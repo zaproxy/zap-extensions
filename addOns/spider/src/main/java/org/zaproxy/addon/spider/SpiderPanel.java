@@ -24,6 +24,7 @@ import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.lang.reflect.InvocationTargetException;
 import javax.swing.Icon;
@@ -36,6 +37,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.apache.logging.log4j.LogManager;
@@ -104,7 +106,7 @@ public class SpiderPanel extends ScanPanel2<SpiderScan, ScanController<SpiderSca
     /** The {@code JTabbedPane} used to show the tabs for URLs found and HTTP messages sent. */
     private JTabbedPane tabbedPane;
 
-    private JButton scanButton = null;
+    private JButton scanButton;
 
     /**
      * The table with URLs found.
@@ -180,7 +182,7 @@ public class SpiderPanel extends ScanPanel2<SpiderScan, ScanController<SpiderSca
 
     private TableExportButton<JXTable> exportButton;
 
-    private ExtensionSpider2 extension = null;
+    private ExtensionSpider2 extension;
 
     /**
      * Instantiates a new spider panel.
@@ -213,7 +215,8 @@ public class SpiderPanel extends ScanPanel2<SpiderScan, ScanController<SpiderSca
         this.setDefaultAccelerator(
                 extension
                         .getView()
-                        .getMenuShortcutKeyStroke(KeyEvent.VK_D, KeyEvent.SHIFT_DOWN_MASK, false));
+                        .getMenuShortcutKeyStroke(
+                                KeyEvent.VK_D, InputEvent.SHIFT_DOWN_MASK, false));
         this.setMnemonic(Constant.messages.getChar("spider.panel.mnemonic"));
     }
 
@@ -281,7 +284,7 @@ public class SpiderPanel extends ScanPanel2<SpiderScan, ScanController<SpiderSca
                     .setCellRenderer(
                             new DefaultTableRenderer(
                                     new MappedValue(StringValues.EMPTY, IconValues.NONE),
-                                    JLabel.CENTER));
+                                    SwingConstants.CENTER));
             urlsTable.getColumnExt(0).setHighlighters(new ProcessedCellItemIconHighlighter(0));
 
             urlsTable.getColumnModel().getColumn(0).setMinWidth(80);
@@ -327,7 +330,7 @@ public class SpiderPanel extends ScanPanel2<SpiderScan, ScanController<SpiderSca
                     .setCellRenderer(
                             new DefaultTableRenderer(
                                     new MappedValue(StringValues.EMPTY, IconValues.NONE),
-                                    JLabel.CENTER));
+                                    SwingConstants.CENTER));
             addedNodesTable
                     .getColumnExt(0)
                     .setHighlighters(new ProcessedCellItemIconHighlighter(0));

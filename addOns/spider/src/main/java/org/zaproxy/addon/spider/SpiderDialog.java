@@ -72,10 +72,10 @@ public class SpiderDialog extends StandardFieldsDialog {
 
     private static final long serialVersionUID = 1L;
 
-    private JButton[] extraButtons = null;
+    private JButton[] extraButtons;
 
-    private ExtensionSpider2 extension = null;
-    private SpiderParam spiderParam = null;
+    private ExtensionSpider2 extension;
+    private SpiderParam spiderParam;
 
     /**
      * Flag that holds the previous checked state of the "Subtree Only" checkbox.
@@ -89,7 +89,7 @@ public class SpiderDialog extends StandardFieldsDialog {
     private ExtensionUserManagement extUserMgmt =
             Control.getSingleton().getExtensionLoader().getExtension(ExtensionUserManagement.class);
 
-    private Target target = null;
+    private Target target;
 
     public SpiderDialog(ExtensionSpider2 ext, Frame owner, Dimension dim) {
         super(

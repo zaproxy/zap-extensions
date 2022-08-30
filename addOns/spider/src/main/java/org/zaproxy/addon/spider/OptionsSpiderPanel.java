@@ -61,37 +61,33 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
     private static final long serialVersionUID = -5623691753271231473L;
 
     /** The full panel for the spider options. */
-    private JPanel panelSpider = null;
+    private JPanel panelSpider;
 
     // The controls for the options:
-    private JSlider sliderMaxDepth = null;
-    private JSlider sliderThreads = null;
-    private ZapNumberSpinner durationNumberSpinner = null;
+    private JSlider sliderMaxDepth;
+    private JSlider sliderThreads;
+    private ZapNumberSpinner durationNumberSpinner;
     private ZapNumberSpinner maxChildrenNumberSpinner;
     private ZapNumberSpinner maxParseSizeBytesNumberSpinner;
-    private JCheckBox chkPostForm = null;
-    private JCheckBox chkProcessForm = null;
-    private JCheckBox parseComments = null;
-    private JCheckBox parseRobotsTxt = null;
-    private JCheckBox parseSitemapXml = null;
-    private JCheckBox parseSVNEntries = null;
-    private JCheckBox parseGit = null;
-    private JCheckBox handleODataSpecificParameters = null;
+    private JCheckBox chkPostForm;
+    private JCheckBox chkProcessForm;
+    private JCheckBox parseComments;
+    private JCheckBox parseRobotsTxt;
+    private JCheckBox parseSitemapXml;
+    private JCheckBox parseSVNEntries;
+    private JCheckBox parseGit;
+    private JCheckBox handleODataSpecificParameters;
     private JCheckBox chkSendRefererHeader;
     private JCheckBox chkAcceptCookies;
     private DomainsAlwaysInScopeMultipleOptionsPanel domainsAlwaysInScopePanel;
     private DomainsAlwaysInScopeTableModel domainsAlwaysInScopeTableModel;
 
-    private JComboBox<HandleParametersOption> handleParameters = null;
+    private JComboBox<HandleParametersOption> handleParameters;
 
     /** Instantiates a new options spider panel. */
     public OptionsSpiderPanel() {
         super();
-        initialize();
-    }
 
-    /** This method initializes this options Panel. */
-    private void initialize() {
         this.setLayout(new CardLayout());
         this.setName(Constant.messages.getString("spider.options.title"));
         if (Model.getSingleton().getOptionsParam().getViewParam().getWmUiHandlingOption() == 0) {
@@ -529,8 +525,8 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
                 Constant.messages.getString(
                         "spider.options.domains.in.scope.dialog.remove.checkbox.label");
 
-        private DialogAddDomainAlwaysInScope addDialog = null;
-        private DialogModifyDomainAlwaysInScope modifyDialog = null;
+        private DialogAddDomainAlwaysInScope addDialog;
+        private DialogModifyDomainAlwaysInScope modifyDialog;
 
         public DomainsAlwaysInScopeMultipleOptionsPanel(DomainsAlwaysInScopeTableModel model) {
             super(model);

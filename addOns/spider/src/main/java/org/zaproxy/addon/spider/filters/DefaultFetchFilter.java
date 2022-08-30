@@ -46,7 +46,7 @@ public class DefaultFetchFilter extends FetchFilter {
     private List<DomainAlwaysInScopeMatcher> domainsAlwaysInScope = Collections.emptyList();
 
     /** The exclude list. */
-    private List<String> excludeList = null;
+    private List<String> excludeList;
 
     private Context scanContext;
 

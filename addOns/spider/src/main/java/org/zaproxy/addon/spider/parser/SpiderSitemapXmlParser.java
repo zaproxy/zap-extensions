@@ -48,10 +48,10 @@ import org.zaproxy.zap.utils.XmlUtils;
 public class SpiderSitemapXmlParser extends SpiderParser {
 
     /** a pattern to match the sitemap.xml file name */
-    private Pattern SITEMAP_XML_FILENAME_PATTERN = Pattern.compile("/sitemap\\.xml$");
+    private static final Pattern SITEMAP_XML_FILENAME_PATTERN = Pattern.compile("/sitemap\\.xml$");
 
     /** a pattern to match the sitemap.xml file.. hint: It's XML */
-    private static final Pattern xmlPattern =
+    private static final Pattern XML_PATTERN =
             Pattern.compile(
                     "^<\\?xml\\s+version\\s*=\\s*\"[0-9.]+\"\\s+encoding\\s*=\\s*\"[^\"]+\"\\s*\\?>");
 
@@ -105,7 +105,7 @@ public class SpiderSitemapXmlParser extends SpiderParser {
         // Get the response content
         byte[] response = message.getResponseBody().getBytes();
         String baseURL = message.getRequestHeader().getURI().toString();
-        Matcher xmlFormatMatcher = xmlPattern.matcher(new String(response));
+        Matcher xmlFormatMatcher = XML_PATTERN.matcher(new String(response));
         if (xmlFormatMatcher.find()) {
 
             getLogger().debug("The format matches XML");
@@ -116,7 +116,7 @@ public class SpiderSitemapXmlParser extends SpiderParser {
                 NodeList locationNodes =
                         (NodeList) xpathLocationExpression.evaluate(xmldoc, XPathConstants.NODESET);
                 for (int i = 0; i < locationNodes.getLength(); i++) {
-                    processURL(message, depth, locationNodes.item(i).getNodeValue(), baseURL);
+                    processUrl(message, depth, locationNodes.item(i).getNodeValue(), baseURL);
                 }
             } catch (Exception e) {
                 getLogger().error("An error occurred trying to parse sitemap.xml", e);

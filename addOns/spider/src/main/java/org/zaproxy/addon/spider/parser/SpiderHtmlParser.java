@@ -118,7 +118,7 @@ public class SpiderHtmlParser extends SpiderParser {
             getLogger().debug("Base tag was found in HTML: {}", base.getDebugInfo());
             String href = base.getAttributeValue("href");
             if (href != null && !href.isEmpty()) {
-                baseURL = UrlCanonicalizer.getCanonicalURL(href, baseURL);
+                baseURL = UrlCanonicalizer.getCanonicalUrl(href, baseURL);
                 baseTagSet = true;
             }
         }
@@ -134,7 +134,7 @@ public class SpiderHtmlParser extends SpiderParser {
                 if (!parseSource(message, s, depth, baseURL)) {
                     Matcher matcher = PLAIN_COMMENTS_URL_PATTERN.matcher(s.toString());
                     while (matcher.find()) {
-                        processURL(message, depth, matcher.group(), baseURL);
+                        processUrl(message, depth, matcher.group(), baseURL);
                     }
                 }
             }
@@ -145,7 +145,7 @@ public class SpiderHtmlParser extends SpiderParser {
         for (StartTag doctype : doctypes) {
             for (String str : doctype.getTagContent().toString().split(" ")) {
                 if (str.startsWith("\"") && str.endsWith("\"")) {
-                    processURL(message, depth, str.substring(1, str.length() - 1), baseURL);
+                    processUrl(message, depth, str.substring(1, str.length() - 1), baseURL);
                 }
             }
         }
@@ -163,7 +163,7 @@ public class SpiderHtmlParser extends SpiderParser {
         Matcher results = SRCSET_PATTERN.matcher(localURL);
         while (results.find()) {
             if (!results.group().isEmpty()) {
-                processURL(message, depth, results.group(), baseURL);
+                processUrl(message, depth, results.group(), baseURL);
             }
         }
     }
@@ -318,7 +318,7 @@ public class SpiderHtmlParser extends SpiderParser {
                             foundMatch = foundMatch.substring(1);
                         }
                     }
-                    processURL(message, depth, foundMatch, baseUrlForText);
+                    processUrl(message, depth, foundMatch, baseUrlForText);
                     resourcesfound = true;
                 }
             }
@@ -342,7 +342,7 @@ public class SpiderHtmlParser extends SpiderParser {
                     Matcher matcher = URL_PATTERN.matcher(content);
                     if (matcher.find()) {
                         String url = matcher.group(1);
-                        processURL(message, depth, url, baseURL);
+                        processUrl(message, depth, url, baseURL);
                         resourcesfound = true;
                     }
                 }
@@ -350,7 +350,7 @@ public class SpiderHtmlParser extends SpiderParser {
                     && content != null
                     && !content.equals("")
                     && !content.equalsIgnoreCase("none")) {
-                processURL(message, depth, content, baseURL);
+                processUrl(message, depth, content, baseURL);
                 resourcesfound = true;
             }
         }
@@ -414,11 +414,11 @@ public class SpiderHtmlParser extends SpiderParser {
         if (customUrlProcessor != null) {
             customUrlProcessor.process(message, depth, localURL, baseURL);
         } else if (!attributeName.equalsIgnoreCase("ping")) {
-            processURL(message, depth, localURL, baseURL);
+            processUrl(message, depth, localURL, baseURL);
         } else {
             for (String pingURL : localURL.split("\\s")) {
                 if (!pingURL.isEmpty()) {
-                    processURL(message, depth, pingURL, baseURL);
+                    processUrl(message, depth, pingURL, baseURL);
                 }
             }
         }

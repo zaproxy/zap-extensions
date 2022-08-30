@@ -40,12 +40,12 @@ public class SpiderGitParser extends SpiderParser {
     private SpiderParam params;
 
     /** a pattern to match the file name of the Git index file */
-    private static final Pattern gitIndexFilenamePattern = Pattern.compile("/.git/index$");
+    private static final Pattern GIT_INDEX_FILENAME_PATTERN = Pattern.compile("/.git/index$");
 
     /** a pattern to match the content of the Git index file */
-    private static final Pattern gitIndexContentPattern = Pattern.compile("^DIRC");
+    private static final Pattern GIT_INDEX_CONTENT_PATTERN = Pattern.compile("^DIRC");
 
-    private Pattern GIT_FILE_PATTERN = Pattern.compile("/\\.git/index$");
+    private static final Pattern GIT_FILE_PATTERN = Pattern.compile("/\\.git/index$");
 
     /**
      * Instantiates a new spider Git Index parser.
@@ -78,7 +78,7 @@ public class SpiderGitParser extends SpiderParser {
             getLogger().debug("The full path is [{}]", fullpath);
 
             // make sure the file name is as expected
-            Matcher gitIndexFilenameMatcher = gitIndexFilenamePattern.matcher(fullpath);
+            Matcher gitIndexFilenameMatcher = GIT_INDEX_FILENAME_PATTERN.matcher(fullpath);
             if (!gitIndexFilenameMatcher.find()) {
                 getLogger().warn("This path cannot be handled by the Git parser: {}", fullpath);
                 return false;
@@ -86,7 +86,7 @@ public class SpiderGitParser extends SpiderParser {
 
             // dealing with the Git Index file
 
-            Matcher gitIndexContentMatcher = gitIndexContentPattern.matcher(new String(data));
+            Matcher gitIndexContentMatcher = GIT_INDEX_CONTENT_PATTERN.matcher(new String(data));
             if (!gitIndexContentMatcher.find()) {
                 getLogger()
                         .debug(
@@ -303,7 +303,7 @@ public class SpiderGitParser extends SpiderParser {
                             .info(
                                     "Found file/symbolic link/gitlink {} in the Git entries file",
                                     indexEntryName);
-                    processURL(message, depth, "../" + indexEntryName, baseURL);
+                    processUrl(message, depth, "../" + indexEntryName, baseURL);
                 }
             }
             // all good, we're outta here.

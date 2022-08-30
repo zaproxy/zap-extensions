@@ -55,17 +55,17 @@ public class SpiderSvnEntriesParser extends SpiderParser {
     /* this class was Cloned from SpiderRobotstxtParser, by Cosmin. Credit where credit is due. */
 
     /** a pattern to match for SQLite based file (in ".svn/wc.db") */
-    private static final Pattern svnSQLiteFormatPattern = Pattern.compile("^SQLite format ");
+    private static final Pattern SVN_SQLITE_FORMAT_PATTERN = Pattern.compile("^SQLite format ");
 
     /** a pattern to match for XML based entries files */
-    private static final Pattern svnXMLFormatPattern = Pattern.compile("<wc-entries");
+    private static final Pattern SVN_XML_FORMAT_PATTERN = Pattern.compile("<wc-entries");
 
     /** matches the entry *after* the line containing the file name */
-    private static final Pattern svnTextFormatFileOrDirectoryPattern =
+    private static final Pattern SVN_TEXT_FORMAT_FILE_OR_DIRECTORY_PATTERN =
             Pattern.compile("^(file|dir)$"); // case sensitive
 
     /** matches the lines containing the repo location */
-    private static final Pattern svnRepoLocationPattern =
+    private static final Pattern SVN_REPO_LOCATION_PATTERN =
             Pattern.compile("^(http://|https://)", Pattern.CASE_INSENSITIVE);
 
     /** The Spider parameters. */
@@ -74,7 +74,8 @@ public class SpiderSvnEntriesParser extends SpiderParser {
     /** used to parse the XML based .svn/entries file format */
     private static DocumentBuilder dBuilder;
 
-    private Pattern SVN_ENTRIES_FILE_PATTERN = Pattern.compile("/\\.svn/entries$|/\\.svn/wc.db$");
+    private static final Pattern SVN_ENTRIES_FILE_PATTERN =
+            Pattern.compile("/\\.svn/entries$|/\\.svn/wc.db$");
 
     /** statically initialise the XML DocumentBuilder */
     static {
@@ -115,8 +116,8 @@ public class SpiderSvnEntriesParser extends SpiderParser {
         // a file called ".svn/wc.db" containing a sqlite database, so we parse this here as well.
 
         // which format are we parsing
-        Matcher svnSQLiteFormatMatcher = svnSQLiteFormatPattern.matcher(content);
-        Matcher svnXMLFormatMatcher = svnXMLFormatPattern.matcher(content);
+        Matcher svnSQLiteFormatMatcher = SVN_SQLITE_FORMAT_PATTERN.matcher(content);
+        Matcher svnXMLFormatMatcher = SVN_XML_FORMAT_PATTERN.matcher(content);
         if (svnSQLiteFormatMatcher.find()) {
             // SQLite format is being used, ( >= SVN working copy format 12, or >= SVN 1.7)
             File tempSqliteFile;
@@ -215,7 +216,7 @@ public class SpiderSvnEntriesParser extends SpiderParser {
                                             .debug(
                                                     "Found a file/directory name in the (SQLite based) SVN wc.db file");
 
-                                    processURL(
+                                    processUrl(
                                             message,
                                             depth,
                                             "../" + filename + (kind.equals("dir") ? "/" : ""),
@@ -226,7 +227,7 @@ public class SpiderSvnEntriesParser extends SpiderParser {
                                     // root is not the WEB root..
                                     // in order to be sure we catch all the SVN repos, we recurse.
                                     if (kind.equals("dir")) {
-                                        processURL(
+                                        processUrl(
                                                 message,
                                                 depth,
                                                 "../" + filename + "/.svn/wc.db",
@@ -238,7 +239,7 @@ public class SpiderSvnEntriesParser extends SpiderParser {
                                     if (kind.equals("file")
                                             && svn_filename != null
                                             && svn_filename.length() > 0) {
-                                        processURL(message, depth, svn_filename, baseURL);
+                                        processUrl(message, depth, svn_filename, baseURL);
                                     }
                                 }
                             }
@@ -255,12 +256,12 @@ public class SpiderSvnEntriesParser extends SpiderParser {
                                     // exclude local repositories here.. we cannot retrieve or
                                     // spider them
                                     Matcher repoMatcher =
-                                            svnRepoLocationPattern.matcher(repos_path);
+                                            SVN_REPO_LOCATION_PATTERN.matcher(repos_path);
                                     if (repoMatcher.find()) {
                                         getLogger()
                                                 .debug(
                                                         "Found an SVN repository location in the (SQLite based) SVN wc.db file");
-                                        processURL(message, depth, repos_path + "/", baseURL);
+                                        processUrl(message, depth, repos_path + "/", baseURL);
                                     }
                                 }
                             }
@@ -342,19 +343,19 @@ public class SpiderSvnEntriesParser extends SpiderParser {
                     getLogger()
                             .debug(
                                     "Found a file/directory name in the (XML based) SVN < 1.4 entries file");
-                    processURL(
+                    processUrl(
                             message,
                             depth,
                             "../" + svnEntryName + (svnEntryKind.equals("dir") ? "/" : ""),
                             baseURL);
                     // get the internal SVN file, probably leading to source code disclosure
                     if (svnEntryKind.equals("file")) {
-                        processURL(
+                        processUrl(
                                 message, depth, "text-base/" + svnEntryName + ".svn-base", baseURL);
                     }
                     // re-seed the spider for this directory.
                     if (svnEntryKind.equals("dir")) {
-                        processURL(message, depth, "../" + svnEntryName + "/.svn/entries", baseURL);
+                        processUrl(message, depth, "../" + svnEntryName + "/.svn/entries", baseURL);
                     }
                 }
 
@@ -364,20 +365,20 @@ public class SpiderSvnEntriesParser extends SpiderParser {
                         && svnEntryName.length() == 0
                         && svnEntryKind.equals("dir")) {
                     // exclude local repositories here.. we cannot retrieve or spider them
-                    Matcher repoMatcher = svnRepoLocationPattern.matcher(svnEntryUrl);
+                    Matcher repoMatcher = SVN_REPO_LOCATION_PATTERN.matcher(svnEntryUrl);
                     if (repoMatcher.find()) {
                         getLogger()
                                 .debug(
                                         "Found an SVN repository location in the (XML based) SVN < 1.4 entries file");
-                        processURL(message, depth, svnEntryUrl + "/", baseURL);
+                        processUrl(message, depth, svnEntryUrl + "/", baseURL);
                     }
                 }
                 // this attribute seems to be set on various entries. Correspond to files, rather
                 // than directories
-                Matcher urlMatcher = svnRepoLocationPattern.matcher(svnEntryCopyFromUrl);
+                Matcher urlMatcher = SVN_REPO_LOCATION_PATTERN.matcher(svnEntryCopyFromUrl);
                 if (urlMatcher.find()) {
                     getLogger().debug("Found an SVN URL in the (XML based) SVN < 1.4 entries file");
-                    processURL(message, depth, svnEntryCopyFromUrl, baseURL);
+                    processUrl(message, depth, svnEntryCopyFromUrl, baseURL);
                 }
             }
         } else {
@@ -391,7 +392,7 @@ public class SpiderSvnEntriesParser extends SpiderParser {
                 // If the line is empty, skip it
                 if (line.length() > 0) {
 
-                    Matcher matcher = svnTextFormatFileOrDirectoryPattern.matcher(line);
+                    Matcher matcher = SVN_TEXT_FORMAT_FILE_OR_DIRECTORY_PATTERN.matcher(line);
                     if (matcher.find()) {
                         // filetype is "dir" or "file", as per the contents of the SVN file.
                         String filetype = matcher.group(0);
@@ -401,14 +402,14 @@ public class SpiderSvnEntriesParser extends SpiderParser {
                                     .debug(
                                             "Found a file/directory name in the (text based) SVN 1.4/1.5/1.6 SVN entries file");
 
-                            processURL(
+                            processUrl(
                                     message,
                                     depth,
                                     "../" + previousline + (filetype.equals("dir") ? "/" : ""),
                                     baseURL);
                             // get the internal SVN file, probably leading to source code disclosure
                             if (filetype.equals("file")) {
-                                processURL(
+                                processUrl(
                                         message,
                                         depth,
                                         "text-base/" + previousline + ".svn-base",
@@ -417,7 +418,7 @@ public class SpiderSvnEntriesParser extends SpiderParser {
 
                             // re-seed the spider for this directory.
                             if (filetype.equals("dir")) {
-                                processURL(
+                                processUrl(
                                         message,
                                         depth,
                                         "../" + previousline + "/.svn/entries",
@@ -427,13 +428,13 @@ public class SpiderSvnEntriesParser extends SpiderParser {
                     } else {
                         // not a "file" or "dir" line, but it may contain details of the SVN repo
                         // location
-                        Matcher repoMatcher = svnRepoLocationPattern.matcher(line);
+                        Matcher repoMatcher = SVN_REPO_LOCATION_PATTERN.matcher(line);
                         if (repoMatcher.find()) {
                             getLogger()
                                     .debug(
                                             "Found an SVN repository location in the (text based) 1.4/1.5/1.6 SVN entries file");
 
-                            processURL(message, depth, line + "/", baseURL);
+                            processUrl(message, depth, line + "/", baseURL);
                         }
                     }
                 }

@@ -34,10 +34,10 @@ import org.parosproxy.paros.network.HttpMessage;
 public class SpiderODataAtomParser extends SpiderParser {
 
     /** The Constant urlPattern defining the pattern for an url. */
-    private static final Pattern patternURL = Pattern.compile("href=\\\"([\\w();&'/,=\\-]*)\\\"");
+    private static final Pattern PATTERN_URL = Pattern.compile("href=\\\"([\\w();&'/,=\\-]*)\\\"");
 
     /** the Constant patternBase defines the pattern for a base url */
-    private static final Pattern patternBase =
+    private static final Pattern PATTERN_BASE =
             Pattern.compile("base=\"(http(s?)://[^\\x00-\\x1f\"'\\s<>#]+)\"");
 
     @Override
@@ -54,19 +54,19 @@ public class SpiderODataAtomParser extends SpiderParser {
         // Handle base tag if any
         // xml:base="http://myserver:8001/remoting/myapp.svc/"
 
-        Matcher matcher = patternBase.matcher(bodyAsStr);
+        Matcher matcher = PATTERN_BASE.matcher(bodyAsStr);
         if (matcher.find()) {
             baseURL = matcher.group(1);
             baseURL = StringEscapeUtils.unescapeXml(baseURL);
         }
 
         boolean foundAtLeastOneResult = false;
-        matcher = patternURL.matcher(bodyAsStr);
+        matcher = PATTERN_URL.matcher(bodyAsStr);
         while (matcher.find()) {
             String s = matcher.group(1);
             s = StringEscapeUtils.unescapeXml(s);
 
-            processURL(message, depth, s, baseURL);
+            processUrl(message, depth, s, baseURL);
             foundAtLeastOneResult = true;
         }
 

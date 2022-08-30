@@ -71,7 +71,7 @@ public class SpiderTask implements Runnable {
     /** The spider resource found. */
     private SpiderResourceFound resourceFound;
 
-    private ExtensionHistory extHistory = null;
+    private ExtensionHistory extHistory;
 
     /** The Constant log. */
     private static final Logger log = LogManager.getLogger(SpiderTask.class);

@@ -26,7 +26,7 @@ import org.zaproxy.zap.users.User;
 
 public class SpiderEventPublisher extends ScanEventPublisher {
 
-    private static SpiderEventPublisher publisher = null;
+    private static SpiderEventPublisher publisher;
 
     @Override
     public String getPublisherName() {

@@ -38,7 +38,7 @@ public class SpiderHttpHeaderParser extends SpiderParser {
         // TODO replace when next core version available HttpHeader.CONTENT_LOCATION
         String location = message.getResponseHeader().getHeader("Content-Location");
         if (location != null && !location.isEmpty()) {
-            processURL(message, depth, location, baseURL);
+            processUrl(message, depth, location, baseURL);
         }
         // Refresh header
         // TODO replace when next core version available HttpHeader.REFRESH
@@ -47,7 +47,7 @@ public class SpiderHttpHeaderParser extends SpiderParser {
             Matcher matcher = SpiderHtmlParser.URL_PATTERN.matcher(refresh);
             if (matcher.find()) {
                 String url = matcher.group(1);
-                processURL(message, depth, url, baseURL);
+                processUrl(message, depth, url, baseURL);
             }
         }
 
@@ -65,7 +65,7 @@ public class SpiderHttpHeaderParser extends SpiderParser {
                 if (j < 0) {
                     break;
                 }
-                processURL(message, depth, link.substring(i + 1, j), baseURL);
+                processUrl(message, depth, link.substring(i + 1, j), baseURL);
                 offset = j;
             }
         }

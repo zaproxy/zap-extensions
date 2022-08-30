@@ -175,9 +175,9 @@ public class SpiderParam extends VersionedAbstractParam {
     /** Whether sitemap.xml file should be parsed for URIs. */
     private boolean parseSitemapXml = true;
     /** Whether SVN entries files should be parsed for URIs. */
-    private boolean parseSVNentries = false;
+    private boolean parseSVNentries;
     /** Whether Git files should be parsed for URIs. */
-    private boolean parseGit = false;
+    private boolean parseGit;
     /** Whether the forms are processed and submitted at all. */
     private boolean processForm = true;
     /**
@@ -190,18 +190,18 @@ public class SpiderParam extends VersionedAbstractParam {
     /** Which urls are skipped. */
     private String skipURL = "";
     /** The pattern for skip url. */
-    private Pattern patternSkipURL = null;
+    private Pattern patternSkipURL;
     /** The user agent string, if different than the default one. */
-    private String userAgent = null;
+    private String userAgent;
     /** The handle parameters visited. */
     private HandleParametersOption handleParametersVisited = HandleParametersOption.USE_ALL;
     /**
      * Defines if we take care of OData specific parameters during the visit in order to identify
      * known URL *
      */
-    private boolean handleODataParametersVisited = false;
+    private boolean handleODataParametersVisited;
     /** The maximum duration in minutes that the spider is allowed to run for, 0 meaning no limit */
-    private int maxDuration = 0;
+    private int maxDuration;
 
     /** The maximum number of child nodes (per node) that can be crawled, 0 means no limit. */
     private int maxChildren;
@@ -210,7 +210,7 @@ public class SpiderParam extends VersionedAbstractParam {
     private List<DomainAlwaysInScopeMatcher> domainsAlwaysInScopeEnabled = new ArrayList<>(0);
     private boolean confirmRemoveDomainAlwaysInScope;
     private int maxScansInUI = 5;
-    private boolean showAdvancedDialog = false; // TODO load/save
+    private boolean showAdvancedDialog; // TODO load/save
 
     /** The log. */
     private static final Logger log = LogManager.getLogger(SpiderParam.class);

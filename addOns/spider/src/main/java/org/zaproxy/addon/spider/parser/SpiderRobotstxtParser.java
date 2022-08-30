@@ -96,7 +96,7 @@ public class SpiderRobotstxtParser extends SpiderParser {
         }
 
         if (!processedPath.isEmpty()) {
-            processURL(message, depth, processedPath, baseURL);
+            processUrl(message, depth, processedPath, baseURL);
         }
     }
 

@@ -76,19 +76,19 @@ public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController
     private ValueGenerator generator = new DefaultValueGenerator();
 
     /** The spider panel. */
-    private SpiderPanel spiderPanel = null;
+    private SpiderPanel spiderPanel;
 
-    SpiderDialog spiderDialog = null;
+    SpiderDialog spiderDialog;
 
     private PopupMenuItemSpiderDialog popupMenuItemSpiderDialog;
 
     private PopupMenuItemSpiderDialogWithContext popupMenuItemSpiderDialogWithContext;
 
     /** The options spider panel. */
-    private OptionsSpiderPanel optionsSpiderPanel = null;
+    private OptionsSpiderPanel optionsSpiderPanel;
 
     /** The params for the spider. */
-    private SpiderParam params = null;
+    private SpiderParam params;
 
     private List<SpiderParser> customParsers;
     private List<FetchFilter> customFetchFilters;
@@ -96,7 +96,7 @@ public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController
 
     private SpiderAPI spiderApi;
 
-    private SpiderScanController scanController = null;
+    private SpiderScanController scanController;
 
     private Icon icon;
 
@@ -108,15 +108,11 @@ public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController
      */
     private List<String> excludeList = Collections.emptyList();
 
-    private ZapMenuItem menuItemCustomScan = null;
+    private ZapMenuItem menuItemCustomScan;
 
     public ExtensionSpider2() {
         super(NAME);
-        initialize();
-    }
 
-    /** This method initializes this extension. */
-    private void initialize() {
         this.customParsers = new LinkedList<>();
         this.customFetchFilters = new LinkedList<>();
         this.customParseFilters = new LinkedList<>();

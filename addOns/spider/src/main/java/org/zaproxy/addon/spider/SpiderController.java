@@ -266,7 +266,7 @@ public class SpiderController implements SpiderParserListener {
             throws URIException {
         StringBuilder identifierBuilder = new StringBuilder(50);
         String visitedURI =
-                UrlCanonicalizer.buildCleanedParametersURIRepresentation(
+                UrlCanonicalizer.buildCleanedParametersUriRepresentation(
                         uri,
                         spider.getSpiderParam().getHandleParameters(),
                         spider.getSpiderParam().isHandleODataParametersVisited());
