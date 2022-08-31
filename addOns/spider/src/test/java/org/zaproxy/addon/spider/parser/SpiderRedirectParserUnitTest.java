@@ -32,14 +32,10 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
-import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
 
 /** Unit test for {@link SpiderRedirectParser}. */
 class SpiderRedirectParserUnitTest extends SpiderParserTestUtils<SpiderRedirectParser> {
-
-    private static final String ROOT_PATH = "/";
-    private static final int BASE_DEPTH = 0;
 
     private static final List<Integer> NON_REDIRECTION_STATUS_CODES;
     private static final List<Integer> REDIRECTION_STATUS_CODES;
@@ -64,13 +60,11 @@ class SpiderRedirectParserUnitTest extends SpiderParserTestUtils<SpiderRedirectP
     }
 
     @Test
-    void shouldFailToEvaluateAnUndefinedMessage() {
+    void shouldFailToEvaluateAnUndefineContext() {
         // Given
-        HttpMessage undefinedMessage = null;
+        ParseContext ctx = null;
         // When / Then
-        assertThrows(
-                NullPointerException.class,
-                () -> parser.canParseResource(undefinedMessage, ROOT_PATH, false));
+        assertThrows(NullPointerException.class, () -> parser.canParseResource(ctx, false));
     }
 
     @Test
@@ -79,7 +73,7 @@ class SpiderRedirectParserUnitTest extends SpiderParserTestUtils<SpiderRedirectP
         for (int statusCode : NON_REDIRECTION_STATUS_CODES) {
             messageWithStatusCode(statusCode);
             // When
-            boolean canParse = parser.canParseResource(msg, ROOT_PATH, false);
+            boolean canParse = parser.canParseResource(ctx, false);
             // Then
             assertThat(Integer.toString(statusCode), canParse, is(equalTo(false)));
         }
@@ -91,7 +85,7 @@ class SpiderRedirectParserUnitTest extends SpiderParserTestUtils<SpiderRedirectP
         for (int statusCode : REDIRECTION_STATUS_CODES) {
             messageWithStatusCode(statusCode);
             // When
-            boolean canParse = parser.canParseResource(msg, ROOT_PATH, false);
+            boolean canParse = parser.canParseResource(ctx, false);
             // Then
             assertThat(Integer.toString(statusCode), canParse, is(equalTo(true)));
         }
@@ -103,19 +97,17 @@ class SpiderRedirectParserUnitTest extends SpiderParserTestUtils<SpiderRedirectP
         boolean alreadyParsed = true;
         messageWithStatusCode(HttpStatusCode.FOUND);
         // When
-        boolean canParse = parser.canParseResource(msg, ROOT_PATH, alreadyParsed);
+        boolean canParse = parser.canParseResource(ctx, alreadyParsed);
         // Then
         assertThat(canParse, is(equalTo(true)));
     }
 
     @Test
-    void shouldFailToParseAnUndefinedMessage() {
+    void shouldFailToParseAnUndefinedContext() {
         // Given
-        HttpMessage undefinedMessage = null;
+        ParseContext ctx = null;
         // When / Then
-        assertThrows(
-                NullPointerException.class,
-                () -> parser.parseResource(undefinedMessage, null, BASE_DEPTH));
+        assertThrows(NullPointerException.class, () -> parser.parseResource(ctx));
     }
 
     @Test
@@ -124,7 +116,7 @@ class SpiderRedirectParserUnitTest extends SpiderParserTestUtils<SpiderRedirectP
         String location = "http://example.com/redirection";
         messageWithLocationAndStatusCode(location, HttpStatusCode.FOUND);
         // When
-        boolean parsed = parser.parseResource(msg, null, BASE_DEPTH);
+        boolean parsed = parser.parseResource(ctx);
         // Then
         assertThat(parsed, is(equalTo(true)));
         assertThat(listener.getUrlsFound(), contains(location));
@@ -136,7 +128,7 @@ class SpiderRedirectParserUnitTest extends SpiderParserTestUtils<SpiderRedirectP
         String location = "/rel/redirection";
         messageWithLocationAndStatusCode(location, HttpStatusCode.FOUND);
         // When
-        boolean parsed = parser.parseResource(msg, null, BASE_DEPTH);
+        boolean parsed = parser.parseResource(ctx);
         // Then
         assertThat(parsed, is(equalTo(true)));
         assertThat(listener.getUrlsFound(), contains("http://example.com" + location));
@@ -148,7 +140,7 @@ class SpiderRedirectParserUnitTest extends SpiderParserTestUtils<SpiderRedirectP
         String location = "";
         messageWithLocationAndStatusCode(location, HttpStatusCode.FOUND);
         // When
-        boolean parsed = parser.parseResource(msg, null, 0);
+        boolean parsed = parser.parseResource(ctx);
         // Then
         assertThat(parsed, is(equalTo(true)));
         assertThat(listener.getUrlsFound(), is(empty()));
@@ -159,7 +151,7 @@ class SpiderRedirectParserUnitTest extends SpiderParserTestUtils<SpiderRedirectP
         // Given
         messageWithStatusCode(HttpStatusCode.FOUND);
         // When
-        boolean parsed = parser.parseResource(msg, null, BASE_DEPTH);
+        boolean parsed = parser.parseResource(ctx);
         // Then
         assertThat(parsed, is(equalTo(true)));
         assertThat(listener.getUrlsFound(), is(empty()));

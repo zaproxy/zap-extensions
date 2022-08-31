@@ -27,7 +27,6 @@ import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import javax.net.ssl.SSLException;
-import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -46,6 +45,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.spider.filters.ParseFilter;
 import org.zaproxy.addon.spider.filters.ParseFilter.FilterResult;
+import org.zaproxy.addon.spider.parser.ParseContext;
 import org.zaproxy.addon.spider.parser.SpiderParser;
 import org.zaproxy.addon.spider.parser.SpiderResourceFound;
 
@@ -221,7 +221,7 @@ public class SpiderTask implements Runnable {
         int maxDepth = parent.getSpiderParam().getMaxDepth();
         if (maxDepth == SpiderParam.UNLIMITED_DEPTH || resourceFound.getDepth() < maxDepth) {
             parent.notifyListenersSpiderTaskResult(new SpiderTaskResult(msg));
-            processResource(msg);
+            processResource(parent, resourceFound.getDepth(), msg);
         } else {
             parent.notifyListenersSpiderTaskResult(
                     new SpiderTaskResult(msg, getSkippedMessage("maxdepth")));
@@ -347,11 +347,8 @@ public class SpiderTask implements Runnable {
      *
      * @param message the HTTP Message
      */
-    private void processResource(HttpMessage message) {
+    static void processResource(Spider parent, int depth, HttpMessage message) {
         List<SpiderParser> parsers = parent.getController().getParsers();
-
-        // Prepare the Jericho source
-        Source source = new Source(message.getResponseBody().toString());
 
         // Get the full path of the file
         String path = null;
@@ -363,12 +360,18 @@ public class SpiderTask implements Runnable {
             if (path == null) path = "";
         }
 
-        // Parse the resource
+        ParseContext ctx =
+                new ParseContext(
+                        parent.getSpiderParam(),
+                        parent.getExtensionSpider().getValueGenerator(),
+                        message,
+                        path,
+                        depth);
         boolean alreadyConsumed = false;
         for (SpiderParser parser : parsers) {
-            if (parser.canParseResource(message, path, alreadyConsumed)) {
+            if (parser.canParseResource(ctx, alreadyConsumed)) {
                 log.debug("Parser {} can parse resource '{}'", parser, path);
-                if (parser.parseResource(message, source, resourceFound.getDepth())) {
+                if (parser.parseResource(ctx)) {
                     alreadyConsumed = true;
                 }
             } else {

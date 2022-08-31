@@ -24,23 +24,16 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
 import java.nio.file.Path;
-import net.htmlparser.jericho.Source;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.spider.SpiderParam;
 
 /** Unit test for {@link SpiderHtmlParser}. */
 class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
-
-    private static final String ROOT_PATH = "/";
-    private static final int BASE_DEPTH = 0;
 
     private static final Path BASE_DIR_HTML_FILES =
             getResourcePath(SpiderHtmlParserUnitTest.class, "html");
@@ -48,26 +41,15 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
     @Override
     protected SpiderHtmlParser createParser() {
         given(spiderOptions.isParseComments()).willReturn(false);
-        return new SpiderHtmlParser(spiderOptions);
+        return new SpiderHtmlParser();
     }
 
     @Test
-    void shouldFailToCreateParserWithUndefinedSpiderOptions() {
+    void shouldFailToEvaluateAnUndefinedContext() {
         // Given
-        SpiderParam undefinedSpiderOptions = null;
+        ParseContext ctx = null;
         // When / Then
-        assertThrows(
-                IllegalArgumentException.class, () -> new SpiderHtmlParser(undefinedSpiderOptions));
-    }
-
-    @Test
-    void shouldFailToEvaluateAnUndefinedMessage() {
-        // Given
-        HttpMessage undefinedMessage = null;
-        // When / Then
-        assertThrows(
-                NullPointerException.class,
-                () -> parser.canParseResource(undefinedMessage, ROOT_PATH, false));
+        assertThrows(NullPointerException.class, () -> parser.canParseResource(ctx, false));
     }
 
     @Test
@@ -76,18 +58,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         messageWith("NoURLsSpiderHtmlParser.html");
         boolean parsed = false;
         // When
-        boolean canParse = parser.canParseResource(msg, ROOT_PATH, parsed);
-        // Then
-        assertThat(canParse, is(equalTo(true)));
-    }
-
-    @Test
-    void shouldParseHtmlResponseEvenIfProvidedPathIsNull() {
-        // Given
-        messageWith("NoURLsSpiderHtmlParser.html");
-        boolean parsed = false;
-        // When
-        boolean canParse = parser.canParseResource(msg, null, parsed);
+        boolean canParse = parser.canParseResource(ctx, parsed);
         // Then
         assertThat(canParse, is(equalTo(true)));
     }
@@ -98,37 +69,25 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         messageWith("NoURLsSpiderHtmlParser.html");
         boolean parsed = true;
         // When
-        boolean canParse = parser.canParseResource(msg, ROOT_PATH, parsed);
+        boolean canParse = parser.canParseResource(ctx, parsed);
         // Then
         assertThat(canParse, is(equalTo(false)));
     }
 
     @Test
-    void shouldFailToParseAnUndefinedMessage() {
+    void shouldFailToParseAnUndefinedContext() {
         // Given
-        HttpMessage undefinedMessage = null;
+        ParseContext ctx = null;
         // When / Then
-        assertThrows(
-                NullPointerException.class,
-                () -> parser.parseResource(undefinedMessage, createSource(), BASE_DEPTH));
-    }
-
-    @Test
-    void shouldParseMessageEvenWithoutSource() {
-        // Given
-        Source source = null;
-        messageWith("NoURLsSpiderHtmlParser.html");
-        // When / Then
-        assertDoesNotThrow(() -> parser.parseResource(msg, createSource(), BASE_DEPTH));
+        assertThrows(NullPointerException.class, () -> parser.parseResource(ctx));
     }
 
     @Test
     void shouldNeverConsiderCompletelyParsed() {
         // Given
-        Source source = null;
         messageWith("NoURLsSpiderHtmlParser.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
     }
@@ -138,7 +97,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("AElementsSpiderHtmlParser.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(7)));
@@ -159,7 +118,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("AElementsWithPingSpiderHtmlParser.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(23)));
@@ -201,7 +160,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("AppletElementsSpiderHtmlParser.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(8)));
@@ -223,7 +182,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("ImportElementsSpiderHtmlParser.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(5)));
@@ -242,7 +201,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("AreaElementsWithPingSpiderHtmlParser.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(23)));
@@ -284,7 +243,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("NoBaseWithAElementSpiderHtmlParser.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -296,7 +255,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("BaseWithAbsolutePathHrefAElementSpiderHtmlParser.html", "/a/b");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(2)));
@@ -312,7 +271,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("BaseWithRelativePathHrefAElementSpiderHtmlParser.html", "/a/b");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(2)));
@@ -328,7 +287,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("BaseWithoutHrefAElementSpiderHtmlParser.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -340,7 +299,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("BaseWithEmptyHrefAElementSpiderHtmlParser.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -352,7 +311,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("AreaElementsSpiderHtmlParser.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(7)));
@@ -373,7 +332,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("AudioElementsSpiderHtmlParser.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(3)));
@@ -390,7 +349,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("EmbedElementsSpiderHtmlParser.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(7)));
@@ -411,7 +370,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("FrameElementsSpiderHtmlParser.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(7)));
@@ -432,7 +391,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("IFrameElementsSpiderHtmlParser.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(7)));
@@ -453,7 +412,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("IsIndexElementsSpiderHtmlParser.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(3)));
@@ -470,7 +429,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("LinkElementsSpiderHtmlParser.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(7)));
@@ -491,7 +450,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("InputElementsSpiderHtmlParser.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(3)));
@@ -508,7 +467,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("ObjectElementsSpiderHtmlParser.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(11)));
@@ -533,7 +492,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("ScriptElementsSpiderHtmlParser.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(7)));
@@ -554,7 +513,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("TableElementsSpiderHtmlParser.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(11)));
@@ -579,7 +538,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("VideoElementsSpiderHtmlParser.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(14)));
@@ -607,7 +566,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("ImgElementsSpiderHtmlParser.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(24)));
@@ -645,7 +604,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("MetaElementsSpiderHtmlParser.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(22)));
@@ -681,7 +640,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("StringSpiderHtmlParser.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(3)));
@@ -700,7 +659,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         messageWith("CommentWithElementsSpiderHtmlParser.html");
         given(spiderOptions.isParseComments()).willReturn(true);
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(9)));
@@ -723,7 +682,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("CommentWithElementsSpiderHtmlParser.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(0)));
@@ -736,7 +695,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         messageWith("CommentWithoutElementsSpiderHtmlParser.html");
         given(spiderOptions.isParseComments()).willReturn(true);
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(10)));
@@ -760,7 +719,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith("CommentWithoutElementsSpiderHtmlParser.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(0)));
@@ -781,7 +740,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Given
         messageWith(file);
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));

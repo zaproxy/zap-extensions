@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.spider.parser;
 
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
@@ -30,13 +31,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import net.htmlparser.jericho.Source;
 import org.junit.jupiter.api.BeforeEach;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.spider.SpiderParam;
 import org.zaproxy.zap.model.DefaultValueGenerator;
+import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /**
@@ -49,17 +54,33 @@ abstract class SpiderParserTestUtils<T extends SpiderParser> extends TestUtils {
 
     protected TestSpiderParserListener listener;
     protected SpiderParam spiderOptions;
-    protected DefaultValueGenerator valueGenerator;
     protected HttpMessage msg;
+    protected ParseContext ctx;
     protected T parser;
 
     @BeforeEach
     void setup() {
-        spiderOptions = mock(SpiderParam.class, withSettings().lenient());
+        ctx = mock(ParseContext.class, withSettings().lenient());
 
-        valueGenerator = new DefaultValueGenerator();
+        spiderOptions = mock(SpiderParam.class, withSettings().lenient());
+        given(ctx.getSpiderParam()).willReturn(spiderOptions);
+
+        ValueGenerator valueGenerator = new DefaultValueGenerator();
+        given(ctx.getValueGenerator()).willReturn(valueGenerator);
 
         msg = new HttpMessage();
+        given(ctx.getHttpMessage()).willReturn(msg);
+        given(ctx.getPath())
+                .willAnswer(
+                        new CachedAnswer<>(
+                                msg, msg -> msg.getRequestHeader().getURI().getEscapedPath()));
+        given(ctx.getBaseUrl())
+                .willAnswer(
+                        new CachedAnswer<>(msg, msg -> msg.getRequestHeader().getURI().toString()));
+        given(ctx.getSource())
+                .willAnswer(
+                        new CachedAnswer<>(
+                                msg, msg -> new Source(msg.getResponseBody().toString())));
 
         parser = createParser();
         listener = createTestSpiderParserListener();
@@ -67,10 +88,6 @@ abstract class SpiderParserTestUtils<T extends SpiderParser> extends TestUtils {
     }
 
     protected abstract T createParser();
-
-    protected Source createSource() {
-        return new Source(msg.getResponseBody().toString());
-    }
 
     protected static String readFile(Path file) throws IOException {
         StringBuilder strBuilder = new StringBuilder();
@@ -80,7 +97,7 @@ abstract class SpiderParserTestUtils<T extends SpiderParser> extends TestUtils {
         return strBuilder.toString();
     }
 
-    static TestSpiderParserListener createTestSpiderParserListener() {
+    protected static TestSpiderParserListener createTestSpiderParserListener() {
         return new TestSpiderParserListener();
     }
 
@@ -192,6 +209,26 @@ abstract class SpiderParserTestUtils<T extends SpiderParser> extends TestUtils {
                     + URLEncoder.encode(value, StandardCharsets.UTF_8.name());
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    private static class CachedAnswer<T> implements Answer<T> {
+
+        private final HttpMessage msg;
+        private final Function<HttpMessage, T> provider;
+        private T value;
+
+        CachedAnswer(HttpMessage msg, Function<HttpMessage, T> provider) {
+            this.msg = msg;
+            this.provider = provider;
+        }
+
+        @Override
+        public T answer(InvocationOnMock invocation) throws Throwable {
+            if (value == null) {
+                value = provider.apply(msg);
+            }
+            return value;
         }
     }
 }

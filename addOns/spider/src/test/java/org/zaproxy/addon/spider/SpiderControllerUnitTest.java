@@ -42,7 +42,6 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.spider.parser.SpiderResourceFound;
-import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link SpiderController}. */
@@ -71,10 +70,6 @@ class SpiderControllerUnitTest extends TestUtils {
 
         given(spider.getSpiderParam()).willReturn(new SpiderParam());
         given(spider.getModel()).willReturn(Model.getSingleton());
-
-        ExtensionSpider2 extensionSpider = mock(ExtensionSpider2.class);
-        given(extensionSpider.getValueGenerator()).willReturn(mock(ValueGenerator.class));
-        given(spider.getExtensionSpider()).willReturn(extensionSpider);
 
         spiderController = new SpiderController(spider, Collections.emptyList());
     }

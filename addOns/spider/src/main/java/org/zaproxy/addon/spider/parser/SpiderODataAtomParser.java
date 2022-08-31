@@ -21,7 +21,6 @@ package org.zaproxy.addon.spider.parser;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.htmlparser.jericho.Source;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.parosproxy.paros.network.HttpMessage;
 
@@ -41,11 +40,13 @@ public class SpiderODataAtomParser extends SpiderParser {
             Pattern.compile("base=\"(http(s?)://[^\\x00-\\x1f\"'\\s<>#]+)\"");
 
     @Override
-    public boolean parseResource(HttpMessage message, Source source, int depth) {
+    public boolean parseResource(ParseContext ctx) {
         getLogger().debug("Parsing an OData Atom resource.");
 
+        HttpMessage message = ctx.getHttpMessage();
+
         // Get the context (base url)
-        String baseURL = message.getRequestHeader().getURI().toString();
+        String baseURL = ctx.getBaseUrl();
 
         // Use a simple pattern matcher to find urls (absolute and relative)
 
@@ -66,7 +67,7 @@ public class SpiderODataAtomParser extends SpiderParser {
             String s = matcher.group(1);
             s = StringEscapeUtils.unescapeXml(s);
 
-            processUrl(message, depth, s, baseURL);
+            processUrl(ctx, s, baseURL);
             foundAtLeastOneResult = true;
         }
 
@@ -75,8 +76,8 @@ public class SpiderODataAtomParser extends SpiderParser {
     }
 
     @Override
-    public boolean canParseResource(HttpMessage message, String path, boolean wasAlreadyParsed) {
+    public boolean canParseResource(ParseContext ctx, boolean wasAlreadyParsed) {
         // Fallback parser - if it's an XML message which has not already been processed
-        return !wasAlreadyParsed && message.getResponseHeader().isXml();
+        return !wasAlreadyParsed && ctx.getHttpMessage().getResponseHeader().isXml();
     }
 }

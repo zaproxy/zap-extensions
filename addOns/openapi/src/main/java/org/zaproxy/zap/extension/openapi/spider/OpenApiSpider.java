@@ -20,8 +20,7 @@
 package org.zaproxy.zap.extension.openapi.spider;
 
 import java.util.function.Supplier;
-import net.htmlparser.jericho.Source;
-import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.spider.parser.ParseContext;
 import org.zaproxy.addon.spider.parser.SpiderParser;
 import org.zaproxy.zap.model.ValueGenerator;
 
@@ -34,12 +33,12 @@ public class OpenApiSpider extends SpiderParser {
     }
 
     @Override
-    public boolean parseResource(HttpMessage message, Source source, int depth) {
-        return func.parseResource(message, source, depth);
+    public boolean parseResource(ParseContext ctx) {
+        return func.parseResource(ctx.getHttpMessage());
     }
 
     @Override
-    public boolean canParseResource(HttpMessage message, String path, boolean wasAlreadyConsumed) {
-        return func.canParseResource(message, path, wasAlreadyConsumed);
+    public boolean canParseResource(ParseContext ctx, boolean wasAlreadyConsumed) {
+        return func.canParseResource(ctx.getHttpMessage());
     }
 }

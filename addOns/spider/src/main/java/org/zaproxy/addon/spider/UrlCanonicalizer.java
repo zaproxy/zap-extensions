@@ -33,6 +33,7 @@ import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zaproxy.addon.spider.SpiderParam.HandleParametersOption;
+import org.zaproxy.addon.spider.parser.ParseContext;
 
 /**
  * The UrlCanonicalizer is used for the process of converting an URL into a canonical (normalized)
@@ -85,24 +86,15 @@ public final class UrlCanonicalizer {
     private UrlCanonicalizer() {}
 
     /**
-     * Gets the canonical url.
-     *
-     * @param url the url
-     * @return the canonical url
-     */
-    public static String getCanonicalUrl(String url) {
-        return getCanonicalUrl(url, null);
-    }
-
-    /**
      * Gets the canonical url, starting from a relative or absolute url found in a given context
      * (baseURL).
      *
+     * @param ctx the parse context.
      * @param url the url string defining the reference
      * @param baseURL the context in which this url was found
      * @return the canonical url
      */
-    public static String getCanonicalUrl(String url, String baseURL) {
+    public static String getCanonicalUrl(ParseContext ctx, String url, String baseURL) {
         if ("javascript:".equals(url)) {
             return null;
         }
@@ -219,7 +211,7 @@ public final class UrlCanonicalizer {
      * Builds a String representation of the URI with cleaned parameters, that can be used when
      * checking if an URI was already visited. The URI provided as a parameter should be already
      * cleaned and canonicalized, so it should be build with a result from {@link
-     * #getCanonicalUrl(String)}.
+     * #getCanonicalUrl(ParseContext, String, String)}.
      *
      * <p>When building the URI representation, the same format should be used for all the cases, as
      * it may affect the number of times the pages are visited and reported if the option

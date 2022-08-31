@@ -19,20 +19,19 @@
  */
 package org.zaproxy.addon.graphql.spider;
 
-import net.htmlparser.jericho.Source;
-import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.graphql.GraphQlSpiderHelper;
+import org.zaproxy.addon.spider.parser.ParseContext;
 import org.zaproxy.addon.spider.parser.SpiderParser;
 
 public class GraphQlSpider extends SpiderParser {
 
     @Override
-    public boolean parseResource(HttpMessage message, Source source, int depth) {
-        return GraphQlSpiderHelper.parseMessage(message);
+    public boolean parseResource(ParseContext ctx) {
+        return GraphQlSpiderHelper.parseMessage(ctx.getHttpMessage());
     }
 
     @Override
-    public boolean canParseResource(HttpMessage message, String path, boolean wasAlreadyConsumed) {
-        return GraphQlSpiderHelper.canParseMessage(message);
+    public boolean canParseResource(ParseContext ctx, boolean wasAlreadyConsumed) {
+        return GraphQlSpiderHelper.canParseMessage(ctx.getHttpMessage());
     }
 }

@@ -22,9 +22,7 @@ package org.zaproxy.addon.spider.parser;
 import java.nio.ByteBuffer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.spider.SpiderParam;
 
 /**
  * The Class SpiderGitParser is used for parsing Git metadata from the .git/index file This parser
@@ -36,9 +34,6 @@ import org.zaproxy.addon.spider.SpiderParam;
  */
 public class SpiderGitParser extends SpiderParser {
 
-    /** The Spider parameters. */
-    private SpiderParam params;
-
     /** a pattern to match the file name of the Git index file */
     private static final Pattern GIT_INDEX_FILENAME_PATTERN = Pattern.compile("/.git/index$");
 
@@ -47,30 +42,20 @@ public class SpiderGitParser extends SpiderParser {
 
     private static final Pattern GIT_FILE_PATTERN = Pattern.compile("/\\.git/index$");
 
-    /**
-     * Instantiates a new spider Git Index parser.
-     *
-     * @param params the params
-     */
-    public SpiderGitParser(SpiderParam params) {
-        super();
-        this.params = params;
-    }
-
     @SuppressWarnings("unused")
     @Override
-    public boolean parseResource(HttpMessage message, Source source, int depth) {
+    public boolean parseResource(ParseContext ctx) {
 
         // parse the Git index file, based on publicly available (but incomplete) documentation of
         // the file format, and some reverse-engineering.
-        if (message == null || !params.isParseGit()) {
+        if (!ctx.getSpiderParam().isParseGit()) {
             return false;
         }
         getLogger().debug("Parsing a Git resource...");
 
+        HttpMessage message = ctx.getHttpMessage();
         // Get the response content
         byte[] data = message.getResponseBody().getBytes();
-        String baseURL = message.getRequestHeader().getURI().toString();
 
         try {
             String fullpath = message.getRequestHeader().getURI().getPath();
@@ -303,7 +288,7 @@ public class SpiderGitParser extends SpiderParser {
                             .info(
                                     "Found file/symbolic link/gitlink {} in the Git entries file",
                                     indexEntryName);
-                    processUrl(message, depth, "../" + indexEntryName, baseURL);
+                    processUrl(ctx, "../" + indexEntryName);
                 }
             }
             // all good, we're outta here.
@@ -314,7 +299,7 @@ public class SpiderGitParser extends SpiderParser {
             getLogger()
                     .warn(
                             "An error occurred trying to parse Git url '{}' : {}",
-                            baseURL,
+                            ctx.getBaseUrl(),
                             e.getMessage());
             // We consider the message fully parsed, so it doesn't get parsed by 'fallback' parsers
             return true;
@@ -322,9 +307,9 @@ public class SpiderGitParser extends SpiderParser {
     }
 
     @Override
-    public boolean canParseResource(HttpMessage message, String path, boolean wasAlreadyParsed) {
+    public boolean canParseResource(ParseContext ctx, boolean wasAlreadyParsed) {
         // matches the file name of files that should be parsed with the GIT file parser
-        Matcher matcher = GIT_FILE_PATTERN.matcher(path);
+        Matcher matcher = GIT_FILE_PATTERN.matcher(ctx.getPath());
         return matcher.find();
     }
 }

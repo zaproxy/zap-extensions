@@ -33,7 +33,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
-import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
 import org.parosproxy.paros.network.HttpMessage;
 import org.w3c.dom.Document;
@@ -42,7 +41,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.zaproxy.addon.spider.SpiderParam;
 import org.zaproxy.zap.utils.XmlUtils;
 
 /**
@@ -68,9 +66,6 @@ public class SpiderSvnEntriesParser extends SpiderParser {
     private static final Pattern SVN_REPO_LOCATION_PATTERN =
             Pattern.compile("^(http://|https://)", Pattern.CASE_INSENSITIVE);
 
-    /** The Spider parameters. */
-    private SpiderParam params;
-
     /** used to parse the XML based .svn/entries file format */
     private static DocumentBuilder dBuilder;
 
@@ -86,28 +81,16 @@ public class SpiderSvnEntriesParser extends SpiderParser {
         }
     }
 
-    /**
-     * Instantiates a new spider SVN entries parser.
-     *
-     * @param params the params
-     */
-    public SpiderSvnEntriesParser(SpiderParam params) {
-        super();
-        this.params = params;
-    }
-
     @Override
-    public boolean parseResource(HttpMessage message, Source source, int depth) {
-        if (message == null || !params.isParseSVNEntries()) {
+    public boolean parseResource(ParseContext ctx) {
+        if (!ctx.getSpiderParam().isParseSVNEntries()) {
             return false;
         }
         getLogger().debug("Parsing an SVN resource...");
 
+        HttpMessage message = ctx.getHttpMessage();
         // Get the response content
         String content = message.getResponseBody().toString();
-
-        // Get the context (base url)
-        String baseURL = message.getRequestHeader().getURI().toString();
 
         // there are 2 major formats of ".svn/entries" file.
         // An XML version is used up to (and including) SVN working copy format 6
@@ -217,21 +200,15 @@ public class SpiderSvnEntriesParser extends SpiderParser {
                                                     "Found a file/directory name in the (SQLite based) SVN wc.db file");
 
                                     processUrl(
-                                            message,
-                                            depth,
-                                            "../" + filename + (kind.equals("dir") ? "/" : ""),
-                                            baseURL);
+                                            ctx,
+                                            "../" + filename + (kind.equals("dir") ? "/" : ""));
 
                                     // re-seed the spider for this directory.
                                     // this is not to do with the SVN version, but in case the SVN
                                     // root is not the WEB root..
                                     // in order to be sure we catch all the SVN repos, we recurse.
                                     if (kind.equals("dir")) {
-                                        processUrl(
-                                                message,
-                                                depth,
-                                                "../" + filename + "/.svn/wc.db",
-                                                baseURL);
+                                        processUrl(ctx, "../" + filename + "/.svn/wc.db");
                                     }
                                     // if we have an internal SVN filename for the file, process it.
                                     // this will probably result in source code disclosure at some
@@ -239,7 +216,7 @@ public class SpiderSvnEntriesParser extends SpiderParser {
                                     if (kind.equals("file")
                                             && svn_filename != null
                                             && svn_filename.length() > 0) {
-                                        processUrl(message, depth, svn_filename, baseURL);
+                                        processUrl(ctx, svn_filename);
                                     }
                                 }
                             }
@@ -261,7 +238,7 @@ public class SpiderSvnEntriesParser extends SpiderParser {
                                         getLogger()
                                                 .debug(
                                                         "Found an SVN repository location in the (SQLite based) SVN wc.db file");
-                                        processUrl(message, depth, repos_path + "/", baseURL);
+                                        processUrl(ctx, repos_path + "/");
                                     }
                                 }
                             }
@@ -343,19 +320,14 @@ public class SpiderSvnEntriesParser extends SpiderParser {
                     getLogger()
                             .debug(
                                     "Found a file/directory name in the (XML based) SVN < 1.4 entries file");
-                    processUrl(
-                            message,
-                            depth,
-                            "../" + svnEntryName + (svnEntryKind.equals("dir") ? "/" : ""),
-                            baseURL);
+                    processUrl(ctx, "../" + svnEntryName + (svnEntryKind.equals("dir") ? "/" : ""));
                     // get the internal SVN file, probably leading to source code disclosure
                     if (svnEntryKind.equals("file")) {
-                        processUrl(
-                                message, depth, "text-base/" + svnEntryName + ".svn-base", baseURL);
+                        processUrl(ctx, "text-base/" + svnEntryName + ".svn-base");
                     }
                     // re-seed the spider for this directory.
                     if (svnEntryKind.equals("dir")) {
-                        processUrl(message, depth, "../" + svnEntryName + "/.svn/entries", baseURL);
+                        processUrl(ctx, "../" + svnEntryName + "/.svn/entries");
                     }
                 }
 
@@ -370,7 +342,7 @@ public class SpiderSvnEntriesParser extends SpiderParser {
                         getLogger()
                                 .debug(
                                         "Found an SVN repository location in the (XML based) SVN < 1.4 entries file");
-                        processUrl(message, depth, svnEntryUrl + "/", baseURL);
+                        processUrl(ctx, svnEntryUrl + "/");
                     }
                 }
                 // this attribute seems to be set on various entries. Correspond to files, rather
@@ -378,7 +350,7 @@ public class SpiderSvnEntriesParser extends SpiderParser {
                 Matcher urlMatcher = SVN_REPO_LOCATION_PATTERN.matcher(svnEntryCopyFromUrl);
                 if (urlMatcher.find()) {
                     getLogger().debug("Found an SVN URL in the (XML based) SVN < 1.4 entries file");
-                    processUrl(message, depth, svnEntryCopyFromUrl, baseURL);
+                    processUrl(ctx, svnEntryCopyFromUrl);
                 }
             }
         } else {
@@ -403,26 +375,16 @@ public class SpiderSvnEntriesParser extends SpiderParser {
                                             "Found a file/directory name in the (text based) SVN 1.4/1.5/1.6 SVN entries file");
 
                             processUrl(
-                                    message,
-                                    depth,
-                                    "../" + previousline + (filetype.equals("dir") ? "/" : ""),
-                                    baseURL);
+                                    ctx,
+                                    "../" + previousline + (filetype.equals("dir") ? "/" : ""));
                             // get the internal SVN file, probably leading to source code disclosure
                             if (filetype.equals("file")) {
-                                processUrl(
-                                        message,
-                                        depth,
-                                        "text-base/" + previousline + ".svn-base",
-                                        baseURL);
+                                processUrl(ctx, "text-base/" + previousline + ".svn-base");
                             }
 
                             // re-seed the spider for this directory.
                             if (filetype.equals("dir")) {
-                                processUrl(
-                                        message,
-                                        depth,
-                                        "../" + previousline + "/.svn/entries",
-                                        baseURL);
+                                processUrl(ctx, "../" + previousline + "/.svn/entries");
                             }
                         }
                     } else {
@@ -434,7 +396,7 @@ public class SpiderSvnEntriesParser extends SpiderParser {
                                     .debug(
                                             "Found an SVN repository location in the (text based) 1.4/1.5/1.6 SVN entries file");
 
-                            processUrl(message, depth, line + "/", baseURL);
+                            processUrl(ctx, line + "/");
                         }
                     }
                 }
@@ -448,9 +410,9 @@ public class SpiderSvnEntriesParser extends SpiderParser {
     }
 
     @Override
-    public boolean canParseResource(HttpMessage message, String path, boolean wasAlreadyParsed) {
+    public boolean canParseResource(ParseContext ctx, boolean wasAlreadyParsed) {
         // matches the file name of files that should be parsed with the SVN entries file parser
-        Matcher matcher = SVN_ENTRIES_FILE_PATTERN.matcher(path);
+        Matcher matcher = SVN_ENTRIES_FILE_PATTERN.matcher(ctx.getPath());
         return matcher.find();
     }
 }

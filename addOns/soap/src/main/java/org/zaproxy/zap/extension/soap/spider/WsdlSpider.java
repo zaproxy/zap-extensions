@@ -19,8 +19,7 @@
  */
 package org.zaproxy.zap.extension.soap.spider;
 
-import net.htmlparser.jericho.Source;
-import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.spider.parser.ParseContext;
 import org.zaproxy.addon.spider.parser.SpiderParser;
 import org.zaproxy.zap.extension.soap.WSDLCustomParser;
 import org.zaproxy.zap.extension.soap.WsdlSpiderHelper;
@@ -34,12 +33,12 @@ public class WsdlSpider extends SpiderParser {
     }
 
     @Override
-    public boolean parseResource(HttpMessage message, Source source, int depth) {
-        return WsdlSpiderHelper.parseWsdl(parser, message);
+    public boolean parseResource(ParseContext ctx) {
+        return WsdlSpiderHelper.parseWsdl(parser, ctx.getHttpMessage());
     }
 
     @Override
-    public boolean canParseResource(HttpMessage message, String path, boolean wasAlreadyConsumed) {
-        return WsdlSpiderHelper.canParseMessage(message);
+    public boolean canParseResource(ParseContext ctx, boolean wasAlreadyConsumed) {
+        return WsdlSpiderHelper.canParseMessage(ctx.getHttpMessage());
     }
 }

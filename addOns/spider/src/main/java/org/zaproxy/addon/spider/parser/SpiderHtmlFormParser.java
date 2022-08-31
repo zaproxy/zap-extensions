@@ -43,10 +43,6 @@ import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.spider.SpiderParam;
-import org.zaproxy.addon.spider.UrlCanonicalizer;
-import org.zaproxy.zap.model.DefaultValueGenerator;
-import org.zaproxy.zap.model.ValueGenerator;
 
 /** The Class SpiderHtmlFormParser is used for parsing HTML files for processing forms. */
 public class SpiderHtmlFormParser extends SpiderParser {
@@ -61,56 +57,19 @@ public class SpiderHtmlFormParser extends SpiderParser {
     /** The form attributes */
     private Map<String, String> envAttributes = new HashMap<>();
 
-    /** The spider parameters. */
-    private final SpiderParam param;
-
-    /** Create new Value Generator field */
-    private final ValueGenerator valueGenerator;
-
-    /**
-     * Instantiates a new spider html form parser.
-     *
-     * @param param the parameters for the spider
-     * @throws IllegalArgumentException if {@code param} is null.
-     */
-    public SpiderHtmlFormParser(SpiderParam param) {
-        this(param, new DefaultValueGenerator());
-    }
-
-    /**
-     * Instantiates a new spider html form parser.
-     *
-     * @param param the parameters for the spider
-     * @param valueGenerator the ValueGenerator
-     * @throws IllegalArgumentException if {@code param} or {@code valueGenerator} is null.
-     */
-    public SpiderHtmlFormParser(SpiderParam param, ValueGenerator valueGenerator) {
-        super();
-        if (param == null) {
-            throw new IllegalArgumentException("Parameter param must not be null.");
-        }
-        if (valueGenerator == null) {
-            throw new IllegalArgumentException("Parameter valueGenerator must not be null.");
-        }
-        this.param = param;
-        this.valueGenerator = valueGenerator;
-    }
-
     @Override
-    public boolean parseResource(HttpMessage message, Source source, int depth) {
+    public boolean parseResource(ParseContext ctx) {
         getLogger().debug("Parsing an HTML message for forms...");
         // If form processing is disabled, don't parse anything
-        if (!param.isProcessForm()) {
+        if (!ctx.getSpiderParam().isProcessForm()) {
             return false;
         }
 
-        // Prepare the source, if not provided
-        if (source == null) {
-            source = new Source(message.getResponseBody().toString());
-        }
+        Source source = ctx.getSource();
+        HttpMessage message = ctx.getHttpMessage();
 
         // Get the context (base url)
-        String baseURL = message.getRequestHeader().getURI().toString();
+        String baseURL = ctx.getBaseUrl();
         uri = message.getRequestHeader().getURI();
 
         // Try to see if there's any BASE tag that could change the base URL
@@ -119,7 +78,7 @@ public class SpiderHtmlFormParser extends SpiderParser {
             getLogger().debug("Base tag was found in HTML: {}", base.getDebugInfo());
             String href = base.getAttributeValue("href");
             if (href != null && !href.isEmpty()) {
-                baseURL = UrlCanonicalizer.getCanonicalUrl(href, baseURL);
+                baseURL = getCanonicalUrl(ctx, href, baseURL);
             }
         }
 
@@ -145,7 +104,7 @@ public class SpiderHtmlFormParser extends SpiderParser {
                         .debug("Found new form with method: '{}' and action: {}", method, action);
 
                 // If POSTing forms is not enabled, skip processing of forms with POST method
-                if (!param.isPostForm()
+                if (!ctx.getSpiderParam().isPostForm()
                         && method != null
                         && method.trim().equalsIgnoreCase(METHOD_POST)) {
                     getLogger().debug("Skipping form with POST method because of user settings.");
@@ -158,13 +117,13 @@ public class SpiderHtmlFormParser extends SpiderParser {
                     action = action.substring(0, fs);
                 }
 
-                url = UrlCanonicalizer.getCanonicalUrl(action, baseURL);
-                FormData formData = prepareFormDataSet(source, form);
+                url = getCanonicalUrl(ctx, action, baseURL);
+                FormData formData = prepareFormDataSet(ctx, form);
 
                 // Process the case of a POST method
                 if (method != null && method.trim().equalsIgnoreCase(METHOD_POST)) {
                     // Build the absolute canonical URL
-                    String fullURL = UrlCanonicalizer.getCanonicalUrl(action, baseURL);
+                    String fullURL = getCanonicalUrl(ctx, action, baseURL);
                     if (fullURL == null) {
                         return false;
                     }
@@ -178,7 +137,7 @@ public class SpiderHtmlFormParser extends SpiderParser {
                     // if (encoding != null && encoding.equals("multipart/form-data"))
 
                     for (String submitData : formData) {
-                        notifyPostResourceFound(message, depth, fullURL, submitData);
+                        notifyPostResourceFound(ctx, fullURL, submitData);
                     }
 
                 } // Process anything else as a GET method
@@ -187,12 +146,12 @@ public class SpiderHtmlFormParser extends SpiderParser {
                     // Process the final URL
                     if (action.contains("?")) {
                         if (action.endsWith("?")) {
-                            processGetForm(message, depth, action, baseURL, formData);
+                            processGetForm(ctx, action, baseURL, formData);
                         } else {
-                            processGetForm(message, depth, action + "&", baseURL, formData);
+                            processGetForm(ctx, action + "&", baseURL, formData);
                         }
                     } else {
-                        processGetForm(message, depth, action + "?", baseURL, formData);
+                        processGetForm(ctx, action + "?", baseURL, formData);
                     }
                 }
             }
@@ -317,21 +276,20 @@ public class SpiderHtmlFormParser extends SpiderParser {
      * <p>For each submit field present in the form data is processed one URL, which includes
      * remaining normal fields.
      *
-     * @param message the source message
-     * @param depth the current depth
+     * @param ctx the parse context.
      * @param action the action
      * @param baseURL the base URL
      * @param formData the GET form data
      * @see #processURL(HttpMessage, int, String, String)
      */
     private void processGetForm(
-            HttpMessage message, int depth, String action, String baseURL, FormData formData) {
+            ParseContext ctx, String action, String baseURL, FormData formData) {
         for (String submitData : formData) {
             getLogger()
                     .debug(
                             "Submitting form with GET method and query with form parameters: {}",
                             submitData);
-            processUrl(message, depth, action + submitData, baseURL);
+            processUrl(ctx, action + submitData, baseURL);
         }
     }
 
@@ -344,19 +302,19 @@ public class SpiderHtmlFormParser extends SpiderParser {
      * @see <a
      *     href="https://html.spec.whatwg.org/multipage/forms.html#association-of-controls-and-forms">HTML
      *     5 - 4.10.18.3 Association of controls and forms</a>
-     * @param source the source where the form is (to obtain further input elements)
+     * @param ctx the parse context.
      * @param form the form
      * @return the list
      */
-    private FormData prepareFormDataSet(Source source, Element form) {
+    private FormData prepareFormDataSet(ParseContext ctx, Element form) {
         List<FormDataField> formDataFields = new LinkedList<>();
 
         // Process each form field
-        Iterator<FormField> it = getFormFields(source, form).iterator();
+        Iterator<FormField> it = getFormFields(ctx, form).iterator();
         while (it.hasNext()) {
             FormField field = it.next();
             getLogger().debug("New form field: {}", field.getDebugInfo());
-            for (String value : getDefaultTextValue(field)) {
+            for (String value : getDefaultTextValue(ctx, field)) {
                 formDataFields.add(
                         new FormDataField(
                                 field.getName(),
@@ -367,7 +325,7 @@ public class SpiderHtmlFormParser extends SpiderParser {
         return new FormData(formDataFields);
     }
 
-    private static FormFields getFormFields(Source source, Element form) {
+    private static FormFields getFormFields(ParseContext ctx, Element form) {
         SortedSet<FormControl> formControls = new TreeSet<>();
         addAll(formControls, form, HTMLElementName.INPUT);
         addAll(formControls, form, HTMLElementName.TEXTAREA);
@@ -376,7 +334,7 @@ public class SpiderHtmlFormParser extends SpiderParser {
 
         String formId = form.getAttributeValue("id");
         if (formId != null && !formId.isEmpty()) {
-            addAll(formControls, source.getAllElements("form", formId, true));
+            addAll(formControls, ctx.getSource().getAllElements("form", formId, true));
         }
         for (Iterator<FormControl> it = formControls.iterator(); it.hasNext(); ) {
             FormControl formControl = it.next();
@@ -408,10 +366,11 @@ public class SpiderHtmlFormParser extends SpiderParser {
      * predefined values to the ValueGenerator and returns its predefined values. Gets the default
      * value that the input field, including HTML5 types, should have.
      *
+     * @param ctx the parse context.
      * @param field the field
      * @return a list with the values
      */
-    private List<String> getDefaultTextValue(FormField field) {
+    private List<String> getDefaultTextValue(ParseContext ctx, FormField field) {
 
         // Get the Id
         String fieldId = field.getName();
@@ -431,14 +390,15 @@ public class SpiderHtmlFormParser extends SpiderParser {
             List<String> submitFields = new ArrayList<>();
             for (String value : field.getPredefinedValues()) {
                 String finalValue =
-                        this.valueGenerator.getValue(
-                                uri,
-                                url,
-                                fieldId,
-                                value,
-                                definedValues,
-                                envAttributes,
-                                fieldAttributes);
+                        ctx.getValueGenerator()
+                                .getValue(
+                                        uri,
+                                        url,
+                                        fieldId,
+                                        value,
+                                        definedValues,
+                                        envAttributes,
+                                        fieldAttributes);
                 submitFields.add(finalValue);
             }
             return submitFields;
@@ -484,14 +444,15 @@ public class SpiderHtmlFormParser extends SpiderParser {
 
         // Get the default value used in DefaultValueGenerator
         String finalValue =
-                this.valueGenerator.getValue(
-                        uri,
-                        url,
-                        fieldId,
-                        defaultValue,
-                        definedValues,
-                        envAttributes,
-                        fieldAttributes);
+                ctx.getValueGenerator()
+                        .getValue(
+                                uri,
+                                url,
+                                fieldId,
+                                defaultValue,
+                                definedValues,
+                                envAttributes,
+                                fieldAttributes);
 
         getLogger().debug("Generated: {}. For field {}", finalValue, field.getName());
 
@@ -504,22 +465,20 @@ public class SpiderHtmlFormParser extends SpiderParser {
     /**
      * Notifies listeners that a new POST resource was found.
      *
-     * @param message the source message
-     * @param depth the current depth
+     * @param ctx the parse context.
      * @param url the URL of the resource
      * @param requestBody the request body
      * @see #notifyListenersPostResourceFound(HttpMessage, int, String, String)
      */
-    private void notifyPostResourceFound(
-            HttpMessage message, int depth, String url, String requestBody) {
+    private void notifyPostResourceFound(ParseContext ctx, String url, String requestBody) {
         getLogger()
                 .debug(
                         "Submitting form with POST method and message body with form parameters (normal encoding): {}",
                         requestBody);
         notifyListenersResourceFound(
                 SpiderResourceFound.builder()
-                        .setMessage(message)
-                        .setDepth(depth + 1)
+                        .setMessage(ctx.getHttpMessage())
+                        .setDepth(ctx.getDepth() + 1)
                         .setUri(url)
                         .setMethod(METHOD_POST)
                         .setBody(requestBody)
@@ -527,9 +486,9 @@ public class SpiderHtmlFormParser extends SpiderParser {
     }
 
     @Override
-    public boolean canParseResource(HttpMessage message, String path, boolean wasAlreadyConsumed) {
+    public boolean canParseResource(ParseContext ctx, boolean wasAlreadyConsumed) {
         // Fallback parser - if it's a HTML message which has not already been processed
-        return !wasAlreadyConsumed && message.getResponseHeader().isHtml();
+        return !wasAlreadyConsumed && ctx.getHttpMessage().getResponseHeader().isHtml();
     }
 
     /**

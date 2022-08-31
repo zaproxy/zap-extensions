@@ -23,7 +23,6 @@ import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
@@ -34,7 +33,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
-import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
 import org.parosproxy.paros.network.HttpMessage;
 import org.w3c.dom.Document;
@@ -42,7 +40,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXParseException;
-import org.zaproxy.addon.spider.UrlCanonicalizer;
 import org.zaproxy.zap.utils.XmlUtils;
 
 public class SvgHrefParser extends SpiderParser {
@@ -76,10 +73,10 @@ public class SvgHrefParser extends SpiderParser {
     }
 
     @Override
-    public boolean parseResource(HttpMessage message, Source source, int depth) {
-        String baseUrl = message.getRequestHeader().getURI().toString();
-        getLogger().debug("SVG Spider attempting to parse {}", baseUrl);
+    public boolean parseResource(ParseContext ctx) {
+        getLogger().debug("SVG Spider attempting to parse {}", ctx.getBaseUrl());
 
+        HttpMessage message = ctx.getHttpMessage();
         if (isSvg(message)) {
             try {
                 synchronized (documentBuilder) {
@@ -91,7 +88,7 @@ public class SvgHrefParser extends SpiderParser {
                     NodeList hrefNodes =
                             (NodeList) xpathHrefExpression.evaluate(xmldoc, XPathConstants.NODESET);
                     if (hrefNodes.getLength() > 0) {
-                        processNodeList(hrefNodes, message, depth, baseUrl);
+                        processNodeList(ctx, hrefNodes, ctx.getBaseUrl());
                         return true;
                     } else {
                         return false;
@@ -102,57 +99,50 @@ public class SvgHrefParser extends SpiderParser {
                     getLogger()
                             .debug(
                                     "Skipping {} due to XXE safety and DOCTYPE declaration present.",
-                                    baseUrl);
+                                    ctx.getBaseUrl());
                 } else {
-                    getLogger().warn("An error occurred trying to parse {}", baseUrl, spe);
+                    getLogger().warn("An error occurred trying to parse {}", ctx.getBaseUrl(), spe);
                 }
                 return false;
             } catch (Exception e) {
-                getLogger().warn("An error occurred trying to parse {}", baseUrl, e);
+                getLogger().warn("An error occurred trying to parse {}", ctx.getBaseUrl(), e);
                 return false;
             }
-        } else if (containsSvg(message, () -> source)) {
-            List<Element> svgElements = source.getAllElements(SVG_TAG);
-            return processSvgElements(message, source, depth, baseUrl, svgElements);
+        } else if (containsSvg(ctx)) {
+            List<Element> svgElements = ctx.getSource().getAllElements(SVG_TAG);
+            return processSvgElements(ctx, svgElements);
         }
         return false;
     }
 
-    private boolean processSvgElements(
-            HttpMessage message,
-            Source source,
-            int depth,
-            String baseUrl,
-            List<Element> svgElements) {
+    private boolean processSvgElements(ParseContext ctx, List<Element> svgElements) {
         if (svgElements.isEmpty()) {
             return false;
         }
+
+        String baseUrl = ctx.getBaseUrl();
         // Try to see if there's any BASE tag that could change the base URL
-        Element base = source.getFirstElement(HTMLElementName.BASE);
+        Element base = ctx.getSource().getFirstElement(HTMLElementName.BASE);
         if (base != null) {
             getLogger().debug("Base tag was found in HTML: {}", base.getDebugInfo());
             String href = base.getAttributeValue("href");
             if (href != null && !href.isEmpty()) {
-                baseUrl = UrlCanonicalizer.getCanonicalUrl(href, baseUrl);
+                baseUrl = getCanonicalUrl(ctx, href, baseUrl);
             }
         }
-        return processSvgTags(message, depth, baseUrl, svgElements, IMAGE_TAG)
-                || processSvgTags(message, depth, baseUrl, svgElements, HTMLElementName.SCRIPT);
+        return processSvgTags(ctx, baseUrl, svgElements, IMAGE_TAG)
+                || processSvgTags(ctx, baseUrl, svgElements, HTMLElementName.SCRIPT);
     }
 
     private boolean processSvgTags(
-            HttpMessage message,
-            int depth,
-            String baseUrl,
-            List<Element> svgElements,
-            String subTag) {
+            ParseContext ctx, String baseUrl, List<Element> svgElements, String subTag) {
         boolean found = false;
         for (Element el : svgElements) {
             for (Element imageTag : el.getAllElements(subTag)) {
                 for (String attribute : ATTRIBUTE_NAMES) {
                     String hrefCandidate = imageTag.getAttributeValue(attribute);
                     if (hrefCandidate != null && !hrefCandidate.isEmpty()) {
-                        processUrl(message, depth, hrefCandidate, baseUrl);
+                        processUrl(ctx, hrefCandidate, baseUrl);
                         found = true;
                         break;
                     }
@@ -162,7 +152,7 @@ public class SvgHrefParser extends SpiderParser {
         return found;
     }
 
-    private void processNodeList(NodeList nodes, HttpMessage message, int depth, String baseUrl) {
+    private void processNodeList(ParseContext ctx, NodeList nodes, String baseUrl) {
         getLogger()
                 .debug(
                         "Identified {} nodes with href attribute from: {}",
@@ -179,11 +169,11 @@ public class SvgHrefParser extends SpiderParser {
                             .warn(
                                     "Failed to resolve extracted URL: {} against base URL: {}",
                                     extractedUrl,
-                                    baseUrl);
+                                    ctx.getBaseUrl());
                 }
-                getLogger().debug("Resolved URL: {} from: {}", newUri, baseUrl);
+                getLogger().debug("Resolved URL: {} from: {}", newUri, ctx.getBaseUrl());
                 if (newUri != null && newUri.isAbsolute()) {
-                    processUrl(message, depth, extractedUrl, baseUrl);
+                    processUrl(ctx, extractedUrl);
                 }
             }
         }
@@ -205,14 +195,13 @@ public class SvgHrefParser extends SpiderParser {
     }
 
     @Override
-    public boolean canParseResource(HttpMessage message, String path, boolean wasAlreadyConsumed) {
-        return isSvg(message)
-                || containsSvg(message, () -> new Source(message.getResponseBody().toString()));
+    public boolean canParseResource(ParseContext ctx, boolean wasAlreadyConsumed) {
+        return isSvg(ctx.getHttpMessage()) || containsSvg(ctx);
     }
 
-    private static boolean containsSvg(HttpMessage message, Supplier<Source> source) {
-        return message.getResponseHeader().isHtml()
-                && source.get().getFirstElement(SVG_TAG) != null;
+    private static boolean containsSvg(ParseContext ctx) {
+        return ctx.getHttpMessage().getResponseHeader().isHtml()
+                && ctx.getSource().getFirstElement(SVG_TAG) != null;
     }
 
     private static boolean isSvg(HttpMessage msg) {

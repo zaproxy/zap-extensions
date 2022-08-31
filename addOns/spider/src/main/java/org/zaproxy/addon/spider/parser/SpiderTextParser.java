@@ -21,7 +21,6 @@ package org.zaproxy.addon.spider.parser;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.network.HttpMessage;
 
 /**
@@ -37,23 +36,22 @@ public class SpiderTextParser extends SpiderParser {
                     "\\W(http(s?)://[^\\x00-\\x1f\"'\\s<>#()\\[\\]{}]+)", Pattern.CASE_INSENSITIVE);
 
     @Override
-    public boolean parseResource(HttpMessage message, Source source, int depth) {
+    public boolean parseResource(ParseContext ctx) {
         getLogger().debug("Parsing a non-HTML text resource.");
 
-        String baseURL = message.getRequestHeader().getURI().toString();
-
         // Use a simple pattern matcher to find urls
-        Matcher matcher = PATTERN_URL.matcher(message.getResponseBody().toString());
+        Matcher matcher = PATTERN_URL.matcher(ctx.getHttpMessage().getResponseBody().toString());
         while (matcher.find()) {
             String s = matcher.group(1);
-            processUrl(message, depth, s, baseURL);
+            processUrl(ctx, s);
         }
 
         return false;
     }
 
     @Override
-    public boolean canParseResource(HttpMessage message, String path, boolean wasAlreadyConsumed) {
+    public boolean canParseResource(ParseContext ctx, boolean wasAlreadyConsumed) {
+        HttpMessage message = ctx.getHttpMessage();
         // Fall-back parser - if it's a text, non-HTML response which has not already been processed
         return !wasAlreadyConsumed
                 && message.getResponseHeader().isText()

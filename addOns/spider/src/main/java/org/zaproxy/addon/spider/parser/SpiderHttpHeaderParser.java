@@ -20,7 +20,6 @@
 package org.zaproxy.addon.spider.parser;
 
 import java.util.regex.Matcher;
-import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.network.HttpMessage;
 
 /**
@@ -31,14 +30,14 @@ import org.parosproxy.paros.network.HttpMessage;
 public class SpiderHttpHeaderParser extends SpiderParser {
 
     @Override
-    public boolean parseResource(HttpMessage message, Source source, int depth) {
-        String baseURL = message.getRequestHeader().getURI().toString();
+    public boolean parseResource(ParseContext ctx) {
+        HttpMessage message = ctx.getHttpMessage();
 
         // Content-location header
         // TODO replace when next core version available HttpHeader.CONTENT_LOCATION
         String location = message.getResponseHeader().getHeader("Content-Location");
         if (location != null && !location.isEmpty()) {
-            processUrl(message, depth, location, baseURL);
+            processUrl(ctx, location);
         }
         // Refresh header
         // TODO replace when next core version available HttpHeader.REFRESH
@@ -47,7 +46,7 @@ public class SpiderHttpHeaderParser extends SpiderParser {
             Matcher matcher = SpiderHtmlParser.URL_PATTERN.matcher(refresh);
             if (matcher.find()) {
                 String url = matcher.group(1);
-                processUrl(message, depth, url, baseURL);
+                processUrl(ctx, url);
             }
         }
 
@@ -65,7 +64,7 @@ public class SpiderHttpHeaderParser extends SpiderParser {
                 if (j < 0) {
                     break;
                 }
-                processUrl(message, depth, link.substring(i + 1, j), baseURL);
+                processUrl(ctx, link.substring(i + 1, j));
                 offset = j;
             }
         }
@@ -74,7 +73,7 @@ public class SpiderHttpHeaderParser extends SpiderParser {
     }
 
     @Override
-    public boolean canParseResource(HttpMessage message, String path, boolean wasAlreadyParsed) {
+    public boolean canParseResource(ParseContext ctx, boolean wasAlreadyParsed) {
         return true;
     }
 }

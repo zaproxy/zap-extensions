@@ -25,16 +25,14 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
 
 import org.junit.jupiter.api.Test;
-import org.parosproxy.paros.network.HttpMessage;
 
 /** Unit test for {@link SpiderTextParser}. */
 class SpiderTextParserUnitTest extends SpiderParserTestUtils<SpiderTextParser> {
 
     private static final String EMPTY_BODY = "";
-    private static final String ROOT_PATH = "/";
-    private static final int BASE_DEPTH = 0;
 
     @Override
     protected SpiderTextParser createParser() {
@@ -42,13 +40,11 @@ class SpiderTextParserUnitTest extends SpiderParserTestUtils<SpiderTextParser> {
     }
 
     @Test
-    void shouldFailToEvaluateAnUndefinedMessage() {
+    void shouldFailToEvaluateAnUndefinedContext() {
         // Given
-        HttpMessage undefinedMessage = null;
+        ParseContext ctx = null;
         // When / Then
-        assertThrows(
-                NullPointerException.class,
-                () -> parser.canParseResource(undefinedMessage, ROOT_PATH, false));
+        assertThrows(NullPointerException.class, () -> parser.canParseResource(ctx, false));
     }
 
     @Test
@@ -56,7 +52,7 @@ class SpiderTextParserUnitTest extends SpiderParserTestUtils<SpiderTextParser> {
         // Given
         boolean parsed = true;
         // When
-        boolean canParse = parser.canParseResource(new HttpMessage(), ROOT_PATH, parsed);
+        boolean canParse = parser.canParseResource(ctx, parsed);
         // Then
         assertThat(canParse, is(equalTo(false)));
     }
@@ -67,7 +63,7 @@ class SpiderTextParserUnitTest extends SpiderParserTestUtils<SpiderTextParser> {
         messageWith("application/xyz", EMPTY_BODY);
         boolean parsed = false;
         // When
-        boolean canParse = parser.canParseResource(msg, ROOT_PATH, parsed);
+        boolean canParse = parser.canParseResource(ctx, parsed);
         // Then
         assertThat(canParse, is(equalTo(false)));
     }
@@ -78,7 +74,7 @@ class SpiderTextParserUnitTest extends SpiderParserTestUtils<SpiderTextParser> {
         messageWith("text/html", EMPTY_BODY);
         boolean parsed = false;
         // When
-        boolean canParse = parser.canParseResource(msg, ROOT_PATH, parsed);
+        boolean canParse = parser.canParseResource(ctx, parsed);
         // Then
         assertThat(canParse, is(equalTo(false)));
     }
@@ -89,7 +85,7 @@ class SpiderTextParserUnitTest extends SpiderParserTestUtils<SpiderTextParser> {
         messageWith(EMPTY_BODY);
         boolean parsed = false;
         // When
-        boolean canParse = parser.canParseResource(msg, ROOT_PATH, parsed);
+        boolean canParse = parser.canParseResource(ctx, parsed);
         // Then
         assertThat(canParse, is(equalTo(true)));
     }
@@ -98,9 +94,10 @@ class SpiderTextParserUnitTest extends SpiderParserTestUtils<SpiderTextParser> {
     void shouldParseTextResponseEvenIfProvidedPathIsNull() {
         // Given
         messageWith(EMPTY_BODY);
+        given(ctx.getPath()).willReturn(null);
         boolean parsed = false;
         // When
-        boolean canParse = parser.canParseResource(msg, null, parsed);
+        boolean canParse = parser.canParseResource(ctx, parsed);
         // Then
         assertThat(canParse, is(equalTo(true)));
     }
@@ -111,19 +108,17 @@ class SpiderTextParserUnitTest extends SpiderParserTestUtils<SpiderTextParser> {
         messageWith(EMPTY_BODY);
         boolean parsed = true;
         // When
-        boolean canParse = parser.canParseResource(msg, ROOT_PATH, parsed);
+        boolean canParse = parser.canParseResource(ctx, parsed);
         // Then
         assertThat(canParse, is(equalTo(false)));
     }
 
     @Test
-    void shouldFailToParseAnUndefinedMessage() {
+    void shouldFailToParseAnUndefinedContext() {
         // Given
-        HttpMessage undefinedMessage = null;
+        ParseContext ctx = null;
         // When / Then
-        assertThrows(
-                NullPointerException.class,
-                () -> parser.parseResource(undefinedMessage, createSource(), BASE_DEPTH));
+        assertThrows(NullPointerException.class, () -> parser.parseResource(ctx));
     }
 
     @Test
@@ -131,7 +126,7 @@ class SpiderTextParserUnitTest extends SpiderParserTestUtils<SpiderTextParser> {
         // Given
         messageWith("Non Empty Body...");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
     }
@@ -146,7 +141,7 @@ class SpiderTextParserUnitTest extends SpiderParserTestUtils<SpiderTextParser> {
                         "More text...  ftp://ftp.example.com/ ",
                         "Even more text... //noscheme.example.com "));
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(0)));
@@ -169,7 +164,7 @@ class SpiderTextParserUnitTest extends SpiderParserTestUtils<SpiderTextParser> {
                         "- {https://plaincomment.example.com/surrounded/with/curly/brackets} curly brackets should not be included",
                         "- mixed case URLs HtTpS://ExAmPlE.CoM/path/ should also be found"));
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(9)));

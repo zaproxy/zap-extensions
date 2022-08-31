@@ -44,7 +44,6 @@ import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.addon.spider.filters.FetchFilter;
 import org.zaproxy.addon.spider.filters.HttpPrefixFetchFilter;
 import org.zaproxy.addon.spider.filters.ParseFilter;
-import org.zaproxy.addon.spider.parser.AddOnToCoreSpiderParser;
 import org.zaproxy.addon.spider.parser.SpiderParser;
 import org.zaproxy.addon.spider.parser.SvgHrefParser;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
@@ -65,9 +64,6 @@ public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController
     private static final Logger LOGGER = LogManager.getLogger(ExtensionSpider2.class);
 
     static boolean coreSpiderDisabled;
-    private ExtensionSpider extensionSpider;
-
-    private SvgHrefParser svgHrefParser;
 
     static {
         coreSpiderDisabled = ExtensionSpider.class.getAnnotation(Deprecated.class) != null;
@@ -121,8 +117,6 @@ public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController
 
     @Override
     public void init() {
-        extensionSpider =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.class);
         if (coreSpiderDisabled) {
             SpiderEventPublisher.getPublisher();
         }
@@ -139,12 +133,6 @@ public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController
     @Override
     public void hook(ExtensionHook extensionHook) {
         if (!coreSpiderDisabled) {
-            if (extensionSpider == null) {
-                return;
-            }
-            svgHrefParser = new SvgHrefParser();
-            extensionSpider.addCustomParser(new AddOnToCoreSpiderParser(svgHrefParser));
-            LOGGER.debug("Added custom SVG HREF spider to core spider.");
             return;
         }
         extensionHook.addSessionListener(new SessionChangedListenerImpl());
@@ -183,8 +171,6 @@ public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController
             if (hasView()) {
                 getSpiderPanel().unload();
             }
-        } else if (extensionSpider != null) {
-            extensionSpider.removeCustomParser(new AddOnToCoreSpiderParser(svgHrefParser));
         }
     }
 
