@@ -30,13 +30,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
-import org.parosproxy.paros.network.HttpMessage;
 
 /** Unit test for {@link SpiderHttpHeaderParser}. */
 class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils<SpiderHttpHeaderParser> {
-
-    private static final String ROOT_PATH = "/";
-    private static final int BASE_DEPTH = 0;
 
     @Override
     protected SpiderHttpHeaderParser createParser() {
@@ -52,9 +48,8 @@ class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils<SpiderHttpHea
 
     @Test
     void shouldParseAnyMessage() {
-        // Given
-        // When
-        boolean canParse = parser.canParseResource(msg, ROOT_PATH, false);
+        // Given / When
+        boolean canParse = parser.canParseResource(ctx, false);
         // Then
         assertThat(canParse, is(equalTo(true)));
     }
@@ -64,26 +59,23 @@ class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils<SpiderHttpHea
         // Given
         boolean alreadyParsed = true;
         // When
-        boolean canParse = parser.canParseResource(msg, ROOT_PATH, alreadyParsed);
+        boolean canParse = parser.canParseResource(ctx, alreadyParsed);
         // Then
         assertThat(canParse, is(equalTo(true)));
     }
 
     @Test
-    void shouldFailToParseAnUndefinedMessage() {
+    void shouldFailToParseAnUndefinedContext() {
         // Given
-        HttpMessage undefinedMessage = null;
-        SpiderHttpHeaderParser parser = new SpiderHttpHeaderParser();
+        ParseContext ctx = null;
         // When / Then
-        assertThrows(
-                NullPointerException.class,
-                () -> parser.parseResource(undefinedMessage, null, BASE_DEPTH));
+        assertThrows(NullPointerException.class, () -> parser.parseResource(ctx));
     }
 
     @Test
     void shouldNotExtractUrlIfNoUrlHeadersPresent() {
         // Given / When
-        boolean parsed = parser.parseResource(msg, null, BASE_DEPTH);
+        boolean parsed = parser.parseResource(ctx);
         // Then
         assertThat(parsed, is(equalTo(false)));
         assertThat(listener.getUrlsFound(), is(empty()));
@@ -97,7 +89,7 @@ class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils<SpiderHttpHea
         // Given
         msg.getResponseHeader().addHeader(header, "");
         // When
-        boolean parsed = parser.parseResource(msg, null, 0);
+        boolean parsed = parser.parseResource(ctx);
         // Then
         assertThat(parsed, is(equalTo(false)));
         assertThat(listener.getUrlsFound(), is(empty()));
@@ -111,7 +103,7 @@ class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils<SpiderHttpHea
         // msg.getResponseHeader().addHeader(HttpHeader.CONTENT_LOCATION, value);
         msg.getResponseHeader().addHeader("Content-Location", value);
         // When
-        boolean parsed = parser.parseResource(msg, null, BASE_DEPTH);
+        boolean parsed = parser.parseResource(ctx);
         // Then
         assertThat(parsed, is(equalTo(false)));
         assertThat(listener.getUrlsFound(), contains(value));
@@ -125,7 +117,7 @@ class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils<SpiderHttpHea
         // msg.getResponseHeader().addHeader(HttpHeader.CONTENT_LOCATION, url);
         msg.getResponseHeader().addHeader("Content-Location", url);
         // When
-        boolean parsed = parser.parseResource(msg, null, BASE_DEPTH);
+        boolean parsed = parser.parseResource(ctx);
         // Then
         assertThat(parsed, is(equalTo(false)));
         assertThat(listener.getUrlsFound(), contains("http://example.com" + url));
@@ -142,7 +134,7 @@ class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils<SpiderHttpHea
                         // HttpHeader.LINK,
                         "Link", "<" + url1 + ">; param1=value1; param2=\"value2\";<" + url2 + ">");
         // When
-        boolean parsed = parser.parseResource(msg, null, BASE_DEPTH);
+        boolean parsed = parser.parseResource(ctx);
         // Then
         assertThat(parsed, is(equalTo(false)));
         assertThat(listener.getUrlsFound(), contains(url1, "http://example.com" + url2));
@@ -162,7 +154,7 @@ class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils<SpiderHttpHea
         // msg.getResponseHeader().addHeader(HttpHeader.LINK, value);
         msg.getResponseHeader().addHeader("Link", value);
         // When
-        boolean parsed = parser.parseResource(msg, null, BASE_DEPTH);
+        boolean parsed = parser.parseResource(ctx);
         // Then
         assertThat(parsed, is(equalTo(false)));
         assertThat(listener.getUrlsFound(), is(empty()));
@@ -176,7 +168,7 @@ class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils<SpiderHttpHea
         // msg.getResponseHeader().addHeader(HttpHeader.REFRESH, "999; url=" + url);
         msg.getResponseHeader().addHeader("Refresh", "999; url=" + url);
         // When
-        boolean parsed = parser.parseResource(msg, null, BASE_DEPTH);
+        boolean parsed = parser.parseResource(ctx);
         // Then
         assertThat(parsed, is(equalTo(false)));
         assertThat(listener.getUrlsFound(), contains(url));
@@ -190,7 +182,7 @@ class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils<SpiderHttpHea
         // msg.getResponseHeader().addHeader(HttpHeader.REFRESH, "999; url=" + url);
         msg.getResponseHeader().addHeader("Refresh", "999; url=" + url);
         // When
-        boolean parsed = parser.parseResource(msg, null, BASE_DEPTH);
+        boolean parsed = parser.parseResource(ctx);
         // Then
         assertThat(parsed, is(equalTo(false)));
         assertThat(listener.getUrlsFound(), contains("http://example.com" + url));

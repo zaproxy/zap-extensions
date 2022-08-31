@@ -36,11 +36,11 @@ public class OpenApiSpider extends SpiderParser {
 
     @Override
     public boolean parseResource(HttpMessage message, Source source, int depth) {
-        return func.parseResource(message, source, depth);
+        return func.parseResource(message);
     }
 
     @Override
     public boolean canParseResource(HttpMessage message, String path, boolean wasAlreadyConsumed) {
-        return func.canParseResource(message, path, wasAlreadyConsumed);
+        return func.canParseResource(message);
     }
 }

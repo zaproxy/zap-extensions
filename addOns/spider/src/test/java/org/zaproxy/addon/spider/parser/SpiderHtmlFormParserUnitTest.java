@@ -24,7 +24,6 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
@@ -36,11 +35,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import net.htmlparser.jericho.Source;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
-import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.spider.SpiderParam;
 import org.zaproxy.zap.model.DefaultValueGenerator;
 import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.utils.Pair;
@@ -52,9 +48,6 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
     private static final String FORM_ACTION_TOKEN = "%%ACTION%%";
     private static final String BASE_HTML_TOKEN = "%%BASE_HTML%%";
 
-    private static final String ROOT_PATH = "/";
-    private static final int BASE_DEPTH = 0;
-
     private static final Path BASE_DIR_HTML_FILES =
             getResourcePath(SpiderHtmlFormParserUnitTest.class, "htmlform");
 
@@ -63,29 +56,15 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         given(spiderOptions.isProcessForm()).willReturn(true);
         given(spiderOptions.isPostForm()).willReturn(true);
 
-        return new SpiderHtmlFormParser(spiderOptions, valueGenerator);
+        return new SpiderHtmlFormParser();
     }
 
     @Test
-    void shouldFailToCreateParserWithUndefinedSpiderOptions() {
+    void shouldFailToEvaluateAnUndefinedContext() {
         // Given
-        SpiderParam undefinedSpiderOptions = null;
+        ParseContext ctx = null;
         // When / Then
-        assertThrows(
-                IllegalArgumentException.class,
-                () ->
-                        new SpiderHtmlFormParser(
-                                undefinedSpiderOptions, new DefaultValueGenerator()));
-    }
-
-    @Test
-    void shouldFailToEvaluateAnUndefinedMessage() {
-        // Given
-        HttpMessage undefinedMessage = null;
-        // When / Then
-        assertThrows(
-                NullPointerException.class,
-                () -> parser.canParseResource(undefinedMessage, ROOT_PATH, false));
+        assertThrows(NullPointerException.class, () -> parser.canParseResource(ctx, false));
     }
 
     @Test
@@ -93,7 +72,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         boolean parsed = true;
         // When
-        boolean canParse = parser.canParseResource(new HttpMessage(), ROOT_PATH, parsed);
+        boolean canParse = parser.canParseResource(ctx, parsed);
         // Then
         assertThat(canParse, is(equalTo(false)));
     }
@@ -103,7 +82,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         boolean parsed = false;
         // When
-        boolean canParse = parser.canParseResource(new HttpMessage(), ROOT_PATH, parsed);
+        boolean canParse = parser.canParseResource(ctx, parsed);
         // Then
         assertThat(canParse, is(equalTo(false)));
     }
@@ -114,18 +93,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         messageWith("NoForms.html");
         boolean parsed = false;
         // When
-        boolean canParse = parser.canParseResource(msg, ROOT_PATH, parsed);
-        // Then
-        assertThat(canParse, is(equalTo(true)));
-    }
-
-    @Test
-    void shouldParseHtmlResponseEvenIfProvidedPathIsNull() {
-        // Given
-        messageWith("NoForms.html");
-        boolean parsed = false;
-        // When
-        boolean canParse = parser.canParseResource(msg, null, parsed);
+        boolean canParse = parser.canParseResource(ctx, parsed);
         // Then
         assertThat(canParse, is(equalTo(true)));
     }
@@ -136,19 +104,17 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         messageWith("NoForms.html");
         boolean parsed = true;
         // When
-        boolean canParse = parser.canParseResource(msg, ROOT_PATH, parsed);
+        boolean canParse = parser.canParseResource(ctx, parsed);
         // Then
         assertThat(canParse, is(equalTo(false)));
     }
 
     @Test
-    void shouldFailToParseAnUndefinedMessage() {
+    void shouldFailToParseAnUndefinedContext() {
         // Given
-        HttpMessage undefinedMessage = null;
+        ParseContext ctx = null;
         // When / Then
-        assertThrows(
-                NullPointerException.class,
-                () -> parser.parseResource(undefinedMessage, createSource(), BASE_DEPTH));
+        assertThrows(NullPointerException.class, () -> parser.parseResource(ctx));
     }
 
     @Test
@@ -157,19 +123,10 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         messageWith("PostGetForms.html");
         given(spiderOptions.isProcessForm()).willReturn(false);
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(0)));
-    }
-
-    @Test
-    void shouldParseMessageEvenWithoutSource() {
-        // Given
-        Source source = null;
-        messageWith("NoForms.html");
-        // When / Then
-        assertDoesNotThrow(() -> parser.parseResource(msg, source, BASE_DEPTH));
     }
 
     @Test
@@ -177,7 +134,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("NoForms.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
     }
@@ -187,7 +144,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("GET", "Form.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -201,7 +158,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("GET", "Forms.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(2)));
@@ -217,7 +174,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("GET", "FormMultipleSubmitFields.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(5)));
@@ -236,7 +193,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("POST", "Form.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -255,7 +212,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("POST", "Forms.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(2)));
@@ -275,7 +232,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("POST", "FormMultipleSubmitFields.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(5)));
@@ -314,7 +271,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("PostGetForms.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfResourcesFound(), is(equalTo(6)));
@@ -348,7 +305,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         given(spiderOptions.isProcessForm()).willReturn(true);
         given(spiderOptions.isPostForm()).willReturn(false);
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(0)));
@@ -361,7 +318,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         given(spiderOptions.isProcessForm()).willReturn(true);
         given(spiderOptions.isPostForm()).willReturn(false);
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -375,7 +332,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("NonGetPostForm.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -389,7 +346,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("NoMethodForm.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -405,7 +362,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         given(spiderOptions.isProcessForm()).willReturn(true);
         given(spiderOptions.isPostForm()).willReturn(false);
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -419,7 +376,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("EmptyMethodForm.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -433,7 +390,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("NoActionForm.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -447,7 +404,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("GET", "FormNoSubmitField.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -461,7 +418,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("POST", "FormNoSubmitField.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -477,7 +434,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("GET", "FormActionWithFragment.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -491,7 +448,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("POST", "FormActionWithFragment.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -510,7 +467,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("NeitherGetNorPost", "FormActionWithFragment.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -524,7 +481,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("GetFormActionWithEmptyQuery.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -538,7 +495,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("GetFormActionWithQuery.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -552,7 +509,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("GetFormActionWithQueryAmpersand.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -566,7 +523,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("GET", "FormWithHtmlBase.html", "search", "http://base.example.com/");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -585,7 +542,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
                 "/base/absolute/path/",
                 "/a/b.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -605,7 +562,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
                 "/base/absolute/path/",
                 "/a/b.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -624,7 +581,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
                 "base/relative/path/",
                 "/a/b.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -639,7 +596,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("GET", "FormWithFormactionButtons.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(10)));
@@ -665,7 +622,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Disable POST handling, we need just to retrieve the forms with GET methods
         given(spiderOptions.isPostForm()).willReturn(false);
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(4)));
@@ -686,7 +643,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // our code
         given(spiderOptions.isPostForm()).willReturn(true);
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(7)));
@@ -712,7 +669,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
                 "base/relative/path/",
                 "/a/b.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -726,7 +683,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("GET", "FormWithHtmlBase.html", "search", "");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -740,7 +697,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("GET", "FormWithHtmlBaseWithoutHref.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -758,7 +715,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
                 "https://example.com/search",
                 "http://base.example.com/");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -772,7 +729,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("POST", "FormWithHtmlBase.html", "search", "http://base.example.com/");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfResourcesFound(), is(equalTo(1)));
@@ -796,7 +753,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
                 "/base/absolute/path/",
                 "/a/b.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfResourcesFound(), is(equalTo(1)));
@@ -820,7 +777,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
                 "/base/absolute/path/",
                 "/a/b.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfResourcesFound(), is(equalTo(1)));
@@ -844,7 +801,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
                 "base/relative/path/",
                 "/a/b.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfResourcesFound(), is(equalTo(1)));
@@ -868,7 +825,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
                 "base/relative/path/",
                 "/a/b.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfResourcesFound(), is(equalTo(1)));
@@ -887,7 +844,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("POST", "FormWithHtmlBase.html", "search", "");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfResourcesFound(), is(equalTo(1)));
@@ -903,7 +860,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("POST", "FormWithHtmlBaseWithoutHref.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfResourcesFound(), is(equalTo(1)));
@@ -923,7 +880,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
                 "https://example.com/search",
                 "http://base.example.com/");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfResourcesFound(), is(equalTo(1)));
@@ -937,11 +894,13 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
     @Test
     void shouldSetValuesToFieldsWithNoValueWhenParsingGetForm() {
         // Given
+        DefaultValueGenerator valueGenerator = new DefaultValueGenerator();
+        given(ctx.getValueGenerator()).willReturn(valueGenerator);
         Date date = new Date(1474370354555L);
         valueGenerator.setDefaultDate(date);
         messageWith("GET", "FormNoDefaultValues.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfResourcesFound(), is(equalTo(8)));
@@ -973,11 +932,13 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
     @Test
     void shouldSetValuesToFieldsWithNoValueWhenParsingPostForm() {
         // Given
+        DefaultValueGenerator valueGenerator = new DefaultValueGenerator();
+        given(ctx.getValueGenerator()).willReturn(valueGenerator);
         Date date = new Date(1474370354555L);
         valueGenerator.setDefaultDate(date);
         messageWith("POST", "FormNoDefaultValues.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfResourcesFound(), is(equalTo(8)));
@@ -1038,11 +999,11 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
     void shouldProvidedCorrectFormDataToValueGenerator() {
         // Given
         TestValueGenerator valueGenerator = new TestValueGenerator();
-        SpiderHtmlFormParser parser = new SpiderHtmlFormParser(spiderOptions, valueGenerator);
+        given(ctx.getValueGenerator()).willReturn(valueGenerator);
         messageWith("FormsForValueGenerator.html");
         int fieldIndex = 0;
         // When
-        parser.parseResource(msg, createSource(), BASE_DEPTH);
+        parser.parseResource(ctx);
         // Then
         assertThat(valueGenerator.getFields(), hasSize(9));
         assertThat(
@@ -1237,7 +1198,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("GET", "FormAndInputsWithFormAttributes.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(3)));
@@ -1254,7 +1215,7 @@ class SpiderHtmlFormParserUnitTest extends SpiderParserTestUtils<SpiderHtmlFormP
         // Given
         messageWith("POST", "FormAndInputsWithFormAttributes.html");
         // When
-        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(ctx);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(3)));

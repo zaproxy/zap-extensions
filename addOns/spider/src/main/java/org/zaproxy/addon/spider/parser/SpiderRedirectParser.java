@@ -19,7 +19,6 @@
  */
 package org.zaproxy.addon.spider.parser;
 
-import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
@@ -28,22 +27,23 @@ import org.parosproxy.paros.network.HttpStatusCode;
 public class SpiderRedirectParser extends SpiderParser {
 
     @Override
-    public boolean parseResource(HttpMessage message, Source source, int depth) {
+    public boolean parseResource(ParseContext ctx) {
         getLogger().debug("Parsing an HTTP redirection resource...");
 
+        HttpMessage message = ctx.getHttpMessage();
         String location = message.getResponseHeader().getHeader(HttpHeader.LOCATION);
         if (location != null && !location.isEmpty()) {
             // Include the base url as well as some applications send relative URLs instead of
             // absolute ones
-            String baseURL = message.getRequestHeader().getURI().toString();
-            processUrl(message, depth, location, baseURL);
+            processUrl(ctx, location);
         }
         // We consider the message fully parsed
         return true;
     }
 
     @Override
-    public boolean canParseResource(HttpMessage message, String path, boolean wasAlreadyParsed) {
-        return HttpStatusCode.isRedirection(message.getResponseHeader().getStatusCode());
+    public boolean canParseResource(ParseContext ctx, boolean wasAlreadyParsed) {
+        return HttpStatusCode.isRedirection(
+                ctx.getHttpMessage().getResponseHeader().getStatusCode());
     }
 }

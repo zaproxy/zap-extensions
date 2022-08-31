@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.openapi.spider;
 
 import java.util.Locale;
 import java.util.function.Supplier;
-import net.htmlparser.jericho.Source;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -46,7 +45,7 @@ public class OpenApiSpiderFunctionality {
         requestor.addListener(new HistoryPersister());
     }
 
-    public boolean parseResource(HttpMessage message, Source source, int depth) {
+    public boolean parseResource(HttpMessage message) {
         try {
             Converter converter =
                     new SwaggerConverter(
@@ -63,7 +62,7 @@ public class OpenApiSpiderFunctionality {
         return true;
     }
 
-    public boolean canParseResource(HttpMessage message, String path, boolean wasAlreadyConsumed) {
+    public boolean canParseResource(HttpMessage message) {
         try {
             String contentType =
                     message.getResponseHeader()

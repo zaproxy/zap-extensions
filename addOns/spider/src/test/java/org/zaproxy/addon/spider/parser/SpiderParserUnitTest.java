@@ -25,11 +25,11 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-import net.htmlparser.jericho.Source;
 import org.junit.jupiter.api.Test;
-import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.zaproxy.addon.spider.parser.SpiderParserUnitTest.TestSpiderParser;
 
 /** Unit test for {@link SpiderParser}. */
@@ -37,6 +37,11 @@ class SpiderParserUnitTest extends SpiderParserTestUtils<TestSpiderParser> {
 
     @Override
     protected TestSpiderParser createParser() {
+        try {
+            msg.setRequestHeader("GET / HTTP/1.1\r\nHost: example.com");
+        } catch (HttpMalformedHeaderException e) {
+            throw new RuntimeException(e);
+        }
         return new TestSpiderParser();
     }
 
@@ -80,24 +85,52 @@ class SpiderParserUnitTest extends SpiderParserTestUtils<TestSpiderParser> {
     void shouldNotifyListenersOfProcessedUrl() {
         // Given
         int depth = 42;
+        given(ctx.getDepth()).willReturn(depth);
         String baseUrl = "https://example.com/";
         String localUrl = "/path/";
-        String expectedUri = "https://example.com/path/";
         // When
-        parser.processUrl(msg, depth, localUrl, baseUrl);
+        parser.processUrl(ctx, localUrl, baseUrl);
         // Then
         assertThat(
-                listener.getResourcesFound(), contains(uriResource(msg, depth + 1, expectedUri)));
+                listener.getResourcesFound(),
+                contains(uriResource(msg, depth + 1, "https://example.com/path/")));
+    }
+
+    @Test
+    void shouldNotifyListenersOfProcessedUrlWithDefaultBaseUrl() {
+        // Given
+        int depth = 42;
+        given(ctx.getDepth()).willReturn(depth);
+        String baseUrl = "https://example.com/";
+        given(ctx.getBaseUrl()).willReturn(baseUrl);
+        String localUrl = "/path/";
+        // When
+        parser.processUrl(ctx, localUrl);
+        // Then
+        assertThat(
+                listener.getResourcesFound(),
+                contains(uriResource(msg, depth + 1, "https://example.com/path/")));
     }
 
     @Test
     void shouldNotNotifyListenersOfMalformedProcessedUrl() {
         // Given
-        int depth = 42;
         String baseUrl = "/";
         String localUrl = "/";
         // When
-        parser.processUrl(msg, depth, localUrl, baseUrl);
+        parser.processUrl(ctx, localUrl, baseUrl);
+        // Then
+        assertThat(listener.getResourcesFound(), is(empty()));
+    }
+
+    @Test
+    void shouldNotNotifyListenersOfMalformedProcessedUrlWithDefaultBaseUrl() {
+        // Given
+        String baseUrl = "/";
+        given(ctx.getBaseUrl()).willReturn(baseUrl);
+        String localUrl = "/";
+        // When
+        parser.processUrl(ctx, localUrl);
         // Then
         assertThat(listener.getResourcesFound(), is(empty()));
     }
@@ -105,13 +138,12 @@ class SpiderParserUnitTest extends SpiderParserTestUtils<TestSpiderParser> {
     protected static class TestSpiderParser extends SpiderParser {
 
         @Override
-        public boolean parseResource(HttpMessage message, Source source, int depth) {
+        public boolean parseResource(ParseContext ctx) {
             return true;
         }
 
         @Override
-        public boolean canParseResource(
-                HttpMessage message, String path, boolean wasAlreadyConsumed) {
+        public boolean canParseResource(ParseContext ctx, boolean wasAlreadyConsumed) {
             return true;
         }
     }

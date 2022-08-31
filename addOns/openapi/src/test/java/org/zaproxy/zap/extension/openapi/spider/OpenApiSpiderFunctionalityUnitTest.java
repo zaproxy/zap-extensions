@@ -74,7 +74,7 @@ class OpenApiSpiderFunctionalityUnitTest extends AbstractServerTest {
                         + "          content:\n"
                         + "            application/json: {}");
         // When
-        spider.parseResource(message, null, 0);
+        spider.parseResource(message);
         // Then
         assertThat(accessedUris, contains("/path"));
     }

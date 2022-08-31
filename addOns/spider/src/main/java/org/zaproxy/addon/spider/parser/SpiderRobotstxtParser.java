@@ -19,11 +19,8 @@
  */
 package org.zaproxy.addon.spider.parser;
 
-import java.util.Objects;
 import java.util.StringTokenizer;
-import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.spider.SpiderParam;
 
 /** The Class SpiderRobotstxtParser used for parsing Robots.txt files. */
 public class SpiderRobotstxtParser extends SpiderParser {
@@ -36,29 +33,15 @@ public class SpiderRobotstxtParser extends SpiderParser {
     private static final int PATTERNS_DISALLOW_LENGTH = 9;
     private static final int PATTERNS_ALLOW_LENGTH = 6;
 
-    /** The params. */
-    private SpiderParam params;
-
-    /**
-     * Instantiates a new spider robotstxt parser.
-     *
-     * @param params the params
-     * @throws NullPointerException if {@code params} is null.
-     */
-    public SpiderRobotstxtParser(SpiderParam params) {
-        super();
-        this.params = Objects.requireNonNull(params, "Parameter params must not be null.");
-    }
-
     /** @throws NullPointerException if {@code message} is null. */
     @Override
-    public boolean parseResource(HttpMessage message, Source source, int depth) {
-        if (!params.isParseRobotsTxt()) {
+    public boolean parseResource(ParseContext ctx) {
+        if (!ctx.getSpiderParam().isParseRobotsTxt()) {
             return false;
         }
         getLogger().debug("Parsing a robots.txt resource...");
 
-        String baseURL = message.getRequestHeader().getURI().toString();
+        HttpMessage message = ctx.getHttpMessage();
 
         StringTokenizer st = new StringTokenizer(message.getResponseBody().toString(), "\n");
         while (st.hasMoreTokens()) {
@@ -79,9 +62,9 @@ public class SpiderRobotstxtParser extends SpiderParser {
             getLogger().debug("Processing robots.txt line: {}", line);
 
             if (line.matches(PATTERNS_DISALLOW)) {
-                processPath(message, depth, line.substring(PATTERNS_DISALLOW_LENGTH), baseURL);
+                processPath(ctx, line.substring(PATTERNS_DISALLOW_LENGTH));
             } else if (line.matches(PATTERNS_ALLOW)) {
-                processPath(message, depth, line.substring(PATTERNS_ALLOW_LENGTH), baseURL);
+                processPath(ctx, line.substring(PATTERNS_ALLOW_LENGTH));
             }
         }
 
@@ -89,20 +72,20 @@ public class SpiderRobotstxtParser extends SpiderParser {
         return true;
     }
 
-    private void processPath(HttpMessage message, int depth, String path, String baseURL) {
+    private void processPath(ParseContext ctx, String path) {
         String processedPath = path.trim();
         if (processedPath.endsWith("*")) {
             processedPath = processedPath.substring(0, processedPath.length() - 1).trim();
         }
 
         if (!processedPath.isEmpty()) {
-            processUrl(message, depth, processedPath, baseURL);
+            processUrl(ctx, processedPath);
         }
     }
 
     @Override
-    public boolean canParseResource(HttpMessage message, String path, boolean wasAlreadyParsed) {
+    public boolean canParseResource(ParseContext ctx, boolean wasAlreadyParsed) {
         // If it's a robots.txt file
-        return "/robots.txt".equalsIgnoreCase(path);
+        return "/robots.txt".equalsIgnoreCase(ctx.getPath());
     }
 }

@@ -104,14 +104,14 @@ public class SpiderController implements SpiderParserListener {
 
         // If parsing of robots.txt is enabled
         if (spider.getSpiderParam().isParseRobotsTxt()) {
-            parser = new SpiderRobotstxtParser(spider.getSpiderParam());
+            parser = new SpiderRobotstxtParser();
             parsers.add(parser);
         }
 
         // If parsing of sitemap.xml is enabled
         if (spider.getSpiderParam().isParseSitemapXml()) {
             log.debug("Adding SpiderSitemapXmlParser");
-            parser = new SpiderSitemapXmlParser(spider.getSpiderParam());
+            parser = new SpiderSitemapXmlParser();
             parsers.add(parser);
         } else {
             log.debug("NOT Adding SpiderSitemapXmlParser");
@@ -119,13 +119,13 @@ public class SpiderController implements SpiderParserListener {
 
         // If parsing of SVN entries is enabled
         if (spider.getSpiderParam().isParseSVNEntries()) {
-            parser = new SpiderSvnEntriesParser(spider.getSpiderParam());
+            parser = new SpiderSvnEntriesParser();
             parsers.add(parser);
         }
 
         // If parsing of GIT entries is enabled
         if (spider.getSpiderParam().isParseGit()) {
-            parser = new SpiderGitParser(spider.getSpiderParam());
+            parser = new SpiderGitParser();
             parsers.add(parser);
         }
 
@@ -138,13 +138,11 @@ public class SpiderController implements SpiderParserListener {
         parsers.add(parser);
 
         // Simple HTML parser
-        parser = new SpiderHtmlParser(spider.getSpiderParam());
+        parser = new SpiderHtmlParser();
         this.parsers.add(parser);
 
         // HTML Form parser
-        parser =
-                new SpiderHtmlFormParser(
-                        spider.getSpiderParam(), spider.getExtensionSpider().getValueGenerator());
+        parser = new SpiderHtmlFormParser();
         this.parsers.add(parser);
         Config.CurrentCompatibilityMode.setFormFieldNameCaseInsensitive(false);
 

@@ -29,8 +29,6 @@ import net.htmlparser.jericho.Source;
 import net.htmlparser.jericho.StartTag;
 import net.htmlparser.jericho.StartTagType;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.spider.SpiderParam;
-import org.zaproxy.addon.spider.UrlCanonicalizer;
 
 /**
  * The Class SpiderHtmlParser is used for parsing of HTML files, gathering resource urls from them.
@@ -76,41 +74,22 @@ public class SpiderHtmlParser extends SpiderParser {
      */
     @FunctionalInterface
     private interface CustomUrlProcessor {
-        void process(HttpMessage message, int depth, String localURL, String baseURL);
+        void process(ParseContext ctx, String localURL, String baseURL);
     }
 
     private static final String IMPORT_TAG = "IMPORT";
 
     private boolean baseTagSet;
 
-    /** The params. */
-    private SpiderParam params;
-
-    /**
-     * Instantiates a new spider html parser.
-     *
-     * @param params the params
-     * @throws IllegalArgumentException if {@code params} is null.
-     */
-    public SpiderHtmlParser(SpiderParam params) {
-        super();
-        if (params == null) {
-            throw new IllegalArgumentException("Parameter params must not be null.");
-        }
-        this.params = params;
-    }
-
     /** @throws NullPointerException if {@code message} is null. */
     @Override
-    public boolean parseResource(HttpMessage message, Source source, int depth) {
+    public boolean parseResource(ParseContext ctx) {
 
-        // Prepare the source, if not provided
-        if (source == null) {
-            source = new Source(message.getResponseBody().toString());
-        }
+        Source source = ctx.getSource();
+        HttpMessage message = ctx.getHttpMessage();
 
         // Get the context (base URL)
-        String baseURL = message.getRequestHeader().getURI().toString();
+        String baseURL = ctx.getBaseUrl();
 
         // Try to see if there's any BASE tag that could change the base URL
         Element base = source.getFirstElement(HTMLElementName.BASE);
@@ -118,23 +97,23 @@ public class SpiderHtmlParser extends SpiderParser {
             getLogger().debug("Base tag was found in HTML: {}", base.getDebugInfo());
             String href = base.getAttributeValue("href");
             if (href != null && !href.isEmpty()) {
-                baseURL = UrlCanonicalizer.getCanonicalUrl(href, baseURL);
+                baseURL = getCanonicalUrl(ctx, href, baseURL);
                 baseTagSet = true;
             }
         }
 
         // Parse the source
-        parseSource(message, source, depth, baseURL);
+        parseSource(ctx, baseURL);
 
         // Parse the comments
-        if (params.isParseComments()) {
+        if (ctx.getSpiderParam().isParseComments()) {
             List<StartTag> comments = source.getAllStartTags(StartTagType.COMMENT);
             for (StartTag comment : comments) {
                 Source s = new Source(comment.getTagContent());
-                if (!parseSource(message, s, depth, baseURL)) {
+                if (!parseSource(ctx, baseURL)) {
                     Matcher matcher = PLAIN_COMMENTS_URL_PATTERN.matcher(s.toString());
                     while (matcher.find()) {
-                        processUrl(message, depth, matcher.group(), baseURL);
+                        processUrl(ctx, matcher.group(), baseURL);
                     }
                 }
             }
@@ -145,7 +124,7 @@ public class SpiderHtmlParser extends SpiderParser {
         for (StartTag doctype : doctypes) {
             for (String str : doctype.getTagContent().toString().split(" ")) {
                 if (str.startsWith("\"") && str.endsWith("\"")) {
-                    processUrl(message, depth, str.substring(1, str.length() - 1), baseURL);
+                    processUrl(ctx, str.substring(1, str.length() - 1), baseURL);
                 }
             }
         }
@@ -159,11 +138,11 @@ public class SpiderHtmlParser extends SpiderParser {
      * attribute contains one or more strings separated by commas, indicating possible image sources
      * for the user agent to use.
      */
-    private void srcSetProcessor(HttpMessage message, int depth, String localURL, String baseURL) {
+    private void srcSetProcessor(ParseContext ctx, String localURL, String baseURL) {
         Matcher results = SRCSET_PATTERN.matcher(localURL);
         while (results.find()) {
             if (!results.group().isEmpty()) {
-                processUrl(message, depth, results.group(), baseURL);
+                processUrl(ctx, results.group(), baseURL);
             }
         }
     }
@@ -171,133 +150,129 @@ public class SpiderHtmlParser extends SpiderParser {
     /**
      * Parses the HTML Jericho source for the elements that contain references to other resources.
      *
-     * @param message the message
-     * @param source the source
-     * @param depth the depth
+     * @param ctx the parse context.
      * @param baseURL the base URL
      * @return {@code true} if at least one URL was found, {@code false} otherwise.
      */
-    private boolean parseSource(HttpMessage message, Source source, int depth, String baseURL) {
+    private boolean parseSource(ParseContext ctx, String baseURL) {
         getLogger().debug("Parsing an HTML message...");
         boolean resourcesfound = false;
+        Source source = ctx.getSource();
         // Process A elements
         List<Element> elements = source.getAllElements(HTMLElementName.A);
         for (Element el : elements) {
-            resourcesfound |= processAttributeElement(message, depth, baseURL, el, "href");
-            resourcesfound |= processAttributeElement(message, depth, baseURL, el, "ping");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "href");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "ping");
         }
 
         // Process Applet elements
         elements = source.getAllElements(HTMLElementName.APPLET);
         for (Element el : elements) {
-            resourcesfound |= processAttributeElement(message, depth, baseURL, el, "archive");
-            resourcesfound |= processAttributeElement(message, depth, baseURL, el, "codebase");
-            resourcesfound |= processAttributeElement(message, depth, baseURL, el, "src");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "archive");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "codebase");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "src");
         }
 
         // Process AREA elements
         elements = source.getAllElements(HTMLElementName.AREA);
         for (Element el : elements) {
-            resourcesfound |= processAttributeElement(message, depth, baseURL, el, "href");
-            resourcesfound |= processAttributeElement(message, depth, baseURL, el, "ping");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "href");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "ping");
         }
 
         // Process AUDIO elements
         elements = source.getAllElements(HTMLElementName.AUDIO);
         for (Element el : elements) {
-            resourcesfound |= processAttributeElement(message, depth, baseURL, el, "src");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "src");
         }
 
         // Process Embed Elements
         elements = source.getAllElements(HTMLElementName.EMBED);
         for (Element el : elements) {
-            resourcesfound |= processAttributeElement(message, depth, baseURL, el, "src");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "src");
         }
 
         // Process Frame Elements
         elements = source.getAllElements(HTMLElementName.FRAME);
         for (Element el : elements) {
-            resourcesfound |= processAttributeElement(message, depth, baseURL, el, "src");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "src");
         }
 
         // Process IFrame Elements
         elements = source.getAllElements(HTMLElementName.IFRAME);
         for (Element el : elements) {
-            resourcesfound |= processAttributeElement(message, depth, baseURL, el, "src");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "src");
         }
 
         // Process Input elements
         elements = source.getAllElements(HTMLElementName.INPUT);
         for (Element el : elements) {
-            resourcesfound |= processAttributeElement(message, depth, baseURL, el, "src");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "src");
         }
 
         // Process ISINDEX elements
         elements = source.getAllElements(HTMLElementName.ISINDEX);
         for (Element el : elements) {
-            resourcesfound |= processAttributeElement(message, depth, baseURL, el, "action");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "action");
         }
 
         // Process Link elements
         elements = source.getAllElements(HTMLElementName.LINK);
         for (Element el : elements) {
-            resourcesfound |= processAttributeElement(message, depth, baseURL, el, "href");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "href");
         }
 
         // Process Object elements
         elements = source.getAllElements(HTMLElementName.OBJECT);
         for (Element el : elements) {
-            resourcesfound |= processAttributeElement(message, depth, baseURL, el, "data");
-            resourcesfound |= processAttributeElement(message, depth, baseURL, el, "codebase");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "data");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "codebase");
         }
 
         // Process Script elements with src
         elements = source.getAllElements(HTMLElementName.SCRIPT);
         for (Element el : elements) {
-            resourcesfound |= processAttributeElement(message, depth, baseURL, el, "src");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "src");
         }
 
         // Process Table elements
         elements = source.getAllElements(HTMLElementName.TABLE);
         for (Element el : elements) {
-            resourcesfound |= processAttributeElement(message, depth, baseURL, el, "background");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "background");
         }
 
         // Process TD elements
         elements = source.getAllElements(HTMLElementName.TD);
         for (Element src : elements) {
-            resourcesfound |= processAttributeElement(message, depth, baseURL, src, "background");
+            resourcesfound |= processAttributeElement(ctx, baseURL, src, "background");
         }
 
         // Process Video elements
         elements = source.getAllElements(HTMLElementName.VIDEO);
         for (Element el : elements) {
-            resourcesfound |= processAttributeElement(message, depth, baseURL, el, "src");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "src");
             List<Element> videoSourceElements = el.getAllElements(HTMLElementName.SOURCE);
             for (Element sourceElement : videoSourceElements) {
-                resourcesfound |=
-                        processAttributeElement(message, depth, baseURL, sourceElement, "src");
+                resourcesfound |= processAttributeElement(ctx, baseURL, sourceElement, "src");
             }
-            resourcesfound |= processAttributeElement(message, depth, baseURL, el, "poster");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "poster");
         }
 
         // Process Img elements
         elements = source.getAllElements(HTMLElementName.IMG);
         for (Element el : elements) {
-            resourcesfound |= processAttributeElement(message, depth, baseURL, el, "src");
-            resourcesfound |= processAttributeElement(message, depth, baseURL, el, "longdesc");
-            resourcesfound |= processAttributeElement(message, depth, baseURL, el, "lowsrc");
-            resourcesfound |= processAttributeElement(message, depth, baseURL, el, "dynsrc");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "src");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "longdesc");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "lowsrc");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "dynsrc");
             resourcesfound |=
-                    processAttributeElement(
-                            message, depth, baseURL, el, "srcset", this::srcSetProcessor);
+                    processAttributeElement(ctx, baseURL, el, "srcset", this::srcSetProcessor);
         }
 
         // Process IMPORT elements
         elements = source.getAllElements(IMPORT_TAG);
         for (Element el : elements) {
-            resourcesfound |=
-                    processAttributeElement(message, depth, baseURL, el, "implementation");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "implementation");
         }
 
         // Process content of container tags which hold text
@@ -318,7 +293,7 @@ public class SpiderHtmlParser extends SpiderParser {
                             foundMatch = foundMatch.substring(1);
                         }
                     }
-                    processUrl(message, depth, foundMatch, baseUrlForText);
+                    processUrl(ctx, foundMatch, baseUrlForText);
                     resourcesfound = true;
                 }
             }
@@ -342,7 +317,7 @@ public class SpiderHtmlParser extends SpiderParser {
                     Matcher matcher = URL_PATTERN.matcher(content);
                     if (matcher.find()) {
                         String url = matcher.group(1);
-                        processUrl(message, depth, url, baseURL);
+                        processUrl(ctx, url, baseURL);
                         resourcesfound = true;
                     }
                 }
@@ -350,7 +325,7 @@ public class SpiderHtmlParser extends SpiderParser {
                     && content != null
                     && !content.equals("")
                     && !content.equalsIgnoreCase("none")) {
-                processUrl(message, depth, content, baseURL);
+                processUrl(ctx, content, baseURL);
                 resourcesfound = true;
             }
         }
@@ -358,13 +333,13 @@ public class SpiderHtmlParser extends SpiderParser {
         // Process HTML manifest elements
         elements = source.getAllElements(HTMLElementName.HTML);
         for (Element el : elements) {
-            resourcesfound |= processAttributeElement(message, depth, baseURL, el, "manifest");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "manifest");
         }
 
         // Process BODY background elements
         elements = source.getAllElements(HTMLElementName.BODY);
         for (Element el : elements) {
-            resourcesfound |= processAttributeElement(message, depth, baseURL, el, "background");
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "background");
         }
 
         return resourcesfound;
@@ -374,24 +349,22 @@ public class SpiderHtmlParser extends SpiderParser {
      * Processes the attribute with the given name of a Jericho element, for an URL. If an URL is
      * found, notifies the listeners.
      *
-     * @param message the message
-     * @param depth the depth
+     * @param ctx the parse context.
      * @param baseURL the base URL
      * @param element the element
      * @param attributeName the attribute name
      * @return {@code true} if a URL was processed, {@code false} otherwise.
      */
     private boolean processAttributeElement(
-            HttpMessage message, int depth, String baseURL, Element element, String attributeName) {
-        return processAttributeElement(message, depth, baseURL, element, attributeName, null);
+            ParseContext ctx, String baseURL, Element element, String attributeName) {
+        return processAttributeElement(ctx, baseURL, element, attributeName, null);
     }
 
     /**
      * Processes the attribute with the given name of a Jericho element, for an URL. If an URL is
      * found, notifies the listeners.
      *
-     * @param message the message
-     * @param depth the depth
+     * @param ctx the parse context.
      * @param baseURL the base URL
      * @param element the element
      * @param attributeName the attribute name
@@ -399,8 +372,7 @@ public class SpiderHtmlParser extends SpiderParser {
      * @return {@code true} if a URL was processed, {@code false} otherwise.
      */
     private boolean processAttributeElement(
-            HttpMessage message,
-            int depth,
+            ParseContext ctx,
             String baseURL,
             Element element,
             String attributeName,
@@ -412,13 +384,13 @@ public class SpiderHtmlParser extends SpiderParser {
         }
 
         if (customUrlProcessor != null) {
-            customUrlProcessor.process(message, depth, localURL, baseURL);
+            customUrlProcessor.process(ctx, localURL, baseURL);
         } else if (!attributeName.equalsIgnoreCase("ping")) {
-            processUrl(message, depth, localURL, baseURL);
+            processUrl(ctx, localURL, baseURL);
         } else {
             for (String pingURL : localURL.split("\\s")) {
                 if (!pingURL.isEmpty()) {
-                    processUrl(message, depth, pingURL, baseURL);
+                    processUrl(ctx, pingURL, baseURL);
                 }
             }
         }
@@ -427,8 +399,8 @@ public class SpiderHtmlParser extends SpiderParser {
 
     /** @throws NullPointerException if {@code message} is null. */
     @Override
-    public boolean canParseResource(HttpMessage message, String path, boolean wasAlreadyConsumed) {
+    public boolean canParseResource(ParseContext ctx, boolean wasAlreadyConsumed) {
         // Fallback parser - if it's a HTML message which has not already been processed
-        return !wasAlreadyConsumed && message.getResponseHeader().isHtml();
+        return !wasAlreadyConsumed && ctx.getHttpMessage().getResponseHeader().isHtml();
     }
 }

@@ -22,13 +22,16 @@ package org.zaproxy.addon.spider;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
 
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.zaproxy.addon.spider.SpiderParam.HandleParametersOption;
+import org.zaproxy.addon.spider.parser.ParseContext;
 
 /**
  * This test ensure that nothing was broken in the handling of normal URLs during the implementation
@@ -39,12 +42,21 @@ import org.zaproxy.addon.spider.SpiderParam.HandleParametersOption;
  */
 class UrlCanonicalizerUnitTest {
 
+    private static final String BASE_URL = null;
+
+    private ParseContext ctx;
+
+    @BeforeEach
+    void setup() {
+        ctx = mock(ParseContext.class);
+    }
+
     @Test
     void shouldRemoveDefaultPortOfHttpUriWhenCanonicalizing() {
         // Given
         String uri = "http://example.com:80/";
         // When
-        String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(uri);
+        String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(ctx, uri, BASE_URL);
         // Then
         assertThat(canonicalizedUri, is(equalTo("http://example.com/")));
     }
@@ -54,7 +66,7 @@ class UrlCanonicalizerUnitTest {
         // Given
         String uri = "http://example.com:443/";
         // When
-        String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(uri);
+        String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(ctx, uri, BASE_URL);
         // Then
         assertThat(canonicalizedUri, is(equalTo("http://example.com:443/")));
     }
@@ -64,7 +76,7 @@ class UrlCanonicalizerUnitTest {
         // Given
         String uri = "https://example.com:443/";
         // When
-        String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(uri);
+        String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(ctx, uri, BASE_URL);
         // Then
         assertThat(canonicalizedUri, is(equalTo("https://example.com/")));
     }
@@ -74,7 +86,7 @@ class UrlCanonicalizerUnitTest {
         // Given
         String uri = "https://example.com:80/";
         // When
-        String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(uri);
+        String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(ctx, uri, BASE_URL);
         // Then
         assertThat(canonicalizedUri, is(equalTo("https://example.com:80/")));
     }
@@ -84,7 +96,7 @@ class UrlCanonicalizerUnitTest {
         // Given
         String uri = "http://example.com";
         // When
-        String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(uri);
+        String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(ctx, uri, BASE_URL);
         // Then
         assertThat(canonicalizedUri, is(equalTo("http://example.com/")));
     }
@@ -95,7 +107,7 @@ class UrlCanonicalizerUnitTest {
         String[] uris = {"http://example.com/", "https://example.com/", "ftp://example.com/"};
         for (String uri : uris) {
             // When
-            String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(uri);
+            String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(ctx, uri, BASE_URL);
             // Then
             assertThat(canonicalizedUri, canonicalizedUri, is(equalTo(uri)));
         }
@@ -115,7 +127,8 @@ class UrlCanonicalizerUnitTest {
         };
         for (int i = 0; i < relativeURIs.length; i++) {
             // When
-            String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(relativeURIs[i], baseURI);
+            String canonicalizedUri =
+                    UrlCanonicalizer.getCanonicalUrl(ctx, relativeURIs[i], baseURI);
             // Then
             assertThat(canonicalizedUri, canonicalizedUri, is(equalTo(expectedCanonicalURIs[i])));
         }
@@ -138,7 +151,7 @@ class UrlCanonicalizerUnitTest {
         };
         for (int i = 0; i < uris.length; i++) {
             // When
-            String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(uris[i]);
+            String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(ctx, uris[i], BASE_URL);
             // Then
             assertThat(canonicalizedUri, canonicalizedUri, is(equalTo(expectedCanonicalURIs[i])));
         }
@@ -154,7 +167,7 @@ class UrlCanonicalizerUnitTest {
             })
     void shouldIgnoreURIsWithNoAuthority(String uri) {
         // Given / When
-        String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(uri);
+        String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(ctx, uri, BASE_URL);
         // Then
         assertThat(canonicalizedUri, canonicalizedUri, is(equalTo(null)));
     }
@@ -164,7 +177,7 @@ class UrlCanonicalizerUnitTest {
         // Given
         String uri = new URI("http://example.com/path/%C3%A1/", true).toString();
         // When
-        String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(uri);
+        String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(ctx, uri, BASE_URL);
         // Then
         assertThat(canonicalizedUri, is(equalTo("http://example.com/path/%C3%A1/")));
     }
@@ -174,7 +187,7 @@ class UrlCanonicalizerUnitTest {
         // Given
         String uri = new URI("http://example.com/path/?par%C3%A2m=v%C3%A3lue", true).toString();
         // When
-        String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(uri);
+        String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(ctx, uri, BASE_URL);
         // Then
         assertThat(canonicalizedUri, is(equalTo("http://example.com/path/?par%C3%A2m=v%C3%A3lue")));
     }
@@ -185,7 +198,7 @@ class UrlCanonicalizerUnitTest {
         // Given
         String uri = new URI("http://example.com/?par%26am%3D1=val%26u%3De1", true).toString();
         // When
-        String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(uri);
+        String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(ctx, uri, BASE_URL);
         // Then
         assertThat(canonicalizedUri, is(equalTo("http://example.com/?par%26am%3D1=val%26u%3De1")));
     }
@@ -199,7 +212,7 @@ class UrlCanonicalizerUnitTest {
                                 true)
                         .toString();
         // When
-        String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(uri);
+        String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(ctx, uri, BASE_URL);
         // Then
         assertThat(
                 canonicalizedUri,
@@ -217,7 +230,7 @@ class UrlCanonicalizerUnitTest {
                                 true)
                         .toString();
         // When
-        String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(uri);
+        String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(ctx, uri, BASE_URL);
         // Then
         assertThat(
                 canonicalizedUri,

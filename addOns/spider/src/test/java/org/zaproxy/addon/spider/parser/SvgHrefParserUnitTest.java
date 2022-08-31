@@ -50,7 +50,7 @@ class SvgHrefParserUnitTest extends SpiderParserTestUtils<SvgHrefParser> {
         // Given
         messageWith("test.svg");
         // When
-        boolean canParse = parser.canParseResource(msg, "", false);
+        boolean canParse = parser.canParseResource(ctx, false);
         // Then
         assertTrue(canParse);
     }
@@ -60,7 +60,7 @@ class SvgHrefParserUnitTest extends SpiderParserTestUtils<SvgHrefParser> {
         // Given
         messageWith("test.test");
         // When
-        boolean canParse = parser.canParseResource(msg, "", false);
+        boolean canParse = parser.canParseResource(ctx, false);
         // Then
         assertFalse(canParse);
     }
@@ -71,7 +71,7 @@ class SvgHrefParserUnitTest extends SpiderParserTestUtils<SvgHrefParser> {
         messageWith("svgimage");
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, SVG_CONTENT_TYPE);
         // When
-        boolean canParse = parser.canParseResource(msg, "", false);
+        boolean canParse = parser.canParseResource(ctx, false);
         // Then
         assertTrue(canParse);
     }
@@ -82,7 +82,7 @@ class SvgHrefParserUnitTest extends SpiderParserTestUtils<SvgHrefParser> {
         messageWith("test.xml");
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, XML_CONTENT_TYPE);
         // When
-        boolean canParse = parser.canParseResource(msg, "", false);
+        boolean canParse = parser.canParseResource(ctx, false);
         // Then
         assertFalse(canParse);
     }
@@ -93,7 +93,7 @@ class SvgHrefParserUnitTest extends SpiderParserTestUtils<SvgHrefParser> {
         messageWith("test");
         msg.setResponseBody("Foo Bar");
         // When
-        boolean parse = parser.parseResource(msg, createSource(), 0);
+        boolean parse = parser.parseResource(ctx);
         // Then
         assertFalse(parse);
     }
@@ -108,7 +108,7 @@ class SvgHrefParserUnitTest extends SpiderParserTestUtils<SvgHrefParser> {
                         + "  <rect x=\".01\" y=\".01\" width=\"4.98\" height=\"2.98\" fill=\"none\" stroke=\"blue\" stroke-width=\".03\"/>\n"
                         + "</svg>");
         // When
-        boolean parse = parser.parseResource(msg, createSource(), 0);
+        boolean parse = parser.parseResource(ctx);
         // Then
         assertFalse(parse);
     }
@@ -126,7 +126,7 @@ class SvgHrefParserUnitTest extends SpiderParserTestUtils<SvgHrefParser> {
                         + "<text x=\"20\" y=\"35\" class=\"small\">Test & Text</text>"
                         + "</svg>");
         // When
-        boolean parse = parser.parseResource(msg, createSource(), 0);
+        boolean parse = parser.parseResource(ctx);
         // Then
         assertFalse(parse);
     }
@@ -145,7 +145,7 @@ class SvgHrefParserUnitTest extends SpiderParserTestUtils<SvgHrefParser> {
                         + "  </a>"
                         + "</svg>");
         // When
-        boolean parse = parser.parseResource(msg, createSource(), 0);
+        boolean parse = parser.parseResource(ctx);
         // Then
         assertFalse(parse);
     }
@@ -166,7 +166,7 @@ class SvgHrefParserUnitTest extends SpiderParserTestUtils<SvgHrefParser> {
                         + "  </a>"
                         + "</svg>");
         // When
-        boolean parse = parser.parseResource(msg, createSource(), 0);
+        boolean parse = parser.parseResource(ctx);
         // Then
         assertTrue(parse);
     }
@@ -196,7 +196,7 @@ class SvgHrefParserUnitTest extends SpiderParserTestUtils<SvgHrefParser> {
                         + "  </a>"
                         + "</svg>");
         // When
-        boolean parse = parser.parseResource(msg, createSource(), 0);
+        boolean parse = parser.parseResource(ctx);
         // Then
         assertTrue(parse);
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -209,7 +209,7 @@ class SvgHrefParserUnitTest extends SpiderParserTestUtils<SvgHrefParser> {
         messageWith("test.svg");
         msg.setResponseBody("<svg><use href=\"//example.org/use_element/upload.php#x\"/></svg>");
         // When
-        boolean parse = parser.parseResource(msg, createSource(), 0);
+        boolean parse = parser.parseResource(ctx);
         // Then
         assertTrue(parse);
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
@@ -236,7 +236,7 @@ class SvgHrefParserUnitTest extends SpiderParserTestUtils<SvgHrefParser> {
                         + "</p>");
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
         // When
-        boolean parse = parser.parseResource(msg, createSource(), 0);
+        boolean parse = parser.parseResource(ctx);
         // Then
         assertTrue(parse);
     }
@@ -259,7 +259,7 @@ class SvgHrefParserUnitTest extends SpiderParserTestUtils<SvgHrefParser> {
                         + "</p>");
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
         // When
-        boolean parse = parser.parseResource(msg, createSource(), 0);
+        boolean parse = parser.parseResource(ctx);
         // Then
         assertTrue(parse);
     }
@@ -282,7 +282,7 @@ class SvgHrefParserUnitTest extends SpiderParserTestUtils<SvgHrefParser> {
                         + "</p>");
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
         // When
-        boolean parse = parser.parseResource(msg, createSource(), 0);
+        boolean parse = parser.parseResource(ctx);
         // Then
         assertFalse(parse);
     }

@@ -21,7 +21,6 @@ package org.zaproxy.addon.spider.parser;
 
 import java.util.LinkedList;
 import java.util.List;
-import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;
@@ -77,17 +76,30 @@ public abstract class SpiderParser {
         }
     }
 
+    protected void processUrl(ParseContext ctx, String localUrl) {
+        processUrl(ctx, localUrl, ctx.getBaseUrl());
+    }
+
+    protected void processUrl(ParseContext ctx, String localUrl, String baseUrl) {
+        processUrl(ctx, ctx.getHttpMessage(), ctx.getDepth(), localUrl, baseUrl);
+    }
+
+    protected String getCanonicalUrl(ParseContext ctx, String localUrl, String baseUrl) {
+        return UrlCanonicalizer.getCanonicalUrl(ctx, localUrl, baseUrl);
+    }
+
     /**
      * Builds an url and notifies the listeners.
      *
      * @param message the message
      * @param depth the depth
      * @param localURL the local url
-     * @param baseURL the base url
+     * @param baseUrl the base url
      */
-    protected void processUrl(HttpMessage message, int depth, String localURL, String baseURL) {
+    private void processUrl(
+            ParseContext ctx, HttpMessage message, int depth, String localURL, String baseUrl) {
         // Build the absolute canonical URL
-        String fullURL = UrlCanonicalizer.getCanonicalUrl(localURL, baseURL);
+        String fullURL = getCanonicalUrl(ctx, localURL, baseUrl);
         if (fullURL == null) {
             return;
         }
@@ -103,40 +115,34 @@ public abstract class SpiderParser {
 
     /**
      * Parses the resource. The HTTP message containing the request and the response is given. Also,
-     * if possible, a Jericho source with the Response Body is provided.
+     * if possible, a Jericho source with the Response Body is provided through the context.
      *
-     * <p>When a link is encountered, implementations can use {@link #processUrl(HttpMessage, int,
-     * String, String)} and {@link #notifyListenersResourceFound(SpiderResourceFound)} to announce
-     * the found URIs.
+     * <p>When a link is encountered, implementations can use one of the {@code processUrl} methods
+     * and {@link #notifyListenersResourceFound(SpiderResourceFound)} to announce the found URIs.
      *
      * <p>The return value specifies whether the resource should be considered 'completely
      * processed'/consumed and should be treated accordingly by subsequent parsers. For example, any
      * parsers which are meant to be 'fall-back' parsers should skip messages already processed by
      * other parsers.
      *
-     * @param message the full http message containing the request and the response
-     * @param source a Jericho source with the Response Body from the HTTP message. This parameter
-     *     can be {@code null}, in which case the parser implementation should ignore it.
-     * @param depth the depth of this resource
+     * @param ctx the parse context.
      * @return whether the resource is considered to be exhaustively processed
      */
-    public abstract boolean parseResource(final HttpMessage message, Source source, int depth);
+    public abstract boolean parseResource(ParseContext ctx);
 
     /**
      * Checks whether the parser should be called to parse the given HttpMessage.
      *
      * <p>Based on the specifics of the HttpMessage and whether this message was already processed
-     * by another Parser, this method should decide whether the {@link #parseResource(HttpMessage,
-     * Source, int)} should be invoked.
+     * by another Parser, this method should decide whether the {@link #parseResource(ParseContext)}
+     * should be invoked.
      *
      * <p>The {@code wasAlreadyConsumed} could be used by parsers which represent a 'fall-back'
      * parser to check whether any other parser has processed the message before.
      *
-     * @param message the full http message containing the request and the response
-     * @param path the resource path, provided for convenience
+     * @param ctx the parse context.
      * @param wasAlreadyConsumed if the resource was already parsed by another SpiderParser
-     * @return true, if the {@link #parseResource(HttpMessage, Source, int)} should be invoked.
+     * @return true, if the {@link #parseResource(ParseContext ctx)} should be invoked.
      */
-    public abstract boolean canParseResource(
-            final HttpMessage message, String path, boolean wasAlreadyConsumed);
+    public abstract boolean canParseResource(ParseContext ctx, boolean wasAlreadyConsumed);
 }
