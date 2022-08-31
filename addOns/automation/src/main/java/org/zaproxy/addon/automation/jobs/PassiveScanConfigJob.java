@@ -45,9 +45,12 @@ public class PassiveScanConfigJob extends AutomationJob {
 
     private static final String PARAM_ENABLE_TAGS = "enableTags";
 
+    private static final String[] IGNORE_PARAMS = new String[] {PARAM_ENABLE_TAGS};
+
     private ExtensionPassiveScan extPScan;
 
     private Parameters parameters = new Parameters();
+    private Parameters originalParameters = new Parameters();
     private Data data;
 
     public PassiveScanConfigJob() {
@@ -62,6 +65,32 @@ public class PassiveScanConfigJob extends AutomationJob {
                             .getExtension(ExtensionPassiveScan.class);
         }
         return extPScan;
+    }
+
+    @Override
+    public void planStarted() {
+        // Save the current state
+        AutomationProgress tempProgress = new AutomationProgress();
+        JobUtils.applyObjectToObject(
+                JobUtils.getJobOptions(this, tempProgress),
+                this.originalParameters,
+                this.getName(),
+                IGNORE_PARAMS,
+                tempProgress,
+                this.getPlan().getEnv());
+    }
+
+    @Override
+    public void planFinished() {
+        // Revert the state
+        AutomationProgress tempProgress = new AutomationProgress();
+        JobUtils.applyObjectToObject(
+                this.originalParameters,
+                JobUtils.getJobOptions(this, tempProgress),
+                this.getName(),
+                IGNORE_PARAMS,
+                tempProgress,
+                this.getPlan().getEnv());
     }
 
     @Override
@@ -135,7 +164,7 @@ public class PassiveScanConfigJob extends AutomationJob {
                 this.parameters,
                 JobUtils.getJobOptions(this, progress),
                 this.getName(),
-                new String[] {PARAM_ENABLE_TAGS},
+                IGNORE_PARAMS,
                 progress,
                 env);
     }

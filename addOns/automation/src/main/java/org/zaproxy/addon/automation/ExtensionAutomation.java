@@ -233,6 +233,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     }
 
     private void setPlanFinished(AutomationPlan plan) {
+        plan.getJobs().forEach(AutomationJob::planFinished);
         plan.setFinished(new Date());
         AutomationEventPublisher.publishEvent(
                 AutomationEventPublisher.PLAN_FINISHED, plan, plan.getProgress().toMap());
@@ -258,13 +259,15 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                 AutomationEventPublisher.PLAN_ENV_CREATED, plan, null);
         Stats.incCounter(PLANS_RUN_STATS);
 
+        List<AutomationJob> jobsToRun = plan.getJobs();
+
+        jobsToRun.forEach(AutomationJob::planStarted);
+
         if (progress.hasErrors() || env.isTimeToQuit()) {
             // If the environment reports an error then no point in continuing
             setPlanFinished(plan);
             return progress;
         }
-
-        List<AutomationJob> jobsToRun = plan.getJobs();
 
         for (AutomationJob job : jobsToRun) {
             job.applyParameters(progress);
