@@ -97,7 +97,6 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         boolean cspHeaderFound = false;
-        int noticesRisk;
 
         LOGGER.debug("Start {} : {}", id, msg.getRequestHeader().getURI());
 
@@ -116,27 +115,8 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
             cspHeaderFound = true;
         }
 
-        // X-Content-Security-Policy is an older header, supported by Firefox
-        // 4.0+, and IE 10+ (in a limited fashion)
-        List<String> xcspOptions = msg.getResponseHeader().getHeaderValues(HTTP_HEADER_XCSP);
-        if (!xcspOptions.isEmpty()) {
-            buildXcspAlert(
-                            cspHeaderFound ? Alert.RISK_INFO : Alert.RISK_LOW,
-                            getHeaderField(msg, HTTP_HEADER_XCSP).get(0),
-                            xcspOptions.get(0))
-                    .raise();
-        }
-
-        // X-WebKit-CSP is supported by Chrome 14+, and Safari 6+
-        List<String> xwkcspOptions =
-                msg.getResponseHeader().getHeaderValues(HTTP_HEADER_WEBKIT_CSP);
-        if (!xwkcspOptions.isEmpty()) {
-            buildWebkitCspAlert(
-                            cspHeaderFound ? Alert.RISK_INFO : Alert.RISK_LOW,
-                            getHeaderField(msg, HTTP_HEADER_WEBKIT_CSP).get(0),
-                            xwkcspOptions.get(0))
-                    .raise();
-        }
+        checkXcsp(msg, cspHeaderFound);
+        checkXWebkitCsp(msg, cspHeaderFound);
 
         if (cspHeaderFound) {
 
@@ -151,67 +131,18 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                     };
 
             for (String csp : cspOptions) {
-                Policy policy;
-                try {
-                    policy = Policy.parseSerializedCSP(csp, consumer);
-                } catch (IllegalArgumentException iae) {
-                    boolean warn = true;
-                    if (iae.getMessage().contains("not ascii")) {
-                        buildMalformedAlert(
-                                        getHeaderField(msg, HTTP_HEADER_CSP).get(0),
-                                        csp,
-                                        getNonasciiCharacters(csp))
-                                .raise();
-                        warn = false;
-                    }
-
-                    if (warn) {
-                        LOGGER.warn("CSP Found but not fully parsed, in message {}.", id);
-                    }
+                Policy policy = parsePolicy(csp, consumer, msg, id);
+                if (policy == null) {
                     continue;
                 }
 
                 if (!observedErrors.isEmpty()) {
-                    String cspNoticesString = getCspNoticesString(observedErrors);
-                    if (cspNoticesString.contains(
-                                    Constant.messages.getString(MESSAGE_PREFIX + "notices.errors"))
-                            || cspNoticesString.contains(
-                                    Constant.messages.getString(
-                                            MESSAGE_PREFIX + "notices.warnings"))) {
-                        noticesRisk = Alert.RISK_LOW;
-                    } else {
-                        noticesRisk = Alert.RISK_INFO;
-                    }
-                    buildNoticesAlert(
-                                    noticesRisk,
-                                    getHeaderField(msg, HTTP_HEADER_CSP).get(0),
-                                    csp,
-                                    cspNoticesString)
-                            .raise();
+                    checkObservedErrors(observedErrors, msg, csp);
                 }
 
                 List<String> allowedWildcardSources = getAllowedWildcardSources(csp);
                 if (!allowedWildcardSources.isEmpty()) {
-                    List<String> allowedDirectivesWithoutFallback =
-                            allowedWildcardSources.stream()
-                                    .distinct()
-                                    .filter(DIRECTIVES_WITHOUT_FALLBACK::contains)
-                                    .collect(Collectors.toList());
-                    String allowedWildcardSrcs = String.join(", ", allowedWildcardSources);
-                    String wildcardSrcOtherInfo =
-                            Constant.messages.getString(
-                                    MESSAGE_PREFIX + "wildcard.otherinfo", allowedWildcardSrcs);
-                    if (!allowedDirectivesWithoutFallback.isEmpty()) {
-                        wildcardSrcOtherInfo +=
-                                Constant.messages.getString(
-                                        "pscanrules.csp.otherinfo.extended",
-                                        String.join(", ", allowedDirectivesWithoutFallback));
-                    }
-                    buildWildcardAlert(
-                                    getHeaderField(msg, HTTP_HEADER_CSP).get(0),
-                                    csp,
-                                    wildcardSrcOtherInfo)
-                            .raise();
+                    checkWildcardSources(allowedWildcardSources, msg, csp);
                 }
 
                 PolicyInOrigin p = new PolicyInOrigin(policy, URI.parseURI(RAND_FQDN).orElse(null));
@@ -228,18 +159,105 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                 if (allowsUnsafeHashes(policy, FetchDirectiveKind.ScriptSrc)) {
                     buildScriptUnsafeHashAlert(getHeaderField(msg, HTTP_HEADER_CSP).get(0), csp)
                             .raise();
-                    ;
                 }
 
                 if (allowsUnsafeHashes(policy, FetchDirectiveKind.StyleSrc)) {
                     buildStyleUnsafeHashAlert(getHeaderField(msg, HTTP_HEADER_CSP).get(0), csp)
                             .raise();
-                    ;
                 }
             }
         }
 
         LOGGER.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
+    }
+
+    private void checkXcsp(HttpMessage msg, boolean cspHeaderFound) {
+        // X-Content-Security-Policy is an older header, supported by Firefox
+        // 4.0+, and IE 10+ (in a limited fashion)
+        List<String> xcspOptions = msg.getResponseHeader().getHeaderValues(HTTP_HEADER_XCSP);
+        if (!xcspOptions.isEmpty()) {
+            buildXcspAlert(
+                            cspHeaderFound ? Alert.RISK_INFO : Alert.RISK_LOW,
+                            getHeaderField(msg, HTTP_HEADER_XCSP).get(0),
+                            xcspOptions.get(0))
+                    .raise();
+        }
+    }
+
+    private void checkXWebkitCsp(HttpMessage msg, boolean cspHeaderFound) {
+        // X-WebKit-CSP is supported by Chrome 14+, and Safari 6+
+        List<String> xwkcspOptions =
+                msg.getResponseHeader().getHeaderValues(HTTP_HEADER_WEBKIT_CSP);
+        if (!xwkcspOptions.isEmpty()) {
+            buildWebkitCspAlert(
+                            cspHeaderFound ? Alert.RISK_INFO : Alert.RISK_LOW,
+                            getHeaderField(msg, HTTP_HEADER_WEBKIT_CSP).get(0),
+                            xwkcspOptions.get(0))
+                    .raise();
+        }
+    }
+
+    private Policy parsePolicy(String csp, PolicyErrorConsumer consumer, HttpMessage msg, int id) {
+        try {
+            return Policy.parseSerializedCSP(csp, consumer);
+        } catch (IllegalArgumentException iae) {
+            boolean warn = true;
+            if (iae.getMessage().contains("not ascii")) {
+                buildMalformedAlert(
+                                getHeaderField(msg, HTTP_HEADER_CSP).get(0),
+                                csp,
+                                getNonasciiCharacters(csp))
+                        .raise();
+                warn = false;
+            }
+
+            if (warn) {
+                LOGGER.warn("CSP Found but not fully parsed, in message {}.", id);
+            }
+        }
+        return null;
+    }
+
+    private void checkObservedErrors(
+            List<PolicyError> observedErrors, HttpMessage msg, String csp) {
+        String cspNoticesString = getCspNoticesString(observedErrors);
+        int noticesRisk;
+
+        if (cspNoticesString.contains(
+                        Constant.messages.getString(MESSAGE_PREFIX + "notices.errors"))
+                || cspNoticesString.contains(
+                        Constant.messages.getString(MESSAGE_PREFIX + "notices.warnings"))) {
+            noticesRisk = Alert.RISK_LOW;
+        } else {
+            noticesRisk = Alert.RISK_INFO;
+        }
+        buildNoticesAlert(
+                        noticesRisk,
+                        getHeaderField(msg, HTTP_HEADER_CSP).get(0),
+                        csp,
+                        cspNoticesString)
+                .raise();
+    }
+
+    private void checkWildcardSources(
+            List<String> allowedWildcardSources, HttpMessage msg, String csp) {
+        List<String> allowedDirectivesWithoutFallback =
+                allowedWildcardSources.stream()
+                        .distinct()
+                        .filter(DIRECTIVES_WITHOUT_FALLBACK::contains)
+                        .collect(Collectors.toList());
+        String allowedWildcardSrcs = String.join(", ", allowedWildcardSources);
+        String wildcardSrcOtherInfo =
+                Constant.messages.getString(
+                        MESSAGE_PREFIX + "wildcard.otherinfo", allowedWildcardSrcs);
+        if (!allowedDirectivesWithoutFallback.isEmpty()) {
+            wildcardSrcOtherInfo +=
+                    Constant.messages.getString(
+                            "pscanrules.csp.otherinfo.extended",
+                            String.join(", ", allowedDirectivesWithoutFallback));
+        }
+        buildWildcardAlert(getHeaderField(msg, HTTP_HEADER_CSP).get(0), csp, wildcardSrcOtherInfo)
+                .raise();
     }
 
     private static boolean allowsUnsafeHashes(Policy policy, FetchDirectiveKind source) {

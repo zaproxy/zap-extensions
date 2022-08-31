@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Reduce Cache Control scan rule confidence to Low, and add new reference (Issue 6446).
 - Added new Custom Payloads alert tag to the example alerts of the Username IDOR and Application Error scan rules.
+- Maintenance changes.
 
 ## [42] - 2022-07-15
 ### Changed
