@@ -19,6 +19,9 @@
  */
 package org.zaproxy.addon.spider.parser;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.withSettings;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -28,12 +31,13 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import net.htmlparser.jericho.Source;
+import org.junit.jupiter.api.BeforeEach;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.spider.SpiderParam;
+import org.zaproxy.zap.model.DefaultValueGenerator;
 import org.zaproxy.zap.testutils.TestUtils;
-import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /**
  * Class with helper/utility methods to help testing classes involving {@code SpiderParser}
@@ -41,16 +45,31 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
  *
  * @see org.zaproxy.zap.spider.parser.SpiderParser
  */
-class SpiderParserTestUtils extends TestUtils {
+abstract class SpiderParserTestUtils<T extends SpiderParser> extends TestUtils {
 
-    protected static Source createSource(HttpMessage messageHtmlResponse) {
-        return new Source(messageHtmlResponse.getResponseBody().toString());
+    protected TestSpiderParserListener listener;
+    protected SpiderParam spiderOptions;
+    protected DefaultValueGenerator valueGenerator;
+    protected HttpMessage msg;
+    protected T parser;
+
+    @BeforeEach
+    void setup() {
+        spiderOptions = mock(SpiderParam.class, withSettings().lenient());
+
+        valueGenerator = new DefaultValueGenerator();
+
+        msg = new HttpMessage();
+
+        parser = createParser();
+        listener = createTestSpiderParserListener();
+        parser.addSpiderParserListener(listener);
     }
 
-    protected static SpiderParam createSpiderParamWithConfig() {
-        SpiderParam spiderParam = new SpiderParam();
-        spiderParam.load(new ZapXmlConfiguration());
-        return spiderParam;
+    protected abstract T createParser();
+
+    protected Source createSource() {
+        return new Source(msg.getResponseBody().toString());
     }
 
     protected static String readFile(Path file) throws IOException {
@@ -63,12 +82,6 @@ class SpiderParserTestUtils extends TestUtils {
 
     static TestSpiderParserListener createTestSpiderParserListener() {
         return new TestSpiderParserListener();
-    }
-
-    static TestSpiderParserListener createAndAddTestSpiderParserListener(SpiderParser parser) {
-        TestSpiderParserListener listener = createTestSpiderParserListener();
-        parser.addSpiderParserListener(listener);
-        return listener;
     }
 
     protected static class TestSpiderParserListener implements SpiderParserListener {

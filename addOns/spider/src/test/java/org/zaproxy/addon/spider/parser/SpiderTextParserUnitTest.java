@@ -26,35 +26,37 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import net.htmlparser.jericho.Source;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 
 /** Unit test for {@link SpiderTextParser}. */
-class SpiderTextParserUnitTest extends SpiderParserTestUtils {
+class SpiderTextParserUnitTest extends SpiderParserTestUtils<SpiderTextParser> {
 
     private static final String EMPTY_BODY = "";
     private static final String ROOT_PATH = "/";
     private static final int BASE_DEPTH = 0;
 
+    @Override
+    protected SpiderTextParser createParser() {
+        return new SpiderTextParser();
+    }
+
     @Test
     void shouldFailToEvaluateAnUndefinedMessage() {
         // Given
         HttpMessage undefinedMessage = null;
-        SpiderTextParser spiderParser = new SpiderTextParser();
         // When / Then
         assertThrows(
                 NullPointerException.class,
-                () -> spiderParser.canParseResource(undefinedMessage, ROOT_PATH, false));
+                () -> parser.canParseResource(undefinedMessage, ROOT_PATH, false));
     }
 
     @Test
     void shouldNotParseMessageIfAlreadyParsed() {
         // Given
-        SpiderTextParser spiderParser = new SpiderTextParser();
         boolean parsed = true;
         // When
-        boolean canParse = spiderParser.canParseResource(new HttpMessage(), ROOT_PATH, parsed);
+        boolean canParse = parser.canParseResource(new HttpMessage(), ROOT_PATH, parsed);
         // Then
         assertThat(canParse, is(equalTo(false)));
     }
@@ -62,11 +64,10 @@ class SpiderTextParserUnitTest extends SpiderParserTestUtils {
     @Test
     void shouldNotParseNonTextResponse() {
         // Given
-        HttpMessage message = createMessageWith("application/xyz", EMPTY_BODY);
-        SpiderTextParser spiderParser = new SpiderTextParser();
+        messageWith("application/xyz", EMPTY_BODY);
         boolean parsed = false;
         // When
-        boolean canParse = spiderParser.canParseResource(message, ROOT_PATH, parsed);
+        boolean canParse = parser.canParseResource(msg, ROOT_PATH, parsed);
         // Then
         assertThat(canParse, is(equalTo(false)));
     }
@@ -74,11 +75,10 @@ class SpiderTextParserUnitTest extends SpiderParserTestUtils {
     @Test
     void shouldNotParseTextHtmlResponse() {
         // Given
-        HttpMessage message = createMessageWith("text/html", EMPTY_BODY);
-        SpiderTextParser spiderParser = new SpiderTextParser();
+        messageWith("text/html", EMPTY_BODY);
         boolean parsed = false;
         // When
-        boolean canParse = spiderParser.canParseResource(message, ROOT_PATH, parsed);
+        boolean canParse = parser.canParseResource(msg, ROOT_PATH, parsed);
         // Then
         assertThat(canParse, is(equalTo(false)));
     }
@@ -86,11 +86,10 @@ class SpiderTextParserUnitTest extends SpiderParserTestUtils {
     @Test
     void shouldParseTextResponse() {
         // Given
-        SpiderTextParser spiderParser = new SpiderTextParser();
-        HttpMessage messageHtmlResponse = createMessageWith(EMPTY_BODY);
+        messageWith(EMPTY_BODY);
         boolean parsed = false;
         // When
-        boolean canParse = spiderParser.canParseResource(messageHtmlResponse, ROOT_PATH, parsed);
+        boolean canParse = parser.canParseResource(msg, ROOT_PATH, parsed);
         // Then
         assertThat(canParse, is(equalTo(true)));
     }
@@ -98,11 +97,10 @@ class SpiderTextParserUnitTest extends SpiderParserTestUtils {
     @Test
     void shouldParseTextResponseEvenIfProvidedPathIsNull() {
         // Given
-        SpiderTextParser spiderParser = new SpiderTextParser();
-        HttpMessage messageHtmlResponse = createMessageWith(EMPTY_BODY);
+        messageWith(EMPTY_BODY);
         boolean parsed = false;
         // When
-        boolean canParse = spiderParser.canParseResource(messageHtmlResponse, null, parsed);
+        boolean canParse = parser.canParseResource(msg, null, parsed);
         // Then
         assertThat(canParse, is(equalTo(true)));
     }
@@ -110,11 +108,10 @@ class SpiderTextParserUnitTest extends SpiderParserTestUtils {
     @Test
     void shouldNotParseTextResponseIfAlreadyParsed() {
         // Given
-        SpiderTextParser spiderParser = new SpiderTextParser();
-        HttpMessage messageHtmlResponse = createMessageWith(EMPTY_BODY);
+        messageWith(EMPTY_BODY);
         boolean parsed = true;
         // When
-        boolean canParse = spiderParser.canParseResource(messageHtmlResponse, ROOT_PATH, parsed);
+        boolean canParse = parser.canParseResource(msg, ROOT_PATH, parsed);
         // Then
         assertThat(canParse, is(equalTo(false)));
     }
@@ -123,22 +120,18 @@ class SpiderTextParserUnitTest extends SpiderParserTestUtils {
     void shouldFailToParseAnUndefinedMessage() {
         // Given
         HttpMessage undefinedMessage = null;
-        SpiderTextParser spiderParser = new SpiderTextParser();
-        Source source = createSource(createMessageWith(EMPTY_BODY));
         // When / Then
         assertThrows(
                 NullPointerException.class,
-                () -> spiderParser.parseResource(undefinedMessage, source, BASE_DEPTH));
+                () -> parser.parseResource(undefinedMessage, createSource(), BASE_DEPTH));
     }
 
     @Test
     void shouldNeverConsiderCompletelyParsed() {
         // Given
-        SpiderTextParser spiderParser = new SpiderTextParser();
-        HttpMessage message = createMessageWith("Non Empty Body...");
-        Source source = createSource(message);
+        messageWith("Non Empty Body...");
         // When
-        boolean completelyParsed = spiderParser.parseResource(message, source, BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
     }
@@ -146,19 +139,14 @@ class SpiderTextParserUnitTest extends SpiderParserTestUtils {
     @Test
     void shouldNotFindUrlsIfThereIsNone() {
         // Given
-        SpiderTextParser spiderParser = new SpiderTextParser();
-        TestSpiderParserListener listener = createTestSpiderParserListener();
-        spiderParser.addSpiderParserListener(listener);
-        HttpMessage message =
-                createMessageWith(
-                        body(
-                                "Body with no HTTP/S URLs",
-                                " ://example.com/ ",
-                                "More text...  ftp://ftp.example.com/ ",
-                                "Even more text... //noscheme.example.com "));
-        Source source = createSource(message);
+        messageWith(
+                body(
+                        "Body with no HTTP/S URLs",
+                        " ://example.com/ ",
+                        "More text...  ftp://ftp.example.com/ ",
+                        "Even more text... //noscheme.example.com "));
         // When
-        boolean completelyParsed = spiderParser.parseResource(message, source, BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(0)));
@@ -168,26 +156,20 @@ class SpiderTextParserUnitTest extends SpiderParserTestUtils {
     @Test
     void shouldFindUrlsInCommentsWithoutElements() {
         // Given
-        SpiderTextParser spiderParser = new SpiderTextParser();
-        TestSpiderParserListener listener = createTestSpiderParserListener();
-        spiderParser.addSpiderParserListener(listener);
-        HttpMessage messageHtmlResponse =
-                createMessageWith(
-                        body(
-                                "Body with HTTP/S URLs",
-                                " - http://plaincomment.example.com some text not part of URL",
-                                "- \"https://plaincomment.example.com/z.php?x=y\" more text not part of URL",
-                                "- 'http://plaincomment.example.com/c.pl?x=y' even more text not part of URL",
-                                "- <https://plaincomment.example.com/d.asp?x=y> ...",
-                                "- http://plaincomment.example.com/e/e1/e2.html?x=y#stop fragment should be ignored",
-                                "- (https://plaincomment.example.com/surrounded/with/parenthesis) parenthesis should not be included",
-                                "- [https://plaincomment.example.com/surrounded/with/brackets] brackets should not be included",
-                                "- {https://plaincomment.example.com/surrounded/with/curly/brackets} curly brackets should not be included",
-                                "- mixed case URLs HtTpS://ExAmPlE.CoM/path/ should also be found"));
-        Source source = createSource(messageHtmlResponse);
+        messageWith(
+                body(
+                        "Body with HTTP/S URLs",
+                        " - http://plaincomment.example.com some text not part of URL",
+                        "- \"https://plaincomment.example.com/z.php?x=y\" more text not part of URL",
+                        "- 'http://plaincomment.example.com/c.pl?x=y' even more text not part of URL",
+                        "- <https://plaincomment.example.com/d.asp?x=y> ...",
+                        "- http://plaincomment.example.com/e/e1/e2.html?x=y#stop fragment should be ignored",
+                        "- (https://plaincomment.example.com/surrounded/with/parenthesis) parenthesis should not be included",
+                        "- [https://plaincomment.example.com/surrounded/with/brackets] brackets should not be included",
+                        "- {https://plaincomment.example.com/surrounded/with/curly/brackets} curly brackets should not be included",
+                        "- mixed case URLs HtTpS://ExAmPlE.CoM/path/ should also be found"));
         // When
-        boolean completelyParsed =
-                spiderParser.parseResource(messageHtmlResponse, source, BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(msg, createSource(), BASE_DEPTH);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(9)));
@@ -205,20 +187,18 @@ class SpiderTextParserUnitTest extends SpiderParserTestUtils {
                         "https://example.com/path/"));
     }
 
-    private static HttpMessage createMessageWith(String body) {
-        return createMessageWith("text/xyz", body);
+    private void messageWith(String body) {
+        messageWith("text/xyz", body);
     }
 
-    private static HttpMessage createMessageWith(String contentType, String body) {
-        return createMessageWith("200 OK", contentType, body);
+    private void messageWith(String contentType, String body) {
+        messageWith("200 OK", contentType, body);
     }
 
-    private static HttpMessage createMessageWith(
-            String statusCodeMessage, String contentType, String body) {
-        HttpMessage message = new HttpMessage();
+    private void messageWith(String statusCodeMessage, String contentType, String body) {
         try {
-            message.setRequestHeader("GET / HTTP/1.1\r\nHost: example.com\r\n");
-            message.setResponseHeader(
+            msg.setRequestHeader("GET / HTTP/1.1\r\nHost: example.com\r\n");
+            msg.setResponseHeader(
                     "HTTP/1.1 "
                             + statusCodeMessage
                             + "\r\n"
@@ -227,11 +207,10 @@ class SpiderTextParserUnitTest extends SpiderParserTestUtils {
                             + "; charset=UTF-8\r\n"
                             + "Content-Length: "
                             + body.length());
-            message.setResponseBody(body);
+            msg.setResponseBody(body);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return message;
     }
 
     private static String body(String... strings) {

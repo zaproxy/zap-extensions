@@ -30,91 +30,79 @@ import static org.mockito.Mockito.mock;
 import net.htmlparser.jericho.Source;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.spider.parser.SpiderParserUnitTest.TestSpiderParser;
 
 /** Unit test for {@link SpiderParser}. */
-class SpiderParserUnitTest extends SpiderParserTestUtils {
+class SpiderParserUnitTest extends SpiderParserTestUtils<TestSpiderParser> {
+
+    @Override
+    protected TestSpiderParser createParser() {
+        return new TestSpiderParser();
+    }
 
     @Test
     void shouldHaveNonNullLogger() {
-        // Given
-        TestSpiderParser testSpiderParser = new TestSpiderParser();
-        // When / Then
-        assertThat(testSpiderParser.getLogger(), is(not(nullValue())));
+        assertThat(parser.getLogger(), is(not(nullValue())));
     }
 
     @Test
     void shouldNotifyListenersOfResourceFound() {
         // Given
-        TestSpiderParser testSpiderParser = new TestSpiderParser();
-        TestSpiderParserListener listener1 = createTestSpiderParserListener();
         TestSpiderParserListener listener2 = createTestSpiderParserListener();
         SpiderResourceFound resourceFound1 = mock(SpiderResourceFound.class);
         SpiderResourceFound resourceFound2 = mock(SpiderResourceFound.class);
         // When
-        testSpiderParser.addSpiderParserListener(listener1);
-        testSpiderParser.addSpiderParserListener(listener2);
-        testSpiderParser.notifyListenersResourceFound(resourceFound1);
-        testSpiderParser.notifyListenersResourceFound(resourceFound2);
+        parser.addSpiderParserListener(listener2);
+        parser.notifyListenersResourceFound(resourceFound1);
+        parser.notifyListenersResourceFound(resourceFound2);
         // Then
-        assertThat(listener1.getResourcesFound(), contains(resourceFound1, resourceFound2));
+        assertThat(listener.getResourcesFound(), contains(resourceFound1, resourceFound2));
         assertThat(listener2.getResourcesFound(), contains(resourceFound1, resourceFound2));
     }
 
     @Test
     void shouldNotNotifyRemovedListenerOfResourceFound() {
         // Given
-        TestSpiderParser testSpiderParser = new TestSpiderParser();
-        TestSpiderParserListener listener1 = createTestSpiderParserListener();
-        testSpiderParser.addSpiderParserListener(listener1);
         TestSpiderParserListener listener2 = createTestSpiderParserListener();
-        testSpiderParser.addSpiderParserListener(listener2);
+        parser.addSpiderParserListener(listener2);
         SpiderResourceFound resourceFound1 = mock(SpiderResourceFound.class);
         SpiderResourceFound resourceFound2 = mock(SpiderResourceFound.class);
         // When
-        testSpiderParser.notifyListenersResourceFound(resourceFound1);
-        testSpiderParser.removeSpiderParserListener(listener2);
-        testSpiderParser.notifyListenersResourceFound(resourceFound2);
+        parser.notifyListenersResourceFound(resourceFound1);
+        parser.removeSpiderParserListener(listener2);
+        parser.notifyListenersResourceFound(resourceFound2);
         // Then
-        assertThat(listener1.getResourcesFound(), contains(resourceFound1, resourceFound2));
+        assertThat(listener.getResourcesFound(), contains(resourceFound1, resourceFound2));
         assertThat(listener2.getResourcesFound(), contains(resourceFound1));
     }
 
     @Test
     void shouldNotifyListenersOfProcessedUrl() {
         // Given
-        TestSpiderParser testSpiderParser = new TestSpiderParser();
-        TestSpiderParserListener listener = createTestSpiderParserListener();
-        testSpiderParser.addSpiderParserListener(listener);
-        HttpMessage message = mock(HttpMessage.class);
         int depth = 42;
         String baseUrl = "https://example.com/";
         String localUrl = "/path/";
         String expectedUri = "https://example.com/path/";
         // When
-        testSpiderParser.processUrl(message, depth, localUrl, baseUrl);
+        parser.processUrl(msg, depth, localUrl, baseUrl);
         // Then
         assertThat(
-                listener.getResourcesFound(),
-                contains(uriResource(message, depth + 1, expectedUri)));
+                listener.getResourcesFound(), contains(uriResource(msg, depth + 1, expectedUri)));
     }
 
     @Test
     void shouldNotNotifyListenersOfMalformedProcessedUrl() {
         // Given
-        TestSpiderParser testSpiderParser = new TestSpiderParser();
-        TestSpiderParserListener listener = createTestSpiderParserListener();
-        testSpiderParser.addSpiderParserListener(listener);
-        HttpMessage message = mock(HttpMessage.class);
         int depth = 42;
         String baseUrl = "/";
         String localUrl = "/";
         // When
-        testSpiderParser.processUrl(message, depth, localUrl, baseUrl);
+        parser.processUrl(msg, depth, localUrl, baseUrl);
         // Then
         assertThat(listener.getResourcesFound(), is(empty()));
     }
 
-    private static class TestSpiderParser extends SpiderParser {
+    protected static class TestSpiderParser extends SpiderParser {
 
         @Override
         public boolean parseResource(HttpMessage message, Source source, int depth) {

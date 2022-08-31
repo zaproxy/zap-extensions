@@ -33,18 +33,28 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
 /** Unit test for {@link SpiderHttpHeaderParser}. */
-class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils {
+class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils<SpiderHttpHeaderParser> {
 
     private static final String ROOT_PATH = "/";
     private static final int BASE_DEPTH = 0;
 
+    @Override
+    protected SpiderHttpHeaderParser createParser() {
+        try {
+            msg.setRequestHeader("GET / HTTP/1.1\r\nHost: example.com\r\n");
+            msg.setResponseHeader("HTTP/1.1 200 OK\r\n");
+        } catch (HttpMalformedHeaderException e) {
+            throw new RuntimeException(e);
+        }
+
+        return new SpiderHttpHeaderParser();
+    }
+
     @Test
     void shouldParseAnyMessage() {
         // Given
-        SpiderHttpHeaderParser headerParser = new SpiderHttpHeaderParser();
-        HttpMessage msg = createMessage();
         // When
-        boolean canParse = headerParser.canParseResource(msg, ROOT_PATH, false);
+        boolean canParse = parser.canParseResource(msg, ROOT_PATH, false);
         // Then
         assertThat(canParse, is(equalTo(true)));
     }
@@ -53,10 +63,8 @@ class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils {
     void shouldParseAnyMessageEvenIfAlreadyParsed() {
         // Given
         boolean alreadyParsed = true;
-        SpiderHttpHeaderParser headerParser = new SpiderHttpHeaderParser();
-        HttpMessage msg = createMessage();
         // When
-        boolean canParse = headerParser.canParseResource(msg, ROOT_PATH, alreadyParsed);
+        boolean canParse = parser.canParseResource(msg, ROOT_PATH, alreadyParsed);
         // Then
         assertThat(canParse, is(equalTo(true)));
     }
@@ -65,21 +73,17 @@ class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils {
     void shouldFailToParseAnUndefinedMessage() {
         // Given
         HttpMessage undefinedMessage = null;
-        SpiderHttpHeaderParser headerParser = new SpiderHttpHeaderParser();
+        SpiderHttpHeaderParser parser = new SpiderHttpHeaderParser();
         // When / Then
         assertThrows(
                 NullPointerException.class,
-                () -> headerParser.parseResource(undefinedMessage, null, BASE_DEPTH));
+                () -> parser.parseResource(undefinedMessage, null, BASE_DEPTH));
     }
 
     @Test
     void shouldNotExtractUrlIfNoUrlHeadersPresent() {
-        // Given
-        HttpMessage msg = createMessage();
-        SpiderHttpHeaderParser headerParser = new SpiderHttpHeaderParser();
-        TestSpiderParserListener listener = createAndAddTestSpiderParserListener(headerParser);
-        // When
-        boolean parsed = headerParser.parseResource(msg, null, BASE_DEPTH);
+        // Given / When
+        boolean parsed = parser.parseResource(msg, null, BASE_DEPTH);
         // Then
         assertThat(parsed, is(equalTo(false)));
         assertThat(listener.getUrlsFound(), is(empty()));
@@ -91,12 +95,9 @@ class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils {
     @ValueSource(strings = {"COntent-Location", "Refresh", "Link"})
     void shouldNotExtractUrlIfUrlHeaderIsEmpty(String header) {
         // Given
-        HttpMessage msg = createMessage();
         msg.getResponseHeader().addHeader(header, "");
-        SpiderHttpHeaderParser headerParser = new SpiderHttpHeaderParser();
-        TestSpiderParserListener listener = createAndAddTestSpiderParserListener(headerParser);
         // When
-        boolean parsed = headerParser.parseResource(msg, null, 0);
+        boolean parsed = parser.parseResource(msg, null, 0);
         // Then
         assertThat(parsed, is(equalTo(false)));
         assertThat(listener.getUrlsFound(), is(empty()));
@@ -106,14 +107,11 @@ class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils {
     void shouldExtractUrlFromContentLocationHeader() {
         // Given
         String value = "http://example.com/contentlocation";
-        HttpMessage msg = createMessage();
         // TODO Adjust once targeting next core version
         // msg.getResponseHeader().addHeader(HttpHeader.CONTENT_LOCATION, value);
         msg.getResponseHeader().addHeader("Content-Location", value);
-        SpiderHttpHeaderParser headerParser = new SpiderHttpHeaderParser();
-        TestSpiderParserListener listener = createAndAddTestSpiderParserListener(headerParser);
         // When
-        boolean parsed = headerParser.parseResource(msg, null, BASE_DEPTH);
+        boolean parsed = parser.parseResource(msg, null, BASE_DEPTH);
         // Then
         assertThat(parsed, is(equalTo(false)));
         assertThat(listener.getUrlsFound(), contains(value));
@@ -123,14 +121,11 @@ class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils {
     void shouldExtractRelativeUrlFromContentLocationHeader() {
         // Given
         String url = "/rel/redirection";
-        HttpMessage msg = createMessage();
         // TODO Adjust once targeting next core version
         // msg.getResponseHeader().addHeader(HttpHeader.CONTENT_LOCATION, url);
         msg.getResponseHeader().addHeader("Content-Location", url);
-        SpiderHttpHeaderParser headerParser = new SpiderHttpHeaderParser();
-        TestSpiderParserListener listener = createAndAddTestSpiderParserListener(headerParser);
         // When
-        boolean parsed = headerParser.parseResource(msg, null, BASE_DEPTH);
+        boolean parsed = parser.parseResource(msg, null, BASE_DEPTH);
         // Then
         assertThat(parsed, is(equalTo(false)));
         assertThat(listener.getUrlsFound(), contains("http://example.com" + url));
@@ -141,16 +136,13 @@ class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils {
         // Given
         String url1 = "http://example.com/link1";
         String url2 = "/link2";
-        HttpMessage msg = createMessage();
         msg.getResponseHeader()
                 .addHeader(
                         // TODO Adjust once targeting next core version
                         // HttpHeader.LINK,
                         "Link", "<" + url1 + ">; param1=value1; param2=\"value2\";<" + url2 + ">");
-        SpiderHttpHeaderParser headerParser = new SpiderHttpHeaderParser();
-        TestSpiderParserListener listener = createAndAddTestSpiderParserListener(headerParser);
         // When
-        boolean parsed = headerParser.parseResource(msg, null, BASE_DEPTH);
+        boolean parsed = parser.parseResource(msg, null, BASE_DEPTH);
         // Then
         assertThat(parsed, is(equalTo(false)));
         assertThat(listener.getUrlsFound(), contains(url1, "http://example.com" + url2));
@@ -166,14 +158,11 @@ class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils {
             })
     void shouldIgnoreInvalidLinkHeaders(String value) {
         // Given
-        HttpMessage msg = createMessage();
         // TODO Adjust once targeting next core version
         // msg.getResponseHeader().addHeader(HttpHeader.LINK, value);
         msg.getResponseHeader().addHeader("Link", value);
-        SpiderHttpHeaderParser headerParser = new SpiderHttpHeaderParser();
-        TestSpiderParserListener listener = createAndAddTestSpiderParserListener(headerParser);
         // When
-        boolean parsed = headerParser.parseResource(msg, null, BASE_DEPTH);
+        boolean parsed = parser.parseResource(msg, null, BASE_DEPTH);
         // Then
         assertThat(parsed, is(equalTo(false)));
         assertThat(listener.getUrlsFound(), is(empty()));
@@ -183,14 +172,11 @@ class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils {
     void shouldExtractUrlFromRefreshHeader() {
         // Given
         String url = "http://example.com/refresh";
-        HttpMessage msg = createMessage();
         // TODO Adjust once targeting next core version
         // msg.getResponseHeader().addHeader(HttpHeader.REFRESH, "999; url=" + url);
         msg.getResponseHeader().addHeader("Refresh", "999; url=" + url);
-        SpiderHttpHeaderParser headerParser = new SpiderHttpHeaderParser();
-        TestSpiderParserListener listener = createAndAddTestSpiderParserListener(headerParser);
         // When
-        boolean parsed = headerParser.parseResource(msg, null, BASE_DEPTH);
+        boolean parsed = parser.parseResource(msg, null, BASE_DEPTH);
         // Then
         assertThat(parsed, is(equalTo(false)));
         assertThat(listener.getUrlsFound(), contains(url));
@@ -200,27 +186,13 @@ class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils {
     void shouldExtractRelativeUrlFromRefreshHeader() {
         // Given
         String url = "/rel/refresh";
-        HttpMessage msg = createMessage();
         // TODO Adjust once targeting next core version
         // msg.getResponseHeader().addHeader(HttpHeader.REFRESH, "999; url=" + url);
         msg.getResponseHeader().addHeader("Refresh", "999; url=" + url);
-        SpiderHttpHeaderParser headerParser = new SpiderHttpHeaderParser();
-        TestSpiderParserListener listener = createAndAddTestSpiderParserListener(headerParser);
         // When
-        boolean parsed = headerParser.parseResource(msg, null, BASE_DEPTH);
+        boolean parsed = parser.parseResource(msg, null, BASE_DEPTH);
         // Then
         assertThat(parsed, is(equalTo(false)));
         assertThat(listener.getUrlsFound(), contains("http://example.com" + url));
-    }
-
-    private static HttpMessage createMessage() {
-        HttpMessage msg = new HttpMessage();
-        try {
-            msg.setRequestHeader("GET / HTTP/1.1\r\nHost: example.com\r\n");
-            msg.setResponseHeader("HTTP/1.1 200 OK\r\n");
-        } catch (HttpMalformedHeaderException e) {
-            throw new RuntimeException(e);
-        }
-        return msg;
     }
 }

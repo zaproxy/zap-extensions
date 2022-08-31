@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
 
 import java.nio.file.Path;
 import net.htmlparser.jericho.Source;
@@ -32,13 +33,19 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.spider.SpiderParam;
 
 /** Unit test for {@link SpiderSitemapXmlParser}. */
-class SpiderSitemapXmlParserUnitTest extends SpiderParserTestUtils {
+class SpiderSitemapXmlParserUnitTest extends SpiderParserTestUtils<SpiderSitemapXmlParser> {
 
     private static final String ROOT_PATH = "/";
     private static final int BASE_DEPTH = 0;
 
     private static final Path BASE_DIR_TEST_FILES =
             getResourcePath(SpiderSitemapXmlParserUnitTest.class, "sitemapxml");
+
+    @Override
+    protected SpiderSitemapXmlParser createParser() {
+        given(spiderOptions.isParseSitemapXml()).willReturn(true);
+        return new SpiderSitemapXmlParser(spiderOptions);
+    }
 
     @Test
     void shouldFailToCreateParserWithUndefinedSpiderOptions() {
@@ -54,9 +61,8 @@ class SpiderSitemapXmlParserUnitTest extends SpiderParserTestUtils {
     void shouldNotFailToEvaluateAnUndefinedMessage() {
         // Given
         HttpMessage undefinedMessage = null;
-        SpiderSitemapXmlParser spiderParser = createSpiderSitemapXMLParser();
         // When
-        boolean canParse = spiderParser.canParseResource(undefinedMessage, ROOT_PATH, false);
+        boolean canParse = parser.canParseResource(undefinedMessage, ROOT_PATH, false);
         // Then
         assertThat(canParse, is(equalTo(false)));
     }
@@ -65,20 +71,18 @@ class SpiderSitemapXmlParserUnitTest extends SpiderParserTestUtils {
     void shouldFailToEvaluateAnUndefinedPath() {
         // Given
         String undefinedPath = null;
-        SpiderSitemapXmlParser spiderParser = createSpiderSitemapXMLParser();
         // When / Then
         assertThrows(
                 NullPointerException.class,
-                () -> spiderParser.canParseResource(new HttpMessage(), undefinedPath, false));
+                () -> parser.canParseResource(new HttpMessage(), undefinedPath, false));
     }
 
     @Test
     void shouldParsePathThatEndsWithSitemapXml() {
         // Given
-        SpiderSitemapXmlParser spiderParser = createSpiderSitemapXMLParser();
         boolean parsed = false;
         // When
-        boolean canParse = spiderParser.canParseResource(new HttpMessage(), "/sitemap.xml", parsed);
+        boolean canParse = parser.canParseResource(new HttpMessage(), "/sitemap.xml", parsed);
         // Then
         assertThat(canParse, is(equalTo(true)));
     }
@@ -86,10 +90,9 @@ class SpiderSitemapXmlParserUnitTest extends SpiderParserTestUtils {
     @Test
     void shouldParseMessageEvenIfAlreadyParsed() {
         // Given
-        SpiderSitemapXmlParser spiderParser = createSpiderSitemapXMLParser();
         boolean parsed = true;
         // When
-        boolean canParse = spiderParser.canParseResource(new HttpMessage(), "/sitemap.xml", parsed);
+        boolean canParse = parser.canParseResource(new HttpMessage(), "/sitemap.xml", parsed);
         // Then
         assertThat(canParse, is(equalTo(true)));
     }
@@ -98,10 +101,9 @@ class SpiderSitemapXmlParserUnitTest extends SpiderParserTestUtils {
     void shouldNotParseAnUndefinedMessage() {
         // Given
         HttpMessage undefinedMessage = null;
-        SpiderSitemapXmlParser spiderParser = createSpiderSitemapXMLParser();
         // When
         boolean completelyParsed =
-                spiderParser.parseResource(undefinedMessage, new Source(""), BASE_DEPTH);
+                parser.parseResource(undefinedMessage, new Source(""), BASE_DEPTH);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
     }
@@ -110,10 +112,9 @@ class SpiderSitemapXmlParserUnitTest extends SpiderParserTestUtils {
     void shouldNotRequireSourceToParseMessage() {
         // Given
         Source undefinedSource = null;
-        SpiderSitemapXmlParser spiderParser = createSpiderSitemapXMLParser();
-        HttpMessage message = createMessageWith("NoUrlsSitemap.xml");
+        messageWith("NoUrlsSitemap.xml");
         // When
-        boolean completelyParsed = spiderParser.parseResource(message, undefinedSource, BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(msg, undefinedSource, BASE_DEPTH);
         // Then
         assertThat(completelyParsed, is(equalTo(true)));
     }
@@ -121,12 +122,10 @@ class SpiderSitemapXmlParserUnitTest extends SpiderParserTestUtils {
     @Test
     void shouldNotParseMessageIfParseOfSitemapXmlIsDisabled() {
         // Given
-        SpiderParam params = createSpiderParamWithConfig();
-        params.setParseSitemapXml(false);
-        SpiderSitemapXmlParser spiderParser = new SpiderSitemapXmlParser(params);
-        HttpMessage message = createMessageWith("NoUrlsSitemap.xml");
+        messageWith("NoUrlsSitemap.xml");
+        given(spiderOptions.isParseSitemapXml()).willReturn(false);
         // When
-        boolean completelyParsed = spiderParser.parseResource(message, null, BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(msg, null, BASE_DEPTH);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
     }
@@ -134,10 +133,9 @@ class SpiderSitemapXmlParserUnitTest extends SpiderParserTestUtils {
     @Test
     void shouldNotParseNonXmlMessage() {
         // Given
-        SpiderSitemapXmlParser spiderParser = createSpiderSitemapXMLParser();
-        HttpMessage message = createMessageWith("text/html", "NoUrlsSitemap.xml");
+        messageWith("text/html", "NoUrlsSitemap.xml");
         // When
-        boolean completelyParsed = spiderParser.parseResource(message, null, BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(msg, null, BASE_DEPTH);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
     }
@@ -145,10 +143,9 @@ class SpiderSitemapXmlParserUnitTest extends SpiderParserTestUtils {
     @Test
     void shouldNotParseXmlMessageIfClientError() {
         // Given
-        SpiderSitemapXmlParser spiderParser = createSpiderSitemapXMLParser();
-        HttpMessage message = createMessageWith("404 Not Found", "text/xml", "NoUrlsSitemap.xml");
+        messageWith("404 Not Found", "text/xml", "NoUrlsSitemap.xml");
         // When
-        boolean completelyParsed = spiderParser.parseResource(message, null, BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(msg, null, BASE_DEPTH);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
     }
@@ -156,11 +153,9 @@ class SpiderSitemapXmlParserUnitTest extends SpiderParserTestUtils {
     @Test
     void shouldNotParseXmlMessageIfServerError() {
         // Given
-        SpiderSitemapXmlParser spiderParser = createSpiderSitemapXMLParser();
-        HttpMessage message =
-                createMessageWith("500 Internal Server Error", "text/xml", "NoUrlsSitemap.xml");
+        messageWith("500 Internal Server Error", "text/xml", "NoUrlsSitemap.xml");
         // When
-        boolean completelyParsed = spiderParser.parseResource(message, null, BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(msg, null, BASE_DEPTH);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
     }
@@ -168,10 +163,9 @@ class SpiderSitemapXmlParserUnitTest extends SpiderParserTestUtils {
     @Test
     void shouldNotParseEmptyXmlMessage() {
         // Given
-        SpiderSitemapXmlParser spiderParser = createSpiderSitemapXMLParser();
-        HttpMessage message = createMessageWith("EmptyFile.xml");
+        messageWith("EmptyFile.xml");
         // When
-        boolean completelyParsed = spiderParser.parseResource(message, null, BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(msg, null, BASE_DEPTH);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
     }
@@ -179,10 +173,9 @@ class SpiderSitemapXmlParserUnitTest extends SpiderParserTestUtils {
     @Test
     void shouldNotParseMalformedXmlMessage() {
         // Given
-        SpiderSitemapXmlParser spiderParser = createSpiderSitemapXMLParser();
-        HttpMessage message = createMessageWith("MalformedSitemap.xml");
+        messageWith("MalformedSitemap.xml");
         // When
-        boolean completelyParsed = spiderParser.parseResource(message, null, BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(msg, null, BASE_DEPTH);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
     }
@@ -190,10 +183,9 @@ class SpiderSitemapXmlParserUnitTest extends SpiderParserTestUtils {
     @Test
     void shouldNotParseXmlMessageWithDoctype() {
         // Given
-        SpiderSitemapXmlParser spiderParser = createSpiderSitemapXMLParser();
-        HttpMessage message = createMessageWith("DoctypeSitemap.xml");
+        messageWith("DoctypeSitemap.xml");
         // When
-        boolean completelyParsed = spiderParser.parseResource(message, null, BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(msg, null, BASE_DEPTH);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
     }
@@ -201,12 +193,9 @@ class SpiderSitemapXmlParserUnitTest extends SpiderParserTestUtils {
     @Test
     void shouldNotFindUrlsIfNoneDefinedInSitemap() {
         // Given
-        SpiderSitemapXmlParser spiderParser = createSpiderSitemapXMLParser();
-        TestSpiderParserListener listener = createTestSpiderParserListener();
-        spiderParser.addSpiderParserListener(listener);
-        HttpMessage message = createMessageWith("NoUrlsSitemap.xml");
+        messageWith("NoUrlsSitemap.xml");
         // When
-        boolean completelyParsed = spiderParser.parseResource(message, null, BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(msg, null, BASE_DEPTH);
         // Then
         assertThat(completelyParsed, is(equalTo(true)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(0)));
@@ -215,12 +204,9 @@ class SpiderSitemapXmlParserUnitTest extends SpiderParserTestUtils {
     @Test
     void shouldNotFindUrlsIfUrlHasNoLocationIsEmptyInSitemap() {
         // Given
-        SpiderSitemapXmlParser spiderParser = createSpiderSitemapXMLParser();
-        TestSpiderParserListener listener = createTestSpiderParserListener();
-        spiderParser.addSpiderParserListener(listener);
-        HttpMessage message = createMessageWith("UrlNoLocationSitemap.xml");
+        messageWith("UrlNoLocationSitemap.xml");
         // When
-        boolean completelyParsed = spiderParser.parseResource(message, null, BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(msg, null, BASE_DEPTH);
         // Then
         assertThat(completelyParsed, is(equalTo(true)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(0)));
@@ -229,12 +215,9 @@ class SpiderSitemapXmlParserUnitTest extends SpiderParserTestUtils {
     @Test
     void shouldNotFindUrlsIfUrlLocationIsEmptyInSitemap() {
         // Given
-        SpiderSitemapXmlParser spiderParser = createSpiderSitemapXMLParser();
-        TestSpiderParserListener listener = createTestSpiderParserListener();
-        spiderParser.addSpiderParserListener(listener);
-        HttpMessage message = createMessageWith("UrlEmptyLocationSitemap.xml");
+        messageWith("UrlEmptyLocationSitemap.xml");
         // When
-        boolean completelyParsed = spiderParser.parseResource(message, null, BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(msg, null, BASE_DEPTH);
         // Then
         assertThat(completelyParsed, is(equalTo(true)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(0)));
@@ -243,12 +226,9 @@ class SpiderSitemapXmlParserUnitTest extends SpiderParserTestUtils {
     @Test
     void shouldFindUrlsInValidSitemapXml() throws Exception {
         // Given
-        SpiderSitemapXmlParser spiderParser = createSpiderSitemapXMLParser();
-        TestSpiderParserListener listener = createTestSpiderParserListener();
-        spiderParser.addSpiderParserListener(listener);
-        HttpMessage message = createMessageWith("MultipleUrlsSitemap.xml");
+        messageWith("MultipleUrlsSitemap.xml");
         // When
-        boolean completelyParsed = spiderParser.parseResource(message, null, BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(msg, null, BASE_DEPTH);
         // Then
         assertThat(completelyParsed, is(equalTo(true)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(5)));
@@ -262,27 +242,19 @@ class SpiderSitemapXmlParserUnitTest extends SpiderParserTestUtils {
                         "http://www.example.com/%C7"));
     }
 
-    private static SpiderSitemapXmlParser createSpiderSitemapXMLParser() {
-        SpiderParam params = createSpiderParamWithConfig();
-        params.setParseSitemapXml(true);
-        return new SpiderSitemapXmlParser(params);
+    private void messageWith(String filename) {
+        messageWith("text/xml", filename);
     }
 
-    private static HttpMessage createMessageWith(String filename) {
-        return createMessageWith("text/xml", filename);
+    private void messageWith(String contentType, String filename) {
+        messageWith("200 OK", contentType, filename);
     }
 
-    private static HttpMessage createMessageWith(String contentType, String filename) {
-        return createMessageWith("200 OK", contentType, filename);
-    }
-
-    private static HttpMessage createMessageWith(
-            String statusCodeMessage, String contentType, String filename) {
-        HttpMessage message = new HttpMessage();
+    private void messageWith(String statusCodeMessage, String contentType, String filename) {
         try {
             String fileContents = readFile(BASE_DIR_TEST_FILES.resolve(filename));
-            message.setRequestHeader("GET / HTTP/1.1\r\nHost: example.com\r\n");
-            message.setResponseHeader(
+            msg.setRequestHeader("GET / HTTP/1.1\r\nHost: example.com\r\n");
+            msg.setResponseHeader(
                     "HTTP/1.1 "
                             + statusCodeMessage
                             + "\r\n"
@@ -291,10 +263,9 @@ class SpiderSitemapXmlParserUnitTest extends SpiderParserTestUtils {
                             + "; charset=UTF-8\r\n"
                             + "Content-Length: "
                             + fileContents.length());
-            message.setResponseBody(fileContents);
+            msg.setResponseBody(fileContents);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return message;
     }
 }
