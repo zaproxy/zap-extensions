@@ -125,6 +125,20 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
 
     public void showDialog() {}
 
+    /**
+     * Called when the plan is started - can be used by jobs to save state if necessary.
+     *
+     * @see #planFinished
+     */
+    public void planStarted() {}
+
+    /**
+     * Called when the plan is finished - can be used by jobs to revert state if necessary.
+     *
+     * @see #planStarted
+     */
+    public void planFinished() {}
+
     public abstract void runJob(AutomationEnvironment env, AutomationProgress progress);
 
     public abstract String getType();

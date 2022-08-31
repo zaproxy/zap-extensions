@@ -47,6 +47,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationJob.Order;
+import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.pscan.PassiveScanParam;
@@ -166,6 +167,41 @@ class PassiveScanConfigJobUnitTest {
         assertThat(psp.isScanOnlyInScope(), is(equalTo(true)));
         assertThat(psp.getMaxBodySizeInBytesToScan(), is(equalTo(1000)));
         assertThat(job.getParameters().getEnableTags(), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldResetParameters() {
+        // Given
+        String yamlStr =
+                "parameters:\n"
+                        + "  maxAlertsPerRule: 2\n"
+                        + "  scanOnlyInScope: true\n"
+                        + "  maxBodySizeInBytesToScan: 1000";
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        PassiveScanConfigJob job = new PassiveScanConfigJob();
+        job.setPlan(mock(AutomationPlan.class));
+        PassiveScanParam psp = (PassiveScanParam) JobUtils.getJobOptions(job, progress);
+        psp.load(new ZapXmlConfiguration());
+        psp.setMaxBodySizeInBytesToScan(200);
+        psp.setScanOnlyInScope(false);
+        psp.setMaxAlertsPerRule(8);
+
+        // When
+        job.planStarted();
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
+        job.planFinished();
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(psp.getMaxAlertsPerRule(), is(equalTo(8)));
+        assertThat(psp.isScanOnlyInScope(), is(equalTo(false)));
+        assertThat(psp.getMaxBodySizeInBytesToScan(), is(equalTo(200)));
     }
 
     @Test

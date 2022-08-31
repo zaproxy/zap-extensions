@@ -32,6 +32,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.logging.log4j.LogManager;
@@ -339,12 +340,19 @@ public class JobUtils {
             Method[] methods = srcObject.getClass().getMethods();
             for (Method m : methods) {
                 String getterName = m.getName();
-                if (getterName.startsWith("get")
+
+                if ((getterName.startsWith("get") || getterName.startsWith("is"))
                         && m.getParameterCount() == 0
                         && !getterName.equals("getClass")
                         && !ignoreList.contains(getterName)) {
                     // Its a getter so process it
-                    String setterName = "s" + getterName.substring(1);
+                    String setterName;
+                    if (getterName.startsWith("get")) {
+                        setterName = "s" + getterName.substring(1);
+                    } else {
+                        // is...
+                        setterName = "set" + getterName.substring(2);
+                    }
                     try {
                         Object value = m.invoke(srcObject);
                         if (value == null) {
@@ -352,11 +360,25 @@ public class JobUtils {
                         }
 
                         Method setterMethod = null;
+                        Class<?> returnType = m.getReturnType();
                         try {
-                            setterMethod =
-                                    destObject.getClass().getMethod(setterName, m.getReturnType());
+                            setterMethod = destObject.getClass().getMethod(setterName, returnType);
                         } catch (Exception e) {
                             // Ignore
+                        }
+                        if (setterMethod == null) {
+                            try {
+                                if (returnType.isPrimitive()) {
+                                    returnType = ClassUtils.primitiveToWrapper(returnType);
+                                } else {
+                                    returnType = ClassUtils.wrapperToPrimitive(returnType);
+                                }
+
+                                setterMethod =
+                                        destObject.getClass().getMethod(setterName, returnType);
+                            } catch (Exception e) {
+                                // Ignore
+                            }
                         }
                         if (setterMethod == null) {
                             Class<?> c = toBaseClass(m.getReturnType());
