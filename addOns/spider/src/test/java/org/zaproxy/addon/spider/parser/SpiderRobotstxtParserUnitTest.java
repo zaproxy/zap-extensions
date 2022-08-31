@@ -26,17 +26,24 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
 
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.spider.SpiderParam;
 
 /** Unit test for {@link SpiderRobotstxtParser}. */
-class SpiderRobotstxtParserUnitTest extends SpiderParserTestUtils {
+class SpiderRobotstxtParserUnitTest extends SpiderParserTestUtils<SpiderRobotstxtParser> {
 
     private static final String ROOT_PATH = "/";
     private static final String ROBOTS_TXT_PATH = "/robots.txt";
     private static final int BASE_DEPTH = 0;
+
+    @Override
+    protected SpiderRobotstxtParser createParser() {
+        given(spiderOptions.isParseRobotsTxt()).willReturn(true);
+        return new SpiderRobotstxtParser(spiderOptions);
+    }
 
     @Test
     void shouldRequireNonNullSpiderParam() {
@@ -50,17 +57,15 @@ class SpiderRobotstxtParserUnitTest extends SpiderParserTestUtils {
     void shouldNotFailToEvaluateAnUndefinedPath() {
         // Given
         String path = null;
-        SpiderRobotstxtParser spiderParser = new SpiderRobotstxtParser(new SpiderParam());
         // When / Then
-        assertDoesNotThrow(() -> spiderParser.canParseResource(null, path, false));
+        assertDoesNotThrow(() -> parser.canParseResource(null, path, false));
     }
 
     @Test
     void shouldParseRobotsTxtPath() {
         // Given
-        SpiderRobotstxtParser spiderParser = new SpiderRobotstxtParser(new SpiderParam());
         // When
-        boolean canParse = spiderParser.canParseResource(null, ROBOTS_TXT_PATH, false);
+        boolean canParse = parser.canParseResource(null, ROBOTS_TXT_PATH, false);
         // Then
         assertThat(canParse, is(equalTo(true)));
     }
@@ -68,9 +73,8 @@ class SpiderRobotstxtParserUnitTest extends SpiderParserTestUtils {
     @Test
     void shouldParseRobotsTxtPathWithDifferentCase() {
         // Given
-        SpiderRobotstxtParser spiderParser = new SpiderRobotstxtParser(new SpiderParam());
         // When
-        boolean canParse = spiderParser.canParseResource(null, "/RoBoTs.TxT", false);
+        boolean canParse = parser.canParseResource(null, "/RoBoTs.TxT", false);
         // Then
         assertThat(canParse, is(equalTo(true)));
     }
@@ -78,20 +82,17 @@ class SpiderRobotstxtParserUnitTest extends SpiderParserTestUtils {
     @Test
     void shouldParseRobotsTxtPathEvenIfAlreadyParsed() {
         // Given
-        SpiderRobotstxtParser spiderParser = new SpiderRobotstxtParser(new SpiderParam());
         boolean parsed = true;
         // When
-        boolean canParse = spiderParser.canParseResource(null, ROBOTS_TXT_PATH, parsed);
+        boolean canParse = parser.canParseResource(null, ROBOTS_TXT_PATH, parsed);
         // Then
         assertThat(canParse, is(equalTo(true)));
     }
 
     @Test
     void shouldNotParseNonRobotsTxtPath() {
-        // Given
-        SpiderRobotstxtParser spiderParser = new SpiderRobotstxtParser(new SpiderParam());
-        // When
-        boolean canParse = spiderParser.canParseResource(null, ROOT_PATH, false);
+        // Given / When
+        boolean canParse = parser.canParseResource(null, ROOT_PATH, false);
         // Then
         assertThat(canParse, is(equalTo(false)));
     }
@@ -100,22 +101,19 @@ class SpiderRobotstxtParserUnitTest extends SpiderParserTestUtils {
     void shouldFailToParseAnUndefinedMessage() {
         // Given
         HttpMessage undefinedMessage = null;
-        SpiderRobotstxtParser spiderParser = new SpiderRobotstxtParser(new SpiderParam());
         // When / Then
         assertThrows(
                 NullPointerException.class,
-                () -> spiderParser.parseResource(undefinedMessage, null, BASE_DEPTH));
+                () -> parser.parseResource(undefinedMessage, null, BASE_DEPTH));
     }
 
     @Test
     void shouldNotBeCompletelyParsedIfParseDisabled() {
         // Given
-        SpiderParam spiderParam = createSpiderParamWithConfig();
-        spiderParam.setParseRobotsTxt(false);
-        SpiderRobotstxtParser spiderParser = new SpiderRobotstxtParser(spiderParam);
-        HttpMessage message = createMessageWith("");
+        messageWith("");
+        given(spiderOptions.isParseRobotsTxt()).willReturn(false);
         // When
-        boolean completelyParsed = spiderParser.parseResource(message, null, BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(msg, null, BASE_DEPTH);
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
     }
@@ -123,10 +121,9 @@ class SpiderRobotstxtParserUnitTest extends SpiderParserTestUtils {
     @Test
     void shouldBeAlwaysCompletelyParsedIfParseEnabled() {
         // Given
-        SpiderRobotstxtParser spiderParser = new SpiderRobotstxtParser(new SpiderParam());
-        HttpMessage message = createMessageWith("");
+        messageWith("");
         // When
-        boolean completelyParsed = spiderParser.parseResource(message, null, BASE_DEPTH);
+        boolean completelyParsed = parser.parseResource(msg, null, BASE_DEPTH);
         // Then
         assertThat(completelyParsed, is(equalTo(true)));
     }
@@ -134,23 +131,19 @@ class SpiderRobotstxtParserUnitTest extends SpiderParserTestUtils {
     @Test
     void shouldNotFindUrlsIfThereIsNone() {
         // Given
-        SpiderRobotstxtParser spiderParser = new SpiderRobotstxtParser(new SpiderParam());
-        TestSpiderParserListener listener = createTestSpiderParserListener();
-        spiderParser.addSpiderParserListener(listener);
-        HttpMessage message =
-                createMessageWith(
-                        body(
-                                "# Just Comments & User-Agents...",
-                                "User-Agent: *",
-                                "# Disallow: /x/y/z",
-                                "User-Agent: bot",
-                                "<pre>",
-                                "# Allow: /a/b/c",
-                                "",
-                                "# ...",
-                                "Allow:   # no path"));
+        messageWith(
+                body(
+                        "# Just Comments & User-Agents...",
+                        "User-Agent: *",
+                        "# Disallow: /x/y/z",
+                        "User-Agent: bot",
+                        "<pre>",
+                        "# Allow: /a/b/c",
+                        "",
+                        "# ...",
+                        "Allow:   # no path"));
         // When
-        spiderParser.parseResource(message, null, BASE_DEPTH);
+        parser.parseResource(msg, null, BASE_DEPTH);
         // Then
         assertThat(listener.getUrlsFound(), is(empty()));
     }
@@ -158,22 +151,18 @@ class SpiderRobotstxtParserUnitTest extends SpiderParserTestUtils {
     @Test
     void shouldFindUrls() {
         // Given
-        SpiderRobotstxtParser spiderParser = new SpiderRobotstxtParser(new SpiderParam());
-        TestSpiderParserListener listener = createTestSpiderParserListener();
-        spiderParser.addSpiderParserListener(listener);
-        HttpMessage messageHtmlResponse =
-                createMessageWith(
-                        body(
-                                "User-Agent: *",
-                                "Disallow: /x/y/z    # Comment",
-                                " User-Agent: bot     # Comment",
-                                "Allow: /a/b/c.html",
-                                "<pre> Allow: /nohtmltags/",
-                                "  Allow:    /%  ",
-                                "Allow: /%20file.txt",
-                                "Allow: /abc/*"));
+        messageWith(
+                body(
+                        "User-Agent: *",
+                        "Disallow: /x/y/z    # Comment",
+                        " User-Agent: bot     # Comment",
+                        "Allow: /a/b/c.html",
+                        "<pre> Allow: /nohtmltags/",
+                        "  Allow:    /%  ",
+                        "Allow: /%20file.txt",
+                        "Allow: /abc/*"));
         // When
-        spiderParser.parseResource(messageHtmlResponse, null, BASE_DEPTH);
+        parser.parseResource(msg, null, BASE_DEPTH);
         // Then
         assertThat(
                 listener.getUrlsFound(),
@@ -186,16 +175,14 @@ class SpiderRobotstxtParserUnitTest extends SpiderParserTestUtils {
                         "http://example.com/abc/"));
     }
 
-    private static HttpMessage createMessageWith(String body) {
-        HttpMessage message = new HttpMessage();
+    private void messageWith(String body) {
         try {
-            message.setRequestHeader("GET / HTTP/1.1\r\nHost: example.com\r\n");
-            message.setResponseHeader("HTTP/1.1 200 OK\r\nContent-Length: " + body.length());
-            message.setResponseBody(body);
+            msg.setRequestHeader("GET / HTTP/1.1\r\nHost: example.com\r\n");
+            msg.setResponseHeader("HTTP/1.1 200 OK\r\nContent-Length: " + body.length());
+            msg.setResponseBody(body);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return message;
     }
 
     private static String body(String... strings) {
