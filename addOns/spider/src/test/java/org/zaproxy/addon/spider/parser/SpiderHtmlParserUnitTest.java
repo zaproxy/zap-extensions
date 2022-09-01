@@ -40,7 +40,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
 
     @Override
     protected SpiderHtmlParser createParser() {
-        given(spiderOptions.isParseComments()).willReturn(false);
+        given(spiderOptions.isParseComments()).willReturn(true);
         return new SpiderHtmlParser();
     }
 
@@ -657,7 +657,6 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // AKA shouldNotFindPlainUrlsInCommentsWithElements
         // Given
         messageWith("CommentWithElementsSpiderHtmlParser.html");
-        given(spiderOptions.isParseComments()).willReturn(true);
         // When
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
@@ -680,6 +679,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
     @Test
     void shouldNotFindUrlsInCommentsWithElementsIfNotEnabledToParseComments() {
         // Given
+        given(spiderOptions.isParseComments()).willReturn(false);
         messageWith("CommentWithElementsSpiderHtmlParser.html");
         // When
         boolean completelyParsed = parser.parseResource(ctx);
@@ -693,7 +693,6 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
     void shouldFindUrlsInCommentsWithoutElements() {
         // Given
         messageWith("CommentWithoutElementsSpiderHtmlParser.html");
-        given(spiderOptions.isParseComments()).willReturn(true);
         // When
         boolean completelyParsed = parser.parseResource(ctx);
         // Then
@@ -717,6 +716,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
     @Test
     void shouldNotFindUrlsInCommentsWithoutElementsIfNotEnabledToParseComments() {
         // Given
+        given(spiderOptions.isParseComments()).willReturn(false);
         messageWith("CommentWithoutElementsSpiderHtmlParser.html");
         // When
         boolean completelyParsed = parser.parseResource(ctx);
@@ -738,6 +738,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
             })
     void shouldFindUrlInFile(String file) {
         // Given
+        given(spiderOptions.isParseComments()).willReturn(false);
         messageWith(file);
         // When
         boolean completelyParsed = parser.parseResource(ctx);

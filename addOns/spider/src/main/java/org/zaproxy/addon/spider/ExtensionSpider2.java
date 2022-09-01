@@ -31,8 +31,6 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -61,7 +59,6 @@ import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController<SpiderScan> {
     public static final String NAME = "ExtensionSpider2";
-    private static final Logger LOGGER = LogManager.getLogger(ExtensionSpider2.class);
 
     static boolean coreSpiderDisabled;
 

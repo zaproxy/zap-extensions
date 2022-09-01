@@ -28,7 +28,6 @@ import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import net.htmlparser.jericho.StartTag;
 import net.htmlparser.jericho.StartTagType;
-import org.parosproxy.paros.network.HttpMessage;
 
 /**
  * The Class SpiderHtmlParser is used for parsing of HTML files, gathering resource urls from them.
@@ -86,7 +85,6 @@ public class SpiderHtmlParser extends SpiderParser {
     public boolean parseResource(ParseContext ctx) {
 
         Source source = ctx.getSource();
-        HttpMessage message = ctx.getHttpMessage();
 
         // Get the context (base URL)
         String baseURL = ctx.getBaseUrl();
@@ -103,14 +101,14 @@ public class SpiderHtmlParser extends SpiderParser {
         }
 
         // Parse the source
-        parseSource(ctx, baseURL);
+        parseSource(ctx, ctx.getSource(), baseURL);
 
         // Parse the comments
         if (ctx.getSpiderParam().isParseComments()) {
             List<StartTag> comments = source.getAllStartTags(StartTagType.COMMENT);
             for (StartTag comment : comments) {
                 Source s = new Source(comment.getTagContent());
-                if (!parseSource(ctx, baseURL)) {
+                if (!parseSource(ctx, s, baseURL)) {
                     Matcher matcher = PLAIN_COMMENTS_URL_PATTERN.matcher(s.toString());
                     while (matcher.find()) {
                         processUrl(ctx, matcher.group(), baseURL);
@@ -151,13 +149,13 @@ public class SpiderHtmlParser extends SpiderParser {
      * Parses the HTML Jericho source for the elements that contain references to other resources.
      *
      * @param ctx the parse context.
+     * @param source the source.
      * @param baseURL the base URL
      * @return {@code true} if at least one URL was found, {@code false} otherwise.
      */
-    private boolean parseSource(ParseContext ctx, String baseURL) {
+    private boolean parseSource(ParseContext ctx, Source source, String baseURL) {
         getLogger().debug("Parsing an HTML message...");
         boolean resourcesfound = false;
-        Source source = ctx.getSource();
         // Process A elements
         List<Element> elements = source.getAllElements(HTMLElementName.A);
         for (Element el : elements) {
