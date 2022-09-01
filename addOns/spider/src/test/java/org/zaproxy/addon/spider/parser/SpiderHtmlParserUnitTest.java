@@ -756,7 +756,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(
                 listener.getUrlsFound(),
                 contains(
-                        "http://example.com/sample/",
+                        "http://example.com/from/base/tag/",
                         "http://a.example.com/",
                         "http://area.example.com/",
                         "http://frame.example.com/",
@@ -778,7 +778,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
-        assertThat(listener.getUrlsFound(), contains("http://example.com/sample/"));
+        assertThat(listener.getUrlsFound(), contains("http://example.com/from/base/tag/"));
     }
 
     @Test
@@ -793,7 +793,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(
                 listener.getUrlsFound(),
                 contains(
-                        "http://example.com/sample/",
+                        "http://example.com/from/base/tag/",
                         "http://plaincomment.example.com/",
                         "http://plaincomment.example.com/z.php?x=y",
                         "http://plaincomment.example.com/c.pl?x=y",
@@ -816,7 +816,7 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         // Then
         assertThat(completelyParsed, is(equalTo(false)));
         assertThat(listener.getNumberOfUrlsFound(), is(equalTo(1)));
-        assertThat(listener.getUrlsFound(), contains("http://example.com/sample/"));
+        assertThat(listener.getUrlsFound(), contains("http://example.com/from/base/tag/"));
     }
 
     @ParameterizedTest
