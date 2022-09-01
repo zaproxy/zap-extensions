@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URIException;
@@ -55,17 +56,6 @@ public final class UrlCanonicalizer {
 
     private static final String HTTPS_SCHEME = "https";
     private static final int HTTPS_DEFAULT_PORT = 443;
-
-    /**
-     * The Constant IRRELEVANT_PARAMETERS defining the parameter names which are ignored in the URL.
-     */
-    private static final Set<String> IRRELEVANT_PARAMETERS = new HashSet<>(3);
-
-    static {
-        IRRELEVANT_PARAMETERS.add("jsessionid");
-        IRRELEVANT_PARAMETERS.add("phpsessid");
-        IRRELEVANT_PARAMETERS.add("aspsessionid");
-    }
 
     /**
      * OData support Extract the ID of a resource including the surrounding quote First group is the
@@ -160,7 +150,8 @@ public final class UrlCanonicalizer {
             final SortedSet<QueryParameter> params =
                     createSortedParameters(canonicalURI.getRawQuery());
             final String queryString;
-            String canonicalParams = canonicalize(params);
+            String canonicalParams =
+                    canonicalize(params, ctx.getSpiderParam()::isIrrelevantUrlParameter);
             queryString = (canonicalParams.isEmpty() ? "" : "?" + canonicalParams);
 
             /* Add starting slash if needed */
@@ -207,11 +198,19 @@ public final class UrlCanonicalizer {
                 || HTTPS_SCHEME.equalsIgnoreCase(scheme) && port == HTTPS_DEFAULT_PORT;
     }
 
+    static String buildCleanedParametersUriRepresentation(
+            org.apache.commons.httpclient.URI uri,
+            SpiderParam.HandleParametersOption handleParameters,
+            boolean handleODataParametersVisited)
+            throws URIException {
+        return buildCleanedParametersUriRepresentation(
+                uri, handleParameters, handleODataParametersVisited, name -> false);
+    }
     /**
      * Builds a String representation of the URI with cleaned parameters, that can be used when
      * checking if an URI was already visited. The URI provided as a parameter should be already
      * cleaned and canonicalized, so it should be build with a result from {@link
-     * #getCanonicalUrl(ParseContext, String, String)}.
+     * #getCanonicalURL(String)}.
      *
      * <p>When building the URI representation, the same format should be used for all the cases, as
      * it may affect the number of times the pages are visited and reported if the option
@@ -220,13 +219,15 @@ public final class UrlCanonicalizer {
      * @param uri the uri
      * @param handleParameters the handle parameters option
      * @param handleODataParametersVisited Should we handle specific OData parameters
+     * @param irrelevantParameter a predicate to ignore parameters.
      * @return the string representation of the URI
      * @throws URIException the URI exception
      */
-    public static String buildCleanedParametersUriRepresentation(
+    static String buildCleanedParametersUriRepresentation(
             org.apache.commons.httpclient.URI uri,
             SpiderParam.HandleParametersOption handleParameters,
-            boolean handleODataParametersVisited)
+            boolean handleODataParametersVisited,
+            Predicate<String> irrelevantParameter)
             throws URIException {
         // If the option is set to use all the information, just use the default string
         // representation
@@ -249,7 +250,7 @@ public final class UrlCanonicalizer {
                             createBaseUriWithCleanedPath(
                                     uri, handleParameters, handleODataParametersVisited));
 
-            String cleanedQuery = getCleanedQuery(uri.getEscapedQuery());
+            String cleanedQuery = getCleanedQuery(uri.getEscapedQuery(), irrelevantParameter);
 
             // Add the parameters' names to the uri representation.
             if (cleanedQuery.length() > 0) {
@@ -304,7 +305,8 @@ public final class UrlCanonicalizer {
         return cleanedPath;
     }
 
-    private static String getCleanedQuery(String escapedQuery) {
+    private static String getCleanedQuery(
+            String escapedQuery, Predicate<String> irrelevantParameter) {
         // Get the parameters' names
         SortedSet<QueryParameter> params = createSortedParameters(escapedQuery);
         Set<String> parameterNames = new HashSet<>();
@@ -316,8 +318,7 @@ public final class UrlCanonicalizer {
                     continue;
                 }
                 parameterNames.add(name);
-                // Ignore irrelevant parameters
-                if (IRRELEVANT_PARAMETERS.contains(name) || name.startsWith("utm_")) {
+                if (irrelevantParameter.test(name)) {
                     continue;
                 }
                 if (cleanedQueryBuilder.length() > 0) {
@@ -451,9 +452,12 @@ public final class UrlCanonicalizer {
      * Canonicalize the query string.
      *
      * @param sortedParameters Parameter name-value pairs in lexicographical order.
+     * @param irrelevantParameter url parameters that are skipped
      * @return Canonical form of query string.
      */
-    private static String canonicalize(final SortedSet<QueryParameter> sortedParameters) {
+    private static String canonicalize(
+            final SortedSet<QueryParameter> sortedParameters,
+            Predicate<String> irrelevantParameter) {
         if (sortedParameters == null || sortedParameters.isEmpty()) {
             return "";
         }
@@ -461,8 +465,7 @@ public final class UrlCanonicalizer {
         final StringBuilder sb = new StringBuilder(100);
         for (QueryParameter parameter : sortedParameters) {
             final String name = parameter.getName().toLowerCase();
-            // Ignore irrelevant parameters
-            if (IRRELEVANT_PARAMETERS.contains(name) || name.startsWith("utm_")) {
+            if (irrelevantParameter.test(name)) {
                 continue;
             }
             if (sb.length() > 0) {

@@ -46,6 +46,7 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.spider.SpiderParam.HandleParametersOption;
+import org.zaproxy.addon.spider.internal.ui.IrrelevantParametersMultipleOptionsPanel;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTablePanel;
 import org.zaproxy.zap.view.LayoutHelper;
@@ -81,6 +82,7 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
     private JCheckBox chkAcceptCookies;
     private DomainsAlwaysInScopeMultipleOptionsPanel domainsAlwaysInScopePanel;
     private DomainsAlwaysInScopeTableModel domainsAlwaysInScopeTableModel;
+    private IrrelevantParametersMultipleOptionsPanel irrelevantQueryParametersPanel;
 
     private JComboBox<HandleParametersOption> handleParameters;
 
@@ -182,6 +184,17 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
             innerPanel.add(getChkParseGit(), gbc);
             innerPanel.add(getHandleODataSpecificParameters(), gbc);
 
+            innerPanel.add(
+                    new JLabel(
+                            Constant.messages.getString(
+                                    "spider.options.label.irrelevantparameters")),
+                    gbc);
+            gbc.fill = GridBagConstraints.BOTH;
+            gbc.weighty = 1.0D;
+            innerPanel.add(getIrrelevantQueryParametersPanel(), gbc);
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.weighty = 0;
+
             JScrollPane scrollPane = new JScrollPane(innerPanel);
             scrollPane.setBorder(BorderFactory.createEmptyBorder());
 
@@ -203,7 +216,7 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
         getDomainsAlwaysInScopeTableModel()
                 .setDomainsAlwaysInScope(param.getDomainsAlwaysInScope());
         getDomainsAlwaysInScopePanel()
-                .setRemoveWithoutConfirmation(param.isConfirmRemoveDomainAlwaysInScope());
+                .setRemoveWithoutConfirmation(!param.isConfirmRemoveDomainAlwaysInScope());
         getChkProcessForm().setSelected(param.isProcessForm());
         getChkSendRefererHeader().setSelected(param.isSendRefererHeader());
         getChkAcceptCookies().setSelected(param.isAcceptCookies());
@@ -215,6 +228,10 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
         getChkParseGit().setSelected(param.isParseGit());
         getComboHandleParameters().setSelectedItem(param.getHandleParameters());
         getHandleODataSpecificParameters().setSelected(param.isHandleODataParametersVisited());
+        getIrrelevantQueryParametersPanel()
+                .setIrrelevantParameters(param.getIrrelevantParameters());
+        getIrrelevantQueryParametersPanel()
+                .setRemoveWithoutConfirmation(!param.isConfirmRemoveIrrelevantParameter());
     }
 
     @Override
@@ -229,7 +246,7 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
         param.setDomainsAlwaysInScope(
                 getDomainsAlwaysInScopeTableModel().getDomainsAlwaysInScope());
         param.setConfirmRemoveDomainAlwaysInScope(
-                getDomainsAlwaysInScopePanel().isRemoveWithoutConfirmation());
+                !getDomainsAlwaysInScopePanel().isRemoveWithoutConfirmation());
         param.setSendRefererHeader(getChkSendRefererHeader().isSelected());
         param.setAcceptCookies(getChkAcceptCookies().isSelected());
         param.setProcessForm(getChkProcessForm().isSelected());
@@ -242,6 +259,10 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
         param.setHandleParameters(
                 (HandleParametersOption) getComboHandleParameters().getSelectedItem());
         param.setHandleODataParametersVisited(getHandleODataSpecificParameters().isSelected());
+        param.setIrrelevantParameters(
+                getIrrelevantQueryParametersPanel().getIrrelevantParameters());
+        param.setConfirmRemoveIrrelevantParameter(
+                !getIrrelevantQueryParametersPanel().isRemoveWithoutConfirmation());
     }
 
     /**
@@ -473,6 +494,13 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
             domainsAlwaysInScopeTableModel = new DomainsAlwaysInScopeTableModel();
         }
         return domainsAlwaysInScopeTableModel;
+    }
+
+    private IrrelevantParametersMultipleOptionsPanel getIrrelevantQueryParametersPanel() {
+        if (irrelevantQueryParametersPanel == null) {
+            irrelevantQueryParametersPanel = new IrrelevantParametersMultipleOptionsPanel();
+        }
+        return irrelevantQueryParametersPanel;
     }
 
     /** A renderer for properly displaying the name of the HandleParametersOptions in a ComboBox. */
