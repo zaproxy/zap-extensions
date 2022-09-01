@@ -29,10 +29,14 @@
 									<param th:text="${instance.param}"></param>
 									<attack th:text="${instance.attack}"></attack>
 									<evidence th:text="${instance.evidence}"></evidence>
-									<requestheader th:text="${helper.legacyEscapeText(instance.message.requestHeader, true)}"></requestheader>
-									<requestbody th:text="${helper.legacyEscapeText(instance.message.requestBody, true)}"></requestbody>
-									<responseheader th:text="${helper.legacyEscapeText(instance.message.responseHeader, true)}"></responseheader>
-									<responsebody th:text="${helper.legacyEscapeText(instance.message.responseBody, true)}"></responsebody>
+									<requestheader
+										th:text="${helper.legacyEscapeText(instance.message.requestHeader, true)}"></requestheader>
+									<requestbody
+										th:text="${helper.legacyEscapeText(instance.message.requestBody, true)}"></requestbody>
+									<responseheader
+										th:text="${helper.legacyEscapeText(instance.message.responseHeader, true)}"></responseheader>
+									<responsebody
+										th:text="${helper.legacyEscapeText(instance.message.responseBody, true)}"></responsebody>
 								</instance>
 							</th:block>
 						</instances>
