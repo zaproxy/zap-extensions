@@ -22,8 +22,13 @@ package org.zaproxy.addon.spider;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Predicate;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,11 +49,15 @@ class UrlCanonicalizerUnitTest {
 
     private static final String BASE_URL = null;
 
+    private SpiderParam options;
     private ParseContext ctx;
 
     @BeforeEach
     void setup() {
         ctx = mock(ParseContext.class);
+        options = mock(SpiderParam.class);
+        given(ctx.getSpiderParam()).willReturn(options);
+        given(options.isIrrelevantUrlParameter(any())).willReturn(false);
     }
 
     @Test
@@ -546,5 +555,37 @@ class UrlCanonicalizerUnitTest {
                 UrlCanonicalizer.buildCleanedParametersUriRepresentation(
                         uri, spiderOption, true /* handleODataParametersVisited */);
         assertThat(visitedURI, is("http://host:9001/app.svc/Book(title,year)/Author"));
+    }
+
+    @Test
+    void shouldSkipIrrelevantQueryParametersWhenCanonicalizing() throws URIException {
+        // Given
+        String uri =
+                new URI("http://example.com/?name1=value1&name2=value2&name3=value3", true)
+                        .toString();
+        List<String> irrelevantParameters = Arrays.asList("name1", "name3");
+        given(options.isIrrelevantUrlParameter(any()))
+                .willAnswer(invocation -> irrelevantParameters.contains(invocation.getArgument(0)));
+        // When
+        String canonicalizedUri = UrlCanonicalizer.getCanonicalUrl(ctx, uri, null);
+        // Then
+        assertThat(canonicalizedUri, is(equalTo("http://example.com/?name2=value2")));
+    }
+
+    @Test
+    void shouldSkipIrrelevantQueryParametersWhenCleaningParametersIn_IGNORE_VALUE_mode()
+            throws URIException {
+        // Given
+        URI uri = new URI("http://example.com/?name1=value1&name2=value2&name3=value3", true);
+        Predicate<String> irrelevantParameters = Arrays.asList("name1", "name3")::contains;
+        // When
+        String cleanedUri =
+                UrlCanonicalizer.buildCleanedParametersUriRepresentation(
+                        uri,
+                        SpiderParam.HandleParametersOption.IGNORE_VALUE,
+                        false,
+                        irrelevantParameters);
+        // Then
+        assertThat(cleanedUri, is(equalTo("http://example.com/?name2")));
     }
 }

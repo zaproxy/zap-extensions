@@ -258,6 +258,7 @@ public class SpiderJob extends AutomationJob {
     public boolean isExcludeParam(String param) {
         switch (param) {
             case "confirmRemoveDomainAlwaysInScope":
+            case "confirmRemoveIrrelevantParameter":
             case "maxScansInUI":
             case "showAdvancedDialog":
             case "skipURLString":

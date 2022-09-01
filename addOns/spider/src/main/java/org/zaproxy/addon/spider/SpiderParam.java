@@ -29,8 +29,11 @@ import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
+import org.zaproxy.addon.spider.internal.IrrelevantParameter;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
+import org.zaproxy.zap.extension.httpsessions.ExtensionHttpSessions;
 
 /** The SpiderParam wraps all the parameters that are given to the spider. */
 public class SpiderParam extends VersionedAbstractParam {
@@ -108,6 +111,15 @@ public class SpiderParam extends VersionedAbstractParam {
     private static final String CONFIRM_REMOVE_DOMAIN_ALWAYS_IN_SCOPE =
             "spider.confirmRemoveDomainAlwaysInScope";
 
+    private static final String IRRELEVANT_PARAMETERS_KEY = "spider.irrelevantParameters";
+    private static final String ALL_IRRELEVANT_PARAMETERS_KEY =
+            IRRELEVANT_PARAMETERS_KEY + ".irrelevantParameter";
+    private static final String IRRELEVANT_PARAMETER_VALUE_KEY = "name";
+    private static final String IRRELEVANT_PARAMETER_REGEX_KEY = "regex";
+    private static final String IRRELEVANT_PARAMETER_ENABLED_KEY = "enabled";
+    private static final String CONFIRM_REMOVE_IRRELEVANT_PARAMETER =
+            IRRELEVANT_PARAMETERS_KEY + ".confirmRemove";
+
     private static final String MAX_SCANS_IN_UI = "spider.maxScansInUI";
 
     private static final String SHOW_ADV_DIALOG = "spider.advDialog";
@@ -134,6 +146,8 @@ public class SpiderParam extends VersionedAbstractParam {
      * @see #maxParseSizeBytes
      */
     private static final int DEFAULT_MAX_PARSE_SIZE_BYTES = 2621440; // 2.5 MiB
+
+    private ExtensionHttpSessions extensionHttpSessions;
 
     /**
      * This option is used to define how the parameters are used when checking if an URI was already
@@ -248,6 +262,10 @@ public class SpiderParam extends VersionedAbstractParam {
      */
     private int maxParseSizeBytes = DEFAULT_MAX_PARSE_SIZE_BYTES;
 
+    private List<IrrelevantParameter> irrelevantParameters;
+    private List<IrrelevantParameter> irrelevantParametersEnabled;
+    private boolean confirmRemoveIrrelevantParameter;
+
     /** Instantiates a new spider param. */
     public SpiderParam() {}
 
@@ -264,6 +282,11 @@ public class SpiderParam extends VersionedAbstractParam {
     @Override
     protected void parseImpl() {
         updateOptions();
+
+        extensionHttpSessions =
+                Control.getSingleton()
+                        .getExtensionLoader()
+                        .getExtension(ExtensionHttpSessions.class);
 
         this.threadCount = getInt(SPIDER_THREAD, 2);
 
@@ -322,13 +345,19 @@ public class SpiderParam extends VersionedAbstractParam {
         this.acceptCookies = getBoolean(SPIDER_ACCEPT_COOKIES, true);
 
         this.maxParseSizeBytes = getInt(SPIDER_MAX_PARSE_SIZE_BYTES, DEFAULT_MAX_PARSE_SIZE_BYTES);
+
+        loadIrrelevantParameters();
+        this.confirmRemoveIrrelevantParameter =
+                getBoolean(CONFIRM_REMOVE_IRRELEVANT_PARAMETER, true);
     }
 
     @Override
     protected void updateConfigsImpl(int fileVersion) {
         switch (fileVersion) {
             case NO_CONFIG_VERSION:
-                // No updates/changes needed.
+                setIrrelevantParameters(
+                        Collections.singletonList(
+                                new IrrelevantParameter(Pattern.compile("utm_.*"))));
                 break;
             default:
         }
@@ -989,5 +1018,116 @@ public class SpiderParam extends VersionedAbstractParam {
      */
     public int getMaxParseSizeBytes() {
         return maxParseSizeBytes;
+    }
+
+    public boolean isIrrelevantUrlParameter(String name) {
+        return irrelevantParametersEnabled.stream().anyMatch(e -> e.test(name))
+                || isSessionToken(name);
+    }
+
+    private boolean isSessionToken(String paramName) {
+        if (extensionHttpSessions == null) {
+            return false;
+        }
+        return extensionHttpSessions.isDefaultSessionToken(paramName);
+    }
+
+    @ZapApiIgnore
+    public List<IrrelevantParameter> getIrrelevantParameters() {
+        return irrelevantParameters;
+    }
+
+    public void setIrrelevantParameters(List<IrrelevantParameter> irrelevantParameters) {
+        if (irrelevantParameters == null || irrelevantParameters.isEmpty()) {
+            ((HierarchicalConfiguration) getConfig()).clearTree(ALL_IRRELEVANT_PARAMETERS_KEY);
+
+            this.irrelevantParameters = Collections.emptyList();
+            this.irrelevantParametersEnabled = Collections.emptyList();
+            return;
+        }
+
+        this.irrelevantParameters = new ArrayList<>(irrelevantParameters);
+
+        ((HierarchicalConfiguration) getConfig()).clearTree(ALL_IRRELEVANT_PARAMETERS_KEY);
+
+        int size = irrelevantParameters.size();
+        ArrayList<IrrelevantParameter> enabledParameters = new ArrayList<>(size);
+        for (int i = 0; i < size; ++i) {
+            String elementBaseKey = ALL_IRRELEVANT_PARAMETERS_KEY + "(" + i + ").";
+            IrrelevantParameter parameter = irrelevantParameters.get(i);
+
+            getConfig()
+                    .setProperty(
+                            elementBaseKey + IRRELEVANT_PARAMETER_VALUE_KEY, parameter.getValue());
+            getConfig()
+                    .setProperty(
+                            elementBaseKey + IRRELEVANT_PARAMETER_REGEX_KEY, parameter.isRegex());
+            getConfig()
+                    .setProperty(
+                            elementBaseKey + IRRELEVANT_PARAMETER_ENABLED_KEY,
+                            parameter.isEnabled());
+
+            if (parameter.isEnabled()) {
+                enabledParameters.add(parameter);
+            }
+        }
+
+        enabledParameters.trimToSize();
+        this.irrelevantParametersEnabled = enabledParameters;
+    }
+
+    private void loadIrrelevantParameters() {
+        List<HierarchicalConfiguration> fields =
+                ((HierarchicalConfiguration) getConfig())
+                        .configurationsAt(ALL_IRRELEVANT_PARAMETERS_KEY);
+        this.irrelevantParameters = new ArrayList<>(fields.size());
+        ArrayList<IrrelevantParameter> parametersEnabled = new ArrayList<>(fields.size());
+        for (HierarchicalConfiguration sub : fields) {
+            String value = sub.getString(IRRELEVANT_PARAMETER_VALUE_KEY, "");
+            if ("".equals(value)) {
+                log.warn("Failed to read an irrelevant parameter entry, required value is empty.");
+            }
+
+            IrrelevantParameter parameter = null;
+            boolean regex = sub.getBoolean(IRRELEVANT_PARAMETER_REGEX_KEY, false);
+            if (regex) {
+                try {
+                    Pattern pattern = IrrelevantParameter.createPattern(value);
+                    parameter = new IrrelevantParameter(pattern);
+                } catch (IllegalArgumentException e) {
+                    log.error(
+                            "Failed to read an irrelevant parameter entry with regex: {}",
+                            value,
+                            e);
+                }
+            } else {
+                parameter = new IrrelevantParameter(value);
+            }
+
+            if (parameter != null) {
+                parameter.setEnabled(sub.getBoolean(IRRELEVANT_PARAMETER_ENABLED_KEY, true));
+
+                irrelevantParameters.add(parameter);
+
+                if (parameter.isEnabled()) {
+                    parametersEnabled.add(parameter);
+                }
+            }
+        }
+
+        parametersEnabled.trimToSize();
+        this.irrelevantParametersEnabled = parametersEnabled;
+    }
+
+    @ZapApiIgnore
+    public boolean isConfirmRemoveIrrelevantParameter() {
+        return this.confirmRemoveIrrelevantParameter;
+    }
+
+    @ZapApiIgnore
+    public void setConfirmRemoveIrrelevantParameter(boolean confirmRemove) {
+        this.confirmRemoveIrrelevantParameter = confirmRemove;
+        getConfig()
+                .setProperty(CONFIRM_REMOVE_IRRELEVANT_PARAMETER, confirmRemoveIrrelevantParameter);
     }
 }
