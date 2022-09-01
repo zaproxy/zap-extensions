@@ -34,7 +34,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.SortOrder;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
@@ -47,8 +46,8 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.spider.SpiderParam.HandleParametersOption;
+import org.zaproxy.addon.spider.internal.ui.IrrelevantParametersMultipleOptionsPanel;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
-import org.zaproxy.zap.utils.ZapTextArea;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTablePanel;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.PositiveValuesSlider;
@@ -83,7 +82,7 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
     private JCheckBox chkAcceptCookies;
     private DomainsAlwaysInScopeMultipleOptionsPanel domainsAlwaysInScopePanel;
     private DomainsAlwaysInScopeTableModel domainsAlwaysInScopeTableModel;
-    private ZapTextArea irrelevantUrlParameters;
+    private IrrelevantParametersMultipleOptionsPanel irrelevantQueryParametersPanel;
 
     private JComboBox<HandleParametersOption> handleParameters;
 
@@ -185,19 +184,16 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
             innerPanel.add(getChkParseGit(), gbc);
             innerPanel.add(getHandleODataSpecificParameters(), gbc);
 
-            ZapTextArea irrelevantUrlParameters = getIrrelevantUrlParameters();
-            JLabel label =
+            innerPanel.add(
                     new JLabel(
                             Constant.messages.getString(
-                                    "spider.options.label.irrelevantUrlParameters"));
-            label.setLabelFor(irrelevantUrlParameters);
-            JScrollPane irrelevantUrlParametersScrollPane = new JScrollPane();
-            irrelevantUrlParametersScrollPane.setVerticalScrollBarPolicy(
-                    ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-            irrelevantUrlParametersScrollPane.setViewportView(irrelevantUrlParameters);
-
-            innerPanel.add(label, gbc);
-            innerPanel.add(irrelevantUrlParametersScrollPane, gbc);
+                                    "spider.options.label.irrelevantparameters")),
+                    gbc);
+            gbc.fill = GridBagConstraints.BOTH;
+            gbc.weighty = 1.0D;
+            innerPanel.add(getIrrelevantQueryParametersPanel(), gbc);
+            gbc.fill = GridBagConstraints.HORIZONTAL;
+            gbc.weighty = 0;
 
             JScrollPane scrollPane = new JScrollPane(innerPanel);
             scrollPane.setBorder(BorderFactory.createEmptyBorder());
@@ -220,7 +216,7 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
         getDomainsAlwaysInScopeTableModel()
                 .setDomainsAlwaysInScope(param.getDomainsAlwaysInScope());
         getDomainsAlwaysInScopePanel()
-                .setRemoveWithoutConfirmation(param.isConfirmRemoveDomainAlwaysInScope());
+                .setRemoveWithoutConfirmation(!param.isConfirmRemoveDomainAlwaysInScope());
         getChkProcessForm().setSelected(param.isProcessForm());
         getChkSendRefererHeader().setSelected(param.isSendRefererHeader());
         getChkAcceptCookies().setSelected(param.isAcceptCookies());
@@ -232,8 +228,10 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
         getChkParseGit().setSelected(param.isParseGit());
         getComboHandleParameters().setSelectedItem(param.getHandleParameters());
         getHandleODataSpecificParameters().setSelected(param.isHandleODataParametersVisited());
-        getIrrelevantUrlParameters().setText(param.getIrrelevantUrlParametersAsString());
-        getIrrelevantUrlParameters().discardAllEdits();
+        getIrrelevantQueryParametersPanel()
+                .setIrrelevantParameters(param.getIrrelevantParameters());
+        getIrrelevantQueryParametersPanel()
+                .setRemoveWithoutConfirmation(!param.isConfirmRemoveIrrelevantParameter());
     }
 
     @Override
@@ -248,7 +246,7 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
         param.setDomainsAlwaysInScope(
                 getDomainsAlwaysInScopeTableModel().getDomainsAlwaysInScope());
         param.setConfirmRemoveDomainAlwaysInScope(
-                getDomainsAlwaysInScopePanel().isRemoveWithoutConfirmation());
+                !getDomainsAlwaysInScopePanel().isRemoveWithoutConfirmation());
         param.setSendRefererHeader(getChkSendRefererHeader().isSelected());
         param.setAcceptCookies(getChkAcceptCookies().isSelected());
         param.setProcessForm(getChkProcessForm().isSelected());
@@ -261,7 +259,10 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
         param.setHandleParameters(
                 (HandleParametersOption) getComboHandleParameters().getSelectedItem());
         param.setHandleODataParametersVisited(getHandleODataSpecificParameters().isSelected());
-        param.setIrrelevantUrlParameters(getIrrelevantUrlParameters().getText());
+        param.setIrrelevantParameters(
+                getIrrelevantQueryParametersPanel().getIrrelevantParameters());
+        param.setConfirmRemoveIrrelevantParameter(
+                !getIrrelevantQueryParametersPanel().isRemoveWithoutConfirmation());
     }
 
     /**
@@ -495,12 +496,11 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
         return domainsAlwaysInScopeTableModel;
     }
 
-    private ZapTextArea getIrrelevantUrlParameters() {
-        if (irrelevantUrlParameters == null) {
-            irrelevantUrlParameters = new ZapTextArea();
-            irrelevantUrlParameters.setLineWrap(true);
+    private IrrelevantParametersMultipleOptionsPanel getIrrelevantQueryParametersPanel() {
+        if (irrelevantQueryParametersPanel == null) {
+            irrelevantQueryParametersPanel = new IrrelevantParametersMultipleOptionsPanel();
         }
-        return irrelevantUrlParameters;
+        return irrelevantQueryParametersPanel;
     }
 
     /** A renderer for properly displaying the name of the HandleParametersOptions in a ComboBox. */
