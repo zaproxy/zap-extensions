@@ -98,12 +98,20 @@ public abstract class BaseHttpSender<T1 extends BaseHttpSenderContext, T2, T3>
                 try {
                     listener.onHttpRequestSend(msg, ctx.getInitiator(), ctx.getParent());
                 } catch (Exception e) {
-                    LOGGER.error(e.getMessage(), e);
+                    logErrorListener(listener, e);
                 }
             }
         } finally {
             IN_LISTENER.remove();
         }
+    }
+
+    private static void logErrorListener(HttpSenderListener listener, Exception e) {
+        LOGGER.error(
+                "Error while notifying listener {} cause: {}",
+                listener.getClass().getCanonicalName(),
+                e.getMessage(),
+                e);
     }
 
     protected void notifyResponseListeners(T1 ctx, HttpMessage msg) {
@@ -117,7 +125,7 @@ public abstract class BaseHttpSender<T1 extends BaseHttpSenderContext, T2, T3>
                 try {
                     listener.onHttpResponseReceive(msg, ctx.getInitiator(), ctx.getParent());
                 } catch (Exception e) {
-                    LOGGER.error(e.getMessage(), e);
+                    logErrorListener(listener, e);
                 }
             }
         } finally {
