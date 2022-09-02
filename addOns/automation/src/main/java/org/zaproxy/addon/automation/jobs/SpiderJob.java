@@ -127,6 +127,11 @@ public class SpiderJob extends AutomationJob {
     }
 
     @Override
+    public boolean supportsMonitorTests() {
+        return true;
+    }
+
+    @Override
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
 
         ContextWrapper context;
@@ -187,29 +192,35 @@ public class SpiderJob extends AutomationJob {
 
         // Wait for the spider to finish
         SpiderScan scan;
+        boolean forceStop = false;
+        int numUrlsFound = 0;
+        int lastCount = 0;
 
         while (true) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                // Ignore
-            }
+            this.sleep(500);
+
             scan = this.getExtSpider().getScan(scanId);
+            numUrlsFound = scan.getNumberOfURIsFound();
+            Stats.incCounter("automation.spider.urls.added", numUrlsFound - lastCount);
+            lastCount = numUrlsFound;
+
             if (scan.isStopped()) {
                 break;
             }
-            if (System.currentTimeMillis() > endTime) {
-                // It should have stopped but didn't (happens occasionally)
-                this.getExtSpider().stopScan(scanId);
+            if (!this.runMonitorTests(progress) || System.currentTimeMillis() > endTime) {
+                forceStop = true;
                 break;
             }
         }
+        if (forceStop) {
+            this.getExtSpider().stopScan(scanId);
+            progress.info(Constant.messages.getString("automation.info.jobstopped", getType()));
+        }
+        numUrlsFound = scan.getNumberOfURIsFound();
 
-        int numUrlsFound = scan.getNumberOfURIsFound();
         progress.info(
                 Constant.messages.getString(
                         "automation.info.urlsfound", this.getName(), numUrlsFound));
-        Stats.incCounter("automation.spider.urls.added", numUrlsFound);
     }
 
     /**

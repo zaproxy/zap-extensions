@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Functionality to parse URLs from href attributes in SVG files (Issue 4984).
+- Support for automation monitor tests.
 
 ### Changed
 - Promoted to Release status, with the migration of the core Spider (Issue 3113).

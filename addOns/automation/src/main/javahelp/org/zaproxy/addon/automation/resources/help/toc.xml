@@ -16,6 +16,10 @@
 				<tocitem text="Job: spider" target="automation.spider"/>
 				<tocitem text="Job: activeScan" target="automation.ascan"/>
 				<tocitem text="Tests" target="automation.tests"/>
+				<tocitem text="Test: alert" target="automation.tests.alert"/>
+				<tocitem text="Test: monitor" target="automation.tests.monitor"/>
+				<tocitem text="Test: stats" target="automation.tests.stats"/>
+				<tocitem text="Test: url" target="automation.tests.url"/>
 				<tocitem text="About" target="automation.about"/>
 			</tocitem>
 		</tocitem>

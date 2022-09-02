@@ -118,6 +118,11 @@ public class AjaxSpiderJob extends AutomationJob {
     }
 
     @Override
+    public boolean supportsMonitorTests() {
+        return true;
+    }
+
+    @Override
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
 
         ContextWrapper context;
@@ -178,27 +183,33 @@ public class AjaxSpiderJob extends AutomationJob {
         }
 
         // Wait for the ajax spider to finish
+        boolean forceStop = false;
+        int numUrlsFound = 0;
+        int lastCount = 0;
 
         while (true) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                // Ignore
-            }
+            this.sleep(500);
+
+            numUrlsFound = listener.getMessagesFound();
+            Stats.incCounter("spiderAjax.urls.added", numUrlsFound - lastCount);
+            lastCount = numUrlsFound;
+
             if (!spiderThread.isRunning()) {
                 break;
             }
-            if (System.currentTimeMillis() > endTime) {
-                // It should have stopped but didn't (happens occasionally)
-                spiderThread.stopSpider();
+            if (!this.runMonitorTests(progress) || System.currentTimeMillis() > endTime) {
+                forceStop = true;
                 break;
             }
         }
-        int numUrlsFound = listener.getMessagesFound();
+        if (forceStop) {
+            spiderThread.stopSpider();
+            progress.info(Constant.messages.getString("automation.info.jobstopped", getType()));
+        }
+
         progress.info(
                 Constant.messages.getString(
                         "automation.info.urlsfound", this.getType(), numUrlsFound));
-        Stats.incCounter("spiderAjax.urls.added", numUrlsFound);
     }
 
     @Override
