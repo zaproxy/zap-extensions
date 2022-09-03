@@ -1,18 +1,4 @@
 {
-  "Triple Whale": {
-    "cats": [
-      10
-    ],
-    "xhr": "triplewhale-pixel\\.web\\.app",
-    "saas": true,
-    "icon": "triplewhale.svg",
-    "website": "https://triplewhale.com/",
-    "description": "The Triple Whale platform combines centralization, visualization, and attribution into a dashboard that presents and illustrates KPIs in an actionable way.",
-    "pricing": [
-      "mid",
-      "recurring"
-    ]
-  },
   "T-Soft": {
     "cats": [
       6
@@ -86,6 +72,16 @@
     ],
     "saas": true,
     "website": "https://www.t1pagos.com"
+  },
+  "TDesign": {
+    "cats": [
+      66
+    ],
+    "description": "TDesign launched by Tencent contains rich and reusable design component resources, such as color system, text system, motion design, etc.",
+    "dom": ".t-button__text, .t-layout",
+    "icon": "TDesign.svg",
+    "scriptSrc": "tdesign\\.gtimg\\.com/",
+    "website": "https://tdesign.tencent.com"
   },
   "THG Ingenuity": {
     "cats": [
@@ -622,16 +618,6 @@
     "saas": true,
     "scriptSrc": "//embed\\.tawk\\.to",
     "website": "http://tawk.to"
-  },
-  "TDesign": {
-    "cats": [
-      66
-    ],
-    "description": "TDesign launched by Tencent contains rich and reusable design component resources, such as color system, text system, motion design, etc.",
-    "icon": "TDesign.svg",
-    "dom": ".t-button__text, .t-layout",
-    "scriptSrc": "tdesign\\.gtimg\\.com/",
-    "website": "https://tdesign.tencent.com"
   },
   "Teachable": {
     "cats": [
@@ -1763,11 +1749,12 @@
     "description": "Tiledesk is the full-stack open-source Live Chat with built-in Chatbots, written in Node.js and Angular.",
     "icon": "Tiledesk.png",
     "js": {
-      "tiledesk": "",
+      "Tiledesk": "",
       "tileDeskAsyncInit": "",
-      "tiledeskSettings": "",
-      "Tiledesk": ""
+      "tiledesk": "",
+      "tiledeskSettings": ""
     },
+    "oss": true,
     "pricing": [
       "freemium",
       "low",
@@ -1775,7 +1762,6 @@
       "poa"
     ],
     "saas": true,
-    "oss": true,
     "website": "https://tiledesk.com"
   },
   "Timeplot": {
@@ -1940,6 +1926,21 @@
       "\\.amazonaws\\.com/totango-cdn/totango\\d\\.js"
     ],
     "website": "https://www.totango.com"
+  },
+  "Totara": {
+    "cats": [
+      21
+    ],
+    "cookies": {
+      "TotaraSession": ""
+    },
+    "description": "Totara is a learning management system designed for businesses.",
+    "icon": "Totara.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.totaralearning.com"
   },
   "Touch2Success": {
     "cats": [
@@ -2198,6 +2199,20 @@
     "icon": "Tripadviser.Widget.svg",
     "scriptSrc": "tripadvisor\\.[\\w]+/WidgetEmbed",
     "website": "https://www.tripadvisor.com/Widgets"
+  },
+  "Triple Whale": {
+    "cats": [
+      10
+    ],
+    "description": "The Triple Whale platform combines centralization, visualization, and attribution into a dashboard that presents and illustrates KPIs in an actionable way.",
+    "icon": "triplewhale.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://triplewhale.com/",
+    "xhr": "triplewhale-pixel\\.web\\.app"
   },
   "TripleLift": {
     "cats": [
@@ -2835,24 +2850,6 @@
     "oss": true,
     "website": "https://typedoc.org"
   },
-  "Typeform": {
-    "cats": [
-      73
-    ],
-    "description": "Typeform is a Spanish online software as a service (SaaS) company that specialises in online form building and online surveys.",
-    "icon": "Typeform.png",
-    "js": {
-      "tf.createPopover": "",
-      "tf.createWidget": ""
-    },
-    "scriptSrc": "embed\\.typeform\\.com/",
-    "saas": true,
-    "pricing": [
-      "low",
-      "recurring"
-    ],
-    "website": "https://www.typeform.com"
-  },
   "TypePad": {
     "cats": [
       11
@@ -2889,6 +2886,24 @@
     },
     "url": "/admin/login\\.php?referer=http%3A%2F%2F",
     "website": "http://typecho.org/"
+  },
+  "Typeform": {
+    "cats": [
+      73
+    ],
+    "description": "Typeform is a Spanish online software as a service (SaaS) company that specialises in online form building and online surveys.",
+    "icon": "Typeform.png",
+    "js": {
+      "tf.createPopover": "",
+      "tf.createWidget": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "embed\\.typeform\\.com/",
+    "website": "https://www.typeform.com"
   },
   "Typekit": {
     "cats": [

@@ -121,11 +121,11 @@
       88
     ],
     "description": "YalinHost is a web hosting service provider.",
-    "icon": "YalinHost.png",
     "dns": {
       "NS": "\\.yalinhost\\.com",
       "SOA": "\\.yalinhost\\.com"
     },
+    "icon": "YalinHost.png",
     "website": "https://yalinhost.com"
   },
   "Yampi Checkout": {

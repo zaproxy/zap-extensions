@@ -98,6 +98,25 @@
     },
     "website": "http://www.eprints.org"
   },
+  "ERPNext": {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:frappe:erpnext:*:*:*:*:*:*:*:*",
+    "description": "ERPNext is a free and open-source integrated Enterprise Resource Planning (ERP) software developed by Frappe Technologies.",
+    "icon": "ERPNext.png",
+    "implies": "Frappe",
+    "js": {
+      "erpnext.shopping_cart": "",
+      "erpnext.subscribe_to_newsletter": ""
+    },
+    "oss": true,
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "website": "https://erpnext.com"
+  },
   "ESW": {
     "cats": [
       106
@@ -307,7 +326,7 @@
     "url": "https?://(?:[^/]+\\.)?edgecastcdn\\.net/",
     "website": "http://www.edgecast.com"
   },
-  "Edgio App Platform": {
+  "Edgio": {
     "cats": [
       31,
       62
@@ -317,7 +336,7 @@
       "layer0_destination": "",
       "layer0_eid": ""
     },
-    "description": "Edgio App Platform is an integrated suite of Edge services, from Delivery to Compute.",
+    "description": "Edgio is an integrated suite of Edge services, from Delivery to Compute.",
     "headers": {
       "x-0-status": "",
       "x-0-t": "",
@@ -621,15 +640,15 @@
     "description": "Ematic Solutions is part of Ematic Group and started to revolve around transforming email marketing into an ROI machine.",
     "icon": "Ematic Solutions.svg",
     "js": {
-      "ematics": "",
       "EmaticsObject": "",
       "ematicApikey": "",
+      "ematics": "",
       "ematicsSubscribe": ""
     },
-    "saas": true,
     "pricing": [
       "poa"
     ],
+    "saas": true,
     "website": "https://www.ematicsolutions.com"
   },
   "EmbedPlus": {

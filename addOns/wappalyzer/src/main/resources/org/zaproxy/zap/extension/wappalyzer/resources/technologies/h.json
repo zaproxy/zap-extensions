@@ -64,6 +64,16 @@
     "icon": "HP.svg",
     "website": "http://hp.com"
   },
+  "HSTS": {
+    "cats": [
+      16
+    ],
+    "description": "HTTP Strict Transport Security (HSTS) informs browsers that the site should only be accessed using HTTPS.",
+    "headers": {
+      "Strict-Transport-Security": ""
+    },
+    "website": "https://www.rfc-editor.org/rfc/rfc6797#section-6.1"
+  },
   "HTTP/2": {
     "cats": [
       19
@@ -78,10 +88,10 @@
     "website": "https://http2.github.io"
   },
   "HTTP/3": {
-    "description": "HTTP/3 is the third major version of the Hypertext Transfer Protocol used to exchange information on the World Wide Web.",
     "cats": [
       19
     ],
+    "description": "HTTP/3 is the third major version of the Hypertext Transfer Protocol used to exchange information on the World Wide Web.",
     "excludes": "HTTP/2",
     "headers": {
       "Alt-Svc": "h3",
@@ -1467,15 +1477,5 @@
       "onetime"
     ],
     "website": "https://hyva.io/"
-  },
-  "HSTS": {
-    "description": "HTTP Strict Transport Security (HSTS) informs browsers that the site should only be accessed using HTTPS.",
-    "cats": [
-      16
-    ],
-    "headers": {
-      "Strict-Transport-Security": ""
-    },
-    "website": "https://www.rfc-editor.org/rfc/rfc6797#section-6.1"
   }
 }

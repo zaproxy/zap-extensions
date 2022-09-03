@@ -504,6 +504,23 @@
     ],
     "website": "https://www.nexive.it"
   },
+  "Next Total": {
+    "cats": [
+      6
+    ],
+    "description": "Next is leveraging the expertise, infrastructure and software it has developed for its own online business to provide a third-party ecommerce outsourcing service named Total Platform.",
+    "icon": "Next Total.svg",
+    "js": {
+      "NextBasket.NextUnlimited": "",
+      "NextFavourites.Busy": "",
+      "NextFavourites.Data.ShoppingLists": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "scriptSrc": "\\.nextdirect\\.com/",
+    "website": "https://www.next.co.uk"
+  },
   "Next.js": {
     "cats": [
       18,
@@ -526,15 +543,6 @@
     },
     "website": "https://nextjs.org"
   },
-  "Nextdoor Ads": {
-    "cats": [
-      36
-    ],
-    "description": "Nextdoor Ads is an easy-to-use expansion of Nextdoor’s proprietary self-serve campaign management platform, designed to help small and medium-sized businesses (SMBs) advertise on Nextdoor.",
-    "icon": "Nextdoor Ads.png",
-    "scriptSrc": "ads\\.nextdoor\\.com/",
-    "website": "https://help.nextdoor.com/s/article/About-Neighborhood-Ad-Center-NAC-Conversion-Pixel"
-  },
   "NextGEN Gallery": {
     "cats": [
       7,
@@ -549,6 +557,15 @@
     "requires": "WordPress",
     "scriptSrc": "/nextgen-gallery/js/",
     "website": "https://www.imagely.com/wordpress-gallery-plugin"
+  },
+  "Nextdoor Ads": {
+    "cats": [
+      36
+    ],
+    "description": "Nextdoor Ads is an easy-to-use expansion of Nextdoor’s proprietary self-serve campaign management platform, designed to help small and medium-sized businesses (SMBs) advertise on Nextdoor.",
+    "icon": "Nextdoor Ads.png",
+    "scriptSrc": "ads\\.nextdoor\\.com/",
+    "website": "https://help.nextdoor.com/s/article/About-Neighborhood-Ad-Center-NAC-Conversion-Pixel"
   },
   "Nextsale": {
     "cats": [
@@ -568,23 +585,6 @@
     "saas": true,
     "scriptSrc": "(?:api|sdk)\\.nextsale\\.io/",
     "website": "https://nextsale.io"
-  },
-  "Next Total": {
-    "cats": [
-      6
-    ],
-    "description": "Next is leveraging the expertise, infrastructure and software it has developed for its own online business to provide a third-party ecommerce outsourcing service named Total Platform.",
-    "icon": "Next Total.svg",
-    "js": {
-      "NextBasket.NextUnlimited": "",
-      "NextFavourites.Busy": "",
-      "NextFavourites.Data.ShoppingLists": ""
-    },
-    "scriptSrc": "\\.nextdirect\\.com/",
-    "pricing": [
-      "poa"
-    ],
-    "website": "https://www.next.co.uk"
   },
   "Nginx": {
     "cats": [

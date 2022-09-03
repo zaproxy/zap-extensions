@@ -12,6 +12,22 @@
     "scriptSrc": "/d3(?:\\. v\\d+)?(?:\\.min)?\\.js",
     "website": "http://d3js.org"
   },
+  "DDoS-Guard": {
+    "cats": [
+      16
+    ],
+    "description": "DDoS-Guard is a Russian Internet infrastructure company which provides DDoS protection, content delivery network services, and web hosting services.",
+    "headers": {
+      "server": "^ddos-guard$"
+    },
+    "icon": "DDoS-Guard.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "website": "https://ddos-guard.net"
+  },
   "DERAK.CLOUD": {
     "cats": [
       31
@@ -121,6 +137,7 @@
       "DPlayer.version": "([\\d\\.]+)\\;version:\\1"
     },
     "oss": true,
+    "scriptSrc": "/dplayer\\.js",
     "website": "https://dplayer.js.org"
   },
   "DTScout": {
@@ -814,6 +831,7 @@
   "Divi": {
     "cats": [
       51,
+      80,
       87
     ],
     "description": "Divi is a WordPress Theme and standalone WordPress plugin from Elegant themes that allows users to build websites using the visual drag-and-drop Divi page builder.",
@@ -1225,6 +1243,18 @@
     "requires": "WordPress",
     "website": "https://draftpress.com/products/header-footer-code-manager-pro/"
   },
+  "Dragon": {
+    "cats": [
+      27
+    ],
+    "description": "Dragon is a general-purpose programming language.",
+    "headers": {
+      "X-Powered-By": "Dragon Native ([\\d.]+)\\;version:\\1"
+    },
+    "icon": "Dragon.png",
+    "implies": "Apache",
+    "website": "https://dragon-lang.org"
+  },
   "Drapr": {
     "cats": [
       76
@@ -1318,8 +1348,8 @@
       "payg",
       "recurring"
     ],
-    "scriptSrc": "\\.getdrip\\.com/",
     "saas": true,
+    "scriptSrc": "\\.getdrip\\.com/",
     "website": "https://www.drip.com"
   },
   "Drop A Hint": {
@@ -1648,22 +1678,6 @@
     "scriptSrc": "cdn\\.db-ip\\.com",
     "website": "https://db-ip.com/",
     "xhr": "api\\.db-ip\\.com"
-  },
-  "DDoS-Guard": {
-    "cats": [
-      16
-    ],
-    "description": "DDoS-Guard is a Russian Internet infrastructure company which provides DDoS protection, content delivery network services, and web hosting services.",
-    "icon": "DDoS-Guard.svg",
-    "headers": {
-      "server": "^ddos-guard$"
-    },
-    "pricing": [
-      "freemium",
-      "low",
-      "recurring"
-    ],
-    "website": "https://ddos-guard.net"
   },
   "decimal.js": {
     "cats": [

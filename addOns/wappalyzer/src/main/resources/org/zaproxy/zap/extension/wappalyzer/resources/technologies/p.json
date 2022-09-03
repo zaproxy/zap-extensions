@@ -375,6 +375,22 @@
     ],
     "website": "https://pantheon.io/"
   },
+  "Paradox": {
+    "cats": [
+      101
+    ],
+    "description": "Paradox is an AI company that helps companies capture and screen candidates, improve conversions, and answer all candidate questions.",
+    "icon": "Paradox.svg",
+    "js": {
+      "_applybase": "\\.paradox\\.ai",
+      "oliviaChatBaseUrl": "\\.paradox\\.ai"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.paradox.ai"
+  },
   "Parcelforce": {
     "cats": [
       99
@@ -1218,6 +1234,22 @@
     "saas": true,
     "website": "https://brands.photoshelter.com"
   },
+  "PhotoSwipe": {
+    "cats": [
+      7,
+      59
+    ],
+    "description": "PhotoSwipe is an open-source gallery to support JavaScript-based image zooming.",
+    "icon": "PhotoSwipe.png",
+    "js": {
+      "PhotoSwipe": "",
+      "PhotoSwipeUI_Default": "",
+      "photoswipeParseHash": ""
+    },
+    "oss": true,
+    "scriptSrc": "photoswipe/([\\d\\.]+)/photoswipe\\.min\\.js\\;version:\\1",
+    "website": "https://photoswipe.com"
+  },
   "Photoslurp": {
     "cats": [
       96
@@ -1236,22 +1268,6 @@
     ],
     "saas": true,
     "website": "https://hi.photoslurp.com"
-  },
-  "PhotoSwipe": {
-    "cats": [
-      7,
-      59
-    ],
-    "description": "PhotoSwipe is an open-source gallery to support JavaScript-based image zooming.",
-    "icon": "PhotoSwipe.png",
-    "js": {
-      "PhotoSwipe": "",
-      "PhotoSwipeUI_Default": "",
-      "photoswipeParseHash": ""
-    },
-    "scriptSrc": "photoswipe/([\\d\\.]+)/photoswipe\\.min\\.js\\;version:\\1",
-    "oss": true,
-    "website": "https://photoswipe.com"
   },
   "Phusion Passenger": {
     "cats": [
@@ -2616,6 +2632,9 @@
     "cats": [
       9
     ],
+    "cookies": {
+      "pterodactyl_session": ""
+    },
     "description": "Pterodactyl Panel is a free, open-source game server management panel built with PHP, React, and Go.",
     "icon": "Pterodactyl Panel.svg",
     "implies": [
@@ -2624,9 +2643,6 @@
       "React",
       "Laravel"
     ],
-    "cookies": {
-      "pterodactyl_session": ""
-    },
     "oss": true,
     "website": "https://pterodactyl.io"
   },

@@ -190,6 +190,20 @@
     "oss": true,
     "website": "https://www.vardot.com/solutions/varbase"
   },
+  "Variti": {
+    "cats": [
+      16
+    ],
+    "description": "Variti is a network security solutions firm that blocks bad bots, protects users from various automated abuse, attacks and fraud techniques.",
+    "headers": {
+      "X-VARITI-CCR": ""
+    },
+    "icon": "Variti.png",
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://variti.io"
+  },
   "Varnish": {
     "cats": [
       23
@@ -854,13 +868,29 @@
     "icon": "vue.svg",
     "js": {
       "Vue.version": "^(.+)$\\;version:\\1",
-      "__VUE_HOT_MAP__": ""
+      "__VUE_HOT_MAP__": "",
+      "vueDLL": ""
     },
     "scriptSrc": [
       "vue[.-]([\\d.]*\\d)[^/]*\\.js\\;version:\\1",
       "(?:/([\\d.]+))?/vue(?:\\.min)?\\.js\\;version:\\1"
     ],
     "website": "https://vuejs.org"
+  },
+  "Vue2-animate": {
+    "cats": [
+      19
+    ],
+    "description": "Vue2-animate is a Vue.js port of Animate.css.",
+    "dom": "link[href*='/vue2-animate.min.css']",
+    "icon": "vue.svg",
+    "implies": [
+      "Vue.js",
+      "Sass",
+      "Animate.css"
+    ],
+    "oss": true,
+    "website": "https://github.com/asika32764/vue2-animate"
   },
   "VuePress": {
     "cats": [
@@ -885,21 +915,6 @@
     "implies": "Vue.js",
     "oss": true,
     "website": "https://vuetifyjs.com"
-  },
-  "Vue2-animate": {
-    "cats": [
-      19
-    ],  
-    "description": "Vue2-animate is a Vue.js port of Animate.css.",
-    "icon": "vue.svg",
-    "dom": "link[href*='/vue2-animate.min.css']",
-    "implies": [
-      "Vue.js",
-      "Sass",
-      "Animate.css"
-    ],
-    "oss": true,
-    "website": "https://github.com/asika32764/vue2-animate"
   },
   "vBulletin": {
     "cats": [

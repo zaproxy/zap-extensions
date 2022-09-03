@@ -522,17 +522,17 @@
       5
     ],
     "description": "Infogram is a web-based data visualisation and infographics platform.",
-    "icon": "Infogram.svg",
     "dom": "iframe[src*='.infogram.com/']",
+    "icon": "Infogram.svg",
     "js": {
       "InfogramEmbeds": ""
     },
-    "saas": true,
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
+    "saas": true,
     "website": "https://infogram.com"
   },
   "Infolinks": {
@@ -1114,12 +1114,12 @@
     "js": {
       "ihfJquery": ""
     },
-    "scriptSrc": "\\.idxhome\\.com/",
-    "saas": true,
     "pricing": [
       "mid",
       "recurring"
     ],
+    "saas": true,
+    "scriptSrc": "\\.idxhome\\.com/",
     "website": "https://www.ihomefinder.com"
   },
   "iPresta": {
