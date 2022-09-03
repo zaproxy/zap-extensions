@@ -472,12 +472,12 @@
       5
     ],
     "description": "Omny Studio is a podcast hosting solution, which enables radio stations and enterprises to manage, monetize, publish, share, edit and analyze audio episodes.",
-    "icon": "Omny Studio.svg",
     "dom": "iframe[src*='//omny.fm/shows/']",
-    "saas": true,
+    "icon": "Omny Studio.svg",
     "pricing": [
       "poa"
     ],
+    "saas": true,
     "website": "https://omnystudio.com"
   },
   "Omurga Sistemi": {
@@ -716,6 +716,27 @@
     "scriptSrc": "\\.speedtestcustom\\.com/",
     "website": "https://www.ookla.com/speedtest-custom"
   },
+  "Oopy": {
+    "cats": [
+      51
+    ],
+    "description": "Oopy provides you with a simple and easy way to turn your Notion page into a performant website.",
+    "icon": "Oopy.png",
+    "implies": [
+      "Notion",
+      "Next.js"
+    ],
+    "oss": false,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "js": {
+      "__OOPY__": ""
+    },
+    "saas": true,
+    "website": "https://oopy.us/"
+  },
   "Open AdStream": {
     "cats": [
       36
@@ -737,6 +758,16 @@
       "copyright": "Open Classifieds ?([0-9.]+)?\\;version:\\1"
     },
     "website": "http://open-classifieds.com"
+  },
+  "Open Graph": {
+    "cats": [
+      19
+    ],
+    "description": "Open Graph is a protocol that is used to integrate any web page into the social graph.",
+    "dom": "meta[property*='og:']",
+    "icon": "Open Graph.png",
+    "oss": true,
+    "website": "https://ogp.me"
   },
   "Open Journal Systems": {
     "cats": [
@@ -779,6 +810,25 @@
       "copyright": "Open eShop ?([0-9.]+)?\\;version:\\1"
     },
     "website": "http://open-eshop.com/"
+  },
+  "Open-Xchange App Suite": {
+    "cats": [
+      30,
+      75
+    ],
+    "cpe": "cpe:2.3:a:open-xchange:app_suite:*:*:*:*:*:*:*:*",
+    "description": "Open-Xchange is a web-based communication, collaboration and office productivity software suite.",
+    "dom": "#io-ox-core",
+    "icon": "openxchange.svg",
+    "implies": "Java",
+    "js": {
+      "ox.version": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.open-xchange.com/"
   },
   "OpenBSD httpd": {
     "cats": [
@@ -835,16 +885,6 @@
     },
     "oss": true,
     "website": "http://openelement.uk"
-  },
-  "Open Graph": {
-    "cats": [
-      19
-    ],
-    "description": "Open Graph is a protocol that is used to integrate any web page into the social graph.",
-    "icon": "Open Graph.png",
-    "dom": "meta[property*='og:']",
-    "oss": true,
-    "website": "https://ogp.me"
   },
   "OpenGSE": {
     "cats": [

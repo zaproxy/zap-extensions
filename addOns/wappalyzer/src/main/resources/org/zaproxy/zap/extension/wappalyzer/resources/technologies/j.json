@@ -6,10 +6,10 @@
     "cpe": "cpe:2.3:a:j2store:j2store:*:*:*:*:*:joomla\\!:*:*",
     "description": "J2Store is a Joomla shopping cart and ecommerce extension.",
     "icon": "j2store.png",
+    "implies": "Joomla",
     "js": {
       "j2storeURL": ""
     },
-    "implies": "Joomla",
     "pricing": [
       "onetime",
       "freemium",

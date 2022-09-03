@@ -208,6 +208,20 @@
     "scriptSrc": "\\.ari-secure\\.com/",
     "website": "https://arinet.com"
   },
+  "ASP.NET Boilerplate": {
+    "cats": [
+      18
+    ],
+    "description": "ASP.NET Boilerplate is a general purpose application framework especially designed for new modern web applications. It uses already familiar tools and implements best practices around them to provide you a SOLID development experience.",
+    "icon": "aspnetboilerplate.png",
+    "implies": "Microsoft ASP.NET",
+    "js": {
+      "abp.localization": "",
+      "abp.toAbsAppPath": ""
+    },
+    "oss": true,
+    "website": "https://www.aspnetboilerplate.com"
+  },
   "AT Internet Analyzer": {
     "cats": [
       10
@@ -2825,6 +2839,21 @@
     ],
     "website": "https://angularjs.org"
   },
+  "Animate.css": {
+    "cats": [
+      66
+    ],
+    "description": "Animate.css is a ready-to-use library collection of CSS3 animation effects.",
+    "dom": {
+      "link[href*='animate']": {
+        "attributes": {
+          "href": "([\\d\\.]+)?/animate\\.min\\.css\\;version:\\1"
+        }
+      }
+    },
+    "oss": true,
+    "website": "https://animate.style"
+  },
   "AnswerDash": {
     "cats": [
       5
@@ -3521,20 +3550,6 @@
     "requiresCategory": 6,
     "text": "\\Asendia\\b",
     "website": "https://www.asendia.com"
-  },
-  "ASP.NET Boilerplate": {
-    "cats": [
-      18
-    ],
-    "description": "ASP.NET Boilerplate is a general purpose application framework especially designed for new modern web applications. It uses already familiar tools and implements best practices around them to provide you a SOLID development experience.",
-    "icon": "aspnetboilerplate.png",
-    "website": "https://www.aspnetboilerplate.com",
-    "js": {
-      "abp.toAbsAppPath": "",
-      "abp.localization": ""
-    },
-    "oss": true,
-    "implies":"Microsoft ASP.NET"
   },
   "Astra": {
     "cats": [
@@ -4422,21 +4437,6 @@
     "saas": true,
     "scriptSrc": "\\.amocrm\\.(?:ru|com)",
     "website": "https://www.amocrm.com"
-  },
-  "Animate.css": {
-    "cats": [
-      66
-    ],
-    "description": "Animate.css is a ready-to-use library collection of CSS3 animation effects.",
-    "dom": {
-      "link[href*='animate']": {
-        "attributes": {
-          "href": "([\\d\\.]+)?/animate\\.min\\.css\\;version:\\1"
-        }
-      }
-    },
-    "oss": true,
-    "website": "https://animate.style"
   },
   "anime.js": {
     "cats": [

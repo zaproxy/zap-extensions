@@ -651,20 +651,20 @@
     ],
     "cpe": "cpe:2.3:a:google:firebase_cloud_messaging:*:*:*:*:*:*:*:*",
     "description": "Firebase is a Google-backed application development software that enables developers to develop iOS, Android and Web apps.",
-    "icon": "Firebase.svg",
     "headers": {
       "vary": "x-fh-requested-host"
     },
+    "icon": "Firebase.svg",
     "js": {
       "firebase.SDK_VERSION": "([\\d.]+)$\\;version:\\1"
     },
-    "scriptSrc": [
-      "/(?:([\\d.]+)/)?firebase(?:\\.min)?\\.js\\;version:\\1",
-      "/firebasejs/([\\d.]+)/firebase\\;version:\\1"
-    ],
     "pricing": [
       "freemium",
       "payg"
+    ],
+    "scriptSrc": [
+      "/(?:([\\d.]+)/)?firebase(?:\\.min)?\\.js\\;version:\\1",
+      "/firebasejs/([\\d.]+)/firebase\\;version:\\1"
     ],
     "website": "https://firebase.google.com"
   },
@@ -804,6 +804,26 @@
     "implies": "Bootstrap",
     "website": "https://designmodo.github.io/Flat-UI/"
   },
+  "Flazio": {
+    "cats": [
+      1,
+      51
+    ],
+    "description": "Flazio is an Italian website builder.",
+    "icon": "Flazio.svg",
+    "js": {
+      "_exaudiflazio": "",
+      "flazio_global_conversion": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "//flazio\\.org/",
+    "website": "https://flazio.com"
+  },
   "Fleksa": {
     "cats": [
       6,
@@ -859,8 +879,8 @@
     "js": {
       "Flickity": ""
     },
-    "scriptSrc": "flickity(?:/|@)([\\d\\.]+).+flickity(?:\\.pkgd)?(?:\\.min)?\\.js\\;version:\\1",
     "oss": true,
+    "scriptSrc": "flickity(?:/|@)([\\d\\.]+).+flickity(?:\\.pkgd)?(?:\\.min)?\\.js\\;version:\\1",
     "website": "https://flickity.metafizzy.co"
   },
   "Flits": {
@@ -1397,6 +1417,25 @@
     ],
     "website": "https://www.france-express.com"
   },
+  "Frappe": {
+    "cats": [
+      18
+    ],
+    "description": "Frappe is a full stack, batteries-included, web framework written in Python and Javascript.",
+    "icon": "Frappe.png",
+    "implies": [
+      "Python",
+      "MariaDB"
+    ],
+    "js": {
+      "frappe.avatar": ""
+    },
+    "meta": {
+      "generator": "^frappe$"
+    },
+    "oss": true,
+    "website": "https://frappeframework.com"
+  },
   "FreakOut": {
     "cats": [
       36
@@ -1605,6 +1644,24 @@
       "static\\.fbot\\.me/friendbuy\\.js"
     ],
     "website": "https://www.friendbuy.com"
+  },
+  "Friendly Captcha": {
+    "cats": [
+      16
+    ],
+    "description": "Friendly Captcha is a proof-of-work based solution in which the user’s device does all the work.",
+    "dom": "div.frc-captcha",
+    "icon": "FriendlyCaptcha.svg",
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "x-frc-client\",\"js-(\\d+(\\.\\d+)+)\\;version:\\1",
+    "website": "https://friendlycaptcha.com",
+    "xhr": "api.friendlycaptcha.com"
   },
   "Frizbit": {
     "cats": [
@@ -1837,23 +1894,5 @@
     "oss": true,
     "scriptSrc": "/fullPage\\.js(?:/([\\d\\.]+)/)?\\;version:\\1",
     "website": "https://github.com/alvarotrigo/fullpage.js"
-  },
-  "Friendly Captcha": {
-    "description": "Friendly Captcha is a proof-of-work based solution in which the user’s device does all the work.",
-    "cats": [
-      16
-    ],
-    "dom": "div.frc-captcha",
-    "scripts": "x-frc-client\",\"js-(\\d+(\\.\\d+)+)\\;version:\\1",
-    "xhr": "api.friendlycaptcha.com",
-    "saas": true,
-    "pricing": [
-      "low",
-      "freemium",
-      "recurring",
-      "poa"
-    ],
-    "icon": "FriendlyCaptcha.svg",
-    "website": "https://friendlycaptcha.com"
   }
 }

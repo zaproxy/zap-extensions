@@ -1059,15 +1059,15 @@
       18,
       19
     ],
-    "html": "<[^>]{1,512}\\bwire:",
     "description": "Livewire is a full-stack Laravel framework for building dynamic interfaces.",
+    "html": "<[^>]{1,512}\\bwire:",
     "icon": "Livewire.svg",
     "implies": "Laravel",
     "js": {
       "livewire": ""
     },
-    "scriptSrc": "livewire(?:\\.min)?\\.js",
     "oss": true,
+    "scriptSrc": "livewire(?:\\.min)?\\.js",
     "website": "https://laravel-livewire.com"
   },
   "Loadable-Components": {
@@ -1498,6 +1498,22 @@
     },
     "icon": "Lua.png",
     "website": "http://www.lua.org"
+  },
+  "Luana": {
+    "cats": [
+      18
+    ],
+    "description": "Luana is a web framework that uses web browser APIs and features to make a cross-platform web app look like a Native one and bring the same experience.",
+    "icon": "Luana.png",
+    "implies": "PWA",
+    "js": {
+      "luanaframework": ""
+    },
+    "meta": {
+      "generator": "^Luana\\sFramework\\s([\\d\\.]+)$\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://luanaframework.github.io"
   },
   "Lucene": {
     "cats": [

@@ -79,6 +79,24 @@
     "scriptSrc": "\\.qualaroo\\.com",
     "website": "https://qualaroo.com"
   },
+  "Qualified": {
+    "cats": [
+      52,
+      32
+    ],
+    "description": "Qualified is a B2B marketer that allows buyers and sales reps to connect through real-time website conversations.",
+    "icon": "Qualified.svg",
+    "js": {
+      "QualifiedObject": "^qualified$"
+    },
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.qualified\\.com/",
+    "website": "https://www.qualified.com"
+  },
   "Qualtrics": {
     "cats": [
       73

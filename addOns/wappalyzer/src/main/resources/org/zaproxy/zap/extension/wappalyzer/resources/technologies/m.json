@@ -249,7 +249,9 @@
     ],
     "cookies": {
       "X-Magento-Vary": "",
-      "frontend": "\\;confidence:50"
+      "frontend": "\\;confidence:50",
+      "mage-translation-file-version": "",
+      "mage-translation-storage": ""
     },
     "cpe": "cpe:2.3:a:magento:magento:*:*:*:*:*:*:*:*",
     "description": "Magento is an open-source ecommerce platform written in PHP.",
@@ -854,6 +856,20 @@
     "icon": "Mastodon.svg",
     "website": "https://joinmastodon.org"
   },
+  "Matajer": {
+    "cats": [
+      6
+    ],
+    "description": "Matajer is an ecommerce platform from Saudi Arabia.",
+    "icon": "Matajer.png",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.mapp\\.sa/",
+    "website": "https://mapp.sa"
+  },
   "Material Design Lite": {
     "cats": [
       66
@@ -898,7 +914,7 @@
       "PIWIK_SESSID": ""
     },
     "cpe": "cpe:2.3:a:matomo:matomo:*:*:*:*:*:*:*:*",
-    "description": "Matomo Analytics is a free and open-source web analytics applicatio, that runs on a PHP/MySQL web-server.",
+    "description": "Matomo Analytics is a free and open-source web analytics application, that runs on a PHP/MySQL web-server.",
     "icon": "Matomo.png",
     "js": {
       "Matomo": "",
@@ -910,6 +926,11 @@
       "generator": "(?:Matomo|Piwik) - Open Source Web Analytics",
       "google-play-app": "app-id=org\\.piwik\\.mobile2"
     },
+    "oss": true,
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
     "scriptSrc": "piwik\\.js|piwik\\.php",
     "website": "https://matomo.org"
   },
@@ -1498,6 +1519,24 @@
     "saas": true,
     "scriptSrc": "www\\.clarity\\.ms/.+/([\\d.]+)/clarity\\.js\\;version:\\1",
     "website": "https://clarity.microsoft.com"
+  },
+  "Microsoft Dynamics 365 Commerce": {
+    "cats": [
+      6
+    ],
+    "description": "Microsoft Dynamics 365 Commerce, an omnichannel ecommerce solution that allows you to build a website, connect physical and digital stores, track customer behaviours and requirements, deliver personalised experiences.",
+    "icon": "Microsoft.svg",
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "requires": [
+      "React",
+      "Azure"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.dynamics365commerce\\.ms/",
+    "website": "https://dynamics.microsoft.com/commerce/overview"
   },
   "Microsoft Excel": {
     "cats": [
@@ -2199,6 +2238,24 @@
     },
     "scriptSrc": "monotracker(?:\\.min)?\\.js",
     "website": "https://www.mono.net/en"
+  },
+  "Monsido": {
+    "cats": [
+      10,
+      67,
+      68
+    ],
+    "description": "Monsido provides a website management platform that automates processes, ensures regulatory compliance, improves collaboration in web and marketing teams, and streamlines reporting.",
+    "icon": "Monsido.png",
+    "js": {
+      "_monsido": "",
+      "monsido_tracking": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://monsido.com"
   },
   "MonsterInsights": {
     "cats": [

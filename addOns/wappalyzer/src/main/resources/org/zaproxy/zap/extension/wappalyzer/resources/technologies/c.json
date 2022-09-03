@@ -527,6 +527,24 @@
     "url": "/(?:cart|order|basket|trolley|bag|shoppingbag|checkout)",
     "website": "https://www.wappalyzer.com/technologies/ecommerce/cart-functionality"
   },
+  "Cart.com": {
+    "cats": [
+      6
+    ],
+    "description": "Cart.com is an ecommerce platform built for high volume online stores and complex products with features such as multi-store management.",
+    "dom": "p.AmeriCommerce-powered-by-link > a[href*='.americommerce.com/'][target='_blank']",
+    "icon": "Cart.com.svg",
+    "js": {
+      "AC.storeDomain": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.americommerce\\.com/",
+    "website": "https://www.americommerce.com"
+  },
   "Cart.js": {
     "cats": [
       59
@@ -1410,12 +1428,12 @@
     ],
     "description": "ClickCease is an ad fraud and click-fraud detection and protection service software.",
     "icon": "ClickCease.svg",
-    "scriptSrc": "\\.clickcease\\.com/monitor/",
-    "saas": true,
     "pricing": [
       "payg",
       "recurring"
     ],
+    "saas": true,
+    "scriptSrc": "\\.clickcease\\.com/monitor/",
     "website": "https://www.clickcease.com"
   },
   "ClickDimensions": {
@@ -1557,11 +1575,11 @@
       47
     ],
     "description": "Clockwork is a development tool for PHP available right in your browser.",
-    "icon": "default.svg",
-    "implies": "PHP",
     "headers": {
       "x-clockwork-version": "^([\\d\\.]+)$\\;version:\\1"
     },
+    "icon": "default.svg",
+    "implies": "PHP",
     "oss": true,
     "website": "https://github.com/underground-works/clockwork-app"
   },
@@ -1585,6 +1603,24 @@
     },
     "icon": "CloudSuite.svg",
     "website": "https://cloudsuite.com"
+  },
+  "Cloudbeds": {
+    "cats": [
+      72
+    ],
+    "description": "Cloudbeds is a cloud-based hotel management platform which includes tools for managing reservations, availability, rates, distribution channels, payments, guests, housekeeping, and more.",
+    "dom": "a[href*='.cloudbeds.com/'][target='_blank']",
+    "icon": "Cloudbeds.svg",
+    "js": {
+      "CloudBeds_widget": ""
+    },
+    "pricing": [
+      "payg",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.cloudbeds\\.com/",
+    "website": "https://www.cloudbeds.com"
   },
   "Cloudera": {
     "cats": [
@@ -3547,23 +3583,5 @@
     "oss": true,
     "scriptSrc": "(?:/([\\d\\.-]+))?/crypto-js(?:\\.min)?\\.js\\;version:\\1",
     "website": "https://github.com/brix/crypto-js"
-  },
-  "Cart.com": {
-    "cats": [
-      6
-    ],
-    "description": "Cart.com is an ecommerce platform built for high volume online stores and complex products with features such as multi-store management.",
-    "dom": "p.AmeriCommerce-powered-by-link > a[href*='.americommerce.com/'][target='_blank']",
-    "icon": "Cart.com.svg",
-    "js": {
-      "AC.storeDomain": ""
-    },
-    "pricing": [
-      "mid",
-      "recurring"
-    ],
-    "saas": true,
-    "scriptSrc": "\\.americommerce\\.com/",
-    "website": "https://www.americommerce.com"
   }
 }

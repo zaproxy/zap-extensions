@@ -116,6 +116,19 @@
     "implies": "Ruby",
     "website": "https://github.com/rtomayko/rack-cache"
   },
+  "Rain": {
+    "cats": [
+      6
+    ],
+    "description": "Rain is a cloud-based point of sale (POS) system for small to midsized retailers.",
+    "icon": "Rain.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.rainpos\\.com/",
+    "website": "https://www.rainpos.com"
+  },
   "RainLoop": {
     "cats": [
       30
@@ -282,6 +295,20 @@
     },
     "icon": "Raspbian.svg",
     "website": "https://www.raspbian.org/"
+  },
+  "RateParity": {
+    "cats": [
+      5
+    ],
+    "description": "RateParity is a conversion rate optimisation platform for hotels.",
+    "icon": "RateParity.svg",
+    "pricing": [
+      "recurring",
+      "mid"
+    ],
+    "saas": true,
+    "scriptSrc": "code\\.rateparity\\.com/",
+    "website": "https://www.rateparity.com"
   },
   "Raychat": {
     "cats": [
@@ -1864,11 +1891,11 @@
       14
     ],
     "description": "Rumble is a Canadian video-streaming platform that presents itself as an alternative to YouTube.",
-    "icon": "Rumble.svg",
     "dom": "iframe[src*='//rumble.com/']",
+    "icon": "Rumble.svg",
     "js": {
-      "Rumble.resize": "",
-      "Rumble.gdpr": ""
+      "Rumble.gdpr": "",
+      "Rumble.resize": ""
     },
     "website": "https://rumble.com"
   },

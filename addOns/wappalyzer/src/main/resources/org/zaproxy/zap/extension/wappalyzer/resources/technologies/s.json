@@ -951,6 +951,22 @@
     "oss": true,
     "website": "https://scrollmagic.io"
   },
+  "Scully": {
+    "cats": [
+      57
+    ],
+    "description": "Scully is a static site generator for Angular projects looking to embrace the Jamstack.",
+    "icon": "Scully.svg",
+    "implies": "Angular",
+    "js": {
+      "ScullyIO": ""
+    },
+    "meta": {
+      "generator": "^Scully\\s([\\d\\.]+)$\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://scully.io"
+  },
   "SeQura": {
     "cats": [
       91
@@ -1000,6 +1016,24 @@
     },
     "website": "http://www.seamlesscms.com"
   },
+  "SearchFit": {
+    "cats": [
+      6
+    ],
+    "description": "Searchfit provides top ecommerce software, solutions and ecommerce website design for enterprise and mid-level retailers.",
+    "icon": "SearchFit.svg",
+    "js": {
+      "SFUI.Checkout": ""
+    },
+    "meta": {
+      "generation-copyright": "by\\sSearchFit\\sShopping\\sCart\\sv([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.searchfit.com"
+  },
   "Searchanise": {
     "cats": [
       29
@@ -1017,24 +1051,6 @@
     "saas": true,
     "scriptSrc": "searchanise(?:-.+\\.kxcdn)?\\.com/",
     "website": "https://start.searchanise.com"
-  },
-  "SearchFit": {
-    "cats": [
-      6
-    ],
-    "description": "Searchfit provides top ecommerce software, solutions and ecommerce website design for enterprise and mid-level retailers.",
-    "icon": "SearchFit.svg",
-    "meta": {
-      "generation-copyright": "by\\sSearchFit\\sShopping\\sCart\\sv([\\d\\.]+)\\;version:\\1"
-    },
-    "js": {
-      "SFUI.Checkout": ""
-    },
-    "saas": true,
-    "pricing": [
-      "poa"
-    ],
-    "website": "https://www.searchfit.com"
   },
   "Searchspring": {
     "cats": [
@@ -2342,6 +2358,7 @@
     "cats": [
       6
     ],
+    "cpe": "cpe:2.3:a:shopware:shopware:*:*:*:*:*:*:*:*",
     "description": "Shopware is an enterprise-level ecommerce platform.",
     "headers": {
       "sw-context-token": "^[\\w]{32}$\\;version:6",
@@ -2357,6 +2374,9 @@
       "jQuery",
       "Symfony"
     ],
+    "js": {
+      "shopStudioGoogleTagManagerCloudGtagCallback": "\\;confidence:50"
+    },
     "meta": {
       "application-name": "Shopware"
     },
@@ -2667,6 +2687,22 @@
     },
     "icon": "Simplebo.png",
     "website": "https://www.simplebo.fr"
+  },
+  "Simvoly": {
+    "cats": [
+      51
+    ],
+    "description": "Simvoly is a drag-and-drop website builder for small and medium-sized businesses, agencies, and freelancers.",
+    "icon": "Simvoly.png",
+    "js": {
+      "Simvoly": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://simvoly.com"
   },
   "Sinatra": {
     "cats": [
@@ -3118,12 +3154,12 @@
     "description": "Skio helps brands on Shopify sell subscriptions without ripping their hair out.",
     "icon": "Skio.png",
     "implies": "Shopify",
-    "scriptSrc": "cdn\\.skio\\.com/",
-    "saas": true,
     "pricing": [
       "mid",
       "recurring"
     ],
+    "saas": true,
+    "scriptSrc": "cdn\\.skio\\.com/",
     "website": "https://skio.com"
   },
   "Sky-Shop": {
@@ -4907,7 +4943,6 @@
       66
     ],
     "description": "Storefront UI is an independent, Vue. js-based, library of UI components.",
-    "icon": "Storefront UI.svg",
     "dom": {
       "link[href*='/dist/sfui']": {
         "attributes": {
@@ -4915,6 +4950,7 @@
         }
       }
     },
+    "icon": "Storefront UI.svg",
     "implies": "Vue.js",
     "oss": true,
     "website": "https://vuestorefront.io/storefront-ui"
