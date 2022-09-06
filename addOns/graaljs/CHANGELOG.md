@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update minimum ZAP version to 2.11.1.
 
+### Fixed
+- Declare the engine is single threaded (Issue 6992).
+
 ## [0.2.0] - 2021-10-06
 ### Added
 - encode-decode Default and rot13 templates.
