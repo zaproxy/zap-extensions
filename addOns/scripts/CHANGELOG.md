@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Automation ScriptJob - Enable or Disable any script and run a targeted script (Issue 7025).
 
 ### Changed
+- 'Copy as curl command menu.js' added change that prevents curl from adding User-Agent when no User-Agent should be present.
 - Maintenance changes.
 
 ## [30] - 2022-02-25
