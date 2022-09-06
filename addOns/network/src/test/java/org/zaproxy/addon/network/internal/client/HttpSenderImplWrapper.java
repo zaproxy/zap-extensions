@@ -29,6 +29,7 @@ import java.nio.file.Path;
 import org.mockito.invocation.InvocationOnMock;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.network.internal.ratelimit.RateLimiter;
 import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.network.HttpSenderContext;
 import org.zaproxy.zap.network.HttpSenderListener;
@@ -44,22 +45,11 @@ public class HttpSenderImplWrapper<T extends HttpSenderContext> {
 
     private CloseableHttpSenderImpl<T> impl;
 
-    private final T ctx;
+    private T ctx;
 
     public HttpSenderImplWrapper(CloseableHttpSenderImpl<T> impl, int initiator) {
         this.impl = impl;
-        parent = mock(HttpSender.class);
-        try {
-            doAnswer(this::send).when(parent).sendAndReceive(any());
-            doAnswer(this::send).when(parent).sendAndReceive(any(), anyBoolean());
-            doAnswer(this::send).when(parent).sendAndReceive(any(), any(HttpRequestConfig.class));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        ctx = impl.createContext(parent, initiator);
-
-        setUseGlobalState(true);
-        setUseCookies(true);
+        setInitiator(initiator);
     }
 
     private Void send(InvocationOnMock invocation) throws IOException {
@@ -82,6 +72,33 @@ public class HttpSenderImplWrapper<T extends HttpSenderContext> {
 
     public HttpSender getParent() {
         return parent;
+    }
+
+    /**
+     * Sets the initiator.
+     *
+     * <p><strong>Note:</strong> This effectively resets the {@code HttpSender} state, any previous
+     * changes done to it are lost.
+     *
+     * @param initiator the new initiator.
+     */
+    public void setInitiator(int initiator) {
+        parent = mock(HttpSender.class);
+        try {
+            doAnswer(this::send).when(parent).sendAndReceive(any());
+            doAnswer(this::send).when(parent).sendAndReceive(any(), anyBoolean());
+            doAnswer(this::send).when(parent).sendAndReceive(any(), any(HttpRequestConfig.class));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        ctx = impl.createContext(parent, initiator);
+
+        setUseGlobalState(true);
+        setUseCookies(true);
+    }
+
+    public void setRateLimiter(RateLimiter rateLimiter) {
+        impl.setRateLimiter(rateLimiter);
     }
 
     public void addListener(HttpSenderListener listener) {

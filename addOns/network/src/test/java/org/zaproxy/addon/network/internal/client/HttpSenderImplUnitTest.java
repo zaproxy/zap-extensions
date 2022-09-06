@@ -36,6 +36,7 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.BDDMockito.given;
@@ -104,6 +105,7 @@ import org.zaproxy.addon.network.ConnectionOptions;
 import org.zaproxy.addon.network.common.ZapSocketTimeoutException;
 import org.zaproxy.addon.network.common.ZapUnknownHostException;
 import org.zaproxy.addon.network.internal.client.apachev5.HttpSenderApache;
+import org.zaproxy.addon.network.internal.ratelimit.RateLimiter;
 import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
 import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.addon.network.testutils.TestHttpServer;
@@ -262,6 +264,49 @@ class HttpSenderImplUnitTest {
 
     @Nested
     class Request {
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+        void shouldNotBeThrottledForCfuInitiator(SenderMethod method) throws Exception {
+            // Given
+            httpSender.setInitiator(HttpSender.CHECK_FOR_UPDATES_INITIATOR);
+            HttpRequestHeader requestHeader = message.getRequestHeader();
+            requestHeader.setHeader("Host", "localhost:" + serverPort);
+            requestHeader.setContentLength(0);
+            RateLimiter rateLimiter = mock(RateLimiter.class);
+            httpSender.setRateLimiter(rateLimiter);
+            // When
+            method.sendWith(httpSender, message);
+            // Then
+            assertThat(server.getReceivedMessages(), hasSize(1));
+            HttpMessage receivedMessage = server.getReceivedMessages().get(0);
+            assertThat(
+                    receivedMessage.getRequestHeader().toString(),
+                    is(equalTo(requestHeader.toString())));
+            verify(rateLimiter, times(0)).throttle(any(), anyInt());
+        }
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+        void shouldBeThrottledForNonCfuInitiator(SenderMethod method) throws Exception {
+            // Given
+            HttpRequestHeader requestHeader = message.getRequestHeader();
+            requestHeader.setHeader("Host", "localhost:" + serverPort);
+            requestHeader.setContentLength(0);
+            RateLimiter rateLimiter = mock(RateLimiter.class);
+            httpSender.setRateLimiter(rateLimiter);
+            // When
+            method.sendWith(httpSender, message);
+            // Then
+            assertThat(server.getReceivedMessages(), hasSize(1));
+            HttpMessage receivedMessage = server.getReceivedMessages().get(0);
+            assertThat(
+                    receivedMessage.getRequestHeader().toString(),
+                    is(equalTo(requestHeader.toString())));
+            verify(rateLimiter).throttle(message, INITIATOR);
+        }
 
         @ParameterizedTest
         @MethodSource(

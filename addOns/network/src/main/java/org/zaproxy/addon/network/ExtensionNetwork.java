@@ -99,6 +99,8 @@ import org.zaproxy.addon.network.internal.client.ZapAuthenticator;
 import org.zaproxy.addon.network.internal.client.ZapProxySelector;
 import org.zaproxy.addon.network.internal.client.apachev5.HttpSenderApache;
 import org.zaproxy.addon.network.internal.handlers.PassThroughHandler;
+import org.zaproxy.addon.network.internal.ratelimit.RateLimitExtensionHelper;
+import org.zaproxy.addon.network.internal.ratelimit.RateLimitOptions;
 import org.zaproxy.addon.network.internal.server.AliasChecker;
 import org.zaproxy.addon.network.internal.server.http.HttpServer;
 import org.zaproxy.addon.network.internal.server.http.LocalServer;
@@ -174,6 +176,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     private ConnectionOptions connectionOptions;
     private ConnectionOptionsPanel connectionOptionsPanel;
 
+    private RateLimitExtensionHelper rateLimitExtensionHelper;
+
     private boolean provideGlobalExclusions;
     private GlobalExclusionsOptions globalExclusionsOptions;
     private GlobalExclusionsOptionsPanel globalExclusionsOptionsPanel;
@@ -220,6 +224,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         Model.getSingleton().getOptionsParam().setConnectionParam(legacyConnectionOptions);
 
         clientCertificatesOptions = new ClientCertificatesOptions();
+
+        rateLimitExtensionHelper = new RateLimitExtensionHelper();
 
         try {
             httpSenderNetwork =
@@ -290,6 +296,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     @Override
     public void init() {
+        rateLimitExtensionHelper.init(httpSenderNetwork);
+
         localServers = Collections.synchronizedMap(new HashMap<>());
         blockingServerExecutor =
                 Executors.newCachedThreadPool(
@@ -517,6 +525,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         localServersOptions.addServersChangedListener(new ServersChangedListenerImpl());
         extensionHook.addOptionsParamSet(localServersOptions);
 
+        rateLimitExtensionHelper.hook(extensionHook);
+
         if (provideGlobalExclusions) {
             globalExclusionsOptions = new GlobalExclusionsOptions();
             extensionHook.addOptionsParamSet(globalExclusionsOptions);
@@ -573,6 +583,9 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             optionsDialog.addParamPanel(networkNode, clientCertificatesOptionsPanel, true);
             hookView.addOptionPanel(
                     new LegacyOptionsPanel("clientcerts", clientCertificatesOptionsPanel));
+
+            optionsDialog.addParamPanel(
+                    networkNode, rateLimitExtensionHelper.getRateLimitOptionsPanel(), true);
 
             if (provideGlobalExclusions) {
                 globalExclusionsOptionsPanel = new GlobalExclusionsOptionsPanel(optionsDialog);
@@ -1405,6 +1418,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             optionsDialog.removeParamPanel(localServersOptionsPanel);
             optionsDialog.removeParamPanel(connectionOptionsPanel);
             optionsDialog.removeParamPanel(clientCertificatesOptionsPanel);
+            optionsDialog.removeParamPanel(rateLimitExtensionHelper.getRateLimitOptionsPanel());
 
             if (provideGlobalExclusions) {
                 optionsDialog.removeParamPanel(globalExclusionsOptionsPanel);
@@ -1546,6 +1560,10 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         return sb.toString();
     }
 
+    RateLimitOptions getRateLimitOptions() {
+        return rateLimitExtensionHelper.getRateLimitOptions();
+    }
+
     private class SessionChangedListenerImpl implements SessionChangedListener {
 
         @Override
@@ -1565,6 +1583,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                     LOGGER.warn("Failed to set global exclusions into the session.", e);
                 }
             }
+
+            rateLimitExtensionHelper.reset();
         }
 
         @Override
