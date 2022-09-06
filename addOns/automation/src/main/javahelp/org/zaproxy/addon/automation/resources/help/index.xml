@@ -7,6 +7,7 @@
     <!-- index entries are merged (sorted) into core index -->
 	<indexitem text="automation" target="automation" />
     <indexitem text="automation - gui" target="automation.gui" />
+    <indexitem text="automation - options" target="automation.options" />
     <indexitem text="automation - environment" target="automation.env" />
     <indexitem text="automation - authentication" target="automation.auth" />
     <indexitem text="automation - addOns job" target="automation.addons" />

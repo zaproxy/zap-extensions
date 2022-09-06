@@ -48,6 +48,7 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.Model;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.gui.AutomationPanel;
+import org.zaproxy.addon.automation.gui.OptionsPanel;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.jobs.AddOnJob;
 import org.zaproxy.addon.automation.jobs.DelayJob;
@@ -87,6 +88,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     private Map<String, AutomationJob> jobs = new HashMap<>();
     private SortedSet<AutomationJob> sortedJobs = new TreeSet<>();
 
+    private OptionsPanel optionsPanel;
     private AutomationParam param;
     private LinkedHashMap<Integer, AutomationPlan> plans = new LinkedHashMap<>();
 
@@ -133,6 +135,32 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
 
         if (getView() != null) {
             extensionHook.getHookView().addStatusPanel(getAutomationPanel());
+            extensionHook.getHookView().addOptionPanel(getOptionsPanel());
+        }
+    }
+
+    private OptionsPanel getOptionsPanel() {
+        if (optionsPanel == null) {
+            optionsPanel = new OptionsPanel();
+        }
+        return optionsPanel;
+    }
+
+    @Override
+    public void optionsLoaded() {
+        if (hasView() && this.getParam().isOpenLastPlan()) {
+            String path = getParam().getLastPlanPath();
+            if (path != null) {
+                File f = new File(path);
+                if (f.canRead()) {
+                    try {
+                        getAutomationPanel().loadPlan(this.loadPlan(f));
+                        getAutomationPanel().setTabFocus();
+                    } catch (IOException e) {
+                        LOG.debug(e.getMessage(), e);
+                    }
+                }
+            }
         }
     }
 

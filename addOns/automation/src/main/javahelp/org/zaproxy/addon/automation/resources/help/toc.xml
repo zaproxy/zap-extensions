@@ -8,6 +8,7 @@
 		<tocitem text="Add Ons" tocid="addons">
 			<tocitem text="Automation Framework" image="automation-icon" target="automation">
 				<tocitem text="GUI" target="automation.gui"/>
+				<tocitem text="Options" target="automation.options"/>
 				<tocitem text="Environment" target="automation.env"/>
 				<tocitem text="Authentication" target="automation.auth"/>
 				<tocitem text="Job: addOns" target="automation.addons"/>
