@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -49,6 +50,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXTreeTable;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.AutomationEnvironment;
@@ -152,6 +154,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
     private JTabbedPane tabbedPane;
     private JButton addTestButton;
     private JButton removeTestButton;
+    private JButton optionsButton;
     private JXTreeTable tree;
     private PlanTreeTableModel treeModel;
     private JScrollPane outputScrollpane;
@@ -190,6 +193,9 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             toolbar.add(getJobDownButton());
             toolbar.add(getAddTestButton());
             toolbar.add(getRemoveTestButton());
+
+            toolbar.add(Box.createHorizontalGlue());
+            toolbar.add(getOptionsButton());
         }
         return toolbar;
     }
@@ -253,6 +259,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                 }
             }
             currentPlan.save();
+            ext.getParam().setLastPlanPath(currentPlan.getFile().getAbsolutePath());
         } catch (JsonProcessingException | FileNotFoundException e1) {
             LOG.error(e1.getMessage(), e1);
             View.getSingleton()
@@ -341,6 +348,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
     private void loadPlan(File f) {
         try {
             loadPlan(ext.loadPlan(f));
+            ext.getParam().setLastPlanPath(f.getAbsolutePath());
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             View.getSingleton()
@@ -546,6 +554,25 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                     });
         }
         return removeTestButton;
+    }
+
+    private JButton getOptionsButton() {
+        if (optionsButton == null) {
+            optionsButton = new JButton();
+            optionsButton.setToolTipText(Constant.messages.getString("automation.dialog.options"));
+            optionsButton.setIcon(
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(ZAP.class.getResource("/resource/icon/16/041.png"))));
+
+            optionsButton.addActionListener(
+                    e ->
+                            Control.getSingleton()
+                                    .getMenuToolsControl()
+                                    .options(
+                                            Constant.messages.getString(
+                                                    "automation.optionspanel.name")));
+        }
+        return optionsButton;
     }
 
     public void loadPlan(AutomationPlan plan) {

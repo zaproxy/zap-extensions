@@ -28,10 +28,14 @@ public class AutomationParam extends AbstractParam {
 
     private static final String PLAN_DIRECTORY_KEY = AUTO_KEY + ".plandir";
     private static final String SHOW_GUI_KEY = AUTO_KEY + ".gui";
+    private static final String OPEN_LAST_PLAN = AUTO_KEY + ".last.open";
+    private static final String LAST_PLAN_PATH = AUTO_KEY + ".last.path";
 
     private boolean showGui = true;
+    private boolean openLastPlan;
 
     private String planDirectory;
+    private String lastPlanPath;
 
     public AutomationParam() {}
 
@@ -39,6 +43,8 @@ public class AutomationParam extends AbstractParam {
     protected void parse() {
         this.planDirectory = this.getString(PLAN_DIRECTORY_KEY, System.getProperty("user.home"));
         this.showGui = getBoolean(SHOW_GUI_KEY, true);
+        this.openLastPlan = getBoolean(OPEN_LAST_PLAN, false);
+        this.lastPlanPath = this.getString(LAST_PLAN_PATH, null);
     }
 
     public String getPlanDirectory() {
@@ -57,5 +63,28 @@ public class AutomationParam extends AbstractParam {
 
     public boolean isShowGui() {
         return showGui;
+    }
+
+    public boolean isOpenLastPlan() {
+        return openLastPlan;
+    }
+
+    public void setOpenLastPlan(boolean openLastPlan) {
+        this.openLastPlan = openLastPlan;
+        getConfig().setProperty(OPEN_LAST_PLAN, openLastPlan);
+    }
+
+    public String getLastPlanPath() {
+        return lastPlanPath;
+    }
+
+    public void setLastPlanPath(String lastPlanPath) {
+        this.lastPlanPath = lastPlanPath;
+        getConfig().setProperty(LAST_PLAN_PATH, lastPlanPath);
+        try {
+            getConfig().save();
+        } catch (ConfigurationException e) {
+            // Ignore
+        }
     }
 }
