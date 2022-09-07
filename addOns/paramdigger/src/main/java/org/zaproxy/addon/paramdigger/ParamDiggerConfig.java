@@ -20,6 +20,8 @@
 package org.zaproxy.addon.paramdigger;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.users.User;
 
@@ -63,11 +65,18 @@ public class ParamDiggerConfig {
     private String customHeaderWordlistPath;
     private String customCookieWordlistPath;
     private int urlGuessChunkSize;
+    private int buster;
+    private String customCacheBusterName;
+    private String DEFAULT_CACHEBUSTER_NAME = "fcbz";
+    private int busterThreshold;
+    private List<String> initCookieList;
 
     public ParamDiggerConfig() {
         this.url = "";
         this.threadCount = 4;
         this.urlGuessChunkSize = 2;
+        this.buster = 4;
+        this.busterThreshold = -1;
     }
 
     public String getUrl() {
@@ -340,5 +349,67 @@ public class ParamDiggerConfig {
 
     public int getUrlGuessChunkSize() {
         return urlGuessChunkSize;
+    }
+
+    public String getCacheBusterName() {
+        // TODO allow users to set this
+        if (customCacheBusterName != null) {
+            return customCacheBusterName;
+        }
+        return DEFAULT_CACHEBUSTER_NAME;
+    }
+
+    public void setCacheBusterName(String name) {
+        this.customCacheBusterName = name;
+    }
+
+    /**
+     * Returns the busting number.
+     *
+     * @return the number of requests to be made to determine cache hit/miss when no cache indicator
+     *     is present
+     */
+    public int getCacheBustingTimes() {
+        return buster;
+    }
+
+    /*
+     * Sets the number of times a request should be made to a URL with a cache buster.
+     * This is used to determine if the cache buster is working on situations where no
+     * cache indicator headers are present in the response.
+     * @param value the number of times to make the request
+     */
+    public void setCacheBustingTimes(int value) {
+        // TODO allow users to set this
+        this.buster = value;
+    }
+
+    /**
+     * Returns the threshold time for a request to be considered a cache hit.
+     *
+     * @return the threshold time in milliseconds
+     */
+    public int getCacheBustingThreshold() {
+        return busterThreshold;
+    }
+
+    /**
+     * Sets the threshold time for a request to be considered a cache hit.
+     *
+     * @param value the threshold time in milliseconds
+     */
+    public void setCacheBustingThreshold(int value) {
+        this.busterThreshold = value;
+    }
+
+    public List<String> getCacheBustingCookies() {
+        if (initCookieList == null) {
+            initCookieList = new ArrayList<>();
+        }
+        return initCookieList;
+    }
+
+    public void setCacheBustingCookies(List<String> cList) {
+        this.initCookieList = cList;
     }
 }
