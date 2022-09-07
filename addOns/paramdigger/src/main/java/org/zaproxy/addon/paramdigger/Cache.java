@@ -72,7 +72,7 @@ public class Cache {
         return cacheBusterIsHttpMethod;
     }
 
-    public void setCacheIsHttpMethod(boolean cacheIsHttpMethod) {
+    public void setCacheBusterIsHttpMethod(boolean cacheIsHttpMethod) {
         this.cacheBusterIsHttpMethod = cacheIsHttpMethod;
     }
 
