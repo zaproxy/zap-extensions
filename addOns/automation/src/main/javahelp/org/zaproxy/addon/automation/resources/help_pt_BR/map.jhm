@@ -7,6 +7,7 @@
 	<mapID target="automation-icon" url="contents/images/robot.png" />
     <mapID target="automation" url="contents/automation.html" />
     <mapID target="automation.gui" url="contents/gui.html" />
+    <mapID target="automation.options" url="contents/options.html" />
     <mapID target="automation.env" url="contents/environment.html" />
     <mapID target="automation.auth" url="contents/authentication.html" />
     <mapID target="automation.addons" url="contents/job-addons.html" />
