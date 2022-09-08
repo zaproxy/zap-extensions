@@ -44,12 +44,6 @@ env:                                   # The environment, mandatory
     progressToStdout: true             # If set will write job progress to stdout
 
 jobs:
-  - type: addOns
-    name: addOns
-    parameters:
-      updateAddOns: true
-    install:                           # A list of non standard add-ons to install from the ZAP Marketplace
-    uninstall:                         # A list of standard add-ons to uninstall
 
   - type: passiveScan-config
     name: passiveScan-config

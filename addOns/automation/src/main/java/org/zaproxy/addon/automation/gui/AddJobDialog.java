@@ -55,6 +55,7 @@ public class AddJobDialog extends StandardFieldsDialog {
         List<AutomationJob> jobs =
                 ext.getAutomationJobs().values().stream()
                         .filter(j -> !j.isDataJob())
+                        .filter(j -> j.getClass().getAnnotation(Deprecated.class) == null)
                         .collect(Collectors.toList());
 
         Collections.sort(jobs);

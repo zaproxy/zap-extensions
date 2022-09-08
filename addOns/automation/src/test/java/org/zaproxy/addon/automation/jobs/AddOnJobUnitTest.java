@@ -23,7 +23,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
@@ -31,12 +30,9 @@ import static org.mockito.Mockito.withSettings;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
-import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -50,6 +46,7 @@ import org.zaproxy.zap.extension.autoupdate.ExtensionAutoUpdate;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
+@SuppressWarnings("deprecation")
 class AddOnJobUnitTest {
 
     @BeforeEach
@@ -71,159 +68,57 @@ class AddOnJobUnitTest {
     }
 
     @Test
-    void shouldReturnCustomConfigParams() {
-        // Given
-        AddOnJob job = new AddOnJob();
-
-        // When
-        Map<String, String> params = job.getCustomConfigParameters();
-
-        // Then
-        assertThat(params.size(), is(equalTo(1)));
-        assertThat(params.containsKey("updateAddOns"), is(equalTo(true)));
-        assertThat(params.containsValue("true"), is(equalTo(true)));
-    }
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    @Test
-    void shouldApplyParams() {
+    void shouldWarnOnVerifyParams() {
         // Given
         AddOnJob job = new AddOnJob();
         AutomationProgress progress = new AutomationProgress();
-        Map map = new HashMap();
-        map.put("updateAddOns", "false");
-        LinkedHashMap<?, ?> params = new LinkedHashMap(map);
-        LinkedHashMap<String, Object> jobData = new LinkedHashMap<>();
-        jobData.put("parameters", params);
 
         // When
-        job.setJobData(jobData);
         job.verifyParameters(progress);
+
+        // Then
+        assertThat(job.isUpdateAddOns(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.getWarnings().size(), is(equalTo(1)));
+        assertThat(
+                progress.getWarnings().get(0), is(equalTo("!automation.error.addons.deprecated!")));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldWarnOnApplyParams() {
+        // Given
+        AddOnJob job = new AddOnJob();
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
         job.applyParameters(progress);
 
         // Then
         assertThat(job.isUpdateAddOns(), is(equalTo(false)));
-        assertThat(progress.hasWarnings(), is(equalTo(false)));
-        assertThat(progress.hasErrors(), is(equalTo(false)));
-    }
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    @Test
-    void shouldWarnOnUnknownParams() {
-        // Given
-        AddOnJob job = new AddOnJob();
-        AutomationProgress progress = new AutomationProgress();
-        Map map = new HashMap();
-        map.put("updateAddOns", "true");
-        map.put("test", "test");
-        LinkedHashMap<?, ?> params = new LinkedHashMap(map);
-        LinkedHashMap<String, Object> jobData = new LinkedHashMap<>();
-        jobData.put("parameters", params);
-
-        // When
-        job.setJobData(jobData);
-        job.verifyParameters(progress);
-        job.applyParameters(progress);
-
-        // Then
         assertThat(progress.hasWarnings(), is(equalTo(true)));
         assertThat(progress.getWarnings().size(), is(equalTo(1)));
         assertThat(
-                progress.getWarnings().get(0), is(equalTo("!automation.error.options.unknown!")));
+                progress.getWarnings().get(0), is(equalTo("!automation.error.addons.deprecated!")));
         assertThat(progress.hasErrors(), is(equalTo(false)));
     }
 
     @Test
-    void shouldErrorOnUnkownInstallDataFormat() {
+    void shouldWarnOnJunJob() {
         // Given
-        AutomationProgress progress = new AutomationProgress();
         AddOnJob job = new AddOnJob();
-        String contextStr = "parameters: \n  updateAddOns: false\n" + "install: addonOne, addonTwo";
-        Yaml yaml = new Yaml();
-        LinkedHashMap<?, ?> jobData =
-                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        AutomationProgress progress = new AutomationProgress();
 
         // When
-        job.setJobData(jobData);
-        job.verifyParameters(progress);
+        job.runJob(null, progress);
 
         // Then
-        assertThat(progress.hasWarnings(), is(equalTo(false)));
-        assertThat(progress.hasErrors(), is(equalTo(true)));
-        assertThat(progress.getErrors().size(), is(equalTo(1)));
+        assertThat(job.isUpdateAddOns(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.getWarnings().size(), is(equalTo(1)));
         assertThat(
-                progress.getErrors().get(0), is(equalTo("!automation.error.addons.addon.data!")));
-    }
-
-    @Test
-    void shouldErrorOnUnkownUninstallDataFormat() {
-        // Given
-        AutomationProgress progress = new AutomationProgress();
-        AddOnJob job = new AddOnJob();
-        String contextStr =
-                "parameters: \n  updateAddOns: false\n" + "uninstall: addonOne, addonTwo";
-        Yaml yaml = new Yaml();
-        LinkedHashMap<?, ?> jobData =
-                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
-
-        // When
-        job.setJobData(jobData);
-        job.verifyParameters(progress);
-
-        // Then
-        assertThat(progress.hasWarnings(), is(equalTo(false)));
-        assertThat(progress.hasErrors(), is(equalTo(true)));
-        assertThat(progress.getErrors().size(), is(equalTo(1)));
-        assertThat(
-                progress.getErrors().get(0), is(equalTo("!automation.error.addons.addon.data!")));
-    }
-
-    @Test
-    void shouldReturnFileConfigData() {
-        // Given
-        AddOnJob job = new AddOnJob();
-
-        // When
-        String data = job.getConfigFileData();
-
-        // Then
-        assertThat(data.length(), is(equalTo(264)));
-    }
-
-    @Test
-    @Disabled("The updateAddons option is disabled.")
-    void shouldCheckForUpdatesByDefault() {
-        // Given
-        Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
-        Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
-        ExtensionAutoUpdate extAuto = mock(ExtensionAutoUpdate.class, withSettings().lenient());
-        given(extensionLoader.getExtension(ExtensionAutoUpdate.class)).willReturn(extAuto);
-
-        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
-        Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
-
-        AutomationProgress progress = new AutomationProgress();
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
-
-        AddOnJob job = new AddOnJob();
-        String contextStr = "parameters: \n";
-        Yaml yaml = new Yaml();
-        LinkedHashMap<?, ?> jobData =
-                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
-
-        // When
-        job.setJobData(jobData);
-        job.verifyParameters(progress);
-        job.applyParameters(progress);
-        job.runJob(env, progress);
-
-        // Then
-        assertThat(progress.hasErrors(), is(equalTo(true)));
-        // It won't work with the mocked classes, but this is an indication is went down the right
-        // path
-        assertThat(progress.getErrors().size(), is(equalTo(1)));
-        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.addons.update!")));
+                progress.getWarnings().get(0), is(equalTo("!automation.error.addons.deprecated!")));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
     }
 
     @Test
@@ -255,139 +150,5 @@ class AddOnJobUnitTest {
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
-    }
-
-    @Test
-    void shouldTryToInstallAddOns() {
-        // Given
-        Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
-        Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
-        ExtensionAutoUpdate extAuto = mock(ExtensionAutoUpdate.class, withSettings().lenient());
-        given(extensionLoader.getExtension(ExtensionAutoUpdate.class)).willReturn(extAuto);
-        given(extAuto.installAddOns(any())).willReturn("");
-
-        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
-        Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
-
-        AutomationProgress progress = new AutomationProgress();
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
-
-        AddOnJob job = new AddOnJob();
-        String contextStr = "parameters: \n  updateAddOns: false\n" + "install: \n  - addon";
-        Yaml yaml = new Yaml();
-        LinkedHashMap<?, ?> jobData =
-                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
-
-        // When
-        job.setJobData(jobData);
-        job.verifyParameters(progress);
-        job.applyParameters(progress);
-        job.runJob(env, progress);
-
-        // Then
-        assertThat(progress.hasErrors(), is(equalTo(false)));
-    }
-
-    @Test
-    void shouldReportInstallAddOnsFailure() {
-        // Given
-        Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
-        Model.setSingletonForTesting(model);
-        String failureMessage = "Failed";
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
-        ExtensionAutoUpdate extAuto = mock(ExtensionAutoUpdate.class, withSettings().lenient());
-        given(extensionLoader.getExtension(ExtensionAutoUpdate.class)).willReturn(extAuto);
-        given(extAuto.installAddOns(any())).willReturn(failureMessage);
-
-        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
-        Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
-
-        AutomationProgress progress = new AutomationProgress();
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
-
-        AddOnJob job = new AddOnJob();
-        String contextStr = "parameters: \n  updateAddOns: false\n" + "install: \n  - addon";
-        Yaml yaml = new Yaml();
-        LinkedHashMap<?, ?> jobData =
-                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
-
-        // When
-        job.setJobData(jobData);
-        job.verifyParameters(progress);
-        job.applyParameters(progress);
-        job.runJob(env, progress);
-
-        // Then
-        assertThat(progress.hasErrors(), is(equalTo(true)));
-        assertThat(progress.getErrors().size(), is(equalTo(1)));
-        assertThat(progress.getErrors().get(0), is(equalTo(failureMessage)));
-    }
-
-    @Test
-    void shouldTryToUninstallAddOns() {
-        // Given
-        Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
-        Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
-        ExtensionAutoUpdate extAuto = mock(ExtensionAutoUpdate.class, withSettings().lenient());
-        given(extensionLoader.getExtension(ExtensionAutoUpdate.class)).willReturn(extAuto);
-        given(extAuto.uninstallAddOns(any())).willReturn("");
-
-        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
-        Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
-
-        AutomationProgress progress = new AutomationProgress();
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
-
-        AddOnJob job = new AddOnJob();
-        String contextStr = "parameters: \n  updateAddOns: false\n" + "uninstall: \n  - addon";
-        Yaml yaml = new Yaml();
-        LinkedHashMap<?, ?> jobData =
-                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
-
-        // When
-        job.setJobData(jobData);
-        job.verifyParameters(progress);
-        job.applyParameters(progress);
-        job.runJob(env, progress);
-
-        // Then
-        assertThat(progress.hasErrors(), is(equalTo(false)));
-    }
-
-    @Test
-    void shouldReportUninstallAddOnsFailure() {
-        // Given
-        Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
-        Model.setSingletonForTesting(model);
-        String failureMessage = "Failed";
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
-        ExtensionAutoUpdate extAuto = mock(ExtensionAutoUpdate.class, withSettings().lenient());
-        given(extensionLoader.getExtension(ExtensionAutoUpdate.class)).willReturn(extAuto);
-        given(extAuto.uninstallAddOns(any())).willReturn(failureMessage);
-
-        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
-        Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
-
-        AutomationProgress progress = new AutomationProgress();
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
-
-        AddOnJob job = new AddOnJob();
-        String contextStr = "parameters: \n  updateAddOns: false\n" + "uninstall: \n  - addon";
-        Yaml yaml = new Yaml();
-        LinkedHashMap<?, ?> jobData =
-                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
-
-        // When
-        job.setJobData(jobData);
-        job.verifyParameters(progress);
-        job.applyParameters(progress);
-        job.runJob(env, progress);
-
-        // Then
-        assertThat(progress.hasErrors(), is(equalTo(true)));
-        assertThat(progress.getErrors().size(), is(equalTo(1)));
-        assertThat(progress.getErrors().get(0), is(equalTo(failureMessage)));
     }
 }

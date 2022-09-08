@@ -50,7 +50,6 @@ import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
-import org.zaproxy.addon.automation.jobs.AddOnJob;
 import org.zaproxy.addon.automation.jobs.DelayJob;
 import org.zaproxy.addon.automation.jobs.ParamsJob;
 import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob;
@@ -101,6 +100,7 @@ class ExtentionAutomationUnitTest extends TestUtils {
         assertThat(extAuto.getAuthor(), is(equalTo("ZAP Dev Team")));
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     void shouldRegisterBuiltInJobsOnInit() {
         // Given
@@ -112,7 +112,9 @@ class ExtentionAutomationUnitTest extends TestUtils {
 
         // Then
         assertThat(jobs.size(), is(equalTo(8)));
-        assertThat(jobs.containsKey(AddOnJob.JOB_NAME), is(equalTo(true)));
+        assertThat(
+                jobs.containsKey(org.zaproxy.addon.automation.jobs.AddOnJob.JOB_NAME),
+                is(equalTo(true)));
         assertThat(jobs.containsKey(PassiveScanConfigJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(PassiveScanWaitJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(SpiderJob.JOB_NAME), is(equalTo(true)));
