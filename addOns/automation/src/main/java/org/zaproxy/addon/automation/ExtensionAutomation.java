@@ -50,7 +50,6 @@ import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.gui.AutomationPanel;
 import org.zaproxy.addon.automation.gui.OptionsPanel;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
-import org.zaproxy.addon.automation.jobs.AddOnJob;
 import org.zaproxy.addon.automation.jobs.DelayJob;
 import org.zaproxy.addon.automation.jobs.ParamsJob;
 import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob;
@@ -108,11 +107,12 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         AutomationEventPublisher.getPublisher();
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public void init() {
         super.init();
 
-        registerAutomationJob(new AddOnJob());
+        registerAutomationJob(new org.zaproxy.addon.automation.jobs.AddOnJob());
         registerAutomationJob(new PassiveScanConfigJob());
         registerAutomationJob(new RequestorJob());
         registerAutomationJob(new PassiveScanWaitJob());

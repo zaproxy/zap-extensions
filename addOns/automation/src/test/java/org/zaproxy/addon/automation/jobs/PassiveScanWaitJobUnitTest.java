@@ -138,7 +138,7 @@ class PassiveScanWaitJobUnitTest {
     @Test
     void shouldWarnOnUnknownParams() {
         // Given
-        AddOnJob job = new AddOnJob();
+        PassiveScanWaitJob job = new PassiveScanWaitJob();
         AutomationProgress progress = new AutomationProgress();
         Map map = new HashMap();
         map.put("test", "test");
