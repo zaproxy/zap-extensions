@@ -17,4 +17,8 @@
     <indexitem text="automation - activeScan job" target="automation.ascan" />
     <indexitem text="automation - about" target="automation.about" />
     <indexitem text="automation - tests" target="automation.tests" />
+    <indexitem text="automation - alert test" target="automation.test.alert" />
+    <indexitem text="automation - monitor test" target="automation.test.monitor" />
+    <indexitem text="automation - statistic test" target="automation.test.stats" />
+    <indexitem text="automation - url test" target="automation.test.url" />
 </index>

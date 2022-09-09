@@ -176,6 +176,11 @@ public class ActiveScanJob extends AutomationJob {
     }
 
     @Override
+    public boolean supportsMonitorTests() {
+        return true;
+    }
+
+    @Override
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
 
         ContextWrapper context;
@@ -229,22 +234,22 @@ public class ActiveScanJob extends AutomationJob {
 
         // Wait for the active scan to finish
         ActiveScan scan;
+        boolean forceStop = false;
 
         while (true) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                // Ignore
-            }
+            this.sleep(500);
             scan = this.getExtAScan().getScan(scanId);
             if (scan.isStopped()) {
                 break;
             }
-            if (System.currentTimeMillis() > endTime) {
-                // It should have stopped but didn't (happens occasionally)
-                this.getExtAScan().stopScan(scanId);
+            if (!this.runMonitorTests(progress) || System.currentTimeMillis() > endTime) {
+                forceStop = true;
                 break;
             }
+        }
+        if (forceStop) {
+            this.getExtAScan().stopScan(scanId);
+            progress.info(Constant.messages.getString("automation.info.jobstopped", getType()));
         }
         progress.addJobResultData(createJobResultData(scanId));
     }

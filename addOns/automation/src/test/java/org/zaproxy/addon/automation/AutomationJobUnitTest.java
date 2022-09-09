@@ -270,6 +270,10 @@ class AutomationJobUnitTest {
     @Test
     void shouldAddUrlPresenceTests() {
         // Given
+        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
+        Control.initSingletonForTesting(mock(Model.class), extensionLoader);
+        ExtensionStats extStats = mock(ExtensionStats.class);
+        when(extensionLoader.getExtension(ExtensionStats.class)).thenReturn(extStats);
         TestParamContainer tpc = new TestParamContainer();
         AutomationJob job = new AutomationJobImpl(tpc);
         AutomationProgress progress = new AutomationProgress();
