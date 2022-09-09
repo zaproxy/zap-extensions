@@ -183,6 +183,8 @@ public class ActiveScanJob extends AutomationJob {
     @Override
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
 
+        getExtAScan().setPanelSwitch(false);
+
         ContextWrapper context;
         if (this.getParameters().getContext() != null) {
             context = env.getContextWrapper(this.getParameters().getContext());
@@ -252,6 +254,8 @@ public class ActiveScanJob extends AutomationJob {
             progress.info(Constant.messages.getString("automation.info.jobstopped", getType()));
         }
         progress.addJobResultData(createJobResultData(scanId));
+
+        getExtAScan().setPanelSwitch(true);
     }
 
     @Override
