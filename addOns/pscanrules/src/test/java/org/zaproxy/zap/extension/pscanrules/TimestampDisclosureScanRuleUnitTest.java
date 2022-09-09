@@ -27,8 +27,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -122,7 +124,19 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
                 "0.33333333em",
                 "0.33333333rem",
                 "1.1592500000000001",
-                "000000000000000000000000000000001"
+                "000000000000000000000000000000001",
+                "a{color:#00000042!important;background-color:transparent!important}",
+                "111111111",
+                "222222222",
+                "999999999",
+                "0000000000",
+                "1234567890",
+                "1111111111",
+                "2147483648",
+                "2222222222",
+                "3333333333",
+                "9876543210",
+                "10000000000",
             })
     void shouldNotRaiseAlertOnUnlikelyValues(String value) throws Exception {
         // Given
@@ -269,7 +283,8 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
     @Test
     void shouldRaiseAlertOnTimeStampWhenFarInThePast() throws Exception {
         // Given
-        String strTestDate = String.valueOf(33333333);
+        Instant testDate = ZonedDateTime.now().minusYears(9).toInstant();
+        String strTestDate = String.valueOf(testDate.getEpochSecond());
         HttpMessage msg = createMessage(strTestDate);
         // When
         scanHttpResponseReceive(msg);
@@ -279,9 +294,22 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
     }
 
     @Test
+    void shouldRaiseAlertOnTimeStampWhenVeryFarInThePastAtLowThreshold() throws Exception {
+        // Given
+        String strTestDate = String.valueOf(1000000000L);
+        HttpMessage msg = createMessage(strTestDate);
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(1, alertsRaised.size());
+    }
+
+    @Test
     void shouldNotRaiseAlertOnTimeStampWhenFarInThePastAtHighThreshold() throws Exception {
         // Given
-        String strTestDate = String.valueOf(33333333);
+        Instant testDate = ZonedDateTime.now().minusYears(9).toInstant();
+        String strTestDate = String.valueOf(testDate.getEpochSecond());
         HttpMessage msg = createMessage(strTestDate);
         rule.setAlertThreshold(AlertThreshold.HIGH);
         // When
@@ -292,8 +320,16 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
 
     @Test
     void shouldRaiseAlertOnTimeStampWhenFarInTheFuture() throws Exception {
+        long epochY2038 = 2147483647L;
+        Instant eventHorizon = ZonedDateTime.now().plusYears(10).toInstant();
+
+        long future =
+                (eventHorizon.isBefore(new Date(TimeUnit.SECONDS.toMillis(epochY2038)).toInstant())
+                                ? eventHorizon.getEpochSecond()
+                                : epochY2038)
+                        - 1;
         // Given
-        String strTestDate = String.valueOf(2147483647);
+        String strTestDate = String.valueOf(future);
         HttpMessage msg = createMessage(strTestDate);
         // When
         scanHttpResponseReceive(msg);
