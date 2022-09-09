@@ -134,6 +134,8 @@ public class SpiderJob extends AutomationJob {
     @Override
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
 
+        getExtSpider().setPanelSwitch(false);
+
         ContextWrapper context;
         if (parameters.getContext() != null) {
             context = env.getContextWrapper(parameters.getContext());
@@ -221,6 +223,8 @@ public class SpiderJob extends AutomationJob {
         progress.info(
                 Constant.messages.getString(
                         "automation.info.urlsfound", this.getName(), numUrlsFound));
+
+        getExtSpider().setPanelSwitch(true);
     }
 
     /**

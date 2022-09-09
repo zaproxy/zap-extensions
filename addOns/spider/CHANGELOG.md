@@ -12,3 +12,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Promoted to Release status, with the migration of the core Spider (Issue 3113).
+
+### Fixed
+- The spider job no longer switches tabs when it runs.
