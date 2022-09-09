@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.17.0] - 2022-09-09
 ### Added
 - Add Save As button that allows user to save the automation plan to a different file (Issue 7178).
 - Support for monitor tests.
@@ -181,6 +181,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.17.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.17.0
 [0.16.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.16.0
 [0.15.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.15.0
 [0.14.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.14.0
