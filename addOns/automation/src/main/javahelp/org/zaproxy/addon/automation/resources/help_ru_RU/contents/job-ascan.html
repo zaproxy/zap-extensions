@@ -10,33 +10,44 @@ Automation Framework - activeScan Job
 - Работа ActiveScan </H1>
 
 Это задание управляет активным сканером.  Это активно атакует ваши приложения и поэтому следует использовать только против приложений, которые у вас есть разрешение на тестирование. 
-
 <p>
-По умолчанию это задание будет активно сканировать первый контекст, определенный в <a href="environment.html">среде</a>, поэтому ни один из параметров не является обязательным. 
+By default this job will actively scan the first context defined in the <a href="environment.html">environment</a> and so none of the parameters are mandatory.
+<p>
+This job supports <a href="test-monitor.html">monitor</a> tests.
 
 <H2>YAML</H2>
 
 <pre>
-  - type: activeScan                   # Активный сканер — он активно атакует цель, поэтому его следует использовать только с разрешения. 
+  - type: activeScan                   # The active scanner - this actively attacks the target so should only be used with permission
     parameters:
-      context:                         # Строка: имя контекста для атаки, по умолчанию: первый контекст 
-      user:                            # Строка: необязательный пользователь для аутентификации должен быть определен в env. 
-      policy:                          # Строка: имя используемой политики сканирования, по умолчанию: политика по умолчанию. 
-      maxRuleDurationInMins:           # Int: максимальное время в минутах, в течение которого может выполняться любое отдельное правило, по умолчанию: 0 неограниченно 
-      maxScanDurationInMins:           # Int: максимальное время в минутах, в течение которого активный сканер может работать, по умолчанию: 0 неограниченно 
-      addQueryParam:                   # Логический (Bool): если установлено, будет добавлен дополнительный параметр запроса к запросам, у которых его нет, по умолчанию: false 
-      defaultPolicy:                   # Строка (String): имя используемой политики сканирования по умолчанию, по умолчанию: политика по умолчанию. 
-      delayInMs:                       # Int: задержка в миллисекундах между каждым запросом, используемая для снижения нагрузки на цель, по умолчанию 0 
-      handleAntiCSRFTokens:            # Bool: Если установлено, то автоматически обрабатывать токены защиты от CSRF, по умолчанию: false 
-      injectPluginIdInHeader:          # Bool: Если установлено, соответствующий идентификатор правила будет вставлен в заголовок X-ZAP-Scan-ID каждого запроса, по умолчанию: false 
+      context:                         # String: Name of the context to attack, default: first context
+      user:                            # String: An optional user to use for authentication, must be defined in the env
+      policy:                          # String: Name of the scan policy to be used, default: Default Policy
+      maxRuleDurationInMins:           # Int: The max time in minutes any individual rule will be allowed to run for, default: 0 unlimited
+      maxScanDurationInMins:           # Int: The max time in minutes the active scanner will be allowed to run for, default: 0 unlimited
+      addQueryParam:                   # Bool: If set will add an extra query parameter to requests that do not have one, default: false
+      defaultPolicy:                   # String: The name of the default scan policy to use, default: Default Policy
+      delayInMs:                       # Int: The delay in milliseconds between each request, use to reduce the strain on the target, default 0
+      handleAntiCSRFTokens:            # Bool: If set then automatically handle anti CSRF tokens, default: false
+      injectPluginIdInHeader:          # Bool: If set then the relevant rule Id will be injected into the X-ZAP-Scan-ID header of each request, default: false
+      scanHeadersAllRequests:          # Bool: If set then the headers of requests that do not include any parameters will be scanned, default: false
+      threadPerHost:                   # Int: The max number of threads per host, default: 2
+    policyDefinition:                  # The policy definition - only used if the 'policy' is not set
+      defaultStrength:                 # String: The default Attack Strength for all rules, one of Low, Medium, High, Insane (not recommended), default: Medium
+      defaultThreshold:                # String: The default Alert Threshold for all rules, one of Off, Low, Medium, High, default: Medium
+      rules:                           # A list of one or more active scan rules and associated settings which override the defaults
+      - id:                            # Int: The rule id as per https://www.zaproxy.org/docs/alerts/
+        name:                          # String: The name of the rule for documentation purposes - this is not required or actually used
+        strength:                      # String: The Attack Strength for this rule, one of Low, Medium, High, Insane, default: Medium
+        threshold:                     # String: The Alert Threshold for this rule, one of Off, Low, Medium, High, default: Medium
 </pre>
 
-<H2>Данные задания </H2>
-Следующий класс будет доступен для надстроек, предоставляющих доступ к данным задания, таких как надстройка Reporting. 
-Обратите внимание, что в этом случае данные относятся к последнему активному сканированию, независимо от того, было ли оно запущено с помощью Automation Framework, пользовательского интерфейса или API. 
+<H2>Job Data</H2>
+The following class will be made available to add-ons that provide access to the Job Data such as the Reporting add-on.
+Note that in this case the data is from the last Active Scan, regardless of whether it was started by the Automation Framework, the UI, or the API.
 <ul>
-<li>Ключ: <code>activeScanData</code> 
-<li>Класс: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/automation/src/main/java/org/zaproxy/addon/automation/jobs/ActiveScanJobResultData.java">ActiveScanJobResultData</a> 
+<li>Key: <code>activeScanData</code>
+<li>Class: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/automation/src/main/java/org/zaproxy/addon/automation/jobs/ActiveScanJobResultData.java">ActiveScanJobResultData</a>
 </ul>
 
 </BODY>

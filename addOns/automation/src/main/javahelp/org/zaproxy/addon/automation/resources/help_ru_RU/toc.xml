@@ -5,15 +5,20 @@
 		<tocitem text="Дополнения" tocid="addons">
 			<tocitem text="Автоматизация Фреймворк " image="automation-icon" target="automation">
 				<tocitem text="GUI  (Графический Интерфейс)" target="automation.gui"/>
-				<tocitem text="окружающая среда" target="automation.env"/>
-				<tocitem text="Аутентификация" target="automation.auth"/>
-				<tocitem text="Задание: надстройки " target="automation.addons"/>
-				<tocitem text="Задание: passiveScanConfig " target="automation.pscanconf"/>
-				<tocitem text="Задание: passiveScanWait" target="automation.pscanwait"/>
-				<tocitem text="Задание: паук " target="automation.spider"/>
-				<tocitem text="Задание: activeScan" target="automation.ascan"/>
-				<tocitem text="Тесты" target="automation.tests"/>
-				<tocitem text="О программе" target="automation.about"/>
+				<tocitem text="Options" target="automation.options"/>
+				<tocitem text="Environment" target="automation.env"/>
+				<tocitem text="Authentication" target="automation.auth"/>
+				<tocitem text="Job: addOns" target="automation.addons"/>
+				<tocitem text="Job: passiveScanConfig" target="automation.pscanconf"/>
+				<tocitem text="Job: passiveScanWait" target="automation.pscanwait"/>
+				<tocitem text="Job: spider" target="automation.spider"/>
+				<tocitem text="Job: activeScan" target="automation.ascan"/>
+				<tocitem text="Tests" target="automation.tests"/>
+				<tocitem text="Test: alert" target="automation.tests.alert"/>
+				<tocitem text="Test: monitor" target="automation.tests.monitor"/>
+				<tocitem text="Test: stats" target="automation.tests.stats"/>
+				<tocitem text="Test: url" target="automation.tests.url"/>
+				<tocitem text="About" target="automation.about"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>

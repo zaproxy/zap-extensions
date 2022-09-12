@@ -5,6 +5,7 @@
 		<tocitem text="Add Ons" tocid="addons">
 			<tocitem text="Automation Framework" image="automation-icon" target="automation">
 				<tocitem text="GUI" target="automation.gui"/>
+				<tocitem text="Options" target="automation.options"/>
 				<tocitem text="Environment" target="automation.env"/>
 				<tocitem text="Authentication" target="automation.auth"/>
 				<tocitem text="Job: addOns" target="automation.addons"/>
@@ -13,6 +14,10 @@
 				<tocitem text="Job: spider" target="automation.spider"/>
 				<tocitem text="Job: activeScan" target="automation.ascan"/>
 				<tocitem text="Tests" target="automation.tests"/>
+				<tocitem text="Test: alert" target="automation.tests.alert"/>
+				<tocitem text="Test: monitor" target="automation.tests.monitor"/>
+				<tocitem text="Test: stats" target="automation.tests.stats"/>
+				<tocitem text="Test: url" target="automation.tests.url"/>
 				<tocitem text="About" target="automation.about"/>
 			</tocitem>
 		</tocitem>

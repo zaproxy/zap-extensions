@@ -5,15 +5,20 @@
 		<tocitem text="Add Ons" tocid="addons">
 			<tocitem text="Automatisierungsframework" image="automation-icon" target="automation">
 				<tocitem text="Benutzeroberfläche" target="automation.gui"/>
-				<tocitem text="Umgebung" target="automation.env"/>
-				<tocitem text="Authentisierung" target="automation.auth"/>
+				<tocitem text="Options" target="automation.options"/>
+				<tocitem text="Environment" target="automation.env"/>
+				<tocitem text="Authentication" target="automation.auth"/>
 				<tocitem text="Job: addOns" target="automation.addons"/>
 				<tocitem text="Job: passiveScanConfig" target="automation.pscanconf"/>
 				<tocitem text="Job: passiveScanWait" target="automation.pscanwait"/>
 				<tocitem text="Job: spider" target="automation.spider"/>
 				<tocitem text="Job: activeScan" target="automation.ascan"/>
 				<tocitem text="Tests" target="automation.tests"/>
-				<tocitem text="Über" target="automation.about"/>
+				<tocitem text="Test: alert" target="automation.tests.alert"/>
+				<tocitem text="Test: monitor" target="automation.tests.monitor"/>
+				<tocitem text="Test: stats" target="automation.tests.stats"/>
+				<tocitem text="Test: url" target="automation.tests.url"/>
+				<tocitem text="About" target="automation.about"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>

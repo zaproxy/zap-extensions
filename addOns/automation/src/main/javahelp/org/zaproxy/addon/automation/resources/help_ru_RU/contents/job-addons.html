@@ -8,21 +8,14 @@ Automation Framework - addOns Job
 <BODY>
 <H1>Automation Framework - работа над надстройками </H1>
 
-Это задание позволяет вам управлять надстройками ZAP. 
+This job has been depreciated, no longer does anything, and should no longer be used.
 <p>
-Идентификаторы надстроек для использования в списках «установка» и «удаление» отображаются в диалоговом окне «Управление надстройками» ZAP Desktop или в диалоговом окне «Управление надстройками».
-можно найти на странице <a href="https://www.zaproxy.org/addons/"> ZAP Marketplace </a>. 
-
-<H2>YAML</H2>
-
-<pre>
-  - type: addOns                       # Управление дополнениями 
-    parameters:
-      updateAddOns: false              # В настоящее время отключен из-за проблем с обновлением фреймворка и заданий во время их работы. 
-    install:                           # Список нестандартных надстроек для установки с ZAP Marketplace 
-    uninstall:                         # Список стандартных надстроек для удаления 
-</pre>
-
+Previously it allowed you to manage the ZAP add-ons.
+However it turns out that adding and updating add-ons when running a plan is a bad idea and does not work well.
+<p>
+For more details on how to manage add-ons see https://www.zaproxy.org/docs/automate/automation-framework/#updating-add-ons
+<p>
+This job will be removed in the next major release of this add-on.
 </BODY>
 </HTML>
 

@@ -4,6 +4,7 @@
     <!-- index entries are merged (sorted) into core index -->
 	<indexitem text="automation" target="automation"/>
     <indexitem text="automation - gui" target="automation.gui"/>
+    <indexitem text="automation - options" target="automation.options"/>
     <indexitem text="automation - environment" target="automation.env"/>
     <indexitem text="automation - authentication" target="automation.auth"/>
     <indexitem text="automation - addOns job" target="automation.addons"/>
@@ -13,4 +14,8 @@
     <indexitem text="automation - activeScan job" target="automation.ascan"/>
     <indexitem text="automation - about" target="automation.about"/>
     <indexitem text="automation - tests" target="automation.tests"/>
+    <indexitem text="automation - alert test" target="automation.test.alert"/>
+    <indexitem text="automation - monitor test" target="automation.test.monitor"/>
+    <indexitem text="automation - statistic test" target="automation.test.stats"/>
+    <indexitem text="automation - url test" target="automation.test.url"/>
 </index>
