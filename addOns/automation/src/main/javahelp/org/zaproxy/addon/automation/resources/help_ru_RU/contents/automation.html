@@ -37,27 +37,30 @@ Automation Framework
 Однако вы можете запускать задания Automation Framework с помощью рабочего стола ZAP, чтобы помочь вам отладить проблемы. 
 
 <H2>Аутентификация</H2>
-Платформа автоматизации поддерживает подмножество механизмов <a href="authentication.html"> аутентификации </a>, поддерживаемых ZAP. 
+The Automation Framework supports all of the <a href="authentication.html">authentication</a> mechanisms supported by ZAP.
 
 <H2>GUI  (Графический Интерфейс)</H2>
 <a href="gui.html"> GUI </a> находится в стадии разработки и предоставляет постоянно расширяющийся набор функций. 
 
+<H2>Options</H2>
+The <a href="options.html">Automation Options</a> screen allows you to configure specific options.
+
 <H2>API</H2>
-Это дополнение предоставляет следующие конечные точки API: 
+The following API endpoints are provided by this add-on:
 <ul>
 <li>Действие: runPlan (filePath) - загружает и асинхронно запускает план в указанном файле, возвращая planId </li>
 <li>Вид:
 planProgress (planId) - возвращает сведения о прогрессе для указанного planId </li>
 </ul>
-Если используется рабочий стол ZAP, план также будет отображаться в графическом интерфейсе, чтобы упростить диагностику любых проблем. 
+If the ZAP desktop is being used then the plan will also be shown in the GUI to make it easier to diagnose any problems.
 
-<H2>окружающая среда</H2>
-Раздел файла <a href="environment.html"> environment </a> определяет приложения, с которыми могут работать остальные задания. 
+<H2>Environment</H2>
+The <a href="environment.html">environment</a> section of the file defines the applications which the rest of the jobs can act on.
 
-<H2>Задачи</H2>
-Это дополнение поддерживает следующие задачи автоматизации: 
+<H2>Jobs</H2>
+The following automation jobs are supported by this add-on:
 <ul>
-<li><a href="job-addons.html"> addOns </a> - управление дополнениями </li>
+<li><a href="job-addons.html">addOns</a> - add-on management, now deprecated</li>
 <li><a href="job-delay.html"> delay </a> - приостанавливает выполнение плана на указанный период времени или выполняется определенное условие </li>
 <li><a href="job-pscanconf.html"> passiveScan-config </a> - конфигурация пассивного сканирования </li>
 <li><a href="job-pscanwait.html"> passiveScan-wait </a> - ожидает, пока пассивный сканер завершит обработку текущей очереди </li>

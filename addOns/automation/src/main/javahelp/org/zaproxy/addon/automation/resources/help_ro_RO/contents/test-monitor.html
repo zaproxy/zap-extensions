@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+  <TITLE>
+    Automation Framework - Monitor Job Test
+  </TITLE>
+</HEAD>
+<BODY>
+<H1>Automation Framework - Monitor Job Test</H1>
+
+Monitor tests are supported by long running jobs, such as <a href="job-ascan.html">activeScan</a> and
+<a href="job-spider.html">spider</a>. 
+<p>
+Unlike the other Job Tests, monitor tests run while a job is running.
+They work in a similar way to <a href="test-stats.html">statistic</a> tests in that they check a specified statistic,
+but there is no 'operator' - instead the test will fail if the value of the statistic exceeds the given threshold.
+<p>
+Monitor tests can be used to terminate a long running job early, for example if there are too many authentication failures.
+<p>
+An up to date list of the statistics ZAP maintains can be found at 
+<a href="https://www.zaproxy.org/docs/internal-statistics/">https://www.zaproxy.org/docs/internal-statistics/</a>.
+<p>
+A job can have tests for multiple statistics and multiple tests can be created for the same statistic.
+<p>
+Note that monitor tests will function correctly only if in memory statistics have been 
+<a href="https://www.zaproxy.org/docs/desktop/ui/dialogs/options/stats/#in-memory-statistics-enabled">enabled</a>.
+
+<H2>YAML</H2>
+
+<pre>
+  jobs:
+  - type: example
+    parameters:
+      jobSpecificParam: 'value'
+    tests:
+      - name: 'test one'                      # Name of the test, optional
+        type: monitor                         # Specifies that the test is of type 'monitor'
+        statistic: 'stats.addon.something'    # Name of an integer / long statistic
+        site:                                 # Name of the site for site specific tests, supports vars
+        threshold: 10                         # The threshold at which a statistic fails
+        onFail: 'info'                        # String: One of 'warn', 'error', 'info', mandatory
+</pre>
+</BODY>
+</HTML>
+

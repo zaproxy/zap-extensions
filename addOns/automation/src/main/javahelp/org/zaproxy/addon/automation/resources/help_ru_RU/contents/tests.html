@@ -7,100 +7,15 @@
 </HEAD>
 <BODY>
 <H1>Платформа автоматизации — тесты результатов работы </H1>
-Платформа автоматизации поддерживает тестирование результатов задания на основе условий, которые можно задать в файле YAML. 
-В настоящее время доступны тесты типа «статистика» и «оповещение».  Другие типы будут добавлены в будущем. 
-
-<H2>Статистика </H2>
-Статистические тесты поддерживаются всеми надстройками, имеющими задачу автоматизации.  Если есть соответствующий
-статистики, используемой надстройкой, для нее можно создать тест.<br>
-Актуальный список статистики, которую ведет ZAP, можно найти по адресу
-<a href="https://www.zaproxy.org/docs/internal-statistics/">https://www.zaproxy.org/docs/internal-statistics/</a>. 
+The automation framework supports testing the job outcomes based on conditions that you can set in the YAML file.
 <p>
-Задание может иметь тесты для нескольких статистических данных, и несколько тестов могут быть созданы для одной и той же статистики. 
-<p>
-Обратите внимание, что тесты, основанные на статистике, будут работать правильно только в том случае, если в памяти
-<a href="https://www.zaproxy.org/docs/desktop/ui/dialogs/options/stats/#in-memory-statistics-enabled">включено</a>. 
-
-<H2>YAML</H2>
-
-<pre>
-  задание:
-  - type: пример 
-    параметры :
-      jobSpecificParam: 'величина'
-    тесты: 
-      - name: 'тест один'                    # Название теста, необязательно 
-        type: статистика                      # Указывает, что тест относится к типу «статистика». 
-        statistic: 'stats.addon.something'    # Имя целочисленной/длинной статистики 
-        site:                                 # Имя сайта для конкретных тестов сайта, поддерживает vars 
-        оператор: '>='                        # Один из  '==', '!=', '&gt;=', '&gt;', '&lt;', '&lt;='
-        величина: 10                             # Значение для сравнения статистики 
-        onFail: 'info'                        # String: Одно из «предупреждение», «ошибка», «информация», обязательно 
-
-</pre>
-
-<H2>Оповещение</H2>
-
-Тесты предупреждений поддерживаются заданиями activeScan и passiveScan-wait.  Эти тесты можно использовать для подтверждения
-наличие/отсутствие определенных предупреждений в активном/пассивном сканировании.  Это обязательно для предупреждений, указанных в
-запланируйте наличие scanRuleId, с которым всегда будут сопоставляться генерируемые оповещения.  Все остальные поля, описывающие
-предупреждение является необязательным регулярным выражением и будет сопоставляться только в том случае, если оно указано. 
-<p>
-Задание может иметь тесты для нескольких предупреждений, и можно создать несколько тестов для предупреждений с одним и тем же scanRuleId. 
-
-<H2>YAML</H2>
-
-<pre>
-  задание:
-  - type: activeScan                   # Активный сканер — он активно атакует цель, поэтому его следует использовать только с разрешения. 
-    parameters:
-      context:                         # Строка: имя контекста для атаки, по умолчанию: первый контекст 
-      policy:                          # Строка: имя используемой политики сканирования, по умолчанию: политика по умолчанию. 
-      maxRuleDurationInMins:           # Int: Максимальное время в минутах, в течение которого может выполняться любое отдельное правило, по умолчанию: 0 неограниченно 
-      maxScanDurationInMins:           # Int: Максимальное время в минутах, в течение которого активный сканер может работать, по умолчанию: 0 неограниченно 
-    tests:
-      - name: 'test one'                       # Название теста, необязательно 
-        type: alert                            # Указывает, что тест относится к типу «оповещение». 
-        action: passIfPresent/passIfAbsent     # Строка: Условие (наличие/отсутствие) предупреждения, по умолчанию: passIfAbsent 
-        scanRuleId:                            # Целое число: идентификатор правила сканирования, которое создает предупреждение, обязательно 
-alertName:                             # Строка: имя сгенерированного оповещения, необязательно 
-        url: http://www.example.com/path       # Строка: URL-адрес запроса, соответствующего сгенерированному предупреждению, необязательно 
-        method:                                # Строка: метод запроса, соответствующий сгенерированному предупреждению, необязательный. 
-        attack:                                # Строка: Фактическая атака, вызвавшая предупреждение, необязательно 
-        param:                                 # Строка: параметр, который был изменен для создания предупреждения, необязательный. 
-        evidence:                              # Строка: свидетельство, соответствующее сгенерированному предупреждению, необязательно 
-        confidence:                            # Строка: уровень достоверности предупреждения, один из вариантов «ложноположительный», «низкий», «средний», «высокий», «подтвержденный», необязательно 
-        risk:                                  # Строка: риск предупреждения, один из «Информационный», «Низкий», «Средний», «Высокий», необязательно 
-        otherInfo:                             # Строка: риск предупреждения, один из «Информационный», «Низкий», «Средний», «Высокий», необязательно 
-        onFail: 'info'                         # Строка: одно из «предупреждение», «ошибка», «информация», обязательно 
-        
-  
-</pre>
-
-<H2>URL Presence</H2>
-
-Presence tests are supported by all the jobs. These tests can be used to validate the presence/absence of a URL and it's 
-specific expressions in the Http response/request. The expressions are specified in the YAML file as regular expressions. 
-The test will pass if the URL or the specified expression is found in the response/request depending upon the operator 
-selection.
-<p>
-A job can have tests for multiple expressions, and multiple tests can be created for expressions having the same URL.
-
-<H2>YAML</H2>
-<pre>
-  jobs:
-  - type: something
-    tests:
-      - name: 'test one'                      # Name of the test, optional
-        type: url                             # Specifies that the test is of type 'url'
-        url: http://www.example.com/path      # String: The URL to be tested.
-        operator: 'and'                       # One of 'and', 'or', default is 'or'
-        requestHeaderRegex:                   # String: The regular expression to be matched in the request header, optional
-        requestBodyRegex:                     # String: The regular expression to be matched in the request body, optional
-        responseHeaderRegex:                  # String: The regular expression to be matched in the response header, optional
-        responseBodyRegex:                    # String: The regular expression to be matched in the response body, optional
-        onFail: 'info'                        # String: One of 'warn', 'error', 'info', mandatory
-</pre>
+The currently supported tests are:
+<ul>
+<li><a href="test-alert.html">alert</a> - Alert tests - validate the presence or absence of specified alerts</li>
+<li><a href="test-monitor.html">monitor</a> - Monitor tests - allow you to stop long running jobs based on statistic thresholds</li>
+<li><a href="test-stats.html">stats</a> - Statistics tests - test any of the statistics maintained by ZAP</li>
+<li><a href="test-url.html">url</a> - URL tests - validate the presence/absence of a URL and it’s specific expressions in the HTTP response/request</li>
+</ul>
 </BODY>
 </HTML>
 

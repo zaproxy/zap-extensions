@@ -29,6 +29,14 @@ However you can run this job later, or multiple times, if you want different job
       threshold:                       # String: The Alert Threshold for this rule, one of Off, Low, Medium, High, default: Medium
 </pre>
 
+The job saves the current passive scan configuration when a plan starts and resets it when the plan ends.
+This is primarily to ensure the scanOnlyInScope setting is not changed - the default is 'true' for the job but
+'false' in the GUI.
+<br>
+In versions up to and including 0.16.0 running this job with the default settings would change scanOnlyInScope to 'true' in the GUI.
+This has proved confusing as many users use the GUI without setting a scope - when scanOnlyInScope is set to 'true'
+and no scope is defined then no passive scan alerts are raised.
+
 </BODY>
 </HTML>
 

@@ -4,13 +4,18 @@
     <!-- index entries are merged (sorted) into core index -->
 	<indexitem text="Автоматизация " target="automation"/>
     <indexitem text="автоматизация - графический интерфейс " target="automation.gui"/>
-    <indexitem text="автоматизация - окружающая среда " target="automation.env"/>
-    <indexitem text="автоматизация - аутентификация " target="automation.auth"/>
-    <indexitem text="автоматизация - работа надстройки " target="automation.addons"/>
-    <indexitem text="автоматизация - задание passiveScan-config " target="automation.pscanconf"/>
-    <indexitem text="автоматизация - пассивное сканирование-ожидание работы " target="automation.pscanwait"/>
-    <indexitem text="автоматизация - работа паука " target="automation.spider"/>
-    <indexitem text="автоматизация - задание activeScan " target="automation.ascan"/>
-    <indexitem text="автоматизация - о " target="automation.about"/>
-    <indexitem text="автоматизация - тесты " target="automation.tests"/>
+    <indexitem text="automation - options" target="automation.options"/>
+    <indexitem text="automation - environment" target="automation.env"/>
+    <indexitem text="automation - authentication" target="automation.auth"/>
+    <indexitem text="automation - addOns job" target="automation.addons"/>
+    <indexitem text="automation - passiveScan-config job" target="automation.pscanconf"/>
+    <indexitem text="automation - passiveScan-wait job" target="automation.pscanwait"/>
+    <indexitem text="automation - spider job" target="automation.spider"/>
+    <indexitem text="automation - activeScan job" target="automation.ascan"/>
+    <indexitem text="automation - about" target="automation.about"/>
+    <indexitem text="automation - tests" target="automation.tests"/>
+    <indexitem text="automation - alert test" target="automation.test.alert"/>
+    <indexitem text="automation - monitor test" target="automation.test.monitor"/>
+    <indexitem text="automation - statistic test" target="automation.test.stats"/>
+    <indexitem text="automation - url test" target="automation.test.url"/>
 </index>

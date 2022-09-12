@@ -17,4 +17,8 @@
     <mapID target="automation.ascan" url="contents/job-ascan.html" />
     <mapID target="automation.about" url="contents/about.html" />
     <mapID target="automation.tests" url="contents/tests.html" />
+    <mapID target="automation.tests.alert" url="contents/test-alert.html" />
+    <mapID target="automation.tests.monitor" url="contents/test-monitor.html" />
+    <mapID target="automation.tests.stats" url="contents/test-stats.html" />
+    <mapID target="automation.tests.url" url="contents/test-url.html" />
 </map>
