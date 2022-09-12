@@ -204,8 +204,40 @@ class HttpSenderImplUnitTest {
                 .flatMap(method -> sendAndReceiveMethods().map(sm -> arguments(method, sm)));
     }
 
+    static Stream<Arguments> httpVersionsAndSendAndReceiveMethods() {
+        return Stream.of(
+                        "HTTP/0.9", "HTTP/1.0", "HTTP/1.1"
+                        // XXX Not yet allowed by current core version.
+                        // "HTTP/1.2",
+                        // "HTTP/2",
+                        // "HTTP/3.0",
+                        // "HTTP/4.5"
+                        )
+                .flatMap(method -> sendAndReceiveMethods().map(sm -> arguments(method, sm)));
+    }
+
     @Nested
     class Request {
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#httpVersionsAndSendAndReceiveMethods")
+        void shouldBeSentWithDifferentHttpVersions(String version, SenderMethod method)
+                throws Exception {
+            // Given
+            HttpRequestHeader requestHeader = message.getRequestHeader();
+            requestHeader.setVersion(version);
+            requestHeader.setHeader("Host", "localhost:" + serverPort);
+            requestHeader.setContentLength(0);
+            // When
+            method.sendWith(httpSender, message);
+            // Then
+            assertThat(server.getReceivedMessages(), hasSize(1));
+            HttpMessage receivedMessage = server.getReceivedMessages().get(0);
+            assertThat(
+                    receivedMessage.getRequestHeader().toString(),
+                    is(equalTo(requestHeader.toString())));
+        }
 
         @ParameterizedTest
         @MethodSource(
