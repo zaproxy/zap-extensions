@@ -26,6 +26,8 @@ import static org.hamcrest.Matchers.is;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
@@ -57,6 +59,26 @@ class ContentSecurityPolicyMissingScanRuleUnitTest
 
         // Then
         assertContentSecurityPolicyAlertRaised();
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "Content-Security-Policy",
+                "CONTENT-SECURITY-POLICY",
+                "content-security-policy"
+            })
+    void givenMissingCspHeaderWithMetaThenAlertNotRaised(String name) throws Exception {
+        // Given
+        HttpMessage msg = createHttpMessageWithHeaders(HEADER_HTML);
+        msg.setResponseBody(
+                "<html><head><meta http-equiv=\""
+                        + name
+                        + "\" content=\"default-src 'self'\"></head><H1>Test</H1></html>");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(0));
     }
 
     @Test
