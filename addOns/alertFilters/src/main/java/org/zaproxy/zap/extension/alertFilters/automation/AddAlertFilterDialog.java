@@ -29,6 +29,8 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.extension.alertFilters.ExtensionAlertFilters;
 import org.zaproxy.zap.extension.alertFilters.automation.AlertFilterJob.Risk;
+import org.zaproxy.zap.extension.alertFilters.internal.ScanRulesInfo;
+import org.zaproxy.zap.extension.alertFilters.internal.ui.ScanRulesInfoComboBoxModel;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -60,6 +62,7 @@ public class AddAlertFilterDialog extends StandardFieldsDialog {
     private int tableIndex;
     private AlertFilterJob job;
     private AlertFilterTableModel model;
+    private ScanRulesInfoComboBoxModel scanRulesInfoComboBoxModel;
 
     public AddAlertFilterDialog(AlertFilterJob job, AlertFilterTableModel model) {
         this(job, model, null, -1);
@@ -80,10 +83,10 @@ public class AddAlertFilterDialog extends StandardFieldsDialog {
         this.model = model;
         this.tableIndex = tableIndex;
 
-        this.addComboField(
-                RULE_PARAM,
-                ExtensionAlertFilters.getAllRuleNames(),
-                ExtensionAlertFilters.getRuleNameForId(rule.getRuleId()));
+        ScanRulesInfo scanRulesInfo = ExtensionAlertFilters.getScanRulesInfo();
+        scanRulesInfoComboBoxModel = new ScanRulesInfoComboBoxModel(scanRulesInfo);
+        scanRulesInfoComboBoxModel.setSelectedItem(scanRulesInfo.getById(rule.getRuleId()));
+        this.addComboField(RULE_PARAM, scanRulesInfoComboBoxModel);
 
         List<String> contextNames = this.job.getEnv().getContextNames();
         // Add blank option
@@ -115,9 +118,9 @@ public class AddAlertFilterDialog extends StandardFieldsDialog {
 
     @Override
     public void save() {
-        String ruleName = this.getStringValue(RULE_PARAM);
-        rule.setRuleId(ExtensionAlertFilters.getIdForRuleName(ruleName));
-        rule.setRuleName(ruleName);
+        ScanRulesInfo.Entry scanRule = scanRulesInfoComboBoxModel.getSelectedItem();
+        rule.setRuleId(scanRule.getId());
+        rule.setRuleName(scanRule.getName());
         rule.setContext(this.getStringValue(CONTEXT_PARAM));
         rule.setNewRisk(Risk.getRiskFromI18n(this.getStringValue(NEW_RISK_PARAM)).toString());
         rule.setParameter(this.getStringValue(PARAM_PARAM));
