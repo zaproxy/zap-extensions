@@ -530,7 +530,7 @@ public class HttpSenderApache
     private static ProtocolVersion toHttpVersion(String version) {
         String[] data = version.substring(version.indexOf('/') + 1).split("\\.", 2);
         int major = Integer.parseInt(data[0]);
-        int minor = Integer.parseInt(data[1]);
+        int minor = data.length > 1 ? Integer.parseInt(data[1]) : 0;
         return new HttpVersion(major, minor);
     }
 
