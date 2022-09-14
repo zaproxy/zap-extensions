@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import net.htmlparser.jericho.Source;
@@ -50,11 +51,6 @@ public class PermissionsPolicyScanRule extends PluginPassiveScanner {
     private static final int PLUGIN_ID = 10063;
 
     @Override
-    public void scanHttpRequestSend(HttpMessage httpMessage, int id) {
-        // Only checking the response for this scan rule
-    }
-
-    @Override
     public void scanHttpResponseReceive(HttpMessage httpMessage, int id, Source source) {
         long start = System.currentTimeMillis();
 
@@ -75,27 +71,9 @@ public class PermissionsPolicyScanRule extends PluginPassiveScanner {
         List<String> permissionPolicyOptions =
                 httpMessage.getResponseHeader().getHeaderValues(PERMISSIONS_POLICY_HEADER);
         if (!featurePolicyOptions.isEmpty()) {
-            newAlert()
-                    .setRisk(Alert.RISK_LOW)
-                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                    .setName(getAlertAttribute("deprecated.name"))
-                    .setDescription(getAlertAttribute("deprecated.desc"))
-                    .setSolution(getAlertAttribute("deprecated.soln"))
-                    .setReference(getAlertAttribute("deprecated.refs"))
-                    .setEvidence(DEPRECATED_HEADER)
-                    .setCweId(16) // CWE-16: Configuration
-                    .setWascId(15) // WASC-15: Application Misconfiguration
-                    .raise();
+            buildDeprecatedAlert().raise();
         } else if (permissionPolicyOptions.isEmpty()) {
-            newAlert()
-                    .setRisk(Alert.RISK_LOW)
-                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                    .setDescription(getAlertAttribute("desc"))
-                    .setSolution(getAlertAttribute("soln"))
-                    .setReference(getAlertAttribute("refs"))
-                    .setCweId(693) // CWE-693: Protection Mechanism Failure
-                    .setWascId(15) // WASC-15: Application Misconfiguration
-                    .raise();
+            buildMissingAlert().raise();
         }
 
         LOGGER.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
@@ -118,5 +96,39 @@ public class PermissionsPolicyScanRule extends PluginPassiveScanner {
 
     private static String getAlertAttribute(String key) {
         return Constant.messages.getString(MESSAGE_PREFIX + key);
+    }
+
+    private AlertBuilder getBuilder() {
+        return newAlert().setRisk(Alert.RISK_LOW).setConfidence(Alert.CONFIDENCE_MEDIUM);
+    }
+
+    private AlertBuilder buildDeprecatedAlert() {
+        return getBuilder()
+                .setName(getAlertAttribute("deprecated.name"))
+                .setDescription(getAlertAttribute("deprecated.desc"))
+                .setSolution(getAlertAttribute("deprecated.soln"))
+                .setReference(getAlertAttribute("deprecated.refs"))
+                .setEvidence(DEPRECATED_HEADER)
+                .setCweId(16) // CWE-16: Configuration
+                .setWascId(15) // WASC-15: Application Misconfiguration
+                .setAlertRef(PLUGIN_ID + "-2");
+    }
+
+    private AlertBuilder buildMissingAlert() {
+        return getBuilder()
+                .setDescription(getAlertAttribute("desc"))
+                .setSolution(getAlertAttribute("soln"))
+                .setReference(getAlertAttribute("refs"))
+                .setCweId(693) // CWE-693: Protection Mechanism Failure
+                .setWascId(15) // WASC-15: Application Misconfiguration
+                .setAlertRef(PLUGIN_ID + "-1");
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        List<Alert> alerts = new ArrayList<>();
+        alerts.add(buildMissingAlert().build());
+        alerts.add(buildDeprecatedAlert().build());
+        return alerts;
     }
 }
