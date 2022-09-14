@@ -36,6 +36,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 
 class ContentSecurityPolicyScanRuleUnitTest
         extends PassiveScannerTest<ContentSecurityPolicyScanRule> {
@@ -45,7 +46,11 @@ class ContentSecurityPolicyScanRuleUnitTest
                     + "storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; "
                     + "style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com "
                     + "fonts.gstatic.com; frame-ancestors 'none'; worker-src 'self'; form-action 'none'";
-    private static final String HTTP_HEADER_CSP = "Content-Security-Policy";
+    private static final String REASONABLE_META_POLICY =
+            "default-src 'self'; script-src 'self' "
+                    + "storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; "
+                    + "style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com "
+                    + "fonts.gstatic.com; worker-src 'self'; form-action 'none'";
 
     @Override
     protected ContentSecurityPolicyScanRule createScanner() {
@@ -80,6 +85,10 @@ class ContentSecurityPolicyScanRuleUnitTest
     void shouldReturnExpectedExampleAlerts() {
         // Given / When
         int count = rule.getExampleAlerts().size();
+        long countInfos =
+                rule.getExampleAlerts().stream()
+                        .filter(alert -> Alert.RISK_INFO == alert.getRisk())
+                        .count();
         long countLows =
                 rule.getExampleAlerts().stream()
                         .filter(alert -> Alert.RISK_LOW == alert.getRisk())
@@ -89,9 +98,10 @@ class ContentSecurityPolicyScanRuleUnitTest
                         .filter(alert -> Alert.RISK_MEDIUM == alert.getRisk())
                         .count();
         // Then
-        assertThat(count, is(equalTo(10)));
+        assertThat(count, is(equalTo(12)));
+        assertThat(countInfos, is(equalTo(1L)));
         assertThat(countLows, is(equalTo(3L)));
-        assertThat(countMediums, is(equalTo(7L)));
+        assertThat(countMediums, is(equalTo(8L)));
     }
 
     @Test
@@ -131,7 +141,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         assertThat(
                 alertsRaised.get(0).getOtherInfo(),
                 equalTo(
-                        "Warnings:\nUnrecognized directive default-src:\nUnrecognized directive report_uri\n"));
+                        "Errors:\nDirective name default-src: contains characters outside the range ALPHA / DIGIT / \"-\"\nDirective name report_uri contains characters outside the range ALPHA / DIGIT / \"-\"\n"));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
                 equalTo("default-src: 'none'; report_uri /__cspreport__"));
@@ -254,11 +264,71 @@ class ContentSecurityPolicyScanRuleUnitTest
     @Test
     void shouldNotAlertOnReasonableCsp() {
         // Given
-        HttpMessage msg = createHttpMessageWithReasonableCsp(HTTP_HEADER_CSP);
+        HttpMessage msg =
+                createHttpMessageWithReasonableCsp(HttpFieldsNames.CONTENT_SECURITY_POLICY);
         // When
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldNotAlertOnReasonableMetaCsp() {
+        // Given
+        HttpMessage msg = createHttpMessage();
+        msg.setResponseBody(
+                "<html><head><<meta http-equiv=\""
+                        + HttpFieldsNames.CONTENT_SECURITY_POLICY
+                        + "\" content=\""
+                        + REASONABLE_META_POLICY
+                        + "\"></head></html>");
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldAlertWhenHeaderAndMetaBothPresent() {
+        // Given
+        HttpMessage msg =
+                createHttpMessageWithReasonableCsp(HttpFieldsNames.CONTENT_SECURITY_POLICY);
+        msg.setResponseBody(
+                "<html><head><<meta http-equiv=\""
+                        + HttpFieldsNames.CONTENT_SECURITY_POLICY
+                        + "\" content=\""
+                        + REASONABLE_META_POLICY
+                        + "\"></head></html>");
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        Alert alert = alertsRaised.get(0);
+        assertThat(alert.getName(), equalTo("CSP: Header & Meta"));
+        assertThat(alert.getAlertRef(), equalTo("10055-12"));
+    }
+
+    @Test
+    void shouldAlertOnMetaPolicyWithInvalidDirective() {
+        // Given
+        HttpMessage msg = createHttpMessage();
+        msg.setResponseBody(
+                "<html><head><<meta http-equiv=\""
+                        + HttpFieldsNames.CONTENT_SECURITY_POLICY
+                        + "\" content=\""
+                        + REASONABLE_META_POLICY
+                        + "; sandbox allow-forms"
+                        + "\"></head></html>");
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        Alert alert = alertsRaised.get(0);
+        assertThat(alert.getName(), equalTo("CSP: Meta Policy Invalid Directive"));
+        assertThat(alert.getAlertRef(), equalTo("10055-11"));
     }
 
     @ParameterizedTest
@@ -290,6 +360,36 @@ class ContentSecurityPolicyScanRuleUnitTest
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_LOW));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
         assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-3"));
+    }
+
+    @Test
+    void shouldAlertWithWildcardDirectiveWhenApplicableAndIgnoreTrustedTypesInMeta() {
+        // Given
+        String policy = "default-src none; report-to csp-endpoint; require-trusted-types 'script'";
+        HttpMessage msg = createHttpMessage();
+        msg.setResponseBody(
+                "<html><head><<meta http-equiv=\""
+                        + HttpFieldsNames.CONTENT_SECURITY_POLICY
+                        + "\" content=\""
+                        + policy
+                        + "\"></head></html>");
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(2));
+        assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Notices"));
+        Alert alert = alertsRaised.get(1);
+        assertThat(alert.getName(), equalTo("CSP: Wildcard Directive"));
+        assertThat(
+                alert.getOtherInfo(),
+                equalTo(
+                        "The following directives either allow wildcard sources (or ancestors), are not defined, or are overly broadly defined: \n"
+                                + "form-action\n\nThe directive(s): form-action are among the directives that do not fallback to default-src, missing/excluding them is the same as allowing anything."));
+        assertThat(alert.getEvidence(), equalTo(policy));
+        assertThat(alert.getRisk(), equalTo(Alert.RISK_MEDIUM));
+        assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
+        assertThat(alert.getAlertRef(), equalTo("10055-4"));
     }
 
     @ParameterizedTest
@@ -359,8 +459,10 @@ class ContentSecurityPolicyScanRuleUnitTest
     @Test
     void shouldRaiseAlertOnSecondCspHasIssueFirstDoesNot() {
         // Given
-        HttpMessage msg = createHttpMessageWithReasonableCsp(HTTP_HEADER_CSP);
-        msg.getResponseHeader().addHeader(HTTP_HEADER_CSP, "style-src 'unsafe-inline'");
+        HttpMessage msg =
+                createHttpMessageWithReasonableCsp(HttpFieldsNames.CONTENT_SECURITY_POLICY);
+        msg.getResponseHeader()
+                .addHeader(HttpFieldsNames.CONTENT_SECURITY_POLICY, "style-src 'unsafe-inline'");
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -386,8 +488,10 @@ class ContentSecurityPolicyScanRuleUnitTest
     @Test
     void shouldRaiseAlertOnUnsafeInDefaultSrc() {
         // Given
-        HttpMessage msg = createHttpMessageWithReasonableCsp(HTTP_HEADER_CSP);
-        msg.getResponseHeader().addHeader(HTTP_HEADER_CSP, "default-src 'unsafe-inline'");
+        HttpMessage msg =
+                createHttpMessageWithReasonableCsp(HttpFieldsNames.CONTENT_SECURITY_POLICY);
+        msg.getResponseHeader()
+                .addHeader(HttpFieldsNames.CONTENT_SECURITY_POLICY, "default-src 'unsafe-inline'");
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -478,13 +582,14 @@ class ContentSecurityPolicyScanRuleUnitTest
     }
 
     private HttpMessage createHttpMessage(String cspPolicy) {
-        return createHttpMessage(HTTP_HEADER_CSP, cspPolicy);
+        return createHttpMessage(HttpFieldsNames.CONTENT_SECURITY_POLICY, cspPolicy);
     }
 
     private HttpMessage createHttpMessage(String cspHeaderName, String cspPolicy) {
         HttpMessage msg = new HttpMessage();
 
-        String header = !cspHeaderName.isEmpty() ? cspHeaderName : HTTP_HEADER_CSP;
+        String header =
+                !cspHeaderName.isEmpty() ? cspHeaderName : HttpFieldsNames.CONTENT_SECURITY_POLICY;
 
         try {
             msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -501,8 +606,19 @@ class ContentSecurityPolicyScanRuleUnitTest
                             + "Content-Length: "
                             + msg.getResponseBody().length()
                             + "\r\n");
+            msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
         } catch (HttpMalformedHeaderException e) {
             throw new RuntimeException(e);
+        }
+        return msg;
+    }
+
+    private HttpMessage createHttpMessage() {
+        HttpMessage msg = new HttpMessage();
+        try {
+            msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        } catch (HttpMalformedHeaderException e) {
+            // Ignore
         }
         return msg;
     }

@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.List;
 import java.util.Map;
-import net.htmlparser.jericho.Element;
-import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,6 +30,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
@@ -44,7 +43,6 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
 
     private static final String MESSAGE_PREFIX = "pscanrules.contentsecuritypolicymissing.";
     private static final int PLUGIN_ID = 10038;
-    private static final String HEADER_CSP = "Content-Security-Policy";
 
     private static final Logger logger =
             LogManager.getLogger(ContentSecurityPolicyMissingScanRule.class);
@@ -72,7 +70,8 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
 
         // Content-Security-Policy is supported by Chrome 25+, Firefox 23+, Safari 7+, but not but
         // Internet Exploder
-        List<String> cspOptions = msg.getResponseHeader().getHeaderValues(HEADER_CSP);
+        List<String> cspOptions =
+                msg.getResponseHeader().getHeaderValues(HttpFieldsNames.CONTENT_SECURITY_POLICY);
         if (!cspOptions.isEmpty()) {
             cspHeaderFound = true;
         }
@@ -97,7 +96,7 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
             xWebKitHeaderFound = true;
         }
 
-        if (!cspHeaderFound && !hasMetaCsp(source)
+        if (!cspHeaderFound && !CspUtils.hasMetaCsp(source)
                 || (AlertThreshold.LOW.equals(this.getAlertThreshold())
                         && (!xCspHeaderFound || !xWebKitHeaderFound))) {
             // Always report if the latest header isnt found,
@@ -146,15 +145,5 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    private static boolean hasMetaCsp(Source source) {
-        for (Element metaElement : source.getAllElements(HTMLElementName.META)) {
-            String httpEquiv = metaElement.getAttributeValue("http-equiv");
-            if (HEADER_CSP.equalsIgnoreCase(httpEquiv)) {
-                return true;
-            }
-        }
-        return false;
     }
 }
