@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add button to allow to regenerate Anti-CSRF tokens (Issue 111).
 
 ### Changed
+- Improve reporting of TLS errors (Issue 2699).
 - Maintenance changes.
 
 ## [6] - 2022-05-10

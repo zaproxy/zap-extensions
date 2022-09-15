@@ -24,14 +24,17 @@ import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
+import javax.net.ssl.SSLException;
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.option.OptionsParamView;
+import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.httppanel.HttpPanelRequest;
 import org.zaproxy.zap.extension.httppanel.Message;
@@ -184,9 +187,41 @@ public abstract class ManualRequestEditorPanel extends JPanel {
                             try {
                                 getMessageSender().handleSendMessage(aMessage);
                                 postSend();
+                            } catch (SSLException sslEx) {
+                                StringBuilder strBuilder = new StringBuilder();
+
+                                strBuilder.append(
+                                        Constant.messages.getString(
+                                                "network.httpsender.ssl.error.connect"));
+                                strBuilder
+                                        .append(
+                                                ((HttpMessage) aMessage)
+                                                        .getRequestHeader()
+                                                        .getURI()
+                                                        .toString())
+                                        .append('\n');
+                                strBuilder
+                                        .append(
+                                                Constant.messages.getString(
+                                                        "network.httpsender.ssl.error.exception"))
+                                        .append(sslEx.getMessage())
+                                        .append('\n');
+                                strBuilder
+                                        .append(
+                                                Constant.messages.getString(
+                                                        "network.httpsender.ssl.error.exception.rootcause"))
+                                        .append(ExceptionUtils.getRootCauseMessage(sslEx))
+                                        .append('\n');
+                                strBuilder.append(
+                                        Constant.messages.getString(
+                                                "network.httpsender.ssl.error.help",
+                                                Constant.messages.getString(
+                                                        "network.httpsender.ssl.error.help.url")));
+                                logger.debug(sslEx, sslEx);
+                                View.getSingleton().showWarningDialog(this, strBuilder.toString());
                             } catch (Exception e) {
-                                logger.warn(e.getMessage(), e);
-                                View.getSingleton().showWarningDialog(e.getMessage());
+                                logger.debug(e.getMessage(), e);
+                                View.getSingleton().showWarningDialog(this, e.getMessage());
                             } finally {
                                 btnSend.setEnabled(true);
                             }
