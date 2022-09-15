@@ -25,13 +25,15 @@
 	Processes the specific tags, identifying links to new resources:
 	<ul>
 		<li>Base - Proper handling</li>
-		<li>A, Link, Area - 'href' attribute</li>
+		<li>A, Link, Area, Base - 'href' attribute</li>
 		<li>Applet, Audio, Embed, Frame, IFrame, Input, Script, Img, Video - 'src' attribute</li>
+		<li>Blockquote - 'cite' attribute</li>
 		<li>Meta - 'http-equiv' for 'location', 'refresh' and 'Content-Security-Policy', 'name' for 'msapplication-config'</li>
 		<li>Applet - 'codebase', 'archive' attributes</li>
 		<li>Img - 'longdesc', 'lowsrc', 'dynsrc', 'srcset' attributes</li>
 		<li>Isindex - 'action' attribute</li>
 		<li>Object - 'codebase', 'data' attributes</li>
+		<li>Param - 'value' attribute</li>
 		<li>Svg - 'href' and 'xlink:href' attributes of 'image' and 'script' elements</li>
 		<li>Table - 'background' attribute</li>
 		<li>Video - 'poster' attribute</li>

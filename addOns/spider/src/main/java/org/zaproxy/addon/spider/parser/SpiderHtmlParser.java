@@ -49,7 +49,7 @@ public class SpiderHtmlParser extends SpiderParser {
 
     private static final Pattern INLINE_CONTENT_URL_PATTERN =
             Pattern.compile(
-                    "(?:http(?:s?)://|(?:\\s|\\B)//?)[^\\x00-\\x1f\"'\\s<>#()\\[\\]{}]+",
+                    "(?:http(?:s?)://|(?:\\s|\\B)(?:\\.{0,2})//?)[^\\x00-\\x1f\"'\\s<>#()\\[\\]{}]+",
                     Pattern.CASE_INSENSITIVE);
 
     private static final Pattern SRCSET_PATTERN =
@@ -90,7 +90,9 @@ public class SpiderHtmlParser extends SpiderParser {
         String baseURL = ctx.getBaseUrl();
 
         // Try to see if there's any BASE tag that could change the base URL
-        Element base = source.getFirstElement(HTMLElementName.BASE);
+        List<Element> elements = source.getAllElements(HTMLElementName.BASE);
+        Element base = elements.isEmpty() ? null : elements.get(0);
+
         if (base != null) {
             getLogger().debug("Base tag was found in HTML: {}", base.getDebugInfo());
             String href = base.getAttributeValue("href");
@@ -98,6 +100,10 @@ public class SpiderHtmlParser extends SpiderParser {
                 baseURL = getCanonicalUrl(ctx, href, baseURL);
                 baseTagSet = true;
             }
+        }
+
+        for (Element el : elements) {
+            processAttributeElement(ctx, ctx.getBaseUrl(), el, "href");
         }
 
         // Parse the source
@@ -184,6 +190,12 @@ public class SpiderHtmlParser extends SpiderParser {
             resourcesfound |= processAttributeElement(ctx, baseURL, el, "src");
         }
 
+        // Process Blockquote elements
+        elements = source.getAllElements(HTMLElementName.BLOCKQUOTE);
+        for (Element el : elements) {
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "cite");
+        }
+
         // Process Embed Elements
         elements = source.getAllElements(HTMLElementName.EMBED);
         for (Element el : elements) {
@@ -225,6 +237,12 @@ public class SpiderHtmlParser extends SpiderParser {
         for (Element el : elements) {
             resourcesfound |= processAttributeElement(ctx, baseURL, el, "data");
             resourcesfound |= processAttributeElement(ctx, baseURL, el, "codebase");
+        }
+
+        // Process Param elements
+        elements = source.getAllElements(HTMLElementName.PARAM);
+        for (Element el : elements) {
+            resourcesfound |= processAttributeElement(ctx, baseURL, el, "value");
         }
 
         // Process Script elements with src
@@ -291,6 +309,11 @@ public class SpiderHtmlParser extends SpiderParser {
                             foundMatch = foundMatch.substring(1);
                         }
                     }
+
+                    if (foundMatch.startsWith(".")) {
+                        foundMatch = foundMatch.substring(foundMatch.indexOf('/'));
+                    }
+
                     processUrl(ctx, foundMatch, baseUrlForText);
                     resourcesfound = true;
                 }
