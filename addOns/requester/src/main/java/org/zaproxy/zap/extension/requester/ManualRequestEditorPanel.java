@@ -37,6 +37,7 @@ import org.parosproxy.paros.extension.option.OptionsParamView;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.httppanel.HttpPanelRequest;
+import org.zaproxy.zap.extension.httppanel.InvalidMessageDataException;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.view.ZapMenuItem;
 
@@ -53,6 +54,8 @@ public abstract class ManualRequestEditorPanel extends JPanel {
     private JPanel panelWindow = null;
 
     private JButton btnSend = null;
+
+    private boolean sending = false;
 
     /**
      * Non-abstract classes should call {@link #initialize()} in their constructor.
@@ -129,50 +132,59 @@ public abstract class ManualRequestEditorPanel extends JPanel {
         getRequestPanel().clearView();
     }
 
+    protected void sendButtonTriggered() {
+        if (sending) {
+            // Can also be triggered by other buttons, eg in the Http Response tab
+            return;
+        }
+        sending = true;
+        try {
+            btnSend.setEnabled(false);
+
+            try {
+                getRequestPanel().saveData();
+            } catch (InvalidMessageDataException e1) {
+                StringBuilder warnMessage = new StringBuilder(150);
+                warnMessage.append(Constant.messages.getString("requester.warn.datainvalid"));
+                String exceptionMessage = e1.getLocalizedMessage();
+                if (exceptionMessage != null && !exceptionMessage.isEmpty()) {
+                    warnMessage.append('\n').append(exceptionMessage);
+                }
+                View.getSingleton().showWarningDialog(this, warnMessage.toString());
+                btnSend.setEnabled(true);
+                return;
+            }
+
+            Mode mode = Control.getSingleton().getMode();
+            if (mode.equals(Mode.safe)) {
+                // Can happen if the user turns on safe mode with the dialog open
+                View.getSingleton()
+                        .showWarningDialog(
+                                this, Constant.messages.getString("manReq.safe.warning"));
+                btnSend.setEnabled(true);
+                return;
+            } else if (mode.equals(Mode.protect) && !getMessage().isInScope()) {
+                // In protected mode and not in scope, so fail
+                View.getSingleton()
+                        .showWarningDialog(
+                                this, Constant.messages.getString("manReq.outofscope.warning"));
+                btnSend.setEnabled(true);
+                return;
+            }
+
+            btnSendAction();
+
+        } finally {
+            sending = false;
+        }
+    }
+
     protected JButton getBtnSend() {
         if (btnSend == null) {
             btnSend = new JButton();
             btnSend.setText(Constant.messages.getString("manReq.button.send"));
             btnSend.setEnabled(isSendEnabled);
-            btnSend.addActionListener(
-                    e -> {
-                        btnSend.setEnabled(false);
-
-                        try {
-                            getRequestPanel().saveData();
-                        } catch (Exception e1) {
-                            StringBuilder warnMessage = new StringBuilder(150);
-                            warnMessage.append(
-                                    Constant.messages.getString("requester.warn.datainvalid"));
-                            String exceptionMessage = e1.getLocalizedMessage();
-                            if (exceptionMessage != null && !exceptionMessage.isEmpty()) {
-                                warnMessage.append('\n').append(exceptionMessage);
-                            }
-                            View.getSingleton().showWarningDialog(warnMessage.toString());
-                            btnSend.setEnabled(true);
-                            return;
-                        }
-
-                        Mode mode = Control.getSingleton().getMode();
-                        if (mode.equals(Mode.safe)) {
-                            // Can happen if the user turns on safe mode with the dialog open
-                            View.getSingleton()
-                                    .showWarningDialog(
-                                            Constant.messages.getString("manReq.safe.warning"));
-                            btnSend.setEnabled(true);
-                            return;
-                        } else if (mode.equals(Mode.protect) && !getMessage().isInScope()) {
-                            // In protected mode and not in scope, so fail
-                            View.getSingleton()
-                                    .showWarningDialog(
-                                            Constant.messages.getString(
-                                                    "manReq.outofscope.warning"));
-                            btnSend.setEnabled(true);
-                            return;
-                        }
-
-                        btnSendAction();
-                    });
+            btnSend.addActionListener(e -> sendButtonTriggered());
         }
         return btnSend;
     }

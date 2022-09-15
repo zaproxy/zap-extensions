@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Added
+- Add Send button to Response tab.
 - Add a context menu to open the Manual Request Editor, on ZAP versions newer than 2.11.
 - Add button to allow to regenerate Anti-CSRF tokens (Issue 111).
 
