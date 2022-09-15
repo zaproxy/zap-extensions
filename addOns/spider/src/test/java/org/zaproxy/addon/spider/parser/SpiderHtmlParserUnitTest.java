@@ -841,6 +841,25 @@ class SpiderHtmlParserUnitTest extends SpiderParserTestUtils<SpiderHtmlParser> {
         assertThat(listener.getUrlsFound(), contains("http://example.com/found"));
     }
 
+    @Test
+    void shouldFindUrlsInParagraph() {
+        // Given
+        messageWith("ParagraphWithUrls.html");
+        // When
+        boolean completelyParsed = parser.parseResource(ctx);
+        // Then
+        assertThat(completelyParsed, is(equalTo(false)));
+
+        assertThat(listener.getNumberOfUrlsFound(), is(equalTo(4)));
+        assertThat(
+                listener.getUrlsFound(),
+                contains(
+                        "http://example.com/base/absolute",
+                        "http://example.com/sample/",
+                        "http://example.com/base/still/absolute",
+                        "http://example.com/base/absolute/relative"));
+    }
+
     private void messageWith(String filename) {
         messageWith(filename, "/");
     }
