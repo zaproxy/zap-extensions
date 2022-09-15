@@ -293,6 +293,20 @@ public class SpiderHtmlParser extends SpiderParser {
 
         // Process content of container tags which hold text
         String baseUrlForText = baseURL;
+        if (!baseUrlForText.endsWith("/")) {
+            baseUrlForText += "/";
+        }
+        String[] baseUrlElements = baseUrlForText.split("/");
+        // The basePath should be the first path element, eg "/top/" for
+        // https://www.example.com/top/second/third
+        String basePath = "";
+        if (baseUrlElements.length > 3) {
+            basePath = baseUrlElements[3];
+            if (basePath.length() > 0) {
+                basePath = "/" + basePath + "/";
+            }
+        }
+
         for (String tag : elementsWithText) {
             elements = source.getAllElements(tag);
             for (Element el : elements) {
@@ -302,10 +316,13 @@ public class SpiderHtmlParser extends SpiderParser {
                 while (matcher.find()) {
                     String foundMatch = matcher.group().trim();
                     if (baseTagSet) {
-                        if (!baseUrlForText.endsWith("/")) {
-                            baseUrlForText += "/";
-                        }
-                        if (foundMatch.charAt(0) == '/' && foundMatch.indexOf("//") != 0) {
+                        if (foundMatch.charAt(0) == '/'
+                                && foundMatch.indexOf("//") != 0
+                                && (basePath.length() == 0 || !foundMatch.startsWith(basePath))) {
+                            // Do not trim first slash off if it starts with the basePath
+                            // This is to prevent matching text with the same path and then looping
+                            // down
+                            // e.g. /test/url -> /test/url/test/url/ .. etc ..
                             foundMatch = foundMatch.substring(1);
                         }
                     }
