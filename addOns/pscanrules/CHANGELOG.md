@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [43] - 2022-09-15
 ### Changed
 
 - Reduce Cache Control scan rule confidence to Low, and add new reference (Issue 6446).
@@ -322,6 +322,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[43]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v40
