@@ -115,7 +115,7 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 
 <H2>Permissions Policy Header Not Set</H2>
 This rule checks the HTTP response headers (on HTML and JavaScript responses) for inclusion of a "Permissions-Policy" header, 
-and alerts if one is not found.<br>
+and alerts if one is not found. It also alerts if the deprecated header "Feature-Policy" is found.<br>
 Redirects are ignored except at the Low threshold.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/PermissionsPolicyScanRule.java">PermissionsPolicyScanRule.java</a>

@@ -153,4 +153,12 @@ class PermissionsPolicyScanRuleUnitTest extends PassiveScannerTest<PermissionsPo
                 tags.get(CommonAlertTag.OWASP_2017_A05_BROKEN_AC.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A05_BROKEN_AC.getValue())));
     }
+
+    @Test
+    void shouldReturnExpectedExampleAlerts() {
+        // Given / When
+        int count = rule.getExampleAlerts().size();
+        // Then
+        assertThat(count, is(equalTo(2)));
+    }
 }
