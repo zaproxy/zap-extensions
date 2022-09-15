@@ -12,7 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added new Custom Payloads alert tag to the example alerts of the Username IDOR and Application Error scan rules.
 - Maintenance changes.
 - The Timestamp Disclosure scan rule is now scoped to a 10 year range with a cap at the Y2038 rollover point (Issue 6741).
-- The Content Security Policy Header Set scan rule will no longer alert if CSP is specified via META tag (Issue 7303).
+- The Content Security Policy Header Not Set scan rule will no longer alert if CSP is specified via META tag (Issue 7303).
 
 ## [42] - 2022-07-15
 ### Changed
