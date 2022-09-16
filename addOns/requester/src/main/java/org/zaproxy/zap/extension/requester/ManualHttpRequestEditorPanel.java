@@ -261,6 +261,7 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
                     new ZapMenuItem(
                             "menu.tools.manReq",
                             View.getSingleton().getMenuShortcutKeyStroke(KeyEvent.VK_M, 0, false));
+            menuItem.setIcon(ExtensionRequester.getManualIcon());
             menuItem.addActionListener(
                     e -> {
                         Message message = getMessage();
@@ -622,6 +623,8 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
         private JButton getResponseSendButton() {
             if (responseSendButton == null) {
                 responseSendButton = new JButton(Constant.messages.getString("manReq.button.send"));
+                responseSendButton.setMnemonic(KeyEvent.VK_ENTER);
+                responseSendButton.setToolTipText(getBtnSendTooltip());
                 responseSendButton.addActionListener(
                         e -> {
                             responseSendButton.setEnabled(false);

@@ -24,6 +24,7 @@ import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
+import java.awt.event.KeyEvent;
 import javax.net.ssl.SSLException;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -184,9 +185,17 @@ public abstract class ManualRequestEditorPanel extends JPanel {
             btnSend = new JButton();
             btnSend.setText(Constant.messages.getString("manReq.button.send"));
             btnSend.setEnabled(isSendEnabled);
+            btnSend.setMnemonic(KeyEvent.VK_ENTER);
+            btnSend.setToolTipText(getBtnSendTooltip());
             btnSend.addActionListener(e -> sendButtonTriggered());
         }
         return btnSend;
+    }
+
+    protected static String getBtnSendTooltip() {
+        return Constant.isMacOsX()
+                ? Constant.messages.getString("manReq.button.send.tooltip.mac")
+                : Constant.messages.getString("manReq.button.send.tooltip");
     }
 
     /** Do not forget to enable the send button again i */
