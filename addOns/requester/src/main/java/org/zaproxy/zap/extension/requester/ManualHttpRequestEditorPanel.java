@@ -159,7 +159,10 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
         if (requestResponsePanel == null) {
             requestResponsePanel =
                     new RequestResponsePanel(
-                            configurationKey, getRequestPanel(), getResponsePanel());
+                            configurationKey,
+                            getRequestPanel(),
+                            getResponsePanel(),
+                            this::sendButtonTriggered);
 
             JButton helpButton = new JButton();
             helpButton.setIcon(ExtensionHelp.getHelpIcon());
@@ -370,8 +373,15 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
         private int verticalDividerLocation;
         private int horizontalDividerLocation;
 
+        private JButton responseSendButton;
+
+        private Runnable sendAction;
+
         public RequestResponsePanel(
-                String configurationKey, HttpPanelRequest request, HttpPanelResponse response)
+                String configurationKey,
+                HttpPanelRequest request,
+                HttpPanelResponse response,
+                Runnable sendAction)
                 throws IllegalArgumentException {
             super(new BorderLayout());
             if (request == null || response == null) {
@@ -383,6 +393,7 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
 
             this.requestPanel = request;
             this.responsePanel = response;
+            this.sendAction = sendAction;
 
             this.currentView = -1;
 
@@ -418,6 +429,8 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
             sideBySideButtonView.addActionListener(e -> changeView(SIDE_BY_SIDE_VIEW));
 
             addToolbarButton(sideBySideButtonView);
+
+            responsePanel.addOptions(getResponseSendButton(), HttpPanel.OptionsLocation.END);
         }
 
         public void loadConfig() {
@@ -560,6 +573,7 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
             tabbedPane.addTab(REQUEST_CAPTION, null, requestPanel, null);
             tabbedPane.addTab(RESPONSE_CAPTION, null, responsePanel, null);
             tabbedPane.setSelectedIndex(0);
+            getResponseSendButton().setVisible(true);
 
             currentViewPanel = tabbedPane;
         }
@@ -567,6 +581,7 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
         private void switchToAboveView() {
             currentView = ABOVE_VIEW;
             currentButtonView = aboveButtonView;
+            getResponseSendButton().setVisible(false);
 
             currentViewPanel = createSplitPane(JSplitPane.VERTICAL_SPLIT);
         }
@@ -574,6 +589,7 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
         private void switchToSideBySideView() {
             currentView = SIDE_BY_SIDE_VIEW;
             currentButtonView = sideBySideButtonView;
+            getResponseSendButton().setVisible(false);
 
             currentViewPanel = createSplitPane(JSplitPane.HORIZONTAL_SPLIT);
         }
@@ -601,6 +617,19 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel {
             splitPane.setDividerLocation(dividerLocation);
 
             return splitPane;
+        }
+
+        private JButton getResponseSendButton() {
+            if (responseSendButton == null) {
+                responseSendButton = new JButton(Constant.messages.getString("manReq.button.send"));
+                responseSendButton.addActionListener(
+                        e -> {
+                            responseSendButton.setEnabled(false);
+                            sendAction.run();
+                            responseSendButton.setEnabled(true);
+                        });
+            }
+            return responseSendButton;
         }
     }
 

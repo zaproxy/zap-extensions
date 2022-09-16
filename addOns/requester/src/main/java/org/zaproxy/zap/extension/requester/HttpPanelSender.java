@@ -135,6 +135,7 @@ public class HttpPanelSender implements MessageSender {
                             } else if (!redirectionValidator.isRequestValid()) {
                                 View.getSingleton()
                                         .showWarningDialog(
+                                                responsePanel,
                                                 Constant.messages.getString(
                                                         "manReq.outofscope.redirection.warning",
                                                         redirectionValidator
