@@ -56,7 +56,7 @@ import org.zaproxy.zap.network.HttpRedirectionValidator;
 import org.zaproxy.zap.network.HttpRequestConfig;
 
 /** Knows how to send {@link HttpMessage} objects. */
-public class HttpPanelSender implements MessageSender {
+public class HttpPanelSender {
 
     private static final Logger logger = LogManager.getLogger(HttpPanelSender.class);
 
@@ -96,8 +96,7 @@ public class HttpPanelSender implements MessageSender {
         getButtonUseTrackingSessionState().setEnabled(isSessionTrackingEnabled);
     }
 
-    @Override
-    public void handleSendMessage(Message aMessage) throws IllegalArgumentException, IOException {
+    void sendMessage(Message aMessage) throws IOException {
         final HttpMessage httpMessage = (HttpMessage) aMessage;
         // Reset the user before sending (e.g. Forced User mode sets the user, if needed).
         httpMessage.setRequestingUser(null);
@@ -244,8 +243,7 @@ public class HttpPanelSender implements MessageSender {
         return extension;
     }
 
-    @Override
-    public void cleanup() {
+    void cleanup() {
         if (delegate != null) {
             delegate.shutdown();
             delegate = null;

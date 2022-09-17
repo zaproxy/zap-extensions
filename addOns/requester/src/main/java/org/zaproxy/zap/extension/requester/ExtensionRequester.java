@@ -20,22 +20,30 @@
 package org.zaproxy.zap.extension.requester;
 
 import java.awt.Component;
+import java.lang.reflect.Method;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookMenu;
 import org.parosproxy.paros.extension.ExtensionHookView;
-import org.parosproxy.paros.extension.manualrequest.http.impl.ManualHttpRequestEditorDialog;
+import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.addon.requester.PopupMenuResendMessage;
+import org.zaproxy.addon.requester.internal.AbstractHttpMessageEditorDialog;
+import org.zaproxy.addon.requester.internal.ResendHttpMessageEditorDialog;
+import org.zaproxy.addon.requester.internal.SendHttpMessageEditorDialog;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.view.HrefTypeInfo;
 
 public class ExtensionRequester extends ExtensionAdaptor {
+
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionRequester.class);
 
     public static final String NAME = "ExtensionRequester";
 
@@ -51,7 +59,8 @@ public class ExtensionRequester extends ExtensionAdaptor {
     private RequesterParam requesterParams;
     private RequesterOptionsPanel requesterOptionsPanel;
 
-    private ManualHttpRequestEditorDialog resendDialog;
+    private AbstractHttpMessageEditorDialog sendDialog;
+    private AbstractHttpMessageEditorDialog resendDialog;
 
     public ExtensionRequester() {
         super(NAME);
@@ -81,7 +90,23 @@ public class ExtensionRequester extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
         extensionHook.addOptionsParamSet(getOptionsParam());
+
+        addHrefType(
+                extensionHook,
+                new HrefTypeInfo(
+                        HistoryReference.TYPE_ZAP_USER,
+                        Constant.messages.getString("view.href.type.name.manual"),
+                        hasView() ? getManualIcon() : null));
+
         if (getView() != null) {
+            if (isDeprecated(
+                    org.parosproxy.paros.extension.manualrequest.ExtensionManualRequestEditor
+                            .class)) {
+                sendDialog =
+                        new SendHttpMessageEditorDialog(new ManualHttpRequestEditorPanel("manual"));
+                sendDialog.load(extensionHook);
+            }
+
             extensionHook.addOptionsChangedListener(getRequesterPanel());
 
             ExtensionHookView hookView = extensionHook.getHookView();
@@ -94,21 +119,25 @@ public class ExtensionRequester extends ExtensionAdaptor {
             menu.addToolsMenuItem(new ToolsMenuItemRequester(this));
 
             if (isDeprecated(org.zaproxy.zap.extension.stdmenus.PopupMenuResendMessage.class)) {
-                resendDialog =
-                        new ManualHttpRequestEditorDialog(true, "resend", "ui.dialogs.manreq");
-                resendDialog.setTitle(Constant.messages.getString("requester.resend.dialog.title"));
-                extensionHook.addOptionsChangedListener(resendDialog);
-
-                PopupMenuResendMessage popupMenuResendMessage =
-                        new PopupMenuResendMessage(
-                                Constant.messages.getString("requester.resend.popup"),
-                                getManualIcon(),
-                                msg -> {
-                                    resendDialog.setMessage(msg);
-                                    resendDialog.setVisible(true);
-                                });
-                menu.addPopupMenuItem(popupMenuResendMessage);
+                ManualHttpRequestEditorPanel panel = new ManualHttpRequestEditorPanel("resend");
+                resendDialog = new ResendHttpMessageEditorDialog(panel);
+                resendDialog.load(extensionHook);
             }
+        }
+    }
+
+    private static void addHrefType(ExtensionHook extensionHook, HrefTypeInfo hrefTypeInfo) {
+        if (!isDeprecated(
+                org.parosproxy.paros.extension.manualrequest.ExtensionManualRequestEditor.class)) {
+            return;
+        }
+
+        try {
+            Method method =
+                    ExtensionHook.class.getDeclaredMethod("addHrefType", HrefTypeInfo.class);
+            method.invoke(extensionHook, hrefTypeInfo);
+        } catch (Exception e) {
+            LOGGER.error("An error occurred while adding the history type:", e);
         }
     }
 
@@ -190,7 +219,11 @@ public class ExtensionRequester extends ExtensionAdaptor {
             getRequesterPanel().unload();
 
             if (resendDialog != null) {
-                resendDialog.dispose();
+                resendDialog.unload();
+            }
+
+            if (sendDialog != null) {
+                sendDialog.unload();
             }
         }
     }
