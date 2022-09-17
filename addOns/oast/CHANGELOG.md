@@ -11,6 +11,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Rename the `OAST Register Request Handler.js` script template to `OAST Request Handler.js`
   and use the Extender script type for it. The request handler is now removed when the
   script is disabled.
+- Promoted to Beta status.
 
 ### Added
 - Default services notes in the help documents.
