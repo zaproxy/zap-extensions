@@ -7,7 +7,20 @@ Passive Scan Rules - Alpha
 </head>
 <body>
 <h1>Passive Scan Rules - Alpha</h1>
-Peraturan pemindaian alpha pasif berikut dimasukkan dalam tambahan ini:
+
+<h2>General Configuration</h2>
+
+<h3>Trusted Domains</h3>
+You can specify a comma separated list of URL regex patterns using the <code>rules.domains.trusted</code> parameter via the Options 'Rule configuration' panel.
+Any link URL that matches one of these patterns will be considered to be in a trusted domain and will therefore not be reported.
+Following rules supports <b>Trusted Domains</b> :
+<ul>
+ <li>Sub Resource Integrity Attribute Missing</li>
+</ul>
+
+<hr>
+
+The following alpha status passive scan rules are included in this add-on:
 
 <h2>An example passive scan rule which loads data from a file</h2>
 This implements an example passive scan rule that loads strings from a file that the user can edit.<br>
@@ -102,7 +115,7 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 
 <h2>Permissions Policy Header Not Set</h2>
 This rule checks the HTTP response headers (on HTML and JavaScript responses) for inclusion of a "Permissions-Policy" header, 
-and alerts if one is not found.<br>
+and alerts if one is not found. It also alerts if the deprecated header "Feature-Policy" is found.<br>
 Redirects are ignored except at the Low threshold.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/PermissionsPolicyScanRule.java">PermissionsPolicyScanRule.java</a>
@@ -117,6 +130,8 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 This rule checks whether the integrity attribute in the script or the link element served by an external resource (for example: CDN) is missing.<br>
 It helps mitigate an attack where the CDN has been compromised and content has been replaced by malicious content.<br>
 Note: A suggested integrity hash value will be present in the relevant Alert's Other Info details if it can be resolved to a script in the Sites Tree.
+<p>
+This rule supports <b>Trusted Domains</b>, check "General Configuration" for more information.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SubResourceIntegrityAttributeScanRule.java">SubResourceIntegrityAttributeScanRule.java</a>
 

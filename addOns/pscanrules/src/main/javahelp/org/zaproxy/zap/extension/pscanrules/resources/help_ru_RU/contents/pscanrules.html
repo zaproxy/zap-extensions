@@ -70,13 +70,15 @@ The following release status passive scan rules are included in this add-on:
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CharsetMismatchScanRule.java">CharsetMismatchScanRule.java</a>
 
 <h2>Content Security Policy (CSP) Header Not Set</h2>
-This checks HTML response headers for the presence of a Content Security Policy header.<br>
+This checks HTML response headers for the presence of a Content Security Policy header, or the response body for CSP specified via META tag.<br>
 By default this rule checks for the presence of the "Content-Security-Policy" header, 
 and at the Low threshold also checks for the "X-Content-Security-Policy" and "X-WebKit-CSP" headers.<br>
-Redirects and non HTML responses are ignored except at the Low threshold.
+Redirects and non-HTML responses are ignored except at the Low threshold.
 <p>
 If a "Content-Security-Policy-Report-Only" header is found on a response an INFO alert is raised. This may represent an enforcement effort 
 that is actively being refined or developed, or one which is only partially implemented.
+<p>
+Note: This rule does not perform any actual analysis of the specified policy, for that please ensure the CSP scan rule is enabled.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/ContentSecurityPolicyMissingScanRule.java">ContentSecurityPolicyMissingScanRule.java</a>
 
@@ -226,7 +228,10 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 
 <h2>Timestamp Disclosure</h2>
 A timestamp was disclosed by the application/web server.<br>
-At HIGH threshold this rule does not alert on potential timestamps that are not within a range of plus or minus one year.
+At HIGH threshold this rule does not alert on potential timestamps that are not within a range of plus or minus one year.<br>
+At MEDIUM threshold this rule does not alert on potential timestamps beyond 10 years.<br>
+At all thresholds, this rule will not alert on timestamps beyond the Y2038 epoch edge.<br>
+
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/TimestampDisclosureScanRule.java">TimestampDisclosureScanRule.java</a>
 
