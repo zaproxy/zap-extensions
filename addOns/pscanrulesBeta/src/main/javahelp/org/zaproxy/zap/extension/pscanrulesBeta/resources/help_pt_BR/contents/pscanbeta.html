@@ -8,7 +8,20 @@ Regras de varredura passiva - Beta
 </head>
 <body>
 <h1>Regras de varredura passiva - Beta</h1>
-As seguintes regras de verificação passiva de qualidade beta estão incluídas neste complemento:
+
+<h2>General Configuration</h2>
+
+<h3>Trusted Domains</h3>
+You can specify a comma separated list of URL regex patterns using the <code>rules.domains.trusted</code> parameter via the Options 'Rule configuration' panel.
+Any link URL that matches one of these patterns will be considered to be in a trusted domain and will therefore not be reported.
+Following rules supports <b>Trusted Domains</b> :
+<ul>
+ <li>Reverse Tabnabbing</li>
+</ul>
+
+<hr>
+
+The following beta status passive scan rules are included in this add-on:
 
 <h2>Big Redirect Detected (Potential Sensitive Information Leak)</h2>
 This check predicts the size of various redirect type responses and generates an alert if the response is greater than the predicted size. 
@@ -89,8 +102,7 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 This checks to see if any links use a target attribute using "opener" keyword in the "rel" attribute, as this may allow target pages to take over the page that opens them.<br>
 By default this rule will ignore all links that are in the same context as the page. At the LOW threshold it will only ignore links that are on the same host.<br>
 At HIGH threshold it will only report links that use the "_blank" target.<br>
-You can specify a comma separated list of URL regex patterns using the <code>rules.domains.trusted</code> parameter via the Options 'Rule configuration' panel.
-Any link URL that matches one of these patterns will be considered to be in a trusted domain and will therefore not be reported.
+ This rule supports <b>Trusted Domains</b>, check "General Configuration" for more information.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/LinkTargetScanRule.java">LinkTargetScanRule.java</a>
 

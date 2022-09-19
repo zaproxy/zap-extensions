@@ -7,11 +7,24 @@
 </head>
 <body>
 <h1>Правила Пассивного Сканирования - Alpha</h1>
-В эту надстройку включены следующие правила пассивного сканирования Альфа-качества:
 
-<h2>Пример правила пассивного сканирования, которое загружает данные из файла </h2>
-Это реализует пример правила пассивного сканирования, которое загружает строки из файла, который пользователь может редактировать. <br>
-Подробнее см.:  <a href="https://www.zaproxy.org/blog/2014-04-03-hacking-zap-3-passive-scan-rules/">Взлом ZAP, часть 3: правила пассивного сканирования </a>.
+<h2>General Configuration</h2>
+
+<h3>Trusted Domains</h3>
+You can specify a comma separated list of URL regex patterns using the <code>rules.domains.trusted</code> parameter via the Options 'Rule configuration' panel.
+Any link URL that matches one of these patterns will be considered to be in a trusted domain and will therefore not be reported.
+Following rules supports <b>Trusted Domains</b> :
+<ul>
+ <li>Sub Resource Integrity Attribute Missing</li>
+</ul>
+
+<hr>
+
+The following alpha status passive scan rules are included in this add-on:
+
+<h2>An example passive scan rule which loads data from a file</h2>
+This implements an example passive scan rule that loads strings from a file that the user can edit.<br>
+For more details see: <a href="https://www.zaproxy.org/blog/2014-04-03-hacking-zap-3-passive-scan-rules/">Взлом ZAP, часть 3: правила пассивного сканирования </a>.
 <p>
 Последний код:  <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleFilePassiveScanRule.java">ExampleFilePassiveScanRule.java</a>
 
@@ -98,12 +111,12 @@ Java Serialization Object (JSO) — это способ сохранения и 
 JSO не должен использоваться программами Java.  Над сериализованными данными должен быть строгий контроль.<br>
 JSO — это тип уязвимостей, связанных с A8:2017-Insecure Deserialization. 
 <p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/JsoScanRule.java">JsoScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/JsoScanRule.java">JsoScanRule.java</a>
 
-<h2>Заголовок политики разрешений не задан</h2>
-Это правило проверяет заголовки ответов HTTP (в ответах HTML и JavaScript) на наличие заголовка «Permissions-Policy».
-и предупреждает, если он не найден.<br>
-Перенаправления игнорируются, за исключением нижнего порога. 
+<h2>Permissions Policy Header Not Set</h2>
+This rule checks the HTTP response headers (on HTML and JavaScript responses) for inclusion of a "Permissions-Policy" header, 
+and alerts if one is not found. It also alerts if the deprecated header "Feature-Policy" is found.<br>
+Redirects are ignored except at the Low threshold.
 <p>
 Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/PermissionsPolicyScanRule.java">PermissionsPolicyScanRule.java</a>
 
@@ -118,15 +131,17 @@ JSO — это тип уязвимостей, связанных с A8:2017-Inse
 Это помогает смягчить атаку, когда сеть CDN была скомпрометирована, а содержимое было заменено вредоносным содержимым.<br>
 Примечание. Рекомендуемое хеш-значение целостности будет присутствовать в соответствующей информации «Другая информация» соответствующего предупреждения, если его можно преобразовать в сценарий в дереве сайтов. 
 <p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SubResourceIntegrityAttributeScanRule.java">SubResourceIntegrityAttributeScanRule.java</a>
-
-<h2>Опасные функции JS</h2>
-Это правило сканирования проверяет любые опасные функции JS, присутствующие в ответе сайта.<br>
-<strong>Примечание.</strong> Если установлен аддон Custom Payloads, вы можете добавить свои собственные имена функций (payloads) на панели параметров Custom Payloads. 
-Их также будут искать в ответах, поскольку они пассивно сканируются.  Имейте в виду, что чем больше количество полезных данных, тем больше времени требуется для пассивного сканирования. 
-<strong>Примечание:</strong> $$; удаляется с самого начала строк/полезных данных и необязательно включается при сборке шаблонов. 
+This rule supports <b>Trusted Domains</b>, check "General Configuration" for more information.
 <p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/JsFunctionScanRule.java">JsFunctionScanRule.java</a> 
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SubResourceIntegrityAttributeScanRule.java">SubResourceIntegrityAttributeScanRule.java</a>
+
+<h2>Dangerous JS Functions</h2>
+This scan rule checks for any dangerous JS functions present in a site response.<br>
+<strong>Note:</strong> If the Custom Payloads addon is installed you can add your own function names (payloads) in the Custom Payloads options panel.
+They will also be searched for in responses as they're passively scanned. Keep in mind that the greater the number of payloads the greater the amount of time needed to passively scan.
+<strong>Note:</strong> &dollar; is stripped from the start of the strings/payloads and is optionally included when the patterns are assembled.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/JsFunctionScanRule.java">JsFunctionScanRule.java</a>
 
 </body>
 </html>
