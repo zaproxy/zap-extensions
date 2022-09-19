@@ -1,7 +1,10 @@
+import org.zaproxy.gradle.addon.AddOnStatus
+
 description = "Handles all of the calls to ZAP services."
 
 zapAddOn {
     addOnName.set("Call Home")
+    addOnStatus.set(AddOnStatus.RELEASE)
     zapVersion.set("2.11.1")
 
     manifest {

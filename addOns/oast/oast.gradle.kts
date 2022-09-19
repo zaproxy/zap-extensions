@@ -1,7 +1,10 @@
+import org.zaproxy.gradle.addon.AddOnStatus
+
 description = "Allows you to exploit out-of-band vulnerabilities"
 
 zapAddOn {
     addOnName.set("OAST Support")
+    addOnStatus.set(AddOnStatus.BETA)
     zapVersion.set("2.11.1")
 
     manifest {

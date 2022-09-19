@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Improve reporting of TLS errors (Issue 2699).
 - Maintenance changes.
+- Promoted to Beta.
 
 ## [6] - 2022-05-10
 ### Added

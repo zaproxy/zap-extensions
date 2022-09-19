@@ -14,7 +14,7 @@ configurations.api { extendsFrom(bouncyCastle) }
 
 zapAddOn {
     addOnName.set("Network")
-    addOnStatus.set(AddOnStatus.ALPHA)
+    addOnStatus.set(AddOnStatus.BETA)
     zapVersion.set("2.11.1")
 
     manifest {

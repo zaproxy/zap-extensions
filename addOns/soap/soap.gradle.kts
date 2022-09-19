@@ -1,7 +1,10 @@
+import org.zaproxy.gradle.addon.AddOnStatus
+
 description = "Imports and scans WSDL files containing SOAP endpoints."
 
 zapAddOn {
     addOnName.set("SOAP Support")
+    addOnStatus.set(AddOnStatus.BETA)
     zapVersion.set("2.11.1")
 
     manifest {
