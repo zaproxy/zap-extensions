@@ -103,7 +103,7 @@ public abstract class NumberedRenamableTabbedPane extends JTabbedPane {
     }
 
     void unload() {
-        processEditorPanels(ManualHttpRequestEditorPanel::beforeClose);
+        processEditorPanels(ManualHttpRequestEditorPanel::unload);
     }
 
     private void processEditorPanels(Consumer<ManualHttpRequestEditorPanel> consumer) {

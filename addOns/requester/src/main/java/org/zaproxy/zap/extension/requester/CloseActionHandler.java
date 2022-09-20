@@ -54,7 +54,7 @@ public class CloseActionHandler implements ActionListener {
             }
             ManualHttpRequestEditorPanel currentEditor =
                     (ManualHttpRequestEditorPanel) ntp.getComponentAt(index);
-            currentEditor.beforeClose();
+            currentEditor.unload();
             currentEditor.saveConfig();
             ntp.removeTabAt(index);
         }

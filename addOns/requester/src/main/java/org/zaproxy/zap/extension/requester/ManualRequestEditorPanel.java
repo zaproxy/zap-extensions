@@ -25,6 +25,7 @@ import java.awt.EventQueue;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import javax.net.ssl.SSLException;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -40,7 +41,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.httppanel.HttpPanelRequest;
 import org.zaproxy.zap.extension.httppanel.InvalidMessageDataException;
 import org.zaproxy.zap.extension.httppanel.Message;
-import org.zaproxy.zap.view.ZapMenuItem;
+import org.zaproxy.zap.view.HttpPanelManager;
 
 /** Send custom crafted messages via HTTP or other TCP based protocols. */
 public abstract class ManualRequestEditorPanel extends JPanel {
@@ -65,7 +66,7 @@ public abstract class ManualRequestEditorPanel extends JPanel {
      * @param configurationKey
      * @throws HeadlessException
      */
-    public ManualRequestEditorPanel(boolean isSendEnabled, String configurationKey)
+    protected ManualRequestEditorPanel(boolean isSendEnabled, String configurationKey)
             throws HeadlessException {
         super();
 
@@ -80,27 +81,6 @@ public abstract class ManualRequestEditorPanel extends JPanel {
         add(getWindowPanel());
     }
 
-    /**
-     * Returns type of message it handles.
-     *
-     * @return
-     */
-    public abstract Class<? extends Message> getMessageType();
-
-    /**
-     * Message sender for the given {@link #getMessageType()}.
-     *
-     * @return
-     */
-    protected abstract MessageSender getMessageSender();
-
-    /**
-     * Menu item that calls this editor.
-     *
-     * @return
-     */
-    public abstract ZapMenuItem getMenuItem();
-
     protected JPanel getWindowPanel() {
         if (panelWindow == null) {
             panelWindow = new JPanel();
@@ -114,23 +94,31 @@ public abstract class ManualRequestEditorPanel extends JPanel {
 
     protected abstract Component getManualSendPanel();
 
-    @Override
-    public void setVisible(boolean show) {
-        if (!show && getMessageSender() != null) {
-            getMessageSender().cleanup();
-        }
-
-        super.setVisible(show);
-    }
-
     public abstract void setDefaultMessage();
 
     public abstract void setMessage(Message aMessage);
 
     public abstract Message getMessage();
 
-    public void clear() {
-        getRequestPanel().clearView();
+    /**
+     * Unloads the panel by {@link #reset() reseting} it and removing the message panel from the
+     * {@link HttpPanelManager}.
+     */
+    public void unload() {
+        reset();
+
+        HttpPanelManager.getInstance().removeRequestPanel(getMessagePanel());
+    }
+
+    /**
+     * Resets the panel.
+     *
+     * <p>Clears the view of the message panel and {@link #setDefaultMessage() sets the default
+     * message}.
+     */
+    public void reset() {
+        getMessagePanel().clearView();
+        setDefaultMessage();
     }
 
     protected void sendButtonTriggered() {
@@ -143,7 +131,7 @@ public abstract class ManualRequestEditorPanel extends JPanel {
             btnSend.setEnabled(false);
 
             try {
-                getRequestPanel().saveData();
+                getMessagePanel().saveData();
             } catch (InvalidMessageDataException e1) {
                 StringBuilder warnMessage = new StringBuilder(150);
                 warnMessage.append(Constant.messages.getString("requester.warn.datainvalid"));
@@ -201,12 +189,14 @@ public abstract class ManualRequestEditorPanel extends JPanel {
     /** Do not forget to enable the send button again i */
     protected abstract void btnSendAction();
 
+    protected abstract void sendMessage(Message message) throws IOException;
+
     protected void send(final Message aMessage) {
         final Thread t =
                 new Thread(
                         () -> {
                             try {
-                                getMessageSender().handleSendMessage(aMessage);
+                                sendMessage(aMessage);
                                 postSend();
                             } catch (SSLException sslEx) {
                                 StringBuilder strBuilder = new StringBuilder();
@@ -252,13 +242,16 @@ public abstract class ManualRequestEditorPanel extends JPanel {
     }
 
     protected void postSend() {
-        EventQueue.invokeLater(
-                () ->
-                        // redraw, as message may have changed after sending
-                        getRequestPanel().updateContent());
+        EventQueue.invokeLater(getMessagePanel()::updateContent);
     }
 
-    protected abstract void saveConfig();
+    /** Saves the configuration of the panel. */
+    public abstract void saveConfig();
 
-    protected abstract HttpPanelRequest getRequestPanel();
+    /**
+     * Gets the panel that shows the message.
+     *
+     * @return the message panel.
+     */
+    protected abstract HttpPanelRequest getMessagePanel();
 }
