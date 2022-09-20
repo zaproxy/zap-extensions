@@ -149,6 +149,12 @@ public class WebSocketComponent
     @Override
     public void setMessage(Message aMessage) {
         this.message = (WebSocketMessageDTO) aMessage;
+        if (message == null) {
+            informationLabel.setText("");
+            buttonShowView.setIcon(WebSocketPanel.connectIcon);
+            views.setMessage(message);
+            return;
+        }
 
         StringBuilder sb = new StringBuilder();
 

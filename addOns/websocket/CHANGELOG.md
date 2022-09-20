@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Correctly handle no message in the WebSocket message panel.
+
 ## [26] - 2022-05-20
 ### Changed
 - Maintenance changes.
