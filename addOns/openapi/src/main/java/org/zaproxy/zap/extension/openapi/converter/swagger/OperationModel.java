@@ -24,9 +24,9 @@ import org.zaproxy.zap.extension.openapi.network.RequestMethod;
 
 public class OperationModel {
 
-    private String path;
-    private Operation operation;
-    private RequestMethod requestMethod;
+    private final String path;
+    private final Operation operation;
+    private final RequestMethod requestMethod;
 
     public OperationModel(String path, Operation operation, RequestMethod requestMethod) {
         this.path = path;
@@ -38,23 +38,11 @@ public class OperationModel {
         return path;
     }
 
-    public void setPath(String path) {
-        this.path = path;
-    }
-
     public Operation getOperation() {
         return operation;
     }
 
-    public void setOperation(Operation operation) {
-        this.operation = operation;
-    }
-
     public RequestMethod getRequestMethod() {
         return requestMethod;
-    }
-
-    public void setRequestMethod(RequestMethod requestMethod) {
-        this.requestMethod = requestMethod;
     }
 }

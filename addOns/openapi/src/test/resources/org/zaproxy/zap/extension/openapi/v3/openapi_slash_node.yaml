@@ -1,0 +1,25 @@
+openapi: 3.0.0
+info:
+  title: OpenAPI definition with Slash Node
+  version: "0"
+servers:
+  - url: http://localhost:@@@PORT@@@/
+paths:
+  /:
+    get:
+      tags:
+        - home
+      summary: home
+      operationId: api_views.main.basic
+      responses:
+        '200':
+          description: Home - Help
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  Help:
+                    type: string
