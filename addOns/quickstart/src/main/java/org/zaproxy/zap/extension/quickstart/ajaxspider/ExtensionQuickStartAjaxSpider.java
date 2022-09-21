@@ -64,7 +64,7 @@ public class ExtensionQuickStartAjaxSpider extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        if (getView() != null) {
+        if (hasView()) {
             this.ase = new AjaxSpiderExplorer(this);
             this.getExtQuickStart().addPlugableSpider(ase);
         }
@@ -77,7 +77,7 @@ public class ExtensionQuickStartAjaxSpider extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        if (getView() != null) {
+        if (hasView()) {
             this.getExtQuickStart().removePlugableSpider(ase);
         }
     }

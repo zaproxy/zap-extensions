@@ -87,7 +87,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 
         extensionHook.addOptionsParamSet(getTokenParam());
 
-        if (getView() != null) {
+        if (hasView()) {
             // Register our popup menu item, as long as we're not running as a daemon
             extensionHook.getHookMenu().addPopupMenuItem(getPopupTokenGen());
             extensionHook.getHookView().addStatusPanel(getTokenPanel());
@@ -107,7 +107,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
     public void unload() {
         stopTokenGeneration();
 
-        if (getView() != null) {
+        if (hasView()) {
             if (analyseTokensDialog != null) {
                 analyseTokensDialog.dispose();
             }

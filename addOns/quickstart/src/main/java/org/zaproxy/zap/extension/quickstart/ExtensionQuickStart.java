@@ -144,7 +144,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
         extensionHook.addOptionsChangedListener(this);
         extensionHook.addOptionsParamSet(getQuickStartParam());
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookView().addWorkPanel(getQuickStartPanel());
 
             ExtensionHelp.enableHelpKey(getQuickStartPanel(), "quickstart");
@@ -405,7 +405,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
 
     @Override
     public void sessionModeChanged(Mode mode) {
-        if (getView() != null) {
+        if (hasView()) {
             this.getQuickStartPanel().getAttackPanel().setMode(mode);
         }
     }

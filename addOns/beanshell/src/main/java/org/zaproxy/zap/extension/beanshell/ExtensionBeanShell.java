@@ -39,7 +39,7 @@ public class ExtensionBeanShell extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookMenu().addToolsMenuItem(getMenuBeanShell());
         }
     }
@@ -51,7 +51,7 @@ public class ExtensionBeanShell extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        if (getView() != null) {
+        if (hasView()) {
             if (beanShellConsoleDialog != null) {
                 // TODO Stop BeanShell threads.
                 // Background:

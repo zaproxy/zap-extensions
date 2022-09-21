@@ -338,7 +338,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
 
     @Override
     public void sessionChanged(final Session session) {
-        if (getView() == null) {
+        if (!hasView()) {
             return;
         }
 

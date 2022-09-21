@@ -53,7 +53,7 @@ public class ExtensionInvoke extends ExtensionAdaptor {
 
         extensionHook.addOptionsParamSet(invokeParam);
 
-        if (getView() != null) {
+        if (hasView()) {
             popupMenuInvokers = new PopupMenuInvokers();
 
             @SuppressWarnings("unused")

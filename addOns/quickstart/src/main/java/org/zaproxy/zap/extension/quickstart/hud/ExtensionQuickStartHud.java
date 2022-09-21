@@ -58,7 +58,7 @@ public class ExtensionQuickStartHud extends ExtensionAdaptor implements Plugable
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        if (getView() != null) {
+        if (hasView()) {
             this.getExtQuickStart().setHudProvider(this);
         }
     }
@@ -114,7 +114,7 @@ public class ExtensionQuickStartHud extends ExtensionAdaptor implements Plugable
 
     @Override
     public void unload() {
-        if (getView() != null) {
+        if (hasView()) {
             this.getExtQuickStart().setHudProvider(null);
         }
     }

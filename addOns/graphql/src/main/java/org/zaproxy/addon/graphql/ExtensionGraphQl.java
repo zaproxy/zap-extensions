@@ -105,7 +105,7 @@ public class ExtensionGraphQl extends ExtensionAdaptor
             }
         }
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportLocalGraphQl());
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportUrlGraphQl());
             extensionHook.getHookView().addOptionPanel(getGraphQlOptionsPanel());

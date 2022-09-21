@@ -100,7 +100,7 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
         extensionHook.addAddOnInstallationStatusListener(this);
         extensionHook.addOptionsChangedListener(this);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookView().addMainToolBarComponent(getLaunchToolbarButton());
             extensionHook.getHookView().addOptionPanel(getOptionsPanel());
 
@@ -120,7 +120,7 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
 
     @Override
     public void unload() {
-        if (getView() != null) {
+        if (hasView()) {
             this.getExtQuickStart().setLaunchPanel(null);
         }
     }
@@ -265,7 +265,7 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
 
     @Override
     public void addOnUninstalled(AddOn addOn, boolean successfully) {
-        if (getView() != null && addOn.getId().equals("hud")) {
+        if (hasView() && addOn.getId().equals("hud")) {
             this.launchPanel.hudAddOnUninstalled();
         }
     }

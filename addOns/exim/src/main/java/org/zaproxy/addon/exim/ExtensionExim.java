@@ -68,7 +68,7 @@ public class ExtensionExim extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuSaveRawMessage());
             extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuSaveXmlMessage());
             extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuItemSaveHarMessage());

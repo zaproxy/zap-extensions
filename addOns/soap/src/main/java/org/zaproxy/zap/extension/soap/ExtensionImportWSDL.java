@@ -90,7 +90,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 
         extensionHook.addApiImplementor(new SoapAPI(this));
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportLocalWSDL());
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportUrlWSDL());
 

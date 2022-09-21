@@ -44,7 +44,7 @@ public class ExtensionGettingStarted extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-        if (getView() != null) {
+        if (hasView()) {
             /* Register our top menu item, as long as we're not running as a daemon
              * Use one of the other methods to add to a different menu list
              */

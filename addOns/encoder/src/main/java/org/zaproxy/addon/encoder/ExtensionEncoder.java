@@ -110,7 +110,7 @@ public class ExtensionEncoder extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuEncode());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuDeleteOutputPanel());
             extensionHook.getHookMenu().addToolsMenuItem(getToolsMenuItemEncoder());

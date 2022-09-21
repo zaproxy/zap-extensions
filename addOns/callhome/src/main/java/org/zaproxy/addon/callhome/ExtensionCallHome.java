@@ -147,7 +147,7 @@ public class ExtensionCallHome extends ExtensionAdaptor
         extensionHook.addCommandLine(getCommandLineArguments());
         extensionHook.addOptionsParamSet(getParam());
         extensionHook.addSessionListener(this);
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookView().addOptionPanel(getOptionsPanel());
         }
     }

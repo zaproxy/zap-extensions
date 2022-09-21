@@ -63,7 +63,7 @@ public class ExtensionTipsAndTricks extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookMenu().addHelpMenuItem(getMenuTipsAndTricks());
         }
     }

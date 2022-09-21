@@ -71,7 +71,7 @@ public class ExtensionPortScan extends ExtensionAdaptor
         extensionHook.addProxyListener(this);
         extensionHook.addSiteMapListener(this);
 
-        if (getView() != null) {
+        if (hasView()) {
             @SuppressWarnings("unused")
             ExtensionHookView pv = extensionHook.getHookView();
             extensionHook.getHookView().addStatusPanel(getPortScanPanel());
@@ -91,7 +91,7 @@ public class ExtensionPortScan extends ExtensionAdaptor
 
     @Override
     public void unload() {
-        if (getView() != null) {
+        if (hasView()) {
             getPortScanPanel().unload();
         }
         super.unload();
@@ -113,7 +113,7 @@ public class ExtensionPortScan extends ExtensionAdaptor
 
     @Override
     public void sessionChanged(final Session session) {
-        if (getView() == null) {
+        if (!hasView()) {
             return;
         }
         if (EventQueue.isDispatchThread()) {
@@ -151,7 +151,7 @@ public class ExtensionPortScan extends ExtensionAdaptor
 
     @Override
     public boolean onHttpRequestSend(HttpMessage msg) {
-        if (getView() != null) {
+        if (hasView()) {
             // The panel will handle duplicates
             this.getPortScanPanel().addSite(msg.getRequestHeader().getHostName(), false);
         }
@@ -232,7 +232,7 @@ public class ExtensionPortScan extends ExtensionAdaptor
     }
 
     public List<Integer> getPorts(String site) {
-        if (getView() == null) {
+        if (!hasView()) {
             return null;
         }
 
@@ -264,7 +264,7 @@ public class ExtensionPortScan extends ExtensionAdaptor
 
     @Override
     public void sessionScopeChanged(Session session) {
-        if (getView() != null) {
+        if (hasView()) {
             this.getPortScanPanel().sessionScopeChanged(session);
         }
     }

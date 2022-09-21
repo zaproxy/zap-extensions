@@ -144,7 +144,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
         nullEngineWrapper = new NullScriptEngineWrapper();
         this.getExtScript().registerScriptEngineWrapper(nullEngineWrapper);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookView().addSelectPanel(getScriptsPanel());
             extensionHook.addSessionListener(new ViewSessionChangedListener());
             extensionHook.getHookView().addWorkPanel(getConsolePanel());
@@ -232,7 +232,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
     @Override
     public void unload() {
-        if (getView() != null) {
+        if (hasView()) {
             if (consolePanel != null) {
                 consolePanel.unload();
             }
@@ -242,7 +242,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
         }
 
         if (extScript != null) {
-            if (getView() != null) {
+            if (hasView()) {
                 extScript.removeWriter(getStdOutputPanelWriter());
                 extScript.removeScriptUI();
             }
@@ -704,7 +704,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
     @Override
     public void addSelectionListener(TreeSelectionListener tsl) {
-        if (getView() == null) {
+        if (!hasView()) {
             return;
         }
         this.getScriptsPanel().getTree().addTreeSelectionListener(tsl);
@@ -712,7 +712,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
     @Override
     public void removeSelectionListener(TreeSelectionListener tsl) {
-        if (getView() == null) {
+        if (!hasView()) {
             return;
         }
         this.getScriptsPanel().getTree().removeTreeSelectionListener(tsl);
@@ -816,7 +816,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
     @Override
     public void engineAdded(final ScriptEngineWrapper scriptEngineWrapper) {
-        if (getView() == null) {
+        if (!hasView()) {
             return;
         }
 
@@ -840,7 +840,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
     @Override
     public void engineRemoved(final ScriptEngineWrapper scriptEngineWrapper) {
-        if (getView() == null) {
+        if (!hasView()) {
             return;
         }
 

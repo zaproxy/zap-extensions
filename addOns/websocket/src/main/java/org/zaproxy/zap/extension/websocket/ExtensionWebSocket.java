@@ -336,7 +336,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
             logger.warn(e.getMessage(), e);
         }
 
-        if (getView() != null) {
+        if (hasView()) {
             ExtensionLoader extLoader = Control.getSingleton().getExtensionLoader();
             ExtensionHookView hookView = extensionHook.getHookView();
             ExtensionHookMenu hookMenu = extensionHook.getHookMenu();
@@ -422,7 +422,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                     new ScriptType(
                             SCRIPT_TYPE_WEBSOCKET_SENDER,
                             "websocket.script.type.websocketsender",
-                            getView() != null ? getScriptSenderIcon() : null,
+                            hasView() ? getScriptSenderIcon() : null,
                             true);
             this.extensionScript.registerScriptType(websocketSenderSciptType);
             webSocketSenderScriptListener = new WebSocketSenderScriptListener();
@@ -451,7 +451,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                     new ScriptType(
                             SCRIPT_TYPE_WEBSOCKET_PASSIVE,
                             "websocket.pscan.scripts.type.passive",
-                            getView() != null ? getScriptPassiveScanIcon() : null,
+                            hasView() ? getScriptPassiveScanIcon() : null,
                             true);
             this.extensionScript.registerScriptType(websocketPassiveScanScriptType);
             webSocketScriptPassiveScanner = new ScriptsWebSocketPassiveScanner(extensionScript);
@@ -520,7 +520,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
             getModel().getDb().removeDatabaseListener(table);
         }
 
-        if (getView() != null) {
+        if (hasView()) {
             getWebSocketPanel().unload();
 
             getView().getSessionDialog().removeParamPanel(sessionExcludePanel);

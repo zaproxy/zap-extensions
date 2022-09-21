@@ -132,7 +132,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
             LOG.debug("Custom Open API spider could not be added.");
         }
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportLocalOpenApi());
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportUrlOpenApi());
             extensionHook.addSessionListener(new SessionChangedListenerImpl());

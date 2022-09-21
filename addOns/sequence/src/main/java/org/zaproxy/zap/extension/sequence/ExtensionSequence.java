@@ -127,7 +127,7 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
                         new String[] {"append"});
         getExtScript().registerScriptType(scriptType);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionhook
                     .getHookMenu()
                     .addPopupMenuItem(new SequencePopupMenuItem(this, getExtScript()));

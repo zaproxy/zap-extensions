@@ -73,7 +73,7 @@ public class ExtensionFormHandler extends ExtensionAdaptor {
             extension.setValueGenerator(valueGenerator);
         }
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookView().addOptionPanel(getOptionsFormHandlerPanel());
             if (extLoader.isExtensionEnabled(ExtensionParams.NAME)) {
                 extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuAddFormhandlerParam());

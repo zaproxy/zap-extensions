@@ -123,7 +123,7 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor
 
         extensionHook.addSessionListener(this);
 
-        if (getView() != null) {
+        if (hasView()) {
 
             // setup SSE tab
             EventStreamPanel tab = getEventStreamTab();
