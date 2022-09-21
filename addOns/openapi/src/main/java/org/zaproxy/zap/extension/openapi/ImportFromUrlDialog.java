@@ -65,7 +65,8 @@ public class ImportFromUrlDialog extends ImportFromAbstractDialog {
         }
 
         try {
-            caller.importOpenApiDefinition(uri, getTargetField().getText(), true);
+            caller.importOpenApiDefinition(
+                    uri, getTargetField().getText(), true, getSelectedContextId());
         } catch (InvalidUrlException e) {
             showWarningInvalidUrl(e.getUrl());
             return false;

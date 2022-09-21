@@ -4,6 +4,10 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Imported specs are now persisted to the session database. They are used by the new variant to mark path parameters as
+  Data Driven Nodes.
+
 ### Fixed
 - JSON body examples specified under `schema` were being enclosed in quotes.
 - Error message when `apiFile` field is not accessible was outputting the `targetUrl` and not the incorrect filename (Issue 7370).
@@ -12,6 +16,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Maintenance changes.
 - Use Spider add-on (Issue 3113).
 - Use Form Handler add-on directly.
+- DDNs added as Structural Modifiers have been superseded by a custom variant. The variant supports nested DDNs and leaf
+  DDNs, prevents non-parameter URL paths from being merged with DDNs, and treats paths with different HTTP methods
+  uniquely. DDNs are named with the parameter name from the spec.
 
 ## [27] - 2022-03-29
 ### Added

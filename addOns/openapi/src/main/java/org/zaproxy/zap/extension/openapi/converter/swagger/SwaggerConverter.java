@@ -42,7 +42,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -50,17 +49,18 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.model.Model;
+import org.zaproxy.zap.extension.openapi.VariantOpenApi;
 import org.zaproxy.zap.extension.openapi.converter.Converter;
 import org.zaproxy.zap.extension.openapi.generators.Generators;
 import org.zaproxy.zap.extension.openapi.network.RequestMethod;
 import org.zaproxy.zap.extension.openapi.network.RequestModel;
 import org.zaproxy.zap.model.Context;
-import org.zaproxy.zap.model.StructuralNodeModifier;
 import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.utils.Pair;
 
@@ -83,7 +83,7 @@ public class SwaggerConverter implements Converter {
     private static final String BASE_KEY_I18N = "openapi.swaggerconverter.";
 
     private static final Logger LOG = LogManager.getLogger(SwaggerConverter.class);
-    private static final Pattern PATH_PART_PATTERN = Pattern.compile("\\{.*}");
+    private static final Pattern PATH_PART_PATTERN = Pattern.compile("\\{.*?}");
     private final UriBuilder targetUriBuilder;
     private final UriBuilder definitionUriBuilder;
     private String defn;
@@ -92,6 +92,7 @@ public class SwaggerConverter implements Converter {
     private List<String> errors = new ArrayList<>();
     private Set<String> apiUrls;
     private OpenAPI openAPI;
+    private List<OperationModel> operationModels;
 
     public SwaggerConverter(String defn, ValueGenerator valGen) {
         this(null, null, defn, valGen);
@@ -180,10 +181,16 @@ public class SwaggerConverter implements Converter {
                 || "https".equalsIgnoreCase(scheme);
     }
 
+    public List<OperationModel> getOperationModels() throws SwaggerException {
+        if (operationModels == null) {
+            operationModels = readOpenAPISpec();
+        }
+        return operationModels;
+    }
+
     @Override
     public List<RequestModel> getRequestModels() throws SwaggerException {
-        List<OperationModel> operations = readOpenAPISpec();
-        return convertToRequest(operations);
+        return convertToRequest(getOperationModels());
     }
 
     private List<RequestModel> convertToRequest(List<OperationModel> operations) {
@@ -471,103 +478,40 @@ public class SwaggerConverter implements Converter {
         return swaggerParseResult;
     }
 
-    private List<StructuralNodeModifier> getStructuralNodeModifiers() {
-        if (openAPI == null) {
-            throw new IllegalStateException("The OpenAPI was not yet imported.");
+    public void updateVariantChecks(
+            Context context, String targetUrl, VariantOpenApi.VariantOpenApiChecks variantChecks)
+            throws SwaggerException {
+        if (targetUrl != null && !targetUrl.isEmpty()) {
+            includeInContext(context, targetUrl);
         }
-
-        String targetUrl = apiUrls.stream().findFirst().get();
-
-        Set<String> ddnRegexStrings = new HashSet<>();
-        // check for DDN on each key (path) in the spec
-        for (Map.Entry<String, PathItem> entry : openAPI.getPaths().entrySet()) {
-            String key = entry.getKey();
-            try {
-                List<String> params = getPathParameters(key);
-                String ddnPattern = createStructuralNodeRegexString(params, targetUrl, key);
-                if (ddnPattern != null) {
-                    ddnRegexStrings.add(ddnPattern);
-                }
-            } catch (Exception e) {
-                LOG.error("error evaluating DDN for key: {}", key, e);
+        for (OperationModel operation : getOperationModels()) {
+            String uri = operation.getPath();
+            if (targetUrl == null || targetUrl.isEmpty()) {
+                includeInContext(context, uri);
+            }
+            if (PATH_PART_PATTERN.matcher(uri).find()) {
+                String regex = uri.replaceAll(PATH_PART_PATTERN.pattern(), "[^/?]+");
+                variantChecks.pathsWithParamsRegex.put(operation, Pattern.compile(regex));
+            } else {
+                variantChecks.pathsWithNoParams.add(operation);
             }
         }
-
-        List<StructuralNodeModifier> structuralNodeModifiers = new ArrayList<>();
-        int ddnCnt = 0;
-        for (String regexString : ddnRegexStrings) {
-            try {
-                Pattern pattern = Pattern.compile(regexString);
-                StructuralNodeModifier structuralNodeModifier =
-                        createStructuralNode(pattern, "DDN" + ddnCnt++);
-                structuralNodeModifiers.add(structuralNodeModifier);
-            } catch (Exception e) {
-                LOG.error("error adding structural node", e);
-            }
-        }
-
-        return structuralNodeModifiers;
     }
 
-    public void setStructuralNodeModifiers(int contextId) {
-        if (contextId == -1) {
-            return;
-        }
-
+    private static void includeInContext(Context context, String url) {
         try {
-            List<StructuralNodeModifier> structuralNodeModifiers = getStructuralNodeModifiers();
-            Context ctx = Model.getSingleton().getSession().getContext(contextId);
-            ctx.setDataDrivenNodes(structuralNodeModifiers);
-        } catch (Exception e) {
-            LOG.error("Error setting data driven nodes from spec for contextId: {}", contextId, e);
-            errors.add(e.getMessage());
-        }
-    }
-
-    private static StructuralNodeModifier createStructuralNode(Pattern pattern, String ddnName) {
-        return new StructuralNodeModifier(
-                StructuralNodeModifier.Type.DataDrivenNode, pattern, ddnName);
-    }
-
-    private static String createStructuralNodeRegexString(
-            List<String> params, String finalTargetUrl, String key) {
-        if (params.isEmpty()) {
-            return null;
-        }
-        // get last param as the DDN for the key
-        String lastParam = params.get(params.size() - 1);
-
-        StringBuilder sb = new StringBuilder();
-        if (finalTargetUrl != null) {
-            sb.append(finalTargetUrl);
-        }
-
-        sb.append('(');
-        String pathTill = key.split(lastParam)[0].replace("{", "");
-        // replace other params with .+? regex in the first path grouping
-        for (String param : params) {
-            if (!param.equals(lastParam)) {
-                pathTill = pathTill.replace(param, ".+?");
+            if (context.isInContext(url)) {
+                return;
             }
+            URI uri = new URI(url, true);
+            String scheme = uri.getScheme();
+            String authority = uri.getAuthority();
+            String regex = scheme != null ? scheme + "://" : "";
+            regex += authority != null ? authority : "";
+            regex += ".*";
+            context.addIncludeInContextRegex(regex);
+        } catch (URIException e) {
+            LOG.debug("Could not add openapi target to context.", e);
         }
-        sb.append(pathTill);
-        // add trailing matcher for this DDN
-        sb.append(")(.+?)(/.*)");
-        return removeBrackets(sb.toString());
-    }
-
-    private static List<String> getPathParameters(String key) {
-        String[] pathParts = key.split("/");
-        List<String> params = new ArrayList<>();
-        for (String part : pathParts) {
-            if (PATH_PART_PATTERN.matcher(part).matches()) {
-                params.add(removeBrackets(part));
-            }
-        }
-        return params;
-    }
-
-    private static String removeBrackets(String str) {
-        return str.replace("{", "").replace("}", "");
     }
 }
