@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [6.0.0] - 2022-09-21
 ### Changed
 - Maintenance changes.
 - Expose value generator for other add-ons (Related to Issue 3113).
@@ -37,6 +37,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[6.0.0]: https://github.com/zaproxy/zap-extensions/releases/formhandler-v6.0.0
 [5]: https://github.com/zaproxy/zap-extensions/releases/formhandler-v5
 [4]: https://github.com/zaproxy/zap-extensions/releases/formhandler-v4
 [3]: https://github.com/zaproxy/zap-extensions/releases/formhandler-v3
