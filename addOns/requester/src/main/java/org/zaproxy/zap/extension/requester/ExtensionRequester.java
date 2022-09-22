@@ -47,7 +47,7 @@ public class ExtensionRequester extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionRequester";
 
-    private static final String RESOURCES_DIR = "resources/";
+    private static final String IMAGES_DIR = "resources/images/";
 
     private static ImageIcon requesterIcon;
 
@@ -74,9 +74,9 @@ public class ExtensionRequester extends ExtensionAdaptor {
         return manualIcon;
     }
 
-    private static ImageIcon createIcon(String relativePath) {
+    public static ImageIcon createIcon(String relativePath) {
         return DisplayUtils.getScaledIcon(
-                ExtensionRequester.class.getResource(RESOURCES_DIR + relativePath));
+                ExtensionRequester.class.getResource(IMAGES_DIR + relativePath));
     }
 
     public static ImageIcon getRequesterIcon() {

@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.requester;
 
 import java.awt.GridBagConstraints;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -32,11 +31,9 @@ public class CloseTabPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
     private static final Icon CLOSE_TAB_GREY_ICON =
-            new ImageIcon(
-                    CloseTabPanel.class.getResource("/resource/icon/fugue/cross-small-grey.png"));
+            ExtensionRequester.createIcon("fugue/cross-small-grey.png");
     private static final Icon CLOSE_TAB_RED_ICON =
-            new ImageIcon(
-                    CloseTabPanel.class.getResource("/resource/icon/fugue/cross-small-red.png"));
+            ExtensionRequester.createIcon("fugue/cross-small-red.png");
 
     private NumberedRenamableTabbedPane ntp;
     private JLabel lblTitle;

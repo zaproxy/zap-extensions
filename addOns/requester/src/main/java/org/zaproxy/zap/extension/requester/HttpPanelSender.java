@@ -27,7 +27,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.net.ssl.SSLException;
-import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
@@ -265,10 +264,7 @@ public class HttpPanelSender {
     private JToggleButton getButtonFollowRedirects() {
         if (followRedirect == null) {
             followRedirect =
-                    new JToggleButton(
-                            new ImageIcon(
-                                    HttpPanelSender.class.getResource(
-                                            "/resource/icon/16/118.png"))); // Arrow
+                    new JToggleButton(ExtensionRequester.createIcon("follow-redirect.png"));
             followRedirect.setToolTipText(
                     Constant.messages.getString("manReq.checkBox.followRedirect"));
             followRedirect.setSelected(true);
@@ -279,10 +275,7 @@ public class HttpPanelSender {
     private JToggleButton getButtonUseTrackingSessionState() {
         if (useTrackingSessionState == null) {
             useTrackingSessionState =
-                    new JToggleButton(
-                            new ImageIcon(
-                                    HttpPanelSender.class.getResource(
-                                            "/resource/icon/fugue/globe-green.png")));
+                    new JToggleButton(ExtensionRequester.createIcon("fugue/globe-green.png"));
             useTrackingSessionState.setToolTipText(
                     Constant.messages.getString("manReq.checkBox.useSession"));
             useTrackingSessionState.addItemListener(
@@ -293,12 +286,7 @@ public class HttpPanelSender {
 
     private JToggleButton getButtonUseCookies() {
         if (useCookies == null) {
-            useCookies =
-                    new JToggleButton(
-                            new ImageIcon(
-                                    HttpPanelSender.class.getResource(
-                                            "/resource/icon/fugue/cookie.png")),
-                            true);
+            useCookies = new JToggleButton(ExtensionRequester.createIcon("fugue/cookie.png"), true);
             useCookies.setToolTipText(Constant.messages.getString("manReq.checkBox.useCookies"));
             useCookies.addItemListener(
                     e -> setUseCookies(e.getStateChange() == ItemEvent.SELECTED));
@@ -308,11 +296,7 @@ public class HttpPanelSender {
 
     private JToggleButton getButtonUseCsrf() {
         if (useCsrf == null) {
-            useCsrf =
-                    new JToggleButton(
-                            new ImageIcon(
-                                    HttpPanelSender.class.getResource(
-                                            "/resource/icon/csrf-button.png")));
+            useCsrf = new JToggleButton(ExtensionRequester.createIcon("csrf-button.png"));
             useCsrf.setToolTipText(Constant.messages.getString("manReq.checkBox.useCSRF"));
         }
         return useCsrf;
@@ -322,10 +306,7 @@ public class HttpPanelSender {
         if (fixContentLength == null) {
             fixContentLength =
                     new JToggleButton(
-                            new ImageIcon(
-                                    HttpPanelSender.class.getResource(
-                                            "/resource/icon/fugue/application-resize.png")),
-                            true);
+                            ExtensionRequester.createIcon("fugue/application-resize.png"), true);
             fixContentLength.setToolTipText(
                     Constant.messages.getString("manReq.checkBox.fixLength"));
         }
