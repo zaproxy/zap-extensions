@@ -25,75 +25,89 @@
 Both dialogues allow to override the server URL present in the OpenAPI definition (or specify one if not present) through the Target URL field.
 The import progress is shown in the progress tab.
 
-<h3>Формат целевого URL </h3>
-Целевой URL имеет следующий формат: <br>
-<code>scheme://authority/path</code><br>
-со всеми необязательными компонентами URI.  Примечание. Хотя все компоненты URI являются необязательными, схема и полномочия становятся обязательными, если они не импортируются из URL-адреса и в определении они не указаны (например, в нем нет серверов или схем). <br>
-Следуя некоторым примерам, переопределение: 
+<h3>Context for Adding DDNs</h3>
+The dialogues also allow selecting a Context, optionally. If a context is selected,
 <ul>
-<li>Полномочия и путь: <code>localhost/api/</code> </li>
-<li>Просто схема: <code>https://</code> </li>
-<li>Просто полномочия: <code>qa.example.com:9090</code> </li>
-<li>Просто путь: <code>/dev/v3/</code> </li>
+    <li>the target URL used for importing is added to the context</li>
+    <li>the imported spec is saved to the session database</li>
+    <li>data driven nodes are generated for endpoints with path parameters</li>
+</ul>
+
+<h3>Target URL Format</h3>
+The Target URL has the following format:<br>
+<code>scheme://authority/path</code><br>
+with all URI components optional. Note: while all URI components are optional the scheme and authority become mandatory when not importing from URL and the definition does not specify them (for example, it has no servers or schemes).<br>
+Following some examples, overriding:
+<ul>
+<li>The authority and path: <code>localhost/api/</code></li>
+<li>Just the scheme: <code>https://</code></li>
+<li>Just the authority: <code>qa.example.com:9090</code></li>
+<li>Just the path: <code>/dev/v3/</code></li>
 </ul>
 
 <h2>API</h2>
-В API добавлены следующие операции: 
+The following operations are added to the API:
 <ul>
-<li>ДЕЙСТВИЕ importFile (файл, цель) </li>
-<li>ДЕЙСТВИЕ import Url (url, host Override) </li>
+<li>ACTION importFile (file, target, contextId)</li>
+<li>ACTION importUrl (url, hostOverride, contextId)</li>
 </ul>
-Оба <code>Цель</code> и <code>hostOverride</code> поддержать  <code>Целевой URL </code> формат, описанный ранее.
+Both <code>Цель</code> and <code>hostOverride</code> support the <code>Целевой URL </code> format explained earlier.
 
-Определения будут импортированы синхронно, и будут возвращены все предупреждения. 
+The definitions will be imported synchronously and any warnings will be returned.
 
-<h3>Узлы, управляемые данными </h3>
-<span style="white-space: pre;">
-Когда схема OpenAPI содержит параметры пути, подключаемый модуль автоматически создает управляемые данными узлы либо в контексте по умолчанию, либо для контекста из предоставленного <code>contextId</code>. 
+<h2>Data Driven Nodes</h2>
+When the OpenAPI definition contains path parameters, and a context is specified during importing, the add-on will
+automatically generate data driven nodes. If no context is specified, no data driven nodes are generated.
 
-Например, следующее определение OpenAPI приведет как минимум к одному узлу, управляемому данными. 
+For example, the following OpenAPI definition will result in at least one data driven node.
 
-<strong>openapi.yml</strong>
-<code >
+<pre>
     ...
     /users/v1/{username}/email:
       ...
       parameters:
         - name: username
-        in: path
-        description: username to update email
-        required: true
-        schema:
-          type: string
+          in: path
+          description: username to update email
+          required: true
+          schema:
+            type: string
     ...
-</code>
+</pre>
 
-<strong>Default Context > Structure > Structural Modifiers</strong>
-<code>
-    DDN0: (/)(.+?)(/.*)
-    DDN1: (/users/v1/)(.+?)(/.*)
-</code>
-</span>
-<h2>командная строка</h2>
-Добавлены следующие параметры командной строки: 
+The following nodes are added to the Sites Tree for the above endpoint:
+<pre>
+Sites
+└── http://example.com
+    └── users
+        └── v1
+            └── «username»
+                └── email
+</pre>
+
+The imported OpenAPI definition is persisted to the session database. When the session is reloaded, the definition is
+used to generate the data driven nodes and mark them for future requests.
+
+<h2>Command Line</h2>
+The following Command Line options are added:
 <ul>
-<li>-openapifile &lt;filename&gt;: импортирует определение OpenAPI из файла с указанным именем. </li>
-<li>-openapiurl &lt;url&gt;: импортирует определение OpenAPI с указанного URL-адреса. </li>
-<li>-openapitargeturl &lt;url&gt; : целевой URL-адрес для переопределения URL-адреса сервера, присутствующего в определении OpenAPI. </li>
+<li>-openapifile &lt;filename&gt;  : Imports an OpenAPI definition from the specified file name</li>
+<li>-openapiurl &lt;url&gt;  : Imports an OpenAPI definition from the specified URL</li>
+<li>-openapitargeturl &lt;url&gt;  : The Target URL, to override the server URL present in the OpenAPI definition</li>
 </ul>
 
-Определения будут импортированы синхронно, а все предупреждения будут отображаться в командной строке. 
+The definitions will be imported synchronously and any warnings will be displayed on the command line.
 
-<h2>Определения будут импортированы синхронно, а все исключены в командной строке. </h2>
-Значения по умолчанию используются при импорте определений OpenAPI. <br>
-Их можно переопределить с помощью надстройки Form Handler, которая позволяет вам указывать свои собственные значения. <br>
-В большинстве случаев это будут простые значения (например, строки и целые числа), но в некоторых случаях вам может потребоваться указать структурированные значения,
-например  <pre>{ "id": 0, "name": "Freda" }</pre>
+<h2>User Specified Values</h2>
+Default values are used when importing OpenAPI definitions.<br>
+These can be overridden using the Form Handler add-on which allows you to specify your own values.<br>
+In most cases these will be simple values (like strings and integers) but in some cases you may need to specify structured values,
+e.g. <pre>{ "id": 0, "name": "Freda" }</pre>
 
-<h2>Статистика</h2>
-Надстройка ведет следующую статистику: 
+<h2>Statistics</h2>
+The add-on maintains the following statistics:
 <ul>
-    <li>openapi.urls.added : общее количество URL-адресов, добавленных при импорте определений OpenAPI. </li>
+    <li>openapi.urls.added : The total number of URLs added when importing OpenAPI definitions</li>
 </ul>
 
 </body>
