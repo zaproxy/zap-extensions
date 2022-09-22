@@ -1,3 +1,4 @@
+import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep
 import org.zaproxy.gradle.addon.AddOnStatus
 
 description = "Request numbered panel."
@@ -22,4 +23,13 @@ crowdin {
     configuration {
         tokens.put("%helpPath%", "")
     }
+}
+
+spotless {
+    format("help-html", {
+        eclipseWtp(EclipseWtpFormatterStep.HTML)
+        target(fileTree(projectDir) {
+            include("src/**/help/**/*.html")
+        })
+    })
 }

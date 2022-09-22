@@ -64,7 +64,7 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel
     private static final long serialVersionUID = -5830450800029295419L;
     private static final Logger logger = LogManager.getLogger(ManualHttpRequestEditorPanel.class);
     private static final String CONFIG_KEY = "requesterpanel";
-    private static final String HELP_KEY = "requester";
+    private static final String HELP_KEY = "addon.requester.tab";
 
     private ZapMenuItem menuItem;
 
@@ -87,7 +87,7 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel
     }
 
     public ManualHttpRequestEditorPanel(String configurationKey) throws HeadlessException {
-        this(configurationKey, "ui.dialogs.manreq", RequestResponsePanel.TABS_VIEW);
+        this(configurationKey, "addon.requester.dialogs", RequestResponsePanel.TABS_VIEW);
     }
 
     private ManualHttpRequestEditorPanel(String configurationKey, String helpKey, int defaultView)
