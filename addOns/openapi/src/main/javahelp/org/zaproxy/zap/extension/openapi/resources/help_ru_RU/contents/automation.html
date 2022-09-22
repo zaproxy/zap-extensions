@@ -17,11 +17,12 @@ OpenAPI Automation Framework Support
 <H2>Задание: openapi </H2>
 Задание openapi позволяет импортировать определения OpenAPI через URL-адрес или файл. 
 <pre>
-  - type: openapi                      # Импорт определения OpenAPI 
+  - type: openapi                      # OpenAPI definition import
     parameters:
-      apiFile:                         # String: Локальный файл, содержащий определение OpenAPI, по умолчанию: null, определение не будет импортировано. 
-      apiUrl:                          # String: URL-адрес, содержащий определение OpenAPI, по умолчанию: null, определение не будет импортировано. 
-      targetUrl:                       # String: URL-адрес, который переопределяет цель, указанную в определении, по умолчанию: null, цель не будет переопределена. 
+      apiFile:                         # String: Local file containing the OpenAPI definition, default: null, no definition will be imported
+      apiUrl:                          # String: URL containing the OpenAPI definition, default: null, no definition will be imported
+      context:                         # String: Context to use when importing the OpenAPI definition, default: null, no context will be used
+      targetUrl:                       # String: URL which overrides the target defined in the definition, default: null, the target will not be overridden
 </pre>
 
 </BODY>

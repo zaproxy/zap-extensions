@@ -25,6 +25,14 @@ It also supports the <a href="automation.html">Automation Framework</a>.
 Both dialogues allow to override the server URL present in the OpenAPI definition (or specify one if not present) through the Target URL field.
 The import progress is shown in the progress tab.
 
+<h3>Context for Adding DDNs</h3>
+The dialogues also allow selecting a Context, optionally. If a context is selected,
+<ul>
+    <li>the target URL used for importing is added to the context</li>
+    <li>the imported spec is saved to the session database</li>
+    <li>data driven nodes are generated for endpoints with path parameters</li>
+</ul>
+
 <h3>Target URL Format</h3>
 The Target URL has the following format:<br>
 <code>scheme://authority/path</code><br>
@@ -40,41 +48,47 @@ Following some examples, overriding:
 <h2>API</h2>
 The following operations are added to the API:
 <ul>
-<li>ACTION importFile (file, target)</li>
-<li>ACTION importUrl (url, hostOverride)</li>
+<li>ACTION importFile (file, target, contextId)</li>
+<li>ACTION importUrl (url, hostOverride, contextId)</li>
 </ul>
 Both <code>target</code> and <code>hostOverride</code> support the <code>Target URL</code> format explained earlier.
 
 The definitions will be imported synchronously and any warnings will be returned.
 
-<h3>Data Driven Nodes</h3>
-<span style="white-space: pre;">
-When the OpenAPI schema contains path params the plugin will automatically generate data driven nodes in either the default context or for the context from the provided <code>contextId</code>.
+<h2>Data Driven Nodes</h2>
+When the OpenAPI definition contains path parameters, and a context is specified during importing, the add-on will
+automatically generate data driven nodes. If no context is specified, no data driven nodes are generated.
 
 For example, the following OpenAPI definition will result in at least one data driven node.
 
-<strong>openapi.yml</strong>
-<code >
+<pre>
     ...
     /users/v1/{username}/email:
       ...
       parameters:
         - name: username
-        in: path
-        description: username to update email
-        required: true
-        schema:
-          type: string
+          in: path
+          description: username to update email
+          required: true
+          schema:
+            type: string
     ...
-</code>
+</pre>
 
-<strong>Default Context > Structure > Structural Modifiers</strong>
-<code>
-    DDN0: (/)(.+?)(/.*)
-    DDN1: (/users/v1/)(.+?)(/.*)
-</code>
-</span>
-<h2>Komut Satırı</h2>
+The following nodes are added to the Sites Tree for the above endpoint:
+<pre>
+Sites
+└── http://example.com
+    └── users
+        └── v1
+            └── «username»
+                └── email
+</pre>
+
+The imported OpenAPI definition is persisted to the session database. When the session is reloaded, the definition is
+used to generate the data driven nodes and mark them for future requests.
+
+<h2>Command Line</h2>
 The following Command Line options are added:
 <ul>
 <li>-openapifile &lt;filename&gt;  : Imports an OpenAPI definition from the specified file name</li>
@@ -84,7 +98,7 @@ The following Command Line options are added:
 
 The definitions will be imported synchronously and any warnings will be displayed on the command line.
 
-<h2>Kullanıcı Belirli Değerler</h2>
+<h2>User Specified Values</h2>
 Default values are used when importing OpenAPI definitions.<br>
 These can be overridden using the Form Handler add-on which allows you to specify your own values.<br>
 In most cases these will be simple values (like strings and integers) but in some cases you may need to specify structured values,
