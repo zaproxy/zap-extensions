@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [42] - 2022-09-22
 ### Changed
 - Maintenance changes.
 - Improved description, solution, and references for the Integer Overflow scan rule.
@@ -361,6 +361,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[42]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v39

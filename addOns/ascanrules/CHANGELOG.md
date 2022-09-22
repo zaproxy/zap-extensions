@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [48] - 2022-09-22
 ### Changed
 - Command Injection Scan Rule: Decode HTML entities in HTML responses before attempting to search for attack validation patterns.
 
@@ -323,6 +323,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[48]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v48
 [47]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v47
 [46]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v46
 [45]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v45
