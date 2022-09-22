@@ -79,7 +79,7 @@ public class ExtensionParamDigger extends ExtensionAdaptor {
         this.api = new ParamDiggerAPI();
         extensionHook.addApiImplementor(this.api);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookMenu().addToolsMenuItem(getMenu());
             extensionHook.getHookView().addStatusPanel(getParamDiggerPanel());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMsg());

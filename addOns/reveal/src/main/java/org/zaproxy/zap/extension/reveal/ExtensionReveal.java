@@ -84,7 +84,7 @@ public class ExtensionReveal extends ExtensionAdaptor implements ProxyListener {
         extensionHook.addProxyListener(this);
         extensionHook.addOptionsParamSet(revealParam);
 
-        if (getView() != null) {
+        if (hasView()) {
             ExtensionHookView extensionHookView = extensionHook.getHookView();
             extensionHookView.addMainToolBarComponent(getRevealButton());
             extensionHookView.addMainToolBarComponent(getToolBarSeparator());

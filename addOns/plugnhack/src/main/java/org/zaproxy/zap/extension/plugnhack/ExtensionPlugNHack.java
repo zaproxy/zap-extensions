@@ -274,7 +274,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
         extensionHook.addProxyListener(this);
         extensionHook.addSessionListener(this);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuOpenAndMonitorUrl());
             extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuMonitorSubtree());
             extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuMonitorScope());

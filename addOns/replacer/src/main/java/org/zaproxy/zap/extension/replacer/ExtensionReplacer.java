@@ -65,7 +65,7 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
         extensionHook.addOptionsParamSet(getParams());
         HttpSender.addListener(this);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookView().addOptionPanel(getOptionsReplacerPanel());
             extensionHook.getHookMenu().addToolsMenuItem(getReplacerMenuItem());
         }

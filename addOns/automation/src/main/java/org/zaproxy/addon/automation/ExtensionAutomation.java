@@ -133,7 +133,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
 
         extensionHook.addApiImplementor(new AutomationAPI(this));
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookView().addStatusPanel(getAutomationPanel());
             extensionHook.getHookView().addOptionPanel(getOptionsPanel());
         }

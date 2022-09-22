@@ -57,7 +57,7 @@ public class ExtensionBugTracker extends ExtensionAdaptor {
         BugTrackerBugzilla bugzillaTracker = new BugTrackerBugzilla();
         extensionHook.addOptionsParamSet(bugzillaTracker.getOptions());
 
-        if (getView() != null) {
+        if (hasView()) {
             addBugTracker(githubTracker);
             addBugTracker(bugzillaTracker);
             View.getSingleton()

@@ -47,7 +47,7 @@ public class ExtensionHttpPanelViewStateView extends ExtensionAdaptor {
     }
 
     private void initViewFactories() {
-        if (getView() != null) {
+        if (hasView()) {
             HttpPanelManager.getInstance()
                     .addRequestViewFactory(
                             RequestSplitComponent.NAME, new RequestSplitBodyViewStateViewFactory());
@@ -71,7 +71,7 @@ public class ExtensionHttpPanelViewStateView extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        if (getView() != null) {
+        if (hasView()) {
             HttpPanelManager panelManager = HttpPanelManager.getInstance();
             panelManager.removeRequestViewFactory(
                     RequestSplitComponent.NAME, RequestSplitBodyViewStateViewFactory.NAME);

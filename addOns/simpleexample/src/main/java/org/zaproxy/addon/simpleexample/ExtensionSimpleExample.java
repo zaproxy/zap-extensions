@@ -85,7 +85,7 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
         extensionHook.addApiImplementor(this.api);
 
         // As long as we're not running as a daemon
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookMenu().addToolsMenuItem(getMenuExample());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMsgMenuExample());
             extensionHook.getHookView().addStatusPanel(getStatusPanel());

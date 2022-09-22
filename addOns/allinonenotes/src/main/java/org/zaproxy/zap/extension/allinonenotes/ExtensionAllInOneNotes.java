@@ -82,7 +82,7 @@ public class ExtensionAllInOneNotes extends ExtensionAdaptor implements SessionC
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
         // As long as we're not running as a daemon
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.addSessionListener(this);
             hookView = extensionHook.getHookView();
             eventConsumerImpl = new EventConsumerImpl(getNotesTableModel());

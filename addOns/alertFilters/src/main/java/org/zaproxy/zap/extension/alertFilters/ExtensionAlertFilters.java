@@ -210,7 +210,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
         // Register this as a context data factory
         extensionHook.addContextDataFactory(this);
 
-        if (getView() != null) {
+        if (hasView()) {
             // Factory for generating Session Context alertFilters panels
             extensionHook.getHookView().addContextPanelFactory(this);
             extensionHook.getHookView().addOptionPanel(getOptionGlobalAlertFilterPanel());

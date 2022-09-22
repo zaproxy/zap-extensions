@@ -211,7 +211,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         extensionHook.addOptionsParamSet(getOptions());
         extensionHook.addAddonFilesChangedListener(addonFilesChangedListener);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookView().addOptionPanel(getOptionsPanel());
             extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuOpenInBrowser(this));
         }
@@ -238,7 +238,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     }
 
     private ImageIcon createScriptIcon() {
-        if (getView() == null) {
+        if (!hasView()) {
             return null;
         }
         return new ImageIcon(
@@ -297,7 +297,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
         final int idx = providedBrowserUIList.indexOf(pbui);
 
-        if (getView() != null) {
+        if (hasView()) {
             SwingUtilities.invokeLater(
                     () -> {
                         ListDataEvent ev =
@@ -353,7 +353,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         providedBrowsers.remove(webDriverProvider.getProvidedBrowser().getId());
         buildProvidedBrowserUIList();
 
-        if (getView() != null) {
+        if (hasView()) {
             SwingUtilities.invokeLater(
                     () -> {
                         ListDataEvent ev =

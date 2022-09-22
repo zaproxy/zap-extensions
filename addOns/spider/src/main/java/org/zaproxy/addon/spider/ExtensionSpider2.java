@@ -135,7 +135,7 @@ public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController
         extensionHook.addSessionListener(new SessionChangedListenerImpl());
 
         // Initialize views
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookMenu().addToolsMenuItem(getMenuItemCustomScan());
             extensionHook.getHookView().addStatusPanel(getSpiderPanel());
             extensionHook.getHookView().addOptionPanel(getOptionsSpiderPanel());

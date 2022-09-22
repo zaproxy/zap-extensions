@@ -98,7 +98,7 @@ public class ExtensionRequester extends ExtensionAdaptor {
                         Constant.messages.getString("view.href.type.name.manual"),
                         hasView() ? getManualIcon() : null));
 
-        if (getView() != null) {
+        if (hasView()) {
             if (isDeprecated(
                     org.parosproxy.paros.extension.manualrequest.ExtensionManualRequestEditor
                             .class)) {
@@ -215,7 +215,7 @@ public class ExtensionRequester extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        if (getView() != null) {
+        if (hasView()) {
             getRequesterPanel().unload();
 
             if (resendDialog != null) {

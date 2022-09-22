@@ -49,7 +49,7 @@ public class ExtensionDiff extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        if (getView() != null) {
+        if (hasView()) {
             if (diffDialog != null) {
                 diffDialog.dispose();
                 diffDialog = null;
@@ -62,7 +62,7 @@ public class ExtensionDiff extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuDiffRequests());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuDiffResponses());
         }

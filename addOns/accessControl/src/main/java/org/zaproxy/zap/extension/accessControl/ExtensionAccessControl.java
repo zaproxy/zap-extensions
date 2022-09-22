@@ -133,7 +133,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor
 
         extensionHook.addApiImplementor(new AccessControlAPI(this));
 
-        if (getView() != null) {
+        if (hasView()) {
             ExtensionHookView viewHook = extensionHook.getHookView();
             viewHook.addStatusPanel(getStatusPanel());
             viewHook.addContextPanelFactory(this);
@@ -256,7 +256,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor
         }
 
         scannerThread = threadManager.recreateScannerThreadIfHasRun(contextId);
-        if (getView() != null) {
+        if (hasView()) {
             scannerThread.addScanListener(getStatusPanel());
         }
         scannerThread.setStartOptions(startOptions);
@@ -278,7 +278,7 @@ public class ExtensionAccessControl extends ExtensionAdaptor
 
     @Override
     public void sessionChanged(Session session) {
-        if (getView() != null) {
+        if (hasView()) {
             getStatusPanel().contextsChanged();
             getStatusPanel().reset();
         }

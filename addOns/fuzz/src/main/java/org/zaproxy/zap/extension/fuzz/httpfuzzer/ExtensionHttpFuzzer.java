@@ -135,7 +135,7 @@ public class ExtensionHttpFuzzer extends ExtensionAdaptor {
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionFuzz.class);
         extensionFuzz.addFuzzerHandler(httpFuzzerHandler);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook
                     .getHookMenu()
                     .addPopupMenuItem(
@@ -192,7 +192,7 @@ public class ExtensionHttpFuzzer extends ExtensionAdaptor {
             extensionSearch.removeCustomHttpSearcher(httpFuzzerSearcher);
         }
 
-        if (getView() != null) {
+        if (hasView()) {
             ExtensionScript extensionScript =
                     Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
             if (extensionScript != null) {

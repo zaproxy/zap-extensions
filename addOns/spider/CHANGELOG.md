@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for automation monitor tests.
 
 ### Changed
+- Maintenance changes.
 - Promoted to Release status, with the migration of the core Spider (Issue 3113).
 
 ### Fixed

@@ -125,7 +125,7 @@ public class ExtensionWebSocketFuzzer extends ExtensionAdaptor {
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionFuzz.class);
         extensionFuzz.addFuzzerHandler(websocketFuzzerHandler);
 
-        if (getView() != null) {
+        if (hasView()) {
             // Disable for now, there are no places where it would be used
             // extensionHook.getHookMenu()
             //       .addPopupMenuItem(new WebSocketFuzzAttackPopupMenuItem(extensionFuzz,
@@ -151,7 +151,7 @@ public class ExtensionWebSocketFuzzer extends ExtensionAdaptor {
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionWebSocket.class);
         extensionWebSocket.removeAllChannelObserver(getAllChannelObserver());
 
-        if (getView() != null) {
+        if (hasView()) {
             ExtensionScript extensionScript =
                     Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
             if (extensionScript != null) {

@@ -340,7 +340,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
         extensionHook.addOptionsParamSet(fuzzOptions);
         extensionHook.addAddonFilesChangedListener(new FuzzerFilesUpdater());
 
-        if (getView() != null) {
+        if (hasView()) {
             PayloadGeneratorUIHandlersRegistry payloadGeneratorsUIRegistry =
                     PayloadGeneratorUIHandlersRegistry.getInstance();
             payloadGeneratorsUIRegistry.registerPayloadUI(
@@ -371,7 +371,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
             fuzzScansPanel.unload();
         }
 
-        if (getView() != null) {
+        if (hasView()) {
             ExtensionScript extensionScript =
                     Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
 

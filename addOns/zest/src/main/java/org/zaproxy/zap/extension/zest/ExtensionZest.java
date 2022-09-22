@@ -168,7 +168,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
         extensionHook.addOptionsParamSet(getParam());
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.addProxyListener(this);
             extensionHook.addSessionListener(new ViewSessionChangedListener());
 
@@ -277,7 +277,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
     @Override
     public void optionsLoaded() {
-        if (getView() == null || EventQueue.isDispatchThread()) {
+        if (!hasView() || EventQueue.isDispatchThread()) {
             // Convert scripts loaded on start into real Zest scripts
             for (ScriptType type : this.getExtScript().getScriptTypes()) {
                 for (ScriptWrapper script : this.getExtScript().getScripts(type)) {
@@ -302,7 +302,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
     @Override
     public void unload() {
-        if (getView() != null) {
+        if (hasView()) {
             View view = View.getSingleton();
             view.removeMainToolbarButton(getRecordButton());
             view.removeMainToolbarSeparator(getToolbarSeparator());
