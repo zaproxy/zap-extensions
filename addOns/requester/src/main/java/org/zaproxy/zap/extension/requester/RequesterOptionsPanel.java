@@ -87,6 +87,6 @@ public class RequesterOptionsPanel extends AbstractParamPanel {
 
     @Override
     public String getHelpIndex() {
-        return null;
+        return "addon.requester.options";
     }
 }
