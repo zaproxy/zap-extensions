@@ -1689,7 +1689,7 @@
 			},
 			{
 				"below" : "2.29.2",
-				"severity": "medium",
+				"severity": "high",
 				"identifiers": { 
 					"summary" : "This vulnerability impacts npm (server) users of moment.js, especially if user provided locale string, eg fr is directly used to switch moment locale.",
 					"CVE" : [ "CVE-2022-24785" ] 
@@ -1701,7 +1701,7 @@
 			{
 				"below" : "2.29.4",
 				"atOrAbove" : "2.18.0",
-				"severity": "medium",
+				"severity": "high",
 				"identifiers": { 
 					"summary" : "Regular Expression Denial of Service (ReDoS), Affecting moment package, versions >=2.18.0 <2.29.4",
 					"CVE" : [ "CVE-2022-31129" ] 
@@ -1719,6 +1719,28 @@
 			"filecontent"	: [ 
 				"//! moment.js(?:[\n\r]+)//! version : (§§version§§)" ,
 				"\\.version=\"(§§version§§)\".{300,500}\\.isMoment="
+			]
+		}
+	},
+	"underscore.js" : {
+		"bowername": [ "Underscore", "underscore" ],
+		"vulnerabilities" : [
+			{
+				"below" : "1.12.1",
+				"atOrAbove" : "1.3.2",
+				"severity": "High",
+				"identifiers": { 
+					"summary":" vulnerable to Arbitrary Code Injection via the template function",
+			        "CVE" : [ "CVE-2021-23358" ] 
+			},
+				"info" : [ "https://nvd.nist.gov/vuln/detail/CVE-2021-23358" ] 	 
+			}		
+		],
+		"extractors" : {
+			"uri" 			: [ "/underscore\\.js/(§§version§§)/underscore(-min)?\\.js" ],
+			"func"			: [ "underscore.version" ],
+			"filecontent"	: [ 
+				"//[\\s]*Underscore.js (§§version§§)"	
 			]
 		}
 	},
