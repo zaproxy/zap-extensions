@@ -31,18 +31,6 @@ import org.parosproxy.paros.network.HttpMessage;
 
 public class ParamGuessResult {
 
-    public enum Reason {
-        HTTP_CODE,
-        HTTP_HEADERS,
-        REDIRECT,
-        BODY_HEURISTIC_MISMATCH,
-        LINE_COUNT,
-        WORD_COUNT,
-        TEXT,
-        PARAM_NAME_REFLECTION,
-        PARAM_VALUE_REFLECTION,
-    }
-
     private String paramName;
     private HistoryReference historyReference;
     private List<Reason> reasons;
@@ -58,6 +46,12 @@ public class ParamGuessResult {
         } catch (HttpMalformedHeaderException | DatabaseException e) {
             logger.warn("Error creating history reference. Exception raised {}", e);
         }
+    }
+
+    public ParamGuessResult(String paramName, List<Reason> reasons, HistoryReference ref) {
+        this.paramName = paramName;
+        this.reasons = reasons;
+        this.historyReference = ref;
     }
 
     public String getParamName() {

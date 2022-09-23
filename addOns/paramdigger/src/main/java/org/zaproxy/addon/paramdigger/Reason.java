@@ -19,23 +19,17 @@
  */
 package org.zaproxy.addon.paramdigger;
 
-import org.parosproxy.paros.Constant;
-
-/** The allowed Methods for the param digger add-on. */
-public enum Method {
-    GET(Constant.messages.getString("paramdigger.dialog.methods.get")),
-    POST(Constant.messages.getString("paramdigger.dialog.methods.post")),
-    XML(Constant.messages.getString("paramdigger.dialog.methods.xml")),
-    JSON(Constant.messages.getString("paramdigger.dialog.methods.json"));
-
-    private final String label;
-
-    @Override
-    public String toString() {
-        return label;
-    }
-
-    private Method(String label) {
-        this.label = label;
-    }
+public enum Reason {
+    HTTP_CODE,
+    HTTP_HEADERS,
+    REDIRECT,
+    BODY_HEURISTIC_MISMATCH,
+    LINE_COUNT,
+    WORD_COUNT,
+    TEXT,
+    PARAM_NAME_REFLECTION,
+    PARAM_VALUE_REFLECTION,
+    POISON_REFLECTION_IN_BODY,
+    POISON_REFLECTION_IN_HEADER,
+    POISON_REFLECTION_IN_COOKIE,
 }

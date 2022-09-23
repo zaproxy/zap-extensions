@@ -53,7 +53,6 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
-import org.zaproxy.addon.paramdigger.ParamGuessResult.Reason;
 import org.zaproxy.addon.paramdigger.gui.ParamDiggerHistoryTableModel;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.testutils.TestUtils;

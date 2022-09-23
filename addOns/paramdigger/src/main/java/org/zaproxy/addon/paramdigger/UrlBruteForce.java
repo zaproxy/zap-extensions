@@ -39,7 +39,6 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.commonlib.http.ComparableResponse;
-import org.zaproxy.addon.paramdigger.ParamGuessResult.Reason;
 import org.zaproxy.addon.paramdigger.UrlGuesser.Mode;
 import org.zaproxy.addon.paramdigger.UrlGuesser.Status;
 import org.zaproxy.addon.paramdigger.gui.ParamDiggerHistoryTableModel;
