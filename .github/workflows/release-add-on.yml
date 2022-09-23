@@ -26,4 +26,4 @@ jobs:
       env:
         ZAPBOT_TOKEN: ${{ secrets.ZAPBOT_TOKEN }}
         CROWDIN_AUTH_TOKEN: ${{ secrets.ZAPBOT_CROWDIN_TOKEN }}
-      run: ./gradlew :addOns:releaseAddOn
+      run: ./gradlew -Dorg.gradle.jvmargs=-Xmx4g :addOns:releaseAddOn
