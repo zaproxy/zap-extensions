@@ -5,6 +5,7 @@
       maxDuration:                     # Int: The max time in minutes the ajax spider will be allowed to run for, default: 0 unlimited
       maxCrawlDepth:                   # Int: The max depth that the crawler can reach, default: 10, 0 is unlimited
       numberOfBrowsers:                # Int: The number of browsers the spider will use, more will be faster but will use up more memory, default: 1
+      runOnlyIfModern:                 # Boolean: If true then the spider will only run if a "modern app" alert is raised, default: false
     tests:
       - name: 'At least X URLs found'        # String: Name of the test, default: statistic + operator + value
         type: 'stats'                        # String: Type of test, only 'stats' is supported for now

@@ -127,13 +127,13 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
         "video"
     };
 
-    private static final int DEFAULT_NUMBER_OF_BROWSERS = 1;
+    public static final int DEFAULT_NUMBER_OF_BROWSERS = 1;
 
-    private static final int DEFAULT_MAX_CRAWL_DEPTH = 10;
+    public static final int DEFAULT_MAX_CRAWL_DEPTH = 10;
 
     private static final int DEFAULT_CRAWL_STATES = 0;
 
-    private static final int DEFAULT_MAX_DURATION = 60;
+    public static final int DEFAULT_MAX_DURATION = 60;
 
     private static final int DEFAULT_EVENT_WAIT_TIME = 1000;
 

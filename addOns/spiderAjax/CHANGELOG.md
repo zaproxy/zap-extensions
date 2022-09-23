@@ -9,6 +9,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 - Support for automation monitor tests.
+- Added 'runOnlyIfModern' Automation Framework option.
+
+### Fixed
+- Automation Framework dialog - min numberOfBrowsers now 1.
+- Automation Framework job - correctly pick up URL from context.
 
 ## [23.8.0] - 2022-08-04
 ### Added
