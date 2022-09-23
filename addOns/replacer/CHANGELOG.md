@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [10] - 2022-09-23
 ### Fixed
 - Allow the replacement type to be changed in existing rules (Issue 3840).
