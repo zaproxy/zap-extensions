@@ -113,7 +113,10 @@ public class JobUtils {
             threshold = AlertThreshold.OFF;
         } else {
             progress.warn(
-                    Constant.messages.getString("automation.error.ascan.threshold", jobName, o));
+                    Constant.messages.getString(
+                            "automation.error.ascan.threshold",
+                            jobName,
+                            o.getClass().getCanonicalName()));
         }
         return threshold;
     }
@@ -332,7 +335,7 @@ public class JobUtils {
         if (ignore != null) {
             ignoreList =
                     Arrays.asList(ignore).stream()
-                            .map(e -> "get" + e.toUpperCase().charAt(0) + e.substring(1))
+                            .map(e -> e.toUpperCase().charAt(0) + e.substring(1))
                             .collect(Collectors.toList());
         }
 
@@ -343,16 +346,19 @@ public class JobUtils {
 
                 if ((getterName.startsWith("get") || getterName.startsWith("is"))
                         && m.getParameterCount() == 0
-                        && !getterName.equals("getClass")
-                        && !ignoreList.contains(getterName)) {
+                        && !getterName.equals("getClass")) {
                     // Its a getter so process it
-                    String setterName;
+                    String baseName;
                     if (getterName.startsWith("get")) {
-                        setterName = "s" + getterName.substring(1);
+                        baseName = getterName.substring(3);
                     } else {
                         // is...
-                        setterName = "set" + getterName.substring(2);
+                        baseName = getterName.substring(2);
                     }
+                    if (ignoreList.contains(baseName)) {
+                        continue;
+                    }
+                    String setterName = "set" + baseName;
                     try {
                         Object value = m.invoke(srcObject);
                         if (value == null) {

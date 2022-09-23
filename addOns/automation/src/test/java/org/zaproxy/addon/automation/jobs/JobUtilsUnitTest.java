@@ -67,7 +67,7 @@ class JobUtilsUnitTest {
     @Test
     void shouldApplyObjectToObject() {
         // Given
-        Data source = new Data("A");
+        Data source = new Data("A", Boolean.TRUE);
         Data dest = new Data();
         AutomationProgress progress = mock(AutomationProgress.class);
         AutomationEnvironment env = mock(AutomationEnvironment.class);
@@ -76,21 +76,23 @@ class JobUtilsUnitTest {
         JobUtils.applyObjectToObject(source, dest, "name", new String[] {}, progress, env);
         // Then
         assertThat(dest.getValueString(), is(equalTo("A")));
+        assertThat(dest.isBool(), is(equalTo(Boolean.TRUE)));
     }
 
     @Test
     void shouldApplyObjectToObjectWhileIgnoringSpecifiedPropertyNames() {
         // Given
-        Data source = new Data("A");
+        Data source = new Data("A", Boolean.TRUE);
         Data dest = new Data();
         AutomationProgress progress = mock(AutomationProgress.class);
         AutomationEnvironment env = mock(AutomationEnvironment.class);
         given(env.replaceVars(any())).willAnswer(invocation -> invocation.getArgument(0));
         // When
         JobUtils.applyObjectToObject(
-                source, dest, "name", new String[] {"valueString"}, progress, env);
+                source, dest, "name", new String[] {"valueString", "bool"}, progress, env);
         // Then
         assertThat(dest.getValueString(), is(nullValue()));
+        assertThat(dest.isBool(), is(nullValue()));
     }
 
     @Test
@@ -303,11 +305,13 @@ class JobUtilsUnitTest {
 
     private static class Data {
         private String valueString;
+        private Boolean bool;
 
         Data() {}
 
-        Data(String valueString) {
+        Data(String valueString, Boolean bool) {
             this.valueString = valueString;
+            this.bool = bool;
         }
 
         public String getValueString() {
@@ -318,6 +322,16 @@ class JobUtilsUnitTest {
         // Used by reflection
         public void setValueString(String valueString) {
             this.valueString = valueString;
+        }
+
+        public Boolean isBool() {
+            return bool;
+        }
+
+        @SuppressWarnings("unused")
+        // Used by reflection
+        public void setBool(Boolean bool) {
+            this.bool = bool;
         }
     }
 }
