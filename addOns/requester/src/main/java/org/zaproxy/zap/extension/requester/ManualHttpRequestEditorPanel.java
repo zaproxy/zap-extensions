@@ -25,7 +25,6 @@ import java.awt.HeadlessException;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -401,11 +400,7 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel
 
             this.currentView = -1;
 
-            tabsButtonView =
-                    new JToggleButton(
-                            new ImageIcon(
-                                    ManualRequestEditorPanel.class.getResource(
-                                            "/resource/icon/layout_tabbed.png")));
+            tabsButtonView = new JToggleButton(ExtensionRequester.createIcon("layout-tabbed.png"));
             tabsButtonView.setToolTipText(TABS_VIEW_TOOL_TIP);
 
             tabsButtonView.addActionListener(e -> changeView(TABS_VIEW));
@@ -413,10 +408,7 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel
             addToolbarButton(tabsButtonView);
 
             aboveButtonView =
-                    new JToggleButton(
-                            new ImageIcon(
-                                    ManualRequestEditorPanel.class.getResource(
-                                            "/resource/icon/layout_vertical_split.png")));
+                    new JToggleButton(ExtensionRequester.createIcon("layout-vertical-split.png"));
             aboveButtonView.setToolTipText(ABOVE_VIEW_TOOL_TIP);
 
             aboveButtonView.addActionListener(e -> changeView(ABOVE_VIEW));
@@ -424,10 +416,7 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel
             addToolbarButton(aboveButtonView);
 
             sideBySideButtonView =
-                    new JToggleButton(
-                            new ImageIcon(
-                                    ManualRequestEditorPanel.class.getResource(
-                                            "/resource/icon/layout_horizontal_split.png")));
+                    new JToggleButton(ExtensionRequester.createIcon("layout-horizontal-split.png"));
             sideBySideButtonView.setToolTipText(SIDE_BY_SIDE_VIEW_TOOL_TIP);
 
             sideBySideButtonView.addActionListener(e -> changeView(SIDE_BY_SIDE_VIEW));

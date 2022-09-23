@@ -24,7 +24,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.function.Consumer;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
@@ -39,8 +38,7 @@ public abstract class NumberedRenamableTabbedPane extends JTabbedPane {
     private static final long serialVersionUID = 1L;
     private Integer nextTabNumber = 1;
     private Component hiddenComponent = new JLabel();
-    private static final Icon PLUS_ICON =
-            new ImageIcon(ExtensionRequester.class.getResource("/resource/icon/fugue/plus.png"));
+    private static final Icon PLUS_ICON = ExtensionRequester.createIcon("fugue/plus.png");
 
     public NumberedRenamableTabbedPane() {
         super();
