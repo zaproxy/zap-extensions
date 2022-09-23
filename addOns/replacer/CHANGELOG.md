@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [10] - 2022-09-23
 ### Fixed
 - Allow the replacement type to be changed in existing rules (Issue 3840).
 
@@ -61,5 +61,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[10]: https://github.com/zaproxy/zap-extensions/releases/replacer-v10
 [9]: https://github.com/zaproxy/zap-extensions/releases/replacer-v9
 [8]: https://github.com/zaproxy/zap-extensions/releases/replacer-v8
