@@ -33,7 +33,7 @@ public class SendHttpMessageEditorDialog extends AbstractHttpMessageEditorDialog
     private static final long serialVersionUID = 1L;
 
     public SendHttpMessageEditorDialog(ManualHttpRequestEditorPanel panel) {
-        super("manReq.dialog.title", panel);
+        super("requester.send.dialog.title", panel);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class SendHttpMessageEditorDialog extends AbstractHttpMessageEditorDialog
 
         ZapMenuItem menuItem =
                 new ZapMenuItem(
-                        "menu.tools.manReq",
+                        "requester.send.toolsmenuitem",
                         View.getSingleton().getMenuShortcutKeyStroke(KeyEvent.VK_M, 0, false));
         menuItem.setIcon(ExtensionRequester.getManualIcon());
         menuItem.addActionListener(

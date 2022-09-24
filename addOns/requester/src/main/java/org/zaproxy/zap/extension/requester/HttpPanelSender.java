@@ -135,7 +135,7 @@ public class HttpPanelSender {
                                         .showWarningDialog(
                                                 responsePanel,
                                                 Constant.messages.getString(
-                                                        "manReq.outofscope.redirection.warning",
+                                                        "requester.httpsender.outofscope.redirection.warning",
                                                         redirectionValidator
                                                                 .getInvalidRedirection()));
                             }
@@ -266,7 +266,7 @@ public class HttpPanelSender {
             followRedirect =
                     new JToggleButton(ExtensionRequester.createIcon("follow-redirect.png"));
             followRedirect.setToolTipText(
-                    Constant.messages.getString("manReq.checkBox.followRedirect"));
+                    Constant.messages.getString("requester.httpsender.checkbox.followredirect"));
             followRedirect.setSelected(true);
         }
         return followRedirect;
@@ -277,7 +277,7 @@ public class HttpPanelSender {
             useTrackingSessionState =
                     new JToggleButton(ExtensionRequester.createIcon("fugue/globe-green.png"));
             useTrackingSessionState.setToolTipText(
-                    Constant.messages.getString("manReq.checkBox.useSession"));
+                    Constant.messages.getString("requester.httpsender.checkbox.usesession"));
             useTrackingSessionState.addItemListener(
                     e -> setUseTrackingSessionState(e.getStateChange() == ItemEvent.SELECTED));
         }
@@ -287,7 +287,8 @@ public class HttpPanelSender {
     private JToggleButton getButtonUseCookies() {
         if (useCookies == null) {
             useCookies = new JToggleButton(ExtensionRequester.createIcon("fugue/cookie.png"), true);
-            useCookies.setToolTipText(Constant.messages.getString("manReq.checkBox.useCookies"));
+            useCookies.setToolTipText(
+                    Constant.messages.getString("requester.httpsender.checkbox.usecookies"));
             useCookies.addItemListener(
                     e -> setUseCookies(e.getStateChange() == ItemEvent.SELECTED));
         }
@@ -297,7 +298,8 @@ public class HttpPanelSender {
     private JToggleButton getButtonUseCsrf() {
         if (useCsrf == null) {
             useCsrf = new JToggleButton(ExtensionRequester.createIcon("csrf-button.png"));
-            useCsrf.setToolTipText(Constant.messages.getString("manReq.checkBox.useCSRF"));
+            useCsrf.setToolTipText(
+                    Constant.messages.getString("requester.httpsender.checkbox.usecsrf"));
         }
         return useCsrf;
     }
@@ -308,7 +310,7 @@ public class HttpPanelSender {
                     new JToggleButton(
                             ExtensionRequester.createIcon("fugue/application-resize.png"), true);
             fixContentLength.setToolTipText(
-                    Constant.messages.getString("manReq.checkBox.fixLength"));
+                    Constant.messages.getString("requester.httpsender.checkbox.fixlength"));
         }
         return fixContentLength;
     }

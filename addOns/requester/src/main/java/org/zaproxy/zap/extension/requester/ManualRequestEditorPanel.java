@@ -149,14 +149,14 @@ public abstract class ManualRequestEditorPanel extends JPanel {
                 // Can happen if the user turns on safe mode with the dialog open
                 View.getSingleton()
                         .showWarningDialog(
-                                this, Constant.messages.getString("manReq.safe.warning"));
+                                this, Constant.messages.getString("requester.warn.safemode"));
                 btnSend.setEnabled(true);
                 return;
             } else if (mode.equals(Mode.protect) && !getMessage().isInScope()) {
                 // In protected mode and not in scope, so fail
                 View.getSingleton()
                         .showWarningDialog(
-                                this, Constant.messages.getString("manReq.outofscope.warning"));
+                                this, Constant.messages.getString("requester.warn.outofscope"));
                 btnSend.setEnabled(true);
                 return;
             }
@@ -171,7 +171,7 @@ public abstract class ManualRequestEditorPanel extends JPanel {
     protected JButton getBtnSend() {
         if (btnSend == null) {
             btnSend = new JButton();
-            btnSend.setText(Constant.messages.getString("manReq.button.send"));
+            btnSend.setText(Constant.messages.getString("requester.button.send"));
             btnSend.setEnabled(isSendEnabled);
             btnSend.setMnemonic(KeyEvent.VK_ENTER);
             btnSend.setToolTipText(getBtnSendTooltip());
@@ -182,8 +182,8 @@ public abstract class ManualRequestEditorPanel extends JPanel {
 
     protected static String getBtnSendTooltip() {
         return Constant.isMacOsX()
-                ? Constant.messages.getString("manReq.button.send.tooltip.mac")
-                : Constant.messages.getString("manReq.button.send.tooltip");
+                ? Constant.messages.getString("requester.button.send.tooltip.mac")
+                : Constant.messages.getString("requester.button.send.tooltip");
     }
 
     /** Do not forget to enable the send button again i */
