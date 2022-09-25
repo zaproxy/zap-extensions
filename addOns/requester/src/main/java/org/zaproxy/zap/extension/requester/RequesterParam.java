@@ -19,7 +19,7 @@
  */
 package org.zaproxy.zap.extension.requester;
 
-import org.parosproxy.paros.common.AbstractParam;
+import org.zaproxy.zap.common.VersionedAbstractParam;
 
 /**
  * Manages the requester configurations saved in the configuration file.
@@ -31,9 +31,27 @@ import org.parosproxy.paros.common.AbstractParam;
  *       after creating a new tab.
  * </ul>
  */
-public class RequesterParam extends AbstractParam {
+public class RequesterParam extends VersionedAbstractParam {
 
     private static final String PARAM_BASE_KEY = "requester";
+
+    /**
+     * The current version of the configurations. Used to keep track of configuration changes
+     * between releases, in case changes/updates are needed.
+     *
+     * <p>It only needs to be incremented for configuration changes (not releases of the add-on).
+     *
+     * @see #CONFIG_VERSION_KEY
+     * @see #updateConfigsImpl(int)
+     */
+    private static final int CURRENT_CONFIG_VERSION = 1;
+
+    /**
+     * The key for the version of the configurations.
+     *
+     * @see #CURRENT_CONFIG_VERSION
+     */
+    private static final String CONFIG_VERSION_KEY = PARAM_BASE_KEY + VERSION_ATTRIBUTE;
 
     private static final String PARAM_REQUESTER_AUTO_FOCUS = PARAM_BASE_KEY + ".autoFocus";
 
@@ -44,8 +62,28 @@ public class RequesterParam extends AbstractParam {
     }
 
     @Override
-    protected void parse() {
+    protected int getCurrentVersion() {
+        return CURRENT_CONFIG_VERSION;
+    }
+
+    @Override
+    protected String getConfigVersionKey() {
+        return CONFIG_VERSION_KEY;
+    }
+
+    @Override
+    protected void parseImpl() {
         autoFocus = getConfig().getBoolean(PARAM_REQUESTER_AUTO_FOCUS, true);
+    }
+
+    @Override
+    protected void updateConfigsImpl(int fileVersion) {
+        switch (fileVersion) {
+            case NO_CONFIG_VERSION:
+                // No updates/changes needed.
+                break;
+            default:
+        }
     }
 
     public boolean isAutoFocus() {
