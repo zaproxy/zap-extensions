@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Correct the ID of reports' sections in the help.
+
 ## [0.15.0] - 2022-07-20
 
 ### Fixed
