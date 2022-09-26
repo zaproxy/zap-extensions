@@ -98,10 +98,10 @@ subprojects {
     }
 
     java {
-        // Compile with Java 8 when building ZAP releases.
+        // Compile with appropriate Java version when building ZAP releases.
         if (System.getenv("ZAP_RELEASE") != null) {
             toolchain {
-                languageVersion.set(JavaLanguageVersion.of(8))
+                languageVersion.set(JavaLanguageVersion.of(System.getenv("ZAP_JAVA_VERSION")))
             }
         } else {
             sourceCompatibility = JavaVersion.VERSION_1_8
