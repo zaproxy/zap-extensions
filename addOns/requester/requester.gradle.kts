@@ -33,3 +33,7 @@ spotless {
         })
     })
 }
+
+dependencies {
+    testImplementation(project(":testutils"))
+}
