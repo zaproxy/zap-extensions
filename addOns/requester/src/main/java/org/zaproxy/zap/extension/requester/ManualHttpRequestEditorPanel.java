@@ -54,7 +54,6 @@ import org.zaproxy.zap.extension.httppanel.HttpPanelRequest;
 import org.zaproxy.zap.extension.httppanel.HttpPanelResponse;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.view.HttpPanelManager;
-import org.zaproxy.zap.view.ZapMenuItem;
 
 @SuppressWarnings("serial")
 public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel
@@ -64,8 +63,6 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel
     private static final Logger logger = LogManager.getLogger(ManualHttpRequestEditorPanel.class);
     private static final String CONFIG_KEY = "requesterpanel";
     private static final String HELP_KEY = "addon.requester.tab";
-
-    private ZapMenuItem menuItem;
 
     private HttpPanelSender sender;
 
@@ -232,36 +229,26 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel
     }
 
     private void setFooterStatus(HttpMessage msg) {
+        long timeLapse = 0;
+        long contentLength = 0;
+        long totalLength = 0;
         if (msg != null) {
-            // get values
-            long contentLength = msg.getResponseBody().length();
-            long totalLength = msg.getResponseHeader().toString().length() + contentLength;
-            long timeLapse = msg.getTimeElapsedMillis();
-            // show time lapse and content length between request and response
-            // Constant.messages.getString("manReq.label.timeLapse")
-            getLabelTimeLapse()
-                    .setText(
-                            Constant.messages.getString("manReq.label.timeLapse")
-                                    + String.valueOf(timeLapse)
-                                    + " ms");
-            getLabelContentLength()
-                    .setText(
-                            Constant.messages.getString("manReq.label.contentLength")
-                                    + String.valueOf(contentLength)
-                                    + " "
-                                    + Constant.messages.getString("manReq.label.totalLengthBytes"));
-            getLabelTotalLength()
-                    .setText(
-                            Constant.messages.getString("manReq.label.totalLength")
-                                    + String.valueOf(totalLength)
-                                    + " "
-                                    + Constant.messages.getString("manReq.label.totalLengthBytes"));
-        } else {
-            getLabelTimeLapse().setText(Constant.messages.getString("manReq.label.timeLapse"));
-            getLabelContentLength()
-                    .setText(Constant.messages.getString("manReq.label.contentLength"));
-            getLabelTotalLength().setText(Constant.messages.getString("manReq.label.totalLength"));
+            contentLength = msg.getResponseBody().length();
+            totalLength = msg.getResponseHeader().toString().length() + contentLength;
+            timeLapse = msg.getTimeElapsedMillis();
         }
+        getLabelTimeLapse()
+                .setText(
+                        Constant.messages.getString(
+                                "requester.httppanel.label.timelapse", timeLapse));
+        getLabelContentLength()
+                .setText(
+                        Constant.messages.getString(
+                                "requester.httppanel.label.contentlength", contentLength));
+        getLabelTotalLength()
+                .setText(
+                        Constant.messages.getString(
+                                "requester.httppanel.label.totallength", totalLength));
     }
 
     private void switchToTab(int i) {
@@ -334,16 +321,16 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel
     public static final class RequestResponsePanel extends JPanel {
 
         private static final String REQUEST_CAPTION =
-                Constant.messages.getString("manReq.tab.request");
+                Constant.messages.getString("requester.httppanel.tab.request");
         private static final String RESPONSE_CAPTION =
-                Constant.messages.getString("manReq.tab.response");
+                Constant.messages.getString("requester.httppanel.tab.response");
 
         private static final String TABS_VIEW_TOOL_TIP =
-                Constant.messages.getString("manReq.display.tabs");
+                Constant.messages.getString("requester.httppanel.display.tabs");
         private static final String ABOVE_VIEW_TOOL_TIP =
-                Constant.messages.getString("manReq.display.above");
+                Constant.messages.getString("requester.httppanel.display.above");
         private static final String SIDE_BY_SIDE_VIEW_TOOL_TIP =
-                Constant.messages.getString("manReq.display.sidebyside");
+                Constant.messages.getString("requester.httppanel.display.sidebyside");
 
         private static final String SELECTEDLAYOUT_CONFIG_KEY = "selectedlayout";
         private static final String HORIZONTAL_DIVIDER_LOCATION_CONFIG_KEY =
@@ -612,7 +599,8 @@ public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel
 
         private JButton getResponseSendButton() {
             if (responseSendButton == null) {
-                responseSendButton = new JButton(Constant.messages.getString("manReq.button.send"));
+                responseSendButton =
+                        new JButton(Constant.messages.getString("requester.button.send"));
                 responseSendButton.setMnemonic(KeyEvent.VK_ENTER);
                 responseSendButton.setToolTipText(getBtnSendTooltip());
                 responseSendButton.addActionListener(

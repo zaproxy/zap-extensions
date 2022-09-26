@@ -95,7 +95,7 @@ public class ExtensionRequester extends ExtensionAdaptor {
                 extensionHook,
                 new HrefTypeInfo(
                         HistoryReference.TYPE_ZAP_USER,
-                        Constant.messages.getString("view.href.type.name.manual"),
+                        Constant.messages.getString("requester.href.type.name.manual"),
                         hasView() ? getManualIcon() : null));
 
         if (hasView()) {
