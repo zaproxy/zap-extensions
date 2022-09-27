@@ -11,6 +11,12 @@ zapAddOn {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/spider/")
 
+        dependencies {
+            addOns {
+                register("database")
+            }
+        }
+
         extensions {
             register("org.zaproxy.addon.spider.automation.ExtensionSpiderAutomation") {
                 classnames {
@@ -43,9 +49,11 @@ zapAddOn {
 
 dependencies {
     compileOnly(parent!!.childProjects.get("automation")!!)
+    compileOnly(parent!!.childProjects.get("database")!!)
     compileOnly(parent!!.childProjects.get("formhandler")!!)
 
     testImplementation(parent!!.childProjects.get("automation")!!)
+    testImplementation(parent!!.childProjects.get("database")!!)
     testImplementation(parent!!.childProjects.get("formhandler")!!)
     testImplementation(project(":testutils"))
 }
