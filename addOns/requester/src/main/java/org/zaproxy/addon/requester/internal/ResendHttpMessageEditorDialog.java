@@ -21,9 +21,7 @@ package org.zaproxy.addon.requester.internal;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.zaproxy.addon.requester.PopupMenuResendMessage;
-import org.zaproxy.zap.extension.requester.ExtensionRequester;
-import org.zaproxy.zap.extension.requester.ManualHttpRequestEditorPanel;
+import org.zaproxy.addon.requester.ExtensionRequester;
 
 public class ResendHttpMessageEditorDialog extends AbstractHttpMessageEditorDialog {
 

@@ -1,19 +1,25 @@
 # Changelog
 All notable changes to this add-on will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 ### Added
 - Add Send button to Response tab.
 - Add shortcut to Send buttons (Issue 6448).
-- Add a context menu to open the Manual Request Editor, on ZAP versions newer than 2.11.
 - Add button to allow to regenerate Anti-CSRF tokens (Issue 111).
+- Provide the necessary infrastructure for other add-ons (e.g. WebSocket) to send messages.
+- On ZAP versions newer than 2.11:
+  - Manage the send/resend Manual Request Editor dialogues.
+  - Add a Tools menu item to open the send Manual Request Editor.
+  - Add a context menu item to open the resend Manual Request Editor.
 
 ### Changed
 - Improve reporting of TLS errors (Issue 2699).
 - Maintenance changes.
 - Promoted to Beta.
+- Now following Semantic Versioning.
 
 ## [6] - 2022-05-10
 ### Added

@@ -29,7 +29,6 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.view.AbstractFrame;
 import org.zaproxy.zap.extension.httppanel.Message;
-import org.zaproxy.zap.extension.requester.ManualRequestEditorPanel;
 import org.zaproxy.zap.utils.DisplayUtils;
 
 /** A dialogue that contains an editor of a {@link Message} and allows to send it. */
@@ -37,14 +36,14 @@ public abstract class MessageEditorDialog extends AbstractFrame {
 
     private static final long serialVersionUID = 1L;
 
-    private final ManualRequestEditorPanel panel;
+    private final MessageEditorPanel panel;
 
     /**
      * Constructs a {@code MessageEditorDialog} with the given panel.
      *
      * @param panel the panel with the editor.
      */
-    protected MessageEditorDialog(ManualRequestEditorPanel panel) {
+    protected MessageEditorDialog(MessageEditorPanel panel) {
         super();
 
         this.panel = panel;
