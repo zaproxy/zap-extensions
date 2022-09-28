@@ -75,7 +75,7 @@ public class ComboBoxChannelRenderer extends JLabel
             }
         }
 
-        setText("<html><p style=\"padding:3px;white-space:nowrap;\">" + text + "</p></html>");
+        setText(text);
         setFont(list.getFont());
 
         return this;

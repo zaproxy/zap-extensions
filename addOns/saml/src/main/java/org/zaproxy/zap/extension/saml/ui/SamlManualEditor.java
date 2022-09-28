@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.saml.ui;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -42,6 +41,7 @@ import org.zaproxy.zap.extension.saml.SAMLException;
 import org.zaproxy.zap.extension.saml.SAMLMessage;
 import org.zaproxy.zap.extension.saml.SAMLResender;
 import org.zaproxy.zap.extension.saml.SamlI18n;
+import org.zaproxy.zap.utils.ZapLabel;
 
 @SuppressWarnings("serial")
 public class SamlManualEditor extends JFrame {
@@ -78,11 +78,12 @@ public class SamlManualEditor extends JFrame {
         tabbedPane.addTab(SamlI18n.getMessage("saml.editor.tab.request"), null, reqPanel, null);
         reqPanel.setLayout(new BorderLayout(0, 0));
 
-        JPanel topPanel = new JPanel();
-        topPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        JPanel topPanel = new JPanel(new BorderLayout());
         reqPanel.add(topPanel, BorderLayout.NORTH);
 
-        JLabel lblNote = new JLabel(SamlI18n.getMessage("saml.editor.headerwarn"));
+        ZapLabel lblNote = new ZapLabel(SamlI18n.getMessage("saml.editor.headerwarn"));
+        lblNote.setLineWrap(true);
+        lblNote.setWrapStyleWord(true);
         topPanel.add(lblNote);
 
         JPanel centerPanel = new JPanel();

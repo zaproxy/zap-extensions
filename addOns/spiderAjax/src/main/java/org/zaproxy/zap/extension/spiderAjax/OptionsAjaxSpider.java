@@ -252,15 +252,14 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
             gbc.gridy = 0;
             gbc.weightx = 1.0;
             gbc.weighty = 1.0;
-            gbc.gridwidth = 2;
+            gbc.gridwidth = 1;
             gbc.insets = new java.awt.Insets(2, 2, 2, 2);
             gbc.anchor = GridBagConstraints.LINE_START;
             innerPanel.add(
                     new JLabel(resourceBundle.getString("spiderajax.proxy.local.label.browsers")),
                     gbc);
 
-            gbc.gridy++;
-            gbc.gridwidth = 1;
+            gbc.gridx = 1;
             innerPanel.add(new JComboBox<>(browsersComboBoxModel), gbc);
 
             // Number of browsers Option
