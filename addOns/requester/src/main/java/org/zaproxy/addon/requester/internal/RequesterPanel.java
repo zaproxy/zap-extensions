@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.requester;
+package org.zaproxy.addon.requester.internal;
 
 import java.awt.GridLayout;
 import java.awt.event.InputEvent;
@@ -27,6 +27,7 @@ import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.requester.ExtensionRequester;
 
 public class RequesterPanel extends AbstractPanel implements OptionsChangedListener {
 
@@ -60,7 +61,7 @@ public class RequesterPanel extends AbstractPanel implements OptionsChangedListe
         getRequesterNumberedTabbedPane().addTab(requestPane);
     }
 
-    void unload() {
+    public void unload() {
         getRequesterNumberedTabbedPane().unload();
     }
 

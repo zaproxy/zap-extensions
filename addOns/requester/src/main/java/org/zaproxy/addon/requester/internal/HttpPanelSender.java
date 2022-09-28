@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.requester;
+package org.zaproxy.addon.requester.internal;
 
 import java.awt.EventQueue;
 import java.awt.event.ItemEvent;
@@ -42,6 +42,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.requester.ExtensionRequester;
 import org.zaproxy.zap.PersistentConnectionListener;
 import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;

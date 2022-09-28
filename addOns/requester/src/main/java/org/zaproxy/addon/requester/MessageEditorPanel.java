@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.requester;
+package org.zaproxy.addon.requester;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -44,10 +44,10 @@ import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.view.HttpPanelManager;
 
 /** Send custom crafted messages via HTTP or other TCP based protocols. */
-public abstract class ManualRequestEditorPanel extends JPanel {
+public abstract class MessageEditorPanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
-    private static final Logger logger = LogManager.getLogger(ManualRequestEditorPanel.class);
+    private static final Logger logger = LogManager.getLogger(MessageEditorPanel.class);
 
     private boolean isSendEnabled = true;
 
@@ -66,7 +66,7 @@ public abstract class ManualRequestEditorPanel extends JPanel {
      * @param configurationKey
      * @throws HeadlessException
      */
-    protected ManualRequestEditorPanel(boolean isSendEnabled, String configurationKey)
+    protected MessageEditorPanel(boolean isSendEnabled, String configurationKey)
             throws HeadlessException {
         super();
 

@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.requester;
+package org.zaproxy.addon.requester;
 
 import java.awt.Component;
 import java.lang.reflect.Method;
@@ -34,8 +34,13 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.requester.internal.AbstractHttpMessageEditorDialog;
+import org.zaproxy.addon.requester.internal.ManualHttpRequestEditorPanel;
+import org.zaproxy.addon.requester.internal.RequesterOptionsPanel;
+import org.zaproxy.addon.requester.internal.RequesterPanel;
 import org.zaproxy.addon.requester.internal.ResendHttpMessageEditorDialog;
+import org.zaproxy.addon.requester.internal.RightClickMsgMenuRequester;
 import org.zaproxy.addon.requester.internal.SendHttpMessageEditorDialog;
+import org.zaproxy.addon.requester.internal.ToolsMenuItemRequester;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.utils.DisplayUtils;
@@ -47,7 +52,7 @@ public class ExtensionRequester extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionRequester";
 
-    private static final String IMAGES_DIR = "resources/images/";
+    private static final String IMAGES_DIR = "images/";
 
     private static ImageIcon requesterIcon;
 

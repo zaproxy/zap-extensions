@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.requester;
+package org.zaproxy.addon.requester.internal;
 
 import java.awt.GridBagConstraints;
 import javax.swing.Icon;
@@ -26,6 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.requester.ExtensionRequester;
 
 public class CloseTabPanel extends JPanel {
 

@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.requester;
+package org.zaproxy.addon.requester.internal;
 
 import java.awt.Component;
 import java.awt.event.MouseAdapter;
@@ -32,6 +32,7 @@ import javax.swing.event.ChangeListener;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
+import org.zaproxy.addon.requester.ExtensionRequester;
 
 public abstract class NumberedRenamableTabbedPane extends JTabbedPane {
 

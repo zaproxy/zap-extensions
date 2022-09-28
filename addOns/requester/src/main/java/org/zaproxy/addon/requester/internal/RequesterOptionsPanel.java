@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.requester;
+package org.zaproxy.addon.requester.internal;
 
 import java.awt.CardLayout;
 import java.awt.GridBagLayout;
@@ -29,6 +29,7 @@ import javax.swing.border.EmptyBorder;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
+import org.zaproxy.addon.requester.RequesterParam;
 import org.zaproxy.zap.view.LayoutHelper;
 
 public class RequesterOptionsPanel extends AbstractParamPanel {

@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.requester;
+package org.zaproxy.addon.requester.internal;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -46,6 +46,8 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.requester.ExtensionRequester;
+import org.zaproxy.addon.requester.MessageEditorPanel;
 import org.zaproxy.zap.PersistentConnectionListener;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
@@ -56,7 +58,7 @@ import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.view.HttpPanelManager;
 
 @SuppressWarnings("serial")
-public class ManualHttpRequestEditorPanel extends ManualRequestEditorPanel
+public class ManualHttpRequestEditorPanel extends MessageEditorPanel
         implements OptionsChangedListener {
 
     private static final long serialVersionUID = -5830450800029295419L;

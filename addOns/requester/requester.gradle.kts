@@ -1,7 +1,7 @@
 import com.diffplug.spotless.extra.wtp.EclipseWtpFormatterStep
 import org.zaproxy.gradle.addon.AddOnStatus
 
-description = "Request numbered panel."
+description = "Allows to manually edit and send messages."
 
 zapAddOn {
     addOnName.set("Requester")

@@ -23,9 +23,8 @@ import java.awt.event.KeyEvent;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.requester.ExtensionRequester;
 import org.zaproxy.zap.extension.httppanel.Message;
-import org.zaproxy.zap.extension.requester.ExtensionRequester;
-import org.zaproxy.zap.extension.requester.ManualHttpRequestEditorPanel;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class SendHttpMessageEditorDialog extends AbstractHttpMessageEditorDialog {

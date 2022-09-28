@@ -24,7 +24,6 @@ import java.awt.event.WindowEvent;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.addon.requester.MessageEditorDialog;
-import org.zaproxy.zap.extension.requester.ManualHttpRequestEditorPanel;
 
 /** The base {@code MessageEditorDialog} for the HTTP implementation. */
 public abstract class AbstractHttpMessageEditorDialog extends MessageEditorDialog {
