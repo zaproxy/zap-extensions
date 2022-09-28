@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.bruteforce;
 
 import com.sittinglittleduck.DirBuster.BaseCase;
 import java.awt.CardLayout;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -42,6 +43,8 @@ import javax.swing.tree.TreeNode;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jdesktop.swingx.JXComboBox;
+import org.jdesktop.swingx.decorator.FontHighlighter;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -363,12 +366,9 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
         getActiveScansValueLabel().setText(String.valueOf(activeScans.size()));
         StringBuilder sb = new StringBuilder();
         Iterator<ScanTarget> iter = activeScans.iterator();
-        sb.append("<html>");
         while (iter.hasNext()) {
-            sb.append(iter.next().toPlainString());
-            sb.append("<br>");
+            sb.append(iter.next()).append('\n');
         }
-        sb.append("</html>");
 
         final String toolTip = sb.toString();
 
@@ -498,9 +498,16 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
         return fileSelect;
     }
 
+    @SuppressWarnings("unchecked")
     private JComboBox<ScanTarget> getSiteSelect() {
         if (siteSelect == null) {
-            siteSelect = new JComboBox<>(siteModel);
+            siteSelect = new JXComboBox(siteModel);
+            ((JXComboBox) siteSelect)
+                    .addHighlighter(
+                            new FontHighlighter(
+                                    (renderer, adapter) ->
+                                            ((ScanTarget) adapter.getValue()).isScanned(),
+                                    siteSelect.getFont().deriveFont(Font.BOLD)));
             siteSelect.addItem(noSelectionScanTarget);
             siteSelect.setSelectedIndex(0);
 

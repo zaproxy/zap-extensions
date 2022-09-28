@@ -27,6 +27,7 @@ import java.awt.Insets;
 import java.awt.event.ActionListener;
 import java.util.regex.PatternSyntaxException;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -181,9 +182,10 @@ public abstract class WebSocketBreakDialog extends AbstractDialog {
             JPanel panel = new JPanel();
             panel.setLayout(new GridBagLayout());
             int y = 0;
-            // description
-            JLabel description = new JLabel(Constant.messages.getString("websocket.brk.add.desc"));
-            description.setPreferredSize(new Dimension(wsUiHelper.getDialogWidth() - 30, 60));
+
+            JComponent description =
+                    wsUiHelper.getDescriptionComponent(
+                            Constant.messages.getString("websocket.brk.add.desc"));
             panel.add(description, wsUiHelper.getDescriptionConstraints(0, y++));
 
             // opcode restriction

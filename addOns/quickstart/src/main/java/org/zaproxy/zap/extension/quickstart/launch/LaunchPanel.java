@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.quickstart.launch;
 
+import java.awt.Font;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
@@ -52,6 +53,7 @@ import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowserUI;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowsersComboBoxModel;
 import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.utils.ZapLabel;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.NodeSelectDialog;
 
@@ -74,7 +76,8 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
     private JCheckBox hudCheckbox;
     private JLabel hudIsInScopeOnly;
     private JLabel exploreLabel;
-    private JLabel footerLabel;
+    private ZapLabel footerLabel;
+    private ZapLabel footerLabelAdditional;
     private JButton selectButton;
     private int hudOffset;
     private Boolean canLaunch;
@@ -360,11 +363,18 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
         return exploreLabel;
     }
 
-    private JLabel getFooterLabel() {
+    private ZapLabel getFooterLabel() {
         if (footerLabel == null) {
-            footerLabel = new JLabel();
+            footerLabel = QuickStartHelper.getWrappedLabel();
         }
         return footerLabel;
+    }
+
+    private ZapLabel getFooterLabelAdditional() {
+        if (footerLabelAdditional == null) {
+            footerLabelAdditional = QuickStartHelper.getWrappedLabel();
+        }
+        return footerLabelAdditional;
     }
 
     @Override
@@ -385,6 +395,9 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
     public JPanel getFooterPanel() {
         JPanel panel = new QuickStartBackgroundPanel();
         panel.add(getFooterLabel(), LayoutHelper.getGBC(0, 0, 5, 1.0D, new Insets(5, 5, 5, 5)));
+        panel.add(
+                getFooterLabelAdditional(),
+                LayoutHelper.getGBC(0, 1, 5, 1.0D, new Insets(5, 5, 5, 5)));
         return panel;
     }
 
@@ -404,9 +417,18 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
             if (canLaunchNow) {
                 getFooterLabel()
                         .setText(Constant.messages.getString("quickstart.panel.launch.manual"));
+                getFooterLabel().setFont(getFooterLabel().getFont().deriveFont(Font.PLAIN));
+                getFooterLabelAdditional().setText("");
+                getFooterLabelAdditional().setVisible(false);
             } else {
                 getFooterLabel()
                         .setText(Constant.messages.getString("quickstart.panel.launch.container"));
+                getFooterLabel().setFont(getFooterLabel().getFont().deriveFont(Font.BOLD));
+                getFooterLabelAdditional().setVisible(true);
+                getFooterLabelAdditional()
+                        .setText(
+                                Constant.messages.getString(
+                                        "quickstart.panel.launch.container.additional"));
             }
             this.getUrlField().setEnabled(canLaunchNow);
             this.getHudCheckbox().setEnabled(canLaunchNow);

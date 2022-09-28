@@ -139,9 +139,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
         List<String> activeActions = new ArrayList<>();
         for (BruteForce scan : getBruteForceScans()) {
             if (scan.isAlive()) {
-                activeActions.add(
-                        MessageFormat.format(
-                                activeActionPrefix, scan.getScanTarget().toPlainString()));
+                activeActions.add(MessageFormat.format(activeActionPrefix, scan.getScanTarget()));
             }
         }
         return activeActions;
