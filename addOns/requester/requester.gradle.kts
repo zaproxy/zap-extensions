@@ -21,6 +21,7 @@ zapAddOn {
 
 crowdin {
     configuration {
+        tokens.put("%messagesPath%", "org/zaproxy/addon/${zapAddOn.addOnId.get()}/")
         tokens.put("%helpPath%", "")
     }
 }
