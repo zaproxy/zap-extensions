@@ -8,16 +8,20 @@ import org.gradle.api.Project
  */
 fun SpotlessExtension.javaWith3rdPartyFormatted(project: Project, files: List<String>) {
     java {
-        target(project.fileTree(project.projectDir) {
-            include("src/**/*.java")
-            exclude(files)
-        })
+        target(
+            project.fileTree(project.projectDir) {
+                include("src/**/*.java")
+                exclude(files)
+            }
+        )
     }
 
     format("3rdParty", JavaExtension::class.java, {
-        target(project.fileTree(project.projectDir) {
-            include(files)
-        })
+        target(
+            project.fileTree(project.projectDir) {
+                include(files)
+            }
+        )
 
         googleJavaFormatAosp()
     })
@@ -26,5 +30,5 @@ fun SpotlessExtension.javaWith3rdPartyFormatted(project: Project, files: List<St
 /**
  * Configures the Google Java Format (AOSP).
  */
-fun JavaExtension.googleJavaFormatAosp(): Unit =
+fun JavaExtension.googleJavaFormatAosp() =
     googleJavaFormat("1.7").aosp()

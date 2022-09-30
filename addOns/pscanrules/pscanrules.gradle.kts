@@ -48,7 +48,11 @@ dependencies {
 }
 
 spotless {
-    javaWith3rdPartyFormatted(project, listOf(
-        "src/**/InfoPrivateAddressDisclosureScanRule.java",
-        "src/**/InfoSessionIdUrlScanRule.java"))
+    javaWith3rdPartyFormatted(
+        project,
+        listOf(
+            "src/**/InfoPrivateAddressDisclosureScanRule.java",
+            "src/**/InfoSessionIdUrlScanRule.java"
+        )
+    )
 }

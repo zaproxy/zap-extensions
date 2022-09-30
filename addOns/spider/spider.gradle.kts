@@ -59,7 +59,11 @@ dependencies {
 }
 
 spotless {
-    javaWith3rdPartyFormatted(project, listOf(
-        "src/**/UrlCanonicalizer.java",
-        "src/**/UrlResolver.java"))
+    javaWith3rdPartyFormatted(
+        project,
+        listOf(
+            "src/**/UrlCanonicalizer.java",
+            "src/**/UrlResolver.java"
+        )
+    )
 }

@@ -1,5 +1,3 @@
-import java.util.Locale
-import java.util.regex.Pattern
 import org.zaproxy.gradle.addon.AddOnPlugin
 import org.zaproxy.gradle.addon.AddOnPluginExtension
 import org.zaproxy.gradle.addon.apigen.ApiClientGenExtension
@@ -14,6 +12,8 @@ import org.zaproxy.gradle.addon.internal.tasks.HandleRelease
 import org.zaproxy.gradle.addon.manifest.ManifestExtension
 import org.zaproxy.gradle.addon.misc.ConvertMarkdownToHtml
 import org.zaproxy.gradle.crowdin.CrowdinExtension
+import java.util.Locale
+import java.util.regex.Pattern
 
 plugins {
     eclipse
@@ -59,11 +59,13 @@ val createPullRequestNextDevIter by tasks.registering(CreatePullRequest::class) 
     branchName.set("bump-version")
 
     commitSummary.set("Prepare next dev iteration(s)")
-    commitDescription.set(provider {
-        "Update version and changelog for:\n" + releasedProjects.map {
-            " - ${it.zapAddOn.addOnName.get()}"
-        }.sorted().joinToString("\n")
-    })
+    commitDescription.set(
+        provider {
+            "Update version and changelog for:\n" + releasedProjects.map {
+                " - ${it.zapAddOn.addOnName.get()}"
+            }.sorted().joinToString("\n")
+        }
+    )
 
     dependsOn(prepareNextDevIter)
 }
@@ -154,10 +156,13 @@ subprojects {
                 file.set(file("$rootDir/gradle/crowdin.yml"))
                 val addOnId = zapAddOn.addOnId.get()
                 val resourcesPath = "org/zaproxy/zap/extension/$addOnId/resources/"
-                tokens.set(mutableMapOf(
-                    "%addOnId%" to addOnId,
-                    "%messagesPath%" to resourcesPath,
-                    "%helpPath%" to resourcesPath))
+                tokens.set(
+                    mutableMapOf(
+                        "%addOnId%" to addOnId,
+                        "%messagesPath%" to resourcesPath,
+                        "%helpPath%" to resourcesPath
+                    )
+                )
             }
         }
     }
@@ -192,9 +197,11 @@ subprojects {
         }
 
         val addOnRelease = AddOnRelease.from(project)
-        addOnRelease.downloadUrl.set(addOnRelease.addOn.map { it.asFile.name }.map {
-            "https://github.com/${ghReleaseDataProvider.get().repo.get()}/releases/download/${tagProvider.get()}/$it"
-        })
+        addOnRelease.downloadUrl.set(
+            addOnRelease.addOn.map { it.asFile.name }.map {
+                "https://github.com/${ghReleaseDataProvider.get().repo.get()}/releases/download/${tagProvider.get()}/$it"
+            }
+        )
         handleRelease {
             addOns.add(addOnRelease)
 
@@ -245,11 +252,13 @@ val createPullRequestRelease by tasks.registering(CreatePullRequest::class) {
         branchName.set("release")
 
         commitSummary.set("Release add-on(s)")
-        commitDescription.set(provider {
-            "Release the following add-ons:\n" + projects.map {
-                " - ${it.zapAddOn.addOnName.get()} version ${it.zapAddOn.addOnVersion.get()}"
-            }.sorted().joinToString("\n")
-        })
+        commitDescription.set(
+            provider {
+                "Release the following add-ons:\n" + projects.map {
+                    " - ${it.zapAddOn.addOnName.get()} version ${it.zapAddOn.addOnVersion.get()}"
+                }.sorted().joinToString("\n")
+            }
+        )
     }
 }
 

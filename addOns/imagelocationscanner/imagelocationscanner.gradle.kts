@@ -33,10 +33,12 @@ dependencies {
 
 spotless {
     java {
-        target(fileTree(projectDir) {
-            include("src/**/*.java")
-            // Ignore ILS classes.
-            exclude("src/**/com/veggiespam/**", "src/**/ImageLocationScanRule.java")
-        })
+        target(
+            fileTree(projectDir) {
+                include("src/**/*.java")
+                // Ignore ILS classes.
+                exclude("src/**/com/veggiespam/**", "src/**/ImageLocationScanRule.java")
+            }
+        )
     }
 }
