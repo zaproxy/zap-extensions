@@ -52,7 +52,6 @@ import org.zaproxy.zap.PersistentConnectionListener;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.extension.httppanel.HttpPanel.OptionsLocation;
-import org.zaproxy.zap.extension.httppanel.HttpPanelRequest;
 import org.zaproxy.zap.extension.httppanel.HttpPanelResponse;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.view.HttpPanelManager;
@@ -69,7 +68,7 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
     private HttpPanelSender sender;
 
     private RequestResponsePanel requestResponsePanel;
-    private HttpPanelRequest requestPanel;
+    private CustomHttpPanelRequest requestPanel;
     private HttpPanelResponse responsePanel;
 
     private JToolBar footerToolbar = null;
@@ -147,9 +146,9 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
     }
 
     @Override
-    protected HttpPanelRequest getMessagePanel() {
+    protected CustomHttpPanelRequest getMessagePanel() {
         if (requestPanel == null) {
-            requestPanel = new HttpPanelRequest(true, configurationKey);
+            requestPanel = new CustomHttpPanelRequest(true, configurationKey);
             requestPanel.setEnableViewSelect(true);
             requestPanel.loadConfig(Model.getSingleton().getOptionsParam().getConfig());
         }
@@ -346,7 +345,7 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
         private static final int ABOVE_VIEW = 1;
         private static final int SIDE_BY_SIDE_VIEW = 2;
 
-        private final HttpPanelRequest requestPanel;
+        private final CustomHttpPanelRequest requestPanel;
         private final HttpPanelResponse responsePanel;
         private final int defaultView;
 
@@ -369,7 +368,7 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
 
         public RequestResponsePanel(
                 String configurationKey,
-                HttpPanelRequest request,
+                CustomHttpPanelRequest request,
                 HttpPanelResponse response,
                 Runnable sendAction,
                 int defaultView)
