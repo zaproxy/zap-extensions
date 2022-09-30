@@ -47,7 +47,6 @@ import org.zaproxy.zap.PersistentConnectionListener;
 import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
-import org.zaproxy.zap.extension.httppanel.HttpPanelRequest;
 import org.zaproxy.zap.extension.httppanel.HttpPanelResponse;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.httppanel.view.impl.models.http.HttpPanelViewModelUtils;
@@ -74,7 +73,7 @@ public class HttpPanelSender {
 
     private List<PersistentConnectionListener> persistentConnectionListener = new ArrayList<>();
 
-    public HttpPanelSender(HttpPanelRequest requestPanel, HttpPanelResponse responsePanel) {
+    public HttpPanelSender(CustomHttpPanelRequest requestPanel, HttpPanelResponse responsePanel) {
         this.responsePanel = responsePanel;
 
         extAntiCSRF =
