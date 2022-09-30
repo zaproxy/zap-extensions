@@ -19,8 +19,7 @@
 							th:text="${helper.getRiskString(alert.risk) + ' (' + helper.getConfidenceString(alert.confidence) + ')'}"></riskdesc>
 						<confidencedesc
 							th:text="${helper.getConfidenceString(alert.confidence)}"></confidencedesc>
-						<desc
-							th:text="${helper.legacyEscapeParagraph(alert.description)}"></desc>
+						<desc th:text="${alert.description}"></desc>
 						<instances>
 							<th:block th:each="instance: ${instances}">
 								<instance>
@@ -30,23 +29,20 @@
 									<attack th:text="${instance.attack}"></attack>
 									<evidence th:text="${instance.evidence}"></evidence>
 									<requestheader
-										th:text="${helper.legacyEscapeText(instance.message.requestHeader, true)}"></requestheader>
+										th:text="${instance.message.requestHeader}"></requestheader>
 									<requestbody
-										th:text="${helper.legacyEscapeText(instance.message.requestBody, true)}"></requestbody>
+										th:text="${instance.message.requestBody}"></requestbody>
 									<responseheader
-										th:text="${helper.legacyEscapeText(instance.message.responseHeader, true)}"></responseheader>
+										th:text="${instance.message.responseHeader}"></responseheader>
 									<responsebody
-										th:text="${helper.legacyEscapeText(instance.message.responseBody, true)}"></responsebody>
+										th:text="${instance.message.responseBody}"></responsebody>
 								</instance>
 							</th:block>
 						</instances>
 						<count th:text="${instances.size()}"></count>
-						<solution
-							th:text="${helper.legacyEscapeParagraph(alert.solution)}"></solution>
-						<otherinfo
-							th:text="${helper.legacyEscapeParagraph(alert.otherinfo)}"></otherinfo>
-						<reference
-							th:text="${helper.legacyEscapeParagraph(alert.reference)}"></reference>
+						<solution th:text="${alert.solution}"></solution>
+						<otherinfo th:text="${alert.otherinfo}"></otherinfo>
+						<reference th:text="${alert.reference}"></reference>
 						<cweid th:text="${alert.cweid}"></cweid>
 						<wascid th:text="${alert.wascid}"></wascid>
 						<sourceid th:text="${alert.sourceHistoryId}"></sourceid>

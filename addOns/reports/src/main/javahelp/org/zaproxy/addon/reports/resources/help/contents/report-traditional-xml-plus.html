@@ -10,45 +10,166 @@
 
 	<pre>
         &lt;?xml version=&quot;1.0&quot;?&gt;
-        &lt;OWASPZAPReport version=&quot;2.11.1&quot; generated=&quot;Do., 1 Sep. 2022 08:08:24&quot;&gt;
-                &lt;site name=&quot;http://localhost:8080&quot; host=&quot;localhost&quot; port=&quot;8080&quot; ssl=&quot;false&quot;&gt;
-                    &lt;alerts&gt;
-                            &lt;alertitem&gt;
-                                &lt;pluginid&gt;90027&lt;/pluginid&gt;
-                                &lt;alertRef&gt;90027&lt;/alertRef&gt;
-                                &lt;alert&gt;Cookie Slack Detector&lt;/alert&gt;
-                                &lt;name&gt;Cookie Slack Detector&lt;/name&gt;
-                                &lt;riskcode&gt;0&lt;/riskcode&gt;
-                                &lt;confidence&gt;1&lt;/confidence&gt;
-                                &lt;riskdesc&gt;Informational (Low)&lt;/riskdesc&gt;
-                                &lt;confidencedesc&gt;Low&lt;/confidencedesc&gt;
-                                &lt;desc&gt;&amp;lt;p&amp;gt;Repeated GET requests: drop a different cookie each time, followed by normal request with all cookies to stabilize session, compare responses against original baseline GET. This can reveal areas where cookie based authentication/attributes are not actually enforced.&amp;lt;/p&amp;gt;&lt;/desc&gt;
-                                &lt;instances&gt;
-                                    
-                                        &lt;instance&gt;
-                                            &lt;uri&gt;http://localhost:8080/bodgeit/&lt;/uri&gt;
-                                            &lt;method&gt;GET&lt;/method&gt;
-                                            &lt;param&gt;&lt;/param&gt;
-                                            &lt;attack&gt;&lt;/attack&gt;
-                                            &lt;evidence&gt;&lt;/evidence&gt;
-                                            &lt;requestheader&gt;GET http://localhost:8080/bodgeit/ HTTP/1.1\r\nHost: localhost:8080\r\nUser-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:104.0) Gecko/20100101 Firefox/104.0\r\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8\r\nAccept-Language: de,en-US;q=0.7,en;q=0.3\r\nConnection: keep-alive\r\nUpgrade-Insecure-Requests: 1\r\nSec-Fetch-Dest: document\r\nSec-Fetch-Mode: navigate\r\nSec-Fetch-Site: none\r\nSec-Fetch-User: ?1\r\nCookie: JSESSIONID=A5AA35A00F4548CFAD7F3B6C80F1974D\r\nContent-Length: 0\r\n\r\n&lt;/requestheader&gt;
-                                            &lt;requestbody&gt;&lt;/requestbody&gt;
-                                            &lt;responseheader&gt;HTTP/1.1 200 OK\r\nServer: Apache-Coyote/1.1\r\nContent-Type: text/html;charset=ISO-8859-1\r\nContent-Length: 3172\r\nDate: Thu, 01 Sep 2022 05:57:49 GMT\r\n\r\n&lt;/responseheader&gt;
-                                            &lt;responsebody&gt;\n\n\n\n\n\n\n\n&amp;lt;!DOCTYPE HTML PUBLIC \&amp;quot;-//W3C//DTD HTML 3.2//EN\&amp;quot;&amp;gt;\n&amp;lt;html&amp;gt;\n&amp;lt;head&amp;gt;\n&amp;lt;title&amp;gt;The BodgeIt Store&amp;lt;/title&amp;gt;\n&amp;lt;link href=\&amp;quot;style.css\&amp;quot; rel=\&amp;quot;stylesheet\&amp;quot; type=\&amp;quot;text/css\&amp;quot; /&amp;gt;\n&amp;lt;script type=\&amp;quot;text/javascript\&amp;quot; src=\&amp;quot;./js/util.js\&amp;quot;&amp;gt;&amp;lt;/script&amp;gt;\n&amp;lt;/head&amp;gt;\n&amp;lt;body&amp;gt;\n\n&amp;lt;center&amp;gt;\n&amp;lt;table width=\&amp;quot;80%\&amp;quot; class=\&amp;quot;border\&amp;quot;&amp;gt;\n&amp;lt;tr BGCOLOR=#C3D9FF&amp;gt;\n&amp;lt;td align=\&amp;quot;center\&amp;quot; colspan=\&amp;quot;6\&amp;quot;&amp;gt;\n&amp;lt;H1&amp;gt;The BodgeIt Store&amp;lt;/H1&amp;gt;\n&amp;lt;table width=\&amp;quot;100%\&amp;quot; class=\\\&amp;quot;noborder\\\&amp;quot;&amp;gt;\n&amp;lt;tr BGCOLOR=#C3D9FF&amp;gt;\n&amp;lt;td align=\&amp;quot;center\&amp;quot; width=\&amp;quot;30%\&amp;quot;&amp;gt;&amp;amp;nbsp;&amp;lt;/td&amp;gt;\n&amp;lt;td align=\&amp;quot;center\&amp;quot; width=\&amp;quot;40%\&amp;quot;&amp;gt;We bodge it, so you dont have to!&amp;lt;/td&amp;gt;\n&amp;lt;td align=\&amp;quot;center\&amp;quot; width=\&amp;quot;30%\&amp;quot; style=\&amp;quot;text-align: right\&amp;quot; &amp;gt;\nGuest user\n\n&amp;lt;/tr&amp;gt;\n&amp;lt;/table&amp;gt;\n&amp;lt;/td&amp;gt;\n&amp;lt;/tr&amp;gt;\n&amp;lt;tr&amp;gt;\n&amp;lt;td align=\&amp;quot;center\&amp;quot; width=\&amp;quot;16%\&amp;quot; BGCOLOR=#EEEEEE&amp;gt;&amp;lt;a href=\&amp;quot;home.jsp\&amp;quot;&amp;gt;Home&amp;lt;/a&amp;gt;&amp;lt;/td&amp;gt;\n&amp;lt;td align=\&amp;quot;center\&amp;quot; width=\&amp;quot;16%\&amp;quot; BGCOLOR=#EEEEEE&amp;gt;&amp;lt;a href=\&amp;quot;about.jsp\&amp;quot;&amp;gt;About Us&amp;lt;/a&amp;gt;&amp;lt;/td&amp;gt;\n\n&amp;lt;td align=\&amp;quot;center\&amp;quot; width=\&amp;quot;16%\&amp;quot; BGCOLOR=#EEEEEE&amp;gt;&amp;lt;a href=\&amp;quot;contact.jsp\&amp;quot;&amp;gt;Contact Us&amp;lt;/a&amp;gt;&amp;lt;/td&amp;gt;\n&amp;lt;!-- td align=\&amp;quot;center\&amp;quot; width=\&amp;quot;16%\&amp;quot;&amp;gt;&amp;lt;a href=\&amp;quot;admin.jsp\&amp;quot;&amp;gt;Admin&amp;lt;/a&amp;gt;&amp;lt;/td--&amp;gt;\n\n&amp;lt;td align=\&amp;quot;center\&amp;quot; width=\&amp;quot;16%\&amp;quot; BGCOLOR=#EEEEEE&amp;gt;\n\n\t\t&amp;lt;a href=\&amp;quot;login.jsp\&amp;quot;&amp;gt;Login&amp;lt;/a&amp;gt;\n\n&amp;lt;/td&amp;gt;\n\n&amp;lt;td align=\&amp;quot;center\&amp;quot; width=\&amp;quot;16%\&amp;quot; BGCOLOR=#EEEEEE&amp;gt;&amp;lt;a href=\&amp;quot;basket.jsp\&amp;quot;&amp;gt;Your Basket&amp;lt;/a&amp;gt;&amp;lt;/td&amp;gt;\n\n&amp;lt;td align=\&amp;quot;center\&amp;quot; width=\&amp;quot;16%\&amp;quot; BGCOLOR=#EEEEEE&amp;gt;&amp;lt;a href=\&amp;quot;search.jsp\&amp;quot;&amp;gt;Search&amp;lt;/a&amp;gt;&amp;lt;/td&amp;gt;\n&amp;lt;/tr&amp;gt;\n&amp;lt;tr&amp;gt;\n&amp;lt;td align=\&amp;quot;center\&amp;quot; colspan=\&amp;quot;6\&amp;quot;&amp;gt;\n&amp;lt;table width=\&amp;quot;100%\&amp;quot; class=\&amp;quot;border\&amp;quot;&amp;gt;\n&amp;lt;tr&amp;gt;\n&amp;lt;td align=\&amp;quot;left\&amp;quot; valign=\&amp;quot;top\&amp;quot; width=\&amp;quot;25%\&amp;quot;&amp;gt;\n&amp;lt;a href=\&amp;quot;product.jsp?typeid=6\&amp;quot;&amp;gt;Doodahs&amp;lt;/a&amp;gt;&amp;lt;br/&amp;gt;\n&amp;lt;a href=\&amp;quot;product.jsp?typeid=5\&amp;quot;&amp;gt;Gizmos&amp;lt;/a&amp;gt;&amp;lt;br/&amp;gt;\n&amp;lt;a href=\&amp;quot;product.jsp?typeid=3\&amp;quot;&amp;gt;Thingamajigs&amp;lt;/a&amp;gt;&amp;lt;br/&amp;gt;\n&amp;lt;a href=\&amp;quot;product.jsp?typeid=2\&amp;quot;&amp;gt;Thingies&amp;lt;/a&amp;gt;&amp;lt;br/&amp;gt;\n&amp;lt;a href=\&amp;quot;product.jsp?typeid=7\&amp;quot;&amp;gt;Whatchamacallits&amp;lt;/a&amp;gt;&amp;lt;br/&amp;gt;\n&amp;lt;a href=\&amp;quot;product.jsp?typeid=4\&amp;quot;&amp;gt;Whatsits&amp;lt;/a&amp;gt;&amp;lt;br/&amp;gt;\n&amp;lt;a href=\&amp;quot;product.jsp?typeid=1\&amp;quot;&amp;gt;Widgets&amp;lt;/a&amp;gt;&amp;lt;br/&amp;gt;\n\n&amp;lt;br/&amp;gt;&amp;lt;br/&amp;gt;&amp;lt;br/&amp;gt;&amp;lt;br/&amp;gt;&amp;lt;br/&amp;gt;&amp;lt;br/&amp;gt;&amp;lt;br/&amp;gt;&amp;lt;br/&amp;gt;&amp;lt;br/&amp;gt;&amp;lt;br/&amp;gt;&amp;lt;br/&amp;gt;&amp;lt;br/&amp;gt;&amp;lt;br/&amp;gt;&amp;lt;br/&amp;gt;&amp;lt;br/&amp;gt;\n&amp;lt;/td&amp;gt;\n&amp;lt;td valign=\&amp;quot;top\&amp;quot; width=\&amp;quot;70%\&amp;quot;&amp;gt;\n\n\n&amp;lt;h3&amp;gt;Our Best Deals!&amp;lt;/h3&amp;gt;\n&amp;lt;center&amp;gt;&amp;lt;table border=\&amp;quot;1\&amp;quot; class=\&amp;quot;border\&amp;quot; width=\&amp;quot;80%\&amp;quot;&amp;gt;\n&amp;lt;tr&amp;gt;&amp;lt;th&amp;gt;Product&amp;lt;/th&amp;gt;&amp;lt;th&amp;gt;Type&amp;lt;/th&amp;gt;&amp;lt;th&amp;gt;Price&amp;lt;/th&amp;gt;&amp;lt;/tr&amp;gt;\n&amp;lt;tr&amp;gt;\n&amp;lt;td&amp;gt;&amp;lt;a href=\&amp;quot;product.jsp?prodid=3\&amp;quot;&amp;gt;Weird Widget&amp;lt;/a&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;td&amp;gt;Widgets&amp;lt;/td&amp;gt;&amp;lt;td align=\&amp;quot;right\&amp;quot;&amp;gt;\u00A44.70&amp;lt;/td&amp;gt;\n&amp;lt;/tr&amp;gt;\n&amp;lt;tr&amp;gt;\n&amp;lt;td&amp;gt;&amp;lt;a href=\&amp;quot;product.jsp?prodid=22\&amp;quot;&amp;gt;GZ XT4&amp;lt;/a&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;td&amp;gt;Gizmos&amp;lt;/td&amp;gt;&amp;lt;td align=\&amp;quot;right\&amp;quot;&amp;gt;\u00A44.45&amp;lt;/td&amp;gt;\n&amp;lt;/tr&amp;gt;\n&amp;lt;tr&amp;gt;\n&amp;lt;td&amp;gt;&amp;lt;a href=\&amp;quot;product.jsp?prodid=22\&amp;quot;&amp;gt;GZ XT4&amp;lt;/a&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;td&amp;gt;Gizmos&amp;lt;/td&amp;gt;&amp;lt;td align=\&amp;quot;right\&amp;quot;&amp;gt;\u00A44.45&amp;lt;/td&amp;gt;\n&amp;lt;/tr&amp;gt;\n&amp;lt;tr&amp;gt;\n&amp;lt;td&amp;gt;&amp;lt;a href=\&amp;quot;product.jsp?prodid=26\&amp;quot;&amp;gt;Zip a dee doo dah&amp;lt;/a&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;td&amp;gt;Doodahs&amp;lt;/td&amp;gt;&amp;lt;td align=\&amp;quot;right\&amp;quot;&amp;gt;\u00A43.99&amp;lt;/td&amp;gt;\n&amp;lt;/tr&amp;gt;\n&amp;lt;tr&amp;gt;\n&amp;lt;td&amp;gt;&amp;lt;a href=\&amp;quot;product.jsp?prodid=25\&amp;quot;&amp;gt;GZ K77&amp;lt;/a&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;td&amp;gt;Gizmos&amp;lt;/td&amp;gt;&amp;lt;td align=\&amp;quot;right\&amp;quot;&amp;gt;\u00A43.05&amp;lt;/td&amp;gt;\n&amp;lt;/tr&amp;gt;\n&amp;lt;tr&amp;gt;\n&amp;lt;td&amp;gt;&amp;lt;a href=\&amp;quot;product.jsp?prodid=6\&amp;quot;&amp;gt;Thingie 3&amp;lt;/a&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;td&amp;gt;Thingies&amp;lt;/td&amp;gt;&amp;lt;td align=\&amp;quot;right\&amp;quot;&amp;gt;\u00A43.30&amp;lt;/td&amp;gt;\n&amp;lt;/tr&amp;gt;\n&amp;lt;tr&amp;gt;\n&amp;lt;td&amp;gt;&amp;lt;a href=\&amp;quot;product.jsp?prodid=5\&amp;quot;&amp;gt;Thingie 2&amp;lt;/a&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;td&amp;gt;Thingies&amp;lt;/td&amp;gt;&amp;lt;td align=\&amp;quot;right\&amp;quot;&amp;gt;\u00A43.20&amp;lt;/td&amp;gt;\n&amp;lt;/tr&amp;gt;\n&amp;lt;tr&amp;gt;\n&amp;lt;td&amp;gt;&amp;lt;a href=\&amp;quot;product.jsp?prodid=26\&amp;quot;&amp;gt;Zip a dee doo dah&amp;lt;/a&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;td&amp;gt;Doodahs&amp;lt;/td&amp;gt;&amp;lt;td align=\&amp;quot;right\&amp;quot;&amp;gt;\u00A43.99&amp;lt;/td&amp;gt;\n&amp;lt;/tr&amp;gt;\n&amp;lt;tr&amp;gt;\n&amp;lt;td&amp;gt;&amp;lt;a href=\&amp;quot;product.jsp?prodid=2\&amp;quot;&amp;gt;Complex Widget&amp;lt;/a&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;td&amp;gt;Widgets&amp;lt;/td&amp;gt;&amp;lt;td align=\&amp;quot;right\&amp;quot;&amp;gt;\u00A43.10&amp;lt;/td&amp;gt;\n&amp;lt;/tr&amp;gt;\n&amp;lt;tr&amp;gt;\n&amp;lt;td&amp;gt;&amp;lt;a href=\&amp;quot;product.jsp?prodid=21\&amp;quot;&amp;gt;Whatsit sound like&amp;lt;/a&amp;gt;&amp;lt;/td&amp;gt;&amp;lt;td&amp;gt;Whatsits&amp;lt;/td&amp;gt;&amp;lt;td align=\&amp;quot;right\&amp;quot;&amp;gt;\u00A42.90&amp;lt;/td&amp;gt;\n&amp;lt;/tr&amp;gt;\n&amp;lt;/table&amp;gt;&amp;lt;/center&amp;gt;&amp;lt;br/&amp;gt;\n\n\n&amp;lt;/td&amp;gt;\n&amp;lt;/tr&amp;gt;\n&amp;lt;/table&amp;gt;\n&amp;lt;/td&amp;gt;\n&amp;lt;/tr&amp;gt;\n&amp;lt;/table&amp;gt;\n&amp;lt;/center&amp;gt;\n&amp;lt;/body&amp;gt;\n&amp;lt;/html&amp;gt;\n\n\n&lt;/responsebody&gt;
-                                        &lt;/instance&gt;
-                                    
-                                &lt;/instances&gt;
-                                &lt;count&gt;1&lt;/count&gt;
-                                &lt;solution&gt;&lt;/solution&gt;
-                                &lt;otherinfo&gt;&amp;lt;p&amp;gt;Dropping this cookie appears to have invalidated the session: [JSESSIONID] A follow-on request with all original cookies still had a different response than the original request. &amp;lt;/p&amp;gt;&amp;lt;p&amp;gt;&amp;lt;/p&amp;gt;&lt;/otherinfo&gt;
-                                &lt;reference&gt;&amp;lt;p&amp;gt;http://projects.webappsec.org/Fingerprinting&amp;lt;/p&amp;gt;&amp;lt;p&amp;gt;&amp;lt;/p&amp;gt;&lt;/reference&gt;
-                                &lt;cweid&gt;200&lt;/cweid&gt;
-                                &lt;wascid&gt;45&lt;/wascid&gt;
-                                &lt;sourceid&gt;1430&lt;/sourceid&gt;
-                            &lt;/alertitem&gt;
-                    &lt;/alerts&gt;
-                &lt;/site&gt;
-        &lt;/OWASPZAPReport&gt;
+        &lt;OWASPZAPReport version=&quot;2.11.1&quot; generated=&quot;Fr., 30 Sep. 2022 08:40:35&quot;&gt;
+                        &lt;site name=&quot;http://localhost:8080&quot; host=&quot;localhost&quot; port=&quot;8080&quot; ssl=&quot;false&quot;&gt;
+                                &lt;alerts&gt;
+                                        
+                                                &lt;alertitem&gt;
+                                                        &lt;pluginid&gt;90027&lt;/pluginid&gt;
+                                                        &lt;alertRef&gt;90027&lt;/alertRef&gt;
+                                                        &lt;alert&gt;Cookie Slack Detector&lt;/alert&gt;
+                                                        &lt;name&gt;Cookie Slack Detector&lt;/name&gt;
+                                                        &lt;riskcode&gt;1&lt;/riskcode&gt;
+                                                        &lt;confidence&gt;1&lt;/confidence&gt;
+                                                        &lt;riskdesc&gt;Low (Low)&lt;/riskdesc&gt;
+                                                        &lt;confidencedesc&gt;Low&lt;/confidencedesc&gt;
+                                                        &lt;desc&gt;Repeated GET requests: drop a different cookie each time, followed by normal request with all cookies to stabilize session, compare responses against original baseline GET. This can reveal areas where cookie based authentication/attributes are not actually enforced.&lt;/desc&gt;
+                                                        &lt;instances&gt;
+                                                                
+                                                                        &lt;instance&gt;
+                                                                                &lt;uri&gt;http://localhost:8080/bodgeit/js&lt;/uri&gt;
+                                                                                &lt;method&gt;GET&lt;/method&gt;
+                                                                                &lt;param&gt;&lt;/param&gt;
+                                                                                &lt;attack&gt;&lt;/attack&gt;
+                                                                                &lt;evidence&gt;&lt;/evidence&gt;
+                                                                                &lt;requestheader&gt;GET http://localhost:8080/bodgeit/js HTTP/1.1
+        Host: localhost:8080
+        User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:105.0) Gecko/20100101 Firefox/105.0
+        Accept: */*
+        Accept-Language: de,en-US;q=0.7,en;q=0.3
+        Connection: keep-alive
+        Referer: https://localhost:8080/bodgeit/
+        Cookie: JSESSIONID=9E75E26E50F681208096FFAA0B566901
+        Sec-Fetch-Dest: script
+        Sec-Fetch-Mode: no-cors
+        Sec-Fetch-Site: same-origin
+        Content-Length: 0
+        
+        &lt;/requestheader&gt;
+                                                                                &lt;requestbody&gt;&lt;/requestbody&gt;
+                                                                                &lt;responseheader&gt;HTTP/1.1 302 Found
+        Server: Apache-Coyote/1.1
+        Location: /bodgeit/js/
+        Content-Length: 0
+        Date: Fri, 30 Sep 2022 06:40:17 GMT
+        
+        &lt;/responseheader&gt;
+                                                                                &lt;responsebody&gt;&lt;/responsebody&gt;
+                                                                        &lt;/instance&gt;
+                                                                
+                                                                
+                                                                        &lt;instance&gt;
+                                                                                &lt;uri&gt;http://localhost:8080/bodgeit/js/util.js&lt;/uri&gt;
+                                                                                &lt;method&gt;GET&lt;/method&gt;
+                                                                                &lt;param&gt;&lt;/param&gt;
+                                                                                &lt;attack&gt;&lt;/attack&gt;
+                                                                                &lt;evidence&gt;&lt;/evidence&gt;
+                                                                                &lt;requestheader&gt;GET http://localhost:8080/bodgeit/js/util.js HTTP/1.1
+        Host: localhost:8080
+        User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:105.0) Gecko/20100101 Firefox/105.0
+        Accept: */*
+        Accept-Language: de,en-US;q=0.7,en;q=0.3
+        Connection: keep-alive
+        Referer: https://localhost:8080/bodgeit/
+        Cookie: JSESSIONID=9E75E26E50F681208096FFAA0B566901
+        Sec-Fetch-Dest: script
+        Sec-Fetch-Mode: no-cors
+        Sec-Fetch-Site: same-origin
+        Content-Length: 0
+        
+        &lt;/requestheader&gt;
+                                                                                &lt;requestbody&gt;&lt;/requestbody&gt;
+                                                                                &lt;responseheader&gt;HTTP/1.1 200 OK
+        Server: Apache-Coyote/1.1
+        Accept-Ranges: bytes
+        ETag: W/&amp;quot;1812-1343651578000&amp;quot;
+        Last-Modified: Mon, 30 Jul 2012 12:32:58 GMT
+        Content-Type: application/javascript
+        Content-Length: 1812
+        Date: Fri, 30 Sep 2022 06:40:17 GMT
+        
+        &lt;/responseheader&gt;
+                                                                                &lt;responsebody&gt;
+        function loadfile(filename){
+                var filetype = filename.split(&amp;apos;.&amp;apos;).pop();
+                switch (filetype){
+                case &amp;quot;js&amp;quot;:
+                        var insert=document.createElement(&amp;apos;script&amp;apos;)
+                        insert.setAttribute(&amp;quot;type&amp;quot;,&amp;quot;text/javascript&amp;quot;)
+                        insert.setAttribute(&amp;quot;src&amp;quot;, filename)
+                        break;
+                case &amp;apos;css&amp;apos;:
+                var insert=document.createElement(&amp;quot;link&amp;quot;);
+                insert.setAttribute(&amp;quot;type&amp;quot;, &amp;quot;text/css&amp;quot;)
+                insert.setAttribute(&amp;quot;href&amp;quot;, filename)
+                insert.setAttribute(&amp;quot;rel&amp;quot;, &amp;quot;stylesheet&amp;quot;)
+                break;
+                }
+                if (typeof insert!=&amp;quot;undefined&amp;quot;)
+                document.getElementsByTagName(&amp;quot;head&amp;quot;)[0].appendChild(insert);
+                return false;
+        }
+        
+        
+        ////The following is from:
+        //http://stackoverflow.com/questions/316781/how-to-build-query-string-with-javascript
+        
+        function form_to_params( form )
+        {
+                var output = &amp;quot;&amp;quot;;
+                var length = form.elements.length
+                for( var i = 0; i &amp;lt; length; i++ )
+                {
+                element = form.elements[i]
+        
+                if(element.tagName == &amp;apos;TEXTAREA&amp;apos; )
+                {
+                        output += &amp;quot;|&amp;quot; + element.name + &amp;quot;:&amp;quot; + element.value; 
+                }
+                else if( element.tagName == &amp;apos;INPUT&amp;apos; )
+                {
+                        switch(element.type){
+                        case &amp;apos;radio&amp;apos;:
+                        case &amp;apos;checkbox&amp;apos;:
+                                if(element.checked &amp;amp;&amp;amp; !element.value){
+                                output += &amp;quot;|&amp;quot; + element.name + &amp;quot;:on&amp;quot;;
+                                break;
+                                }
+                        case &amp;apos;text&amp;apos;:
+                        case &amp;apos;hidden&amp;apos;:
+                        case &amp;apos;password&amp;apos;:
+                                if(element.value)
+                                output += &amp;quot;|&amp;quot; + element.name + &amp;quot;:&amp;quot; + element.value;
+                        break;     
+                        }
+                }
+                }
+                return output.substring(1);
+        }
+        
+        
+        function htmlEntities(str) {
+                return String(str).replace(/&amp;amp;/g, &amp;apos;&amp;amp;amp;&amp;apos;).replace(/&amp;lt;/g, &amp;apos;&amp;amp;lt;&amp;apos;).replace(/&amp;gt;/g, &amp;apos;&amp;amp;gt;&amp;apos;).replace(/&amp;quot;/g, &amp;apos;&amp;amp;quot;&amp;apos;);
+        }&lt;/responsebody&gt;
+                                                                        &lt;/instance&gt;
+                                                                
+                                                        &lt;/instances&gt;
+                                                        &lt;count&gt;3&lt;/count&gt;
+                                                        &lt;solution&gt;&lt;/solution&gt;
+                                                        &lt;otherinfo&gt;NOTE: Because of its name this cookie may be important, but dropping it appears to have no effect: [JSESSIONID] 
+        Cookies that don&amp;apos;t have expected effects can reveal flaws in application logic. In the worst case, this can reveal where authentication via cookie token(s) is not actually enforced.
+        These cookies affected the response: 
+        These cookies did NOT affect the response: JSESSIONID
+        &lt;/otherinfo&gt;
+                                                        &lt;reference&gt;http://projects.webappsec.org/Fingerprinting
+        &lt;/reference&gt;
+                                                        &lt;cweid&gt;200&lt;/cweid&gt;
+                                                        &lt;wascid&gt;45&lt;/wascid&gt;
+                                                        &lt;sourceid&gt;2420&lt;/sourceid&gt;
+                                                &lt;/alertitem&gt;
+                                &lt;/alerts&gt;
+                        &lt;/site&gt;
+        &lt;/OWASPZAPReport&gt;                
 </pre>
 
 </BODY>
