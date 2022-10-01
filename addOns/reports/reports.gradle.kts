@@ -64,17 +64,21 @@ dependencies {
 spotless {
     format("html", {
         eclipseWtp(EclipseWtpFormatterStep.HTML)
-        target(fileTree(projectDir) {
-            include("src/**/*.html")
-            exclude("src/main/zapHomeFiles/reports/risk-confidence-html/report.html")
-            exclude("src/test/**/*.html")
-        })
+        target(
+            fileTree(projectDir) {
+                include("src/**/*.html")
+                exclude("src/main/zapHomeFiles/reports/risk-confidence-html/report.html")
+                exclude("src/test/**/*.html")
+            }
+        )
     })
     format("xml", {
         eclipseWtp(EclipseWtpFormatterStep.XML)
-        target(fileTree(projectDir) {
-            include("src/**/*.xml")
-            exclude("src/test/**/*.xml")
-        })
+        target(
+            fileTree(projectDir) {
+                include("src/**/*.xml")
+                exclude("src/test/**/*.xml")
+            }
+        )
     })
 }

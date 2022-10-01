@@ -29,7 +29,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -71,13 +70,11 @@ class ExtentionAutomationUnitTest extends TestUtils {
     @BeforeAll
     static void init() throws Exception {
         mockedCmdLine = Mockito.mockStatic(CommandLine.class);
-        updateEnv("myEnvVar", "envVarValue");
     }
 
     @AfterAll
     static void close() throws ReflectiveOperationException {
         mockedCmdLine.close();
-        updateEnv("myEnvVar", "");
     }
 
     @BeforeEach
@@ -725,14 +722,6 @@ class ExtentionAutomationUnitTest extends TestUtils {
         assertThat(
                 progress.getWarnings().get(0), is(equalTo("!automation.error.options.unknown!")));
         assertThat(job.wasRun(), is(equalTo(false)));
-    }
-
-    @SuppressWarnings({"unchecked"})
-    public static void updateEnv(String name, String val) throws ReflectiveOperationException {
-        Map<String, String> env = System.getenv();
-        Field field = env.getClass().getDeclaredField("m");
-        field.setAccessible(true);
-        ((Map<String, String>) field.get(env)).put(name, val);
     }
 
     @Test

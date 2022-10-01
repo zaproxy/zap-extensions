@@ -491,7 +491,7 @@ class ExtensionReportsUnitTest {
         ReportData reportData = new ReportData();
         AlertNode root = new AlertNode(0, "Test");
         reportData.setAlertTreeRootNode(root);
-        reportData.setSites(Arrays.asList("http://example.com"));
+        addSites(reportData);
         return reportData;
     }
 
@@ -675,8 +675,14 @@ class ExtensionReportsUnitTest {
         AlertNode root = new AlertNode(0, "Test");
         reportData.setAlertTreeRootNode(root);
         root.add(getAlertNode("XSS", "XSS Description", Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM));
-        reportData.setSites(Arrays.asList("http://example.com"));
+        addSites(reportData);
         return reportData;
+    }
+
+    private static void addSites(ReportData reportData) {
+        List<String> sites = new ArrayList<>();
+        sites.add("http://example.com");
+        reportData.setSites(sites);
     }
 
     private static File generateReportWithAlerts(Template template, File f)
