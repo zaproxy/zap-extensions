@@ -38,6 +38,7 @@ import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.oast.OastState;
 import org.zaproxy.addon.oast.ui.OastOptionsPanelTab;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
@@ -108,7 +109,7 @@ public class InteractshOptionsPanelTab extends OastOptionsPanelTab {
 
         interactshService.addOastStateChangedListener(
                 e -> {
-                    if (e.isRegistered()) {
+                    if (e.getEventType() != OastState.OastStateEventType.UNREGISTERED) {
                         return;
                     }
 

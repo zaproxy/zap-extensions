@@ -28,6 +28,7 @@ import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.zaproxy.addon.oast.OastRequest;
 import org.zaproxy.addon.oast.OastState;
+import org.zaproxy.addon.oast.OastState.OastStateEventType;
 
 public class BoastPoller implements Runnable {
 
@@ -49,7 +50,11 @@ public class BoastPoller implements Runnable {
                 .flatMap(Collection::stream)
                 .forEach(this::handleBoastEvent);
         this.boastService.fireOastStateChanged(
-                new OastState(boastService.getName(), true, LocalDateTime.now()));
+                new OastState(
+                        boastService.getName(),
+                        true,
+                        LocalDateTime.now(),
+                        OastStateEventType.POLLED));
     }
 
     private void handleBoastEvent(BoastEvent boastEvent) {

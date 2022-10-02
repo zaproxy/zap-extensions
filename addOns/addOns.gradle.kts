@@ -19,6 +19,7 @@ import java.util.regex.Pattern
 plugins {
     eclipse
     jacoco
+    id("org.rm3l.datanucleus-gradle-plugin") version "1.7.0" apply false
     id("org.zaproxy.add-on") version "0.8.0" apply false
     id("org.zaproxy.crowdin") version "0.2.1" apply false
     id("me.champeau.gradle.japicmp") version "0.3.0" apply false
@@ -88,6 +89,7 @@ subprojects {
     apply(plugin = "eclipse")
     apply(plugin = "java-library")
     apply(plugin = "jacoco")
+    apply(plugin = "org.rm3l.datanucleus-gradle-plugin")
     apply(plugin = "org.zaproxy.add-on")
     if (useCrowdin) {
         apply(plugin = "org.zaproxy.crowdin")
