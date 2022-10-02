@@ -3,6 +3,9 @@ import org.zaproxy.gradle.addon.AddOnStatus
 
 description = "Provides database engines and related infrastructure."
 
+val datanucleus by configurations.creating
+configurations.api { extendsFrom(datanucleus) }
+
 val sqlite by configurations.creating
 configurations.api { extendsFrom(sqlite) }
 
@@ -21,6 +24,7 @@ zapAddOn {
         }
 
         bundledLibs {
+            libs.from(datanucleus)
             libs.from(sqlite)
         }
     }
@@ -44,7 +48,10 @@ spotless {
 }
 
 dependencies {
+    datanucleus("org.datanucleus:datanucleus-accessplatform-jdo-rdbms:6.0.1")
     sqlite("org.xerial:sqlite-jdbc:3.39.3.0")
+
+    implementation("org.flywaydb:flyway-core:9.4.0")
 
     testImplementation(project(":testutils"))
 }
