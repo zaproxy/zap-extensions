@@ -549,7 +549,7 @@
       53
     ],
     "description": "Virtuagym is a cloud-based membership management and coaching platform designed for personal trainers and fitness businesses of all sizes.",
-    "dom": "a[href*='.virtuagym.com'][target='_blank'], iframe[src*='.virtuagym.com/]",
+    "dom": "a[href*='.virtuagym.com'][target='_blank'], iframe[src*='.virtuagym.com/']",
     "icon": "Virtuagym.svg",
     "js": {
       "VGTutorial": "",
