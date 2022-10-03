@@ -41,6 +41,19 @@
     "implies": "OpenResty",
     "website": "http://matori.net"
   },
+  "MDBootstrap": {
+    "cats": [
+      66
+    ],
+    "description": "MDBootstrap (Material Design for Bootstrap) is a complete UI package that can be integrated with other frameworks such as Angular, React, Vue, etc. It is used to design a fully responsive and mobile-friendly layout using various components, plugins, animation.",
+    "icon": "MDBootstrap.png",
+    "js": {
+      "mdb.ScrollSpy": ""
+    },
+    "oss": true,
+    "scriptSrc": "(?:/mdbootstrap/([\\d\\.]+)/)?js/mdb\\.min\\.js\\;version:\\1",
+    "website": "https://mdbootstrap.com"
+  },
   "MDUI": {
     "cats": [
       66
@@ -280,6 +293,23 @@
       "static/_requirejs\\;confidence:50\\;version:2"
     ],
     "website": "https://magento.com"
+  },
+  "Magewire": {
+    "cats": [
+      19
+    ],
+    "description": "Magewire is a Laravel Livewire port for Magento 2.",
+    "icon": "default.svg",
+    "implies": [
+      "Laravel",
+      "Livewire"
+    ],
+    "js": {
+      "Magewire.connection-author": "",
+      "magewire": ""
+    },
+    "oss": true,
+    "website": "https://github.com/magewirephp/magewire"
   },
   "Magisto": {
     "cats": [
@@ -1190,6 +1220,29 @@
     "saas": true,
     "website": "https://megagroup.ru/cms"
   },
+  "Meilisearch": {
+    "cats": [
+      29
+    ],
+    "description": "Meilisearch is a search engine created by Meili, a software development company based in France.",
+    "dom": "span.meilisearch-autocomplete",
+    "icon": "Meilisearch.svg",
+    "js": {
+      "MeiliSearch": "",
+      "MeiliSearchApiError": "",
+      "MeiliSearchTimeOutError": "",
+      "ac_apsulis_meilisearch": "",
+      "instantMeiliSearch": ""
+    },
+    "oss": true,
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.meilisearch.com"
+  },
   "Melis Platform": {
     "cats": [
       1,
@@ -1760,6 +1813,22 @@
     "scriptSrc": "mint/\\?js",
     "website": "https://haveamint.com"
   },
+  "Miso": {
+    "cats": [
+      29,
+      76
+    ],
+    "description": "Miso is a real-time personalisation APIs for search, recommendation, and marketing.",
+    "icon": "Miso.svg",
+    "pricing": [
+      "poa",
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://miso.ai",
+    "xhr": "\\.askmiso\\.com/"
+  },
   "Misskey": {
     "cats": [
       2
@@ -2075,11 +2144,24 @@
       41,
       91
     ],
-    "description": "Mokka is a Buy Now Pay Later solution that connects target customer acquisition and settlement costs through marketing and promotion..",
+    "description": "Mokka is a Buy Now Pay Later solution that connects target customer acquisition and settlement costs through marketing and promotion.",
     "icon": "Mokka.svg",
     "saas": true,
     "scriptSrc": "revoiframe\\.js",
     "website": "https://mokka.ro"
+  },
+  "Mollie": {
+    "cats": [
+      41
+    ],
+    "description": "Mollie is a payment provider for Belgium and the Netherlands, offering payment methods such as credit card, iDEAL, Bancontact/Mister cash, PayPal, SCT, SDD, and others.",
+    "icon": "Mollie.svg",
+    "js": {
+      "Mollie": ""
+    },
+    "saas": true,
+    "scriptSrc": "/wp-content/plugins/mollie-payments-for-woocommerce/",
+    "website": "https://www.mollie.com"
   },
   "Mollom": {
     "cats": [
@@ -2451,11 +2533,17 @@
       1,
       11
     ],
-    "icon": "Mura CMS.png",
+    "cpe": "cpe:2.3:a:blueriver:muracms:*:*:*:*:*:*:*:*",
+    "description": "Mura CMS is the cloud-based, API driven, content management platform.",
+    "icon": "Mura CMS.svg",
     "implies": "Adobe ColdFusion",
     "meta": {
-      "generator": "Mura CMS ([\\d]+)\\;version:\\1"
+      "generator": "Mura\\sCMS\\s([\\d\\.]+)\\;version:\\1"
     },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
     "website": "http://www.getmura.com"
   },
   "Mustache": {
@@ -2686,6 +2774,19 @@
       "generator": "Mynetcap"
     },
     "website": "http://www.netcap-creation.fr"
+  },
+  "Mysitefy": {
+    "cats": [
+      51
+    ],
+    "description": "Mysitefy is a digital platform for B2B enterprises. It provides companies with a closed-loop digital application system from website building to marketing, to customer and order management.",
+    "dom": "img[src*='//cdn.mysitefy.com/']",
+    "icon": "Mysitefy.png",
+    "pricing": [
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.mysitefy.com"
   },
   "MysteryThemes News Portal": {
     "cats": [

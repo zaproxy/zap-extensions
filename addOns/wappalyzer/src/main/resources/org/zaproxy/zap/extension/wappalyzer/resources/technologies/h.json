@@ -267,6 +267,17 @@
     "scriptSrc": "haravan.*\\.js",
     "website": "https://www.haravan.com"
   },
+  "Harbor": {
+    "cats": [
+      60
+    ],
+    "description": "Harbor is an open-source registry that secures artifacts with policies and role-based access control, ensures images are scanned and free from vulnerabilities, and signs images as trusted.",
+    "dom": "harbor-app",
+    "icon": "Harbor.svg",
+    "implies": "Go",
+    "oss": true,
+    "website": "https://goharbor.io"
+  },
   "HashThemes Total": {
     "cats": [
       80

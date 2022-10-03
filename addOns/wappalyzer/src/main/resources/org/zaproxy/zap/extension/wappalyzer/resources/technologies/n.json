@@ -558,6 +558,43 @@
     "scriptSrc": "/nextgen-gallery/js/",
     "website": "https://www.imagely.com/wordpress-gallery-plugin"
   },
+  "NextUI": {
+    "cats": [
+      66
+    ],
+    "css": "--nextui-(?:colors-accents1|colors-text|space-0|fonts-sans|fonts-mono)",
+    "description": "NextUI allows you to make beautiful, modern, and fast websites/applications regardless of your design experience, created with React.js and Stitches, based on React Aria and inspired by Vuesax.",
+    "icon": "NextUI.svg",
+    "implies": [
+      "React",
+      "Stitches"
+    ],
+    "oss": true,
+    "website": "https://nextui.org/"
+  },
+  "Nextcloud": {
+    "cats": [
+      95,
+      19
+    ],
+    "cookies": {
+      " __Host-nc_sameSiteCookielax": "",
+      "__Host-nc_sameSiteCookiestrict": ""
+    },
+    "cpe": "cpe:2.3:a:nextcloud:nextcloud:*:*:*:*:*:*:*:*",
+    "description": "Nextcloud is a suite of client-server software for creating and using file hosting services.",
+    "icon": "Nextcloud.svg",
+    "implies": "PHP",
+    "js": {
+      "oc_config.version": "^([\\.\\d]+)$\\;version:\\1\\;confidence:0"
+    },
+    "oss": true,
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "website": "https://nextcloud.com"
+  },
   "Nextdoor Ads": {
     "cats": [
       36
@@ -585,6 +622,17 @@
     "saas": true,
     "scriptSrc": "(?:api|sdk)\\.nextsale\\.io/",
     "website": "https://nextsale.io"
+  },
+  "NexusPIPE": {
+    "cats": [
+      16
+    ],
+    "description": "NexusPIPE is a ADC and DDoS mitigation Company.",
+    "headers": {
+      "Server": "^Nexuspipe.com"
+    },
+    "icon": "NexusPIPE.png",
+    "website": "https://nexuspipe.com"
   },
   "Nginx": {
     "cats": [
@@ -726,13 +774,34 @@
       2
     ],
     "cpe": "cpe:2.3:a:nodebb:nodebb:*:*:*:*:*:*:*:*",
+    "description": "NodeBB forum software is powered by Node.js and built on either a Redis or MongoDB database.",
     "headers": {
       "X-Powered-By": "^NodeBB$"
     },
-    "icon": "NodeBB.png",
+    "icon": "NodeBB.svg",
     "implies": "Node.js",
-    "scriptSrc": "^/nodebb\\.min\\.js\\?",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "/nodebb\\.min\\.js\\?",
     "website": "https://nodebb.org"
+  },
+  "NodePing": {
+    "cats": [
+      13
+    ],
+    "description": "NodePing is a tool in the Website Monitoring category of a tech stack. NodePing is an open source tool with GitHub stars and GitHub forks.",
+    "dom": "footer#poweredbynodeping",
+    "icon": "NodePing.svg",
+    "oss": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://nodeping.com"
   },
   "Norton Shopping Guarantee": {
     "cats": [

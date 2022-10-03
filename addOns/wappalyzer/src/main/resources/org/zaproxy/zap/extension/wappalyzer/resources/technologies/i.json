@@ -1105,6 +1105,15 @@
     },
     "website": "https://exchanger.iexbase.com"
   },
+  "iGoDigital": {
+    "cats": [
+      76
+    ],
+    "description": "iGoDigital provides web-based commerce tools, personalisation, and product recommendations designed to increase customer interaction.",
+    "icon": "default.svg",
+    "scriptSrc": "\\.igodigital\\.com/",
+    "website": "http://www.igodigital.com"
+  },
   "iHomefinder IDX": {
     "cats": [
       19
