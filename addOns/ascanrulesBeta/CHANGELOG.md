@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Depend on `database` add-on.
+- Maintenance changes.
 
 ## [42] - 2022-09-22
 ### Changed

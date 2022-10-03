@@ -454,7 +454,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                                     msgDelay.getRequestHeader().getMethod(),
                                     msgDelay.getRequestHeader().getURI(),
                                     paramName,
-                                    errorMessagePattern.toString());
+                                    errorMessagePattern);
                             foundTimeBased =
                                     true; // yeah, I know. we found an error based, while looking
                             // for a time based. bale out anyways.

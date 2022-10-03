@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Fix an exception in Bypassing 403 scan rule when creating example alerts.
 
+### Changed
+- Maintenance changes.
+
 ## [39] - 2022-09-22
 ### Changed
 - Maintenance changes.

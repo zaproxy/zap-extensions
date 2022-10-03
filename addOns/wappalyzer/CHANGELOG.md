@@ -6,22 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Updated with upstream Wappalyzer icon and pattern changes.
-
-
+- Maintenance changes.
 
 ## [21.13.0] - 2022-09-23
 ### Changed
 - Maintenance changes.
 - Updated with upstream Wappalyzer icon and pattern changes.
 
-
-
 ## [21.12.0] - 2022-08-15
 ### Changed
 - Maintenance changes.
 - Updated with upstream Wappalyzer icon and pattern changes.
-
-
 
 ## [21.11.0] - 2022-06-03
 ###Changed
@@ -66,7 +61,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Updated with upstream Wappalyzer icon and pattern changes.
 - Adapt script source handling to upstream changes.
-
 
 ## [21.4.0] - 2021-10-07
 ### Changed
@@ -158,7 +152,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Update with Wappalyzer icon and pattern changes.
-
 
 ## [16] - 2020-01-24
 ### Added

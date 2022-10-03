@@ -1116,7 +1116,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
                             // data (or as much as possible), allowing us to pinpoint the SQL
                             // Injection
                             log.debug(
-                                    "Check 2 , {} html output for AND FALSE condition [{}] SAME as (refreshed) original results for {} ### (forcing OR TRUE check) {}",
+                                    "Check 2 , {} html output for AND FALSE condition [{}] SAME as (refreshed) original results for {} ### (forcing OR TRUE check)",
                                     (strippedOutput[booleanStrippedUnstrippedIndex]
                                             ? "STRIPPED"
                                             : "UNSTRIPPED"),

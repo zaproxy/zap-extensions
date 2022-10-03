@@ -501,7 +501,7 @@ public class ExtensionReports extends ExtensionAdaptor {
         try {
             return getHttpMessagesForRule(this.getRootAlertNode(), ruleId, max);
         } catch (Exception e) {
-            LOGGER.error("Failed to get HttpMessages for rule Id " + ruleId, e);
+            LOGGER.error("Failed to get HttpMessages for rule Id {}", ruleId, e);
         }
         return new ArrayList<>();
     }

@@ -131,7 +131,7 @@ public class ReportLastScan {
        String path = "/org/zaproxy/zap/resources/xml/" + xslFileName;
        try (InputStream is = ReportLastScan.class.getResourceAsStream(path)) {
            if (is == null) {
-               logger.error("Bundled file not found: " + path);
+               logger.error("Bundled file not found: {}", path);
                return new File(reportFile);
            }
            return ReportGenerator.stringToHtml(report, new StreamSource(is), reportFile);
@@ -307,7 +307,7 @@ public class ReportLastScan {
                }
 
                if (Files.notExists(report.toPath())) {
-                   logger.info("Not opening report, does not exist: " + report);
+                   logger.info("Not opening report, does not exist: {}", report);
                    return;
                }
 

@@ -217,7 +217,7 @@ public class GitMetadata {
                             null,
                             null);
 
-            log.debug("The internal Git (loose) file name is {}", gitobjecturi.toString());
+            log.debug("The internal Git (loose) file name is {}", gitobjecturi);
             byte[] data = getURIResponseBody(gitobjecturi, true, basemsg);
 
             ByteBuffer dataBuffer = ByteBuffer.wrap(data);
