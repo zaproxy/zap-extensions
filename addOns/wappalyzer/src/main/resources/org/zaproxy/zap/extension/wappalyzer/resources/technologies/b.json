@@ -478,6 +478,21 @@
     "scriptSrc": "/shopify-apps//js/betterprice/betterprice\\.js",
     "website": "https://apps.shopify.com/better-price"
   },
+  "Better Uptime": {
+    "cats": [
+      13
+    ],
+    "description": "Better Uptime is the all-in-one infrastructure monitoring platform for your incident management, uptime monitoring, and status pages.",
+    "icon": "Better Uptime.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "//betteruptime\\.com/",
+    "website": "https://betterstack.com/better-uptime"
+  },
   "Betty Blocks": {
     "cats": [
       47,
@@ -562,6 +577,25 @@
     "scripts": "bigcommerceProductId",
     "url": "mybigcommerce\\.com",
     "website": "http://www.bigcommerce.com"
+  },
+  "BigTree CMS": {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:bigtreecms:bigtree_cms:*:*:*:*:*:*:*:*",
+    "description": "BigTree CMS is an extremely extensible open-source CMS built on PHP and MySQL.",
+    "icon": "BigTree CMS.svg",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "js": {
+      "BigTree.Growling": "",
+      "BigTreeMatrix": "",
+      "BigTreeTagAdder": ""
+    },
+    "oss": true,
+    "website": "https://www.bigtreecms.org"
   },
   "Bigware": {
     "cats": [
@@ -1017,6 +1051,19 @@
     "scriptSrc": "boba(?:\\.min)?\\.js",
     "website": "http://boba.space150.com"
   },
+  "BoidCMS": {
+    "cats": [
+      1
+    ],
+    "description": "BoidCMS is a free and open-source flat file CMS for building simple websites and blogs in seconds, developed using PHP and uses JSON as a database.",
+    "headers": {
+      "X-Powered-By": "BoidCMS"
+    },
+    "icon": "BoidCMS.svg",
+    "implies": "PHP",
+    "oss": true,
+    "website": "https://boidcms.github.io"
+  },
   "Bokeh": {
     "cats": [
       25
@@ -1329,6 +1376,24 @@
     "icon": "Bookatable.svg",
     "scriptSrc": "bda\\.bookatable\\.com/deploy/lbui\\.direct\\.min\\.js",
     "website": "https://www.bookatable.co.uk"
+  },
+  "Bookeo": {
+    "cats": [
+      72
+    ],
+    "description": "Bookeo is a cloud-based booking and reservation solution that caters to tour operators, travel agencies, schools, therapists, photographers and event organizers.",
+    "dom": "a[href*='//bookeo.com/'], iframe[src*='//bookeo.com/']",
+    "icon": "Bookeo.svg",
+    "js": {
+      "bookeo_start": "",
+      "bookeo_startMobileLabel": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.bookeo.com"
   },
   "Bookero": {
     "cats": [
@@ -1780,6 +1845,21 @@
     ],
     "saas": true,
     "website": "https://home.breinify.ai"
+  },
+  "Bricks": {
+    "cats": [
+      51,
+      80
+    ],
+    "description": "Bricks is a premium WordPress theme that lets you visually build performant WordPress sites.",
+    "icon": "Bricks.svg",
+    "pricing": [
+      "low",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/bricks/assets/",
+    "website": "https://bricksbuilder.io"
   },
   "Bricksite": {
     "cats": [

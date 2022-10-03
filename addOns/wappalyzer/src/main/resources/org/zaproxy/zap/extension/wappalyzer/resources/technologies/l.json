@@ -256,6 +256,27 @@
     "scriptSrc": "ls\\.unveilhooks(?:\\.min)?\\.js",
     "website": "https://github.com/aFarkas/lazysizes/tree/gh-pages/plugins/unveilhooks"
   },
+  "Leadfeeder": {
+    "cats": [
+      10
+    ],
+    "description": "Leadfeeder is a B2B visitor identification software that tracks and identifies companies that visit your website.",
+    "headers": {
+      "Content-Security-Policy": "\\.(?:lfeeder|leadfeeder)\\.com"
+    },
+    "icon": "Leadfeeder.png",
+    "js": {
+      "ldfdr.getTracker": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.leadfeeder\\.com/",
+    "website": "https://www.leadfeeder.com"
+  },
   "Leadinfo": {
     "cats": [
       10
@@ -273,6 +294,25 @@
     "saas": true,
     "scriptSrc": "cdn\\.leadinfo\\.net",
     "website": "https://www.leadinfo.com"
+  },
+  "Leadster": {
+    "cats": [
+      52
+    ],
+    "description": "Leadster is a conversation marketing plataform based on chatbot.",
+    "icon": "Leadster.svg",
+    "js": {
+      "neurolead.convoScript": "",
+      "neurolead.elChatbot": "",
+      "neuroleadLanguage": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://leadster.com.br"
   },
   "Leaflet": {
     "cats": [
@@ -395,6 +435,20 @@
     "scriptSrc": "\\.legalmonster\\.com/",
     "website": "https://www.legalmonster.com"
   },
+  "Lengow": {
+    "cats": [
+      19
+    ],
+    "description": "Lengow is an ecommerce automation solution that enables brands and retailers to integrate, structure and optimise their product content across all distribution channels: marketplaces, comparison shopping engines, affiliate platforms, display and retargeting.",
+    "icon": "Lengow.svg",
+    "pricing": [
+      "payg",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.lengow\\.com/",
+    "website": "https://www.lengow.com"
+  },
   "Less": {
     "cats": [
       19
@@ -461,6 +515,25 @@
     ],
     "saas": true,
     "website": "https://www.lever.co"
+  },
+  "Lexity": {
+    "cats": [
+      10
+    ],
+    "description": "Lexity is the one-stop-shop of ecommerce services for SMBs.",
+    "icon": "Lexity.png",
+    "scriptSrc": "\\.lexity\\.com/",
+    "website": "http://lexity.com"
+  },
+  "Liberapay": {
+    "cats": [
+      41
+    ],
+    "description": "Liberapay is a non-profit organisation subscription payment platform.",
+    "dom": "a[href*='//liberapay.com/'][target='_blank']",
+    "icon": "Liberapay.svg",
+    "scriptSrc": "//liberapay\\.com/",
+    "website": "https://liberapay.com/"
   },
   "Libravatar": {
     "cats": [
@@ -653,11 +726,35 @@
     "scriptSrc": "^https?://cdn\\.linksmart\\.com/linksmart_([\\d.]+?)(?:\\.min)?\\.js\\;version:\\1",
     "website": "http://linksmart.com"
   },
+  "Linkedin Ads": {
+    "cats": [
+      36
+    ],
+    "description": "Linkedin Ads is a paid marketing tool that offers access to Linkedin social networks through various sponsored posts and other methods.",
+    "dom": {
+      "img[src*='dc.ads.linkedin.com']": {
+        "attributes": {
+          "src": "dc\\.ads\\.linkedin\\.com"
+        }
+      },
+      "link[href*='px.ads.linkedin.com']": {
+        "attributes": {
+          "href": "px\\.ads\\.linkedin\\.com"
+        }
+      }
+    },
+    "headers": {
+      "Content-Security-Policy": "px\\.ads\\.linkedin\\.com"
+    },
+    "html": "<img [^>]*src=\"[^/]*//[^/]*px\\.ads\\.linkedin\\.com",
+    "icon": "Linkedin.svg",
+    "website": "https://business.linkedin.com/marketing-solutions/ads"
+  },
   "Linkedin Insight Tag": {
     "cats": [
       10
     ],
-    "dom": "noscript > img[src*='dc.ads.linkedin.com']",
+    "description": "LinkedIn Insight Tag is a lightweight JavaScript tag that powers conversion tracking, website audiences, and website demographics.",
     "icon": "Linkedin.svg",
     "js": {
       "ORIBI": "",

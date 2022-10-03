@@ -268,6 +268,20 @@
     },
     "website": "http://opensolution.org"
   },
+  "QuickSell": {
+    "cats": [
+      6
+    ],
+    "description": "QuickSell is a sales acceleration platform helping businesses transform conversations to conversions by leveraging personal commerce.",
+    "icon": "QuickSell.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.quicksell\\.co/",
+    "website": "https://quicksell.co"
+  },
   "Quicklink": {
     "cats": [
       59,

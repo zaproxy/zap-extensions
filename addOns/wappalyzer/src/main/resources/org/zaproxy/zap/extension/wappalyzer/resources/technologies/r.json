@@ -203,7 +203,7 @@
       54
     ],
     "description": "RankMath SEO is a search engine optimization plugin for WordPress.",
-    "dom": "link[href*='/wp-content/plugins/seo-by-rank-math/']",
+    "dom": "link[href*='/wp-content/plugins/seo-by-rank-math/'], script.rank-math-schema-pro",
     "icon": "RankMath SEO.svg",
     "pricing": [
       "freemium",
@@ -511,12 +511,13 @@
       12
     ],
     "description": "React Router provides declarative routing for React.",
-    "icon": "React Router.png",
+    "icon": "React Router.svg",
     "implies": "React",
+    "oss": true,
     "scriptSrc": [
-      "/react-router(@|/)([\\d.]+)(?:/[a-z]+)?/react-router(?:.min)?\\.js\\;version:\\2"
+      "(?:/react-router(@|/)([\\d.]+)(?:/[a-z]+)?)?/react-router(?:\\.min)?\\.js\\;version:\\2"
     ],
-    "website": "https://reactrouter.com/"
+    "website": "https://reactrouter.com"
   },
   "Reactive": {
     "cats": [
@@ -709,6 +710,28 @@
     ],
     "saas": true,
     "website": "https://recruitee.com"
+  },
+  "Recurate": {
+    "cats": [
+      19
+    ],
+    "description": "Recurate is a tech-enabled resale service that empowers brands & retailers to establish their own integrated resale platforms directly on their ecommerce sites.",
+    "dom": {
+      "a[href*='support@recurate.com']": {
+        "attributes": {
+          "href": "mailto\\:support\\@recurate\\.com"
+        }
+      },
+      "link[href*='/recurate-site.css']": {
+        "attributes": {
+          "href": "cdn\\.shopify\\.com/.+/recurate-site\\.css"
+        }
+      }
+    },
+    "icon": "Recurate.svg",
+    "requires": "Shopify",
+    "scripts": "\"(?:vendor|title)?\"\\:\"Recurate\"",
+    "website": "https://www.recurate.com"
   },
   "Recurly": {
     "cats": [
@@ -1174,6 +1197,30 @@
     "saas": true,
     "scriptSrc": "static\\.resmio\\.\\w+/static/",
     "website": "https://www.resmio.com"
+  },
+  "Resova": {
+    "cats": [
+      72
+    ],
+    "description": "Resova is an online booking software.",
+    "dom": {
+      "a[href*='.resova.']": {
+        "attributes": {
+          "href": "\\.resova\\.(?:us|eu|co\\.uk)"
+        }
+      }
+    },
+    "icon": "Resova.svg",
+    "js": {
+      "baseUrl": "\\.resova\\.(?:us|eu|co\\.uk)",
+      "initResova": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://resova.com"
   },
   "Responsive Lightbox & Gallery": {
     "cats": [

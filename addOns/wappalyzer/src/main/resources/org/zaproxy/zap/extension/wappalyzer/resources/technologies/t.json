@@ -1543,11 +1543,17 @@
     "cats": [
       18
     ],
+    "cookies": {
+      "thinkphp_show_page_trace": ""
+    },
+    "cpe": "cpe:2.3:a:thinkphp:thinkphp:*:*:*:*:*:*:*:*",
+    "description": "ThinkPHP is an open-source PHP framework with MVC structure developed and maintained by Shanghai Topthink Company.",
     "headers": {
       "X-Powered-By": "ThinkPHP"
     },
     "icon": "ThinkPHP.png",
     "implies": "PHP",
+    "oss": true,
     "website": "http://www.thinkphp.cn"
   },
   "Thinkific": {
@@ -1791,6 +1797,16 @@
     ],
     "scriptSrc": "\\.timify\\.com/",
     "website": "https://www.timify.com"
+  },
+  "Tiny Slider": {
+    "cats": [
+      59
+    ],
+    "description": "Tiny Slider is a vanilla javascript slider for all purposes.",
+    "icon": "default.svg",
+    "oss": true,
+    "scriptSrc": "(?:/([\\d\\.]+)/min/)?tiny-slider(?:\\.min)?\\.js\\;version:\\1",
+    "website": "https://github.com/ganlanyuan/tiny-slider"
   },
   "TinyMCE": {
     "cats": [
@@ -2190,6 +2206,25 @@
     "saas": true,
     "scriptSrc": "\\.widget\\.trengo\\.eu/",
     "website": "https://trengo.com"
+  },
+  "Trinity Audio": {
+    "cats": [
+      5
+    ],
+    "description": "Trinity Audio's AI-driven solutions help publishers and content creators create a world of smart audio experiences for their audiences, covering every stage of the audio journey from creation to distribution.",
+    "icon": "Trinity Audio.svg",
+    "js": {
+      "TRINITY_DISPLAY": "",
+      "TRINITY_PLAYER": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "//trinitymedia\\.ai/",
+    "website": "https://www.trinityaudio.ai"
   },
   "Tripadviser.Widget": {
     "cats": [
