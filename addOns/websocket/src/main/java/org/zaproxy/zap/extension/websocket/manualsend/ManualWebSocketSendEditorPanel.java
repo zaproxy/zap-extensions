@@ -37,10 +37,9 @@ import javax.swing.SwingWorker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.extension.manualrequest.ManualRequestEditorDialog;
-import org.parosproxy.paros.extension.manualrequest.MessageSender;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.requester.MessageEditorPanel;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.websocket.WebSocketMessage;
@@ -48,15 +47,12 @@ import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.client.RequestOutOfScopeException;
 import org.zaproxy.zap.extension.websocket.ui.ChannelSortedListModel;
 import org.zaproxy.zap.extension.websocket.ui.WebSocketUiHelper;
-import org.zaproxy.zap.view.ZapMenuItem;
 
 /** Send custom crafted WebSocket messages. */
 @SuppressWarnings("serial")
-public class ManualWebSocketSendEditorDialog extends ManualRequestEditorDialog {
+public class ManualWebSocketSendEditorPanel extends MessageEditorPanel {
 
     private static final long serialVersionUID = -5830450800029295419L;
-
-    private ZapMenuItem menuItem;
 
     private WebSocketPanelSender sender;
 
@@ -73,19 +69,19 @@ public class ManualWebSocketSendEditorDialog extends ManualRequestEditorDialog {
     static {
         REOPEN_ICON =
                 new ImageIcon(
-                        ManualWebSocketSendEditorDialog.class.getResource(
+                        ManualWebSocketSendEditorPanel.class.getResource(
                                 "/org/zaproxy/zap/extension/websocket/resources/icons/plug--plus.png"));
         REOPEN_EDIT_ICON =
                 new ImageIcon(
-                        ManualWebSocketSendEditorDialog.class.getResource(
+                        ManualWebSocketSendEditorPanel.class.getResource(
                                 "/org/zaproxy/zap/extension/websocket/resources/icons/plug--pencil.png"));
         WEBSOCKET_CONNECTING_ICON =
                 new ImageIcon(
-                        ManualWebSocketSendEditorDialog.class.getResource(
+                        ManualWebSocketSendEditorPanel.class.getResource(
                                 "/org/zaproxy/zap/extension/websocket/resources/icons/websocket_connecting.gif"));
     }
 
-    public ManualWebSocketSendEditorDialog(
+    public ManualWebSocketSendEditorPanel(
             ChannelSortedListModel channelsModel,
             WebSocketPanelSender sender,
             boolean isSendEnabled,
@@ -119,13 +115,11 @@ public class ManualWebSocketSendEditorDialog extends ManualRequestEditorDialog {
     }
 
     @Override
-    public Class<? extends Message> getMessageType() {
-        return WebSocketMessageDTO.class;
-    }
-
-    @Override
     public Message getMessage() {
-        WebSocketMessageDTO message = (WebSocketMessageDTO) getRequestPanel().getMessage();
+        WebSocketMessageDTO message = (WebSocketMessageDTO) getMessagePanel().getMessage();
+        if (message == null) {
+            return null;
+        }
 
         // set metadata first (opcode, channel, direction)
         wsMessagePanel.setMetadata(message);
@@ -140,17 +134,12 @@ public class ManualWebSocketSendEditorDialog extends ManualRequestEditorDialog {
             return;
         }
 
-        getRequestPanel().setMessage(message);
+        getMessagePanel().setMessage(message);
         wsMessagePanel.setMessageMetadata(message);
     }
 
     @Override
-    protected MessageSender getMessageSender() {
-        return sender;
-    }
-
-    @Override
-    protected WebSocketSendPanel getRequestPanel() {
+    protected WebSocketSendPanel getMessagePanel() {
         if (requestPanel == null) {
             requestPanel = new WebSocketSendPanel(true, configurationKey);
             requestPanel.setEnableViewSelect(true);
@@ -164,7 +153,7 @@ public class ManualWebSocketSendEditorDialog extends ManualRequestEditorDialog {
         if (wsMessagePanel == null) {
             wsMessagePanel =
                     new WebSocketMessagePanel(
-                            channelsModel, getControlToolbar(), getRequestPanel(), sender);
+                            channelsModel, getControlToolbar(), getMessagePanel(), sender);
 
             wsMessagePanel.addEndButton(getBtnSend());
             wsMessagePanel.addSeparator();
@@ -181,27 +170,13 @@ public class ManualWebSocketSendEditorDialog extends ManualRequestEditorDialog {
     }
 
     @Override
-    protected void saveConfig() {
-        wsMessagePanel.saveConfig();
+    protected void sendMessage(Message message) throws IOException {
+        sender.handleSendMessage(message);
     }
 
     @Override
-    public ZapMenuItem getMenuItem() {
-        if (menuItem == null) {
-            menuItem = new ZapMenuItem("websocket.manual_send.menu");
-            menuItem.addActionListener(
-                    e -> {
-                        Message message = getMessage();
-                        if (message == null) {
-                            setDefaultMessage();
-                        } else if (message instanceof WebSocketMessageDTO
-                                && ((WebSocketMessageDTO) message).getOpcode() == null) {
-                            setDefaultMessage();
-                        }
-                        setVisible(true);
-                    });
-        }
-        return menuItem;
+    public void saveConfig() {
+        wsMessagePanel.saveConfig();
     }
 
     @Override
@@ -214,8 +189,9 @@ public class ManualWebSocketSendEditorDialog extends ManualRequestEditorDialog {
         setMessage(msg);
     }
 
+    @Override
     public void unload() {
-        getRequestPanel().unload();
+        getMessagePanel().unload();
     }
 
     private static final class WebSocketMessagePanel extends JPanel {
@@ -223,7 +199,7 @@ public class ManualWebSocketSendEditorDialog extends ManualRequestEditorDialog {
         private static final long serialVersionUID = -3335708932021769432L;
 
         private static final Logger LOGGER =
-                LogManager.getLogger(ManualWebSocketSendEditorDialog.class);
+                LogManager.getLogger(ManualWebSocketSendEditorPanel.class);
 
         private final HttpPanel messagePanel;
 
