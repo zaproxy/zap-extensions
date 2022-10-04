@@ -48,7 +48,6 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.requester.ExtensionRequester;
 import org.zaproxy.addon.requester.MessageEditorPanel;
-import org.zaproxy.zap.PersistentConnectionListener;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.extension.httppanel.HttpPanel.OptionsLocation;
@@ -613,14 +612,6 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
             }
             return responseSendButton;
         }
-    }
-
-    public void addPersistentConnectionListener(PersistentConnectionListener listener) {
-        sender.addPersistentConnectionListener(listener);
-    }
-
-    public void removePersistentConnectionListener(PersistentConnectionListener listener) {
-        sender.removePersistentConnectionListener(listener);
     }
 
     @Override

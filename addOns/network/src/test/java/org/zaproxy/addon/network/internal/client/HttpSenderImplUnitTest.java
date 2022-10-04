@@ -32,6 +32,9 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
@@ -52,6 +55,7 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.EventExecutorGroup;
 import java.io.IOException;
 import java.net.PasswordAuthentication;
+import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -78,6 +82,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -85,9 +90,11 @@ import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.network.ClientCertificatesOptions;
 import org.zaproxy.addon.network.ConnectionOptions;
 import org.zaproxy.addon.network.internal.client.apachev5.HttpSenderApache;
+import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
 import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.addon.network.testutils.TestHttpServer;
 import org.zaproxy.addon.network.testutils.TestHttpServer.TestHttpMessageHandler;
+import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.network.HttpSenderListener;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -114,6 +121,8 @@ class HttpSenderImplUnitTest {
     private ConnectionOptions options;
     private ClientCertificatesOptions clientCertificatesOptions;
     private KeyStores keyStores;
+
+    private LegacyProxyListenerHandler legacyProxyListenerHandler;
 
     private HttpSenderImplWrapper<?> httpSender;
 
@@ -159,10 +168,15 @@ class HttpSenderImplUnitTest {
         keyStores = mock(KeyStores.class);
         given(clientCertificatesOptions.getKeyStores()).willReturn(keyStores);
 
+        legacyProxyListenerHandler = mock(LegacyProxyListenerHandler.class);
+
         httpSender =
                 new HttpSenderImplWrapper<>(
                         new HttpSenderApache(
-                                () -> globalCookieStore, options, clientCertificatesOptions),
+                                () -> globalCookieStore,
+                                options,
+                                clientCertificatesOptions,
+                                () -> legacyProxyListenerHandler),
                         INITIATOR);
     }
 
@@ -940,7 +954,10 @@ class HttpSenderImplUnitTest {
             HttpSenderImplWrapper<?> httpSender2 =
                     new HttpSenderImplWrapper<>(
                             new HttpSenderApache(
-                                    () -> globalCookieStore, options, clientCertificatesOptions),
+                                    () -> globalCookieStore,
+                                    options,
+                                    clientCertificatesOptions,
+                                    () -> null),
                             INITIATOR);
             httpSender2.addListener(listener);
             HttpMessage message2 = createMessage("GET", "/");
@@ -1029,6 +1046,66 @@ class HttpSenderImplUnitTest {
             assertThrows(
                     ConcurrentModificationException.class,
                     () -> method.sendWith(httpSender, message));
+        }
+    }
+
+    @Nested
+    class PersistentConnection {
+
+        @BeforeEach
+        void setup() {
+            server.setHttpMessageHandler((ctx, msg) -> msg.setResponseHeader("HTTP/1.1 101"));
+
+            message.getRequestHeader().setHeader("Host", "localhost:" + serverPort);
+            message.setUserObject(
+                    Collections.singletonMap("connection.manual.persistent", Boolean.TRUE));
+        }
+
+        @AfterEach
+        void teardown() throws IOException {
+            server.close();
+        }
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+        void shouldBeKeptOpenIfListenerWantsIt(SenderMethod method) throws Exception {
+            // Given
+            given(
+                            legacyProxyListenerHandler.notifyPersistentConnectionListener(
+                                    any(), any(), any()))
+                    .willReturn(true);
+            // When
+            method.sendWith(httpSender, message);
+            // Then
+            assertSocketClosed(false);
+        }
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+        void shouldBeClosedIfNoListenerWantsIt(SenderMethod method) throws Exception {
+            // Given
+            given(
+                            legacyProxyListenerHandler.notifyPersistentConnectionListener(
+                                    any(), any(), any()))
+                    .willReturn(false);
+            // When
+            method.sendWith(httpSender, message);
+            // Then
+            assertSocketClosed(true);
+        }
+
+        private void assertSocketClosed(boolean closed) throws IOException {
+            ArgumentCaptor<ZapGetMethod> methodCaptor = ArgumentCaptor.forClass(ZapGetMethod.class);
+            verify(legacyProxyListenerHandler)
+                    .notifyPersistentConnectionListener(
+                            eq(message), isNull(), methodCaptor.capture());
+            ZapGetMethod getMethod = methodCaptor.getValue();
+            try (Socket socket = getMethod.getUpgradedConnection()) {
+                assertThat(socket.isConnected(), is(equalTo(true)));
+                assertThat(socket.isClosed(), is(equalTo(closed)));
+            }
         }
     }
 

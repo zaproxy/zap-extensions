@@ -89,6 +89,7 @@ import org.zaproxy.addon.network.internal.client.BaseHttpSender;
 import org.zaproxy.addon.network.internal.client.LegacyUtils;
 import org.zaproxy.addon.network.internal.client.ResponseBodyConsumer;
 import org.zaproxy.addon.network.internal.client.SocksProxy;
+import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
 import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.users.User;
@@ -101,6 +102,7 @@ public class HttpSenderApache
 
     private final Supplier<CookieStore> globalCookieStoreProvider;
     private final ConnectionOptions options;
+    private final Supplier<LegacyProxyListenerHandler> legacyProxyListenerHandler;
 
     private final Lookup<AuthSchemeFactory> authSchemeRegistry;
 
@@ -122,9 +124,11 @@ public class HttpSenderApache
     public HttpSenderApache(
             Supplier<CookieStore> globalCookieStoreProvider,
             ConnectionOptions options,
-            ClientCertificatesOptions clientCertificatesOptions) {
+            ClientCertificatesOptions clientCertificatesOptions,
+            Supplier<LegacyProxyListenerHandler> legacyProxyListenerHandler) {
         this.globalCookieStoreProvider = Objects.requireNonNull(globalCookieStoreProvider);
         this.options = Objects.requireNonNull(options);
+        this.legacyProxyListenerHandler = legacyProxyListenerHandler;
 
         authSchemeRegistry =
                 RegistryBuilder.<AuthSchemeFactory>create()
@@ -415,7 +419,34 @@ public class HttpSenderApache
                     };
             method.setUpgradedSocket(socket);
             method.setUpgradedInputStream(socket.getInputStream());
+            Object userObject = message.getUserObject();
             message.setUserObject(method);
+
+            if (isPersistentManualConnection(userObject)
+                    && !legacyProxyListenerHandler
+                            .get()
+                            .notifyPersistentConnectionListener(message, null, method)) {
+                closeSilently(socket);
+            }
+        }
+    }
+
+    private static boolean isPersistentManualConnection(Object userObject) {
+        if (userObject instanceof Map) {
+            Map<?, ?> metadata = (Map<?, ?>) userObject;
+            Object persistent = metadata.get("connection.manual.persistent");
+            if (persistent == Boolean.TRUE) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static void closeSilently(Socket socket) {
+        try {
+            socket.close();
+        } catch (IOException ignore) {
+            // Nothing to do.
         }
     }
 

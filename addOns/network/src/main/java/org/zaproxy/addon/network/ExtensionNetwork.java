@@ -235,7 +235,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                                     new HttpSenderApache(
                                             this::getGlobalCookieStore,
                                             connectionOptions,
-                                            clientCertificatesOptions));
+                                            clientCertificatesOptions,
+                                            () -> legacyProxyListenerHandler));
                 } catch (Exception e) {
                     LOGGER.error("An error occurred while creating the sender:", e);
                 }

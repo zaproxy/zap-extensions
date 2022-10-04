@@ -22,10 +22,8 @@ package org.zaproxy.addon.requester.internal;
 import java.awt.EventQueue;
 import java.awt.event.ItemEvent;
 import java.io.IOException;
-import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 import javax.net.ssl.SSLException;
 import javax.swing.JToggleButton;
 import org.apache.commons.httpclient.URI;
@@ -43,8 +41,6 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.requester.ExtensionRequester;
-import org.zaproxy.zap.PersistentConnectionListener;
-import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.extension.httppanel.HttpPanelResponse;
@@ -70,8 +66,6 @@ public class HttpPanelSender {
     private JToggleButton useTrackingSessionState = null;
     private JToggleButton useCookies = null;
     private JToggleButton useCsrf = null;
-
-    private List<PersistentConnectionListener> persistentConnectionListener = new ArrayList<>();
 
     public HttpPanelSender(CustomHttpPanelRequest requestPanel, HttpPanelResponse responsePanel) {
         this.responsePanel = responsePanel;
@@ -99,6 +93,9 @@ public class HttpPanelSender {
         final HttpMessage httpMessage = (HttpMessage) aMessage;
         // Reset the user before sending (e.g. Forced User mode sets the user, if needed).
         httpMessage.setRequestingUser(null);
+
+        httpMessage.setUserObject(
+                Collections.singletonMap("connection.manual.persistent", Boolean.TRUE));
 
         if (getButtonFixContentLength().isSelected()) {
             HttpPanelViewModelUtils.updateRequestContentLength(httpMessage);
@@ -142,19 +139,6 @@ public class HttpPanelSender {
                         }
                     });
 
-            Object userObject = httpMessage.getUserObject();
-            if (userObject instanceof Socket) {
-                closeSilently((Socket) userObject);
-                return;
-            }
-
-            if (!(userObject instanceof ZapGetMethod)) {
-                return;
-            }
-
-            ZapGetMethod method = (ZapGetMethod) userObject;
-            notifyPersistentConnectionListener(httpMessage, null, method);
-
         } catch (final HttpMalformedHeaderException mhe) {
             throw new IllegalArgumentException("Malformed header error.", mhe);
 
@@ -170,14 +154,6 @@ public class HttpPanelSender {
 
         } catch (final Exception e) {
             logger.error(e.getMessage(), e);
-        }
-    }
-
-    private static void closeSilently(Socket socket) {
-        try {
-            socket.close();
-        } catch (IOException ignore) {
-            // Nothing to do.
         }
     }
 
@@ -199,37 +175,6 @@ public class HttpPanelSender {
         } catch (HttpMalformedHeaderException | DatabaseException e) {
             logger.warn("Failed to persist message sent:", e);
         }
-    }
-
-    /**
-     * Go thru each listener and offer him to take over the connection. The first observer that
-     * returns true gets exclusive rights.
-     *
-     * @param httpMessage Contains HTTP request & response.
-     * @param inSocket Encapsulates the TCP connection to the browser.
-     * @param method Provides more power to process response.
-     * @return boolean to indicate if socket should be kept open.
-     */
-    private boolean notifyPersistentConnectionListener(
-            HttpMessage httpMessage, Socket inSocket, ZapGetMethod method) {
-        boolean keepSocketOpen = false;
-        PersistentConnectionListener listener = null;
-        synchronized (persistentConnectionListener) {
-            for (int i = 0; i < persistentConnectionListener.size(); i++) {
-                listener = persistentConnectionListener.get(i);
-                try {
-                    if (listener.onHandshakeResponse(httpMessage, inSocket, method)) {
-                        // inform as long as one listener wishes to overtake the connection
-                        keepSocketOpen = true;
-                        break;
-                    }
-                } catch (Exception e) {
-                    logger.warn(e.getMessage(), e);
-                }
-            }
-        }
-
-        return keepSocketOpen;
     }
 
     protected ExtensionHistory getHistoryExtension() {
@@ -313,14 +258,6 @@ public class HttpPanelSender {
                     Constant.messages.getString("requester.httpsender.checkbox.fixlength"));
         }
         return fixContentLength;
-    }
-
-    public void addPersistentConnectionListener(PersistentConnectionListener listener) {
-        persistentConnectionListener.add(listener);
-    }
-
-    public void removePersistentConnectionListener(PersistentConnectionListener listener) {
-        persistentConnectionListener.remove(listener);
     }
 
     /**
