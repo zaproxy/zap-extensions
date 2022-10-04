@@ -134,6 +134,7 @@
     "cats": [
       18
     ],
+    "description": "Vaadin is an open-source framework for building user interfaces and single-page applications using Java and TypeScript.",
     "icon": "Vaadin.svg",
     "implies": "Java",
     "js": {
@@ -220,6 +221,17 @@
     },
     "icon": "Varnish.svg",
     "website": "http://www.varnish-cache.org"
+  },
+  "Ve Global": {
+    "cats": [
+      10
+    ],
+    "description": "Ve Global, formerly known as Ve Interactive, is a global technology company that provides ecommerce businesses with a managed-service of proprietary marketing software and digital advertising solutions.",
+    "icon": "Ve Global.png",
+    "js": {
+      "veTagData.appsServicesUrl": "\\.veinteractive\\.com"
+    },
+    "website": "https://ve.com"
   },
   "Venmo": {
     "cats": [
@@ -531,6 +543,42 @@
     "saas": true,
     "scriptSrc": "\\.virtooal\\.com/",
     "website": "https://try.virtooal.com"
+  },
+  "Virtuagym": {
+    "cats": [
+      53
+    ],
+    "description": "Virtuagym is a cloud-based membership management and coaching platform designed for personal trainers and fitness businesses of all sizes.",
+    "dom": "a[href*='.virtuagym.com'][target='_blank'], iframe[src*='.virtuagym.com/']",
+    "icon": "Virtuagym.svg",
+    "js": {
+      "VGTutorial": "",
+      "open_vg_custom_modal": "",
+      "trigger_vg_neutral_message": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://business.virtuagym.com"
+  },
+  "VirtualSpirits": {
+    "cats": [
+      52
+    ],
+    "description": "VirtualSpirits is a chatbot and live-chat service for websites.",
+    "icon": "VirtualSpirits.png",
+    "js": {
+      "vspiritbutton": "",
+      "vspirits_chat_client": "",
+      "vspiritsizeheight": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.virtualspirits.com"
   },
   "VirtueMart": {
     "cats": [
@@ -869,6 +917,7 @@
     "js": {
       "Vue.version": "^(.+)$\\;version:\\1",
       "__VUE_HOT_MAP__": "",
+      "__VUE__": "",
       "vueDLL": ""
     },
     "scriptSrc": [
@@ -899,9 +948,13 @@
     "description": "VuePress is a static site generator with a Vue-powered theming system, and a default theme for writing technical documentation.",
     "icon": "VuePress.svg",
     "implies": "Vue.js",
+    "js": {
+      "__VUEPRESS__.version": "([\\d\\.]+)\\;version:\\1"
+    },
     "meta": {
       "generator": "^VuePress(?: ([0-9.]+)(-[a-z]+.[0-9]+)?)?$\\;version:\\1"
     },
+    "oss": true,
     "website": "https://vuepress.vuejs.org/"
   },
   "Vuetify": {

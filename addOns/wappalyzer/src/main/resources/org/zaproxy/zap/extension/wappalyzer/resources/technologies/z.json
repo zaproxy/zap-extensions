@@ -198,7 +198,7 @@
     "headers": {
       "x-zendesk-user-id": ""
     },
-    "icon": "Zendesk.png",
+    "icon": "Zendesk.svg",
     "js": {
       "Zendesk": ""
     },
@@ -222,6 +222,21 @@
     "saas": true,
     "scriptSrc": "v2\\.zopim\\.com",
     "website": "http://zopim.com"
+  },
+  "Zendesk Sunshine Conversations": {
+    "cats": [
+      52
+    ],
+    "description": "Zendesk Sunshine Conversations lets you share a single, continuous conversation with every team in your business. With a unified API and native connectors to popular business applications like Zendesk and Slack, everyone in your organization can get access to a single view of the customer conversation.",
+    "icon": "Zendesk.svg",
+    "implies": "Zendesk",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.smooch\\.io/",
+    "website": "https://www.zendesk.com/platform/conversations"
   },
   "Zenfolio": {
     "cats": [

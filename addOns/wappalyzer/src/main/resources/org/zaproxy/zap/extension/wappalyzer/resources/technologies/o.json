@@ -726,14 +726,14 @@
       "Notion",
       "Next.js"
     ],
+    "js": {
+      "__OOPY__": ""
+    },
     "oss": false,
     "pricing": [
       "low",
       "recurring"
     ],
-    "js": {
-      "__OOPY__": ""
-    },
     "saas": true,
     "website": "https://oopy.us/"
   },
@@ -818,7 +818,7 @@
     ],
     "cpe": "cpe:2.3:a:open-xchange:app_suite:*:*:*:*:*:*:*:*",
     "description": "Open-Xchange is a web-based communication, collaboration and office productivity software suite.",
-    "dom": "#io-ox-core",
+    "dom": "#io-ox-core, form > input[value='open-xchange-appsuite']",
     "icon": "openxchange.svg",
     "implies": "Java",
     "js": {
@@ -1328,16 +1328,24 @@
     "requires": "WordPress",
     "website": "https://themeisle.com/plugins/orbit-fox-companion"
   },
-  "Orchard CMS": {
+  "Orchard Core": {
     "cats": [
       1
     ],
-    "icon": "Orchard CMS.png",
+    "cpe": "cpe:2.3:a:orchardcore:orchard_core:*:*:*:*:*:*:*:*",
+    "description": "Orchard Core is an open-source modular and multi-tenant application framework built with ASP.NET Core, and a content management system (CMS).",
+    "headers": {
+      "x-generator": "^Orchard$",
+      "x-powered-by": "OrchardCore"
+    },
+    "icon": "Orchard Core.png",
     "implies": "Microsoft ASP.NET",
     "meta": {
       "generator": "Orchard"
     },
-    "website": "http://orchardproject.net"
+    "oss": true,
+    "scriptSrc": "/OrchardCore\\.",
+    "website": "https://orchardcore.net"
   },
   "Orckestra": {
     "cats": [
@@ -1604,6 +1612,35 @@
       "wp-content/plugins/oxygen"
     ],
     "website": "https://oxygenbuilder.com"
+  },
+  "ocStore": {
+    "cats": [
+      6
+    ],
+    "description": "ocStore is an online store based on Opencart and open-source.",
+    "html": "<!--[^>]+ocStore(?:\\s([\\d\\.a-z]+))?\\;version:\\1",
+    "icon": "ocStore.png",
+    "implies": "OpenCart",
+    "oss": true,
+    "website": "https://ocstore.com"
+  },
+  "onpublix": {
+    "cats": [
+      1
+    ],
+    "description": "onpublix is a web content management system (CMS) platform for eBusinesses.",
+    "icon": "onpublix.svg",
+    "meta": {
+      "generator": "^onpublix\\s([\\d\\.]+)$\\;version:\\1"
+    },
+    "pricing": [
+      "onetime",
+      "mid",
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.onpublix.de"
   },
   "osCommerce": {
     "cats": [

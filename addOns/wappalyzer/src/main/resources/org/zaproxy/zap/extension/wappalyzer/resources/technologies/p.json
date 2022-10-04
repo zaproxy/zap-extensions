@@ -356,6 +356,24 @@
     "scriptSrc": "\\.getpaloma\\.com/",
     "website": "https://www.getpaloma.com"
   },
+  "Panelbear": {
+    "cats": [
+      10,
+      13
+    ],
+    "description": "Panelbear is a simple website performance and traffic analytics tool.",
+    "icon": "Panelbear.svg",
+    "js": {
+      "panelbear": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://panelbear.com"
+  },
   "Pantheon": {
     "cats": [
       62
@@ -1426,6 +1444,24 @@
     },
     "website": "https://www.pingoteam.ir/"
   },
+  "PinnacleCart": {
+    "cats": [
+      6
+    ],
+    "description": "PinnacleCart is an ecommerce platform.",
+    "icon": "PinnacleCart.png",
+    "js": {
+      "USER_DELETE_ADDRESS": "^DeleteShippingAddress$\\;confidence:49",
+      "USER_DELETE_PAYMENT_PROFILE": "^DeletePaymentProfile$\\;confidence:49"
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.pinnaclecart.com"
+  },
   "Pinterest": {
     "cats": [
       5
@@ -1617,6 +1653,26 @@
       "recurring"
     ],
     "website": "https://www.pizzanetz.de"
+  },
+  "Plaid": {
+    "cats": [
+      41,
+      19
+    ],
+    "description": "Plaid is a fintech company that facilitates communication between financial services apps and users' banks and credit card providers.",
+    "headers": {
+      "content-security-policy": "cdn\\.plaid\\.com/"
+    },
+    "icon": "Plaid.svg",
+    "js": {
+      "Plaid.version": "([\\.\\d]+)\\;version:\\1"
+    },
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "scriptSrc": "\\.plaid\\.com/",
+    "website": "https://plaid.com"
   },
   "Planet": {
     "cats": [
@@ -1892,12 +1948,18 @@
       87,
       89
     ],
-    "description": "Polylang is a WordPress plugin which allows you to create a bilingual or multilingual WordPress site.",
+    "cookies": {
+      "pll_language": ""
+    },
+    "description": "Polylang is a WordPress plugin which allows you to create multilingual WordPress site.",
     "dom": "img[src*='/wp-content/plugins/polylang/']",
+    "headers": {
+      "x-redirected-by": "Polylang(?:\\s[a-zA-Z]+)?"
+    },
     "icon": "Polylang.svg",
     "oss": true,
     "requires": "WordPress",
-    "website": "https://github.com/polylang/polylang"
+    "website": "https://polylang.pro"
   },
   "Polymer": {
     "cats": [
@@ -2454,6 +2516,26 @@
     "oss": true,
     "website": "https://processwire.com"
   },
+  "Product Hunt": {
+    "cats": [
+      19
+    ],
+    "description": "Product Hunt is a community-based website that allows makers and marketers to launch their products or services and get in touch with their first real users.",
+    "dom": {
+      "a[href*='.producthunt.com/']": {
+        "attributes": {
+          "href": "\\.producthunt\\.com/(?:post|tech|products)"
+        }
+      }
+    },
+    "icon": "Product Hunt.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "website": "https://www.producthunt.com"
+  },
   "Product Personalizer": {
     "cats": [
       100,
@@ -2888,6 +2970,25 @@
     "icon": "Python.png",
     "website": "http://python.org"
   },
+  "PythonAnywhere": {
+    "cats": [
+      62,
+      88
+    ],
+    "description": "PythonAnywhere is an online integrated development environment (IDE) and web hosting service (Platform as a service) based on the Python programming language.",
+    "headers": {
+      "Server": "^PythonAnywhere$"
+    },
+    "icon": "PythonAnywhere.svg",
+    "implies": "Python",
+    "oss": false,
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "saas": false,
+    "website": "https://www.pythonanywhere.com"
+  },
   "papaya CMS": {
     "cats": [
       1
@@ -2912,12 +3013,13 @@
       25
     ],
     "description": "Particles.js is a JavaScript library for creating particles.",
-    "html": "<div id=\"particles-js\">",
+    "dom": "div#particles-js",
     "js": {
       "particlesJS": ""
     },
+    "oss": true,
     "scriptSrc": "/particles(?:\\.min)?\\.js",
-    "website": "https://vincentgarreau.com/particles.js/"
+    "website": "https://github.com/VincentGarreau/particles.js"
   },
   "phpAlbum": {
     "cats": [

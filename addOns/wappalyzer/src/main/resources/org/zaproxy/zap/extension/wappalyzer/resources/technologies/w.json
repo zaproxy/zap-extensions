@@ -491,7 +491,7 @@
       "onetime"
     ],
     "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/weaver-xtreme/.+weaverxjslib-end\\.min.\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": "/wp-content/themes/weaver-xtreme/.+weaverxjslib-end\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://weavertheme.com"
   },
   "Web Shop Manager": {

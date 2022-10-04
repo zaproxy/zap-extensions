@@ -256,6 +256,22 @@
     },
     "website": "https://get.gaug.es"
   },
+  "GeeTest": {
+    "cats": [
+      16
+    ],
+    "description": "GeeTest is a CAPTCHA and bot management provider, protects websites, mobile apps, and APIs from automated bot-driven attacks, like ATO, credential stuffing, web scalping, etc.",
+    "headers": {
+      "content-security-policy": "\\.geetest\\.com"
+    },
+    "icon": "GeeTest.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.geetest\\.com/",
+    "website": "https://www.geetest.com"
+  },
   "GemPages": {
     "cats": [
       100,
@@ -1626,7 +1642,6 @@
     ],
     "icon": "Google Tag Manager.svg",
     "js": {
-      "google_tag_manager": "",
       "googletag": ""
     },
     "saas": true,
@@ -1820,6 +1835,20 @@
       "generator": "grandnode"
     },
     "website": "https://grandnode.com"
+  },
+  "GrapesJS": {
+    "cats": [
+      51,
+      18
+    ],
+    "cpe": "cpe:2.3:a:grapesjs:grapesjs:*:*:*:*:*:node.js:*:*",
+    "description": "GrapesJS is an open-source, multi-purpose page builder which combines different plugins and intuitive drag and drop interface.",
+    "icon": "GrapesJS.png",
+    "js": {
+      "grapesjs.version": "^([\\d\\.]+)$\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://grapesjs.com"
   },
   "GraphCMS": {
     "cats": [

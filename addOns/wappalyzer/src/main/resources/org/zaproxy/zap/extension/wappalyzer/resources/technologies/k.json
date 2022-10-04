@@ -169,7 +169,7 @@
       103
     ],
     "description": "Kaltura is a video content management platform that allows users to upload, manage, share, publish, and stream videos.",
-    "dom": "link[href*='.kaltura.com']",
+    "dom": "link[href*='.kaltura.com'], div.kaltura-zone",
     "icon": "Kaltura.svg",
     "js": {
       "Kplayer": "",
@@ -281,7 +281,7 @@
       53
     ],
     "description": "Keap offers an email marketing and sales platform for small businesses, including products to manage customers, customer relationship management, marketing, and ecommerce.",
-    "dom": "form[action*='property.infusionsoft.com']",
+    "dom": "form[action*='property.infusionsoft.com'], link[href*='.infusionsoft.com']",
     "icon": "Keap.svg",
     "pricing": [
       "low",
@@ -644,6 +644,27 @@
     "scriptSrc": "js\\.klevu\\.\\w+/klevu-js-v([\\d.]+)\\;version:\\1",
     "website": "https://www.klevu.com"
   },
+  "KlickPages": {
+    "cats": [
+      32,
+      51
+    ],
+    "description": "KlickPages is a landing page management software designed to help businesses execute email marketing campaigns and capture leads.",
+    "icon": "KlickPages.svg",
+    "js": {
+      "klickart.analytics": ""
+    },
+    "meta": {
+      "klickart:url": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.klickpages\\.com\\.br/",
+    "website": "https://klickpages.com.br"
+  },
   "Klickly": {
     "cats": [
       36
@@ -661,10 +682,12 @@
     "cats": [
       12
     ],
-    "icon": "Knockout.js.png",
+    "description": "Knockout.js is basically a library written in JavaScript, based on MVVM pattern that helps developers build rich and responsive websites.",
+    "icon": "Knockout.js.svg",
     "js": {
       "ko.version": "^(.+)$\\;version:\\1"
     },
+    "oss": true,
     "website": "http://knockoutjs.com"
   },
   "Ko-fi": {
@@ -810,6 +833,24 @@
     "scriptSrc": "\\.k-analytix\\.com",
     "website": "https://www.konduto.com"
   },
+  "Kontent.ai": {
+    "cats": [
+      1
+    ],
+    "description": "Kontent.ai is a SaaS-based modular content platform.",
+    "dom": "img[src*='.kc-usercontent.com'], link[href*='.kc-usercontent.com']",
+    "headers": {
+      "content-security-policy": "\\.kc-usercontent\\.com"
+    },
+    "icon": "Kontent.ai.svg",
+    "pricing": [
+      "freemium",
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://kontent.ai"
+  },
   "Koobi": {
     "cats": [
       1
@@ -863,6 +904,16 @@
     "scriptSrc": "kotisivukone(?:\\.min)?\\.js",
     "website": "http://www.kotisivukone.fi"
   },
+  "Kotlin": {
+    "cats": [
+      27
+    ],
+    "cpe": "cpe:2.3:a:jetbrains:kotlin:*:*:*:*:*:*:*:*",
+    "description": "Kotlin is a general purpose, free, open-source, statically typed “pragmatic” programming language initially designed for the JVM (Java Virtual Machine) and Android that combines object-oriented and functional programming features.",
+    "icon": "Kotlin.svg",
+    "oss": true,
+    "website": "https://kotlinlang.org"
+  },
   "Kount": {
     "cats": [
       10,
@@ -882,6 +933,21 @@
       "shopify\\.kount\\.net/js"
     ],
     "website": "https://kount.com"
+  },
+  "Ktor": {
+    "cats": [
+      18
+    ],
+    "cpe": "cpe:2.3:a:jetbrains:ktor:*:*:*:*:*:*:*:*",
+    "description": "Ktor is a Kotlin framework that allow developers to write asynchronous clients and servers applications, in Kotlin.",
+    "headers": {
+      "server": "^Ktor/debug$",
+      "x-engine": "^Ktor$"
+    },
+    "icon": "Ktor.svg",
+    "implies": "Kotlin",
+    "oss": true,
+    "website": "https://ktor.io"
   },
   "Kubernetes Dashboard": {
     "cats": [
