@@ -187,7 +187,13 @@ public class ForbiddenBypassScanRule extends AbstractAppPlugin {
     @Override
     public List<Alert> getExampleAlerts() {
         List<Alert> alerts = new ArrayList<>();
-        alerts.add(createAlert("", new HttpMessage(), "").build());
+        try {
+            alerts.add(
+                    createAlert("", new HttpMessage(new URI("https://example.com", true)), "")
+                            .build());
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
         return alerts;
     }
 }

@@ -20,10 +20,12 @@
 package org.zaproxy.zap.testutils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 import static org.mockito.Mockito.mock;
 
@@ -36,6 +38,7 @@ import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.pscan.PassiveScanData;
 import org.zaproxy.zap.extension.pscan.PassiveScanTestHelper;
@@ -119,6 +122,9 @@ public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends 
         if (rule instanceof PluginPassiveScanner) {
             commonTests.add(testScanRuleHasName());
         }
+        if (rule instanceof ExampleAlertProvider) {
+            commonTests.add(testExampleAlerts());
+        }
         return commonTests;
     }
 
@@ -128,6 +134,15 @@ public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends 
                 () -> {
                     setUp();
                     shouldHaveI18nNonEmptyName();
+                });
+    }
+
+    private DynamicTest testExampleAlerts() {
+        return dynamicTest(
+                "shouldHaveExampleAlerts",
+                () -> {
+                    setUp();
+                    shouldHaveExampleAlerts();
                 });
     }
 
@@ -141,5 +156,16 @@ public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends 
                 extensionResourceBundle.keySet().stream()
                         .map(extensionResourceBundle::getString)
                         .anyMatch(str -> str.equals(name)));
+    }
+
+    private void shouldHaveExampleAlerts() {
+        // Given / When
+        List<Alert> alerts = assertDoesNotThrow(((ExampleAlertProvider) rule)::getExampleAlerts);
+        // Then
+        if (alerts == null) {
+            return;
+        }
+        assertThat(alerts, is(not(empty())));
+        alerts.forEach(this::defaultAssertions);
     }
 }
