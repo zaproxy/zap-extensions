@@ -35,7 +35,12 @@ dependencies {
     implementation("com.diffplug.spotless:spotless-plugin-gradle:6.11.0")
 }
 
+val javaVersion = JavaVersion.VERSION_11
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+}
+
+kotlinDslPluginOptions {
+    jvmTarget.set(javaVersion.toString())
 }

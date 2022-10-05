@@ -4,11 +4,6 @@ plugins {
 
 description = "Common test utilities for the add-ons."
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
 val nanohttpdVersion = "2.3.1"
 val jupiterVersion = "5.8.1"
 

@@ -105,9 +105,9 @@ subprojects {
             toolchain {
                 languageVersion.set(JavaLanguageVersion.of(System.getenv("ZAP_JAVA_VERSION")))
             }
-        } else {
-            sourceCompatibility = JavaVersion.VERSION_1_8
-            targetCompatibility = JavaVersion.VERSION_1_8
+
+            sourceCompatibility = null
+            targetCompatibility = null
         }
     }
 
