@@ -59,6 +59,24 @@
     "url": "Pages/SearchResults\\.aspx\\?k=",
     "website": "http://sharepoint.microsoft.com/en-us/product/capabilities/search/Pages/Fast-Search.aspx"
   },
+  "FUDforum": {
+    "cats": [
+      2
+    ],
+    "cpe": "cpe:2.3:a:fudforum:fudforum:*:*:*:*:*:*:*:*",
+    "description": "FUDforum is a discussion forum software with support for posts, topics, polls and attachments.",
+    "icon": "default.svg",
+    "implies": [
+      "Perl",
+      "PHP"
+    ],
+    "js": {
+      "fud_msg_focus": "",
+      "fud_tree_msg_focus": ""
+    },
+    "oss": true,
+    "website": "https://github.com/fudforum/FUDforum"
+  },
   "Fabric": {
     "cats": [
       6
@@ -1064,6 +1082,13 @@
       17
     ],
     "description": "Font Awesome is a font and icon toolkit based on CSS and Less.",
+    "dom": {
+      "link[href*='font-awesome']": {
+        "attributes": {
+          "href": "/font-awesome/([\\d\\.]+)/css/\\;version:\\1"
+        }
+      }
+    },
     "html": [
       "<link[^>]* href=[^>]+(?:([\\d.]+)/)?(?:css/)?font-awesome(?:\\.min)?\\.css\\;version:\\1",
       "<link[^>]* href=[^>]*kit\\-pro\\.fontawesome\\.com/releases/v([0-9.]+)/\\;version:\\1"
@@ -1083,6 +1108,21 @@
       "\\.fontawesome\\.com/([0-9a-z]+).js"
     ],
     "website": "https://fontawesome.com/"
+  },
+  "FontServer": {
+    "cats": [
+      17
+    ],
+    "description": "FontServer is a online font delivery network service-provider for websites.",
+    "dom": {
+      "link[href*='.font']": {
+        "attributes": {
+          "href": "\\.font(?:api|cdn)\\.ir"
+        }
+      }
+    },
+    "icon": "FontServer.svg",
+    "website": "https://fontserver.ir"
   },
   "Fontify": {
     "cats": [
@@ -1538,7 +1578,11 @@
       22
     ],
     "description": "Fresh is a full stack modern web framework for JavaScript and TypeScript developers, designed to make it trivial to create high-quality, performant, and personalized web applications.",
-    "dom": "style[id='__FRSH_STYLE']",
+    "dom": [
+      "style[id='__FRSH_TWIND']",
+      "style[id='__FRSH_STYLE']",
+      "script[id='__FRSH_STATE']"
+    ],
     "icon": "fresh.svg",
     "implies": [
       "Deno",

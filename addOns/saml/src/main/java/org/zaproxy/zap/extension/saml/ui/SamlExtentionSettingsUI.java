@@ -45,6 +45,8 @@ import org.zaproxy.zap.extension.saml.PassiveAttributeChangeListener;
 import org.zaproxy.zap.extension.saml.SAMLConfiguration;
 import org.zaproxy.zap.extension.saml.SAMLException;
 import org.zaproxy.zap.extension.saml.SamlI18n;
+import org.zaproxy.zap.utils.FontUtils;
+import org.zaproxy.zap.utils.FontUtils.Size;
 
 @SuppressWarnings("serial")
 public class SamlExtentionSettingsUI extends JFrame
@@ -74,6 +76,7 @@ public class SamlExtentionSettingsUI extends JFrame
         setContentPane(contentPane);
 
         JLabel lblHeaderlabel = new JLabel(SamlI18n.getMessage("saml.settings.header"));
+        lblHeaderlabel.setFont(FontUtils.getFont(Size.larger));
         contentPane.add(lblHeaderlabel, BorderLayout.NORTH);
 
         settingsScrollPane = new JScrollPane();

@@ -5,7 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Added
-- Content for SARIF reports
+- "XML Plus" report format for XML with requests and responses
+- SARIF reporting
 
 ### Changed
 - Maintenance changes.

@@ -58,6 +58,20 @@
     "saas": true,
     "website": "https://commercesuite.aboutyou.com"
   },
+  "ABP Framework": {
+    "cats": [
+      18
+    ],
+    "description": "ABP Framework is a complete infrastructure to create modern web applications by following the best practices and conventions of software development.",
+    "icon": "abp.svg",
+    "implies": "Microsoft ASP.NET",
+    "js": {
+      "abp.timing.timeZone": "",
+      "abp.version": "(.*)\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://abp.io/"
+  },
   "AD EBiS": {
     "cats": [
       36,
@@ -216,8 +230,8 @@
     "icon": "aspnetboilerplate.png",
     "implies": "Microsoft ASP.NET",
     "js": {
-      "abp.localization": "",
-      "abp.toAbsAppPath": ""
+      "abp.aspnetboilerplate.version": "(.*)\\;version:\\1",
+      "abp.timing.utcClockProvider": ""
     },
     "oss": true,
     "website": "https://www.aspnetboilerplate.com"
@@ -1210,6 +1224,23 @@
     "saas": true,
     "scriptSrc": "\\.adform\\.net/",
     "website": "https://site.adform.com"
+  },
+  "Adjust": {
+    "cats": [
+      10
+    ],
+    "description": "Adjust is the mobile marketing analytics platform.",
+    "dom": "div[data-adjust*='app.adjust.com/'], a[href*='app.adjust.com/'], a[href*='.adj.st/'], form[action*='app.adjust.com/']",
+    "icon": "Adjust.svg",
+    "js": {
+      "Adjust.initSdk": ""
+    },
+    "pricing": [
+      "payg",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.adjust.com"
   },
   "Adloox": {
     "cats": [
@@ -2500,8 +2531,8 @@
     ],
     "description": "Amazon S3 or Amazon Simple Storage Service is a service offered by Amazon Web Services (AWS) that provides object storage through a web service interface.",
     "headers": {
-      "Content-Security-Policy": "s3[^ ]*amazonaws\\.com\\s",
-      "Content-Security-Policy-Report-Only": "s3[^ ]*\\.amazonaws\\.com\\s",
+      "Content-Security-Policy": "s3[^ ]*amazonaws\\.com",
+      "Content-Security-Policy-Report-Only": "s3[^ ]*\\.amazonaws\\.com",
       "server": "^AmazonS3$"
     },
     "icon": "aws-s3.svg",
@@ -2668,7 +2699,7 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "cdn\\.amplitude\\.com",
+    "scriptSrc": "cdn\\.(?:segment.+)?amplitude(?:\\.com|-plugins)",
     "website": "https://amplitude.com",
     "xhr": "\\.amplitude\\.com"
   },
@@ -2927,6 +2958,23 @@
     "saas": true,
     "website": "https://g6.antv.vision"
   },
+  "Antee IPO": {
+    "cats": [
+      1
+    ],
+    "description": "Antee is a Czech company that will make a custom-made website for you, then you manage it in CMS IPO.",
+    "icon": "Antee.png",
+    "js": {
+      "ipo.api.hideSpinner": ""
+    },
+    "meta": {
+      "author": "Antee\\ss\\.r\\.o\\."
+    },
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://ipo.antee.cz"
+  },
   "Antsomi CDP 365": {
     "cats": [
       97
@@ -3182,9 +3230,15 @@
       62
     ],
     "description": "Appian is an enterprise low-code application platform.",
-    "icon": "Appian.png",
+    "icon": "Appian.svg",
+    "js": {
+      "APPIAN": "",
+      "Appian": "",
+      "_APPIAN_PROXIES_INITIALIZED": "",
+      "webpackJsonpAppian": ""
+    },
     "saas": true,
-    "scriptSrc": "/suite/tempo/ui/sail-client/embeddedBootstrap.nocache.js",
+    "scriptSrc": "tempo/ui/sail-client/embeddedBootstrap\\.nocache\\.js",
     "website": "https://www.appian.com"
   },
   "Apple Business Chat": {
@@ -3551,6 +3605,19 @@
     "text": "\\Asendia\\b",
     "website": "https://www.asendia.com"
   },
+  "Asgaros Forum": {
+    "cats": [
+      87,
+      2
+    ],
+    "description": "Asgaros Forum is a lightweight and simple forum plugin for WordPress.",
+    "dom": "link[href*='/wp-content/plugins/asgaros-forum/']",
+    "icon": "Asgaros Forum.png",
+    "oss": true,
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/asgaros-forum/",
+    "website": "https://www.asgaros.de"
+  },
   "Astra": {
     "cats": [
       80
@@ -3622,6 +3689,9 @@
       }
     },
     "icon": "Astro.svg",
+    "meta": {
+      "generator": "^Astro\\sv([\\d\\.]+)$\\;version:\\1"
+    },
     "oss": true,
     "website": "https://astro.build"
   },
@@ -3834,6 +3904,18 @@
     "dom": "img[src*='listen.audiohook.com/']",
     "icon": "Audiohook.svg",
     "website": "https://www.audiohook.com"
+  },
+  "Aura": {
+    "cats": [
+      66
+    ],
+    "description": "Aura is an open-source UI framework built by Salesforce for developing dynamic web apps for mobile and desktop devices.",
+    "icon": "default.svg",
+    "js": {
+      "Aura.app": "siteforce\\:communityApp"
+    },
+    "oss": true,
+    "website": "https://github.com/forcedotcom/aura"
   },
   "Aurelia": {
     "cats": [

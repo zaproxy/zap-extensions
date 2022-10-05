@@ -75,7 +75,13 @@ public class PassiveScanConfigJob extends AutomationJob {
                 JobUtils.getJobOptions(this, tempProgress),
                 this.originalParameters,
                 this.getName(),
-                IGNORE_PARAMS,
+                new String[] {
+                    "scanFuzzerMessages",
+                    "autoTagScanners",
+                    "passiveScanThreads",
+                    "confirmRemoveAutoTagScanner",
+                    "config"
+                },
                 tempProgress,
                 this.getPlan().getEnv());
     }

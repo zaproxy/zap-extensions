@@ -28,7 +28,6 @@ import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -114,11 +113,7 @@ public class WebSocketMessagesViewFilterDialog extends AbstractDialog {
 
             int y = 0;
 
-            JLabel description = new JLabel(MSG);
-            description.setPreferredSize(
-                    DisplayUtils.getScaledDimension(wsUiHelper.getDialogWidth() - 20, 60));
-            description.setMaximumSize(
-                    DisplayUtils.getScaledDimension(wsUiHelper.getDialogWidth() - 20, 100));
+            JComponent description = wsUiHelper.getDescriptionComponent(MSG);
             dialogPanel.add(description, wsUiHelper.getDescriptionConstraints(0, y++));
 
             // add opcode selection

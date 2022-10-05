@@ -22,13 +22,13 @@ package org.zaproxy.zap.extension.invoke;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SortOrder;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.utils.ZapLabel;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTablePanel;
 
 @SuppressWarnings("serial")
@@ -54,8 +54,10 @@ public class OptionsInvokePanel extends AbstractParamPanel {
         gbc.anchor = GridBagConstraints.LINE_START;
         gbc.fill = GridBagConstraints.BOTH;
 
-        this.add(new JLabel(Constant.messages.getString("invoke.options.desc1")), gbc);
-        this.add(new JLabel(Constant.messages.getString("invoke.options.desc2")), gbc);
+        ZapLabel label = new ZapLabel(Constant.messages.getString("invoke.options.desc"));
+        label.setLineWrap(true);
+        label.setWrapStyleWord(true);
+        this.add(label, gbc);
 
         appsOptionsPanel = new InvokableAppMultipleOptionsPanel(getTableModel());
 

@@ -30,6 +30,7 @@ import static org.mockito.Mockito.verify;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -54,13 +55,14 @@ class AutomationEnvironmentUnitTest {
     @BeforeAll
     static void init() throws Exception {
         mockedCmdLine = Mockito.mockStatic(CommandLine.class);
-        ExtentionAutomationUnitTest.updateEnv("myEnvVar", "envVarValue");
+        AutomationEnvironment.envSupplier =
+                () -> Collections.singletonMap("myEnvVar", "envVarValue");
     }
 
     @AfterAll
     static void close() throws Exception {
+        AutomationEnvironment.envSupplier = AutomationEnvironment.DEFAULT_ENV;
         mockedCmdLine.close();
-        ExtentionAutomationUnitTest.updateEnv("myEnvVar", "");
     }
 
     @BeforeEach

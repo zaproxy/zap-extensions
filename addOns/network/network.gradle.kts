@@ -46,10 +46,12 @@ crowdin {
 
 spotless {
     java {
-        target(fileTree(projectDir) {
-            include("src/**/*.java")
-            exclude("src/main/java/org/apache/hc/client5/**/Zap*.java")
-        })
+        target(
+            fileTree(projectDir) {
+                include("src/**/*.java")
+                exclude("src/main/java/org/apache/hc/client5/**/Zap*.java")
+            }
+        )
     }
 }
 

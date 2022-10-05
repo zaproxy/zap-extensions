@@ -465,6 +465,7 @@
     "icon": "Saleor.svg",
     "implies": "GraphQL",
     "js": {
+      "__NEXT_DATA__.runtimeConfig.SALEOR": "",
       "___NEXT_DATA__.runtimeConfig.SALEOR": ""
     },
     "oss": true,
@@ -599,6 +600,21 @@
     "scriptSrc": "/demandware\\.static/",
     "website": "http://demandware.com"
   },
+  "Salesforce Desk": {
+    "cats": [
+      53
+    ],
+    "description": "Salesforce Desk(Desk.com) is software as a service (SaaS) tool on the help desk.",
+    "dom": "link[href*='/s/sfsites/']",
+    "icon": "Salesforce.svg",
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "^/s/sfsites/auraFW/",
+    "website": "https://www.salesforce.com/solutions/small-business-solutions/help-desk-software/"
+  },
   "Salesforce Interaction Studio": {
     "cats": [
       76,
@@ -634,6 +650,22 @@
     "saas": true,
     "scriptSrc": "service\\.force\\.com",
     "website": "https://www.salesforce.com/au/products/service-cloud/"
+  },
+  "Salesloft": {
+    "cats": [
+      32
+    ],
+    "description": "Salesloft is a cloud-based sales engagement platform.",
+    "icon": "Salesloft.svg",
+    "js": {
+      "SLScoutObject": "",
+      "slscout": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://salesloft.com"
   },
   "Salla": {
     "cats": [
@@ -933,6 +965,27 @@
     },
     "scriptSrc": "cdn.cxc.scorpion.direct",
     "website": "https://www.scorpion.co/"
+  },
+  "Scrivito": {
+    "cats": [
+      1
+    ],
+    "description": "Scrivito is a decoupled/headless enterprise web CMS.",
+    "icon": "Scrivito.svg",
+    "js": {
+      "Scrivito": "",
+      "scrivito": ""
+    },
+    "meta": {
+      "generator": "^Scrivito\\sby\\sInfopark\\sAG\\s\\(scrivito\\.com\\)$"
+    },
+    "pricing": [
+      "freemium",
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.scrivito.com"
   },
   "ScrollMagic": {
     "cats": [
@@ -1401,6 +1454,23 @@
     "icon": "Sencha Touch.png",
     "scriptSrc": "sencha-touch.*\\.js",
     "website": "http://www.sencha.com/products/touch"
+  },
+  "SendPulse": {
+    "cats": [
+      32,
+      75
+    ],
+    "description": "SendPulse is an email marketing platform with additional channels: SMS, web push notifications, Facebook and WhatsApp chatbots.",
+    "dom": "link[href*='.sendpulse.com']",
+    "icon": "SendPulse.svg",
+    "pricing": [
+      "freemium",
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.sendpulse\\.com/",
+    "website": "https://sendpulse.com"
   },
   "Sendgrid": {
     "cats": [
@@ -3096,6 +3166,22 @@
     },
     "website": "http://sivuviidakko.fi"
   },
+  "Sizebay": {
+    "cats": [
+      76
+    ],
+    "description": "Sizebay is a virtual fitting room that helps ecommerce and even brick-and-mortar stores provide their shoppers with a personalised shopping.",
+    "icon": "Sizebay.svg",
+    "js": {
+      "Sizebay": "",
+      "SizebayParams": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://sizebay.com"
+  },
   "Sizmek": {
     "cats": [
       36
@@ -3128,6 +3214,25 @@
     },
     "scriptSrc": "plugin\\.skedify\\.io",
     "website": "https://calendly.com/"
+  },
+  "Skilldo": {
+    "cats": [
+      1
+    ],
+    "description": "Skilldo is a content management system written in PHP and paired with a MySQL or MariaDB database. ",
+    "headers": {
+      "cms-name": "^Skilldo$",
+      "cms-version": "([\\d\\.]+)\\;version:\\1\\;confidence:0"
+    },
+    "icon": "Skilldo.png",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://developers.sikido.vn/docs/cms/"
   },
   "Skimlinks": {
     "cats": [
@@ -3204,6 +3309,25 @@
     "saas": true,
     "scriptSrc": "sv-wc-payment-gateway-payment-form\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1",
     "website": "https://www.skyverge.com"
+  },
+  "Sleeknote": {
+    "cats": [
+      32
+    ],
+    "description": "Sleeknote is a cloud-based software that helps online businesses reach conversion goals through website popups.",
+    "icon": "Sleeknote.svg",
+    "js": {
+      "SleekNote.SleekNotes": "",
+      "sleeknoteMarketingConsent": "",
+      "sleeknoteScriptTag": "",
+      "sleeknoteSiteData": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://sleeknote.com"
   },
   "Slice": {
     "cats": [
@@ -4847,12 +4971,41 @@
     "cats": [
       31
     ],
+    "description": "Statically is a free, fast and modern CDN for open-source projects, WordPress, images, and any static assets.",
+    "dom": "link[href*='cdn.statically.io/'], a[href*='cdn.statically.io/']",
     "headers": {
       "Server": "^statically$"
     },
-    "html": "<link [^>]*?href=\"?[a-z]*?:?//cdn\\.statically\\.io/",
     "icon": "Statically.svg",
+    "oss": true,
+    "scriptSrc": "cdn\\.statically\\.io/",
     "website": "https://statically.io"
+  },
+  "Status.io": {
+    "cats": [
+      13
+    ],
+    "description": "Status.io is a hosted system status page manager with features such as customised incident tracking, subscriber notifications, and more.",
+    "icon": "Status.io.png",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "static\\.status\\.io/",
+    "website": "https://status.io"
+  },
+  "Staytus": {
+    "cats": [
+      13
+    ],
+    "description": "Staytus is a free, open-source status site that you can install on your own servers.",
+    "icon": "Staytus.svg",
+    "meta": {
+      "generator": "^Staytus/([\\d\\.]+)$\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://staytus.co"
   },
   "SteelHouse": {
     "cats": [
@@ -4954,6 +5107,20 @@
     "implies": "Vue.js",
     "oss": true,
     "website": "https://vuestorefront.io/storefront-ui"
+  },
+  "Storeplum": {
+    "cats": [
+      6
+    ],
+    "description": "Storeplum is a no-code ecommerce platform.",
+    "dom": "a[href*='//storeplum.in/'][target='_blank']",
+    "icon": "Storeplum.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.storeplum.com"
   },
   "StorifyMe": {
     "cats": [

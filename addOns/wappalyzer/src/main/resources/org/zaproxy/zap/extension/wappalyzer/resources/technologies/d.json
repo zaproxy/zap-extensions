@@ -102,7 +102,7 @@
     "implies": "Microsoft ASP.NET",
     "js": {
       "DotNetNuke": "",
-      "dnn.apiversion": "^(.+)$\\;version:\\1"
+      "dnn.apiversion": "^([\\d\\.]+)$\\;version:\\1"
     },
     "meta": {
       "generator": "DotNetNuke"
@@ -555,6 +555,40 @@
     ],
     "saas": true,
     "website": "https://deno.land/"
+  },
+  "DeskPro": {
+    "cats": [
+      1,
+      53
+    ],
+    "cpe": "cpe:2.3:a:deskpro:deskpro:*:*:*:*:*:*:*:*",
+    "description": "DeskPro is multi channel helpdesk software for managing customer and citizen requests via email, forms, chat, social and voice.",
+    "icon": "DeskPro.svg",
+    "meta": {
+      "generator": "^DeskPRO.+$"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.deskpro.com"
+  },
+  "DeskPro Chat": {
+    "cats": [
+      52
+    ],
+    "description": "DeskPro is multi channel helpdesk software for managing customer and citizen requests via email, forms, chat, social and voice.",
+    "icon": "DeskPro.svg",
+    "js": {
+      "DESKPRO_WIDGET_OPTIONS.chat": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.deskpro.com/product/chat"
   },
   "Deta": {
     "cats": [
@@ -1253,6 +1287,7 @@
     },
     "icon": "Dragon.png",
     "implies": "Apache",
+    "url": "^.*(?:\\.dgn)$",
     "website": "https://dragon-lang.org"
   },
   "Drapr": {

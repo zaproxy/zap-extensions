@@ -35,9 +35,11 @@ crowdin {
 spotless {
     format("help-html", {
         eclipseWtp(EclipseWtpFormatterStep.HTML)
-        target(fileTree(projectDir) {
-            include("src/**/help/**/*.html")
-        })
+        target(
+            fileTree(projectDir) {
+                include("src/**/help/**/*.html")
+            }
+        )
     })
 }
 

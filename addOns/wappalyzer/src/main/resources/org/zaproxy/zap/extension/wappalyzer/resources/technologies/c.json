@@ -26,6 +26,19 @@
     "icon": "CDN77.png",
     "website": "https://www.cdn77.com"
   },
+  "CEMax": {
+    "cats": [
+      52
+    ],
+    "description": "CEMax is a premium customer engagement platform.",
+    "dom": "div[data-chat-url*='.cemaxai.com/']",
+    "icon": "CEMax.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://cemax.ai"
+  },
   "CFML": {
     "cats": [
       27
@@ -370,6 +383,27 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/themes/fairy(?:-premium)?/.+custom\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.candidthemes.com/themes/fairy"
+  },
+  "Canny": {
+    "cats": [
+      13
+    ],
+    "description": "Canny is a cloud-based solution that helps small to large businesses collect, analyse, prioritise and track user feedback to make informed product decisions.",
+    "dom": "a[href*='.canny.io/']",
+    "headers": {
+      "Content-Security-Policy": "//canny\\.io"
+    },
+    "icon": "Canny.svg",
+    "js": {
+      "Canny": ""
+    },
+    "pricing": [
+      "freemium",
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://canny.io"
   },
   "Canto": {
     "cats": [
@@ -958,6 +992,22 @@
     "scriptSrc": "chartbeat\\.js",
     "website": "http://chartbeat.com"
   },
+  "ChatStack": {
+    "cats": [
+      52
+    ],
+    "description": "ChatStack is a self-hosted live chat software for websites.",
+    "icon": "ChatStack.svg",
+    "js": {
+      "Chatstack.chatState": "",
+      "Chatstack.server": ""
+    },
+    "pricing": [
+      "onetime"
+    ],
+    "saas": true,
+    "website": "https://www.chatstack.com"
+  },
   "Chatango": {
     "cats": [
       5
@@ -1298,6 +1348,24 @@
       "generator": "^ckan ?([0-9.]+)$\\;version:\\1"
     },
     "website": "http://ckan.org/"
+  },
+  "Claris FileMaker": {
+    "cats": [
+      34
+    ],
+    "description": "Claris FileMaker is a cross-platform relational database application from Claris International.",
+    "icon": "Claris.svg",
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "requires": [
+      "Vaadin",
+      "Application Request Routing",
+      "Java"
+    ],
+    "url": "\\.[\\w]+/fmi/webd/",
+    "website": "https://www.claris.com/filemaker"
   },
   "Clarity": {
     "cats": [
@@ -1689,6 +1757,18 @@
     },
     "icon": "CloudFlare.svg",
     "website": "https://developers.cloudflare.com/logs/reference/log-fields/zone/nel_reports"
+  },
+  "Cloudflare Rocket Loader": {
+    "cats": [
+      92
+    ],
+    "description": "Cloudflare Rocket Loader is responsible for prioritising over website's content by delaying the loading of Javascript until rendering.",
+    "icon": "CloudFlare.svg",
+    "js": {
+      "__cfQR.done": "",
+      "__cfRLUnblockHandlers": ""
+    },
+    "website": "https://support.cloudflare.com/hc/en-us/articles/200168056-Understanding-Rocket-Loader"
   },
   "Cloudimage": {
     "cats": [

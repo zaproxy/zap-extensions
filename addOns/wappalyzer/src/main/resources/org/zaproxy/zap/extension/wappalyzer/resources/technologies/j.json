@@ -254,9 +254,10 @@
       "<!-- Created with Jekyll Now -",
       "<!-- Begin Jekyll SEO tag"
     ],
-    "icon": "Jekyll.png",
+    "icon": "Jekyll.svg",
+    "implies": "Ruby",
     "meta": {
-      "generator": "Jekyll (v[\\d.]+)?\\;version:\\1"
+      "generator": "Jekyll\\sv([\\d.]+)?\\;version:\\1"
     },
     "website": "http://jekyllrb.com"
   },
@@ -520,6 +521,7 @@
   },
   "JouwWeb": {
     "cats": [
+      1,
       51
     ],
     "description": "JouwWeb is an online website builder that allows internet users to create own website.",
@@ -572,22 +574,21 @@
   },
   "Judge.me": {
     "cats": [
-      90,
-      100
+      90
     ],
-    "description": "Judge.me powers product reviews on ecommerce stores.",
+    "description": "Judge.me is a reviews app that helps you collect and display product reviews and site reviews with photos, videos and Q&A.",
     "icon": "Judge.svg",
-    "implies": "Shopify",
     "js": {
       "judgeme": ""
     },
     "pricing": [
+      "freemium",
       "low",
       "recurring"
     ],
     "saas": true,
     "scriptSrc": "cdn\\.judge\\.me",
-    "website": "https://judge.me/"
+    "website": "https://judge.me"
   },
   "JuicyAds": {
     "cats": [
@@ -730,6 +731,22 @@
       "MAIN.version": ".*\\;version:\\1"
     },
     "website": "https://componentator.com"
+  },
+  "jPlayer": {
+    "cats": [
+      14,
+      59
+    ],
+    "description": "jPlayer is a cross-browser JavaScript library developed as a jQuery plugin which facilitates the embedding of web based media, notably HTML5 audio and video in addition to Adobe Flash based media.",
+    "icon": "jPlayer.png",
+    "implies": "jQuery",
+    "js": {
+      "jPlayerPlaylist": ""
+    },
+    "oss": true,
+    "scriptSrc": "/jquery\\.jplayer\\.min\\.js",
+    "scripts": "jquery\\.jplayer\\.min\\.js",
+    "website": "https://jplayer.org"
   },
   "jQTouch": {
     "cats": [

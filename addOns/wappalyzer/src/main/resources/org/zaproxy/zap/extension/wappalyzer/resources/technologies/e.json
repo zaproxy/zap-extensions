@@ -1712,6 +1712,18 @@
     "saas": true,
     "website": "https://www.ekomi.de"
   },
+  "eNamad": {
+    "cats": [
+      19
+    ],
+    "description": "eNamad is an electronic trust symbol.",
+    "dom": "a[href*='.enamad.ir/'][target='_blank'], div.e-namad-widget-wrapper, img[src*='.enamad.ir/']",
+    "icon": "eNamad.png",
+    "meta": {
+      "enamad": "^\\d+$"
+    },
+    "website": "https://enamad.ir/"
+  },
   "ePages": {
     "cats": [
       6
@@ -1735,7 +1747,7 @@
     "cats": [
       68
     ],
-    "description": "eSSENTIAL Accessibility provides an accessibility overlay for websites.",
+    "description": "eSSENTIAL Accessibility is a digital accessibility-as-a-service platform.",
     "dom": " a[href*='.essentialaccessibility.com'] > img",
     "icon": "eSSENTIAL Accessibility.png",
     "pricing": [
@@ -1757,6 +1769,24 @@
     "saas": true,
     "scriptSrc": "eshopcrm\\.com/",
     "website": "https://eshopcrm.com"
+  },
+  "eSputnik": {
+    "cats": [
+      32,
+      97
+    ],
+    "description": "eSputnik is a marketing automation service for ecommerce.",
+    "icon": "eSputnik.svg",
+    "js": {
+      "esSdk": "^es$"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "(?://|\\.)esputnik\\.com/",
+    "website": "https://esputnik.com"
   },
   "eSyndiCat": {
     "cats": [
@@ -1815,6 +1845,25 @@
       "generator": "eZ Publish"
     },
     "website": "https://github.com/ezsystems/ezpublish-legacy"
+  },
+  "ebisumart": {
+    "cats": [
+      6
+    ],
+    "description": "ebisumart is a cloud-based storefront system for developing and renewing high-quality ecommerce websites.",
+    "icon": "ebisumart.svg",
+    "js": {
+      "Ebisu.FontChanger": "",
+      "Ebisu.FontChanger.map.L": "",
+      "ebisu_conv": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://www.ebisumart.com"
   },
   "ef.js": {
     "cats": [
