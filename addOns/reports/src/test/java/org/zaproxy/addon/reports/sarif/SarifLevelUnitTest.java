@@ -26,7 +26,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.parosproxy.paros.core.scanner.Alert;
 
-class SarifLevelTest {
+class SarifLevelUnitTest {
 
     @ParameterizedTest(name = "Risk level {0} is mapped to {1}")
     @CsvSource({

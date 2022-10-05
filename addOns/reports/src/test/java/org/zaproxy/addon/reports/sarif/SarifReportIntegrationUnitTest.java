@@ -77,7 +77,7 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
  * also it gave the the chance to develop the SARIF report parts without always starting ZAP UI. So
  * test data is much more detailed as normally expected to simulate a real world scenario.
  */
-class SarifReportIntegrationTest {
+class SarifReportIntegrationUnitTest {
 
     private static final String FINDING_1_URI =
             "https://127.0.0.1:8080/greeting?name=%3C%2Fp%3E%3Cscript%3Ealert%281%29%3B%3C%2Fscript%3E%3Cp%3E";

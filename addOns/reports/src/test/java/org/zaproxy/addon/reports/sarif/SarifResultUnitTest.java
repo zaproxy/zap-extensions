@@ -42,7 +42,7 @@ import org.zaproxy.addon.reports.sarif.SarifResult.SarifArtifactLocation;
 import org.zaproxy.addon.reports.sarif.SarifResult.SarifBody;
 import org.zaproxy.addon.reports.sarif.SarifResult.SarifResultLocation;
 
-class SarifResultTest {
+class SarifResultUnitTest {
 
     private static final String PSEUDO_BASE64_ENCODED_CONTENT = "somethingBase64Encoded";
     private static final String A_SIMPLE_BODY = "the-body";

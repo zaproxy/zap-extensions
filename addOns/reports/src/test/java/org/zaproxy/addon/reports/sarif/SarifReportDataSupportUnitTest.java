@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.reports.ReportData;
 import org.zaproxy.zap.extension.alert.AlertNode;
 
-class SarifReportDataSupportTest {
+class SarifReportDataSupportUnitTest {
 
     private ReportData reportData;
 

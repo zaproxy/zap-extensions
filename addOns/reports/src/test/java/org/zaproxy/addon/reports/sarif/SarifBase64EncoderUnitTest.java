@@ -25,7 +25,7 @@ import java.util.Base64;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class SarifBase64EncoderTest {
+class SarifBase64EncoderUnitTest {
 
     private SarifBase64Encoder toTest;
 

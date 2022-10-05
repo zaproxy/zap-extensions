@@ -31,7 +31,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.parosproxy.paros.network.HttpHeader;
 
-class SarifBinaryContentDetectorTest {
+class SarifBinaryContentDetectorUnitTest {
 
     private SarifBinaryContentDetector toTest;
     private HttpHeader header;

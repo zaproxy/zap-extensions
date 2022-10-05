@@ -27,7 +27,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.reports.sarif.SarifResult.SarifBody;
 
-class SarifBodyStartLineFinderTest {
+class SarifBodyStartLineFinderUnitTest {
 
     private SarifBodyStartLineFinder toTest;
     private SarifBody body;

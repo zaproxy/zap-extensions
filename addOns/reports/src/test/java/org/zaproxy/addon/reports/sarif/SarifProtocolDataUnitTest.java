@@ -29,7 +29,7 @@ import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-class SarifProtocolDataTest {
+class SarifProtocolDataUnitTest {
 
     @ParameterizedTest(
             name =
