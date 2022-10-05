@@ -42,7 +42,6 @@ class SarifBinaryContentDetectorUnitTest {
         header = mock(HttpHeader.class);
     }
 
-    // @formatter:off
     @CsvSource({
         "text/html,false",
         "text/plain,false",
@@ -74,7 +73,6 @@ class SarifBinaryContentDetectorUnitTest {
         "application/javascript,false",
         "application/ecmascript,false",
     })
-    // @formatter:on
     @ParameterizedTest(name = "content type:{0} is binary:{1}")
     void normalizedHeaderContenTypeNotNulltHandledAsExpected(
             String normalizedContentValue, String expectedAsBinary) {

@@ -36,7 +36,6 @@ class SarifBigContentShrinkerUnitTest {
         shrinkerToTest = new SarifBigContentShrinker();
     }
 
-    // @formatter:off
     @CsvSource({
         "l2345,2,l2",
         "l2345,5,l2345",
@@ -51,7 +50,6 @@ class SarifBigContentShrinkerUnitTest {
         "'',-1,''",
         "'',10,''"
     })
-    // @formatter:on
     @ParameterizedTest(name = "\"{0}\", maximum: {1} results in \"{2}\"")
     void shrinkTextWithoutMarkers(String evidence, int maximum, String expectedResult) {
         /* execute */
@@ -71,7 +69,6 @@ class SarifBigContentShrinkerUnitTest {
         assertNull(result);
     }
 
-    // @formatter:off
     @CsvSource({
         "4,5,4",
         "10,11,10",
@@ -84,7 +81,6 @@ class SarifBigContentShrinkerUnitTest {
         "4,-1,0",
         "5,-2,0"
     })
-    // @formatter:on
     @ParameterizedTest(
             name = "an array having {0} bytes, maximum: {1} results in array with {2} bytes")
     void byteArrayShrinkingAsExpected(int givenArraySize, int maximum, int expectedArraySize) {
@@ -114,7 +110,6 @@ class SarifBigContentShrinkerUnitTest {
         assertNull(result);
     }
 
-    // @formatter:off
     @CsvSource({
         "12345678901234567890,,30,12345678901234567890",
         "12345678901234567890,12345678901234567890,30,12345678901234567890",

@@ -59,7 +59,6 @@ class SarifResultUnitTest {
     @DisplayName("A high risk alert will be converted to corresponding sarif result")
     @Test
     void aHighRiskAlertWillBeConvertedToCorrespondingSarifResult() {
-        // @formatter:off
 
         /* prepare */
         Alert alert =
@@ -91,7 +90,6 @@ class SarifResultUnitTest {
         assertEquals("description1", result.getMessage().getText());
         assertEquals("12345", result.getRuleId());
         assertEquals("https://example.com/highrisk", artifactLocation.getUri());
-        // @formatter:on
     }
 
     @DisplayName(
@@ -99,13 +97,13 @@ class SarifResultUnitTest {
     @Test
     void webResponseBinary() {
         /* prepare */
-        // @formatter:off
+
         Alert alert =
                 newAlertBuilder()
                         .setResponseBody(A_SIMPLE_BODY)
                         .setResponseHeader("HTTP/1.1 200")
                         .build();
-        // @formatter:on
+
         when(binaryContentDetector.isBinaryContent(eq(alert.getMessage().getResponseHeader())))
                 .thenReturn(true);
         when(encoder.encodeBytesToBase64(any())).thenReturn(PSEUDO_BASE64_ENCODED_CONTENT);
@@ -129,13 +127,13 @@ class SarifResultUnitTest {
     @Test
     void webResponseNotBinary() {
         /* prepare */
-        // @formatter:off
+
         Alert alert =
                 newAlertBuilder()
                         .setResponseBody(A_SIMPLE_BODY)
                         .setResponseHeader("HTTP/1.1 200")
                         .build();
-        // @formatter:on
+
         when(binaryContentDetector.isBinaryContent(eq(alert.getMessage().getResponseHeader())))
                 .thenReturn(false);
         when(encoder.encodeBytesToBase64(any())).thenReturn(PSEUDO_BASE64_ENCODED_CONTENT);
@@ -159,13 +157,12 @@ class SarifResultUnitTest {
     @Test
     void webRequestBinary() {
         /* prepare */
-        // @formatter:off
+
         Alert alert =
                 newAlertBuilder()
                         .setRequestBody(A_SIMPLE_BODY)
                         .setRequestHeader("GET https://127.0.0.1:8080 HTTP/1.1")
                         .build();
-        // @formatter:on
 
         when(binaryContentDetector.isBinaryContent(eq(alert.getMessage().getRequestHeader())))
                 .thenReturn(true);
@@ -190,13 +187,13 @@ class SarifResultUnitTest {
     @Test
     void webRequestNotBinary() {
         /* prepare */
-        // @formatter:off
+
         Alert alert =
                 newAlertBuilder()
                         .setRequestBody(A_SIMPLE_BODY)
                         .setRequestHeader("GET https://127.0.0.1:8080 HTTP/1.1")
                         .build();
-        // @formatter:on
+
         when(binaryContentDetector.isBinaryContent(eq(alert.getMessage().getRequestHeader())))
                 .thenReturn(false);
         when(encoder.encodeBytesToBase64(any())).thenReturn(PSEUDO_BASE64_ENCODED_CONTENT);
@@ -218,14 +215,14 @@ class SarifResultUnitTest {
     @Test
     void headerContainingBasicAuthAuthorizationInfoWillBeHiddenInReport() {
         /* prepare */
-        // @formatter:off
+
         Alert alert =
                 newAlertBuilder()
                         .setRequestBody(A_SIMPLE_BODY)
                         .setRequestHeader(
                                 "GET https://127.0.0.1:8080 HTTP/1.1\nAccept-Language: en-us,en;q=0.5\nAuthorization: Basic dXNlcjpwYXNzd29yZA==")
                         .build();
-        // @formatter:on
+
         when(binaryContentDetector.isBinaryContent(eq(alert.getMessage().getRequestHeader())))
                 .thenReturn(false);
         when(encoder.encodeBytesToBase64(any())).thenReturn(PSEUDO_BASE64_ENCODED_CONTENT);
@@ -246,7 +243,6 @@ class SarifResultUnitTest {
                 headers.get("Authorization"));
     }
 
-    // @formatter:off
     @ParameterizedTest(name = "A list containing rules {0} is sorted to {1}")
     @CsvSource({
         "1:ERROR-2:ERROR-3:ERROR,1-2-3",
@@ -255,7 +251,6 @@ class SarifResultUnitTest {
         "40023:NOTE-40012:ERROR-50012:ERROR-1000:ERROR-3:ERROR,3-1000-40012-50012-40023",
         "40023:NOTE-40012:ERROR-50012:ERROR-1000:WARNING-3:NOTE,40012-50012-1000-3-40023",
     })
-    // @formatter:on
     void sortingDoneByLevelAndPluginId(
             String creationOrderString, String expectedSortedOrderString) {
         /* prepare */

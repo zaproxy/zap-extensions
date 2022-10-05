@@ -23,7 +23,6 @@ public class SarifToolData {
 
     public static final SarifToolData INSTANCE = new SarifToolData();
 
-    // @formatter:off
     private static final SarifToolDataProvider OWASP_ZAP =
             builder()
                     .setName("OWASP ZAP")
@@ -46,7 +45,6 @@ public class SarifToolData {
                     .setShortDescription("The MITRE Common Weakness Enumeration")
                     .setOrganization("MITRE")
                     .build();
-    // @formatter:on
 
     private SarifToolData() {
         // we only want the shared instance
