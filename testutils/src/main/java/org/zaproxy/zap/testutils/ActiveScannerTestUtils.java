@@ -20,11 +20,13 @@
 package org.zaproxy.zap.testutils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -196,6 +198,7 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
     Collection<DynamicTest> commonScanRuleTests() {
         List<DynamicTest> commonTests = new ArrayList<>();
         commonTests.add(testScanRuleHasName());
+        commonTests.add(testExampleAlerts());
         addTestsSendReasonableNumberOfMessages(commonTests);
         return commonTests;
     }
@@ -223,6 +226,25 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
                 extensionResourceBundle.keySet().stream()
                         .map(extensionResourceBundle::getString)
                         .anyMatch(str -> str.equals(name)));
+    }
+
+    private DynamicTest testExampleAlerts() {
+        return dynamicTest(
+                "shouldHaveExampleAlerts",
+                () -> {
+                    setUp();
+                    shouldHaveExampleAlerts();
+                });
+    }
+
+    private void shouldHaveExampleAlerts() {
+        // Given / When
+        List<Alert> alerts = assertDoesNotThrow(rule::getExampleAlerts);
+        // Then
+        if (alerts == null) {
+            return;
+        }
+        assertThat(alerts, is(not(empty())));
     }
 
     private void addTestsSendReasonableNumberOfMessages(List<DynamicTest> tests) {
