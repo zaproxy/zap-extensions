@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Manage the send/resend Manual Request Editor dialogues.
   - Add a Tools menu item to open the send Manual Request Editor.
   - Add a context menu item to open the resend Manual Request Editor.
+  - Allow to establish WebSocket connections with the send/resend Manual Request Editor dialogues.
 
 ### Changed
 - Improve reporting of TLS errors (Issue 2699).
