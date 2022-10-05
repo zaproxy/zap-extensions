@@ -5,18 +5,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Fixed
+- NPE in example alert generation.
 
 ## [0.15.0] - 2022-09-22
 ### Changed
 - Updated with upstream retire.js pattern changes.
 
-
-
 ## [0.14.0] - 2022-08-15
 ### Changed
 - Updated with upstream retire.js pattern changes.
-
-
 
 ## [0.13.0] - 2022-08-02
 ### Changed
