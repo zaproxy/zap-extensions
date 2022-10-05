@@ -40,6 +40,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
@@ -87,6 +88,14 @@ class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
     @Override
     protected void setUpMessages() {
         mockMessages(new ExtensionDomXSS());
+    }
+
+    @Override
+    protected int getRecommendMaxNumberMessagesPerParam(AttackStrength strength) {
+        if (strength == AttackStrength.LOW) {
+            return NUMBER_MSGS_ATTACK_STRENGTH_LOW + 1;
+        }
+        return super.getRecommendMaxNumberMessagesPerParam(strength);
     }
 
     @Test
