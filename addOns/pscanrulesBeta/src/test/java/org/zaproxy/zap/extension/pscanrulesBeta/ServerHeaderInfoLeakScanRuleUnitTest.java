@@ -24,10 +24,12 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -136,5 +138,23 @@ class ServerHeaderInfoLeakScanRuleUnitTest
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_INFO_02_FINGERPRINT_WEB_SERVER.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_INFO_02_FINGERPRINT_WEB_SERVER.getValue())));
+    }
+
+    @Test
+    void shouldReturnExampleAlerts() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        long countLows =
+                rule.getExampleAlerts().stream()
+                        .filter(alert -> Alert.RISK_LOW == alert.getRisk())
+                        .count();
+        long countInfos =
+                rule.getExampleAlerts().stream()
+                        .filter(alert -> Alert.RISK_INFO == alert.getRisk())
+                        .count();
+        // Then
+        assertThat(alerts.size(), is(equalTo(2)));
+        assertThat(countLows, is(equalTo(1L)));
+        assertThat(countInfos, is(equalTo(1L)));
     }
 }

@@ -108,7 +108,7 @@ public class CacheableScanRule extends PluginPassiveScanner {
                         "{} is not storable due to the use of the non-cacheable request method '{}'",
                         msg.getRequestHeader().getURI(),
                         method);
-                alertNonStorable(msg, id, method + " ");
+                alertNonStorable(method + " ").raise();
                 return;
             }
 
@@ -127,7 +127,7 @@ public class CacheableScanRule extends PluginPassiveScanner {
                         "{} is not storable due to the use of a HTTP response class [{}] that we do not 'understand' (we 'understand' 1XX, 2XX, 3XX, 4XX, and 5XX response classes)",
                         msg.getRequestHeader().getURI(),
                         responseClass);
-                alertNonStorable(msg, id, String.valueOf(msg.getResponseHeader().getStatusCode()));
+                alertNonStorable(String.valueOf(msg.getResponseHeader().getStatusCode())).raise();
                 return;
             }
 
@@ -152,7 +152,7 @@ public class CacheableScanRule extends PluginPassiveScanner {
                         logger.debug(
                                 "{} is not storable due to the use of HTTP caching directive 'no-store' in the request or response",
                                 msg.getRequestHeader().getURI());
-                        alertNonStorable(msg, id, directiveToken);
+                        alertNonStorable(directiveToken).raise();
                         return;
                     }
                 }
@@ -174,7 +174,7 @@ public class CacheableScanRule extends PluginPassiveScanner {
                             logger.debug(
                                     "{} is not storable due to the use of HTTP caching directive 'private' in the response",
                                     msg.getRequestHeader().getURI());
-                            alertNonStorable(msg, id, directiveToken);
+                            alertNonStorable(directiveToken).raise();
                             return;
                         }
                     }
@@ -222,14 +222,14 @@ public class CacheableScanRule extends PluginPassiveScanner {
                         logger.debug(
                                 "{} is not storable due to the use of the 'Authorisation' request header, without a compensatory 'must-revalidate', 'public', or 's-maxage' directive in the response",
                                 msg.getRequestHeader().getURI());
-                        alertNonStorable(msg, id, HttpHeader.AUTHORIZATION + ":");
+                        alertNonStorable(HttpHeader.AUTHORIZATION + ":").raise();
                         return;
                     }
                 } else {
                     logger.debug(
                             "{} is not storable due to the use of the 'Authorisation' request header, without a compensatory 'must-revalidate', 'public', or 's-maxage' directive in the response (no 'Cache-Control' directive was noted)",
                             msg.getRequestHeader().getURI());
-                    alertNonStorable(msg, id, HttpHeader.AUTHORIZATION + ":");
+                    alertNonStorable(HttpHeader.AUTHORIZATION + ":").raise();
                     return;
                 }
             }
@@ -327,7 +327,7 @@ public class CacheableScanRule extends PluginPassiveScanner {
                 // we raise the alert with the status code as evidence, because all the other
                 // conditions are "absent", rather "present" (ie, it is the only possible evidence
                 // we can show in this case).
-                alertNonStorable(msg, id, String.valueOf(response));
+                alertNonStorable(String.valueOf(response)).raise();
                 return;
             }
 
@@ -393,7 +393,7 @@ public class CacheableScanRule extends PluginPassiveScanner {
                             logger.debug(
                                     "{} is not retrievable from the cache (cacheable) due to the use of the unqualified HTTP caching directive 'no-cache' in the response",
                                     msg.getRequestHeader().getURI());
-                            alertStorableNonCacheable(msg, id, directiveToken);
+                            alertStorableNonCacheable(directiveToken).raise();
                             return;
                         }
                     }
@@ -632,7 +632,7 @@ public class CacheableScanRule extends PluginPassiveScanner {
                 logger.debug(
                         "{} is retrievable from the cache (cacheable), since it is fresh",
                         msg.getRequestHeader().getURI());
-                alertStorableCacheable(msg, id, freshEvidence, otherInfo);
+                alertStorableCacheable(freshEvidence, otherInfo).raise();
                 return;
             } else {
                 // stale!
@@ -677,17 +677,16 @@ public class CacheableScanRule extends PluginPassiveScanner {
                     // no directives were configured to prevent stale responses being retrieved
                     // (without validation)
                     alertStorableCacheable(
-                            msg,
-                            id,
-                            "",
-                            Constant.messages.getString(
-                                    MESSAGE_PREFIX_STORABLE_CACHEABLE
-                                            + "otherinfo.staleretrievenotblocked"));
+                                    "",
+                                    Constant.messages.getString(
+                                            MESSAGE_PREFIX_STORABLE_CACHEABLE
+                                                    + "otherinfo.staleretrievenotblocked"))
+                            .raise();
                 } else {
                     // the directives do not allow stale responses to be retrieved
                     // we saw just one other scenario where this could happen: where the response
                     // was cached, but the "no-cache" response directive was specified
-                    alertStorableNonCacheable(msg, id, doNotRetrieveStaleEvidence);
+                    alertStorableNonCacheable(doNotRetrieveStaleEvidence).raise();
                 }
             }
         } catch (Exception e) {
@@ -721,74 +720,59 @@ public class CacheableScanRule extends PluginPassiveScanner {
         return ALERT_TAGS;
     }
 
-    /**
-     * raise an alert for a non-storable response
-     *
-     * @param msg
-     * @param id
-     * @param evidence
-     */
-    public void alertNonStorable(HttpMessage msg, int id, String evidence) {
-        newAlert()
-                .setName(Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "name"))
-                .setRisk(Alert.RISK_INFO)
-                .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setDescription(Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "desc"))
-                .setSolution(Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "soln"))
-                .setReference(Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "refs"))
-                .setEvidence(evidence)
-                .setCweId(524) // CWE-524: Information Exposure Through Caching
-                .setWascId(13) // WASC-13: Information Leakage
-                .raise();
+    @Override
+    public List<Alert> getExampleAlerts() {
+        List<Alert> alerts = new ArrayList<>();
+        String exampleUri = "https://example.com";
+        alerts.add(alertNonStorable("HEAD ").setUri(exampleUri).build());
+        alerts.add(alertStorableNonCacheable("no-cache").setUri(exampleUri).build());
+        alerts.add(
+                alertStorableCacheable(
+                                "",
+                                Constant.messages.getString(
+                                        MESSAGE_PREFIX_STORABLE_CACHEABLE
+                                                + "otherinfo.liberallifetimeheuristic"))
+                        .build());
+        return alerts;
     }
 
-    /**
-     * raise an alert for a storable but non-cacheable response
-     *
-     * @param msg
-     * @param id
-     * @param evidence
-     */
-    public void alertStorableNonCacheable(HttpMessage msg, int id, String evidence) {
-        newAlert()
-                .setName(Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "name"))
+    private AlertBuilder buildAlert(String evidence) {
+        return newAlert()
                 .setRisk(Alert.RISK_INFO)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setEvidence(evidence)
+                .setCweId(524) // CWE-524: Information Exposure Through Caching
+                .setWascId(13); // WASC-13: Information Leakage
+    }
+
+    private AlertBuilder alertNonStorable(String evidence) {
+        return buildAlert(evidence)
+                .setName(Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "name"))
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "desc"))
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "soln"))
+                .setReference(Constant.messages.getString(MESSAGE_PREFIX_NONSTORABLE + "refs"));
+    }
+
+    private AlertBuilder alertStorableNonCacheable(String evidence) {
+        return buildAlert(evidence)
+                .setName(Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "name"))
                 .setDescription(
                         Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "desc"))
                 .setSolution(
                         Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "soln"))
                 .setReference(
-                        Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "refs"))
-                .setEvidence(evidence)
-                .setCweId(524) // CWE-524: Information Exposure Through Caching
-                .setWascId(13) // WASC-13: Information Leakage
-                .raise();
+                        Constant.messages.getString(MESSAGE_PREFIX_STORABLE_NONCACHEABLE + "refs"));
     }
 
-    /**
-     * raise an alert for a storable and cacheable (retrievable from the cache) response
-     *
-     * @param msg
-     * @param id
-     * @param evidence
-     * @param otherInfo
-     */
-    public void alertStorableCacheable(HttpMessage msg, int id, String evidence, String otherInfo) {
-        newAlert()
+    private AlertBuilder alertStorableCacheable(String evidence, String otherInfo) {
+        return buildAlert(evidence)
                 .setName(Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "name"))
-                .setRisk(Alert.RISK_INFO)
-                .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(
                         Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "desc"))
                 .setOtherInfo(otherInfo)
                 .setSolution(
                         Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "soln"))
                 .setReference(
-                        Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "refs"))
-                .setEvidence(evidence)
-                .setCweId(524) // CWE-524: Information Exposure Through Caching
-                .setWascId(13) // WASC-13: Information Leakage
-                .raise();
+                        Constant.messages.getString(MESSAGE_PREFIX_STORABLE_CACHEABLE + "refs"));
     }
 }

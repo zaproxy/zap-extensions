@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -64,29 +65,9 @@ public class ServerHeaderInfoLeakScanRule extends PluginPassiveScanner {
                 if (matched) { // See if there's any version info.
                     // While an alpha string might be the server type (Apache, Netscape, IIS, etc.)
                     // that's much less of a head-start than actual version details.
-                    raiseAlert(
-                            Alert.RISK_LOW,
-                            Alert.CONFIDENCE_HIGH,
-                            Constant.messages.getString(
-                                    "pscanbeta.serverheaderversioninfoleak.name"),
-                            Constant.messages.getString(
-                                    "pscanbeta.serverheaderversioninfoleak.desc"),
-                            Constant.messages.getString(
-                                    "pscanbeta.serverheaderinfoleak.general.soln"),
-                            Constant.messages.getString(
-                                    "pscanbeta.serverheaderinfoleak.general.refs"),
-                            serverDirective);
+                    buildVersionLeakAlert(serverDirective).raise();
                 } else if (Plugin.AlertThreshold.LOW.equals(this.getAlertThreshold())) {
-                    raiseAlert(
-                            Alert.RISK_INFO,
-                            Alert.CONFIDENCE_HIGH,
-                            Constant.messages.getString("pscanbeta.serverheaderinfoleak.name"),
-                            Constant.messages.getString("pscanbeta.serverheaderinfoleak.desc"),
-                            Constant.messages.getString(
-                                    "pscanbeta.serverheaderinfoleak.general.soln"),
-                            Constant.messages.getString(
-                                    "pscanbeta.serverheaderinfoleak.general.refs"),
-                            serverDirective);
+                    buildHeaderPresentAlert(serverDirective).raise();
                 }
             }
         }
@@ -108,24 +89,41 @@ public class ServerHeaderInfoLeakScanRule extends PluginPassiveScanner {
         return ALERT_TAGS;
     }
 
-    private void raiseAlert(
-            int risk,
-            int confidence,
-            String name,
-            String desc,
-            String soln,
-            String refs,
-            String evidence) {
-        newAlert()
-                .setName(name)
-                .setRisk(risk)
-                .setConfidence(confidence)
-                .setDescription(desc)
-                .setSolution(soln)
-                .setReference(refs)
-                .setEvidence(evidence)
+    @Override
+    public List<Alert> getExampleAlerts() {
+        List<Alert> alerts = new ArrayList<>();
+        alerts.add(buildHeaderPresentAlert("Apache").setUri("https://www.example.com").build());
+        alerts.add(
+                buildVersionLeakAlert("Apache/2.4.1 (Unix)")
+                        .setUri("https://www.example.com")
+                        .build());
+        return alerts;
+    }
+
+    private AlertBuilder createAlert(String directive) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setSolution(
+                        Constant.messages.getString("pscanbeta.serverheaderinfoleak.general.soln"))
+                .setReference(
+                        Constant.messages.getString("pscanbeta.serverheaderinfoleak.general.refs"))
+                .setEvidence(directive)
                 .setCweId(200)
-                .setWascId(13)
-                .raise();
+                .setWascId(13);
+    }
+
+    private AlertBuilder buildHeaderPresentAlert(String directive) {
+        return createAlert(directive)
+                .setRisk(Alert.RISK_INFO)
+                .setName(Constant.messages.getString("pscanbeta.serverheaderinfoleak.name"))
+                .setDescription(Constant.messages.getString("pscanbeta.serverheaderinfoleak.desc"));
+    }
+
+    private AlertBuilder buildVersionLeakAlert(String directive) {
+        return createAlert(directive)
+                .setRisk(Alert.RISK_LOW)
+                .setName(Constant.messages.getString("pscanbeta.serverheaderversioninfoleak.name"))
+                .setDescription(
+                        Constant.messages.getString("pscanbeta.serverheaderversioninfoleak.desc"));
     }
 }
