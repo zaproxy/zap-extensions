@@ -29,7 +29,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
-import org.parosproxy.paros.extension.manualrequest.MessageSender;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
@@ -48,8 +47,11 @@ import org.zaproxy.zap.extension.websocket.client.RequestOutOfScopeException;
 import org.zaproxy.zap.extension.websocket.ui.WebSocketPanel;
 import org.zaproxy.zap.model.SessionStructure;
 
-/** Knows how to send {@link HttpMessage} objects. Contains a list of valid WebSocket channels. */
-public class WebSocketPanelSender implements MessageSender, WebSocketObserver {
+/**
+ * Knows how to send {@link WebSocketMessageDTO} objects. Contains a list of valid WebSocket
+ * channels.
+ */
+class WebSocketPanelSender implements WebSocketObserver {
 
     private static final Logger logger = LogManager.getLogger(WebSocketPanelSender.class);
 
@@ -62,8 +64,7 @@ public class WebSocketPanelSender implements MessageSender, WebSocketObserver {
         closedProxies = new HashMap<>();
     }
 
-    @Override
-    public void handleSendMessage(Message aMessage) throws IOException {
+    void handleSendMessage(Message aMessage) throws IOException {
         final WebSocketMessageDTO websocketMessage = (WebSocketMessageDTO) aMessage;
 
         if (websocketMessage.getChannel() == null
@@ -97,9 +98,6 @@ public class WebSocketPanelSender implements MessageSender, WebSocketObserver {
         }
         wsProxy.sendAndNotify(websocketMessage, Initiator.MANUAL_REQUEST);
     }
-
-    @Override
-    public void cleanup() {}
 
     private WebSocketProxy getDelegate(Integer channelId) {
         if (closedProxies.containsKey(channelId)) {

@@ -56,9 +56,6 @@ import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.extension.ViewDelegate;
-import org.parosproxy.paros.extension.manualrequest.ExtensionManualRequestEditor;
-import org.parosproxy.paros.extension.manualrequest.ManualRequestEditorDialog;
-import org.parosproxy.paros.extension.manualrequest.http.impl.ManualHttpRequestEditorDialog;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
@@ -89,8 +86,6 @@ import org.zaproxy.zap.extension.websocket.brk.WebSocketBreakpointsUiManagerInte
 import org.zaproxy.zap.extension.websocket.brk.WebSocketProxyListenerBreak;
 import org.zaproxy.zap.extension.websocket.db.TableWebSocket;
 import org.zaproxy.zap.extension.websocket.db.WebSocketStorage;
-import org.zaproxy.zap.extension.websocket.manualsend.ManualWebSocketSendEditorDialog;
-import org.zaproxy.zap.extension.websocket.manualsend.WebSocketPanelSender;
 import org.zaproxy.zap.extension.websocket.pscan.WebSocketPassiveScannerManager;
 import org.zaproxy.zap.extension.websocket.pscan.scripts.ScriptsWebSocketPassiveScanner;
 import org.zaproxy.zap.extension.websocket.treemap.WebSocketTreeMap;
@@ -99,7 +94,6 @@ import org.zaproxy.zap.extension.websocket.ui.OptionsParamWebSocket;
 import org.zaproxy.zap.extension.websocket.ui.OptionsWebSocketPanel;
 import org.zaproxy.zap.extension.websocket.ui.PopupExcludeWebSocketContextMenu;
 import org.zaproxy.zap.extension.websocket.ui.PopupIncludeWebSocketContextMenu;
-import org.zaproxy.zap.extension.websocket.ui.ResendWebSocketMessageMenuItem;
 import org.zaproxy.zap.extension.websocket.ui.SessionExcludeFromWebSocket;
 import org.zaproxy.zap.extension.websocket.ui.WebSocketMessagesPayloadFilter;
 import org.zaproxy.zap.extension.websocket.ui.WebSocketPanel;
@@ -386,33 +380,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor
 
             // setup workpanel (window containing Request, Response & Break tab)
             initializeWebSocketsForWorkPanel();
-
-            // setup manualrequest extension
-            ExtensionManualRequestEditor extManReqEdit =
-                    (ExtensionManualRequestEditor)
-                            extLoader.getExtension(ExtensionManualRequestEditor.NAME);
-            if (extManReqEdit != null) {
-                WebSocketPanelSender sender = new WebSocketPanelSender();
-                addAllChannelObserver(sender);
-
-                sendDialog = createManualSendDialog(sender);
-                extManReqEdit.addManualSendEditor(sendDialog);
-                hookMenu.addToolsMenuItem(sendDialog.getMenuItem());
-
-                resenderDialog = createReSendDialog(sender);
-
-                // add 'Resend Message' menu item to WebSocket tab context menu
-                hookMenu.addPopupMenuItem(new ResendWebSocketMessageMenuItem(resenderDialog));
-
-                // setup persistent connection listener for http manual send editor
-                ManualRequestEditorDialog sendEditor =
-                        extManReqEdit.getManualSendEditor(HttpMessage.class);
-                if (sendEditor != null) {
-                    ManualHttpRequestEditorDialog httpSendEditor =
-                            (ManualHttpRequestEditorDialog) sendEditor;
-                    httpSendEditor.addPersistentConnectionListener(this);
-                }
-            }
         }
         // setup sender script interface
         this.extensionScript =
@@ -499,23 +466,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor
             extLoader.getExtension(ExtensionBreak.class).removeBreakpointsUiManager(brkManager);
         }
 
-        // clear up manualrequest extension
-        ExtensionManualRequestEditor extManReqEdit =
-                (ExtensionManualRequestEditor)
-                        extLoader.getExtension(ExtensionManualRequestEditor.NAME);
-        if (extManReqEdit != null) {
-            extManReqEdit.removeManualSendEditor(WebSocketMessageDTO.class);
-
-            // clear up persistent connection listener for http manual send editor
-            ManualRequestEditorDialog sendEditor =
-                    extManReqEdit.getManualSendEditor(HttpMessage.class);
-            if (sendEditor != null) {
-                ManualHttpRequestEditorDialog httpSendEditor =
-                        (ManualHttpRequestEditorDialog) sendEditor;
-                httpSendEditor.removePersistentConnectionListener(this);
-            }
-        }
-
         if (table != null) {
             getModel().getDb().removeDatabaseListener(table);
         }
@@ -526,14 +476,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor
             getView().getSessionDialog().removeParamPanel(sessionExcludePanel);
 
             clearupWebSocketsForWorkPanel();
-
-            if (sendDialog != null) {
-                sendDialog.unload();
-            }
-
-            if (resenderDialog != null) {
-                resenderDialog.unload();
-            }
         }
 
         // unregister the WebSocket Sender script type and remove the listener
@@ -1248,13 +1190,14 @@ public class ExtensionWebSocket extends ExtensionAdaptor
     /** WebSockets can be excluded from the current session via this GUI panel. */
     private SessionExcludeFromWebSocket sessionExcludePanel;
 
-    /** Send custom WebSocket messages. */
-    private ManualWebSocketSendEditorDialog sendDialog;
-
-    /** Resends custom WebSocket messages. */
-    private ManualWebSocketSendEditorDialog resenderDialog;
-
-    private WebSocketPanel getWebSocketPanel() {
+    /**
+     * Gets the WebSocket panel.
+     *
+     * <p><strong>Note:</strong> Not part of the public API.
+     *
+     * @return the panel, never {@code null}.
+     */
+    public WebSocketPanel getWebSocketPanel() {
         if (panel == null) {
             panel = new WebSocketPanel(storage.getTable(), getBrkManager());
         }
@@ -1567,40 +1510,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor
             // has to come before HexDefaultViewSelector
             return 15;
         }
-    }
-
-    /**
-     * This method initializes the dialog for crafting custom messages.
-     *
-     * @param sender
-     * @return
-     */
-    private ManualWebSocketSendEditorDialog createManualSendDialog(WebSocketPanelSender sender) {
-        ManualWebSocketSendEditorDialog sendDialog =
-                new ManualWebSocketSendEditorDialog(
-                        getWebSocketPanel().getChannelsModel(),
-                        sender,
-                        true,
-                        "websocket.manual_send");
-        sendDialog.setTitle(Constant.messages.getString("websocket.manual_send.menu"));
-        return sendDialog;
-    }
-
-    /**
-     * This method initializes the re-send WebSocket message dialog.
-     *
-     * @param sender
-     * @return
-     */
-    private ManualWebSocketSendEditorDialog createReSendDialog(WebSocketPanelSender sender) {
-        ManualWebSocketSendEditorDialog resendDialog =
-                new ManualWebSocketSendEditorDialog(
-                        getWebSocketPanel().getChannelsModel(),
-                        sender,
-                        true,
-                        "websocket.manual_resend");
-        resendDialog.setTitle(Constant.messages.getString("websocket.manual_send.popup"));
-        return resendDialog;
     }
 
     @Override
