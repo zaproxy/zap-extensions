@@ -44,7 +44,7 @@ class SarifReportDataSupportUnitTest {
         reportData = new ReportData();
         AlertNode rootNode = new AlertNode(0, "root");
         reportData.setAlertTreeRootNode(rootNode);
-        //  @formatter:off
+
         AlertNode plugin1NodeA =
                 newAlertNodeBuilder(
                                 newAlertBuilder()
@@ -75,7 +75,6 @@ class SarifReportDataSupportUnitTest {
         rootNode.add(plugin1NodeA);
         rootNode.add(plugin1NodeB);
         rootNode.add(plugin2Node);
-        //  @formatter:on
 
         reportData.setSites(Arrays.asList("https://example.com"));
         SarifReportDataSupport toTest = new SarifReportDataSupport(reportData);
@@ -102,7 +101,7 @@ class SarifReportDataSupportUnitTest {
         reportData = new ReportData();
         AlertNode rootNode = new AlertNode(0, "root");
         reportData.setAlertTreeRootNode(rootNode);
-        //  @formatter:off
+
         AlertNode plugin1NodeA =
                 newAlertNodeBuilder(
                                 newAlertBuilder()
@@ -112,7 +111,6 @@ class SarifReportDataSupportUnitTest {
                         .build();
 
         rootNode.add(plugin1NodeA);
-        //  @formatter:on
 
         reportData.setSites(Arrays.asList("https://example.com"));
         SarifReportDataSupport toTest = new SarifReportDataSupport(reportData);

@@ -524,7 +524,7 @@ class SarifReportIntegrationUnitTest {
         AlertNode rootAlertNode =
                 new AlertNode(0, "TestRootNode"); // represents root node at top of alert tree in UI
         reportData.setAlertTreeRootNode(rootAlertNode);
-        /** @formatter:off */
+
         Alert cssAlert =
                 newAlertBuilder()
                         .setName("Cross Site Scripting")
@@ -661,7 +661,7 @@ class SarifReportIntegrationUnitTest {
         rootAlertNode.add(newAlertNodeBuilder(cspAlert).build());
 
         reportData.setSites(Arrays.asList("https://127.0.0.1"));
-        /** @formatter:on */
+
         return reportData;
     }
 
