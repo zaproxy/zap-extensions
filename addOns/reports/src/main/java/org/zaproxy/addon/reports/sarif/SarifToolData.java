@@ -41,7 +41,7 @@ public class SarifToolData {
                     .setTaxonomyComprehensive(true)
                     .setTaxonomyReleaseDateUtc("2022-06-28")
                     .setTaxonomyDownloadUri("https://cwe.mitre.org/data/xml/cwec_v4.8.xml.zip")
-                    .setTaxonomyInformationUri("https://cwe.mitre.org/data/published/cwe_v4.8.pdf/")
+                    .setTaxonomyInformationUri("https://cwe.mitre.org/data/published/cwe_v4.8.pdf")
                     .setShortDescription("The MITRE Common Weakness Enumeration")
                     .setOrganization("MITRE")
                     .build();
