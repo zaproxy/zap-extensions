@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.reports.sarif;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -40,6 +41,7 @@ import org.zaproxy.zap.extension.alert.AlertNode;
  */
 public class SarifReportDataSupport {
 
+    private static final String FALLBACK_SEMANTIC_VERSION = "0.0.0";
     private ReportData reportData;
     private List<SarifResult> results;
 
@@ -122,7 +124,8 @@ public class SarifReportDataSupport {
 
         for (Integer foundCWEId : foundCWEIds) {
             SarifTaxa taxa = taxonomy.addTaxa("" + foundCWEId);
-            taxa.helpUri = "https://cwe.mitre.org/data/definitions/" + foundCWEId + ".html";
+            taxa.helpUri =
+                    URI.create("https://cwe.mitre.org/data/definitions/" + foundCWEId + ".html");
         }
     }
 
@@ -151,5 +154,45 @@ public class SarifReportDataSupport {
         }
 
         return registeredRules;
+    }
+
+    /**
+     * Ensures given tool version is compatible with SARIF tool versions. This method ensures, that
+     * even for reports created with ZAP developer builds the <a
+     * href="https://sarifweb.azurewebsites.net/Validation">SARIF online validation</a> shall have
+     * no validation errors.<br>
+     * <br>
+     * To ensure this, this method returns a result version which is compatible to <a
+     * href="https://semver.org">Semantic Versioning 2.0.0</a>.
+     *
+     * <p>This method will do following: If the given version ($givenVersion) cannot be represented
+     * in a semantic version string like "$major.$minor.$hotfix", "$major" or "$major.minor" the
+     * result will always be a fallback to {@value #FALLBACK_SEMANTIC_VERSION}-$givenVersion
+     */
+    public String ensureSemanticVersion(String toolVersion) {
+        if (toolVersion != null) {
+
+            StringBuilder sb = new StringBuilder();
+            String[] splitted = toolVersion.split("\\.");
+
+            boolean failed = false;
+
+            for (String splitPart : splitted) {
+                try {
+                    int value = Integer.parseInt(splitPart);
+                    if (sb.length() > 0) {
+                        sb.append('.');
+                    }
+                    sb.append(value);
+                } catch (NumberFormatException e) {
+                    failed = true;
+                    break;
+                }
+            }
+            if (!failed) {
+                return sb.toString();
+            }
+        }
+        return FALLBACK_SEMANTIC_VERSION + "-" + toolVersion;
     }
 }

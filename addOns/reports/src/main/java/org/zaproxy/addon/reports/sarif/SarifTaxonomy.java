@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.reports.sarif;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -42,12 +43,12 @@ public class SarifTaxonomy implements SarifTaxonomyDataProvider {
     }
 
     @Override
-    public String getDownloadUri() {
+    public URI getDownloadUri() {
         return provider.getDownloadUri();
     }
 
     @Override
-    public String getInformationUri() {
+    public URI getInformationUri() {
         return provider.getInformationUri();
     }
 

@@ -212,9 +212,10 @@ public class SarifResult implements Comparable<SarifResult> {
                  * https://docs.oasis-open.org/sarif/sarif/v2.1.0/os/sarif-v2.1.0-os.html#
                  * _Toc34317425
                  *
-                 * In case of binary, we just show up the first KiloByte of bytes as base64 encoded string.
-                 * Should be enough to identify the result type and some additional data. So we avaoid to
-                 * blow up the report with (human) unreadable content.
+                 * In case of binary, we just show up the first KiloByte of bytes as base64
+                 * encoded string. Should be enough to identify the result type and some
+                 * additional data. So we avaoid to blow up the report with (human) unreadable
+                 * content.
                  */
                 sarifBody.binary =
                         useBodyBytesBase64EncodedAndShrinkIfNecessary(
@@ -304,6 +305,35 @@ public class SarifResult implements Comparable<SarifResult> {
         long startLine;
         SarifMessage snippet;
 
+        /**
+         * Returns the start line - or if the start line is invalid (see
+         * https://docs.oasis-open.org/sarif/sarif/v2.1.0/os/sarif-v2.1.0-os.html#_Toc34317687 for
+         * details) 1 as a fallback.
+         *
+         * @return a value >= 1
+         */
+        public long getValidStartLineOrFallback() {
+            if (isStartLineInvalid()) {
+                return 1;
+            }
+            return getStartLine();
+        }
+
+        /**
+         * Checks if start line value is invalid or not
+         *
+         * @return <code>true</code> when {@link #getStartLine()} returns an invalid value
+         */
+        public boolean isStartLineInvalid() {
+            return startLine <= 0;
+        }
+
+        /**
+         * Returns plain start line value - you should use {@link #getValidStartLineOrFallback()}
+         * for reporting instead.
+         *
+         * @return plain start line value - can be valid or invalid
+         */
         public long getStartLine() {
             return startLine;
         }

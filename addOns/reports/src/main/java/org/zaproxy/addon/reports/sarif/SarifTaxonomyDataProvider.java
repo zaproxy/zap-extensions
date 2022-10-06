@@ -19,6 +19,8 @@
  */
 package org.zaproxy.addon.reports.sarif;
 
+import java.net.URI;
+
 /** A provider interface for SARIF taxonomy data */
 public interface SarifTaxonomyDataProvider {
 
@@ -30,9 +32,9 @@ public interface SarifTaxonomyDataProvider {
 
     String getGuid();
 
-    String getDownloadUri();
+    URI getDownloadUri();
 
-    String getInformationUri();
+    URI getInformationUri();
 
     boolean isComprehensive();
 

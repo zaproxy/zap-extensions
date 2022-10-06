@@ -20,6 +20,8 @@
 package org.zaproxy.addon.reports.sarif;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -36,10 +38,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.reports.sarif.SarifResult.SarifArtifactLocation;
 import org.zaproxy.addon.reports.sarif.SarifResult.SarifBody;
+import org.zaproxy.addon.reports.sarif.SarifResult.SarifRegion;
 import org.zaproxy.addon.reports.sarif.SarifResult.SarifResultLocation;
 
 class SarifResultUnitTest {
@@ -54,6 +58,40 @@ class SarifResultUnitTest {
     void beforeEach() {
         encoder = mock(SarifBase64Encoder.class);
         binaryContentDetector = mock(SarifBinaryContentDetector.class);
+    }
+
+    @DisplayName(
+            "A region with incorrect start line set, method getValidStartLineOrFallback returns 1 as fallback")
+    @ParameterizedTest
+    @ValueSource(longs = {0, -1, -100})
+    void sarifRegionGetValidStartLineOrFallbackForInvalidStartLine(long value) {
+        /* prepare */
+        SarifRegion region = new SarifRegion();
+        region.startLine = value;
+
+        /* test */
+        assertEquals(1, region.getValidStartLineOrFallback());
+
+        // test other getters as well:
+        assertTrue(region.isStartLineInvalid());
+        assertEquals(value, region.getStartLine());
+    }
+
+    @DisplayName(
+            "For a region with correct start line set, method getValidStartLineOrFallback returns start line")
+    @ParameterizedTest
+    @ValueSource(longs = {1, 2, 4711})
+    void sarifRegionGetValidStartLineOrFallbackForValidStartLine(long value) {
+        /* prepare */
+        SarifRegion region = new SarifRegion();
+        region.startLine = value;
+
+        /* test */
+        assertEquals(value, region.getValidStartLineOrFallback());
+
+        // test other getters as well:
+        assertFalse(region.isStartLineInvalid());
+        assertEquals(value, region.getStartLine());
     }
 
     @DisplayName("A high risk alert will be converted to corresponding sarif result")

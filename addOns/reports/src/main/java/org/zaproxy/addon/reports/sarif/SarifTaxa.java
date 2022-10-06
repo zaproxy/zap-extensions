@@ -19,18 +19,20 @@
  */
 package org.zaproxy.addon.reports.sarif;
 
+import java.net.URI;
+
 public class SarifTaxa {
 
     private SarifGuid sarifGUID;
     private String id;
-    String helpUri;
+    URI helpUri;
 
     public SarifTaxa(SarifGuid sarifGUID, String identifier) {
         this.sarifGUID = sarifGUID;
         this.id = identifier;
     }
 
-    public String getHelpUri() {
+    public URI getHelpUri() {
         return helpUri;
     }
 

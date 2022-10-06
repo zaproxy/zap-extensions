@@ -19,11 +19,13 @@
  */
 package org.zaproxy.addon.reports.sarif;
 
+import java.net.URI;
+
 public class SarifToolData {
 
     public static final SarifToolData INSTANCE = new SarifToolData();
 
-    private static final SarifToolDataProvider OWASP_ZAP =
+    static final SarifToolDataProvider OWASP_ZAP =
             builder()
                     .setName("OWASP ZAP")
                     . // we use 1.0 here - should normally not change
@@ -31,17 +33,19 @@ public class SarifToolData {
                     .setTaxonomyComprehensive(true)
                     .setShortDescription("OWASP Zed Attack Proxy")
                     .setOrganization("OWASP")
-                    .setTaxonomyInformationUri("https://www.zaproxy.org/")
+                    .setTaxonomyInformationUri(URI.create("https://www.zaproxy.org/"))
                     .build();
 
-    private static final SarifToolDataProvider CWE_WITH_4_8_TAXONOMY =
+    static final SarifToolDataProvider CWE_WITH_4_8_TAXONOMY =
             builder()
                     .setName("CWE")
                     .setTaxonomyVersion("4.8")
                     .setTaxonomyComprehensive(true)
                     .setTaxonomyReleaseDateUtc("2022-06-28")
-                    .setTaxonomyDownloadUri("https://cwe.mitre.org/data/xml/cwec_v4.8.xml.zip")
-                    .setTaxonomyInformationUri("https://cwe.mitre.org/data/published/cwe_v4.8.pdf")
+                    .setTaxonomyDownloadUri(
+                            URI.create("https://cwe.mitre.org/data/xml/cwec_v4.8.xml.zip"))
+                    .setTaxonomyInformationUri(
+                            URI.create("https://cwe.mitre.org/data/published/cwe_v4.8.pdf"))
                     .setShortDescription("The MITRE Common Weakness Enumeration")
                     .setOrganization("MITRE")
                     .build();
@@ -67,8 +71,8 @@ public class SarifToolData {
         private String name;
         private String shortDescription;
         private String taxonomyVersion;
-        private String taxonomyInformationUri;
-        private String taxonomyDownloadUri;
+        private URI taxonomyInformationUri;
+        private URI taxonomyDownloadUri;
         private String taxonomyReleaseDateUtc;
         private boolean comprehensive;
         private String organization;
@@ -100,12 +104,12 @@ public class SarifToolData {
             return this;
         }
 
-        public SarifToolDataProviderBuilder setTaxonomyInformationUri(String uri) {
+        public SarifToolDataProviderBuilder setTaxonomyInformationUri(URI uri) {
             this.taxonomyInformationUri = uri;
             return this;
         }
 
-        public SarifToolDataProviderBuilder setTaxonomyDownloadUri(String uri) {
+        public SarifToolDataProviderBuilder setTaxonomyDownloadUri(URI uri) {
             this.taxonomyDownloadUri = uri;
             return this;
         }
@@ -147,8 +151,8 @@ public class SarifToolData {
         private String organization;
         private SarifGuid sarifGuid;
         private String taxonomyVersion;
-        private String taxonomyInformationUri;
-        private String taxonomyDownloadUri;
+        private URI taxonomyInformationUri;
+        private URI taxonomyDownloadUri;
         private boolean taxonomyComprehensive;
 
         @Override
@@ -177,12 +181,12 @@ public class SarifToolData {
         }
 
         @Override
-        public String getDownloadUri() {
+        public URI getDownloadUri() {
             return taxonomyDownloadUri;
         }
 
         @Override
-        public String getInformationUri() {
+        public URI getInformationUri() {
             return taxonomyInformationUri;
         }
 

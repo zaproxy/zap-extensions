@@ -71,18 +71,21 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /**
  * This integration test uses the real ZAP template engine to create a SARIF report output. Why an
- * integration test and not "normal" JUnit test? The {@link SarifReportDataSupport} creates an
+ * integration test and not a "normal" JUnit test? The {@link SarifReportDataSupport} creates an
  * adopted SARIF data structure/model and there are multiple objects necessary to provide an easy to
  * read report template file. So we test multiple objects here which we do not all want to mock -
- * also it gave the the chance to develop the SARIF report parts without always starting ZAP UI. So
- * test data is much more detailed as normally expected to simulate a real world scenario.
+ * also this way gives us the chance to develop the SARIF report parts without always starting ZAP
+ * UI. So test data is much more detailed as normally expected to simulate a real world scenario.
  */
 class SarifReportIntegrationUnitTest {
+
+    private static final String ZAP_VERSION_DEV_BUILD = "Dev Build";
 
     private static final String FINDING_1_URI =
             "https://127.0.0.1:8080/greeting?name=%3C%2Fp%3E%3Cscript%3Ealert%281%29%3B%3C%2Fscript%3E%3Cp%3E";
     private static final String FINDING_2_URI =
             "https://127.0.0.1:8080/greeting2?name=%3C%2Fp%3E%3Cscript%3Ealert%281%29%3B%3C%2Fscript%3E%3Cp%3E";
+
     private Template template;
     private TemplateEngine templateEngine;
 
@@ -97,7 +100,7 @@ class SarifReportIntegrationUnitTest {
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
         Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
 
-        Constant.PROGRAM_VERSION = "Dev Build";
+        Constant.PROGRAM_VERSION = ZAP_VERSION_DEV_BUILD;
     }
 
     @Test
@@ -120,6 +123,7 @@ class SarifReportIntegrationUnitTest {
 
         JsonNode rootNode = assertValidJSON(sarifReportJSON);
         JsonNode firstRun = assertOneRunOnly(rootNode);
+
         assertResults(firstRun);
         assertTaxonomies(firstRun, inspectionContext);
         assertTool(firstRun, inspectionContext);
@@ -134,15 +138,20 @@ class SarifReportIntegrationUnitTest {
         // driver
         JsonNode driver = tool.get("driver");
         assertEquals(owaspZap.getGuid(), driver.get("guid").asText());
-        assertEquals(owaspZap.getInformationUri(), driver.get("informationUri").asText());
+        assertEquals(
+                owaspZap.getInformationUri().toString(), driver.get("informationUri").asText());
         assertEquals(owaspZap.getName(), driver.get("name").asText());
-        assertEquals("99.9.9", driver.get("version").asText());
-        assertEquals("99.9.9", driver.get("semanticVersion").asText());
 
-        // driver - rules
+        assertEquals("0.0.0-" + ZAP_VERSION_DEV_BUILD, driver.get("version").asText());
+        // Remark: In our test the simulated ZAP version is "Dev Build". But this is not really a
+        // semantic version.
+        // Here we test only that the ZAP version is used for this field.
+        // If you use https://sarifweb.azurewebsites.net/Validation to validate the generated
+        // output,
+        assertEquals("0.0.0-" + ZAP_VERSION_DEV_BUILD, driver.get("semanticVersion").asText());
+
         assertRules(inspectionContext, cwe, driver);
 
-        // driver - supported taxonomies
         assertTaxonomies(cwe, driver);
     }
 
@@ -164,22 +173,42 @@ class SarifReportIntegrationUnitTest {
         for (JsonNode rule : rulesArray) {
             assertRuleHasCweEntryAndGuidsNotDuplicated(inspectionContext, cwe, rule);
         }
-        assertEquals(2, rulesArray.size());
+        assertEquals(3, rulesArray.size());
         Iterator<JsonNode> ruleIt = rulesArray.iterator();
         assertRule1(ruleIt.next());
         assertRule2(ruleIt.next());
+        assertRule3(ruleIt.next());
     }
 
     private void assertRule1(JsonNode rule) {
+        assertEquals("1", rule.get("id").asText());
+        assertEquals("warning", rule.get("defaultConfiguration").get("level").asText());
+        assertEquals("CSP Description", rule.get("fullDescription").get("text").asText());
+        assertEquals("CSP", rule.get("shortDescription").get("text").asText());
+        assertEquals("CSP", rule.get("name").asText());
+
         // properties
         JsonNode properties = rule.get("properties");
         assertEquals("medium", properties.get("confidence").asText());
         assertEquals("Test Solution", properties.get("solution").get("text").asText());
 
         assertPropertiesContainReferences(properties, Collections.emptyList());
+
+        // check relationships
+        JsonNode firstTarget = assertRelationShipsAndFetchFirstRelationShipTarget(rule);
+        assertTargetLinksToCweAndHasExpectedGuid(
+                firstTarget, "c60fb1e0-6538-36e7-9dfd-7702d6cf8b1f", 693);
     }
 
     private void assertRule2(JsonNode rule) {
+        assertEquals("40012", rule.get("id").asText());
+        assertEquals("error", rule.get("defaultConfiguration").get("level").asText());
+        assertEquals(
+                "CSS Description\n" + "Multiple lines\n" + "\n" + "End",
+                rule.get("fullDescription").get("text").asText());
+        assertEquals("Cross Site Scripting", rule.get("shortDescription").get("text").asText());
+        assertEquals("Cross Site Scripting", rule.get("name").asText());
+
         // properties
         JsonNode properties = rule.get("properties");
         assertEquals("medium", properties.get("confidence").asText());
@@ -190,6 +219,75 @@ class SarifReportIntegrationUnitTest {
         expectedReferences.add("http://cwe.mitre.org/data/definitions/79.html");
 
         assertPropertiesContainReferences(properties, expectedReferences);
+
+        // check relationships
+        JsonNode firstTarget = assertRelationShipsAndFetchFirstRelationShipTarget(rule);
+        assertTargetLinksToCweAndHasExpectedGuid(
+                firstTarget, "5dd429c8-e5e3-37a8-bf40-f7b2d72a9085", 79);
+    }
+
+    private void assertRule3(JsonNode rule) {
+        assertEquals("47110815", rule.get("id").asText());
+        assertEquals("none", rule.get("defaultConfiguration").get("level").asText());
+
+        // properties
+        JsonNode properties = rule.get("properties");
+        assertEquals("false-positive", properties.get("confidence").asText());
+        assertEquals(
+                "The solution is to escape characters like " + '"' + " when rendering JSON.",
+                properties.get("solution").get("text").asText());
+
+        assertEquals(
+                "Test, if we have illegal JSON when using special chars in description - e.g: \\ \" or :, !, { , }",
+                rule.get("fullDescription").get("text").asText());
+        // we use the name as the SARIF short description:
+        assertEquals("Pseudo-Name with \"", rule.get("shortDescription").get("text").asText());
+        assertEquals("Pseudo-Name with \"", rule.get("name").asText());
+
+        List<String> expectedReferences = new ArrayList<>();
+        expectedReferences.add("pseudo-ref with \" inside");
+
+        assertPropertiesContainReferences(properties, expectedReferences);
+
+        // check relationships
+        JsonNode firstTarget = assertRelationShipsAndFetchFirstRelationShipTarget(rule);
+        assertTargetLinksToCweAndHasExpectedGuid(
+                firstTarget, "df9506bb-b34f-3120-b1ba-a21a624bc7af", 4711);
+    }
+
+    private JsonNode assertRelationShipsAndFetchFirstRelationShipTarget(JsonNode rule) {
+        // Check relation ships array and fetch first relation ship
+        JsonNode relationShips = rule.get("relationships");
+        assertTrue(relationShips.isArray());
+        ArrayNode relationShipsAsArray = (ArrayNode) relationShips;
+        assertEquals(1, relationShipsAsArray.size());
+        JsonNode relationShip1 = relationShipsAsArray.iterator().next();
+
+        // Check kinds is only "superset"
+        JsonNode kinds = relationShip1.get("kinds");
+        assertTrue(kinds.isArray());
+        ArrayNode kindsAsArray = (ArrayNode) kinds;
+        assertEquals(1, kindsAsArray.size());
+        assertEquals("superset", kindsAsArray.get(0).asText());
+
+        // Ensure relationship contains a target node and return this one for further
+        // testing
+        JsonNode firstRelationShipTargetNode = relationShip1.get("target");
+        assertNotNull(firstRelationShipTargetNode, "First relationship target may not be null!");
+        return firstRelationShipTargetNode;
+    }
+
+    private void assertTargetLinksToCweAndHasExpectedGuid(
+            JsonNode target, String expectedGuid, int expectedCweId) {
+        assertEquals(expectedGuid, target.get("guid").asText());
+
+        JsonNode targetToolComponent = target.get("toolComponent");
+        assertEquals(
+                SarifToolData.CWE_WITH_4_8_TAXONOMY.getGuid(),
+                targetToolComponent.get("guid").asText());
+        assertEquals("CWE", targetToolComponent.get("name").asText());
+
+        assertEquals("" + expectedCweId, target.get("id").asText());
     }
 
     private void assertPropertiesContainReferences(
@@ -271,17 +369,19 @@ class SarifReportIntegrationUnitTest {
         assertEquals(1, taxonomiesArray.size()); // currently we provide only one: CWE
         JsonNode firstTaxonomy = taxonomiesArray.iterator().next();
         SarifToolDataProvider cwe = SarifToolData.INSTANCE.getCwe();
-        assertEquals(cwe.getDownloadUri(), firstTaxonomy.get("downloadUri").asText());
-        assertEquals(cwe.getInformationUri(), firstTaxonomy.get("informationUri").asText());
+        assertEquals(cwe.getDownloadUri().toString(), firstTaxonomy.get("downloadUri").asText());
+        assertEquals(
+                cwe.getInformationUri().toString(), firstTaxonomy.get("informationUri").asText());
 
         // taxa
         JsonNode taxa = firstTaxonomy.get("taxa");
         assertTrue(taxa.isArray());
         ArrayNode taxaArray = (ArrayNode) taxa;
-        assertEquals(2, taxaArray.size());
+        assertEquals(3, taxaArray.size());
         Iterator<JsonNode> taxaIterator = taxaArray.iterator();
         JsonNode firstTaxa = taxaIterator.next();
         JsonNode secondTaxa = taxaIterator.next();
+        JsonNode thirdTaxa = taxaIterator.next();
 
         assertEquals("79", firstTaxa.get("id").asText());
         assertEquals(
@@ -294,6 +394,11 @@ class SarifReportIntegrationUnitTest {
         assertEquals(
                 "https://cwe.mitre.org/data/definitions/693.html",
                 secondTaxa.get("helpUri").asText());
+
+        assertEquals("4711", thirdTaxa.get("id").asText());
+        assertEquals(
+                "https://cwe.mitre.org/data/definitions/4711.html",
+                thirdTaxa.get("helpUri").asText());
     }
 
     private void assertCWEGuidNotDifferent(
@@ -314,7 +419,7 @@ class SarifReportIntegrationUnitTest {
         assertTrue(results.isArray());
         ArrayNode resultsArray = (ArrayNode) results;
         assertEquals(
-                3,
+                4,
                 resultsArray
                         .size()); // 2 different rules, but css was found 2 times so 3 results at
         // all
@@ -328,7 +433,8 @@ class SarifReportIntegrationUnitTest {
     private void assertCSS1Result(Iterator<JsonNode> resultiterator) {
         JsonNode result = assertCSS1ResultFoundAndLocationAsExpected(resultiterator);
 
-        // first result has "otherInfo" set, so we expect the other info expect the full description
+        // first result has "otherInfo" set, so we expect the other info expect the full
+        // description
         JsonNode message = result.get("message");
         JsonNode messageText = message.get("text");
         assertEquals(
@@ -342,7 +448,8 @@ class SarifReportIntegrationUnitTest {
     private void assertCSS2Result(Iterator<JsonNode> resultiterator) {
         JsonNode result = assertCSS2ResultFoundAndLocationAsExpected(resultiterator);
 
-        // first result has "otherInfo" set, so we expect the other info expect the full description
+        // first result has "otherInfo" set, so we expect the other info expect the full
+        // description
         JsonNode message = result.get("message");
         JsonNode messageText = message.get("text");
         assertEquals(
@@ -353,7 +460,8 @@ class SarifReportIntegrationUnitTest {
     private JsonNode assertCSPResult(Iterator<JsonNode> resultiterator) {
         JsonNode secondResult = resultiterator.next();
 
-        // second result has no "otherInfo" set, so we expect the description as fallback
+        // second result has no "otherInfo" set, so we expect the description as
+        // fallback
         JsonNode message = secondResult.get("message");
         JsonNode messageText = message.get("text");
         assertEquals("CSP Description", messageText.asText());
@@ -502,7 +610,7 @@ class SarifReportIntegrationUnitTest {
         context.setVariable("reportTitle", reportData.getTitle());
         context.setVariable("description", reportData.getDescription());
         context.setVariable("helper", new ReportHelper());
-        context.setVariable("zapVersion", "99.9.9");
+        context.setVariable("zapVersion", ZAP_VERSION_DEV_BUILD);
         context.setVariable("reportData", reportData);
         context.setVariable("report", reportData);
         return context;
@@ -659,6 +767,46 @@ class SarifReportIntegrationUnitTest {
                         .build();
 
         rootAlertNode.add(newAlertNodeBuilder(cspAlert).build());
+
+        Alert testEvenProblematicContentCanBeRenderedAsJsonAlert =
+                newAlertBuilder()
+                        .setPluginId(47110815)
+                        .setEvidence("An evidence with an \" !")
+                        .setOtherInfo("Other info with an \" ...")
+                        .setParam("A param with an \" inside")
+                        .setReference("pseudo-ref with \" inside")
+                        .setResponseBody("Response containing a \"")
+                        .setResponseHeader("Header with \"")
+                        .setSolution(
+                                "The solution is to escape characters like \" when rendering JSON.")
+                        .setAttack(
+                                "The \"attack\" would be to use \" inside a field rendered unescaped in thymeleaf")
+                        .setName("Pseudo-Name with \"")
+                        .setResponseHeader(
+                                "HTTP/1.0 200\n"
+                                        + "Set-Cookie: locale=de; HttpOnly; SameSite=strict\n"
+                                        + "X-Content-Type-Options: nosniff\n"
+                                        + "X-XSS-Protection: 1; mode=block\n"
+                                        + "Cache-Control: no-cache, no-store, max-age=0, must-revalidate\n"
+                                        + "Pragma: no-cache\n"
+                                        + "Expires: 0\n"
+                                        + "Strict-Transport-Security: max-age=31536000 ; includeSubDomains\n"
+                                        + "X-Frame-Options: DENY\n"
+                                        + "Content-Security-Policy: script-src 'self'\n"
+                                        + "Referrer-Policy: no-referrer\n"
+                                        + "Content-Type: application/pdf\n"
+                                        + "Content-Language: en-US\n"
+                                        + "Date: Thu, 11 Nov 2021 09:56:20 GMT\n"
+                                        + "")
+                        .setCweId(4711)
+                        .setUriString("https://127.0.0.1:8080")
+                        .setDescription(
+                                "Test, if we have illegal JSON when using special chars in description - e.g: \\ \" or :, !, { , }")
+                        .setRisk(Alert.RISK_INFO)
+                        .setConfidence(0)
+                        .build();
+        rootAlertNode.add(
+                newAlertNodeBuilder(testEvenProblematicContentCanBeRenderedAsJsonAlert).build());
 
         reportData.setSites(Arrays.asList("https://127.0.0.1"));
 

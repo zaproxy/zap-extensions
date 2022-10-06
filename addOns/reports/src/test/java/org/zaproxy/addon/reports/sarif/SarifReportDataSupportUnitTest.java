@@ -28,6 +28,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.zaproxy.addon.reports.ReportData;
 import org.zaproxy.zap.extension.alert.AlertNode;
 
@@ -37,6 +39,30 @@ class SarifReportDataSupportUnitTest {
 
     @BeforeEach
     void beforeEach() {}
+
+    @ParameterizedTest()
+    @CsvSource({
+        "Dev Build,0.0.0-Dev Build",
+        "dev build, 0.0.0-dev build",
+        "something-else,0.0.0-something-else",
+        ",0.0.0-null",
+        "1.0,1.0",
+        "2.1,2.1",
+        "'',0.0.0-",
+        "1,1",
+        "2.11.1,2.11.1"
+    })
+    void resolveSemanticZapVersion(String zapVersion, String expectedSemanticVersion) {
+        /* prepare */
+        reportData = new ReportData();
+        SarifReportDataSupport toTest = new SarifReportDataSupport(reportData);
+
+        /* execute */
+        String semanticVersion = toTest.ensureSemanticVersion(zapVersion);
+
+        /* test */
+        assertEquals(expectedSemanticVersion, semanticVersion);
+    }
 
     @Test
     void threeAlertsTwoDifferentResultInTwoSarifRules() {
