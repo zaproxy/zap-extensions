@@ -74,8 +74,6 @@ import org.zaproxy.zap.extension.plugnhack.httppanel.component.ClientComponent;
 import org.zaproxy.zap.extension.plugnhack.httppanel.models.ByteClientPanelViewModel;
 import org.zaproxy.zap.extension.plugnhack.httppanel.models.StringClientPanelViewModel;
 import org.zaproxy.zap.extension.plugnhack.httppanel.views.ClientSyntaxHighlightTextView;
-import org.zaproxy.zap.extension.plugnhack.manualsend.ClientMessagePanelSender;
-import org.zaproxy.zap.extension.plugnhack.manualsend.ManualClientMessageSendEditorDialog;
 import org.zaproxy.zap.view.HttpPanelManager;
 import org.zaproxy.zap.view.HttpPanelManager.HttpPanelComponentFactory;
 import org.zaproxy.zap.view.HttpPanelManager.HttpPanelDefaultViewSelectorFactory;
@@ -151,7 +149,6 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
     private static final int poll = 3000;
 
     private ClientsPanel clientsPanel = null;
-    private PopupMenuResend popupMenuResend = null;
 
     private PlugNHackAPI api = new PlugNHackAPI(this);
     private MonitoredPagesManager mpm = new MonitoredPagesManager(this);
@@ -165,7 +162,6 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
     // private PopupMenuShowResponseInBrowser popupMenuShowResponseInBrowser = null;
 
     private ClientBreakpointMessageHandler brkMessageHandler = null;
-    private ManualClientMessageSendEditorDialog resendDialog = null;
     private ClientConfigDialog clientConfigDialog = null;
 
     private ClientBreakpointsUiManagerInterface brkManager = null;
@@ -278,7 +274,6 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
             extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuOpenAndMonitorUrl());
             extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuMonitorSubtree());
             extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuMonitorScope());
-            extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuResend());
             // TODO Work in progress
             // extensionHook.getHookMenu().addPopupMenuItem(this.getPopupMenuShowResponseInBrowser());
             extensionHook.getHookView().addStatusPanel(getClientsPanel());
@@ -370,14 +365,6 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
         Database db = Model.getSingleton().getDb();
         db.removeDatabaseListener(clientTable);
         db.removeDatabaseListener(messageTable);
-    }
-
-    private PopupMenuResend getPopupMenuResend() {
-        if (popupMenuResend == null) {
-            popupMenuResend = new PopupMenuResend(this);
-        }
-
-        return this.popupMenuResend;
     }
 
     private void initializeClientsForWorkPanel() {
@@ -528,15 +515,6 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
         return true;
     }
 
-    protected ManualClientMessageSendEditorDialog getResendDialog() {
-        if (resendDialog == null) {
-            resendDialog =
-                    new ManualClientMessageSendEditorDialog(
-                            new ClientMessagePanelSender(this), true, "plugnhack.resend.popup");
-        }
-
-        return resendDialog;
-    }
     /*
     public void setMonitored(MonitoredPage page, boolean monitored) {
     	SiteNode node = Model.getSingleton().getSession().getSiteTree().findNode(page.getMessage());

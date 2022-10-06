@@ -18,6 +18,21 @@ zapAddOn {
                 }
             }
         }
+
+        extensions {
+            register("org.zaproxy.zap.extension.plugnhack.manualsend.ExtensionPlugNHackManualSend") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.plugnhack.manualsend"))
+                }
+                dependencies {
+                    addOns {
+                        register("requester") {
+                            version.set("7.*")
+                        }
+                    }
+                }
+            }
+        }
     }
 
     apiClientGen {
@@ -28,4 +43,5 @@ zapAddOn {
 
 dependencies {
     compileOnly(parent!!.childProjects.get("network")!!)
+    compileOnly(parent!!.childProjects.get("requester")!!)
 }
