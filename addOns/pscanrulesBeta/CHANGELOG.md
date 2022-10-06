@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- The Server Header Information Leak scan rule now has functionality to generate example alerts for documentation purposes (Issue 6119).
 
 ## [30] - 2022-09-15
 ### Changed
