@@ -62,6 +62,8 @@ jobs:
       - url:                           # String: A mandatory URL of the request to be made
         name:                          # String: Optional name for the request, for documentation only
         method:                        # String: A non-empty request method, default: GET
+        headers:                       # An optional list of headers
+            # - "header1:value1"
         data:                          # String: Optional data to send in the request body, supports vars
         responseCode:                  # Int: An optional, expected response code against which the actual response code will be matched
   - type: spider                       # The traditional spider - fast but doesnt handle modern apps so well

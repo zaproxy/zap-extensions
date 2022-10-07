@@ -19,6 +19,8 @@
  */
 package org.zaproxy.addon.automation.jobs;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.util.StdConverter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -76,20 +78,23 @@ public class RequestorJob extends AutomationJob {
 
         this.verifyUser(this.getParameters().getUser(), progress);
 
-        Object o = jobData.get(REQUESTS);
-        if (o == null) {
-            return;
-        }
-        if (!(o instanceof ArrayList<?>)) {
-            progress.error(Constant.messages.getString("automation.error.requestor.badlist", o));
+        Object requestsList = jobData.get(REQUESTS);
+        if (requestsList == null) {
             return;
         }
 
-        ArrayList<?> requests = (ArrayList<?>) o;
+        if (!(requestsList instanceof ArrayList<?>)) {
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.error.requestor.badlist", requestsList));
+            return;
+        }
+
+        ArrayList<?> requests = (ArrayList<?>) requestsList;
         for (Object request : requests) {
             if (request instanceof LinkedHashMap<?, ?>) {
                 Request req = new Request();
-                JobUtils.applyParamsToObject(
+                JobUtils.applyParamsToObject( // Here request needs to be mapped to req object
                         (LinkedHashMap<?, ?>) request, req, this.getName(), null, progress);
                 if (req.getUrl() == null) {
                     progress.error(
@@ -128,6 +133,10 @@ public class RequestorJob extends AutomationJob {
     @Override
     public void applyParameters(AutomationProgress progress) {}
 
+    /**
+     * This method sets the headers plus other required components of an HTTP message and then sends
+     * the HTTP request.
+     */
     @Override
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
 
@@ -136,6 +145,12 @@ public class RequestorJob extends AutomationJob {
             String method = req.getMethod();
             if (method == null || method.isEmpty()) {
                 method = "GET";
+            }
+            List<Request.Header> headers = req.getHeaders();
+            if (headers != null) {
+                for (Request.Header header : headers) {
+                    msg.getRequestHeader().addHeader(header.getName(), header.getValue());
+                }
             }
             msg.getRequestHeader().setMethod(method);
             String url = env.replaceVars(req.getUrl());
@@ -314,6 +329,7 @@ public class RequestorJob extends AutomationJob {
         private String url;
         private String name;
         private String method;
+        private List<Header> headers;
         private String data;
         private Integer responseCode;
 
@@ -327,8 +343,23 @@ public class RequestorJob extends AutomationJob {
             this.responseCode = responseCode;
         }
 
+        public Request(
+                String url,
+                String name,
+                String method,
+                String data,
+                Integer responseCode,
+                List<Header> headers) {
+            this.url = url;
+            this.name = name;
+            this.method = method;
+            this.data = data;
+            this.responseCode = responseCode;
+            this.headers = headers;
+        }
+
         public Request copy() {
-            return new Request(url, name, method, data, responseCode);
+            return new Request(url, name, method, data, responseCode, headers);
         }
 
         public String getUrl() {
@@ -369,6 +400,74 @@ public class RequestorJob extends AutomationJob {
 
         public void setResponseCode(Integer responseCode) {
             this.responseCode = responseCode;
+        }
+
+        public List<Header> getHeaders() {
+            return headers;
+        }
+
+        private static List<Header> convertStringListToHeadersList(List<String> stringHeaders) {
+            List<Header> headers = new ArrayList<>();
+            if (stringHeaders != null) {
+
+                for (String stringHeader : stringHeaders) {
+                    String[] array = stringHeader.split(":", 2);
+                    Header header = new Header();
+                    header.setName(array[0]);
+                    if (array.length > 1) {
+                        header.setValue(array[1]);
+                    }
+                    headers.add(header);
+                }
+            }
+            return headers;
+        }
+
+        public void setHeaders(List<String> headers) {
+            this.headers = convertStringListToHeadersList(headers);
+        }
+
+        public void setHeadersList(List<Header> headers) {
+            this.headers = headers;
+        }
+
+        @JsonSerialize(converter = HeaderConverter.class)
+        public static class Header {
+            private String name;
+            private String value;
+
+            public Header() {
+                this.name = "";
+                this.value = "";
+            }
+
+            public Header(String name, String value) {
+                this.name = name;
+                this.value = value;
+            }
+
+            public String getName() {
+                return name;
+            }
+
+            public void setName(String name) {
+                this.name = name;
+            }
+
+            public String getValue() {
+                return value;
+            }
+
+            public void setValue(String value) {
+                this.value = value;
+            }
+        }
+
+        static class HeaderConverter extends StdConverter<Request.Header, String> {
+            @Override
+            public String convert(Request.Header header) {
+                return header.getName() + ":" + header.getValue();
+            }
         }
     }
 }

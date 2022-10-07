@@ -369,6 +369,163 @@ class RequestorJobUnitTest {
     }
 
     @Test
+    void shouldSendHeadersWithSetValues() throws IOException {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(progress);
+        HttpSender httpSender = mock(HttpSender.class);
+        RequestorJob job = new RequestorJob(httpSender);
+
+        String yamlStr =
+                "requests:\n"
+                        + "- url: https://www.example.com\n"
+                        + "  headers:\n"
+                        + "    - 'header1:value1'\n"
+                        + "    - 'header2:value2'\n"
+                        + "    - 'header3:'";
+
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> jobData = (LinkedHashMap<?, ?>) yaml.load(yamlStr);
+
+        // When
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        ArgumentCaptor<HttpMessage> argument = ArgumentCaptor.forClass(HttpMessage.class);
+        verify(httpSender).sendAndReceive(argument.capture());
+        assertThat(
+                argument.getValue().getRequestHeader().getHeader("header1"), is(equalTo("value1")));
+        assertThat(
+                argument.getValue().getRequestHeader().getHeader("header2"), is(equalTo("value2")));
+        assertThat(argument.getValue().getRequestHeader().getHeader("header3"), is(equalTo("")));
+    }
+
+    @Test
+    void shouldSendHeaderWithEmptyStringValue() throws IOException {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(progress);
+        HttpSender httpSender = mock(HttpSender.class);
+        RequestorJob job = new RequestorJob(httpSender);
+
+        String yamlStr =
+                "requests:\n"
+                        + "- url: https://www.example.com\n"
+                        + "  headers:\n"
+                        + "    - 'header1:'";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> jobData = (LinkedHashMap<?, ?>) yaml.load(yamlStr);
+
+        // When
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        ArgumentCaptor<HttpMessage> argument = ArgumentCaptor.forClass(HttpMessage.class);
+        verify(httpSender).sendAndReceive(argument.capture());
+        assertThat(argument.getValue().getRequestHeader().getHeader("header1"), is(equalTo("")));
+    }
+
+    @Test
+    void shouldAcceptEmptyHeadersList() throws IOException {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(progress);
+        HttpSender httpSender = mock(HttpSender.class);
+        RequestorJob job = new RequestorJob(httpSender);
+
+        String yamlStr = "requests:\n" + "- url: https://www.example.com\n" + "  headers: []";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> jobData = (LinkedHashMap<?, ?>) yaml.load(yamlStr);
+
+        // When
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldMaintainOrderOfHeadersWhileSending() throws IOException {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(progress);
+        HttpSender httpSender = mock(HttpSender.class);
+        RequestorJob job = new RequestorJob(httpSender);
+
+        String yamlStr =
+                "requests:\n"
+                        + "- url: https://www.example.com\n"
+                        + "  headers:\n"
+                        + "   - 'header1:value1'\n"
+                        + "   - 'header2:value2'";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> jobData = (LinkedHashMap<?, ?>) yaml.load(yamlStr);
+
+        // When
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        ArgumentCaptor<HttpMessage> argument = ArgumentCaptor.forClass(HttpMessage.class);
+        verify(httpSender).sendAndReceive(argument.capture());
+        assertThat(
+                argument.getValue().getRequestHeader().getHeaders().get(0).getName(),
+                is(equalTo("header1")));
+        assertThat(
+                argument.getValue().getRequestHeader().getHeaders().get(1).getName(),
+                is(equalTo("header2")));
+    }
+
+    @Test
+    void shouldSendHeadersWithSameName() throws IOException {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(progress);
+        HttpSender httpSender = mock(HttpSender.class);
+        RequestorJob job = new RequestorJob(httpSender);
+
+        String yamlStr =
+                "requests:\n"
+                        + "- url: https://www.example.com\n"
+                        + "  headers:\n"
+                        + "   - 'header1:value1'\n"
+                        + "   - 'header1:value1'";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> jobData = (LinkedHashMap<?, ?>) yaml.load(yamlStr);
+
+        // When
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        ArgumentCaptor<HttpMessage> argument = ArgumentCaptor.forClass(HttpMessage.class);
+        verify(httpSender).sendAndReceive(argument.capture());
+        assertThat(
+                argument.getValue().getRequestHeader().getHeaders().get(0).getName(),
+                is(equalTo("header1")));
+        assertThat(
+                argument.getValue().getRequestHeader().getHeaders().get(1).getName(),
+                is(equalTo("header1")));
+    }
+
+    @Test
     void shouldHandleUrlsWithEnvVarValues() throws IOException {
         // Given
         AutomationProgress progress = new AutomationProgress();
