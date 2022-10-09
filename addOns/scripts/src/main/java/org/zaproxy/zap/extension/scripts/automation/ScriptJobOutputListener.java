@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.scripts.automation;
 
 import java.util.Objects;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.script.ScriptOutputListener;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
@@ -54,7 +55,13 @@ public class ScriptJobOutputListener implements ScriptOutputListener {
         int index = nextLineEnd();
         while (index > -1) {
             String line = stringBuilder.substring(0, index);
-            progress.info(line);
+            // With view the core script extension does not print to std out.
+            if (View.isInitialised()) {
+                progress.info(line);
+            } else {
+                progress.infoNoStdout(line);
+            }
+
             stringBuilder.delete(0, index + 1);
             index = nextLineEnd();
         }
