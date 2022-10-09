@@ -64,6 +64,7 @@ public class HtmlContextAnalyser {
         "classid",
         "codebase",
         "data",
+        "data-src",
         "formaction",
         "href",
         "icon",

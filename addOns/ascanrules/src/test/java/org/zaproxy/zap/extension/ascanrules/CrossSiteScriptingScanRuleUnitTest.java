@@ -963,6 +963,48 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
     }
 
     @Test
+    void shouldReportXssInUrlAttributeButNotWhenPayloadIsModified()
+            throws NullPointerException, IOException {
+        String test = "/shouldReportXssInUrlAttributeButNotWhenPayloadIsModified/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response;
+                        if (name != null) {
+                            // Strip out < and >
+                            name =
+                                    name.replaceAll("<", "")
+                                            .replaceAll(">", "")
+                                            .replaceAll("\"", "");
+                            response =
+                                    getHtml(
+                                            "InputInLinkHrefTagAndFrameSrcTag.html",
+                                            new String[][] {{"name", name}});
+                        } else {
+                            response = getHtml("NoInput.html");
+                        }
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=file.html");
+
+        this.rule.init(msg, this.parent);
+
+        this.rule.scan();
+
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("javascript:alert(1);"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(alertsRaised.get(0).getAttack(), equalTo("javascript:alert(1);"));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
     void shouldReportXssInScriptIdTag() throws NullPointerException, IOException {
         String test = "/shouldReportXssInScriptIdTag/";
 
