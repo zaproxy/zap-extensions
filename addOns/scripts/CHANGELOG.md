@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Don't print twice to std out when running without view and executing scripts (Issue 7455).
+
 ## [31] - 2022-09-23
 ### Added
 - Automation ScriptJob - Enable or Disable any script and run a targeted script (Issue 7025).
