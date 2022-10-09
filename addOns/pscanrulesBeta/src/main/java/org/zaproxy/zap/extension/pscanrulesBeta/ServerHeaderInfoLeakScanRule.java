@@ -92,11 +92,8 @@ public class ServerHeaderInfoLeakScanRule extends PluginPassiveScanner {
     @Override
     public List<Alert> getExampleAlerts() {
         List<Alert> alerts = new ArrayList<>();
-        alerts.add(buildHeaderPresentAlert("Apache").setUri("https://www.example.com").build());
-        alerts.add(
-                buildVersionLeakAlert("Apache/2.4.1 (Unix)")
-                        .setUri("https://www.example.com")
-                        .build());
+        alerts.add(buildHeaderPresentAlert("Apache").build());
+        alerts.add(buildVersionLeakAlert("Apache/2.4.1 (Unix)").build());
         return alerts;
     }
 
