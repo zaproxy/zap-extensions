@@ -32,6 +32,7 @@ import org.zaproxy.addon.encoder.processors.predefined.Base64Decoder;
 import org.zaproxy.addon.encoder.processors.predefined.Base64Encoder;
 import org.zaproxy.addon.encoder.processors.predefined.Base64UrlDecoder;
 import org.zaproxy.addon.encoder.processors.predefined.Base64UrlEncoder;
+import org.zaproxy.addon.encoder.processors.predefined.FullHtmlStringEncoder;
 import org.zaproxy.addon.encoder.processors.predefined.FullUrlDecoder;
 import org.zaproxy.addon.encoder.processors.predefined.FullUrlEncoder;
 import org.zaproxy.addon.encoder.processors.predefined.HexStringDecoder;
@@ -70,6 +71,7 @@ public class EncodeDecodeProcessors {
 
         addPredefined("htmldecode", new HtmlStringDecoder());
         addPredefined("htmlencode", new HtmlStringEncoder());
+        addPredefined("fullhtmlencode", new FullHtmlStringEncoder());
 
         addPredefined("javascriptdecode", new JavaScriptStringDecoder());
         addPredefined("javascriptencode", new JavaScriptStringEncoder());
