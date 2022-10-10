@@ -25,6 +25,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.ssl.SslClosedEngineException;
 import java.nio.channels.ClosedChannelException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -87,6 +88,11 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
 
         writeResponse(ctx, msg);
 
+        if (isClosed(msg)) {
+            close(ctx);
+            return;
+        }
+
         if (postWriteResponse(ctx, msg)) {
             return;
         }
@@ -94,6 +100,15 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
         if (isConnectionClose(msg)) {
             close(ctx);
         }
+    }
+
+    private static boolean isClosed(HttpMessage msg) {
+        Object userObject = msg.getUserObject();
+        if (userObject instanceof Map) {
+            Map<?, ?> properties = (Map<?, ?>) userObject;
+            return Boolean.TRUE.equals(properties.get("connection.closed"));
+        }
+        return false;
     }
 
     protected HandlerResult processMessage(HttpMessage msg) {
