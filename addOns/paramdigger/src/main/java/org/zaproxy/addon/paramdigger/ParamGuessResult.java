@@ -56,7 +56,8 @@ public class ParamGuessResult {
             this.historyReference =
                     new HistoryReference(Model.getSingleton().getSession(), 23, httpMessage);
         } catch (HttpMalformedHeaderException | DatabaseException e) {
-            logger.warn("Error creating history reference. Exception raised {}", e);
+            logger.warn(
+                    "Error creating history reference. Exception raised: {}", e.getMessage(), e);
         }
     }
 
@@ -72,7 +73,7 @@ public class ParamGuessResult {
         try {
             return this.historyReference.getHttpMessage();
         } catch (HttpMalformedHeaderException | DatabaseException e) {
-            logger.warn("Error getting HTTP message. Exception raised {}", e);
+            logger.warn("Error getting HTTP message. Exception raised: {}", e.getMessage(), e);
         }
         return null;
     }

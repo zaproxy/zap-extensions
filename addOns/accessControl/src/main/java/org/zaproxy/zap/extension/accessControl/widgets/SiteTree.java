@@ -109,7 +109,7 @@ public class SiteTree {
 
         } catch (Exception e) {
             // ZAP: Added error
-            log.error("Exception adding {} {}", uri.toString(), e.getMessage(), e);
+            log.error("Exception adding {} {}", uri, e.getMessage(), e);
         }
 
         return leaf;

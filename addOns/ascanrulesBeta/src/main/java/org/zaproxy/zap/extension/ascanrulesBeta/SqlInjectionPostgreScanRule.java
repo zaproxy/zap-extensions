@@ -268,13 +268,13 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
                 log.debug(
                         "The Base Time Check timed out on [{}] URL [{}]",
                         msgTimeBaseline.getRequestHeader().getMethod(),
-                        msgTimeBaseline.getRequestHeader().getURI().toString());
+                        msgTimeBaseline.getRequestHeader().getURI());
             } catch (SocketException ex) {
                 log.debug(
                         "Caught {} {} when accessing: {}",
                         ex.getClass().getName(),
                         ex.getMessage(),
-                        msgTimeBaseline.getRequestHeader().getURI().toString());
+                        msgTimeBaseline.getRequestHeader().getURI());
                 return; // No need to keep going
             }
             long originalTimeUsed = msgTimeBaseline.getTimeElapsedMillis();
@@ -285,7 +285,7 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
             log.debug(
                     "Scanning URL [{}] [{}], field [{}] with original value [{}] for SQL Injection",
                     getBaseMsg().getRequestHeader().getMethod(),
-                    getBaseMsg().getRequestHeader().getURI().toString(),
+                    getBaseMsg().getRequestHeader().getURI(),
                     paramName,
                     paramValue);
 
@@ -313,14 +313,14 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
                     log.debug(
                             "The time check query timed out on [{}] URL [{}] on field: [{}]",
                             msgTimeBaseline.getRequestHeader().getMethod(),
-                            msgTimeBaseline.getRequestHeader().getURI().toString(),
+                            msgTimeBaseline.getRequestHeader().getURI(),
                             paramName);
                 } catch (SocketException ex) {
                     log.debug(
                             "Caught {} {} when accessing: {}",
                             ex.getClass().getName(),
                             ex.getMessage(),
-                            msgTimeBaseline.getRequestHeader().getURI().toString());
+                            msgTimeBaseline.getRequestHeader().getURI());
                     return; // No need to keep going
                 }
                 long modifiedTimeUsed = msgAttack.getTimeElapsedMillis();

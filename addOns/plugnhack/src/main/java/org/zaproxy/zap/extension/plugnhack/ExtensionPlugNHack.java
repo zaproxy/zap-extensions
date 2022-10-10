@@ -471,8 +471,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                     if (endHeadTag > 0) {
                         endHeadTag++;
                         logger.debug(
-                                "Injecting PnH script into {}",
-                                msg.getRequestHeader().getURI().toString());
+                                "Injecting PnH script into {}", msg.getRequestHeader().getURI());
                         // this assign the unique id
                         MonitoredPage page = mpm.monitorPage(msg);
                         try {
@@ -504,7 +503,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                     if (!injected) {
                         logger.debug(
                                 "Cant inject PnH script into {} no head tag found {}",
-                                msg.getRequestHeader().getURI().toString(),
+                                msg.getRequestHeader().getURI(),
                                 msg.getResponseHeader().getStatusCode());
                     }
                 }

@@ -305,13 +305,7 @@ public class AlertFilter extends Enableable {
         }
         if (getRuleId() != alert.getPluginId()) {
             // rule ids dont match
-            if (log.isDebugEnabled()) {
-                log.debug(
-                        "Filter didnt match plugin id: "
-                                + getRuleId()
-                                + " != "
-                                + alert.getPluginId());
-            }
+            log.debug("Filter didn't match plugin id: {} != {}", getRuleId(), alert.getPluginId());
             return false;
         }
         if (!ignoreContext && this.contextId != -1) {

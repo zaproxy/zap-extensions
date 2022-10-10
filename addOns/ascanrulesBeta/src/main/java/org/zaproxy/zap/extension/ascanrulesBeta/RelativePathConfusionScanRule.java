@@ -247,7 +247,10 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                 try {
                     hackedMessage.setCookieParams(originalMsg.getCookieParams());
                 } catch (Exception e) {
-                    log.warn("Could not set the cookies from the base request: {}", e);
+                    log.warn(
+                            "Could not set the cookies from the base request: {}",
+                            e.getMessage(),
+                            e);
                 }
                 sendAndReceive(hackedMessage, true); // follow redirects
 

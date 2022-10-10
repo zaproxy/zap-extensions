@@ -106,7 +106,7 @@ public class EventConsumerImpl implements EventConsumer {
                 break;
             case HistoryReferenceEventPublisher.EVENT_REMOVED:
                 // This only gets fired if request is removed
-                LOGGER.debug("NOTE REMOVE EVENT received... {}", event.getParameters().toString());
+                LOGGER.debug("NOTE REMOVE EVENT received... {}", event.getParameters());
                 int refIdDelete =
                         Integer.valueOf(
                                 event.getParameters()

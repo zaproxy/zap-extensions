@@ -262,7 +262,7 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
                     log.debug(
                             "A likely Time Based SQL Injection Vulnerability has been found with [{}] URL [{}] on field: [{}]",
                             msgAttack.getRequestHeader().getMethod(),
-                            msgAttack.getRequestHeader().getURI().toString(),
+                            msgAttack.getRequestHeader().getURI(),
                             paramName);
                     return;
                 } // query took longer than the amount of time we attempted to delay it by

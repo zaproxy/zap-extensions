@@ -717,7 +717,7 @@ public class WebSocketProxyV13 extends WebSocketProxy {
                 if (logger.isDebugEnabled()) {
                     logger.debug(
                             "Unable to decode as UTF-8: {} {}",
-                            payload.toString(),
+                            payload,
                             Arrays.toString(payload.array()),
                             e);
                 }
