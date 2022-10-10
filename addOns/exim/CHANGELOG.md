@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Maintenance changes.
 - When importing a file of URLs the output tab and log will now be more informative about failures.
 
+### Added
+- HAR related API endpoints being migrated from core (Issue 6579).
+
 ## [0.2.0] - 2022-07-20
 ### Fixed
 - Tweaked import functionality to mark import progress components completed when an exception occurs during import (thus allowing them to be cleared properly).
