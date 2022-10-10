@@ -723,9 +723,8 @@ public class CacheableScanRule extends PluginPassiveScanner {
     @Override
     public List<Alert> getExampleAlerts() {
         List<Alert> alerts = new ArrayList<>();
-        String exampleUri = "https://example.com";
-        alerts.add(alertNonStorable("HEAD ").setUri(exampleUri).build());
-        alerts.add(alertStorableNonCacheable("no-cache").setUri(exampleUri).build());
+        alerts.add(alertNonStorable("HEAD ").build());
+        alerts.add(alertStorableNonCacheable("no-cache").build());
         alerts.add(
                 alertStorableCacheable(
                                 "",
