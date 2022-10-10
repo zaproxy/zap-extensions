@@ -48,6 +48,7 @@ import org.zaproxy.zap.utils.DesktopUtils;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.FontUtils.Size;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.view.LayoutHelper;
 
 @SuppressWarnings("serial")
@@ -315,9 +316,13 @@ public class QuickStartPanel extends AbstractPanel {
                     extension.getQuickStartParam().setClearedNewsItem(newsItem.getId());
                 });
 
-        JButton learnMoreButton =
+        JButton newsLearnMoreButton =
                 new JButton(Constant.messages.getString("quickstart.button.news"));
-        learnMoreButton.addActionListener(e -> DesktopUtils.openUrlInBrowser(newsItem.getUri()));
+        newsLearnMoreButton.addActionListener(
+                e -> {
+                    Stats.incCounter("stats.quickstart.news." + newsItem.getId());
+                    DesktopUtils.openUrlInBrowser(newsItem.getUri());
+                });
 
         innerPanel.setBorder(
                 BorderFactory.createTitledBorder(
@@ -326,7 +331,8 @@ public class QuickStartPanel extends AbstractPanel {
         innerPanel.add(
                 new JLabel(newsItem.getText()),
                 LayoutHelper.getGBC(0, 0, 1, 0.0D, new Insets(5, 5, 5, 5)));
-        innerPanel.add(learnMoreButton, LayoutHelper.getGBC(1, 0, 1, 0.0D, new Insets(5, 5, 5, 5)));
+        innerPanel.add(
+                newsLearnMoreButton, LayoutHelper.getGBC(1, 0, 1, 0.0D, new Insets(5, 5, 5, 5)));
         innerPanel.add(closeButton, LayoutHelper.getGBC(2, 0, 1, 0.0D));
 
         newsPanel.add(
