@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Allow spider to run if no OK response (Issue 7510).
 
 ## [0.17.0] - 2022-09-09
 ### Added

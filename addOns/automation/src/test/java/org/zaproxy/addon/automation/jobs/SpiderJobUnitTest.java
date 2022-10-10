@@ -536,7 +536,7 @@ class SpiderJobUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldFailIfForbiddenResponse() throws Exception {
+    void shouldWarnIfNotOkResponse() throws Exception {
         ExtensionHistory extHistory = mock(ExtensionHistory.class, withSettings().lenient());
         given(extensionLoader.getExtension(ExtensionHistory.class)).willReturn(extHistory);
 
@@ -572,10 +572,12 @@ class SpiderJobUnitTest extends TestUtils {
         stopServer();
 
         // Then
-        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(testHandler.wasCalled(), is(equalTo(true)));
-        assertThat(progress.getErrors().size(), is(equalTo(1)));
-        assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.spider.url.notok!")));
+        assertThat(progress.getWarnings().size(), is(equalTo(1)));
+        assertThat(
+                progress.getWarnings().get(0), is(equalTo("!automation.error.spider.url.notok!")));
     }
 
     @Test

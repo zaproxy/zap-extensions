@@ -333,13 +333,12 @@ public class SpiderJob extends AutomationJob {
                 httpSender.sendAndReceive(msg, true);
 
                 if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK) {
-                    progress.error(
+                    progress.warn(
                             Constant.messages.getString(
                                     "automation.error.spider.url.notok",
                                     requester,
                                     url,
                                     msg.getResponseHeader().getStatusCode()));
-                    return;
                 }
 
                 ExtensionHistory extHistory =
