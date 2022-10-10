@@ -25,7 +25,9 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
@@ -62,6 +64,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -84,6 +87,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
@@ -228,6 +232,22 @@ class HttpSenderImplUnitTest {
                         // "HTTP/4.5"
                         )
                 .flatMap(method -> sendAndReceiveMethods().map(sm -> arguments(method, sm)));
+    }
+
+    static Stream<Arguments> noBodyKeepAliveResponseAndSendAndReceiveMethods() {
+        return Stream.of("1.0", "1.1")
+                .map(version -> "HTTP/" + version + " 200 OK\r\nConnection: keep-alive\r\n\r\n")
+                .flatMap(response -> sendAndReceiveMethods().map(sm -> arguments(response, sm)));
+    }
+
+    static Stream<Arguments> emptyKeepAliveResponseAndSendAndReceiveMethods() {
+        return Stream.of("1.0", "1.1")
+                .map(
+                        version ->
+                                "HTTP/"
+                                        + version
+                                        + " 200 OK\r\nContent-Length: 0\r\nConnection: keep-alive\r\n\r\n")
+                .flatMap(response -> sendAndReceiveMethods().map(sm -> arguments(response, sm)));
     }
 
     @Nested
@@ -626,6 +646,54 @@ class HttpSenderImplUnitTest {
                     message.getRequestHeader().getURI().toString(), is(equalTo(getServerUri("/"))));
             assertThat(message.getResponseHeader().getStatusCode(), is(equalTo(200)));
             assertThat(message.getResponseBody().toString(), is(equalTo("Final Response")));
+        }
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#noBodyKeepAliveResponseAndSendAndReceiveMethods")
+        void shouldContainUserObjectWithConnectionClosed(String responseHeader, SenderMethod method)
+                throws Exception {
+            // Given
+            server.setRawHandler(
+                    (ctx, msg) -> {
+                        ByteBuf out = ctx.alloc().buffer();
+                        ByteBufUtil.writeAscii(out, responseHeader);
+                        ctx.write(out);
+                        ctx.writeAndFlush(Unpooled.EMPTY_BUFFER)
+                                .addListener(ChannelFutureListener.CLOSE);
+                    });
+            message.getRequestHeader().setHeader(HttpHeader.CONNECTION, HttpHeader._KEEP_ALIVE);
+            // When
+            method.sendWith(httpSender, message);
+            // Then
+            assertThat(message.getResponseHeader().toString(), is(equalTo(responseHeader)));
+            assertThat(message.getResponseBody().toString(), is(equalTo("")));
+            assertThat(message.getUserObject(), is(instanceOf(Map.class)));
+            assertThat(
+                    (Map<?, ?>) message.getUserObject(),
+                    hasEntry("connection.closed", Boolean.TRUE));
+        }
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#emptyKeepAliveResponseAndSendAndReceiveMethods")
+        void shouldNotContainUserObjectWithConnectionClosedIfNotClosed(
+                String responseHeader, SenderMethod method) throws Exception {
+            // Given
+            server.setRawHandler(
+                    (ctx, msg) -> {
+                        ByteBuf out = ctx.alloc().buffer();
+                        ByteBufUtil.writeAscii(out, responseHeader);
+                        ctx.write(out);
+                        ctx.writeAndFlush(Unpooled.EMPTY_BUFFER);
+                    });
+            message.getRequestHeader().setHeader(HttpHeader.CONNECTION, HttpHeader._KEEP_ALIVE);
+            // When
+            method.sendWith(httpSender, message);
+            // Then
+            assertThat(message.getResponseHeader().toString(), is(equalTo(responseHeader)));
+            assertThat(message.getResponseBody().toString(), is(equalTo("")));
+            assertThat(message.getUserObject(), is(nullValue()));
         }
 
         @Nested

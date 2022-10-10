@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.net.Socket;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
@@ -63,6 +64,7 @@ import org.apache.hc.core5.http.ProtocolVersion;
 import org.apache.hc.core5.http.config.CharCodingConfig;
 import org.apache.hc.core5.http.config.Lookup;
 import org.apache.hc.core5.http.config.RegistryBuilder;
+import org.apache.hc.core5.http.io.HttpClientConnection;
 import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
@@ -403,6 +405,13 @@ public class HttpSenderApache
         if (user != null) {
             LegacyUtils.updateHttpState(
                     user.getCorrespondingHttpState(), requestCtx.getCookieStore());
+        }
+
+        HttpClientConnection connection =
+                (HttpClientConnection) requestCtx.getAttribute(ZapHttpRequestExecutor.CONNECTION);
+        if (!connection.isOpen()) {
+            message.setUserObject(Collections.singletonMap("connection.closed", Boolean.TRUE));
+            return;
         }
 
         Socket socket = (Socket) requestCtx.getAttribute(ZapHttpRequestExecutor.CONNECTION_SOCKET);

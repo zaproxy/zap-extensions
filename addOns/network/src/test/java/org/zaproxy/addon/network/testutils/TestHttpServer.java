@@ -134,7 +134,11 @@ public class TestHttpServer extends HttpServer {
         }
     }
 
-    /** Gets the messages received by the server. @return the messages received by the server. */
+    /**
+     * Gets the messages received by the server.
+     *
+     * @return the messages received by the server.
+     */
     public List<HttpMessage> getReceivedMessages() {
         return receivedMessages;
     }
