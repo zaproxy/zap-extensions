@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- The SQL Injection Scan Rule filters reflected payload containing escaped characters like '&amp;' and '&quot;' before response content comparison to reduce false negatives.
 
 ## [52] - 2023-02-03
 ### Changed
