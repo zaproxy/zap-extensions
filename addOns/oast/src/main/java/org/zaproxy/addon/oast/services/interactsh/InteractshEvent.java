@@ -132,6 +132,21 @@ public class InteractshEvent {
             msg.setRequestHeader(requestHeader);
             msg.getRequestHeader().setHeader(EMAIL_FROM_HEADER, smtpFrom);
             msg.setRequestBody(rawRequest);
+        } else if ("ldap".equals(protocol)) {
+            String searchString = "BaseDn=";
+            int requestUriIndex = rawRequest.indexOf(searchString) + searchString.length();
+            String requestUri = rawRequest.substring(
+                requestUriIndex, rawRequest.indexOf("\n", requestUriIndex)
+            );
+            if (requestUri.contains("://")) {
+                searchString = "://";
+                requestUriIndex = requestUri.indexOf(searchString) + searchString.length();
+                requestUri = requestUri.substring(requestUriIndex);
+            }
+            requestUri = "ldap://" + requestUri + "/" + requestUri;
+            String requestHeader = "LDAP " + requestUri + " HTTP/1.1\r\n\r\n";
+            msg.setRequestHeader(requestHeader);
+            msg.setRequestBody(rawRequest);
         }
         return OastRequest.create(msg, remoteAddress, "Interactsh");
     }

