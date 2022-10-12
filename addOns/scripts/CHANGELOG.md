@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [32] - 2022-10-12
 ### Changed
 - Maintenance changes.
 
@@ -202,6 +202,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[32]: https://github.com/zaproxy/zap-extensions/releases/scripts-v32
 [31]: https://github.com/zaproxy/zap-extensions/releases/scripts-v31
 [30]: https://github.com/zaproxy/zap-extensions/releases/scripts-v30
 [29]: https://github.com/zaproxy/zap-extensions/releases/scripts-v29
