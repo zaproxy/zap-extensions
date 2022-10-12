@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Maintenance changes.
 - Update minimum ZAP version to 2.11.1.
 
+### Added
+- A Full HTML Entity encoder (Issue 2222).
+
 ## [0.6.0] - 2021-10-06
 ### Changed
 - Maintenance changes.
