@@ -23,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
@@ -117,6 +118,8 @@ class PassiveScanJobResultsUnitTest {
     @Test
     void shouldReturnAlertData() {
         // Given
+        final int pluginId_100 = 100;
+        final int pluginId_200 = 200;
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
         ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
@@ -124,7 +127,7 @@ class PassiveScanJobResultsUnitTest {
         given(extensionLoader.getExtension(ExtensionAlert.class)).willReturn(extAlert);
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
 
-        Alert alertOne = new Alert(100);
+        Alert alertOne = new Alert(pluginId_100);
         alertOne.setAlertId(1);
         alertOne.setSource(Alert.Source.PASSIVE);
         AlertNode nodeOne = mock(AlertNode.class);
@@ -135,7 +138,7 @@ class PassiveScanJobResultsUnitTest {
         given(nodeOneParent.getFirstChild()).willReturn(nodeOne);
         given(nodeOneParent.getNodeName()).willReturn("nodeOneParent");
 
-        Alert alertTwo = new Alert(200);
+        Alert alertTwo = new Alert(pluginId_200);
         alertTwo.setAlertId(2);
         alertTwo.setSource(Alert.Source.PASSIVE);
         AlertNode nodeTwo = mock(AlertNode.class);
@@ -170,13 +173,15 @@ class PassiveScanJobResultsUnitTest {
         assertThat(data.getKey(), is(equalTo("passiveScanData")));
         assertThat(data.getAllAlertData().size(), is(equalTo(2)));
 
-        assertThat(data.getAlertData(1), is(notNullValue()));
-        assertThat(data.getAlertData(1).getAlertId(), is(equalTo(1)));
-        assertThat(data.getAlertData(1).getPluginId(), is(equalTo(100)));
+        assertThat(data.getAlertData(pluginId_100), is(notNullValue()));
+        assertThat(data.getAlertData(pluginId_100).getAlertId(), is(equalTo(1)));
+        assertThat(data.getAlertData(pluginId_100).getPluginId(), is(equalTo(100)));
 
-        assertThat(data.getAlertData(2), is(notNullValue()));
-        assertThat(data.getAlertData(2).getAlertId(), is(equalTo(2)));
-        assertThat(data.getAlertData(2).getPluginId(), is(equalTo(200)));
+        assertThat(data.getAlertData(pluginId_200), is(notNullValue()));
+        assertThat(data.getAlertData(pluginId_200).getAlertId(), is(equalTo(2)));
+        assertThat(data.getAlertData(pluginId_200).getPluginId(), is(equalTo(200)));
+
+        assertThat(data.getAlertData(1), is(nullValue()));
     }
 
     private class TestPluginPassiveScanner extends PluginPassiveScanner {
