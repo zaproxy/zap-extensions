@@ -27,8 +27,11 @@ import static org.hamcrest.Matchers.is;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.Response;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
@@ -45,10 +48,35 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
         return new ExternalRedirectScanRule();
     }
 
+    private static final String TYPE_TOKEN = "@@@type@@@";
+    private static final String CONTENT_TOKEN = "@@@content@@@";
+    private static final String META_TEMPLATE =
+            "<html><head><meta http-equiv=\""
+                    + TYPE_TOKEN
+                    + "\" content=\""
+                    + CONTENT_TOKEN
+                    + "\"></head><body><H1>Redirect></H1></`body></html>";
+    private static final String JS_VAR_TOKEN = "@@@jsVar@@@";
+    private static final String JS_VAR_TEMPLATE =
+            "<html><head><script>"
+                    + JS_VAR_TOKEN
+                    + "='"
+                    + CONTENT_TOKEN
+                    + "';</script></head><body><H1>Redirect></H1></body></html>";
+    private static final String JS_METHOD_TOKEN = "@@@jsMethod@@@";
+    private static final String JS_METHOD_TEMPLATE =
+            "<html><head><script>"
+                    + JS_METHOD_TOKEN
+                    + "('"
+                    + CONTENT_TOKEN
+                    + "');</script></head><body><H1>Redirect></H1></body></html>";
+
     private enum PayloadHandling {
         TRIM,
         ADD,
-        NEITHER
+        NEITHER,
+        CONCAT_PARAM,
+        CONCAT_PATH
     };
 
     private NanoServerHandler createHttpRedirectHandler(String path, String header) {
@@ -69,7 +97,13 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
                                         .replace("\\", "");
                         break;
                     case ADD:
-                        site = HttpHeader.HTTP + "://" + site;
+                        site = HttpHeader.SCHEME_HTTP + site;
+                        break;
+                    case CONCAT_PARAM:
+                        site = HttpHeader.SCHEME_HTTPS + "example.com/?q=" + site;
+                        break;
+                    case CONCAT_PATH:
+                        site = HttpHeader.SCHEME_HTTPS + "example.com/" + site;
                         break;
                     case NEITHER:
                     default:
@@ -132,7 +166,7 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
     @ValueSource(strings = {HttpFieldsNames.LOCATION, HttpFieldsNames.REFRESH})
     void shouldReportRedirectWithLocationOrRefreshHeader(String header) throws Exception {
         // Given
-        String test = "/shouldReportSimpleRedirect/";
+        String test = "/";
 
         nano.addHandler(createHttpRedirectHandler(test, header));
         HttpMessage msg = getHttpMessage(test + "?site=xxx");
@@ -145,10 +179,31 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
         assertThat(alertsRaised.get(0).getEvidence().endsWith(".owasp.org"), equalTo(true));
     }
 
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldNotReportRedirectWithRefreshHeaderWhenPayloadConcatenated(boolean param)
+            throws Exception {
+        // Given
+        String test = "/";
+
+        nano.addHandler(
+                param
+                        ? createHttpRedirectHandler(
+                                test, HttpFieldsNames.REFRESH, PayloadHandling.CONCAT_PARAM)
+                        : createHttpRedirectHandler(
+                                test, HttpFieldsNames.REFRESH, PayloadHandling.CONCAT_PATH));
+        HttpMessage msg = getHttpMessage(test + "?site=xxx");
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
     @Test
     void shouldNotReportRedirectWithLocationOrRefreshHeaderIfSchemeIsRemoved() throws Exception {
         // Given
-        String test = "/shouldReportSimpleRedirect/";
+        String test = "/";
 
         nano.addHandler(
                 createHttpRedirectHandler(test, HttpFieldsNames.LOCATION, PayloadHandling.TRIM));
@@ -161,9 +216,9 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
     }
 
     @Test
-    void shouldReportRedirectWithLocationOrRefreshHeaderIfSchemeIsAdded() throws Exception {
+    void shouldReportRedirectWithLocationHeaderIfSchemeIsAdded() throws Exception {
         // Given
-        String test = "/shouldReportSimpleRedirect/";
+        String test = "/";
 
         nano.addHandler(
                 createHttpRedirectHandler(test, HttpFieldsNames.LOCATION, PayloadHandling.ADD));
@@ -178,10 +233,30 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
         assertThat(alertsRaised.get(0).getAttack().startsWith(HttpHeader.HTTP), equalTo(false));
     }
 
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldNotReportRedirectWithLocationHeaderIfPayloadIsConcatenated(boolean param)
+            throws Exception {
+        // Given
+        String test = "/";
+        nano.addHandler(
+                param
+                        ? createHttpRedirectHandler(
+                                test, HttpHeader.LOCATION, PayloadHandling.CONCAT_PARAM)
+                        : createHttpRedirectHandler(
+                                test, HttpHeader.LOCATION, PayloadHandling.CONCAT_PATH));
+        HttpMessage msg = getHttpMessage(test + "?site=xxx");
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
     @Test
     void shouldReportDoubleEncodedRedirect() throws Exception {
         // Given
-        String test = "/shouldReportDoubleEncodedRedirect/";
+        String test = "/";
 
         nano.addHandler(
                 new NanoServerHandler(test) {
@@ -215,7 +290,7 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
     @ValueSource(strings = {HttpFieldsNames.LOCATION, HttpFieldsNames.REFRESH})
     void shouldReportRedirectWithMetaLocationOrRefresh(String type) throws Exception {
         // Given
-        String test = "/shouldReportSimpleRedirect/";
+        String test = "/";
 
         nano.addHandler(
                 new NanoServerHandler(test) {
@@ -249,33 +324,93 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
         assertThat(alertsRaised.get(0).getEvidence().startsWith(HttpHeader.HTTP), equalTo(true));
     }
 
+    private static NanoServerHandler createMetaHandler(String test, String type, String content) {
+        return new NanoServerHandler(test) {
+            @Override
+            protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                String site = getFirstParamValue(session, "site");
+                if (site != null && site.length() > 0) {
+                    Response response =
+                            newFixedLengthResponse(
+                                    NanoHTTPD.Response.Status.OK,
+                                    NanoHTTPD.MIME_HTML,
+                                    META_TEMPLATE
+                                            .replace(TYPE_TOKEN, type)
+                                            .replace(CONTENT_TOKEN, content + site));
+                    return response;
+                }
+                String response = "<html><body></body></html>";
+                return newFixedLengthResponse(response);
+            }
+        };
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldNotReportRedirectWithMetaLocationWhenConcatenated(boolean param) throws Exception {
+        // Given
+        String test = "/";
+        nano.addHandler(
+                param
+                        ? createMetaHandler(
+                                test, HttpFieldsNames.LOCATION, "https://example.com/?q=")
+                        : createMetaHandler(
+                                test, HttpFieldsNames.LOCATION, "https://example.com/"));
+        HttpMessage msg = getHttpMessage(test + "?site=xxx");
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldNotReportRedirectWithMetaRefreshWhenConcatenated(boolean param) throws Exception {
+        // Given
+        String test = "/";
+        nano.addHandler(
+                param
+                        ? createMetaHandler(
+                                test, HttpFieldsNames.REFRESH, "5;url='https://example.com/?q=")
+                        : createMetaHandler(
+                                test, HttpFieldsNames.REFRESH, "5;url='https://example.com/"));
+        HttpMessage msg = getHttpMessage(test + "?site=xxx");
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    private static NanoServerHandler createJsVariableHandler(
+            String test, String jsVar, String content) {
+        return new NanoServerHandler(test) {
+            @Override
+            protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                String site = getFirstParamValue(session, "site");
+                if (site != null && site.length() > 0) {
+                    Response response =
+                            newFixedLengthResponse(
+                                    NanoHTTPD.Response.Status.OK,
+                                    NanoHTTPD.MIME_HTML,
+                                    JS_VAR_TEMPLATE
+                                            .replace(JS_VAR_TOKEN, jsVar)
+                                            .replace(CONTENT_TOKEN, content + site));
+                    return response;
+                }
+                String response = "<html><body></body></html>";
+                return newFixedLengthResponse(response);
+            }
+        };
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"location", "location.href"})
     void shouldReportRedirectWithJsLocationAssignment(String jsVar) throws Exception {
         // Given
-        String test = "/shouldReportSimpleRedirect/";
-
-        nano.addHandler(
-                new NanoServerHandler(test) {
-                    @Override
-                    protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
-                        String site = getFirstParamValue(session, "site");
-                        if (site != null && site.length() > 0) {
-                            Response response =
-                                    newFixedLengthResponse(
-                                            NanoHTTPD.Response.Status.OK,
-                                            NanoHTTPD.MIME_HTML,
-                                            "<html><head><script>"
-                                                    + jsVar
-                                                    + "='"
-                                                    + site
-                                                    + "';</script></head><body><H1>Redirect></H1></body></html>");
-                            return response;
-                        }
-                        String response = "<html><body></body></html>";
-                        return newFixedLengthResponse(response);
-                    }
-                });
+        String test = "/";
+        nano.addHandler(createJsVariableHandler(test, jsVar, ""));
         HttpMessage msg = getHttpMessage(test + "?site=xxx");
         rule.init(msg, parent);
         // When
@@ -285,35 +420,62 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
         assertThat(alertsRaised.get(0).getParam(), equalTo("site"));
         assertThat(alertsRaised.get(0).getEvidence().endsWith(".owasp.org"), equalTo(true));
         assertThat(alertsRaised.get(0).getEvidence().startsWith(HttpHeader.HTTP), equalTo(true));
+    }
+
+    private static Stream<Arguments> createJsVarBooleanPairs() {
+        return Stream.of(
+                Arguments.of("location", true),
+                Arguments.of("location", false),
+                Arguments.of("location.href", true),
+                Arguments.of("location.href", false));
+    }
+
+    @ParameterizedTest
+    @MethodSource("createJsVarBooleanPairs")
+    void shouldNotReportRedirectWithJsLocationAssignmentWhenConcatenated(
+            String jsVar, boolean param) throws Exception {
+        // Given
+        String test = "/";
+        nano.addHandler(
+                param
+                        ? createJsVariableHandler(test, jsVar, "http://www.example.com/?q=")
+                        : createJsVariableHandler(test, jsVar, "http://www.example.com/"));
+        HttpMessage msg = getHttpMessage(test + "?site=xxx");
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    private static NanoServerHandler createJsMethodHandler(
+            String test, String jsMethod, String content) {
+        return new NanoServerHandler(test) {
+            @Override
+            protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
+                String site = getFirstParamValue(session, "site");
+                if (site != null && site.length() > 0) {
+                    Response response =
+                            newFixedLengthResponse(
+                                    NanoHTTPD.Response.Status.OK,
+                                    NanoHTTPD.MIME_HTML,
+                                    JS_METHOD_TEMPLATE
+                                            .replace(JS_METHOD_TOKEN, jsMethod)
+                                            .replace(CONTENT_TOKEN, content + site));
+                    return response;
+                }
+                String response = "<html><body></body></html>";
+                return newFixedLengthResponse(response);
+            }
+        };
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"location.reload", "location.replace", "location.assign"})
     void shouldReportRedirectWithJsLocationMethods(String jsMethod) throws Exception {
         // Given
-        String test = "/shouldReportSimpleRedirect/";
-
-        nano.addHandler(
-                new NanoServerHandler(test) {
-                    @Override
-                    protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
-                        String site = getFirstParamValue(session, "site");
-                        if (site != null && site.length() > 0) {
-                            Response response =
-                                    newFixedLengthResponse(
-                                            NanoHTTPD.Response.Status.OK,
-                                            NanoHTTPD.MIME_HTML,
-                                            "<html><head><script>"
-                                                    + jsMethod
-                                                    + "('"
-                                                    + site
-                                                    + "');</script></head><body><H1>Redirect></H1></body></html>");
-                            return response;
-                        }
-                        String response = "<html><body></body></html>";
-                        return newFixedLengthResponse(response);
-                    }
-                });
+        String test = "/";
+        nano.addHandler(createJsMethodHandler(test, jsMethod, ""));
         HttpMessage msg = getHttpMessage(test + "?site=xxx");
         rule.init(msg, parent);
         // When
@@ -325,33 +487,40 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
         assertThat(alertsRaised.get(0).getEvidence().startsWith(HttpHeader.HTTP), equalTo(true));
     }
 
+    private static Stream<Arguments> createJsMethodBooleanPairs() {
+        return Stream.of(
+                Arguments.of("location.reload", true),
+                Arguments.of("location.reload", false),
+                Arguments.of("location.replace", true),
+                Arguments.of("location.replace", false),
+                Arguments.of("location.assign", true),
+                Arguments.of("location.assign", false));
+    }
+
+    @ParameterizedTest
+    @MethodSource("createJsMethodBooleanPairs")
+    void shouldNotReportRedirectWithJsLocationMethodsWhenConcatenated(
+            String jsMethod, boolean param) throws Exception {
+        // Given
+        String test = "/";
+        nano.addHandler(
+                param
+                        ? createJsMethodHandler(test, jsMethod, "http://www.example.com/?q=")
+                        : createJsMethodHandler(test, jsMethod, "http://www.example.com/"));
+        HttpMessage msg = getHttpMessage(test + "?site=xxx");
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"window.open", "window.navigate"})
     void shouldReportRedirectWithJsWindowMethods(String jsMethod) throws Exception {
         // Given
-        String test = "/shouldReportSimpleRedirect/";
-
-        nano.addHandler(
-                new NanoServerHandler(test) {
-                    @Override
-                    protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
-                        String site = getFirstParamValue(session, "site");
-                        if (site != null && site.length() > 0) {
-                            Response response =
-                                    newFixedLengthResponse(
-                                            NanoHTTPD.Response.Status.OK,
-                                            NanoHTTPD.MIME_HTML,
-                                            "<html><head><script>"
-                                                    + jsMethod
-                                                    + "('"
-                                                    + site
-                                                    + "');</script></head><body><H1>Redirect></H1></body></html>");
-                            return response;
-                        }
-                        String response = "<html><body></body></html>";
-                        return newFixedLengthResponse(response);
-                    }
-                });
+        String test = "/";
+        nano.addHandler(createJsMethodHandler(test, jsMethod, ""));
         HttpMessage msg = getHttpMessage(test + "?site=xxx");
         rule.init(msg, parent);
         // When
@@ -361,6 +530,32 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
         assertThat(alertsRaised.get(0).getParam(), equalTo("site"));
         assertThat(alertsRaised.get(0).getEvidence().endsWith(".owasp.org"), equalTo(true));
         assertThat(alertsRaised.get(0).getEvidence().startsWith(HttpHeader.HTTP), equalTo(true));
+    }
+
+    private static Stream<Arguments> createJsWindowBooleanPairs() {
+        return Stream.of(
+                Arguments.of("window.open", true),
+                Arguments.of("window.open", false),
+                Arguments.of("window.navigate", true),
+                Arguments.of("window.navigate", false));
+    }
+
+    @ParameterizedTest
+    @MethodSource("createJsWindowBooleanPairs")
+    void shouldNotReportRedirectWithJsWindowMethodsWhenConcatenated(String jsMethod, boolean param)
+            throws Exception {
+        // Given
+        String test = "/";
+        nano.addHandler(
+                param
+                        ? createJsMethodHandler(test, jsMethod, "http://www.example.com/?q=")
+                        : createJsMethodHandler(test, jsMethod, "http://www.example.com/"));
+        HttpMessage msg = getHttpMessage(test + "?site=xxx");
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @ParameterizedTest
