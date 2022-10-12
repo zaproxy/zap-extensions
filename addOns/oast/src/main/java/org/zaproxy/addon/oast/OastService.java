@@ -51,6 +51,8 @@ public abstract class OastService {
         return null;
     }
 
+    public abstract OastPayload getNewOastPayload() throws Exception;
+
     public void poll() {}
 
     public void sessionChanged() {}

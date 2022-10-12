@@ -9,6 +9,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Changed
 - Maintenance changes.
 
+### Added
+- Allow getting both the payload and canary values for OAST services.
+
+### Fixed
+- Interactsh canary values were reversed in the UI.
+
 ## [0.13.0] - 2022-10-27
 ### Changed
 - Update minimum ZAP version to 2.12.0.

@@ -38,6 +38,7 @@ import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.oast.OastPayload;
 import org.zaproxy.addon.oast.OastState;
 import org.zaproxy.addon.oast.ui.OastOptionsPanelTab;
 import org.zaproxy.zap.utils.ThreadUtils;
@@ -51,7 +52,7 @@ public class InteractshOptionsPanelTab extends OastOptionsPanelTab {
     private static final long serialVersionUID = 1L;
 
     private final InteractshService interactshService;
-    private final List<String> payloads = new ArrayList<>();
+    private final List<OastPayload> payloads = new ArrayList<>();
     private ZapTextField serverUrl;
     private ZapTextField authToken;
     private ZapNumberSpinner pollingFrequencySpinner;
@@ -177,7 +178,7 @@ public class InteractshOptionsPanelTab extends OastOptionsPanelTab {
 
     private void newPayloadButtonAction() {
         try {
-            payloads.add(interactshService.getNewPayload());
+            payloads.add(interactshService.getNewOastPayload());
             getPayloadsTableModel().fireTableDataChanged();
         } catch (Exception exception) {
             View.getSingleton().showWarningDialog(this, exception.getLocalizedMessage());
@@ -274,12 +275,9 @@ public class InteractshOptionsPanelTab extends OastOptionsPanelTab {
         public Object getValueAt(int rowIndex, int columnIndex) {
             switch (columnIndex) {
                 case 0:
-                    return payloads.get(rowIndex);
+                    return payloads.get(rowIndex).getPayload();
                 case 1:
-                    String payload = payloads.get(rowIndex);
-                    int firstDot = payload.indexOf('.');
-                    int secondDot = payload.indexOf('.', firstDot + 1);
-                    return payload.substring(firstDot + 1, secondDot);
+                    return payloads.get(rowIndex).getCanary();
                 default:
                     return "";
             }

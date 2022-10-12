@@ -31,6 +31,7 @@ import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.model.OptionsParam;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.Server;
+import org.zaproxy.addon.oast.OastPayload;
 import org.zaproxy.addon.oast.OastService;
 import org.zaproxy.zap.utils.Stats;
 
@@ -129,6 +130,11 @@ public class CallbackService extends OastService implements OptionsChangedListen
     @Override
     public String getNewPayload() {
         return getNewPayload(null);
+    }
+
+    @Override
+    public OastPayload getNewOastPayload() {
+        return new OastPayload(getNewPayload(), null);
     }
 
     public String getNewPayload(String handler) {
