@@ -110,7 +110,7 @@ public class PassiveScanJobResultData extends JobResultData {
                         while (instance != null) {
                             Alert alert = instance.getUserObject();
                             if (alert.getSource() == Alert.Source.PASSIVE) {
-                                this.alertDataMap.put(alert.getAlertId(), alert);
+                                this.alertDataMap.put(alert.getPluginId(), alert);
                             }
                             instance = (AlertNode) child.getChildAfter(instance);
                         }
