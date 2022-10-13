@@ -23,7 +23,8 @@ public class FullHtmlStringEncoder extends DefaultEncodeDecodeProcessor {
 
     @Override
     protected String processInternal(String value) {
-        StringBuilder output = new StringBuilder();
+        // Initial size: 3 digits for code point plus 3 appended chars
+        StringBuilder output = new StringBuilder(value.length() * 6);
         for (int i = 0; i < value.length(); i++) {
             output.append("&#").append(value.codePointAt(i)).append(';');
         }
