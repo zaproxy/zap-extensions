@@ -22,8 +22,6 @@ zapAddOn {
 }
 
 dependencies {
-    implementation("com.google.re2j:re2j:1.6")
-
     compileOnly(parent!!.childProjects.get("commonlib")!!)
 
     testImplementation(parent!!.childProjects.get("commonlib")!!)
