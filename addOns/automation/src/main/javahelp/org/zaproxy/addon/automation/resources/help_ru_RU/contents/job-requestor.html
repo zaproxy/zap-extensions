@@ -9,19 +9,21 @@
 <H1>Платформа автоматизации — работа запрашивающей стороны </H1>
 
 Это задание отправляет специально созданные запросы на целевой URL-адрес с настраиваемым методом и телом запроса.  Пользователь также может указать
-код ожидаемого ответа, с которым сравнивается фактический ответ, и пользователь получает предупреждение, если он не совпадает. 
+код ожидаемого ответа, с которым сравнивается фактический ответ, и пользователь получает предупреждение, если он не совпадает.  The user can add additional headers to the request e.g. Authorization Tokens, etc.
 
 <H2>YAML</H2>
 
 <pre>
-  - type: requestor                    # Используется для отправки определенных запросов к целям 
+  - type: requestor                    # Used to send specific requests to targets
     parameters:
-      user:                            # String: Необязательный пользователь, который будет использоваться для аутентифицированных запросов, должен быть определен в env. 
-    requests:                          # Список запросов, которые нужно сделать 
-      - url:                           # String: Обязательный URL запроса, который необходимо сделать 
-        method:                        # String: Непустой метод запроса, по умолчанию: GET 
-        data:                          # String: Необязательные данные для отправки в теле запроса 
-        responseCode:                  # Int: Необязательный ожидаемый код ответа, с которым будет сравниваться фактический код ответа. 
+      user:                            # String: An optional user to use for authenticated requests, must be defined in the env
+    requests:                          # A list of requests to make
+      - url:                           # String: A mandatory URL of the request to be made
+        method:                        # String: A non-empty request method, default: GET
+        headers:                       # An optional list of additional headers to include in the request
+            - "header1:value1"
+        data:                          # String: Optional data to send in the request body
+        responseCode:                  # Int: An optional, expected response code against which the actual response code will be matched
 </pre>
 
 </BODY>
