@@ -255,10 +255,11 @@ public class InteractshService extends OastService implements OptionsChangedList
     }
 
     public synchronized void deregister() {
+        if (!isRegistered) {
+            return;
+        }
         try {
-            if (!isRegistered) {
-                return;
-            }
+
             stopPoller();
             URI deregistrationUri = (URI) serverUrl.clone();
             deregistrationUri.setPath("/deregister");
@@ -271,17 +272,19 @@ public class InteractshService extends OastService implements OptionsChangedList
             HttpMessage deregisterMsg = new HttpMessage(reqHeader, reqBody);
             httpSender.sendAndReceive(deregisterMsg);
             if (deregisterMsg.getResponseHeader().getStatusCode() != 200) {
+
                 LOGGER.warn(
                         "Error during interactsh deregister, due to bad HTTP code {}. Content: {}",
                         deregisterMsg.getResponseHeader().getStatusCode(),
                         deregisterMsg.getResponseBody());
-                return;
             }
             LOGGER.debug("Deregistered correlationId: {}", correlationId);
-            isRegistered = false;
-            fireOastStateChanged(new OastState(getName(), false, null));
+
         } catch (Exception e) {
             LOGGER.error("Error during interactsh deregister: {}", e.getMessage(), e);
+        } finally {
+            isRegistered = false;
+            fireOastStateChanged(new OastState(getName(), false, null));
         }
     }
 

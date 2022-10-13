@@ -6,7 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-
+### Fixed
+- Deregister the Interactsh service even in case of error (Issue 7504).
+- Clear Interactsh payloads from the GUI when the service is deregistered.
 
 ## [0.11.0] - 2022-09-23
 ### Changed

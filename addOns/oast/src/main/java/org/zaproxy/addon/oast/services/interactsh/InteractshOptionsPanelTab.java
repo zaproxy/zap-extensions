@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.oast.services.interactsh;
 
+import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.util.ArrayList;
@@ -104,6 +105,19 @@ public class InteractshOptionsPanelTab extends OastOptionsPanelTab {
         this.add(
                 scrollPane,
                 LayoutHelper.getGBC(0, ++rowIndex, GridBagConstraints.REMAINDER, 1.0, 1.0));
+
+        interactshService.addOastStateChangedListener(
+                e -> {
+                    if (e.isRegistered()) {
+                        return;
+                    }
+
+                    EventQueue.invokeLater(
+                            () -> {
+                                payloads.clear();
+                                getPayloadsTableModel().fireTableDataChanged();
+                            });
+                });
     }
 
     ZapTextField getServerUrl() {
