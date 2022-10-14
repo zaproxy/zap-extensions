@@ -20,7 +20,7 @@ jobs:
       uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
-        java-version: 8
+        java-version: 11
     - name: Generate Release State
       run: ./gradlew :addOns:generateReleaseStateLastCommit
     - name: Build and Release Add-On
