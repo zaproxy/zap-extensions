@@ -54,7 +54,6 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.extension.ascan.VariantFactory;
-import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -77,9 +76,6 @@ class ExtensionOpenApiTest extends AbstractServerTest {
 
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
         Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
-
-        given(extensionLoader.getExtension(ExtensionSpider.class))
-                .willReturn(mock(ExtensionSpider.class));
 
         tableHistory = mock(TableHistory.class);
         HistoryReference.setTableHistory(tableHistory);
