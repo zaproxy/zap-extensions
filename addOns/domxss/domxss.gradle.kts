@@ -4,7 +4,7 @@ description = "DOM XSS Active scanner rule"
 
 zapAddOn {
     addOnName.set("DOM XSS Active scanner rule")
-    addOnStatus.set(AddOnStatus.BETA)
+    addOnStatus.set(AddOnStatus.RELEASE)
     zapVersion.set("2.11.1")
 
     manifest {
