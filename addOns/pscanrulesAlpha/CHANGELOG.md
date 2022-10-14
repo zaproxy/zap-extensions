@@ -4,8 +4,14 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-### Changed
-- Content Cacheability scan rule now has functionality to generate example alerts for documentation purposes (Issue 7502).
+### Removed
+- The following scan rules were removed, having been promoted to Beta:
+  - Content Cacheable
+  - In Page Banner Info Leak
+  - JS Function
+  - JSO
+  - Permissions Policy
+  - Sub Resource Integrity Attribute
 
 ## [36] - 2022-09-16
 ### Changed

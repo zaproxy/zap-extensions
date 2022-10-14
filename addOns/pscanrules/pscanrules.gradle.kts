@@ -37,6 +37,7 @@ zapAddOn {
 }
 
 dependencies {
+    implementation("com.google.re2j:re2j:1.6")
     implementation("com.shapesecurity:salvation2:3.0.0")
     compileOnly(parent!!.childProjects.get("commonlib")!!)
     compileOnly(parent!!.childProjects.get("custompayloads")!!)
