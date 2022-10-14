@@ -1,3 +1,4 @@
+import me.champeau.gradle.japicmp.JapicmpTask
 import org.zaproxy.gradle.addon.AddOnPlugin
 import org.zaproxy.gradle.addon.AddOnPluginExtension
 import org.zaproxy.gradle.addon.apigen.ApiClientGenExtension
@@ -20,6 +21,7 @@ plugins {
     jacoco
     id("org.zaproxy.add-on") version "0.8.0" apply false
     id("org.zaproxy.crowdin") version "0.2.1" apply false
+    id("me.champeau.gradle.japicmp") version "0.3.0" apply false
 }
 
 description = "Common configuration of the add-ons."
@@ -80,6 +82,8 @@ subprojects {
     }
 
     val useCrowdin = !crowdinExcludedProjects.contains(project)
+    val mavenPublishAddOn = project.hasProperty("zap.maven.publish", "true")
+    val japicmpAddOn = project.hasProperty("zap.japicmp", "true")
 
     apply(plugin = "eclipse")
     apply(plugin = "java-library")
@@ -87,6 +91,13 @@ subprojects {
     apply(plugin = "org.zaproxy.add-on")
     if (useCrowdin) {
         apply(plugin = "org.zaproxy.crowdin")
+    }
+    if (mavenPublishAddOn) {
+        apply(plugin = "maven-publish")
+        apply(plugin = "signing")
+    }
+    if (japicmpAddOn) {
+        apply(plugin = "me.champeau.gradle.japicmp")
     }
 
     val compileOnlyEclipse by configurations.creating {
@@ -98,6 +109,8 @@ subprojects {
             plusConfigurations.add(compileOnlyEclipse)
         }
     }
+
+    group = "org.zaproxy.addon"
 
     java {
         // Compile with appropriate Java version when building ZAP releases.
@@ -213,6 +226,120 @@ subprojects {
         }
         prepareNextDevIter {
             dependsOn(prepareNextDevIterAddOn)
+        }
+    }
+
+    if (mavenPublishAddOn) {
+        val sourceSets = extensions.getByName("sourceSets") as SourceSetContainer
+
+        tasks.register<Jar>("javadocJar") {
+            from(tasks.named("javadoc"))
+            archiveClassifier.set("javadoc")
+        }
+
+        tasks.register<Jar>("sourcesJar") {
+            from(sourceSets.named("main").map { it.allJava })
+            archiveClassifier.set("sources")
+        }
+
+        val ossrhUsername: String? by project
+        val ossrhPassword: String? by project
+
+        publishing {
+            repositories {
+                maven {
+                    val releasesRepoUrl = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+                    val snapshotsRepoUrl = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+                    setUrl(provider { if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl })
+
+                    if (ossrhUsername != null && ossrhPassword != null) {
+                        credentials {
+                            username = ossrhUsername
+                            password = ossrhPassword
+                        }
+                    }
+                }
+            }
+
+            publications {
+                register<MavenPublication>("addon") {
+                    from(components["java"])
+
+                    artifact(tasks["sourcesJar"])
+                    artifact(tasks["javadocJar"])
+
+                    pom {
+                        name.set(project.zapAddOn.addOnName.map { "OWASP ZAP - $it Add-on" })
+                        packaging = "jar"
+                        description.set(project.description)
+                        url.set("https://github.com/zaproxy/zap-extensions")
+                        inceptionYear.set(project.property("zap.maven.pom.inceptionyear") as String)
+
+                        organization {
+                            name.set("OWASP")
+                            url.set("https://www.zaproxy.org/")
+                        }
+
+                        mailingLists {
+                            mailingList {
+                                name.set("OWASP ZAP Developer Group")
+                                post.set("zaproxy-develop@googlegroups.com")
+                                archive.set("https://groups.google.com/group/zaproxy-develop")
+                            }
+                        }
+
+                        scm {
+                            url.set("https://github.com/zaproxy/zap-extensions")
+                            connection.set("scm:git:https://github.com/zaproxy/zap-extensions.git")
+                            developerConnection.set("scm:git:https://github.com/zaproxy/zap-extensions.git")
+                        }
+
+                        licenses {
+                            license {
+                                name.set("The Apache License, Version 2.0")
+                                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                                distribution.set("repo")
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id.set("AllAddOnDevs")
+                                name.set("Everyone who has contributed to the add-on")
+                                email.set("zaproxy-develop@googlegroups.com")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        signing {
+            if (project.hasProperty("signing.keyId")) {
+                sign(publishing.publications["addon"])
+            }
+        }
+    }
+
+    if (japicmpAddOn) {
+        val versionBC = project.property("zap.japicmp.baseversion") as String
+        val japicmp by tasks.registering(JapicmpTask::class) {
+            group = LifecycleBasePlugin.VERIFICATION_GROUP
+            description = "Checks ${project.name}.jar binary compatibility with latest version ($versionBC)."
+
+            oldClasspath = files(addOnJar(versionBC))
+            newClasspath = files(tasks.named<Jar>(JavaPlugin.JAR_TASK_NAME).map { it.archivePath })
+            setIgnoreMissingClasses(true)
+
+            richReport {
+                destinationDir = file("$buildDir/reports/japicmp/")
+                reportName = "japi.html"
+                isAddDefaultRules = true
+            }
+        }
+
+        tasks.named(LifecycleBasePlugin.CHECK_TASK_NAME) {
+            dependsOn(japicmp)
         }
     }
 }
@@ -336,6 +463,15 @@ fun Project.java(configure: JavaPluginExtension.() -> Unit): Unit =
 fun Project.jacoco(configure: JacocoPluginExtension.() -> Unit): Unit =
     (this as ExtensionAware).extensions.configure("jacoco", configure)
 
+fun Project.publishing(configure: PublishingExtension.() -> Unit): Unit =
+    (this as ExtensionAware).extensions.configure("publishing", configure)
+
+val Project.publishing: PublishingExtension get() =
+    (this as ExtensionAware).extensions.getByName("publishing") as PublishingExtension
+
+fun Project.signing(configure: SigningExtension.() -> Unit): Unit =
+    (this as ExtensionAware).extensions.configure("signing", configure)
+
 fun Project.zapAddOn(configure: AddOnPluginExtension.() -> Unit): Unit =
     (this as ExtensionAware).extensions.configure("zapAddOn", configure)
 
@@ -363,3 +499,18 @@ fun mandatoryProjects() =
         require(project != null) { "Add-on with project name $name not found." }
         project
     }
+
+fun Project.hasProperty(name: String, value: String) = hasProperty(name) && property(name) == value
+
+fun Project.addOnJar(version: String): File {
+    val oldGroup = group
+    try {
+        // https://discuss.gradle.org/t/is-the-default-configuration-leaking-into-independent-configurations/2088/6
+        group = "virtual_group_for_japicmp"
+        val conf = configurations.detachedConfiguration(dependencies.create("$oldGroup:$name:$version"))
+        conf.isTransitive = false
+        return conf.singleFile
+    } finally {
+        group = oldGroup
+    }
+}

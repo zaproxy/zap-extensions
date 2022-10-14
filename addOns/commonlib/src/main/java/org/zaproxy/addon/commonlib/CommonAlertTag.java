@@ -407,11 +407,12 @@ public enum CommonAlertTag {
     }
 
     /**
-     * Merges a {@code Map<String, String>} of {@code CommonAlertTag} with any number of other {@code CommonAlertTag}s.
+     * Merges a {@code Map<String, String>} of {@code CommonAlertTag} with any number of other
+     * {@code CommonAlertTag}s.
      *
      * @param tagMap the {@code Map<String, String>} of {@code CommonAlertTag}s to be merged with.
      * @param alertTags the {@code CommonAlertTag}s to be added.
-     * @return a {@code Map<String, String> of the unified collection of CommonAlertTags
+     * @return a {@code Map<String, String>} of the unified collection of CommonAlertTags
      * @since 1.10.0
      */
     public static Map<String, String> mergeTags(

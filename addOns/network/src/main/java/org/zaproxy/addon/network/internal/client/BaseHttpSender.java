@@ -204,8 +204,8 @@ public abstract class BaseHttpSender<T1 extends BaseHttpSenderContext, T2, T3>
      * Helper method that sends the request of the given HTTP {@code message} with the given
      * configurations.
      *
-     * <p>No redirections are followed (see {@link #followRedirections(HttpMessage,
-     * HttpRequestConfig)}).
+     * <p>No redirections are followed (see {@link #followRedirections(BaseHttpSenderContext,
+     * Object, HttpRequestConfig, HttpMessage, ResponseBodyConsumer)}).
      *
      * @param message the message that will be sent.
      * @param requestConfig the request configurations.
