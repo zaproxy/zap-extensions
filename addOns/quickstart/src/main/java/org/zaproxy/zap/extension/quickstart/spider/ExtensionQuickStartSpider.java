@@ -33,7 +33,6 @@ import org.zaproxy.addon.spider.SpiderScan;
 import org.zaproxy.zap.extension.quickstart.ExtensionQuickStart;
 import org.zaproxy.zap.extension.quickstart.QuickStartParam;
 import org.zaproxy.zap.extension.quickstart.TraditionalSpider;
-import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.model.Target;
 
 public class ExtensionQuickStartSpider extends ExtensionAdaptor {
@@ -61,10 +60,6 @@ public class ExtensionQuickStartSpider extends ExtensionAdaptor {
 
     @Override
     public void hook(ExtensionHook extensionHook) {
-        if (ExtensionSpider.class.getAnnotation(Deprecated.class) == null) {
-            return;
-        }
-
         traditionalSpider = new TraditionalSpiderImpl();
         getExtension(ExtensionQuickStart.class).setTraditionalSpider(traditionalSpider);
     }
@@ -80,10 +75,6 @@ public class ExtensionQuickStartSpider extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        if (ExtensionSpider.class.getAnnotation(Deprecated.class) == null) {
-            return;
-        }
-
         getExtension(ExtensionQuickStart.class).setTraditionalSpider(null);
     }
 

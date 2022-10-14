@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Remove core spider usage (Related to Issue 3113).
 - Maintenance changes.
 - Record news stats.
 
