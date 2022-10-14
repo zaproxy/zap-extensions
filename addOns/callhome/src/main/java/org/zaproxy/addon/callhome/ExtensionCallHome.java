@@ -308,7 +308,8 @@ public class ExtensionCallHome extends ExtensionAdaptor
         @Override
         public boolean test(Entry<String, Long> t) {
             String key = t.getKey();
-            return key.startsWith("openapi.")
+            return key.startsWith("domxss.")
+                    || key.startsWith("openapi.")
                     || key.startsWith("soap.")
                     || key.startsWith("spiderAjax.")
                     || key.startsWith("stats.alertFilter")
