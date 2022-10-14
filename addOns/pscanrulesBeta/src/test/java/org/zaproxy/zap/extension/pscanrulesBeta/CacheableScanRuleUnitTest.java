@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.pscanrulesAlpha;
+package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -69,7 +69,7 @@ class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanRule> {
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(expectedEvidence));
         assertThat(
                 alertsRaised.get(0).getName(),
-                equalTo(Constant.messages.getString("pscanalpha.storablecacheable.name")));
+                equalTo(Constant.messages.getString("pscanbeta.storablecacheable.name")));
     }
 
     @Override
@@ -311,7 +311,7 @@ class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanRule> {
                 alertsRaised.get(0).getOtherInfo(),
                 equalTo(
                         Constant.messages.getString(
-                                "pscanalpha.storablecacheable.otherinfo.liberallifetimeheuristic")));
+                                "pscanbeta.storablecacheable.otherinfo.liberallifetimeheuristic")));
     }
 
     @Test

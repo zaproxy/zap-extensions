@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.pscanrulesAlpha;
+package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -78,11 +78,11 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 public class CacheableScanRule extends PluginPassiveScanner {
 
     private static final String MESSAGE_PREFIX_STORABILITY_CACHEABILITY =
-            "pscanalpha.storabilitycacheability.";
-    private static final String MESSAGE_PREFIX_NONSTORABLE = "pscanalpha.nonstorable.";
+            "pscanbeta.storabilitycacheability.";
+    private static final String MESSAGE_PREFIX_NONSTORABLE = "pscanbeta.nonstorable.";
     private static final String MESSAGE_PREFIX_STORABLE_NONCACHEABLE =
-            "pscanalpha.storablenoncacheable.";
-    private static final String MESSAGE_PREFIX_STORABLE_CACHEABLE = "pscanalpha.storablecacheable.";
+            "pscanbeta.storablenoncacheable.";
+    private static final String MESSAGE_PREFIX_STORABLE_CACHEABLE = "pscanbeta.storablecacheable.";
     private static final long SECONDS_IN_YEAR = TimeUnit.SECONDS.convert(365, TimeUnit.DAYS);
     private static final int PLUGIN_ID = 10049;
     private static final Map<String, String> ALERT_TAGS =

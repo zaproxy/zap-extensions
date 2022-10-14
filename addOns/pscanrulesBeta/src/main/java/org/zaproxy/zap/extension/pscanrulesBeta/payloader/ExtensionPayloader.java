@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.pscanrulesAlpha.payloader;
+package org.zaproxy.zap.extension.pscanrulesBeta.payloader;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,11 +29,11 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.zap.extension.custompayloads.ExtensionCustomPayloads;
 import org.zaproxy.zap.extension.custompayloads.PayloadCategory;
-import org.zaproxy.zap.extension.pscanrulesAlpha.JsFunctionScanRule;
+import org.zaproxy.zap.extension.pscanrulesBeta.JsFunctionScanRule;
 
 public class ExtensionPayloader extends ExtensionAdaptor {
 
-    public static final String NAME = "ExtensionPayloaderPscanRulesAlphaRelease";
+    public static final String NAME = "ExtensionPayloaderPscanRulesBetaRelease";
     private static final List<Class<? extends Extension>> DEPENDENCIES;
     private static ExtensionCustomPayloads ecp;
     private PayloadCategory jsFuncCategory;
@@ -82,11 +82,11 @@ public class ExtensionPayloader extends ExtensionAdaptor {
 
     @Override
     public String getDescription() {
-        return Constant.messages.getString("pscanalpha.payloader.desc");
+        return Constant.messages.getString("pscanbeta.payloader.desc");
     }
 
     @Override
     public String getUIName() {
-        return Constant.messages.getString("pscanalpha.payloader.name");
+        return Constant.messages.getString("pscanbeta.payloader.name");
     }
 }

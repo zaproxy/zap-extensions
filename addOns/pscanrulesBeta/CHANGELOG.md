@@ -4,6 +4,18 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- The following scan rules were added, having been promoted from Alpha:
+  - Content Cacheable
+  - In Page Banner Info Leak
+  - JS Function
+  - JSO
+  - Permissions Policy
+  - Sub Resource Integrity Attribute
+
+### Changed
+- Content Cacheability scan rule now has functionality to generate example alerts for documentation purposes (Issue 7502).
+
 ### Removed
 - The following scan rules were removed, having been promoted to Release:
   - Big Redirects
@@ -23,8 +35,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - User Controlled HTML Attributes
   - User Controlled Javascript Event
   - User Controlled Open Redirect
-  - X Backend Server Information Leak
-  - X Chrome Logger Data Info Leak   
+  - X-Backend-Server Information Leak
+  - X-ChromeLogger-Data Info Leak   
 
 ## [30] - 2022-09-15
 ### Changed

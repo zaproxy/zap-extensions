@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.pscanrulesAlpha;
+package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -46,7 +46,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 public class JsFunctionScanRule extends PluginPassiveScanner {
 
     /** Prefix for internationalized messages used by this rule */
-    private static final String MESSAGE_PREFIX = "pscanalpha.jsfunction.";
+    private static final String MESSAGE_PREFIX = "pscanbeta.jsfunction.";
 
     public static final String FUNC_LIST_DIR = "txt";
     public static final String FUNC_LIST_FILE = "js-function-list.txt";

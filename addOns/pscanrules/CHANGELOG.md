@@ -23,8 +23,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - User Controlled HTML Attributes
   - User Controlled Javascript Event
   - User Controlled Open Redirect
-  - X Backend Server Information Leak
-  - X Chrome Logger Data Info Leak   
+  - X-Backend-Server Information Leak
+  - X-ChromeLogger-Data Info Leak   
 
 ### Changed
 - The Server Header Information Leak scan rule now has functionality to generate example alerts for documentation purposes (Issue 6119).

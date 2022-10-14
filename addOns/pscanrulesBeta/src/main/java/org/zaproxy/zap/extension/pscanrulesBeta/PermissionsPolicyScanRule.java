@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.pscanrulesAlpha;
+package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,7 @@ public class PermissionsPolicyScanRule extends PluginPassiveScanner {
 
     private static final String PERMISSIONS_POLICY_HEADER = "Permissions-Policy";
     private static final String DEPRECATED_HEADER = "Feature-Policy";
-    private static final String MESSAGE_PREFIX = "pscanalpha.permissionspolicymissing.";
+    private static final String MESSAGE_PREFIX = "pscanbeta.permissionspolicymissing.";
     private static final Logger LOGGER = LogManager.getLogger(PermissionsPolicyScanRule.class);
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(

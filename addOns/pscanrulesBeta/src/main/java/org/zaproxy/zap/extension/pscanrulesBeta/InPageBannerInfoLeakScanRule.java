@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.pscanrulesAlpha;
+package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -42,7 +42,7 @@ public class InPageBannerInfoLeakScanRule extends PluginPassiveScanner {
 
     private static final Logger LOGGER = LogManager.getLogger(InPageBannerInfoLeakScanRule.class);
     private static final int PLUGIN_ID = 10009;
-    private static final String MESSAGE_PREFIX = "pscanalpha.inpagebanner.";
+    private static final String MESSAGE_PREFIX = "pscanbeta.inpagebanner.";
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,

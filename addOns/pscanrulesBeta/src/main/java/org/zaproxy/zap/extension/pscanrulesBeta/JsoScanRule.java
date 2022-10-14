@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.pscanrulesAlpha;
+package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.net.HttpCookie;
 import java.util.Arrays;
@@ -36,7 +36,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 public class JsoScanRule extends PluginPassiveScanner {
 
     /** Prefix for internationalized messages used by this rule */
-    private static final String MESSAGE_PREFIX = "pscanalpha.jso.";
+    private static final String MESSAGE_PREFIX = "pscanbeta.jso.";
 
     private static final byte[] JSO_BYTE_MAGIC_SEQUENCE = {(byte) 0xac, (byte) 0xed, 0x00, 0x05};
     private static final String JSO_BASE_64_MAGIC_SEQUENCE = "rO0AB";
