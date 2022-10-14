@@ -22,9 +22,7 @@ package org.zaproxy.addon.spider;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -40,30 +38,12 @@ class ExtensionSpider2UnitTest {
 
     @BeforeEach
     void setUp() {
-        coreSpiderDeprecated(false);
-
         extension = new ExtensionSpider2();
     }
 
-    private static void coreSpiderDeprecated(boolean deprecated) {
-        ExtensionSpider2.coreSpiderDisabled = deprecated;
-    }
-
     @Test
-    void shouldNotAddSessionChangedListenerOnHookIfCoreSpiderNotDeprecated() {
+    void shouldAddSessionChangedListenerOnHook() {
         // Given
-        coreSpiderDeprecated(false);
-        ExtensionHook extensionHook = mock(ExtensionHook.class);
-        // When
-        extension.hook(extensionHook);
-        // Then
-        verify(extensionHook, times(0)).addSessionListener(any());
-    }
-
-    @Test
-    void shouldAddSessionChangedListenerOnHookIfCoreSpiderDeprecated() {
-        // Given
-        coreSpiderDeprecated(true);
         ExtensionHook extensionHook = mock(ExtensionHook.class);
         // When
         extension.hook(extensionHook);

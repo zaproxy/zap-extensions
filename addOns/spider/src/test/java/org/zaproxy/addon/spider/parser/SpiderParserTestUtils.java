@@ -48,7 +48,7 @@ import org.zaproxy.zap.testutils.TestUtils;
  * Class with helper/utility methods to help testing classes involving {@code SpiderParser}
  * implementations.
  *
- * @see org.zaproxy.zap.spider.parser.SpiderParser
+ * @see org.zaproxy.addon.spider.parser.SpiderParser
  */
 abstract class SpiderParserTestUtils<T extends SpiderParser> extends TestUtils {
 

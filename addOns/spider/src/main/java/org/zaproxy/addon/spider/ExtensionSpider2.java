@@ -45,7 +45,6 @@ import org.zaproxy.addon.spider.filters.ParseFilter;
 import org.zaproxy.addon.spider.parser.SpiderParser;
 import org.zaproxy.addon.spider.parser.SvgHrefParser;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
-import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.DefaultValueGenerator;
 import org.zaproxy.zap.model.ScanController;
@@ -59,12 +58,6 @@ import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController<SpiderScan> {
     public static final String NAME = "ExtensionSpider2";
-
-    static boolean coreSpiderDisabled;
-
-    static {
-        coreSpiderDisabled = ExtensionSpider.class.getAnnotation(Deprecated.class) != null;
-    }
 
     private ValueGenerator generator = new DefaultValueGenerator();
 
@@ -114,9 +107,7 @@ public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController
 
     @Override
     public void init() {
-        if (coreSpiderDisabled) {
-            SpiderEventPublisher.getPublisher();
-        }
+        SpiderEventPublisher.getPublisher();
     }
 
     public void setValueGenerator(ValueGenerator generator) {
@@ -129,9 +120,6 @@ public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController
 
     @Override
     public void hook(ExtensionHook extensionHook) {
-        if (!coreSpiderDisabled) {
-            return;
-        }
         extensionHook.addSessionListener(new SessionChangedListenerImpl());
 
         // Initialize views
@@ -141,7 +129,7 @@ public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController
             extensionHook.getHookView().addOptionPanel(getOptionsSpiderPanel());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuItemSpiderDialog());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuItemSpiderDialogWithContext());
-            ExtensionHelp.enableHelpKey(getSpiderPanel(), "ui.tabs.spider");
+            ExtensionHelp.enableHelpKey(getSpiderPanel(), "addon.spider.tab");
         }
 
         // Register the params
@@ -162,12 +150,10 @@ public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController
 
     @Override
     public void unload() {
-        if (coreSpiderDisabled) {
-            SpiderEventPublisher.unload();
+        SpiderEventPublisher.unload();
 
-            if (hasView()) {
-                getSpiderPanel().unload();
-            }
+        if (hasView()) {
+            getSpiderPanel().unload();
         }
     }
 
@@ -324,10 +310,6 @@ public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController
 
     @Override
     public void destroy() {
-        if (!coreSpiderDisabled) {
-            return;
-        }
-
         // Shut all of the scans down
         this.stopAllScans();
         if (hasView()) {
