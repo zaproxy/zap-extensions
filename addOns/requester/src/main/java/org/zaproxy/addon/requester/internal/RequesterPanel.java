@@ -19,21 +19,24 @@
  */
 package org.zaproxy.addon.requester.internal;
 
-import java.awt.GridLayout;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.requester.ExtensionRequester;
+import org.zaproxy.addon.requester.db.RequesterTabStorage;
+import org.zaproxy.addon.requester.internal.tab.RequesterNumberedRenamableTabbedPane;
+
+import java.awt.GridLayout;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 
 public class RequesterPanel extends AbstractPanel implements OptionsChangedListener {
 
     private static final long serialVersionUID = 1L;
 
-    private RequesterNumberedRenamableTabbedPane requesterNumberedTabbedPane = null;
+    private RequesterNumberedRenamableTabbedPane tabbedPane = null;
 
     public RequesterPanel(ExtensionRequester extension) {
         super();
@@ -47,26 +50,34 @@ public class RequesterPanel extends AbstractPanel implements OptionsChangedListe
                         .getMenuShortcutKeyStroke(KeyEvent.VK_R, InputEvent.ALT_DOWN_MASK, false));
         this.setMnemonic(Constant.messages.getChar("requester.panel.mnemonic"));
         this.setShowByDefault(true);
-        requesterNumberedTabbedPane = new RequesterNumberedRenamableTabbedPane();
-        this.add(requesterNumberedTabbedPane);
     }
 
-    public RequesterNumberedRenamableTabbedPane getRequesterNumberedTabbedPane() {
-        return requesterNumberedTabbedPane;
+    public RequesterNumberedRenamableTabbedPane getTabbedPane() {
+        return tabbedPane;
     }
 
-    public void newRequester(HttpMessage msg) {
-        ManualHttpRequestEditorPanel requestPane = new ManualHttpRequestEditorPanel();
-        requestPane.setMessage(msg);
-        getRequesterNumberedTabbedPane().addTab(requestPane);
+    public void load(RequesterTabStorage tabStorage) {
+        // If it is already loaded, unload
+        if (tabbedPane != null) {
+            tabbedPane.unload();
+            remove(tabbedPane);
+        }
+
+        // Load tabbed pane
+        tabbedPane = new RequesterNumberedRenamableTabbedPane(tabStorage);
+        this.add(tabbedPane);
+    }
+
+    public void newRequester(HttpMessage message) {
+        getTabbedPane().newRequester(message);
     }
 
     public void unload() {
-        getRequesterNumberedTabbedPane().unload();
+        getTabbedPane().unload();
     }
 
     @Override
     public void optionsChanged(OptionsParam optionsParam) {
-        getRequesterNumberedTabbedPane().optionsChanged(optionsParam);
+        getTabbedPane().optionsChanged(optionsParam);
     }
 }

@@ -17,20 +17,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.requester.internal;
+package org.zaproxy.addon.requester.exception;
 
-public class RequesterNumberedRenamableTabbedPane extends NumberedRenamableTabbedPane {
+/**
+ * Requester runtime exception
+ */
+public class RequesterException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    public RequesterNumberedRenamableTabbedPane() {
-        super();
+    public RequesterException(Throwable cause) {
+        super(cause);
     }
 
-    @Override
-    public void addDefaultTab() {
-        ManualHttpRequestEditorPanel requestPane = new ManualHttpRequestEditorPanel();
-        requestPane.setDefaultMessage();
-        addTab(requestPane);
+    public RequesterException(String message) {
+        super(message);
     }
+
 }

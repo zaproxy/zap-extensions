@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add shortcut to Send buttons (Issue 6448).
 - Add button to allow to regenerate Anti-CSRF tokens (Issue 111).
 - Provide the necessary infrastructure for other add-ons (e.g. WebSocket) to send messages.
+- Persist tabs (with name, order and message) in session database
 - On ZAP versions newer than 2.11:
   - Manage the send/resend Manual Request Editor dialogues.
   - Add a Tools menu item to open the send Manual Request Editor.
