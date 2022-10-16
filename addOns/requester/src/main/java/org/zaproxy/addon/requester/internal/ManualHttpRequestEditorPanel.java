@@ -40,20 +40,14 @@ import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.URIException;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
-import org.parosproxy.paros.network.HttpHeader;
-import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.requester.ExtensionRequester;
 import org.zaproxy.addon.requester.MessageEditorPanel;
+import org.zaproxy.addon.requester.internal.util.RequesterUtil;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.extension.httppanel.HttpPanel.OptionsLocation;
@@ -68,7 +62,6 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
         implements OptionsChangedListener, LayoutChangedListener {
 
     private static final long serialVersionUID = -5830450800029295419L;
-    private static final Logger logger = LogManager.getLogger(ManualHttpRequestEditorPanel.class);
     private static final String CONFIG_KEY = "requesterpanel";
     private static final String HELP_KEY = "addon.requester.tab";
 
@@ -466,15 +459,7 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
 
     @Override
     public void setDefaultMessage() {
-        HttpMessage msg = new HttpMessage();
-        try {
-            URI uri = new URI("http://www.any_domain_name.org/path", true);
-            msg.setRequestHeader(
-                    new HttpRequestHeader(HttpRequestHeader.GET, uri, HttpHeader.HTTP11));
-            setMessage(msg);
-        } catch (HttpMalformedHeaderException | URIException e) {
-            logger.error(e.getMessage(), e);
-        }
+        setMessage(RequesterUtil.createDefaultHttpMessage());
     }
 
     /**

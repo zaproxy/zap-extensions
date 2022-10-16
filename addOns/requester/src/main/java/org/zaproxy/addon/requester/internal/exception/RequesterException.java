@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2016 The ZAP Development Team
+ * Copyright 2022 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,20 +17,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.requester.internal;
+package org.zaproxy.addon.requester.internal.exception;
 
-public class RequesterNumberedRenamableTabbedPane extends NumberedRenamableTabbedPane {
+/** Requester runtime exception */
+public class RequesterException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    public RequesterNumberedRenamableTabbedPane() {
-        super();
+    public RequesterException(Throwable cause) {
+        super(cause);
     }
 
-    @Override
-    public void addDefaultTab() {
-        ManualHttpRequestEditorPanel requestPane = new ManualHttpRequestEditorPanel();
-        requestPane.setDefaultMessage();
-        addTab(requestPane);
+    public RequesterException(String message) {
+        super(message);
     }
 }
