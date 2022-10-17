@@ -38,7 +38,7 @@ zapAddOn {
 dependencies {
     compileOnly(parent!!.childProjects.get("network")!!)
     compileOnly(parent!!.childProjects.get("selenium")!!)
-    implementation("org.zaproxy:zest:0.15.0") {
+    implementation("org.zaproxy:zest:0.16.0") {
         // Provided by Selenium add-on.
         exclude(group = "org.seleniumhq.selenium")
         exclude(group = "com.codeborne", module = "phantomjsdriver")

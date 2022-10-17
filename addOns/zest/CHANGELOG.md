@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Update Zest library to 0.16.0:
+  - Search script engines also by extension not just by name when invoking scripts otherwise it could miss some engines (e.g. Jython).
 - Maintenance changes.
 
 ## [36] - 2022-09-23
