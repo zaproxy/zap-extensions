@@ -104,13 +104,9 @@ public class ExtensionRequester extends ExtensionAdaptor {
                         hasView() ? getManualIcon() : null));
 
         if (hasView()) {
-            if (isDeprecated(
-                    org.parosproxy.paros.extension.manualrequest.ExtensionManualRequestEditor
-                            .class)) {
-                sendDialog =
-                        new SendHttpMessageEditorDialog(new ManualHttpRequestEditorPanel("manual"));
-                sendDialog.load(extensionHook);
-            }
+            sendDialog =
+                    new SendHttpMessageEditorDialog(new ManualHttpRequestEditorPanel("manual"));
+            sendDialog.load(extensionHook);
 
             extensionHook.addOptionsChangedListener(getRequesterPanel());
 
@@ -123,20 +119,13 @@ public class ExtensionRequester extends ExtensionAdaptor {
             // ToolsMenuItem
             menu.addToolsMenuItem(new ToolsMenuItemRequester(this));
 
-            if (isDeprecated(org.zaproxy.zap.extension.stdmenus.PopupMenuResendMessage.class)) {
-                ManualHttpRequestEditorPanel panel = new ManualHttpRequestEditorPanel("resend");
-                resendDialog = new ResendHttpMessageEditorDialog(panel);
-                resendDialog.load(extensionHook);
-            }
+            ManualHttpRequestEditorPanel panel = new ManualHttpRequestEditorPanel("resend");
+            resendDialog = new ResendHttpMessageEditorDialog(panel);
+            resendDialog.load(extensionHook);
         }
     }
 
     private static void addHrefType(ExtensionHook extensionHook, HrefTypeInfo hrefTypeInfo) {
-        if (!isDeprecated(
-                org.parosproxy.paros.extension.manualrequest.ExtensionManualRequestEditor.class)) {
-            return;
-        }
-
         try {
             Method method =
                     ExtensionHook.class.getDeclaredMethod("addHrefType", HrefTypeInfo.class);
@@ -144,10 +133,6 @@ public class ExtensionRequester extends ExtensionAdaptor {
         } catch (Exception e) {
             LOGGER.error("An error occurred while adding the history type:", e);
         }
-    }
-
-    private static boolean isDeprecated(Class<?> clazz) {
-        return clazz.getAnnotation(Deprecated.class) != null;
     }
 
     private RequesterParam getOptionsParam() {
