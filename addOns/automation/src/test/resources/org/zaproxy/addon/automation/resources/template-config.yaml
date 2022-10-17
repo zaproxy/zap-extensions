@@ -56,12 +56,6 @@ jobs:
       - url:                          # URL of the request to be made
         method:                       # A non-empty request method
 
-  - type: spider
-    name: spider
-    parameters:
-      context: 
-      url: 
-
   - type: delay
     name: delay
     parameters:
