@@ -26,8 +26,6 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.zaproxy.zap.extension.params.ExtensionParams;
-import org.zaproxy.zap.extension.spider.ExtensionSpider;
-import org.zaproxy.zap.model.DefaultValueGenerator;
 import org.zaproxy.zap.model.ValueGenerator;
 
 public class ExtensionFormHandler extends ExtensionAdaptor {
@@ -67,11 +65,6 @@ public class ExtensionFormHandler extends ExtensionAdaptor {
 
         extensionHook.addOptionsParamSet(getParam());
         ExtensionLoader extLoader = Control.getSingleton().getExtensionLoader();
-        // TODO Remove once other add-ons no longer use the core spider to get the generator.
-        ExtensionSpider extension = extLoader.getExtension(ExtensionSpider.class);
-        if (extension != null) {
-            extension.setValueGenerator(valueGenerator);
-        }
 
         if (hasView()) {
             extensionHook.getHookView().addOptionPanel(getOptionsFormHandlerPanel());
@@ -83,19 +76,7 @@ public class ExtensionFormHandler extends ExtensionAdaptor {
 
     @Override
     public boolean canUnload() {
-        // The extension can be dynamically unloaded, all resources used/added can be freed/removed
-        // from core.
         return true;
-    }
-
-    @Override
-    public void unload() {
-        super.unload();
-        ExtensionSpider extension =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.class);
-        if (extension != null) {
-            extension.setValueGenerator(new DefaultValueGenerator());
-        }
     }
 
     // Method for creating and obtaining the Options Panel

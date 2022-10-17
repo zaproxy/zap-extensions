@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- No longer provide the value generator through the core spider (Related to Issue 3113).
 - Maintenance changes.
 
 
