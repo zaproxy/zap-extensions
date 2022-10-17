@@ -19,10 +19,10 @@
  */
 package org.zaproxy.zap.extension.soap.spider;
 
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.spider.parser.ParseContext;
 import org.zaproxy.addon.spider.parser.SpiderParser;
 import org.zaproxy.zap.extension.soap.WSDLCustomParser;
-import org.zaproxy.zap.extension.soap.WsdlSpiderHelper;
 
 public class WsdlSpider extends SpiderParser {
 
@@ -34,11 +34,29 @@ public class WsdlSpider extends SpiderParser {
 
     @Override
     public boolean parseResource(ParseContext ctx) {
-        return WsdlSpiderHelper.parseWsdl(parser, ctx.getHttpMessage());
+        if (!canParseMessage(ctx)) {
+            return false;
+        }
+
+        String content = ctx.getHttpMessage().getResponseBody().toString().trim();
+        parser.extContentWSDLImport(content, true);
+        return true;
+    }
+
+    private boolean canParseMessage(ParseContext ctx) {
+        HttpMessage message = ctx.getHttpMessage();
+        if (canParseResource(ctx, false)
+                || message.getResponseHeader().hasContentType("text/xml", "application/wsdl+xml")) {
+            String content = message.getResponseBody().toString();
+            if (parser.canBeWSDLparsed(content)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public boolean canParseResource(ParseContext ctx, boolean wasAlreadyConsumed) {
-        return WsdlSpiderHelper.canParseMessage(ctx.getHttpMessage());
+        return ctx.getHttpMessage().getRequestHeader().getURI().toString().endsWith(".wsdl");
     }
 }

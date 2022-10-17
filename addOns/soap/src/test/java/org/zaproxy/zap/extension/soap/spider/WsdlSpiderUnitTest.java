@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.soap;
+package org.zaproxy.zap.extension.soap.spider;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -31,14 +31,21 @@ import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.spider.parser.ParseContext;
+import org.zaproxy.zap.extension.soap.Sample;
+import org.zaproxy.zap.extension.soap.WSDLCustomParser;
 
-class WsdlSpiderHelperUnitTest {
+class WsdlSpiderUnitTest {
 
     private WSDLCustomParser wsdlCustomParser;
+    private ParseContext ctx;
+    private WsdlSpider spider;
 
     @BeforeEach
     void setUp() {
         wsdlCustomParser = mock(WSDLCustomParser.class);
+        ctx = mock(ParseContext.class);
+        spider = new WsdlSpider(wsdlCustomParser);
     }
 
     @Test
@@ -49,8 +56,9 @@ class WsdlSpiderHelperUnitTest {
         Sample.setResponseHeaderContent(message);
         Sample.setResponseBodyContent(message);
         given(wsdlCustomParser.canBeWSDLparsed(anyString())).willReturn(true);
+        given(ctx.getHttpMessage()).willReturn(message);
         // When
-        boolean result = WsdlSpiderHelper.parseWsdl(wsdlCustomParser, message);
+        boolean result = spider.parseResource(ctx);
         // Then
         assertTrue(result);
         String content = message.getResponseBody().toString();
@@ -63,8 +71,9 @@ class WsdlSpiderHelperUnitTest {
     void shouldNotParseNonWsdl() throws Exception {
         // Given
         HttpMessage message = new HttpMessage(new URI("https://example.com/", true));
+        given(ctx.getHttpMessage()).willReturn(message);
         // When
-        boolean result = WsdlSpiderHelper.parseWsdl(wsdlCustomParser, message);
+        boolean result = spider.parseResource(ctx);
         // Then
         assertFalse(result);
         verifyNoInteractions(wsdlCustomParser);
@@ -74,8 +83,9 @@ class WsdlSpiderHelperUnitTest {
     void shouldBeAbleToParseMessageWithWsdlExtension() throws Exception {
         // Given
         HttpMessage message = new HttpMessage(new URI("https://example.com/actions.wsdl", true));
+        given(ctx.getHttpMessage()).willReturn(message);
         // When
-        boolean result = WsdlSpiderHelper.canParseMessage(message);
+        boolean result = spider.canParseResource(ctx, false);
         // Then
         assertTrue(result);
     }
@@ -84,8 +94,9 @@ class WsdlSpiderHelperUnitTest {
     void shouldNotBeAbleToParseMessageWithoutWsdlExtension() throws Exception {
         // Given
         HttpMessage message = new HttpMessage(new URI("https://example.com/", true));
+        given(ctx.getHttpMessage()).willReturn(message);
         // When
-        boolean result = WsdlSpiderHelper.canParseMessage(message);
+        boolean result = spider.canParseResource(ctx, false);
         // Then
         assertFalse(result);
     }
