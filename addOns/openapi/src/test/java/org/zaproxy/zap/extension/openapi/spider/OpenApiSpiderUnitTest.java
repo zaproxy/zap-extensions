@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.openapi.spider;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
@@ -31,20 +32,21 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.spider.parser.ParseContext;
 import org.zaproxy.zap.extension.openapi.AbstractServerTest;
 import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
-/** Unit test for {@link OpenApiSpiderFunctionality}. */
-class OpenApiSpiderFunctionalityUnitTest extends AbstractServerTest {
+/** Unit test for {@link OpenApiSpider}. */
+class OpenApiSpiderUnitTest extends AbstractServerTest {
 
     private ValueGenerator valueGenerator;
-    private OpenApiSpiderFunctionality spider;
+    private OpenApiSpider spider;
 
     @BeforeEach
     void setupSpider() {
         valueGenerator = mock(ValueGenerator.class);
-        spider = new OpenApiSpiderFunctionality(() -> valueGenerator);
+        spider = new OpenApiSpider(() -> valueGenerator);
     }
 
     @Test
@@ -73,8 +75,10 @@ class OpenApiSpiderFunctionalityUnitTest extends AbstractServerTest {
                         + "        200:\n"
                         + "          content:\n"
                         + "            application/json: {}");
+        ParseContext ctx = mock(ParseContext.class);
+        given(ctx.getHttpMessage()).willReturn(message);
         // When
-        spider.parseResource(message);
+        spider.parseResource(ctx);
         // Then
         assertThat(accessedUris, contains("/path"));
     }
