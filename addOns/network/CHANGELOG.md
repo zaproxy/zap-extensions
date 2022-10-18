@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Client Certificates management (PKCS#11 and PKCS#12).
+- Connection options, HTTP proxy, and SOCKS proxy.
+- A newer HTTP client implementation.
+
 ### Changed
 - Minor tweaks in help pages for better rendering.
 - Promoted to Beta status.
