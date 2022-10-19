@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [40] - 2022-10-19
 ### Added
 - Text4shell (CVE-2022-42889) Scan Rule.
 
@@ -308,6 +308,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version, including persistent XSS tests
 
+[40]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v39
 [38]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v38
 [37]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v37
