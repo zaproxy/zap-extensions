@@ -9,6 +9,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Fixed
 - Deregister the Interactsh service even in case of error (Issue 7504).
 - Clear Interactsh payloads from the GUI when the service is deregistered.
+- Error logged when interactsh server returns null data.
 
 ## [0.11.0] - 2022-09-23
 ### Changed

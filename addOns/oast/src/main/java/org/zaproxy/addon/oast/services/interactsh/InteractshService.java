@@ -46,6 +46,7 @@ import javax.crypto.spec.OAEPParameterSpec;
 import javax.crypto.spec.PSource;
 import javax.crypto.spec.SecretKeySpec;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONNull;
 import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -375,6 +376,11 @@ public class InteractshService extends OastService implements OptionsChangedList
                 return new ArrayList<>();
             }
             String aesKey = response.getString("aes_key");
+            Object data = response.get("data");
+            if (data instanceof JSONNull) {
+                LOGGER.debug("Interactsh server has returned null data");
+                return new ArrayList<>();
+            }
             JSONArray interactions = response.getJSONArray("data");
             LOGGER.debug(
                     "Polled {} interactions for correlationId: {}",
