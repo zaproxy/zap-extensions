@@ -30,10 +30,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.model.OptionsParam;
-import org.zaproxy.addon.oast.OastEntity;
 import org.zaproxy.addon.oast.OastService;
 import org.zaproxy.addon.oast.OastState;
-import org.zaproxy.addon.oast.OastState.OastStateEventType;
 
 public class BoastService extends OastService implements OptionsChangedListener {
 
@@ -119,30 +117,8 @@ public class BoastService extends OastService implements OptionsChangedListener 
         LOGGER.debug("Registering BOAST Server.");
         BoastServer boastServer = new BoastServer(getParam().getBoastUri());
         registeredServers.add(boastServer);
-        fireOastStateChanged(new OastState(getName(), true, null, OastStateEventType.REGISTERED));
+        fireOastStateChanged(new OastState(getName(), true, null));
         return boastServer;
-    }
-
-    public void addEntitiesAsServers(List<BoastEntity> entities) {
-        try {
-            for (BoastEntity entity : entities) {
-                LOGGER.debug(
-                        "Adding entity as BOAST Server: {}, {}, {}, {}, {}",
-                        entity.getUri(),
-                        entity.getId(),
-                        entity.getRegisteredTimestamp(),
-                        entity.getCanary(),
-                        entity.getSecret());
-                registeredServers.add(new BoastServer(entity));
-            }
-        } catch (Exception e) {
-            LOGGER.warn("Could not add entities as servers: {}", e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public OastEntity getLastRegisteredServerEntity() {
-        return BoastEntity.fromBoastServer(registeredServers.get(registeredServers.size() - 1));
     }
 
     @Override
