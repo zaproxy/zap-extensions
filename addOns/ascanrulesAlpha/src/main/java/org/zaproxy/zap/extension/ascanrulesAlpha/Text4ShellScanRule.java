@@ -41,6 +41,7 @@ public class Text4ShellScanRule extends AbstractAppParamPlugin {
 
     private static final Logger LOGGER = LogManager.getLogger(Text4ShellScanRule.class);
     private static final String PREFIX = "ascanalpha.text4shell.";
+    private static final String CVE = "CVE-2022-42889";
     private static final String[] ATTACK_PATTERNS = {
         "${url:UTF-8:http://{0}/bingo}", "${url:UTF-8:https://{0}/bingo}"
     };
@@ -95,6 +96,7 @@ public class Text4ShellScanRule extends AbstractAppParamPlugin {
                                 CommonAlertTag.OWASP_2017_A09_VULN_COMP,
                                 CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ));
         alertTags.put(ExtensionOast.OAST_ALERT_TAG_KEY, ExtensionOast.OAST_ALERT_TAG_VALUE);
+        alertTags.put(CVE, "");
         return alertTags;
     }
 
