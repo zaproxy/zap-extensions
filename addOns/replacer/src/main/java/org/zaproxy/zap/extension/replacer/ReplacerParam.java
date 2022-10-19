@@ -39,6 +39,7 @@ public class ReplacerParam extends AbstractParam {
     private static final String ALL_RULES_KEY = REPLACER_BASE_KEY + ".full_list";
 
     private static final String RULE_DESCRIPTION_KEY = "description";
+    private static final String RULE_URL_KEY = "url";
     private static final String RULE_ENABLED_KEY = "enabled";
     private static final String RULE_MATCH_STRING_KEY = "matchstr";
     private static final String RULE_MATCH_TYPE_KEY = "matchtype";
@@ -146,7 +147,14 @@ public class ReplacerParam extends AbstractParam {
                     }
                     this.rules.add(
                             new ReplacerParamRule(
-                                    desc, matchType, matchStr, regex, replace, initList, enabled));
+                                    desc,
+                                    sub.getString(RULE_URL_KEY, ""),
+                                    matchType,
+                                    matchStr,
+                                    regex,
+                                    replace,
+                                    initList,
+                                    enabled));
                     tempTokensNames.add(desc);
                 }
             }
@@ -183,6 +191,7 @@ public class ReplacerParam extends AbstractParam {
             ReplacerParamRule rule = rules.get(i);
 
             getConfig().setProperty(elementBaseKey + RULE_DESCRIPTION_KEY, rule.getDescription());
+            getConfig().setProperty(elementBaseKey + RULE_URL_KEY, rule.getUrl());
             getConfig()
                     .setProperty(
                             elementBaseKey + RULE_ENABLED_KEY, Boolean.valueOf(rule.isEnabled()));

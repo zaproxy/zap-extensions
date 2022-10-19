@@ -42,6 +42,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
     private static final String[] ADV_TAB_LABELS = {FIRST_TAB, INITIATORS_TAB};
 
     protected static final String DESC_FIELD = "replacer.label.desc";
+    protected static final String URL_FIELD = "replacer.label.url";
     protected static final String MATCH_STR_FIELD = "replacer.label.matchstr";
     protected static final String MATCH_TYPE_FIELD = "replacer.label.matchtype";
     protected static final String REGEX_FIELD = "replacer.label.regex";
@@ -83,6 +84,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
 
         this.removeAllFields();
         this.addTextField(0, DESC_FIELD, "");
+        this.addTextField(0, URL_FIELD, "");
         this.addComboField(0, MATCH_TYPE_FIELD, getMatchTypes(), selectedStr);
 
         if (ReplacerParamRule.MatchType.REQ_HEADER.equals(selectedMatchType)) {
@@ -179,6 +181,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
         this.rule = rule;
         if (rule != null) {
             this.setFieldValue(DESC_FIELD, rule.getDescription());
+            this.setFieldValue(URL_FIELD, rule.getUrl());
             if (selectedMatchType != null) {
                 // overrides the one set
                 this.setFieldValue(MATCH_TYPE_FIELD, matchTypeToStr(selectedMatchType));
@@ -278,6 +281,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
         rule =
                 new ReplacerParamRule(
                         this.getStringValue(DESC_FIELD),
+                        this.getStringValue(URL_FIELD),
                         this.getSelectedMatchType(),
                         this.getStringValue(MATCH_STR_FIELD),
                         this.getBoolValue(REGEX_FIELD),
@@ -297,6 +301,13 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
     public String validateFields() {
         if (this.isEmptyField(DESC_FIELD)) {
             return Constant.messages.getString("replacer.add.warning.nodesc");
+        }
+        if (!isEmptyField(URL_FIELD)) {
+            try {
+                Pattern.compile(getStringValue(URL_FIELD));
+            } catch (PatternSyntaxException e) {
+                return Constant.messages.getString("replacer.add.warning.badurlregex");
+            }
         }
         if (this.isEmptyField(MATCH_STR_FIELD)) {
             return Constant.messages.getString("replacer.add.warning.nomatch");
