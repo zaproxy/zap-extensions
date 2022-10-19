@@ -17,6 +17,14 @@ zapAddOn {
     }
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
+    sourceCompatibility = null
+    targetCompatibility = null
+}
+
 crowdin {
     configuration {
         file.set(file("$rootDir/gradle/crowdin-help-only.yml"))
