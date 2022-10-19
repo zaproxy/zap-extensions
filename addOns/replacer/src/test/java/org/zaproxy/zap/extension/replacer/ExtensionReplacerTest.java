@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.replacer;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.REQ_BODY_STR;
 import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.REQ_HEADER;
 import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.REQ_HEADER_STR;
@@ -29,8 +30,13 @@ import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.RES
 import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.RESP_HEADER;
 import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.RESP_HEADER_STR;
 
+import java.util.regex.PatternSyntaxException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 
@@ -43,8 +49,69 @@ class ExtensionReplacerTest {
     private HttpMessage msg;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         msg = new HttpMessage();
+        msg.setRequestHeader("GET https://example.com/ HTTP/1.1");
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void shouldSetEmptyAndNullUrl(String url) {
+        // Given
+        ReplacerParamRule rule = new ReplacerParamRule();
+        // When
+        rule.setUrl(url);
+        // Then
+        assertThat(rule.getUrl(), equalTo(""));
+    }
+
+    @Test
+    void shouldSetValidUrlRegex() {
+        // Given
+        ReplacerParamRule rule = new ReplacerParamRule();
+        String url = " a .* b ";
+        // When
+        rule.setUrl(url);
+        // Then
+        assertThat(rule.getUrl(), equalTo(url));
+    }
+
+    @Test
+    void shouldThrowForInvalidUrlRegex() {
+        // Given
+        ReplacerParamRule rule = new ReplacerParamRule();
+        // When
+        assertThrows(PatternSyntaxException.class, () -> rule.setUrl("*"));
+        // Then
+        assertThat(rule.getUrl(), equalTo(""));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"https://subdomain.example.com/", "https://example.org/"})
+    void shouldMatchAllUrlsIfUrlEmpty(String targetUrl) {
+        // Given
+        ReplacerParamRule rule = new ReplacerParamRule();
+        // When
+        boolean matches = rule.matchesUrl(targetUrl);
+        // Then
+        assertThat(matches, equalTo(true));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "https://subdomain.example.com/,true",
+        "https://example.org/,true",
+        "http://example.org/,false",
+        "http://subdomain.example.com, false"
+    })
+    void shouldMatchUrlRegex(String targetUrl, boolean expectedMatch) {
+        // Given
+        ReplacerParamRule rule = new ReplacerParamRule();
+        rule.setUrl("^https://([^.]+\\.)?example\\.(com|org).*");
+        // When
+        boolean matches = rule.matchesUrl(targetUrl);
+        // Then
+        assertThat(matches, equalTo(expectedMatch));
     }
 
     @Test
