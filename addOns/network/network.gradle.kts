@@ -30,6 +30,14 @@ zapAddOn {
     }
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
+    sourceCompatibility = null
+    targetCompatibility = null
+}
+
 crowdin {
     configuration {
         tokens.put("%messagesPath%", "org/zaproxy/addon/${zapAddOn.addOnId.get()}/resources/")
