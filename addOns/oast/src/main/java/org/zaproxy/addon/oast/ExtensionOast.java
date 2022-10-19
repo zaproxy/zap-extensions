@@ -43,10 +43,7 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.addon.database.PermanentDatabase;
 import org.zaproxy.addon.network.ExtensionNetwork;
-import org.zaproxy.addon.oast.OastState.OastStateEventType;
-import org.zaproxy.addon.oast.services.boast.BoastEntity;
 import org.zaproxy.addon.oast.services.boast.BoastOptionsPanelTab;
 import org.zaproxy.addon.oast.services.boast.BoastService;
 import org.zaproxy.addon.oast.services.callback.CallbackOptionsPanelTab;
@@ -71,7 +68,6 @@ public class ExtensionOast extends ExtensionAdaptor {
 
     private static final String NAME = ExtensionOast.class.getSimpleName();
     private static final Logger LOGGER = LogManager.getLogger(ExtensionOast.class);
-    private static final String OAST_PERSISTENCE_UNIT_NAME = "oast";
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
             Collections.unmodifiableList(Arrays.asList(ExtensionNetwork.class));
@@ -88,8 +84,6 @@ public class ExtensionOast extends ExtensionAdaptor {
     private BoastService boastService;
     private CallbackService callbackService;
     private InteractshService interactshService;
-    private PermanentDatabase permanentDatabase;
-    private boolean wasUsePermanentDatabase;
 
     public ExtensionOast() {
         super(NAME);
@@ -150,14 +144,10 @@ public class ExtensionOast extends ExtensionAdaptor {
         boastService.optionsLoaded();
         callbackService.optionsLoaded();
         interactshService.optionsLoaded();
-        wasUsePermanentDatabase = oastParam.isUsePermanentDatabase();
     }
 
     @Override
     public void postInit() {
-        if (oastParam.isUsePermanentDatabase()) {
-            getPermanentDatabase();
-        }
         boastService.startService();
         callbackService.startService();
         interactshService.startService();
@@ -165,10 +155,6 @@ public class ExtensionOast extends ExtensionAdaptor {
 
     private void optionsChanged(OptionsParam optionsParam) {
         getOastServices().values().forEach(OastService::fireOastStateChanged);
-        if (!wasUsePermanentDatabase && oastParam.isUsePermanentDatabase()) {
-            getPermanentDatabase();
-            wasUsePermanentDatabase = true;
-        }
     }
 
     public void deleteAllCallbacks() {
@@ -198,7 +184,6 @@ public class ExtensionOast extends ExtensionAdaptor {
             service.addOastRequestHandler(o -> getOastPanel().addOastRequest(o));
         }
         service.addOastRequestHandler(this::activeScanAlertOastRequestHandler);
-        service.addOastStateChangedListener(this::oastPersisterStateChangedListener);
         services.put(service.getName(), service);
     }
 
@@ -224,14 +209,6 @@ public class ExtensionOast extends ExtensionAdaptor {
 
     public void pollAllServices() {
         getOastServices().values().forEach(OastService::poll);
-    }
-
-    private PermanentDatabase getPermanentDatabase() {
-        if (permanentDatabase == null) {
-            permanentDatabase =
-                    new PermanentDatabase(OAST_PERSISTENCE_UNIT_NAME, getClass().getClassLoader());
-        }
-        return permanentDatabase;
     }
 
     private OastOptionsPanel getOastOptionsPanel() {
@@ -347,7 +324,6 @@ public class ExtensionOast extends ExtensionAdaptor {
         unregisterOastService(boastService);
         unregisterOastService(callbackService);
         unregisterOastService(interactshService);
-        getPermanentDatabase().close();
     }
 
     @Override
@@ -358,16 +334,6 @@ public class ExtensionOast extends ExtensionAdaptor {
     @Override
     public String getDescription() {
         return Constant.messages.getString("oast.ext.description");
-    }
-
-    private void oastPersisterStateChangedListener(OastState state) {
-        if (!oastParam.isUsePermanentDatabase()
-                || state.getEventType() != OastStateEventType.REGISTERED) {
-            return;
-        }
-        if (boastService.getName().equals(state.getServiceName())) {
-            getPermanentDatabase().persistEntity(boastService.getLastRegisteredServerEntity());
-        }
     }
 
     private class OastSessionChangedListener implements SessionChangedListener {
@@ -389,9 +355,6 @@ public class ExtensionOast extends ExtensionAdaptor {
                 }
                 s.addOastRequestHandler(ExtensionOast.this::activeScanAlertOastRequestHandler);
             }
-            if (oastParam.isUsePermanentDatabase()) {
-                addRegisteredServersFromPermanentDatabase();
-            }
         }
 
         private void addCallbacksFromDatabaseIntoCallbackPanel(Session session) {
@@ -411,11 +374,6 @@ public class ExtensionOast extends ExtensionAdaptor {
             } catch (DatabaseException | HttpMalformedHeaderException e) {
                 LOGGER.error(e.getMessage(), e);
             }
-        }
-
-        private void addRegisteredServersFromPermanentDatabase() {
-            List<BoastEntity> boastEntities = getPermanentDatabase().getAll(BoastEntity.class);
-            boastService.addEntitiesAsServers(boastEntities);
         }
 
         @Override

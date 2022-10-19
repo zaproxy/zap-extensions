@@ -66,7 +66,6 @@ import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.addon.oast.OastService;
 import org.zaproxy.addon.oast.OastState;
-import org.zaproxy.addon.oast.OastState.OastStateEventType;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.utils.Stats;
 
@@ -230,8 +229,6 @@ public class InteractshService extends OastService implements OptionsChangedList
                     reqMsg.getResponseHeader().getStatusCode(),
                     reqMsg.getResponseBody());
             isRegistered = true;
-            fireOastStateChanged(
-                    new OastState(getName(), false, null, OastStateEventType.REGISTERED));
             if (startPolling) {
                 schedulePoller(0);
             }
@@ -262,6 +259,7 @@ public class InteractshService extends OastService implements OptionsChangedList
             return;
         }
         try {
+
             stopPoller();
             URI deregistrationUri = (URI) serverUrl.clone();
             deregistrationUri.setPath("/deregister");
@@ -274,18 +272,19 @@ public class InteractshService extends OastService implements OptionsChangedList
             HttpMessage deregisterMsg = new HttpMessage(reqHeader, reqBody);
             httpSender.sendAndReceive(deregisterMsg);
             if (deregisterMsg.getResponseHeader().getStatusCode() != 200) {
+
                 LOGGER.warn(
                         "Error during interactsh deregister, due to bad HTTP code {}. Content: {}",
                         deregisterMsg.getResponseHeader().getStatusCode(),
                         deregisterMsg.getResponseBody());
             }
             LOGGER.debug("Deregistered correlationId: {}", correlationId);
+
         } catch (Exception e) {
             LOGGER.error("Error during interactsh deregister: {}", e.getMessage(), e);
         } finally {
             isRegistered = false;
-            fireOastStateChanged(
-                    new OastState(getName(), false, null, OastStateEventType.UNREGISTERED));
+            fireOastStateChanged(new OastState(getName(), false, null));
         }
     }
 

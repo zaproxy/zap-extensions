@@ -23,7 +23,6 @@ import java.awt.GridBagConstraints;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import org.parosproxy.paros.Constant;
@@ -38,7 +37,6 @@ public class GeneralOastOptionsPanelTab extends OastOptionsPanelTab {
 
     private static final long serialVersionUID = 1L;
     private JComboBox<String> activeScanServices;
-    private JCheckBox usePermanentDatabase;
 
     public GeneralOastOptionsPanelTab() {
         super(Constant.messages.getString("oast.options.general.title"));
@@ -53,9 +51,6 @@ public class GeneralOastOptionsPanelTab extends OastOptionsPanelTab {
                 getActiveScanServicesComboBox(),
                 LayoutHelper.getGBC(1, rowIndex, GridBagConstraints.REMAINDER, 1.0, 0));
         add(
-                getUsePermanentDatabaseCheckbox(),
-                LayoutHelper.getGBC(0, ++rowIndex, GridBagConstraints.REMAINDER, 1.0, 0));
-        add(
                 new JLabel(),
                 LayoutHelper.getGBC(0, ++rowIndex, GridBagConstraints.REMAINDER, 1.0, 1.0));
     }
@@ -64,7 +59,6 @@ public class GeneralOastOptionsPanelTab extends OastOptionsPanelTab {
     public void initParam(OptionsParam options) {
         final OastParam param = options.getParamSet(OastParam.class);
         getActiveScanServicesComboBox().setSelectedItem(param.getActiveScanServiceName());
-        getUsePermanentDatabaseCheckbox().setSelected(param.isUsePermanentDatabase());
     }
 
     @Override
@@ -74,7 +68,6 @@ public class GeneralOastOptionsPanelTab extends OastOptionsPanelTab {
                 Optional.ofNullable(getActiveScanServicesComboBox().getSelectedItem())
                         .orElse(OastParam.NO_ACTIVE_SCAN_SERVICE_SELECTED_OPTION)
                         .toString());
-        param.setUsePermanentDatabase(getUsePermanentDatabaseCheckbox().isSelected());
     }
 
     private JComboBox<String> getActiveScanServicesComboBox() {
@@ -89,15 +82,5 @@ public class GeneralOastOptionsPanelTab extends OastOptionsPanelTab {
                     Constant.messages.getString("oast.options.activeScanService.tooltip"));
         }
         return activeScanServices;
-    }
-
-    private JCheckBox getUsePermanentDatabaseCheckbox() {
-        if (usePermanentDatabase == null) {
-            usePermanentDatabase =
-                    new JCheckBox(Constant.messages.getString("oast.options.usePermanentDatabase"));
-            usePermanentDatabase.setToolTipText(
-                    Constant.messages.getString("oast.options.usePermanentDatabase.tooltip"));
-        }
-        return usePermanentDatabase;
     }
 }

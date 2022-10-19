@@ -47,7 +47,6 @@ public class BoastServer {
     private final URI uri;
     private final String id;
     private final String canary;
-    private final String secret;
     private final HttpMessage boastMsg;
     private final HttpSender httpSender;
     private final List<String> eventIds = new ArrayList<>();
@@ -62,28 +61,12 @@ public class BoastServer {
 
         uri = new URI(uriString, true);
         boastMsg = new HttpMessage(uri);
-        secret = generateBoastSecret();
-        boastMsg.getRequestHeader().setHeader(HttpHeader.AUTHORIZATION, "Secret " + secret);
+        boastMsg.getRequestHeader().setHeader(HttpHeader.AUTHORIZATION, generateBoastSecret());
         httpSender.sendAndReceive(boastMsg);
         JSONObject result = JSONObject.fromObject(boastMsg.getResponseBody().toString());
         id = result.getString("id");
         canary = result.getString("canary");
         Stats.incCounter("stats.oast.boast.payloadsGenerated");
-    }
-
-    BoastServer(BoastEntity entity) throws IOException {
-        httpSender =
-                new HttpSender(
-                        Model.getSingleton().getOptionsParam().getConnectionParam(),
-                        true,
-                        // TODO: Replace on next ZAP release with HttpSender.OAST_INITIATOR
-                        ExtensionOast.HTTP_SENDER_OAST_INITIATOR);
-        uri = new URI(entity.getUri(), true);
-        boastMsg = new HttpMessage(uri);
-        secret = entity.getSecret();
-        boastMsg.getRequestHeader().setHeader(HttpHeader.AUTHORIZATION, "Secret " + secret);
-        id = entity.getId();
-        canary = entity.getCanary();
     }
 
     /** @return new BOAST events found on polling */
@@ -134,18 +117,10 @@ public class BoastServer {
         return canary;
     }
 
-    String getSecret() {
-        return secret;
-    }
-
-    List<String> getEventIds() {
-        return eventIds;
-    }
-
     private String generateBoastSecret() {
         Random random = ThreadLocalRandom.current();
         byte[] r = new byte[32];
         random.nextBytes(r);
-        return Base64.encodeBase64String(r);
+        return "Secret " + Base64.encodeBase64String(r);
     }
 }
