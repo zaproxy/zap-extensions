@@ -40,14 +40,6 @@ zapAddOn {
     }
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
-    }
-    sourceCompatibility = null
-    targetCompatibility = null
-}
-
 crowdin {
     configuration {
         val resourcesPath = "org/zaproxy/addon/${zapAddOn.addOnId.get()}/resources/"

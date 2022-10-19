@@ -21,14 +21,6 @@ zapAddOn {
     }
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
-    }
-    sourceCompatibility = null
-    targetCompatibility = null
-}
-
 dependencies {
     compileOnly(parent!!.childProjects.get("commonlib")!!)
     compileOnly(parent!!.childProjects.get("oast")!!)
