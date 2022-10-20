@@ -21,6 +21,7 @@ package org.zaproxy.addon.oast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -45,6 +46,10 @@ public abstract class OastService {
      * @throws Exception if it is unable to get a new payload.
      */
     public abstract String getNewPayload() throws Exception;
+
+    public OastEntity getLastRegisteredServerEntity() {
+        return null;
+    }
 
     public void poll() {}
 
@@ -77,9 +82,12 @@ public abstract class OastService {
     }
 
     public void fireOastStateChanged(OastState oastState) {
-        for (OastStateChangedListener handler : oastStateChangedListenerList) {
-            handler.stateChanged(oastState);
-        }
+        CompletableFuture.runAsync(
+                () -> {
+                    for (OastStateChangedListener handler : oastStateChangedListenerList) {
+                        handler.stateChanged(oastState);
+                    }
+                });
     }
 
     public void clearOastStateChangedListeners() {

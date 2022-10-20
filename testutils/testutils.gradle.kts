@@ -7,14 +7,6 @@ description = "Common test utilities for the add-ons."
 val nanohttpdVersion = "2.3.1"
 val jupiterVersion = "5.8.1"
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
-    }
-    sourceCompatibility = null
-    targetCompatibility = null
-}
-
 configurations {
     "compileClasspath" {
         exclude(group = "log4j")

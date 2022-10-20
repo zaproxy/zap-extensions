@@ -21,19 +21,12 @@ zapAddOn {
     }
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
-    }
-    sourceCompatibility = null
-    targetCompatibility = null
-}
-
 dependencies {
     compileOnly(parent!!.childProjects.get("commonlib")!!)
     compileOnly(parent!!.childProjects.get("oast")!!)
 
     testImplementation(parent!!.childProjects.get("commonlib")!!)
+    testImplementation(parent!!.childProjects.get("database")!!)
     testImplementation(parent!!.childProjects.get("network")!!)
     testImplementation(parent!!.childProjects.get("oast")!!)
     testImplementation(project(":testutils"))
