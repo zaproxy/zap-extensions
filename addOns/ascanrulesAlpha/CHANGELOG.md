@@ -16,6 +16,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Removed
+- The following scan rules were removed, having been promoted to Beta:
+    - CORS
+    - Exponential Entity Expansion
+    - Forbidden Bypass
+    - Log4Shell
+    - Out-of-Band XSS
+    - Spring4Shell
+    - Spring Actuator
+    - Blind SSTI
+    - SSTI
+
 ## [39] - 2022-09-22
 ### Changed
 - Maintenance changes.

@@ -8,6 +8,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Depend on `database` add-on.
 - Maintenance changes.
 
+### Added
+- The following scan rules were added, having been promoted to Beta:
+    - CORS
+    - Exponential Entity Expansion
+    - Forbidden Bypass
+    - Log4Shell
+    - Out-of-Band XSS
+    - Spring4Shell
+    - Spring Actuator
+    - Blind SSTI
+    - SSTI
+
+### Fixed
+- NPE in Source Code Disclosure File Inclusion Scan Rule
+
+### Removed
+- The following scan rules were removed, having been promoted to Release:
+    - .env Information Leak
+    - Cloud Metadata Attack
+    - GET for POST
+    - Heartbleed OpenSSL Vulnerability
+    - Hidden File Finder
+    - Padding Oracle
+    - Remote Code Execution - CVE-2012-1823
+    - Source Code Disclosure - CVE-2012-1823
+    - SQL Injection - Hypersonic (Time Based)
+    - SQL Injection - MsSQL (Time Based)
+    - SQL Injection - MySQL (Time Based)
+    - SQL Injection - Oracle (Time Based)
+    - SQL Injection - PostgreSQL (Time Based)
+    - SQL Injection - SQLite
+    - Trace.axd Information Leak
+    - User Agent Fuzzer
+    - XSLT Injection
+    - XXE
+
 ## [42] - 2022-09-22
 ### Changed
 - Maintenance changes.
