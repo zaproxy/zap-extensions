@@ -30,6 +30,7 @@ import static org.mockito.Mockito.when;
 
 import fi.iki.elonen.NanoHTTPD;
 import java.io.IOException;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.control.Control;
@@ -111,6 +112,14 @@ class Text4ShellScanRuleUnitTest extends ActiveScannerTest<Text4ShellScanRule> {
 
         // Then
         assertThat(httpMessagesSent, hasSize(1));
+    }
+
+    @Test
+    void shouldHaveExpectedNumberOfAlertTags() {
+        // Given / When
+        Map<String, String> alertTags = rule.getAlertTags();
+        // Then
+        assertThat(alertTags.size(), is(equalTo(5)));
     }
 
     private static class Log4ShellServerHandler extends NanoServerHandler {
