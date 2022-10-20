@@ -214,6 +214,9 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         if (hasView()) {
             extensionHook.getHookView().addOptionPanel(getOptionsPanel());
             extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuOpenInBrowser(this));
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(new PopupMenuOpenCustomRequestInBrowser(this));
         }
 
         extensionHook.addApiImplementor(seleniumApi);
@@ -235,6 +238,10 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                     Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
         }
         return extScript;
+    }
+
+    public SeleniumAPI getApiImplementor() {
+        return seleniumApi;
     }
 
     private ImageIcon createScriptIcon() {
