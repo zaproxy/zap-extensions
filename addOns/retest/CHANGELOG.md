@@ -5,7 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-
+### Fixed
+- Correct the Automation Framework plan generation with localized languages.
 
 ## [0.3.0] - 2022-09-23
 ### Changed
