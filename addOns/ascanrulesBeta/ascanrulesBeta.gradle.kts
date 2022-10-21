@@ -27,27 +27,11 @@ zapAddOn {
                 }
             }
         }
-
-        extensions {
-            register("org.zaproxy.zap.extension.ascanrulesBeta.payloader.ExtensionPayloader") {
-                classnames {
-                    allowed.set(listOf("org.zaproxy.zap.extension.ascanrulesBeta.payloader"))
-                }
-                dependencies {
-                    addOns {
-                        register("custompayloads") {
-                            version.set(">= 0.9.0 & < 1.0.0")
-                        }
-                    }
-                }
-            }
-        }
     }
 }
 
 dependencies {
     compileOnly(parent!!.childProjects.get("commonlib")!!)
-    compileOnly(parent!!.childProjects.get("custompayloads")!!)
     compileOnly(parent!!.childProjects.get("database")!!)
     compileOnly(parent!!.childProjects.get("network")!!)
     compileOnly(parent!!.childProjects.get("oast")!!)
@@ -57,7 +41,6 @@ dependencies {
 
     testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
-    testImplementation(parent!!.childProjects.get("custompayloads")!!)
     testImplementation(parent!!.childProjects.get("database")!!)
     testImplementation(parent!!.childProjects.get("network")!!)
     testImplementation(parent!!.childProjects.get("oast")!!)
