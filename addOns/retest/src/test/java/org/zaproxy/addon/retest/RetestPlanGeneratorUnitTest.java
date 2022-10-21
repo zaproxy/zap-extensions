@@ -23,24 +23,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.extension.ExtensionLoader;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.ContextWrapper;
-import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob;
 import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
@@ -48,17 +41,13 @@ import org.zaproxy.addon.automation.jobs.RequestorJob;
 import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 import org.zaproxy.addon.automation.tests.AutomationAlertTest;
 import org.zaproxy.zap.network.HttpRequestBody;
-import org.zaproxy.zap.testutils.TestUtils;
-import org.zaproxy.zap.utils.I18N;
 
-class RetestPlanGeneratorUnitTest extends TestUtils {
+class RetestPlanGeneratorUnitTest {
 
     private static AutomationPlan retestPlan;
 
     @BeforeAll
     static void init() {
-        Constant.messages = mock(I18N.class);
-        mockMessages(new ExtensionAutomation());
         List<AlertData> alertData = new ArrayList<>();
         HttpMessage msgOne = new HttpMessage();
         Alert alertOne = new Alert(100);
@@ -99,14 +88,6 @@ class RetestPlanGeneratorUnitTest extends TestUtils {
         alertData.add(alertTwoData);
 
         retestPlan = new RetestPlanGenerator(alertData).getPlan();
-    }
-
-    @BeforeEach
-    void setUp() throws Exception {
-        mockMessages(new ExtensionAutomation());
-        super.setUpZap();
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
-        Control.initSingletonForTesting(mock(Model.class), extensionLoader);
     }
 
     @Test
