@@ -276,7 +276,7 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
             // use this later to build up "wavsep.war", and "wavsep.ear", for instance :)
             String applicationContext = "";
             int slashIndex = uri.getPath().indexOf("/", 1);
-            if (slashIndex > 0) {
+            if (slashIndex > 1) {
                 applicationContext = uri.getPath().substring(1, slashIndex);
             }
 
