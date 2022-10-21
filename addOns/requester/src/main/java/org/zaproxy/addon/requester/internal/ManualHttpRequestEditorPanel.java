@@ -264,9 +264,9 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
 
     @Override
     public void reset() {
-        super.reset();
-
+        getMessagePanel().clearView();
         getResponsePanel().clearView();
+        setDefaultMessage();
     }
 
     @Override
