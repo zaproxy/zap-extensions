@@ -26,29 +26,40 @@ import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeResult;
 
-class FullHtmlStringEncoderUnitTest extends ProcessorTests<FullHtmlStringEncoder> {
+public class Base64UrlDecoderUnitTest extends ProcessorTests<Base64UrlDecoder> {
 
     @Override
-    protected FullHtmlStringEncoder createProcessor() {
-        return FullHtmlStringEncoder.getSingleton();
+    protected Base64UrlDecoder createProcessor() {
+        return Base64UrlDecoder.getSingleton();
     }
 
     @Test
-    void shouldEncodeSimpleScriptTag() throws Exception {
+    void shouldErrorOnInvalidStringInput() throws Exception {
         // Given / When
-        EncodeDecodeResult result = processor.process("<script>");
+        EncodeDecodeResult result = processor.process("admin");
         // Then
-        assertThat(result.hasError(), is(equalTo(false)));
+        assertThat(result.hasError(), is(equalTo(true)));
         assertThat(
-                result.getResult(), is(equalTo("&#60;&#115;&#99;&#114;&#105;&#112;&#116;&#62;")));
+                result.getResult(),
+                is(equalTo("IllegalArgumentException: Last unit does not have enough valid bits")));
     }
 
     @Test
-    void shouldEncodeStringWithEmoji() throws Exception {
+    void shouldHandleEncodedInput() throws Exception {
         // Given / When
-        EncodeDecodeResult result = processor.process("fred✅");
+        EncodeDecodeResult result = processor.process("YWRtaW4=");
         // Then
         assertThat(result.hasError(), is(equalTo(false)));
-        assertThat(result.getResult(), is(equalTo("&#102;&#114;&#101;&#100;&#9989;")));
+        assertThat(result.getResult(), is(equalTo("admin")));
+    }
+
+    @Test
+    void shouldDecodeBase64UrlString() throws Exception {
+        // Given / When
+        EncodeDecodeResult result =
+                processor.process("YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXohQCMkJV4mKigpe31bXS8_Liw=");
+        // Then
+        assertThat(result.hasError(), is(equalTo(false)));
+        assertThat(result.getResult(), is(equalTo("abcdefghijklmnopqrstuvwxyz!@#$%^&*(){}[]/?.,")));
     }
 }

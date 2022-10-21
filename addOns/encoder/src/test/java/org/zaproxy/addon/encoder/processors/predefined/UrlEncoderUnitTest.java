@@ -26,29 +26,30 @@ import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeResult;
 
-class FullHtmlStringEncoderUnitTest extends ProcessorTests<FullHtmlStringEncoder> {
+public class UrlEncoderUnitTest extends ProcessorTests<UrlEncoder> {
 
     @Override
-    protected FullHtmlStringEncoder createProcessor() {
-        return FullHtmlStringEncoder.getSingleton();
+    protected UrlEncoder createProcessor() {
+        return UrlEncoder.getSingleton();
     }
 
     @Test
-    void shouldEncodeSimpleScriptTag() throws Exception {
+    void shouldEncodeWithoutError() throws Exception {
         // Given / When
-        EncodeDecodeResult result = processor.process("<script>");
+        EncodeDecodeResult result = processor.process("<script>alert('✅')</script>");
         // Then
         assertThat(result.hasError(), is(equalTo(false)));
         assertThat(
-                result.getResult(), is(equalTo("&#60;&#115;&#99;&#114;&#105;&#112;&#116;&#62;")));
+                result.getResult(),
+                is(equalTo("%3Cscript%3Ealert%28%27%E2%9C%85%27%29%3C%2Fscript%3E")));
     }
 
     @Test
-    void shouldEncodeStringWithEmoji() throws Exception {
+    void shouldEncodeMultilineInput() throws Exception {
         // Given / When
-        EncodeDecodeResult result = processor.process("fred✅");
+        EncodeDecodeResult result = processor.process("some multiline\ncontent");
         // Then
         assertThat(result.hasError(), is(equalTo(false)));
-        assertThat(result.getResult(), is(equalTo("&#102;&#114;&#101;&#100;&#9989;")));
+        assertThat(result.getResult(), is(equalTo("some+multiline%0Acontent")));
     }
 }

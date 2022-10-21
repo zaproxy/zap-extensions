@@ -26,29 +26,20 @@ import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeResult;
 
-class FullHtmlStringEncoderUnitTest extends ProcessorTests<FullHtmlStringEncoder> {
+public class HtmlStringEncoderUnitTest extends ProcessorTests<HtmlStringEncoder> {
 
     @Override
-    protected FullHtmlStringEncoder createProcessor() {
-        return FullHtmlStringEncoder.getSingleton();
+    protected HtmlStringEncoder createProcessor() {
+        return HtmlStringEncoder.getSingleton();
     }
 
     @Test
-    void shouldEncodeSimpleScriptTag() throws Exception {
+    void shouldEncodeWithoutError() throws Exception {
         // Given / When
-        EncodeDecodeResult result = processor.process("<script>");
+        EncodeDecodeResult result = processor.process("<script>alert('✅')</script>");
         // Then
         assertThat(result.hasError(), is(equalTo(false)));
         assertThat(
-                result.getResult(), is(equalTo("&#60;&#115;&#99;&#114;&#105;&#112;&#116;&#62;")));
-    }
-
-    @Test
-    void shouldEncodeStringWithEmoji() throws Exception {
-        // Given / When
-        EncodeDecodeResult result = processor.process("fred✅");
-        // Then
-        assertThat(result.hasError(), is(equalTo(false)));
-        assertThat(result.getResult(), is(equalTo("&#102;&#114;&#101;&#100;&#9989;")));
+                result.getResult(), is(equalTo("&lt;script&gt;alert('&#9989;')&lt;/script&gt;")));
     }
 }

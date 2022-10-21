@@ -26,29 +26,31 @@ import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeResult;
 
-class FullHtmlStringEncoderUnitTest extends ProcessorTests<FullHtmlStringEncoder> {
+public class Base64UrlEncoderUnitTest extends ProcessorTests<Base64UrlEncoder> {
 
     @Override
-    protected FullHtmlStringEncoder createProcessor() {
-        return FullHtmlStringEncoder.getSingleton();
+    protected Base64UrlEncoder createProcessor() {
+        return Base64UrlEncoder.getSingleton();
     }
 
     @Test
-    void shouldEncodeSimpleScriptTag() throws Exception {
+    void shouldEncodeSimpleString() throws Exception {
         // Given / When
-        EncodeDecodeResult result = processor.process("<script>");
+        EncodeDecodeResult result = processor.process("admin");
+        // Then
+        assertThat(result.hasError(), is(equalTo(false)));
+        assertThat(result.getResult(), is(equalTo("YWRtaW4=")));
+    }
+
+    @Test
+    void shouldEncodeAsBase64UrlString() throws Exception {
+        // Given / When
+        EncodeDecodeResult result =
+                processor.process("abcdefghijklmnopqrstuvwxyz!@#$%^&*(){}[]/?.,");
         // Then
         assertThat(result.hasError(), is(equalTo(false)));
         assertThat(
-                result.getResult(), is(equalTo("&#60;&#115;&#99;&#114;&#105;&#112;&#116;&#62;")));
-    }
-
-    @Test
-    void shouldEncodeStringWithEmoji() throws Exception {
-        // Given / When
-        EncodeDecodeResult result = processor.process("fred✅");
-        // Then
-        assertThat(result.hasError(), is(equalTo(false)));
-        assertThat(result.getResult(), is(equalTo("&#102;&#114;&#101;&#100;&#9989;")));
+                result.getResult(),
+                is(equalTo("YWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXohQCMkJV4mKigpe31bXS8_Liw=")));
     }
 }
