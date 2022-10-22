@@ -32,6 +32,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.any;
@@ -67,6 +68,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
@@ -93,6 +95,8 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.network.ClientCertificatesOptions;
 import org.zaproxy.addon.network.ConnectionOptions;
+import org.zaproxy.addon.network.common.ZapSocketTimeoutException;
+import org.zaproxy.addon.network.common.ZapUnknownHostException;
 import org.zaproxy.addon.network.internal.client.apachev5.HttpSenderApache;
 import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
 import org.zaproxy.addon.network.server.Server;
@@ -252,6 +256,41 @@ class HttpSenderImplUnitTest {
 
     @Nested
     class Request {
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+        void shouldThrowZapUnknownHostExceptionIfHostUnknown(SenderMethod method) throws Exception {
+            // Given
+            String host = "unknown_host";
+            message.getRequestHeader().setURI(new URI("https://" + host + ":" + serverPort, true));
+            // When / Then
+            ZapUnknownHostException exception =
+                    assertThrows(
+                            ZapUnknownHostException.class,
+                            () -> method.sendWith(httpSender, message));
+            assertThat(exception.getMessage(), startsWith(host));
+            assertThat(exception.isFromOutgoingProxy(), is(equalTo(false)));
+        }
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+        void shouldThrowZapSocketTimeoutExceptionIfTimeout(SenderMethod method) throws Exception {
+            // Given
+            int timeoutInSecs = 1;
+            options.setTimeoutInSecs(timeoutInSecs);
+            server.setHttpMessageHandler(
+                    (ctx, msg) -> {
+                        Thread.sleep(TimeUnit.SECONDS.toMillis(timeoutInSecs * 2));
+                    });
+            // When / Then
+            ZapSocketTimeoutException exception =
+                    assertThrows(
+                            ZapSocketTimeoutException.class,
+                            () -> method.sendWith(httpSender, message));
+            assertThat(exception.getTimeout(), is(equalTo(timeoutInSecs)));
+        }
 
         @ParameterizedTest
         @MethodSource(
@@ -1198,6 +1237,22 @@ class HttpSenderImplUnitTest {
         @AfterEach
         void teardown() throws IOException {
             proxy.close();
+        }
+
+        @Test
+        void shouldThrowZapUnknownHostExceptionIfProxyHostUnknown() throws Exception {
+            // Given
+            String proxyHost = "proxy.unknown_host";
+            configOptionsWithProxy(proxyHost, proxyPort);
+            // When / Then
+            ZapUnknownHostException exception =
+                    assertThrows(
+                            ZapUnknownHostException.class,
+                            () -> httpSender.sendAndReceive(message));
+            assertThat(proxy.getReceivedMessages(), hasSize(0));
+            assertThat(server.getReceivedMessages(), hasSize(0));
+            assertThat(exception.getMessage(), startsWith(proxyHost));
+            assertThat(exception.isFromOutgoingProxy(), is(equalTo(true)));
         }
 
         @Test

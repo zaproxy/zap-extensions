@@ -22,6 +22,8 @@ package org.zaproxy.addon.network.internal.client.apachev5;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -87,6 +89,8 @@ import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.network.ClientCertificatesOptions;
 import org.zaproxy.addon.network.ConnectionOptions;
+import org.zaproxy.addon.network.common.ZapSocketTimeoutException;
+import org.zaproxy.addon.network.common.ZapUnknownHostException;
 import org.zaproxy.addon.network.internal.client.BaseHttpSender;
 import org.zaproxy.addon.network.internal.client.LegacyUtils;
 import org.zaproxy.addon.network.internal.client.ResponseBodyConsumer;
@@ -292,6 +296,12 @@ public class HttpSenderApache
             throws IOException {
         try {
             sendImpl0(ctx, requestContext, message, responseBodyConsumer);
+        } catch (SocketTimeoutException e) {
+            LOGGER.debug("A timeout occurred while sending the request:", e);
+            throw new ZapSocketTimeoutException(e.getMessage(), options.getTimeoutInSecs());
+        } catch (UnknownHostException e) {
+            LOGGER.debug("An unknown host exception occurred while sending the request:", e);
+            throw new ZapUnknownHostException(e.getMessage(), isProxyHost(e.getMessage()));
         } catch (IOException e) {
             LOGGER.debug("An I/O error occurred while sending the request:", e);
             throw e;
@@ -299,6 +309,14 @@ public class HttpSenderApache
             LOGGER.warn("An error occurred while sending the request:", e);
             throw new IOException(e);
         }
+    }
+
+    private boolean isProxyHost(String exceptionMessage) {
+        if (!options.isHttpProxyEnabled() || exceptionMessage == null) {
+            return false;
+        }
+        // Exception message can be just the host or the host plus some other details.
+        return exceptionMessage.startsWith(options.getHttpProxy().getHost());
     }
 
     private void sendImpl0(
