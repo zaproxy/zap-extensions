@@ -954,8 +954,8 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldBeUnloadable() {
-        assertThat(extension.canUnload(), is(true));
+    void shouldNotBeUnloadable() {
+        assertThat(extension.canUnload(), is(false));
     }
 
     @Test
