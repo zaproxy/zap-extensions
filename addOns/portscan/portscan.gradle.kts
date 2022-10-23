@@ -10,5 +10,19 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/port-scan/")
+
+        dependencies {
+            addOns {
+                register("network") {
+                    version.set(">=0.3.0")
+                }
+            }
+        }
     }
+}
+
+dependencies {
+    compileOnly(parent!!.childProjects.get("network")!!)
+
+    testImplementation(parent!!.childProjects.get("network")!!)
 }
