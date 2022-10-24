@@ -46,7 +46,7 @@ public class ConnectionOptions extends VersionedAbstractParam {
     private static final Logger LOGGER = LogManager.getLogger(ConnectionOptions.class);
 
     public static final String DEFAULT_DEFAULT_USER_AGENT =
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:100.0) Gecko/20100101 Firefox/100.0";
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:105.0) Gecko/20100101 Firefox/105.0";
 
     /** The default connection timeout (in seconds). */
     public static final int DEFAULT_TIMEOUT = 20;
@@ -63,7 +63,7 @@ public class ConnectionOptions extends VersionedAbstractParam {
      * @see #CONFIG_VERSION_KEY
      * @see #updateConfigsImpl(int)
      */
-    private static final int CURRENT_CONFIG_VERSION = 1;
+    protected static final int CURRENT_CONFIG_VERSION = 2;
 
     private static final String BASE_KEY = "network.connection";
 
@@ -172,7 +172,9 @@ public class ConnectionOptions extends VersionedAbstractParam {
 
     @Override
     protected void updateConfigsImpl(int fileVersion) {
-        // Nothing to do.
+        if (fileVersion < CURRENT_CONFIG_VERSION) {
+            setDefaultUserAgent(DEFAULT_DEFAULT_USER_AGENT);
+        }
     }
 
     @Override
