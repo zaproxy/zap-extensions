@@ -17,7 +17,7 @@ zapAddOn {
                     version.set(">= 1.10.0 & < 2.0.0")
                 }
                 register("network") {
-                    version.set(">= 0.1.0")
+                    version.set(">= 0.3.0")
                 }
                 register("oast") {
                     version.set(">= 0.7.0")
