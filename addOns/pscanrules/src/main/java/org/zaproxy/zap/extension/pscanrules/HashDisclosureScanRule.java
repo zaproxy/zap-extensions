@@ -58,10 +58,10 @@ public class HashDisclosureScanRule extends PluginPassiveScanner {
                 Pattern.compile("\\$K4\\$[a-f0-9]{16},", Pattern.CASE_INSENSITIVE),
                 new HashAlert("Kerberos AFS DES", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH));
         hashPatterns.put(
-                Pattern.compile("\\$2a\\$05\\$[a-zA-z0-9\\+\\-_./=]{53}", Pattern.CASE_INSENSITIVE),
+                Pattern.compile("\\$2a\\$05\\$[a-z0-9\\+\\-_./=]{53}", Pattern.CASE_INSENSITIVE),
                 new HashAlert("OpenBSD Blowfish", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH));
         hashPatterns.put(
-                Pattern.compile("\\$2y\\$05\\$[a-zA-z0-9\\+\\-_./=]{53}", Pattern.CASE_INSENSITIVE),
+                Pattern.compile("\\$2y\\$05\\$[a-z0-9\\+\\-_./=]{53}", Pattern.CASE_INSENSITIVE),
                 new HashAlert("OpenBSD Blowfish", Alert.RISK_HIGH, Alert.CONFIDENCE_HIGH));
 
         // MD5 Crypt
