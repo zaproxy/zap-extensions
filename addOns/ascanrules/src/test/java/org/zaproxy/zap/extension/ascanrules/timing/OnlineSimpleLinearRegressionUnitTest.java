@@ -17,12 +17,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.commonlib.timing;
-
-import static org.hamcrest.MatcherAssert.assertThat;
+package org.zaproxy.zap.extension.ascanrules.timing;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+
+import static org.hamcrest.MatcherAssert.assertThat;
 
 /** Unit test for {@link OnlineSimpleLinearRegression}. */
 class OnlineSimpleLinearRegressionUnitTest {
@@ -37,7 +37,7 @@ class OnlineSimpleLinearRegressionUnitTest {
         // When
         OnlineSimpleLinearRegression regression = new OnlineSimpleLinearRegression();
         for (double[] vars : variables) regression.addPoint(vars[0], vars[1]);
-        // When / Then
+        // Then
         assertThat(regression.getSlope(), Matchers.closeTo(slope, 1e-8));
         assertThat(regression.getCorrelation(), Matchers.closeTo(corr, 1e-8));
     }
@@ -55,7 +55,7 @@ class OnlineSimpleLinearRegressionUnitTest {
         // When
         OnlineSimpleLinearRegression regression = new OnlineSimpleLinearRegression();
         for (double[] vars : variables) regression.addPoint(vars[0], vars[1]);
-        // When / Then
+        // Then
         assertThat(regression.getSlope(), Matchers.closeTo(slope, 1e-8));
         assertThat(regression.getCorrelation(), Matchers.closeTo(corr, 1e-8));
     }
@@ -68,7 +68,7 @@ class OnlineSimpleLinearRegressionUnitTest {
         // When
         OnlineSimpleLinearRegression regression = new OnlineSimpleLinearRegression();
         for (double[] vars : variables) regression.addPoint(vars[0], vars[1]);
-        // When / Then
+        // Then
         assertThat(regression.getCorrelation(), Matchers.lessThan(0.9));
     }
 }

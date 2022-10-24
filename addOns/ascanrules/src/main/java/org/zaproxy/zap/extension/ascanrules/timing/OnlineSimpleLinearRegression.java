@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.commonlib.timing;
+package org.zaproxy.zap.extension.ascanrules.timing;
 
 /**
  * A helper class to compute the Simple Linear Regression of a series of (x,y) pairs. This

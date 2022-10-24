@@ -17,15 +17,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.commonlib.timing;
+package org.zaproxy.zap.extension.ascanrules.timing;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.Random;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
-
-import java.util.Random;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 /** Unit test for {@link TimingUtils}. */
 class TimingUtilsUnitTest {
@@ -55,7 +56,7 @@ class TimingUtilsUnitTest {
                         },
                         0.1,
                         0.2);
-        // When / Then
+        // Then
         assertThat(result, is(false));
         assertThat(timesCalled, is(1));
     }
@@ -77,7 +78,7 @@ class TimingUtilsUnitTest {
                         },
                         0.1,
                         0.2);
-        // When / Then
+        // Then
         assertThat(result, is(false));
         assertThat(timesCalled, lessThanOrEqualTo(3));
     }
@@ -97,7 +98,7 @@ class TimingUtilsUnitTest {
                         (x) -> x + rand.nextDouble(),
                         correlationErrorRange,
                         slopeErrorRange);
-        // When / Then
+        // Then
         assertThat(result, is(true));
     }
 }
