@@ -1555,6 +1555,18 @@ class ConnectionOptionsUnitTest {
         assertThat(config.getKeys("connection").hasNext(), is(equalTo(false)));
     }
 
+    @Test
+    void shouldUpdateUserAgentOnUpdate() {
+        // Given
+        config.setProperty(DEFAULT_USER_AGENT_KEY, "Non default");
+        // When
+        options.updateConfigsImpl(ConnectionOptions.CURRENT_CONFIG_VERSION - 1);
+        // Then
+        assertThat(
+                config.getString(DEFAULT_USER_AGENT_KEY),
+                is(equalTo(ConnectionOptions.DEFAULT_DEFAULT_USER_AGENT)));
+    }
+
     private static HttpProxyExclusion exclusion(String pattern, boolean enabled) {
         return new HttpProxyExclusion(Pattern.compile(pattern), enabled);
     }
