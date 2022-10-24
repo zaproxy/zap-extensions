@@ -52,12 +52,14 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractFrame;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeProcessors;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeResult;
+import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ZapTextArea;
@@ -75,6 +77,8 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
     private JToolBar panelToolbar = null;
     private List<TabModel> tabs = new ArrayList<>();
     private ZapTextArea inputField = null;
+    private JButton helpButton;
+    private JButton optionsButton;
     private JButton addTabButton;
     private JButton addOutputButton;
     private AddEncodeDecodeTabDialog addTabDialog;
@@ -196,8 +200,14 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
             gbc.weighty = 1.0;
             gbc.anchor = GridBagConstraints.EAST;
             panelToolbar.add(new JLabel(), gbc);
+            gbc.weightx = 0.0;
+            gbc.weighty = 0.0;
             ++gbc.gridx;
             panelToolbar.add(getResetButton(), gbc);
+            ++gbc.gridx;
+            panelToolbar.add(getOptionsButton(), gbc);
+            ++gbc.gridx;
+            panelToolbar.add(getHelpButton(), gbc);
         }
         return panelToolbar;
     }
@@ -664,6 +674,37 @@ public class EncodeDecodeDialog extends AbstractFrame implements OptionsChangedL
     @Override
     public void optionsChanged(OptionsParam optionsParam) {
         updateEncodeDecodeFields();
+    }
+
+    private JButton getHelpButton() {
+        if (helpButton == null) {
+            helpButton = new JButton();
+            helpButton.setIcon(ExtensionHelp.getHelpIcon());
+            helpButton.setToolTipText(Constant.messages.getString("help.dialog.button.tooltip"));
+            helpButton.addActionListener(e -> ExtensionHelp.showHelp("encoder"));
+        }
+        return helpButton;
+    }
+
+    private JButton getOptionsButton() {
+        if (optionsButton == null) {
+            optionsButton = new JButton();
+            optionsButton.setToolTipText(Constant.messages.getString("encoder.dialog.options"));
+            optionsButton.setIcon(
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(
+                                    EncodeDecodeDialog.class.getResource(
+                                            "/resource/icon/16/041.png"))));
+
+            optionsButton.addActionListener(
+                    e ->
+                            Control.getSingleton()
+                                    .getMenuToolsControl()
+                                    .options(
+                                            Constant.messages.getString(
+                                                    "encoder.optionspanel.name")));
+        }
+        return optionsButton;
     }
 
     private static class OutputPanelPosition {

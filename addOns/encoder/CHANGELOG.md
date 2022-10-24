@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Maintenance changes.
 - Allow script processors to return strings without requiring an "EncodeDecodeResult" wrapper.
+- Show help and options buttons in the main dialog.
 
 ## [0.7.0] - 2022-10-27
 ### Changed
