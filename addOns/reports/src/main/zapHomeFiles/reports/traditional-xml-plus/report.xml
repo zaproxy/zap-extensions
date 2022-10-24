@@ -46,6 +46,14 @@
 						<cweid th:text="${alert.cweid}"></cweid>
 						<wascid th:text="${alert.wascid}"></wascid>
 						<sourceid th:text="${alert.sourceHistoryId}"></sourceid>
+						<tags>
+							<th:block th:each="tag: ${alert.tags}">
+								<tag>
+									<tag th:text="${tag.key}"></tag>
+									<link th:text="${tag.value}"></link>
+								</tag>
+							</th:block>
+						</tags>
 					</alertitem>
 				</th:block>
 			</alerts>

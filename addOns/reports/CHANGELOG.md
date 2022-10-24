@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - "XML Plus" report format for XML with requests and responses
+- Tags to "JSON Plus" report.
 
 ### Changed
 - Maintenance changes.
