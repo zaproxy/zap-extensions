@@ -378,7 +378,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
         ConnectionParam connectionParam = model.getOptionsParam().getConnectionParam();
         proxyHttpSender = new HttpSender(connectionParam, true, HttpSender.PROXY_INITIATOR);
-        httpSenderHandler = new HttpSenderHandler(connectionParam, proxyHttpSender);
+        httpSenderHandler = new HttpSenderHandler(proxyHttpSender);
     }
 
     private NioEventLoopGroup getMainEventLoopGroup() {
@@ -524,8 +524,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                         RemoveAcceptEncodingHandler.getEnabledInstance(),
                         DecodeResponseHandler.getEnabledInstance(),
                         handler,
-                        new HttpSenderHandler(
-                                getModel().getOptionsParam().getConnectionParam(), httpSender));
+                        new HttpSenderHandler(httpSender));
         return createHttpServer(() -> new MainProxyHandler(legacyProxyListenerHandler, handlers));
     }
 
