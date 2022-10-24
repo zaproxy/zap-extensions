@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Depend on `database` add-on.
 - Maintenance changes.
+- Rely on Network add-on to obtain more information about socket timeouts.
 
 ### Added
 - The following scan rules were added, having been promoted to Beta:

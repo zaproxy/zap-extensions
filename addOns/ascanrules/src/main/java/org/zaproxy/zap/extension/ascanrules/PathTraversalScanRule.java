@@ -23,7 +23,6 @@ import static org.zaproxy.zap.extension.ascanrules.utils.Constants.NULL_BYTE_CHA
 
 import java.io.IOException;
 import java.net.SocketException;
-import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -37,9 +36,9 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.network.common.ZapSocketTimeoutException;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
@@ -552,17 +551,13 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
             // request to find the vulnerability
             // but it would be foiled by simple input validation on "..", for instance.
 
-        } catch (SocketTimeoutException ste) {
+        } catch (ZapSocketTimeoutException ste) {
             log.warn(
                     "A timeout occurred while checking [{}] [{}], parameter [{}] for Path Traversal. The currently configured timeout is: {}",
                     msg.getRequestHeader().getMethod(),
                     msg.getRequestHeader().getURI(),
                     param,
-                    Integer.toString(
-                            Model.getSingleton()
-                                    .getOptionsParam()
-                                    .getConnectionParam()
-                                    .getTimeoutInSecs()));
+                    ste.getTimeout());
 
             log.debug("Caught {} {}", ste.getClass().getName(), ste.getMessage());
 
