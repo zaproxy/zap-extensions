@@ -1471,7 +1471,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     @Override
     public boolean canUnload() {
-        return true;
+        // Do not allow, the HttpSender implementation is used everywhere.
+        return false;
     }
 
     @Override
