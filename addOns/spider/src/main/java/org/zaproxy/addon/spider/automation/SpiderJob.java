@@ -22,7 +22,6 @@ package org.zaproxy.addon.spider.automation;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -37,7 +36,6 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpStatusCode;
@@ -50,6 +48,7 @@ import org.zaproxy.addon.automation.jobs.JobData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 import org.zaproxy.addon.automation.tests.AutomationStatisticTest;
+import org.zaproxy.addon.network.common.ZapUnknownHostException;
 import org.zaproxy.addon.spider.ExtensionSpider2;
 import org.zaproxy.addon.spider.SpiderScan;
 import org.zaproxy.zap.model.Target;
@@ -74,7 +73,13 @@ public class SpiderJob extends AutomationJob {
     private Data data;
     private Parameters parameters = new Parameters();
 
-    private UrlRequester urlRequester = new UrlRequester(this.getName());
+    private UrlRequester urlRequester =
+            new UrlRequester(
+                    this.getName(),
+                    new HttpSender(
+                            Model.getSingleton().getOptionsParam().getConnectionParam(),
+                            true,
+                            HttpSender.SPIDER_INITIATOR));
 
     public SpiderJob() {
         this.data = new Data(this, parameters);
@@ -346,13 +351,9 @@ public class SpiderJob extends AutomationJob {
         private final HttpSender httpSender;
         private final String requester;
 
-        public UrlRequester(String requester) {
+        public UrlRequester(String requester, HttpSender httpSender) {
             this.requester = requester;
-            httpSender =
-                    new HttpSender(
-                            Model.getSingleton().getOptionsParam().getConnectionParam(),
-                            true,
-                            HttpSender.SPIDER_INITIATOR);
+            this.httpSender = httpSender;
         }
 
         public void requestUrl(String url, User user, AutomationProgress progress) {
@@ -388,11 +389,8 @@ public class SpiderJob extends AutomationJob {
                                         .getSession()
                                         .getSiteTree()
                                         .addPath(msg.getHistoryRef()));
-            } catch (UnknownHostException e1) {
-                ConnectionParam connectionParam =
-                        Model.getSingleton().getOptionsParam().getConnectionParam();
-                if (connectionParam.isUseProxyChain()
-                        && connectionParam.getProxyChainName().equalsIgnoreCase(e1.getMessage())) {
+            } catch (ZapUnknownHostException e1) {
+                if (e1.isFromOutgoingProxy()) {
                     progress.error(
                             Constant.messages.getString(
                                     "spider.automation.error.url.badhost.proxychain",

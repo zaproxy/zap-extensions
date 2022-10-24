@@ -14,6 +14,9 @@ zapAddOn {
         dependencies {
             addOns {
                 register("database")
+                register("network") {
+                    version.set(">=0.3.0")
+                }
             }
         }
 
@@ -51,10 +54,12 @@ dependencies {
     compileOnly(parent!!.childProjects.get("automation")!!)
     compileOnly(parent!!.childProjects.get("database")!!)
     compileOnly(parent!!.childProjects.get("formhandler")!!)
+    compileOnly(parent!!.childProjects.get("network")!!)
 
     testImplementation(parent!!.childProjects.get("automation")!!)
     testImplementation(parent!!.childProjects.get("database")!!)
     testImplementation(parent!!.childProjects.get("formhandler")!!)
+    testImplementation(parent!!.childProjects.get("network")!!)
     testImplementation(project(":testutils"))
 }
 
