@@ -21,7 +21,6 @@ package org.zaproxy.addon.network.internal.server.http.handlers;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import javax.net.ssl.SSLException;
@@ -37,6 +36,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.addon.network.common.ZapUnknownHostException;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.zap.network.HttpRequestConfig;
@@ -140,6 +140,24 @@ public class HttpSenderHandler implements HttpMessageHandler {
                     strBuilder.append(stackTraceFrame).append('\n');
                 }
             }
+        } else if (cause instanceof ZapUnknownHostException) {
+            strBuilder.append(
+                    Constant.messages.getString("network.httpsender.error.badhost.connect"));
+            strBuilder.append(msg.getRequestHeader().getURI().toString()).append('\n');
+            strBuilder
+                    .append(
+                            Constant.messages.getString(
+                                    "network.httpsender.error.badhost.exception"))
+                    .append(cause.getMessage())
+                    .append('\n');
+            strBuilder.append(
+                    Constant.messages.getString(
+                            "network.httpsender.error.badhost.help",
+                            Constant.messages.getString(
+                                    "network.httpsender.error.badhost.help.url")));
+            if (((ZapUnknownHostException) cause).isFromOutgoingProxy()) {
+                strBuilder.append(Constant.messages.getString("network.httpsender.error.proxy"));
+            }
         } else {
             strBuilder
                     .append("ZAP Error")
@@ -148,11 +166,6 @@ public class HttpSenderHandler implements HttpMessageHandler {
                     .append("]: ")
                     .append(cause.getLocalizedMessage())
                     .append("\n");
-            if (cause instanceof UnknownHostException
-                    && connectionParam.isUseProxyChain()
-                    && connectionParam.getProxyChainName().equalsIgnoreCase(cause.getMessage())) {
-                strBuilder.append(Constant.messages.getString("network.httpsender.error.proxy"));
-            }
             strBuilder.append("\n\nStack Trace:\n");
             for (String stackTraceFrame : ExceptionUtils.getRootCauseStackTrace(cause)) {
                 strBuilder.append(stackTraceFrame).append('\n');
