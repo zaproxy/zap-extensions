@@ -36,7 +36,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.parosproxy.paros.security.SslCertificateService;
+import org.zaproxy.addon.network.internal.cert.ServerCertificateService;
 import org.zaproxy.addon.network.server.Server;
 
 /** Unit test for {@link HttpServer}. */
@@ -44,7 +44,7 @@ class HttpServerUnitTest {
 
     private static NioEventLoopGroup group;
     private static EventExecutorGroup mainHandlerExecutor;
-    private SslCertificateService sslCertificateService;
+    private ServerCertificateService certificateService;
     private Supplier<MainServerHandler> handlerSupplier;
 
     @BeforeAll
@@ -70,7 +70,7 @@ class HttpServerUnitTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        sslCertificateService = mock(SslCertificateService.class);
+        certificateService = mock(ServerCertificateService.class);
         handlerSupplier = () -> mock(MainServerHandler.class);
     }
 
@@ -83,10 +83,7 @@ class HttpServerUnitTest {
                 NullPointerException.class,
                 () ->
                         new HttpServer(
-                                group,
-                                mainHandlerExecutor,
-                                sslCertificateService,
-                                handlerSupplier));
+                                group, mainHandlerExecutor, certificateService, handlerSupplier));
     }
 
     @Test
@@ -98,25 +95,19 @@ class HttpServerUnitTest {
                 NullPointerException.class,
                 () ->
                         new HttpServer(
-                                group,
-                                mainHandlerExecutor,
-                                sslCertificateService,
-                                handlerSupplier));
+                                group, mainHandlerExecutor, certificateService, handlerSupplier));
     }
 
     @Test
-    void shouldThrowIfNoSslCertificateService() throws Exception {
+    void shouldThrowIfNoServerCertificateService() throws Exception {
         // Given
-        sslCertificateService = null;
+        certificateService = null;
         // When / Then
         assertThrows(
                 NullPointerException.class,
                 () ->
                         new HttpServer(
-                                group,
-                                mainHandlerExecutor,
-                                sslCertificateService,
-                                handlerSupplier));
+                                group, mainHandlerExecutor, certificateService, handlerSupplier));
     }
 
     @Test
@@ -128,10 +119,7 @@ class HttpServerUnitTest {
                 NullPointerException.class,
                 () ->
                         new HttpServer(
-                                group,
-                                mainHandlerExecutor,
-                                sslCertificateService,
-                                handlerSupplier));
+                                group, mainHandlerExecutor, certificateService, handlerSupplier));
     }
 
     @Test
@@ -139,21 +127,17 @@ class HttpServerUnitTest {
         assertDoesNotThrow(
                 () ->
                         new HttpServer(
-                                group,
-                                mainHandlerExecutor,
-                                sslCertificateService,
-                                handlerSupplier));
+                                group, mainHandlerExecutor, certificateService, handlerSupplier));
     }
 
     @Test
     void shouldCreateWithNoHandler() throws Exception {
-        assertDoesNotThrow(() -> new HttpServer(group, mainHandlerExecutor, sslCertificateService));
+        assertDoesNotThrow(() -> new HttpServer(group, mainHandlerExecutor, certificateService));
     }
 
     @Test
     void shouldFailToStartWithNoHandler() throws Exception {
-        try (HttpServer server =
-                new HttpServer(group, mainHandlerExecutor, sslCertificateService)) {
+        try (HttpServer server = new HttpServer(group, mainHandlerExecutor, certificateService)) {
             IOException exception =
                     assertThrows(IOException.class, () -> server.start(Server.ANY_PORT));
             assertThat(exception.getMessage(), is(equalTo("No main server handler set.")));
@@ -162,8 +146,7 @@ class HttpServerUnitTest {
 
     @Test
     void shouldStartWithHandlerSet() throws Exception {
-        try (HttpServer server =
-                new HttpServer(group, mainHandlerExecutor, sslCertificateService)) {
+        try (HttpServer server = new HttpServer(group, mainHandlerExecutor, certificateService)) {
             server.setMainServerHandler(handlerSupplier);
             assertDoesNotThrow(() -> server.start(Server.ANY_PORT));
         }
@@ -174,8 +157,7 @@ class HttpServerUnitTest {
         // Given
         handlerSupplier = null;
         // When / Then
-        try (HttpServer server =
-                new HttpServer(group, mainHandlerExecutor, sslCertificateService)) {
+        try (HttpServer server = new HttpServer(group, mainHandlerExecutor, certificateService)) {
             assertThrows(
                     NullPointerException.class, () -> server.setMainServerHandler(handlerSupplier));
         }

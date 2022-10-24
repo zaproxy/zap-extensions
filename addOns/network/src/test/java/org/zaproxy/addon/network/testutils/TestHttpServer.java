@@ -32,7 +32,7 @@ import java.util.Collections;
 import java.util.List;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
-import org.parosproxy.paros.security.SslCertificateService;
+import org.zaproxy.addon.network.internal.cert.ServerCertificateService;
 import org.zaproxy.addon.network.internal.server.http.HttpServer;
 import org.zaproxy.addon.network.internal.server.http.MainServerHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
@@ -41,8 +41,8 @@ import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 /** A HTTP server that allows to receive and send text messages, to help with the tests. */
 public class TestHttpServer extends HttpServer {
 
-    private static final SslCertificateService SSL_CERTIFICATE_SERVICE =
-            TestSslCertificateService.createInstance();
+    private static final ServerCertificateService CERTIFICATE_SERVICE =
+            TestServerCertificateService.createInstance();
 
     private final List<HttpMessage> receivedMessages;
     private HttpMessageHandler handler;
@@ -56,7 +56,7 @@ public class TestHttpServer extends HttpServer {
      * @param mainHandlerExecutor the event executor for the main handler.
      */
     public TestHttpServer(NioEventLoopGroup group, EventExecutorGroup mainHandlerExecutor) {
-        super(group, mainHandlerExecutor, SSL_CERTIFICATE_SERVICE);
+        super(group, mainHandlerExecutor, CERTIFICATE_SERVICE);
 
         receivedMessages = Collections.synchronizedList(new ArrayList<>());
         setMainServerHandler(() -> new MainServerHandler(Collections.singletonList(this::handle)));

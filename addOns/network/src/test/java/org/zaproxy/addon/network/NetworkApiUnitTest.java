@@ -133,21 +133,7 @@ class NetworkApiUnitTest extends TestUtils {
 
     @Test
     void shouldAddApiElements() {
-        // Given
-        given(extensionNetwork.isHandleServerCerts()).willReturn(false);
-        // When
-        networkApi = new NetworkApi(extensionNetwork);
-        // Then
-        assertThat(networkApi.getApiActions(), hasSize(2));
-        assertThat(networkApi.getApiViews(), hasSize(0));
-        assertThat(networkApi.getApiOthers(), hasSize(1));
-    }
-
-    @Test
-    void shouldAddAdditionalApiElementsWhenHandlingServerCerts() {
-        // Given
-        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
-        // When
+        // Given / When
         networkApi = new NetworkApi(extensionNetwork);
         // Then
         assertThat(networkApi.getApiActions(), hasSize(4));
@@ -158,7 +144,6 @@ class NetworkApiUnitTest extends TestUtils {
     @Test
     void shouldAddAdditionalApiElementsWhenHandlingLocalServers() {
         // Given
-        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
         given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         // When
         networkApi = new NetworkApi(extensionNetwork);
@@ -171,7 +156,6 @@ class NetworkApiUnitTest extends TestUtils {
     @Test
     void shouldAddAdditionalApiElementsWhenHandlingConnection() {
         // Given
-        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
         given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         ExtensionNetwork.handleConnection = true;
         // When
@@ -185,7 +169,6 @@ class NetworkApiUnitTest extends TestUtils {
     @Test
     void shouldAddAdditionalApiElementsWhenHandlingClientCertificates() {
         // Given
-        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
         given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(extensionNetwork.isHandleClientCerts()).willReturn(true);
         ExtensionNetwork.handleConnection = true;
@@ -345,27 +328,11 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "setRootCaCertValidity";
         JSONObject params = new JSONObject();
         params.put("validity", 123);
-        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
         // Then
         assertThat(response, is(equalTo(ApiResponseElement.OK)));
         verify(serverCertificatesOptions).setRootCaCertValidity(Duration.ofDays(123));
-    }
-
-    @Test
-    void shouldThrowApiExceptionWhenSettingRootCaCertValidityIfNotHandlingServerCerts()
-            throws Exception {
-        // Given
-        String name = "setRootCaCertValidity";
-        JSONObject params = new JSONObject();
-        params.put("validity", 123);
-        given(extensionNetwork.isHandleServerCerts()).willReturn(false);
-        // When
-        ApiException exception =
-                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
-        // Then
-        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_ACTION)));
     }
 
     @Test
@@ -377,7 +344,6 @@ class NetworkApiUnitTest extends TestUtils {
         willThrow(IllegalArgumentException.class)
                 .given(serverCertificatesOptions)
                 .setRootCaCertValidity(any());
-        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
         // When
         ApiException exception =
                 assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
@@ -391,27 +357,11 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "setServerCertValidity";
         JSONObject params = new JSONObject();
         params.put("validity", 123);
-        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
         // Then
         assertThat(response, is(equalTo(ApiResponseElement.OK)));
         verify(serverCertificatesOptions).setServerCertValidity(Duration.ofDays(123));
-    }
-
-    @Test
-    void shouldThrowApiExceptionWhenSettingServerCertValidityIfNotHandlingServerCerts()
-            throws Exception {
-        // Given
-        String name = "setServerCertValidity";
-        JSONObject params = new JSONObject();
-        params.put("validity", 123);
-        given(extensionNetwork.isHandleServerCerts()).willReturn(false);
-        // When
-        ApiException exception =
-                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
-        // Then
-        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_ACTION)));
     }
 
     @Test
@@ -423,7 +373,6 @@ class NetworkApiUnitTest extends TestUtils {
         willThrow(IllegalArgumentException.class)
                 .given(serverCertificatesOptions)
                 .setServerCertValidity(any());
-        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
         // When
         ApiException exception =
                 assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
@@ -662,28 +611,12 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "getRootCaCertValidity";
         JSONObject params = new JSONObject();
         given(serverCertificatesOptions.getRootCaCertValidity()).willReturn(Duration.ofDays(123));
-        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiView(name, params);
         // Then
         assertThat(response.getName(), is(equalTo(name)));
         assertThat(response, is(instanceOf(ApiResponseElement.class)));
         assertThat(((ApiResponseElement) response).getValue(), is(equalTo("123")));
-    }
-
-    @Test
-    void shouldThrowApiExceptionWhenGettingRootCaCertValidityIfNotHandlingServerCerts()
-            throws Exception {
-        // Given
-        String name = "getRootCaCertValidity";
-        JSONObject params = new JSONObject();
-        given(serverCertificatesOptions.getRootCaCertValidity()).willReturn(Duration.ofDays(123));
-        given(extensionNetwork.isHandleServerCerts()).willReturn(false);
-        // When
-        ApiException exception =
-                assertThrows(ApiException.class, () -> networkApi.handleApiView(name, params));
-        // Then
-        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_VIEW)));
     }
 
     @Test
@@ -692,28 +625,12 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "getServerCertValidity";
         JSONObject params = new JSONObject();
         given(serverCertificatesOptions.getServerCertValidity()).willReturn(Duration.ofDays(123));
-        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiView(name, params);
         // Then
         assertThat(response.getName(), is(equalTo(name)));
         assertThat(response, is(instanceOf(ApiResponseElement.class)));
         assertThat(((ApiResponseElement) response).getValue(), is(equalTo("123")));
-    }
-
-    @Test
-    void shouldThrowApiExceptionWhenGettingServerCertValidityIfNotHandlingServerCerts()
-            throws Exception {
-        // Given
-        String name = "getServerCertValidity";
-        JSONObject params = new JSONObject();
-        given(serverCertificatesOptions.getServerCertValidity()).willReturn(Duration.ofDays(123));
-        given(extensionNetwork.isHandleServerCerts()).willReturn(false);
-        // When
-        ApiException exception =
-                assertThrows(ApiException.class, () -> networkApi.handleApiView(name, params));
-        // Then
-        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_VIEW)));
     }
 
     @Test
@@ -1801,7 +1718,6 @@ class NetworkApiUnitTest extends TestUtils {
 
     @Test
     void shouldHaveDescriptionsForAllApiElements() {
-        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
         given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         ExtensionNetwork.handleConnection = true;
         given(extensionNetwork.isHandleClientCerts()).willReturn(true);

@@ -66,12 +66,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.parosproxy.paros.security.SslCertificateService;
 import org.zaproxy.addon.network.internal.ChannelAttributes;
 import org.zaproxy.addon.network.internal.TlsUtils;
+import org.zaproxy.addon.network.internal.cert.ServerCertificateService;
 import org.zaproxy.addon.network.internal.server.BaseServer;
 import org.zaproxy.addon.network.server.Server;
-import org.zaproxy.addon.network.testutils.TestSslCertificateService;
+import org.zaproxy.addon.network.testutils.TestServerCertificateService;
 import org.zaproxy.addon.network.testutils.TextTestClient;
 
 /** Unit test for {@link TlsProtocolHandler}. */
@@ -81,7 +81,7 @@ class TlsProtocolHandlerUnitTest {
 
     private static NioEventLoopGroup eventLoopGroup;
     private static TextTestClient client;
-    private static SslCertificateService sslCertificateService;
+    private static ServerCertificateService certificateService;
     private TextTestClient clientTls;
     private BaseServer server;
     private CountDownLatch serverChannelReady;
@@ -91,7 +91,7 @@ class TlsProtocolHandlerUnitTest {
 
     @BeforeAll
     static void setupAll() throws Exception {
-        sslCertificateService = TestSslCertificateService.createInstance();
+        certificateService = TestServerCertificateService.createInstance();
         eventLoopGroup =
                 new NioEventLoopGroup(
                         NettyRuntime.availableProcessors(),
@@ -159,7 +159,7 @@ class TlsProtocolHandlerUnitTest {
     }
 
     private void initDefaultChannel(SocketChannel ch, TlsProtocolHandler tlsProtocolHandler) {
-        ch.attr(ChannelAttributes.CERTIFICATE_SERVICE).set(sslCertificateService);
+        ch.attr(ChannelAttributes.CERTIFICATE_SERVICE).set(certificateService);
         ch.attr(ChannelAttributes.TLS_CONFIG).set(tlsConfig);
 
         ch.pipeline()
