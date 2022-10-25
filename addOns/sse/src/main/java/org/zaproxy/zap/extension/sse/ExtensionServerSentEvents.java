@@ -61,9 +61,6 @@ import org.zaproxy.zap.extension.sse.ui.httppanel.component.EventStreamComponent
 import org.zaproxy.zap.extension.sse.ui.httppanel.models.ByteEventStreamPanelViewModel;
 import org.zaproxy.zap.extension.sse.ui.httppanel.models.StringEventStreamPanelViewModel;
 import org.zaproxy.zap.extension.sse.ui.httppanel.views.EventStreamSyntaxHighlightTextView;
-import org.zaproxy.zap.extension.sse.ui.httppanel.views.large.EventStreamLargeEventUtil;
-import org.zaproxy.zap.extension.sse.ui.httppanel.views.large.EventStreamLargePayloadView;
-import org.zaproxy.zap.extension.sse.ui.httppanel.views.large.EventStreamLargetPayloadViewModel;
 import org.zaproxy.zap.view.HttpPanelManager;
 import org.zaproxy.zap.view.HttpPanelManager.HttpPanelComponentFactory;
 import org.zaproxy.zap.view.HttpPanelManager.HttpPanelDefaultViewSelectorFactory;
@@ -315,14 +312,6 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor
         // replace the normal Text views with the ones that use syntax highlighting
         viewFactory = new SyntaxHighlightTextViewFactory();
         manager.addResponseViewFactory(EventStreamComponent.NAME, viewFactory);
-
-        // support large payloads on incoming and outgoing messages
-        viewFactory = new EventStreamLargePayloadViewFactory();
-        manager.addResponseViewFactory(EventStreamComponent.NAME, viewFactory);
-
-        viewSelectorFactory = new EventStreamLargeEventDefaultViewSelectorFactory();
-        manager.addResponseDefaultViewSelectorFactory(
-                EventStreamComponent.NAME, viewSelectorFactory);
     }
 
     private void clearUpWorkPanel() {
@@ -346,12 +335,6 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor
         // replace the normal Text views with the ones that use syntax highlighting
         manager.removeResponseViewFactory(
                 EventStreamComponent.NAME, SyntaxHighlightTextViewFactory.NAME);
-
-        // support large payloads on incoming and outgoing messages
-        manager.removeResponseViewFactory(
-                EventStreamComponent.NAME, EventStreamLargeEventDefaultViewSelectorFactory.NAME);
-        manager.removeResponseDefaultViewSelectorFactory(
-                EventStreamComponent.NAME, EventStreamLargeEventDefaultViewSelectorFactory.NAME);
     }
 
     /**
@@ -480,87 +463,6 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor
         @Override
         public String getName() {
             return NAME;
-        }
-    }
-
-    private static final class EventStreamLargePayloadViewFactory implements HttpPanelViewFactory {
-
-        public static final String NAME = "EventStreamLargePayloadViewFactory";
-
-        @Override
-        public HttpPanelView getNewView() {
-            return new EventStreamLargePayloadView(new EventStreamLargetPayloadViewModel());
-        }
-
-        @Override
-        public Object getOptions() {
-            return null;
-        }
-
-        @Override
-        public String getName() {
-            return NAME;
-        }
-    }
-
-    private static final class EventStreamLargeEventDefaultViewSelectorFactory
-            implements HttpPanelDefaultViewSelectorFactory {
-
-        public static final String NAME = "EventStreamLargeEventDefaultViewSelectorFactory";
-
-        private static HttpPanelDefaultViewSelector defaultViewSelector = null;
-
-        private HttpPanelDefaultViewSelector getDefaultViewSelector() {
-            if (defaultViewSelector == null) {
-                createViewSelector();
-            }
-            return defaultViewSelector;
-        }
-
-        private synchronized void createViewSelector() {
-            if (defaultViewSelector == null) {
-                defaultViewSelector = new EventStreamLargePayloadDefaultViewSelector();
-            }
-        }
-
-        @Override
-        public HttpPanelDefaultViewSelector getNewDefaultViewSelector() {
-            return getDefaultViewSelector();
-        }
-
-        @Override
-        public Object getOptions() {
-            return null;
-        }
-
-        @Override
-        public String getName() {
-            return NAME;
-        }
-    }
-
-    private static final class EventStreamLargePayloadDefaultViewSelector
-            implements HttpPanelDefaultViewSelector {
-
-        @Override
-        public String getName() {
-            return "EventStreamLargePayloadDefaultViewSelector";
-        }
-
-        @Override
-        public boolean matchToDefaultView(Message aMessage) {
-            return EventStreamLargeEventUtil.isLargeEvent(aMessage);
-        }
-
-        @Override
-        public String getViewName() {
-            return EventStreamLargePayloadView.NAME;
-        }
-
-        @Override
-        public int getOrder() {
-            // has to come before HexDefaultViewSelector
-            return 15;
         }
     }
 }

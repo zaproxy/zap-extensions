@@ -101,9 +101,6 @@ import org.zaproxy.zap.extension.websocket.ui.httppanel.component.WebSocketCompo
 import org.zaproxy.zap.extension.websocket.ui.httppanel.models.ByteWebSocketPanelViewModel;
 import org.zaproxy.zap.extension.websocket.ui.httppanel.models.StringWebSocketPanelViewModel;
 import org.zaproxy.zap.extension.websocket.ui.httppanel.views.WebSocketSyntaxHighlightTextView;
-import org.zaproxy.zap.extension.websocket.ui.httppanel.views.large.WebSocketLargePayloadUtil;
-import org.zaproxy.zap.extension.websocket.ui.httppanel.views.large.WebSocketLargePayloadView;
-import org.zaproxy.zap.extension.websocket.ui.httppanel.views.large.WebSocketLargetPayloadViewModel;
 import org.zaproxy.zap.extension.websocket.utility.WebSocketUtils;
 import org.zaproxy.zap.network.HttpSenderListener;
 import org.zaproxy.zap.view.HttpPanelManager;
@@ -1250,15 +1247,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor
         viewFactory = new SyntaxHighlightTextViewFactory();
         manager.addRequestViewFactory(WebSocketComponent.NAME, viewFactory);
         manager.addResponseViewFactory(WebSocketComponent.NAME, viewFactory);
-
-        // support large payloads on incoming and outgoing messages
-        viewFactory = new WebSocketLargePayloadViewFactory();
-        manager.addRequestViewFactory(WebSocketComponent.NAME, viewFactory);
-        manager.addResponseViewFactory(WebSocketComponent.NAME, viewFactory);
-
-        viewSelectorFactory = new WebSocketLargePayloadDefaultViewSelectorFactory();
-        manager.addRequestDefaultViewSelectorFactory(WebSocketComponent.NAME, viewSelectorFactory);
-        manager.addResponseDefaultViewSelectorFactory(WebSocketComponent.NAME, viewSelectorFactory);
     }
 
     private void clearupWebSocketsForWorkPanel() {
@@ -1286,17 +1274,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                 WebSocketComponent.NAME, SyntaxHighlightTextViewFactory.NAME);
         manager.removeResponseViewFactory(
                 WebSocketComponent.NAME, SyntaxHighlightTextViewFactory.NAME);
-
-        // support large payloads on incoming and outgoing messages
-        manager.removeRequestViewFactory(
-                WebSocketComponent.NAME, WebSocketLargePayloadViewFactory.NAME);
-        manager.removeResponseViewFactory(
-                WebSocketComponent.NAME, WebSocketLargePayloadViewFactory.NAME);
-
-        manager.removeRequestDefaultViewSelectorFactory(
-                WebSocketComponent.NAME, WebSocketLargePayloadDefaultViewSelectorFactory.NAME);
-        manager.removeResponseDefaultViewSelectorFactory(
-                WebSocketComponent.NAME, WebSocketLargePayloadDefaultViewSelectorFactory.NAME);
     }
 
     /**
@@ -1427,88 +1404,6 @@ public class ExtensionWebSocket extends ExtensionAdaptor
         @Override
         public Object getOptions() {
             return null;
-        }
-    }
-
-    private static final class WebSocketLargePayloadViewFactory implements HttpPanelViewFactory {
-
-        public static final String NAME = "WebSocketLargePayloadViewFactory";
-
-        @Override
-        public String getName() {
-            return NAME;
-        }
-
-        @Override
-        public HttpPanelView getNewView() {
-            return new WebSocketLargePayloadView(new WebSocketLargetPayloadViewModel());
-        }
-
-        @Override
-        public Object getOptions() {
-            return null;
-        }
-    }
-
-    private static final class WebSocketLargePayloadDefaultViewSelectorFactory
-            implements HttpPanelDefaultViewSelectorFactory {
-
-        public static final String NAME = "WebSocketLargePayloadDefaultViewSelectorFactory";
-        private static HttpPanelDefaultViewSelector defaultViewSelector = null;
-
-        private HttpPanelDefaultViewSelector getDefaultViewSelector() {
-            if (defaultViewSelector == null) {
-                createViewSelector();
-            }
-            return defaultViewSelector;
-        }
-
-        private synchronized void createViewSelector() {
-            if (defaultViewSelector == null) {
-                defaultViewSelector = new WebSocketLargePayloadDefaultViewSelector();
-            }
-        }
-
-        @Override
-        public String getName() {
-            return NAME;
-        }
-
-        @Override
-        public HttpPanelDefaultViewSelector getNewDefaultViewSelector() {
-            return getDefaultViewSelector();
-        }
-
-        @Override
-        public Object getOptions() {
-            return null;
-        }
-    }
-
-    private static final class WebSocketLargePayloadDefaultViewSelector
-            implements HttpPanelDefaultViewSelector {
-
-        public static final String NAME = "WebSocketLargePayloadDefaultViewSelector";
-
-        @Override
-        public String getName() {
-            return NAME;
-        }
-
-        @Override
-        public boolean matchToDefaultView(Message aMessage) {
-            return WebSocketLargePayloadUtil.isLargePayload(aMessage);
-        }
-
-        @Override
-        public String getViewName() {
-            return WebSocketLargePayloadView.NAME;
-        }
-
-        @Override
-        public int getOrder() {
-            // has to come before HexDefaultViewSelector
-            return 15;
         }
     }
 
