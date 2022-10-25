@@ -61,10 +61,10 @@ class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
         WebDriverManager.chromedriver().setup();
 
         extensionNetwork = new ExtensionNetwork();
-        extensionNetwork.init();
         Model model = Model.getSingleton();
         extensionNetwork.initModel(model);
         Control.initSingletonForTesting(model, mock(ExtensionLoader.class));
+        extensionNetwork.init();
         extensionNetwork.hook(new ExtensionHook(model, null));
     }
 

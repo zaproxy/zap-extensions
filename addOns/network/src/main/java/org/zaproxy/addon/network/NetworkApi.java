@@ -162,48 +162,43 @@ public class NetworkApi extends ApiImplementor {
         this.addApiView(new ApiView(VIEW_GET_ROOT_CA_CERT_VALIDITY));
         this.addApiView(new ApiView(VIEW_GET_SERVER_CERT_VALIDITY));
 
-        if (isHandleLocalServers(extensionNetwork)) {
-            this.addApiAction(
-                    new ApiAction(
-                            ACTION_ADD_ALIAS,
-                            Arrays.asList(PARAM_NAME),
-                            Arrays.asList(PARAM_ENABLED)));
-            this.addApiAction(
-                    new ApiAction(
-                            ACTION_ADD_LOCAL_SERVER,
-                            Arrays.asList(PARAM_ADDRESS, PARAM_PORT),
-                            Arrays.asList(
-                                    PARAM_API,
-                                    PARAM_PROXY,
-                                    PARAM_BEHIND_NAT,
-                                    PARAM_DECODE_RESPONSE,
-                                    PARAM_REMOVE_ACCEPT_ENCODING)));
-            this.addApiAction(
-                    new ApiAction(
-                            ACTION_ADD_PASS_THROUGH,
-                            Arrays.asList(PARAM_AUTHORITY),
-                            Arrays.asList(PARAM_ENABLED)));
-            this.addApiAction(new ApiAction(ACTION_REMOVE_ALIAS, Arrays.asList(PARAM_NAME)));
-            this.addApiAction(
-                    new ApiAction(
-                            ACTION_REMOVE_LOCAL_SERVER, Arrays.asList(PARAM_ADDRESS, PARAM_PORT)));
-            this.addApiAction(
-                    new ApiAction(ACTION_REMOVE_PASS_THROUGH, Arrays.asList(PARAM_AUTHORITY)));
-            this.addApiAction(
-                    new ApiAction(
-                            ACTION_SET_ALIAS_ENABLED, Arrays.asList(PARAM_NAME, PARAM_ENABLED)));
-            this.addApiAction(
-                    new ApiAction(
-                            ACTION_SET_PASS_THROUGH_ENABLED,
-                            Arrays.asList(PARAM_AUTHORITY, PARAM_ENABLED)));
+        this.addApiAction(
+                new ApiAction(
+                        ACTION_ADD_ALIAS, Arrays.asList(PARAM_NAME), Arrays.asList(PARAM_ENABLED)));
+        this.addApiAction(
+                new ApiAction(
+                        ACTION_ADD_LOCAL_SERVER,
+                        Arrays.asList(PARAM_ADDRESS, PARAM_PORT),
+                        Arrays.asList(
+                                PARAM_API,
+                                PARAM_PROXY,
+                                PARAM_BEHIND_NAT,
+                                PARAM_DECODE_RESPONSE,
+                                PARAM_REMOVE_ACCEPT_ENCODING)));
+        this.addApiAction(
+                new ApiAction(
+                        ACTION_ADD_PASS_THROUGH,
+                        Arrays.asList(PARAM_AUTHORITY),
+                        Arrays.asList(PARAM_ENABLED)));
+        this.addApiAction(new ApiAction(ACTION_REMOVE_ALIAS, Arrays.asList(PARAM_NAME)));
+        this.addApiAction(
+                new ApiAction(
+                        ACTION_REMOVE_LOCAL_SERVER, Arrays.asList(PARAM_ADDRESS, PARAM_PORT)));
+        this.addApiAction(
+                new ApiAction(ACTION_REMOVE_PASS_THROUGH, Arrays.asList(PARAM_AUTHORITY)));
+        this.addApiAction(
+                new ApiAction(ACTION_SET_ALIAS_ENABLED, Arrays.asList(PARAM_NAME, PARAM_ENABLED)));
+        this.addApiAction(
+                new ApiAction(
+                        ACTION_SET_PASS_THROUGH_ENABLED,
+                        Arrays.asList(PARAM_AUTHORITY, PARAM_ENABLED)));
 
-            this.addApiView(new ApiView(VIEW_GET_ALIASES));
-            this.addApiView(new ApiView(VIEW_GET_LOCAL_SERVERS));
-            this.addApiView(new ApiView(VIEW_GET_PASS_THROUGHS));
+        this.addApiView(new ApiView(VIEW_GET_ALIASES));
+        this.addApiView(new ApiView(VIEW_GET_LOCAL_SERVERS));
+        this.addApiView(new ApiView(VIEW_GET_PASS_THROUGHS));
 
-            this.addApiOthers(new ApiOther(OTHER_PROXY_PAC, false));
-            this.addApiShortcut(OTHER_PROXY_PAC);
-        }
+        this.addApiOthers(new ApiOther(OTHER_PROXY_PAC, false));
+        this.addApiShortcut(OTHER_PROXY_PAC);
 
         this.addApiOthers(new ApiOther(OTHER_SET_PROXY, Arrays.asList(PARAM_PROXY)));
         this.addApiShortcut(SHORTCUT_SET_PROXY);
@@ -266,10 +261,6 @@ public class NetworkApi extends ApiImplementor {
         this.addApiOthers(new ApiOther(OTHER_ROOT_CA_CERT, false));
     }
 
-    private static boolean isHandleLocalServers(ExtensionNetwork extensionNetwork) {
-        return extensionNetwork == null || extensionNetwork.isHandleLocalServers();
-    }
-
     @Override
     public String getPrefix() {
         return PREFIX;
@@ -280,9 +271,6 @@ public class NetworkApi extends ApiImplementor {
         switch (name) {
             case ACTION_ADD_ALIAS:
                 {
-                    if (!isHandleLocalServers(extensionNetwork)) {
-                        throw new ApiException(ApiException.Type.BAD_ACTION);
-                    }
                     String aliasName = params.getString(PARAM_NAME);
                     boolean enabled = getParam(params, PARAM_ENABLED, true);
                     Alias alias = new Alias(aliasName, enabled);
@@ -299,9 +287,6 @@ public class NetworkApi extends ApiImplementor {
                 }
             case ACTION_ADD_LOCAL_SERVER:
                 {
-                    if (!isHandleLocalServers(extensionNetwork)) {
-                        throw new ApiException(ApiException.Type.BAD_ACTION);
-                    }
                     LocalServerConfig server = new LocalServerConfig();
                     server.setAddress(params.getString(PARAM_ADDRESS));
                     try {
@@ -326,9 +311,6 @@ public class NetworkApi extends ApiImplementor {
                 }
             case ACTION_ADD_PASS_THROUGH:
                 {
-                    if (!isHandleLocalServers(extensionNetwork)) {
-                        throw new ApiException(ApiException.Type.BAD_ACTION);
-                    }
                     Pattern authority = createAuthorityPattern(params.getString(PARAM_AUTHORITY));
                     boolean enabled = getParam(params, PARAM_ENABLED, true);
                     PassThrough passThrough = new PassThrough(authority, enabled);
@@ -369,9 +351,6 @@ public class NetworkApi extends ApiImplementor {
                 throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, errorMessage);
             case ACTION_REMOVE_ALIAS:
                 {
-                    if (!isHandleLocalServers(extensionNetwork)) {
-                        throw new ApiException(ApiException.Type.BAD_ACTION);
-                    }
                     String aliasName = params.getString(PARAM_NAME);
                     boolean removed =
                             extensionNetwork.getLocalServersOptions().removeAlias(aliasName);
@@ -392,9 +371,6 @@ public class NetworkApi extends ApiImplementor {
                 }
             case ACTION_REMOVE_LOCAL_SERVER:
                 {
-                    if (!isHandleLocalServers(extensionNetwork)) {
-                        throw new ApiException(ApiException.Type.BAD_ACTION);
-                    }
                     String address = params.getString(PARAM_ADDRESS);
                     int port = getParam(params, PARAM_PORT, LocalServerConfig.DEFAULT_PORT);
                     boolean removed =
@@ -406,9 +382,6 @@ public class NetworkApi extends ApiImplementor {
                 }
             case ACTION_REMOVE_PASS_THROUGH:
                 {
-                    if (!isHandleLocalServers(extensionNetwork)) {
-                        throw new ApiException(ApiException.Type.BAD_ACTION);
-                    }
                     String authority = params.getString(PARAM_AUTHORITY);
                     boolean removed =
                             extensionNetwork.getLocalServersOptions().removePassThrough(authority);
@@ -419,9 +392,6 @@ public class NetworkApi extends ApiImplementor {
                 }
             case ACTION_SET_ALIAS_ENABLED:
                 {
-                    if (!isHandleLocalServers(extensionNetwork)) {
-                        throw new ApiException(ApiException.Type.BAD_ACTION);
-                    }
                     String aliasName = params.getString(PARAM_NAME);
                     boolean enabled = getParam(params, PARAM_ENABLED, true);
                     boolean changed =
@@ -500,9 +470,6 @@ public class NetworkApi extends ApiImplementor {
                 }
             case ACTION_SET_PASS_THROUGH_ENABLED:
                 {
-                    if (!isHandleLocalServers(extensionNetwork)) {
-                        throw new ApiException(ApiException.Type.BAD_ACTION);
-                    }
                     String authority = params.getString(PARAM_AUTHORITY);
                     boolean enabled = getParam(params, PARAM_ENABLED, true);
                     boolean changed =
@@ -643,9 +610,6 @@ public class NetworkApi extends ApiImplementor {
         switch (name) {
             case VIEW_GET_ALIASES:
                 {
-                    if (!isHandleLocalServers(extensionNetwork)) {
-                        throw new ApiException(ApiException.Type.BAD_VIEW);
-                    }
                     ApiResponseList response = new ApiResponseList(name);
                     for (Alias alias : extensionNetwork.getLocalServersOptions().getAliases()) {
                         Map<String, Object> entry = new HashMap<>();
@@ -697,9 +661,6 @@ public class NetworkApi extends ApiImplementor {
                 }
             case VIEW_GET_LOCAL_SERVERS:
                 {
-                    if (!isHandleLocalServers(extensionNetwork)) {
-                        throw new ApiException(ApiException.Type.BAD_VIEW);
-                    }
                     ApiResponseList response = new ApiResponseList(name);
                     for (LocalServerConfig server :
                             extensionNetwork.getLocalServersOptions().getServers()) {
@@ -717,9 +678,6 @@ public class NetworkApi extends ApiImplementor {
                     return response;
                 }
             case VIEW_GET_PASS_THROUGHS:
-                if (!isHandleLocalServers(extensionNetwork)) {
-                    throw new ApiException(ApiException.Type.BAD_VIEW);
-                }
                 ApiResponseList response = new ApiResponseList(name);
                 for (PassThrough passThrough :
                         extensionNetwork.getLocalServersOptions().getPassThroughs()) {
@@ -803,9 +761,6 @@ public class NetworkApi extends ApiImplementor {
             throws ApiException {
         switch (name) {
             case OTHER_PROXY_PAC:
-                if (!isHandleLocalServers(extensionNetwork)) {
-                    throw new ApiException(ApiException.Type.BAD_OTHER);
-                }
                 try {
                     String response =
                             extensionNetwork.getProxyPacContent(
@@ -898,11 +853,7 @@ public class NetworkApi extends ApiImplementor {
 
     @Override
     public HttpMessage handleShortcut(HttpMessage msg) throws ApiException {
-        if (isHandleLocalServers(extensionNetwork)
-                && msg.getRequestHeader()
-                        .getURI()
-                        .getEscapedPath()
-                        .startsWith("/" + OTHER_PROXY_PAC)) {
+        if (msg.getRequestHeader().getURI().getEscapedPath().startsWith("/" + OTHER_PROXY_PAC)) {
             return handleApiOther(msg, OTHER_PROXY_PAC, new JSONObject());
         }
 

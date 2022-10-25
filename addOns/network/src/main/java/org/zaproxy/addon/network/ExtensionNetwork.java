@@ -70,7 +70,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.core.proxy.ProxyParam;
-import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -151,7 +150,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     boolean handleClient;
     private HttpSenderNetwork<? extends HttpSenderContext> httpSenderNetwork;
-    boolean handleLocalServers;
     private ConnectionParam legacyConnectionOptions;
     private LegacyProxyListenerHandler legacyProxyListenerHandler;
     private Object syncGroups = new Object();
@@ -258,10 +256,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         return clientCertificatesOptions;
     }
 
-    boolean isHandleLocalServers() {
-        return handleLocalServers;
-    }
-
     AliasChecker getAliasChecker() {
         return aliasChecker;
     }
@@ -270,26 +264,22 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     public void init() {
         localServers = Collections.synchronizedMap(new HashMap<>());
 
-        handleLocalServers = isDeprecated(ProxyServer.class);
-
-        if (handleLocalServers) {
-            extensionBreak =
-                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionBreak.class);
-            if (extensionBreak != null) {
-                try {
-                    addBreakListenerMethod =
-                            extensionBreak
-                                    .getClass()
-                                    .getDeclaredMethod(
-                                            "addSerialisationRequiredListener", Consumer.class);
-                    removeBreakListenerMethod =
-                            extensionBreak
-                                    .getClass()
-                                    .getDeclaredMethod(
-                                            "removeSerialisationRequiredListener", Consumer.class);
-                } catch (Exception e) {
-                    LOGGER.error("An error occurred while getting the break methods:", e);
-                }
+        extensionBreak =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionBreak.class);
+        if (extensionBreak != null) {
+            try {
+                addBreakListenerMethod =
+                        extensionBreak
+                                .getClass()
+                                .getDeclaredMethod(
+                                        "addSerialisationRequiredListener", Consumer.class);
+                removeBreakListenerMethod =
+                        extensionBreak
+                                .getClass()
+                                .getDeclaredMethod(
+                                        "removeSerialisationRequiredListener", Consumer.class);
+            } catch (Exception e) {
+                LOGGER.error("An error occurred while getting the break methods:", e);
             }
         }
     }
@@ -315,10 +305,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                         return getModel().getOptionsParam().getProxyParam().getProxyPort();
                     }
                 };
-
-        if (!handleLocalServers) {
-            return;
-        }
 
         ConnectionParam connectionParam = model.getOptionsParam().getConnectionParam();
         proxyHttpSender = new HttpSender(connectionParam, true, HttpSender.PROXY_INITIATOR);
@@ -490,36 +476,34 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         legacyProxyListenerHandler = new LegacyProxyListenerHandler();
         Control.getSingleton().getExtensionLoader().addProxyServer(legacyProxyListenerHandler);
 
-        extensionHook.addCommandLine(createCommandLineArgs(handleLocalServers));
+        extensionHook.addCommandLine(createCommandLineArgs());
 
         serverCertificateService = new ServerCertificateServiceImpl();
 
         serverCertificatesOptions = new ServerCertificatesOptions();
         extensionHook.addOptionsParamSet(serverCertificatesOptions);
 
-        if (handleLocalServers) {
-            localServersOptions = new LocalServersOptions();
-            localServersOptions.addServersChangedListener(new ServersChangedListenerImpl());
-            extensionHook.addOptionsParamSet(localServersOptions);
+        localServersOptions = new LocalServersOptions();
+        localServersOptions.addServersChangedListener(new ServersChangedListenerImpl());
+        extensionHook.addOptionsParamSet(localServersOptions);
 
-            passThroughHandler =
-                    new PassThroughHandler(
-                            requestHeader ->
-                                    localServersOptions.getPassThroughs().stream()
-                                            .anyMatch(e -> e.test(requestHeader)));
+        passThroughHandler =
+                new PassThroughHandler(
+                        requestHeader ->
+                                localServersOptions.getPassThroughs().stream()
+                                        .anyMatch(e -> e.test(requestHeader)));
 
-            aliasChecker =
-                    requestHeader -> {
-                        if (API.API_DOMAIN.equals(requestHeader.getHostName())) {
-                            return true;
-                        }
+        aliasChecker =
+                requestHeader -> {
+                    if (API.API_DOMAIN.equals(requestHeader.getHostName())) {
+                        return true;
+                    }
 
-                        return localServersOptions.getAliases().stream()
-                                .anyMatch(e -> e.test(requestHeader));
-                    };
+                    return localServersOptions.getAliases().stream()
+                            .anyMatch(e -> e.test(requestHeader));
+                };
 
-            extensionHook.addApiImplementor(new LegacyProxiesApi(this));
-        }
+        extensionHook.addApiImplementor(new LegacyProxiesApi(this));
 
         ApiImplementor coreApi = API.getInstance().getImplementors().get("core");
         if (coreApi != null) {
@@ -541,19 +525,16 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             serverCertificatesOptionsPanel = new ServerCertificatesOptionsPanel(this);
             optionsDialog.addParamPanel(networkNode, serverCertificatesOptionsPanel, true);
 
-            if (handleLocalServers) {
-                localServersOptionsPanel = new LocalServersOptionsPanel(this);
-                optionsDialog.addParamPanel(networkNode, localServersOptionsPanel, true);
+            localServersOptionsPanel = new LocalServersOptionsPanel(this);
+            optionsDialog.addParamPanel(networkNode, localServersOptionsPanel, true);
 
-                localServerInfoLabel =
-                        new LocalServerInfoLabel(
-                                getView().getMainFrame().getMainFooterPanel(), localServersOptions);
+            localServerInfoLabel =
+                    new LocalServerInfoLabel(
+                            getView().getMainFrame().getMainFooterPanel(), localServersOptions);
 
-                hookView.addOptionPanel(
-                        new LegacyOptionsPanel("dynssl", serverCertificatesOptionsPanel));
-                hookView.addOptionPanel(
-                        new LegacyOptionsPanel("proxies", localServersOptionsPanel));
-            }
+            hookView.addOptionPanel(
+                    new LegacyOptionsPanel("dynssl", serverCertificatesOptionsPanel));
+            hookView.addOptionPanel(new LegacyOptionsPanel("proxies", localServersOptionsPanel));
 
             connectionOptionsPanel = new ConnectionOptionsPanel();
             optionsDialog.addParamPanel(networkNode, connectionOptionsPanel, true);
@@ -723,10 +704,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     @Override
     public void postInit() {
-        if (!handleLocalServers) {
-            return;
-        }
-
         serialiseForBreak = new BreakSerialiseState();
         if (addBreakListenerMethod != null) {
             try {
@@ -759,10 +736,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     @Override
     public void postInstall() {
-        if (!handleLocalServers) {
-            return;
-        }
-
         startLocalServers(null, NO_PORT_OVERRIDE, true);
     }
 
@@ -1065,8 +1038,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         return passThroughHandler;
     }
 
-    private static CommandLineArgument[] createCommandLineArgs(boolean includeHostPort) {
-        CommandLineArgument[] arguments = new CommandLineArgument[includeHostPort ? 5 : 3];
+    private static CommandLineArgument[] createCommandLineArgs() {
+        CommandLineArgument[] arguments = new CommandLineArgument[5];
         arguments[ARG_CERT_LOAD] =
                 new CommandLineArgument(
                         "-certload",
@@ -1092,25 +1065,22 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                         "-certfulldump <path>     "
                                 + Constant.messages.getString("network.cmdline.certfulldump"));
 
-        if (includeHostPort) {
-            arguments[ARG_HOST_IDX] =
-                    new CommandLineArgument(
-                            "-host",
-                            1,
-                            null,
-                            "",
-                            "-host <host>             "
-                                    + Constant.messages.getString("network.cmdline.proxy.host"));
-            arguments[ARG_PORT_IDX] =
-                    new CommandLineArgument(
-                            "-port",
-                            1,
-                            null,
-                            "",
-                            "-port <port>             "
-                                    + Constant.messages.getString("network.cmdline.proxy.port"));
-        }
-
+        arguments[ARG_HOST_IDX] =
+                new CommandLineArgument(
+                        "-host",
+                        1,
+                        null,
+                        "",
+                        "-host <host>             "
+                                + Constant.messages.getString("network.cmdline.proxy.host"));
+        arguments[ARG_PORT_IDX] =
+                new CommandLineArgument(
+                        "-port",
+                        1,
+                        null,
+                        "",
+                        "-port <port>             "
+                                + Constant.messages.getString("network.cmdline.proxy.port"));
         return arguments;
     }
 
@@ -1142,10 +1112,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             writeCert(
                     arguments[ARG_CERT_FULL_DUMP].getArguments().firstElement(),
                     this::writeRootCaCertAndPrivateKeyAsPem);
-        }
-
-        if (!handleLocalServers) {
-            return;
         }
 
         String mainProxyAddress = null;
@@ -1257,10 +1223,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     @Override
     public void stop() {
-        if (handleLocalServers) {
-            localServers.values().removeIf(ExtensionNetwork::stopAdditionalLocalServer);
-            stopLocalServer(mainProxyServer);
-        }
+        localServers.values().removeIf(ExtensionNetwork::stopAdditionalLocalServer);
+        stopLocalServer(mainProxyServer);
     }
 
     @Override
@@ -1368,17 +1332,15 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             OptionsDialog optionsDialog = View.getSingleton().getOptionsDialog("");
             optionsDialog.removeParamPanel(serverCertificatesOptionsPanel);
 
-            if (handleLocalServers) {
-                localServerInfoLabel.unload();
+            localServerInfoLabel.unload();
 
-                optionsDialog.removeParamPanel(localServersOptionsPanel);
+            optionsDialog.removeParamPanel(localServersOptionsPanel);
 
-                if (removeBreakListenerMethod != null) {
-                    try {
-                        removeBreakListenerMethod.invoke(extensionBreak, serialiseForBreak);
-                    } catch (Exception e) {
-                        LOGGER.error("An error occurred while removing the break listener:", e);
-                    }
+            if (removeBreakListenerMethod != null) {
+                try {
+                    removeBreakListenerMethod.invoke(extensionBreak, serialiseForBreak);
+                } catch (Exception e) {
+                    LOGGER.error("An error occurred while removing the break listener:", e);
                 }
             }
         }
