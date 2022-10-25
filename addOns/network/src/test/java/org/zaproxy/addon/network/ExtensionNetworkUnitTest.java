@@ -43,7 +43,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.withSettings;
 
 import io.netty.channel.Channel;
@@ -129,14 +128,15 @@ class ExtensionNetworkUnitTest extends TestUtils {
     @SuppressWarnings("unchecked")
     void setUp() {
         Security.addProvider(new BouncyCastleProvider());
-        ExtensionNetwork.handleConnection = false;
-        extension = new ExtensionNetwork();
-        extension.init();
-        mockMessages(extension);
+
         model = mock(Model.class, withSettings().lenient());
         Model.setSingletonForTesting(model);
         optionsParam = mock(OptionsParam.class, withSettings().lenient());
         given(model.getOptionsParam()).willReturn(optionsParam);
+
+        extension = new ExtensionNetwork();
+        extension.init();
+        mockMessages(extension);
 
         extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
         Control.initSingletonForTesting(model, extensionLoader);
@@ -180,25 +180,10 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldAddLegacyConnectionOptionsOnInstantiationIfHandlingConnection() {
-        // Given
-        ExtensionNetwork.handleConnection = true;
-        // When
-        new ExtensionNetwork();
-        // Then
+    void shouldAddLegacyConnectionOptionsOnInstantiation() {
         ArgumentCaptor<ConnectionParam> argument = ArgumentCaptor.forClass(ConnectionParam.class);
         verify(optionsParam).setConnectionParam(argument.capture());
         assertThat(argument.getValue(), is(instanceOf(LegacyConnectionParam.class)));
-    }
-
-    @Test
-    void shouldNotAddLegacyConnectionOptionsOnInstantiationIfNotHandlingConnection() {
-        // Given
-        ExtensionNetwork.handleConnection = false;
-        // When
-        new ExtensionNetwork();
-        // Then
-        verifyNoInteractions(optionsParam);
     }
 
     @Test
@@ -343,7 +328,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
         extension.hook(extensionHook);
         // Then
         ArgumentCaptor<AbstractParam> argument = ArgumentCaptor.forClass(AbstractParam.class);
-        verify(extensionHook, times(2)).addOptionsParamSet(argument.capture());
+        verify(extensionHook, times(3)).addOptionsParamSet(argument.capture());
         assertThat(argument.getAllValues(), hasItem(instanceOf(ServerCertificatesOptions.class)));
         assertThat(
                 extension.getServerCertificatesOptions(),
@@ -418,7 +403,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
         extension.hook(extensionHook);
         // Then
         ArgumentCaptor<AbstractParam> argument = ArgumentCaptor.forClass(AbstractParam.class);
-        verify(extensionHook, times(3)).addOptionsParamSet(argument.capture());
+        verify(extensionHook, times(4)).addOptionsParamSet(argument.capture());
         assertThat(argument.getAllValues(), hasItem(instanceOf(LocalServersOptions.class)));
         assertThat(extension.getLocalServersOptions(), is(equalTo(argument.getAllValues().get(1))));
     }
@@ -432,7 +417,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
         extension.hook(extensionHook);
         // Then
         ArgumentCaptor<AbstractParam> argument = ArgumentCaptor.forClass(AbstractParam.class);
-        verify(extensionHook, times(2)).addOptionsParamSet(argument.capture());
+        verify(extensionHook, times(3)).addOptionsParamSet(argument.capture());
         assertThat(argument.getAllValues(), not(contains(instanceOf(LocalServersOptions.class))));
         assertThat(extension.getLocalServersOptions(), is(nullValue()));
     }
@@ -460,11 +445,9 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldAddConnectionOptionsOnHookIfHandlingConnection() {
+    void shouldAddConnectionOptionsOnHook() {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
-        ExtensionNetwork.handleConnection = true;
-        extension = new ExtensionNetwork();
         // When
         extension.hook(extensionHook);
         // Then
@@ -474,25 +457,9 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldNotAddConnectionOptionsOnHookIfNotHandlingConnection() {
+    void shouldAddOptionsChangedListenerOnHook() {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
-        ExtensionNetwork.handleConnection = false;
-        extension = new ExtensionNetwork();
-        // When
-        extension.hook(extensionHook);
-        // Then
-        ArgumentCaptor<AbstractParam> argument = ArgumentCaptor.forClass(AbstractParam.class);
-        verify(extensionHook, times(2)).addOptionsParamSet(argument.capture());
-        assertThat(argument.getAllValues(), not(hasItem(instanceOf(ConnectionOptions.class))));
-    }
-
-    @Test
-    void shouldAddOptionsChangedListenerOnHookIfHandlingConnection() {
-        // Given
-        ExtensionHook extensionHook = mock(ExtensionHook.class);
-        ExtensionNetwork.handleConnection = true;
-        extension = new ExtensionNetwork();
         // When
         extension.hook(extensionHook);
         // Then
@@ -500,27 +467,14 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldNotAddOptionsChangedListenerOnHookIfNotHandlingConnection() {
-        // Given
-        ExtensionHook extensionHook = mock(ExtensionHook.class);
-        ExtensionNetwork.handleConnection = false;
-        extension = new ExtensionNetwork();
-        // When
-        extension.hook(extensionHook);
-        // Then
-        verify(extensionHook, times(0)).addOptionsChangedListener(any());
-    }
-
-    @Test
     void shouldAddClientCertificatesOptionsOnHook() {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension = new ExtensionNetwork();
         // When
         extension.hook(extensionHook);
         // Then
         ArgumentCaptor<AbstractParam> argument = ArgumentCaptor.forClass(AbstractParam.class);
-        verify(extensionHook, times(2)).addOptionsParamSet(argument.capture());
+        verify(extensionHook, times(3)).addOptionsParamSet(argument.capture());
         assertThat(argument.getAllValues(), hasItem(instanceOf(ClientCertificatesOptions.class)));
         assertThat(extension.getClientCertificatesOptions(), is(notNullValue()));
     }
@@ -538,8 +492,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
 
     private OptionsChangedListener setupOptionsChangedListener() {
         ExtensionHook extensionHook = mock(ExtensionHook.class);
-        ExtensionNetwork.handleConnection = true;
-        extension = new ExtensionNetwork();
         extension.hook(extensionHook);
         extension.getConnectionOptions().load(new ZapXmlConfiguration());
         ArgumentCaptor<OptionsChangedListener> argument =
@@ -573,45 +525,15 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldAddLegacyConnectionParamToCoreApiOnHookIfHandlingConnection() {
+    void shouldAddLegacyConnectionParamToCoreApiOnHook() {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
-        ExtensionNetwork.handleConnection = true;
-        extension = new ExtensionNetwork();
         CoreApiTest coreApi = new CoreApiTest();
         API.getInstance().registerApiImplementor(coreApi);
         // When
         extension.hook(extensionHook);
         // Then
         assertThat(coreApi.getLastAddedParam(), is(instanceOf(LegacyConnectionParam.class)));
-        assertThat(
-                coreApi.getApiViews().stream()
-                        .map(ApiElement::getName)
-                        .sorted()
-                        .filter(e -> e.startsWith("option"))
-                        .count(),
-                is(equalTo(21L)));
-        assertThat(
-                coreApi.getApiActions().stream()
-                        .map(ApiElement::getName)
-                        .sorted()
-                        .filter(e -> e.startsWith("setOption"))
-                        .count(),
-                is(equalTo(18L)));
-    }
-
-    @Test
-    void shouldNotAddLegacyConnectionParamToCoreApiOnHookIfNotHandlingConnection() {
-        // Given
-        ExtensionHook extensionHook = mock(ExtensionHook.class);
-        ExtensionNetwork.handleConnection = false;
-        extension = new ExtensionNetwork();
-        CoreApiTest coreApi = new CoreApiTest();
-        API.getInstance().registerApiImplementor(coreApi);
-        // When
-        extension.hook(extensionHook);
-        // Then
-        assertThat(coreApi.getLastAddedParam(), is(not(instanceOf(LegacyConnectionParam.class))));
         assertThat(
                 coreApi.getApiViews().stream()
                         .map(ApiElement::getName)
@@ -847,7 +769,9 @@ class ExtensionNetworkUnitTest extends TestUtils {
 
     @Test
     void shouldUnload() {
-        // Given / When
+        // Given
+        extension.initModel(model);
+        // When
         extension.unload();
         // Then
         assertThat(Security.getProvider(BouncyCastleProvider.PROVIDER_NAME), is(nullValue()));
@@ -857,6 +781,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
     void shouldUnloadLegacyProxyListenerHandlerAlways() {
         // Given
         extension.hook(mock(ExtensionHook.class));
+        extension.initModel(model);
         LegacyProxyListenerHandler handler = extension.getLegacyProxyListenerHandler();
         // When
         extension.unload();
@@ -866,10 +791,8 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldUnloadLegacyConnectionParamIfHandlingConnection() {
+    void shouldUnloadLegacyConnectionParam() {
         // Given
-        ExtensionNetwork.handleConnection = true;
-        extension = new ExtensionNetwork();
         extension.initModel(model);
         CoreApiTest coreApi = new CoreApiTest();
         API.getInstance().registerApiImplementor(coreApi);
@@ -880,18 +803,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
         verify(optionsParam, times(2)).setConnectionParam(argument.capture());
         assertThat(argument.getValue(), not(instanceOf(LegacyConnectionParam.class)));
         assertThat(coreApi.getLastAddedParam(), is(not(instanceOf(LegacyConnectionParam.class))));
-    }
-
-    @Test
-    void shouldNotUnloadLegacyConnectionParamIfNotHandlingConnection() {
-        // Given
-        ExtensionNetwork.handleConnection = false;
-        extension = new ExtensionNetwork();
-        extension.initModel(model);
-        // When
-        extension.unload();
-        // Then
-        verifyNoInteractions(optionsParam);
     }
 
     @ParameterizedTest

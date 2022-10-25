@@ -125,7 +125,6 @@ import org.zaproxy.zap.extension.api.ApiElement;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.brk.ExtensionBreak;
 import org.zaproxy.zap.utils.ZapPortNumberSpinner;
-import org.zaproxy.zap.view.ProxyDialog;
 
 public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineListener {
 
@@ -153,7 +152,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     boolean handleClient;
     private HttpSenderNetwork<? extends HttpSenderContext> httpSenderNetwork;
     boolean handleLocalServers;
-    static Boolean handleConnection;
     private ConnectionParam legacyConnectionOptions;
     private LegacyProxyListenerHandler legacyProxyListenerHandler;
     private Object syncGroups = new Object();
@@ -203,35 +201,33 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         // Force initialisation.
         TlsUtils.getSupportedProtocols();
 
-        if (isHandleConnection()) {
-            connectionOptions = new ConnectionOptions();
-            legacyConnectionOptions =
-                    new LegacyConnectionParam(
-                            () -> {
-                                if (handleClient) {
-                                    LegacyUtils.updateHttpState(globalHttpState, globalCookieStore);
-                                }
-                                return globalHttpState;
-                            },
-                            connectionOptions);
-            Model.getSingleton().getOptionsParam().setConnectionParam(legacyConnectionOptions);
+        connectionOptions = new ConnectionOptions();
+        legacyConnectionOptions =
+                new LegacyConnectionParam(
+                        () -> {
+                            if (handleClient) {
+                                LegacyUtils.updateHttpState(globalHttpState, globalCookieStore);
+                            }
+                            return globalHttpState;
+                        },
+                        connectionOptions);
+        Model.getSingleton().getOptionsParam().setConnectionParam(legacyConnectionOptions);
 
-            handleClient = isDeprecated(SSLConnector.class);
-            if (handleClient) {
-                clientCertificatesOptions = new ClientCertificatesOptions();
+        handleClient = isDeprecated(SSLConnector.class);
+        if (handleClient) {
+            clientCertificatesOptions = new ClientCertificatesOptions();
 
-                try {
-                    httpSenderNetwork =
-                            new HttpSenderNetwork<>(
-                                    connectionOptions,
-                                    new HttpSenderApache(
-                                            this::getGlobalCookieStore,
-                                            connectionOptions,
-                                            clientCertificatesOptions,
-                                            () -> legacyProxyListenerHandler));
-                } catch (Exception e) {
-                    LOGGER.error("An error occurred while creating the sender:", e);
-                }
+            try {
+                httpSenderNetwork =
+                        new HttpSenderNetwork<>(
+                                connectionOptions,
+                                new HttpSenderApache(
+                                        this::getGlobalCookieStore,
+                                        connectionOptions,
+                                        clientCertificatesOptions,
+                                        () -> legacyProxyListenerHandler));
+            } catch (Exception e) {
+                LOGGER.error("An error occurred while creating the sender:", e);
             }
         }
     }
@@ -264,14 +260,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     boolean isHandleLocalServers() {
         return handleLocalServers;
-    }
-
-    static boolean isHandleConnection() {
-        if (handleConnection != null) {
-            return handleConnection;
-        }
-        handleConnection = isDeprecated(ConnectionParam.class);
-        return handleConnection;
     }
 
     AliasChecker getAliasChecker() {
@@ -534,14 +522,12 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         }
 
         ApiImplementor coreApi = API.getInstance().getImplementors().get("core");
-        if (handleConnection && coreApi != null) {
+        if (coreApi != null) {
             updateOldCoreApiEndpoints(coreApi, legacyConnectionOptions);
         }
 
-        if (handleConnection) {
-            extensionHook.addOptionsParamSet(connectionOptions);
-            extensionHook.addOptionsChangedListener(new OptionsChangedListenerImpl());
-        }
+        extensionHook.addOptionsParamSet(connectionOptions);
+        extensionHook.addOptionsChangedListener(new OptionsChangedListenerImpl());
 
         if (!handleClient) {
             clientCertificatesOptions = new ClientCertificatesOptions();
@@ -569,12 +555,9 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                         new LegacyOptionsPanel("proxies", localServersOptionsPanel));
             }
 
-            if (handleConnection) {
-                connectionOptionsPanel = new ConnectionOptionsPanel();
-                optionsDialog.addParamPanel(networkNode, connectionOptionsPanel, true);
-                hookView.addOptionPanel(
-                        new LegacyOptionsPanel("connection", connectionOptionsPanel));
-            }
+            connectionOptionsPanel = new ConnectionOptionsPanel();
+            optionsDialog.addParamPanel(networkNode, connectionOptionsPanel, true);
+            hookView.addOptionPanel(new LegacyOptionsPanel("connection", connectionOptionsPanel));
 
             clientCertificatesOptionsPanel =
                     new ClientCertificatesOptionsPanel(View.getSingleton());
@@ -721,31 +704,19 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     @Override
     public void optionsLoaded() {
-        if (hasView()) {
-            if (handleConnection) {
-                if (!connectionOptions.isStoreHttpProxyPass()) {
-                    char[] password = new PromptHttpProxyPasswordDialog().getPassword();
-                    if (password.length != 0) {
-                        HttpProxy oldProxy = connectionOptions.getHttpProxy();
-                        HttpProxy httpProxy =
-                                new HttpProxy(
-                                        oldProxy.getHost(),
-                                        oldProxy.getPort(),
-                                        oldProxy.getRealm(),
-                                        new PasswordAuthentication(
-                                                oldProxy.getPasswordAuthentication().getUserName(),
-                                                password));
-                        connectionOptions.setHttpProxy(httpProxy);
-                    }
-                }
-                return;
-            }
-
-            OptionsParam options = getModel().getOptionsParam();
-            if (options.getConnectionParam().isProxyChainPrompt()) {
-                ProxyDialog dialog = new ProxyDialog(null, true);
-                dialog.init(options);
-                dialog.setVisible(true);
+        if (hasView() && !connectionOptions.isStoreHttpProxyPass()) {
+            char[] password = new PromptHttpProxyPasswordDialog().getPassword();
+            if (password.length != 0) {
+                HttpProxy oldProxy = connectionOptions.getHttpProxy();
+                HttpProxy httpProxy =
+                        new HttpProxy(
+                                oldProxy.getHost(),
+                                oldProxy.getPort(),
+                                oldProxy.getRealm(),
+                                new PasswordAuthentication(
+                                        oldProxy.getPasswordAuthentication().getUserName(),
+                                        password));
+                connectionOptions.setHttpProxy(httpProxy);
             }
         }
     }
@@ -1379,15 +1350,13 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         Control.getSingleton().getExtensionLoader().removeProxyServer(legacyProxyListenerHandler);
         legacyProxyListenerHandler = null;
 
-        if (handleConnection) {
-            ConnectionParam connectionParam = new ConnectionParam();
-            ApiImplementor coreApi = API.getInstance().getImplementors().get("core");
-            if (coreApi != null) {
-                updateOldCoreApiEndpoints(coreApi, connectionParam);
-            }
-            getModel().getOptionsParam().setConnectionParam(connectionParam);
-            connectionParam.load(getModel().getOptionsParam().getConfig());
+        ConnectionParam connectionParam = new ConnectionParam();
+        ApiImplementor coreApi = API.getInstance().getImplementors().get("core");
+        if (coreApi != null) {
+            updateOldCoreApiEndpoints(coreApi, connectionParam);
         }
+        getModel().getOptionsParam().setConnectionParam(connectionParam);
+        connectionParam.load(getModel().getOptionsParam().getConfig());
 
         if (httpSenderNetwork != null) {
             httpSenderNetwork.unload();

@@ -39,7 +39,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.border.TitledBorder;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
-import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.zaproxy.addon.network.internal.client.CommonUserAgents;
 import org.zaproxy.addon.network.internal.client.HttpProxy;
@@ -331,7 +330,7 @@ class ConnectionOptionsPanel extends AbstractParamPanel {
             layout.setAutoCreateContainerGaps(true);
 
             hostTextField = new ZapTextField();
-            hostTextField.setText(ConnectionParam.DEFAULT_SOCKS_PROXY.getHost());
+            hostTextField.setText(ConnectionOptions.DEFAULT_HTTP_PROXY.getHost());
             JLabel hostLabel =
                     new JLabel(
                             Constant.messages.getString(
@@ -339,7 +338,7 @@ class ConnectionOptionsPanel extends AbstractParamPanel {
             hostLabel.setLabelFor(hostTextField);
 
             portNumberSpinner =
-                    new ZapPortNumberSpinner(ConnectionParam.DEFAULT_SOCKS_PROXY.getPort());
+                    new ZapPortNumberSpinner(ConnectionOptions.DEFAULT_HTTP_PROXY.getPort());
             JLabel portLabel =
                     new JLabel(
                             Constant.messages.getString(
@@ -581,7 +580,7 @@ class ConnectionOptionsPanel extends AbstractParamPanel {
             layout.setAutoCreateContainerGaps(true);
 
             hostTextField = new ZapTextField();
-            hostTextField.setText(ConnectionParam.DEFAULT_SOCKS_PROXY.getHost());
+            hostTextField.setText(ConnectionOptions.DEFAULT_SOCKS_PROXY.getHost());
             JLabel hostLabel =
                     new JLabel(
                             Constant.messages.getString(
@@ -589,7 +588,7 @@ class ConnectionOptionsPanel extends AbstractParamPanel {
             hostLabel.setLabelFor(hostTextField);
 
             portNumberSpinner =
-                    new ZapPortNumberSpinner(ConnectionParam.DEFAULT_SOCKS_PROXY.getPort());
+                    new ZapPortNumberSpinner(ConnectionOptions.DEFAULT_SOCKS_PROXY.getPort());
             JLabel portLabel =
                     new JLabel(
                             Constant.messages.getString(

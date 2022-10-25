@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
-import org.parosproxy.paros.network.ConnectionParam;
+import org.zaproxy.addon.network.ConnectionOptions;
 import org.zaproxy.addon.network.internal.ChannelAttributes;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateService;
 import org.zaproxy.addon.network.internal.codec.HttpRequestDecoder;
@@ -118,7 +118,7 @@ public class HttpServer extends BaseServer {
         ch.pipeline()
                 .addLast(
                         "timeout",
-                        new ReadTimeoutHandler(ConnectionParam.DEFAULT_TIMEOUT, TimeUnit.SECONDS))
+                        new ReadTimeoutHandler(ConnectionOptions.DEFAULT_TIMEOUT, TimeUnit.SECONDS))
                 .addLast("tls.upgrade", new TlsProtocolHandler())
                 .addLast("http.decoder", new HttpRequestDecoder())
                 .addLast("http.encoder", HttpResponseEncoder.getInstance())

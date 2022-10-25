@@ -32,7 +32,6 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpRequestHeader;
-import org.parosproxy.paros.network.SSLConnector;
 import org.zaproxy.addon.network.internal.TlsUtils;
 import org.zaproxy.addon.network.internal.client.HttpProxy;
 import org.zaproxy.addon.network.internal.client.HttpProxyExclusion;
@@ -207,7 +206,6 @@ public class ConnectionOptions extends VersionedAbstractParam {
             }
         }
         tlsProtocols = protocols;
-        applyTlsProtocols();
         allowUnsafeRenegotiation = getBoolean(TLS_ALLOW_UNSAFE_RENEGOTIATION, false);
         setAllowUnsafeRenegotiationSystemProperty(allowUnsafeRenegotiation);
 
@@ -409,7 +407,6 @@ public class ConnectionOptions extends VersionedAbstractParam {
     public void setTlsProtocols(List<String> tlsProtocols) {
         this.tlsProtocols = TlsUtils.filterUnsupportedProtocols(tlsProtocols);
         persistTlsProtocols(tlsProtocols);
-        applyTlsProtocols();
 
         notifyChangesListeners();
     }
@@ -419,20 +416,6 @@ public class ConnectionOptions extends VersionedAbstractParam {
         for (int i = 0; i < tlsProtocols.size(); ++i) {
             String elementBaseKey = TLS_PROTOCOL_KEY + "(" + i + ")";
             getConfig().setProperty(elementBaseKey, tlsProtocols.get(i));
-        }
-    }
-
-    private void applyTlsProtocols() {
-        try {
-            SSLConnector.setClientEnabledProtocols(tlsProtocols.toArray(new String[0]));
-        } catch (IllegalArgumentException e) {
-            LOGGER.warn(
-                    "Failed to apply protocols {} falling back to {} caused by: {}",
-                    tlsProtocols,
-                    TlsUtils.getSupportedProtocols(),
-                    e.getMessage());
-            tlsProtocols = TlsUtils.getSupportedProtocols();
-            SSLConnector.setClientEnabledProtocols(tlsProtocols.toArray(new String[0]));
         }
     }
 
