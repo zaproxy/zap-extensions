@@ -259,15 +259,12 @@ public class NetworkApi extends ApiImplementor {
             this.addApiView(new ApiView(VIEW_IS_USE_GLOBAL_HTTP_STATE));
         }
 
-        if (isHandleClientCerts(extensionNetwork)) {
-            addApiAction(
-                    new ApiAction(
-                            ACTION_ADD_PKCS12_CLIENT_CERTIFICATE,
-                            Arrays.asList(PARAM_FILE_PATH, PARAM_PASSWORD),
-                            Arrays.asList(PARAM_INDEX)));
-            addApiAction(
-                    new ApiAction(ACTION_SET_USE_CLIENT_CERTIFICATE, Arrays.asList(PARAM_USE)));
-        }
+        addApiAction(
+                new ApiAction(
+                        ACTION_ADD_PKCS12_CLIENT_CERTIFICATE,
+                        Arrays.asList(PARAM_FILE_PATH, PARAM_PASSWORD),
+                        Arrays.asList(PARAM_INDEX)));
+        addApiAction(new ApiAction(ACTION_SET_USE_CLIENT_CERTIFICATE, Arrays.asList(PARAM_USE)));
 
         this.addApiOthers(new ApiOther(OTHER_ROOT_CA_CERT, false));
     }
@@ -278,10 +275,6 @@ public class NetworkApi extends ApiImplementor {
 
     private static boolean isHandleConnection(ExtensionNetwork extensionNetwork) {
         return extensionNetwork == null || ExtensionNetwork.isHandleConnection();
-    }
-
-    private static boolean isHandleClientCerts(ExtensionNetwork extensionNetwork) {
-        return extensionNetwork == null || extensionNetwork.isHandleClientCerts();
     }
 
     @Override
@@ -354,9 +347,6 @@ public class NetworkApi extends ApiImplementor {
                 }
             case ACTION_ADD_PKCS12_CLIENT_CERTIFICATE:
                 {
-                    if (!isHandleClientCerts(extensionNetwork)) {
-                        throw new ApiException(ApiException.Type.BAD_ACTION);
-                    }
                     String file = params.getString(PARAM_FILE_PATH);
                     String password = params.getString(PARAM_PASSWORD);
                     int index = ApiUtils.getIntParam(params, PARAM_INDEX);
@@ -628,9 +618,6 @@ public class NetworkApi extends ApiImplementor {
                 }
             case ACTION_SET_USE_CLIENT_CERTIFICATE:
                 {
-                    if (!isHandleClientCerts(extensionNetwork)) {
-                        throw new ApiException(ApiException.Type.BAD_ACTION);
-                    }
                     boolean use = getParam(params, PARAM_USE, false);
                     extensionNetwork.getClientCertificatesOptions().setUseCertificate(use);
                     return ApiResponseElement.OK;

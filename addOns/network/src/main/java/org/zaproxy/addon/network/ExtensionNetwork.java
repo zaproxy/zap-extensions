@@ -78,7 +78,6 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.extension.SessionChangedListener;
-import org.parosproxy.paros.extension.option.OptionsParamCertificate;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
@@ -153,7 +152,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     boolean handleClient;
     private HttpSenderNetwork<? extends HttpSenderContext> httpSenderNetwork;
-    boolean handleClientCerts;
     boolean handleLocalServers;
     static Boolean handleConnection;
     private ConnectionParam legacyConnectionOptions;
@@ -264,10 +262,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         return clientCertificatesOptions;
     }
 
-    boolean isHandleClientCerts() {
-        return handleClientCerts;
-    }
-
     boolean isHandleLocalServers() {
         return handleLocalServers;
     }
@@ -310,8 +304,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                 }
             }
         }
-
-        handleClientCerts = isDeprecated(OptionsParamCertificate.class);
     }
 
     private static boolean isDeprecated(Class<?> clazz) {
@@ -551,12 +543,10 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             extensionHook.addOptionsChangedListener(new OptionsChangedListenerImpl());
         }
 
-        if (handleClientCerts) {
-            if (!handleClient) {
-                clientCertificatesOptions = new ClientCertificatesOptions();
-            }
-            extensionHook.addOptionsParamSet(clientCertificatesOptions);
+        if (!handleClient) {
+            clientCertificatesOptions = new ClientCertificatesOptions();
         }
+        extensionHook.addOptionsParamSet(clientCertificatesOptions);
 
         if (hasView()) {
             ExtensionHookView hookView = extensionHook.getHookView();
@@ -586,13 +576,11 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                         new LegacyOptionsPanel("connection", connectionOptionsPanel));
             }
 
-            if (handleClientCerts) {
-                clientCertificatesOptionsPanel =
-                        new ClientCertificatesOptionsPanel(View.getSingleton());
-                optionsDialog.addParamPanel(networkNode, clientCertificatesOptionsPanel, true);
-                hookView.addOptionPanel(
-                        new LegacyOptionsPanel("clientcerts", clientCertificatesOptionsPanel));
-            }
+            clientCertificatesOptionsPanel =
+                    new ClientCertificatesOptionsPanel(View.getSingleton());
+            optionsDialog.addParamPanel(networkNode, clientCertificatesOptionsPanel, true);
+            hookView.addOptionPanel(
+                    new LegacyOptionsPanel("clientcerts", clientCertificatesOptionsPanel));
         }
     }
 

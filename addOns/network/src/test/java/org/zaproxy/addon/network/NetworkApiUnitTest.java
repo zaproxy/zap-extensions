@@ -136,7 +136,7 @@ class NetworkApiUnitTest extends TestUtils {
         // Given / When
         networkApi = new NetworkApi(extensionNetwork);
         // Then
-        assertThat(networkApi.getApiActions(), hasSize(4));
+        assertThat(networkApi.getApiActions(), hasSize(6));
         assertThat(networkApi.getApiViews(), hasSize(2));
         assertThat(networkApi.getApiOthers(), hasSize(1));
     }
@@ -148,7 +148,7 @@ class NetworkApiUnitTest extends TestUtils {
         // When
         networkApi = new NetworkApi(extensionNetwork);
         // Then
-        assertThat(networkApi.getApiActions(), hasSize(12));
+        assertThat(networkApi.getApiActions(), hasSize(14));
         assertThat(networkApi.getApiViews(), hasSize(5));
         assertThat(networkApi.getApiOthers(), hasSize(2));
     }
@@ -157,20 +157,6 @@ class NetworkApiUnitTest extends TestUtils {
     void shouldAddAdditionalApiElementsWhenHandlingConnection() {
         // Given
         given(extensionNetwork.isHandleLocalServers()).willReturn(true);
-        ExtensionNetwork.handleConnection = true;
-        // When
-        networkApi = new NetworkApi(extensionNetwork);
-        // Then
-        assertThat(networkApi.getApiActions(), hasSize(24));
-        assertThat(networkApi.getApiViews(), hasSize(15));
-        assertThat(networkApi.getApiOthers(), hasSize(3));
-    }
-
-    @Test
-    void shouldAddAdditionalApiElementsWhenHandlingClientCertificates() {
-        // Given
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
-        given(extensionNetwork.isHandleClientCerts()).willReturn(true);
         ExtensionNetwork.handleConnection = true;
         // When
         networkApi = new NetworkApi(extensionNetwork);
@@ -1649,7 +1635,6 @@ class NetworkApiUnitTest extends TestUtils {
         params.put("password", password);
         int index = 1234;
         params.put("index", index);
-        given(extensionNetwork.isHandleClientCerts()).willReturn(true);
         given(clientCertificatesOptions.addPkcs12Certificate()).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
@@ -1673,7 +1658,6 @@ class NetworkApiUnitTest extends TestUtils {
         params.put("password", password);
         int index = 1234;
         params.put("index", index);
-        given(extensionNetwork.isHandleClientCerts()).willReturn(true);
         given(clientCertificatesOptions.addPkcs12Certificate()).willReturn(false);
         // When
         ApiException exception =
@@ -1694,7 +1678,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "setUseClientCertificate";
         JSONObject params = new JSONObject();
         params.put("use", use);
-        given(extensionNetwork.isHandleClientCerts()).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
         // Then
@@ -1702,25 +1685,10 @@ class NetworkApiUnitTest extends TestUtils {
         verify(clientCertificatesOptions).setUseCertificate(use);
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"addPkcs12ClientCertificate", "setUseClientCertificate"})
-    void shouldThrowApiExceptionForUnsupportedActionsIfNotHandlingClientCertificates(String name)
-            throws Exception {
-        // Given
-        JSONObject params = new JSONObject();
-        given(extensionNetwork.isHandleClientCerts()).willReturn(false);
-        // When
-        ApiException exception =
-                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
-        // Then
-        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_ACTION)));
-    }
-
     @Test
     void shouldHaveDescriptionsForAllApiElements() {
         given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         ExtensionNetwork.handleConnection = true;
-        given(extensionNetwork.isHandleClientCerts()).willReturn(true);
         networkApi = new NetworkApi(extensionNetwork);
         List<String> missingKeys = new ArrayList<>();
         checkKey(networkApi.getDescriptionKey(), missingKeys);
