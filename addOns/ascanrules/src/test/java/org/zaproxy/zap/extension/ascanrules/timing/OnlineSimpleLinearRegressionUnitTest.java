@@ -19,10 +19,10 @@
  */
 package org.zaproxy.zap.extension.ascanrules.timing;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
-
-import static org.hamcrest.MatcherAssert.assertThat;
 
 /** Unit test for {@link OnlineSimpleLinearRegression}. */
 class OnlineSimpleLinearRegressionUnitTest {

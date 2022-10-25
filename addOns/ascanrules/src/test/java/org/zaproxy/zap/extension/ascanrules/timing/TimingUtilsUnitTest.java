@@ -19,14 +19,13 @@
  */
 package org.zaproxy.zap.extension.ascanrules.timing;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.util.Random;
-
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
+
+import java.util.Random;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /** Unit test for {@link TimingUtils}. */
 class TimingUtilsUnitTest {
