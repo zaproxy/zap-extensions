@@ -154,15 +154,13 @@ public class NetworkApi extends ApiImplementor {
         this.addApiAction(
                 new ApiAction(ACTION_IMPORT_ROOT_CA_CERT, Arrays.asList(PARAM_FILE_PATH)));
 
-        if (isHandleServerCerts(extensionNetwork)) {
-            this.addApiAction(
-                    new ApiAction(ACTION_SET_ROOT_CA_CERT_VALIDITY, Arrays.asList(PARAM_VALIDITY)));
-            this.addApiAction(
-                    new ApiAction(ACTION_SET_SERVER_CERT_VALIDITY, Arrays.asList(PARAM_VALIDITY)));
+        this.addApiAction(
+                new ApiAction(ACTION_SET_ROOT_CA_CERT_VALIDITY, Arrays.asList(PARAM_VALIDITY)));
+        this.addApiAction(
+                new ApiAction(ACTION_SET_SERVER_CERT_VALIDITY, Arrays.asList(PARAM_VALIDITY)));
 
-            this.addApiView(new ApiView(VIEW_GET_ROOT_CA_CERT_VALIDITY));
-            this.addApiView(new ApiView(VIEW_GET_SERVER_CERT_VALIDITY));
-        }
+        this.addApiView(new ApiView(VIEW_GET_ROOT_CA_CERT_VALIDITY));
+        this.addApiView(new ApiView(VIEW_GET_SERVER_CERT_VALIDITY));
 
         if (isHandleLocalServers(extensionNetwork)) {
             this.addApiAction(
@@ -272,10 +270,6 @@ public class NetworkApi extends ApiImplementor {
         }
 
         this.addApiOthers(new ApiOther(OTHER_ROOT_CA_CERT, false));
-    }
-
-    private static boolean isHandleServerCerts(ExtensionNetwork extensionNetwork) {
-        return extensionNetwork == null || extensionNetwork.isHandleServerCerts();
     }
 
     private static boolean isHandleLocalServers(ExtensionNetwork extensionNetwork) {
@@ -566,10 +560,6 @@ public class NetworkApi extends ApiImplementor {
                 }
 
             case ACTION_SET_ROOT_CA_CERT_VALIDITY:
-                if (!isHandleServerCerts(extensionNetwork)) {
-                    throw new ApiException(ApiException.Type.BAD_ACTION);
-                }
-
                 try {
                     Duration validity = Duration.ofDays(params.getInt(PARAM_VALIDITY));
                     extensionNetwork.getServerCertificatesOptions().setRootCaCertValidity(validity);
@@ -579,10 +569,6 @@ public class NetworkApi extends ApiImplementor {
                 }
 
             case ACTION_SET_SERVER_CERT_VALIDITY:
-                if (!isHandleServerCerts(extensionNetwork)) {
-                    throw new ApiException(ApiException.Type.BAD_ACTION);
-                }
-
                 try {
                     Duration validity = Duration.ofDays(params.getInt(PARAM_VALIDITY));
                     extensionNetwork.getServerCertificatesOptions().setServerCertValidity(validity);
@@ -816,10 +802,6 @@ public class NetworkApi extends ApiImplementor {
                 return response;
 
             case VIEW_GET_ROOT_CA_CERT_VALIDITY:
-                if (!isHandleServerCerts(extensionNetwork)) {
-                    throw new ApiException(ApiException.Type.BAD_VIEW);
-                }
-
                 return new ApiResponseElement(
                         name,
                         String.valueOf(
@@ -829,10 +811,6 @@ public class NetworkApi extends ApiImplementor {
                                         .toDays()));
 
             case VIEW_GET_SERVER_CERT_VALIDITY:
-                if (!isHandleServerCerts(extensionNetwork)) {
-                    throw new ApiException(ApiException.Type.BAD_VIEW);
-                }
-
                 return new ApiResponseElement(
                         name,
                         String.valueOf(

@@ -63,7 +63,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.logging.log4j.Level;
@@ -95,11 +94,11 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
-import org.parosproxy.paros.security.CertData;
-import org.parosproxy.paros.security.SslCertificateService;
-import org.zaproxy.addon.network.ExtensionNetwork.SslCertificateServiceImpl;
 import org.zaproxy.addon.network.internal.cert.CertConfig;
+import org.zaproxy.addon.network.internal.cert.CertData;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
+import org.zaproxy.addon.network.internal.cert.GenerationException;
+import org.zaproxy.addon.network.internal.cert.ServerCertificateService;
 import org.zaproxy.addon.network.internal.codec.HttpClientCodec;
 import org.zaproxy.addon.network.internal.server.AliasChecker;
 import org.zaproxy.addon.network.internal.server.http.Alias;
@@ -114,9 +113,6 @@ import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiElement;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.CoreAPI;
-import org.zaproxy.zap.extension.dynssl.DynSSLParam;
-import org.zaproxy.zap.extension.dynssl.ExtensionDynSSL;
-import org.zaproxy.zap.extension.dynssl.SslCertificateUtils;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -124,7 +120,6 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 class ExtensionNetworkUnitTest extends TestUtils {
 
     private MockedStatic<ZAP> zap;
-    private Consumer<SslCertificateService> setSslCertificateService;
     private Model model;
     private OptionsParam optionsParam;
     private ExtensionLoader extensionLoader;
@@ -138,8 +133,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
         extension = new ExtensionNetwork();
         extension.init();
         mockMessages(extension);
-        setSslCertificateService = mock(Consumer.class);
-        extension.setSslCertificateService = setSslCertificateService;
         model = mock(Model.class, withSettings().lenient());
         Model.setSingletonForTesting(model);
         optionsParam = mock(OptionsParam.class, withSettings().lenient());
@@ -209,14 +202,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldCreateLegacyCertServiceOnInit() {
-        // Given / When
-        extension.init();
-        // Then
-        assertThat(extension.getSslCertificateService(), is(notNullValue()));
-    }
-
-    @Test
     void shouldCreateMainProxyServerInfoOnInitModel() {
         // Given
         String address = "address";
@@ -283,7 +268,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
     void shouldAddLegacyProxiesApiOnHookIfHandlingLocalServers() {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension.handleServerCerts = true;
         extension.handleLocalServers = true;
         // When
         extension.hook(extensionHook);
@@ -297,7 +281,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
     void shouldNotCreateAliasCheckerOnHookIfNotHandlingLocalServers() {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension.handleServerCerts = true;
         extension.handleLocalServers = false;
         // When
         extension.hook(extensionHook);
@@ -309,7 +292,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
     void shouldCreateAliasCheckerOnHookIfHandlingLocalServers() {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension.handleServerCerts = true;
         extension.handleLocalServers = true;
         // When
         extension.hook(extensionHook);
@@ -322,7 +304,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
     void shouldBeAliasIfZapDomain(String requestTarget) throws Exception {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension.handleServerCerts = true;
         extension.handleLocalServers = true;
         extension.hook(extensionHook);
         AliasChecker aliasChecker = extension.getAliasChecker();
@@ -339,7 +320,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
     void shouldCheckAliasDefinedInOptions(boolean expectedAlias) throws Exception {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension.handleServerCerts = true;
         extension.handleLocalServers = true;
         extension.hook(extensionHook);
         Alias optionAlias = mock(Alias.class);
@@ -356,22 +336,9 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldNotAddServerCertificatesOptionsOnHookIfNotHandlingServerCerts() throws Exception {
+    void shouldAddServerCertificatesOptionsOnHook() {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension.handleServerCerts = false;
-        // When
-        extension.hook(extensionHook);
-        // Then
-        verify(extensionHook, times(0)).addOptionsParamSet(any());
-        assertThat(extension.getServerCertificatesOptions(), is(nullValue()));
-    }
-
-    @Test
-    void shouldAddServerCertificatesOptionsOnHookIfHandlingServerCerts() {
-        // Given
-        ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension.handleServerCerts = true;
         // When
         extension.hook(extensionHook);
         // Then
@@ -384,22 +351,9 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldNotAddCommandLineArgsOnHookIfNotHandlingServerCerts() throws Exception {
+    void shouldAddCommandLineArgsOnHook() throws Exception {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension.handleServerCerts = false;
-        // When
-        extension.hook(extensionHook);
-        // Then
-        verify(extensionHook, times(0)).addCommandLine(any());
-        assertThat(extension.getServerCertificatesOptions(), is(nullValue()));
-    }
-
-    @Test
-    void shouldAddCommandLineArgsOnHookIfHandlingServerCerts() throws Exception {
-        // Given
-        ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension.handleServerCerts = true;
         // When
         extension.hook(extensionHook);
         // Then
@@ -423,7 +377,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
     void shouldAddHostAndPortCommandLineArgsOnHookIfHandlingLocalServerServers() throws Exception {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension.handleServerCerts = true;
         extension.handleLocalServers = true;
         // When
         extension.hook(extensionHook);
@@ -460,7 +413,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
     void shouldAddLocalServersOptionsOnHookIfHandlingLocalServers() {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension.handleServerCerts = true;
         extension.handleLocalServers = true;
         // When
         extension.hook(extensionHook);
@@ -475,7 +427,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
     void shouldNotAddLocalServersOptionsOnHookIfNotHandlingLocalServers() {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension.handleServerCerts = true;
         extension.handleLocalServers = false;
         // When
         extension.hook(extensionHook);
@@ -490,7 +441,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
     void shouldCreatePassThroughHandlerOnHookIfHandlingLocalServers() {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension.handleServerCerts = true;
         extension.handleLocalServers = true;
         // When
         extension.hook(extensionHook);
@@ -502,7 +452,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
     void shouldNotCreatePassThroughHandlerOnHookIfNotHandlingLocalServers() {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension.handleServerCerts = true;
         extension.handleLocalServers = false;
         // When
         extension.hook(extensionHook);
@@ -516,7 +465,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
         ExtensionHook extensionHook = mock(ExtensionHook.class);
         ExtensionNetwork.handleConnection = true;
         extension = new ExtensionNetwork();
-        extension.handleServerCerts = true;
         // When
         extension.hook(extensionHook);
         // Then
@@ -531,7 +479,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
         ExtensionHook extensionHook = mock(ExtensionHook.class);
         ExtensionNetwork.handleConnection = false;
         extension = new ExtensionNetwork();
-        extension.handleServerCerts = true;
         // When
         extension.hook(extensionHook);
         // Then
@@ -546,7 +493,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
         ExtensionHook extensionHook = mock(ExtensionHook.class);
         ExtensionNetwork.handleConnection = true;
         extension = new ExtensionNetwork();
-        extension.handleServerCerts = true;
         // When
         extension.hook(extensionHook);
         // Then
@@ -559,7 +505,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
         ExtensionHook extensionHook = mock(ExtensionHook.class);
         ExtensionNetwork.handleConnection = false;
         extension = new ExtensionNetwork();
-        extension.handleServerCerts = true;
         // When
         extension.hook(extensionHook);
         // Then
@@ -571,7 +516,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
         extension = new ExtensionNetwork();
-        extension.handleServerCerts = true;
         extension.handleClientCerts = true;
         // When
         extension.hook(extensionHook);
@@ -587,7 +531,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
         extension = new ExtensionNetwork();
-        extension.handleServerCerts = true;
         extension.handleClientCerts = false;
         // When
         extension.hook(extensionHook);
@@ -614,7 +557,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
         ExtensionHook extensionHook = mock(ExtensionHook.class);
         ExtensionNetwork.handleConnection = true;
         extension = new ExtensionNetwork();
-        extension.handleServerCerts = true;
         extension.hook(extensionHook);
         extension.getConnectionOptions().load(new ZapXmlConfiguration());
         ArgumentCaptor<OptionsChangedListener> argument =
@@ -653,7 +595,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
         ExtensionHook extensionHook = mock(ExtensionHook.class);
         ExtensionNetwork.handleConnection = true;
         extension = new ExtensionNetwork();
-        extension.handleServerCerts = true;
         CoreApiTest coreApi = new CoreApiTest();
         API.getInstance().registerApiImplementor(coreApi);
         // When
@@ -682,7 +623,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
         ExtensionHook extensionHook = mock(ExtensionHook.class);
         ExtensionNetwork.handleConnection = false;
         extension = new ExtensionNetwork();
-        extension.handleServerCerts = true;
         CoreApiTest coreApi = new CoreApiTest();
         API.getInstance().registerApiImplementor(coreApi);
         // When
@@ -706,25 +646,12 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldNotExecuteCommandLineArgsIfNotHandlingCerts() throws Exception {
-        // Given
-        CommandLineArgument[] args = mockedCmdLineArgs(3);
-        Stream.of(args).forEach(arg -> given(arg.isEnabled()).willReturn(true));
-        extension.handleServerCerts = false;
-        // When
-        extension.execute(args);
-        // Then
-        Stream.of(args).forEach(arg -> verify(arg, times(0)).isEnabled());
-    }
-
-    @Test
-    void shouldLoadCertCommandLineArgIfHandlingCerts() throws Exception {
+    void shouldLoadCertCommandLineArg() throws Exception {
         // Given
         Path file = Files.createTempFile("rootca", ".pem");
         Files.write(file, NetworkTestUtils.FISH_CERT_PEM_BYTES);
         CommandLineArgument[] args = mockedCmdLineArgs(3);
         cmdLineArgEnabledWithFile(args, 0, file);
-        extension.handleServerCerts = true;
         extensionStarted();
         List<String> logEvents = registerLogEvents();
         // When
@@ -733,12 +660,10 @@ class ExtensionNetworkUnitTest extends TestUtils {
         Stream.of(args).forEach(arg -> verify(arg).isEnabled());
         assertThat(
                 extension.getServerCertificatesOptions().getRootCaKeyStore(), is(notNullValue()));
-        ArgumentCaptor<SslCertificateService> argument =
-                ArgumentCaptor.forClass(SslCertificateService.class);
-        verify(extension.setSslCertificateService, times(1)).accept(argument.capture());
-        assertThat(argument.getAllValues(), contains(instanceOf(SslCertificateServiceImpl.class)));
-        SslCertificateService service = argument.getAllValues().get(0);
-        assertThat(service.createCertForHost(new CertData("example.org")), is(notNullValue()));
+        ServerCertificateService certificateService = extension.getServerCertificateService();
+        assertThat(
+                certificateService.createCertificate(new CertData("example.org")),
+                is(notNullValue()));
         assertThat(logEvents, contains(startsWith("Root CA certificate loaded from")));
     }
 
@@ -748,7 +673,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
         Path file = Paths.get("/some/path/not/readable/rootca.pem");
         CommandLineArgument[] args = mockedCmdLineArgs(3);
         cmdLineArgEnabledWithFile(args, 0, file);
-        extension.handleServerCerts = true;
         extensionStarted();
         List<String> logEvents = registerLogEvents();
         // When
@@ -764,7 +688,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
         Path file = Files.createTempDirectory("not-cert");
         CommandLineArgument[] args = mockedCmdLineArgs(3);
         cmdLineArgEnabledWithFile(args, 0, file);
-        extension.handleServerCerts = true;
         extensionStarted();
         List<String> logEvents = registerLogEvents();
         // When
@@ -775,12 +698,11 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldDumpCertCommandLineArgIfHandlingCerts() throws Exception {
+    void shouldDumpCertCommandLineArg() throws Exception {
         // Given
         Path file = Files.createTempFile("dump", ".pem");
         CommandLineArgument[] args = mockedCmdLineArgs(3);
         cmdLineArgEnabledWithFile(args, 1, file);
-        extension.handleServerCerts = true;
         extensionStarted();
         List<String> logEvents = registerLogEvents();
         // When
@@ -790,9 +712,9 @@ class ExtensionNetworkUnitTest extends TestUtils {
         assertThat(
                 contents(file),
                 allOf(
-                        containsString(SslCertificateUtils.BEGIN_CERTIFICATE_TOKEN),
-                        containsString(SslCertificateUtils.END_CERTIFICATE_TOKEN),
-                        not(containsString(SslCertificateUtils.BEGIN_PRIVATE_KEY_TOKEN))));
+                        containsString(CertificateUtils.BEGIN_CERTIFICATE_TOKEN),
+                        containsString(CertificateUtils.END_CERTIFICATE_TOKEN),
+                        not(containsString(CertificateUtils.BEGIN_PRIVATE_KEY_TOKEN))));
         assertThat(logEvents, contains(startsWith("Root CA certificate written to")));
     }
 
@@ -803,7 +725,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
         notWritable(file);
         CommandLineArgument[] args = mockedCmdLineArgs(3);
         cmdLineArgEnabledWithFile(args, 1, file);
-        extension.handleServerCerts = true;
         extensionStarted();
         List<String> logEvents = registerLogEvents();
         // When
@@ -814,12 +735,11 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldDumpCertAndKeyCommandLineArgIfHandlingCerts() throws Exception {
+    void shouldDumpCertAndKeyCommandLineArg() throws Exception {
         // Given
         Path file = Files.createTempFile("dump", ".pem");
         CommandLineArgument[] args = mockedCmdLineArgs(3);
         cmdLineArgEnabledWithFile(args, 2, file);
-        extension.handleServerCerts = true;
         extensionStarted();
         List<String> logEvents = registerLogEvents();
         // When
@@ -829,10 +749,10 @@ class ExtensionNetworkUnitTest extends TestUtils {
         assertThat(
                 contents(file),
                 allOf(
-                        containsString(SslCertificateUtils.BEGIN_CERTIFICATE_TOKEN),
-                        containsString(SslCertificateUtils.END_CERTIFICATE_TOKEN),
-                        containsString(SslCertificateUtils.BEGIN_PRIVATE_KEY_TOKEN),
-                        containsString(SslCertificateUtils.END_PRIVATE_KEY_TOKEN)));
+                        containsString(CertificateUtils.BEGIN_CERTIFICATE_TOKEN),
+                        containsString(CertificateUtils.END_CERTIFICATE_TOKEN),
+                        containsString(CertificateUtils.BEGIN_PRIVATE_KEY_TOKEN),
+                        containsString(CertificateUtils.END_PRIVATE_KEY_TOKEN)));
         assertThat(logEvents, contains(startsWith("Root CA certificate written to")));
     }
 
@@ -843,7 +763,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
         notWritable(file);
         CommandLineArgument[] args = mockedCmdLineArgs(3);
         cmdLineArgEnabledWithFile(args, 2, file);
-        extension.handleServerCerts = true;
         extensionStarted();
         List<String> logEvents = registerLogEvents();
         // When
@@ -874,38 +793,22 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldNotSetSslCertificateServiceOnStartIfNotHandlingServerCerts() {
+    void shouldGenerateAndSetRootCaCertOnStart() throws Exception {
         // Given
-        extension.handleServerCerts = false;
-        // When
-        extension.start();
-        // Then
-        verify(extension.setSslCertificateService, times(0)).accept(any());
-    }
-
-    @Test
-    void shouldGenerateRootCaCertAndSetSslCertificateServiceOnStartIfHandlingServerCerts()
-            throws Exception {
-        // Given
-        extension.handleServerCerts = true;
         extension.hook(mock(ExtensionHook.class));
         extension.getServerCertificatesOptions().load(new ZapXmlConfiguration());
         // When
         extension.start();
         // Then
-        ArgumentCaptor<SslCertificateService> argument =
-                ArgumentCaptor.forClass(SslCertificateService.class);
-        verify(extension.setSslCertificateService, times(1)).accept(argument.capture());
-        assertThat(argument.getAllValues(), contains(instanceOf(SslCertificateServiceImpl.class)));
-        SslCertificateService service = argument.getAllValues().get(0);
-        assertThat(service.createCertForHost(new CertData("example.org")), is(notNullValue()));
+        ServerCertificateService certificateService = extension.getServerCertificateService();
+        assertThat(
+                certificateService.createCertificate(new CertData("example.org")),
+                is(notNullValue()));
     }
 
     @Test
-    void shouldLoadRootCaCertAndSetSslCertificateServiceOnStartIfHandlingServerCerts()
-            throws Exception {
+    void shouldSetRootCaCertOnStartIfAbleToLoadRootCaCert() throws Exception {
         // Given
-        extension.handleServerCerts = true;
         extension.hook(mock(ExtensionHook.class));
         ZapXmlConfiguration config = new ZapXmlConfiguration();
         config.setProperty(
@@ -914,30 +817,31 @@ class ExtensionNetworkUnitTest extends TestUtils {
         // When
         extension.start();
         // Then
-        ArgumentCaptor<SslCertificateService> argument =
-                ArgumentCaptor.forClass(SslCertificateService.class);
-        verify(extension.setSslCertificateService, times(1)).accept(argument.capture());
-        assertThat(argument.getAllValues(), contains(instanceOf(SslCertificateServiceImpl.class)));
-        SslCertificateService service = argument.getAllValues().get(0);
-        assertThat(service.createCertForHost(new CertData("example.org")), is(notNullValue()));
+        ServerCertificateService certificateService = extension.getServerCertificateService();
+        assertThat(
+                certificateService.createCertificate(new CertData("example.org")),
+                is(notNullValue()));
     }
 
     @Test
-    void shouldNotSetSslCertificateServiceOnStartIfHandlingServerCertsAndNotAbleToLoadRootCaCert() {
+    void shouldNotSetRootCaCertOnStartIfNotAbleToLoadRootCaCert() {
         // Given
-        extension.handleServerCerts = true;
         extension.hook(mock(ExtensionHook.class));
         // No configuration loaded in the options will lead to exception later.
         // When
         extension.start();
         // Then
-        verify(extension.setSslCertificateService, times(0)).accept(any());
+        ServerCertificateService certificateService = extension.getServerCertificateService();
+        GenerationException exception =
+                assertThrows(
+                        GenerationException.class,
+                        () -> certificateService.createCertificate(null));
+        assertThat(exception.getMessage(), is(equalTo("The root CA certificate was not set.")));
     }
 
     @Test
-    void shouldWarnOfExpiredRootCaCertOnStartIfHandlingServerCerts() throws Exception {
+    void shouldWarnOfExpiredRootCaCertOnStart() throws Exception {
         // Given
-        extension.handleServerCerts = true;
         extension.hook(mock(ExtensionHook.class));
         ZapXmlConfiguration config = new ZapXmlConfiguration();
         KeyStore expiredRootCaKeyStore =
@@ -959,24 +863,10 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldNotUnloadAnyComponentsIfNotHandlingServerCerts() {
-        // Given
-        extension.handleServerCerts = false;
-        // When
+    void shouldUnload() {
+        // Given / When
         extension.unload();
         // Then
-        verify(extension.setSslCertificateService, times(0)).accept(any());
-        assertThat(Security.getProvider(BouncyCastleProvider.PROVIDER_NAME), is(notNullValue()));
-    }
-
-    @Test
-    void shouldUnloadIfHandlingServerCerts() {
-        // Given
-        extension.handleServerCerts = true;
-        // When
-        extension.unload();
-        // Then
-        verify(extension.setSslCertificateService, times(1)).accept(null);
         assertThat(Security.getProvider(BouncyCastleProvider.PROVIDER_NAME), is(nullValue()));
     }
 
@@ -1032,99 +922,38 @@ class ExtensionNetworkUnitTest extends TestUtils {
     void shouldWriteRootCaCertAsPem() throws Exception {
         // Given
         Path file = Files.createTempFile("rootca", ".cer");
-        mockRootCaKeyStore();
+        extension.hook(mock(ExtensionHook.class));
+        ZapXmlConfiguration config = new ZapXmlConfiguration();
+        config.setProperty(
+                "network.serverCertificates.rootCa.ks", NetworkTestUtils.FISH_CERT_BASE64_STR);
+        extension.getServerCertificatesOptions().load(config);
         // When
         extension.writeRootCaCertAsPem(file);
         // Then
         assertThat(
                 contents(file),
                 allOf(
-                        containsString(SslCertificateUtils.BEGIN_CERTIFICATE_TOKEN),
+                        containsString(CertificateUtils.BEGIN_CERTIFICATE_TOKEN),
                         containsString(
                                 "MIIC9TCCAl6gAwIBAgIJANL8E4epRNznMA0GCSqGSIb3DQEBBQUAMFsxGDAWBgNV\n"),
-                        containsString(SslCertificateUtils.END_CERTIFICATE_TOKEN),
-                        not(containsString(SslCertificateUtils.BEGIN_PRIVATE_KEY_TOKEN))));
+                        containsString(CertificateUtils.END_CERTIFICATE_TOKEN),
+                        not(containsString(CertificateUtils.BEGIN_PRIVATE_KEY_TOKEN))));
     }
 
     @Test
     void shouldNotWriteRootCaCertAsPemIfRootCaKeyStoreMissing() throws Exception {
         // Given
         Path file = Files.createTempFile("rootca", ".cer");
+        extension.hook(mock(ExtensionHook.class));
         // When
         extension.writeRootCaCertAsPem(file);
         // Then
-        assertThat(
-                contents(file), not(containsString(SslCertificateUtils.BEGIN_CERTIFICATE_TOKEN)));
+        assertThat(contents(file), not(containsString(CertificateUtils.BEGIN_CERTIFICATE_TOKEN)));
     }
 
     @Test
-    void shouldGetRootCaKeyStoreFromDynSslParam() throws Exception {
+    void shouldImportRootCaCert() throws Exception {
         // Given
-        mockRootCaKeyStore();
-        // When
-        KeyStore keyStore = extension.getRootCaKeyStore();
-        // Then
-        assertThat(keyStore, is(notNullValue()));
-    }
-
-    @Test
-    void shouldNotGetRootCaKeyStoreFromDynSslParamIfNotAvailable() throws Exception {
-        // Given / When
-        KeyStore keyStore = extension.getRootCaKeyStore();
-        // Then
-        assertThat(keyStore, is(nullValue()));
-    }
-
-    @Test
-    void shouldGenerateRootCaCertWithExtensionDynSsl() throws Exception {
-        // Given
-        ExtensionDynSSL extensionDynSsl = mock(ExtensionDynSSL.class);
-        given(extensionLoader.getExtension(ExtensionDynSSL.class)).willReturn(extensionDynSsl);
-        // When
-        boolean generated = extension.generateRootCaCert();
-        // Then
-        assertThat(generated, is(equalTo(true)));
-        verify(extensionDynSsl).createNewRootCa();
-    }
-
-    @Test
-    void shouldNotGenerateRootCaCertWithExtensionDynSslIfNotAvailable() throws Exception {
-        // Given
-        given(extensionLoader.getExtension(ExtensionDynSSL.class)).willReturn(null);
-        // When
-        boolean generated = extension.generateRootCaCert();
-        // Then
-        assertThat(generated, is(equalTo(false)));
-    }
-
-    @Test
-    void shouldImportRootCaCertWithExtensionDynSsl() throws Exception {
-        // Given
-        Path file = Files.createTempFile("rootca", ".cer");
-        ExtensionDynSSL extensionDynSsl = mock(ExtensionDynSSL.class);
-        given(extensionLoader.getExtension(ExtensionDynSSL.class)).willReturn(extensionDynSsl);
-        // When
-        String result = extension.importRootCaCert(file);
-        // Then
-        assertThat(result, is(nullValue()));
-        verify(extensionDynSsl).importRootCaCertificate(file.toFile());
-    }
-
-    @Test
-    void shouldNotImportRootCaCertWithExtensionDynSslIfNotAvailable() throws Exception {
-        // Given
-        Path file = Files.createTempFile("rootca", ".cer");
-        given(extensionLoader.getExtension(ExtensionDynSSL.class)).willReturn(null);
-        // When
-        String result = extension.importRootCaCert(file);
-        // Then
-        assertThat(result, is(equalTo("")));
-    }
-
-    @Test
-    void shouldImportRootCaCertWhenHandlingServerCerts() throws Exception {
-        // Given
-        extension.handleServerCerts = true;
         Path file = Files.createTempFile("rootca", ".cer");
         Files.write(file, NetworkTestUtils.FISH_CERT_PEM_BYTES);
         extensionStarted();
@@ -1134,19 +963,13 @@ class ExtensionNetworkUnitTest extends TestUtils {
         assertThat(result, is(nullValue()));
         assertThat(
                 extension.getServerCertificatesOptions().getRootCaKeyStore(), is(notNullValue()));
-        ArgumentCaptor<SslCertificateService> argument =
-                ArgumentCaptor.forClass(SslCertificateService.class);
-        verify(extension.setSslCertificateService, times(1)).accept(argument.capture());
-        assertThat(argument.getAllValues(), contains(instanceOf(SslCertificateServiceImpl.class)));
-        SslCertificateService service = argument.getAllValues().get(0);
-        assertThat(service.createCertForHost(new CertData("example.org")), is(notNullValue()));
+        ServerCertificateService service = extension.getServerCertificateService();
+        assertThat(service.createCertificate(new CertData("example.org")), is(notNullValue()));
     }
 
     @Test
-    void shouldFailToImportRootCaCertIfUnableToCreateKeyStoreWhenHandlingServerCerts()
-            throws Exception {
+    void shouldFailToImportRootCaCertIfUnableToCreateKeyStore() throws Exception {
         // Given
-        extension.handleServerCerts = true;
         Path file = Files.createTempFile("rootca", ".cer");
         Files.write(file, NetworkTestUtils.FISH_CERT_PEM_BYTES);
         // No options instance will lead to exception later.
@@ -1157,9 +980,8 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldFailToImportRootCaCertIfFileDoesNotExistWhenHandlingServerCerts() throws Exception {
+    void shouldFailToImportRootCaCertIfFileDoesNotExist() throws Exception {
         // Given
-        extension.handleServerCerts = true;
         Path file = Paths.get("/not/a/file.pem");
         // When
         String result = extension.importRootCaCert(file);
@@ -1168,10 +990,8 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldFailToImportRootCaCertIfFileDoesNotContainCertWhenHandlingServerCerts()
-            throws Exception {
+    void shouldFailToImportRootCaCertIfFileDoesNotContainCert() throws Exception {
         // Given
-        extension.handleServerCerts = true;
         Path file = Files.createTempFile("rootca", ".cer");
         // When
         String result = extension.importRootCaCert(file);
@@ -1180,10 +1000,8 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldFailToImportRootCaCertIfFileHasInvalidBase64CertWhenHandlingServerCerts()
-            throws Exception {
+    void shouldFailToImportRootCaCertIfFileHasInvalidBase64Cert() throws Exception {
         // Given
-        extension.handleServerCerts = true;
         Path file = Files.createTempFile("rootca", ".cer");
         Files.write(
                 file,
@@ -1198,10 +1016,8 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldFailToImportRootCaCertIfFileDoesNotContainPrivateKeyWhenHandlingServerCerts()
-            throws Exception {
+    void shouldFailToImportRootCaCertIfFileDoesNotContainPrivateKey() throws Exception {
         // Given
-        extension.handleServerCerts = true;
         Path file = Files.createTempFile("rootca", ".cer");
         Files.write(
                 file,
@@ -1217,10 +1033,8 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldFailToImportRootCaCertIfFileHasInvalidBase64PrivateKeyWhenHandlingServerCerts()
-            throws Exception {
+    void shouldFailToImportRootCaCertIfFileHasInvalidBase64PrivateKey() throws Exception {
         // Given
-        extension.handleServerCerts = true;
         Path file = Files.createTempFile("rootca", ".cer");
         Files.write(
                 file,
@@ -1253,7 +1067,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
                         // Valid header.
                     }
                 };
-        extension.handleServerCerts = true;
         extension.hook(mock(ExtensionHook.class));
         HttpMessage msg = new HttpMessage(new HttpRequestHeader("GET / HTTP/1.1"));
         TestClient client =
@@ -1287,7 +1100,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
                         // Valid header.
                     }
                 };
-        extension.handleServerCerts = true;
         extension.hook(mock(ExtensionHook.class));
         HttpMessage msg = new HttpMessage(new HttpRequestHeader("GET / HTTP/1.1"));
         TestClient client =
@@ -1323,7 +1135,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
                         // Valid header.
                     }
                 };
-        extension.handleServerCerts = true;
         extension.hook(mock(ExtensionHook.class));
         HttpMessage msg = new HttpMessage(new HttpRequestHeader("GET / HTTP/1.1"));
         TestClient client =
@@ -1352,7 +1163,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
     @Test
     void shouldThrowIfCreatingHttpServerWithNullHandler() throws Exception {
         // Given
-        extension.handleServerCerts = true;
         extension.hook(mock(ExtensionHook.class));
         HttpMessageHandler handler = null;
         // When / Then
@@ -1362,7 +1172,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
     @Test
     void shouldGetProxyPacContent() {
         // Given
-        extension.handleServerCerts = true;
         extension.handleLocalServers = true;
         extension.hook(mock(ExtensionHook.class));
         String domain = "X";
@@ -1379,7 +1188,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
     @Test
     void shouldGetProxyPacContentWithAccessedDomainIfProxyAnyAddressAndNotZapDomain() {
         // Given
-        extension.handleServerCerts = true;
         extension.handleLocalServers = true;
         extension.hook(mock(ExtensionHook.class));
         extension.getLocalServersOptions().load(new ZapXmlConfiguration());
@@ -1398,7 +1206,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
     @Test
     void shouldGetProxyPacContentWithAnyAddressIfNoAddressKnown() {
         // Given
-        extension.handleServerCerts = true;
         extension.handleLocalServers = true;
         extension.hook(mock(ExtensionHook.class));
         extension.getLocalServersOptions().load(new ZapXmlConfiguration());
@@ -1412,14 +1219,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
                 is(
                         equalTo(
                                 "function FindProxyForURL(url, host) {\n  return \"PROXY 0.0.0.0:8080\";\n} // End of function\n")));
-    }
-
-    private void mockRootCaKeyStore() throws Exception {
-        KeyStore keyStore =
-                SslCertificateUtils.string2Keystore(NetworkTestUtils.FISH_CERT_BASE64_STR);
-        DynSSLParam dynSslParam = mock(DynSSLParam.class);
-        given(optionsParam.getParamSet(DynSSLParam.class)).willReturn(dynSslParam);
-        given(dynSslParam.getRootca()).willReturn(keyStore);
     }
 
     private static List<String> registerLogEvents() {

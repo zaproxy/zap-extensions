@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
-import org.parosproxy.paros.security.CertData;
 import org.zaproxy.addon.network.ServerCertificatesOptions;
 
 /** A generator of server certificates. */

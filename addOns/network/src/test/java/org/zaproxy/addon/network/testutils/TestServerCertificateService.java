@@ -19,61 +19,48 @@
  */
 package org.zaproxy.addon.network.testutils;
 
-import java.io.IOException;
 import java.security.KeyStore;
-import org.parosproxy.paros.security.CertData;
-import org.parosproxy.paros.security.MissingRootCertificateException;
-import org.parosproxy.paros.security.SslCertificateService;
 import org.zaproxy.addon.network.ServerCertificatesOptions;
+import org.zaproxy.addon.network.internal.cert.CertData;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
 import org.zaproxy.addon.network.internal.cert.GenerationException;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateGenerator;
+import org.zaproxy.addon.network.internal.cert.ServerCertificateService;
 
 /**
- * A {@link SslCertificateService} for tests.
+ * A {@link ServerCertificateService} for tests.
  *
  * @see #createInstance()
  */
-public class TestSslCertificateService implements SslCertificateService {
+public class TestServerCertificateService implements ServerCertificateService {
 
     private final ServerCertificatesOptions serverCertificatesOptions;
     private ServerCertificateGenerator generator;
 
-    public static TestSslCertificateService createInstance() {
+    public static TestServerCertificateService createInstance() {
         ServerCertificatesOptions serverCertificatesOptions = new ServerCertificatesOptions();
         KeyStore rootCa =
                 CertificateUtils.createRootCaKeyStore(
                         serverCertificatesOptions.getRootCaCertConfig());
-        TestSslCertificateService sslCertificateService =
-                new TestSslCertificateService(serverCertificatesOptions);
-        sslCertificateService.initializeRootCA(rootCa);
-        return sslCertificateService;
+        TestServerCertificateService certificateService =
+                new TestServerCertificateService(serverCertificatesOptions);
+        certificateService.setRootCa(rootCa);
+        return certificateService;
     }
 
-    TestSslCertificateService(ServerCertificatesOptions serverCertificatesOptions) {
+    TestServerCertificateService(ServerCertificatesOptions serverCertificatesOptions) {
         this.serverCertificatesOptions = serverCertificatesOptions;
     }
 
-    @Override
-    public void initializeRootCA(KeyStore keyStore) {
+    public void setRootCa(KeyStore keyStore) {
         generator = new ServerCertificateGenerator(keyStore, serverCertificatesOptions);
     }
 
     @Override
-    public KeyStore createCertForHost(String hostname) {
-        return null;
-    }
-
-    @Override
-    public KeyStore createCertForHost(CertData certData) throws IOException {
+    public KeyStore createCertificate(CertData certData) throws GenerationException {
         if (generator == null) {
-            throw new MissingRootCertificateException("The root CA certificate was not set.");
+            throw new GenerationException("The root CA certificate was not set.");
         }
-
-        try {
-            return generator.generate(certData);
-        } catch (GenerationException e) {
-            throw new IOException(e);
-        }
+        return generator.generate(certData);
     }
 }

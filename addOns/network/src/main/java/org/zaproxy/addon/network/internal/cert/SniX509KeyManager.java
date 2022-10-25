@@ -42,8 +42,6 @@ import javax.net.ssl.X509ExtendedKeyManager;
 import javax.net.ssl.X509KeyManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.parosproxy.paros.security.CertData;
-import org.parosproxy.paros.security.SslCertificateService;
 
 /**
  * A key manager for generated server certificates.
@@ -55,7 +53,7 @@ public class SniX509KeyManager extends X509ExtendedKeyManager {
 
     private static final Logger LOGGER = LogManager.getLogger(SniX509KeyManager.class);
 
-    private final SslCertificateService sslCertificateService;
+    private final ServerCertificateService certificateService;
     private final String fallbackHostname;
     private InetAddress listeningAddress;
     private X509KeyManager x509KeyManager;
@@ -63,18 +61,18 @@ public class SniX509KeyManager extends X509ExtendedKeyManager {
     /**
      * Constructs a {@code SniX509KeyManager} with the given data.
      *
-     * @param sslCertificateService the service used to generate the server certificates.
+     * @param certificateService the service used to generate the server certificates.
      * @param listeningAddress the address the server is listening to.
      * @param fallbackHostname the hostname to use if none was provided during the SSL/TLS handshake
      *     (SNI).
-     * @throws NullPointerException if the given {@code sslCertificateService} or {@code
+     * @throws NullPointerException if the given {@code certificateService} or {@code
      *     listeningAddress} is null.
      */
     public SniX509KeyManager(
-            SslCertificateService sslCertificateService,
+            ServerCertificateService certificateService,
             InetAddress listeningAddress,
             String fallbackHostname) {
-        this.sslCertificateService = Objects.requireNonNull(sslCertificateService);
+        this.certificateService = Objects.requireNonNull(certificateService);
         this.listeningAddress = Objects.requireNonNull(listeningAddress);
         this.fallbackHostname = fallbackHostname;
     }
@@ -109,7 +107,7 @@ public class SniX509KeyManager extends X509ExtendedKeyManager {
                     KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
 
             initKeyManagerFactoryWithCertForHostname(
-                    sslCertificateService, keyManagerFactory, hostname, listeningAddress);
+                    certificateService, keyManagerFactory, hostname, listeningAddress);
         } catch (GeneralSecurityException | IOException e) {
             logAndThrow(
                     "Failed to generate the certificate for '"
@@ -159,7 +157,7 @@ public class SniX509KeyManager extends X509ExtendedKeyManager {
     }
 
     private static void initKeyManagerFactoryWithCertForHostname(
-            SslCertificateService sslCertificateService,
+            ServerCertificateService certificateService,
             KeyManagerFactory keyManagerFactory,
             String hostname,
             InetAddress listeningAddress)
@@ -178,8 +176,8 @@ public class SniX509KeyManager extends X509ExtendedKeyManager {
                     new CertData.Name(CertData.Name.IP_ADDRESS, hostname));
         }
 
-        KeyStore ks = sslCertificateService.createCertForHost(certData);
-        keyManagerFactory.init(ks, SslCertificateService.PASSPHRASE);
+        KeyStore ks = certificateService.createCertificate(certData);
+        keyManagerFactory.init(ks, CertificateUtils.getPassphrase());
     }
 
     private static boolean isIpAddress(String value) {

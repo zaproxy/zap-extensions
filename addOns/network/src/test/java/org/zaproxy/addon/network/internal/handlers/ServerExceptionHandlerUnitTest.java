@@ -42,7 +42,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
-import org.parosproxy.paros.security.MissingRootCertificateException;
 import org.zaproxy.addon.network.TestLogAppender;
 import org.zaproxy.addon.network.internal.cert.GenerationException;
 
@@ -117,21 +116,6 @@ class ServerExceptionHandlerUnitTest {
                 hasItem(
                         startsWith(
                                 "WARN Failed while creating certificate, cause: java.lang.Exception: Cause")));
-    }
-
-    @Test
-    void shouldLogMissingRootCertificateExceptionAsWarn() throws Exception {
-        // Given
-        Exception cause = new MissingRootCertificateException("No Root CA cert");
-        Exception exception = new DecoderException(cause);
-        // When
-        serverExceptionHandler.exceptionCaught(ctx, exception);
-        // Then
-        assertThat(
-                logEvents,
-                hasItem(
-                        startsWith(
-                                "WARN Failed while creating certificate, cause: No Root CA cert")));
     }
 
     @Test

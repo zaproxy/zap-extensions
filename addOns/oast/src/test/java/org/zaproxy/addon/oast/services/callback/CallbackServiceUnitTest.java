@@ -36,6 +36,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.ExtensionLoader;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -62,8 +66,10 @@ class CallbackServiceUnitTest extends TestUtils {
     @BeforeAll
     static void setupAll() {
         mockMessages(new ExtensionOast());
+
+        Control.initSingletonForTesting(mock(Model.class), mock(ExtensionLoader.class));
         extensionNetwork = new ExtensionNetwork();
-        extensionNetwork.init();
+        extensionNetwork.hook(mock(ExtensionHook.class));
     }
 
     @AfterAll

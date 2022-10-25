@@ -85,17 +85,15 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.SSLConnector;
-import org.parosproxy.paros.security.CachedSslCertifificateServiceImpl;
-import org.parosproxy.paros.security.CertData;
-import org.parosproxy.paros.security.MissingRootCertificateException;
-import org.parosproxy.paros.security.SslCertificateService;
 import org.parosproxy.paros.view.OptionsDialog;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.network.LocalServersOptions.ServersChangedListener;
 import org.zaproxy.addon.network.internal.TlsUtils;
+import org.zaproxy.addon.network.internal.cert.CertData;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
 import org.zaproxy.addon.network.internal.cert.GenerationException;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateGenerator;
+import org.zaproxy.addon.network.internal.cert.ServerCertificateService;
 import org.zaproxy.addon.network.internal.client.HttpProxy;
 import org.zaproxy.addon.network.internal.client.LegacyUtils;
 import org.zaproxy.addon.network.internal.client.ZapAuthenticator;
@@ -127,8 +125,6 @@ import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiElement;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.brk.ExtensionBreak;
-import org.zaproxy.zap.extension.dynssl.DynSSLParam;
-import org.zaproxy.zap.extension.dynssl.ExtensionDynSSL;
 import org.zaproxy.zap.utils.ZapPortNumberSpinner;
 import org.zaproxy.zap.view.ProxyDialog;
 
@@ -155,8 +151,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     private static final int ARG_HOST_IDX = 3;
     private static final int ARG_PORT_IDX = 4;
 
-    Consumer<SslCertificateService> setSslCertificateService;
-    boolean handleServerCerts;
     boolean handleClient;
     private HttpSenderNetwork<? extends HttpSenderContext> httpSenderNetwork;
     boolean handleClientCerts;
@@ -175,7 +169,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     private ServerCertificatesOptions serverCertificatesOptions;
     private ServerCertificatesOptionsPanel serverCertificatesOptionsPanel;
 
-    private SslCertificateService sslCertificateService;
+    private ServerCertificateServiceImpl serverCertificateService;
 
     private LocalServersOptions localServersOptions;
     private LocalServersOptionsPanel localServersOptionsPanel;
@@ -270,10 +264,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         return clientCertificatesOptions;
     }
 
-    boolean isHandleServerCerts() {
-        return handleServerCerts;
-    }
-
     boolean isHandleClientCerts() {
         return handleClientCerts;
     }
@@ -298,28 +288,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     public void init() {
         localServers = Collections.synchronizedMap(new HashMap<>());
 
-        handleServerCerts = isDeprecated(ExtensionDynSSL.class);
-        setSslCertificateService =
-                new Consumer<SslCertificateService>() {
-
-                    Method method;
-
-                    @Override
-                    public void accept(SslCertificateService sslCertificateService) {
-                        try {
-                            if (method == null) {
-                                method =
-                                        SSLConnector.class.getMethod(
-                                                "setSslCertificateService",
-                                                SslCertificateService.class);
-                            }
-                            method.invoke(SSLConnector.class, sslCertificateService);
-                        } catch (Exception e) {
-                            LOGGER.error(
-                                    "An error occurred while setting the certificates service:", e);
-                        }
-                    }
-                };
         handleLocalServers = isDeprecated(ProxyServer.class);
 
         if (handleLocalServers) {
@@ -341,10 +309,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                     LOGGER.error("An error occurred while getting the break methods:", e);
                 }
             }
-        }
-
-        if (!handleServerCerts) {
-            sslCertificateService = new LegacySslCertificateServiceImpl();
         }
 
         handleClientCerts = isDeprecated(OptionsParamCertificate.class);
@@ -469,7 +433,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         return new HttpServer(
                 getMainEventLoopGroup(),
                 getMainEventExecutorGroup(),
-                sslCertificateService,
+                serverCertificateService,
                 handler);
     }
 
@@ -546,13 +510,9 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         legacyProxyListenerHandler = new LegacyProxyListenerHandler();
         Control.getSingleton().getExtensionLoader().addProxyServer(legacyProxyListenerHandler);
 
-        if (!handleServerCerts) {
-            return;
-        }
-
         extensionHook.addCommandLine(createCommandLineArgs(handleLocalServers));
 
-        sslCertificateService = new SslCertificateServiceImpl();
+        serverCertificateService = new ServerCertificateServiceImpl();
 
         serverCertificatesOptions = new ServerCertificatesOptions();
         extensionHook.addOptionsParamSet(serverCertificatesOptions);
@@ -886,7 +846,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         return new LocalServer(
                 getMainEventLoopGroup(),
                 getMainEventExecutorGroup(),
-                sslCertificateService,
+                serverCertificateService,
                 legacyProxyListenerHandler,
                 passThroughHandler,
                 httpSenderHandler,
@@ -1197,10 +1157,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     @Override
     public void execute(CommandLineArgument[] arguments) {
-        if (!handleServerCerts) {
-            return;
-        }
-
         if (arguments[ARG_CERT_LOAD].isEnabled()) {
             Path file = Paths.get(arguments[ARG_CERT_LOAD].getArguments().firstElement());
             if (!Files.isReadable(file)) {
@@ -1323,8 +1279,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         return Collections.emptyList();
     }
 
-    SslCertificateService getSslCertificateService() {
-        return sslCertificateService;
+    ServerCertificateService getServerCertificateService() {
+        return serverCertificateService;
     }
 
     ServerCertificatesOptions getServerCertificatesOptions() {
@@ -1337,13 +1293,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     @Override
     public void start() {
-        if (!handleServerCerts) {
-            return;
-        }
-
-        if (loadRootCaCert()) {
-            setSslCertificateService(sslCertificateService);
-        }
+        loadRootCaCert();
     }
 
     @Override
@@ -1363,58 +1313,20 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         }
     }
 
-    private void setSslCertificateService(SslCertificateService sslCertificateService) {
-        setSslCertificateService.accept(sslCertificateService);
-    }
-
-    class SslCertificateServiceImpl implements SslCertificateService {
+    class ServerCertificateServiceImpl implements ServerCertificateService {
 
         private ServerCertificateGenerator generator;
 
-        @Override
-        public void initializeRootCA(KeyStore keyStore) {
+        public void setRootCaCert(KeyStore keyStore) {
             generator = new ServerCertificateGenerator(keyStore, serverCertificatesOptions);
         }
 
         @Override
-        public KeyStore createCertForHost(String hostname) {
-            // Nothing to do, no longer used by core.
-            return null;
-        }
-
-        @Override
-        public KeyStore createCertForHost(CertData certData) throws IOException {
+        public KeyStore createCertificate(CertData certData) throws GenerationException {
             if (generator == null) {
-                throw new MissingRootCertificateException("The root CA certificate was not set.");
+                throw new GenerationException("The root CA certificate was not set.");
             }
-            try {
-                return generator.generate(certData);
-            } catch (GenerationException e) {
-                throw new IOException(e);
-            }
-        }
-    }
-
-    private static class LegacySslCertificateServiceImpl implements SslCertificateService {
-
-        @Override
-        public void initializeRootCA(KeyStore keyStore) {
-            // Nothing to do, not called.
-        }
-
-        @Override
-        public KeyStore createCertForHost(String hostname) {
-            // Nothing to do, no longer used by core.
-            return null;
-        }
-
-        @Override
-        public KeyStore createCertForHost(CertData certData) throws IOException {
-            try {
-                return CachedSslCertifificateServiceImpl.getService().createCertForHost(certData);
-            } catch (Exception e) {
-                throw new IOException(e);
-            }
+            return generator.generate(certData);
         }
     }
 
@@ -1460,7 +1372,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     boolean applyRootCaCert() {
         try {
-            sslCertificateService.initializeRootCA(getRootCaKeyStore());
+            serverCertificateService.setRootCaCert(getRootCaKeyStore());
             return true;
         } catch (Exception e) {
             LOGGER.error("An error occurred while initializing the certificate service:", e);
@@ -1493,11 +1405,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             httpSenderNetwork.unload();
         }
 
-        if (!handleServerCerts) {
-            return;
-        }
-
-        setSslCertificateService(null);
         Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
 
         if (hasView()) {
@@ -1551,100 +1458,69 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     }
 
     KeyStore getRootCaKeyStore() {
-        if (handleServerCerts) {
-            return serverCertificatesOptions.getRootCaKeyStore();
-        }
-
-        DynSSLParam param = Model.getSingleton().getOptionsParam().getParamSet(DynSSLParam.class);
-        if (param == null) {
-            return null;
-        }
-        return param.getRootca();
+        return serverCertificatesOptions.getRootCaKeyStore();
     }
 
     boolean generateRootCaCert() {
-        if (handleServerCerts) {
-            try {
-                LOGGER.info("Creating new root CA certificate.");
-                KeyStore keyStore =
-                        CertificateUtils.createRootCaKeyStore(
-                                serverCertificatesOptions.getRootCaCertConfig());
-                serverCertificatesOptions.setRootCaKeyStore(keyStore);
-                LOGGER.info("New root CA certificate created.");
-            } catch (Exception e) {
-                LOGGER.error("Failed to create new root CA certificate:", e);
-                return false;
-            }
-
-            return applyRootCaCert();
+        try {
+            LOGGER.info("Creating new root CA certificate.");
+            KeyStore keyStore =
+                    CertificateUtils.createRootCaKeyStore(
+                            serverCertificatesOptions.getRootCaCertConfig());
+            serverCertificatesOptions.setRootCaKeyStore(keyStore);
+            LOGGER.info("New root CA certificate created.");
+        } catch (Exception e) {
+            LOGGER.error("Failed to create new root CA certificate:", e);
+            return false;
         }
 
-        ExtensionDynSSL extDyn =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionDynSSL.class);
-        if (extDyn != null) {
-            try {
-                extDyn.createNewRootCa();
-                return true;
-            } catch (Exception e) {
-                LOGGER.error("Failed to create the new Root CA cert:", e);
-            }
-        }
-        return false;
+        return applyRootCaCert();
     }
 
     String importRootCaCert(Path pemFile) {
-        if (handleServerCerts) {
-            String pem;
-            try {
-                pem = new String(Files.readAllBytes(pemFile), StandardCharsets.US_ASCII);
-            } catch (IOException e) {
-                return Constant.messages.getString(
-                        "network.importpem.failedreadfile", e.getLocalizedMessage());
-            }
-
-            byte[] certificate;
-            try {
-                certificate = CertificateUtils.extractCertificate(pem);
-                if (certificate.length == 0) {
-                    return Constant.messages.getString(
-                            "network.importpem.nocertsection",
-                            CertificateUtils.BEGIN_CERTIFICATE_TOKEN,
-                            CertificateUtils.END_CERTIFICATE_TOKEN);
-                }
-            } catch (IllegalArgumentException e) {
-                return Constant.messages.getString("network.importpem.certnobase64");
-            }
-
-            byte[] key;
-            try {
-                key = CertificateUtils.extractPrivateKey(pem);
-                if (key.length == 0) {
-                    return Constant.messages.getString(
-                            "network.importpem.noprivkeysection",
-                            CertificateUtils.BEGIN_PRIVATE_KEY_TOKEN,
-                            CertificateUtils.END_PRIVATE_KEY_TOKEN);
-                }
-            } catch (IllegalArgumentException e) {
-                return Constant.messages.getString("network.importpem.privkeynobase64");
-            }
-
-            try {
-                KeyStore keyStore = CertificateUtils.pemToKeyStore(certificate, key);
-                serverCertificatesOptions.setRootCaKeyStore(keyStore);
-                applyRootCaCert();
-                return null;
-            } catch (Exception e) {
-                return Constant.messages.getString(
-                        "network.importpem.failedkeystore", e.getLocalizedMessage());
-            }
+        String pem;
+        try {
+            pem = new String(Files.readAllBytes(pemFile), StandardCharsets.US_ASCII);
+        } catch (IOException e) {
+            return Constant.messages.getString(
+                    "network.importpem.failedreadfile", e.getLocalizedMessage());
         }
 
-        ExtensionDynSSL extDyn =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionDynSSL.class);
-        if (extDyn != null) {
-            return extDyn.importRootCaCertificate(pemFile.toFile());
+        byte[] certificate;
+        try {
+            certificate = CertificateUtils.extractCertificate(pem);
+            if (certificate.length == 0) {
+                return Constant.messages.getString(
+                        "network.importpem.nocertsection",
+                        CertificateUtils.BEGIN_CERTIFICATE_TOKEN,
+                        CertificateUtils.END_CERTIFICATE_TOKEN);
+            }
+        } catch (IllegalArgumentException e) {
+            return Constant.messages.getString("network.importpem.certnobase64");
         }
-        return "";
+
+        byte[] key;
+        try {
+            key = CertificateUtils.extractPrivateKey(pem);
+            if (key.length == 0) {
+                return Constant.messages.getString(
+                        "network.importpem.noprivkeysection",
+                        CertificateUtils.BEGIN_PRIVATE_KEY_TOKEN,
+                        CertificateUtils.END_PRIVATE_KEY_TOKEN);
+            }
+        } catch (IllegalArgumentException e) {
+            return Constant.messages.getString("network.importpem.privkeynobase64");
+        }
+
+        try {
+            KeyStore keyStore = CertificateUtils.pemToKeyStore(certificate, key);
+            serverCertificatesOptions.setRootCaKeyStore(keyStore);
+            applyRootCaCert();
+            return null;
+        } catch (Exception e) {
+            return Constant.messages.getString(
+                    "network.importpem.failedkeystore", e.getLocalizedMessage());
+        }
     }
 
     String getProxyPacContent(String hostname) {

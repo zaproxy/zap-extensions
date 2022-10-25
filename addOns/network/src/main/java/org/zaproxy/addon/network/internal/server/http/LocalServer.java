@@ -26,8 +26,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
 import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.security.SslCertificateService;
 import org.zaproxy.addon.network.internal.ChannelAttributes;
+import org.zaproxy.addon.network.internal.cert.ServerCertificateService;
 import org.zaproxy.addon.network.internal.handlers.PassThroughHandler;
 import org.zaproxy.addon.network.internal.server.http.LocalServerHandler.SerialiseState;
 import org.zaproxy.addon.network.internal.server.http.handlers.AliasApiRewriteHandler;
@@ -61,7 +61,7 @@ public class LocalServer extends HttpServer {
      *
      * @param group the event loop group.
      * @param mainHandlerExecutor the event executor for the main handler.
-     * @param sslCertificateService the certificate service.
+     * @param certificateService the certificate service.
      * @param legacyHandler the handler for legacy (core) listeners.
      * @param passThroughHandler the pass-through handler.
      * @param httpSenderHandler the HTTP Sender handler.
@@ -72,14 +72,14 @@ public class LocalServer extends HttpServer {
     public LocalServer(
             NioEventLoopGroup group,
             EventExecutorGroup mainHandlerExecutor,
-            SslCertificateService sslCertificateService,
+            ServerCertificateService certificateService,
             LegacyProxyListenerHandler legacyHandler,
             PassThroughHandler passThroughHandler,
             HttpSenderHandler httpSenderHandler,
             LocalServerConfig serverConfig,
             SerialiseState serialiseState,
             Model model) {
-        super(group, mainHandlerExecutor, sslCertificateService);
+        super(group, mainHandlerExecutor, certificateService);
         this.legacyHandler = legacyHandler;
         this.passThroughHandler = Objects.requireNonNull(passThroughHandler);
         this.httpSenderHandler = httpSenderHandler;
