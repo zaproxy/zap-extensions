@@ -362,11 +362,7 @@ public class ImportExportApi extends ApiImplementor {
     private static void sendRequest(
             HttpMessage request, boolean followRedirects, Processor<HttpMessage> processor)
             throws IOException, ApiException {
-        HttpSender sender =
-                new HttpSender(
-                        Model.getSingleton().getOptionsParam().getConnectionParam(),
-                        true,
-                        HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpSender sender = new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR);
 
         if (followRedirects) {
             ModeRedirectionValidator redirector = new ModeRedirectionValidator(processor);

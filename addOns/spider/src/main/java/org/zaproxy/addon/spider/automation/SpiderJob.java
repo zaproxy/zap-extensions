@@ -74,12 +74,7 @@ public class SpiderJob extends AutomationJob {
     private Parameters parameters = new Parameters();
 
     private UrlRequester urlRequester =
-            new UrlRequester(
-                    this.getName(),
-                    new HttpSender(
-                            Model.getSingleton().getOptionsParam().getConnectionParam(),
-                            true,
-                            HttpSender.SPIDER_INITIATOR));
+            new UrlRequester(this.getName(), new HttpSender(HttpSender.SPIDER_INITIATOR));
 
     public SpiderJob() {
         this.data = new Data(this, parameters);

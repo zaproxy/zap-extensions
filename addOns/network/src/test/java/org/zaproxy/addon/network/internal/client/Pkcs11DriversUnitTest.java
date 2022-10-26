@@ -45,7 +45,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.testutils.TestUtils;
+import org.zaproxy.addon.network.TestUtils;
 
 /** Unit test for {@link Pkcs11Drivers}. */
 class Pkcs11DriversUnitTest extends TestUtils {

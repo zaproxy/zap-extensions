@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Sub Resource Integrity Attribute
 
 ### Changed
+- Update minimum ZAP version to 2.12.0.
 - Content Cacheability scan rule now has functionality to generate example alerts for documentation purposes (Issue 7502).
 
 ### Removed

@@ -37,7 +37,6 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
@@ -55,9 +54,6 @@ public class Spider {
 
     /** The spider parameters. */
     private SpiderParam spiderParam;
-
-    /** The connection parameters. */
-    private ConnectionParam connectionParam;
 
     /** The model. */
     private Model model;
@@ -143,7 +139,6 @@ public class Spider {
      * @param id the ID of the spider, usually a unique integer
      * @param extension the extension
      * @param spiderParam the spider param
-     * @param connectionParam the connection param
      * @param model the model
      * @param scanContext if a scan context is set, only URIs within the context are fetched and
      *     processed
@@ -152,14 +147,12 @@ public class Spider {
             String id,
             ExtensionSpider2 extension,
             SpiderParam spiderParam,
-            ConnectionParam connectionParam,
             Model model,
             Context scanContext) {
         super();
         log.info("Spider initializing...");
         this.id = id;
         this.spiderParam = spiderParam;
-        this.connectionParam = connectionParam;
         this.model = model;
         this.extension = extension;
         this.controller = new SpiderController(this, extension.getCustomParsers());
@@ -504,13 +497,10 @@ public class Spider {
                         new SpiderThreadFactory("ZAP-SpiderThreadPool-" + id + "-thread-"));
 
         // Initialize the HTTP sender
-        httpSender =
-                new HttpSender(
-                        connectionParam,
-                        connectionParam.isHttpStateEnabled()
-                                ? true
-                                : !spiderParam.isAcceptCookies(),
-                        HttpSender.SPIDER_INITIATOR);
+        httpSender = new HttpSender(HttpSender.SPIDER_INITIATOR);
+        httpSender.setUseGlobalState(
+                httpSender.isGlobalStateEnabled() || !spiderParam.isAcceptCookies());
+
         // Do not follow redirections because the request is not updated, the redirections will be
         // handled manually.
         httpSender.setFollowRedirect(false);
@@ -576,10 +566,7 @@ public class Spider {
         } catch (InterruptedException ignore) {
             log.warn("Interrupted while awaiting for all spider threads to stop...");
         }
-        if (httpSender != null) {
-            this.getHttpSender().shutdown();
-            httpSender = null;
-        }
+        httpSender = null;
 
         // Notify the controller to clean up memory
         controller.reset();
@@ -597,10 +584,7 @@ public class Spider {
 
         log.info("Spidering process is complete. Shutting down...");
         this.stopped = true;
-        if (httpSender != null) {
-            this.getHttpSender().shutdown();
-            httpSender = null;
-        }
+        httpSender = null;
 
         // Notify the controller to clean up memory
         controller.reset();

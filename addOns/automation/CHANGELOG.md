@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Update minimum ZAP version to 2.12.0.
+
 ### Removed
 - The spider job was removed, it is provided by the Spider add-on (Issue 3113).
 

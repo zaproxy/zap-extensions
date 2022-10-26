@@ -82,7 +82,6 @@ import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiParameter;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
-import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link NetworkApi}. */
 class NetworkApiUnitTest extends TestUtils {

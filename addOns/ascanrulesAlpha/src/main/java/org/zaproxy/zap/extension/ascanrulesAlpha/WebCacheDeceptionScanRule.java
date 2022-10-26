@@ -30,7 +30,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -135,9 +134,8 @@ public class WebCacheDeceptionScanRule extends AbstractAppPlugin {
 
         HttpMessage unauthorisedMessage = new HttpMessage(uri);
         unauthorisedMessage.getRequestHeader().setMethod(method);
-        HttpSender sender =
-                new HttpSender(
-                        Model.getSingleton().getOptionsParam().getConnectionParam(), false, 1);
+        HttpSender sender = new HttpSender(HttpSender.ACTIVE_SCANNER_INITIATOR);
+        sender.setUseGlobalState(false);
         sender.sendAndReceive(unauthorisedMessage);
         return unauthorisedMessage;
     }

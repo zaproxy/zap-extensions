@@ -66,10 +66,9 @@ import org.zaproxy.addon.network.internal.ChannelAttributes;
 import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.addon.network.testutils.TestClient;
 import org.zaproxy.addon.network.testutils.TextTestClient;
-import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link BaseServer}. */
-class BaseServerUnitTest extends TestUtils {
+class BaseServerUnitTest {
 
     private static NioEventLoopGroup eventLoopGroup;
     private static TestClient client;
@@ -422,5 +421,11 @@ class BaseServerUnitTest extends TestUtils {
         rootLoggerconfig.setLevel(Level.ALL);
         context.updateLoggers();
         return logEvents;
+    }
+
+    private static int getRandomPort() throws IOException {
+        try (ServerSocket server = new ServerSocket(0)) {
+            return server.getLocalPort();
+        }
     }
 }

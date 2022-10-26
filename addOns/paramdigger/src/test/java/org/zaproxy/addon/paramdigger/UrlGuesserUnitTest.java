@@ -50,7 +50,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.TableAlert;
 import org.parosproxy.paros.db.TableHistory;
 import org.parosproxy.paros.model.HistoryReference;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.paramdigger.gui.ParamDiggerHistoryTableModel;
@@ -63,8 +62,7 @@ public class UrlGuesserUnitTest extends TestUtils {
     private ExecutorService executor;
     private TableHistory tableHistory;
     private ParamDiggerHistoryTableModel tableModel;
-    private HttpSender httpSender =
-            new HttpSender(Model.getSingleton().getOptionsParam().getConnectionParam(), true, 17);
+    private HttpSender httpSender = new HttpSender(HttpSender.PARAM_DIGGER_INITIATOR);
     private ParamDiggerConfig config;
     private static String TEST_WORDLIST_FILE = "wordlists/UrlGuesserTestList.txt";
     private Path file;

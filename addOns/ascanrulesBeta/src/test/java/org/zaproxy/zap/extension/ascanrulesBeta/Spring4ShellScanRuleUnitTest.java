@@ -146,7 +146,7 @@ class Spring4ShellScanRuleUnitTest extends ActiveScannerTest<Spring4ShellScanRul
         assertThat(alertsRaised.get(0).getName(), is(equalTo("Spring4Shell")));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(3)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(2)));
-        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("HTTP/1.1 400 Bad Request ")));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("HTTP/1.1 400 Bad Request")));
         assertThat(alertsRaised.get(0).getAttack(), is(equalTo(Spring4ShellScanRule.ATTACK)));
     }
 
@@ -177,7 +177,7 @@ class Spring4ShellScanRuleUnitTest extends ActiveScannerTest<Spring4ShellScanRul
         assertThat(alertsRaised.get(0).getName(), is(equalTo("Spring4Shell")));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(3)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(2)));
-        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("HTTP/1.1 400 Bad Request ")));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("HTTP/1.1 400 Bad Request")));
         assertThat(alertsRaised.get(0).getAttack(), is(equalTo(Spring4ShellScanRule.ATTACK)));
     }
 

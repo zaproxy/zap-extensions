@@ -26,14 +26,14 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.httpclient.HttpState;
-import org.parosproxy.paros.network.ConnectionParam;
 import org.zaproxy.addon.network.internal.client.HttpProxy;
 import org.zaproxy.addon.network.internal.client.HttpProxyExclusion;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
 import org.zaproxy.zap.network.DomainMatcher;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-public class LegacyConnectionParam extends ConnectionParam {
+@SuppressWarnings("deprecation")
+public class LegacyConnectionParam extends org.parosproxy.paros.network.ConnectionParam {
 
     private final Supplier<HttpState> httpStateSupplier;
     private final ConnectionOptions connectionOptions;
@@ -130,13 +130,6 @@ public class LegacyConnectionParam extends ConnectionParam {
                                 oldProxy.getPasswordAuthentication().getUserName(),
                                 proxyChainPassword.toCharArray()));
         connectionOptions.setHttpProxy(httpProxy);
-    }
-
-    @Override
-    @Deprecated
-    public void setProxyChainSkipName(String proxyChainSkipName) {
-        // Overridden to expose in the ZAP API.
-        super.setProxyChainSkipName(proxyChainSkipName);
     }
 
     @Override

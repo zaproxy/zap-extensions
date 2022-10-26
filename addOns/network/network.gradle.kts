@@ -8,7 +8,7 @@ configurations.api { extendsFrom(bouncyCastle) }
 zapAddOn {
     addOnName.set("Network")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.11.1")
+    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -54,7 +54,7 @@ dependencies {
     implementation("io.netty:netty-handler:$nettyVersion")
 
     implementation("org.apache.httpcomponents.client5:httpclient5:5.2-beta1")
-    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.17.2") {
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.19.0") {
         // Provided by ZAP.
         exclude(group = "org.apache.logging.log4j")
     }
@@ -69,6 +69,11 @@ dependencies {
         setTransitive(false)
     }
 
-    testImplementation(project(":testutils"))
-    testImplementation("org.apache.logging.log4j:log4j-core:2.17.2")
+    testImplementation("org.hamcrest:hamcrest-library:2.2")
+    val jupiterVersion = "5.8.1"
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$jupiterVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:$jupiterVersion")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$jupiterVersion")
+    testImplementation("org.mockito:mockito-junit-jupiter:4.0.0")
+    testImplementation("org.apache.logging.log4j:log4j-core:2.19.0")
 }

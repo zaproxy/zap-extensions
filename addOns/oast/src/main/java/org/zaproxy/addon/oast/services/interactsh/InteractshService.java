@@ -57,14 +57,12 @@ import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemWriter;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.OptionsChangedListener;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
-import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.addon.oast.OastService;
 import org.zaproxy.addon.oast.OastState;
 import org.zaproxy.addon.oast.OastState.OastStateEventType;
@@ -100,12 +98,7 @@ public class InteractshService extends OastService implements OptionsChangedList
     }
 
     InteractshService(InteractshParam param) {
-        httpSender =
-                new HttpSender(
-                        Model.getSingleton().getOptionsParam().getConnectionParam(),
-                        true,
-                        // TODO: Replace on next ZAP release with HttpSender.OAST_INITIATOR
-                        ExtensionOast.HTTP_SENDER_OAST_INITIATOR);
+        httpSender = new HttpSender(HttpSender.OAST_INITIATOR);
         secretKey = UUID.randomUUID();
         correlationId = RandomStringUtils.randomAlphanumeric(20).toLowerCase(Locale.ROOT);
         this.param = param;

@@ -308,11 +308,7 @@ public class AttackThread extends Thread {
 
     private HttpSender getHttpSender() {
         if (httpSender == null) {
-            httpSender =
-                    new HttpSender(
-                            Model.getSingleton().getOptionsParam().getConnectionParam(),
-                            true,
-                            HttpSender.MANUAL_REQUEST_INITIATOR);
+            httpSender = new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR);
         }
         return httpSender;
     }

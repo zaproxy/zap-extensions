@@ -53,12 +53,7 @@ class CloudMetadataScanRuleUnitTest extends ActiveScannerTest<CloudMetadataScanR
         // Given
         String path = "/latest/meta-data/";
         String body = "<html><head></head><H>401 - Unauthorized</H1><html>";
-        this.nano.addHandler(
-                createHandler(
-                        path,
-                        newFixedLengthResponse(
-                                Response.Status.UNAUTHORIZED, NanoHTTPD.MIME_HTML, body),
-                        ""));
+        this.nano.addHandler(createHandler(path, Response.Status.UNAUTHORIZED, body, ""));
         HttpMessage msg = this.getHttpMessage(path);
         rule.init(msg, this.parent);
         // When
@@ -81,11 +76,7 @@ class CloudMetadataScanRuleUnitTest extends ActiveScannerTest<CloudMetadataScanR
         String path = "/latest/meta-data/";
         // https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-retrieval.html
         String body = "<html><head></head><H></H1>ami-id\nami-launch-index<html>";
-        this.nano.addHandler(
-                createHandler(
-                        path,
-                        newFixedLengthResponse(Response.Status.OK, NanoHTTPD.MIME_HTML, body),
-                        host));
+        this.nano.addHandler(createHandler(path, Response.Status.OK, body, host));
         HttpMessage msg = this.getHttpMessage(path);
         rule.init(msg, this.parent);
         // When
@@ -118,12 +109,13 @@ class CloudMetadataScanRuleUnitTest extends ActiveScannerTest<CloudMetadataScanR
                 is(equalTo(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getValue())));
     }
 
-    private static NanoServerHandler createHandler(String path, Response response, String host) {
+    private static NanoServerHandler createHandler(
+            String path, Response.Status status, String body, String host) {
         return new NanoServerHandler(path) {
             @Override
             protected Response serve(IHTTPSession session) {
-                if (session.getHeaders().get("host").startsWith(host) || host.isEmpty()) {
-                    return response;
+                if (session.getHeaders().get("host").equals(host) || host.isEmpty()) {
+                    return newFixedLengthResponse(status, NanoHTTPD.MIME_HTML, body);
                 }
                 return newFixedLengthResponse(Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "");
             }

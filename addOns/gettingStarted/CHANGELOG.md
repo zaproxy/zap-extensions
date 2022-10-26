@@ -6,8 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
-- Update minimum ZAP version to 2.11.1.
-- Updated for 2.12.0.
+- Update minimum ZAP version to 2.12.0.
 - Added note about Firefox's Enhanced Tracking Protection.
 
 ## [13] - 2021-10-06

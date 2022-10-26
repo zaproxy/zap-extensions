@@ -47,7 +47,6 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.PersistentConnectionListener;
-import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.httppanel.component.HttpPanelComponentInterface;
@@ -193,17 +192,17 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor
      * @param msg Contains request & response headers.
      * @param remoteReader Content arrives continuously and is forwarded to local client.
      * @param localWriter Received content is written here.
-     * @param method the method used to establish the connection.
+     * @param socket the socket of the connection.
      */
     public void addEventStream(
             HttpMessage msg,
             final InputStream remoteReader,
             final OutputStream localWriter,
-            ZapGetMethod method) {
+            Socket socket) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(remoteReader, charset));
         BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(localWriter, charset));
 
-        EventStreamProxy proxy = new EventStreamProxy(msg, reader, writer, method);
+        EventStreamProxy proxy = new EventStreamProxy(msg, reader, writer, socket);
         synchronized (observers) {
             for (EventStreamObserver observer : observers) {
                 proxy.addObserver(observer);
@@ -219,14 +218,16 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public boolean onHandshakeResponse(
-            HttpMessage httpMessage, Socket inSocket, ZapGetMethod method) {
+            HttpMessage httpMessage, Socket inSocket, org.zaproxy.zap.ZapGetMethod method) {
         boolean keepSocketOpen = false;
 
         if (httpMessage.isEventStream()) {
             logger.debug("Got Server-Sent Events stream.");
 
-            ZapGetMethod handshakeMethod = (ZapGetMethod) httpMessage.getUserObject();
+            org.zaproxy.zap.ZapGetMethod handshakeMethod =
+                    (org.zaproxy.zap.ZapGetMethod) httpMessage.getUserObject();
             if (handshakeMethod != null) {
                 keepSocketOpen = true;
 
@@ -238,7 +239,7 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor
                     inSocket.setTcpNoDelay(true);
                     inSocket.setKeepAlive(true);
 
-                    addEventStream(httpMessage, inputStream, inSocket.getOutputStream(), method);
+                    addEventStream(httpMessage, inputStream, inSocket.getOutputStream(), inSocket);
                 } catch (IOException e) {
                     logger.warn(e.getMessage(), e);
                     keepSocketOpen = false;

@@ -32,31 +32,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
-import java.util.regex.Pattern;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpVersion;
 import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.URIException;
-import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
-import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
-import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.network.HttpBody;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpMethodHelper;
 import org.parosproxy.paros.network.HttpRequestHeader;
-import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpSender;
-import org.parosproxy.paros.network.SSLConnector;
 import org.zaproxy.addon.commonlib.http.ComparableResponse;
 import org.zaproxy.addon.paramdigger.gui.ParamDiggerHistoryTableModel;
-import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.utils.ThreadUtils;
 
 public class HeaderGuesser implements Runnable {
@@ -87,8 +75,6 @@ public class HeaderGuesser implements Runnable {
     private static final String POISON_DEFINITION_FIRST =
             "paramdigger.results.poison.definition.first";
 
-    private static boolean useHttpSender;
-
     private static final int PORT = 31337;
     private static final String[] PORTS = {":" + PORT, ":@" + PORT, " " + PORT};
 
@@ -100,15 +86,6 @@ public class HeaderGuesser implements Runnable {
 
     private static final String X_FORWARDED_PORT = "X-Forwarded-Port";
     private static final String FPORT = "" + PORT;
-
-    static {
-        try {
-            Class.forName("org.zaproxy.addon.network.internal.client.BaseHttpSender");
-            useHttpSender = SSLConnector.class.getAnnotation(Deprecated.class) != null;
-        } catch (Exception e) {
-            useHttpSender = false;
-        }
-    }
 
     public HeaderGuesser(
             int id, GuesserScan scan, HttpSender httpSender, ExecutorService executor) {
@@ -451,7 +428,8 @@ public class HeaderGuesser implements Runnable {
             for (int i = 0; i < headers.length; i++) {
                 if (headers[i].equalsIgnoreCase(HttpRequestHeader.HOST)) {
                     String host = new URI(url, true).getHost();
-                    setMessageWithCustomHostHeader(msg, host + values[i]);
+                    msg.setUserObject(Collections.singletonMap("host", host + values[i]));
+                    httpSender.sendAndReceive(msg);
                 }
             }
             httpSender.sendAndReceive(msg);
@@ -460,8 +438,9 @@ public class HeaderGuesser implements Runnable {
                         try {
                             table.addHistoryReference(
                                     new HistoryReference(
-                                            // TODO: Add History Reference Type
-                                            Model.getSingleton().getSession(), 23, msg));
+                                            Model.getSingleton().getSession(),
+                                            HistoryReference.TYPE_PARAM_DIGGER,
+                                            msg));
                         } catch (Exception e) {
                             logger.error(e, e);
                         }
@@ -469,72 +448,5 @@ public class HeaderGuesser implements Runnable {
             return msg;
         }
         return null;
-    }
-
-    private void setMessageWithCustomHostHeader(HttpMessage message, String host)
-            throws IOException {
-        if (useHttpSender) {
-            message.setUserObject(Collections.singletonMap("host", host));
-            return;
-        }
-
-        HttpMethodParams params = new HttpMethodParams();
-        params.setVirtualHost(host);
-        HttpMethod method =
-                createRequestMethod(message.getRequestHeader(), message.getRequestBody(), params);
-        if (!(method instanceof EntityEnclosingMethod) || method instanceof ZapGetMethod) {
-            method.setFollowRedirects(false);
-        }
-
-        message.setTimeSentMillis(System.currentTimeMillis());
-        httpSender.executeMethod(method, null);
-        message.setTimeElapsedMillis(
-                (int) (System.currentTimeMillis() - message.getTimeSentMillis()));
-
-        HttpMethodHelper.updateHttpRequestHeaderSent(message.getRequestHeader(), method);
-
-        HttpResponseHeader resHeader = HttpMethodHelper.getHttpResponseHeader(method);
-        resHeader.setHeader(HttpHeader.TRANSFER_ENCODING, null);
-        message.setResponseHeader(resHeader);
-        message.getResponseBody().setCharset(resHeader.getCharset());
-        message.getResponseBody().setLength(0);
-        message.getResponseBody().append(method.getResponseBody());
-        message.setResponseFromTargetHost(true);
-    }
-
-    private static HttpMethod createRequestMethod(
-            HttpRequestHeader header, HttpBody body, HttpMethodParams params) throws URIException {
-        HttpMethod httpMethod = new ZapGetMethod();
-        httpMethod.setURI(header.getURI());
-        httpMethod.setParams(params);
-        params.setVersion(HttpVersion.HTTP_1_1);
-
-        String msg = header.getHeadersAsString();
-
-        String[] split = Pattern.compile("\\r\\n", Pattern.MULTILINE).split(msg);
-        String token = null;
-        String name = null;
-        String value = null;
-
-        int pos = 0;
-        for (int i = 0; i < split.length; i++) {
-            token = split[i];
-            if (token.equals("")) {
-                continue;
-            }
-
-            if ((pos = token.indexOf(":")) < 0) {
-                continue;
-            }
-            name = token.substring(0, pos).trim();
-            value = token.substring(pos + 1).trim();
-            httpMethod.addRequestHeader(name, value);
-        }
-        if (body != null && body.length() > 0 && (httpMethod instanceof EntityEnclosingMethod)) {
-            EntityEnclosingMethod post = (EntityEnclosingMethod) httpMethod;
-            post.setRequestEntity(new ByteArrayRequestEntity(body.getBytes()));
-        }
-        httpMethod.setFollowRedirects(false);
-        return httpMethod;
     }
 }

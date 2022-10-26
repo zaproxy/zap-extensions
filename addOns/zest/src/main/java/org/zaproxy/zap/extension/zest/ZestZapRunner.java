@@ -389,12 +389,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
         if (extRC != null) {
             ruleConfigParam = extRC.getRuleConfigParam();
         }
-        Scanner scanner =
-                new Scanner(
-                        scannerParam,
-                        Model.getSingleton().getOptionsParam().getConnectionParam(),
-                        getDefaultScanPolicy(),
-                        ruleConfigParam);
+        Scanner scanner = new Scanner(scannerParam, getDefaultScanPolicy(), ruleConfigParam);
         scanner.setScanChildren(false);
         scanner.addScannerListener(this);
 

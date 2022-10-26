@@ -76,11 +76,7 @@ public class HttpFuzzer extends AbstractFuzzer<HttpMessage> {
                         : Collections.synchronizedList(new ArrayList<>(messageProcessors));
         currentSession = Model.getSingleton().getSession();
 
-        httpSender =
-                new HttpSender(
-                        Model.getSingleton().getOptionsParam().getConnectionParam(),
-                        true,
-                        HttpSender.FUZZER_INITIATOR);
+        httpSender = new HttpSender(HttpSender.FUZZER_INITIATOR);
 
         if (fuzzerOptions.isFollowRedirects()) {
             httpSender.setFollowRedirect(fuzzerOptions.isFollowRedirects());

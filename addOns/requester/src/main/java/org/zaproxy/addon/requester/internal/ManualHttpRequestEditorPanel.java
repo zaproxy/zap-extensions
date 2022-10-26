@@ -140,10 +140,6 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
         sender.sendMessage(message);
     }
 
-    public void cleanup() {
-        sender.cleanup();
-    }
-
     @Override
     protected CustomHttpPanelRequest getMessagePanel() {
         if (requestPanel == null) {
@@ -623,7 +619,6 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
 
     @Override
     public void optionsChanged(OptionsParam optionsParam) {
-        sender.setButtonTrackingSessionStateEnabled(
-                optionsParam.getConnectionParam().isHttpStateEnabled());
+        sender.updateButtonTrackingSessionState();
     }
 }

@@ -12,7 +12,7 @@ configurations.api { extendsFrom(sqlite) }
 zapAddOn {
     addOnName.set("Database")
     addOnStatus.set(AddOnStatus.ALPHA)
-    zapVersion.set("2.11.1")
+    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")

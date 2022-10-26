@@ -96,7 +96,6 @@ import org.zaproxy.addon.network.internal.client.LegacyUtils;
 import org.zaproxy.addon.network.internal.client.ResponseBodyConsumer;
 import org.zaproxy.addon.network.internal.client.SocksProxy;
 import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
-import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.users.User;
 
@@ -433,28 +432,36 @@ public class HttpSenderApache
         }
 
         Socket socket = (Socket) requestCtx.getAttribute(ZapHttpRequestExecutor.CONNECTION_SOCKET);
-        if (socket != null) {
-            InputStream inputStream =
-                    (InputStream)
-                            requestCtx.getAttribute(ZapHttpRequestExecutor.CONNECTION_INPUT_STREAM);
-            ZapGetMethod method =
-                    new ZapGetMethod() {
-                        @Override
-                        public InputStream getResponseBodyAsStream() {
-                            return inputStream;
-                        }
-                    };
-            method.setUpgradedSocket(socket);
-            method.setUpgradedInputStream(socket.getInputStream());
-            Object userObject = message.getUserObject();
-            message.setUserObject(method);
+        processSocket(requestCtx, message, socket);
+    }
 
-            if (isPersistentManualConnection(userObject)
-                    && !legacyProxyListenerHandler
-                            .get()
-                            .notifyPersistentConnectionListener(message, null, method)) {
-                closeSilently(socket);
-            }
+    @SuppressWarnings("deprecation")
+    private void processSocket(ZapHttpClientContext requestCtx, HttpMessage message, Socket socket)
+            throws IOException {
+        if (socket == null) {
+            return;
+        }
+
+        InputStream inputStream =
+                (InputStream)
+                        requestCtx.getAttribute(ZapHttpRequestExecutor.CONNECTION_INPUT_STREAM);
+        org.zaproxy.zap.ZapGetMethod method =
+                new org.zaproxy.zap.ZapGetMethod() {
+                    @Override
+                    public InputStream getResponseBodyAsStream() {
+                        return inputStream;
+                    }
+                };
+        method.setUpgradedSocket(socket);
+        method.setUpgradedInputStream(socket.getInputStream());
+        Object userObject = message.getUserObject();
+        message.setUserObject(method);
+
+        if (isPersistentManualConnection(userObject)
+                && !legacyProxyListenerHandler
+                        .get()
+                        .notifyPersistentConnectionListener(message, null, method)) {
+            closeSilently(socket);
         }
     }
 

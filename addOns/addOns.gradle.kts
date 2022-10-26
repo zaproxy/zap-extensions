@@ -143,7 +143,12 @@ subprojects {
         }
     }
 
-    val apiGenClasspath = configurations.detachedConfiguration(dependencies.create("org.zaproxy:zap:2.11.1"))
+    val zapGav = "org.zaproxy:zap:2.12.0-SNAPSHOT"
+    dependencies {
+        "zap"(zapGav)
+    }
+
+    val apiGenClasspath = configurations.detachedConfiguration(dependencies.create(zapGav))
 
     zapAddOn {
         releaseLink.set(project.provider { "https://github.com/zaproxy/zap-extensions/releases/${zapAddOn.addOnId.get()}-v@CURRENT_VERSION@" })

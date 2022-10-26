@@ -352,11 +352,7 @@ public class BruteForce extends Thread implements BruteForceListenner {
         private HttpSender httpSender;
 
         private SimpleHttpClientImpl() {
-            httpSender =
-                    new HttpSender(
-                            Model.getSingleton().getOptionsParam().getConnectionParam(),
-                            true,
-                            HttpSender.FORCED_BROWSE_INITIATOR);
+            httpSender = new HttpSender(HttpSender.FORCED_BROWSE_INITIATOR);
         }
 
         @Override

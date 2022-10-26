@@ -52,7 +52,6 @@ import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.PluginFactory;
 import org.parosproxy.paros.core.scanner.Scanner;
 import org.parosproxy.paros.core.scanner.ScannerParam;
-import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
@@ -136,13 +135,10 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
         ScanPolicy scanPolicy = mock(ScanPolicy.class);
         when(scanPolicy.getPluginFactory()).thenReturn(pluginFactory);
 
-        ConnectionParam connectionParam = new ConnectionParam();
-
         scannerParam = new ScannerParam();
         scannerParam.load(new ZapXmlConfiguration());
         RuleConfigParam ruleConfigParam = new RuleConfigParam();
-        Scanner parentScanner =
-                new Scanner(scannerParam, connectionParam, scanPolicy, ruleConfigParam);
+        Scanner parentScanner = new Scanner(scannerParam, scanPolicy, ruleConfigParam);
 
         startServer();
         int port = nano.getListeningPort();
@@ -155,7 +151,6 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
                                 "localhost:" + port,
                                 parentScanner,
                                 scannerParam,
-                                connectionParam,
                                 scanPolicy,
                                 ruleConfigParam) {
                             @Override

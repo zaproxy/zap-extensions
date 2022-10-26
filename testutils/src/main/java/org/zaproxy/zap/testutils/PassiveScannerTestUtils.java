@@ -27,7 +27,11 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,12 +41,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
-import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.pscan.PassiveScanData;
-import org.zaproxy.zap.extension.pscan.PassiveScanTestHelper;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
+import org.zaproxy.zap.extension.pscan.PassiveScanTaskHelper;
 import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -55,29 +58,34 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends TestUtils {
 
     protected T rule;
-    protected PassiveScanThread parent;
-    protected PassiveScanData passiveScanData = mock(PassiveScanData.class);
+    protected PassiveScanTaskHelper helper;
+    protected PassiveScanData passiveScanData;
     protected List<Alert> alertsRaised;
-
-    public PassiveScannerTestUtils() {
-        super();
-    }
 
     @BeforeEach
     public void setUp() throws Exception {
         setUpZap();
 
+        passiveScanData = mock(PassiveScanData.class, withSettings().lenient());
         alertsRaised = new ArrayList<>();
-        parent =
-                new PassiveScanThread(null, null, new ExtensionAlert(), null) {
-                    @Override
-                    public void raiseAlert(int id, Alert alert) {
-                        defaultAssertions(alert);
-                        alertsRaised.add(alert);
-                    }
-                };
+        helper = mock(PassiveScanTaskHelper.class, withSettings().lenient());
+        doAnswer(
+                        invocation -> {
+                            Alert alert = invocation.getArgument(1);
+
+                            defaultAssertions(alert);
+                            alertsRaised.add(alert);
+                            return null;
+                        })
+                .when(helper)
+                .raiseAlert(any(), any());
+
         rule = createScanner();
-        rule.setParent(parent);
+        rule.setTaskHelper(helper);
+
+        if (rule instanceof PluginPassiveScanner) {
+            ((PluginPassiveScanner) rule).setHelper(passiveScanData);
+        }
     }
 
     protected void defaultAssertions(Alert alert) {
@@ -97,19 +105,18 @@ public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends 
     protected abstract T createScanner();
 
     protected void scanHttpRequestSend(HttpMessage msg) {
-        initRule(msg);
+        init(msg);
         rule.scanHttpRequestSend(msg, -1);
     }
 
-    protected void scanHttpResponseReceive(HttpMessage msg) {
-        initRule(msg);
-        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
+    private void init(HttpMessage msg) {
+        msg.setHistoryRef(mock(HistoryReference.class));
+        given(passiveScanData.getMessage()).willReturn(msg);
     }
 
-    private void initRule(HttpMessage msg) {
-        if (rule instanceof PluginPassiveScanner) {
-            PassiveScanTestHelper.init((PluginPassiveScanner) rule, parent, msg, passiveScanData);
-        }
+    protected void scanHttpResponseReceive(HttpMessage msg) {
+        init(msg);
+        rule.scanHttpResponseReceive(msg, -1, createSource(msg));
     }
 
     protected Source createSource(HttpMessage msg) {

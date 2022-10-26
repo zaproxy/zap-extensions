@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.ascanrulesBeta.ssti;
 import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.commonlib.http.ComparableResponse;
@@ -62,11 +61,7 @@ public class StoredSinkPoint implements SinkPoint {
         originalPayload = payload;
         sinkLocation = originalSinkRequest.getRequestHeader().getURI().toString();
 
-        httpSender =
-                new HttpSender(
-                        Model.getSingleton().getOptionsParam().getConnectionParam(),
-                        true,
-                        HttpSender.ACTIVE_SCANNER_INITIATOR);
+        httpSender = new HttpSender(HttpSender.ACTIVE_SCANNER_INITIATOR);
     }
 
     @Override
