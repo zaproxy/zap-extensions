@@ -129,17 +129,20 @@ class ExtensionNetworkUnitTest extends TestUtils {
     void setUp() {
         Security.addProvider(new BouncyCastleProvider());
 
+        extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
+        Control.initSingletonForTesting(model, extensionLoader);
+
         model = mock(Model.class, withSettings().lenient());
         Model.setSingletonForTesting(model);
         optionsParam = mock(OptionsParam.class, withSettings().lenient());
+        given(optionsParam.getConnectionParam()).willReturn(new ConnectionParam());
+        given(optionsParam.getProxyParam()).willReturn(mock(ProxyParam.class));
         given(model.getOptionsParam()).willReturn(optionsParam);
 
         extension = new ExtensionNetwork();
         extension.init();
+        extension.initModel(model);
         mockMessages(extension);
-
-        extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
-        Control.initSingletonForTesting(model, extensionLoader);
 
         zap = mockStatic(ZAP.class);
         zap.when(ZAP::getProcessType).thenReturn(ZAP.ProcessType.daemon);
@@ -214,8 +217,8 @@ class ExtensionNetworkUnitTest extends TestUtils {
         extension.hook(extensionHook);
         // Then
         ArgumentCaptor<ApiImplementor> argument = ArgumentCaptor.forClass(ApiImplementor.class);
-        verify(extensionHook).addApiImplementor(argument.capture());
-        assertThat(argument.getAllValues(), contains(instanceOf(NetworkApi.class)));
+        verify(extensionHook, times(2)).addApiImplementor(argument.capture());
+        assertThat(argument.getAllValues(), hasItem(instanceOf(NetworkApi.class)));
     }
 
     @Test
@@ -250,10 +253,9 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldAddLegacyProxiesApiOnHookIfHandlingLocalServers() {
+    void shouldAddLegacyProxiesApiOnHook() {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension.handleLocalServers = true;
         // When
         extension.hook(extensionHook);
         // Then
@@ -263,21 +265,9 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldNotCreateAliasCheckerOnHookIfNotHandlingLocalServers() {
+    void shouldCreateAliasCheckerOnHook() {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension.handleLocalServers = false;
-        // When
-        extension.hook(extensionHook);
-        // Then
-        assertThat(extension.getAliasChecker(), is(nullValue()));
-    }
-
-    @Test
-    void shouldCreateAliasCheckerOnHookIfHandlingLocalServers() {
-        // Given
-        ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension.handleLocalServers = true;
         // When
         extension.hook(extensionHook);
         // Then
@@ -289,7 +279,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
     void shouldBeAliasIfZapDomain(String requestTarget) throws Exception {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension.handleLocalServers = true;
         extension.hook(extensionHook);
         AliasChecker aliasChecker = extension.getAliasChecker();
         HttpRequestHeader requestHeader =
@@ -305,7 +294,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
     void shouldCheckAliasDefinedInOptions(boolean expectedAlias) throws Exception {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension.handleLocalServers = true;
         extension.hook(extensionHook);
         Alias optionAlias = mock(Alias.class);
         HttpRequestHeader requestHeader = new HttpRequestHeader("GET http://not.zap/ HTTP/1.1");
@@ -328,7 +316,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
         extension.hook(extensionHook);
         // Then
         ArgumentCaptor<AbstractParam> argument = ArgumentCaptor.forClass(AbstractParam.class);
-        verify(extensionHook, times(3)).addOptionsParamSet(argument.capture());
+        verify(extensionHook, times(4)).addOptionsParamSet(argument.capture());
         assertThat(argument.getAllValues(), hasItem(instanceOf(ServerCertificatesOptions.class)));
         assertThat(
                 extension.getServerCertificatesOptions(),
@@ -346,7 +334,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
                 ArgumentCaptor.forClass(CommandLineArgument[].class);
         verify(extensionHook).addCommandLine(argument.capture());
         CommandLineArgument[] args = argument.getAllValues().get(0);
-        assertThat(args, arrayWithSize(3));
+        assertThat(args, arrayWithSize(5));
         assertThat(args[0].getName(), is(equalTo("-certload")));
         assertThat(args[0].getNumOfArguments(), is(equalTo(1)));
         assertThat(args[0].getHelpMessage(), is(not(emptyString())));
@@ -356,21 +344,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
         assertThat(args[2].getName(), is(equalTo("-certfulldump")));
         assertThat(args[2].getNumOfArguments(), is(equalTo(1)));
         assertThat(args[2].getHelpMessage(), is(not(emptyString())));
-    }
-
-    @Test
-    void shouldAddHostAndPortCommandLineArgsOnHookIfHandlingLocalServerServers() throws Exception {
-        // Given
-        ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension.handleLocalServers = true;
-        // When
-        extension.hook(extensionHook);
-        // Then
-        ArgumentCaptor<CommandLineArgument[]> argument =
-                ArgumentCaptor.forClass(CommandLineArgument[].class);
-        verify(extensionHook).addCommandLine(argument.capture());
-        CommandLineArgument[] args = argument.getAllValues().get(0);
-        assertThat(args, arrayWithSize(5));
         assertThat(args[3].getName(), is(equalTo("-host")));
         assertThat(args[3].getNumOfArguments(), is(equalTo(1)));
         assertThat(args[3].getHelpMessage(), is(not(emptyString())));
@@ -395,10 +368,9 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldAddLocalServersOptionsOnHookIfHandlingLocalServers() {
+    void shouldAddLocalServersOptionsOnHook() {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension.handleLocalServers = true;
         // When
         extension.hook(extensionHook);
         // Then
@@ -409,39 +381,13 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldNotAddLocalServersOptionsOnHookIfNotHandlingLocalServers() {
+    void shouldCreatePassThroughHandlerOnHook() {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension.handleLocalServers = false;
-        // When
-        extension.hook(extensionHook);
-        // Then
-        ArgumentCaptor<AbstractParam> argument = ArgumentCaptor.forClass(AbstractParam.class);
-        verify(extensionHook, times(3)).addOptionsParamSet(argument.capture());
-        assertThat(argument.getAllValues(), not(contains(instanceOf(LocalServersOptions.class))));
-        assertThat(extension.getLocalServersOptions(), is(nullValue()));
-    }
-
-    @Test
-    void shouldCreatePassThroughHandlerOnHookIfHandlingLocalServers() {
-        // Given
-        ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension.handleLocalServers = true;
         // When
         extension.hook(extensionHook);
         // Then
         assertThat(extension.getPassThroughHandler(), is(notNullValue()));
-    }
-
-    @Test
-    void shouldNotCreatePassThroughHandlerOnHookIfNotHandlingLocalServers() {
-        // Given
-        ExtensionHook extensionHook = mock(ExtensionHook.class);
-        extension.handleLocalServers = false;
-        // When
-        extension.hook(extensionHook);
-        // Then
-        assertThat(extension.getPassThroughHandler(), is(nullValue()));
     }
 
     @Test
@@ -452,7 +398,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
         extension.hook(extensionHook);
         // Then
         ArgumentCaptor<AbstractParam> argument = ArgumentCaptor.forClass(AbstractParam.class);
-        verify(extensionHook, times(3)).addOptionsParamSet(argument.capture());
+        verify(extensionHook, times(4)).addOptionsParamSet(argument.capture());
         assertThat(argument.getAllValues(), hasItem(instanceOf(ConnectionOptions.class)));
     }
 
@@ -474,7 +420,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
         extension.hook(extensionHook);
         // Then
         ArgumentCaptor<AbstractParam> argument = ArgumentCaptor.forClass(AbstractParam.class);
-        verify(extensionHook, times(3)).addOptionsParamSet(argument.capture());
+        verify(extensionHook, times(4)).addOptionsParamSet(argument.capture());
         assertThat(argument.getAllValues(), hasItem(instanceOf(ClientCertificatesOptions.class)));
         assertThat(extension.getClientCertificatesOptions(), is(notNullValue()));
     }
@@ -555,7 +501,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
         // Given
         Path file = Files.createTempFile("rootca", ".pem");
         Files.write(file, NetworkTestUtils.FISH_CERT_PEM_BYTES);
-        CommandLineArgument[] args = mockedCmdLineArgs(3);
+        CommandLineArgument[] args = mockedCmdLineArgs(5);
         cmdLineArgEnabledWithFile(args, 0, file);
         extensionStarted();
         List<String> logEvents = registerLogEvents();
@@ -569,14 +515,14 @@ class ExtensionNetworkUnitTest extends TestUtils {
         assertThat(
                 certificateService.createCertificate(new CertData("example.org")),
                 is(notNullValue()));
-        assertThat(logEvents, contains(startsWith("Root CA certificate loaded from")));
+        assertThat(logEvents, hasItem(startsWith("Root CA certificate loaded from")));
     }
 
     @Test
     void shouldErrorIfLoadingUnreadableCertCommandLineArg() throws Exception {
         // Given
         Path file = Paths.get("/some/path/not/readable/rootca.pem");
-        CommandLineArgument[] args = mockedCmdLineArgs(3);
+        CommandLineArgument[] args = mockedCmdLineArgs(5);
         cmdLineArgEnabledWithFile(args, 0, file);
         extensionStarted();
         List<String> logEvents = registerLogEvents();
@@ -584,14 +530,14 @@ class ExtensionNetworkUnitTest extends TestUtils {
         extension.execute(args);
         // Then
         Stream.of(args).forEach(arg -> verify(arg).isEnabled());
-        assertThat(logEvents, contains(startsWith("Cannot read file")));
+        assertThat(logEvents, hasItem(startsWith("Cannot read file")));
     }
 
     @Test
     void shouldErrorIfLoadingInvalidCertCommandLineArg() throws Exception {
         // Given
         Path file = Files.createTempDirectory("not-cert");
-        CommandLineArgument[] args = mockedCmdLineArgs(3);
+        CommandLineArgument[] args = mockedCmdLineArgs(5);
         cmdLineArgEnabledWithFile(args, 0, file);
         extensionStarted();
         List<String> logEvents = registerLogEvents();
@@ -599,14 +545,14 @@ class ExtensionNetworkUnitTest extends TestUtils {
         extension.execute(args);
         // Then
         Stream.of(args).forEach(arg -> verify(arg).isEnabled());
-        assertThat(logEvents, contains(startsWith("Failed to read the selected .pem file:")));
+        assertThat(logEvents, hasItem(startsWith("Failed to read the selected .pem file:")));
     }
 
     @Test
     void shouldDumpCertCommandLineArg() throws Exception {
         // Given
         Path file = Files.createTempFile("dump", ".pem");
-        CommandLineArgument[] args = mockedCmdLineArgs(3);
+        CommandLineArgument[] args = mockedCmdLineArgs(5);
         cmdLineArgEnabledWithFile(args, 1, file);
         extensionStarted();
         List<String> logEvents = registerLogEvents();
@@ -620,7 +566,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
                         containsString(CertificateUtils.BEGIN_CERTIFICATE_TOKEN),
                         containsString(CertificateUtils.END_CERTIFICATE_TOKEN),
                         not(containsString(CertificateUtils.BEGIN_PRIVATE_KEY_TOKEN))));
-        assertThat(logEvents, contains(startsWith("Root CA certificate written to")));
+        assertThat(logEvents, hasItem(startsWith("Root CA certificate written to")));
     }
 
     @Test
@@ -628,7 +574,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
         // Given
         Path file = Files.createTempFile("dump", ".pem");
         notWritable(file);
-        CommandLineArgument[] args = mockedCmdLineArgs(3);
+        CommandLineArgument[] args = mockedCmdLineArgs(5);
         cmdLineArgEnabledWithFile(args, 1, file);
         extensionStarted();
         List<String> logEvents = registerLogEvents();
@@ -636,14 +582,14 @@ class ExtensionNetworkUnitTest extends TestUtils {
         extension.execute(args);
         // Then
         Stream.of(args).forEach(arg -> verify(arg).isEnabled());
-        assertThat(logEvents, contains(startsWith("Cannot write to file")));
+        assertThat(logEvents, hasItem(startsWith("Cannot write to file")));
     }
 
     @Test
     void shouldDumpCertAndKeyCommandLineArg() throws Exception {
         // Given
         Path file = Files.createTempFile("dump", ".pem");
-        CommandLineArgument[] args = mockedCmdLineArgs(3);
+        CommandLineArgument[] args = mockedCmdLineArgs(5);
         cmdLineArgEnabledWithFile(args, 2, file);
         extensionStarted();
         List<String> logEvents = registerLogEvents();
@@ -658,7 +604,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
                         containsString(CertificateUtils.END_CERTIFICATE_TOKEN),
                         containsString(CertificateUtils.BEGIN_PRIVATE_KEY_TOKEN),
                         containsString(CertificateUtils.END_PRIVATE_KEY_TOKEN)));
-        assertThat(logEvents, contains(startsWith("Root CA certificate written to")));
+        assertThat(logEvents, hasItem(startsWith("Root CA certificate written to")));
     }
 
     @Test
@@ -666,7 +612,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
         // Given
         Path file = Files.createTempFile("dump", ".pem");
         notWritable(file);
-        CommandLineArgument[] args = mockedCmdLineArgs(3);
+        CommandLineArgument[] args = mockedCmdLineArgs(5);
         cmdLineArgEnabledWithFile(args, 2, file);
         extensionStarted();
         List<String> logEvents = registerLogEvents();
@@ -674,7 +620,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
         extension.execute(args);
         // Then
         Stream.of(args).forEach(arg -> verify(arg).isEnabled());
-        assertThat(logEvents, contains(startsWith("Cannot write to file")));
+        assertThat(logEvents, hasItem(startsWith("Cannot write to file")));
     }
 
     @ParameterizedTest
@@ -1066,7 +1012,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
     @Test
     void shouldGetProxyPacContent() {
         // Given
-        extension.handleLocalServers = true;
         extension.hook(mock(ExtensionHook.class));
         String domain = "X";
         // When
@@ -1082,7 +1027,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
     @Test
     void shouldGetProxyPacContentWithAccessedDomainIfProxyAnyAddressAndNotZapDomain() {
         // Given
-        extension.handleLocalServers = true;
         extension.hook(mock(ExtensionHook.class));
         extension.getLocalServersOptions().load(new ZapXmlConfiguration());
         extension.getLocalServersOptions().getMainProxy().setAddress("0.0.0.0");
@@ -1100,7 +1044,6 @@ class ExtensionNetworkUnitTest extends TestUtils {
     @Test
     void shouldGetProxyPacContentWithAnyAddressIfNoAddressKnown() {
         // Given
-        extension.handleLocalServers = true;
         extension.hook(mock(ExtensionHook.class));
         extension.getLocalServersOptions().load(new ZapXmlConfiguration());
         extension.getLocalServersOptions().getMainProxy().setAddress("0.0.0.0");

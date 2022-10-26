@@ -134,18 +134,6 @@ class NetworkApiUnitTest extends TestUtils {
         // Given / When
         networkApi = new NetworkApi(extensionNetwork);
         // Then
-        assertThat(networkApi.getApiActions(), hasSize(18));
-        assertThat(networkApi.getApiViews(), hasSize(12));
-        assertThat(networkApi.getApiOthers(), hasSize(2));
-    }
-
-    @Test
-    void shouldAddAdditionalApiElementsWhenHandlingLocalServers() {
-        // Given
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
-        // When
-        networkApi = new NetworkApi(extensionNetwork);
-        // Then
         assertThat(networkApi.getApiActions(), hasSize(26));
         assertThat(networkApi.getApiViews(), hasSize(15));
         assertThat(networkApi.getApiOthers(), hasSize(3));
@@ -156,7 +144,6 @@ class NetworkApiUnitTest extends TestUtils {
     @ValueSource(strings = {"unknown", "something"})
     void shouldThrowApiExceptionForUnknownShortcut(String path) throws Exception {
         // Given
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         HttpMessage message = new HttpMessage(new URI("http://zap/" + path, true));
         // When
         ApiException exception =
@@ -166,9 +153,8 @@ class NetworkApiUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnProxyPacFromShortcutIfHandlingLocalServers() throws Exception {
+    void shouldReturnProxyPacFromShortcut() throws Exception {
         // Given
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         String proxyPacContent = "Proxy PAC Content";
         given(extensionNetwork.getProxyPacContent(any())).willReturn(proxyPacContent);
         HttpMessage message = new HttpMessage(new URI("http://zap/proxy.pac", true));
@@ -177,20 +163,6 @@ class NetworkApiUnitTest extends TestUtils {
         // Then
         assertThat(response.getResponseBody().toString(), is(equalTo(proxyPacContent)));
         verify(extensionNetwork).getProxyPacContent("zap");
-    }
-
-    @Test
-    void shouldThrowApiExceptionWhenGettingProxyPacFromShortcutIfNotHandlingLocalServers()
-            throws Exception {
-        // Given
-        given(extensionNetwork.isHandleLocalServers()).willReturn(false);
-        HttpMessage message = new HttpMessage(new URI("http://zap/proxy.pac", true));
-        // When
-        ApiException exception =
-                assertThrows(ApiException.class, () -> networkApi.handleShortcut(message));
-        // Then
-        assertThat(exception.getType(), is(equalTo(ApiException.Type.URL_NOT_FOUND)));
-        verify(extensionNetwork, times(0)).getProxyPacContent(any());
     }
 
     @Test
@@ -351,11 +323,10 @@ class NetworkApiUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnProxyPacIfHandlingLocalServers() throws Exception {
+    void shouldReturnProxyPac() throws Exception {
         // Given
         String name = "proxy.pac";
         JSONObject params = new JSONObject();
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         String proxyPacContent = "Proxy PAC Content";
         given(extensionNetwork.getProxyPacContent(any())).willReturn(proxyPacContent);
         HttpMessage message = new HttpMessage(new URI("http://zap/OTHER/network/proxy.pac", true));
@@ -364,22 +335,6 @@ class NetworkApiUnitTest extends TestUtils {
         // Then
         assertThat(response.getResponseBody().toString(), is(equalTo(proxyPacContent)));
         verify(extensionNetwork).getProxyPacContent("zap");
-    }
-
-    @Test
-    void shouldThrowApiExceptionWhenGettingProxyPacIfNotHandlingLocalServers() throws Exception {
-        // Given
-        String name = "proxy.pac";
-        JSONObject params = new JSONObject();
-        given(extensionNetwork.isHandleLocalServers()).willReturn(false);
-        HttpMessage message = new HttpMessage(new URI("http://zap/OTHER/network/proxy.pac", true));
-        // When
-        ApiException exception =
-                assertThrows(
-                        ApiException.class, () -> networkApi.handleApiOther(message, name, params));
-        // Then
-        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_OTHER)));
-        verify(extensionNetwork, times(0)).getProxyPacContent(any());
     }
 
     @Test
@@ -573,7 +528,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("name", "example.org");
         params.put("enabled", "false");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
         // Then
@@ -587,7 +541,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "addAlias";
         JSONObject params = new JSONObject();
         params.put("name", "example.org");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
         // Then
@@ -601,7 +554,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "removeAlias";
         JSONObject params = new JSONObject();
         params.put("name", "example.org");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.removeAlias(any())).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
@@ -616,7 +568,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "removeAlias";
         JSONObject params = new JSONObject();
         params.put("name", "example.org");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.removeAlias(any())).willReturn(false);
         // When
         ApiException exception =
@@ -633,7 +584,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("name", "example.org");
         params.put("enabled", "false");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.setAliasEnabled(any(), anyBoolean())).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
@@ -649,7 +599,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("name", "example.org");
         params.put("enabled", "true");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.setAliasEnabled(any(), anyBoolean())).willReturn(false);
         // When
         ApiException exception =
@@ -664,7 +613,6 @@ class NetworkApiUnitTest extends TestUtils {
         // Given
         String name = "getAliases";
         JSONObject params = new JSONObject();
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.getAliases())
                 .willReturn(
                         Arrays.asList(
@@ -1010,7 +958,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("authority", "example.org");
         params.put("enabled", "false");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
         // Then
@@ -1025,7 +972,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("authority", "*");
         params.put("enabled", "true");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         // When
         ApiException exception =
                 assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
@@ -1039,7 +985,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "addPassThrough";
         JSONObject params = new JSONObject();
         params.put("authority", "example.org");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
         // Then
@@ -1053,7 +998,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "removePassThrough";
         JSONObject params = new JSONObject();
         params.put("authority", "example.org");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.removePassThrough(any())).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
@@ -1068,7 +1012,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "removePassThrough";
         JSONObject params = new JSONObject();
         params.put("authority", "example.org");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.removePassThrough(any())).willReturn(false);
         // When
         ApiException exception =
@@ -1085,7 +1028,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("authority", "example.org");
         params.put("enabled", "false");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.setPassThroughEnabled(any(), anyBoolean())).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
@@ -1101,7 +1043,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("authority", "example.org");
         params.put("enabled", "true");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.setPassThroughEnabled(any(), anyBoolean())).willReturn(false);
         // When
         ApiException exception =
@@ -1116,7 +1057,6 @@ class NetworkApiUnitTest extends TestUtils {
         // Given
         String name = "getPassThroughs";
         JSONObject params = new JSONObject();
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.getPassThroughs())
                 .willReturn(
                         Arrays.asList(
@@ -1142,7 +1082,6 @@ class NetworkApiUnitTest extends TestUtils {
         params.put("address", "localhost");
         int port = getRandomPort();
         params.put("port", port);
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.getMainProxy()).willReturn(newLocalServer("localhost", 8080));
         given(localServersOptions.getServers()).willReturn(Collections.emptyList());
         // When
@@ -1159,7 +1098,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("address", "localhost");
         params.put("port", "8080");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.getMainProxy()).willReturn(newLocalServer("localhost", 8080));
         given(localServersOptions.getServers()).willReturn(Collections.emptyList());
         // When
@@ -1178,7 +1116,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("address", "localhost");
         params.put("port", "8080");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.getMainProxy()).willReturn(newLocalServer("localhost", 8081));
         given(localServersOptions.getServers())
                 .willReturn(Arrays.asList(newLocalServer("localhost", 8080)));
@@ -1197,7 +1134,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("address", "localhost");
         params.put("port", "80");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.getMainProxy()).willReturn(newLocalServer("localhost", 8080));
         given(localServersOptions.getServers())
                 .willReturn(Arrays.asList(newLocalServer("localhost", 8081)));
@@ -1216,7 +1152,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("address", "localhost");
         params.put("port", "808080808");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         // When
         ApiException exception =
                 assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
@@ -1243,7 +1178,6 @@ class NetworkApiUnitTest extends TestUtils {
         server.setBehindNat(true);
         server.setRemoveAcceptEncoding(false);
         server.setDecodeResponse(false);
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.getMainProxy()).willReturn(newLocalServer("localhost", 8080));
         given(localServersOptions.getServers()).willReturn(Collections.emptyList());
         // When
@@ -1260,7 +1194,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("address", "localhost");
         params.put("port", "8080");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.removeServer(any(), anyInt())).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
@@ -1276,7 +1209,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("address", "localhost");
         params.put("port", "8080");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.removeServer(any(), anyInt())).willReturn(false);
         // When
         ApiException exception =
@@ -1291,7 +1223,6 @@ class NetworkApiUnitTest extends TestUtils {
         // Given
         String name = "getLocalServers";
         JSONObject params = new JSONObject();
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.getServers())
                 .willReturn(
                         Arrays.asList(
@@ -1450,44 +1381,6 @@ class NetworkApiUnitTest extends TestUtils {
                 response.toJSON().toString(), is(equalTo("{\"isUseGlobalHttpState\":\"true\"}")));
     }
 
-    @ParameterizedTest
-    @ValueSource(
-            strings = {
-                "addAlias",
-                "removeAlias",
-                "setAliasEnabled",
-                "addPassThrough",
-                "removePassThrough",
-                "setPassThroughEnabled",
-                "addLocalServer",
-                "removeLocalServer"
-            })
-    void shouldThrowApiExceptionForUnsupportedActionsIfNotHandlingLocalServers(String name)
-            throws Exception {
-        // Given
-        JSONObject params = new JSONObject();
-        given(extensionNetwork.isHandleLocalServers()).willReturn(false);
-        // When
-        ApiException exception =
-                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
-        // Then
-        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_ACTION)));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"getAliases", "getPassThroughs", "getLocalServers"})
-    void shouldThrowApiExceptionForUnsupportedViewsIfNotHandlingLocalServers(String name)
-            throws Exception {
-        // Given
-        JSONObject params = new JSONObject();
-        given(extensionNetwork.isHandleLocalServers()).willReturn(false);
-        // When
-        ApiException exception =
-                assertThrows(ApiException.class, () -> networkApi.handleApiView(name, params));
-        // Then
-        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_VIEW)));
-    }
-
     @Test
     void shouldAddPkcs12ClientCertificate() throws Exception {
         // Given
@@ -1551,7 +1444,6 @@ class NetworkApiUnitTest extends TestUtils {
 
     @Test
     void shouldHaveDescriptionsForAllApiElements() {
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         networkApi = new NetworkApi(extensionNetwork);
         List<String> missingKeys = new ArrayList<>();
         checkKey(networkApi.getDescriptionKey(), missingKeys);
