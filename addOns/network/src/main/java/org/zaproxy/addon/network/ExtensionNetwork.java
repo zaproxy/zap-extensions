@@ -82,7 +82,6 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpSender;
-import org.parosproxy.paros.network.SSLConnector;
 import org.parosproxy.paros.view.OptionsDialog;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.network.LocalServersOptions.ServersChangedListener;
@@ -130,10 +129,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     private static final Logger LOGGER = LogManager.getLogger(ExtensionNetwork.class);
 
     static {
-        if (isDeprecated(org.zaproxy.zap.network.ZapAuthenticator.class)) {
-            ProxySelector.setDefault(ZapProxySelector.getSingleton());
-            Authenticator.setDefault(ZapAuthenticator.getSingleton());
-        }
+        ProxySelector.setDefault(ZapProxySelector.getSingleton());
+        Authenticator.setDefault(ZapAuthenticator.getSingleton());
     }
 
     private static final int NO_PORT_OVERRIDE = -1;
@@ -148,7 +145,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     private static final int ARG_HOST_IDX = 3;
     private static final int ARG_PORT_IDX = 4;
 
-    boolean handleClient;
     private HttpSenderNetwork<? extends HttpSenderContext> httpSenderNetwork;
     private ConnectionParam legacyConnectionOptions;
     private LegacyProxyListenerHandler legacyProxyListenerHandler;
@@ -203,30 +199,25 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         legacyConnectionOptions =
                 new LegacyConnectionParam(
                         () -> {
-                            if (handleClient) {
-                                LegacyUtils.updateHttpState(globalHttpState, globalCookieStore);
-                            }
+                            LegacyUtils.updateHttpState(globalHttpState, globalCookieStore);
                             return globalHttpState;
                         },
                         connectionOptions);
         Model.getSingleton().getOptionsParam().setConnectionParam(legacyConnectionOptions);
 
-        handleClient = isDeprecated(SSLConnector.class);
-        if (handleClient) {
-            clientCertificatesOptions = new ClientCertificatesOptions();
+        clientCertificatesOptions = new ClientCertificatesOptions();
 
-            try {
-                httpSenderNetwork =
-                        new HttpSenderNetwork<>(
-                                connectionOptions,
-                                new HttpSenderApache(
-                                        this::getGlobalCookieStore,
-                                        connectionOptions,
-                                        clientCertificatesOptions,
-                                        () -> legacyProxyListenerHandler));
-            } catch (Exception e) {
-                LOGGER.error("An error occurred while creating the sender:", e);
-            }
+        try {
+            httpSenderNetwork =
+                    new HttpSenderNetwork<>(
+                            connectionOptions,
+                            new HttpSenderApache(
+                                    this::getGlobalCookieStore,
+                                    connectionOptions,
+                                    clientCertificatesOptions,
+                                    () -> legacyProxyListenerHandler));
+        } catch (Exception e) {
+            LOGGER.error("An error occurred while creating the sender:", e);
         }
     }
 
@@ -282,10 +273,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                 LOGGER.error("An error occurred while getting the break methods:", e);
             }
         }
-    }
-
-    private static boolean isDeprecated(Class<?> clazz) {
-        return clazz.getAnnotation(Deprecated.class) != null;
     }
 
     @Override
@@ -513,9 +500,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         extensionHook.addOptionsParamSet(connectionOptions);
         extensionHook.addOptionsChangedListener(new OptionsChangedListenerImpl());
 
-        if (!handleClient) {
-            clientCertificatesOptions = new ClientCertificatesOptions();
-        }
         extensionHook.addOptionsParamSet(clientCertificatesOptions);
 
         if (hasView()) {
@@ -1467,9 +1451,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
         @Override
         public void sessionChanged(Session session) {
-            if (handleClient) {
-                globalCookieStore = new BasicCookieStore();
-            }
+            globalCookieStore = new BasicCookieStore();
             globalHttpState = new HttpState();
             getModel().getOptionsParam().getConnectionParam().setHttpState(globalHttpState);
         }
@@ -1489,16 +1471,14 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         @Override
         public void optionsChanged(OptionsParam optionsParam) {
             if (connectionOptions.isUseGlobalHttpState()) {
-                if (handleClient && globalCookieStore == null) {
+                if (globalCookieStore == null) {
                     globalCookieStore = new BasicCookieStore();
                 }
                 if (globalHttpState == null) {
                     globalHttpState = new HttpState();
                 }
             } else {
-                if (handleClient) {
-                    globalCookieStore = null;
-                }
+                globalCookieStore = null;
                 globalHttpState = null;
             }
         }
