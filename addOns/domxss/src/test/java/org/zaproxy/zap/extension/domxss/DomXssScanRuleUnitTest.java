@@ -93,7 +93,7 @@ class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
     @Override
     protected int getRecommendMaxNumberMessagesPerParam(AttackStrength strength) {
         if (strength == AttackStrength.LOW) {
-            return NUMBER_MSGS_ATTACK_STRENGTH_LOW + 1;
+            return NUMBER_MSGS_ATTACK_STRENGTH_LOW + 3;
         }
         return super.getRecommendMaxNumberMessagesPerParam(strength);
     }
