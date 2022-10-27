@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [49] - 2022-10-27
 ### Added
 - The following scan rules were added, having been promoted from Beta:
     - .env Information Leak
@@ -350,6 +350,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[49]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v49
 [48]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v48
 [47]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v47
 [46]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v46
