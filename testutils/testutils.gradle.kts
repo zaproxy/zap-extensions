@@ -15,7 +15,7 @@ configurations {
 }
 
 dependencies {
-    compileOnly("org.zaproxy:zap:2.12.0-SNAPSHOT")
+    compileOnly("org.zaproxy:zap:2.12.0")
     implementation(parent!!.childProjects.get("addOns")!!.childProjects.get("network")!!)
     implementation("org.apache.httpcomponents.client5:httpclient5:5.2-beta1")
 
