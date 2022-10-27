@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [15] - 2022-10-27
 ### Changed
 - Update minimum ZAP version to 2.12.0.
 - Remove parser used for core spider (Related to Issue 3113).
@@ -116,6 +116,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[15]: https://github.com/zaproxy/zap-extensions/releases/soap-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/soap-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/soap-v13
 [12]: https://github.com/zaproxy/zap-extensions/releases/soap-v12
