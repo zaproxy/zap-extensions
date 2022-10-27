@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [43] - 2022-10-27
 ### Changed
 - Update minimum ZAP version to 2.12.0.
 - Depend on `database` add-on.
@@ -404,6 +404,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[43]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v40

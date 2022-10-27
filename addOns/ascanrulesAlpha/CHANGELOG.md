@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [41] - 2022-10-27
 ### Changed
 - Update minimum ZAP version to 2.12.0.
 - The Text4shell scan rule now includes an alert tag for its CVE reference.
@@ -325,6 +325,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version, including persistent XSS tests
 
+[41]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v39
 [38]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v38
