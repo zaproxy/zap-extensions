@@ -25,6 +25,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class PopupSemiAutoIssue extends PopupMenuItemAlert {
 
     private static final long serialVersionUID = 1L;
