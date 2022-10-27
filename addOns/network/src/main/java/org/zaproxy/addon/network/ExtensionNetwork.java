@@ -69,7 +69,6 @@ import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
-import org.parosproxy.paros.core.proxy.ProxyParam;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -80,7 +79,6 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
-import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.OptionsDialog;
 import org.parosproxy.paros.view.View;
@@ -91,12 +89,12 @@ import org.zaproxy.addon.network.internal.cert.CertificateUtils;
 import org.zaproxy.addon.network.internal.cert.GenerationException;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateGenerator;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateService;
+import org.zaproxy.addon.network.internal.client.CloseableHttpSenderImpl;
 import org.zaproxy.addon.network.internal.client.HttpProxy;
 import org.zaproxy.addon.network.internal.client.LegacyUtils;
 import org.zaproxy.addon.network.internal.client.ZapAuthenticator;
 import org.zaproxy.addon.network.internal.client.ZapProxySelector;
 import org.zaproxy.addon.network.internal.client.apachev5.HttpSenderApache;
-import org.zaproxy.addon.network.internal.client.core.HttpSenderContext;
 import org.zaproxy.addon.network.internal.handlers.PassThroughHandler;
 import org.zaproxy.addon.network.internal.server.AliasChecker;
 import org.zaproxy.addon.network.internal.server.http.HttpServer;
@@ -145,8 +143,11 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     private static final int ARG_HOST_IDX = 3;
     private static final int ARG_PORT_IDX = 4;
 
-    private HttpSenderNetwork<? extends HttpSenderContext> httpSenderNetwork;
-    private ConnectionParam legacyConnectionOptions;
+    private CloseableHttpSenderImpl<?> httpSenderNetwork;
+
+    @SuppressWarnings("deprecation")
+    private org.parosproxy.paros.network.ConnectionParam legacyConnectionOptions;
+
     private LegacyProxyListenerHandler legacyProxyListenerHandler;
     private Object syncGroups = new Object();
     private boolean groupsInitiated;
@@ -184,6 +185,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     private CookieStore globalCookieStore;
     private HttpState globalHttpState;
 
+    @SuppressWarnings("deprecation")
     public ExtensionNetwork() {
         super(ExtensionNetwork.class.getSimpleName());
 
@@ -209,13 +211,12 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
         try {
             httpSenderNetwork =
-                    new HttpSenderNetwork<>(
+                    new HttpSenderApache(
+                            this::getGlobalCookieStore,
                             connectionOptions,
-                            new HttpSenderApache(
-                                    this::getGlobalCookieStore,
-                                    connectionOptions,
-                                    clientCertificatesOptions,
-                                    () -> legacyProxyListenerHandler));
+                            clientCertificatesOptions,
+                            () -> legacyProxyListenerHandler);
+            HttpSender.setImpl(httpSenderNetwork);
         } catch (Exception e) {
             LOGGER.error("An error occurred while creating the sender:", e);
         }
@@ -283,18 +284,19 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                 new ServerInfo() {
 
                     @Override
+                    @SuppressWarnings("deprecation")
                     public String getAddress() {
                         return getModel().getOptionsParam().getProxyParam().getProxyIp();
                     }
 
                     @Override
+                    @SuppressWarnings("deprecation")
                     public int getPort() {
                         return getModel().getOptionsParam().getProxyParam().getProxyPort();
                     }
                 };
 
-        ConnectionParam connectionParam = model.getOptionsParam().getConnectionParam();
-        proxyHttpSender = new HttpSender(connectionParam, true, HttpSender.PROXY_INITIATOR);
+        proxyHttpSender = new HttpSender(HttpSender.PROXY_INITIATOR);
         httpSenderHandler = new HttpSenderHandler(proxyHttpSender);
     }
 
@@ -414,8 +416,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
      */
     public Server createHttpProxy(int initiator, HttpMessageHandler handler) {
         Objects.requireNonNull(handler);
-        HttpSender httpSender =
-                new HttpSender(getModel().getOptionsParam().getConnectionParam(), true, initiator);
+        HttpSender httpSender = new HttpSender(initiator);
         return createHttpProxy(httpSender, handler);
     }
 
@@ -533,7 +534,9 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     }
 
     private static void updateOldCoreApiEndpoints(
-            ApiImplementor coreApi, ConnectionParam connectionParam) {
+            ApiImplementor coreApi,
+            @SuppressWarnings("deprecation")
+                    org.parosproxy.paros.network.ConnectionParam connectionParam) {
         List<String> views =
                 Arrays.asList(
                         "optionDefaultUserAgent",
@@ -563,7 +566,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                         "setOptionProxyChainPort",
                         "setOptionProxyChainPrompt",
                         "setOptionProxyChainRealm",
-                        "setOptionProxyChainSkipName",
                         "setOptionProxyChainUserName",
                         "setOptionSingleCookieRequestHeader",
                         "setOptionTimeoutInSecs",
@@ -874,8 +876,10 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         }
     }
 
+    @SuppressWarnings("deprecation")
     private void updateCoreProxy(LocalServerConfig serverConfig) {
-        ProxyParam proxyParam = getModel().getOptionsParam().getProxyParam();
+        org.parosproxy.paros.core.proxy.ProxyParam proxyParam =
+                getModel().getOptionsParam().getProxyParam();
         proxyParam.setProxyIp(
                 serverConfig.isAnyLocalAddress()
                         ? getLocalhostAddress()
@@ -891,6 +895,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         }
     }
 
+    @SuppressWarnings("deprecation")
     private boolean promptUserMainProxyPort() {
         LocalServerConfig serverConfig = mainProxyServer.getConfig();
         PromptPortPanel prompt =
@@ -920,7 +925,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
         } while (true);
 
-        ProxyParam proxyParam = getModel().getOptionsParam().getProxyParam();
+        org.parosproxy.paros.core.proxy.ProxyParam proxyParam =
+                getModel().getOptionsParam().getProxyParam();
         proxyParam.setProxyPort(prompt.getPort());
 
         LocalServer currentProxyServer = mainProxyServer;
@@ -1294,11 +1300,13 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void unload() {
         Control.getSingleton().getExtensionLoader().removeProxyServer(legacyProxyListenerHandler);
         legacyProxyListenerHandler = null;
 
-        ConnectionParam connectionParam = new ConnectionParam();
+        org.parosproxy.paros.network.ConnectionParam connectionParam =
+                new org.parosproxy.paros.network.ConnectionParam();
         ApiImplementor coreApi = API.getInstance().getImplementors().get("core");
         if (coreApi != null) {
             updateOldCoreApiEndpoints(coreApi, connectionParam);
@@ -1307,7 +1315,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         connectionParam.load(getModel().getOptionsParam().getConfig());
 
         if (httpSenderNetwork != null) {
-            httpSenderNetwork.unload();
+            httpSenderNetwork.close();
         }
 
         Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
@@ -1450,6 +1458,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     private class SessionChangedListenerImpl implements SessionChangedListener {
 
         @Override
+        @SuppressWarnings("deprecation")
         public void sessionChanged(Session session) {
             globalCookieStore = new BasicCookieStore();
             globalHttpState = new HttpState();

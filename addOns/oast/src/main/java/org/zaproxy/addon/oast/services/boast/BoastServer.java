@@ -33,11 +33,9 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
-import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.zap.utils.Stats;
 
 public class BoastServer {
@@ -53,13 +51,7 @@ public class BoastServer {
     private final List<String> eventIds = new ArrayList<>();
 
     public BoastServer(String uriString) throws IOException {
-        httpSender =
-                new HttpSender(
-                        Model.getSingleton().getOptionsParam().getConnectionParam(),
-                        true,
-                        // TODO: Replace on next ZAP release with HttpSender.OAST_INITIATOR
-                        ExtensionOast.HTTP_SENDER_OAST_INITIATOR);
-
+        httpSender = new HttpSender(HttpSender.OAST_INITIATOR);
         uri = new URI(uriString, true);
         boastMsg = new HttpMessage(uri);
         secret = generateBoastSecret();
@@ -72,12 +64,7 @@ public class BoastServer {
     }
 
     BoastServer(BoastEntity entity) throws IOException {
-        httpSender =
-                new HttpSender(
-                        Model.getSingleton().getOptionsParam().getConnectionParam(),
-                        true,
-                        // TODO: Replace on next ZAP release with HttpSender.OAST_INITIATOR
-                        ExtensionOast.HTTP_SENDER_OAST_INITIATOR);
+        httpSender = new HttpSender(HttpSender.OAST_INITIATOR);
         uri = new URI(entity.getUri(), true);
         boastMsg = new HttpMessage(uri);
         secret = entity.getSecret();

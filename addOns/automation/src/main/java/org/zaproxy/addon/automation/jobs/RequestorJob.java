@@ -55,11 +55,7 @@ public class RequestorJob extends AutomationJob {
     private Data data;
 
     private static final Logger LOG = LogManager.getLogger(RequestorJob.class);
-    private HttpSender httpSender =
-            new HttpSender(
-                    Model.getSingleton().getOptionsParam().getConnectionParam(),
-                    true,
-                    HttpSender.MANUAL_REQUEST_INITIATOR);
+    private HttpSender httpSender = new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR);
 
     public RequestorJob() {
         this.data = new Data(this, parameters);

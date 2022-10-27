@@ -39,7 +39,6 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PassiveScanner;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -310,11 +309,6 @@ public class WappalyzerPassiveScanner implements PassiveScanner {
             appMatch = new ApplicationMatch(currentApp);
         }
         return appMatch;
-    }
-
-    @Override
-    public void setParent(PassiveScanThread parent) {
-        // Does not apply.
     }
 
     @Override

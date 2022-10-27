@@ -40,9 +40,11 @@ public class ParamGuessResult {
         this.paramName = paramName;
         this.reasons = reasons;
         try {
-            // TODO Use TYPE_PARAM_MINER for the history reference type once targeting >= 2.12.0
             this.historyReference =
-                    new HistoryReference(Model.getSingleton().getSession(), 23, httpMessage);
+                    new HistoryReference(
+                            Model.getSingleton().getSession(),
+                            HistoryReference.TYPE_PARAM_DIGGER,
+                            httpMessage);
         } catch (HttpMalformedHeaderException | DatabaseException e) {
             logger.warn(
                     "Error creating history reference. Exception raised: {}", e.getMessage(), e);

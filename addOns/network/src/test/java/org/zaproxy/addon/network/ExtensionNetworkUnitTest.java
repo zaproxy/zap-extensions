@@ -79,8 +79,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 import org.parosproxy.paros.common.AbstractParam;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.core.proxy.ProxyParam;
-import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionLoader;
@@ -88,7 +86,6 @@ import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
-import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -112,10 +109,10 @@ import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiElement;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.CoreAPI;
-import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link ExtensionNetwork}. */
+@SuppressWarnings("deprecation")
 class ExtensionNetworkUnitTest extends TestUtils {
 
     private MockedStatic<ZAP> zap;
@@ -135,8 +132,10 @@ class ExtensionNetworkUnitTest extends TestUtils {
         model = mock(Model.class, withSettings().lenient());
         Model.setSingletonForTesting(model);
         optionsParam = mock(OptionsParam.class, withSettings().lenient());
-        given(optionsParam.getConnectionParam()).willReturn(new ConnectionParam());
-        given(optionsParam.getProxyParam()).willReturn(mock(ProxyParam.class));
+        given(optionsParam.getConnectionParam())
+                .willReturn(new org.parosproxy.paros.network.ConnectionParam());
+        given(optionsParam.getProxyParam())
+                .willReturn(mock(org.parosproxy.paros.core.proxy.ProxyParam.class));
         given(model.getOptionsParam()).willReturn(optionsParam);
 
         extension = new ExtensionNetwork();
@@ -184,7 +183,8 @@ class ExtensionNetworkUnitTest extends TestUtils {
 
     @Test
     void shouldAddLegacyConnectionOptionsOnInstantiation() {
-        ArgumentCaptor<ConnectionParam> argument = ArgumentCaptor.forClass(ConnectionParam.class);
+        ArgumentCaptor<org.parosproxy.paros.network.ConnectionParam> argument =
+                ArgumentCaptor.forClass(org.parosproxy.paros.network.ConnectionParam.class);
         verify(optionsParam).setConnectionParam(argument.capture());
         assertThat(argument.getValue(), is(instanceOf(LegacyConnectionParam.class)));
     }
@@ -194,7 +194,8 @@ class ExtensionNetworkUnitTest extends TestUtils {
         // Given
         String address = "address";
         int port = 1234;
-        ProxyParam proxyParam = mock(ProxyParam.class);
+        org.parosproxy.paros.core.proxy.ProxyParam proxyParam =
+                mock(org.parosproxy.paros.core.proxy.ProxyParam.class);
         given(proxyParam.getProxyIp()).willReturn(address);
         given(proxyParam.getProxyPort()).willReturn(port);
         given(optionsParam.getProxyParam()).willReturn(proxyParam);
@@ -243,7 +244,8 @@ class ExtensionNetworkUnitTest extends TestUtils {
                 ArgumentCaptor.forClass(SessionChangedListener.class);
         verify(extensionHook).addSessionListener(argument.capture());
         SessionChangedListener sessionChangedListener = argument.getValue();
-        ConnectionParam connectionParam = mock(ConnectionParam.class);
+        org.parosproxy.paros.network.ConnectionParam connectionParam =
+                mock(org.parosproxy.paros.network.ConnectionParam.class);
         given(optionsParam.getConnectionParam()).willReturn(connectionParam);
         extension.initModel(model);
         // When
@@ -359,7 +361,8 @@ class ExtensionNetworkUnitTest extends TestUtils {
         // When
         extension.hook(extensionHook);
         // Then
-        ArgumentCaptor<ProxyServer> argument = ArgumentCaptor.forClass(ProxyServer.class);
+        ArgumentCaptor<org.parosproxy.paros.core.proxy.ProxyServer> argument =
+                ArgumentCaptor.forClass(org.parosproxy.paros.core.proxy.ProxyServer.class);
         verify(extensionLoader).addProxyServer(argument.capture());
         assertThat(argument.getAllValues(), contains(instanceOf(LegacyProxyListenerHandler.class)));
         assertThat(
@@ -745,7 +748,8 @@ class ExtensionNetworkUnitTest extends TestUtils {
         // When
         extension.unload();
         // Then
-        ArgumentCaptor<ConnectionParam> argument = ArgumentCaptor.forClass(ConnectionParam.class);
+        ArgumentCaptor<org.parosproxy.paros.network.ConnectionParam> argument =
+                ArgumentCaptor.forClass(org.parosproxy.paros.network.ConnectionParam.class);
         verify(optionsParam, times(2)).setConnectionParam(argument.capture());
         assertThat(argument.getValue(), not(instanceOf(LegacyConnectionParam.class)));
         assertThat(coreApi.getLastAddedParam(), is(not(instanceOf(LegacyConnectionParam.class))));
@@ -946,7 +950,8 @@ class ExtensionNetworkUnitTest extends TestUtils {
                 new TextTestClient(
                         "127.0.0.1",
                         ch -> ch.pipeline().addFirst("http.client", new HttpClientCodec()));
-        given(optionsParam.getConnectionParam()).willReturn(new ConnectionParam());
+        given(optionsParam.getConnectionParam())
+                .willReturn(new org.parosproxy.paros.network.ConnectionParam());
         extension.initModel(model);
         // When
         try (Server server = extension.createHttpProxy(1, handler)) {
@@ -981,7 +986,8 @@ class ExtensionNetworkUnitTest extends TestUtils {
                 new TextTestClient(
                         "127.0.0.1",
                         ch -> ch.pipeline().addFirst("http.client", new HttpClientCodec()));
-        ConnectionParam connectionParam = new ConnectionParam();
+        org.parosproxy.paros.network.ConnectionParam connectionParam =
+                new org.parosproxy.paros.network.ConnectionParam();
         given(optionsParam.getConnectionParam()).willReturn(connectionParam);
         extension.initModel(model);
         // When
@@ -1105,7 +1111,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
         private AbstractParam param;
 
         CoreApiTest() {
-            super(new ConnectionParam());
+            super(new org.parosproxy.paros.network.ConnectionParam());
         }
 
         AbstractParam getLastAddedParam() {

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A newer HTTP client implementation.
 
 ### Changed
+- Update minimum ZAP version to 2.12.0.
 - Minor tweaks in help pages for better rendering.
 - Promoted to Beta status.
 - Maintenance changes.

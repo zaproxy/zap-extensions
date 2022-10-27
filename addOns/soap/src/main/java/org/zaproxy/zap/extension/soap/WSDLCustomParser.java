@@ -218,11 +218,7 @@ public class WSDLCustomParser {
                 }
                 return;
             }
-            HttpSender sender =
-                    new HttpSender(
-                            Model.getSingleton().getOptionsParam().getConnectionParam(),
-                            true,
-                            HttpSender.MANUAL_REQUEST_INITIATOR);
+            HttpSender sender = new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR);
             try {
                 sender.sendAndReceive(httpRequest, true);
             } catch (IOException e) {
@@ -594,11 +590,7 @@ public class WSDLCustomParser {
         /* Avoids connection if message has no proper body. */
         if (body == null || body.getBytes().length <= 0) return;
         /* Connection. */
-        HttpSender sender =
-                new HttpSender(
-                        Model.getSingleton().getOptionsParam().getConnectionParam(),
-                        true,
-                        HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpSender sender = new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR);
         /* Send request. */
         try {
             sender.sendAndReceive(httpRequest, true);

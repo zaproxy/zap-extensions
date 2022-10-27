@@ -19,8 +19,6 @@
  */
 package org.zaproxy.addon.requester.internal;
 
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.addon.requester.MessageEditorDialog;
@@ -38,29 +36,6 @@ public abstract class AbstractHttpMessageEditorDialog extends MessageEditorDialo
         this.panel = panel;
 
         setTitle(Constant.messages.getString(titleKey));
-
-        addWindowListener(
-                new WindowAdapter() {
-
-                    @Override
-                    public void windowClosed(WindowEvent e) {
-                        panel.cleanup();
-                    }
-
-                    @Override
-                    public void windowClosing(WindowEvent e) {
-                        windowClosed(e);
-                    }
-                });
-    }
-
-    @Override
-    public void setVisible(boolean show) {
-        if (!show && panel != null) {
-            panel.cleanup();
-        }
-
-        super.setVisible(show);
     }
 
     protected ManualHttpRequestEditorPanel getPanel() {

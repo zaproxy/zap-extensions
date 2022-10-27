@@ -26,7 +26,6 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.SwingWorker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -49,11 +48,7 @@ public class TokenGenerator extends SwingWorker<Void, Void> {
 
     private HttpSender getHttpSender() {
         if (httpSender == null) {
-            httpSender =
-                    new HttpSender(
-                            Model.getSingleton().getOptionsParam().getConnectionParam(),
-                            true,
-                            HttpSender.TOKEN_GENERATOR_INITIATOR);
+            httpSender = new HttpSender(HttpSender.TOKEN_GENERATOR_INITIATOR);
         }
         return httpSender;
     }

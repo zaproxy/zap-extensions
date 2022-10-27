@@ -57,6 +57,7 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -95,6 +96,8 @@ class ExtensionReportsUnitTest {
         Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
 
         Constant.PROGRAM_VERSION = "Dev Build";
+        HttpRequestHeader.setDefaultUserAgent(
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0");
     }
 
     @Test

@@ -5,7 +5,7 @@ description = "Imports and scans WSDL files containing SOAP endpoints."
 zapAddOn {
     addOnName.set("SOAP Support")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.11.1")
+    zapVersion.set("2.12.0")
 
     manifest {
         author.set("Alberto (albertov91) + ZAP Dev Team")
@@ -75,7 +75,7 @@ dependencies {
     implementation("com.predic8:soa-model-core:1.6.3")
     implementation("com.sun.xml.messaging.saaj:saaj-impl:2.0.1")
     implementation("jakarta.xml.soap:jakarta.xml.soap-api:2.0.1")
-    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.17.2") {
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.19.0") {
         // Provided by ZAP.
         exclude(group = "org.apache.logging.log4j")
     }

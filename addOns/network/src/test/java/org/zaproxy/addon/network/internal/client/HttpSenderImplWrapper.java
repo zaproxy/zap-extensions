@@ -29,8 +29,8 @@ import java.nio.file.Path;
 import org.mockito.invocation.InvocationOnMock;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
-import org.zaproxy.addon.network.internal.client.core.HttpSenderContext;
 import org.zaproxy.zap.network.HttpRequestConfig;
+import org.zaproxy.zap.network.HttpSenderContext;
 import org.zaproxy.zap.network.HttpSenderListener;
 import org.zaproxy.zap.users.User;
 

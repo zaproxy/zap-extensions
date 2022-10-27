@@ -25,7 +25,6 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 
@@ -41,11 +40,7 @@ public class SAMLResender {
      * @param msg The message to be sent
      */
     public static void resendMessage(final HttpMessage msg) throws SAMLException {
-        HttpSender sender =
-                new HttpSender(
-                        Model.getSingleton().getOptionsParam().getConnectionParam(),
-                        true,
-                        HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpSender sender = new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR);
         try {
             sender.sendAndReceive(msg, true);
             if (!msg.getResponseHeader().isEmpty()) {

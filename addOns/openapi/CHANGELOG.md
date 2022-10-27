@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Update minimum ZAP version to 2.12.0.
 - Remove parser used for core spider (Related to Issue 3113).
 - Maintenance changes.
 

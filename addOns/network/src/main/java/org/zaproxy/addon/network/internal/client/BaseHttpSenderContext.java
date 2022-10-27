@@ -21,7 +21,7 @@ package org.zaproxy.addon.network.internal.client;
 
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
-import org.zaproxy.addon.network.internal.client.core.HttpSenderContext;
+import org.zaproxy.zap.network.HttpSenderContext;
 import org.zaproxy.zap.users.User;
 
 public abstract class BaseHttpSenderContext implements HttpSenderContext {

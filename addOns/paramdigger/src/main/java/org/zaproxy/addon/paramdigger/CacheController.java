@@ -78,8 +78,9 @@ public class CacheController {
                         try {
                             model.addHistoryReference(
                                     new HistoryReference(
-                                            // TODO replace the type
-                                            Model.getSingleton().getSession(), 23, msg));
+                                            Model.getSingleton().getSession(),
+                                            HistoryReference.TYPE_PARAM_DIGGER,
+                                            msg));
                         } catch (Exception e) {
                             logger.error(e, e);
                         }

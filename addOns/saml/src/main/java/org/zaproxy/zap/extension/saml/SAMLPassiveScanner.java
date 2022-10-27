@@ -23,7 +23,6 @@ import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
-import org.zaproxy.zap.extension.pscan.PassiveScanThread;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class SAMLPassiveScanner extends PluginPassiveScanner {
@@ -35,8 +34,6 @@ public class SAMLPassiveScanner extends PluginPassiveScanner {
             Constant.messages.getString("saml.passivescanner.otherinfo");
     private static final String REFS = Constant.messages.getString("saml.passivescanner.refs");
 
-    private PassiveScanThread parent;
-
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         scanMessage(msg, id);
@@ -45,7 +42,7 @@ public class SAMLPassiveScanner extends PluginPassiveScanner {
     private void scanMessage(HttpMessage msg, int id) {
         SAMLInspectionResult samlInspectionResult = SAMLUtils.inspectMessage(msg);
         if (samlInspectionResult.hasSAMLMessage()) {
-            parent.addTag("SAML");
+            addHistoryTag("SAML");
             raiseAlert(samlInspectionResult);
         }
     }

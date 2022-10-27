@@ -336,10 +336,6 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
     public void unload() {
         super.unload();
 
-        // Explicitly call "stop()" as it's not being called by the core during/after the unloading.
-        // TODO Remove once the bug is fixed in core.
-        stop();
-
         if (View.isInitialised()) {
             // clear up Session Properties
             getView().getSessionDialog().removeParamPanel(monitoredClientsPanel);

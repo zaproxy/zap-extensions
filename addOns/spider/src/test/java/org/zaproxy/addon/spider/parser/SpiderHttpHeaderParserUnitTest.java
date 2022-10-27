@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 
 /** Unit test for {@link SpiderHttpHeaderParser}. */
@@ -82,9 +83,7 @@ class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils<SpiderHttpHea
     }
 
     @ParameterizedTest
-    // TODO Adjust once targeting next core version
-    // @ValueSource(strings = {HttpHeader.CONTENT_LOCATION, HttpHeader.REFRESH, HttpHeader.LINK})
-    @ValueSource(strings = {"COntent-Location", "Refresh", "Link"})
+    @ValueSource(strings = {HttpHeader.CONTENT_LOCATION, HttpHeader.REFRESH, HttpHeader.LINK})
     void shouldNotExtractUrlIfUrlHeaderIsEmpty(String header) {
         // Given
         msg.getResponseHeader().addHeader(header, "");
@@ -99,9 +98,7 @@ class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils<SpiderHttpHea
     void shouldExtractUrlFromContentLocationHeader() {
         // Given
         String value = "http://example.com/contentlocation";
-        // TODO Adjust once targeting next core version
-        // msg.getResponseHeader().addHeader(HttpHeader.CONTENT_LOCATION, value);
-        msg.getResponseHeader().addHeader("Content-Location", value);
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_LOCATION, value);
         // When
         boolean parsed = parser.parseResource(ctx);
         // Then
@@ -113,9 +110,7 @@ class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils<SpiderHttpHea
     void shouldExtractRelativeUrlFromContentLocationHeader() {
         // Given
         String url = "/rel/redirection";
-        // TODO Adjust once targeting next core version
-        // msg.getResponseHeader().addHeader(HttpHeader.CONTENT_LOCATION, url);
-        msg.getResponseHeader().addHeader("Content-Location", url);
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_LOCATION, url);
         // When
         boolean parsed = parser.parseResource(ctx);
         // Then
@@ -130,9 +125,8 @@ class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils<SpiderHttpHea
         String url2 = "/link2";
         msg.getResponseHeader()
                 .addHeader(
-                        // TODO Adjust once targeting next core version
-                        // HttpHeader.LINK,
-                        "Link", "<" + url1 + ">; param1=value1; param2=\"value2\";<" + url2 + ">");
+                        HttpHeader.LINK,
+                        "<" + url1 + ">; param1=value1; param2=\"value2\";<" + url2 + ">");
         // When
         boolean parsed = parser.parseResource(ctx);
         // Then
@@ -150,9 +144,7 @@ class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils<SpiderHttpHea
             })
     void shouldIgnoreInvalidLinkHeaders(String value) {
         // Given
-        // TODO Adjust once targeting next core version
-        // msg.getResponseHeader().addHeader(HttpHeader.LINK, value);
-        msg.getResponseHeader().addHeader("Link", value);
+        msg.getResponseHeader().addHeader(HttpHeader.LINK, value);
         // When
         boolean parsed = parser.parseResource(ctx);
         // Then
@@ -164,9 +156,7 @@ class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils<SpiderHttpHea
     void shouldExtractUrlFromRefreshHeader() {
         // Given
         String url = "http://example.com/refresh";
-        // TODO Adjust once targeting next core version
-        // msg.getResponseHeader().addHeader(HttpHeader.REFRESH, "999; url=" + url);
-        msg.getResponseHeader().addHeader("Refresh", "999; url=" + url);
+        msg.getResponseHeader().addHeader(HttpHeader.REFRESH, "999; url=" + url);
         // When
         boolean parsed = parser.parseResource(ctx);
         // Then
@@ -178,9 +168,7 @@ class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils<SpiderHttpHea
     void shouldExtractRelativeUrlFromRefreshHeader() {
         // Given
         String url = "/rel/refresh";
-        // TODO Adjust once targeting next core version
-        // msg.getResponseHeader().addHeader(HttpHeader.REFRESH, "999; url=" + url);
-        msg.getResponseHeader().addHeader("Refresh", "999; url=" + url);
+        msg.getResponseHeader().addHeader(HttpHeader.REFRESH, "999; url=" + url);
         // When
         boolean parsed = parser.parseResource(ctx);
         // Then

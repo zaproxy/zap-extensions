@@ -36,9 +36,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.httpclient.ProxyClient;
-import org.apache.commons.httpclient.ProxyClient.ConnectResponse;
-import org.apache.commons.httpclient.StatusLine;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -54,7 +51,6 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
-import org.parosproxy.paros.network.SSLConnector;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
@@ -101,17 +97,6 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
                     CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
                     CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
                     CommonAlertTag.WSTG_V42_CONF_06_HTTP_METHODS);
-
-    private static boolean useHttpSender;
-
-    static {
-        try {
-            Class.forName("org.zaproxy.addon.network.internal.client.BaseHttpSender");
-            useHttpSender = SSLConnector.class.getAnnotation(Deprecated.class) != null;
-        } catch (Exception e) {
-            useHttpSender = false;
-        }
-    }
 
     @Override
     public int getId() {
@@ -421,71 +406,48 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
         String connecthost = baseMsg.getRequestHeader().getURI().getHost();
         int connectport = baseMsg.getRequestHeader().getURI().getPort();
 
-        if (useHttpSender) {
-            HttpRequestHeader requestHeader = baseMsg.getRequestHeader();
-            HttpMessage connectMessage = baseMsg.cloneRequest();
-            connectMessage
-                    .getRequestHeader()
-                    .setMessage(
-                            HttpRequestHeader.CONNECT
-                                    + " "
-                                    + thirdpartyHost
-                                    + ":"
-                                    + thirdpartyPort
-                                    + " "
-                                    + requestHeader.getVersion()
-                                    + "\r\n"
-                                    + requestHeader.getHeadersAsString());
+        HttpRequestHeader requestHeader = baseMsg.getRequestHeader();
+        HttpMessage connectMessage = baseMsg.cloneRequest();
+        connectMessage
+                .getRequestHeader()
+                .setMessage(
+                        HttpRequestHeader.CONNECT
+                                + " "
+                                + thirdpartyHost
+                                + ":"
+                                + thirdpartyPort
+                                + " "
+                                + requestHeader.getVersion()
+                                + "\r\n"
+                                + requestHeader.getHeadersAsString());
 
-            Map<String, Object> metadata = new HashMap<>();
-            metadata.put("target.host", connecthost);
-            metadata.put("target.port", connectport);
-            connectMessage.setUserObject(metadata);
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("target.host", connecthost);
+        metadata.put("target.port", connectport);
+        connectMessage.setUserObject(metadata);
 
-            try {
-                sendAndReceive(connectMessage, false);
-            } catch (IOException ex) {
-                log.debug(
-                        "Could not establish a client connection to a third party using the CONNECT HTTP method",
-                        ex);
-                return;
-            }
-
-            Object userObject = connectMessage.getUserObject();
-            if (!(userObject instanceof Socket)) {
-                return;
-            }
-
-            HttpResponseHeader responseHeader = connectMessage.getResponseHeader();
-            log.debug("The status line returned: {}", responseHeader.getPrimeHeader());
-            handleConnectResponse(
-                    thirdpartyHost,
-                    thirdpartyPort,
-                    thirdPartyContentPattern,
-                    responseHeader.getStatusCode(),
-                    (Socket) userObject);
-            return;
-        }
-
-        ProxyClient client = new ProxyClient();
-        ConnectResponse connectResponse = null;
-        client.getHostConfiguration().setProxy(connecthost, connectport);
-        client.getHostConfiguration().setHost(thirdpartyHost, thirdpartyPort);
         try {
-            connectResponse = client.connect();
-            StatusLine statusLine = connectResponse.getConnectMethod().getStatusLine();
-            log.debug("The status line returned: {}", statusLine);
-            handleConnectResponse(
-                    thirdpartyHost,
-                    thirdpartyPort,
-                    thirdPartyContentPattern,
-                    statusLine.getStatusCode(),
-                    connectResponse.getSocket());
+            sendAndReceive(connectMessage, false);
         } catch (IOException ex) {
             log.debug(
                     "Could not establish a client connection to a third party using the CONNECT HTTP method",
                     ex);
+            return;
         }
+
+        Object userObject = connectMessage.getUserObject();
+        if (!(userObject instanceof Socket)) {
+            return;
+        }
+
+        HttpResponseHeader responseHeader = connectMessage.getResponseHeader();
+        log.debug("The status line returned: {}", responseHeader.getPrimeHeader());
+        handleConnectResponse(
+                thirdpartyHost,
+                thirdpartyPort,
+                thirdPartyContentPattern,
+                responseHeader.getStatusCode(),
+                (Socket) userObject);
     }
 
     private void handleConnectResponse(

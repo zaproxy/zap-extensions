@@ -179,7 +179,9 @@ public class UrlBruteForce implements Callable<ParamReasons> {
                                 try {
                                     table.addHistoryReference(
                                             new HistoryReference(
-                                                    Model.getSingleton().getSession(), 23, msg));
+                                                    Model.getSingleton().getSession(),
+                                                    HistoryReference.TYPE_PARAM_DIGGER,
+                                                    msg));
                                 } catch (Exception e) {
                                     logger.error(e, e);
                                 }
@@ -215,7 +217,10 @@ public class UrlBruteForce implements Callable<ParamReasons> {
                     msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
                     httpSender.sendAndReceive(msg);
                     table.addHistoryReference(
-                            new HistoryReference(Model.getSingleton().getSession(), 23, msg));
+                            new HistoryReference(
+                                    Model.getSingleton().getSession(),
+                                    HistoryReference.TYPE_PARAM_DIGGER,
+                                    msg));
                     return xmlPayload;
                 } catch (Exception e) {
                     // TODO show proper error message on Output Panel
@@ -258,7 +263,10 @@ public class UrlBruteForce implements Callable<ParamReasons> {
                     msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
                     httpSender.sendAndReceive(msg);
                     table.addHistoryReference(
-                            new HistoryReference(Model.getSingleton().getSession(), 23, msg));
+                            new HistoryReference(
+                                    Model.getSingleton().getSession(),
+                                    HistoryReference.TYPE_PARAM_DIGGER,
+                                    msg));
                     return jsonPayload;
                 } catch (Exception e) {
                     // TODO show proper error message on Output Panel
@@ -286,7 +294,10 @@ public class UrlBruteForce implements Callable<ParamReasons> {
                     msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
                     httpSender.sendAndReceive(msg);
                     table.addHistoryReference(
-                            new HistoryReference(Model.getSingleton().getSession(), 23, msg));
+                            new HistoryReference(
+                                    Model.getSingleton().getSession(),
+                                    HistoryReference.TYPE_PARAM_DIGGER,
+                                    msg));
                     return postPayload;
                 } catch (Exception e) {
                     // TODO show proper error message on Output Panel

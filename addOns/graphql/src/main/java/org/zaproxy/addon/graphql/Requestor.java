@@ -28,7 +28,6 @@ import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -50,11 +49,7 @@ public class Requestor {
     public Requestor(URI endpointUrl, int initiator) {
         this.endpointUrl = endpointUrl;
         this.initiator = initiator;
-        sender =
-                new HttpSender(
-                        Model.getSingleton().getOptionsParam().getConnectionParam(),
-                        true,
-                        initiator);
+        sender = new HttpSender(initiator);
         requestConfig =
                 HttpRequestConfig.builder().setRedirectionValidator(new MessageHandler()).build();
     }

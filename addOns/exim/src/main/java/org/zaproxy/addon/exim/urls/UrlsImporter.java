@@ -47,11 +47,7 @@ public class UrlsImporter {
     private static final String STATS_URL_FILE_URL = "import.url.file.url";
     private static final String STATS_URL_FILE_URL_ERROR = "import.url.file.url.errors";
 
-    private final HttpSender sender =
-            new HttpSender(
-                    Model.getSingleton().getOptionsParam().getConnectionParam(),
-                    true,
-                    HttpSender.MANUAL_REQUEST_INITIATOR);
+    private final HttpSender sender = new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR);
     private ProgressPaneListener progressListener;
     private boolean success;
 

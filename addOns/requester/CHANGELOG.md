@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Allow to establish WebSocket connections with the send/resend Manual Request Editor dialogues.
 
 ### Changed
+- Update minimum ZAP version to 2.12.0.
 - Improve reporting of TLS errors (Issue 2699).
 - Maintenance changes.
 - Promoted to Beta.

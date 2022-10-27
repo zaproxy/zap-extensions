@@ -36,6 +36,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Locale;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,11 +48,10 @@ import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.network.common.ZapSocketTimeoutException;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.zap.network.HttpRequestConfig;
-import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
 
 /** Unit test for {@link HttpSenderHandler}. */
-class HttpSenderHandlerUnitTest extends TestUtils {
+class HttpSenderHandlerUnitTest {
 
     private HttpMessageHandlerContext ctx;
     private HttpSender httpSender;
@@ -84,7 +84,8 @@ class HttpSenderHandlerUnitTest extends TestUtils {
         // Then
         verify(httpSender, times(0)).sendAndReceive(any());
         verify(httpSender, times(0)).sendAndReceive(any(), anyBoolean());
-        verify(httpSender, times(0)).sendAndReceive(any(), any());
+        verify(httpSender, times(0)).sendAndReceive(any(), any(HttpRequestConfig.class));
+        verify(httpSender, times(0)).sendAndReceive(any(), any(Path.class));
     }
 
     @Test
@@ -184,7 +185,8 @@ class HttpSenderHandlerUnitTest extends TestUtils {
     private void verifyMessageSent(HttpMessage message) throws IOException {
         verify(httpSender, times(1)).sendAndReceive(message);
         verify(httpSender, times(0)).sendAndReceive(any(), anyBoolean());
-        verify(httpSender, times(0)).sendAndReceive(any(), any());
+        verify(httpSender, times(0)).sendAndReceive(any(), any(HttpRequestConfig.class));
+        verify(httpSender, times(0)).sendAndReceive(any(), any(Path.class));
     }
 
     private static HttpMessage createServerRequest(String request) {

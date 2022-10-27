@@ -102,7 +102,6 @@ import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListen
 import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.addon.network.testutils.TestHttpServer;
 import org.zaproxy.addon.network.testutils.TestHttpServer.TestHttpMessageHandler;
-import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.network.HttpSenderListener;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -228,13 +227,13 @@ class HttpSenderImplUnitTest {
 
     static Stream<Arguments> httpVersionsAndSendAndReceiveMethods() {
         return Stream.of(
-                        "HTTP/0.9", "HTTP/1.0", "HTTP/1.1"
-                        // XXX Not yet allowed by current core version.
-                        // "HTTP/1.2",
-                        // "HTTP/2",
-                        // "HTTP/3.0",
-                        // "HTTP/4.5"
-                        )
+                        "HTTP/0.9",
+                        "HTTP/1.0",
+                        "HTTP/1.1",
+                        "HTTP/1.2",
+                        "HTTP/2.0",
+                        "HTTP/3.0",
+                        "HTTP/4.5")
                 .flatMap(method -> sendAndReceiveMethods().map(sm -> arguments(method, sm)));
     }
 
@@ -1203,12 +1202,14 @@ class HttpSenderImplUnitTest {
             assertSocketClosed(true);
         }
 
+        @SuppressWarnings("deprecation")
         private void assertSocketClosed(boolean closed) throws IOException {
-            ArgumentCaptor<ZapGetMethod> methodCaptor = ArgumentCaptor.forClass(ZapGetMethod.class);
+            ArgumentCaptor<org.zaproxy.zap.ZapGetMethod> methodCaptor =
+                    ArgumentCaptor.forClass(org.zaproxy.zap.ZapGetMethod.class);
             verify(legacyProxyListenerHandler)
                     .notifyPersistentConnectionListener(
                             eq(message), isNull(), methodCaptor.capture());
-            ZapGetMethod getMethod = methodCaptor.getValue();
+            org.zaproxy.zap.ZapGetMethod getMethod = methodCaptor.getValue();
             try (Socket socket = getMethod.getUpgradedConnection()) {
                 assertThat(socket.isConnected(), is(equalTo(true)));
                 assertThat(socket.isClosed(), is(equalTo(closed)));

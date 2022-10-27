@@ -12,7 +12,7 @@ javafx {
 
 zapAddOn {
     addOnName.set("Browser View")
-    zapVersion.set("2.11.1")
+    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")

@@ -43,7 +43,6 @@ import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.network.internal.ChannelAttributes;
 import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
-import org.zaproxy.zap.ZapGetMethod;
 
 /** Unit test for {@link MainProxyHandler}. */
 class MainProxyHandlerUnitTest {
@@ -165,7 +164,8 @@ class MainProxyHandlerUnitTest {
     void shouldUseMethodFromMessage() {
         // Given
         given(msg.isEventStream()).willReturn(true);
-        ZapGetMethod method = mock(ZapGetMethod.class);
+        @SuppressWarnings("deprecation")
+        org.zaproxy.zap.ZapGetMethod method = mock(org.zaproxy.zap.ZapGetMethod.class);
         given(msg.getUserObject()).willReturn(method);
         // When
         handler.postWriteResponse(ctx, msg);

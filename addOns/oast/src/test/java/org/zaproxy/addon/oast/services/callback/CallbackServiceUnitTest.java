@@ -40,7 +40,6 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
@@ -80,7 +79,7 @@ class CallbackServiceUnitTest extends TestUtils {
 
     @BeforeEach
     void setup() throws Exception {
-        httpSender = new HttpSender(new ConnectionParam(), false, 0);
+        httpSender = new HttpSender(0);
 
         oastRequest = mock(OastRequest.class);
         OastRequestFactory oastRequestFactory =
