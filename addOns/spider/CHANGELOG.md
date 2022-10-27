@@ -4,7 +4,7 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [0.1.0] - 2022-10-27
 
 ### Functional Improvements Compared to Previous Core Release
 
@@ -29,3 +29,5 @@ The following table illustrates the changes versus the previous core release(s) 
 |                                                                                                                                         | Inline string - 'p', 'title', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', and 'blockquote' tags                                                                                                                       |
 |                                                                                                                                         | SVG image files are parsed to identify HREF attributes and extract/resolve any contained links. (Issue 4984)                                                                                                        |
 |                                                                                                                                         | Irrelevant Parameters - Allows to manage the parameters that should be removed when canonicalising the URLs found. The session token names defined in the HTTP Sessions options are taken into account and removed (Issue 4388). |
+
+[0.1.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.1.0

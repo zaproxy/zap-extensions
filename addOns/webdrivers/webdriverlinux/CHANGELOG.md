@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [46] - 2022-10-27
 ### Changed
 - Update minimum ZAP version to 2.12.0.
 - Update ChromeDriver to 107.0.5304.62.
@@ -215,6 +215,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27
 
+[46]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v46
 [45]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v45
 [44]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v43
