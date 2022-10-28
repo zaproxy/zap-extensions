@@ -33,8 +33,6 @@ package org.zaproxy.zap.extension.ascanrules.timing;
  * This class has a few quirks, most notably that it doesn't compute y-intercept at all, since we're
  * only interested in the slope for Zap purposes. Additionally, the correlation and slope
  * conventionally fix at 1.0 when insufficient data points (<2) have been added.
- *
- * @since 1.11.0
  */
 public class OnlineSimpleLinearRegression {
     private double count = 0;

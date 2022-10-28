@@ -23,8 +23,6 @@ import java.util.function.Function;
 
 /**
  * Utility class to host time-based blind detection algorithms.
- *
- * @since 1.11.0
  */
 public class TimingUtils {
 
