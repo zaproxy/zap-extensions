@@ -137,6 +137,10 @@ public class SpiderAPI extends ApiImplementor {
     /** The spider extension. */
     private ExtensionSpider2 extension;
 
+    public SpiderAPI() {
+        this(null);
+    }
+
     /**
      * Instantiates a new spider API.
      *

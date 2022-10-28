@@ -54,7 +54,7 @@ class ExtensionSpiderFormHandlerUnitTest extends TestUtils {
     @BeforeEach
     void setUp() {
         extension = new ExtensionSpiderFormHandler();
-        mockMessages("org.zaproxy.addon.spider." + Constant.MESSAGES_PREFIX, "spider");
+        mockMessages("org.zaproxy.addon.spider.resources." + Constant.MESSAGES_PREFIX, "spider");
 
         Model model = mock(Model.class, withSettings().lenient());
         Model.setSingletonForTesting(model);
