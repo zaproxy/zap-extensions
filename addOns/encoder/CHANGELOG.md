@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- Allow script processors to return strings without requiring an "EncodeDecodeResult" wrapper.
 
 ## [0.7.0] - 2022-10-27
 ### Changed

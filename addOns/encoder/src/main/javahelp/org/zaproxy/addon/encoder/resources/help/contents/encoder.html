@@ -172,7 +172,8 @@ Will display the SHA1 hash of the text you enter.
 Will display the SHA256 hash of the text you enter.
 
 <H3>Custom</H3>
-Custom "Encode/Decode" scripts can be created/added to the Scripts Tree and used by custom Output Panels.
+Custom "Encode/Decode" scripts can be created/added to the Scripts Tree and used by custom Output Panels. They should return <code>EncodeDecodeResult</code> objects as indicated by the templates. However,
+in the event that users aren't careful in doing so will return other data types leveraging their <code>toString()</code> implementation (which may or may not be useful/obvious at first glance).
 
 <H2>Accessed via</H2>
 <table>
