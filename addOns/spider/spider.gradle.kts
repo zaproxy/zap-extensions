@@ -48,6 +48,19 @@ zapAddOn {
             }
         }
     }
+
+    apiClientGen {
+        api.set("org.zaproxy.addon.spider.SpiderAPI")
+        options.set("org.zaproxy.addon.spider.SpiderParam")
+    }
+}
+
+crowdin {
+    configuration {
+        val path = "org/zaproxy/addon/spider/resources/"
+        tokens.put("%messagesPath%", path)
+        tokens.put("%helpPath%", path)
+    }
 }
 
 dependencies {
