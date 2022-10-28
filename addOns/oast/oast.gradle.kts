@@ -38,11 +38,6 @@ zapAddOn {
             }
         }
     }
-
-    apiClientGen {
-        api.set("org.zaproxy.addon.oast.OastApi")
-        messages.set(file("src/main/resources/org/zaproxy/addon/oast/resources/Messages.properties"))
-    }
 }
 
 crowdin {
