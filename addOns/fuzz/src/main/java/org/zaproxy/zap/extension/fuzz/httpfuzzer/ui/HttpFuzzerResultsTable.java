@@ -44,6 +44,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.search.SearchMatch;
 import org.zaproxy.zap.view.table.HistoryReferencesTable;
 
+@SuppressWarnings("serial")
 public class HttpFuzzerResultsTable extends HistoryReferencesTable {
 
     private static final long serialVersionUID = -1910120966638329368L;

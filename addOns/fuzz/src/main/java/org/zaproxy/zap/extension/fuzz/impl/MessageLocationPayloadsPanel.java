@@ -41,6 +41,7 @@ import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.utils.StringUIUtils;
 import org.zaproxy.zap.view.AbstractMultipleOrderedOptionsBaseTablePanel;
 
+@SuppressWarnings("serial")
 public class MessageLocationPayloadsPanel extends JPanel {
 
     private static final long serialVersionUID = 693504188920055070L;
@@ -171,6 +172,7 @@ public class MessageLocationPayloadsPanel extends JPanel {
 
         private final JButton processorsButton;
 
+        @SuppressWarnings("unchecked")
         public PayloadsTablePanel(List<PayloadTableEntry> payloads) {
             super(new PayloadsTableModel(payloads));
 
@@ -273,6 +275,7 @@ public class MessageLocationPayloadsPanel extends JPanel {
 
         @Override
         public PayloadTableEntry showModifyDialogue(PayloadTableEntry e) {
+            @SuppressWarnings({"unchecked", "rawtypes"})
             PayloadGeneratorUI<?, ?> payloadGeneratorUI =
                     showModifyDialogueHelper((PayloadGeneratorUI) e.getPayloadGeneratorUI());
 

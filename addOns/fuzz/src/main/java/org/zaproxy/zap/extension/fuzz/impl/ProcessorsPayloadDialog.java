@@ -38,6 +38,7 @@ import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.view.AbstractFormDialog;
 import org.zaproxy.zap.view.AbstractMultipleOrderedOptionsBaseTablePanel;
 
+@SuppressWarnings("serial")
 public class ProcessorsPayloadDialog extends AbstractFormDialog {
 
     protected static final long serialVersionUID = -7609757285865562636L;
@@ -210,7 +211,7 @@ public class ProcessorsPayloadDialog extends AbstractFormDialog {
         @Override
         public PayloadProcessorTableEntry showModifyDialogue(PayloadProcessorTableEntry e) {
             PayloadProcessorUI<?, ?> processorUI =
-                    showModifyDialogueImpl(e, (PayloadProcessorUI) e.getPayloadProcessorUI());
+                    showModifyDialogueImpl(e, (PayloadProcessorUI<?, ?>) e.getPayloadProcessorUI());
 
             if (processorUI != null) {
                 e.setPayloadProcessorUI(processorUI);
@@ -282,6 +283,7 @@ public class ProcessorsPayloadDialog extends AbstractFormDialog {
         return getProcessedPayloads(-1);
     }
 
+    @SuppressWarnings("unchecked")
     private ResettableAutoCloseableIterator<Payload> getProcessedPayloads(int numberOfProcessors) {
         List<PayloadProcessor<Payload>> currentProcessors = new ArrayList<>();
         int count = 0;
@@ -294,6 +296,6 @@ public class ProcessorsPayloadDialog extends AbstractFormDialog {
                             processorEntry.getPayloadProcessorUI().getPayloadProcessor());
             count++;
         }
-        return new PayloadsProcessedIterator(payloads, currentProcessors);
+        return new PayloadsProcessedIterator<>(payloads, currentProcessors);
     }
 }

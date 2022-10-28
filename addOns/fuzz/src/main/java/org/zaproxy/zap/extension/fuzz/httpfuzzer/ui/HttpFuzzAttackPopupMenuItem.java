@@ -28,6 +28,7 @@ import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerHandler;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 
+@SuppressWarnings("serial")
 public class HttpFuzzAttackPopupMenuItem extends PopupMenuItemHttpMessageContainer {
 
     private static final long serialVersionUID = 1L;

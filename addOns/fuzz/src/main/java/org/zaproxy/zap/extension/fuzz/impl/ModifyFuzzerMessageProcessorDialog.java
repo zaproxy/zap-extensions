@@ -30,6 +30,7 @@ import org.zaproxy.zap.extension.fuzz.FuzzerMessageProcessorUIPanel;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.view.AbstractFormDialog;
 
+@SuppressWarnings("serial")
 public class ModifyFuzzerMessageProcessorDialog<
                 T1 extends Message,
                 T2 extends FuzzerMessageProcessor<T1>,

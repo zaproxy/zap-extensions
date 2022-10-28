@@ -2,10 +2,6 @@ import org.zaproxy.gradle.addon.AddOnStatus
 
 description = "Advanced fuzzer for manual testing"
 
-tasks.withType<JavaCompile> {
-    options.compilerArgs = options.compilerArgs - "-Werror"
-}
-
 zapAddOn {
     addOnName.set("Fuzzer")
     addOnStatus.set(AddOnStatus.BETA)

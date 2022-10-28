@@ -45,6 +45,7 @@ import org.zaproxy.zap.view.table.AbstractCustomColumnHistoryReferencesTableMode
 import org.zaproxy.zap.view.table.AbstractHistoryReferencesTableEntry;
 import org.zaproxy.zap.view.table.DefaultHistoryReferencesTableEntry;
 
+@SuppressWarnings("serial")
 public class HttpFuzzerResultsTableModel
         extends AbstractCustomColumnHistoryReferencesTableModel<
                 HttpFuzzerResultsTableModel.FuzzResultTableEntry> {

@@ -27,6 +27,7 @@ import org.zaproxy.zap.extension.fuzz.FuzzerMessageProcessorUI;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.view.AbstractMultipleOrderedOptionsBaseTableModel;
 
+@SuppressWarnings("serial")
 public class FuzzerMessageProcessorsTableModel<
                 T1 extends Message,
                 T2 extends FuzzerMessageProcessor<T1>,

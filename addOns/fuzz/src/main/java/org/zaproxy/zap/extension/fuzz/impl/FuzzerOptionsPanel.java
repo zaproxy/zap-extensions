@@ -40,6 +40,7 @@ import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationsReplaceme
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.view.PositiveValuesSlider;
 
+@SuppressWarnings("serial")
 public class FuzzerOptionsPanel<FO extends FuzzerOptions> extends JPanel {
 
     private static final long serialVersionUID = -6701853630031984651L;

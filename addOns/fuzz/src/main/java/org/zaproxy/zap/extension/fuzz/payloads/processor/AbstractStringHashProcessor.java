@@ -74,7 +74,7 @@ public abstract class AbstractStringHashProcessor extends AbstractCharsetProcess
         MessageDigest messageDigest = getMessageDigest();
         messageDigest.reset();
         messageDigest.update(payload.getValue().getBytes(getCharset()));
-        payload.setValue(new String(HEX_ASCII.encodeHex(messageDigest.digest(), !upperCase)));
+        payload.setValue(Hex.encodeHexString(messageDigest.digest(), !upperCase));
         return payload;
     }
 
