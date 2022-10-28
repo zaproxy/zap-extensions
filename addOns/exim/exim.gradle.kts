@@ -37,6 +37,11 @@ zapAddOn {
             }
         }
     }
+
+    apiClientGen {
+        api.set("org.zaproxy.addon.exim.ImportExportApi")
+        messages.set(file("src/main/resources/org/zaproxy/addon/exim/resources/Messages.properties"))
+    }
 }
 
 crowdin {
