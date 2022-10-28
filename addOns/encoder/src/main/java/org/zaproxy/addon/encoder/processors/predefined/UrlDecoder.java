@@ -25,6 +25,8 @@ import java.net.URLDecoder;
 
 public class UrlDecoder extends DefaultEncodeDecodeProcessor {
 
+    private static final UrlDecoder INSTANCE = new UrlDecoder();
+
     @Override
     protected String processInternal(String value) throws IOException {
         return getURLDecode(value);
@@ -38,5 +40,9 @@ public class UrlDecoder extends DefaultEncodeDecodeProcessor {
             // Nothing to do
         }
         return result;
+    }
+
+    public static UrlDecoder getSingleton() {
+        return INSTANCE;
     }
 }

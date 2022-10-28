@@ -23,8 +23,14 @@ import org.apache.commons.lang.StringEscapeUtils;
 
 public class JavaScriptStringDecoder extends DefaultEncodeDecodeProcessor {
 
+    private static final JavaScriptStringDecoder INSTANCE = new JavaScriptStringDecoder();
+
     @Override
     protected String processInternal(String value) {
         return StringEscapeUtils.unescapeJavaScript(value);
+    }
+
+    public static JavaScriptStringDecoder getSingleton() {
+        return INSTANCE;
     }
 }

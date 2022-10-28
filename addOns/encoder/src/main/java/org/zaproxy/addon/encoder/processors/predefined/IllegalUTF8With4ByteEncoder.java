@@ -21,7 +21,13 @@ package org.zaproxy.addon.encoder.processors.predefined;
 
 public class IllegalUTF8With4ByteEncoder extends IllegalUTF8Encoder {
 
+    private static final IllegalUTF8With4ByteEncoder INSTANCE = new IllegalUTF8With4ByteEncoder();
+
     public IllegalUTF8With4ByteEncoder() {
         super(4);
+    }
+
+    public static IllegalUTF8With4ByteEncoder getSingleton() {
+        return INSTANCE;
     }
 }

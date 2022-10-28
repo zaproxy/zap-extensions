@@ -60,38 +60,38 @@ public class EncodeDecodeProcessors {
     private static List<EncodeDecodeProcessorItem> predefinedProcessors = new ArrayList<>();
 
     static {
-        addPredefined("base64decode", new Base64Decoder());
-        addPredefined("base64encode", new Base64Encoder());
+        addPredefined("base64decode", Base64Decoder.getSingleton());
+        addPredefined("base64encode", Base64Encoder.getSingleton());
 
-        addPredefined("base64urldecode", new Base64UrlDecoder());
-        addPredefined("base64urlencode", new Base64UrlEncoder());
+        addPredefined("base64urldecode", Base64UrlDecoder.getSingleton());
+        addPredefined("base64urlencode", Base64UrlEncoder.getSingleton());
 
-        addPredefined("hexdecode", new HexStringDecoder());
-        addPredefined("hexencode", new HexStringEncoder());
+        addPredefined("hexdecode", HexStringDecoder.getSingleton());
+        addPredefined("hexencode", HexStringEncoder.getSingleton());
 
-        addPredefined("htmldecode", new HtmlStringDecoder());
-        addPredefined("htmlencode", new HtmlStringEncoder());
-        addPredefined("fullhtmlencode", new FullHtmlStringEncoder());
+        addPredefined("htmldecode", HtmlStringDecoder.getSingleton());
+        addPredefined("htmlencode", HtmlStringEncoder.getSingleton());
+        addPredefined("fullhtmlencode", FullHtmlStringEncoder.getSingleton());
 
-        addPredefined("javascriptdecode", new JavaScriptStringDecoder());
-        addPredefined("javascriptencode", new JavaScriptStringEncoder());
+        addPredefined("javascriptdecode", JavaScriptStringDecoder.getSingleton());
+        addPredefined("javascriptencode", JavaScriptStringEncoder.getSingleton());
 
-        addPredefined("unicodedecode", new UnicodeDecoder());
-        addPredefined("unicodeencode", new UnicodeEncoder());
+        addPredefined("unicodedecode", UnicodeDecoder.getSingleton());
+        addPredefined("unicodeencode", UnicodeEncoder.getSingleton());
 
-        addPredefined("urldecode", new UrlDecoder());
-        addPredefined("urlencode", new UrlEncoder());
+        addPredefined("urldecode", UrlDecoder.getSingleton());
+        addPredefined("urlencode", UrlEncoder.getSingleton());
 
-        addPredefined("fullurldecode", new FullUrlDecoder());
-        addPredefined("fullurlencode", new FullUrlEncoder());
+        addPredefined("fullurldecode", FullUrlDecoder.getSingleton());
+        addPredefined("fullurlencode", FullUrlEncoder.getSingleton());
 
-        addPredefined("md5hash", new Md5Hasher());
-        addPredefined("sha1hash", new Sha1Hasher());
-        addPredefined("sha256hash", new Sha256Hasher());
+        addPredefined("md5hash", Md5Hasher.getSingleton());
+        addPredefined("sha1hash", Sha1Hasher.getSingleton());
+        addPredefined("sha256hash", Sha256Hasher.getSingleton());
 
-        addPredefined("illegalutf8with2byteencoder", new IllegalUTF8With2ByteEncoder());
-        addPredefined("illegalutf8with3byteencoder", new IllegalUTF8With3ByteEncoder());
-        addPredefined("illegalutf8with4byteencoder", new IllegalUTF8With4ByteEncoder());
+        addPredefined("illegalutf8with2byteencoder", IllegalUTF8With2ByteEncoder.getSingleton());
+        addPredefined("illegalutf8with3byteencoder", IllegalUTF8With3ByteEncoder.getSingleton());
+        addPredefined("illegalutf8with4byteencoder", IllegalUTF8With4ByteEncoder.getSingleton());
     }
 
     private Map<String, EncodeDecodeProcessorItem> scriptProcessors = new HashMap<>();

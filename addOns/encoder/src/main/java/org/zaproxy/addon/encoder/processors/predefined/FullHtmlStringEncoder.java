@@ -21,6 +21,8 @@ package org.zaproxy.addon.encoder.processors.predefined;
 
 public class FullHtmlStringEncoder extends DefaultEncodeDecodeProcessor {
 
+    private static final FullHtmlStringEncoder INSTANCE = new FullHtmlStringEncoder();
+
     @Override
     protected String processInternal(String value) {
         // Initial size: 3 digits for code point plus 3 appended chars
@@ -29,5 +31,9 @@ public class FullHtmlStringEncoder extends DefaultEncodeDecodeProcessor {
             output.append("&#").append(value.codePointAt(i)).append(';');
         }
         return output.toString();
+    }
+
+    public static FullHtmlStringEncoder getSingleton() {
+        return INSTANCE;
     }
 }
