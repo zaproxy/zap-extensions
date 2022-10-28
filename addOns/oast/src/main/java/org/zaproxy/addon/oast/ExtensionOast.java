@@ -117,7 +117,6 @@ public class ExtensionOast extends ExtensionAdaptor {
         registerOastService(callbackService);
         registerOastService(interactshService);
 
-        extensionHook.addApiImplementor(new OastApi());
         extensionHook.addSessionListener(new OastSessionChangedListener());
 
         oastParam = new OastParam();
