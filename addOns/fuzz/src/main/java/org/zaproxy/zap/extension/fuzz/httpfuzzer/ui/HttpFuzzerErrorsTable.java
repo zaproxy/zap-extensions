@@ -29,6 +29,7 @@ import javax.swing.table.TableModel;
 import org.jdesktop.swingx.JXTable;
 import org.zaproxy.zap.utils.StickyScrollbarAdjustmentListener;
 
+@SuppressWarnings("serial")
 public class HttpFuzzerErrorsTable extends JXTable {
 
     private static final long serialVersionUID = 8652281391044780396L;

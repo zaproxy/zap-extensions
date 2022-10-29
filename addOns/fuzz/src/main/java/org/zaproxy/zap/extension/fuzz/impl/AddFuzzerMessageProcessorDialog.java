@@ -34,6 +34,7 @@ import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
 import org.zaproxy.zap.view.AbstractFormDialog;
 
+@SuppressWarnings("serial")
 public class AddFuzzerMessageProcessorDialog<
                 T1 extends Message, T2 extends FuzzerMessageProcessor<T1>>
         extends AbstractFormDialog {

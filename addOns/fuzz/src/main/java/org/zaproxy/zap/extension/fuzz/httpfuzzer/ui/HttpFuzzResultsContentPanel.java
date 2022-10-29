@@ -52,6 +52,7 @@ import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerListener;
 import org.zaproxy.zap.view.ZapToggleButton;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
+@SuppressWarnings("serial")
 public class HttpFuzzResultsContentPanel extends JPanel
         implements FuzzResultsContentPanel<HttpMessage, HttpFuzzer> {
 

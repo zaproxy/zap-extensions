@@ -33,6 +33,7 @@ import org.zaproxy.zap.model.MessageLocation;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
 import org.zaproxy.zap.view.AbstractFormDialog;
 
+@SuppressWarnings("serial")
 public class AddPayloadDialog extends AbstractFormDialog {
 
     private static final long serialVersionUID = 4460797449668634319L;

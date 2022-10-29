@@ -28,6 +28,7 @@ import org.zaproxy.zap.extension.fuzz.impl.MessageLocationPayloadsPanel.Payloads
 import org.zaproxy.zap.model.MessageLocation;
 import org.zaproxy.zap.view.AbstractFormDialog;
 
+@SuppressWarnings("serial")
 public class PayloadsDialog extends AbstractFormDialog {
 
     private static final long serialVersionUID = 4152587374142222707L;

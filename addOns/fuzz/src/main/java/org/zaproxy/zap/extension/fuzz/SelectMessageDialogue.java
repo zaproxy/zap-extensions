@@ -36,6 +36,7 @@ import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
 import org.zaproxy.zap.view.AbstractFormDialog;
 
+@SuppressWarnings("serial")
 public class SelectMessageDialogue extends AbstractFormDialog {
 
     private static final long serialVersionUID = -117024736933191325L;
