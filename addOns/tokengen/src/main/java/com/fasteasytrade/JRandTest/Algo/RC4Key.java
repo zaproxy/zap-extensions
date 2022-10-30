@@ -44,7 +44,7 @@ import java.io.PrintStream;
  * @author Zur Aougav
  *  
  */
-public class RC4Key extends Cipher {
+public class RC4Key extends Cipher implements AutoCloseable {
 
 	boolean ready = false; // is the algorithm is ready?
 
@@ -170,9 +170,7 @@ public class RC4Key extends Cipher {
 	 *  
 	 */
 	@Override
-	protected void finalize() throws Throwable {
-		super.finalize();		
-		System.out.println("RC4Key finalize...");
+	public void close() {
 		if (Key != null)
 			java.util.Arrays.fill(Key, 0, Key.length, (byte) 0x00);
 		java.util.Arrays.fill(KeyBytes, 0, KeyBytes.length, (byte) 0x00);
