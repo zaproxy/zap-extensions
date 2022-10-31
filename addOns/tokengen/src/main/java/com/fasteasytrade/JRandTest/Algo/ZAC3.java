@@ -34,6 +34,8 @@
 
 package com.fasteasytrade.JRandTest.Algo;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.Random;
 
 /**
@@ -61,7 +63,7 @@ import java.util.Random;
  * 
  * @author Zur Aougav
  */
-public class ZAC3 extends Cipher {
+public class ZAC3 extends Cipher implements AutoCloseable {
 
 	/**
 	 * encrypt and decrypt data using cryptKey
@@ -489,9 +491,7 @@ public class ZAC3 extends Cipher {
 	 *  
 	 */
 	@Override
-	protected void finalize() throws Throwable {
-		super.finalize();
-		System.out.println("ZAC3 finalize...");
+	public void close() {
 		/**
 		 * clear all keys
 		 */
@@ -685,49 +685,46 @@ public class ZAC3 extends Cipher {
 			byte[] cryptKey = new byte[256];
 			byte[] fillKey = new byte[256];
 			byte[] controlKey = new byte[256];
-			java.io.FileOutputStream fos = null;
-			java.io.FileInputStream fis = null;
 
 			try {
 
 				System.out.println("Read " + cryptKeyFile);
-				fis = new java.io.FileInputStream(cryptKeyFile);
-				fis.read(cryptKey);
-				fis.close();
-
-				System.out.println("Read " + fillKeyFile);
-				fis = new java.io.FileInputStream(fillKeyFile);
-				fis.read(fillKey);
-				fis.close();
-
-				System.out.println("Read " + controlKeyFile);
-				fis = new java.io.FileInputStream(controlKeyFile);
-				fis.read(controlKey);
-				fis.close();
-
-				System.out.println("Open input file " + inFilename);
-				fis = new java.io.FileInputStream(inFilename);
-
-				System.out.println("Open output file " + outFilename);
-				fos = new java.io.FileOutputStream(outFilename);
-
-				ZAC3 algo = new ZAC3(cryptKey, fillKey, controlKey);
-				algo.initEncrypt();
-				fos.write(algo.getCryptShaDigest());
-				fos.write(algo.getFillShaDigest());
-				fos.write(algo.getControlShaDigest());
-
-				byte[] buffer = new byte[4096];
-				byte[] outbuffer = new byte[4096 * 2];
-				int len;
-
-				while ((len = fis.read(buffer)) > -1) {
-					algo.encrypt(buffer, outbuffer);
-					fos.write(outbuffer, 0, len * 2);
+				try (FileInputStream fis = new FileInputStream(cryptKeyFile)) {
+					fis.read(cryptKey);
 				}
 
-				fis.close();
-				fos.close();
+				System.out.println("Read " + fillKeyFile);
+				try (FileInputStream fis = new FileInputStream(fillKeyFile)) {
+					fis.read(fillKey);
+				}
+
+				System.out.println("Read " + controlKeyFile);
+				try (FileInputStream fis = new FileInputStream(controlKeyFile)) {
+					fis.read(controlKey);
+				}
+
+				System.out.println("Open input file " + inFilename);
+				System.out.println("Open output file " + outFilename);
+				try (FileInputStream fis = new FileInputStream(inFilename);
+					FileOutputStream fos = new FileOutputStream(outFilename)) {
+
+					try (ZAC3 algo = new ZAC3(cryptKey, fillKey, controlKey)) {
+						algo.initEncrypt();
+						fos.write(algo.getCryptShaDigest());
+						fos.write(algo.getFillShaDigest());
+						fos.write(algo.getControlShaDigest());
+
+						byte[] buffer = new byte[4096];
+						byte[] outbuffer = new byte[4096 * 2];
+						int len;
+
+						while ((len = fis.read(buffer)) > -1) {
+							algo.encrypt(buffer, outbuffer);
+							fos.write(outbuffer, 0, len * 2);
+						}
+					}
+
+				}
 
 			} catch (Exception e) {
 				System.out.println("Error: " + e);
@@ -746,55 +743,52 @@ public class ZAC3 extends Cipher {
 			byte[] cryptShaDigest = new byte[20];
 			byte[] fillShaDigest = new byte[20];
 			byte[] controlShaDigest = new byte[20];
-			java.io.FileOutputStream fos = null;
-			java.io.FileInputStream fis = null;
 
 			try {
 
 				System.out.println("Read " + cryptKeyFile);
-				fis = new java.io.FileInputStream(cryptKeyFile);
-				fis.read(cryptKey);
-				fis.close();
+				try (FileInputStream fis = new FileInputStream(cryptKeyFile)) {
+					fis.read(cryptKey);
+				}
 
 				System.out.println("Read " + fillKeyFile);
-				fis = new java.io.FileInputStream(fillKeyFile);
-				fis.read(fillKey);
-				fis.close();
+				try (FileInputStream fis = new FileInputStream(fillKeyFile)) {
+					fis.read(fillKey);
+				}
 
 				System.out.println("Read " + controlKeyFile);
-				fis = new java.io.FileInputStream(controlKeyFile);
-				fis.read(controlKey);
-				fis.close();
+				try (FileInputStream fis = new FileInputStream(controlKeyFile)) {
+					fis.read(controlKey);
+				}
 
 				System.out.println("Open input file " + inFilename);
-				fis = new java.io.FileInputStream(inFilename);
-
 				System.out.println("Open output file " + outFilename);
-				fos = new java.io.FileOutputStream(outFilename);
+				try (FileInputStream fis = new FileInputStream(inFilename);
+					FileOutputStream fos = new FileOutputStream(outFilename)) {
 
-				fis.read(cryptShaDigest);
-				fis.read(fillShaDigest);
-				fis.read(controlShaDigest);
+					fis.read(cryptShaDigest);
+					fis.read(fillShaDigest);
+					fis.read(controlShaDigest);
 
-				ZAC3 algo = new ZAC3(cryptKey, fillKey, controlKey);
+					try (ZAC3 algo = new ZAC3(cryptKey, fillKey, controlKey)) {
 
-				if (!algo.initDecrypt(cryptShaDigest, fillShaDigest,
-						controlShaDigest)) {
-					System.out.println("Invalid data files.");
-					return;
+						if (!algo.initDecrypt(cryptShaDigest, fillShaDigest,
+								controlShaDigest)) {
+							System.out.println("Invalid data files.");
+							return;
+						}
+
+						byte[] inbuffer = new byte[4096 * 2];
+						byte[] outbuffer = new byte[4096];
+						int len;
+
+						while ((len = fis.read(inbuffer)) > -1) {
+							algo.decrypt(inbuffer, outbuffer, len);
+							fos.write(outbuffer, 0, len / 2);
+						}
+					}
+
 				}
-
-				byte[] inbuffer = new byte[4096 * 2];
-				byte[] outbuffer = new byte[4096];
-				int len;
-
-				while ((len = fis.read(inbuffer)) > -1) {
-					algo.decrypt(inbuffer, outbuffer, len);
-					fos.write(outbuffer, 0, len / 2);
-				}
-
-				fis.close();
-				fos.close();
 
 			} catch (Exception e) {
 				//System.out.println("Error: " + e);

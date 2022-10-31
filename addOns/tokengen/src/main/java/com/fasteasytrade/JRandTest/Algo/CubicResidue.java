@@ -186,18 +186,18 @@ public class CubicResidue extends FileAlgoRandomStream {
 
 	public static void main(String[] args) {
 		if (args != null && args.length > 0 && args[0] != null) {
-			CubicResidue algo = new CubicResidue();
-			algo.setup();
-			try {
-				algo.openInputStream();
-				byte temp;
-				for (int i = 0; i < 100; i++) {
-					System.out.print(algo.readByte());
-					System.out.print(",");
+			try (CubicResidue algo = new CubicResidue()) {
+				algo.setup();
+				try {
+					algo.openInputStream();
+					for (int i = 0; i < 100; i++) {
+						System.out.print(algo.readByte());
+						System.out.print(",");
+					}
+					System.out.println();
+				} catch (Exception e) {
+					System.out.println("" + e);
 				}
-				System.out.println();
-			} catch (Exception e) {
-				System.out.println("" + e);
 			}
 		}
 	}

@@ -34,6 +34,8 @@
 
 package com.fasteasytrade.JRandTest.Algo;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.Random;
 
 /**
@@ -63,7 +65,7 @@ import java.util.Random;
  * 
  * @author Zur Aougav
  */
-public class ZAC5 extends Cipher {
+public class ZAC5 extends Cipher implements AutoCloseable {
 
 	/**
 	 * encrypt and decrypt data using cryptKey
@@ -736,9 +738,7 @@ public class ZAC5 extends Cipher {
 	 *  
 	 */
 	@Override
-	protected void finalize() throws Throwable {
-		super.finalize();
-		System.out.println("ZAC5 finalize...");
+	public void close() {
 		/**
 		 * clear all keys
 		 */
@@ -996,8 +996,6 @@ public class ZAC5 extends Cipher {
 			byte[] controlKey = new byte[256];
 			byte[] prePermutationKey = new byte[256];
 			byte[] postPermutationKey = new byte[256];
-			java.io.FileOutputStream fos = null;
-			java.io.FileInputStream fis = null;
 
 			try {
 
@@ -1005,67 +1003,65 @@ public class ZAC5 extends Cipher {
 						+ outFilename);
 
 				System.out.println("Read " + cryptKeyFile);
-				fis = new java.io.FileInputStream(cryptKeyFile);
-				fis.read(cryptKey);
-				fis.close();
-
-				System.out.println("Read " + fillKeyFile);
-				fis = new java.io.FileInputStream(fillKeyFile);
-				fis.read(fillKey);
-				fis.close();
-
-				System.out.println("Read " + controlKeyFile);
-				fis = new java.io.FileInputStream(controlKeyFile);
-				fis.read(controlKey);
-				fis.close();
-
-				System.out.println("Read " + prePermutationKeyFile);
-				fis = new java.io.FileInputStream(prePermutationKeyFile);
-				fis.read(prePermutationKey);
-				fis.close();
-
-				System.out.println("Read " + postPermutationKeyFile);
-				fis = new java.io.FileInputStream(postPermutationKeyFile);
-				fis.read(postPermutationKey);
-				fis.close();
-
-				System.out.println("Open input file " + inFilename);
-				fis = new java.io.FileInputStream(inFilename);
-
-				System.out.println("Open output file " + outFilename);
-				fos = new java.io.FileOutputStream(outFilename);
-
-				/**
-				 * write 8 bytes of the length of input file
-				 */
-				long avail = (new java.io.File(inFilename)).length();
-				System.out.println("avail=" + avail);
-				byte[] vectemp = new byte[8];
-				i = 0;
-				for (int j = 56; j >= 0; j -= 8)
-					vectemp[i++] = (byte) (avail >>> j);
-				fos.write(vectemp);
-
-				ZAC5 algo = new ZAC5(cryptKey, fillKey, controlKey,
-						prePermutationKey, postPermutationKey);
-				algo.initEncrypt();
-				fos.write(algo.getCryptShaDigest());
-				fos.write(algo.getFillShaDigest());
-				fos.write(algo.getControlShaDigest());
-				fos.write(algo.getPrePermutationShaDigest());
-				fos.write(algo.getPostPermutationShaDigest());
-
-				byte[] buffer = new byte[256];
-				byte[] outbuffer = new byte[256 * 2];
-				int len;
-
-				while ((len = fis.read(buffer)) > -1) {
-					algo.encrypt(buffer, outbuffer);
-					fos.write(outbuffer);
+				try (FileInputStream fis = new FileInputStream(cryptKeyFile)) {
+					fis.read(cryptKey);
 				}
 
-				fis.close();
-				fos.close();
+				System.out.println("Read " + fillKeyFile);
+				try (FileInputStream fis = new FileInputStream(fillKeyFile)) {
+					fis.read(fillKey);
+				}
+
+				System.out.println("Read " + controlKeyFile);
+				try (FileInputStream fis = new FileInputStream(controlKeyFile)) {
+					fis.read(controlKey);
+				}
+
+				System.out.println("Read " + prePermutationKeyFile);
+				try (FileInputStream fis = new FileInputStream(prePermutationKeyFile)) {
+					fis.read(prePermutationKey);
+				}
+
+				System.out.println("Read " + postPermutationKeyFile);
+				try (FileInputStream fis = new FileInputStream(postPermutationKeyFile)) {
+					fis.read(postPermutationKey);
+				}
+
+				System.out.println("Open input file " + inFilename);
+				System.out.println("Open output file " + outFilename);
+				try (FileInputStream fis = new FileInputStream(inFilename);
+					FileOutputStream fos = new FileOutputStream(outFilename)) {
+
+					/**
+					 * write 8 bytes of the length of input file
+					 */
+					long avail = (new java.io.File(inFilename)).length();
+					System.out.println("avail=" + avail);
+					byte[] vectemp = new byte[8];
+					i = 0;
+					for (int j = 56; j >= 0; j -= 8)
+						vectemp[i++] = (byte) (avail >>> j);
+					fos.write(vectemp);
+
+					try(ZAC5 algo = new ZAC5(cryptKey, fillKey, controlKey,
+							prePermutationKey, postPermutationKey)) {
+						algo.initEncrypt();
+						fos.write(algo.getCryptShaDigest());
+						fos.write(algo.getFillShaDigest());
+						fos.write(algo.getControlShaDigest());
+						fos.write(algo.getPrePermutationShaDigest());
+						fos.write(algo.getPostPermutationShaDigest());
+
+						byte[] buffer = new byte[256];
+						byte[] outbuffer = new byte[256 * 2];
+
+						while (fis.read(buffer) > -1) {
+							algo.encrypt(buffer, outbuffer);
+							fos.write(outbuffer);
+						}
+					}
+
+				}
 
 			} catch (Exception e) {
 				//System.out.println("Error: " + e);
@@ -1089,8 +1085,6 @@ public class ZAC5 extends Cipher {
 			byte[] controlShaDigest = new byte[20];
 			byte[] prePermutationShaDigest = new byte[20];
 			byte[] postPermutationShaDigest = new byte[20];
-			java.io.FileOutputStream fos = null;
-			java.io.FileInputStream fis = null;
 
 			try {
 
@@ -1098,79 +1092,78 @@ public class ZAC5 extends Cipher {
 						+ outFilename);
 
 				System.out.println("Read " + cryptKeyFile);
-				fis = new java.io.FileInputStream(cryptKeyFile);
-				fis.read(cryptKey);
-				fis.close();
+				try (FileInputStream fis = new FileInputStream(cryptKeyFile)) {
+					fis.read(cryptKey);
+				}
 
 				System.out.println("Read " + fillKeyFile);
-				fis = new java.io.FileInputStream(fillKeyFile);
-				fis.read(fillKey);
-				fis.close();
+				try (FileInputStream fis = new FileInputStream(fillKeyFile)) {
+					fis.read(fillKey);
+				}
 
 				System.out.println("Read " + controlKeyFile);
-				fis = new java.io.FileInputStream(controlKeyFile);
-				fis.read(controlKey);
-				fis.close();
+				try (FileInputStream fis = new FileInputStream(controlKeyFile)) {
+					fis.read(controlKey);
+				}
 
 				System.out.println("Read " + prePermutationKeyFile);
-				fis = new java.io.FileInputStream(prePermutationKeyFile);
-				fis.read(prePermutationKey);
-				fis.close();
+				try (FileInputStream fis = new FileInputStream(prePermutationKeyFile)) {
+					fis.read(prePermutationKey);
+				}
 
 				System.out.println("Read " + postPermutationKeyFile);
-				fis = new java.io.FileInputStream(postPermutationKeyFile);
-				fis.read(postPermutationKey);
-				fis.close();
+				try (FileInputStream fis = new FileInputStream(postPermutationKeyFile)) {
+					fis.read(postPermutationKey);
+				}
 
 				System.out.println("Open input file " + inFilename);
-				fis = new java.io.FileInputStream(inFilename);
-
 				System.out.println("Open output file " + outFilename);
-				fos = new java.io.FileOutputStream(outFilename);
+				try (FileInputStream fis = new FileInputStream(inFilename);
+					FileOutputStream fos = new FileOutputStream(outFilename)) {
 
-				/**
-				 * write 8 bytes of the length of input file
-				 */
-				long avail = 0;
-				byte[] vectemp = new byte[8];
-				fis.read(vectemp);
-				for (i = 0; i < 8; i++)
-					avail = (avail << 8) | (0xffL & vectemp[i]);
-				System.out.println("avail=" + avail);
+					/**
+					 * write 8 bytes of the length of input file
+					 */
+					long avail = 0;
+					byte[] vectemp = new byte[8];
+					fis.read(vectemp);
+					for (i = 0; i < 8; i++)
+						avail = (avail << 8) | (0xffL & vectemp[i]);
+					System.out.println("avail=" + avail);
 
-				fis.read(cryptShaDigest);
-				fis.read(fillShaDigest);
-				fis.read(controlShaDigest);
-				fis.read(prePermutationShaDigest);
-				fis.read(postPermutationShaDigest);
+					fis.read(cryptShaDigest);
+					fis.read(fillShaDigest);
+					fis.read(controlShaDigest);
+					fis.read(prePermutationShaDigest);
+					fis.read(postPermutationShaDigest);
 
-				ZAC5 algo = new ZAC5(cryptKey, fillKey, controlKey,
-						prePermutationKey, postPermutationKey);
+					try(ZAC5 algo = new ZAC5(cryptKey, fillKey, controlKey,
+							prePermutationKey, postPermutationKey)) {
 
-				if (!algo.initDecrypt(cryptShaDigest, fillShaDigest,
-						controlShaDigest, prePermutationShaDigest,
-						postPermutationShaDigest)) {
-					System.out.println("Invalid data files.");
-					return;
-				}
+						if (!algo.initDecrypt(cryptShaDigest, fillShaDigest,
+								controlShaDigest, prePermutationShaDigest,
+								postPermutationShaDigest)) {
+							System.out.println("Invalid data files.");
+							return;
+						}
 
-				byte[] inbuffer = new byte[256 * 2];
-				byte[] outbuffer = new byte[256];
-				int len;
+						byte[] inbuffer = new byte[256 * 2];
+						byte[] outbuffer = new byte[256];
+						int len;
 
-				while (avail > 0 && (len = fis.read(inbuffer)) > -1) {
-					algo.decrypt(inbuffer, outbuffer, len);
-					if (avail < outbuffer.length) {
-						fos.write(outbuffer, 0, (int) avail);
-						avail = 0;
-					} else {
-						fos.write(outbuffer, 0, len / 2);
-						avail -= len / 2;
+						while (avail > 0 && (len = fis.read(inbuffer)) > -1) {
+							algo.decrypt(inbuffer, outbuffer, len);
+							if (avail < outbuffer.length) {
+								fos.write(outbuffer, 0, (int) avail);
+								avail = 0;
+							} else {
+								fos.write(outbuffer, 0, len / 2);
+								avail -= len / 2;
+							}
+						}
 					}
-				}
 
-				fis.close();
-				fos.close();
+				}
 
 			} catch (Exception e) {
 				e.printStackTrace();
