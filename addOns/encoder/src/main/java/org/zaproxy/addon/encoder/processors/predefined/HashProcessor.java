@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2020 The ZAP Development Team
+ * Copyright 2022 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,18 +19,25 @@
  */
 package org.zaproxy.addon.encoder.processors.predefined;
 
-import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
-public class FullUrlEncoder extends DefaultEncodeDecodeProcessor {
+public class HashProcessor extends DefaultEncodeDecodeProcessor {
 
-    private static final FullUrlEncoder INSTANCE = new FullUrlEncoder();
+    private final String algorithm;
 
-    @Override
-    protected String processInternal(String value) throws IOException {
-        return HexStringEncoder.getPercentHexString(value.getBytes());
+    public HashProcessor(String algorithm) {
+        this.algorithm = algorithm;
     }
 
-    public static FullUrlEncoder getSingleton() {
-        return INSTANCE;
+    @Override
+    protected String processInternal(String value) throws NoSuchAlgorithmException {
+        return HexStringEncoder.getHexString(getHash(value.getBytes()));
+    }
+
+    private byte[] getHash(byte[] buf) throws NoSuchAlgorithmException {
+        MessageDigest hasher = MessageDigest.getInstance(algorithm);
+        hasher.update(buf);
+        return hasher.digest();
     }
 }

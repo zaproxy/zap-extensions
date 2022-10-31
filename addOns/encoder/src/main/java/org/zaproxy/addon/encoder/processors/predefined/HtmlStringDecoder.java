@@ -23,8 +23,14 @@ import org.apache.commons.lang.StringEscapeUtils;
 
 public class HtmlStringDecoder extends DefaultEncodeDecodeProcessor {
 
+    private static final HtmlStringDecoder INSTANCE = new HtmlStringDecoder();
+
     @Override
     protected String processInternal(String value) {
         return StringEscapeUtils.unescapeHtml(value);
+    }
+
+    public static HtmlStringDecoder getSingleton() {
+        return INSTANCE;
     }
 }

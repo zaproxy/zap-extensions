@@ -19,19 +19,15 @@
  */
 package org.zaproxy.addon.encoder.processors.predefined;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+public class Sha1Hasher extends HashProcessor {
 
-public class Sha1Hasher extends DefaultEncodeDecodeProcessor {
+    private static final Sha1Hasher INSTANCE = new Sha1Hasher();
 
-    @Override
-    protected String processInternal(String value) throws NoSuchAlgorithmException {
-        return HexStringEncoder.getHexString(getHashSHA1(value.getBytes()));
+    public Sha1Hasher() {
+        super("SHA-1");
     }
 
-    private byte[] getHashSHA1(byte[] buf) throws NoSuchAlgorithmException {
-        MessageDigest sha = MessageDigest.getInstance("SHA-1");
-        sha.update(buf);
-        return sha.digest();
+    public static Sha1Hasher getSingleton() {
+        return INSTANCE;
     }
 }

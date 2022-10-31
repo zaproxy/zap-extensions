@@ -21,6 +21,8 @@ package org.zaproxy.addon.encoder.processors.predefined;
 
 public class HexStringDecoder extends DefaultEncodeDecodeProcessor {
 
+    private static final HexStringDecoder INSTANCE = new HexStringDecoder();
+
     @Override
     protected String processInternal(String value) {
         return decodeHexString(value);
@@ -47,5 +49,9 @@ public class HexStringDecoder extends DefaultEncodeDecodeProcessor {
 
     static String hexDecode(String value) {
         return decodeHexString(value);
+    }
+
+    public static HexStringDecoder getSingleton() {
+        return INSTANCE;
     }
 }
