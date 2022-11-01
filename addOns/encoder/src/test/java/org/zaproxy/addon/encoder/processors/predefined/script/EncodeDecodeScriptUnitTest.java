@@ -22,9 +22,13 @@ package org.zaproxy.addon.encoder.processors.predefined.script;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
 import java.io.IOException;
@@ -32,12 +36,14 @@ import java.util.List;
 import javax.script.ScriptException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.encoder.ExtensionEncoder;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeResult;
 import org.zaproxy.addon.encoder.processors.script.EncodeDecodeScript;
+import org.zaproxy.addon.encoder.processors.script.EncodeDecodeScriptHelper;
 import org.zaproxy.addon.encoder.processors.script.ScriptBasedEncodeDecodeProcessor;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
@@ -70,7 +76,7 @@ public class EncodeDecodeScriptUnitTest {
         // Given
         String admin = "admin";
         EncodeDecodeResult expected = new EncodeDecodeResult(admin);
-        given(script.process(admin)).willReturn(expected);
+        given(script.process(any(), eq(admin))).willReturn(expected);
         // When
         EncodeDecodeResult result = processor.process(admin);
         // Then
@@ -81,7 +87,7 @@ public class EncodeDecodeScriptUnitTest {
     void shouldHandleStringResultObject() throws Exception {
         // Given
         String admin = "admin";
-        given(script.process(admin)).willReturn(admin);
+        given(script.process(any(), eq(admin))).willReturn(admin);
         // When
         EncodeDecodeResult result = processor.process(admin);
         // Then
@@ -92,7 +98,7 @@ public class EncodeDecodeScriptUnitTest {
     void shouldHandleUnexpectedReturnType() throws Exception {
         // Given
         String admin = "admin";
-        given(script.process(admin)).willReturn(6667);
+        given(script.process(any(), eq(admin))).willReturn(6667);
         // When
         EncodeDecodeResult result = processor.process(admin);
         // Then
@@ -103,10 +109,25 @@ public class EncodeDecodeScriptUnitTest {
     void shouldHandleNullReturnType() throws Exception {
         // Given
         String admin = "admin";
-        given(script.process(admin)).willReturn(null);
+        given(script.process(any(), eq(admin))).willReturn(null);
         // When
         EncodeDecodeResult result = processor.process(admin);
         // Then
         assertThat(result.getResult(), is(equalTo(null)));
+    }
+
+    @Test
+    void helperShouldNotBeNull() throws Exception {
+        // Given
+        String admin = "admin";
+        EncodeDecodeResult expected = new EncodeDecodeResult(admin);
+        given(script.process(any(), eq(admin))).willReturn(expected);
+        ArgumentCaptor<EncodeDecodeScriptHelper> helperCaptor =
+                ArgumentCaptor.forClass(EncodeDecodeScriptHelper.class);
+        // When
+        processor.process(admin);
+        // Then
+        verify(script).process(helperCaptor.capture(), any());
+        assertThat(helperCaptor.getValue(), is(notNullValue()));
     }
 }

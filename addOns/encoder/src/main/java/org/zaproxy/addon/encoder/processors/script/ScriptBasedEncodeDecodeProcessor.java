@@ -75,7 +75,7 @@ public class ScriptBasedEncodeDecodeProcessor implements EncodeDecodeProcessor {
             EncodeDecodeScript script = evaluateScript(scriptWrapper);
             if (script != null) {
                 LOGGER.debug("Calling encode/decode script {}", scriptWrapper.getName());
-                Object result = script.process(value);
+                Object result = script.process(EncodeDecodeScriptHelper.getSingleton(), value);
                 return result instanceof EncodeDecodeResult
                         ? (EncodeDecodeResult) result
                         : new EncodeDecodeResult(result == null ? null : result.toString());

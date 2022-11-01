@@ -165,4 +165,8 @@ public class EncodeDecodeProcessors {
         EncodeDecodeProcessorItem processor = findProcessorItemById(processorId);
         return processor.getProcessor().process(value);
     }
+
+    public static List<EncodeDecodeProcessorItem> getPredefinedProcessors() {
+        return predefinedProcessors;
+    }
 }
