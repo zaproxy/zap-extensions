@@ -57,6 +57,7 @@ import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.EventExecutorGroup;
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.PasswordAuthentication;
 import java.net.Socket;
 import java.nio.file.Files;
@@ -73,7 +74,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+import org.apache.commons.httpclient.HttpState;
+import org.apache.commons.httpclient.NTCredentials;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.hc.client5.http.cookie.CookieStore;
 import org.junit.jupiter.api.AfterAll;
@@ -89,6 +93,8 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -104,6 +110,7 @@ import org.zaproxy.addon.network.testutils.TestHttpServer;
 import org.zaproxy.addon.network.testutils.TestHttpServer.TestHttpMessageHandler;
 import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.network.HttpSenderListener;
+import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link HttpSender} implementations. */
@@ -1407,6 +1414,142 @@ class HttpSenderImplUnitTest {
                             new PasswordAuthentication("username", "password".toCharArray())));
             options.setHttpProxyEnabled(true);
             options.setHttpProxyAuthEnabled(true);
+        }
+    }
+
+    @Nested
+    class Auth {
+
+        private String authRealm = "SomeRealm";
+        private User user;
+
+        @BeforeEach
+        void setup() throws IOException {
+            user = mock(User.class);
+            given(user.isAuthenticated(any()))
+                    .willAnswer(
+                            new Answer<Boolean>() {
+
+                                @Override
+                                public Boolean answer(InvocationOnMock invocation)
+                                        throws Throwable {
+                                    HttpMessage msg = invocation.getArgument(0);
+                                    return SERVER_RESPONSE.equals(msg.getResponseBody().toString());
+                                }
+                            });
+            HttpState httpState = new HttpState();
+            httpState.setCredentials(
+                    new AuthScope("localhost", serverPort, authRealm),
+                    new NTCredentials(
+                            "username",
+                            "password",
+                            InetAddress.getLocalHost().getCanonicalHostName(),
+                            authRealm));
+            given(user.getCorrespondingHttpState()).willReturn(httpState);
+
+            server.setHttpMessageHandler(
+                    (ctx, msg) -> {
+                        String authorization =
+                                msg.getRequestHeader().getHeader(HttpHeader.AUTHORIZATION);
+                        if (authorization == null) {
+                            msg.setResponseHeader(
+                                    "HTTP/1.1 401\r\nWWW-Authenticate: Basic realm=\""
+                                            + authRealm
+                                            + "\"\r\n");
+                            msg.getResponseHeader().setContentLength(0);
+                            return;
+                        }
+
+                        if (!"Basic dXNlcm5hbWU6cGFzc3dvcmQ=".equals(authorization)) {
+                            msg.setResponseHeader("HTTP/1.1 403");
+                            msg.getResponseHeader().setContentLength(0);
+                            return;
+                        }
+
+                        msg.setResponseHeader("HTTP/1.1 200\r\n");
+                        msg.setResponseBody(SERVER_RESPONSE);
+                        msg.getResponseHeader().setContentLength(msg.getResponseBody().length());
+                    });
+        }
+
+        @Test
+        void shouldAuthenticateToServer() throws Exception {
+            // Given
+            message.setRequestingUser(user);
+            // When
+            httpSender.sendAndReceive(message);
+            // Then
+            assertThat(server.getReceivedMessages(), hasSize(2));
+            assertThat(
+                    server.getReceivedMessages()
+                            .get(0)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.AUTHORIZATION),
+                    is(nullValue()));
+            assertThat(
+                    server.getReceivedMessages()
+                            .get(1)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.AUTHORIZATION),
+                    is(equalTo("Basic dXNlcm5hbWU6cGFzc3dvcmQ=")));
+            assertThat(message.getResponseBody().toString(), is(equalTo(SERVER_RESPONSE)));
+        }
+
+        @Test
+        void shouldReauthenticateIfRemoveUserDefinedAuthHeadersSet() throws Exception {
+            // Given
+            message.setRequestingUser(user);
+            httpSender.setRemoveUserDefinedAuthHeaders(true);
+            message.getRequestHeader()
+                    .setHeader(HttpHeader.AUTHORIZATION, "Basic NotValidCredentials");
+            // When
+            httpSender.sendAndReceive(message);
+            // Then
+            assertThat(server.getReceivedMessages(), hasSize(3));
+            assertThat(
+                    server.getReceivedMessages()
+                            .get(0)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.AUTHORIZATION),
+                    is(equalTo("Basic NotValidCredentials")));
+            assertThat(
+                    server.getReceivedMessages()
+                            .get(1)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.AUTHORIZATION),
+                    is(nullValue()));
+            assertThat(
+                    server.getReceivedMessages()
+                            .get(2)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.AUTHORIZATION),
+                    is(equalTo("Basic dXNlcm5hbWU6cGFzc3dvcmQ=")));
+            assertThat(message.getResponseBody().toString(), is(equalTo(SERVER_RESPONSE)));
+        }
+
+        @Test
+        void shouldNotReauthenticateIfRemoveUserDefinedAuthHeadersNotSet() throws Exception {
+            // Given
+            message.setRequestingUser(user);
+            message.getRequestHeader()
+                    .setHeader(HttpHeader.AUTHORIZATION, "Basic NotValidCredentials");
+            // When
+            httpSender.sendAndReceive(message);
+            // Then
+            assertThat(server.getReceivedMessages(), hasSize(2));
+            assertThat(
+                    server.getReceivedMessages()
+                            .get(0)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.AUTHORIZATION),
+                    is(equalTo("Basic NotValidCredentials")));
+            assertThat(
+                    server.getReceivedMessages()
+                            .get(1)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.AUTHORIZATION),
+                    is(equalTo("Basic NotValidCredentials")));
+            assertThat(message.getResponseBody().toString(), is(not(equalTo(SERVER_RESPONSE))));
         }
     }
 

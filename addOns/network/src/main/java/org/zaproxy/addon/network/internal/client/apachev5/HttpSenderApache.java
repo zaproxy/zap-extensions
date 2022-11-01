@@ -87,6 +87,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpSender;
+import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.network.ClientCertificatesOptions;
 import org.zaproxy.addon.network.ConnectionOptions;
 import org.zaproxy.addon.network.common.ZapSocketTimeoutException;
@@ -183,7 +184,6 @@ public class HttpSenderApache
                 HttpProcessorBuilder.create()
                         .add(zapRequestAddCookies)
                         .add(new ResponseProcessCookies())
-                        .add(new RemoveAuthHeader(options))
                         .add(new RemoveTransferEncoding())
                         .build();
 
@@ -248,10 +248,6 @@ public class HttpSenderApache
 
         if (ctx.getInitiator() != HttpSender.CHECK_FOR_UPDATES_INITIATOR) {
             context.setAttribute(SslConnectionSocketFactory.LAX_ATTR_NAME, Boolean.TRUE);
-        }
-
-        if (ctx.isRemoveUserDefinedAuthHeaders()) {
-            context.setAttribute(RemoveAuthHeader.ATTR_NAME, Boolean.TRUE);
         }
 
         context.setAttribute(RequestRetryStrategy.CUSTOM_RETRY, ctx.getRequestRetryStrategy());
@@ -328,13 +324,20 @@ public class HttpSenderApache
         RequestConfig.Builder requestConfigBuilder =
                 RequestConfig.copy(requestCtx.getRequestConfig());
 
+        boolean reauthenticate = false;
         User user = ctx.getUser(message);
         if (user != null) {
             requestConfigBuilder.setCookieSpec(StandardCookieSpec.RELAXED);
             requestCtx.setCookieStore(
                     LegacyUtils.httpStateToCookieStore(user.getCorrespondingHttpState()));
-            requestCtx.setCredentialsProvider(
-                    new HttpStateCredentialsProvider(user.getCorrespondingHttpState()));
+
+            boolean authHeaderPresent =
+                    message.getRequestHeader().getHeader(HttpHeader.AUTHORIZATION) != null;
+            reauthenticate = ctx.isRemoveUserDefinedAuthHeaders() && authHeaderPresent;
+            if (!authHeaderPresent) {
+                requestCtx.setCredentialsProvider(
+                        new HttpStateCredentialsProvider(user.getCorrespondingHttpState()));
+            }
         } else {
             switch (ctx.getCookieUsage()) {
                 case GLOBAL:
@@ -361,7 +364,6 @@ public class HttpSenderApache
         ClassicHttpRequest request = createHttpRequest(message);
 
         requestCtx.increaseRequestCount();
-        message.setTimeSentMillis(System.currentTimeMillis());
         try {
             if (HttpRequestHeader.CONNECT.equals(message.getRequestHeader().getMethod())) {
                 String host = message.getRequestHeader().getHostName();
@@ -382,6 +384,7 @@ public class HttpSenderApache
                     }
                 }
 
+                message.setTimeSentMillis(System.currentTimeMillis());
                 httpConnector.connect(
                         request,
                         requestCtx,
@@ -391,13 +394,21 @@ public class HttpSenderApache
                             message.setUserObject(socket);
                         });
             } else {
-                clientImpl.execute(
-                        request,
-                        requestCtx,
-                        response -> {
-                            copyResponse(response, message, responseBodyConsumer);
-                            return null;
-                        });
+                for (; ; ) {
+                    message.setTimeSentMillis(System.currentTimeMillis());
+                    clientImpl.execute(
+                            request,
+                            requestCtx,
+                            response -> {
+                                copyResponse(response, message, responseBodyConsumer);
+                                return null;
+                            });
+
+                    if (!reauthenticate || !isAuthNeeded(requestCtx, user, request, message)) {
+                        break;
+                    }
+                    reauthenticate = false;
+                }
             }
         } finally {
             message.setTimeElapsedMillis(
@@ -433,6 +444,22 @@ public class HttpSenderApache
 
         Socket socket = (Socket) requestCtx.getAttribute(ZapHttpRequestExecutor.CONNECTION_SOCKET);
         processSocket(requestCtx, message, socket);
+    }
+
+    private static boolean isAuthNeeded(
+            ZapHttpClientContext requestCtx,
+            User user,
+            ClassicHttpRequest request,
+            HttpMessage message) {
+        int statusCode = message.getResponseHeader().getStatusCode();
+        if (statusCode != HttpStatusCode.UNAUTHORIZED && statusCode != HttpStatusCode.FORBIDDEN) {
+            return false;
+        }
+
+        request.removeHeaders(HttpHeader.AUTHORIZATION);
+        requestCtx.setCredentialsProvider(
+                new HttpStateCredentialsProvider(user.getCorrespondingHttpState()));
+        return true;
     }
 
     @SuppressWarnings("deprecation")
