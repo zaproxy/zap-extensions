@@ -77,8 +77,8 @@ dependencies {
     compileOnly(parent!!.childProjects.get("formhandler")!!)
     compileOnly(parent!!.childProjects.get("spider")!!)
 
-    implementation("io.swagger.parser.v3:swagger-parser:2.0.28")
-    implementation("io.swagger:swagger-compat-spec-parser:1.0.56") {
+    implementation("io.swagger.parser.v3:swagger-parser:2.1.7")
+    implementation("io.swagger:swagger-compat-spec-parser:1.0.63") {
         // Not needed:
         exclude(group = "com.github.java-json-tools", module = "json-schema-validator")
         exclude(group = "org.apache.httpcomponents", module = "httpclient")
