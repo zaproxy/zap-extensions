@@ -3,7 +3,11 @@
 <toc version="2.0">
     <tocitem text="Руководство пользователя ZAP " tocid="toplevelitem">
         <tocitem text="Дополнения" tocid="addons">
-            <tocitem text="Запрос" target="requester"/>
+            <tocitem text="Запрос" image="addon.requester.icon" target="addon.requester">
+                <tocitem text="Dialogs" image="addon.requester.icon.dialog" target="addon.requester.dialogs"/>
+                <tocitem text="Tab" image="addon.requester.icon" target="addon.requester.tab"/>
+                <tocitem text="Options" target="addon.requester.options"/>
+            </tocitem>
         </tocitem>
     </tocitem>
 </toc>

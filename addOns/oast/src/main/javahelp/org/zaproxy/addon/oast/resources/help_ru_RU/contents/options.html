@@ -17,8 +17,16 @@
 <h3>Служба активного сканирования </h3>
 Выпадающее меню, позволяющее выбрать внеполосный сервис, который будет использоваться активными правилами сканирования. 
 
+<h3>Permanent Database</h3>
+Enabling the "Use Permanent Database" option will allow you to persist registered out-of-band payloads in ZAP's
+permanent database. The persisted payloads will be loaded into memory and polled along with other payloads as per the
+set polling interval. The permanent database is currently only supported by the BOAST service.
+
+<strong>NOTE</strong>: This means that Alerts may appear in a ZAP session which is not directly or specifically related
+to the original assessment/scan.
+
 <h2>Конфигурации для конкретных служб </h2>
-Просмотрите страницу отдельных параметров каждой службы для получения дополнительной информации о доступных настройках для этой службы. 
+Look at the individual options page of each service for more information about the available settings for that service.
 
 <h2>Смотрите также</h2>
 <table>

@@ -17,57 +17,61 @@
 <h3>Описание</h3>
 Описание, позволяющее идентифицировать правило. 
 
-<h3>Тип соответствия</h3>
-Может быть одним из:
+<h3>URL</h3>
+A regular expression to match the URL of the message, if empty the rule applies to all messages.<br>
+For example, allows to restrict the rules to certain domains when providing authentication credentials.
 
-<h4>Заголовок запроса (будет добавлен, если отсутствует)</h4>
-В этом случае «Строка совпадения» будет рассматриваться как имя заголовка.  
-Если заголовок присутствует, то его значение будет заменено текстом замены.  
-Если текст замены пуст, то заголовок будет удален (если он есть). 
-Если заголовок отсутствует и замещающий текст не пуст, заголовок будет добавлен. 
+<h3>Match Type</h3>
+May be one of:
 
-<h4>Строка заголовка запроса</h4>
-В этом случае 'Match String' будет рассматриваться как строка или регулярное выражение.
-Если он присутствует в заголовке запроса, то он будет заменен замещающим текстом. 
+<h4>Request Header (will add if not present)</h4>
+In this case the 'Match String' will be treated as a header name. 
+If the header is present then its value will be replaced by the replacement text. 
+If the replacement text is empty then the header will be removed (if present).
+If the header is not present and the replacement text is not empty then the header will be added.
 
-<h4>Строка тела запроса</h4>
-В этом случае 'Match String' будет рассматриваться как строка или регулярное выражение. 
-Если он присутствует в теле запроса, то он будет заменен замещающим текстом. 
+<h4>Request Header String</h4>
+In this case the 'Match String' will be treated as a string or regex expression.
+If it is present in the request header then it will be replaced by the replacement text.
 
-<h4>Заголовок ответа (будет добавлен, если отсутствует)</h4>
-В этом случае «Строка совпадения» будет рассматриваться как имя заголовка.  
-Если заголовок присутствует, то его значение будет заменено текстом замены.  
-Если текст замены пуст, то заголовок будет удален (если он есть). 
-Если заголовок отсутствует и замещающий текст не пуст, заголовок будет добавлен. 
+<h4>Request Body String</h4>
+In this case the 'Match String' will be treated as a string or regex expression.
+If it is present in the request body then it will be replaced by the replacement text.
 
-<h4>Строка заголовка ответа</h4>
-В этом случае 'Match String' будет рассматриваться как строка или регулярное выражение. 
-Если он присутствует в заголовке ответа, то он будет заменен замещающим текстом. 
+<h4>Response Header (will add if not present)</h4>
+In this case the 'Match String' will be treated as a header name. 
+If the header is present then its value will be replaced by the replacement text. 
+If the replacement text is empty then the header will be removed (if present).
+If the header is not present and the replacement text is not empty then the header will be added.
 
-<h4>Строка тела ответа</h4>
-В этом случае 'Match String' будет рассматриваться как строка или регулярное выражение. 
-Если он присутствует в теле ответа, то он будет заменен текстом замены. 
+<h4>Response Header String</h4>
+In this case the 'Match String' will be treated as a string or regex expression.
+If it is present in the response header then it will be replaced by the replacement text.
 
-<h3>Совпадение строки</h3>
-Строка, которая будет использоваться для определения того, что следует заменить — подробности см. в разделе «Тип соответствия». 
+<h4>Response Body String</h4>
+In this case the 'Match String' will be treated as a string or regex expression.
+If it is present in the response body then it will be replaced by the replacement text.
 
-<h3>Соответствие регулярному выражению</h3>
-Если установлено, то строка соответствия будет рассматриваться как регулярное выражение. 
-Эта опция отключена при сопоставлении фактических заголовков. 
-Шестнадцатеричные байты представлены как "\x00 - \xFF" (например, "abc\x01\x02\x03def"). 
+<h3>Match String</h3>
+The string that will be used to identify what should be replaced - see Match Type for details.
 
-<h3>Строка замены</h3>
-Новая строка, которая заменит указанный выбор.
-Шестнадцатеричные байты представлены как "\x00 - \xFF". 
-Литеральная строка "\x00" может быть сохранена с "\\x00". 
+<h3>Match Regex</h3>
+If set then the Match String will be treated as a regex expression.
+This option is disabled when matching actual headers.
+Hexadecimal bytes are represented with "\x00 - \xFF" (for example "abc\x01\x02\x03def").
 
-<h3>Включить</h3>
-Если не установлено, то правило не будет применяться. 
+<h3>Replacement String</h3>
+The new string that will replace the specified selection.
+Hexadecimal bytes are represented with "\x00 - \xFF".
+The literal string "\x00" can be kept with "\\x00".
 
-<h3>Вкладка "Инициаторы"</h3>
-Позволяет указать, к каким «инициаторам» должно применяться правило. 
-Каждый компонент ZAP, который может отправлять и получать сообщения, является отдельным инициатором, так что это дает вам очень мелкое зерно.
-контролировать, когда именно должно применяться правило. 
+<h3>Enable</h3>
+If not set then the rule will not apply.
+
+<h3>Initiators tab</h3>
+Allows you to specify which 'initiators' the rule should apply to.
+Each ZAP component which can send and receive messages is a separate initiator, so this gives you a very fine grain
+control over exactly when the rule should apply.
 
 <p>
 Если вам нужен еще больший контроль над тем, когда и как следует заменять текст, вы можете использовать ZAP Script Console, которая

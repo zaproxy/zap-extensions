@@ -16,35 +16,47 @@ El panel de Opciones del Reemplazador permite definir tantas reglas reemplazadas
 <h3>Descripción</h3>
 Una descripción que permite identificar la regla.
 
-<h3>Tipo de coincidencia</h3> Puede ser uno de: <h4>Encabezado de solicitud (se agrega si no está presente)</h4> En este caso la "Cadena de coincidencia" será tratada como un nombre de encabezado. 
-Si el encabezado está presente su valor será reemplazado por el texto de reemplazo. 
-Si el texto de reemplazo está en blanco el encabezado se eliminará (si está presente).
-Si el encabezado no está presente y el texto reemplazado no está en blanco entonces se agregará el encabezado.
+<h3>URL</h3>
+A regular expression to match the URL of the message, if empty the rule applies to all messages.<br>
+For example, allows to restrict the rules to certain domains when providing authentication credentials.
 
-<h4>Cadena de encabezado de solicitud</h4> En este caso la "Cadena de coincidencia" se tratará como una cadena o una expresión regex.
-Si está presente en el encabezado de solicitud, será reemplazado por el texto de reemplazo.
+<h3>Match Type</h3>
+May be one of:
 
-<h4>Cadena de cuerpo de solicitud</h4>
-En este caso la "Cadena de coincidencia" se tratara como una cadena o una expresión regex.
-Si está presente en el cuerpo de solicitud será reemplazada por el texto de reemplazo.
+<h4>Request Header (will add if not present)</h4>
+In this case the 'Match String' will be treated as a header name. 
+If the header is present then its value will be replaced by the replacement text. 
+If the replacement text is empty then the header will be removed (if present).
+If the header is not present and the replacement text is not empty then the header will be added.
 
-<h4>Encabezado de respuesta (se agrega si no está presente)</h4> En este caso la "Cadena de coincidencia" se considerará como un nombre de encabezado. 
-Si el encabezado está presente su valor será reemplazado por el texto de reemplazo. 
-Si el texto de reemplazo está en blanco el encabezado se eliminará (si está presente).
-Si el encabezado no está presente y el texto reemplazado no está en blanco entonces se agregará el encabezado.
+<h4>Request Header String</h4>
+In this case the 'Match String' will be treated as a string or regex expression.
+If it is present in the request header then it will be replaced by the replacement text.
 
-<h4>Cadena de encabezado de respuesta</h4> En este caso la "Cadena de coincidencia" se tratará como una cadena o una expresión regex.
-Si está presente en el encabezado de respuesta, será reemplazado por el texto de reemplazo.
+<h4>Request Body String</h4>
+In this case the 'Match String' will be treated as a string or regex expression.
+If it is present in the request body then it will be replaced by the replacement text.
 
-<h4>Cadena de cuerpo de respuesta</h4> En este caso la "Cadena de coincidencia" se tratará como una cadena o una expresión regex.
-Si está presente en el cuerpo de respuesta, será reemplazado por el texto de reemplazo.
+<h4>Response Header (will add if not present)</h4>
+In this case the 'Match String' will be treated as a header name. 
+If the header is present then its value will be replaced by the replacement text. 
+If the replacement text is empty then the header will be removed (if present).
+If the header is not present and the replacement text is not empty then the header will be added.
 
-<h3>Cadena de coincidencia</h3>
-La cadena que se utilizará para identificar lo que debe ser reemplazado. Para más detalles vea Tipo de coincidencia.
+<h4>Response Header String</h4>
+In this case the 'Match String' will be treated as a string or regex expression.
+If it is present in the response header then it will be replaced by the replacement text.
 
-<h3>Coincidencia Regex</h3>
-Si se configura entonces la cadena de coincidencia se tratará como una expresión regex.
-Esta opción está deshabilitada al coincidir con encabezados reales.
+<h4>Response Body String</h4>
+In this case the 'Match String' will be treated as a string or regex expression.
+If it is present in the response body then it will be replaced by the replacement text.
+
+<h3>Match String</h3>
+The string that will be used to identify what should be replaced - see Match Type for details.
+
+<h3>Match Regex</h3>
+If set then the Match String will be treated as a regex expression.
+This option is disabled when matching actual headers.
 Hexadecimal bytes are represented with "\x00 - \xFF" (for example "abc\x01\x02\x03def").
 
 <h3>Replacement String</h3>

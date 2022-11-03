@@ -17,43 +17,47 @@ Setiap aturan yang ditentukan oleh bidang-bidang berikut:
 <h3>Deskripsi</h3>
 Deskripsi yang memungkinkan anda untuk mengidentifikasi aturan.
 
-<h3>Jenis Pencocokan</h3>
-Mungkin salah satu dari:
+<h3>URL</h3>
+A regular expression to match the URL of the message, if empty the rule applies to all messages.<br>
+For example, allows to restrict the rules to certain domains when providing authentication credentials.
 
-<h4>Header Permintaan (akan menambahkan jika tidak hadir)</h4>
-Dalam hal ini 'Mencocokkan String' akan diperlakukan sebagai nama header. 
-Jika header hadir maka nilainya akan diganti dengan teks pengganti. 
-Jika penggantian teks kosong maka header akan dihapus (jika ada).
-Jika header tidak hadir dan penggantian teks tidak kosong maka header akan ditambahkan.
+<h3>Match Type</h3>
+May be one of:
+
+<h4>Request Header (will add if not present)</h4>
+In this case the 'Match String' will be treated as a header name. 
+If the header is present then its value will be replaced by the replacement text. 
+If the replacement text is empty then the header will be removed (if present).
+If the header is not present and the replacement text is not empty then the header will be added.
 
 <h4>Request Header String</h4>
-Dalam hal ini 'Mencocokkan String' akan diperlakukan sebagai string atau regex ekspresi.
-Jika hadir di header permintaan maka akan diganti dengan teks pengganti.
+In this case the 'Match String' will be treated as a string or regex expression.
+If it is present in the request header then it will be replaced by the replacement text.
 
-<h4>Permintaan Tubuh String</h4>
-Dalam hal ini 'Mencocokkan String' akan diperlakukan sebagai string atau regex ekspresi.
-Jika hal ini hadir dalam permintaan tubuh maka akan diganti dengan teks pengganti.
+<h4>Request Body String</h4>
+In this case the 'Match String' will be treated as a string or regex expression.
+If it is present in the request body then it will be replaced by the replacement text.
 
 <h4>Response Header (will add if not present)</h4>
 In this case the 'Match String' will be treated as a header name. 
-Jika header hadir maka nilainya akan diganti dengan teks pengganti. 
-Jika penggantian teks kosong maka header akan dihapus (jika ada).
-Jika header tidak hadir dan penggantian teks tidak kosong maka header akan ditambahkan.
+If the header is present then its value will be replaced by the replacement text. 
+If the replacement text is empty then the header will be removed (if present).
+If the header is not present and the replacement text is not empty then the header will be added.
 
-<h4>Respon Header String</h4>
-Dalam hal ini 'Mencocokkan String' akan diperlakukan sebagai string atau regex ekspresi.
-Jika hadir di respon header maka akan diganti dengan teks pengganti.
+<h4>Response Header String</h4>
+In this case the 'Match String' will be treated as a string or regex expression.
+If it is present in the response header then it will be replaced by the replacement text.
 
-<h4>Respon Tubuh String</h4>
-Dalam hal ini 'Mencocokkan String' akan diperlakukan sebagai string atau regex ekspresi.
-Jika hal ini hadir dalam respon tubuh maka akan diganti dengan teks pengganti.
+<h4>Response Body String</h4>
+In this case the 'Match String' will be treated as a string or regex expression.
+If it is present in the response body then it will be replaced by the replacement text.
 
-<h3>Pertandingan String</h3>
-String yang akan digunakan untuk mengidentifikasi apa yang harus diganti - melihat Jenis Pencocokan untuk rincian.
+<h3>Match String</h3>
+The string that will be used to identify what should be replaced - see Match Type for details.
 
-<h3>Pertandingan Regex</h3>
-Jika diatur kemudian Mencocokkan String akan diperlakukan sebagai regex ekspresi.
-Opsi ini dinonaktifkan ketika pencocokan header.
+<h3>Match Regex</h3>
+If set then the Match String will be treated as a regex expression.
+This option is disabled when matching actual headers.
 Hexadecimal bytes are represented with "\x00 - \xFF" (for example "abc\x01\x02\x03def").
 
 <h3>Replacement String</h3>

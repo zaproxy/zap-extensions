@@ -6,8 +6,6 @@
 </HEAD>
 <BODY>
 	<H1>Local Servers/Proxies</H1>
-	<strong>Note:</strong> This feature is only available in weekly releases and versions after 2.11.
-	<br>
 
 	<H2>Local Servers/Proxies</H2>
 	This tab allows you to configure the addresses and ports on which ZAP accepts incoming connections.
@@ -52,6 +50,7 @@
 	instance's metadata</a>.<br>
 	ZAP should be started with this option enabled if access to the API, through the public IP address, is required:
 	<blockquote>zap.sh -daemon -port 8080 -host 0.0.0.0 -config network.localServers.mainProxy.behindNat=true</blockquote>
+	<br>
 	Also, the API needs to be configured to accept external IP addresses (i.e. the IP address from where ZAP is being accessed).
 
 	<H4>Remove Accept-Encoding Request Header</H4>
@@ -71,7 +70,7 @@
 	For example, if you have a Linux machine you use for testing, you can do something like the following to forward all HTTP and
 	HTTPS traffic to a local proxy listening on <code>192.168.0.14:8080</code>:
 	<pre><code>iptables -t nat -A OUTPUT -p tcp --dport 443 -j DNAT --to-destination 192.168.0.14:8080
-	iptables -t nat -A OUTPUT -p tcp --dport 80 -j DNAT --to-destination 192.168.0.14:8080
+iptables -t nat -A OUTPUT -p tcp --dport 80 -j DNAT --to-destination 192.168.0.14:8080
 	</code></pre>
 
 	<H2>Aliases</H2>
