@@ -2421,7 +2421,7 @@
     "cats": [
       66
     ],
-    "css": "\\.p-(?:toast|calendar|dialog-mask|menuitem-text)(?:-content)?{",
+    "css": "\\.p-(?:toast|calendar|dialog-mask|menuitem-text)(?:-content)?\\{",
     "description": "PrimeNG is a rich set of open-source UI Components for Angular.",
     "icon": "PrimeNG.svg",
     "oss": true,
@@ -2435,7 +2435,7 @@
     "cats": [
       66
     ],
-    "css": ".p-(?:toast|calendar|dialog-mask|menuitem-text)(?:-content)?{",
+    "css": ".p-(?:toast|calendar|dialog-mask|menuitem-text)(?:-content)?\\{",
     "description": "PrimeReact is a rich set of open-source UI Components for React.",
     "icon": "PrimeReact.svg",
     "oss": true,
@@ -2449,7 +2449,7 @@
     "cats": [
       66
     ],
-    "css": ".p-(?:toast|calendar|dialog-mask|menuitem-text)(?:-content)?{",
+    "css": ".p-(?:toast|calendar|dialog-mask|menuitem-text)(?:-content)?\\{",
     "description": "PrimeVue is a rich set of open-source UI Components for Vue.js.",
     "icon": "PrimeVue.svg",
     "oss": true,
