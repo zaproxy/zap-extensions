@@ -123,6 +123,24 @@
     "scriptSrc": "uc_cart/uc_cart_block\\.js",
     "website": "http://www.ubercart.org"
   },
+  "Ubiliz": {
+    "cats": [
+      5,
+      6
+    ],
+    "description": "Ubiliz is a gift voucher ecommerce solution.",
+    "icon": "Ubiliz.svg",
+    "js": {
+      "ubilizSettings": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.ubiliz.com"
+  },
   "Ubuntu": {
     "cats": [
       28
@@ -133,7 +151,7 @@
       "Server": "Ubuntu",
       "X-Powered-By": "Ubuntu"
     },
-    "icon": "Ubuntu.png",
+    "icon": "Ubuntu.svg",
     "website": "http://www.ubuntu.com/server"
   },
   "Ueeshop": {
@@ -201,6 +219,9 @@
     ],
     "description": "Umami is a self-hosted web analytics solution. It's goal is to provide a friendlier, privacy-focused alternative to Google Analytics and a free, open-sourced alternative to paid solutions.",
     "icon": "umami.svg",
+    "js": {
+      "umami": ""
+    },
     "oss": true,
     "scriptSrc": "umami\\.js",
     "website": "https://umami.is/"
@@ -210,6 +231,7 @@
       1
     ],
     "description": "Umbraco is an open-source Microsoft ASP.NET based content management system.",
+    "dom": "script[src*='/UmbracoForms/']",
     "headers": {
       "X-Umbraco-Version": "^(.+)$\\;version:\\1"
     },
@@ -233,7 +255,7 @@
     "saas": true,
     "scripts": "/Umbraco/Api/",
     "url": "/umbraco/login\\.aspx(?:$|\\?)",
-    "website": "http://umbraco.com",
+    "website": "https://umbraco.com/",
     "xhr": "/umbraco/api/"
   },
   "UmiJs": {
@@ -419,6 +441,19 @@
     "scriptSrc": "www\\.upsellit\\.com/",
     "website": "https://us.upsellit.com"
   },
+  "Upfluence": {
+    "cats": [
+      71
+    ],
+    "description": "Upfluence is the all-in-one affiliate and influencer marketing platform for ecommerce and direct-to-consumer brands.",
+    "icon": "Upfluence.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.upfluence\\.co/",
+    "website": "https://www.upfluence.com"
+  },
   "Uploadcare": {
     "cats": [
       31
@@ -572,6 +607,7 @@
     "description": "Userlike is a cloud-based live chat solution that can be integrated with existing websites.",
     "icon": "UserLike.svg",
     "js": {
+      "__USERLIKE_MOUNT_GUARD__": "",
       "userlike": "",
       "userlikeInit": ""
     },

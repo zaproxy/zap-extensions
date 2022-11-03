@@ -1208,6 +1208,23 @@
     "scriptSrc": "\\.(?:fbgcdn|foodbooking)\\.com/",
     "website": "https://www.foodbooking.com"
   },
+  "Foodomaa": {
+    "cats": [
+      93
+    ],
+    "cookies": {
+      "foodomaa_session": ""
+    },
+    "description": "Foodomaa is a multi-restaurant food ordering and restaurant membership system.",
+    "icon": "Foodomaa.svg",
+    "pricing": [
+      "freemium",
+      "recurring",
+      "low"
+    ],
+    "saas": true,
+    "website": "https://foodomaa.com"
+  },
   "Fork Awesome": {
     "cats": [
       17
@@ -1750,6 +1767,23 @@
     },
     "website": "http://froala.com/wysiwyg-editor"
   },
+  "Front Chat": {
+    "cats": [
+      52
+    ],
+    "description": "Front Chat is the live website chat solution that you can manage straight from your inbox.",
+    "icon": "Front Chat.svg",
+    "js": {
+      "FrontChat": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "//chat-assets\\.frontapp\\.com/",
+    "website": "https://front.com"
+  },
   "FrontPage": {
     "cats": [
       20
@@ -1862,7 +1896,7 @@
     "cats": [
       91
     ],
-    "description": "Fundiin is the BNPL leader in Vietnam in providing zero-cost buy-now-pay-later facilities",
+    "description": "Fundiin is the BNPL leader in Vietnam in providing zero-cost buy-now-pay-later facilities.",
     "icon": "Fundiin.svg",
     "js": {
       "websiteEnableSuggestFundiin": "true",
@@ -1870,6 +1904,33 @@
     },
     "saas": true,
     "website": "https://fundiin.vn"
+  },
+  "FunnelCockpit": {
+    "cats": [
+      32
+    ],
+    "description": "FunnelCockpit is an all-in-one funnel builder.",
+    "dom": "a[href*='.funnelcockpit.com/'][target='_blank'], iframe[src*='.funnelcockpit.com/']",
+    "icon": "FunnelCockpit.png",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.funnelcockpit\\.com/",
+    "website": "https://funnelcockpit.com"
+  },
+  "FurnitureDealer": {
+    "cats": [
+      6
+    ],
+    "description": "FurnitureDealer is the internet partner of more than 100 leading local full service brick and mortar furniture retailers.",
+    "icon": "FurnitureDealer.png",
+    "pricing": [
+      "poa"
+    ],
+    "scriptSrc": "\\.furnituredealer\\.net/",
+    "website": "https://www.furnituredealer.net"
   },
   "Fusion Ads": {
     "cats": [

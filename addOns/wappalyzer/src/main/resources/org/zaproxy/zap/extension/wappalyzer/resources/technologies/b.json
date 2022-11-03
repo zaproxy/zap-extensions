@@ -127,6 +127,19 @@
     "scriptSrc": "babylist\\.com/",
     "website": "https://www.babylist.com"
   },
+  "Babylon.js": {
+    "cats": [
+      25
+    ],
+    "description": "Babylon.js is a real time 3D engine using a JavaScript library for displaying 3D graphics in a web browser via HTML5. The source code is available on GitHub and distributed under the Apache License 2.0.",
+    "dom": "canvas[data-engine*='Babylon.js']",
+    "icon": "babylonjs.svg",
+    "js": {
+      "BABYLON.AddressMode": ""
+    },
+    "oss": true,
+    "website": "https://www.babylonjs.com/"
+  },
   "Back In Stock": {
     "cats": [
       100
@@ -272,6 +285,20 @@
     },
     "oss": true,
     "website": "https://barba.js.org"
+  },
+  "Barilliance": {
+    "cats": [
+      76,
+      98
+    ],
+    "description": "Barilliance is an ecommerce personalisation tools including cart abandonment emails, personalised product recommendations, onsite personalisation, and live notifications.",
+    "icon": "Barilliance.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.barilliance\\.net/",
+    "website": "https://www.barilliance.com"
   },
   "Base": {
     "cats": [
@@ -492,6 +519,36 @@
     "saas": true,
     "scriptSrc": "//betteruptime\\.com/",
     "website": "https://betterstack.com/better-uptime"
+  },
+  "BetterDocs": {
+    "cats": [
+      4
+    ],
+    "description": "BetterDocs is an advanced documentation and knowledge base plugin for WordPress and Shopify.",
+    "icon": "BetterDocs.png",
+    "js": {
+      "betterdocs.FEEDBACK": "",
+      "betterdocs_pro.FEEDBACK": "",
+      "betterdocspublic.post_id": ""
+    },
+    "pricing": [
+      "onetime"
+    ],
+    "website": "https://betterdocs.co"
+  },
+  "BetterDocs plugin": {
+    "cats": [
+      87
+    ],
+    "description": "BetterDocs plugin is an advanced documentation and knowledge base plugin for WordPress.",
+    "icon": "BetterDocs.png",
+    "implies": "BetterDocs",
+    "pricing": [
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/betterdocs(?:-pro)?/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://betterdocs.co/docs/wordpress"
   },
   "Betty Blocks": {
     "cats": [
@@ -1349,6 +1406,24 @@
     "icon": "BookDinners.svg",
     "scriptSrc": "bookdinners\\.nl/widget\\.js",
     "website": "https://www.bookdinners.nl"
+  },
+  "BookStack": {
+    "cats": [
+      4
+    ],
+    "cookies": {
+      "bookstack_session": ""
+    },
+    "cpe": "cpe:2.3:a:bookstackapp:bookstack:*:*:*:*:*:*:*:*",
+    "description": "BookStack is a simple, open-source, self-hosted, easy-to-use platform for organising and storing information.",
+    "icon": "BookStack.svg",
+    "implies": [
+      "PHP",
+      "MySQL",
+      "Laravel"
+    ],
+    "oss": true,
+    "website": "https://www.bookstackapp.com"
   },
   "BookThatApp": {
     "cats": [
@@ -2245,6 +2320,7 @@
     "cats": [
       31
     ],
+    "dom": "[src*='.b-cdn.net'],[data-src*='.b-cdn.net']",
     "headers": {
       "Server": "^BunnyCDN"
     },
@@ -2372,5 +2448,19 @@
       "basket.isValidItem": ""
     },
     "website": "https://addyosmani.github.io/basket.js/"
+  },
+  "bdok": {
+    "cats": [
+      6
+    ],
+    "description": "bdok is a cloud-based platform which provides the capability to create and manage online stores with no technical knowledge.",
+    "icon": "bdok.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.ibdok\\.ir/",
+    "website": "https://bdok.ir"
   }
 }

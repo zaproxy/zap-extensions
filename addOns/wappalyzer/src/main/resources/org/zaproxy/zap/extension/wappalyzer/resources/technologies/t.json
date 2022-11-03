@@ -73,6 +73,22 @@
     "saas": true,
     "website": "https://www.t1pagos.com"
   },
+  "TCAdmin": {
+    "cats": [
+      9
+    ],
+    "description": "TCAdmin is the game hosting control panel.",
+    "icon": "TCAdmin.png",
+    "js": {
+      "TCAdmin": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "website": "https://www.tcadmin.com"
+  },
   "TDesign": {
     "cats": [
       66
@@ -821,6 +837,19 @@
     "icon": "termly.svg",
     "scriptSrc": "app\\.termly\\.io/embed\\.min\\.js",
     "website": "https://termly.io/"
+  },
+  "Tern": {
+    "cats": [
+      100
+    ],
+    "description": "Tern is a plug and play ecommerce app, built for Shopify, that offers merchants the ability to provide a seamless trade-in service.",
+    "icon": "Tern.png",
+    "pricing": [
+      "payg"
+    ],
+    "requires": "Shopify",
+    "scriptSrc": "live\\.tern-returns\\.eastsideapps\\.io/",
+    "website": "https://www.tern.eco"
   },
   "TerriaJS": {
     "cats": [
@@ -1609,6 +1638,104 @@
     "saas": true,
     "website": "https://www.threekit.com"
   },
+  "Thrive Apprentice": {
+    "cats": [
+      87,
+      21
+    ],
+    "description": "Thrive Apprentice is a WordPress plugin for creating online courses and also a membership plugin.",
+    "dom": "link[href*='/wp-content/plugins/thrive-apprentice/']",
+    "icon": "Thrive.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "saas": true,
+    "scriptSrc": "/wp-content/plugins/thrive-apprentice/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://thrivethemes.com/apprentice/"
+  },
+  "Thrive Architect": {
+    "cats": [
+      87,
+      51
+    ],
+    "description": "Thrive Architect is the visual page builder for WordPress.",
+    "dom": "link[href*='/wp-content/plugins/thrive-visual-editor/']",
+    "icon": "Thrive.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "saas": true,
+    "scriptSrc": "/wp-content/plugins/thrive-visual-editor/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://thrivethemes.com/architect/"
+  },
+  "Thrive Comments": {
+    "cats": [
+      87
+    ],
+    "description": "Thrive Comments plugin replaces the standard WordPress comments from your website.",
+    "dom": "link[href*='/wp-content/plugins/thrive-comments/']",
+    "icon": "Thrive.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "saas": true,
+    "scriptSrc": "/wp-content/plugins/thrive-comments/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://thrivethemes.com/comments/"
+  },
+  "Thrive Leads": {
+    "cats": [
+      87
+    ],
+    "description": "Thrive Leads is an all-in-one email list building plugin for WordPress.",
+    "dom": "link[href*='/wp-content/plugins/thrive-leads/']",
+    "icon": "Thrive.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "saas": true,
+    "scriptSrc": "/wp-content/plugins/thrive-leads/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://thrivethemes.com/leads/"
+  },
+  "Thrive Quiz Builder": {
+    "cats": [
+      87
+    ],
+    "description": "Thrive Quiz Builder is a powerful WordPress plugin that can help you to create quizzes for your website or blog.",
+    "dom": "link[href*='/wp-content/plugins/thrive-quiz-builder/']",
+    "icon": "Thrive.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "saas": true,
+    "scriptSrc": "/wp-content/plugins/thrive-quiz-builder/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://thrivethemes.com/quizbuilder"
+  },
+  "Thrive Ultimatum": {
+    "cats": [
+      87
+    ],
+    "description": "Thrive Ultimatum is a WordPress scarcity marketing plugin with built-in templates and campaign tracking tools from developer Thrive Themes.",
+    "dom": "link[href*='/wp-content/plugins/thrive-ultimatum/']",
+    "icon": "Thrive.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "saas": true,
+    "scriptSrc": "/wp-content/plugins/thrive-ultimatum/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://thrivethemes.com/ultimatum/"
+  },
   "ThriveCart": {
     "cats": [
       6
@@ -2043,6 +2170,22 @@
     "scriptSrc": "swrap\\.tradedoubler\\.com",
     "website": "https://www.tradedoubler.com/"
   },
+  "Traek": {
+    "cats": [
+      10
+    ],
+    "description": "Traek is a website insights, analytics and lead generation tool.",
+    "icon": "Traek.svg",
+    "js": {
+      "Traek": ""
+    },
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.traek.io"
+  },
   "TrafficStars": {
     "cats": [
       36
@@ -2101,6 +2244,20 @@
       "Transifex.live.lib_version": "(.+)\\;version:\\1"
     },
     "website": "https://www.transifex.com"
+  },
+  "Transistor.fm": {
+    "cats": [
+      5
+    ],
+    "description": "Transistor.fm is a podcast host, distribution and management platform.",
+    "dom": "iframe[src*='.transistor.fm/']",
+    "icon": "Transistor.fm.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://transistor.fm"
   },
   "Translate WordPress": {
     "cats": [
@@ -2206,6 +2363,22 @@
     "saas": true,
     "scriptSrc": "\\.widget\\.trengo\\.eu/",
     "website": "https://trengo.com"
+  },
+  "Triggerbee": {
+    "cats": [
+      76
+    ],
+    "description": "Triggerbee is an onsite personalisation platform that lets you use customer and behavioral data to build and launch personalised campaigns.",
+    "icon": "Triggerbee.png",
+    "js": {
+      "triggerbee": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://triggerbee.com"
   },
   "Trinity Audio": {
     "cats": [
@@ -2491,6 +2664,23 @@
     "saas": true,
     "website": "https://site.trustvox.com.br"
   },
+  "TryNow": {
+    "cats": [
+      91
+    ],
+    "description": "TryNow is an ecommerce platform designed to offer a try before you buy experience for shoppers.",
+    "icon": "TryNow.svg",
+    "js": {
+      "TryNowConfig": "",
+      "tryNowCheckout": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.trynow\\.net/shopify/([\\d\\.]+)/\\;version:\\1",
+    "website": "https://www.trynow.io"
+  },
   "Tumblr": {
     "cats": [
       11
@@ -2759,6 +2949,19 @@
     "scriptSrc": "cdn\\.twik\\.io",
     "website": "https://www.twik.io/"
   },
+  "Twikoo": {
+    "cats": [
+      15
+    ],
+    "description": "Twikoo is a simple, safe, free comment system.",
+    "icon": "Twikoo.png",
+    "js": {
+      "twikoo.version": "^([\\d\\.]+)$\\;version:\\1"
+    },
+    "oss": true,
+    "scriptSrc": "/twikoo/dist/twikoo\\.all\\.min\\.js",
+    "website": "https://twikoo.js.org"
+  },
   "Twilight CMS": {
     "cats": [
       1
@@ -2927,6 +3130,7 @@
       73
     ],
     "description": "Typeform is a Spanish online software as a service (SaaS) company that specialises in online form building and online surveys.",
+    "dom": "link[href*='.typeform.com/']",
     "icon": "Typeform.png",
     "js": {
       "tf.createPopover": "",

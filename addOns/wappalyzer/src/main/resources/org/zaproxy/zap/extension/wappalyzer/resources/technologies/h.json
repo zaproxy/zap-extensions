@@ -1,4 +1,23 @@
 {
+  "H2O": {
+    "cats": [
+      22
+    ],
+    "cookies": {
+      "h2o_casper": ""
+    },
+    "description": "H2O is a fast and secure HTTP/2 server written in C by Kazuho Oku.",
+    "headers": {
+      "Server": "^h2o(?:/)?([\\d\\.]+)?\\;version:\\1"
+    },
+    "icon": "default.svg",
+    "implies": [
+      "C",
+      "HTTP/2"
+    ],
+    "oss": true,
+    "website": "https://github.com/h2o/h2o"
+  },
   "HCL Commerce": {
     "cats": [
       6
@@ -20,14 +39,36 @@
       1
     ],
     "cpe": "cpe:2.3:a:ibm:websphere_portal:*:*:*:*:*:*:*:*",
+    "description": "HCL Digital Experience software empowers you to create, manage and deliver engaging omni-channel digital experiences to virtually all audiences.",
     "headers": {
       "IBM-Web2-Location": "",
       "Itx-Generated-Timestamp": ""
     },
-    "icon": "IBM.svg",
+    "icon": "hcl-dx.png",
     "implies": "Java",
-    "url": "/wps/",
-    "website": "https://www.hcltechsw.com/products/dx"
+    "pricing": [
+      "high",
+      "poa"
+    ],
+    "url": "/wps/wcm/",
+    "website": "https://www.hcltechsw.com/dx"
+  },
+  "HCL Domino": {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:ibm:lotus_domino:*:*:*:*:*:*:*:*",
+    "description": "HCL Domino, formerly called IBM Domino (1995) and Lotus Domino (1989), is an enterprise server application development platform.",
+    "headers": {
+      "Server": "^Lotus-Domino$"
+    },
+    "icon": "HCL Domino.svg",
+    "implies": "Java",
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "website": "https://www.hcltechsw.com/domino"
   },
   "HHVM": {
     "cats": [
@@ -72,6 +113,7 @@
     "headers": {
       "Strict-Transport-Security": ""
     },
+    "url": "^https://[\\w\\d\\.\\-]+(?:\\.dev)(?:/.+||/)$",
     "website": "https://www.rfc-editor.org/rfc/rfc6797#section-6.1"
   },
   "HTTP/2": {
@@ -310,6 +352,21 @@
     ],
     "icon": "Haskell.png",
     "website": "http://wiki.haskell.org/Haskell"
+  },
+  "Hatena Blog": {
+    "cats": [
+      1,
+      11
+    ],
+    "description": "Hatena Blog is one of the traditional blog platforms in Japan.",
+    "icon": "Hatena.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "scriptSrc": "cdn\\.blog\\.st-hatena\\.com/",
+    "website": "https://hatenablog.com"
   },
   "HeadJS": {
     "cats": [
@@ -695,6 +752,22 @@
     "scriptSrc": "\\.hextom\\.com/js/ultimatesalesboost\\.js",
     "website": "https://hextom.com/case_study/ultimate-sales-boost"
   },
+  "Hi Platform": {
+    "cats": [
+      53
+    ],
+    "description": "Hi Platform provider of an online customer relationship platform.",
+    "dom": "link[href*='.hiplatform.com']",
+    "icon": "Hi Platform.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.hiplatform\\.com/",
+    "website": "https://www.hiplatform.com"
+  },
   "Hiawatha": {
     "cats": [
       22
@@ -1069,6 +1142,20 @@
     "scriptSrc": "\\.hrflow\\.ai",
     "website": "https://hrflow.ai"
   },
+  "Htmx": {
+    "cats": [
+      59
+    ],
+    "description": "Htmx is a JavaScript library for performing AJAX requests, triggering CSS transitions, and invoking WebSocket and server-sent events directly from HTML elements.",
+    "dom": "script[data-src*='/dist/htmx.min.js']",
+    "icon": "Htmx.svg",
+    "js": {
+      "htmx": ""
+    },
+    "oss": true,
+    "scriptSrc": "/htmx\\.org@([\\d\\.]+)\\;version:\\1",
+    "website": "https://htmx.org"
+  },
   "HubSpot": {
     "cats": [
       32
@@ -1080,7 +1167,7 @@
       ]
     },
     "html": "<!-- Start of Async HubSpot",
-    "icon": "HubSpot.png",
+    "icon": "HubSpot.svg",
     "js": {
       "_hsq": "",
       "hubspot": ""
@@ -1097,7 +1184,7 @@
       10
     ],
     "description": "HubSpot is a marketing and sales software that helps companies attract visitors, convert leads, and close customers.",
-    "icon": "HubSpot.png",
+    "icon": "HubSpot.svg",
     "scriptSrc": "js\\.hs-analytics\\.net/analytics",
     "website": "https://www.hubspot.com/products/marketing/analytics"
   },
@@ -1110,7 +1197,7 @@
       "x-hs-hub-id": "",
       "x-powered-by": "HubSpot"
     },
-    "icon": "HubSpot.png",
+    "icon": "HubSpot.svg",
     "implies": "HubSpot",
     "meta": {
       "generator": "HubSpot"
@@ -1127,7 +1214,7 @@
       52
     ],
     "description": "HubSpot Chat is a tool where you can view, manage, and reply to incoming messages from multiple channels.",
-    "icon": "HubSpot.png",
+    "icon": "HubSpot.svg",
     "js": {
       "HubSpotConversations": ""
     },
@@ -1144,8 +1231,24 @@
     ],
     "description": "HubSpot Cookie Policy banner is a cookie compliance functionality from HubSpot.",
     "dom": "#hs-eu-cookie-confirmation",
-    "icon": "HubSpot.png",
+    "icon": "HubSpot.svg",
     "website": "https://knowledge.hubspot.com/reports/customize-your-cookie-tracking-settings-and-privacy-policy-alert"
+  },
+  "HubSpot WordPress plugin": {
+    "cats": [
+      87
+    ],
+    "description": "HubSpot is a platform with all the tools and integrations you need for marketing, sales, and customer service. HubSpot WordPress plugin allows you to manage contacts (CRM), engage visitors with live chat and chatbots, add beautiful forms to pages, create engaging email marketing campaigns, and more.",
+    "icon": "HubSpot.svg",
+    "implies": [
+      "HubSpot",
+      "HubSpot Analytics"
+    ],
+    "js": {
+      "leadin_wordpress.leadinPluginVersion": "^([\\d.]+)$\\;version:\\1"
+    },
+    "requires": "WordPress",
+    "website": "https://wordpress.org/plugins/leadin/"
   },
   "Huberway": {
     "cats": [
@@ -1342,6 +1445,23 @@
     "scriptSrc": "\\.hushly\\.com/",
     "website": "https://www.hushly.com"
   },
+  "Hydrogen": {
+    "cats": [
+      12
+    ],
+    "description": "Hydrogen is a front-end web development framework used for building Shopify custom storefronts.",
+    "headers": {
+      "powered-by": "^Shopify-Hydrogen$"
+    },
+    "icon": "Hydrogen.svg",
+    "implies": [
+      "Shopify",
+      "React",
+      "Vite"
+    ],
+    "oss": true,
+    "website": "https://hydrogen.shopify.dev"
+  },
   "Hypercorn": {
     "cats": [
       22
@@ -1412,6 +1532,25 @@
     "oss": true,
     "website": "https://www.hypestylecss.xyz"
   },
+  "Hyva Themes": {
+    "cats": [
+      19
+    ],
+    "description": "Hyva Themes is a performance-optimised theme for Magento 2 which eliminated the third-party libraries and having only two dependencies Alpine.js and Tailwind CSS.",
+    "headers": {
+      "X-Built-With": "^Hyva Themes$"
+    },
+    "icon": "Hyva Themes.svg",
+    "implies": [
+      "Magento\\;version:2",
+      "Tailwind CSS",
+      "Alpine.js"
+    ],
+    "pricing": [
+      "onetime"
+    ],
+    "website": "https://hyva.io"
+  },
   "h5ai": {
     "cats": [
       19
@@ -1473,20 +1612,5 @@
     "saas": true,
     "scriptSrc": "merchant\\.cdn\\.hoolah\\.co/",
     "website": "https://www.hoolah.co"
-  },
-  "hyva": {
-    "cats": [
-      6
-    ],
-    "description": "Hyvä themes is a frontend for Magento 2.",
-    "headers": {
-      "X-Built-With": "^Hyva Themes$"
-    },
-    "icon": "Hyva.svg",
-    "implies": "Magento",
-    "pricing": [
-      "onetime"
-    ],
-    "website": "https://hyva.io/"
   }
 }

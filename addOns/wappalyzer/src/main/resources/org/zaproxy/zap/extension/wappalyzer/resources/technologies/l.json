@@ -53,12 +53,14 @@
     "cats": [
       62
     ],
+    "description": "The Open Source Application Delivery Platform for Kubernetes.",
     "headers": {
       "X-LAGOON": "",
       "x-lagoon": ""
     },
-    "icon": "Lagoon.png",
-    "website": "https://www.amazee.io/hosting"
+    "icon": "lagoon.svg",
+    "oss": true,
+    "website": "https://lagoon.sh/"
   },
   "LangShop": {
     "cats": [
@@ -449,6 +451,18 @@
     "scriptSrc": "\\.lengow\\.com/",
     "website": "https://www.lengow.com"
   },
+  "Lenis": {
+    "cats": [
+      59
+    ],
+    "description": "Lenis is a smooth scroll library to normalise the scrolling experience across devices.",
+    "icon": "Lenis.svg",
+    "js": {
+      "lenisVersion": "([\\d\\.]+)\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://lenis.studiofreight.com"
+  },
   "Less": {
     "cats": [
       19
@@ -570,6 +584,7 @@
       "Liferay-Portal": "[a-z\\s]+([\\d.]+)\\;version:\\1"
     },
     "icon": "Liferay.svg",
+    "implies": "Java",
     "js": {
       "Liferay": ""
     },
@@ -577,7 +592,7 @@
     "pricing": [
       "poa"
     ],
-    "website": "https://www.liferay.com"
+    "website": "https://www.liferay.com/"
   },
   "Lift": {
     "cats": [
@@ -1309,8 +1324,12 @@
     ],
     "description": "LogiCommerce is the headless ecommerce platform.",
     "icon": "LogiCommerce.svg",
+    "js": {
+      "logicommerceGlobal": ""
+    },
     "meta": {
-      "generator": "^LogiCommerce$"
+      "generator": "^LogiCommerce$",
+      "logicommerce": ""
     },
     "pricing": [
       "low",
@@ -1540,18 +1559,6 @@
       "/dist/tgs-player\\.js"
     ],
     "website": "https://lottiefiles.com"
-  },
-  "Lotus Domino": {
-    "cats": [
-      22
-    ],
-    "cpe": "cpe:2.3:a:ibm:lotus_domino:*:*:*:*:*:*:*:*",
-    "headers": {
-      "Server": "Lotus-Domino"
-    },
-    "icon": "Lotus Domino.png",
-    "implies": "Java",
-    "website": "http://www-01.ibm.com/software/lotus/products/domino"
   },
   "LoyaltyLion": {
     "cats": [
