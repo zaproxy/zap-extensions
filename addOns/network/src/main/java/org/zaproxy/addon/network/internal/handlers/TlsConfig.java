@@ -35,36 +35,36 @@ public class TlsConfig {
                     TlsUtils.TLS_V1_2,
                     TlsUtils.TLS_V1_3);
 
-    private List<String> enabledProtocols;
+    private List<String> tlsProtocols;
 
     /** Constructs a {@code TlsConfig} with all the SSL/TLS protocol versions supported. */
     public TlsConfig() {
-        this.enabledProtocols = TlsUtils.filterUnsupportedProtocols(DEFAULT_PROTOCOLS);
+        this.tlsProtocols = TlsUtils.filterUnsupportedProtocols(DEFAULT_PROTOCOLS);
     }
 
     /**
      * Constructs a {@code TlsConfig} with the given SSL/TLS protocol versions.
      *
-     * @param enabledProtocols the enabled protocols
+     * @param tlsProtocols the enabled protocols
      * @throws IllegalArgumentException if no protocol is provided or none supported.
-     * @throws NullPointerException if the given {@code enabledProtocols} is {@code null}.
+     * @throws NullPointerException if the given {@code tlsProtocols} is {@code null}.
      */
-    public TlsConfig(List<String> enabledProtocols) {
-        this.enabledProtocols = TlsUtils.filterUnsupportedProtocols(enabledProtocols);
+    public TlsConfig(List<String> tlsProtocols) {
+        this.tlsProtocols = TlsUtils.filterUnsupportedProtocols(tlsProtocols);
     }
 
     /**
-     * Gets the enabled protocols.
+     * Gets the TLS protocols.
      *
-     * @return a list with the enabled protocols.
+     * @return a list with the TLS protocols.
      */
-    public List<String> getEnabledProtocols() {
-        return enabledProtocols;
+    public List<String> getTlsProtocols() {
+        return tlsProtocols;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(enabledProtocols);
+        return Objects.hash(tlsProtocols);
     }
 
     @Override
@@ -76,6 +76,6 @@ public class TlsConfig {
             return false;
         }
         TlsConfig other = (TlsConfig) object;
-        return Objects.equals(enabledProtocols, other.enabledProtocols);
+        return Objects.equals(tlsProtocols, other.tlsProtocols);
     }
 }

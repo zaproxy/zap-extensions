@@ -36,7 +36,7 @@ import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 
 /**
- * Decodes a HTTP message, request or response into a {@link HttpMessage}.
+ * Decodes an HTTP message, request or response into a {@link HttpMessage}.
  *
  * <p>Based on Netty's {@code HttpObjectDecoder}.
  */

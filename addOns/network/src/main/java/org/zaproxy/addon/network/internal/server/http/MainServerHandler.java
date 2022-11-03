@@ -34,7 +34,9 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.network.internal.ChannelAttributes;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 
-/** The main handler of a HTTP server, notifies {@link HttpMessageHandler}s and acts accordingly. */
+/**
+ * The main handler of an HTTP server, notifies {@link HttpMessageHandler}s and acts accordingly.
+ */
 public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> {
 
     private static final String ERROR_WRITE =
@@ -52,7 +54,7 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
     protected final DefaultHttpMessageHandlerContext handlerContext;
 
     /**
-     * Constructs a {@code HttpMessageServerBridge} with the given handlers.
+     * Constructs a {@code MainServerHandler} with the given handlers.
      *
      * @param handlers the message handlers.
      * @throws NullPointerException if the given list is {@code null}.
