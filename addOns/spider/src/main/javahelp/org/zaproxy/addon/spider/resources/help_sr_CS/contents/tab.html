@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<title>Spider tab</title>
+</head>
+<body>
+	<h1>Spider tab</h1>
+	<p>
+		The Spider tab shows you the set of unique URIs found by the <a
+			href="spider.html">Spider</a> during the scans.
+	</p>
+
+	<p>
+		The 'New Scan' button launches the <a href="dialog.html">Spider dialog</a> which allows you
+to specify exactly what should be scanned.<br>
+	
+		The Spider can be run on multiple Sites in parallel and the results for each scan are
+		shown by selecting the scan via the 'Progress' pull-down.
+	</p>
+
+	<p>The toolbar shows information about a scan and allows to control it. It provides a
+		set of buttons which allows to:
+	
+	<ul>
+		<li><img align="bottom" alt="pause button" src="images/pause.png">
+			Pause (and <img alt="resume button" src="images/play.png"> resume) the
+			selected Spider scan;</li>
+		<li><img align="bottom" alt="stop button" src="images/stop.png"> Stop
+			the selected Spider scan;</li>
+		<li><img align="bottom" alt="clean scans button" src="images/broom.png">
+			Clean completed scans;</li>
+		<li><img align="bottom" alt="Spider options button" src="images/gear.png">
+			Open the <a href="options.html">Spider Options screen</a>.</li>
+	</ul>
+	The progress bar shows how far the selected Spider scan has progressed. It is also shown
+	the number of active Spider scans and the number of URIs found for the selected scan.
+	<p>For each URI found you can see:
+	<ul>
+		<li>Processed - Whether the URI was processed by the Spider or
+			was skipped from fetching because of a rule (e.g. it was out of
+			scope)</li>
+		<li>Method - The HTTP method, e.g. GET or POST, through which the
+			resource should be accessed</li>
+		<li>URI - the resource found</li>
+		<li>Flags - any information about the URI (e.g. if it's a seed or
+			why was it not processed)</li>
+	</ul>
+
+	<p>For each Spider message, shown under the Messages tab, you can see details of the request sent and response
+		received. The <code>Processed</code> column, indicates whether:
+	<ul>
+		<li><img align="bottom" alt="successful parse" src="images/green_dot.png">Successfully
+			- the response was successfully received and parsed</li>
+		<li><img align="bottom" alt="no parse" src="images/red_dot.png">Empty
+			Message - the response was not parsed because it was empty</li>
+		<li><img align="bottom" alt="no parse" src="images/red_dot.png">I/O
+			Error - an input/output error occurred while fetching the response</li>
+		<li><img align="bottom" alt="no parse" src="images/red_dot.png">Max
+			Children - the response was not parsed because the corresponding parent Sites node
+			already has more child nodes than the maximum allowed</li>
+		<li><img align="bottom" alt="no parse" src="images/red_dot.png">Max
+			Depth - the response was not parsed because it passed the maximum depth allowed</li>
+		<li><img align="bottom" alt="no parse" src="images/red_dot.png">Max
+			Size - the response was not parsed because its size is not under the maximum allowed</li>
+		<li><img align="bottom" alt="no parse" src="images/red_dot.png">Not
+			Text - the response was not parsed because it's not text, for example, an image</li>
+		<li><img align="bottom" alt="no parse" src="images/red_dot.png">Spider
+			Stopped - the response was not fetched or parsed because the Spider was already stopped</li>
+	</ul>
+
+	<h2>See also</h2>
+	<table>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="spider.html">Spider</a></td>
+			<td>for an overview of the Spider</td>
+		</tr>
+		<tr>
+			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td><a href="options.html">Spider
+					Options screen</a></td>
+			<td>for an overview of the Spider Options</td>
+		</tr>
+	</table>
+
+</body>
+</html>
+

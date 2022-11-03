@@ -8,7 +8,7 @@ Import/Export
 </HEAD>
 <BODY>
 
-<H1>>Copy URLs to Clipboard</H1>
+<H1>Copy URLs to Clipboard</H1>
 A context menu item to Copy URLs to the system clipboard.
 
 <H1>Save Selected Entries as HAR (HTTP Archive File)</H1>
@@ -65,10 +65,14 @@ also available from the right-click menu when used on a Context node in the Site
 <H1>ZAP API</H1>
 This add-on also exposes various ZAP API endpoints to facilitate programmatic use of the functionality.
 <ul>
-  <li><code>/exim/importHar (filePath*)</code></li>
-  <li><code>/exim/importModsec2Logs (filePath*)</code></li>
-  <li><code>/exim/importUrls (filePath*)</code></li>
-  <li><code>/exim/importZapLogs (filePath*)</code></li>
+  <li><code>/exim/action/importHar (filePath*)</code></li>
+  <li><code>/exim/action/importModsec2Logs (filePath*)</code></li>
+  <li><code>/exim/action/importUrls (filePath*)</code></li>
+  <li><code>/exim/action/importZapLogs (filePath*)</code></li>
+  <li>---</li>
+  <li><code>/exim/other/exportHar (baseurl start count)</code></li>
+  <li><code>/exim/other/exportHarById (ids*)</code></li>
+  <li><code>/exim/other/sendHarRequest (request* followRedirects)</code></li>
 </ul>
 
 </BODY>
