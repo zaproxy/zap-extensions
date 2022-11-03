@@ -119,12 +119,13 @@
       1
     ],
     "cpe": "cpe:2.3:a:modx:modx_revolution:*:*:*:*:*:*:*:*",
-    "description": "MODX is an open source content management system and web application framework for publishing content on the world wide web and intranets.",
+    "description": "MODX (originally MODx) is an open source content management system and web application framework for publishing content on the World Wide Web and intranets.",
     "headers": {
       "X-Powered-By": "^MODX"
     },
     "html": [
       "<a[^>]+>Powered by MODX</a>",
+      "<!-- Modx process time debug info -->",
       "<(?:link|script)[^>]+assets/snippets/\\;confidence:20",
       "<form[^>]+id=\"ajaxSearch_form\\;confidence:20",
       "<input[^>]+id=\"ajaxSearch_input\\;confidence:20"
@@ -143,7 +144,7 @@
       "low"
     ],
     "saas": true,
-    "website": "http://modx.com"
+    "website": "https://modx.com/content-management-framework"
   },
   "MRW": {
     "cats": [
@@ -156,6 +157,20 @@
       "\\bMRW\\b"
     ],
     "website": "https://www.mrw.es"
+  },
+  "MSHOP": {
+    "cats": [
+      6
+    ],
+    "description": "MSHOP is an all-in-one ecommerce platform.",
+    "icon": "MSHOP.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "static\\.hotishop\\.com/",
+    "website": "https://hotishop.com"
   },
   "MTCaptcha": {
     "cats": [
@@ -263,6 +278,8 @@
     "cookies": {
       "X-Magento-Vary": "",
       "frontend": "\\;confidence:50",
+      "mage-cache-storage": "",
+      "mage-cache-storage-section-invalidation": "",
       "mage-translation-file-version": "",
       "mage-translation-storage": ""
     },
@@ -597,6 +614,17 @@
     ],
     "website": "https://www.mangeznotez.com"
   },
+  "Mantine": {
+    "cats": [
+      59
+    ],
+    "description": "Mantine is a React components library.",
+    "dom": "style[data-emotion='mantine-global'], style[data-emotion='mantine']",
+    "icon": "Mantine.svg",
+    "implies": "TypeScript",
+    "oss": true,
+    "website": "https://mantine.dev"
+  },
   "MantisBT": {
     "cats": [
       13
@@ -633,6 +661,21 @@
     "saas": true,
     "scriptSrc": "\\.manycontacts\\.com",
     "website": "https://www.manycontacts.com"
+  },
+  "MapLibre GL JS": {
+    "cats": [
+      35
+    ],
+    "description": "MapLibre GL JS is an open-source library for publishing maps on your websites.",
+    "icon": "MapLibre.svg",
+    "js": {
+      "apex.libVersions.maplibre": "([\\d\\.]+)\\;version:\\1",
+      "maplibregl": "",
+      "rmap2.maplibreglCompare": ""
+    },
+    "oss": true,
+    "scriptSrc": "maplibre-gl@([\\d\\.]+)/dist/maplibre-gl\\.js\\;version:\\1",
+    "website": "https://github.com/maplibre/maplibre-gl-js"
   },
   "Mapbox GL JS": {
     "cats": [
@@ -2205,6 +2248,7 @@
     "icon": "Microsoft.svg",
     "js": {
       "MonacoEnvironment": "",
+      "apex.libVersions.monacoEditor": "^([\\d\\.]+)$\\;version:\\1",
       "monaco.editor": ""
     },
     "oss": true,
@@ -2691,6 +2735,23 @@
     "description": "MySQL is an open-source relational database management system.",
     "icon": "MySQL.svg",
     "website": "http://mysql.com"
+  },
+  "MySiteNow": {
+    "cats": [
+      51
+    ],
+    "description": "MySiteNow provides cloud-based web development services, allowing users to create HTML5 websites and mobile sites.",
+    "icon": "MySiteNow.png",
+    "meta": {
+      "app-platform": "^MySiteNow$"
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://mysitenow.gr"
   },
   "MyWebsite": {
     "cats": [

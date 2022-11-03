@@ -222,6 +222,21 @@
     "scriptSrc": "apps\\.xpresslane\\.in/",
     "website": "https://www.xpresslane.in"
   },
+  "Xretail": {
+    "cats": [
+      6
+    ],
+    "description": "Xretail is a subscription based product that enables the omni-channel ecommerce approach to its customers.",
+    "icon": "Xretail.png",
+    "meta": {
+      "author": "^Xretail team$"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://xretail.com"
+  },
   "Xserver": {
     "cats": [
       88

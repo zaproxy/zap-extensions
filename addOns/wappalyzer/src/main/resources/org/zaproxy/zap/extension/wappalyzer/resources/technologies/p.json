@@ -1391,6 +1391,16 @@
     ],
     "website": "https://picturepark.com"
   },
+  "Piman": {
+    "cats": [
+      68
+    ],
+    "description": "Piman is an open-source accessibility UI framework create by Blueplanet Inc.",
+    "dom": "button.bpa-btn",
+    "icon": "Piman.svg",
+    "oss": true,
+    "website": "https://ya-sai.github.io/piman/"
+  },
   "Pimcore": {
     "cats": [
       1,
@@ -1408,7 +1418,7 @@
     "pricing": [
       "poa"
     ],
-    "website": "http://pimcore.org"
+    "website": "https://pimcore.com/en/digital-experience-platform"
   },
   "Pin Payments": {
     "cats": [
@@ -1799,12 +1809,14 @@
       1
     ],
     "cpe": "cpe:2.3:a:plone:plone:*:*:*:*:*:*:*:*",
+    "description": "Plone is a free and open source content management system (CMS) built on top of the Zope application server.",
     "icon": "Plone.svg",
     "implies": "Python",
     "meta": {
       "generator": "Plone"
     },
-    "website": "http://plone.org"
+    "oss": true,
+    "website": "https://plone.org/"
   },
   "Plotly": {
     "cats": [
@@ -1949,17 +1961,20 @@
       89
     ],
     "cookies": {
-      "pll_language": ""
+      "pll_language": "[a-z]{2}"
     },
     "description": "Polylang is a WordPress plugin which allows you to create multilingual WordPress site.",
-    "dom": "img[src*='/wp-content/plugins/polylang/']",
+    "dom": "#pll_switcher",
     "headers": {
-      "x-redirected-by": "Polylang(?:\\s[a-zA-Z]+)?"
+      "x-redirected-by": "Polylang(?: (Pro))?\\;version:\\1"
     },
     "icon": "Polylang.svg",
     "oss": true,
+    "pricing": [
+      "freemium"
+    ],
     "requires": "WordPress",
-    "website": "https://polylang.pro"
+    "website": "https://wordpress.org/plugins/polylang"
   },
   "Polymer": {
     "cats": [
@@ -2402,6 +2417,48 @@
     "scriptSrc": "cdn\\.pricespider\\.com/",
     "website": "https://www.pricespider.com"
   },
+  "PrimeNG": {
+    "cats": [
+      66
+    ],
+    "css": "\\.p-(?:toast|calendar|dialog-mask|menuitem-text)(?:-content)?{",
+    "description": "PrimeNG is a rich set of open-source UI Components for Angular.",
+    "icon": "PrimeNG.svg",
+    "oss": true,
+    "pricing": [
+      "onetime"
+    ],
+    "requires": "Angular",
+    "website": "https://www.primefaces.org"
+  },
+  "PrimeReact": {
+    "cats": [
+      66
+    ],
+    "css": ".p-(?:toast|calendar|dialog-mask|menuitem-text)(?:-content)?{",
+    "description": "PrimeReact is a rich set of open-source UI Components for React.",
+    "icon": "PrimeReact.svg",
+    "oss": true,
+    "pricing": [
+      "onetime"
+    ],
+    "requires": "React",
+    "website": "https://www.primefaces.org"
+  },
+  "PrimeVue": {
+    "cats": [
+      66
+    ],
+    "css": ".p-(?:toast|calendar|dialog-mask|menuitem-text)(?:-content)?{",
+    "description": "PrimeVue is a rich set of open-source UI Components for Vue.js.",
+    "icon": "PrimeVue.svg",
+    "oss": true,
+    "pricing": [
+      "onetime"
+    ],
+    "requires": "Vue.js",
+    "website": "https://www.primefaces.org"
+  },
   "Primis": {
     "cats": [
       36
@@ -2458,7 +2515,8 @@
     "description": "Prism is an extensible syntax highlighter.",
     "icon": "Prism.svg",
     "js": {
-      "Prism": ""
+      "Prism": "",
+      "apex.libVersions.prismJs": "^([\\d\\.]+)$\\;version:\\1"
     },
     "scriptSrc": "prism\\.js",
     "website": "http://prismjs.com"
@@ -2476,6 +2534,7 @@
       "recurring"
     ],
     "saas": true,
+    "scriptSrc": "\\.prismic\\.io/",
     "website": "https://prismic.io",
     "xhr": "\\.cdn\\.prismic\\.io"
   },
@@ -2514,7 +2573,7 @@
       "ProcessWire": ""
     },
     "oss": true,
-    "website": "https://processwire.com"
+    "website": "https://processwire.com/"
   },
   "Product Hunt": {
     "cats": [
@@ -2935,6 +2994,16 @@
     "scriptSrc": "api\\.pushnami\\.com",
     "website": "https://pushnami.com"
   },
+  "PyScript": {
+    "cats": [
+      19
+    ],
+    "description": "PyScript is a python script that can be run in the browser using a mix of Python and standard HTML.",
+    "dom": "py-script",
+    "icon": "PyScript.svg",
+    "oss": true,
+    "website": "https://pyscript.net"
+  },
   "Pygments": {
     "cats": [
       19
@@ -3003,6 +3072,9 @@
       19
     ],
     "icon": "Parcel.png",
+    "implies": [
+      "SWC"
+    ],
     "js": {
       "parcelRequire": ""
     },
@@ -3020,6 +3092,17 @@
     "oss": true,
     "scriptSrc": "/particles(?:\\.min)?\\.js",
     "website": "https://github.com/VincentGarreau/particles.js"
+  },
+  "petite-vue": {
+    "cats": [
+      19
+    ],
+    "description": "petite-vue is an alternative distribution of Vue optimised for progressive enhancement.",
+    "icon": "vue.svg",
+    "oss": true,
+    "scriptSrc": "/petite-vue",
+    "scripts": "/petite-vue@([\\d\\.]+)/\\;version:\\1",
+    "website": "https://github.com/vuejs/petite-vue"
   },
   "phpAlbum": {
     "cats": [
@@ -3109,6 +3192,26 @@
     "icon": "phpPgAdmin.png",
     "implies": "PHP",
     "website": "http://phppgadmin.sourceforge.net"
+  },
+  "phpRS": {
+    "cats": [
+      1
+    ],
+    "description": "phpRS is a content management software written in PHP.",
+    "dom": {
+      "a[href*='.php']": {
+        "attributes": {
+          "href": "search\\.php\\?.+all-phpRS-all"
+        }
+      }
+    },
+    "icon": "default.svg",
+    "implies": "PHP",
+    "meta": {
+      "generator": "^phpRS$"
+    },
+    "oss": true,
+    "website": "https://phprs.net"
   },
   "phpSQLiteCMS": {
     "cats": [

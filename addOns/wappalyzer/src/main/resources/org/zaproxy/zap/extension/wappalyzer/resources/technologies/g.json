@@ -1256,6 +1256,25 @@
     "saas": true,
     "website": "https://www.gokwik.co"
   },
+  "GoMage": {
+    "cats": [
+      19
+    ],
+    "description": "GoMage is a Magento development company with 10 years of experience.",
+    "icon": "GoMage.svg",
+    "implies": [
+      "PWA",
+      "Magento"
+    ],
+    "js": {
+      "GomageNavigation": "",
+      "GomageNavigationClass": "",
+      "gomageSpinnerModal": "",
+      "gomage_navigation_loadinfo_text": "",
+      "gomage_navigation_urlhash": ""
+    },
+    "website": "https://www.gomage.com/magento-2-pwa"
+  },
   "GoStats": {
     "cats": [
       10
@@ -1364,6 +1383,7 @@
     ],
     "description": "Google Ads Conversion Tracking is a free tool that shows you what happens after a customer interacts with your ads.",
     "icon": "Google.svg",
+    "implies": "Google Ads",
     "js": {
       "google_trackConversion": ""
     },
@@ -1372,6 +1392,7 @@
     ],
     "saas": true,
     "scriptSrc": "\\.googleadservices\\.com/pagead/conversion_async\\.js",
+    "scripts": "gtag\\([^)]+'(AW-)",
     "website": "https://support.google.com/google-ads/answer/1722022"
   },
   "Google Analytics": {
@@ -1384,7 +1405,7 @@
       "_gat": ""
     },
     "description": "Google Analytics is a free web analytics service that tracks and reports website traffic.",
-    "html": "<amp-analytics [^>]*type=[\"']googleanalytics[\"']",
+    "dom": "amp-analytics[type*=googleanalytics]",
     "icon": "Google Analytics.svg",
     "js": {
       "GoogleAnalyticsObject": "",
@@ -1393,6 +1414,10 @@
     "scriptSrc": [
       "google-analytics\\.com/(?:ga|urchin|analytics)\\.js",
       "googletagmanager\\.com/gtag/js"
+    ],
+    "scripts": [
+      "gtag\\([^)]+'(UA-)\\;version:\\1?UA:",
+      "gtag\\([^)]+'(G-)\\;version:\\1?GA4:"
     ],
     "website": "http://google.com/analytics"
   },
@@ -1520,7 +1545,18 @@
       17
     ],
     "description": "Google Font API is a web service that supports open-source font files that can be used on your web designs.",
-    "html": "<link[^>]* href=[^>]+fonts\\.(?:googleapis|google)\\.com",
+    "dom": {
+      "link[href*='fonts.g']": {
+        "attributes": {
+          "href": "fonts\\.(?:googleapis|google|gstatic)\\.com"
+        }
+      },
+      "style[data-href*='fonts.g']": {
+        "attributes": {
+          "data-href": "fonts\\.(?:googleapis|google|gstatic)\\.com"
+        }
+      }
+    },
     "icon": "Google Font API.png",
     "js": {
       "WebFonts": ""
@@ -1835,6 +1871,18 @@
       "generator": "grandnode"
     },
     "website": "https://grandnode.com"
+  },
+  "Granim.js": {
+    "cats": [
+      59
+    ],
+    "description": "Granim.js is a lightweight javascript library to create fluid and interactive gradients animations.",
+    "icon": "default.svg",
+    "js": {
+      "Granim": ""
+    },
+    "oss": true,
+    "website": "https://sarcadass.github.io/granim.js"
   },
   "GrapesJS": {
     "cats": [

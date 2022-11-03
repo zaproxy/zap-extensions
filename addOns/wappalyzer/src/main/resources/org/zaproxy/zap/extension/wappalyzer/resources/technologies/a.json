@@ -91,6 +91,23 @@
     "scriptSrc": "\\.ebis\\.ne\\.jp/",
     "website": "http://www.ebis.ne.jp"
   },
+  "ADAPT": {
+    "cats": [
+      6
+    ],
+    "description": "ADAPT is a subscription-based app that allows anyone to create video focused online store in minutes on their phone.",
+    "icon": "ADAPT.svg",
+    "meta": {
+      "image": "assets\\.adapt\\.ws/"
+    },
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://adapt.ws"
+  },
   "ADFOX": {
     "cats": [
       36
@@ -188,9 +205,9 @@
     "description": "JavaScript library to animate elements on your page as you scroll.",
     "icon": "AOS.svg",
     "js": {
-      "AOS.init": "\\;confidence:25",
-      "AOS.refresh": "\\;confidence:50",
-      "AOS.refreshHard": "\\;confidence:50"
+      "AOS.init": "",
+      "AOS.refresh": "",
+      "AOS.refreshHard": ""
     },
     "oss": true,
     "scriptSrc": [
@@ -551,24 +568,6 @@
     ],
     "website": "https://www.acquia.com/products/marketing-cloud/campaign-factory"
   },
-  "Acquia Cloud Classic": {
-    "cats": [
-      88
-    ],
-    "description": "Acquia Cloud Classic is a Amazon EC2 based Drupal hosting platform.",
-    "headers": {
-      "X-AH-Environment": "prod"
-    },
-    "icon": "acquia-cloud-platform.svg",
-    "implies": [
-      "Acquia Cloud Platform",
-      "Amazon EC2",
-      "Percona",
-      "Red Hat Gluster"
-    ],
-    "saas": true,
-    "website": "https://docs.acquia.com/cloud-platform/"
-  },
   "Acquia Cloud IDE": {
     "cats": [
       47
@@ -585,38 +584,20 @@
     "url": "https:?\\/\\/.+\\.web\\.ahdev\\.cloud",
     "website": "https://www.acquia.com/products/drupal-cloud/cloud-ide"
   },
-  "Acquia Cloud Next": {
-    "cats": [
-      88
-    ],
-    "description": "Acquia Cloud Next is a Kubernetes-native Drupal hosting platform.",
-    "headers": {
-      "X-AH-Environment": "next"
-    },
-    "icon": "acquia-cloud-platform.svg",
-    "implies": [
-      "Acquia Cloud Platform",
-      "Kubernetes Dashboard",
-      "Amazon EFS",
-      "Amazon Aurora"
-    ],
-    "saas": true,
-    "website": "https://docs.acquia.com/cloud-platform/cloud-next/"
-  },
   "Acquia Cloud Platform": {
     "cats": [
       62
     ],
     "description": "Acquia Cloud Platform is a Drupal-tuned application lifecycle management suite with an infrastructure to support Drupal deployment workflow processes.",
     "headers": {
-      "X-AH-Environment": "^\\w+$"
+      "X-AH-Environment": "^(next)?.*$\\;version:\\1?Next:"
     },
     "icon": "acquia-cloud.png",
     "implies": [
       "Amazon Web Services"
     ],
     "saas": true,
-    "website": "https://www.acquia.com/"
+    "website": "https://www.acquia.com/products/drupal-cloud/cloud-platform"
   },
   "Acquia Cloud Platform CDN": {
     "cats": [
@@ -626,6 +607,7 @@
       "via": "Acquia Platform CDN (.+)\\;version:\\1"
     },
     "icon": "acquia-cloud-platform.svg",
+    "implies": "Acquia Cloud Platform",
     "saas": true,
     "website": "https://docs.acquia.com/cloud-platform/platformcdn/"
   },
@@ -2799,7 +2781,7 @@
     "dom": {
       "[ng-version]": {
         "attributes": {
-          "ng-version": "^([\\d.]+)\\;version:\\1"
+          "ng-version": "^([\\d\\.]+)\\;version:\\1"
         }
       }
     },
@@ -2866,7 +2848,7 @@
     "scriptSrc": [
       "angular[.-]([\\d.]*\\d)[^/]*\\.js\\;version:\\1",
       "/([\\d.]+(?:-?rc[.\\d]*)*)/angular(?:\\.min)?\\.js\\;version:\\1",
-      "\\bangular.{0,32}\\.js"
+      "(?!angular\\.io)\\bangular.{0,32}\\.js"
     ],
     "website": "https://angularjs.org"
   },
@@ -2876,6 +2858,11 @@
     ],
     "description": "Animate.css is a ready-to-use library collection of CSS3 animation effects.",
     "dom": {
+      ".animate__animated": {
+        "attributes": {
+          "class": "\\;confidence:99"
+        }
+      },
       "link[href*='animate']": {
         "attributes": {
           "href": "([\\d\\.]+)?/animate\\.min\\.css\\;version:\\1"
@@ -3393,6 +3380,20 @@
     "saas": true,
     "website": "https://www.aprimo.com"
   },
+  "AptusShop": {
+    "cats": [
+      6
+    ],
+    "description": "AptusShop is proprietary online store software created from scratch and developed by Aptus.pl.",
+    "icon": "AptusShop.png",
+    "meta": {
+      "generator": "^AptusShop\\.pl$"
+    },
+    "pricing": [
+      "onetime"
+    ],
+    "website": "https://www.aptusshop.pl"
+  },
   "AquilaCMS": {
     "cats": [
       1
@@ -3689,6 +3690,9 @@
       }
     },
     "icon": "Astro.svg",
+    "js": {
+      "Astro": ""
+    },
     "meta": {
       "generator": "^Astro\\sv([\\d\\.]+)$\\;version:\\1"
     },
@@ -4271,6 +4275,28 @@
     "saas": true,
     "website": "https://www.azion.com/"
   },
+  "Azoya": {
+    "cats": [
+      6,
+      106
+    ],
+    "description": "Azoya helps international brands and retailers sell directly to Chinese consumers through cross-border ecommerce.",
+    "excludes": "Magento",
+    "headers": {
+      "x-azoya-webisteid": ""
+    },
+    "icon": "Azoya.svg",
+    "js": {
+      "IMAGE_CDN_HOST": "\\.azoyacdn\\.com"
+    },
+    "pricing": [
+      "high",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.azoyagroup.com"
+  },
   "Azure": {
     "cats": [
       62
@@ -4541,5 +4567,15 @@
     "icon": "augmented-ui.png",
     "oss": true,
     "website": "http://augmented-ui.com"
+  },
+  "autoComplete.js": {
+    "cats": [
+      59
+    ],
+    "description": "autoComplete.js is a simple, pure vanilla Javascript library.",
+    "icon": "autoComplete.js.svg",
+    "oss": true,
+    "scriptSrc": "@tarekraafat/autocomplete\\.js@([\\d\\.]+)/\\;version:\\1",
+    "website": "https://tarekraafat.github.io/autoComplete.js"
   }
 }

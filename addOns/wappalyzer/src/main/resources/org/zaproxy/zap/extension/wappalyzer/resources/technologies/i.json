@@ -153,6 +153,26 @@
     "scriptSrc": "cdn\\.iamport\\.kr/js/iamport\\.payment-([\\d\\.]+)\\.js\\;version:\\1",
     "website": "https://www.iamport.kr"
   },
+  "Ibexa DXP ": {
+    "cats": [
+      1
+    ],
+    "description": "Ibexa DXP is an open-source enterprise PHP content management system (CMS) and Digital Experience Platform (DXP) developed by the company Ibexa (known previously as eZ Systems).",
+    "headers": {
+      "x-powered-by": "^Ibexa\\sExperience\\sv([\\d\\.]+)$\\;version:\\1"
+    },
+    "icon": "Ibexa.svg",
+    "implies": [
+      "PHP",
+      "Symfony"
+    ],
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.ibexa.co"
+  },
   "Ideasoft": {
     "cats": [
       6
@@ -275,6 +295,24 @@
     ],
     "saas": true,
     "website": "https://imber.live"
+  },
+  "Imgix": {
+    "cats": [
+      31,
+      95
+    ],
+    "description": "Imgix is a visual media platform for managing, processing, rendering, optimising and delivering your existing images.",
+    "dns": {
+      "SOA": "\\.imgix\\.net"
+    },
+    "dom": "img[src*='.imgix.net/'], img[data-src*='.imgix.net/'], img[srcset*='.imgix.net/'], source[src*='.imgix.net/'], source[data-src*='.imgix.net/']",
+    "icon": "Imgix.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "website": "https://imgix.com/"
   },
   "Immutable.js": {
     "cats": [
@@ -486,11 +524,11 @@
     },
     "website": "http://indyproject.org"
   },
-  "Inertia": {
+  "Inertia.js": {
     "cats": [
       12
     ],
-    "description": "Inertia is a protocol for creating monolithic single-page applications.",
+    "description": "Inertia.js is a protocol for creating monolithic single-page applications.",
     "dom": {
       "div[data-page*='component']": {
         "attributes": {
@@ -503,7 +541,6 @@
     },
     "icon": "Inertia.svg",
     "oss": true,
-    "saas": false,
     "website": "https://inertiajs.com"
   },
   "InfernoJS": {
@@ -742,7 +779,7 @@
       13
     ],
     "description": "Instatus is a status and incident communication tool.",
-    "dom": "a[href*='instatus.com'][target='_blank']",
+    "dom": "a[href*='instatus.com'][target='_blank'], iframe[src*='.instatus.com']",
     "icon": "Instatus.svg",
     "pricing": [
       "freemium",
@@ -910,7 +947,8 @@
   },
   "Invoca": {
     "cats": [
-      32
+      32,
+      10
     ],
     "description": "Invoca is an AI-powered call tracking and conversational analytics company.",
     "icon": "Invoca.svg",
@@ -922,6 +960,7 @@
       "poa"
     ],
     "saas": true,
+    "scriptSrc": "\\.dialogtech\\.com/",
     "website": "https://www.invoca.com"
   },
   "Ionic": {
@@ -1223,6 +1262,27 @@
     },
     "url": "imperia/md/",
     "website": "https://www.pirobase-imperia.com/de/produkte/produktuebersicht/imperia-cms"
+  },
+  "inSales": {
+    "cats": [
+      6
+    ],
+    "description": "inSales is a SaaS ecommerce platform with multichannel integration.",
+    "icon": "inSales.svg",
+    "js": {
+      "InSales": "",
+      "InSalesUI": "",
+      "insalesGeocodeResults": ""
+    },
+    "meta": {
+      "insales-redefined-api-method": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.insales.com"
   },
   "inSided": {
     "cats": [

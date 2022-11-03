@@ -130,6 +130,26 @@
     ],
     "website": "https://www.nagish.li"
   },
+  "Naive UI": {
+    "cats": [
+      66
+    ],
+    "description": "Naive UI is a Vue.js UI library written in TypeScript, offering more than 80 treeshakable components.",
+    "dom": {
+      "style[cssr-id^='n-']": {
+        "attributes": {
+          "cssr-id": "^n-[a-z-]+$\\;confidence:99"
+        }
+      }
+    },
+    "icon": "Naive UI.svg",
+    "implies": [
+      "Vue.js",
+      "TypeScript"
+    ],
+    "oss": true,
+    "website": "https://www.naiveui.com"
+  },
   "Najva": {
     "cats": [
       32
@@ -346,6 +366,21 @@
     },
     "icon": "NetSuite.png",
     "website": "http://netsuite.com"
+  },
+  "Netcore Cloud": {
+    "cats": [
+      97,
+      32
+    ],
+    "description": "Netcore Cloud is a globally recognised marketing technology SaaS company.",
+    "icon": "Netcore Cloud.svg",
+    "pricing": [
+      "poa",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.netcoresmartech\\.com/",
+    "website": "https://netcorecloud.com"
   },
   "Netlify": {
     "cats": [

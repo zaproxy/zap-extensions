@@ -67,22 +67,6 @@
     "implies": "ELOG",
     "website": "http://midas.psi.ch/elog"
   },
-  "EPiServer": {
-    "cats": [
-      1
-    ],
-    "cookies": {
-      "EPiServer": "",
-      "EPiTrace": ""
-    },
-    "cpe": "cpe:2.3:a:episerver:episerver:*:*:*:*:*:*:*:*",
-    "icon": "EPiServer.png",
-    "implies": "Microsoft ASP.NET",
-    "meta": {
-      "generator": "EPiServer"
-    },
-    "website": "http://episerver.com"
-  },
   "EPrints": {
     "cats": [
       19
@@ -279,6 +263,27 @@
     "scriptSrc": "cdnebasnet\\.com/",
     "website": "https://ebasnet.com"
   },
+  "EcForce": {
+    "cats": [
+      6
+    ],
+    "description": "EcForce is an all-in-one ecommerce platform with all the functions necessary for ecommerce, from landing-page creation to order and customer data management analysis.",
+    "icon": "EcForce.png",
+    "implies": [
+      "Ruby",
+      "Ruby on Rails",
+      "Nginx"
+    ],
+    "js": {
+      "EcForce.Models": "",
+      "EcForce.Models.Shop": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://ec-force.com"
+  },
   "Ecovium": {
     "cats": [
       99
@@ -384,6 +389,20 @@
     "scriptSrc": "\\.eggplant\\.cloud/",
     "website": "https://www.eggplantsoftware.com"
   },
+  "Ektron CMS": {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:ektron:ektron_content_management_system:*:*:*:*:*:*:*:*",
+    "description": "Ektron CMS is developed on the Microsoft .NET framework and is 100% ASP.NET. In 2015 Ektron merged with EPiServer.",
+    "icon": "optimizely-cms.svg",
+    "implies": "Microsoft ASP.NET",
+    "js": {
+      "Ektron": ""
+    },
+    "scriptSrc": "/ektron\\.javascript\\.ashx",
+    "website": "https://www.optimizely.com/ektron-cms"
+  },
   "Elastic APM": {
     "cats": [
       10,
@@ -454,7 +473,12 @@
     ],
     "cpe": "cpe:2.3:a:elastic:elasticsearch:*:*:*:*:*:*:*:*",
     "description": "Elasticsearch is a search engine based on the Lucene library. It provides a distributed, multitenant-capable full-text search engine with an HTTP web interface and schema-free JSON documents.",
+    "dom": "div#topsearchelastic_widget",
     "icon": "Elasticsearch.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
     "website": "https://www.elastic.co"
   },
   "Elcodi": {
@@ -470,6 +494,23 @@
       "Symfony"
     ],
     "website": "http://elcodi.io"
+  },
+  "Elcom": {
+    "cats": [
+      1
+    ],
+    "description": "The Elcom Platform is a web content management and intranet portal software written in Microsoft ASP.NET and SQL Server by Elcom Technology.",
+    "icon": "elcom.png",
+    "implies": "Microsoft ASP.NET",
+    "meta": {
+      "generator": "^elcomCMS"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "text": "Web CMS by Elcom",
+    "website": "https://www.elcom.com.au/"
   },
   "Eleanor CMS": {
     "cats": [
@@ -1427,7 +1468,7 @@
     "icon": "ExpressionEngine.svg",
     "implies": "PHP",
     "oss": true,
-    "website": "http://expressionengine.com"
+    "website": "https://expressionengine.com/"
   },
   "ExtJS": {
     "cats": [

@@ -390,6 +390,19 @@
     "implies": "Microsoft ASP.NET",
     "website": "https://docs.microsoft.com/en-us/aspnet/core/fundamentals/servers/kestrel"
   },
+  "Ketch": {
+    "cats": [
+      67
+    ],
+    "description": "Ketch is a data control platform that manages compliance with privacy regulations.",
+    "icon": "Ketch.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.ketchcdn\\.com/",
+    "website": "https://www.ketch.com"
+  },
   "Kevel": {
     "cats": [
       36
@@ -833,6 +846,22 @@
     "scriptSrc": "\\.k-analytix\\.com",
     "website": "https://www.konduto.com"
   },
+  "Kong": {
+    "cats": [
+      64
+    ],
+    "description": "Kong is an open-source API gateway and platform that acts as middleware between compute clients and the API-centric applications.",
+    "headers": {
+      "via": "^kong/([\\d\\.]+)(?:.+)?$\\;version:\\1"
+    },
+    "icon": "Kong.svg",
+    "oss": true,
+    "pricing": [
+      "payg",
+      "freemium"
+    ],
+    "website": "https://konghq.com"
+  },
   "Kontent.ai": {
     "cats": [
       1
@@ -991,6 +1020,18 @@
       "cdn\\.kustomerapp\\.com"
     ],
     "website": "https://www.kustomer.com/"
+  },
+  "Kwai pixel": {
+    "cats": [
+      10
+    ],
+    "description": "Kwai is a social network for short videos and trends.",
+    "icon": "Kwai.png",
+    "js": {
+      "KwaiAnalyticsObject": "",
+      "kwaiq": ""
+    },
+    "website": "https://www.kwai.com"
   },
   "k-eCommerce": {
     "cats": [

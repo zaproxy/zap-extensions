@@ -38,13 +38,18 @@
   },
   "WEBXPAY": {
     "cats": [
-      6
+      41
     ],
-    "html": "Powered by <a href=\"https://www\\.webxpay\\.com\">WEBXPAY<",
+    "description": "WEBXPAY is a specialised online payment gateway that expedites buying and selling in a highly secured environment.",
     "icon": "WEBXPAY.png",
     "js": {
       "WEBXPAY": ""
     },
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
     "website": "https://webxpay.com"
   },
   "WEN Themes Education Hub": {
@@ -400,7 +405,7 @@
       "Python"
     ],
     "oss": true,
-    "website": "https://wagtail.io/"
+    "website": "https://wagtail.org/"
   },
   "Wair": {
     "cats": [
@@ -912,6 +917,20 @@
     },
     "website": "http://worldwide.webtrends.com"
   },
+  "Webx": {
+    "cats": [
+      6
+    ],
+    "description": "Webx is a hosted ecommerce solution from Pakistan.",
+    "dom": "div#divPowered > div > p > a[href*='.webx.pk']",
+    "icon": "Webx.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.webx.pk"
+  },
   "Webzie": {
     "cats": [
       1,
@@ -984,6 +1003,23 @@
     "requires": "WordPress",
     "scriptSrc": "uscesL10n",
     "website": "https://www.welcart.com"
+  },
+  "WeltPixel Pearl Theme": {
+    "cats": [
+      19
+    ],
+    "description": "Pearl Theme for Magento 2 by WeltPixel. Pearl Theme is following the Magento architecture, layouts and best practice in order to assure highest compatibility with 3rd party extensions.",
+    "dom": "body.theme-pearl",
+    "icon": "WeltPixel.svg",
+    "implies": "Magento\\;version:2",
+    "js": {
+      "Pearl": ""
+    },
+    "pricing": [
+      "high",
+      "onetime"
+    ],
+    "website": "https://www.weltpixel.com/magento-2-theme-pearl"
   },
   "Whatfix": {
     "cats": [
@@ -1599,6 +1635,7 @@
       "generator": "^WordPress(?: ([\\d.]+))?\\;version:\\1",
       "shareaholic:wp_version": ""
     },
+    "oss": true,
     "pricing": [
       "low",
       "recurring",
@@ -1723,12 +1760,23 @@
     "cats": [
       6
     ],
-    "description": "Workarea is a SaaS commerce platform for medium to large businesses.",
-    "icon": "Workarea.png",
+    "description": "Workarea is a SaaS ecommerce platform for medium to large businesses.",
+    "icon": "Workarea.svg",
+    "implies": [
+      "Ruby on Rails",
+      "MongoDB",
+      "Elasticsearch"
+    ],
     "js": {
+      "WEBLINC.cartCount": "",
       "workarea": ""
     },
-    "website": "https://www.workarea.com/"
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.workarea.com"
   },
   "World4You": {
     "cats": [
@@ -1867,6 +1915,20 @@
     "oss": true,
     "scriptSrc": "/jquery\\.wysibb\\.min\\.js",
     "website": "http://wysibb.com"
+  },
+  "wBuy": {
+    "cats": [
+      6
+    ],
+    "description": "wBuy is a SaaS ecommerce platform.",
+    "icon": "wBuy.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.sistemawbuy\\.com\\.br/",
+    "website": "https://www.wbuy.com.br"
   },
   "web-vitals": {
     "cats": [

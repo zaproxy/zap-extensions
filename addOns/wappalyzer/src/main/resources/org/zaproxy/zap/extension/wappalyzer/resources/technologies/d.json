@@ -112,7 +112,7 @@
       "/js/dnncore\\.js",
       "/js/dnn\\.js"
     ],
-    "website": "http://dnnsoftware.com"
+    "website": "https://www.dnnsoftware.com/"
   },
   "DPD": {
     "cats": [
@@ -274,6 +274,19 @@
     ],
     "oss": true,
     "website": "https://github.com/django/daphne"
+  },
+  "Darkmode.js": {
+    "cats": [
+      59
+    ],
+    "description": "Darkmode.js is a JavaScript library that enables an HTML element to switch between CSS themes.",
+    "icon": "default.svg",
+    "js": {
+      "Darkmode": ""
+    },
+    "oss": true,
+    "scriptSrc": "darkmode-js@([\\d\\.]+)/lib/darkmode-js\\.min\\.js\\;version:\\1",
+    "website": "https://github.com/sandoche/Darkmode.js"
   },
   "Dart": {
     "cats": [
@@ -627,6 +640,17 @@
     ],
     "website": "https://www.deutschepost.de"
   },
+  "DiamondCDN": {
+    "cats": [
+      31
+    ],
+    "description": "DiamondCDN is a CDN with DDoS mitigation for free.",
+    "headers": {
+      "server": "^DiamondCDN$"
+    },
+    "icon": "DiamondCDN.png",
+    "website": "https://diamondcdn.com"
+  },
   "Dianomi": {
     "cats": [
       36
@@ -669,6 +693,24 @@
     "certIssuer": "DigiCert",
     "icon": "DigiCert.svg",
     "website": "https://www.digicert.com/"
+  },
+  "Digismoothie Candy Rack": {
+    "cats": [
+      100
+    ],
+    "description": "Digismoothie Candy Rack is an upsell app for Shopify which allow merchants to offer custom services or bundle products.",
+    "icon": "Digismoothie.svg",
+    "implies": "Shopify",
+    "js": {
+      "CANDYRACK_DOCUMENT_LISTENER": "",
+      "candyrackEnableDebug": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.digismoothie.com/apps/candy-rack"
   },
   "Digistore24": {
     "cats": [
@@ -1326,7 +1368,10 @@
     ],
     "cpe": "cpe:2.3:a:adobe:dreamweaver:*:*:*:*:*:*:*:*",
     "description": "Dreamweaver is a development tool for creating, publishing, and managing websites and mobile content.",
-    "html": "<!--[^>]*(?:InstanceBeginEditable|Dreamweaver([^>]+)target|DWLayoutDefaultTable)\\;version:\\1",
+    "html": [
+      "<!--[^>]*(?:InstanceBeginEditable|Dreamweaver([^>]+)target|DWLayoutDefaultTable)\\;version:\\1",
+      "<!-- #BeginDate format:"
+    ],
     "icon": "DreamWeaver.png",
     "js": {
       "MM_preloadImages": "",
@@ -1497,7 +1542,8 @@
     },
     "oss": true,
     "scriptSrc": "drupal\\.js",
-    "website": "https://drupal.org"
+    "scripts": "drupal_internal__nid",
+    "website": "https://www.drupal.org/"
   },
   "Drupal Commerce": {
     "cats": [

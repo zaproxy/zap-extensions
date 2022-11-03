@@ -46,6 +46,10 @@
       "ACC.config.commonResourcePath": "/_ui/responsive/common\\;confidence:25",
       "ACC.config.rootPath": "/_ui/responsive\\;confidence:25",
       "ACC.config.themeResourcePath": "/_ui/responsive/theme-\\;confidence:50",
+      "getProductAttrFromHybris": "",
+      "getProductAvailabilityHybris": "",
+      "hybrisId": "",
+      "passLgDataToHybris": "",
       "smartedit": ""
     },
     "pricing": [
@@ -196,6 +200,8 @@
       1
     ],
     "cpe": "cpe:2.3:a:spip:spip:*:*:*:*:*:*:*:*",
+    "description": "SPIP is a content management system written in PHP that uses one or more databases like SQL, SQLite or PostgreSQL.",
+    "dom": "div.formulaire_spip",
     "headers": {
       "Composed-By": "SPIP ([\\d.]+) @\\;version:\\1",
       "X-Spip-Cache": ""
@@ -205,6 +211,7 @@
     "meta": {
       "generator": "(?:^|\\s)SPIP(?:\\s([\\d.]+(?:\\s\\[\\d+\\])?))?\\;version:\\1"
     },
+    "oss": true,
     "website": "http://www.spip.net"
   },
   "SPNEGO": {
@@ -299,6 +306,16 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/svg-support/",
     "website": "https://github.com/wp-plugins/svg-support"
+  },
+  "SWC": {
+    "cats": [
+      19
+    ],
+    "description": "SWC is an extensible Rust-based platform for the next generation of fast developer tools.",
+    "icon": "swc.svg",
+    "implies": "Rust",
+    "oss": true,
+    "website": "https://swc.rs"
   },
   "SWFObject": {
     "cats": [
@@ -428,6 +445,24 @@
     "scriptSrc": "ak\\.sail-horizon\\.com",
     "website": "https://www.sailthru.com"
   },
+  "Sakai": {
+    "cats": [
+      21
+    ],
+    "cookies": {
+      "SAKAIID": ""
+    },
+    "cpe": "cpe:2.3:a:sakailms:sakai:*:*:*:*:*:*:*:*:*",
+    "description": "Sakai is a robust open-source learning management system created by higher ed for higher ed.",
+    "icon": "Sakai.png",
+    "js": {
+      "sakai": "",
+      "sakaiPortalWindow": "",
+      "sakaiTutorialSkin": ""
+    },
+    "oss": true,
+    "website": "https://www.sakailms.org"
+  },
   "Sakura Internet": {
     "cats": [
       88
@@ -461,7 +496,15 @@
       6
     ],
     "description": "Saleor is a headless, GraphQL ecommerce platform.",
-    "dom": "img[src*='saleor.imgix.net']",
+    "dom": {
+      "img[src*='saleor'], img[srcset*='saleor'], link[imagesrcset*='saleor']": {
+        "attributes": {
+          "imagesrcset": "/_next.+-saleor-",
+          "src": "saleor\\.imgix\\.net",
+          "srcset": "/_next.+-saleor-"
+        }
+      }
+    },
     "icon": "Saleor.svg",
     "implies": "GraphQL",
     "js": {
@@ -1290,6 +1333,20 @@
     "scriptSrc": "select2(?:\\.min|\\.full)?\\.js",
     "website": "https://select2.org/"
   },
+  "Selectize": {
+    "cats": [
+      59
+    ],
+    "description": "Selectize is an extensible jQuery-based custom <select> UI control.",
+    "icon": "Selectize.svg",
+    "implies": "jQuery",
+    "js": {
+      "Selectize": "",
+      "selectize": ""
+    },
+    "oss": true,
+    "website": "https://selectize.dev"
+  },
   "Sellacious": {
     "cats": [
       6
@@ -1313,6 +1370,31 @@
     ],
     "saas": true,
     "website": "https://www.sellacious.com"
+  },
+  "Selldone": {
+    "cats": [
+      6
+    ],
+    "description": "Selldone is an all-in-one, ready-to-use ecommerce platform.",
+    "icon": "Selldone.svg",
+    "implies": [
+      "PHP",
+      "Vue.js"
+    ],
+    "js": {
+      "webpackChunkselldone": ""
+    },
+    "meta": {
+      "selldone-capi": "",
+      "selldone-cdn-id": "",
+      "selldone-cdn-images": "",
+      "selldone-iframe": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://selldone.com"
   },
   "Sellfy": {
     "cats": [
@@ -1860,6 +1942,29 @@
     },
     "website": "http://shellinabox.com"
   },
+  "Shift4Shop": {
+    "cats": [
+      1,
+      6
+    ],
+    "cookies": {
+      "3dvisit": ""
+    },
+    "description": "Shift4Shop, formerly known as 3Dcart, is an ecommerce software provider for online businesses.",
+    "headers": {
+      "X-Powered-By": "3DCART"
+    },
+    "icon": "Shift4Shop.svg",
+    "js": {
+      "_3d_cart.subtotal": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "(?:twlh(?:track)?\\.asp|3d_upsell\\.js)",
+    "website": "https://www.shift4shop.com"
+  },
   "Shiny": {
     "cats": [
       18
@@ -1913,6 +2018,21 @@
     ],
     "saas": true,
     "website": "https://www.shippypro.com"
+  },
+  "Shoefitr.io": {
+    "cats": [
+      76
+    ],
+    "description": "Shoefitr.io is data-based shoe size advice service where we measure the length, width, ball, and instep.",
+    "dom": "a[href*='api.shoefitr.io/']",
+    "icon": "Shoefitr.io.svg",
+    "pricing": [
+      "payg",
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.shoefitr.io"
   },
   "Shogun": {
     "cats": [
@@ -2243,6 +2363,26 @@
     "saas": true,
     "website": "https://www.shopistry.com/"
   },
+  "Shoplazza": {
+    "cats": [
+      6
+    ],
+    "cookies": {
+      "shoplazza_source": ""
+    },
+    "description": "Shoplazza is a SaaS ecommerce platform.",
+    "icon": "Shoplazza.svg",
+    "js": {
+      "SHOPLAZZA": "",
+      "Shoplazza": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.shoplazza.com"
+  },
   "Shopline": {
     "cats": [
       6
@@ -2276,6 +2416,23 @@
     "saas": true,
     "scriptSrc": "cdn\\.shoplo\\.\\w+/",
     "website": "https://www.shoplo.com"
+  },
+  "Shopmatic": {
+    "cats": [
+      6
+    ],
+    "description": "Shopmatic is an ecommerce website builder.",
+    "icon": "Shopmatic.svg",
+    "meta": {
+      "shopmatic-facebook-pixels-id": ""
+    },
+    "pricing": [
+      "payg",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://goshopmatic.com"
   },
   "Shoporama": {
     "cats": [
@@ -2609,7 +2766,7 @@
       "generator": "^SilverStripe"
     },
     "oss": true,
-    "website": "https://www.silverstripe.org"
+    "website": "https://www.silverstripe.org/"
   },
   "Simbel": {
     "cats": [
@@ -3092,7 +3249,11 @@
     },
     "cpe": "cpe:2.3:a:sitecore:*:*:*:*:*:*:*:*:*",
     "description": "Sitecore provides web content management, and multichannel marketing automation software.",
-    "html": "<img[^>]+src=\"[^>]*/~/media/[^>]+\\.ashx",
+    "dom": [
+      "link[href*='/_sitecore/']",
+      "img[src^='/-/media/']",
+      "img[src*='/~/media/.+\\.ashx']"
+    ],
     "icon": "Sitecore.svg",
     "pricing": [
       "poa",
@@ -3370,9 +3531,10 @@
   },
   "Slider Revolution": {
     "cats": [
-      87
+      5,
+      7
     ],
-    "description": "Slider Revolution is a WordPress plugin that allows you to create responsive sliders with many animation effects, text, image and video layers, and many other features.",
+    "description": "Slider Revolution is a flexible and highly customisable slider.",
     "icon": "Slider Revolution.svg",
     "js": {
       "RS_MODULES.main.version": "^Slider Revolution\\s([\\d\\.]+)$\\;version:\\1",
@@ -3388,7 +3550,6 @@
       "recurring",
       "onetime"
     ],
-    "requires": "WordPress",
     "saas": true,
     "scriptSrc": "/wp-content/plugins/revslider/",
     "website": "https://www.sliderrevolution.com"
@@ -3630,6 +3791,16 @@
     "saas": true,
     "scriptSrc": "js\\.smile\\.io/v([\\d.]+)/\\;version:\\1",
     "website": "https://smile.io"
+  },
+  "SmtpJS": {
+    "cats": [
+      75
+    ],
+    "description": "SmtpJS is a free library you can use for sending emails from JavaScript.",
+    "icon": "default.svg",
+    "oss": true,
+    "scriptSrc": "/smtpjs\\.com/(?:v([\\d\\.]+)/)?smtp\\.js\\;version:\\1",
+    "website": "https://smtpjs.com"
   },
   "SmugMug": {
     "cats": [
@@ -3892,6 +4063,27 @@
     },
     "website": "http://www.softtr.com"
   },
+  "Softr": {
+    "cats": [
+      51
+    ],
+    "description": "Softr is a tool designed to help users build custom websites, web apps, clients portals, or internal tools using Airtable or Google Sheets data.",
+    "dom": {
+      "link[href*='softr']": {
+        "attributes": {
+          "href": "softr-(?:files\\.com/|prod.imgix.net/)"
+        }
+      }
+    },
+    "icon": "Softr.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.softr.io"
+  },
   "Soisy": {
     "cats": [
       91
@@ -4144,6 +4336,26 @@
     },
     "website": "http://www.schillmania.com/projects/soundmanager2"
   },
+  "Sourcepoint": {
+    "cats": [
+      67
+    ],
+    "cookies": {
+      "_sp_enable_dfp_personalized_ads": ""
+    },
+    "description": "Sourcepoint is the data privacy software company for the digital marketing ecosystem.",
+    "dom": "body.f_sourcepoint_ccpa_on",
+    "icon": "Sourcepoint.svg",
+    "js": {
+      "tealium_sourcepoint": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "SOURCEPOINT_MMS_DOMAIN",
+    "website": "https://sourcepoint.com"
+  },
   "Sovrn": {
     "cats": [
       36
@@ -4189,6 +4401,20 @@
     },
     "icon": "SparkPost.svg",
     "website": "https://www.sparkpost.com/"
+  },
+  "Spatie Support Bubble": {
+    "cats": [
+      52
+    ],
+    "description": "Spatie Support Bubble is a non-intrusive support form.",
+    "dom": "div.spatie-support-bubble",
+    "icon": "Spatie.png",
+    "implies": [
+      "Laravel",
+      "Tailwind CSS"
+    ],
+    "oss": true,
+    "website": "https://github.com/spatie/laravel-support-bubble"
   },
   "Speed Kit": {
     "cats": [
@@ -4782,6 +5008,9 @@
     "cats": [
       1
     ],
+    "cpe": "cpe:2.3:a:squiz:matrix:*:*:*:*:*:*:*:*",
+    "description": "A flexible, low-code enterprise content management system designed to manage multiple sites with many editors.",
+    "dom": "link[href*='/__data/assets/css_file/']",
     "headers": {
       "X-Powered-By": "Squiz Matrix"
     },
@@ -4791,7 +5020,14 @@
     "meta": {
       "generator": "Squiz Matrix"
     },
-    "website": "http://squiz.net"
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "scriptSrc": [
+      "/__data/assets/(js_file_folder|git_bridge|js_file)/"
+    ],
+    "website": "https://www.squiz.net/matrix"
   },
   "Stack Analytix": {
     "cats": [
@@ -5431,11 +5667,16 @@
     "cats": [
       1
     ],
+    "description": "Sulu is the go-to CMS for back-end projects written within the PHP Symfony framework.",
     "headers": {
       "X-Generator": "Sulu/?(.+)?$\\;version:\\1"
     },
     "icon": "Sulu.svg",
     "implies": "Symfony",
+    "js": {
+      "SULU_CONFIG.suluVersion": "^([\\d\\.]+)$\\;version:\\1"
+    },
+    "oss": true,
     "website": "http://sulu.io"
   },
   "SummerCart": {
@@ -5618,13 +5859,7 @@
       12
     ],
     "description": "Svelte is a free and open-source front end compiler created by Rich Harris and maintained by the Svelte core team members.",
-    "dom": {
-      "*": {
-        "attributes": {
-          "class": "svelte-\\w+"
-        }
-      }
-    },
+    "dom": "[class*='svelte-']",
     "icon": "Svelte.svg",
     "oss": true,
     "website": "https://svelte.dev"
