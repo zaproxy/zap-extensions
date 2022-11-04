@@ -392,6 +392,7 @@ public class ExtensionReports extends ExtensionAdaptor {
                         "generatedString", SIMPLE_DATE_FORMAT.format(System.currentTimeMillis()));
             }
             context.setVariable("zapVersion", Constant.PROGRAM_VERSION);
+            context.setVariable("programName", Constant.PROGRAM_NAME);
 
             if (reportDataHandler != null) {
                 reportDataHandler.handle(reportData);
