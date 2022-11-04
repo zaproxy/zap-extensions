@@ -38,7 +38,7 @@ import org.zaproxy.addon.network.internal.server.http.MainServerHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 
-/** A HTTP server that allows to receive and send text messages, to help with the tests. */
+/** An HTTP server that allows to receive and send text messages, to help with the tests. */
 public class TestHttpServer extends HttpServer {
 
     private static final ServerCertificateService CERTIFICATE_SERVICE =

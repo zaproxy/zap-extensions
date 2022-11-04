@@ -54,42 +54,42 @@ class TlsConfigUnitTest {
         // Given / When
         TlsConfig tlsConfig = new TlsConfig();
         // Then
-        assertThat(tlsConfig.getEnabledProtocols(), hasItem(TLS_V1_2));
+        assertThat(tlsConfig.getTlsProtocols(), hasItem(TLS_V1_2));
     }
 
     @Test
-    void shouldCreateWithProvidedProtocols() {
+    void shouldCreateWithProvidedTlsProtocols() {
         // Given
         List<String> protocols = TlsUtils.getSupportedProtocols();
         // When
         TlsConfig tlsConfig = new TlsConfig(protocols);
         // Then
-        assertThat(tlsConfig.getEnabledProtocols(), is(equalTo(protocols)));
+        assertThat(tlsConfig.getTlsProtocols(), is(equalTo(protocols)));
     }
 
     @Test
-    void shouldCreateWithProvidedProtocolsRemovingUnsupported() {
+    void shouldCreateWithProvidedTlsProtocolsRemovingUnsupported() {
         // Given
         List<String> protocols = new ArrayList<>(TlsUtils.getSupportedProtocols());
         protocols.add("X");
         // When
         TlsConfig tlsConfig = new TlsConfig(protocols);
         // Then
-        assertThat(tlsConfig.getEnabledProtocols(), is(equalTo(TlsUtils.getSupportedProtocols())));
+        assertThat(tlsConfig.getTlsProtocols(), is(equalTo(TlsUtils.getSupportedProtocols())));
     }
 
     @ParameterizedTest
     @NullAndEmptySource
     @ValueSource(strings = {"NotSupported", "SSLv2Hello"})
-    void shouldThrowForUnsupportedProtocols(String protocols) {
+    void shouldThrowForUnsupportedTlsProtocols(String protocols) {
         assertThrows(IllegalArgumentException.class, () -> new TlsConfig(Arrays.asList(protocols)));
     }
 
     @Test
-    void shouldNotAllowToModifyReturnedProtocols() {
+    void shouldNotAllowToModifyReturnedTlsProtocols() {
         // Given
         TlsConfig tlsConfig = new TlsConfig(TlsUtils.getSupportedProtocols());
-        List<String> protocols = tlsConfig.getEnabledProtocols();
+        List<String> protocols = tlsConfig.getTlsProtocols();
         // When / Then
         assertThrows(UnsupportedOperationException.class, () -> protocols.add("X"));
     }
@@ -149,7 +149,7 @@ class TlsConfigUnitTest {
 
     @ParameterizedTest
     @MethodSource("differencesProvider")
-    void shouldNotBeEqualToTlsConfigWithDifferentProtocols(
+    void shouldNotBeEqualToTlsConfigWithDifferentTlsProtocols(
             List<String> protocols, List<String> otherProtocols) {
         assumeTrue(!protocols.equals(otherProtocols), "Requires different protocols.");
         // Given

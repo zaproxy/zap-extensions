@@ -21,7 +21,7 @@ package org.zaproxy.addon.network.internal.server;
 
 import org.parosproxy.paros.network.HttpRequestHeader;
 
-/** Checks if a HTTP request header is an alias. */
+/** Checks if an HTTP request header is an alias. */
 public interface AliasChecker {
 
     /**

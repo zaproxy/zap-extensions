@@ -98,7 +98,7 @@ public class TlsProtocolHandler extends ByteToMessageDecoder {
                                         ch.attr(ChannelAttributes.CERTIFICATE_SERVICE).get(),
                                         ch.attr(ChannelAttributes.LOCAL_ADDRESS).get().getAddress(),
                                         authority))
-                        .protocols(config.getEnabledProtocols())
+                        .protocols(config.getTlsProtocols())
                         .build();
         ctx.pipeline().addAfter(ctx.name(), TLS_HANDLER_NAME, sslCtx.newHandler(ctx.alloc()));
 

@@ -368,7 +368,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     }
 
     /**
-     * Creates a HTTP server.
+     * Creates an HTTP server.
      *
      * <p>The CONNECT requests are automatically handled as is the possible TLS upgrade.
      *
@@ -403,7 +403,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     }
 
     /**
-     * Creates a HTTP proxy.
+     * Creates an HTTP proxy.
      *
      * <p>The CONNECT requests are automatically handled as is the possible TLS upgrade. The
      * connection is automatically closed on recursive requests.
@@ -421,7 +421,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     }
 
     /**
-     * Creates a HTTP proxy using an existing {@code HttpSender}.
+     * Creates an HTTP proxy using an existing {@code HttpSender}.
      *
      * <p>The CONNECT requests are automatically handled as is the possible TLS upgrade. The
      * connection is automatically closed on recursive requests.

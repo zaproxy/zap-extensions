@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.zap.utils.Enableable;
 
-/** The pass-through condition of a HTTPS connection. */
+/** The pass-through condition of an HTTPS connection. */
 public class PassThrough extends Enableable implements Predicate<HttpRequestHeader> {
 
     private Pattern authority;

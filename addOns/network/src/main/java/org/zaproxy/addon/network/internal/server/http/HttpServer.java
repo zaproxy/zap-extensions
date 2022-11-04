@@ -40,13 +40,13 @@ import org.zaproxy.addon.network.internal.handlers.TlsProtocolHandler;
 import org.zaproxy.addon.network.internal.server.BaseServer;
 
 /**
- * A HTTP server.
+ * An HTTP server.
  *
  * <p>Provides the following functionality:
  *
  * <ul>
  *   <li>Read timeout;
- *   <li>Handling of CONNECT requests and TLS upgrade;
+ *   <li>Handling of HTTP/1.x CONNECT requests and TLS upgrade;
  *   <li>Recursive check;
  *   <li>Exception handling;
  * </ul>

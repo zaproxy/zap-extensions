@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 /**
- * A HTTP proxy.
+ * An HTTP proxy.
  *
  * <p>Contains the host, port, realm, and password authentication.
  */

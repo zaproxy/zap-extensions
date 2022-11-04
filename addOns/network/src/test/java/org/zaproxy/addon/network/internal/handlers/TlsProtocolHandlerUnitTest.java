@@ -122,7 +122,7 @@ class TlsProtocolHandlerUnitTest {
     void setUp() {
         messagesReceived = new ArrayList<>();
         tlsConfig = mock(TlsConfig.class);
-        given(tlsConfig.getEnabledProtocols()).willReturn(TlsUtils.getSupportedProtocols());
+        given(tlsConfig.getTlsProtocols()).willReturn(TlsUtils.getSupportedProtocols());
 
         serverChannelReady = new CountDownLatch(1);
         createDefaultServer();
@@ -353,7 +353,7 @@ class TlsProtocolHandlerUnitTest {
         int port = server.start(Server.ANY_PORT);
         createClientTls(port);
         // Not allowing any will lead to exception.
-        given(tlsConfig.getEnabledProtocols()).willReturn(Collections.emptyList());
+        given(tlsConfig.getTlsProtocols()).willReturn(Collections.emptyList());
         String message = "Attempting to send securily.";
         // When / Then
         assertThrows(Exception.class, () -> clientTls.connect(port, message));

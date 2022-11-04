@@ -39,7 +39,7 @@ import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.zap.network.HttpRequestConfig;
 
-/** A {@link HttpMessageHandler} that sends and receives a HTTP message. */
+/** A {@link HttpMessageHandler} that sends and receives an HTTP message. */
 public class HttpSenderHandler implements HttpMessageHandler {
 
     private static final Logger LOGGER = LogManager.getLogger(HttpSenderHandler.class);

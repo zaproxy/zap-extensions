@@ -520,7 +520,7 @@ public class ConnectionOptions extends VersionedAbstractParam {
                                     sub.getBoolean(HTTP_PROXY_EXCLUSION_ENABLED_KEY, true)));
                 }
             } catch (ConversionException e) {
-                LOGGER.warn("An error occurred while reading a HTTP proxy exclusion:", e);
+                LOGGER.warn("An error occurred while reading an HTTP proxy exclusion:", e);
             }
         }
         confirmRemoveHttpProxyExclusion = getBoolean(HTTP_PROXY_EXCLUSIONS_CONFIRM_REMOVE, true);
@@ -721,7 +721,7 @@ public class ConnectionOptions extends VersionedAbstractParam {
     }
 
     /**
-     * Removes a HTTP proxy exclusion.
+     * Removes an HTTP proxy exclusion.
      *
      * @param host the value of the host.
      * @return {@code true} if the HTTP proxy exclusion was removed, {@code false} otherwise.
@@ -761,7 +761,7 @@ public class ConnectionOptions extends VersionedAbstractParam {
     }
 
     /**
-     * Sets whether or not the removal of a HTTP proxy exclusion needs confirmation.
+     * Sets whether or not the removal of an HTTP proxy exclusion needs confirmation.
      *
      * @param confirmRemove {@code true} if the removal needs confirmation, {@code false} otherwise.
      */
@@ -772,7 +772,7 @@ public class ConnectionOptions extends VersionedAbstractParam {
     }
 
     /**
-     * Tells whether or not the removal of a HTTP proxy exclusion needs confirmation.
+     * Tells whether or not the removal of an HTTP proxy exclusion needs confirmation.
      *
      * @return {@code true} if the removal needs confirmation, {@code false} otherwise.
      */
