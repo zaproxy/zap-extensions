@@ -54,7 +54,7 @@ class LocalServerConfigUnitTest {
         assertThat(server.getAddress(), is(equalTo("localhost")));
         assertThat(server.getPort(), is(equalTo(8080)));
         assertThat(server.getMode(), is(equalTo(LocalServerConfig.ServerMode.API_AND_PROXY)));
-        assertThat(server.getTlsProtocols(), is(equalTo(TlsUtils.getSupportedProtocols())));
+        assertThat(server.getTlsProtocols(), is(equalTo(TlsUtils.getSupportedTlsProtocols())));
         assertThat(server.getTlsConfig(), is(notNullValue()));
         assertThat(server.isBehindNat(), is(equalTo(false)));
         assertThat(server.isRemoveAcceptEncoding(), is(equalTo(true)));

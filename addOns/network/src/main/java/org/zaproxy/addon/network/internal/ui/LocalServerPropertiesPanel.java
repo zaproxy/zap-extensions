@@ -162,7 +162,7 @@ public class LocalServerPropertiesPanel extends JPanel {
     }
 
     public void reset() {
-        securityProtocolsPanel.setSecurityProtocolsEnabled(TlsUtils.getSupportedProtocols());
+        securityProtocolsPanel.setSecurityProtocolsEnabled(TlsUtils.getSupportedTlsProtocols());
         apiAndProxyRadioButton.doClick();
         behindNatCheckBox.setSelected(false);
         removeAcceptEncodingCheckBox.setSelected(true);

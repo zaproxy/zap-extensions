@@ -36,45 +36,45 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 class TlsUtilsUnitTest {
 
     @Test
-    void shouldHaveSupportedProtocols() {
-        assertThat(TlsUtils.getSupportedProtocols(), is(not(empty())));
+    void shouldHaveSupportedTlsProtocols() {
+        assertThat(TlsUtils.getSupportedTlsProtocols(), is(not(empty())));
     }
 
     @Test
-    void shoulFilterUnsupportedProtocols() {
+    void shouldFilterUnsupportedTlsProtocols() {
         // Given
         List<String> protocols = Arrays.asList("Unknown A", TlsUtils.TLS_V1_2, "Unknown B");
         // When
-        List<String> filteredProtocols = TlsUtils.filterUnsupportedProtocols(protocols);
+        List<String> filteredProtocols = TlsUtils.filterUnsupportedTlsProtocols(protocols);
         // Then
         assertThat(filteredProtocols, contains(TlsUtils.TLS_V1_2));
     }
 
     @ParameterizedTest
     @NullAndEmptySource
-    void shoulThrowIfNoProtocols(List<String> protocols) {
+    void shouldThrowIfNoTlsProtocols(List<String> protocols) {
         assertThrows(
                 IllegalArgumentException.class,
-                () -> TlsUtils.filterUnsupportedProtocols(protocols));
+                () -> TlsUtils.filterUnsupportedTlsProtocols(protocols));
     }
 
     @Test
-    void shoulThrowIfNoProtocolsAfterFilter() {
+    void shouldThrowIfNoTlsProtocolsAfterFilter() {
         // Given
         List<String> protocols = Arrays.asList("Unknown A");
         // When / Then
         assertThrows(
                 IllegalArgumentException.class,
-                () -> TlsUtils.filterUnsupportedProtocols(protocols));
+                () -> TlsUtils.filterUnsupportedTlsProtocols(protocols));
     }
 
     @Test
-    void shoulThrowIfInvalidConfiguration() {
+    void shouldThrowIfInvalidTlsConfiguration() {
         // Given
         List<String> protocols = Arrays.asList(TlsUtils.SSL_V2_HELLO);
         // When / Then
         assertThrows(
                 IllegalArgumentException.class,
-                () -> TlsUtils.filterUnsupportedProtocols(protocols));
+                () -> TlsUtils.filterUnsupportedTlsProtocols(protocols));
     }
 }

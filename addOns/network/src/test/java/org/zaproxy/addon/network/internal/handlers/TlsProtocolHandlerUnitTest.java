@@ -122,7 +122,7 @@ class TlsProtocolHandlerUnitTest {
     void setUp() {
         messagesReceived = new ArrayList<>();
         tlsConfig = mock(TlsConfig.class);
-        given(tlsConfig.getTlsProtocols()).willReturn(TlsUtils.getSupportedProtocols());
+        given(tlsConfig.getTlsProtocols()).willReturn(TlsUtils.getSupportedTlsProtocols());
 
         serverChannelReady = new CountDownLatch(1);
         createDefaultServer();
@@ -138,7 +138,7 @@ class TlsProtocolHandlerUnitTest {
                                 sslCtx =
                                         SslContextBuilder.forClient()
                                                 .trustManager(InsecureTrustManagerFactory.INSTANCE)
-                                                .protocols(TlsUtils.getSupportedProtocols())
+                                                .protocols(TlsUtils.getSupportedTlsProtocols())
                                                 .build();
                             } catch (SSLException e) {
                                 throw new RuntimeException(e);

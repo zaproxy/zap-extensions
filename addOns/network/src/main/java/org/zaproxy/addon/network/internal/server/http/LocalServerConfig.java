@@ -95,7 +95,7 @@ public class LocalServerConfig extends Enableable implements ServerConfig {
         address = DEFAULT_ADDRESS;
         port = DEFAULT_PORT;
         mode = ServerMode.API_AND_PROXY;
-        setTlsProtocols(TlsUtils.getSupportedProtocols());
+        setTlsProtocols(TlsUtils.getSupportedTlsProtocols());
         removeAcceptEncoding = true;
         decodeResponse = true;
         setEnabled(true);

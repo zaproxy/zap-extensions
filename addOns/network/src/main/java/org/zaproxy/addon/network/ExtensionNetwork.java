@@ -195,7 +195,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         setOrder(Integer.MAX_VALUE);
 
         // Force initialisation.
-        TlsUtils.getSupportedProtocols();
+        TlsUtils.getSupportedTlsProtocols();
 
         connectionOptions = new ConnectionOptions();
         legacyConnectionOptions =

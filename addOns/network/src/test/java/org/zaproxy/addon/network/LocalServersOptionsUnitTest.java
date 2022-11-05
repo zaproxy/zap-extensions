@@ -137,7 +137,7 @@ class LocalServersOptionsUnitTest {
         assertThat(mainProxy.getAddress(), is(equalTo(LocalServerConfig.DEFAULT_ADDRESS)));
         assertThat(mainProxy.getPort(), is(equalTo(LocalServerConfig.DEFAULT_PORT)));
         assertThat(mainProxy.getMode(), is(equalTo(LocalServerConfig.ServerMode.API_AND_PROXY)));
-        assertThat(mainProxy.getTlsProtocols(), is(equalTo(TlsUtils.getSupportedProtocols())));
+        assertThat(mainProxy.getTlsProtocols(), is(equalTo(TlsUtils.getSupportedTlsProtocols())));
         assertThat(mainProxy.isBehindNat(), is(equalTo(false)));
         assertThat(mainProxy.isRemoveAcceptEncoding(), is(equalTo(true)));
         assertThat(mainProxy.isDecodeResponse(), is(equalTo(true)));
@@ -473,7 +473,7 @@ class LocalServersOptionsUnitTest {
     }
 
     @Test
-    void shouldUseDefaultProtocolsOnErrorForMainProxy() {
+    void shouldUseDefaultTlsProtocolsOnErrorForMainProxy() {
         // Given
         ZapXmlConfiguration config =
                 configWith(
@@ -617,7 +617,7 @@ class LocalServersOptionsUnitTest {
     }
 
     @Test
-    void shouldUseDefaultProtocolsOnErrorForServer() {
+    void shouldUseDefaultTlsProtocolsOnErrorForServer() {
         // Given
         ZapXmlConfiguration config =
                 configWith(

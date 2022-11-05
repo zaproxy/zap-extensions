@@ -146,7 +146,7 @@ public class ConnectionOptions extends VersionedAbstractParam {
     private String defaultUserAgent = DEFAULT_DEFAULT_USER_AGENT;
     private boolean useGlobalHttpState;
     private int dnsTtlSuccessfulQueries = DNS_DEFAULT_TTL_SUCCESSFUL_QUERIES;
-    private List<String> tlsProtocols = TlsUtils.getSupportedProtocols();
+    private List<String> tlsProtocols = TlsUtils.getSupportedTlsProtocols();
     private boolean allowUnsafeRenegotiation;
 
     private boolean httpProxyEnabled;
@@ -196,13 +196,13 @@ public class ConnectionOptions extends VersionedAbstractParam {
                         .map(Object::toString)
                         .collect(Collectors.toList());
         if (protocols.isEmpty()) {
-            protocols = TlsUtils.getSupportedProtocols();
+            protocols = TlsUtils.getSupportedTlsProtocols();
         } else {
             try {
-                protocols = TlsUtils.filterUnsupportedProtocols(protocols);
+                protocols = TlsUtils.filterUnsupportedTlsProtocols(protocols);
             } catch (Exception e) {
                 LOGGER.warn("An error occurred while setting TLS protocols:", e);
-                protocols = TlsUtils.getSupportedProtocols();
+                protocols = TlsUtils.getSupportedTlsProtocols();
             }
         }
         tlsProtocols = protocols;
@@ -225,7 +225,7 @@ public class ConnectionOptions extends VersionedAbstractParam {
             List<Object> list = getConfig().getList("connection.securityProtocolsEnabled.protocol");
             if (!list.isEmpty()) {
                 persistTlsProtocols(
-                        TlsUtils.filterUnsupportedProtocols(
+                        TlsUtils.filterUnsupportedTlsProtocols(
                                 list.stream()
                                         .map(Object::toString)
                                         .filter(e -> !e.isEmpty())
@@ -405,7 +405,7 @@ public class ConnectionOptions extends VersionedAbstractParam {
      * @throws IllegalArgumentException if no protocol is provided or none supported.
      */
     public void setTlsProtocols(List<String> tlsProtocols) {
-        this.tlsProtocols = TlsUtils.filterUnsupportedProtocols(tlsProtocols);
+        this.tlsProtocols = TlsUtils.filterUnsupportedTlsProtocols(tlsProtocols);
         persistTlsProtocols(tlsProtocols);
 
         notifyChangesListeners();
