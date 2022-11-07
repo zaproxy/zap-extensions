@@ -1348,6 +1348,130 @@ class HttpSenderImplUnitTest {
         }
 
         @Test
+        void shouldReauthenticateIfRemoveUserDefinedAuthHeadersSet() throws Exception {
+            // Given
+            String authRealm = "SomeRealm";
+            proxy.setHttpMessageHandler(
+                    (ctx, msg) -> {
+                        String authorization =
+                                msg.getRequestHeader().getHeader(HttpHeader.PROXY_AUTHORIZATION);
+                        if (authorization == null) {
+                            msg.setResponseHeader(
+                                    "HTTP/1.1 407\r\nProxy-Authenticate: Basic realm=\""
+                                            + authRealm
+                                            + "\"\r\n");
+                            msg.getResponseHeader().setContentLength(0);
+                            msg.setResponseBody(PROXY_RESPONSE);
+                            msg.getResponseHeader()
+                                    .setContentLength(msg.getResponseBody().length());
+                            return;
+                        }
+
+                        if (!"Basic dXNlcm5hbWU6cGFzc3dvcmQ=".equals(authorization)) {
+                            msg.setResponseHeader("HTTP/1.1 403");
+                            msg.setResponseBody(PROXY_RESPONSE);
+                            msg.getResponseHeader()
+                                    .setContentLength(msg.getResponseBody().length());
+                            return;
+                        }
+
+                        msg.setResponseHeader("HTTP/1.1 200\r\n");
+                        msg.setResponseBody(SERVER_RESPONSE);
+                        msg.getResponseHeader().setContentLength(msg.getResponseBody().length());
+                    });
+            configOptionsWithProxy("localhost", proxyPort, authRealm);
+            httpSender.setRemoveUserDefinedAuthHeaders(true);
+            message.getRequestHeader()
+                    .setHeader(HttpHeader.PROXY_AUTHORIZATION, "Basic NotValidCredentials");
+            // When
+            httpSender.sendAndReceive(message);
+            // Then
+            assertThat(proxy.getReceivedMessages(), hasSize(3));
+            assertThat(
+                    proxy.getReceivedMessages()
+                            .get(0)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.PROXY_AUTHORIZATION),
+                    is(equalTo("Basic NotValidCredentials")));
+            assertThat(
+                    proxy.getReceivedMessages().get(0).getRequestHeader().getHeader("host"),
+                    is(equalTo("localhost:" + serverPort)));
+            assertThat(
+                    proxy.getReceivedMessages()
+                            .get(1)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.PROXY_AUTHORIZATION),
+                    is(nullValue()));
+            assertThat(
+                    proxy.getReceivedMessages().get(1).getRequestHeader().getHeader("host"),
+                    is(equalTo("localhost:" + serverPort)));
+            assertThat(
+                    proxy.getReceivedMessages()
+                            .get(2)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.PROXY_AUTHORIZATION),
+                    is(equalTo("Basic dXNlcm5hbWU6cGFzc3dvcmQ=")));
+            assertThat(
+                    proxy.getReceivedMessages().get(2).getRequestHeader().getHeader("host"),
+                    is(equalTo("localhost:" + serverPort)));
+            assertThat(server.getReceivedMessages(), hasSize(0));
+            assertThat(message.getResponseBody().toString(), is(equalTo(SERVER_RESPONSE)));
+        }
+
+        @Test
+        void shouldNotReauthenticateIfRemoveUserDefinedAuthHeadersNotSet() throws Exception {
+            // Given
+            String authRealm = "SomeRealm";
+            proxy.setHttpMessageHandler(
+                    (ctx, msg) -> {
+                        String authorization =
+                                msg.getRequestHeader().getHeader(HttpHeader.PROXY_AUTHORIZATION);
+                        if (authorization == null) {
+                            msg.setResponseHeader(
+                                    "HTTP/1.1 407\r\nProxy-Authenticate: Basic realm=\""
+                                            + authRealm
+                                            + "\"\r\n");
+                            msg.getResponseHeader().setContentLength(0);
+                            msg.setResponseBody(PROXY_RESPONSE);
+                            msg.getResponseHeader()
+                                    .setContentLength(msg.getResponseBody().length());
+                            return;
+                        }
+
+                        if (!"Basic dXNlcm5hbWU6cGFzc3dvcmQ=".equals(authorization)) {
+                            msg.setResponseHeader("HTTP/1.1 403");
+                            msg.setResponseBody(PROXY_RESPONSE);
+                            msg.getResponseHeader()
+                                    .setContentLength(msg.getResponseBody().length());
+                            return;
+                        }
+
+                        msg.setResponseHeader("HTTP/1.1 200\r\n");
+                        msg.setResponseBody(SERVER_RESPONSE);
+                        msg.getResponseHeader().setContentLength(msg.getResponseBody().length());
+                    });
+            configOptionsWithProxy("localhost", proxyPort, authRealm);
+            httpSender.setRemoveUserDefinedAuthHeaders(false);
+            message.getRequestHeader()
+                    .setHeader(HttpHeader.PROXY_AUTHORIZATION, "Basic NotValidCredentials");
+            // When
+            httpSender.sendAndReceive(message);
+            // Then
+            assertThat(proxy.getReceivedMessages(), hasSize(1));
+            assertThat(
+                    proxy.getReceivedMessages()
+                            .get(0)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.PROXY_AUTHORIZATION),
+                    is(equalTo("Basic NotValidCredentials")));
+            assertThat(
+                    proxy.getReceivedMessages().get(0).getRequestHeader().getHeader("host"),
+                    is(equalTo("localhost:" + serverPort)));
+            assertThat(server.getReceivedMessages(), hasSize(0));
+            assertThat(message.getResponseBody().toString(), is(equalTo(PROXY_RESPONSE)));
+        }
+
+        @Test
         void shouldNotBasicAuthenticateToProxyIfRealmMismatch() throws Exception {
             // Given
             proxy.setHttpMessageHandler(
