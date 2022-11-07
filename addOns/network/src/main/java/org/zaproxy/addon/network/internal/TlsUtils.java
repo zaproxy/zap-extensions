@@ -41,7 +41,7 @@ public final class TlsUtils {
 
     private static final Logger LOGGER = LogManager.getLogger(TlsUtils.class);
 
-    private static final String PROTOCOL = "TLS";
+    private static final String PROTOCOL_TLS = "TLS";
 
     /**
      * Try to use something if not able to read the supported protocols.
@@ -52,57 +52,57 @@ public final class TlsUtils {
      * @see <a
      *     href="https://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8202343">JDK-8202343</a>
      */
-    private static final List<String> FALLBACK_PROTOCOLS = Arrays.asList(TLS_V1_2);
+    private static final List<String> FALLBACK_TLS_PROTOCOLS = Arrays.asList(TLS_V1_2);
 
-    private static final List<String> SUPPORTED_PROTOCOLS;
+    private static final List<String> SUPPORTED_TLS_PROTOCOLS;
 
     static {
         LOGGER.debug("Reading supported SSL/TLS protocols...");
         List<String> tempSupportedProtocols;
         try {
-            SSLContext sslContext = SSLContext.getInstance(PROTOCOL);
+            SSLContext sslContext = SSLContext.getInstance(PROTOCOL_TLS);
             sslContext.init(null, null, null);
             tempSupportedProtocols =
                     Arrays.asList(sslContext.getDefaultSSLParameters().getProtocols());
         } catch (NoSuchAlgorithmException | KeyManagementException e) {
             LOGGER.error(
                     "Failed to read the SSL/TLS supported protocols. Using fallback protocol versions: {}",
-                    FALLBACK_PROTOCOLS,
+                    FALLBACK_TLS_PROTOCOLS,
                     e);
-            tempSupportedProtocols = FALLBACK_PROTOCOLS;
+            tempSupportedProtocols = FALLBACK_TLS_PROTOCOLS;
         }
         Collections.sort(tempSupportedProtocols);
-        SUPPORTED_PROTOCOLS = Collections.unmodifiableList(tempSupportedProtocols);
-        LOGGER.info("Using supported SSL/TLS protocols: {}", SUPPORTED_PROTOCOLS);
+        SUPPORTED_TLS_PROTOCOLS = Collections.unmodifiableList(tempSupportedProtocols);
+        LOGGER.info("Using supported SSL/TLS protocols: {}", SUPPORTED_TLS_PROTOCOLS);
     }
 
     private TlsUtils() {}
 
     /**
-     * Gets the protocols that are supported (and enabled) by the JRE.
+     * Gets the SSL/TLS protocols that are supported (and enabled) by the JRE.
      *
      * @return the protocols.
      */
-    public static List<String> getSupportedProtocols() {
-        return SUPPORTED_PROTOCOLS;
+    public static List<String> getSupportedTlsProtocols() {
+        return SUPPORTED_TLS_PROTOCOLS;
     }
 
     /**
-     * Filters the unsupported protocols from the given list.
+     * Filters the unsupported SSL/TLS protocols from the given list.
      *
      * @param protocols the protocols to filter.
      * @return the filtered protocols.
      * @throws IllegalArgumentException if the given list is {@code null} or empty and if no
      *     protocols are supported or not in a valid configuration.
      */
-    public static List<String> filterUnsupportedProtocols(List<String> protocols) {
+    public static List<String> filterUnsupportedTlsProtocols(List<String> protocols) {
         if (protocols == null || protocols.isEmpty()) {
             throw new IllegalArgumentException("Protocol(s) required but no protocol set.");
         }
 
         List<String> enabledSupportedProtocols =
                 protocols.stream()
-                        .filter(SUPPORTED_PROTOCOLS::contains)
+                        .filter(SUPPORTED_TLS_PROTOCOLS::contains)
                         .collect(Collectors.toList());
 
         if (enabledSupportedProtocols.isEmpty()) {

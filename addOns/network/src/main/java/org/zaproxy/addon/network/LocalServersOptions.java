@@ -434,13 +434,13 @@ public class LocalServersOptions extends VersionedAbstractParam {
                             .map(Object::toString)
                             .collect(Collectors.toList());
             if (protocols.isEmpty()) {
-                protocols = TlsUtils.getSupportedProtocols();
+                protocols = TlsUtils.getSupportedTlsProtocols();
             }
             try {
                 serverConfig.setTlsProtocols(protocols);
             } catch (Exception e) {
                 LOGGER.warn("An error occurred while setting TLS protocols:", e);
-                serverConfig.setTlsProtocols(TlsUtils.getSupportedProtocols());
+                serverConfig.setTlsProtocols(TlsUtils.getSupportedTlsProtocols());
             }
             serverConfig.setBehindNat(config.getBoolean(SERVER_BEHIND_NAT, false));
             serverConfig.setRemoveAcceptEncoding(
@@ -606,7 +606,7 @@ public class LocalServersOptions extends VersionedAbstractParam {
     }
 
     private void migrateCoreConfigs() {
-        List<String> tlsProtocols = TlsUtils.getSupportedProtocols();
+        List<String> tlsProtocols = TlsUtils.getSupportedTlsProtocols();
         try {
             tlsProtocols = migrateMainProxy();
         } catch (Exception e) {
@@ -624,7 +624,7 @@ public class LocalServersOptions extends VersionedAbstractParam {
 
     private List<String> migrateMainProxy() {
         if (!getConfig().containsKey("proxy.port")) {
-            return TlsUtils.getSupportedProtocols();
+            return TlsUtils.getSupportedTlsProtocols();
         }
         LocalServerConfig config = new LocalServerConfig();
         config.setAddress(getString("proxy.ip", LocalServerConfig.DEFAULT_ADDRESS));
@@ -638,7 +638,7 @@ public class LocalServersOptions extends VersionedAbstractParam {
                         .map(Object::toString)
                         .collect(Collectors.toList());
         if (tlsProtocols.isEmpty()) {
-            tlsProtocols = TlsUtils.getSupportedProtocols();
+            tlsProtocols = TlsUtils.getSupportedTlsProtocols();
         }
         config.setTlsProtocols(tlsProtocols);
 

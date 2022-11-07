@@ -46,7 +46,7 @@ class TlsConfigUnitTest {
 
     @BeforeAll
     static void setup() {
-        TlsUtils.getSupportedProtocols();
+        TlsUtils.getSupportedTlsProtocols();
     }
 
     @Test
@@ -60,7 +60,7 @@ class TlsConfigUnitTest {
     @Test
     void shouldCreateWithProvidedTlsProtocols() {
         // Given
-        List<String> protocols = TlsUtils.getSupportedProtocols();
+        List<String> protocols = TlsUtils.getSupportedTlsProtocols();
         // When
         TlsConfig tlsConfig = new TlsConfig(protocols);
         // Then
@@ -70,12 +70,12 @@ class TlsConfigUnitTest {
     @Test
     void shouldCreateWithProvidedTlsProtocolsRemovingUnsupported() {
         // Given
-        List<String> protocols = new ArrayList<>(TlsUtils.getSupportedProtocols());
+        List<String> protocols = new ArrayList<>(TlsUtils.getSupportedTlsProtocols());
         protocols.add("X");
         // When
         TlsConfig tlsConfig = new TlsConfig(protocols);
         // Then
-        assertThat(tlsConfig.getTlsProtocols(), is(equalTo(TlsUtils.getSupportedProtocols())));
+        assertThat(tlsConfig.getTlsProtocols(), is(equalTo(TlsUtils.getSupportedTlsProtocols())));
     }
 
     @ParameterizedTest
@@ -88,7 +88,7 @@ class TlsConfigUnitTest {
     @Test
     void shouldNotAllowToModifyReturnedTlsProtocols() {
         // Given
-        TlsConfig tlsConfig = new TlsConfig(TlsUtils.getSupportedProtocols());
+        TlsConfig tlsConfig = new TlsConfig(TlsUtils.getSupportedTlsProtocols());
         List<String> protocols = tlsConfig.getTlsProtocols();
         // When / Then
         assertThrows(UnsupportedOperationException.class, () -> protocols.add("X"));
@@ -116,7 +116,7 @@ class TlsConfigUnitTest {
 
     static Stream<Arguments> constructorArgsProvider() {
         return Stream.of(
-                arguments(TlsUtils.getSupportedProtocols()), arguments(Arrays.asList(TLS_V1_2)));
+                arguments(TlsUtils.getSupportedTlsProtocols()), arguments(Arrays.asList(TLS_V1_2)));
     }
 
     @ParameterizedTest
@@ -143,8 +143,8 @@ class TlsConfigUnitTest {
 
     static Stream<Arguments> differencesProvider() {
         return Stream.of(
-                arguments(TlsUtils.getSupportedProtocols(), Arrays.asList(TLS_V1_2)),
-                arguments(Arrays.asList(TLS_V1_2), TlsUtils.getSupportedProtocols()));
+                arguments(TlsUtils.getSupportedTlsProtocols(), Arrays.asList(TLS_V1_2)),
+                arguments(Arrays.asList(TLS_V1_2), TlsUtils.getSupportedTlsProtocols()));
     }
 
     @ParameterizedTest

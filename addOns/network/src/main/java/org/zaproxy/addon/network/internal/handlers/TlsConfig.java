@@ -39,7 +39,7 @@ public class TlsConfig {
 
     /** Constructs a {@code TlsConfig} with all the SSL/TLS protocol versions supported. */
     public TlsConfig() {
-        this.tlsProtocols = TlsUtils.filterUnsupportedProtocols(DEFAULT_PROTOCOLS);
+        this.tlsProtocols = TlsUtils.filterUnsupportedTlsProtocols(DEFAULT_PROTOCOLS);
     }
 
     /**
@@ -50,7 +50,7 @@ public class TlsConfig {
      * @throws NullPointerException if the given {@code tlsProtocols} is {@code null}.
      */
     public TlsConfig(List<String> tlsProtocols) {
-        this.tlsProtocols = TlsUtils.filterUnsupportedProtocols(tlsProtocols);
+        this.tlsProtocols = TlsUtils.filterUnsupportedTlsProtocols(tlsProtocols);
     }
 
     /**
