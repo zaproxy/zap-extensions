@@ -47,6 +47,7 @@ import org.zaproxy.addon.network.internal.server.BaseServer;
  * <ul>
  *   <li>Read timeout;
  *   <li>Handling of HTTP/1.x CONNECT requests and TLS upgrade;
+ *   <li>Handling of TLS ALPN, with support for HTTP/1.1;
  *   <li>Recursive check;
  *   <li>Exception handling;
  * </ul>

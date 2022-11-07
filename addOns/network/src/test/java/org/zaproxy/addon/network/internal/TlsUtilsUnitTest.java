@@ -43,7 +43,7 @@ class TlsUtilsUnitTest {
     @Test
     void shouldFilterUnsupportedTlsProtocols() {
         // Given
-        List<String> protocols = Arrays.asList("Unknown A", TlsUtils.TLS_V1_2, "Unknown B");
+        List<String> protocols = Arrays.asList("Unknown A", TlsUtils.TLS_V1_2, "Unknown B", null);
         // When
         List<String> filteredProtocols = TlsUtils.filterUnsupportedTlsProtocols(protocols);
         // Then
@@ -76,5 +76,41 @@ class TlsUtilsUnitTest {
         assertThrows(
                 IllegalArgumentException.class,
                 () -> TlsUtils.filterUnsupportedTlsProtocols(protocols));
+    }
+
+    @Test
+    void shouldHaveSupportedApplicationProtocols() {
+        assertThat(TlsUtils.getSupportedApplicationProtocols(), is(not(empty())));
+    }
+
+    @Test
+    void shouldFilterUnsupportedApplicationProtocols() {
+        // Given
+        List<String> protocols =
+                Arrays.asList(
+                        "Unknown A", TlsUtils.APPLICATION_PROTOCOL_HTTP_1_1, "Unknown B", null);
+        // When
+        List<String> filteredApplicationProtocols =
+                TlsUtils.filterUnsupportedApplicationProtocols(protocols);
+        // Then
+        assertThat(filteredApplicationProtocols, contains(TlsUtils.APPLICATION_PROTOCOL_HTTP_1_1));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void shouldThrowIfNoApplicationProtocols(List<String> protocols) {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> TlsUtils.filterUnsupportedApplicationProtocols(protocols));
+    }
+
+    @Test
+    void shouldThrowIfNoApplicationProtocolsAfterFilter() {
+        // Given
+        List<String> protocols = Arrays.asList("Unknown A");
+        // When / Then
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> TlsUtils.filterUnsupportedApplicationProtocols(protocols));
     }
 }
