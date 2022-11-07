@@ -57,6 +57,7 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 /** Unit test for {@link LocalServersOptions}. */
 class LocalServersOptionsUnitTest {
 
+    private static final List<String> DEFAULT_APPLICATION_PROTOCOLS = List.of("http/1.1");
     private static final String ALIAS_KEY = "network.localServers.aliases.alias";
     private static final String PASS_THROUGH_KEY = "network.localServers.passThroughs.passThrough";
     private static final String MAIN_PROXY_KEY = "network.localServers.mainProxy";
@@ -76,6 +77,12 @@ class LocalServersOptionsUnitTest {
                     + "          <protocol>TLSv1.2</protocol>\n"
                     + "          <protocol>TLSv1.1</protocol>\n"
                     + "        </tlsProtocols>\n"
+                    + "        <alpn>\n"
+                    + "          <enabled>true</enabled>\n"
+                    + "          <protocols>\n"
+                    + "            <protocol>http/1.1</protocol>\n"
+                    + "          </protocols>\n"
+                    + "        </alpn>\n"
                     + "        <behindNat>true</behindNat>\n"
                     + "        <removeAcceptEncoding>false</removeAcceptEncoding>\n"
                     + "        <decodeResponse>false</decodeResponse>\n"
@@ -91,6 +98,13 @@ class LocalServersOptionsUnitTest {
                     + "          <protocol>TLSv1.2</protocol>\n"
                     + "          <protocol>TLSv1.1</protocol>\n"
                     + "        </tlsProtocols>\n"
+                    + "        <alpn>\n"
+                    + "          <enabled>false</enabled>\n"
+                    + "          <protocols>\n"
+                    + "            <protocol>http/1.1</protocol>\n"
+                    + "            <protocol>h1</protocol>\n"
+                    + "          </protocols>\n"
+                    + "        </alpn>\n"
                     + "        <behindNat>false</behindNat>\n"
                     + "        <removeAcceptEncoding>true</removeAcceptEncoding>\n"
                     + "        <decodeResponse>true</decodeResponse>\n"
@@ -138,6 +152,10 @@ class LocalServersOptionsUnitTest {
         assertThat(mainProxy.getPort(), is(equalTo(LocalServerConfig.DEFAULT_PORT)));
         assertThat(mainProxy.getMode(), is(equalTo(LocalServerConfig.ServerMode.API_AND_PROXY)));
         assertThat(mainProxy.getTlsProtocols(), is(equalTo(TlsUtils.getSupportedTlsProtocols())));
+        assertThat(mainProxy.isAlpnEnabled(), is(equalTo(false)));
+        assertThat(
+                mainProxy.getApplicationProtocols(),
+                is(equalTo(TlsUtils.getSupportedApplicationProtocols())));
         assertThat(mainProxy.isBehindNat(), is(equalTo(false)));
         assertThat(mainProxy.isRemoveAcceptEncoding(), is(equalTo(true)));
         assertThat(mainProxy.isDecodeResponse(), is(equalTo(true)));
@@ -283,6 +301,13 @@ class LocalServersOptionsUnitTest {
                 is(notNullValue()));
         assertThat(config.getProperty(MAIN_PROXY_KEY + ".behindNat"), is(equalTo(behindNat)));
         assertThat(
+                config.getProperty(MAIN_PROXY_KEY + ".tlsProtocols.protocol(0)"),
+                is(notNullValue()));
+        assertThat(config.getProperty(MAIN_PROXY_KEY + ".alpn.enabled"), is(equalTo(false)));
+        assertThat(
+                config.getProperty(MAIN_PROXY_KEY + ".alpn.protocols.protocol(0)"),
+                is(notNullValue()));
+        assertThat(
                 config.getProperty(MAIN_PROXY_KEY + ".removeAcceptEncoding"),
                 is(equalTo(removeAcceptEncoding)));
         assertThat(
@@ -331,6 +356,9 @@ class LocalServersOptionsUnitTest {
         assertThat(config.getProperty(SERVER_KEY + ".api"), is(equalTo(api)));
         assertThat(
                 config.getProperty(SERVER_KEY + ".tlsProtocols.protocol(0)"), is(notNullValue()));
+        assertThat(config.getProperty(SERVER_KEY + ".alpn.enabled"), is(equalTo(false)));
+        assertThat(
+                config.getProperty(SERVER_KEY + ".alpn.protocols.protocol(0)"), is(notNullValue()));
         assertThat(config.getProperty(SERVER_KEY + ".behindNat"), is(equalTo(behindNat)));
         assertThat(
                 config.getProperty(SERVER_KEY + ".removeAcceptEncoding"),
@@ -450,6 +478,12 @@ class LocalServersOptionsUnitTest {
                                 + "        <protocol>TLSv1.2</protocol>\n"
                                 + "        <protocol>TLSv1.1</protocol>\n"
                                 + "      </tlsProtocols>"
+                                + "      <alpn>\n"
+                                + "        <enabled>true</enabled>\n"
+                                + "        <protocols>\n"
+                                + "          <protocol>http/1.1</protocol>\n"
+                                + "        </protocols>\n"
+                                + "      </alpn>\n"
                                 + "      <behindNat>true</behindNat>\n"
                                 + "      <removeAcceptEncoding>false</removeAcceptEncoding>\n"
                                 + "      <decodeResponse>false</decodeResponse>\n"
@@ -469,7 +503,9 @@ class LocalServersOptionsUnitTest {
                 true,
                 false,
                 false,
-                true);
+                true,
+                true,
+                DEFAULT_APPLICATION_PROTOCOLS);
     }
 
     @Test
@@ -491,6 +527,32 @@ class LocalServersOptionsUnitTest {
         options.load(config);
         // Then
         assertThat(options.getMainProxy().getTlsProtocols(), is(not(empty())));
+        assertThat(options.getMainProxy().getTlsConfig(), is(notNullValue()));
+    }
+
+    @Test
+    void shouldUseDefaultApplicationProtocolsOnErrorForMainProxy() {
+        // Given
+        ZapXmlConfiguration config =
+                configWith(
+                        "<network>\n"
+                                + "  <localServers version=\"1\">\n"
+                                + "    <mainProxy>\n"
+                                + "      <address>192.168.0.1</address>\n"
+                                + "      <alpn>\n"
+                                + "        <protocols>\n"
+                                + "          <protocol>not something supported</protocol>\n"
+                                + "        </protocols>\n"
+                                + "      </alpn>\n"
+                                + "    </mainProxy>\n"
+                                + "  </localServers>\n"
+                                + "</network>");
+        // When
+        options.load(config);
+        // Then
+        assertThat(
+                options.getMainProxy().getApplicationProtocols(),
+                is(equalTo(DEFAULT_APPLICATION_PROTOCOLS)));
         assertThat(options.getMainProxy().getTlsConfig(), is(notNullValue()));
     }
 
@@ -519,7 +581,9 @@ class LocalServersOptionsUnitTest {
                 false,
                 true,
                 true,
-                true);
+                true,
+                false,
+                DEFAULT_APPLICATION_PROTOCOLS);
     }
 
     @Test
@@ -545,7 +609,9 @@ class LocalServersOptionsUnitTest {
                 false,
                 true,
                 true,
-                true);
+                true,
+                false,
+                DEFAULT_APPLICATION_PROTOCOLS);
     }
 
     @Test
@@ -604,7 +670,9 @@ class LocalServersOptionsUnitTest {
                 true,
                 false,
                 false,
-                false);
+                false,
+                true,
+                DEFAULT_APPLICATION_PROTOCOLS);
         assertServerFields(
                 options.getServers().get(1),
                 "localhost",
@@ -613,7 +681,9 @@ class LocalServersOptionsUnitTest {
                 false,
                 true,
                 true,
-                true);
+                true,
+                false,
+                DEFAULT_APPLICATION_PROTOCOLS);
     }
 
     @Test
@@ -640,6 +710,34 @@ class LocalServersOptionsUnitTest {
         assertThat(options.getMainProxy().getTlsConfig(), is(notNullValue()));
     }
 
+    @Test
+    void shouldUseDefaultApplicationProtocolsOnErrorForServer() {
+        // Given
+        ZapXmlConfiguration config =
+                configWith(
+                        "<network>\n"
+                                + "  <localServers version=\"1\">\n"
+                                + "    <servers>\n"
+                                + "      <server>\n"
+                                + "        <address>192.168.0.1</address>\n"
+                                + "        <alpn>\n"
+                                + "          <protocols>\n"
+                                + "            <protocol>not something supported</protocol>\n"
+                                + "          </protocols>\n"
+                                + "        </alpn>\n"
+                                + "      </server>\n"
+                                + "    </servers>\n"
+                                + "  </localServers>\n"
+                                + "</network>");
+        // When
+        options.load(config);
+        // Then
+        assertThat(
+                options.getMainProxy().getApplicationProtocols(),
+                is(equalTo(DEFAULT_APPLICATION_PROTOCOLS)));
+        assertThat(options.getMainProxy().getTlsConfig(), is(notNullValue()));
+    }
+
     private static void assertServerFields(
             LocalServerConfig server,
             String address,
@@ -648,7 +746,9 @@ class LocalServersOptionsUnitTest {
             boolean behindNat,
             boolean removeAcceptEncoding,
             boolean decodeResponse,
-            boolean enabled) {
+            boolean enabled,
+            boolean alpnEnabled,
+            List<String> alpnProcotols) {
         assertThat(server.getAddress(), is(equalTo(address)));
         assertThat(server.getPort(), is(equalTo(port)));
         assertThat(server.getMode(), is(equalTo(mode)));
@@ -658,6 +758,8 @@ class LocalServersOptionsUnitTest {
         assertThat(server.isRemoveAcceptEncoding(), is(equalTo(removeAcceptEncoding)));
         assertThat(server.isDecodeResponse(), is(equalTo(decodeResponse)));
         assertThat(server.isEnabled(), is(equalTo(enabled)));
+        assertThat(server.isAlpnEnabled(), is(equalTo(alpnEnabled)));
+        assertThat(server.getApplicationProtocols(), is(equalTo(alpnProcotols)));
     }
 
     @Test
@@ -679,7 +781,9 @@ class LocalServersOptionsUnitTest {
                 true,
                 false,
                 false,
-                false);
+                false,
+                true,
+                DEFAULT_APPLICATION_PROTOCOLS);
         assertServerFields(
                 options.getServers().get(1),
                 "localhost",
@@ -688,7 +792,9 @@ class LocalServersOptionsUnitTest {
                 false,
                 true,
                 true,
-                true);
+                true,
+                false,
+                DEFAULT_APPLICATION_PROTOCOLS);
         verify(serversChangedlistener).serversSet(servers);
     }
 
@@ -721,7 +827,9 @@ class LocalServersOptionsUnitTest {
                 false,
                 true,
                 true,
-                true);
+                true,
+                false,
+                DEFAULT_APPLICATION_PROTOCOLS);
     }
 
     @Test
@@ -751,7 +859,9 @@ class LocalServersOptionsUnitTest {
                 false,
                 true,
                 true,
-                true);
+                true,
+                false,
+                DEFAULT_APPLICATION_PROTOCOLS);
     }
 
     @Test
@@ -793,7 +903,9 @@ class LocalServersOptionsUnitTest {
                 false,
                 true,
                 true,
-                true);
+                true,
+                false,
+                DEFAULT_APPLICATION_PROTOCOLS);
     }
 
     @ParameterizedTest
@@ -1369,7 +1481,9 @@ class LocalServersOptionsUnitTest {
                 true,
                 false,
                 false,
-                true);
+                true,
+                false,
+                DEFAULT_APPLICATION_PROTOCOLS);
         assertThat(config.getProperty("proxy.ip"), is(nullValue()));
     }
 
@@ -1388,7 +1502,9 @@ class LocalServersOptionsUnitTest {
                 false,
                 true,
                 true,
-                true);
+                true,
+                false,
+                DEFAULT_APPLICATION_PROTOCOLS);
         assertThat(config.getProperty("proxy.port"), is(nullValue()));
     }
 
@@ -1453,7 +1569,9 @@ class LocalServersOptionsUnitTest {
                 false,
                 true,
                 true,
-                true);
+                true,
+                false,
+                DEFAULT_APPLICATION_PROTOCOLS);
         assertServerFields(
                 options.getServers().get(1),
                 "0.0.0.0",
@@ -1462,7 +1580,9 @@ class LocalServersOptionsUnitTest {
                 true,
                 false,
                 false,
-                false);
+                false,
+                false,
+                DEFAULT_APPLICATION_PROTOCOLS);
         assertThat(config.getProperty("proxies.confirmRemoveProxy"), is(nullValue()));
         assertThat(config.getProperty("proxies.all"), is(nullValue()));
     }

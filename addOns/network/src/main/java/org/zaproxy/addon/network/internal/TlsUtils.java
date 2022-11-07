@@ -24,6 +24,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.net.ssl.SSLContext;
 import org.apache.logging.log4j.LogManager;
@@ -38,6 +39,8 @@ public final class TlsUtils {
     public static final String TLS_V1_1 = "TLSv1.1";
     public static final String TLS_V1_2 = "TLSv1.2";
     public static final String TLS_V1_3 = "TLSv1.3";
+
+    public static final String APPLICATION_PROTOCOL_HTTP_1_1 = "http/1.1";
 
     private static final Logger LOGGER = LogManager.getLogger(TlsUtils.class);
 
@@ -55,6 +58,9 @@ public final class TlsUtils {
     private static final List<String> FALLBACK_TLS_PROTOCOLS = Arrays.asList(TLS_V1_2);
 
     private static final List<String> SUPPORTED_TLS_PROTOCOLS;
+
+    private static final List<String> SUPPORTED_APPLICATION_PROTOCOLS =
+            List.of(APPLICATION_PROTOCOL_HTTP_1_1);
 
     static {
         LOGGER.debug("Reading supported SSL/TLS protocols...");
@@ -88,6 +94,15 @@ public final class TlsUtils {
     }
 
     /**
+     * Gets the application protocols that are supported by ZAP.
+     *
+     * @return the protocols.
+     */
+    public static List<String> getSupportedApplicationProtocols() {
+        return SUPPORTED_APPLICATION_PROTOCOLS;
+    }
+
+    /**
      * Filters the unsupported SSL/TLS protocols from the given list.
      *
      * @param protocols the protocols to filter.
@@ -96,18 +111,7 @@ public final class TlsUtils {
      *     protocols are supported or not in a valid configuration.
      */
     public static List<String> filterUnsupportedTlsProtocols(List<String> protocols) {
-        if (protocols == null || protocols.isEmpty()) {
-            throw new IllegalArgumentException("Protocol(s) required but no protocol set.");
-        }
-
-        List<String> enabledSupportedProtocols =
-                protocols.stream()
-                        .filter(SUPPORTED_TLS_PROTOCOLS::contains)
-                        .collect(Collectors.toList());
-
-        if (enabledSupportedProtocols.isEmpty()) {
-            throw new IllegalArgumentException("No supported protocol(s) set.");
-        }
+        List<String> enabledSupportedProtocols = filter(protocols, SUPPORTED_TLS_PROTOCOLS);
 
         if (enabledSupportedProtocols.size() == 1
                 && enabledSupportedProtocols.contains(SSL_V2_HELLO)) {
@@ -115,6 +119,36 @@ public final class TlsUtils {
                     "Only SSLv2Hello set, must have at least one SSL/TLS version enabled.");
         }
 
-        return Collections.unmodifiableList(enabledSupportedProtocols);
+        return enabledSupportedProtocols;
+    }
+
+    private static List<String> filter(List<String> protocols, List<String> supportedProtocols) {
+        if (protocols == null || protocols.isEmpty()) {
+            throw new IllegalArgumentException("Protocol(s) required but no protocol set.");
+        }
+
+        List<String> filteredProtocols =
+                protocols.stream()
+                        .filter(Objects::nonNull)
+                        .filter(supportedProtocols::contains)
+                        .collect(Collectors.toUnmodifiableList());
+
+        if (filteredProtocols.isEmpty()) {
+            throw new IllegalArgumentException("No supported protocol(s) set.");
+        }
+
+        return filteredProtocols;
+    }
+
+    /**
+     * Filters the unsupported application protocols from the given list.
+     *
+     * @param protocols the protocols to filter.
+     * @return the filtered protocols.
+     * @throws IllegalArgumentException if the given list is {@code null} or empty and if no
+     *     protocols are supported.
+     */
+    public static List<String> filterUnsupportedApplicationProtocols(List<String> protocols) {
+        return filter(protocols, SUPPORTED_APPLICATION_PROTOCOLS);
     }
 }

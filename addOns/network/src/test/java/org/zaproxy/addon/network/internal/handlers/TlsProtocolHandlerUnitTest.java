@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.network.internal.handlers;
 
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -42,6 +43,11 @@ import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.netty.handler.codec.Delimiters;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import io.netty.handler.ssl.ApplicationProtocolConfig;
+import io.netty.handler.ssl.ApplicationProtocolConfig.Protocol;
+import io.netty.handler.ssl.ApplicationProtocolConfig.SelectedListenerFailureBehavior;
+import io.netty.handler.ssl.ApplicationProtocolConfig.SelectorFailureBehavior;
+import io.netty.handler.ssl.ApplicationProtocolNegotiationHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslHandler;
@@ -61,6 +67,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLHandshakeException;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -129,6 +136,11 @@ class TlsProtocolHandlerUnitTest {
     }
 
     private void createClientTls(int port) throws Exception {
+        createClientTls(port, null, null);
+    }
+
+    private void createClientTls(
+            int port, AlpnTestHandler alpnHandler, ApplicationProtocolConfig alpnConfig) {
         clientTls =
                 new TextTestClient(
                         SERVER_ADDRESS,
@@ -139,6 +151,7 @@ class TlsProtocolHandlerUnitTest {
                                         SslContextBuilder.forClient()
                                                 .trustManager(InsecureTrustManagerFactory.INSTANCE)
                                                 .protocols(TlsUtils.getSupportedTlsProtocols())
+                                                .applicationProtocolConfig(alpnConfig)
                                                 .build();
                             } catch (SSLException e) {
                                 throw new RuntimeException(e);
@@ -147,6 +160,9 @@ class TlsProtocolHandlerUnitTest {
                                     sslCtx.newHandler(ch.alloc(), SERVER_ADDRESS, port);
                             sslHandler.setHandshakeTimeout(5, TimeUnit.SECONDS);
                             ch.pipeline().addFirst(sslHandler);
+                            if (alpnHandler != null) {
+                                ch.pipeline().addLast(alpnHandler);
+                            }
                         });
     }
 
@@ -361,7 +377,6 @@ class TlsProtocolHandlerUnitTest {
     }
 
     @Test
-    @SuppressWarnings("deprecation")
     void shouldUseProvidedAuthorityForCert() throws Exception {
         // Given
         createServer(ch -> initDefaultChannel(ch, new TlsProtocolHandler("example.org")));
@@ -375,7 +390,6 @@ class TlsProtocolHandlerUnitTest {
     }
 
     @Test
-    @SuppressWarnings("deprecation")
     void shouldUseProvidedLocalAddressForCert() throws Exception {
         // Given
         String localAddress = "127.0.1.2";
@@ -400,6 +414,66 @@ class TlsProtocolHandlerUnitTest {
         assertThat(getCertificate(clientChannel), containsString("IPAddress: " + localAddress));
     }
 
+    @Test
+    void shouldUseAlpnIfEnabled() throws Exception {
+        // Given
+        int port = server.start(Server.ANY_PORT);
+        AlpnTestHandler alpnHandler = new AlpnTestHandler();
+        String commonProtocol = "h0";
+        createClientTls(
+                port, alpnHandler, createAlpnConfig(commonProtocol, "another-protocol-client"));
+        given(tlsConfig.isAlpnEnabled()).willReturn(true);
+        given(tlsConfig.getApplicationProtocols())
+                .willReturn(List.of(commonProtocol, "another-protocol-server"));
+        // When
+        clientTls.connect(port, "");
+        // Then
+        assertThat(alpnHandler.getNegotiatedProtocol(), is(equalTo(commonProtocol)));
+    }
+
+    @Test
+    void shouldNotUseAlpnIfNotEnabled() throws Exception {
+        // Given
+        int port = server.start(Server.ANY_PORT);
+        AlpnTestHandler alpnHandler = new AlpnTestHandler();
+        String commonProtocol = "h0";
+        createClientTls(
+                port, alpnHandler, createAlpnConfig(commonProtocol, "another-protocol-client"));
+        given(tlsConfig.isAlpnEnabled()).willReturn(false);
+        given(tlsConfig.getApplicationProtocols())
+                .willReturn(List.of(commonProtocol, "another-protocol-server"));
+        // When
+        clientTls.connect(port, "");
+        // Then
+        assertThat(alpnHandler.getNegotiatedProtocol(), is(AlpnTestHandler.NO_PROTOCOL_NEGOTIATED));
+    }
+
+    @Test
+    void shouldFailHandshakeIfNoCommonProtocolWithAlpnEnabled() throws Exception {
+        // Given
+        int port = server.start(Server.ANY_PORT);
+        createClientTls(port, new AlpnTestHandler(), createAlpnConfig("h0"));
+        given(tlsConfig.isAlpnEnabled()).willReturn(true);
+        given(tlsConfig.getApplicationProtocols()).willReturn(List.of("different-protocol"));
+        // When / Then
+        SSLHandshakeException e =
+                assertThrows(SSLHandshakeException.class, () -> clientTls.connect(port, ""));
+        assertThat(e.getMessage(), containsString("no_application_protocol"));
+    }
+
+    @Test
+    void shouldCloseConnectionIfClientHasNoAlpnAndAlpnIsEnabled() throws Exception {
+        // Given
+        int port = server.start(Server.ANY_PORT);
+        createClientTls(port);
+        given(tlsConfig.isAlpnEnabled()).willReturn(true);
+        given(tlsConfig.getApplicationProtocols()).willReturn(List.of("h0"));
+        // When
+        Channel ch = clientTls.connect(port, "");
+        // Then
+        assertThat(ch.isOpen(), is(equalTo(false)));
+    }
+
     private void waitForServerChannel() throws InterruptedException {
         serverChannelReady.await(5, TimeUnit.SECONDS);
         assertThat(serverChannel, is(notNullValue()));
@@ -413,5 +487,34 @@ class TlsProtocolHandlerUnitTest {
                 .getSession()
                 .getPeerCertificates()[0]
                 .toString();
+    }
+
+    private static ApplicationProtocolConfig createAlpnConfig(String... protocols) {
+        return new ApplicationProtocolConfig(
+                Protocol.ALPN,
+                SelectorFailureBehavior.NO_ADVERTISE,
+                SelectedListenerFailureBehavior.ACCEPT,
+                protocols);
+    }
+
+    private static class AlpnTestHandler extends ApplicationProtocolNegotiationHandler {
+
+        private static final String NO_PROTOCOL_NEGOTIATED = "no-protocol-negotiated";
+
+        private String negotiatedProtocol;
+
+        AlpnTestHandler() {
+            super(NO_PROTOCOL_NEGOTIATED);
+        }
+
+        String getNegotiatedProtocol() {
+            return negotiatedProtocol;
+        }
+
+        @Override
+        protected void configurePipeline(ChannelHandlerContext ctx, String protocol)
+                throws Exception {
+            negotiatedProtocol = protocol;
+        }
     }
 }
