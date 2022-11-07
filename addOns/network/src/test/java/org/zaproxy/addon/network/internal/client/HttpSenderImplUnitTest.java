@@ -60,6 +60,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.PasswordAuthentication;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -353,21 +354,7 @@ class HttpSenderImplUnitTest {
             method.sendWith(httpSender, message);
             // Then
             assertThat(server.getReceivedMessages(), hasSize(1));
-            HttpMessage receivedMessage = server.getReceivedMessages().get(0);
-            assertThat(
-                    receivedMessage.getRequestHeader().toString(),
-                    is(
-                            equalTo(
-                                    requestMethod
-                                            + " "
-                                            + getServerUri("/")
-                                            + " HTTP/1.1\r\n"
-                                            + "Content-Length: 12\r\n"
-                                            + "Host: localhost:"
-                                            + serverPort
-                                            + "\r\n"
-                                            + "\r\n")));
-            assertThat(receivedMessage.getRequestBody().toString(), is(equalTo(requestBody)));
+            assertRequest(server.getReceivedMessages().get(0), requestMethod, requestBody);
         }
 
         @ParameterizedTest
@@ -504,20 +491,7 @@ class HttpSenderImplUnitTest {
             // Then
             assertThat(server.getReceivedMessages(), hasSize(maxRetries));
             for (HttpMessage receivedMessage : server.getReceivedMessages()) {
-                assertThat(
-                        receivedMessage.getRequestHeader().toString(),
-                        is(
-                                equalTo(
-                                        requestMethod
-                                                + " "
-                                                + getServerUri("/")
-                                                + " HTTP/1.1\r\n"
-                                                + "Content-Length: 12\r\n"
-                                                + "Host: localhost:"
-                                                + serverPort
-                                                + "\r\n"
-                                                + "\r\n")));
-                assertThat(receivedMessage.getRequestBody().toString(), is(equalTo(requestBody)));
+                assertRequest(receivedMessage, requestMethod, requestBody);
             }
         }
     }
@@ -1401,6 +1375,24 @@ class HttpSenderImplUnitTest {
             assertThat(message.getResponseBody().toString(), is(equalTo(PROXY_RESPONSE)));
         }
 
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#requestMethodsAndSendAndReceiveMethods")
+        void shouldSendRequestWithBodyForAnyMethod(String requestMethod, SenderMethod method)
+                throws Exception {
+            // Given
+            configOptionsWithProxy("localhost", proxyPort);
+            String requestBody = "Request Body";
+            message.getRequestHeader().setMethod(requestMethod);
+            message.setRequestBody(requestBody);
+            message.getRequestHeader().setContentLength(message.getRequestBody().length());
+            // When
+            method.sendWith(httpSender, message);
+            // Then
+            assertThat(proxy.getReceivedMessages(), hasSize(1));
+            assertRequest(proxy.getReceivedMessages().get(0), requestMethod, requestBody);
+        }
+
         private void configOptionsWithProxy(String host, int port) {
             configOptionsWithProxy(host, port, "");
         }
@@ -1562,6 +1554,25 @@ class HttpSenderImplUnitTest {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private void assertRequest(HttpMessage msg, String requestMethod, String requestBody) {
+        assertThat(
+                msg.getRequestHeader().toString(),
+                is(
+                        equalTo(
+                                requestMethod
+                                        + " "
+                                        + getServerUri("/")
+                                        + " HTTP/1.1\r\n"
+                                        + "Content-Length: "
+                                        + requestBody.getBytes(StandardCharsets.US_ASCII).length
+                                        + "\r\n"
+                                        + "Host: localhost:"
+                                        + serverPort
+                                        + "\r\n"
+                                        + "\r\n")));
+        assertThat(msg.getRequestBody().toString(), is(equalTo(requestBody)));
     }
 
     private String getServerUri(String path) {
