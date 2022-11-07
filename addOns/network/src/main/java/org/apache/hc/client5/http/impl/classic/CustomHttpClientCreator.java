@@ -82,7 +82,7 @@ public final class CustomHttpClientCreator {
                 ChainElement.CONNECT.name());
 
         execChainDefinition.addFirst(
-                new ProtocolExec(
+                new ZapProtocolExec(
                         DefaultAuthenticationStrategy.INSTANCE,
                         DefaultAuthenticationStrategy.INSTANCE,
                         DefaultSchemePortResolver.INSTANCE,

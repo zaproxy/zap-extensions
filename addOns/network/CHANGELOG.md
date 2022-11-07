@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Update dependencies.
 
+### Fixed
+- Allow to send TRACE requests with payload and with an outgoing proxy (Issue 7578).
+
 ## [0.3.0] - 2022-10-27
 ### Added
 - Client Certificates management (PKCS#11 and PKCS#12).
