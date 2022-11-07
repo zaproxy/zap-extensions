@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Allow to send TRACE requests with payload and with an outgoing proxy (Issue 7578).
+- Correct HTTP/NTLM reauthentication to target and proxy (Issue 7566).
 
 ## [0.3.0] - 2022-10-27
 ### Added

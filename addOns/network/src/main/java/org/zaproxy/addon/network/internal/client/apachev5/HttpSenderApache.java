@@ -325,6 +325,11 @@ public class HttpSenderApache
                 RequestConfig.copy(requestCtx.getRequestConfig());
 
         boolean reauthenticate = false;
+        boolean reauthenticateProxy =
+                ctx.isRemoveUserDefinedAuthHeaders()
+                        && credentialsProvider.hasProxyAuth()
+                        && message.getRequestHeader().getHeader(HttpHeader.PROXY_AUTHORIZATION)
+                                != null;
         User user = ctx.getUser(message);
         if (user != null) {
             requestConfigBuilder.setCookieSpec(StandardCookieSpec.RELAXED);
@@ -404,6 +409,11 @@ public class HttpSenderApache
                                 return null;
                             });
 
+                    if (reauthenticateProxy && isProxyAuthNeeded(request, message)) {
+                        reauthenticateProxy = false;
+                        continue;
+                    }
+
                     if (!reauthenticate || !isAuthNeeded(requestCtx, user, request, message)) {
                         break;
                     }
@@ -459,6 +469,17 @@ public class HttpSenderApache
         request.removeHeaders(HttpHeader.AUTHORIZATION);
         requestCtx.setCredentialsProvider(
                 new HttpStateCredentialsProvider(user.getCorrespondingHttpState()));
+        return true;
+    }
+
+    private static boolean isProxyAuthNeeded(ClassicHttpRequest request, HttpMessage message) {
+        int statusCode = message.getResponseHeader().getStatusCode();
+        if (statusCode != HttpStatusCode.PROXY_AUTHENTICATION_REQUIRED
+                && statusCode != HttpStatusCode.FORBIDDEN) {
+            return false;
+        }
+
+        request.removeHeaders(HttpHeader.PROXY_AUTHORIZATION);
         return true;
     }
 
