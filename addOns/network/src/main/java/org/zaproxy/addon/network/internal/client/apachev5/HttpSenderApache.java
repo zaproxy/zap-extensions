@@ -46,6 +46,7 @@ import org.apache.hc.client5.http.impl.auth.NTLMSchemeFactory;
 import org.apache.hc.client5.http.impl.auth.SPNegoSchemeFactory;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CustomHttpClientCreator;
+import org.apache.hc.client5.http.impl.classic.ZapProtocolExec;
 import org.apache.hc.client5.http.impl.classic.ZapRequestAddCookies;
 import org.apache.hc.client5.http.impl.io.ManagedHttpClientConnectionFactory;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
@@ -330,6 +331,12 @@ public class HttpSenderApache
                         && credentialsProvider.hasProxyAuth()
                         && message.getRequestHeader().getHeader(HttpHeader.PROXY_AUTHORIZATION)
                                 != null;
+        if (reauthenticateProxy
+                || (!ctx.isRemoveUserDefinedAuthHeaders()
+                        && message.getRequestHeader().getHeader(HttpHeader.PROXY_AUTHORIZATION)
+                                != null)) {
+            requestCtx.setAttribute(ZapProtocolExec.PROXY_AUTH_DISABLED_ATTR, Boolean.TRUE);
+        }
         User user = ctx.getUser(message);
         if (user != null) {
             requestConfigBuilder.setCookieSpec(StandardCookieSpec.RELAXED);
@@ -411,6 +418,8 @@ public class HttpSenderApache
 
                     if (reauthenticateProxy && isProxyAuthNeeded(request, message)) {
                         reauthenticateProxy = false;
+                        requestCtx.setAttribute(
+                                ZapProtocolExec.PROXY_AUTH_DISABLED_ATTR, Boolean.FALSE);
                         continue;
                     }
 
