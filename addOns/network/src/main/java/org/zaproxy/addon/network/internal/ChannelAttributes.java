@@ -23,6 +23,7 @@ import io.netty.util.AttributeKey;
 import java.net.InetSocketAddress;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateService;
 import org.zaproxy.addon.network.internal.handlers.TlsConfig;
+import org.zaproxy.addon.network.internal.handlers.TlsProtocolHandler.PipelineConfigurator;
 import org.zaproxy.addon.network.internal.server.ServerConfig;
 
 /** Common attributes for a channel. */
@@ -45,6 +46,10 @@ public final class ChannelAttributes {
     /** The attribute that contains the {@link TlsConfig}. */
     public static final AttributeKey<TlsConfig> TLS_CONFIG =
             AttributeKey.newInstance("zap.tls-config");
+
+    /** The attribute that contains a {@link PipelineConfigurator}. */
+    public static final AttributeKey<PipelineConfigurator> TLS_PIPELINE_CONFIGURATOR =
+            AttributeKey.newInstance("zap.tls-pipeline-configurator");
 
     /** The attribute that indicates if a channel was upgraded to use the SSL/TLS protocol. */
     public static final AttributeKey<Boolean> TLS_UPGRADED =

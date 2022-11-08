@@ -118,6 +118,23 @@ public class TlsProtocolHandler extends ByteToMessageDecoder {
         return true;
     }
 
+    /**
+     * A pipeline configurator called after the protocol negotiation (ALPN).
+     *
+     * <p>Obtained through the channel attribute {@link
+     * ChannelAttributes#TLS_PIPELINE_CONFIGURATOR}.
+     */
+    public interface PipelineConfigurator {
+
+        /**
+         * Configures the pipeline to match the negotiated protocol.
+         *
+         * @param ctx the context.
+         * @param protocol the negotiated protocol.
+         */
+        void configure(ChannelHandlerContext ctx, String protocol);
+    }
+
     private static ApplicationProtocolConfig createApplicationProtocolConfig(TlsConfig config) {
         if (!config.isAlpnEnabled()) {
             return null;
@@ -149,6 +166,12 @@ public class TlsProtocolHandler extends ByteToMessageDecoder {
                 return;
             }
             LOGGER.debug("Negotiated protocol: {}", protocol);
+
+            PipelineConfigurator configurator =
+                    ctx.channel().attr(ChannelAttributes.TLS_PIPELINE_CONFIGURATOR).get();
+            if (configurator != null) {
+                configurator.configure(ctx, protocol);
+            }
         }
 
         @Override

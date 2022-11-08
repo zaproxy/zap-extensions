@@ -29,8 +29,12 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -76,6 +80,7 @@ import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.network.internal.ChannelAttributes;
 import org.zaproxy.addon.network.internal.TlsUtils;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateService;
+import org.zaproxy.addon.network.internal.handlers.TlsProtocolHandler.PipelineConfigurator;
 import org.zaproxy.addon.network.internal.server.BaseServer;
 import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.addon.network.testutils.TestServerCertificateService;
@@ -95,6 +100,7 @@ class TlsProtocolHandlerUnitTest {
     private Channel serverChannel;
     private List<Object> messagesReceived;
     private TlsConfig tlsConfig;
+    private PipelineConfigurator pipelineConfigurator;
 
     @BeforeAll
     static void setupAll() throws Exception {
@@ -177,6 +183,7 @@ class TlsProtocolHandlerUnitTest {
     private void initDefaultChannel(SocketChannel ch, TlsProtocolHandler tlsProtocolHandler) {
         ch.attr(ChannelAttributes.CERTIFICATE_SERVICE).set(certificateService);
         ch.attr(ChannelAttributes.TLS_CONFIG).set(tlsConfig);
+        ch.attr(ChannelAttributes.TLS_PIPELINE_CONFIGURATOR).set(pipelineConfigurator);
 
         ch.pipeline()
                 .addFirst(
@@ -472,6 +479,35 @@ class TlsProtocolHandlerUnitTest {
         Channel ch = clientTls.connect(port, "");
         // Then
         assertThat(ch.isOpen(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldCallPipelineConfiguratorAfterProtocolNegotiation() throws Exception {
+        // Given
+        int port = server.start(Server.ANY_PORT);
+        String protocol = "h0";
+        createClientTls(port, new AlpnTestHandler(), createAlpnConfig(protocol));
+        given(tlsConfig.isAlpnEnabled()).willReturn(true);
+        given(tlsConfig.getApplicationProtocols()).willReturn(List.of(protocol));
+        pipelineConfigurator = mock(PipelineConfigurator.class);
+        // When
+        clientTls.connect(port, "");
+        // Then
+        verify(pipelineConfigurator).configure(any(), eq(protocol));
+    }
+
+    @Test
+    void shouldNotCallPipelineConfiguratorIfNoProtocolNegotiated() throws Exception {
+        // Given
+        int port = server.start(Server.ANY_PORT);
+        createClientTls(port, new AlpnTestHandler(), createAlpnConfig("h0"));
+        given(tlsConfig.isAlpnEnabled()).willReturn(true);
+        given(tlsConfig.getApplicationProtocols()).willReturn(List.of("different-protocol"));
+        pipelineConfigurator = mock(PipelineConfigurator.class);
+        // When
+        assertThrows(SSLHandshakeException.class, () -> clientTls.connect(port, ""));
+        // Then
+        verify(pipelineConfigurator, times(0)).configure(any(), any());
     }
 
     private void waitForServerChannel() throws InterruptedException {
