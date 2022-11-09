@@ -63,11 +63,14 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * Implementation from {@link ProtocolExec} but with custom request copy.
+ * Implementation from {@link ProtocolExec} with custom request copy, TRACE with authentication,
+ * and attribute to disable proxy authentication.
  */
 public final class ZapProtocolExec implements ExecChainHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(ZapProtocolExec.class);
+
+    public static final String PROXY_AUTH_DISABLED_ATTR = "zap.proxy_auth_disabled";
 
     private final AuthenticationStrategy targetAuthStrategy;
     private final AuthenticationStrategy proxyAuthStrategy;
@@ -174,11 +177,6 @@ public final class ZapProtocolExec implements ExecChainHandler {
 
                 final ClassicHttpResponse response = chain.proceed(request, scope);
 
-                if (Method.TRACE.isSame(request.getMethod())) {
-                    // Do not perform authentication for TRACE request
-                    ResponseEntityProxy.enhance(response, execRuntime);
-                    return response;
-                }
                 final HttpEntity requestEntity = request.getEntity();
                 if (requestEntity != null && !requestEntity.isRepeatable()) {
                     if (LOG.isDebugEnabled()) {
@@ -251,6 +249,7 @@ public final class ZapProtocolExec implements ExecChainHandler {
             final HttpClientContext context) {
         final RequestConfig config = context.getRequestConfig();
         if (config.isAuthenticationEnabled()) {
+            final boolean proxyAuthEnabled = !Boolean.TRUE.equals(context.getAttribute(PROXY_AUTH_DISABLED_ATTR));
             final boolean targetAuthRequested = authenticator.isChallenged(
                     target, ChallengeType.TARGET, response, targetAuthExchange, context);
 
@@ -265,7 +264,7 @@ public final class ZapProtocolExec implements ExecChainHandler {
             final boolean proxyAuthRequested = authenticator.isChallenged(
                     proxy, ChallengeType.PROXY, response, proxyAuthExchange, context);
 
-            if (authCacheKeeper != null) {
+            if (authCacheKeeper != null && proxyAuthEnabled) {
                 if (proxyAuthRequested) {
                     authCacheKeeper.updateOnChallenge(proxy, null, proxyAuthExchange, context);
                 } else {
@@ -283,7 +282,7 @@ public final class ZapProtocolExec implements ExecChainHandler {
 
                 return updated;
             }
-            if (proxyAuthRequested) {
+            if (proxyAuthRequested && proxyAuthEnabled) {
                 final boolean updated = authenticator.updateAuthState(proxy, ChallengeType.PROXY, response,
                         proxyAuthStrategy, proxyAuthExchange, context);
 

@@ -71,7 +71,6 @@ import java.util.Map;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -1221,6 +1220,35 @@ class HttpSenderImplUnitTest {
             proxy.close();
         }
 
+        private void proxyWithAuth(String authRealm) {
+            proxy.setHttpMessageHandler(
+                    (ctx, msg) -> {
+                        String authorization =
+                                msg.getRequestHeader().getHeader(HttpHeader.PROXY_AUTHORIZATION);
+                        if (authorization == null
+                                || !"Basic dXNlcm5hbWU6cGFzc3dvcmQ=".equals(authorization)) {
+                            msg.setResponseHeader(
+                                    "HTTP/1.1 407\r\nProxy-Authenticate: Basic realm=\""
+                                            + authRealm
+                                            + "\"\r\n");
+                            if (!HttpRequestHeader.HEAD.equals(
+                                    msg.getRequestHeader().getMethod())) {
+                                msg.setResponseBody(PROXY_RESPONSE);
+                                msg.getResponseHeader()
+                                        .setContentLength(msg.getResponseBody().length());
+                            }
+                            return;
+                        }
+
+                        msg.setResponseHeader("HTTP/1.1 200\r\n");
+                        if (!HttpRequestHeader.HEAD.equals(msg.getRequestHeader().getMethod())) {
+                            msg.setResponseBody(SERVER_RESPONSE);
+                            msg.getResponseHeader()
+                                    .setContentLength(msg.getResponseBody().length());
+                        }
+                    });
+        }
+
         @Test
         void shouldThrowZapUnknownHostExceptionIfProxyHostUnknown() throws Exception {
             // Given
@@ -1249,7 +1277,7 @@ class HttpSenderImplUnitTest {
                     proxy.getReceivedMessages().get(0).getRequestHeader().getHeader("host"),
                     is(equalTo("localhost:" + serverPort)));
             assertThat(server.getReceivedMessages(), hasSize(0));
-            assertThat(message.getResponseBody().toString(), is(equalTo(PROXY_RESPONSE)));
+            assertResponseBody(message, PROXY_RESPONSE);
         }
 
         @Test
@@ -1265,19 +1293,13 @@ class HttpSenderImplUnitTest {
             assertThat(
                     server.getReceivedMessages().get(0).getRequestHeader().getHeader("host"),
                     is(equalTo("localhost:" + serverPort)));
-            assertThat(message.getResponseBody().toString(), is(equalTo(SERVER_RESPONSE)));
+            assertResponseBody(message, SERVER_RESPONSE);
         }
 
         @Test
         void shouldNotAuthenticateToProxyIfAuthDisabled() throws Exception {
             // Given
-            proxy.setHttpMessageHandler(
-                    (ctx, msg) -> {
-                        msg.setResponseHeader(
-                                "HTTP/1.1 407\r\nProxy-Authenticate: Basic realm=\"\"\r\n");
-                        msg.setResponseBody(PROXY_RESPONSE);
-                        msg.getResponseHeader().setContentLength(msg.getResponseBody().length());
-                    });
+            proxyWithAuth("");
             configOptionsWithProxy("localhost", proxyPort);
             options.setHttpProxyAuthEnabled(false);
             // When
@@ -1294,36 +1316,21 @@ class HttpSenderImplUnitTest {
                     proxy.getReceivedMessages().get(0).getRequestHeader().getHeader("host"),
                     is(equalTo("localhost:" + serverPort)));
             assertThat(server.getReceivedMessages(), hasSize(0));
-            assertThat(message.getResponseBody().toString(), is(equalTo(PROXY_RESPONSE)));
+            assertResponseBody(message, PROXY_RESPONSE);
         }
 
-        @Test
-        void shouldBasicAuthenticateToProxy() throws Exception {
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#requestMethodsAndSendAndReceiveMethods")
+        void shouldAuthenticateToProxy(String requestMethod, SenderMethod method) throws Exception {
             // Given
             String authRealm = "SomeRealm";
-            AtomicBoolean challenged = new AtomicBoolean();
-            proxy.setHttpMessageHandler(
-                    (ctx, msg) -> {
-                        if (challenged.compareAndSet(false, true)) {
-                            msg.setResponseHeader(
-                                    "HTTP/1.1 407\r\nProxy-Authenticate: Basic realm=\""
-                                            + authRealm
-                                            + "\"\r\n");
-                            msg.setResponseBody(PROXY_RESPONSE);
-                            msg.getResponseHeader()
-                                    .setContentLength(msg.getResponseBody().length());
-                            return;
-                        }
-
-                        msg.setResponseHeader("HTTP/1.1 200\r\n");
-                        msg.setResponseBody(SERVER_RESPONSE);
-                        msg.getResponseHeader().setContentLength(msg.getResponseBody().length());
-                    });
+            proxyWithAuth(authRealm);
             configOptionsWithProxy("localhost", proxyPort, authRealm);
+            message.getRequestHeader().setMethod(requestMethod);
             // When
-            httpSender.sendAndReceive(message);
+            method.sendWith(httpSender, message);
             // Then
-
             assertThat(proxy.getReceivedMessages(), hasSize(2));
             assertThat(
                     proxy.getReceivedMessages()
@@ -1344,47 +1351,24 @@ class HttpSenderImplUnitTest {
                     proxy.getReceivedMessages().get(1).getRequestHeader().getHeader("host"),
                     is(equalTo("localhost:" + serverPort)));
             assertThat(server.getReceivedMessages(), hasSize(0));
-            assertThat(message.getResponseBody().toString(), is(equalTo(SERVER_RESPONSE)));
+            assertResponseBody(message, SERVER_RESPONSE);
         }
 
-        @Test
-        void shouldReauthenticateIfRemoveUserDefinedAuthHeadersSet() throws Exception {
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#requestMethodsAndSendAndReceiveMethods")
+        void shouldReauthenticateIfRemoveUserDefinedAuthHeadersSet(
+                String requestMethod, SenderMethod method) throws Exception {
             // Given
             String authRealm = "SomeRealm";
-            proxy.setHttpMessageHandler(
-                    (ctx, msg) -> {
-                        String authorization =
-                                msg.getRequestHeader().getHeader(HttpHeader.PROXY_AUTHORIZATION);
-                        if (authorization == null) {
-                            msg.setResponseHeader(
-                                    "HTTP/1.1 407\r\nProxy-Authenticate: Basic realm=\""
-                                            + authRealm
-                                            + "\"\r\n");
-                            msg.getResponseHeader().setContentLength(0);
-                            msg.setResponseBody(PROXY_RESPONSE);
-                            msg.getResponseHeader()
-                                    .setContentLength(msg.getResponseBody().length());
-                            return;
-                        }
-
-                        if (!"Basic dXNlcm5hbWU6cGFzc3dvcmQ=".equals(authorization)) {
-                            msg.setResponseHeader("HTTP/1.1 403");
-                            msg.setResponseBody(PROXY_RESPONSE);
-                            msg.getResponseHeader()
-                                    .setContentLength(msg.getResponseBody().length());
-                            return;
-                        }
-
-                        msg.setResponseHeader("HTTP/1.1 200\r\n");
-                        msg.setResponseBody(SERVER_RESPONSE);
-                        msg.getResponseHeader().setContentLength(msg.getResponseBody().length());
-                    });
+            proxyWithAuth(authRealm);
             configOptionsWithProxy("localhost", proxyPort, authRealm);
             httpSender.setRemoveUserDefinedAuthHeaders(true);
             message.getRequestHeader()
                     .setHeader(HttpHeader.PROXY_AUTHORIZATION, "Basic NotValidCredentials");
+            message.getRequestHeader().setMethod(requestMethod);
             // When
-            httpSender.sendAndReceive(message);
+            method.sendWith(httpSender, message);
             // Then
             assertThat(proxy.getReceivedMessages(), hasSize(3));
             assertThat(
@@ -1415,47 +1399,24 @@ class HttpSenderImplUnitTest {
                     proxy.getReceivedMessages().get(2).getRequestHeader().getHeader("host"),
                     is(equalTo("localhost:" + serverPort)));
             assertThat(server.getReceivedMessages(), hasSize(0));
-            assertThat(message.getResponseBody().toString(), is(equalTo(SERVER_RESPONSE)));
+            assertResponseBody(message, SERVER_RESPONSE);
         }
 
-        @Test
-        void shouldNotReauthenticateIfRemoveUserDefinedAuthHeadersNotSet() throws Exception {
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#requestMethodsAndSendAndReceiveMethods")
+        void shouldNotReauthenticateIfRemoveUserDefinedAuthHeadersNotSet(
+                String requestMethod, SenderMethod method) throws Exception {
             // Given
             String authRealm = "SomeRealm";
-            proxy.setHttpMessageHandler(
-                    (ctx, msg) -> {
-                        String authorization =
-                                msg.getRequestHeader().getHeader(HttpHeader.PROXY_AUTHORIZATION);
-                        if (authorization == null) {
-                            msg.setResponseHeader(
-                                    "HTTP/1.1 407\r\nProxy-Authenticate: Basic realm=\""
-                                            + authRealm
-                                            + "\"\r\n");
-                            msg.getResponseHeader().setContentLength(0);
-                            msg.setResponseBody(PROXY_RESPONSE);
-                            msg.getResponseHeader()
-                                    .setContentLength(msg.getResponseBody().length());
-                            return;
-                        }
-
-                        if (!"Basic dXNlcm5hbWU6cGFzc3dvcmQ=".equals(authorization)) {
-                            msg.setResponseHeader("HTTP/1.1 403");
-                            msg.setResponseBody(PROXY_RESPONSE);
-                            msg.getResponseHeader()
-                                    .setContentLength(msg.getResponseBody().length());
-                            return;
-                        }
-
-                        msg.setResponseHeader("HTTP/1.1 200\r\n");
-                        msg.setResponseBody(SERVER_RESPONSE);
-                        msg.getResponseHeader().setContentLength(msg.getResponseBody().length());
-                    });
+            proxyWithAuth(authRealm);
             configOptionsWithProxy("localhost", proxyPort, authRealm);
             httpSender.setRemoveUserDefinedAuthHeaders(false);
             message.getRequestHeader()
                     .setHeader(HttpHeader.PROXY_AUTHORIZATION, "Basic NotValidCredentials");
+            message.getRequestHeader().setMethod(requestMethod);
             // When
-            httpSender.sendAndReceive(message);
+            method.sendWith(httpSender, message);
             // Then
             assertThat(proxy.getReceivedMessages(), hasSize(1));
             assertThat(
@@ -1468,22 +1429,20 @@ class HttpSenderImplUnitTest {
                     proxy.getReceivedMessages().get(0).getRequestHeader().getHeader("host"),
                     is(equalTo("localhost:" + serverPort)));
             assertThat(server.getReceivedMessages(), hasSize(0));
-            assertThat(message.getResponseBody().toString(), is(equalTo(PROXY_RESPONSE)));
+            assertResponseBody(message, PROXY_RESPONSE);
         }
 
-        @Test
-        void shouldNotBasicAuthenticateToProxyIfRealmMismatch() throws Exception {
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#requestMethodsAndSendAndReceiveMethods")
+        void shouldNotBasicAuthenticateToProxyIfRealmMismatch(
+                String requestMethod, SenderMethod method) throws Exception {
             // Given
-            proxy.setHttpMessageHandler(
-                    (ctx, msg) -> {
-                        msg.setResponseHeader(
-                                "HTTP/1.1 407\r\nProxy-Authenticate: Basic realm=\"SomeRealm\"\r\n");
-                        msg.setResponseBody(PROXY_RESPONSE);
-                        msg.getResponseHeader().setContentLength(msg.getResponseBody().length());
-                    });
+            proxyWithAuth("SomeRealm");
             configOptionsWithProxy("localhost", proxyPort, "NotSomeRealm");
+            message.getRequestHeader().setMethod(requestMethod);
             // When
-            httpSender.sendAndReceive(message);
+            method.sendWith(httpSender, message);
             // Then
             assertThat(proxy.getReceivedMessages(), hasSize(1));
             assertThat(
@@ -1496,7 +1455,7 @@ class HttpSenderImplUnitTest {
                     proxy.getReceivedMessages().get(0).getRequestHeader().getHeader("host"),
                     is(equalTo("localhost:" + serverPort)));
             assertThat(server.getReceivedMessages(), hasSize(0));
-            assertThat(message.getResponseBody().toString(), is(equalTo(PROXY_RESPONSE)));
+            assertResponseBody(message, PROXY_RESPONSE);
         }
 
         @ParameterizedTest
@@ -1567,17 +1526,12 @@ class HttpSenderImplUnitTest {
                     (ctx, msg) -> {
                         String authorization =
                                 msg.getRequestHeader().getHeader(HttpHeader.AUTHORIZATION);
-                        if (authorization == null) {
+                        if (authorization == null
+                                || !"Basic dXNlcm5hbWU6cGFzc3dvcmQ=".equals(authorization)) {
                             msg.setResponseHeader(
                                     "HTTP/1.1 401\r\nWWW-Authenticate: Basic realm=\""
                                             + authRealm
                                             + "\"\r\n");
-                            msg.getResponseHeader().setContentLength(0);
-                            return;
-                        }
-
-                        if (!"Basic dXNlcm5hbWU6cGFzc3dvcmQ=".equals(authorization)) {
-                            msg.setResponseHeader("HTTP/1.1 403");
                             msg.getResponseHeader().setContentLength(0);
                             return;
                         }
@@ -1608,7 +1562,7 @@ class HttpSenderImplUnitTest {
                             .getRequestHeader()
                             .getHeader(HttpHeader.AUTHORIZATION),
                     is(equalTo("Basic dXNlcm5hbWU6cGFzc3dvcmQ=")));
-            assertThat(message.getResponseBody().toString(), is(equalTo(SERVER_RESPONSE)));
+            assertResponseBody(message, SERVER_RESPONSE);
         }
 
         @Test
@@ -1640,7 +1594,7 @@ class HttpSenderImplUnitTest {
                             .getRequestHeader()
                             .getHeader(HttpHeader.AUTHORIZATION),
                     is(equalTo("Basic dXNlcm5hbWU6cGFzc3dvcmQ=")));
-            assertThat(message.getResponseBody().toString(), is(equalTo(SERVER_RESPONSE)));
+            assertResponseBody(message, SERVER_RESPONSE);
         }
 
         @Test
@@ -1697,6 +1651,13 @@ class HttpSenderImplUnitTest {
                                         + "\r\n"
                                         + "\r\n")));
         assertThat(msg.getRequestBody().toString(), is(equalTo(requestBody)));
+    }
+
+    private static void assertResponseBody(HttpMessage message, String body) {
+        if (HttpRequestHeader.HEAD.equals(message.getRequestHeader().getMethod())) {
+            return;
+        }
+        assertThat(message.getResponseBody().toString(), is(equalTo(body)));
     }
 
     private String getServerUri(String path) {
