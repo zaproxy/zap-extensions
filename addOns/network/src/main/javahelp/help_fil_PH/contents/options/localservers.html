@@ -34,6 +34,11 @@
 	<br>
 	The option SSLv2Hello must be selected in conjunction with at least one SSL/TLS version.
 
+	<H4>ALPN</H4>
+	Allows to enable and select the application protocols negotiated during a TLS handshake (ALPN extension).
+	<br>
+	<strong>Note:</strong> The connection is closed if the client establishing the connection does not support ALPN or any of the selected protocols.
+
 	<H4>Mode</H4>
 	Allows to specify if the API should be exposed or if it should be allowed to proxy requests. For example, one can configure a
 	server exposing just the the API to external addresses (i.e. remote control) while having a proxy for local addresses only.
