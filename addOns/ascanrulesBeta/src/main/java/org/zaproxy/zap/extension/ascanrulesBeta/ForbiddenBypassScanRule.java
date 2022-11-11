@@ -110,6 +110,9 @@ public class ForbiddenBypassScanRule extends AbstractAppPlugin {
         for (String pathPayload : pathPayloads) {
             HttpMessage reqWithPayload =
                     new HttpMessage(new URI(schema + "://" + host + "" + pathPayload, true));
+            reqWithPayload
+                    .getRequestHeader()
+                    .setVersion(getBaseMsg().getRequestHeader().getVersion());
             sendAndReceive(reqWithPayload);
             if (reqWithPayload.getResponseHeader().getStatusCode() == HttpStatusCode.OK) {
                 createAlert(uri.toString(), reqWithPayload, pathPayload).raise();
@@ -146,6 +149,9 @@ public class ForbiddenBypassScanRule extends AbstractAppPlugin {
             }
 
             HttpMessage reqWithPayload = new HttpMessage(new URI(tmpUri, true));
+            reqWithPayload
+                    .getRequestHeader()
+                    .setVersion(getBaseMsg().getRequestHeader().getVersion());
 
             String[] headerPayload = header.split(":");
 

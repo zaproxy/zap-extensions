@@ -151,6 +151,7 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin {
             }
             // and send it as a GET, unauthorised.
             HttpMessage attackmsg = new HttpMessage(attackURI);
+            attackmsg.getRequestHeader().setVersion(getBaseMsg().getRequestHeader().getVersion());
             sendAndReceive(attackmsg, false); // do not follow redirects
 
             if (isPage200(attackmsg)) {

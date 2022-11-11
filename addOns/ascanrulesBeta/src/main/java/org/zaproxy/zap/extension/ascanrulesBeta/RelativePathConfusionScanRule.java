@@ -244,6 +244,9 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                                 null,
                                 null);
                 HttpMessage hackedMessage = new HttpMessage(hackedUri);
+                hackedMessage
+                        .getRequestHeader()
+                        .setVersion(getBaseMsg().getRequestHeader().getVersion());
                 try {
                     hackedMessage.setCookieParams(originalMsg.getCookieParams());
                 } catch (Exception e) {

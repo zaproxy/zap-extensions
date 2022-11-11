@@ -259,6 +259,9 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                             .setMethod(HttpRequestHeader.GET); // it's always a GET for a redirect
                     msgRedirect
                             .getRequestHeader()
+                            .setVersion(getBaseMsg().getRequestHeader().getVersion());
+                    msgRedirect
+                            .getRequestHeader()
                             .setContentLength(0); // since we send a GET, the body will be 0 long
                     if (!cookies.isEmpty()) {
                         // if a previous request sent back a cookie that has not since been
@@ -487,6 +490,9 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                             msgRedirect.getRequestHeader().setURI(newLocationWorkaround);
                         }
                         msgRedirect.getRequestHeader().setMethod(HttpRequestHeader.GET);
+                        msgRedirect
+                                .getRequestHeader()
+                                .setVersion(getBaseMsg().getRequestHeader().getVersion());
                         msgRedirect
                                 .getRequestHeader()
                                 .setContentLength(

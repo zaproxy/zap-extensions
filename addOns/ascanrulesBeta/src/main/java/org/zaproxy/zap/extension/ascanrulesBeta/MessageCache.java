@@ -87,6 +87,7 @@ public class MessageCache {
             // request the file, then add the file to the cache
             // use the cookies from an original request, in case authorisation is required
             HttpMessage requestmsg = new HttpMessage(uri);
+            requestmsg.getRequestHeader().setVersion(basemsg.getRequestHeader().getVersion());
             try {
                 requestmsg.setCookieParams(basemsg.getCookieParams());
             } catch (Exception e) {
