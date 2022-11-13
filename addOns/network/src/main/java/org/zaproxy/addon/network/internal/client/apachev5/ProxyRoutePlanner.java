@@ -22,6 +22,7 @@ package org.zaproxy.addon.network.internal.client.apachev5;
 import org.apache.hc.client5.http.impl.routing.DefaultRoutePlanner;
 import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.protocol.HttpContext;
+import org.parosproxy.paros.network.HttpHeader;
 import org.zaproxy.addon.network.ConnectionOptions;
 import org.zaproxy.addon.network.internal.client.HttpProxy;
 
@@ -42,6 +43,6 @@ public class ProxyRoutePlanner extends DefaultRoutePlanner {
         if (!options.isUseHttpProxy(target.getHostName())) {
             return null;
         }
-        return new HttpHost(target.getSchemeName(), proxy.getHost(), proxy.getPort());
+        return new HttpHost(HttpHeader.HTTP, proxy.getHost(), proxy.getPort());
     }
 }
