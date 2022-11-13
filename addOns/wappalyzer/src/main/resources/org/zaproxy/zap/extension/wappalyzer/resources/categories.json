@@ -742,5 +742,12 @@
     ],
     "name": "Fulfilment",
     "priority": 6
+  },
+  "108": {
+    "groups": [
+      1
+    ],
+    "name": "Ecommerce frontends",
+    "priority": 6
   }
 }

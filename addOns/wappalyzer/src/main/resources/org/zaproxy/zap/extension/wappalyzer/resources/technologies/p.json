@@ -158,7 +158,7 @@
   },
   "PWA Studio": {
     "cats": [
-      6
+      108
     ],
     "description": "PWA Studio is a collection of tools that lets developers build complex Progressive Web Applications on top of Magento 2 or Adobe Commerce stores.",
     "icon": "PWA Studio.png",
@@ -2435,7 +2435,7 @@
     "cats": [
       66
     ],
-    "css": ".p-(?:toast|calendar|dialog-mask|menuitem-text)(?:-content)?\\{",
+    "css": "\\.p-(?:toast|calendar|dialog-mask|menuitem-text)(?:-content)?\\{",
     "description": "PrimeReact is a rich set of open-source UI Components for React.",
     "icon": "PrimeReact.svg",
     "oss": true,
@@ -2449,7 +2449,7 @@
     "cats": [
       66
     ],
-    "css": ".p-(?:toast|calendar|dialog-mask|menuitem-text)(?:-content)?\\{",
+    "css": "\\.p-(?:toast|calendar|dialog-mask|menuitem-text)(?:-content)?\\{",
     "description": "PrimeVue is a rich set of open-source UI Components for Vue.js.",
     "icon": "PrimeVue.svg",
     "oss": true,

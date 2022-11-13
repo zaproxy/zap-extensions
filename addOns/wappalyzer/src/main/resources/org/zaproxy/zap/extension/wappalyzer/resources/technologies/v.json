@@ -746,6 +746,23 @@
     "saas": true,
     "website": "https://www.visualsoft.co.uk/"
   },
+  "Visx": {
+    "cats": [
+      25
+    ],
+    "description": "Visx is a collection of React-based data visualisation tools developed by Airbnb.",
+    "dom": {
+      "g.visx-group,g.vx-group": {
+        "attributes": {
+          "class": "(?:v(?:is)?x)-group"
+        }
+      }
+    },
+    "icon": "Visx.svg",
+    "oss": true,
+    "requires": "React",
+    "website": "https://airbnb.io/visx/"
+  },
   "Vitals": {
     "cats": [
       100,
@@ -928,10 +945,9 @@
   },
   "Vue Storefront": {
     "cats": [
-      6,
-      12
+      108
     ],
-    "description": "Vue Storefront is a frontend platform for headless commerce.",
+    "description": "Vue Storefront is a frontend platform for headless ecommerce.",
     "icon": "vue-storefront.svg",
     "implies": "Vue.js",
     "meta": {
@@ -1081,5 +1097,16 @@
       "generator": "vibecommerce"
     },
     "website": "http://vibecommerce.com.br"
+  },
+  "vxe-table": {
+    "cats": [
+      59
+    ],
+    "description": "vxe-table is a Vue.js based PC form component, support add, delete, change, virtual scroll, lazy load, shortcut menu, data validation, tree structure, print export, form rendering, data paging, virtual list, modal window, custom template, renderer, flexible configuration items, extension interface.",
+    "dom": "div[class*='vxe-table']",
+    "icon": "vxe-table.png",
+    "oss": true,
+    "requires": "Vue.js",
+    "website": "https://vxetable.cn"
   }
 }

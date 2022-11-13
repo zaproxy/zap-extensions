@@ -147,6 +147,35 @@
     },
     "website": "http://dragonflycms.org"
   },
+  "CRM+": {
+    "cats": [
+      53
+    ],
+    "description": "CRM+ is a German CRM software product building on Vtiger with GDPR-compliant extensions and improvements.",
+    "dom": {
+      "div.footer > div.floatRight ": {
+        "text": "Powered by Brainformatik GmbH"
+      }
+    },
+    "icon": "CRM+.png",
+    "implies": [
+      "MariaDB",
+      "amCharts",
+      "Sentry",
+      "Vtiger"
+    ],
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa",
+      "freemium"
+    ],
+    "requires": [
+      "Apache",
+      "PHP"
+    ],
+    "website": "https://www.brainformatik.com"
+  },
   "CS Cart": {
     "cats": [
       6
