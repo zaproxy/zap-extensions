@@ -2270,18 +2270,6 @@
     "scriptSrc": "/wp-content/plugins/google-language-translator/.+scripts\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://gtranslate.io"
   },
-  "Translucide": {
-    "cats": [
-      1
-    ],
-    "icon": "translucide.svg",
-    "implies": [
-      "PHP",
-      "jQuery"
-    ],
-    "scriptSrc": "lucide\\.init(?:\\.min)?\\.js",
-    "website": "http://www.translucide.net"
-  },
   "Transmart": {
     "cats": [
       99

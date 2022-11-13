@@ -46,6 +46,9 @@
     },
     "icon": "hcl-dx.png",
     "implies": "Java",
+    "js": {
+      "ibmCfg.themeConfig.modulesWebAppBaseURI": "/wps/themeModules"
+    },
     "pricing": [
       "high",
       "poa"
@@ -1534,7 +1537,7 @@
   },
   "Hyva Themes": {
     "cats": [
-      19
+      108
     ],
     "description": "Hyva Themes is a performance-optimised theme for Magento 2 which eliminated the third-party libraries and having only two dependencies Alpine.js and Tailwind CSS.",
     "headers": {

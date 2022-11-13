@@ -1402,7 +1402,8 @@
     "cookies": {
       "__utma": "",
       "_ga": "",
-      "_gat": ""
+      "_ga_*": "\\;version:GA4",
+      "_gat": "\\;version:UA"
     },
     "description": "Google Analytics is a free web analytics service that tracks and reports website traffic.",
     "dom": "amp-analytics[type*=googleanalytics]",

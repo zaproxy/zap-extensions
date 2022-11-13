@@ -344,6 +344,8 @@
     "js": {
       "OktaAuth": "",
       "isOktaEnabled": "",
+      "okta.cdnUrlHostname": "",
+      "okta.locale": "",
       "oktaCurrentSessionUrl": ""
     },
     "pricing": [
