@@ -26,29 +26,36 @@ import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeResult;
 
-class FullHtmlStringEncoderUnitTest extends ProcessorTests<FullHtmlStringEncoder> {
+public class UnicodeEncoderUnitTest extends ProcessorTests<UnicodeEncoder> {
 
     @Override
-    protected FullHtmlStringEncoder createProcessor() {
-        return FullHtmlStringEncoder.getSingleton();
+    protected UnicodeEncoder createProcessor() {
+        return UnicodeEncoder.getSingleton();
     }
 
     @Test
-    void shouldEncodeSimpleScriptTag() throws Exception {
+    void shouldEncodeWithoutError() throws Exception {
         // Given / When
-        EncodeDecodeResult result = processor.process("<script>");
+        EncodeDecodeResult result = processor.process("<script>alert('✅')</script>");
         // Then
         assertThat(result.hasError(), is(equalTo(false)));
         assertThat(
-                result.getResult(), is(equalTo("&#60;&#115;&#99;&#114;&#105;&#112;&#116;&#62;")));
+                result.getResult(),
+                is(
+                        equalTo(
+                                "%u003c%u0073%u0063%u0072%u0069%u0070%u0074%u003e%u0061%u006c%u0065%u0072%u0074%u0028%u0027%u2705%u0027%u0029%u003c%u002f%u0073%u0063%u0072%u0069%u0070%u0074%u003e")));
     }
 
     @Test
-    void shouldEncodeStringWithEmoji() throws Exception {
+    void shouldEncodeMultilineInput() throws Exception {
         // Given / When
-        EncodeDecodeResult result = processor.process("fred✅");
+        EncodeDecodeResult result = processor.process("some multiline\ncontent");
         // Then
         assertThat(result.hasError(), is(equalTo(false)));
-        assertThat(result.getResult(), is(equalTo("&#102;&#114;&#101;&#100;&#9989;")));
+        assertThat(
+                result.getResult(),
+                is(
+                        equalTo(
+                                "%u0073%u006f%u006d%u0065%u0020%u006d%u0075%u006c%u0074%u0069%u006c%u0069%u006e%u0065%u000a%u0063%u006f%u006e%u0074%u0065%u006e%u0074")));
     }
 }

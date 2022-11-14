@@ -26,29 +26,28 @@ import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeResult;
 
-class FullHtmlStringEncoderUnitTest extends ProcessorTests<FullHtmlStringEncoder> {
+class Md5HasherUnitTest extends ProcessorTests<Md5Hasher> {
 
     @Override
-    protected FullHtmlStringEncoder createProcessor() {
-        return FullHtmlStringEncoder.getSingleton();
+    protected Md5Hasher createProcessor() {
+        return Md5Hasher.getSingleton();
+    }
+
+    @Override
+    void shouldHandleEmptyInput() throws Exception {
+        // Given / When
+        EncodeDecodeResult result = processor.process("");
+        // Then
+        assertThat(result.hasError(), is(equalTo(false)));
+        assertThat(result.getResult(), is(equalTo("D41D8CD98F00B204E9800998ECF8427E")));
     }
 
     @Test
-    void shouldEncodeSimpleScriptTag() throws Exception {
+    void shouldEncodeSimpleString() throws Exception {
         // Given / When
-        EncodeDecodeResult result = processor.process("<script>");
+        EncodeDecodeResult result = processor.process("admin");
         // Then
         assertThat(result.hasError(), is(equalTo(false)));
-        assertThat(
-                result.getResult(), is(equalTo("&#60;&#115;&#99;&#114;&#105;&#112;&#116;&#62;")));
-    }
-
-    @Test
-    void shouldEncodeStringWithEmoji() throws Exception {
-        // Given / When
-        EncodeDecodeResult result = processor.process("fred✅");
-        // Then
-        assertThat(result.hasError(), is(equalTo(false)));
-        assertThat(result.getResult(), is(equalTo("&#102;&#114;&#101;&#100;&#9989;")));
+        assertThat(result.getResult(), is(equalTo("21232F297A57A5A743894A0E4A801FC3")));
     }
 }

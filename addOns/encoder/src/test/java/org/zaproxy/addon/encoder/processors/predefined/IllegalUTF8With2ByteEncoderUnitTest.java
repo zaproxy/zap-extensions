@@ -26,29 +26,37 @@ import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeResult;
 
-class FullHtmlStringEncoderUnitTest extends ProcessorTests<FullHtmlStringEncoder> {
+public class IllegalUTF8With2ByteEncoderUnitTest
+        extends ProcessorTests<IllegalUTF8With2ByteEncoder> {
 
     @Override
-    protected FullHtmlStringEncoder createProcessor() {
-        return FullHtmlStringEncoder.getSingleton();
+    protected IllegalUTF8With2ByteEncoder createProcessor() {
+        return IllegalUTF8With2ByteEncoder.getSingleton();
     }
 
     @Test
-    void shouldEncodeSimpleScriptTag() throws Exception {
+    void shouldEncodeWithoutError() throws Exception {
         // Given / When
-        EncodeDecodeResult result = processor.process("<script>");
+        EncodeDecodeResult result = processor.process("<script>alert('✅')</script>");
         // Then
         assertThat(result.hasError(), is(equalTo(false)));
         assertThat(
-                result.getResult(), is(equalTo("&#60;&#115;&#99;&#114;&#105;&#112;&#116;&#62;")));
+                result.getResult(),
+                is(
+                        equalTo(
+                                "%c0%bc%c1%b3%c1%a3%c1%b2%c1%a9%c1%b0%c1%b4%c0%be%c1%a1%c1%ac%c1%a5%c1%b2%c1%b4%c0%a8%c0%a7%c0%85%c0%a7%c0%a9%c0%bc%c0%af%c1%b3%c1%a3%c1%b2%c1%a9%c1%b0%c1%b4%c0%be")));
     }
 
     @Test
-    void shouldEncodeStringWithEmoji() throws Exception {
+    void shouldEncodeMultilineInput() throws Exception {
         // Given / When
-        EncodeDecodeResult result = processor.process("fred✅");
+        EncodeDecodeResult result = processor.process("some multiline\ncontent");
         // Then
         assertThat(result.hasError(), is(equalTo(false)));
-        assertThat(result.getResult(), is(equalTo("&#102;&#114;&#101;&#100;&#9989;")));
+        assertThat(
+                result.getResult(),
+                is(
+                        equalTo(
+                                "%c1%b3%c1%af%c1%ad%c1%a5%c0%a0%c1%ad%c1%b5%c1%ac%c1%b4%c1%a9%c1%ac%c1%a9%c1%ae%c1%a5%c0%8a%c1%a3%c1%af%c1%ae%c1%b4%c1%a5%c1%ae%c1%b4")));
     }
 }
