@@ -467,6 +467,37 @@ class HttpSenderImplUnitTest {
         @ParameterizedTest
         @MethodSource(
                 "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#requestMethodsAndSendAndReceiveMethods")
+        void shouldBeUpdatedWithExactContentLengthHeaderCase(
+                String requestMethod, SenderMethod method) throws Exception {
+            // Given
+            message.getRequestHeader().setHeader("Host", "localhost:" + serverPort);
+            message.getRequestHeader().addHeader("content-length", "0");
+            message.getRequestHeader().addHeader("OtherHeader", "SomeValue");
+            // When
+            method.sendWith(httpSender, message);
+            // Then
+            String expectedRequestHeader =
+                    "GET "
+                            + getServerUri("/")
+                            + " HTTP/1.1\r\n"
+                            + "Host: localhost:"
+                            + serverPort
+                            + "\r\n"
+                            + "content-length: 0\r\n"
+                            + "OtherHeader: SomeValue\r\n"
+                            + "\r\n";
+            assertThat(message.getRequestHeader().toString(), is(equalTo(expectedRequestHeader)));
+            assertThat(server.getReceivedMessages(), hasSize(1));
+            HttpMessage receivedMessage = server.getReceivedMessages().get(0);
+            assertThat(
+                    receivedMessage.getRequestHeader().toString(),
+                    is(equalTo(expectedRequestHeader)));
+            assertThat(receivedMessage.getRequestBody().toString(), is(equalTo("")));
+        }
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#requestMethodsAndSendAndReceiveMethods")
         void shouldBeSentWithRetriesOnIoError(String requestMethod, SenderMethod method)
                 throws Exception {
             // Given

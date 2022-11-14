@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Fixed
 - Use always a plain connection to the outgoing HTTP proxy (Issue 7594).
+- Do not change the case of the Content-Length header.
 
 ## [0.5.0] - 2022-11-09
 ### Fixed

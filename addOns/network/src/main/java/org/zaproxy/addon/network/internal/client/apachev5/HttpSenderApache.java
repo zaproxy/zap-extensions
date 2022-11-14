@@ -698,15 +698,18 @@ public class HttpSenderApache
     private static void copyHeaders(MessageHeaders from, HttpHeader to) {
         for (Iterator<Header> it = from.headerIterator(); it.hasNext(); ) {
             Header header = it.next();
-            to.addHeader(header.getName(), header.getValue());
-        }
-
-        String contentLength = to.getHeader(HttpHeader.CONTENT_LENGTH);
-        if (contentLength != null) {
-            try {
-                to.setContentLength(Integer.parseInt(contentLength));
-            } catch (NumberFormatException e) {
-                LOGGER.debug("Invalid content-length value: {}", contentLength);
+            String name = header.getName();
+            if (HttpHeader.CONTENT_LENGTH.equalsIgnoreCase(name)) {
+                String contentLength = header.getValue();
+                try {
+                    to.setContentLength(Integer.parseInt(contentLength));
+                } catch (NumberFormatException e) {
+                    LOGGER.debug("Invalid content-length value: {}", contentLength);
+                }
+                // Set it again to keep the exact case.
+                to.setHeader(name, contentLength);
+            } else {
+                to.addHeader(name, header.getValue());
             }
         }
     }
