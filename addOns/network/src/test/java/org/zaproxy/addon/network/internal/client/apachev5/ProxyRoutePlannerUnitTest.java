@@ -30,7 +30,9 @@ import static org.mockito.Mockito.mock;
 import java.net.PasswordAuthentication;
 import org.apache.hc.core5.http.HttpHost;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.parosproxy.paros.network.HttpHeader;
 import org.zaproxy.addon.network.ConnectionOptions;
 import org.zaproxy.addon.network.internal.client.HttpProxy;
 
@@ -54,10 +56,10 @@ class ProxyRoutePlannerUnitTest {
         proxyRoutePlanner = new ProxyRoutePlanner(connectionOptions);
     }
 
-    @Test
-    void shouldProxyIfEnabledForHost() {
+    @ParameterizedTest
+    @ValueSource(strings = {HttpHeader.HTTP, HttpHeader.HTTPS})
+    void shouldProxyIfEnabledForHost(String schemeName) {
         // Given
-        String schemeName = "http";
         String hostName = "localhost";
         HttpHost host = new HttpHost(schemeName, hostName, 8080);
         given(connectionOptions.isUseHttpProxy(hostName)).willReturn(true);
@@ -65,15 +67,15 @@ class ProxyRoutePlannerUnitTest {
         HttpHost proxy = proxyRoutePlanner.determineProxy(host, null);
         // Then
         assertThat(proxy, is(notNullValue()));
-        assertThat(proxy.getSchemeName(), is(equalTo(schemeName)));
+        assertThat(proxy.getSchemeName(), is(equalTo(HttpHeader.HTTP)));
         assertThat(proxy.getHostName(), is(equalTo(HTTP_PROXY.getHost())));
         assertThat(proxy.getPort(), is(equalTo(HTTP_PROXY.getPort())));
     }
 
-    @Test
-    void shouldNotProxyIfNotEnabledForHost() {
+    @ParameterizedTest
+    @ValueSource(strings = {HttpHeader.HTTP, HttpHeader.HTTPS})
+    void shouldNotProxyIfNotEnabledForHost(String schemeName) {
         // Given
-        String schemeName = "http";
         String hostName = "localhost";
         HttpHost host = new HttpHost(schemeName, hostName, 8080);
         given(connectionOptions.isUseHttpProxy(hostName)).willReturn(false);

@@ -1208,6 +1208,10 @@ class HttpSenderImplUnitTest {
             proxy = new TestHttpServer(group, mainHandlerExecutor);
             proxy.setHttpMessageHandler(
                     (ctx, msg) -> {
+                        if (HttpRequestHeader.CONNECT.equals(msg.getRequestHeader().getMethod())) {
+                            msg.setResponseHeader("HTTP/1.1 200 OK");
+                            return;
+                        }
                         msg.setResponseHeader(DEFAULT_SERVER_HEADER);
                         msg.setResponseBody(PROXY_RESPONSE);
                         msg.getResponseHeader().setContentLength(msg.getResponseBody().length());
@@ -1266,15 +1270,38 @@ class HttpSenderImplUnitTest {
         }
 
         @Test
-        void shouldProxyIfEnabled() throws Exception {
+        void shouldProxyHttpIfEnabled() throws Exception {
             // Given
             configOptionsWithProxy("localhost", proxyPort);
+            message.getRequestHeader().setSecure(false);
             // When
             httpSender.sendAndReceive(message);
             // Then
             assertThat(proxy.getReceivedMessages(), hasSize(1));
             assertThat(
                     proxy.getReceivedMessages().get(0).getRequestHeader().getHeader("host"),
+                    is(equalTo("localhost:" + serverPort)));
+            assertThat(server.getReceivedMessages(), hasSize(0));
+            assertResponseBody(message, PROXY_RESPONSE);
+        }
+
+        @Test
+        void shouldProxyHttpsIfEnabled() throws Exception {
+            // Given
+            configOptionsWithProxy("localhost", proxyPort);
+            message.getRequestHeader().setSecure(true);
+            // When
+            httpSender.sendAndReceive(message);
+            // Then
+            assertThat(proxy.getReceivedMessages(), hasSize(2));
+            assertThat(
+                    proxy.getReceivedMessages().get(0).getRequestHeader().getPrimeHeader(),
+                    is(equalTo("CONNECT localhost:" + serverPort + " HTTP/1.1")));
+            assertThat(
+                    proxy.getReceivedMessages().get(0).getRequestHeader().getHeader("host"),
+                    is(equalTo("localhost:" + serverPort)));
+            assertThat(
+                    proxy.getReceivedMessages().get(1).getRequestHeader().getHeader("host"),
                     is(equalTo("localhost:" + serverPort)));
             assertThat(server.getReceivedMessages(), hasSize(0));
             assertResponseBody(message, PROXY_RESPONSE);
