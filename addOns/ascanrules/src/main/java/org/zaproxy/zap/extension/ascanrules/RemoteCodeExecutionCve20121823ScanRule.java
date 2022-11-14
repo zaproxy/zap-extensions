@@ -157,7 +157,9 @@ public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin {
             // send it as a POST request, unauthorised, with the payload as the POST body.
             HttpRequestHeader requestHeader =
                     new HttpRequestHeader(
-                            HttpRequestHeader.POST, attackURI, HttpRequestHeader.HTTP11);
+                            HttpRequestHeader.POST,
+                            attackURI,
+                            getBaseMsg().getRequestHeader().getVersion());
             HttpMessage attackmsg = new HttpMessage(requestHeader);
             attackmsg.setRequestBody(payload);
             requestHeader.setContentLength(attackmsg.getRequestBody().length());

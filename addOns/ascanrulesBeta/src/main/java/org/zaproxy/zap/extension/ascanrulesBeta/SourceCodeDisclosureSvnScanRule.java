@@ -320,6 +320,9 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                                             + ".svn-base",
                                     null,
                                     null));
+            svnsourcefileattackmsg
+                    .getRequestHeader()
+                    .setVersion(getBaseMsg().getRequestHeader().getVersion());
             svnsourcefileattackmsg.setCookieParams(this.getBaseMsg().getCookieParams());
             // svnsourcefileattackmsg.setRequestHeader(this.getBaseMsg().getRequestHeader());
             sendAndReceive(svnsourcefileattackmsg, false); // do not follow redirects
@@ -425,6 +428,9 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                                         pathminusfilename + ".svn/wc.db",
                                         null,
                                         null));
+                svnWCDBAttackMsg
+                        .getRequestHeader()
+                        .setVersion(getBaseMsg().getRequestHeader().getVersion());
                 svnWCDBAttackMsg.setCookieParams(this.getBaseMsg().getCookieParams());
                 // svnsourcefileattackmsg.setRequestHeader(this.getBaseMsg().getRequestHeader());
                 sendAndReceive(svnWCDBAttackMsg, false); // do not follow redirects
@@ -554,6 +560,12 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                                                                         + svnFilename,
                                                                 null,
                                                                 null));
+                                        svnSourceFileAttackMsg
+                                                .getRequestHeader()
+                                                .setVersion(
+                                                        getBaseMsg()
+                                                                .getRequestHeader()
+                                                                .getVersion());
                                         svnSourceFileAttackMsg.setCookieParams(
                                                 this.getBaseMsg().getCookieParams());
                                         // svnsourcefileattackmsg.setRequestHeader(this.getBaseMsg().getRequestHeader());

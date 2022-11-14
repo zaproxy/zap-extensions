@@ -4,7 +4,15 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Fixed
+- Preserve the HTTP version in the scan rules:
+  - Backup File Disclosure
+  - Bypassing 403
+  - Cross-Domain Misconfiguration
+  - Relative Path Confusion
+  - Source Code Disclosure - Git
+  - Source Code Disclosure - SVN
+  - Possible Username Enumeration
 
 ## [43] - 2022-10-27
 ### Changed

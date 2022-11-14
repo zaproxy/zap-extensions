@@ -134,6 +134,9 @@ public class WebCacheDeceptionScanRule extends AbstractAppPlugin {
 
         HttpMessage unauthorisedMessage = new HttpMessage(uri);
         unauthorisedMessage.getRequestHeader().setMethod(method);
+        unauthorisedMessage
+                .getRequestHeader()
+                .setVersion(getBaseMsg().getRequestHeader().getVersion());
         HttpSender sender = new HttpSender(HttpSender.ACTIVE_SCANNER_INITIATOR);
         sender.setUseGlobalState(false);
         sender.sendAndReceive(unauthorisedMessage);
