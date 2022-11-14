@@ -28,7 +28,7 @@ The import progress is shown in the progress tab.
 <H3>Context for Adding DDNs</H3>
 The dialogues also allow selecting a Context, optionally. If a context is selected,
 <ul>
-    <li>the target URL used for importing is added to the context</li>
+    <li>each imported endpoint is included in the context, unless its URL matches an already existing <em>Include in Context</em> regex entry.</li>
     <li>the imported spec is saved to the session database</li>
     <li>data driven nodes are generated for endpoints with path parameters</li>
 </ul>

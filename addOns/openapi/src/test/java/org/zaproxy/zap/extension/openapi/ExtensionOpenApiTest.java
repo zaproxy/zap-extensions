@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.openapi;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -45,6 +46,8 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.db.RecordHistory;
@@ -54,6 +57,7 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.extension.ascan.VariantFactory;
+import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -71,6 +75,7 @@ class ExtensionOpenApiTest extends AbstractServerTest {
         Model.setSingletonForTesting(model);
 
         extensionOpenApi = new ExtensionOpenApi();
+        extensionOpenApi.initModel(model);
 
         ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
 
@@ -175,6 +180,56 @@ class ExtensionOpenApiTest extends AbstractServerTest {
         // Then
         assertThat(results.getErrors(), is(not(empty())));
         assertThat(results.getHistoryReferences(), hasSize(1));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void shouldIncludeAllRegexUrlsInContextWithNoExistingMatchingRegex(String target)
+            throws IOException {
+        // Given
+        File file = createLocalDefinition("v3/PetStore_defn.json").toFile();
+        Context context = model.getSession().getNewContext("Test Context");
+        String serverUrl = "http://localhost:" + nano.getListeningPort();
+        String targetUrl = target != null ? serverUrl + "/v1" : null;
+        String expectedUrl = target != null ? targetUrl : serverUrl + "/PetStore";
+        // When
+        extensionOpenApi.importOpenApiDefinition(file, targetUrl, false, context.getId());
+        // Then
+        assertThat(context.getIncludeInContextRegexs().size(), is(13));
+        assertThat(
+                context.getIncludeInContextRegexs(),
+                contains(
+                        expectedUrl + "/pet",
+                        expectedUrl + "/pet/findByStatus",
+                        expectedUrl + "/pet/findByTags",
+                        expectedUrl + "/pet/[^/?]+",
+                        expectedUrl + "/store/inventory",
+                        expectedUrl + "/store/order",
+                        expectedUrl + "/store/order/[^/?]+",
+                        expectedUrl + "/user",
+                        expectedUrl + "/user/createWithArray",
+                        expectedUrl + "/user/createWithList",
+                        expectedUrl + "/user/login",
+                        expectedUrl + "/user/logout",
+                        expectedUrl + "/user/[^/?]+"));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void shouldNotIncludeRegexUrlsInContextWithExistingMatchingRegex(String target)
+            throws IOException {
+        // Given
+        File file = createLocalDefinition("v3/PetStore_defn.json").toFile();
+        Context context = model.getSession().getNewContext("Test Context");
+        String serverUrl = "http://localhost:" + nano.getListeningPort();
+        String targetUrl = target != null ? serverUrl + "/v1" : null;
+        String includedRegex = serverUrl + ".*";
+        context.addIncludeInContextRegex(includedRegex);
+        // When
+        extensionOpenApi.importOpenApiDefinition(file, targetUrl, false, context.getId());
+        // Then
+        assertThat(context.getIncludeInContextRegexs().size(), is(1));
+        assertThat(context.getIncludeInContextRegexs(), contains(includedRegex));
     }
 
     private Path createLocalDefinition(String path) throws IOException {

@@ -412,7 +412,6 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                                 if (context != null) {
                                     converter.updateVariantChecks(
                                             context,
-                                            targetUrl,
                                             variantChecksMap.computeIfAbsent(
                                                     contextId, VariantOpenApiChecks::new));
                                 }

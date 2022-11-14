@@ -49,8 +49,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.regex.Pattern;
-import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -468,39 +466,22 @@ public class SwaggerConverter implements Converter {
     }
 
     public void updateVariantChecks(
-            Context context, String targetUrl, VariantOpenApi.VariantOpenApiChecks variantChecks)
+            Context context, VariantOpenApi.VariantOpenApiChecks variantChecks)
             throws SwaggerException {
-        if (targetUrl != null && !targetUrl.isEmpty()) {
-            includeInContext(context, targetUrl);
-        }
         for (OperationModel operation : getOperationModels()) {
             String uri = operation.getPath();
-            if (targetUrl == null || targetUrl.isEmpty()) {
-                includeInContext(context, uri);
-            }
             if (PATH_PART_PATTERN.matcher(uri).find()) {
                 String regex = uri.replaceAll(PATH_PART_PATTERN.pattern(), "[^/?]+");
                 variantChecks.pathsWithParamsRegex.put(operation, Pattern.compile(regex));
+                if (!context.isIncluded(uri.replaceAll("[{}]", ""))) {
+                    context.addIncludeInContextRegex(regex);
+                }
             } else {
                 variantChecks.pathsWithNoParams.add(operation);
+                if (!context.isIncluded(uri)) {
+                    context.addIncludeInContextRegex(uri);
+                }
             }
-        }
-    }
-
-    private static void includeInContext(Context context, String url) {
-        try {
-            if (context.isInContext(url)) {
-                return;
-            }
-            URI uri = new URI(url, true);
-            String scheme = uri.getScheme();
-            String authority = uri.getAuthority();
-            String regex = scheme != null ? scheme + "://" : "";
-            regex += authority != null ? authority : "";
-            regex += ".*";
-            context.addIncludeInContextRegex(regex);
-        } catch (URIException e) {
-            LOG.debug("Could not add openapi target to context.", e);
         }
     }
 }
