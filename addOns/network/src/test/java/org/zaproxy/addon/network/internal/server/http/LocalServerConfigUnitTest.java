@@ -54,7 +54,7 @@ class LocalServerConfigUnitTest {
         assertThat(server.getAddress(), is(equalTo("localhost")));
         assertThat(server.getPort(), is(equalTo(8080)));
         assertThat(server.getMode(), is(equalTo(LocalServerConfig.ServerMode.API_AND_PROXY)));
-        assertThat(server.getTlsProtocols(), is(equalTo(TlsUtils.getSupportedProtocols())));
+        assertThat(server.getTlsProtocols(), is(equalTo(TlsUtils.getSupportedTlsProtocols())));
         assertThat(server.getTlsConfig(), is(notNullValue()));
         assertThat(server.isBehindNat(), is(equalTo(false)));
         assertThat(server.isRemoveAcceptEncoding(), is(equalTo(true)));
@@ -73,9 +73,30 @@ class LocalServerConfigUnitTest {
                         true,
                         true,
                         true,
-                        true),
-                arguments("127.0.0.2", 1002, ServerMode.API, true, false, true, true, true, true),
-                arguments("127.0.0.3", 1003, ServerMode.PROXY, false, true, true, true, true, true),
+                        true,
+                        false),
+                arguments(
+                        "127.0.0.2",
+                        1002,
+                        ServerMode.API,
+                        true,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false),
+                arguments(
+                        "127.0.0.3",
+                        1003,
+                        ServerMode.PROXY,
+                        false,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false),
                 arguments(
                         "127.0.0.4",
                         1004,
@@ -85,7 +106,8 @@ class LocalServerConfigUnitTest {
                         false,
                         true,
                         true,
-                        true),
+                        true,
+                        false),
                 arguments(
                         "127.0.0.5",
                         1005,
@@ -95,11 +117,35 @@ class LocalServerConfigUnitTest {
                         true,
                         false,
                         true,
-                        true),
+                        true,
+                        false),
                 arguments(
                         "127.0.0.6",
                         1006,
                         ServerMode.API_AND_PROXY,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        true,
+                        false),
+                arguments(
+                        "127.0.0.7",
+                        1007,
+                        ServerMode.API_AND_PROXY,
+                        true,
+                        true,
+                        true,
+                        true,
+                        true,
+                        false,
+                        false),
+                arguments(
+                        "127.0.0.7",
+                        1007,
+                        ServerMode.API_AND_PROXY,
+                        true,
                         true,
                         true,
                         true,
@@ -115,6 +161,7 @@ class LocalServerConfigUnitTest {
                         true,
                         true,
                         true,
+                        false,
                         false));
     }
 
@@ -129,7 +176,8 @@ class LocalServerConfigUnitTest {
             boolean behindNat,
             boolean removeAcceptEncoding,
             boolean decodeResponse,
-            boolean enabled) {
+            boolean enabled,
+            boolean alpnEnabled) {
         // Given
         LocalServerConfig other = new LocalServerConfig();
         other.setAddress(address);
@@ -139,6 +187,7 @@ class LocalServerConfigUnitTest {
         other.setRemoveAcceptEncoding(removeAcceptEncoding);
         other.setDecodeResponse(decodeResponse);
         other.setEnabled(enabled);
+        other.setAlpnEnabled(alpnEnabled);
         // When
         LocalServerConfig server = new LocalServerConfig(other);
         // Then
@@ -146,6 +195,8 @@ class LocalServerConfigUnitTest {
         assertThat(server.getPort(), is(equalTo(port)));
         assertThat(server.getMode(), is(equalTo(mode)));
         assertThat(server.getTlsProtocols(), is(notNullValue()));
+        assertThat(server.isAlpnEnabled(), is(equalTo(alpnEnabled)));
+        assertThat(server.getApplicationProtocols(), is(notNullValue()));
         assertThat(server.getTlsConfig(), is(notNullValue()));
         assertThat(server.isBehindNat(), is(equalTo(behindNat)));
         assertThat(server.isRemoveAcceptEncoding(), is(equalTo(removeAcceptEncoding)));
@@ -172,7 +223,8 @@ class LocalServerConfigUnitTest {
             boolean behindNat,
             boolean removeAcceptEncoding,
             boolean decodeResponse,
-            boolean enabled) {
+            boolean enabled,
+            boolean alpnEnabled) {
         // Given
         LocalServerConfig other = new LocalServerConfig();
         other.setAddress(address);
@@ -182,6 +234,7 @@ class LocalServerConfigUnitTest {
         other.setRemoveAcceptEncoding(removeAcceptEncoding);
         other.setDecodeResponse(decodeResponse);
         other.setEnabled(enabled);
+        other.setAlpnEnabled(alpnEnabled);
         LocalServerConfig server = new LocalServerConfig();
         // When
         boolean changed = server.updateFrom(other);
@@ -191,6 +244,8 @@ class LocalServerConfigUnitTest {
         assertThat(server.getPort(), is(equalTo(port)));
         assertThat(server.getMode(), is(equalTo(mode)));
         assertThat(server.getTlsProtocols(), is(notNullValue()));
+        assertThat(server.isAlpnEnabled(), is(equalTo(alpnEnabled)));
+        assertThat(server.getApplicationProtocols(), is(notNullValue()));
         assertThat(server.getTlsConfig(), is(notNullValue()));
         assertThat(server.isBehindNat(), is(equalTo(behindNat)));
         assertThat(server.isRemoveAcceptEncoding(), is(equalTo(removeAcceptEncoding)));

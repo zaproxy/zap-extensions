@@ -286,8 +286,8 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                             randomParamMsg1.getResponseBody().toString(),
                             randomParamMsg2.getResponseBody().toString());
             log.debug(
-                    "Got percentage match for a random parameter (against another identical request): "
-                            + randomVersusRandomMatch);
+                    "Got percentage match for a random parameter (against another identical request): {}",
+                    randomVersusRandomMatch);
             if (!(randomVersusRandomMatch > matchThreshold)) {
                 // the output for the random parameter is .
                 log.debug(

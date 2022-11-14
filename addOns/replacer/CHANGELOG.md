@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [11] - 2022-10-27
+### Changed
+- Update minimum ZAP version to 2.12.0.
+
+### Added
+- Allow the rules to apply to specific URLs (Issue 4793).
+
 ## [10] - 2022-09-23
 ### Fixed
 - Allow the replacement type to be changed in existing rules (Issue 3840).
@@ -64,6 +71,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[11]: https://github.com/zaproxy/zap-extensions/releases/replacer-v11
 [10]: https://github.com/zaproxy/zap-extensions/releases/replacer-v10
 [9]: https://github.com/zaproxy/zap-extensions/releases/replacer-v9
 [8]: https://github.com/zaproxy/zap-extensions/releases/replacer-v8

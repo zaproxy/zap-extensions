@@ -19,19 +19,15 @@
  */
 package org.zaproxy.addon.encoder.processors.predefined;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+public class Md5Hasher extends HashProcessor {
 
-public class Md5Hasher extends DefaultEncodeDecodeProcessor {
+    private static final Md5Hasher INSTANCE = new Md5Hasher();
 
-    @Override
-    protected String processInternal(String value) throws NoSuchAlgorithmException {
-        return HexStringEncoder.getHexString(getHashMD5(value.getBytes()));
+    public Md5Hasher() {
+        super("MD5");
     }
 
-    private byte[] getHashMD5(byte[] buf) throws NoSuchAlgorithmException {
-        MessageDigest md5 = MessageDigest.getInstance("MD5");
-        md5.update(buf);
-        return md5.digest();
+    public static Md5Hasher getSingleton() {
+        return INSTANCE;
     }
 }

@@ -162,6 +162,9 @@ public class CrossDomainScanRule extends AbstractHostPlugin {
                                 "/" + ADOBE_CROSS_DOMAIN_POLICY_FILE,
                                 null,
                                 null));
+        crossdomainmessage
+                .getRequestHeader()
+                .setVersion(getBaseMsg().getRequestHeader().getVersion());
         sendAndReceive(crossdomainmessage, false);
 
         if (crossdomainmessage.getResponseBody().length() == 0) {
@@ -257,6 +260,9 @@ public class CrossDomainScanRule extends AbstractHostPlugin {
                                 "/" + SILVERLIGHT_CROSS_DOMAIN_POLICY_FILE,
                                 null,
                                 null));
+        clientaccesspolicymessage
+                .getRequestHeader()
+                .setVersion(getBaseMsg().getRequestHeader().getVersion());
         sendAndReceive(clientaccesspolicymessage, false);
 
         if (clientaccesspolicymessage.getResponseBody().length() == 0) {

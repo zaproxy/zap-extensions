@@ -5,7 +5,7 @@ description = "The release status Passive Scanner rules"
 zapAddOn {
     addOnName.set("Passive scanner rules")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.11.1")
+    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -37,6 +37,7 @@ zapAddOn {
 }
 
 dependencies {
+    implementation("com.google.re2j:re2j:1.6")
     implementation("com.shapesecurity:salvation2:3.0.0")
     compileOnly(parent!!.childProjects.get("commonlib")!!)
     compileOnly(parent!!.childProjects.get("custompayloads")!!)

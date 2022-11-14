@@ -31,13 +31,11 @@ import org.parosproxy.paros.core.proxy.ArrangeableProxyListener;
 import org.parosproxy.paros.core.proxy.ConnectRequestProxyListener;
 import org.parosproxy.paros.core.proxy.OverrideMessageProxyListener;
 import org.parosproxy.paros.core.proxy.ProxyListener;
-import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.zap.PersistentConnectionListener;
-import org.zaproxy.zap.ZapGetMethod;
 
 /**
  * Handler that notifies core proxy listeners.
@@ -52,7 +50,9 @@ import org.zaproxy.zap.ZapGetMethod;
  *
  * It also exposes the {@link PersistentConnectionListener}.
  */
-public class LegacyProxyListenerHandler extends ProxyServer implements HttpMessageHandler {
+@SuppressWarnings("deprecation")
+public class LegacyProxyListenerHandler extends org.parosproxy.paros.core.proxy.ProxyServer
+        implements HttpMessageHandler {
 
     private static final Logger LOGGER = LogManager.getLogger(LegacyProxyListenerHandler.class);
 
@@ -197,7 +197,7 @@ public class LegacyProxyListenerHandler extends ProxyServer implements HttpMessa
      * @return {@code true} if the connection should be kept open, {@code false} otherwise.
      */
     public boolean notifyPersistentConnectionListener(
-            HttpMessage message, Socket inSocket, ZapGetMethod method) {
+            HttpMessage message, Socket inSocket, org.zaproxy.zap.ZapGetMethod method) {
         synchronized (persistentConnectionListeners) {
             for (PersistentConnectionListener listener : persistentConnectionListeners) {
                 if (handleErrors(

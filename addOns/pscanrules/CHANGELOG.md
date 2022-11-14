@@ -6,6 +6,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [44] - 2022-10-27
+### Added
+- The following scan rules were added, having been promoted from Beta:
+  - Big Redirects
+  - Directory Browsing
+  - Hash Disclosure
+  - HeartBleed
+  - Insecure Form Load
+  - Insecure Form Post
+  - Link Target
+  - Modern App Detection
+  - PII
+  - Retrieved From Cache
+  - Server Header Info Leak
+  - Strict Transport Security
+  - User Controlled Charset
+  - User Controlled Cookie
+  - User Controlled HTML Attributes
+  - User Controlled Javascript Event
+  - User Controlled Open Redirect
+  - X-Backend-Server Information Leak
+  - X-ChromeLogger-Data Info Leak   
+
+### Changed
+- Update minimum ZAP version to 2.12.0.
+- The Server Header Information Leak scan rule now has functionality to generate example alerts for documentation purposes (Issue 6119).
+- Maintenance changes.
+
 ## [43] - 2022-09-15
 ### Changed
 - Reduce Cache Control scan rule confidence to Low, and add new reference (Issue 6446).
@@ -324,6 +352,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[44]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v41

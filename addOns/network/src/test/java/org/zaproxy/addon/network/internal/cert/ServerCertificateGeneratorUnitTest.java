@@ -33,7 +33,6 @@ import java.time.Duration;
 import java.util.Date;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.parosproxy.paros.security.CertData;
 import org.zaproxy.addon.network.NetworkTestUtils;
 import org.zaproxy.addon.network.ServerCertificatesOptions;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;

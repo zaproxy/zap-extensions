@@ -19,8 +19,8 @@
  */
 package org.zaproxy.addon.network.internal.client;
 
-import org.zaproxy.addon.network.internal.client.core.HttpSenderContext;
-import org.zaproxy.addon.network.internal.client.core.HttpSenderImpl;
+import org.zaproxy.zap.network.HttpSenderContext;
+import org.zaproxy.zap.network.HttpSenderImpl;
 
 /**
  * A {@link HttpSenderImpl} that can be closed.

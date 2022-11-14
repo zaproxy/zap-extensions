@@ -6,17 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [0.17.0] - 2022-11-14
+### Changed
+- Updated with upstream retire.js pattern changes.
+
+
+
+## [0.16.0] - 2022-10-27
+### Changed
+- Update minimum ZAP version to 2.12.0.
+
+### Fixed
+- NPE in example alert generation.
+
 ## [0.15.0] - 2022-09-22
 ### Changed
 - Updated with upstream retire.js pattern changes.
 
-
-
 ## [0.14.0] - 2022-08-15
 ### Changed
 - Updated with upstream retire.js pattern changes.
-
-
 
 ## [0.13.0] - 2022-08-02
 ### Changed
@@ -94,6 +103,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - First release.
 
+[0.17.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.17.0
+[0.16.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.16.0
 [0.15.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.15.0
 [0.14.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.14.0
 [0.13.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.13.0

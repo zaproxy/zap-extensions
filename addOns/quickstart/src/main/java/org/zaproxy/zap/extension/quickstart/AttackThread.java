@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.quickstart;
 
 import java.net.URL;
-import java.net.UnknownHostException;
 import javax.swing.SwingUtilities;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -32,10 +31,10 @@ import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
-import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.addon.network.common.ZapUnknownHostException;
 import org.zaproxy.zap.extension.ascan.ActiveScan;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.model.Target;
@@ -279,11 +278,8 @@ public class AttackThread extends Thread {
                     // Ignore
                 }
             }
-        } catch (UnknownHostException e1) {
-            ConnectionParam connectionParam =
-                    Model.getSingleton().getOptionsParam().getConnectionParam();
-            if (connectionParam.isUseProxyChain()
-                    && connectionParam.getProxyChainName().equalsIgnoreCase(e1.getMessage())) {
+        } catch (ZapUnknownHostException e1) {
+            if (e1.isFromOutgoingProxy()) {
                 extension.notifyProgress(
                         Progress.failed,
                         Constant.messages.getString(
@@ -312,11 +308,7 @@ public class AttackThread extends Thread {
 
     private HttpSender getHttpSender() {
         if (httpSender == null) {
-            httpSender =
-                    new HttpSender(
-                            Model.getSingleton().getOptionsParam().getConnectionParam(),
-                            true,
-                            HttpSender.MANUAL_REQUEST_INITIATOR);
+            httpSender = new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR);
         }
         return httpSender;
     }

@@ -48,7 +48,6 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.requester.ExtensionRequester;
 import org.zaproxy.addon.requester.MessageEditorPanel;
-import org.zaproxy.zap.PersistentConnectionListener;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.extension.httppanel.HttpPanel.OptionsLocation;
@@ -139,10 +138,6 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
     @Override
     protected void sendMessage(Message message) throws IOException {
         sender.sendMessage(message);
-    }
-
-    public void cleanup() {
-        sender.cleanup();
     }
 
     @Override
@@ -265,9 +260,9 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
 
     @Override
     public void reset() {
-        super.reset();
-
+        getMessagePanel().clearView();
         getResponsePanel().clearView();
+        setDefaultMessage();
     }
 
     @Override
@@ -615,14 +610,6 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
         }
     }
 
-    public void addPersistentConnectionListener(PersistentConnectionListener listener) {
-        sender.addPersistentConnectionListener(listener);
-    }
-
-    public void removePersistentConnectionListener(PersistentConnectionListener listener) {
-        sender.removePersistentConnectionListener(listener);
-    }
-
     @Override
     public void unload() {
         super.unload();
@@ -632,7 +619,6 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
 
     @Override
     public void optionsChanged(OptionsParam optionsParam) {
-        sender.setButtonTrackingSessionStateEnabled(
-                optionsParam.getConnectionParam().isHttpStateEnabled());
+        sender.updateButtonTrackingSessionState();
     }
 }

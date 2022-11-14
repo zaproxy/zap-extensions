@@ -72,6 +72,10 @@ public class LocalServersOptions extends VersionedAbstractParam {
     private static final String SERVER_PORT = "port";
     private static final String SERVER_TLS_PROTOCOLS = "tlsProtocols";
     private static final String SERVER_TLS_PROTOCOL = "protocol";
+    private static final String SERVER_ALPN = "alpn";
+    private static final String SERVER_ALPN_ENABLED = SERVER_ALPN + ".enabled";
+    private static final String SERVER_ALPN_PROTOCOLS = SERVER_ALPN + ".protocols";
+    private static final String SERVER_ALPN_PROTOCOL = "protocol";
     private static final String SERVER_BEHIND_NAT = "behindNat";
     private static final String SERVER_REMOVE_ACCEPT_ENCODING = "removeAcceptEncoding";
     private static final String SERVER_DECODE_RESPONSE = "decodeResponse";
@@ -434,14 +438,30 @@ public class LocalServersOptions extends VersionedAbstractParam {
                             .map(Object::toString)
                             .collect(Collectors.toList());
             if (protocols.isEmpty()) {
-                protocols = TlsUtils.getSupportedProtocols();
+                protocols = TlsUtils.getSupportedTlsProtocols();
             }
             try {
                 serverConfig.setTlsProtocols(protocols);
             } catch (Exception e) {
                 LOGGER.warn("An error occurred while setting TLS protocols:", e);
-                serverConfig.setTlsProtocols(TlsUtils.getSupportedProtocols());
+                serverConfig.setTlsProtocols(TlsUtils.getSupportedTlsProtocols());
             }
+
+            serverConfig.setAlpnEnabled(config.getBoolean(SERVER_ALPN_ENABLED, false));
+            protocols =
+                    config.getList(SERVER_ALPN_PROTOCOLS + "." + SERVER_ALPN_PROTOCOL).stream()
+                            .map(Object::toString)
+                            .collect(Collectors.toList());
+            if (protocols.isEmpty()) {
+                protocols = TlsUtils.getSupportedApplicationProtocols();
+            }
+            try {
+                serverConfig.setApplicationProtocols(protocols);
+            } catch (Exception e) {
+                LOGGER.warn("An error occurred while setting application protocols:", e);
+                serverConfig.setApplicationProtocols(TlsUtils.getSupportedApplicationProtocols());
+            }
+
             serverConfig.setBehindNat(config.getBoolean(SERVER_BEHIND_NAT, false));
             serverConfig.setRemoveAcceptEncoding(
                     config.getBoolean(SERVER_REMOVE_ACCEPT_ENCODING, true));
@@ -469,6 +489,14 @@ public class LocalServersOptions extends VersionedAbstractParam {
         for (int i = 0; i < serverConfig.getTlsProtocols().size(); ++i) {
             String elementBaseKey = protocolsBaseKey + "." + SERVER_TLS_PROTOCOL + "(" + i + ")";
             getConfig().setProperty(elementBaseKey, serverConfig.getTlsProtocols().get(i));
+        }
+
+        getConfig().setProperty(baseKeyDot + SERVER_ALPN_ENABLED, serverConfig.isAlpnEnabled());
+        protocolsBaseKey = baseKeyDot + SERVER_ALPN_PROTOCOLS;
+        ((HierarchicalConfiguration) getConfig()).clearTree(protocolsBaseKey);
+        for (int i = 0; i < serverConfig.getApplicationProtocols().size(); ++i) {
+            String elementBaseKey = protocolsBaseKey + "." + SERVER_ALPN_PROTOCOL + "(" + i + ")";
+            getConfig().setProperty(elementBaseKey, serverConfig.getApplicationProtocols().get(i));
         }
 
         getConfig().setProperty(baseKeyDot + SERVER_BEHIND_NAT, serverConfig.isBehindNat());
@@ -606,7 +634,7 @@ public class LocalServersOptions extends VersionedAbstractParam {
     }
 
     private void migrateCoreConfigs() {
-        List<String> tlsProtocols = TlsUtils.getSupportedProtocols();
+        List<String> tlsProtocols = TlsUtils.getSupportedTlsProtocols();
         try {
             tlsProtocols = migrateMainProxy();
         } catch (Exception e) {
@@ -624,7 +652,7 @@ public class LocalServersOptions extends VersionedAbstractParam {
 
     private List<String> migrateMainProxy() {
         if (!getConfig().containsKey("proxy.port")) {
-            return TlsUtils.getSupportedProtocols();
+            return TlsUtils.getSupportedTlsProtocols();
         }
         LocalServerConfig config = new LocalServerConfig();
         config.setAddress(getString("proxy.ip", LocalServerConfig.DEFAULT_ADDRESS));
@@ -638,7 +666,7 @@ public class LocalServersOptions extends VersionedAbstractParam {
                         .map(Object::toString)
                         .collect(Collectors.toList());
         if (tlsProtocols.isEmpty()) {
-            tlsProtocols = TlsUtils.getSupportedProtocols();
+            tlsProtocols = TlsUtils.getSupportedTlsProtocols();
         }
         config.setTlsProtocols(tlsProtocols);
 

@@ -131,7 +131,7 @@ class IntegerOverflowScanRuleUnitTest extends ActiveScannerTest<IntegerOverflowS
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("years"));
         assertThat(
-                alertsRaised.get(0).getEvidence(), equalTo("HTTP/1.1 500 Internal Server Error "));
+                alertsRaised.get(0).getEvidence(), equalTo("HTTP/1.1 500 Internal Server Error"));
     }
 
     @Test

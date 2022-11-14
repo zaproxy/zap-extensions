@@ -25,11 +25,21 @@ public class OastState {
     private String serviceName;
     private boolean isRegistered;
     private LocalDateTime lastPollTime;
+    private OastStateEventType eventType;
 
     public OastState(String serviceName, boolean isRegistered, LocalDateTime lastPollTime) {
+        this(serviceName, isRegistered, lastPollTime, OastStateEventType.UNKNOWN);
+    }
+
+    public OastState(
+            String serviceName,
+            boolean isRegistered,
+            LocalDateTime lastPollTime,
+            OastStateEventType eventType) {
         this.serviceName = serviceName;
         this.isRegistered = isRegistered;
         this.lastPollTime = lastPollTime;
+        this.eventType = eventType;
     }
 
     public String getServiceName() {
@@ -50,5 +60,20 @@ public class OastState {
 
     public void setLastPollTime(LocalDateTime lastPollTime) {
         this.lastPollTime = lastPollTime;
+    }
+
+    public OastStateEventType getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(OastStateEventType eventType) {
+        this.eventType = eventType;
+    }
+
+    public enum OastStateEventType {
+        UNKNOWN,
+        REGISTERED,
+        POLLED,
+        UNREGISTERED,
     }
 }

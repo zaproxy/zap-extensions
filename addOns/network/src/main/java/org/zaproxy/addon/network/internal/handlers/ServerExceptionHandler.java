@@ -30,7 +30,6 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
-import org.parosproxy.paros.security.MissingRootCertificateException;
 import org.zaproxy.addon.network.internal.cert.GenerationException;
 
 /**
@@ -105,8 +104,7 @@ public class ServerExceptionHandler extends ChannelInboundHandlerAdapter {
             return;
         }
 
-        if (nestedCause instanceof GenerationException
-                || nestedCause instanceof MissingRootCertificateException) {
+        if (nestedCause instanceof GenerationException) {
             LOGGER.warn("Failed while creating certificate, cause: {}", nestedCause.getMessage());
             return;
         }

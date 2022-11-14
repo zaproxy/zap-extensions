@@ -4,7 +4,13 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [37] - 2022-10-27
 ### Changed
+- Update minimum ZAP version to 2.12.0.
+- Update Zest library to 0.16.0:
+  - Search script engines also by extension not just by name when invoking scripts otherwise it could miss some engines (e.g. Jython).
 - Maintenance changes.
 
 ## [36] - 2022-09-23
@@ -261,6 +267,7 @@ Sender scripts. (Issue 5590)
 
 - Updated for 2.1.0
 
+[37]: https://github.com/zaproxy/zap-extensions/releases/zest-v37
 [36]: https://github.com/zaproxy/zap-extensions/releases/zest-v36
 [35]: https://github.com/zaproxy/zap-extensions/releases/zest-v35
 [34]: https://github.com/zaproxy/zap-extensions/releases/zest-v34

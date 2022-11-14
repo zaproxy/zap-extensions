@@ -24,10 +24,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -55,12 +57,14 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.network.HttpSender;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob.Order;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.automation.tests.AutomationStatisticTest;
+import org.zaproxy.addon.network.common.ZapUnknownHostException;
 import org.zaproxy.addon.spider.ExtensionSpider2;
 import org.zaproxy.addon.spider.SpiderParam;
 import org.zaproxy.addon.spider.SpiderScan;
@@ -522,7 +526,11 @@ class SpiderJobUnitTest extends TestUtils {
         given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
         given(env.replaceVars(url)).willReturn(url);
 
+        HttpSender httpSender = mock(HttpSender.class);
+        doThrow(ZapUnknownHostException.class).when(httpSender).sendAndReceive(any(), anyBoolean());
+
         SpiderJob job = new SpiderJob();
+        job.setUrlRequester(new UrlRequester("", httpSender));
 
         // When
         job.runJob(env, progress);
@@ -536,7 +544,49 @@ class SpiderJobUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldFailIfForbiddenResponse() throws Exception {
+    void shouldFailIfInvalidProxyHost() throws Exception {
+        ExtensionHistory extHistory = mock(ExtensionHistory.class, withSettings().lenient());
+        given(extensionLoader.getExtension(ExtensionHistory.class)).willReturn(extHistory);
+
+        Context context = mock(Context.class);
+        ContextWrapper contextWrapper = new ContextWrapper(context);
+        String url = "http://null.example.com/";
+        contextWrapper.addUrl(url);
+
+        given(extSpider.startScan(any(), any(), any())).willReturn(1);
+
+        SpiderScan spiderScan = mock(SpiderScan.class);
+        given(spiderScan.isStopped()).willReturn(true);
+        given(extSpider.getScan(1)).willReturn(spiderScan);
+
+        AutomationProgress progress = new AutomationProgress();
+
+        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
+        given(env.replaceVars(url)).willReturn(url);
+
+        HttpSender httpSender = mock(HttpSender.class);
+        doThrow(new ZapUnknownHostException("", true))
+                .when(httpSender)
+                .sendAndReceive(any(), anyBoolean());
+
+        SpiderJob job = new SpiderJob();
+        job.setUrlRequester(new UrlRequester("", httpSender));
+
+        // When
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), is(equalTo(1)));
+        assertThat(
+                progress.getErrors().get(0),
+                is(equalTo("!spider.automation.error.url.badhost.proxychain!")));
+    }
+
+    @Test
+    void shouldWarnIfNotOkResponse() throws Exception {
         ExtensionHistory extHistory = mock(ExtensionHistory.class, withSettings().lenient());
         given(extensionLoader.getExtension(ExtensionHistory.class)).willReturn(extHistory);
 
@@ -572,10 +622,12 @@ class SpiderJobUnitTest extends TestUtils {
         stopServer();
 
         // Then
-        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
         assertThat(testHandler.wasCalled(), is(equalTo(true)));
-        assertThat(progress.getErrors().size(), is(equalTo(1)));
-        assertThat(progress.getErrors().get(0), is(equalTo("!spider.automation.error.url.notok!")));
+        assertThat(progress.getWarnings().size(), is(equalTo(1)));
+        assertThat(
+                progress.getWarnings().get(0), is(equalTo("!spider.automation.error.url.notok!")));
     }
 
     @Test

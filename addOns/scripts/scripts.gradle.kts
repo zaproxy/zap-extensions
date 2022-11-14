@@ -5,7 +5,7 @@ description = "Supports all JSR 223 scripting languages"
 zapAddOn {
     addOnName.set("Script Console")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.11.1")
+    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -18,7 +18,7 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("automation") {
-                            version.set(">=0.12.0")
+                            version.set(">=0.18.0")
                         }
                     }
                 }

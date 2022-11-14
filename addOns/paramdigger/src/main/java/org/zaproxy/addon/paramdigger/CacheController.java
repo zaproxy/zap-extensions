@@ -29,12 +29,16 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.paramdigger.gui.ParamDiggerHistoryTableModel;
+import org.zaproxy.zap.utils.ThreadUtils;
 
 public class CacheController {
 
@@ -50,15 +54,38 @@ public class CacheController {
     private final String[] headerList = {"Accept-Encoding", "Accept", "Cookie", "Origin"};
     private final String[] valueList = {"gzip, deflate, ", "*/*, text/", "paramdigger_cookie=", ""};
     private final String[] methodList = {"PURGE", "FASTLYPURGE"};
+    private GuesserScan scan;
 
     private static final Logger logger = LogManager.getLogger(CacheController.class);
 
     public CacheController(HttpSender httpSender, ParamDiggerConfig config) {
-
         this.httpSender = httpSender;
         this.config = config;
         this.cache = new Cache();
         this.random = new SecureRandom();
+    }
+
+    public CacheController(HttpSender httpSender, GuesserScan scan) {
+        this(httpSender, scan.getConfig());
+        this.scan = scan;
+    }
+
+    private void addCacheMessage(HttpMessage msg) {
+        if (this.scan != null) {
+            ParamDiggerHistoryTableModel model = this.scan.getTableModel();
+            ThreadUtils.invokeAndWaitHandled(
+                    () -> {
+                        try {
+                            model.addHistoryReference(
+                                    new HistoryReference(
+                                            Model.getSingleton().getSession(),
+                                            HistoryReference.TYPE_PARAM_DIGGER,
+                                            msg));
+                        } catch (Exception e) {
+                            logger.error(e, e);
+                        }
+                    });
+        }
     }
 
     /**
@@ -88,7 +115,7 @@ public class CacheController {
             headers.setVersion(HttpHeader.HTTP11);
             msg.setRequestHeader(headers);
             httpSender.sendAndReceive(msg);
-
+            this.addCacheMessage(msg);
             /* Set base response for comparison */
             this.base = msg;
 
@@ -210,6 +237,7 @@ public class CacheController {
                 msg.setRequestHeader(headers);
 
                 httpSender.sendAndReceive(msg);
+                this.addCacheMessage(msg);
 
                 if (msg.getResponseHeader().getStatusCode()
                         == base.getResponseHeader().getStatusCode()) {
@@ -261,6 +289,7 @@ public class CacheController {
                         HttpMessage msg = new HttpMessage();
                         msg.setRequestHeader(headers2);
                         httpSender.sendAndReceive(msg);
+                        addCacheMessage(msg);
 
                         if (msg.getResponseHeader().getStatusCode()
                                 == base.getResponseHeader().getStatusCode()) {
@@ -300,6 +329,7 @@ public class CacheController {
                     msg.setRequestHeader(headers);
 
                     httpSender.sendAndReceive(msg);
+                    addCacheMessage(msg);
                     times.add(msg.getTimeElapsedMillis());
 
                     if (msg.getResponseHeader().getStatusCode()
@@ -367,6 +397,7 @@ public class CacheController {
                 HttpMessage msg = new HttpMessage();
                 msg.setRequestHeader(headers);
                 httpSender.sendAndReceive(msg);
+                addCacheMessage(msg);
 
                 if (msg.getResponseHeader().getStatusCode()
                         == base.getResponseHeader().getStatusCode()) {
@@ -412,6 +443,7 @@ public class CacheController {
                         HttpMessage msg1 = new HttpMessage();
                         msg1.setRequestHeader(headers1);
                         httpSender.sendAndReceive(msg1);
+                        addCacheMessage(msg1);
 
                         if (msg1.getResponseHeader().getStatusCode()
                                 == base.getResponseHeader().getStatusCode()) {
@@ -442,7 +474,7 @@ public class CacheController {
                     }
                     msg.setRequestHeader(headers);
                     httpSender.sendAndReceive(msg);
-
+                    addCacheMessage(msg);
                     times.add(msg.getTimeElapsedMillis());
 
                     if (msg.getResponseHeader().getStatusCode()
@@ -519,6 +551,7 @@ public class CacheController {
                     } else {
                         /* Now we try for a hit to dtermine the cachebuster works and the response is from the cache. */
                         httpSender.sendAndReceive(msg);
+                        addCacheMessage(msg);
                         if (msg.getResponseHeader().getStatusCode()
                                 == base.getResponseHeader().getStatusCode()) {
                             indicValue = msg.getResponseHeader().getHeader(cache.getIndicator());
@@ -554,6 +587,7 @@ public class CacheController {
                         headers2.setHeader(headerList[i], randHead);
                         msg1.setRequestHeader(headers2);
                         httpSender.sendAndReceive(msg1);
+                        addCacheMessage(msg1);
 
                         if (msg1.getResponseHeader().getStatusCode()
                                 == base.getResponseHeader().getStatusCode()) {
@@ -582,6 +616,7 @@ public class CacheController {
                     msg.setRequestHeader(headers);
 
                     httpSender.sendAndReceive(msg);
+                    addCacheMessage(msg);
                     timeList.add(msg.getTimeElapsedMillis());
 
                     if (msg.getResponseHeader().getStatusCode()
@@ -619,18 +654,8 @@ public class CacheController {
      * @return a URL with a cachebuster parameter having a random value.
      */
     private String generateParameterString(String url) {
-        return this.createParameterString(
+        return Utils.addCacheBusterParameter(
                 url, config.getCacheBusterName(), "" + random.nextInt(RANDOM_SEED));
-    }
-
-    private String createParameterString(String url, String param, String value) {
-        String newUrl;
-        if (url.contains("?")) {
-            newUrl = url + "&" + param + "=" + value;
-        } else {
-            newUrl = url + "?" + param + "=" + value;
-        }
-        return newUrl;
     }
 
     /**
@@ -668,6 +693,7 @@ public class CacheController {
 
             msg.setRequestHeader(headers);
             httpSender.sendAndReceive(msg);
+            addCacheMessage(msg);
 
             if (msg.getResponseHeader().getStatusCode()
                     == base.getResponseHeader().getStatusCode()) {
@@ -678,6 +704,7 @@ public class CacheController {
                 } else {
                     /* Now we try to hit the cache to verify that the cachebuster works and the response is from the cache. */
                     httpSender.sendAndReceive(msg);
+                    addCacheMessage(msg);
                     if (msg.getResponseHeader().getStatusCode()
                             == base.getResponseHeader().getStatusCode()) {
                         indicValue = msg.getResponseHeader().getHeader(cache.getIndicator());
@@ -705,12 +732,13 @@ public class CacheController {
                 String randomBuster = "zap";
                 String randomBusterValue = "" + random.nextInt(RANDOM_SEED);
                 for (int i = 0; i < 2; i++) {
-                    newUrl = this.createParameterString(url, randomBuster, randomBusterValue);
+                    newUrl = Utils.addCacheBusterParameter(url, randomBuster, randomBusterValue);
                     headers.setURI(new URI(newUrl, true));
                     headers.setVersion(HttpHeader.HTTP11);
 
                     msg1.setRequestHeader(headers);
                     httpSender.sendAndReceive(msg1);
+                    addCacheMessage(msg1);
 
                     if (msg1.getResponseHeader().getStatusCode()
                             == base.getResponseHeader().getStatusCode()) {
@@ -742,6 +770,7 @@ public class CacheController {
 
                 msg.setRequestHeader(headers);
                 httpSender.sendAndReceive(msg);
+                addCacheMessage(msg);
 
                 times.add(msg.getTimeElapsedMillis());
                 if (msg.getResponseHeader().getStatusCode()
@@ -793,6 +822,7 @@ public class CacheController {
             requestHeader.setURI(new URI(url, true));
             msg.setRequestHeader(requestHeader);
             httpSender.sendAndReceive(msg);
+            addCacheMessage(msg);
             if (msg.getResponseHeader().getStatusCode()
                     != base.getResponseHeader().getStatusCode()) {
                 // TODO show error on output panel that unexpected status code match error was

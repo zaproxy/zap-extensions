@@ -20,11 +20,13 @@
 package org.zaproxy.zap.testutils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -50,7 +52,6 @@ import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.PluginFactory;
 import org.parosproxy.paros.core.scanner.Scanner;
 import org.parosproxy.paros.core.scanner.ScannerParam;
-import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
@@ -134,13 +135,10 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
         ScanPolicy scanPolicy = mock(ScanPolicy.class);
         when(scanPolicy.getPluginFactory()).thenReturn(pluginFactory);
 
-        ConnectionParam connectionParam = new ConnectionParam();
-
         scannerParam = new ScannerParam();
         scannerParam.load(new ZapXmlConfiguration());
         RuleConfigParam ruleConfigParam = new RuleConfigParam();
-        Scanner parentScanner =
-                new Scanner(scannerParam, connectionParam, scanPolicy, ruleConfigParam);
+        Scanner parentScanner = new Scanner(scannerParam, scanPolicy, ruleConfigParam);
 
         startServer();
         int port = nano.getListeningPort();
@@ -153,7 +151,6 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
                                 "localhost:" + port,
                                 parentScanner,
                                 scannerParam,
-                                connectionParam,
                                 scanPolicy,
                                 ruleConfigParam) {
                             @Override
@@ -196,6 +193,7 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
     Collection<DynamicTest> commonScanRuleTests() {
         List<DynamicTest> commonTests = new ArrayList<>();
         commonTests.add(testScanRuleHasName());
+        commonTests.add(testExampleAlerts());
         addTestsSendReasonableNumberOfMessages(commonTests);
         return commonTests;
     }
@@ -223,6 +221,25 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
                 extensionResourceBundle.keySet().stream()
                         .map(extensionResourceBundle::getString)
                         .anyMatch(str -> str.equals(name)));
+    }
+
+    private DynamicTest testExampleAlerts() {
+        return dynamicTest(
+                "shouldHaveExampleAlerts",
+                () -> {
+                    setUp();
+                    shouldHaveExampleAlerts();
+                });
+    }
+
+    private void shouldHaveExampleAlerts() {
+        // Given / When
+        List<Alert> alerts = assertDoesNotThrow(rule::getExampleAlerts);
+        // Then
+        if (alerts == null) {
+            return;
+        }
+        assertThat(alerts, is(not(empty())));
     }
 
     private void addTestsSendReasonableNumberOfMessages(List<DynamicTest> tests) {

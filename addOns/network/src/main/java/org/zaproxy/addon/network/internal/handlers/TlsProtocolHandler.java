@@ -23,15 +23,24 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import io.netty.handler.codec.DecoderException;
+import io.netty.handler.ssl.ApplicationProtocolConfig;
+import io.netty.handler.ssl.ApplicationProtocolConfig.Protocol;
+import io.netty.handler.ssl.ApplicationProtocolConfig.SelectedListenerFailureBehavior;
+import io.netty.handler.ssl.ApplicationProtocolConfig.SelectorFailureBehavior;
+import io.netty.handler.ssl.ApplicationProtocolNegotiationHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslHandler;
 import java.util.List;
+import javax.net.ssl.SSLException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.zaproxy.addon.network.internal.ChannelAttributes;
 import org.zaproxy.addon.network.internal.cert.SniX509KeyManager;
 
 /**
- * Handles SSL/TLS connections as a server.
+ * Handles SSL/TLS connections as a server, with ALPN if enabled.
  *
  * <p>The handler removes itself after handling the possible SSL/TLS connection.
  *
@@ -98,10 +107,64 @@ public class TlsProtocolHandler extends ByteToMessageDecoder {
                                         ch.attr(ChannelAttributes.CERTIFICATE_SERVICE).get(),
                                         ch.attr(ChannelAttributes.LOCAL_ADDRESS).get().getAddress(),
                                         authority))
-                        .protocols(config.getEnabledProtocols())
+                        .protocols(config.getTlsProtocols())
+                        .applicationProtocolConfig(createApplicationProtocolConfig(config))
                         .build();
         ctx.pipeline().addAfter(ctx.name(), TLS_HANDLER_NAME, sslCtx.newHandler(ctx.alloc()));
+        if (config.isAlpnEnabled()) {
+            ctx.pipeline().addAfter(TLS_HANDLER_NAME, "tls.alpn", new AlpnHandlerImpl());
+        }
 
         return true;
+    }
+
+    private static ApplicationProtocolConfig createApplicationProtocolConfig(TlsConfig config) {
+        if (!config.isAlpnEnabled()) {
+            return null;
+        }
+
+        return new ApplicationProtocolConfig(
+                Protocol.ALPN,
+                SelectorFailureBehavior.FATAL_ALERT,
+                SelectedListenerFailureBehavior.FATAL_ALERT,
+                config.getApplicationProtocols());
+    }
+
+    private static class AlpnHandlerImpl extends ApplicationProtocolNegotiationHandler {
+
+        private static final Logger LOGGER = LogManager.getLogger(AlpnHandlerImpl.class);
+
+        private static final String NO_PROTOCOL_NEGOTIATED = "zap.no-protocol";
+
+        protected AlpnHandlerImpl() {
+            super(NO_PROTOCOL_NEGOTIATED);
+        }
+
+        @Override
+        protected void configurePipeline(ChannelHandlerContext ctx, String protocol)
+                throws Exception {
+            if (NO_PROTOCOL_NEGOTIATED.equals(protocol)) {
+                LOGGER.warn("ALPN enabled and no protocol negotiated, closing connection.");
+                ctx.close();
+                return;
+            }
+            LOGGER.debug("Negotiated protocol: {}", protocol);
+        }
+
+        @Override
+        protected void handshakeFailure(ChannelHandlerContext ctx, Throwable cause)
+                throws Exception {
+            ctx.fireExceptionCaught(cause);
+        }
+
+        @Override
+        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+            if (cause instanceof DecoderException && (cause.getCause() instanceof SSLException)) {
+                super.exceptionCaught(ctx, cause);
+                return;
+            }
+
+            ctx.fireExceptionCaught(cause);
+        }
     }
 }

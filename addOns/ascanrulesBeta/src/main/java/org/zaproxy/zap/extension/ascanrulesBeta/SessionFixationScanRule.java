@@ -987,7 +987,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                         // either way, the parameter/url combo is not vulnerable, so continue with
                         // the next parameter
                         log.debug(
-                                "The URL parameter [{}] was NOT set in any links in the response, when {()} URL param [{}] was set to NULL in the request, so it is likely not a session id field",
+                                "The URL parameter [{}] was NOT set in any links in the response, when ({}) URL param [{}] was set to NULL in the request, so it is likely not a session id field",
                                 currentHtmlParameter.getName(),
                                 isPseudoUrlParameter ? "pseudo/URL rewritten" : "",
                                 currentHtmlParameter.getName());

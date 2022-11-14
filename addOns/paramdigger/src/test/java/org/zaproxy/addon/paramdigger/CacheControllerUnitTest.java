@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.testutils.NanoServerHandler;
@@ -40,8 +39,7 @@ import org.zaproxy.zap.testutils.TestUtils;
 
 class CacheControllerUnitTest extends TestUtils {
     private CacheController cacheController;
-    private HttpSender httpSender =
-            new HttpSender(Model.getSingleton().getOptionsParam().getConnectionParam(), true, 17);
+    private HttpSender httpSender = new HttpSender(HttpSender.PARAM_DIGGER_INITIATOR);
     private ParamDiggerConfig config;
 
     @BeforeEach

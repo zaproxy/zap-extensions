@@ -36,28 +36,24 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
-import java.net.SocketTimeoutException;
+import java.nio.file.Path;
 import java.util.Locale;
-import org.apache.commons.httpclient.HttpException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.network.common.ZapSocketTimeoutException;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.zap.network.HttpRequestConfig;
-import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
-import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link HttpSenderHandler}. */
-class HttpSenderHandlerUnitTest extends TestUtils {
+class HttpSenderHandlerUnitTest {
 
     private HttpMessageHandlerContext ctx;
-    private ConnectionParam connectionParam;
     private HttpSender httpSender;
     private HttpSenderHandler handler;
 
@@ -67,19 +63,15 @@ class HttpSenderHandlerUnitTest extends TestUtils {
 
         ctx = mock(HttpMessageHandlerContext.class);
         httpSender = mock(HttpSender.class);
-        connectionParam = new ConnectionParam();
-        connectionParam.load(new ZapXmlConfiguration());
-        handler = new HttpSenderHandler(connectionParam, httpSender);
+        handler = new HttpSenderHandler(httpSender);
     }
 
     @Test
-    void shouldThrowIfConnectionParamIsNull() {
+    void shouldThrowIfHttpSenderIsNull() {
         // Given
-        ConnectionParam connectionParam = null;
+        HttpSender httpSender = null;
         // When / Then
-        assertThrows(
-                NullPointerException.class,
-                () -> new HttpSenderHandler(connectionParam, httpSender));
+        assertThrows(NullPointerException.class, () -> new HttpSenderHandler(httpSender));
     }
 
     @Test
@@ -92,7 +84,8 @@ class HttpSenderHandlerUnitTest extends TestUtils {
         // Then
         verify(httpSender, times(0)).sendAndReceive(any());
         verify(httpSender, times(0)).sendAndReceive(any(), anyBoolean());
-        verify(httpSender, times(0)).sendAndReceive(any(), any());
+        verify(httpSender, times(0)).sendAndReceive(any(), any(HttpRequestConfig.class));
+        verify(httpSender, times(0)).sendAndReceive(any(), any(Path.class));
     }
 
     @Test
@@ -128,7 +121,7 @@ class HttpSenderHandlerUnitTest extends TestUtils {
         // Given
         given(ctx.isFromClient()).willReturn(true);
         HttpMessage message = createServerRequest("GET / HTTP/1.1");
-        doThrow(SocketTimeoutException.class).when(httpSender).sendAndReceive(message);
+        doThrow(ZapSocketTimeoutException.class).when(httpSender).sendAndReceive(message);
         // When
         handler.handleMessage(ctx, message);
         verifyMessageSent(message);
@@ -146,7 +139,7 @@ class HttpSenderHandlerUnitTest extends TestUtils {
         // Given
         given(ctx.isFromClient()).willReturn(true);
         HttpMessage message = createServerRequest("HEAD / HTTP/1.1");
-        doThrow(SocketTimeoutException.class).when(httpSender).sendAndReceive(message);
+        doThrow(ZapSocketTimeoutException.class).when(httpSender).sendAndReceive(message);
         // When
         handler.handleMessage(ctx, message);
         verifyMessageSent(message);
@@ -176,11 +169,11 @@ class HttpSenderHandlerUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldCloseWithoutSettingResponseOnHttpProtocolError() throws Exception {
+    void shouldCloseWithoutSettingResponseOnException() throws Exception {
         // Given
         given(ctx.isFromClient()).willReturn(true);
         HttpMessage message = createServerRequest("GET / HTTP/1.1");
-        doThrow(HttpException.class).when(httpSender).sendAndReceive(message);
+        doThrow(RuntimeException.class).when(httpSender).sendAndReceive(message);
         // When
         handler.handleMessage(ctx, message);
         verifyMessageSent(message);
@@ -192,7 +185,8 @@ class HttpSenderHandlerUnitTest extends TestUtils {
     private void verifyMessageSent(HttpMessage message) throws IOException {
         verify(httpSender, times(1)).sendAndReceive(message);
         verify(httpSender, times(0)).sendAndReceive(any(), anyBoolean());
-        verify(httpSender, times(0)).sendAndReceive(any(), any());
+        verify(httpSender, times(0)).sendAndReceive(any(), any(HttpRequestConfig.class));
+        verify(httpSender, times(0)).sendAndReceive(any(), any(Path.class));
     }
 
     private static HttpMessage createServerRequest(String request) {

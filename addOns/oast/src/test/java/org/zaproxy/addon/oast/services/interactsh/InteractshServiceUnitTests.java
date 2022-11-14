@@ -42,6 +42,8 @@ import net.sf.json.JSONObject;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -109,6 +111,23 @@ class InteractshServiceUnitTests extends TestUtils {
         // Then
         JSONObject request = JSONObject.fromObject(handler.getRequestBody());
         assertThat(request.containsKey("correlation-id"), is(true));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {200, 400, 500})
+    void shouldDeregisterAlways(int statusCode) throws InteractshException {
+        // Given
+        InteractshParam param = new InteractshParam(serverUrl, 60, "");
+        InteractshService service = new InteractshService(param);
+        StaticInteractshServerHandler handler =
+                new StaticInteractshServerHandler("/deregister", "", statusCode);
+        nano.addHandler(handler);
+        nano.addHandler(new StaticInteractshServerHandler("/register", ""));
+        service.register();
+        // When
+        service.deregister();
+        // Then
+        assertThat(service.isRegistered(), is(false));
     }
 
     @Test
@@ -211,11 +230,17 @@ class InteractshServiceUnitTests extends TestUtils {
     private static class StaticInteractshServerHandler extends NanoServerHandler {
         private String request;
         private String response;
+        private int statusCode;
         private Map<String, List<String>> parameters;
 
         public StaticInteractshServerHandler(String path, String response) {
+            this(path, response, 200);
+        }
+
+        public StaticInteractshServerHandler(String path, String response, int statusCode) {
             super(path);
             this.response = response;
+            this.statusCode = statusCode;
         }
 
         @Override
@@ -223,7 +248,9 @@ class InteractshServiceUnitTests extends TestUtils {
             request = getBody(session);
             parameters = session.getParameters();
             return newFixedLengthResponse(
-                    NanoHTTPD.Response.Status.OK, NanoHTTPD.MIME_PLAINTEXT, response);
+                    NanoHTTPD.Response.Status.lookup(this.statusCode),
+                    NanoHTTPD.MIME_PLAINTEXT,
+                    response);
         }
 
         public String getRequestBody() {

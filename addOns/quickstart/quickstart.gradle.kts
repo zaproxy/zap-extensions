@@ -5,7 +5,7 @@ description = "Provides a tab which allows you to quickly test a target applicat
 zapAddOn {
     addOnName.set("Quick Start")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.11.1")
+    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -73,7 +73,7 @@ zapAddOn {
                     version.set(">= 0.0.1")
                 }
                 register("network") {
-                    version.set(">= 0.2.0")
+                    version.set(">= 0.3.0")
                 }
             }
         }

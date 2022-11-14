@@ -21,9 +21,9 @@ package org.zaproxy.zap.extension.sse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.Socket;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.zaproxy.zap.ZapGetMethod;
 
 public class EventStreamListener implements Runnable {
 
@@ -31,12 +31,12 @@ public class EventStreamListener implements Runnable {
 
     private EventStreamProxy proxy;
     private BufferedReader reader;
-    private ZapGetMethod method;
+    private Socket socket;
 
-    public EventStreamListener(EventStreamProxy proxy, BufferedReader reader, ZapGetMethod method) {
+    public EventStreamListener(EventStreamProxy proxy, BufferedReader reader, Socket socket) {
         this.proxy = proxy;
         this.reader = reader;
-        this.method = method;
+        this.socket = socket;
     }
 
     @Override
@@ -74,6 +74,6 @@ public class EventStreamListener implements Runnable {
     }
 
     public void close() throws IOException {
-        method.abort();
+        socket.close();
     }
 }

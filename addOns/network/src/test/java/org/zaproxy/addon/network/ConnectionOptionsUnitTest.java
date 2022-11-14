@@ -130,7 +130,7 @@ class ConnectionOptionsUnitTest {
         assertThat(
                 options.getDnsTtlSuccessfulQueries(),
                 is(equalTo(ConnectionOptions.DNS_DEFAULT_TTL_SUCCESSFUL_QUERIES)));
-        assertThat(options.getTlsProtocols(), is(equalTo(TlsUtils.getSupportedProtocols())));
+        assertThat(options.getTlsProtocols(), is(equalTo(TlsUtils.getSupportedTlsProtocols())));
         assertThat(options.isAllowUnsafeRenegotiation(), is(equalTo(false)));
 
         HttpProxy httpProxy = options.getHttpProxy();
@@ -327,11 +327,11 @@ class ConnectionOptionsUnitTest {
     @Test
     void shouldLoadConfigWithTlsProtocols() {
         // Given
-        config.setProperty(TLS_PROTOCOL_KEY + "(0)", TlsUtils.getSupportedProtocols().get(0));
+        config.setProperty(TLS_PROTOCOL_KEY + "(0)", TlsUtils.getSupportedTlsProtocols().get(0));
         // When
         options.load(config);
         // Then
-        assertThat(options.getTlsProtocols(), contains(TlsUtils.getSupportedProtocols().get(0)));
+        assertThat(options.getTlsProtocols(), contains(TlsUtils.getSupportedTlsProtocols().get(0)));
     }
 
     @ParameterizedTest
@@ -342,21 +342,21 @@ class ConnectionOptionsUnitTest {
         // When
         options.load(config);
         // Then
-        assertThat(options.getTlsProtocols(), is(equalTo(TlsUtils.getSupportedProtocols())));
+        assertThat(options.getTlsProtocols(), is(equalTo(TlsUtils.getSupportedTlsProtocols())));
     }
 
     @Test
     void shouldSetAndPersistTlsProtocols() throws Exception {
         // Given
         List<String> tlsProtocols =
-                Collections.singletonList(TlsUtils.getSupportedProtocols().get(0));
+                Collections.singletonList(TlsUtils.getSupportedTlsProtocols().get(0));
         // When
         options.setTlsProtocols(tlsProtocols);
         // Then
         assertThat(options.getTlsProtocols(), is(equalTo(tlsProtocols)));
         assertThat(
                 config.getString(TLS_PROTOCOL_KEY + "(0)"),
-                is(equalTo(TlsUtils.getSupportedProtocols().get(0))));
+                is(equalTo(TlsUtils.getSupportedTlsProtocols().get(0))));
     }
 
     @Test
@@ -1408,7 +1408,7 @@ class ConnectionOptionsUnitTest {
         assertThat(options.getDefaultUserAgent(), is(equalTo("User-Agent")));
         assertThat(options.isUseGlobalHttpState(), is(equalTo(true)));
         assertThat(options.getDnsTtlSuccessfulQueries(), is(equalTo(321)));
-        assertThat(options.getTlsProtocols(), is(equalTo(TlsUtils.getSupportedProtocols())));
+        assertThat(options.getTlsProtocols(), is(equalTo(TlsUtils.getSupportedTlsProtocols())));
         assertThat(options.isAllowUnsafeRenegotiation(), is(equalTo(true)));
         assertThat(config.getKeys("connection").hasNext(), is(equalTo(false)));
         assertThat(config.getKeys("certificate").hasNext(), is(equalTo(false)));
@@ -1433,7 +1433,7 @@ class ConnectionOptionsUnitTest {
         // When
         options.load(config);
         // Then
-        assertThat(options.getTlsProtocols(), is(equalTo(TlsUtils.getSupportedProtocols())));
+        assertThat(options.getTlsProtocols(), is(equalTo(TlsUtils.getSupportedTlsProtocols())));
         assertThat(config.getKeys("connection").hasNext(), is(equalTo(false)));
     }
 
@@ -1446,7 +1446,7 @@ class ConnectionOptionsUnitTest {
         // When
         options.load(config);
         // Then
-        assertThat(options.getTlsProtocols(), is(equalTo(TlsUtils.getSupportedProtocols())));
+        assertThat(options.getTlsProtocols(), is(equalTo(TlsUtils.getSupportedTlsProtocols())));
         assertThat(config.getKeys("connection").hasNext(), is(equalTo(false)));
     }
 
@@ -1553,6 +1553,18 @@ class ConnectionOptionsUnitTest {
                 "User Name",
                 "Password");
         assertThat(config.getKeys("connection").hasNext(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldUpdateUserAgentOnUpdate() {
+        // Given
+        config.setProperty(DEFAULT_USER_AGENT_KEY, "Non default");
+        // When
+        options.updateConfigsImpl(ConnectionOptions.CURRENT_CONFIG_VERSION - 1);
+        // Then
+        assertThat(
+                config.getString(DEFAULT_USER_AGENT_KEY),
+                is(equalTo(ConnectionOptions.DEFAULT_DEFAULT_USER_AGENT)));
     }
 
     private static HttpProxyExclusion exclusion(String pattern, boolean enabled) {

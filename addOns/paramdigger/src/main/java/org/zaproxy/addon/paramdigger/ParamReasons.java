@@ -23,15 +23,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import org.zaproxy.addon.paramdigger.ParamGuessResult.Reason;
+import org.parosproxy.paros.model.HistoryReference;
 
 public class ParamReasons {
     private List<Reason> reasons;
     private Map<String, String> params;
+    private HistoryReference ref;
 
     public ParamReasons(List<Reason> reasons, Map<String, String> params) {
         this.reasons = Objects.requireNonNull(reasons);
         this.params = params;
+    }
+
+    public ParamReasons(List<Reason> reasons, Map<String, String> params, HistoryReference ref) {
+        this(reasons, params);
+        this.ref = ref;
     }
 
     public boolean isEmpty() {
@@ -60,5 +66,9 @@ public class ParamReasons {
 
     public void setParams(Map<String, String> params) {
         this.params = params;
+    }
+
+    public HistoryReference getRef() {
+        return ref;
     }
 }

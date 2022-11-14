@@ -26,9 +26,9 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
-import org.parosproxy.paros.network.ConnectionParam;
-import org.parosproxy.paros.security.SslCertificateService;
+import org.zaproxy.addon.network.ConnectionOptions;
 import org.zaproxy.addon.network.internal.ChannelAttributes;
+import org.zaproxy.addon.network.internal.cert.ServerCertificateService;
 import org.zaproxy.addon.network.internal.codec.HttpRequestDecoder;
 import org.zaproxy.addon.network.internal.codec.HttpResponseEncoder;
 import org.zaproxy.addon.network.internal.handlers.ConnectRequestHandler;
@@ -40,13 +40,14 @@ import org.zaproxy.addon.network.internal.handlers.TlsProtocolHandler;
 import org.zaproxy.addon.network.internal.server.BaseServer;
 
 /**
- * A HTTP server.
+ * An HTTP server.
  *
  * <p>Provides the following functionality:
  *
  * <ul>
  *   <li>Read timeout;
- *   <li>Handling of CONNECT requests and TLS upgrade;
+ *   <li>Handling of HTTP/1.x CONNECT requests and TLS upgrade;
+ *   <li>Handling of TLS ALPN, with support for HTTP/1.1;
  *   <li>Recursive check;
  *   <li>Exception handling;
  * </ul>
@@ -56,7 +57,7 @@ public class HttpServer extends BaseServer {
     private static final TlsConfig DEFAULT_TLS_CONFIG = new TlsConfig();
 
     private final EventExecutorGroup mainHandlerExecutor;
-    private final SslCertificateService sslCertificateService;
+    private final ServerCertificateService certificateService;
     private Supplier<MainServerHandler> handler;
     private DefaultServerConfig serverConfig;
 
@@ -67,16 +68,16 @@ public class HttpServer extends BaseServer {
      *
      * @param group the event loop group.
      * @param mainHandlerExecutor the event executor for the main handler.
-     * @param sslCertificateService the certificate service.
+     * @param certificateService the certificate service.
      * @see #setMainServerHandler(Supplier)
      */
     protected HttpServer(
             NioEventLoopGroup group,
             EventExecutorGroup mainHandlerExecutor,
-            SslCertificateService sslCertificateService) {
+            ServerCertificateService certificateService) {
         super(group);
         this.mainHandlerExecutor = Objects.requireNonNull(mainHandlerExecutor);
-        this.sslCertificateService = Objects.requireNonNull(sslCertificateService);
+        this.certificateService = Objects.requireNonNull(certificateService);
 
         this.serverConfig = new DefaultServerConfig();
         setChannelInitialiser(this::initChannel);
@@ -87,15 +88,15 @@ public class HttpServer extends BaseServer {
      *
      * @param group the event loop group.
      * @param mainHandlerExecutor the event executor for the main handler.
-     * @param sslCertificateService the certificate service.
+     * @param certificateService the certificate service.
      * @param handler the main handler.
      */
     public HttpServer(
             NioEventLoopGroup group,
             EventExecutorGroup mainHandlerExecutor,
-            SslCertificateService sslCertificateService,
+            ServerCertificateService certificateService,
             Supplier<MainServerHandler> handler) {
-        this(group, mainHandlerExecutor, sslCertificateService);
+        this(group, mainHandlerExecutor, certificateService);
 
         setMainServerHandler(handler);
     }
@@ -111,14 +112,14 @@ public class HttpServer extends BaseServer {
     }
 
     protected void initChannel(SocketChannel ch) {
-        ch.attr(ChannelAttributes.CERTIFICATE_SERVICE).set(sslCertificateService);
+        ch.attr(ChannelAttributes.CERTIFICATE_SERVICE).set(certificateService);
         ch.attr(ChannelAttributes.SERVER_CONFIG).set(serverConfig);
         ch.attr(ChannelAttributes.TLS_CONFIG).set(DEFAULT_TLS_CONFIG);
 
         ch.pipeline()
                 .addLast(
                         "timeout",
-                        new ReadTimeoutHandler(ConnectionParam.DEFAULT_TIMEOUT, TimeUnit.SECONDS))
+                        new ReadTimeoutHandler(ConnectionOptions.DEFAULT_TIMEOUT, TimeUnit.SECONDS))
                 .addLast("tls.upgrade", new TlsProtocolHandler())
                 .addLast("http.decoder", new HttpRequestDecoder())
                 .addLast("http.encoder", HttpResponseEncoder.getInstance())

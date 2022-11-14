@@ -44,6 +44,7 @@ public class GraalJsEngineWrapper extends DefaultEngineWrapper {
         this.icon = icon;
     }
 
+    @Override
     public boolean isSingleThreaded() {
         return true;
     }

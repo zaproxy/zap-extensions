@@ -5,7 +5,7 @@ description = "Adds encode/decode/hash dialog and support for scripted processor
 zapAddOn {
     addOnName.set("Encoder")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.11.1")
+    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -19,4 +19,8 @@ crowdin {
         tokens.put("%messagesPath%", resourcesPath)
         tokens.put("%helpPath%", resourcesPath)
     }
+}
+
+dependencies {
+    testImplementation(project(":testutils"))
 }

@@ -65,12 +65,10 @@ import org.zaproxy.zap.extension.openapi.converter.swagger.OperationModel;
 import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerConverter;
 import org.zaproxy.zap.extension.openapi.network.RequestModel;
 import org.zaproxy.zap.extension.openapi.network.Requestor;
-import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.DefaultValueGenerator;
 import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.model.ValueGenerator;
-import org.zaproxy.zap.spider.parser.SpiderParser;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineListener {
@@ -89,7 +87,6 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     private ImportFromFileDialog currentFileDialog = null;
     private ImportFromUrlDialog currentUrlDialog = null;
     private int threadId = 1;
-    private SpiderParser customSpider;
     private ValueGenerator valueGenerator;
     private final Map<Integer, VariantOpenApiChecks> variantChecksMap = new HashMap<>();
     private TableOpenApi table = new TableOpenApi();
@@ -118,20 +115,6 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        /* Custom spider is added in order to explore Open API definitions. */
-        ExtensionSpider spider =
-                (ExtensionSpider)
-                        Control.getSingleton()
-                                .getExtensionLoader()
-                                .getExtension(ExtensionSpider.NAME);
-        if (spider != null) {
-            customSpider = new OpenApiSpider(this::getValueGenerator);
-            spider.addCustomParser(customSpider);
-            LOG.debug("Added custom Open API spider.");
-        } else {
-            LOG.debug("Custom Open API spider could not be added.");
-        }
-
         if (hasView()) {
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportLocalOpenApi());
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportUrlOpenApi());
@@ -148,15 +131,6 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     @Override
     public void unload() {
         super.unload();
-        ExtensionSpider spider =
-                (ExtensionSpider)
-                        Control.getSingleton()
-                                .getExtensionLoader()
-                                .getExtension(ExtensionSpider.NAME);
-        if (spider != null) {
-            spider.removeCustomParser(customSpider);
-            LOG.debug("Removed custom Open API spider.");
-        }
         if (currentFileDialog != null) {
             currentFileDialog.dispose();
             currentFileDialog.unload();

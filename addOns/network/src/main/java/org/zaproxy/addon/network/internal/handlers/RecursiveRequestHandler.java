@@ -38,7 +38,7 @@ import org.zaproxy.addon.network.internal.ChannelAttributes;
 import org.zaproxy.addon.network.internal.server.ServerConfig;
 
 /**
- * A handler that checks if a HTTP request is a request to the server itself, thus recursive if
+ * A handler that checks if an HTTP request is a request to the server itself, thus recursive if
  * forwarded.
  *
  * <p>Sets the attribute {@link ChannelAttributes#RECURSIVE_MESSAGE} accordingly.

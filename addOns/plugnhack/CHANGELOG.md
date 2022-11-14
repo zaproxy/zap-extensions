@@ -4,9 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [13] - 2022-10-27
 ### Changed
 - Maintenance changes.
-- Update minimum ZAP version to 2.11.1.
+- Update minimum ZAP version to 2.12.0.
 - Use Network add-on to obtain main proxy address/port.
 
 ## [12] - 2021-10-07
@@ -58,4 +61,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Moved to beta
 
+[13]: https://github.com/zaproxy/zap-extensions/releases/plugnhack-v13
 [12]: https://github.com/zaproxy/zap-extensions/releases/plugnhack-v12

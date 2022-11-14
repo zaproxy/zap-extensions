@@ -19,19 +19,15 @@
  */
 package org.zaproxy.addon.encoder.processors.predefined;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+public class Sha256Hasher extends HashProcessor {
 
-public class Sha256Hasher extends DefaultEncodeDecodeProcessor {
+    private static final Sha256Hasher INSTANCE = new Sha256Hasher();
 
-    @Override
-    protected String processInternal(String value) throws NoSuchAlgorithmException {
-        return HexStringEncoder.getHexString(getHashSHA256(value.getBytes()));
+    public Sha256Hasher() {
+        super("SHA-256");
     }
 
-    private byte[] getHashSHA256(byte[] buf) throws NoSuchAlgorithmException {
-        MessageDigest sha = MessageDigest.getInstance("SHA-256");
-        sha.update(buf);
-        return sha.digest();
+    public static Sha256Hasher getSingleton() {
+        return INSTANCE;
     }
 }

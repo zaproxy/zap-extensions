@@ -43,7 +43,6 @@ import java.util.Date;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
-import org.parosproxy.paros.security.CertData;
 import org.zaproxy.addon.network.NetworkTestUtils;
 
 /** Unit test for {@link CertificateUtils}. */

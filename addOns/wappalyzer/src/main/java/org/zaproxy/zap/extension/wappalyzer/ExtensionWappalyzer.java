@@ -285,7 +285,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         try {
             return lead + uri.getAuthority();
         } catch (URIException e) {
-            logger.debug("Unable to get authority from: {}", uri.toString(), e);
+            logger.debug("Unable to get authority from: {}", uri, e);
             // Shouldn't happen, but sure fallback
             return ScanPanel.cleanSiteName(uri.toString(), true);
         }

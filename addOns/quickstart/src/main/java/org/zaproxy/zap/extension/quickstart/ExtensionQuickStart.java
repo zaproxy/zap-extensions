@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Vector;
 import javax.swing.ComboBoxModel;
 import javax.swing.ImageIcon;
-import javax.swing.JCheckBox;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.tree.ConfigurationNode;
 import org.apache.commons.httpclient.URI;
@@ -60,9 +59,6 @@ import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.reports.ExtensionReports;
 import org.zaproxy.zap.extension.ext.ExtensionExtension;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
-import org.zaproxy.zap.extension.spider.ExtensionSpider;
-import org.zaproxy.zap.extension.spider.SpiderScan;
-import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -136,10 +132,6 @@ public class ExtensionQuickStart extends ExtensionAdaptor
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-
-        if (ExtensionSpider.class.getAnnotation(Deprecated.class) == null) {
-            setTraditionalSpider(new TraditionalSpiderImpl());
-        }
 
         extensionHook.addOptionsChangedListener(this);
         extensionHook.addOptionsParamSet(getQuickStartParam());
@@ -678,71 +670,5 @@ public class ExtensionQuickStart extends ExtensionAdaptor
 
     public ComboBoxModel<String> getUrlModel() {
         return this.getQuickStartPanel().getUrlModel();
-    }
-
-    private class TraditionalSpiderImpl implements TraditionalSpider {
-
-        private JCheckBox spiderCheckBox;
-
-        @Override
-        public String getLabel() {
-            return Constant.messages.getString("quickstart.label.tradspider");
-        }
-
-        @Override
-        public JCheckBox getComponent() {
-            if (spiderCheckBox == null) {
-                spiderCheckBox = new JCheckBox();
-                spiderCheckBox.setSelected(getQuickStartParam().isTradSpiderEnabled());
-                spiderCheckBox.addActionListener(
-                        e ->
-                                getQuickStartParam()
-                                        .setTradSpiderEnabled(spiderCheckBox.isSelected()));
-            }
-            return spiderCheckBox;
-        }
-
-        @Override
-        public boolean isSelected() {
-            return getComponent().isSelected();
-        }
-
-        @Override
-        public void setEnabled(boolean enabled) {
-            getComponent().setEnabled(enabled);
-        }
-
-        @Override
-        public Scan startScan(String displayName, Target target) {
-            ExtensionSpider extension =
-                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.class);
-
-            int scanId = extension.startScan(displayName, target, null, null);
-            return new ScanImpl(extension.getScan(scanId));
-        }
-    }
-
-    private static class ScanImpl implements TraditionalSpider.Scan {
-
-        private SpiderScan scan;
-
-        public ScanImpl(SpiderScan scan) {
-            this.scan = scan;
-        }
-
-        @Override
-        public boolean isStopped() {
-            return scan.isStopped();
-        }
-
-        @Override
-        public void stopScan() {
-            scan.stopScan();
-        }
-
-        @Override
-        public int getProgress() {
-            return scan.getProgress();
-        }
     }
 }

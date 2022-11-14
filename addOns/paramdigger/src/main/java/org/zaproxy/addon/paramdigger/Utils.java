@@ -167,4 +167,18 @@ public class Utils {
         json.accumulateAll(params);
         return json.toString();
     }
+
+    public static String addCacheBusterParameter(String url, String cacheBuster, String value) {
+        StringBuilder newUrl = new StringBuilder(url);
+
+        if (url.contains("?")) {
+            newUrl.append('&');
+        } else {
+            newUrl.append('?');
+        }
+        newUrl.append(cacheBuster);
+        newUrl.append('=');
+        newUrl.append(value);
+        return newUrl.toString();
+    }
 }

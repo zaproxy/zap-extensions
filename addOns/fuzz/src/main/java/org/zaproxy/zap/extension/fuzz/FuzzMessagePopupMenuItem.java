@@ -30,6 +30,7 @@ import org.zaproxy.zap.view.messagecontainer.SelectableContentMessageContainer;
 import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
 import org.zaproxy.zap.view.popup.ExtensionPopupMenuItemMessageContainer;
 
+@SuppressWarnings("serial")
 public class FuzzMessagePopupMenuItem extends ExtensionPopupMenuItemMessageContainer {
 
     private static final long serialVersionUID = 1L;

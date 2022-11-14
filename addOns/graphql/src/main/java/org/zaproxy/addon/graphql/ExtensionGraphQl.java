@@ -46,11 +46,8 @@ import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
-import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.model.DefaultValueGenerator;
 import org.zaproxy.zap.model.ValueGenerator;
-import org.zaproxy.zap.spider.filters.ParseFilter;
-import org.zaproxy.zap.spider.parser.SpiderParser;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionGraphQl extends ExtensionAdaptor
@@ -61,8 +58,6 @@ public class ExtensionGraphQl extends ExtensionAdaptor
 
     private ZapMenuItem menuImportLocalGraphQl = null;
     private ZapMenuItem menuImportUrlGraphQl = null;
-    private SpiderParser graphQlSpider;
-    private ParseFilter graphQlParseFilter;
     private GraphQlOptionsPanel graphQlOptionsPanel;
     private GraphQlParam param;
     private List<ParserThread> parserThreads = Collections.synchronizedList(new ArrayList<>());
@@ -90,20 +85,6 @@ public class ExtensionGraphQl extends ExtensionAdaptor
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-        if (!"2.9.0".equals(Constant.PROGRAM_VERSION)) {
-            /* Custom spider is added in order to explore GraphQl schemas. */
-            ExtensionSpider spider =
-                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.class);
-            graphQlSpider = new GraphQlSpider();
-            graphQlParseFilter = new GraphQlParseFilter();
-            if (spider != null) {
-                spider.addCustomParseFilter(graphQlParseFilter);
-                spider.addCustomParser(graphQlSpider);
-                LOG.debug("Added GraphQl spider.");
-            } else {
-                LOG.debug("Could not add GraphQl spider.");
-            }
-        }
 
         if (hasView()) {
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportLocalGraphQl());
@@ -124,20 +105,6 @@ public class ExtensionGraphQl extends ExtensionAdaptor
             addScript();
         } catch (IOException e) {
             LOG.warn("Could not add GraphQL Input Vectors script.");
-        }
-    }
-
-    @Override
-    public void unload() {
-        super.unload();
-        if (!"2.9.0".equals(Constant.PROGRAM_VERSION)) {
-            ExtensionSpider spider =
-                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.class);
-            if (spider != null) {
-                spider.removeCustomParseFilter(graphQlParseFilter);
-                spider.removeCustomParser(graphQlSpider);
-                LOG.debug("Removed GraphQl spider.");
-            }
         }
     }
 

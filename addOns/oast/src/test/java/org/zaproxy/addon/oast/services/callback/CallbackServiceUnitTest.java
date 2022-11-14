@@ -36,7 +36,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.parosproxy.paros.network.ConnectionParam;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.ExtensionLoader;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
@@ -62,8 +65,11 @@ class CallbackServiceUnitTest extends TestUtils {
     @BeforeAll
     static void setupAll() {
         mockMessages(new ExtensionOast());
+
+        Control.initSingletonForTesting(mock(Model.class), mock(ExtensionLoader.class));
         extensionNetwork = new ExtensionNetwork();
         extensionNetwork.init();
+        extensionNetwork.hook(mock(ExtensionHook.class));
     }
 
     @AfterAll
@@ -73,7 +79,7 @@ class CallbackServiceUnitTest extends TestUtils {
 
     @BeforeEach
     void setup() throws Exception {
-        httpSender = new HttpSender(new ConnectionParam(), false, 0);
+        httpSender = new HttpSender(0);
 
         oastRequest = mock(OastRequest.class);
         OastRequestFactory oastRequestFactory =

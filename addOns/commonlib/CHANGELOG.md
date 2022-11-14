@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 
+## [1.11.0] - 2022-10-27
+### Changed
+- Update minimum ZAP version to 2.12.0.
+
 ## [1.10.0] - 2022-09-15
 ### Changed
 - Maintenance changes.
@@ -72,6 +76,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 First version.
 
+[1.11.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.11.0
 [1.10.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.10.0
 [1.9.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.9.0
 [1.8.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.8.0

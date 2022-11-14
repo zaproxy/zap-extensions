@@ -69,8 +69,6 @@ import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
-import org.parosproxy.paros.core.proxy.ProxyParam;
-import org.parosproxy.paros.core.proxy.ProxyServer;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -78,30 +76,25 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.extension.SessionChangedListener;
-import org.parosproxy.paros.extension.option.OptionsParamCertificate;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
-import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpSender;
-import org.parosproxy.paros.network.SSLConnector;
-import org.parosproxy.paros.security.CachedSslCertifificateServiceImpl;
-import org.parosproxy.paros.security.CertData;
-import org.parosproxy.paros.security.MissingRootCertificateException;
-import org.parosproxy.paros.security.SslCertificateService;
 import org.parosproxy.paros.view.OptionsDialog;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.network.LocalServersOptions.ServersChangedListener;
 import org.zaproxy.addon.network.internal.TlsUtils;
+import org.zaproxy.addon.network.internal.cert.CertData;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
 import org.zaproxy.addon.network.internal.cert.GenerationException;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateGenerator;
+import org.zaproxy.addon.network.internal.cert.ServerCertificateService;
+import org.zaproxy.addon.network.internal.client.CloseableHttpSenderImpl;
 import org.zaproxy.addon.network.internal.client.HttpProxy;
 import org.zaproxy.addon.network.internal.client.LegacyUtils;
 import org.zaproxy.addon.network.internal.client.ZapAuthenticator;
 import org.zaproxy.addon.network.internal.client.ZapProxySelector;
 import org.zaproxy.addon.network.internal.client.apachev5.HttpSenderApache;
-import org.zaproxy.addon.network.internal.client.core.HttpSenderContext;
 import org.zaproxy.addon.network.internal.handlers.PassThroughHandler;
 import org.zaproxy.addon.network.internal.server.AliasChecker;
 import org.zaproxy.addon.network.internal.server.http.HttpServer;
@@ -127,20 +120,15 @@ import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiElement;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.brk.ExtensionBreak;
-import org.zaproxy.zap.extension.dynssl.DynSSLParam;
-import org.zaproxy.zap.extension.dynssl.ExtensionDynSSL;
 import org.zaproxy.zap.utils.ZapPortNumberSpinner;
-import org.zaproxy.zap.view.ProxyDialog;
 
 public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineListener {
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionNetwork.class);
 
     static {
-        if (isDeprecated(org.zaproxy.zap.network.ZapAuthenticator.class)) {
-            ProxySelector.setDefault(ZapProxySelector.getSingleton());
-            Authenticator.setDefault(ZapAuthenticator.getSingleton());
-        }
+        ProxySelector.setDefault(ZapProxySelector.getSingleton());
+        Authenticator.setDefault(ZapAuthenticator.getSingleton());
     }
 
     private static final int NO_PORT_OVERRIDE = -1;
@@ -155,14 +143,11 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     private static final int ARG_HOST_IDX = 3;
     private static final int ARG_PORT_IDX = 4;
 
-    Consumer<SslCertificateService> setSslCertificateService;
-    boolean handleServerCerts;
-    boolean handleClient;
-    private HttpSenderNetwork<? extends HttpSenderContext> httpSenderNetwork;
-    boolean handleClientCerts;
-    boolean handleLocalServers;
-    static Boolean handleConnection;
-    private ConnectionParam legacyConnectionOptions;
+    private CloseableHttpSenderImpl<?> httpSenderNetwork;
+
+    @SuppressWarnings("deprecation")
+    private org.parosproxy.paros.network.ConnectionParam legacyConnectionOptions;
+
     private LegacyProxyListenerHandler legacyProxyListenerHandler;
     private Object syncGroups = new Object();
     private boolean groupsInitiated;
@@ -175,7 +160,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     private ServerCertificatesOptions serverCertificatesOptions;
     private ServerCertificatesOptionsPanel serverCertificatesOptionsPanel;
 
-    private SslCertificateService sslCertificateService;
+    private ServerCertificateServiceImpl serverCertificateService;
 
     private LocalServersOptions localServersOptions;
     private LocalServersOptionsPanel localServersOptionsPanel;
@@ -200,6 +185,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     private CookieStore globalCookieStore;
     private HttpState globalHttpState;
 
+    @SuppressWarnings("deprecation")
     public ExtensionNetwork() {
         super(ExtensionNetwork.class.getSimpleName());
 
@@ -209,37 +195,30 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         setOrder(Integer.MAX_VALUE);
 
         // Force initialisation.
-        TlsUtils.getSupportedProtocols();
+        TlsUtils.getSupportedTlsProtocols();
 
-        if (isHandleConnection()) {
-            connectionOptions = new ConnectionOptions();
-            legacyConnectionOptions =
-                    new LegacyConnectionParam(
-                            () -> {
-                                if (handleClient) {
-                                    LegacyUtils.updateHttpState(globalHttpState, globalCookieStore);
-                                }
-                                return globalHttpState;
-                            },
-                            connectionOptions);
-            Model.getSingleton().getOptionsParam().setConnectionParam(legacyConnectionOptions);
+        connectionOptions = new ConnectionOptions();
+        legacyConnectionOptions =
+                new LegacyConnectionParam(
+                        () -> {
+                            LegacyUtils.updateHttpState(globalHttpState, globalCookieStore);
+                            return globalHttpState;
+                        },
+                        connectionOptions);
+        Model.getSingleton().getOptionsParam().setConnectionParam(legacyConnectionOptions);
 
-            handleClient = isDeprecated(SSLConnector.class);
-            if (handleClient) {
-                clientCertificatesOptions = new ClientCertificatesOptions();
+        clientCertificatesOptions = new ClientCertificatesOptions();
 
-                try {
-                    httpSenderNetwork =
-                            new HttpSenderNetwork<>(
-                                    connectionOptions,
-                                    new HttpSenderApache(
-                                            this::getGlobalCookieStore,
-                                            connectionOptions,
-                                            clientCertificatesOptions));
-                } catch (Exception e) {
-                    LOGGER.error("An error occurred while creating the sender:", e);
-                }
-            }
+        try {
+            httpSenderNetwork =
+                    new HttpSenderApache(
+                            this::getGlobalCookieStore,
+                            connectionOptions,
+                            clientCertificatesOptions,
+                            () -> legacyProxyListenerHandler);
+            HttpSender.setImpl(httpSenderNetwork);
+        } catch (Exception e) {
+            LOGGER.error("An error occurred while creating the sender:", e);
         }
     }
 
@@ -269,26 +248,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         return clientCertificatesOptions;
     }
 
-    boolean isHandleServerCerts() {
-        return handleServerCerts;
-    }
-
-    boolean isHandleClientCerts() {
-        return handleClientCerts;
-    }
-
-    boolean isHandleLocalServers() {
-        return handleLocalServers;
-    }
-
-    static boolean isHandleConnection() {
-        if (handleConnection != null) {
-            return handleConnection;
-        }
-        handleConnection = isDeprecated(ConnectionParam.class);
-        return handleConnection;
-    }
-
     AliasChecker getAliasChecker() {
         return aliasChecker;
     }
@@ -297,60 +256,24 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     public void init() {
         localServers = Collections.synchronizedMap(new HashMap<>());
 
-        handleServerCerts = isDeprecated(ExtensionDynSSL.class);
-        setSslCertificateService =
-                new Consumer<SslCertificateService>() {
-
-                    Method method;
-
-                    @Override
-                    public void accept(SslCertificateService sslCertificateService) {
-                        try {
-                            if (method == null) {
-                                method =
-                                        SSLConnector.class.getMethod(
-                                                "setSslCertificateService",
-                                                SslCertificateService.class);
-                            }
-                            method.invoke(SSLConnector.class, sslCertificateService);
-                        } catch (Exception e) {
-                            LOGGER.error(
-                                    "An error occurred while setting the certificates service:", e);
-                        }
-                    }
-                };
-        handleLocalServers = isDeprecated(ProxyServer.class);
-
-        if (handleLocalServers) {
-            extensionBreak =
-                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionBreak.class);
-            if (extensionBreak != null) {
-                try {
-                    addBreakListenerMethod =
-                            extensionBreak
-                                    .getClass()
-                                    .getDeclaredMethod(
-                                            "addSerialisationRequiredListener", Consumer.class);
-                    removeBreakListenerMethod =
-                            extensionBreak
-                                    .getClass()
-                                    .getDeclaredMethod(
-                                            "removeSerialisationRequiredListener", Consumer.class);
-                } catch (Exception e) {
-                    LOGGER.error("An error occurred while getting the break methods:", e);
-                }
+        extensionBreak =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionBreak.class);
+        if (extensionBreak != null) {
+            try {
+                addBreakListenerMethod =
+                        extensionBreak
+                                .getClass()
+                                .getDeclaredMethod(
+                                        "addSerialisationRequiredListener", Consumer.class);
+                removeBreakListenerMethod =
+                        extensionBreak
+                                .getClass()
+                                .getDeclaredMethod(
+                                        "removeSerialisationRequiredListener", Consumer.class);
+            } catch (Exception e) {
+                LOGGER.error("An error occurred while getting the break methods:", e);
             }
         }
-
-        if (!handleServerCerts) {
-            sslCertificateService = new LegacySslCertificateServiceImpl();
-        }
-
-        handleClientCerts = isDeprecated(OptionsParamCertificate.class);
-    }
-
-    private static boolean isDeprecated(Class<?> clazz) {
-        return clazz.getAnnotation(Deprecated.class) != null;
     }
 
     @Override
@@ -361,23 +284,20 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                 new ServerInfo() {
 
                     @Override
+                    @SuppressWarnings("deprecation")
                     public String getAddress() {
                         return getModel().getOptionsParam().getProxyParam().getProxyIp();
                     }
 
                     @Override
+                    @SuppressWarnings("deprecation")
                     public int getPort() {
                         return getModel().getOptionsParam().getProxyParam().getProxyPort();
                     }
                 };
 
-        if (!handleLocalServers) {
-            return;
-        }
-
-        ConnectionParam connectionParam = model.getOptionsParam().getConnectionParam();
-        proxyHttpSender = new HttpSender(connectionParam, true, HttpSender.PROXY_INITIATOR);
-        httpSenderHandler = new HttpSenderHandler(connectionParam, proxyHttpSender);
+        proxyHttpSender = new HttpSender(HttpSender.PROXY_INITIATOR);
+        httpSenderHandler = new HttpSenderHandler(proxyHttpSender);
     }
 
     private NioEventLoopGroup getMainEventLoopGroup() {
@@ -448,7 +368,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     }
 
     /**
-     * Creates a HTTP server.
+     * Creates an HTTP server.
      *
      * <p>The CONNECT requests are automatically handled as is the possible TLS upgrade.
      *
@@ -468,7 +388,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         return new HttpServer(
                 getMainEventLoopGroup(),
                 getMainEventExecutorGroup(),
-                sslCertificateService,
+                serverCertificateService,
                 handler);
     }
 
@@ -483,7 +403,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     }
 
     /**
-     * Creates a HTTP proxy.
+     * Creates an HTTP proxy.
      *
      * <p>The CONNECT requests are automatically handled as is the possible TLS upgrade. The
      * connection is automatically closed on recursive requests.
@@ -496,13 +416,12 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
      */
     public Server createHttpProxy(int initiator, HttpMessageHandler handler) {
         Objects.requireNonNull(handler);
-        HttpSender httpSender =
-                new HttpSender(getModel().getOptionsParam().getConnectionParam(), true, initiator);
+        HttpSender httpSender = new HttpSender(initiator);
         return createHttpProxy(httpSender, handler);
     }
 
     /**
-     * Creates a HTTP proxy using an existing {@code HttpSender}.
+     * Creates an HTTP proxy using an existing {@code HttpSender}.
      *
      * <p>The CONNECT requests are automatically handled as is the possible TLS upgrade. The
      * connection is automatically closed on recursive requests.
@@ -523,8 +442,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                         RemoveAcceptEncodingHandler.getEnabledInstance(),
                         DecodeResponseHandler.getEnabledInstance(),
                         handler,
-                        new HttpSenderHandler(
-                                getModel().getOptionsParam().getConnectionParam(), httpSender));
+                        new HttpSenderHandler(httpSender));
         return createHttpServer(() -> new MainProxyHandler(legacyProxyListenerHandler, handlers));
     }
 
@@ -546,57 +464,44 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         legacyProxyListenerHandler = new LegacyProxyListenerHandler();
         Control.getSingleton().getExtensionLoader().addProxyServer(legacyProxyListenerHandler);
 
-        if (!handleServerCerts) {
-            return;
-        }
+        extensionHook.addCommandLine(createCommandLineArgs());
 
-        extensionHook.addCommandLine(createCommandLineArgs(handleLocalServers));
-
-        sslCertificateService = new SslCertificateServiceImpl();
+        serverCertificateService = new ServerCertificateServiceImpl();
 
         serverCertificatesOptions = new ServerCertificatesOptions();
         extensionHook.addOptionsParamSet(serverCertificatesOptions);
 
-        if (handleLocalServers) {
-            localServersOptions = new LocalServersOptions();
-            localServersOptions.addServersChangedListener(new ServersChangedListenerImpl());
-            extensionHook.addOptionsParamSet(localServersOptions);
+        localServersOptions = new LocalServersOptions();
+        localServersOptions.addServersChangedListener(new ServersChangedListenerImpl());
+        extensionHook.addOptionsParamSet(localServersOptions);
 
-            passThroughHandler =
-                    new PassThroughHandler(
-                            requestHeader ->
-                                    localServersOptions.getPassThroughs().stream()
-                                            .anyMatch(e -> e.test(requestHeader)));
+        passThroughHandler =
+                new PassThroughHandler(
+                        requestHeader ->
+                                localServersOptions.getPassThroughs().stream()
+                                        .anyMatch(e -> e.test(requestHeader)));
 
-            aliasChecker =
-                    requestHeader -> {
-                        if (API.API_DOMAIN.equals(requestHeader.getHostName())) {
-                            return true;
-                        }
+        aliasChecker =
+                requestHeader -> {
+                    if (API.API_DOMAIN.equals(requestHeader.getHostName())) {
+                        return true;
+                    }
 
-                        return localServersOptions.getAliases().stream()
-                                .anyMatch(e -> e.test(requestHeader));
-                    };
+                    return localServersOptions.getAliases().stream()
+                            .anyMatch(e -> e.test(requestHeader));
+                };
 
-            extensionHook.addApiImplementor(new LegacyProxiesApi(this));
-        }
+        extensionHook.addApiImplementor(new LegacyProxiesApi(this));
 
         ApiImplementor coreApi = API.getInstance().getImplementors().get("core");
-        if (handleConnection && coreApi != null) {
+        if (coreApi != null) {
             updateOldCoreApiEndpoints(coreApi, legacyConnectionOptions);
         }
 
-        if (handleConnection) {
-            extensionHook.addOptionsParamSet(connectionOptions);
-            extensionHook.addOptionsChangedListener(new OptionsChangedListenerImpl());
-        }
+        extensionHook.addOptionsParamSet(connectionOptions);
+        extensionHook.addOptionsChangedListener(new OptionsChangedListenerImpl());
 
-        if (handleClientCerts) {
-            if (!handleClient) {
-                clientCertificatesOptions = new ClientCertificatesOptions();
-            }
-            extensionHook.addOptionsParamSet(clientCertificatesOptions);
-        }
+        extensionHook.addOptionsParamSet(clientCertificatesOptions);
 
         if (hasView()) {
             ExtensionHookView hookView = extensionHook.getHookView();
@@ -605,39 +510,33 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             serverCertificatesOptionsPanel = new ServerCertificatesOptionsPanel(this);
             optionsDialog.addParamPanel(networkNode, serverCertificatesOptionsPanel, true);
 
-            if (handleLocalServers) {
-                localServersOptionsPanel = new LocalServersOptionsPanel(this);
-                optionsDialog.addParamPanel(networkNode, localServersOptionsPanel, true);
+            localServersOptionsPanel = new LocalServersOptionsPanel(this);
+            optionsDialog.addParamPanel(networkNode, localServersOptionsPanel, true);
 
-                localServerInfoLabel =
-                        new LocalServerInfoLabel(
-                                getView().getMainFrame().getMainFooterPanel(), localServersOptions);
+            localServerInfoLabel =
+                    new LocalServerInfoLabel(
+                            getView().getMainFrame().getMainFooterPanel(), localServersOptions);
 
-                hookView.addOptionPanel(
-                        new LegacyOptionsPanel("dynssl", serverCertificatesOptionsPanel));
-                hookView.addOptionPanel(
-                        new LegacyOptionsPanel("proxies", localServersOptionsPanel));
-            }
+            hookView.addOptionPanel(
+                    new LegacyOptionsPanel("dynssl", serverCertificatesOptionsPanel));
+            hookView.addOptionPanel(new LegacyOptionsPanel("proxies", localServersOptionsPanel));
 
-            if (handleConnection) {
-                connectionOptionsPanel = new ConnectionOptionsPanel();
-                optionsDialog.addParamPanel(networkNode, connectionOptionsPanel, true);
-                hookView.addOptionPanel(
-                        new LegacyOptionsPanel("connection", connectionOptionsPanel));
-            }
+            connectionOptionsPanel = new ConnectionOptionsPanel();
+            optionsDialog.addParamPanel(networkNode, connectionOptionsPanel, true);
+            hookView.addOptionPanel(new LegacyOptionsPanel("connection", connectionOptionsPanel));
 
-            if (handleClientCerts) {
-                clientCertificatesOptionsPanel =
-                        new ClientCertificatesOptionsPanel(View.getSingleton());
-                optionsDialog.addParamPanel(networkNode, clientCertificatesOptionsPanel, true);
-                hookView.addOptionPanel(
-                        new LegacyOptionsPanel("clientcerts", clientCertificatesOptionsPanel));
-            }
+            clientCertificatesOptionsPanel =
+                    new ClientCertificatesOptionsPanel(View.getSingleton());
+            optionsDialog.addParamPanel(networkNode, clientCertificatesOptionsPanel, true);
+            hookView.addOptionPanel(
+                    new LegacyOptionsPanel("clientcerts", clientCertificatesOptionsPanel));
         }
     }
 
     private static void updateOldCoreApiEndpoints(
-            ApiImplementor coreApi, ConnectionParam connectionParam) {
+            ApiImplementor coreApi,
+            @SuppressWarnings("deprecation")
+                    org.parosproxy.paros.network.ConnectionParam connectionParam) {
         List<String> views =
                 Arrays.asList(
                         "optionDefaultUserAgent",
@@ -667,7 +566,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                         "setOptionProxyChainPort",
                         "setOptionProxyChainPrompt",
                         "setOptionProxyChainRealm",
-                        "setOptionProxyChainSkipName",
                         "setOptionProxyChainUserName",
                         "setOptionSingleCookieRequestHeader",
                         "setOptionTimeoutInSecs",
@@ -773,41 +671,25 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     @Override
     public void optionsLoaded() {
-        if (hasView()) {
-            if (handleConnection) {
-                if (!connectionOptions.isStoreHttpProxyPass()) {
-                    char[] password = new PromptHttpProxyPasswordDialog().getPassword();
-                    if (password.length != 0) {
-                        HttpProxy oldProxy = connectionOptions.getHttpProxy();
-                        HttpProxy httpProxy =
-                                new HttpProxy(
-                                        oldProxy.getHost(),
-                                        oldProxy.getPort(),
-                                        oldProxy.getRealm(),
-                                        new PasswordAuthentication(
-                                                oldProxy.getPasswordAuthentication().getUserName(),
-                                                password));
-                        connectionOptions.setHttpProxy(httpProxy);
-                    }
-                }
-                return;
-            }
-
-            OptionsParam options = getModel().getOptionsParam();
-            if (options.getConnectionParam().isProxyChainPrompt()) {
-                ProxyDialog dialog = new ProxyDialog(null, true);
-                dialog.init(options);
-                dialog.setVisible(true);
+        if (hasView() && !connectionOptions.isStoreHttpProxyPass()) {
+            char[] password = new PromptHttpProxyPasswordDialog().getPassword();
+            if (password.length != 0) {
+                HttpProxy oldProxy = connectionOptions.getHttpProxy();
+                HttpProxy httpProxy =
+                        new HttpProxy(
+                                oldProxy.getHost(),
+                                oldProxy.getPort(),
+                                oldProxy.getRealm(),
+                                new PasswordAuthentication(
+                                        oldProxy.getPasswordAuthentication().getUserName(),
+                                        password));
+                connectionOptions.setHttpProxy(httpProxy);
             }
         }
     }
 
     @Override
     public void postInit() {
-        if (!handleLocalServers) {
-            return;
-        }
-
         serialiseForBreak = new BreakSerialiseState();
         if (addBreakListenerMethod != null) {
             try {
@@ -840,10 +722,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     @Override
     public void postInstall() {
-        if (!handleLocalServers) {
-            return;
-        }
-
         startLocalServers(null, NO_PORT_OVERRIDE, true);
     }
 
@@ -886,7 +764,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         return new LocalServer(
                 getMainEventLoopGroup(),
                 getMainEventExecutorGroup(),
-                sslCertificateService,
+                serverCertificateService,
                 legacyProxyListenerHandler,
                 passThroughHandler,
                 httpSenderHandler,
@@ -998,8 +876,10 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         }
     }
 
+    @SuppressWarnings("deprecation")
     private void updateCoreProxy(LocalServerConfig serverConfig) {
-        ProxyParam proxyParam = getModel().getOptionsParam().getProxyParam();
+        org.parosproxy.paros.core.proxy.ProxyParam proxyParam =
+                getModel().getOptionsParam().getProxyParam();
         proxyParam.setProxyIp(
                 serverConfig.isAnyLocalAddress()
                         ? getLocalhostAddress()
@@ -1015,6 +895,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         }
     }
 
+    @SuppressWarnings("deprecation")
     private boolean promptUserMainProxyPort() {
         LocalServerConfig serverConfig = mainProxyServer.getConfig();
         PromptPortPanel prompt =
@@ -1044,7 +925,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
         } while (true);
 
-        ProxyParam proxyParam = getModel().getOptionsParam().getProxyParam();
+        org.parosproxy.paros.core.proxy.ProxyParam proxyParam =
+                getModel().getOptionsParam().getProxyParam();
         proxyParam.setProxyPort(prompt.getPort());
 
         LocalServer currentProxyServer = mainProxyServer;
@@ -1146,8 +1028,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         return passThroughHandler;
     }
 
-    private static CommandLineArgument[] createCommandLineArgs(boolean includeHostPort) {
-        CommandLineArgument[] arguments = new CommandLineArgument[includeHostPort ? 5 : 3];
+    private static CommandLineArgument[] createCommandLineArgs() {
+        CommandLineArgument[] arguments = new CommandLineArgument[5];
         arguments[ARG_CERT_LOAD] =
                 new CommandLineArgument(
                         "-certload",
@@ -1173,34 +1055,27 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                         "-certfulldump <path>     "
                                 + Constant.messages.getString("network.cmdline.certfulldump"));
 
-        if (includeHostPort) {
-            arguments[ARG_HOST_IDX] =
-                    new CommandLineArgument(
-                            "-host",
-                            1,
-                            null,
-                            "",
-                            "-host <host>             "
-                                    + Constant.messages.getString("network.cmdline.proxy.host"));
-            arguments[ARG_PORT_IDX] =
-                    new CommandLineArgument(
-                            "-port",
-                            1,
-                            null,
-                            "",
-                            "-port <port>             "
-                                    + Constant.messages.getString("network.cmdline.proxy.port"));
-        }
-
+        arguments[ARG_HOST_IDX] =
+                new CommandLineArgument(
+                        "-host",
+                        1,
+                        null,
+                        "",
+                        "-host <host>             "
+                                + Constant.messages.getString("network.cmdline.proxy.host"));
+        arguments[ARG_PORT_IDX] =
+                new CommandLineArgument(
+                        "-port",
+                        1,
+                        null,
+                        "",
+                        "-port <port>             "
+                                + Constant.messages.getString("network.cmdline.proxy.port"));
         return arguments;
     }
 
     @Override
     public void execute(CommandLineArgument[] arguments) {
-        if (!handleServerCerts) {
-            return;
-        }
-
         if (arguments[ARG_CERT_LOAD].isEnabled()) {
             Path file = Paths.get(arguments[ARG_CERT_LOAD].getArguments().firstElement());
             if (!Files.isReadable(file)) {
@@ -1227,10 +1102,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             writeCert(
                     arguments[ARG_CERT_FULL_DUMP].getArguments().firstElement(),
                     this::writeRootCaCertAndPrivateKeyAsPem);
-        }
-
-        if (!handleLocalServers) {
-            return;
         }
 
         String mainProxyAddress = null;
@@ -1323,8 +1194,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         return Collections.emptyList();
     }
 
-    SslCertificateService getSslCertificateService() {
-        return sslCertificateService;
+    ServerCertificateService getServerCertificateService() {
+        return serverCertificateService;
     }
 
     ServerCertificatesOptions getServerCertificatesOptions() {
@@ -1337,21 +1208,13 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     @Override
     public void start() {
-        if (!handleServerCerts) {
-            return;
-        }
-
-        if (loadRootCaCert()) {
-            setSslCertificateService(sslCertificateService);
-        }
+        loadRootCaCert();
     }
 
     @Override
     public void stop() {
-        if (handleLocalServers) {
-            localServers.values().removeIf(ExtensionNetwork::stopAdditionalLocalServer);
-            stopLocalServer(mainProxyServer);
-        }
+        localServers.values().removeIf(ExtensionNetwork::stopAdditionalLocalServer);
+        stopLocalServer(mainProxyServer);
     }
 
     @Override
@@ -1363,58 +1226,20 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         }
     }
 
-    private void setSslCertificateService(SslCertificateService sslCertificateService) {
-        setSslCertificateService.accept(sslCertificateService);
-    }
-
-    class SslCertificateServiceImpl implements SslCertificateService {
+    class ServerCertificateServiceImpl implements ServerCertificateService {
 
         private ServerCertificateGenerator generator;
 
-        @Override
-        public void initializeRootCA(KeyStore keyStore) {
+        public void setRootCaCert(KeyStore keyStore) {
             generator = new ServerCertificateGenerator(keyStore, serverCertificatesOptions);
         }
 
         @Override
-        public KeyStore createCertForHost(String hostname) {
-            // Nothing to do, no longer used by core.
-            return null;
-        }
-
-        @Override
-        public KeyStore createCertForHost(CertData certData) throws IOException {
+        public KeyStore createCertificate(CertData certData) throws GenerationException {
             if (generator == null) {
-                throw new MissingRootCertificateException("The root CA certificate was not set.");
+                throw new GenerationException("The root CA certificate was not set.");
             }
-            try {
-                return generator.generate(certData);
-            } catch (GenerationException e) {
-                throw new IOException(e);
-            }
-        }
-    }
-
-    private static class LegacySslCertificateServiceImpl implements SslCertificateService {
-
-        @Override
-        public void initializeRootCA(KeyStore keyStore) {
-            // Nothing to do, not called.
-        }
-
-        @Override
-        public KeyStore createCertForHost(String hostname) {
-            // Nothing to do, no longer used by core.
-            return null;
-        }
-
-        @Override
-        public KeyStore createCertForHost(CertData certData) throws IOException {
-            try {
-                return CachedSslCertifificateServiceImpl.getService().createCertForHost(certData);
-            } catch (Exception e) {
-                throw new IOException(e);
-            }
+            return generator.generate(certData);
         }
     }
 
@@ -1460,7 +1285,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     boolean applyRootCaCert() {
         try {
-            sslCertificateService.initializeRootCA(getRootCaKeyStore());
+            serverCertificateService.setRootCaCert(getRootCaKeyStore());
             return true;
         } catch (Exception e) {
             LOGGER.error("An error occurred while initializing the certificate service:", e);
@@ -1470,50 +1295,44 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     @Override
     public boolean canUnload() {
-        return true;
+        // Do not allow, the HttpSender implementation is used everywhere.
+        return false;
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void unload() {
         Control.getSingleton().getExtensionLoader().removeProxyServer(legacyProxyListenerHandler);
         legacyProxyListenerHandler = null;
 
-        if (handleConnection) {
-            ConnectionParam connectionParam = new ConnectionParam();
-            ApiImplementor coreApi = API.getInstance().getImplementors().get("core");
-            if (coreApi != null) {
-                updateOldCoreApiEndpoints(coreApi, connectionParam);
-            }
-            getModel().getOptionsParam().setConnectionParam(connectionParam);
-            connectionParam.load(getModel().getOptionsParam().getConfig());
+        org.parosproxy.paros.network.ConnectionParam connectionParam =
+                new org.parosproxy.paros.network.ConnectionParam();
+        ApiImplementor coreApi = API.getInstance().getImplementors().get("core");
+        if (coreApi != null) {
+            updateOldCoreApiEndpoints(coreApi, connectionParam);
         }
+        getModel().getOptionsParam().setConnectionParam(connectionParam);
+        connectionParam.load(getModel().getOptionsParam().getConfig());
 
         if (httpSenderNetwork != null) {
-            httpSenderNetwork.unload();
+            httpSenderNetwork.close();
         }
 
-        if (!handleServerCerts) {
-            return;
-        }
-
-        setSslCertificateService(null);
         Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
 
         if (hasView()) {
             OptionsDialog optionsDialog = View.getSingleton().getOptionsDialog("");
             optionsDialog.removeParamPanel(serverCertificatesOptionsPanel);
 
-            if (handleLocalServers) {
-                localServerInfoLabel.unload();
+            localServerInfoLabel.unload();
 
-                optionsDialog.removeParamPanel(localServersOptionsPanel);
+            optionsDialog.removeParamPanel(localServersOptionsPanel);
 
-                if (removeBreakListenerMethod != null) {
-                    try {
-                        removeBreakListenerMethod.invoke(extensionBreak, serialiseForBreak);
-                    } catch (Exception e) {
-                        LOGGER.error("An error occurred while removing the break listener:", e);
-                    }
+            if (removeBreakListenerMethod != null) {
+                try {
+                    removeBreakListenerMethod.invoke(extensionBreak, serialiseForBreak);
+                } catch (Exception e) {
+                    LOGGER.error("An error occurred while removing the break listener:", e);
                 }
             }
         }
@@ -1550,100 +1369,69 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     }
 
     KeyStore getRootCaKeyStore() {
-        if (handleServerCerts) {
-            return serverCertificatesOptions.getRootCaKeyStore();
-        }
-
-        DynSSLParam param = Model.getSingleton().getOptionsParam().getParamSet(DynSSLParam.class);
-        if (param == null) {
-            return null;
-        }
-        return param.getRootca();
+        return serverCertificatesOptions.getRootCaKeyStore();
     }
 
     boolean generateRootCaCert() {
-        if (handleServerCerts) {
-            try {
-                LOGGER.info("Creating new root CA certificate.");
-                KeyStore keyStore =
-                        CertificateUtils.createRootCaKeyStore(
-                                serverCertificatesOptions.getRootCaCertConfig());
-                serverCertificatesOptions.setRootCaKeyStore(keyStore);
-                LOGGER.info("New root CA certificate created.");
-            } catch (Exception e) {
-                LOGGER.error("Failed to create new root CA certificate:", e);
-                return false;
-            }
-
-            return applyRootCaCert();
+        try {
+            LOGGER.info("Creating new root CA certificate.");
+            KeyStore keyStore =
+                    CertificateUtils.createRootCaKeyStore(
+                            serverCertificatesOptions.getRootCaCertConfig());
+            serverCertificatesOptions.setRootCaKeyStore(keyStore);
+            LOGGER.info("New root CA certificate created.");
+        } catch (Exception e) {
+            LOGGER.error("Failed to create new root CA certificate:", e);
+            return false;
         }
 
-        ExtensionDynSSL extDyn =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionDynSSL.class);
-        if (extDyn != null) {
-            try {
-                extDyn.createNewRootCa();
-                return true;
-            } catch (Exception e) {
-                LOGGER.error("Failed to create the new Root CA cert:", e);
-            }
-        }
-        return false;
+        return applyRootCaCert();
     }
 
     String importRootCaCert(Path pemFile) {
-        if (handleServerCerts) {
-            String pem;
-            try {
-                pem = new String(Files.readAllBytes(pemFile), StandardCharsets.US_ASCII);
-            } catch (IOException e) {
-                return Constant.messages.getString(
-                        "network.importpem.failedreadfile", e.getLocalizedMessage());
-            }
-
-            byte[] certificate;
-            try {
-                certificate = CertificateUtils.extractCertificate(pem);
-                if (certificate.length == 0) {
-                    return Constant.messages.getString(
-                            "network.importpem.nocertsection",
-                            CertificateUtils.BEGIN_CERTIFICATE_TOKEN,
-                            CertificateUtils.END_CERTIFICATE_TOKEN);
-                }
-            } catch (IllegalArgumentException e) {
-                return Constant.messages.getString("network.importpem.certnobase64");
-            }
-
-            byte[] key;
-            try {
-                key = CertificateUtils.extractPrivateKey(pem);
-                if (key.length == 0) {
-                    return Constant.messages.getString(
-                            "network.importpem.noprivkeysection",
-                            CertificateUtils.BEGIN_PRIVATE_KEY_TOKEN,
-                            CertificateUtils.END_PRIVATE_KEY_TOKEN);
-                }
-            } catch (IllegalArgumentException e) {
-                return Constant.messages.getString("network.importpem.privkeynobase64");
-            }
-
-            try {
-                KeyStore keyStore = CertificateUtils.pemToKeyStore(certificate, key);
-                serverCertificatesOptions.setRootCaKeyStore(keyStore);
-                applyRootCaCert();
-                return null;
-            } catch (Exception e) {
-                return Constant.messages.getString(
-                        "network.importpem.failedkeystore", e.getLocalizedMessage());
-            }
+        String pem;
+        try {
+            pem = new String(Files.readAllBytes(pemFile), StandardCharsets.US_ASCII);
+        } catch (IOException e) {
+            return Constant.messages.getString(
+                    "network.importpem.failedreadfile", e.getLocalizedMessage());
         }
 
-        ExtensionDynSSL extDyn =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionDynSSL.class);
-        if (extDyn != null) {
-            return extDyn.importRootCaCertificate(pemFile.toFile());
+        byte[] certificate;
+        try {
+            certificate = CertificateUtils.extractCertificate(pem);
+            if (certificate.length == 0) {
+                return Constant.messages.getString(
+                        "network.importpem.nocertsection",
+                        CertificateUtils.BEGIN_CERTIFICATE_TOKEN,
+                        CertificateUtils.END_CERTIFICATE_TOKEN);
+            }
+        } catch (IllegalArgumentException e) {
+            return Constant.messages.getString("network.importpem.certnobase64");
         }
-        return "";
+
+        byte[] key;
+        try {
+            key = CertificateUtils.extractPrivateKey(pem);
+            if (key.length == 0) {
+                return Constant.messages.getString(
+                        "network.importpem.noprivkeysection",
+                        CertificateUtils.BEGIN_PRIVATE_KEY_TOKEN,
+                        CertificateUtils.END_PRIVATE_KEY_TOKEN);
+            }
+        } catch (IllegalArgumentException e) {
+            return Constant.messages.getString("network.importpem.privkeynobase64");
+        }
+
+        try {
+            KeyStore keyStore = CertificateUtils.pemToKeyStore(certificate, key);
+            serverCertificatesOptions.setRootCaKeyStore(keyStore);
+            applyRootCaCert();
+            return null;
+        } catch (Exception e) {
+            return Constant.messages.getString(
+                    "network.importpem.failedkeystore", e.getLocalizedMessage());
+        }
     }
 
     String getProxyPacContent(String hostname) {
@@ -1670,10 +1458,9 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     private class SessionChangedListenerImpl implements SessionChangedListener {
 
         @Override
+        @SuppressWarnings("deprecation")
         public void sessionChanged(Session session) {
-            if (handleClient) {
-                globalCookieStore = new BasicCookieStore();
-            }
+            globalCookieStore = new BasicCookieStore();
             globalHttpState = new HttpState();
             getModel().getOptionsParam().getConnectionParam().setHttpState(globalHttpState);
         }
@@ -1693,16 +1480,14 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         @Override
         public void optionsChanged(OptionsParam optionsParam) {
             if (connectionOptions.isUseGlobalHttpState()) {
-                if (handleClient && globalCookieStore == null) {
+                if (globalCookieStore == null) {
                     globalCookieStore = new BasicCookieStore();
                 }
                 if (globalHttpState == null) {
                     globalHttpState = new HttpState();
                 }
             } else {
-                if (handleClient) {
-                    globalCookieStore = null;
-                }
+                globalCookieStore = null;
                 globalHttpState = null;
             }
         }

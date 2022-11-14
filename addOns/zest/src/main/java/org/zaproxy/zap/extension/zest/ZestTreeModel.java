@@ -223,11 +223,11 @@ public class ZestTreeModel {
         ZestElement childZe = ZestZapUtils.getElement(node);
 
         if (parentZe == null) {
-            logger.error("delete: Parent user object null: {}", node.toString());
+            logger.error("delete: Parent user object null: {}", node);
             return;
         }
         if (childZe == null) {
-            logger.error("delete: Child user object null: {}", node.toString());
+            logger.error("delete: Child user object null: {}", node);
             return;
         }
         if (ZestZapUtils.getElement(node) instanceof ZestConditional) {
@@ -285,7 +285,7 @@ public class ZestTreeModel {
                     "delete: unexpected child of request node: {}",
                     childZe.getClass().getCanonicalName());
         } else {
-            logger.error("delete: unknown nodes: {} {}", node.toString(), parent.toString());
+            logger.error("delete: unknown nodes: {} {}", node, parent);
             logger.error("Parent user object: {}", parentZe.getClass().getCanonicalName());
             logger.error("Child user object: {}", childZe.getClass().getCanonicalName());
         }

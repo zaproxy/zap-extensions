@@ -31,18 +31,6 @@ import org.parosproxy.paros.network.HttpMessage;
 
 public class ParamGuessResult {
 
-    public enum Reason {
-        HTTP_CODE,
-        HTTP_HEADERS,
-        REDIRECT,
-        BODY_HEURISTIC_MISMATCH,
-        LINE_COUNT,
-        WORD_COUNT,
-        TEXT,
-        PARAM_NAME_REFLECTION,
-        PARAM_VALUE_REFLECTION,
-    }
-
     private String paramName;
     private HistoryReference historyReference;
     private List<Reason> reasons;
@@ -52,12 +40,21 @@ public class ParamGuessResult {
         this.paramName = paramName;
         this.reasons = reasons;
         try {
-            // TODO Use TYPE_PARAM_MINER for the history reference type once targeting >= 2.12.0
             this.historyReference =
-                    new HistoryReference(Model.getSingleton().getSession(), 23, httpMessage);
+                    new HistoryReference(
+                            Model.getSingleton().getSession(),
+                            HistoryReference.TYPE_PARAM_DIGGER,
+                            httpMessage);
         } catch (HttpMalformedHeaderException | DatabaseException e) {
-            logger.warn("Error creating history reference. Exception raised {}", e);
+            logger.warn(
+                    "Error creating history reference. Exception raised: {}", e.getMessage(), e);
         }
+    }
+
+    public ParamGuessResult(String paramName, List<Reason> reasons, HistoryReference ref) {
+        this.paramName = paramName;
+        this.reasons = reasons;
+        this.historyReference = ref;
     }
 
     public String getParamName() {
@@ -72,7 +69,7 @@ public class ParamGuessResult {
         try {
             return this.historyReference.getHttpMessage();
         } catch (HttpMalformedHeaderException | DatabaseException e) {
-            logger.warn("Error getting HTTP message. Exception raised {}", e);
+            logger.warn("Error getting HTTP message. Exception raised: {}", e.getMessage(), e);
         }
         return null;
     }

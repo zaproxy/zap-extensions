@@ -75,7 +75,10 @@ public class ScriptBasedEncodeDecodeProcessor implements EncodeDecodeProcessor {
             EncodeDecodeScript script = evaluateScript(scriptWrapper);
             if (script != null) {
                 LOGGER.debug("Calling encode/decode script {}", scriptWrapper.getName());
-                return script.process(value);
+                Object result = script.process(value);
+                return result instanceof EncodeDecodeResult
+                        ? (EncodeDecodeResult) result
+                        : new EncodeDecodeResult(result == null ? null : result.toString());
             } else {
                 String errorMsg =
                         Constant.messages.getString(
@@ -92,10 +95,12 @@ public class ScriptBasedEncodeDecodeProcessor implements EncodeDecodeProcessor {
 
     private EncodeDecodeScript evaluateScript(ScriptWrapper scriptWrapper)
             throws javax.script.ScriptException, java.io.IOException {
-
-        String md5AsHex = getMd5HashAsHex(scriptWrapper.getContents());
-        if (StringUtils.equals(cachedScriptHash, md5AsHex)) {
-            return cachedScript;
+        String md5AsHex = null;
+        if (cachedScript != null) {
+            md5AsHex = getMd5HashAsHex(scriptWrapper.getContents());
+            if (StringUtils.equals(cachedScriptHash, md5AsHex)) {
+                return cachedScript;
+            }
         }
 
         ExtensionScript extensionScript = ExtensionEncoder.getExtensionScript();

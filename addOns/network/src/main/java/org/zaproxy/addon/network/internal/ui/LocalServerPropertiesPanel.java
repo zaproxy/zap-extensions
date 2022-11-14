@@ -40,6 +40,7 @@ public class LocalServerPropertiesPanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
     private final SecurityProtocolsPanel securityProtocolsPanel;
+    private final AlpnPanel alpnPanel;
     private final JRadioButton apiAndProxyRadioButton;
     private final JCheckBox behindNatCheckBox;
     private final JCheckBox removeAcceptEncodingCheckBox;
@@ -57,6 +58,8 @@ public class LocalServerPropertiesPanel extends JPanel {
         layout.setAutoCreateGaps(true);
 
         securityProtocolsPanel = new SecurityProtocolsPanel();
+
+        alpnPanel = new AlpnPanel();
 
         behindNatCheckBox =
                 new JCheckBox(
@@ -102,6 +105,7 @@ public class LocalServerPropertiesPanel extends JPanel {
         layout.setHorizontalGroup(
                 layout.createParallelGroup()
                         .addComponent(securityProtocolsPanel)
+                        .addComponent(alpnPanel)
                         .addGroup(
                                 layout.createSequentialGroup()
                                         .addGroup(
@@ -122,6 +126,7 @@ public class LocalServerPropertiesPanel extends JPanel {
         layout.setVerticalGroup(
                 layout.createSequentialGroup()
                         .addComponent(securityProtocolsPanel)
+                        .addComponent(alpnPanel)
                         .addGroup(
                                 layout.createParallelGroup()
                                         .addComponent(mode)
@@ -162,7 +167,9 @@ public class LocalServerPropertiesPanel extends JPanel {
     }
 
     public void reset() {
-        securityProtocolsPanel.setSecurityProtocolsEnabled(TlsUtils.getSupportedProtocols());
+        securityProtocolsPanel.setSecurityProtocolsEnabled(TlsUtils.getSupportedTlsProtocols());
+        alpnPanel.setAlpnEnabled(false);
+        alpnPanel.setProtocolsSelected(TlsUtils.getSupportedApplicationProtocols());
         apiAndProxyRadioButton.doClick();
         behindNatCheckBox.setSelected(false);
         removeAcceptEncodingCheckBox.setSelected(true);
@@ -170,12 +177,14 @@ public class LocalServerPropertiesPanel extends JPanel {
     }
 
     public boolean validateFields() {
-        return securityProtocolsPanel.validateSecurityProtocols();
+        return securityProtocolsPanel.validateSecurityProtocols() && alpnPanel.validateProtocols();
     }
 
     public void init(LocalServerConfig serverConfig) {
         modeRadioButtons.get(serverConfig.getMode()).doClick();
         securityProtocolsPanel.setSecurityProtocolsEnabled(serverConfig.getTlsProtocols());
+        alpnPanel.setAlpnEnabled(serverConfig.isAlpnEnabled());
+        alpnPanel.setProtocolsSelected(serverConfig.getApplicationProtocols());
         behindNatCheckBox.setSelected(serverConfig.isBehindNat());
         removeAcceptEncodingCheckBox.setSelected(serverConfig.isRemoveAcceptEncoding());
         decodeResponseCheckBox.setSelected(serverConfig.isDecodeResponse());
@@ -184,6 +193,8 @@ public class LocalServerPropertiesPanel extends JPanel {
     public void update(LocalServerConfig serverConfig) {
         serverConfig.setMode(selectedMode);
         serverConfig.setTlsProtocols(securityProtocolsPanel.getSelectedProtocols());
+        serverConfig.setAlpnEnabled(alpnPanel.isAlpnEnabled());
+        serverConfig.setApplicationProtocols(alpnPanel.getSelectedProtocols());
         serverConfig.setBehindNat(behindNatCheckBox.isSelected());
         serverConfig.setRemoveAcceptEncoding(removeAcceptEncodingCheckBox.isSelected());
         serverConfig.setDecodeResponse(decodeResponseCheckBox.isSelected());

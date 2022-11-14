@@ -17,43 +17,47 @@ Her kural aşağıdaki alanlarla tanımlanır:
 <h3>Açıklama</h3>
 Kuralın tanınmasına imkan veren bir açıklama.
 
-<h3>Eşleşme Türü</h3>
-Biri olabilir:
+<h3>URL</h3>
+A regular expression to match the URL of the message, if empty the rule applies to all messages.<br>
+For example, allows to restrict the rules to certain domains when providing authentication credentials.
 
-<h4>Başlık Talebi (eğer mevcut değilse eklenecek)</h4>
-Bu durumda 'Eşleşme Dizisi' bir başlık adı olarak ele alınır. 
-Eğer başlık mevcutsa, değer, yedek metin ile değiştirilecektir. 
-Eğer yedek metin boşsa, başlık kaldırılır (eğer mevcutsa).
-Başlık mevcut değilse ve yedek metin varsa, başlık eklenecektir.
+<h3>Match Type</h3>
+May be one of:
 
-<h4>Başlık Talebi Dizisi</h4>
-Bu durumda 'Eşleşme Dizisi' bir dize veya düzenli ifadeler olarak ele alınacaktır.
-Eğer başlık talebinde varsa, yedek metinle değiştirilir.
+<h4>Request Header (will add if not present)</h4>
+In this case the 'Match String' will be treated as a header name. 
+If the header is present then its value will be replaced by the replacement text. 
+If the replacement text is empty then the header will be removed (if present).
+If the header is not present and the replacement text is not empty then the header will be added.
 
-<h4>Gövde Talebi Dizisi</h4>
-Bu durumda 'Eşleşme Dizisi' bir dize veya düzenli ifadeler olarak ele alınacaktır.
-Gövde talebinde varsa, yerini yedek metinle değiştirir.
+<h4>Request Header String</h4>
+In this case the 'Match String' will be treated as a string or regex expression.
+If it is present in the request header then it will be replaced by the replacement text.
 
-<h4>Yanıt Başlığı (eğer mevcut değilse eklenir)</h4>
-Bu durumda 'Eşleşme Dizisi' bir başlık adı olarak ele alınır. 
-Eğer başlık var ise, değer, yedek metin ile değiştirilecek. 
-Eğer yedek metin boş ise, başlık kaldırılır(eğer var ise).
-Başlık yok ise ve yedek metin boş değilse, başlık eklenecektir.
+<h4>Request Body String</h4>
+In this case the 'Match String' will be treated as a string or regex expression.
+If it is present in the request body then it will be replaced by the replacement text.
 
-<h4>Üstbilgi Talep Dizisi</h4>
-Bu durumda 'Eşleşme Dizisi' bir dize veya düzenli ifadeler olarak ele alınacaktır.
-Eğer yanıt başlığında var ise yedek metin ile değiştirilir.
+<h4>Response Header (will add if not present)</h4>
+In this case the 'Match String' will be treated as a header name. 
+If the header is present then its value will be replaced by the replacement text. 
+If the replacement text is empty then the header will be removed (if present).
+If the header is not present and the replacement text is not empty then the header will be added.
 
-<h4>Gövde Talep Dizisi</h4>
-Bu durumda 'Eşleşme Dizisi' bir dize veya düzenli ifadeler olarak ele alınacaktır.
-Eğer yanıt gövdesinde var ise yedek metin ile değiştirelecektir.
+<h4>Response Header String</h4>
+In this case the 'Match String' will be treated as a string or regex expression.
+If it is present in the response header then it will be replaced by the replacement text.
 
-<h3>Eşleşme Dizisi</h3>
-Neyin değiştirilmesi gerektiğini belirlemek için kullanılacak dize - Ayrıntılar için Eşleşme Türü' ne bakınız.
+<h4>Response Body String</h4>
+In this case the 'Match String' will be treated as a string or regex expression.
+If it is present in the response body then it will be replaced by the replacement text.
 
-<h3>Eşleşme Düzenli İfadeleri</h3>
-Eğer ayarlanırsa Eşleşme Dizesi bir düzenli ifade olarak değerlendirilir.
-Asıl başlıkları eşleştirirken bu seçenek devre dışı bırakılır.
+<h3>Match String</h3>
+The string that will be used to identify what should be replaced - see Match Type for details.
+
+<h3>Match Regex</h3>
+If set then the Match String will be treated as a regex expression.
+This option is disabled when matching actual headers.
 Hexadecimal bytes are represented with "\x00 - \xFF" (for example "abc\x01\x02\x03def").
 
 <h3>Replacement String</h3>

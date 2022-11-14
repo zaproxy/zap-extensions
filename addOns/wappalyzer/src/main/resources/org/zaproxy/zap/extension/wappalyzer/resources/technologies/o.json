@@ -69,6 +69,21 @@
     "implies": "PHP",
     "website": "https://www.oxid-esales.com"
   },
+  "OXID eShop Professional Edition": {
+    "cats": [
+      6
+    ],
+    "description": "OXID eShop Professional Edition is an e-ommerce platform for both small start-up companies and experience online retailers with a wide range of functions, software maintenance and support.",
+    "excludes": "OXID eShop",
+    "html": "<!--[^-]*OXID eShop Professional Edition, Version (\\d+)\\;version:\\1",
+    "icon": "OXID eShop.svg",
+    "implies": "PHP",
+    "pricing": [
+      "high",
+      "onetime"
+    ],
+    "website": "https://exchange.oxid-esales.com/OXID-Products/OXID-eShop/OXID-eShop-Professional-Edition-6-Professional-Edition-6-Stable-PE-6-0-x.html"
+  },
   "Obsidian Incentivize": {
     "cats": [
       100
@@ -329,6 +344,8 @@
     "js": {
       "OktaAuth": "",
       "isOktaEnabled": "",
+      "okta.cdnUrlHostname": "",
+      "okta.locale": "",
       "oktaCurrentSessionUrl": ""
     },
     "pricing": [
@@ -372,6 +389,19 @@
     "saas": true,
     "scriptSrc": "\\.olark\\.com/",
     "website": "https://www.olark.com/"
+  },
+  "Omeka": {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:omeka:omeka:*:*:*:*:*:*:*:*:*",
+    "description": "Omeka is a free Content Management System (CMS) used by archives, historical societies, libraries, museums, and individual researchers for publishing digital collections.",
+    "icon": "Omeka.png",
+    "js": {
+      "Omeka": ""
+    },
+    "oss": true,
+    "website": "https://omeka.org"
   },
   "Ometria": {
     "cats": [
@@ -855,6 +885,17 @@
     "implies": "PHP",
     "website": "http://www.opencart.com"
   },
+  "OpenCities": {
+    "cats": [
+      1
+    ],
+    "description": "OpenCities is a content management system built for government organizations.",
+    "icon": "granicus.svg",
+    "js": {
+      "OpenCities": ""
+    },
+    "website": "https://granicus.com/solution/govaccess/opencities/"
+  },
   "OpenCms": {
     "cats": [
       1
@@ -866,6 +907,7 @@
     "html": "<link href=\"/opencms/",
     "icon": "OpenCms.png",
     "implies": "Java",
+    "oss": true,
     "scriptSrc": "opencms",
     "website": "http://www.opencms.org"
   },
@@ -1124,6 +1166,23 @@
     "scriptSrc": "optimizely\\.com.*\\.js",
     "website": "https://www.optimizely.com"
   },
+  "Optimizely CMS": {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "EPiServer": "",
+      "EPiSessionId": "",
+      "EPiTrace": ""
+    },
+    "cpe": "cpe:2.3:a:episerver:episerver:*:*:*:*:*:*:*:*",
+    "icon": "optimizely-cms.svg",
+    "implies": "Microsoft ASP.NET",
+    "meta": {
+      "generator": "EPiServer"
+    },
+    "website": "https://www.optimizely.com/"
+  },
   "Optimove": {
     "cats": [
       97
@@ -1171,6 +1230,22 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/optinmonster/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://optinmonster.com"
+  },
+  "Oracle Application Express": {
+    "cats": [
+      51
+    ],
+    "description": "Oracle Application Express (APEX) is an enterprise low-code development platform from Oracle Corporation. APEX is a fully supported no-cost feature of Oracle Database.",
+    "icon": "Oracle.svg",
+    "js": {
+      "apex.libVersions": "",
+      "apex_img_dir": ""
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "saas": true,
+    "website": "https://apex.oracle.com"
   },
   "Oracle Application Server": {
     "cats": [

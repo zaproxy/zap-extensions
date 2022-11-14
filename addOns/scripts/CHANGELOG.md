@@ -4,8 +4,18 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [33] - 2022-10-27
+### Changed
+- Update minimum ZAP version to 2.12.0.
+
+## [32] - 2022-10-12
 ### Changed
 - Maintenance changes.
+
+### Fixed
+- Don't print twice to std out when running without view and executing scripts (Issue 7455).
 
 ## [31] - 2022-09-23
 ### Added
@@ -199,6 +209,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[33]: https://github.com/zaproxy/zap-extensions/releases/scripts-v33
+[32]: https://github.com/zaproxy/zap-extensions/releases/scripts-v32
 [31]: https://github.com/zaproxy/zap-extensions/releases/scripts-v31
 [30]: https://github.com/zaproxy/zap-extensions/releases/scripts-v30
 [29]: https://github.com/zaproxy/zap-extensions/releases/scripts-v29

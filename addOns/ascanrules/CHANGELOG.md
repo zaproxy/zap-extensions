@@ -4,7 +4,38 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Fixed
+- Preserve the HTTP version in the scan rules:
+  - Remote Code Execution - CVE-2012-1823
+  - Source Code Disclosure - CVE-2012-1823
+  - Source Code Disclosure - /WEB-INF folder
 
+## [49] - 2022-10-27
+### Added
+- The following scan rules were added, having been promoted from Beta:
+    - .env Information Leak
+    - Cloud Metadata Attack
+    - GET for POST
+    - Heartbleed OpenSSL Vulnerability
+    - Hidden File Finder
+    - Padding Oracle
+    - Remote Code Execution - CVE-2012-1823
+    - Source Code Disclosure - CVE-2012-1823
+    - SQL Injection - Hypersonic (Time Based)
+    - SQL Injection - MsSQL (Time Based)
+    - SQL Injection - MySQL (Time Based)
+    - SQL Injection - Oracle (Time Based)
+    - SQL Injection - PostgreSQL (Time Based)
+    - SQL Injection - SQLite
+    - Trace.axd Information Leak
+    - User Agent Fuzzer
+    - XSLT Injection
+    - XXE
+
+### Changed
+- Update minimum ZAP version to 2.12.0.
+- Maintenance changes.
+- Rely on Network add-on to obtain more information about socket timeouts.
 
 ## [48] - 2022-09-22
 ### Changed
@@ -326,6 +357,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[49]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v49
 [48]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v48
 [47]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v47
 [46]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v46

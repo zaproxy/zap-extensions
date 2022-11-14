@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
-import java.net.SocketTimeoutException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -39,12 +38,12 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.network.common.ZapSocketTimeoutException;
 
 /**
  * Detect and fingerprint forward proxies and reverse proxies configured between the Zap instance
@@ -598,16 +597,12 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
 
             try {
                 sendAndReceive(trackmsg, false); // do not follow redirects.
-            } catch (SocketTimeoutException ste) {
+            } catch (ZapSocketTimeoutException ste) {
                 log.warn(
                         "A timeout occurred while checking [{}] [{}] for Proxy Disclosure.\nThe currently configured timeout is: {}",
                         trackmsg.getRequestHeader().getMethod(),
                         trackmsg.getRequestHeader().getURI(),
-                        Integer.toString(
-                                Model.getSingleton()
-                                        .getOptionsParam()
-                                        .getConnectionParam()
-                                        .getTimeoutInSecs()));
+                        ste.getTimeout());
                 log.debug("Caught {} {}", ste.getClass().getName(), ste.getMessage());
                 return;
             }

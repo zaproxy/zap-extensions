@@ -130,7 +130,7 @@ public class InvokeAppWorker extends SwingWorker<Void, Void> {
             }
         }
 
-        logger.debug("Invoking: {}", cmd.toString());
+        logger.debug("Invoking: {}", cmd);
         View.getSingleton().getOutputPanel().append("\n" + cmd.toString() + "\n");
         ProcessBuilder pb = new ProcessBuilder(cmd);
         if (workingDir != null) {

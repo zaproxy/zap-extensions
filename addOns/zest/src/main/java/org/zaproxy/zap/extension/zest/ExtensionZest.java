@@ -798,7 +798,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     }
 
     public final ScriptNode addToParent(ScriptNode parent, ZestExpression newExp) {
-        logger.debug("addToParent parent={} new={}", parent.getNodeName(), newExp.toString());
+        logger.debug("addToParent parent={} new={}", parent.getNodeName(), newExp);
         ScriptNode node;
         ZestElement parentZe = ZestZapUtils.getElement(parent);
         if (parentZe instanceof ZestConditional) {

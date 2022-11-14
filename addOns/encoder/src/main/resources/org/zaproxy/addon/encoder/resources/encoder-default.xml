@@ -29,6 +29,10 @@
                 </outputpanel>
                 <outputpanel>
                     <name/>
+                    <processorId>encoder.predefined.fullhtmlencode</processorId>
+                </outputpanel>
+                <outputpanel>
+                    <name/>
                     <processorId>encoder.predefined.javascriptencode</processorId>
                 </outputpanel>
             </outputpanels>

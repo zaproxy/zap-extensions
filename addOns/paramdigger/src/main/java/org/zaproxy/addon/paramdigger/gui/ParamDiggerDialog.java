@@ -48,6 +48,7 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.paramdigger.ExtensionParamDigger;
+import org.zaproxy.addon.paramdigger.Method;
 import org.zaproxy.addon.paramdigger.ParamDiggerConfig;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.LayoutHelper;
@@ -56,23 +57,6 @@ import org.zaproxy.zap.view.StandardFieldsDialog;
 
 @SuppressWarnings("serial")
 public class ParamDiggerDialog extends StandardFieldsDialog {
-    private enum Methods {
-        GET(Constant.messages.getString("paramdigger.dialog.urlguess.methods.get")),
-        POST(Constant.messages.getString("paramdigger.dialog.urlguess.methods.post")),
-        XML(Constant.messages.getString("paramdigger.dialog.urlguess.methods.xml")),
-        JSON(Constant.messages.getString("paramdigger.dialog.urlguess.methods.json"));
-
-        private final String label;
-
-        @Override
-        public String toString() {
-            return label;
-        }
-
-        private Methods(String label) {
-            this.label = label;
-        }
-    }
 
     private static final long serialVersionUID = 1L;
     // Base Tab Options
@@ -130,6 +114,7 @@ public class ParamDiggerDialog extends StandardFieldsDialog {
 
     private static final String WORDLIST_EMPTY = "paramdigger.dialog.error.wordlist.empty";
     private static final String WORDLIST_NOTFOUND = "paramdigger.dialog.error.wordlist.notfound";
+    private static final String HEADER_METHODS = "paramdigger.dialog.headerguess.methods";
 
     private static final Logger logger = LogManager.getLogger(ParamDiggerDialog.class);
 
@@ -138,7 +123,7 @@ public class ParamDiggerDialog extends StandardFieldsDialog {
     private ParamDiggerConfig config;
     private Map<String, JPanel> panelMap;
     private Map<String, ZapTextField> textFieldMap;
-    private Map<String, JList<Methods>> listMap;
+    private Map<String, JList<Method>> listMap;
 
     private JPanel getPanel(String fieldName) {
         return this.panelMap.get(fieldName);
@@ -212,12 +197,12 @@ public class ParamDiggerDialog extends StandardFieldsDialog {
 
         this.addNumberField(URL_GUESS_TAB, URL_CHUNK_SIZE, 2, 40, 2);
 
-        List<Methods> urlGuessMethods = new ArrayList<>();
-        urlGuessMethods.add(Methods.GET);
-        urlGuessMethods.add(Methods.POST);
+        List<Method> urlGuessMethods = new ArrayList<>();
+        urlGuessMethods.add(Method.GET);
+        urlGuessMethods.add(Method.POST);
         // urlGuessMethods.add(Methods.XML);
         // TODO add XML text Field and json text Field (Along with vanishing effect)
-        urlGuessMethods.add(Methods.JSON);
+        urlGuessMethods.add(Method.JSON);
         this.addMethodPanel(URL_GUESS_TAB, URL_METHODS, urlGuessMethods, true);
         this.listMap.get(URL_METHODS).setSelectedIndex(0);
 
@@ -259,6 +244,12 @@ public class ParamDiggerDialog extends StandardFieldsDialog {
                             new String[] {HEADERGUESS_TAB_KEY},
                             (((JCheckBox) e.getSource()).isSelected()));
                 });
+        List<Method> headerGuessMethods = new ArrayList<>();
+        headerGuessMethods.add(Method.GET);
+        headerGuessMethods.add(Method.POST);
+        this.addMethodPanel(HEADER_GUESS_TAB, HEADER_METHODS, headerGuessMethods, true);
+        this.listMap.get(HEADER_METHODS).setSelectedIndex(0);
+
         this.addFieldListener(
                 HEADERGUESS_WORDLIST,
                 e -> {
@@ -318,10 +309,10 @@ public class ParamDiggerDialog extends StandardFieldsDialog {
     }
 
     private void addMethodPanel(
-            int tabIndex, String fieldLabel, List<Methods> methods, boolean isVisible) {
+            int tabIndex, String fieldLabel, List<Method> methods, boolean isVisible) {
         JLabel label = new JLabel(Constant.messages.getString(fieldLabel));
         label.setVerticalAlignment(JLabel.TOP);
-        JList<Methods> list = new JList<>(methods.toArray(new Methods[0]));
+        JList<Method> list = new JList<>(methods.toArray(new Method[0]));
         list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
         list.setVisibleRowCount(1);
         list.setToolTipText(
@@ -404,7 +395,7 @@ public class ParamDiggerDialog extends StandardFieldsDialog {
     }
 
     private void setUrlGuessMethods(ParamDiggerConfig conf) {
-        for (Methods e : this.listMap.get(URL_METHODS).getSelectedValuesList()) {
+        for (Method e : this.listMap.get(URL_METHODS).getSelectedValuesList()) {
             switch (e) {
                 case GET:
                     conf.setUrlGetRequest(true);
@@ -419,6 +410,12 @@ public class ParamDiggerDialog extends StandardFieldsDialog {
                     conf.setUrlXmlRequest(true);
                     break;
             }
+        }
+    }
+
+    private void setHeaderGuessMethods(ParamDiggerConfig conf) {
+        for (Method e : this.listMap.get(HEADER_METHODS).getSelectedValuesList()) {
+            conf.setHeaderGuessMethods(e);
         }
     }
 
@@ -490,6 +487,7 @@ public class ParamDiggerDialog extends StandardFieldsDialog {
         this.setWordlistsSettings(config, HEADERGUESS_WORDLIST, HEADER_GUESS_TAB);
         this.setWordlistsSettings(config, COOKIEGUESS_WORDLIST, COOKIE_GUESS_TAB);
         setUrlGuessMethods(config);
+        setHeaderGuessMethods(config);
         config.setSkipBoringHeaders(this.getBoolValue(SKIP_BORING_HEADERS));
         config.setThreadCount(this.getIntValue(THREADPOOL_SIZE));
         config.setContext(this.getStringValue(CONTEXT));

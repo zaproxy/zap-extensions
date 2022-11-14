@@ -174,6 +174,7 @@ class PayloadPreviewPanel {
         textArea.setCaretPosition(0);
     }
 
+    @SuppressWarnings("unchecked")
     private void updateProcessedPayloadsTextArea() {
         updatePayloadsTextArea(
                 getProcessedPayloadsTextArea(),

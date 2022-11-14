@@ -39,6 +39,7 @@ import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.view.AbstractFormDialog;
 import org.zaproxy.zap.view.AbstractMultipleOrderedOptionsBaseTablePanel;
 
+@SuppressWarnings("serial")
 public class ProcessorsMessageLocationDialog extends AbstractFormDialog {
 
     protected static final long serialVersionUID = -7609757285865562636L;
@@ -71,7 +72,7 @@ public class ProcessorsMessageLocationDialog extends AbstractFormDialog {
 
     private List<PayloadProcessorTableEntry> processors;
 
-    private ResettableAutoCloseableIterator<? extends Payload> payloads;
+    private ResettableAutoCloseableIterator<Payload> payloads;
 
     private MessageLocation messageLocation;
     private JLabel messageLocationLabel;
@@ -243,7 +244,7 @@ public class ProcessorsMessageLocationDialog extends AbstractFormDialog {
         @Override
         public PayloadProcessorTableEntry showModifyDialogue(PayloadProcessorTableEntry e) {
             PayloadProcessorUI<?, ?> processorUI =
-                    showModifyDialogueImpl(e, (PayloadProcessorUI) e.getPayloadProcessorUI());
+                    showModifyDialogueImpl(e, (PayloadProcessorUI<?, ?>) e.getPayloadProcessorUI());
 
             if (processorUI != null) {
                 e.setPayloadProcessorUI(processorUI);
@@ -310,14 +311,16 @@ public class ProcessorsMessageLocationDialog extends AbstractFormDialog {
         this.processorsTablePanel.setProcessors(processors);
     }
 
+    @SuppressWarnings("unchecked")
     public void setPayloads(ResettableAutoCloseableIterator<? extends Payload> payloads) {
-        this.payloads = payloads;
+        this.payloads = (ResettableAutoCloseableIterator<Payload>) payloads;
     }
 
     private ResettableAutoCloseableIterator<Payload> getProcessedPayloads() {
         return getProcessedPayloads(-1);
     }
 
+    @SuppressWarnings({"unchecked"})
     private ResettableAutoCloseableIterator<Payload> getProcessedPayloads(int numberOfProcessors) {
         List<PayloadProcessor<Payload>> currentProcessors = new ArrayList<>();
         int count = 0;
@@ -330,6 +333,6 @@ public class ProcessorsMessageLocationDialog extends AbstractFormDialog {
                             processorEntry.getPayloadProcessorUI().getPayloadProcessor());
             count++;
         }
-        return new PayloadsProcessedIterator(payloads, currentProcessors);
+        return new PayloadsProcessedIterator<>(payloads, currentProcessors);
     }
 }

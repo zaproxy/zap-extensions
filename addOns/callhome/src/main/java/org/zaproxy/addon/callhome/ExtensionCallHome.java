@@ -23,9 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.management.ManagementFactory;
-import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -49,7 +46,6 @@ import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -170,19 +166,10 @@ public class ExtensionCallHome extends ExtensionAdaptor
     }
 
     private void setAutoUpdateSupplier(Supplier<ZapXmlConfiguration> supplier) {
-        // XXX Change to not use reflection after 2.12.0
         ExtensionAutoUpdate extAu =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionAutoUpdate.class);
         if (extAu != null) {
-            try {
-                Method setSupplierMethod =
-                        extAu.getClass().getMethod("setCheckForUpdatesSupplier", Supplier.class);
-                LOGGER.debug("Setting CheckForUpdates supplier: {}", supplier);
-                setSupplierMethod.invoke(extAu, supplier);
-            } catch (Exception e) {
-                LOGGER.debug(
-                        "Failed to set CheckForUpdates supplier - expected to fail at 2.11.0", e);
-            }
+            extAu.setCheckForUpdatesSupplier(supplier);
         }
     }
 
@@ -200,7 +187,7 @@ public class ExtensionCallHome extends ExtensionAdaptor
                 System.getProperty("os.name") + " : " + System.getProperty("os.version"));
         json.put("javaVersion", System.getProperty("java.version"));
         json.put("zapType", ZAP.getProcessType().name());
-        json.put("container", isInContainer() ? containerName : "");
+        json.put("container", Constant.isInContainer() ? containerName : "");
         return json;
     }
 
@@ -308,7 +295,8 @@ public class ExtensionCallHome extends ExtensionAdaptor
         @Override
         public boolean test(Entry<String, Long> t) {
             String key = t.getKey();
-            return key.startsWith("openapi.")
+            return key.startsWith("domxss.")
+                    || key.startsWith("openapi.")
                     || key.startsWith("soap.")
                     || key.startsWith("spiderAjax.")
                     || key.startsWith("stats.alertFilter")
@@ -385,7 +373,7 @@ public class ExtensionCallHome extends ExtensionAdaptor
                 os = OS.WINDOWS;
             } else if (Constant.isKali()) {
                 os = OS.KALI;
-            } else if (isBackBox()) {
+            } else if (Constant.isBackBox()) {
                 os = OS.BACK_BOX;
             } else if (Constant.isLinux()) {
                 os = OS.LINUX;
@@ -398,72 +386,9 @@ public class ExtensionCallHome extends ExtensionAdaptor
         return os;
     }
 
-    // XXX: Use Constant.isBackBox() from 2.12.0
-    private static boolean isBackBox() {
-        if (onBackBox == null) {
-            onBackBox = Boolean.FALSE;
-            File issueFile = new File(ISSUE_FILE);
-            if (Constant.isLinux() && !Constant.isDailyBuild() && issueFile.exists()) {
-                // Ignore the fact we're on BackBox if this is a daily build - they will only have
-                // been installed manually
-                try {
-                    String content = new String(Files.readAllBytes(issueFile.toPath()));
-                    if (content.startsWith(BACK_BOX_ID)) {
-                        onBackBox = Boolean.TRUE;
-                    }
-                } catch (Exception e) {
-                    // Ignore
-                }
-            }
-        }
-        return onBackBox;
-    }
-
-    /** Copied from core Constant to fix a bug in the webswing & kali detection logic in 2.11.0 */
-    // XXX Change back to using the core after 2.12.0
-    public static boolean isInContainer() {
-        if (inContainer == null) {
-            // This is created by the Docker files from 2.11
-            File containerFile = new File(ZAP_CONTAINER_FILE);
-            File flatpakFile = new File(FLATPAK_FILE);
-            File snapFile = new File(SNAP_FILE);
-            if (Constant.isLinux() && containerFile.exists()) {
-                inContainer = true;
-                String home = System.getenv(HOME_ENVVAR);
-                boolean inWebSwing = home != null && home.contains(WEBSWING_NAME);
-                try {
-                    containerName =
-                            new String(
-                                            Files.readAllBytes(containerFile.toPath()),
-                                            StandardCharsets.UTF_8)
-                                    .trim();
-                    if (inWebSwing) {
-                        // Append the webswing name so we don't loose the docker image name
-                        containerName += "." + WEBSWING_NAME;
-                    }
-                } catch (IOException e) {
-                    // Ignore
-                }
-            } else if (flatpakFile.exists()) {
-                inContainer = true;
-                containerName = FLATPAK_NAME;
-            } else if (snapFile.exists()) {
-                inContainer = true;
-                containerName = SNAP_NAME;
-            } else {
-                inContainer = false;
-            }
-        }
-        return inContainer;
-    }
-
     private HttpSender getHttpSender() {
         if (httpSender == null) {
-            httpSender =
-                    new HttpSender(
-                            Model.getSingleton().getOptionsParam().getConnectionParam(),
-                            true,
-                            HttpSender.CHECK_FOR_UPDATES_INITIATOR);
+            httpSender = new HttpSender(HttpSender.CHECK_FOR_UPDATES_INITIATOR);
         }
         return httpSender;
     }

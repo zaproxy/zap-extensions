@@ -21,7 +21,7 @@ package org.zaproxy.addon.network.internal;
 
 import io.netty.util.AttributeKey;
 import java.net.InetSocketAddress;
-import org.parosproxy.paros.security.SslCertificateService;
+import org.zaproxy.addon.network.internal.cert.ServerCertificateService;
 import org.zaproxy.addon.network.internal.handlers.TlsConfig;
 import org.zaproxy.addon.network.internal.server.ServerConfig;
 
@@ -38,8 +38,8 @@ public final class ChannelAttributes {
     public static final AttributeKey<InetSocketAddress> REMOTE_ADDRESS =
             AttributeKey.newInstance("zap.remote-address");
 
-    /** The attribute that contains the {@link SslCertificateService}. */
-    public static final AttributeKey<SslCertificateService> CERTIFICATE_SERVICE =
+    /** The attribute that contains the {@link ServerCertificateService}. */
+    public static final AttributeKey<ServerCertificateService> CERTIFICATE_SERVICE =
             AttributeKey.newInstance("zap.certificate-service");
 
     /** The attribute that contains the {@link TlsConfig}. */

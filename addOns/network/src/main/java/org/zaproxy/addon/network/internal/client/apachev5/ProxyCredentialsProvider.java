@@ -42,7 +42,7 @@ public class ProxyCredentialsProvider implements CredentialsProvider {
     @Override
     public Credentials getCredentials(AuthScope authScope, HttpContext context) {
         HttpProxy proxy = options.getHttpProxy();
-        if (!options.isHttpProxyEnabled() || !options.isHttpProxyAuthEnabled()) {
+        if (!hasProxyAuth()) {
             return null;
         }
 
@@ -69,5 +69,9 @@ public class ProxyCredentialsProvider implements CredentialsProvider {
 
         return new NTCredentials(
                 credentials.getUserName(), credentials.getPassword(), "", proxy.getRealm());
+    }
+
+    public boolean hasProxyAuth() {
+        return options.isHttpProxyEnabled() && options.isHttpProxyAuthEnabled();
     }
 }

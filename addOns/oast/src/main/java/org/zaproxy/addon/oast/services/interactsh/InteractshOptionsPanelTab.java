@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.oast.services.interactsh;
 
+import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import java.util.ArrayList;
@@ -37,6 +38,7 @@ import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.oast.OastState;
 import org.zaproxy.addon.oast.ui.OastOptionsPanelTab;
 import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
@@ -104,6 +106,19 @@ public class InteractshOptionsPanelTab extends OastOptionsPanelTab {
         this.add(
                 scrollPane,
                 LayoutHelper.getGBC(0, ++rowIndex, GridBagConstraints.REMAINDER, 1.0, 1.0));
+
+        interactshService.addOastStateChangedListener(
+                e -> {
+                    if (e.getEventType() != OastState.OastStateEventType.UNREGISTERED) {
+                        return;
+                    }
+
+                    EventQueue.invokeLater(
+                            () -> {
+                                payloads.clear();
+                                getPayloadsTableModel().fireTableDataChanged();
+                            });
+                });
     }
 
     ZapTextField getServerUrl() {

@@ -4,11 +4,17 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+# Changed
+- The XML and JSON reports now include programName metadata elements (Issue 6640).
+
+## [0.16.0] - 2022-10-27
 ### Added
 - "XML Plus" report format for XML with requests and responses
+- Tags to "JSON Plus" report.
 - SARIF reporting
 
 ### Changed
+- Update minimum ZAP version to 2.12.0.
 - Maintenance changes.
 
 ### Fixed
@@ -158,6 +164,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.16.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.16.0
 [0.15.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.15.0
 [0.14.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.14.0
 [0.13.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.13.0

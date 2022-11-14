@@ -153,12 +153,16 @@ public class ClientComponent implements HttpPanelComponentInterface, SearchableH
     public void setMessage(Message aMessage) {
         this.message = (ClientMessage) aMessage;
 
-        informationLabel.setText(
-                Constant.messages.getString(
-                        "plugnhack.clientmsg",
-                        SDF.format(message.getReceived()),
-                        message.getClientId(),
-                        message.getType()));
+        String information = "";
+        if (message != null) {
+            information =
+                    Constant.messages.getString(
+                            "plugnhack.clientmsg",
+                            SDF.format(message.getReceived()),
+                            message.getClientId(),
+                            message.getType());
+        }
+        informationLabel.setText(information);
 
         views.setMessage(message);
     }

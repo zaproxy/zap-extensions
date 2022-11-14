@@ -5,7 +5,7 @@ description = "Imports and spiders OpenAPI definitions."
 zapAddOn {
     addOnName.set("OpenAPI Support")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.11.1")
+    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team plus Joanna Bona, Nathalie Bouchahine, Artur Grzesica, Mohammad Kamar, Markus Kiss, Michal Materniak, Marcin Spiewak, and SDA SE Open Industry Solutions")
@@ -77,20 +77,20 @@ dependencies {
     compileOnly(parent!!.childProjects.get("formhandler")!!)
     compileOnly(parent!!.childProjects.get("spider")!!)
 
-    implementation("io.swagger.parser.v3:swagger-parser:2.0.28")
-    implementation("io.swagger:swagger-compat-spec-parser:1.0.56") {
+    implementation("io.swagger.parser.v3:swagger-parser:2.1.7")
+    implementation("io.swagger:swagger-compat-spec-parser:1.0.63") {
         // Not needed:
         exclude(group = "com.github.java-json-tools", module = "json-schema-validator")
         exclude(group = "org.apache.httpcomponents", module = "httpclient")
     }
-    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.17.2") {
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.19.0") {
         // Provided by ZAP.
         exclude(group = "org.apache.logging.log4j")
     }
 
     testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
-    testImplementation("org.apache.logging.log4j:log4j-core:2.17.2")
+    testImplementation("org.apache.logging.log4j:log4j-core:2.19.0")
     testImplementation(parent!!.childProjects.get("automation")!!)
     testImplementation(parent!!.childProjects.get("formhandler")!!)
     testImplementation(parent!!.childProjects.get("spider")!!)

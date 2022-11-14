@@ -67,9 +67,10 @@ public class ParamDiggerConfig {
     private int urlGuessChunkSize;
     private int buster;
     private String customCacheBusterName;
-    private String DEFAULT_CACHEBUSTER_NAME = "fcbz";
+    private static final String DEFAULT_CACHEBUSTER_NAME = "fcbz";
     private int busterThreshold;
     private List<String> initCookieList;
+    private List<Method> headerGuessMethods;
 
     public ParamDiggerConfig() {
         this.url = "";
@@ -77,6 +78,7 @@ public class ParamDiggerConfig {
         this.urlGuessChunkSize = 2;
         this.buster = 4;
         this.busterThreshold = -1;
+        this.headerGuessMethods = new ArrayList<>();
     }
 
     public String getUrl() {
@@ -411,5 +413,13 @@ public class ParamDiggerConfig {
 
     public void setCacheBustingCookies(List<String> cList) {
         this.initCookieList = cList;
+    }
+
+    public List<Method> getHeaderGuessMethods() {
+        return this.headerGuessMethods;
+    }
+
+    public void setHeaderGuessMethods(Method e) {
+        this.headerGuessMethods.add(e);
     }
 }

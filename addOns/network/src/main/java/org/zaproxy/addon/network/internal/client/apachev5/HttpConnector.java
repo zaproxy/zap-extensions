@@ -36,7 +36,7 @@ import org.apache.hc.core5.http.io.HttpConnectionFactory;
 import org.apache.hc.core5.http.protocol.HttpCoreContext;
 import org.apache.hc.core5.http.protocol.HttpProcessor;
 
-/** A HTTP connector, sends CONNECT request to a target and returns the connected socket. */
+/** An HTTP connector, sends CONNECT request to a target and returns the connected socket. */
 public class HttpConnector {
 
     private final HttpConnectionFactory<ManagedHttpClientConnection> connectionFactory;

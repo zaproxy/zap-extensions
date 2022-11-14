@@ -26,6 +26,7 @@ import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.view.messagelocation.MessageLocationProducerFocusListener;
 import org.zaproxy.zap.view.messagelocation.SelectMessageLocationsPanel;
 
+@SuppressWarnings("serial")
 public class FuzzMessagePanel extends SelectMessageLocationsPanel {
 
     private static final long serialVersionUID = -1511437565770653938L;

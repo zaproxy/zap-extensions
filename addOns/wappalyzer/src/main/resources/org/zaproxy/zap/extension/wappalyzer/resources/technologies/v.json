@@ -56,6 +56,16 @@
     "scriptSrc": "vk\\.com/js/api/openapi\\.js",
     "website": "https://vk.com/"
   },
+  "VKUI": {
+    "cats": [
+      66
+    ],
+    "description": "VKUI is a set of React components with which you can create interfaces that are visually indistinguishable from our iOS and Android applications.",
+    "dom": "html.vkui",
+    "icon": "vk.svg",
+    "oss": true,
+    "website": "https://vkcom.github.io/VKUI"
+  },
   "VP-ASP": {
     "cats": [
       6
@@ -282,6 +292,20 @@
     },
     "icon": "vercel.svg",
     "website": "https://vercel.com"
+  },
+  "Vercel Analytics": {
+    "cats": [
+      10
+    ],
+    "icon": "vercel.svg",
+    "js": {
+      "va": ""
+    },
+    "requires": [
+      "Vercel"
+    ],
+    "scriptSrc": "/va/script\\.js",
+    "website": "https://vercel.com/analytics"
   },
   "Verifone 2Checkout": {
     "cats": [
@@ -530,13 +554,13 @@
   },
   "Virtooal": {
     "cats": [
-      76
+      105
     ],
     "description": "Virtooal allows shoppers to try on and combine decorative cosmetics, sunglasses, contact lenses, jewellery and fashion accessories using models, their own photo or a live webcam feed.",
     "icon": "Virtooal.svg",
     "pricing": [
       "freemium",
-      "mid",
+      "low",
       "recurring"
     ],
     "requiresCategory": 6,
@@ -561,6 +585,16 @@
     ],
     "saas": true,
     "website": "https://business.virtuagym.com"
+  },
+  "Virtual Chat": {
+    "cats": [
+      52
+    ],
+    "description": "Virtual Chat is a live-chat service for web sites.",
+    "icon": "Virtual Chat.png",
+    "saas": true,
+    "scriptSrc": "virtual-chat\\.co\\.il/",
+    "website": "https://www.virtual-chat.co.il"
   },
   "VirtualSpirits": {
     "cats": [
@@ -712,6 +746,23 @@
     "saas": true,
     "website": "https://www.visualsoft.co.uk/"
   },
+  "Visx": {
+    "cats": [
+      25
+    ],
+    "description": "Visx is a collection of React-based data visualisation tools developed by Airbnb.",
+    "dom": {
+      "g.visx-group,g.vx-group": {
+        "attributes": {
+          "class": "(?:v(?:is)?x)-group"
+        }
+      }
+    },
+    "icon": "Visx.svg",
+    "oss": true,
+    "requires": "React",
+    "website": "https://airbnb.io/visx/"
+  },
   "Vitals": {
     "cats": [
       100,
@@ -858,6 +909,25 @@
     "saas": true,
     "website": "https://www.voracio.co.uk"
   },
+  "Vtiger": {
+    "cats": [
+      53
+    ],
+    "cpe": "cpe:2.3:a:vtiger:vtiger_crm:*:*:*:*:*:*:*:*",
+    "description": "Vtiger is a cloud-based suite of marketing, sales and help desk offerings, which can be deployed separately or as an integrated, all-in-one ecosystem.",
+    "icon": "Vtiger.svg",
+    "js": {
+      "Vtiger": "",
+      "Vtiger_Base_Js": "",
+      "Vtiger_Helper_Js": ""
+    },
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.vtiger.com"
+  },
   "VuFind": {
     "cats": [
       29
@@ -875,10 +945,9 @@
   },
   "Vue Storefront": {
     "cats": [
-      6,
-      12
+      108
     ],
-    "description": "Vue Storefront is a frontend platform for headless commerce.",
+    "description": "Vue Storefront is a frontend platform for headless ecommerce.",
     "icon": "vue-storefront.svg",
     "implies": "Vue.js",
     "meta": {
@@ -912,10 +981,12 @@
     ],
     "css": "\\.vue-notification-group",
     "description": "Vue.js is an open-source model–view–viewmodel JavaScript framework for building user interfaces and single-page applications.",
+    "dom": ".vue-app",
     "html": "<[^>]+\\sdata-v(?:ue)?-",
     "icon": "vue.svg",
     "js": {
       "Vue.version": "^(.+)$\\;version:\\1",
+      "VueRoot": "",
       "__VUE_HOT_MAP__": "",
       "__VUE__": "",
       "vueDLL": ""
@@ -1026,5 +1097,16 @@
       "generator": "vibecommerce"
     },
     "website": "http://vibecommerce.com.br"
+  },
+  "vxe-table": {
+    "cats": [
+      59
+    ],
+    "description": "vxe-table is a Vue.js based PC form component, support add, delete, change, virtual scroll, lazy load, shortcut menu, data validation, tree structure, print export, form rendering, data paging, virtual list, modal window, custom template, renderer, flexible configuration items, extension interface.",
+    "dom": "div[class*='vxe-table']",
+    "icon": "vxe-table.png",
+    "oss": true,
+    "requires": "Vue.js",
+    "website": "https://vxetable.cn"
   }
 }

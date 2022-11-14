@@ -78,8 +78,7 @@ public class FileAlgoRandomStream extends FileRandomStream implements
 	 */
 	@Override
 	public void setPublicKeyFromFile(String f) {
-		try {
-			FileInputStream fis = new FileInputStream(f);
+		try (FileInputStream fis = new FileInputStream(f)) {
 			fis.read(publicKey);
 		} catch (Exception e) {
 			System.out.println(e);
@@ -102,8 +101,7 @@ public class FileAlgoRandomStream extends FileRandomStream implements
 	 */
 	@Override
 	public void setPrivateKeyFromFile(String f) {
-		try {
-			FileInputStream fis = new FileInputStream(f);
+		try (FileInputStream fis = new FileInputStream(f)) {
 			fis.read(privateKey);
 		} catch (Exception e) {
 			System.out.println(e);

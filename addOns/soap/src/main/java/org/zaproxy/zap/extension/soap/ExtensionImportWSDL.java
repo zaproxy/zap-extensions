@@ -43,7 +43,6 @@ import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
-import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.model.DefaultValueGenerator;
 import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.view.ZapMenuItem;
@@ -62,7 +61,6 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 
     private final TableWsdl table = new TableWsdl();
     private final WSDLCustomParser parser = new WSDLCustomParser(this::getValueGenerator, table);
-    private WSDLSpider spiderParser;
     private ValueGenerator valueGenerator;
 
     public ExtensionImportWSDL() {
@@ -93,17 +91,6 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
         if (hasView()) {
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportLocalWSDL());
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportUrlWSDL());
-
-            /*
-             * Custom spider parser is added in order to explore not only WSDL files, but
-             * also their WSDL endpoints.
-             */
-            ExtensionSpider spider =
-                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.class);
-            if (spider != null) {
-                spiderParser = new WSDLSpider(parser);
-                spider.addCustomParser(spiderParser);
-            }
         }
     }
 
@@ -114,18 +101,6 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
             addScript();
         } catch (IOException e) {
             LOG.warn("Could not add SOAP Support script.");
-        }
-    }
-
-    @Override
-    public void unload() {
-        super.unload();
-
-        if (spiderParser != null) {
-            Control.getSingleton()
-                    .getExtensionLoader()
-                    .getExtension(ExtensionSpider.class)
-                    .removeCustomParser(spiderParser);
         }
     }
 

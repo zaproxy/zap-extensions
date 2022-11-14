@@ -19,19 +19,51 @@
  */
 package org.zaproxy.addon.graphql.spider;
 
-import org.zaproxy.addon.graphql.GraphQlSpiderHelper;
+import org.apache.commons.httpclient.URI;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.graphql.GraphQlParser;
+import org.zaproxy.addon.graphql.HistoryPersister;
+import org.zaproxy.addon.graphql.MessageValidator;
 import org.zaproxy.addon.spider.parser.ParseContext;
 import org.zaproxy.addon.spider.parser.SpiderParser;
 
 public class GraphQlSpider extends SpiderParser {
 
+    private static final Logger LOGGER = LogManager.getLogger(GraphQlSpider.class);
+
     @Override
     public boolean parseResource(ParseContext ctx) {
-        return GraphQlSpiderHelper.parseMessage(ctx.getHttpMessage());
+        try {
+            GraphQlParser parser =
+                    new GraphQlParser(
+                            ctx.getHttpMessage().getRequestHeader().getURI(),
+                            HttpSender.SPIDER_INITIATOR,
+                            false);
+            parser.addRequesterListener(new HistoryPersister());
+            parser.introspect();
+        } catch (Exception e) {
+            LOGGER.debug(e.getMessage(), e);
+            return false;
+        }
+        return true;
     }
 
     @Override
     public boolean canParseResource(ParseContext ctx, boolean wasAlreadyConsumed) {
-        return GraphQlSpiderHelper.canParseMessage(ctx.getHttpMessage());
+        HttpMessage message = ctx.getHttpMessage();
+        URI uri = message.getRequestHeader().getURI();
+        switch (MessageValidator.validate(message)) {
+            case VALID_ENDPOINT:
+                LOGGER.debug("Found GraphQL endpoint at: {}", uri);
+                return true;
+            case VALID_SCHEMA:
+                LOGGER.debug("Found GraphQL schema at: {}", uri);
+                break;
+            default:
+        }
+        return false;
     }
 }

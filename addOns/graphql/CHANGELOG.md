@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## Unreleased
 
 
+## [0.11.0] - 2022-10-27
+### Changed
+- Update minimum ZAP version to 2.12.0.
+- Remove parser used for core spider (Related to Issue 3113).
+
 ## [0.10.0] - 2022-09-23
 ### Changed
 - Maintenance changes.
@@ -77,6 +82,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
   - Import a GraphQL Schema
   - Generate Queries from an imported Schema
 
+[0.11.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.11.0
 [0.10.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.10.0
 [0.9.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.9.0
 [0.8.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.8.0

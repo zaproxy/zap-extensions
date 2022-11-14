@@ -24,6 +24,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.net.ssl.SSLContext;
 import org.apache.logging.log4j.LogManager;
@@ -39,9 +40,11 @@ public final class TlsUtils {
     public static final String TLS_V1_2 = "TLSv1.2";
     public static final String TLS_V1_3 = "TLSv1.3";
 
+    public static final String APPLICATION_PROTOCOL_HTTP_1_1 = "http/1.1";
+
     private static final Logger LOGGER = LogManager.getLogger(TlsUtils.class);
 
-    private static final String PROTOCOL = "TLS";
+    private static final String PROTOCOL_TLS = "TLS";
 
     /**
      * Try to use something if not able to read the supported protocols.
@@ -52,62 +55,63 @@ public final class TlsUtils {
      * @see <a
      *     href="https://bugs.java.com/bugdatabase/view_bug.do?bug_id=JDK-8202343">JDK-8202343</a>
      */
-    private static final List<String> FALLBACK_PROTOCOLS = Arrays.asList(TLS_V1_2);
+    private static final List<String> FALLBACK_TLS_PROTOCOLS = Arrays.asList(TLS_V1_2);
 
-    private static final List<String> SUPPORTED_PROTOCOLS;
+    private static final List<String> SUPPORTED_TLS_PROTOCOLS;
+
+    private static final List<String> SUPPORTED_APPLICATION_PROTOCOLS =
+            List.of(APPLICATION_PROTOCOL_HTTP_1_1);
 
     static {
         LOGGER.debug("Reading supported SSL/TLS protocols...");
         List<String> tempSupportedProtocols;
         try {
-            SSLContext sslContext = SSLContext.getInstance(PROTOCOL);
+            SSLContext sslContext = SSLContext.getInstance(PROTOCOL_TLS);
             sslContext.init(null, null, null);
             tempSupportedProtocols =
                     Arrays.asList(sslContext.getDefaultSSLParameters().getProtocols());
         } catch (NoSuchAlgorithmException | KeyManagementException e) {
             LOGGER.error(
                     "Failed to read the SSL/TLS supported protocols. Using fallback protocol versions: {}",
-                    FALLBACK_PROTOCOLS,
+                    FALLBACK_TLS_PROTOCOLS,
                     e);
-            tempSupportedProtocols = FALLBACK_PROTOCOLS;
+            tempSupportedProtocols = FALLBACK_TLS_PROTOCOLS;
         }
         Collections.sort(tempSupportedProtocols);
-        SUPPORTED_PROTOCOLS = Collections.unmodifiableList(tempSupportedProtocols);
-        LOGGER.info("Using supported SSL/TLS protocols: {}", SUPPORTED_PROTOCOLS);
+        SUPPORTED_TLS_PROTOCOLS = Collections.unmodifiableList(tempSupportedProtocols);
+        LOGGER.info("Using supported SSL/TLS protocols: {}", SUPPORTED_TLS_PROTOCOLS);
     }
 
     private TlsUtils() {}
 
     /**
-     * Gets the protocols that are supported (and enabled) by the JRE.
+     * Gets the SSL/TLS protocols that are supported (and enabled) by the JRE.
      *
      * @return the protocols.
      */
-    public static List<String> getSupportedProtocols() {
-        return SUPPORTED_PROTOCOLS;
+    public static List<String> getSupportedTlsProtocols() {
+        return SUPPORTED_TLS_PROTOCOLS;
     }
 
     /**
-     * Filters the unsupported protocols from the given list.
+     * Gets the application protocols that are supported by ZAP.
+     *
+     * @return the protocols.
+     */
+    public static List<String> getSupportedApplicationProtocols() {
+        return SUPPORTED_APPLICATION_PROTOCOLS;
+    }
+
+    /**
+     * Filters the unsupported SSL/TLS protocols from the given list.
      *
      * @param protocols the protocols to filter.
      * @return the filtered protocols.
      * @throws IllegalArgumentException if the given list is {@code null} or empty and if no
      *     protocols are supported or not in a valid configuration.
      */
-    public static List<String> filterUnsupportedProtocols(List<String> protocols) {
-        if (protocols == null || protocols.isEmpty()) {
-            throw new IllegalArgumentException("Protocol(s) required but no protocol set.");
-        }
-
-        List<String> enabledSupportedProtocols =
-                protocols.stream()
-                        .filter(SUPPORTED_PROTOCOLS::contains)
-                        .collect(Collectors.toList());
-
-        if (enabledSupportedProtocols.isEmpty()) {
-            throw new IllegalArgumentException("No supported protocol(s) set.");
-        }
+    public static List<String> filterUnsupportedTlsProtocols(List<String> protocols) {
+        List<String> enabledSupportedProtocols = filter(protocols, SUPPORTED_TLS_PROTOCOLS);
 
         if (enabledSupportedProtocols.size() == 1
                 && enabledSupportedProtocols.contains(SSL_V2_HELLO)) {
@@ -115,6 +119,36 @@ public final class TlsUtils {
                     "Only SSLv2Hello set, must have at least one SSL/TLS version enabled.");
         }
 
-        return Collections.unmodifiableList(enabledSupportedProtocols);
+        return enabledSupportedProtocols;
+    }
+
+    private static List<String> filter(List<String> protocols, List<String> supportedProtocols) {
+        if (protocols == null || protocols.isEmpty()) {
+            throw new IllegalArgumentException("Protocol(s) required but no protocol set.");
+        }
+
+        List<String> filteredProtocols =
+                protocols.stream()
+                        .filter(Objects::nonNull)
+                        .filter(supportedProtocols::contains)
+                        .collect(Collectors.toUnmodifiableList());
+
+        if (filteredProtocols.isEmpty()) {
+            throw new IllegalArgumentException("No supported protocol(s) set.");
+        }
+
+        return filteredProtocols;
+    }
+
+    /**
+     * Filters the unsupported application protocols from the given list.
+     *
+     * @param protocols the protocols to filter.
+     * @return the filtered protocols.
+     * @throws IllegalArgumentException if the given list is {@code null} or empty and if no
+     *     protocols are supported.
+     */
+    public static List<String> filterUnsupportedApplicationProtocols(List<String> protocols) {
+        return filter(protocols, SUPPORTED_APPLICATION_PROTOCOLS);
     }
 }

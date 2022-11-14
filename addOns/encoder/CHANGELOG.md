@@ -7,7 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Maintenance changes.
-- Update minimum ZAP version to 2.11.1.
+- Allow script processors to return strings without requiring an "EncodeDecodeResult" wrapper.
+- Show help and options buttons in the main dialog.
+
+## [0.7.0] - 2022-10-27
+### Changed
+- Maintenance changes.
+- Update minimum ZAP version to 2.12.0.
+
+### Added
+- A Full HTML Entity encoder (Issue 2222).
 
 ## [0.6.0] - 2021-10-06
 ### Changed
@@ -46,6 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First version.
 
+[0.7.0]: https://github.com/zaproxy/zap-extensions/releases/encoder-v0.7.0
 [0.6.0]: https://github.com/zaproxy/zap-extensions/releases/encoder-v0.6.0
 [0.5.0]: https://github.com/zaproxy/zap-extensions/releases/encoder-v0.5.0
 [0.4.0]: https://github.com/zaproxy/zap-extensions/releases/encoder-v0.4.0

@@ -4,9 +4,26 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [0.19.0] - 2022-10-27
+### Changed
+- Update minimum ZAP version to 2.12.0.
+
+### Removed
+- The spider job was removed, it is provided by the Spider add-on (Issue 3113).
+
+## [0.18.0] - 2022-10-12
+### Added
+- Add support for headers in the requestor job (Issue 6917).
+
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Allow spider to run if no OK response (Issue 7510).
+- Bug in passive scan reporting code which prevented specified alerts from being read.
+- NPE when adding users to more than one context.
 
 ## [0.17.0] - 2022-09-09
 ### Added
@@ -186,6 +203,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.19.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.19.0
+[0.18.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.18.0
 [0.17.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.17.0
 [0.16.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.16.0
 [0.15.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.15.0

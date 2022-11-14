@@ -1,4 +1,5 @@
 {
+    "@programName": [[${programName}]],
     "@version": [[${zapVersion}]],
     "@generated": [[${generatedString}]],
     "site":[ [#th:block th:each="site, siteState: ${reportData.sites}"][#th:block th:if="${! siteState.first}"],[/th:block]
@@ -36,7 +37,13 @@
                     "reference": "[(${helper.legacyEscapeParagraph(alert.reference, true)})]",
                     "cweid": "[(${alert.cweid})]",
                     "wascid": "[(${alert.wascid})]",
-                    "sourceid": "[(${alert.sourceHistoryId})]"
+                    "sourceid": "[(${alert.sourceHistoryId})]",
+                    "tags":[ [#th:block th:each="tag, tagState: ${alert.tags}"][#th:block th:if="${! tagState.first}"],[/th:block]
+                        {
+                            "tag": [[${tag.key}]],
+                            "link": [[${tag.value}]]
+                        }[/th:block]
+                    ]
                 }[#th:block th:if="${! alertState.last}"],[/th:block][/th:block]
             ]
         }[/th:block]

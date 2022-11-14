@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -51,6 +52,7 @@ import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
+/** This class contains different helper functions to perform tasks like object mapping. */
 public class JobUtils {
 
     private static final String THRESHOLD_I18N_PREFIX = "ascan.options.level.";
@@ -250,7 +252,7 @@ public class JobUtils {
             if (ignoreList.contains(key)) {
                 continue;
             }
-
+            /** Mapping the setters of all the corresponding parameters of job */
             String paramMethodName = "set" + key.toUpperCase().charAt(0) + key.substring(1);
             Method optMethod = methodMap.get(paramMethodName);
             if (optMethod != null) {
@@ -462,6 +464,16 @@ public class JobUtils {
             } else {
                 LOG.error("Unable to map to a Map from {}", obj.getClass().getCanonicalName());
             }
+
+        } else if (List.class.equals(t)) {
+            if (obj instanceof List) {
+                List<String> list = new ArrayList<>();
+                list.addAll((ArrayList) obj);
+                return (T) list;
+            } else {
+                LOG.error("Unable to map to an List from {}", obj.getClass().getCanonicalName());
+            }
+
         } else if (Enum.class.isAssignableFrom((Class<T>) t)) {
             T enumType = (T) EnumUtils.getEnumIgnoreCase((Class<Enum>) t, obj.toString());
             if (enumType != null) {

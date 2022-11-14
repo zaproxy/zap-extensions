@@ -4,9 +4,17 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Fixed
+- Show missing API endpoints' descriptions.
+
+## [0.3.0] - 2022-10-27
 ### Changed
+- Update minimum ZAP version to 2.12.0.
 - Maintenance changes.
 - When importing a file of URLs the output tab and log will now be more informative about failures.
+
+### Added
+- HAR related API endpoints being migrated from core (Issue 6579).
 
 ## [0.2.0] - 2022-07-20
 ### Fixed
@@ -34,6 +42,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release.
 
+[0.3.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.3.0
 [0.2.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.2.0
 [0.1.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.1.0
 [0.0.1]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.0.1

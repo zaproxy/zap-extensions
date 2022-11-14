@@ -27,6 +27,8 @@ The other fields will be updated dynamically if you change the text<br/>
   <li><img src="../../ui-tab--delete.png"></src> Remove Selected Tab - Removes the selected (or current) tab from the dialog.</li>
   <li><img src="../../ui-output--plus.png"></src> Add Output Panel to Current Tab - Adds an output panel to the current tab.</li>
   <li>Reset - Reset all the tabs/panels to their default state.</li>
+  <li>Options - Will open the options dialog, with the focus set to the Encode/Decode/Hash options panel.</li>
+  <li>Help - Will open the User Guide, with the content pane preset to the Encode/Decode/Hash add-on's help page.</li>
 </ul>
 
 <H2>Default Dialog Tabs & Panels</H2>
@@ -41,6 +43,7 @@ In its default state the Encode/Decode/Hash dialog displays tabs and output pane
   <li>Full URL Encode</li>
   <li>ASCII Hex Encode</li>
   <li>HTML Encode</li>
+  <li>Full HTML Encode</li>
   <li>JavaScript Encode</li>
 </ul>
 
@@ -113,6 +116,9 @@ Will display escaped Unicode characters. For example, the text
 Will display the HTML encoding of the text you enter. For example, the text
 <code>&quot;pi&ntilde;ata&quot;</code> would be encoded as <code>&amp;quot;pi&amp;ntilde;ata&amp;quot;</code>.
 
+<H4>Full HTML Encode</H4>
+Will display the full HTML encoding of the text you enter. For example, the text <code>&lt;script&gt;</code> would be encoded as <code>&amp;#60;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#62;</code>
+
 <H4>JavaScript Encode</H4>
 Will display escaped JavaScript literals of the text you enter. For example, the text
 <code>&quot;2&#65504;&quot;</code> would be encoded as <code>\&quot;2\uFFE0\&quot;</code>.
@@ -168,7 +174,8 @@ Will display the SHA1 hash of the text you enter.
 Will display the SHA256 hash of the text you enter.
 
 <H3>Custom</H3>
-Custom "Encode/Decode" scripts can be created/added to the Scripts Tree and used by custom Output Panels.
+Custom "Encode/Decode" scripts can be created/added to the Scripts Tree and used by custom Output Panels. They should return <code>EncodeDecodeResult</code> objects as indicated by the templates. However,
+in the event that users aren't careful in doing so will return other data types leveraging their <code>toString()</code> implementation (which may or may not be useful/obvious at first glance).
 
 <H2>Accessed via</H2>
 <table>

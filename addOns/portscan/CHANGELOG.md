@@ -4,9 +4,13 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [10] - 2022-10-27
 ### Changed
+- Use the Network add-on to obtain the outgoing proxy.
 - Maintenance changes.
-- Update minimum ZAP version to 2.11.1.
+- Update minimum ZAP version to 2.12.0.
 
 ## [9] - 2021-10-07
 ### Added
@@ -58,4 +62,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release as an add-on (previously bundled in ZAP).
 
+[10]: https://github.com/zaproxy/zap-extensions/releases/portscan-v10
 [9]: https://github.com/zaproxy/zap-extensions/releases/portscan-v9

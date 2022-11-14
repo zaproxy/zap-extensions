@@ -24,7 +24,7 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import org.zaproxy.zap.utils.Enableable;
 
-/** A HTTP Proxy exclusion. */
+/** An HTTP Proxy exclusion. */
 public class HttpProxyExclusion extends Enableable implements Predicate<String> {
 
     private Pattern host;

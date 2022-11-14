@@ -29,7 +29,6 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.addon.spider.ExtensionSpider2;
-import org.zaproxy.zap.extension.spider.ExtensionSpider;
 
 public class ExtensionSpiderAutomation extends ExtensionAdaptor {
 
@@ -56,10 +55,6 @@ public class ExtensionSpiderAutomation extends ExtensionAdaptor {
 
     @Override
     public void hook(ExtensionHook extensionHook) {
-        if (ExtensionSpider.class.getAnnotation(Deprecated.class) == null) {
-            return;
-        }
-
         job = new SpiderJob();
         getExtension(ExtensionAutomation.class).registerAutomationJob(job);
     }
@@ -75,10 +70,6 @@ public class ExtensionSpiderAutomation extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        if (job == null) {
-            return;
-        }
-
         getExtension(ExtensionAutomation.class).unregisterAutomationJob(job);
     }
 }

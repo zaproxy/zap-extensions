@@ -34,11 +34,6 @@ It will also attempt JSON parameter specific payloads if the scan is configured 
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/MongoDbInjectionScanRule.java">MongoDbInjectionScanRule.java</a>
 
-<h2>CORS Header</h2>
-This rule attempts to identify CORS headers and also CORS misconfiguration. The CORS is considered as misconfigured when it allows all origins, origins with weaker protocols and null origin.<br>
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/CorsScanRule.java">CorsScanRule.java</a>
-
 <h2>Web Cache Deception</h2>
 This rule attempts to identify Web Cache Deception vulnerabilities. It checks whether a static path appended to original URIs can be used to leak sensitive user information or not.
 <ul>
@@ -46,44 +41,11 @@ This rule attempts to identify Web Cache Deception vulnerabilities. It checks wh
 </ul>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/WebCacheDeceptionScanRule.java">WebCacheDeceptionScanRule.java</a>
 
-<h2>Java Spring Actuators</h2>
-This rule attempts to identify if the Spring Actuators are enabled. Tests for the default /actuator/health route in the application.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/SpringActuatorScanRule.java">SpringActuatorScanRule.java</a>
-
-<h2>Log4Shell (CVE-2021-44228 and CVE-2021-45046)</h2>
-This rule attempts to discover the Log4Shell (<a href="https://www.cve.org/CVERecord?id=CVE-2021-44228">CVE-2021-44228</a> and <a href="https://www.cve.org/CVERecord?id=CVE-2021-45046">CVE-2021-45046</a>) vulnerabilities.
+<h2>Text4shell (CVE-2022-42889)</h2>
+This rule attempts to discover the Text4shell (<a href="https://www.cve.org/CVERecord?id=CVE-2022-42889">CVE-2022-42889</a>) vulnerability.
 It relies on the OAST add-on to generate out-of-band payloads and verify DNS interactions.
-We recommend that this scan rule is used with header injection enabled for maximum coverage.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/Log4ShellScanRule.java">Log4ShellScanRule.java</a>
-
-<h2>Out of Band XSS</h2>
-This rule attempts to discover Out-of-band XSS vulnerabilities.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/OutOfBandXssScanRule.java">OutOfBandXssScanRule.java</a>
-
-<h2>Exponential Entity Expansion (Billion Laughs Attack)</h2>
-This rule attempts to identify the "Billion Laughs" vulnerability in servers that accept XML or YAML files.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/ExponentialEntityExpansionScanRule.java">ExponentialEntityExpansionScanRule.java</a>
-
-<h2>Spring4Shell (CVE-2022-22965)</h2>
-This rule attempts to discover the Spring4Shell (<a href="https://tanzu.vmware.com/security/cve-2022-22965">CVE-2022-22965</a> vulnerability.
-It uses a payload of <code>class.module.classLoader.DefaultAssertionStatus=nonsense</code> on all nodes and raises an alert if this payload results in a 400 response.
-It will not raise an alert if a similar but safe payload also results in a 400 response.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/Spring4ShellScanRule.java">Spring4ShellScanRule.java</a>
-
-<h2>Server Side Template Injection</h2>
-This rule attempts to detect situations in which user input might be interpreted as part of the template and processed on the server, versus the user input simply being used as an argument to the template/engine.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/SstiScanRule.java">SstiScanRule.java</a>
-
-<h2>Server Side Template Injection (Blind)</h2>
-This rule goes one step further than the SSTI scan rule and attempts to find places where the impact of the user input is not immediately obvious, such as when used by an admin panel, report output, invoice, etc.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/SstiBlindScanRule.java">SstiBlindScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesAlpha/src/main/java/org/zaproxy/zap/extension/ascanrulesAlpha/Text4ShellScanRule.java">Text4ShellScanRule.java</a>
 
 </body>
 </html>

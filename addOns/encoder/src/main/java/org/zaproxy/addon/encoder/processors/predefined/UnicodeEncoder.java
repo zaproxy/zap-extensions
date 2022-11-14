@@ -21,6 +21,8 @@ package org.zaproxy.addon.encoder.processors.predefined;
 
 public class UnicodeEncoder extends DefaultEncodeDecodeProcessor {
 
+    private static final UnicodeEncoder INSTANCE = new UnicodeEncoder();
+
     @Override
     protected String processInternal(String value) throws Exception {
         String str = value == null ? "" : value;
@@ -43,5 +45,9 @@ public class UnicodeEncoder extends DefaultEncodeDecodeProcessor {
             sb.append(tmp);
         }
         return (sb.toString());
+    }
+
+    public static UnicodeEncoder getSingleton() {
+        return INSTANCE;
     }
 }

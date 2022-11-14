@@ -25,7 +25,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.apache.commons.lang.time.StopWatch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpSender;
 
 public class ParamGuesser implements Runnable {
@@ -53,10 +52,7 @@ public class ParamGuesser implements Runnable {
         this.scan = scan;
         this.executor = executor;
         this.config = scan.getConfig();
-        // TODO - use the actual core initiator once targeting >= 2.12.0
-        httpSender =
-                new HttpSender(
-                        Model.getSingleton().getOptionsParam().getConnectionParam(), true, 17);
+        httpSender = new HttpSender(HttpSender.PARAM_DIGGER_INITIATOR);
         if (config.doUrlGuess()) {
             urlGuesser = new UrlGuesser(id, scan, httpSender, executor);
         }
@@ -136,10 +132,7 @@ public class ParamGuesser implements Runnable {
         logger.debug("Guessing process is complete. Shutting Down ... ");
         this.stopped = true;
         stopWatch.stop();
-        if (httpSender != null) {
-            httpSender.shutdown();
-            httpSender = null;
-        }
+        httpSender = null;
         reset();
 
         new Thread(

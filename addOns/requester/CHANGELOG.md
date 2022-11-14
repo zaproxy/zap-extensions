@@ -5,17 +5,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+
+## [7.0.0] - 2022-10-27
 ### Added
 - Add Send button to Response tab.
 - Add shortcut to Send buttons (Issue 6448).
 - Add button to allow to regenerate Anti-CSRF tokens (Issue 111).
 - Provide the necessary infrastructure for other add-ons (e.g. WebSocket) to send messages.
-- On ZAP versions newer than 2.11:
-  - Manage the send/resend Manual Request Editor dialogues.
-  - Add a Tools menu item to open the send Manual Request Editor.
-  - Add a context menu item to open the resend Manual Request Editor.
+- Manage the send/resend Manual Request Editor dialogues.
+- Add a Tools menu item to open the send Manual Request Editor.
+- Add a context menu item to open the resend Manual Request Editor.
+- Allow to establish WebSocket connections with the send/resend Manual Request Editor dialogues.
 
 ### Changed
+- Update minimum ZAP version to 2.12.0.
 - Improve reporting of TLS errors (Issue 2699).
 - Maintenance changes.
 - Promoted to Beta.
@@ -66,6 +70,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+[7.0.0]: https://github.com/zaproxy/zap-extensions/releases/requester-v7.0.0
 [6]: https://github.com/zaproxy/zap-extensions/releases/requester-v6
 [5]: https://github.com/zaproxy/zap-extensions/releases/requester-v5
 [4]: https://github.com/zaproxy/zap-extensions/releases/requester-v4

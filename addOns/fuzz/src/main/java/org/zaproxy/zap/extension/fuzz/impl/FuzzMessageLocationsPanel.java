@@ -38,6 +38,7 @@ import org.zaproxy.zap.view.messagelocation.AbstractMessageLocationsPanel;
 import org.zaproxy.zap.view.messagelocation.MessageLocationHighlight;
 import org.zaproxy.zap.view.messagelocation.MessageLocationsTableModel;
 
+@SuppressWarnings("serial")
 public class FuzzMessageLocationsPanel
         extends AbstractMessageLocationsPanel<
                 FuzzLocationTableEntry, MessageLocationsTableModel<FuzzLocationTableEntry>> {
@@ -188,6 +189,7 @@ public class FuzzMessageLocationsPanel
         return true;
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public List<PayloadGeneratorMessageLocation<?>> getFuzzMessageLocations() {
         List<PayloadGeneratorMessageLocation<?>> fuzzLocations = new ArrayList<>();
         for (FuzzLocationTableEntry entry : getMultipleOptionsModel().getElements()) {
@@ -234,6 +236,7 @@ public class FuzzMessageLocationsPanel
         return fuzzLocations;
     }
 
+    @SuppressWarnings("unchecked")
     private static <T2 extends Payload, T3 extends PayloadProcessor<T2>>
             ProcessedPayloadGenerator<T2> wrapProcessedPayloadGenerator(
                     PayloadGenerator<T2> payloadGenerator,
@@ -247,6 +250,7 @@ public class FuzzMessageLocationsPanel
         return new ProcessedPayloadGenerator<>(payloadGenerator, processors);
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private static ResettableAutoCloseableIterator<Payload> getPayloads(
             FuzzLocationTableEntry locationEntry) {
         List<PayloadGenerator<? extends Payload>> payloadGenerators;

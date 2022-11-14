@@ -55,11 +55,9 @@ import org.zaproxy.addon.automation.jobs.ParamsJob;
 import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob;
 import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
 import org.zaproxy.addon.automation.jobs.RequestorJob;
-import org.zaproxy.addon.automation.jobs.SpiderJob;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.ZAP.ProcessType;
 import org.zaproxy.zap.eventBus.Event;
-import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.utils.Stats;
 
 public class ExtensionAutomation extends ExtensionAdaptor implements CommandLineListener {
@@ -116,9 +114,6 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
         registerAutomationJob(new PassiveScanConfigJob());
         registerAutomationJob(new RequestorJob());
         registerAutomationJob(new PassiveScanWaitJob());
-        if (ExtensionSpider.class.getAnnotation(Deprecated.class) == null) {
-            registerAutomationJob(new SpiderJob());
-        }
         registerAutomationJob(new DelayJob());
         registerAutomationJob(new ActiveScanJob());
         registerAutomationJob(new ParamsJob());

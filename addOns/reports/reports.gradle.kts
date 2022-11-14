@@ -10,7 +10,7 @@ description = "Official ZAP Reports."
 zapAddOn {
     addOnName.set("Report Generation")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.11.1")
+    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -52,7 +52,7 @@ dependencies {
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:2.13.0")
     implementation("org.snakeyaml:snakeyaml-engine:2.3")
-    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.17.2") {
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.19.0") {
         // Provided by ZAP.
         exclude(group = "org.apache.logging.log4j")
     }

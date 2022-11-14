@@ -35,6 +35,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -56,6 +57,7 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -94,6 +96,8 @@ class ExtensionReportsUnitTest {
         Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
 
         Constant.PROGRAM_VERSION = "Dev Build";
+        HttpRequestHeader.setDefaultUserAgent(
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0");
     }
 
     @Test
@@ -651,6 +655,9 @@ class ExtensionReportsUnitTest {
                 123,
                 456,
                 msg);
+        Map<String, String> tags = new HashMap<>();
+        tags.put("tagkey", "tagvalue");
+        alert.setTags(tags);
         node.setUserObject(alert);
 
         AlertNode instance = new AlertNode(0, name);
@@ -704,8 +711,10 @@ class ExtensionReportsUnitTest {
     @ValueSource(
             strings = {
                 "traditional-json",
+                "traditional-json-plus",
                 "traditional-md",
                 "traditional-xml",
+                "traditional-xml-plus",
                 "traditional-html",
                 "traditional-html-plus"
             })
@@ -714,6 +723,10 @@ class ExtensionReportsUnitTest {
         Template template = getTemplateFromYamlFile(templateName);
         String fileName = "basic-" + templateName;
         File f = File.createTempFile(fileName, template.getExtension());
+
+        // If the test fails because of valid changes then uncomment the next line and copy the
+        // generated file to the right file in src/test/resources
+        // System.out.println(f.getAbsolutePath());
 
         // When
         File r = generateReportWithAlerts(template, f);
@@ -731,30 +744,13 @@ class ExtensionReportsUnitTest {
         assertThat(cleanReport(report), is(equalTo(cleanReport(expected))));
     }
 
-    @Test
-    void shouldGenerateValidJsonReport() throws Exception {
-        // Given
-        Template template = getTemplateFromYamlFile("traditional-json");
-        String fileName = "basic-traditional-json";
-        File f = File.createTempFile(fileName, template.getExtension());
+    void checkAlert(JSONObject alert) {
+        assertThat(alert.getString("@name"), is(equalTo("http://example.com")));
+        assertThat(alert.getString("@host"), is(equalTo("example.com")));
+        assertThat(alert.getString("@port"), is(equalTo("80")));
+        assertThat(alert.getString("@ssl"), is(equalTo("false")));
 
-        // When
-        File r = generateReportWithAlerts(template, f);
-        String report = new String(Files.readAllBytes(r.toPath()));
-
-        JSONObject json = JSONObject.fromObject(report);
-        JSONArray site = json.getJSONArray("site");
-
-        // Then
-        assertThat(json.getString("@version"), is(equalTo("Dev Build")));
-        assertThat(json.getString("@generated").length(), is(greaterThan(20)));
-        assertThat(site.size(), is(equalTo(1)));
-        assertThat(site.getJSONObject(0).getString("@name"), is(equalTo("http://example.com")));
-        assertThat(site.getJSONObject(0).getString("@host"), is(equalTo("example.com")));
-        assertThat(site.getJSONObject(0).getString("@port"), is(equalTo("80")));
-        assertThat(site.getJSONObject(0).getString("@ssl"), is(equalTo("false")));
-
-        JSONArray alerts = site.getJSONObject(0).getJSONArray("alerts");
+        JSONArray alerts = alert.getJSONArray("alerts");
         assertThat(alerts.size(), is(equalTo(1)));
         assertThat(alerts.getJSONObject(0).getString("pluginid"), is(equalTo("1")));
         assertThat(alerts.getJSONObject(0).getString("alertRef"), is(equalTo("1")));
@@ -792,6 +788,61 @@ class ExtensionReportsUnitTest {
                 instances.getJSONObject(0).getString("attack"), is(equalTo("Test \"Attack\\\"")));
         assertThat(
                 instances.getJSONObject(0).getString("evidence"), is(equalTo("Test <p>Evidence")));
+    }
+
+    @Test
+    void shouldGenerateValidJsonReport() throws Exception {
+        // Given
+        Template template = getTemplateFromYamlFile("traditional-json");
+        String fileName = "basic-traditional-json";
+        File f = File.createTempFile(fileName, template.getExtension());
+
+        // When
+        File r = generateReportWithAlerts(template, f);
+        String report = new String(Files.readAllBytes(r.toPath()));
+
+        JSONObject json = JSONObject.fromObject(report);
+        JSONArray site = json.getJSONArray("site");
+
+        // Then
+        assertThat(json.getString("@version"), is(equalTo("Dev Build")));
+        assertThat(json.getString("@generated").length(), is(greaterThan(20)));
+        assertThat(site.size(), is(equalTo(1)));
+        checkAlert(site.getJSONObject(0));
+    }
+
+    @Test
+    void shouldGenerateValidJsonPlusReport() throws Exception {
+        // Given
+        Template template = getTemplateFromYamlFile("traditional-json-plus");
+        String fileName = "basic-traditional-json-plus";
+        File f = File.createTempFile(fileName, template.getExtension());
+
+        // When
+        File r = generateReportWithAlerts(template, f);
+        String report = new String(Files.readAllBytes(r.toPath()));
+
+        JSONObject json = JSONObject.fromObject(report);
+        JSONArray site = json.getJSONArray("site");
+
+        // Then
+        assertThat(json.getString("@version"), is(equalTo("Dev Build")));
+        assertThat(json.getString("@generated").length(), is(greaterThan(20)));
+        assertThat(site.size(), is(equalTo(1)));
+        assertThat(site.getJSONObject(0).getString("@name"), is(equalTo("http://example.com")));
+        assertThat(site.getJSONObject(0).getString("@host"), is(equalTo("example.com")));
+        assertThat(site.getJSONObject(0).getString("@port"), is(equalTo("80")));
+        assertThat(site.getJSONObject(0).getString("@ssl"), is(equalTo("false")));
+        checkAlert(site.getJSONObject(0));
+
+        JSONArray alerts = site.getJSONObject(0).getJSONArray("alerts");
+        assertThat(alerts.size(), is(equalTo(1)));
+        checkAlert(site.getJSONObject(0));
+        // tags are not included in non plus report
+        JSONArray tags = alerts.getJSONObject(0).getJSONArray("tags");
+        assertThat(tags.size(), is(equalTo(1)));
+        assertThat(tags.getJSONObject(0).getString("tag"), is(equalTo("tagkey")));
+        assertThat(tags.getJSONObject(0).getString("link"), is(equalTo("tagvalue")));
     }
 
     @Test

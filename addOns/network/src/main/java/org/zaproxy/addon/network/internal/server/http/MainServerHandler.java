@@ -25,6 +25,7 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.ssl.SslClosedEngineException;
 import java.nio.channels.ClosedChannelException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,7 +34,9 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.network.internal.ChannelAttributes;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 
-/** The main handler of a HTTP server, notifies {@link HttpMessageHandler}s and acts accordingly. */
+/**
+ * The main handler of an HTTP server, notifies {@link HttpMessageHandler}s and acts accordingly.
+ */
 public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> {
 
     private static final String ERROR_WRITE =
@@ -51,7 +54,7 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
     protected final DefaultHttpMessageHandlerContext handlerContext;
 
     /**
-     * Constructs a {@code HttpMessageServerBridge} with the given handlers.
+     * Constructs a {@code MainServerHandler} with the given handlers.
      *
      * @param handlers the message handlers.
      * @throws NullPointerException if the given list is {@code null}.
@@ -87,6 +90,11 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
 
         writeResponse(ctx, msg);
 
+        if (isClosed(msg)) {
+            close(ctx);
+            return;
+        }
+
         if (postWriteResponse(ctx, msg)) {
             return;
         }
@@ -94,6 +102,15 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
         if (isConnectionClose(msg)) {
             close(ctx);
         }
+    }
+
+    private static boolean isClosed(HttpMessage msg) {
+        Object userObject = msg.getUserObject();
+        if (userObject instanceof Map) {
+            Map<?, ?> properties = (Map<?, ?>) userObject;
+            return Boolean.TRUE.equals(properties.get("connection.closed"));
+        }
+        return false;
     }
 
     protected HandlerResult processMessage(HttpMessage msg) {

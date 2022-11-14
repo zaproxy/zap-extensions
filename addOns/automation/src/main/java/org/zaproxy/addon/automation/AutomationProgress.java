@@ -63,13 +63,21 @@ public class AutomationProgress {
     }
 
     public void info(String info) {
+        infoImpl(info, true);
+    }
+
+    private void infoImpl(String info, boolean toStdout) {
         this.infos.add(info);
         this.allMessages.add(info);
-        if (outputToStdout) {
+        if (toStdout && outputToStdout) {
             CommandLine.info(info);
         }
         AutomationEventPublisher.publishMessageEvent(
                 AutomationEventPublisher.PLAN_INFO_MESSAGE, info);
+    }
+
+    public void infoNoStdout(String info) {
+        infoImpl(info, false);
     }
 
     public List<String> getErrors() {

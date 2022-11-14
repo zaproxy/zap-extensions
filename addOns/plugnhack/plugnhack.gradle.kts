@@ -5,7 +5,7 @@ description = "Supports the Mozilla Plug-n-Hack standard: https://developer.mozi
 zapAddOn {
     addOnName.set("Plug-n-Hack Configuration")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.11.1")
+    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -15,6 +15,21 @@ zapAddOn {
             addOns {
                 register("network") {
                     version.set(">= 0.2.0")
+                }
+            }
+        }
+
+        extensions {
+            register("org.zaproxy.zap.extension.plugnhack.manualsend.ExtensionPlugNHackManualSend") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.plugnhack.manualsend"))
+                }
+                dependencies {
+                    addOns {
+                        register("requester") {
+                            version.set("7.*")
+                        }
+                    }
                 }
             }
         }
@@ -28,4 +43,5 @@ zapAddOn {
 
 dependencies {
     compileOnly(parent!!.childProjects.get("network")!!)
+    compileOnly(parent!!.childProjects.get("requester")!!)
 }

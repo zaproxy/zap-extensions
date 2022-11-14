@@ -4,8 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [0.3.0] - 2022-10-27
 ### Changed
-- Update minimum ZAP version to 2.11.1.
+- Update minimum ZAP version to 2.12.0.
 
 ### Fixed
 - Declare the engine is single threaded (Issue 6992).
@@ -22,5 +25,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 First version.
 
+[0.3.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.3.0
 [0.2.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.2.0
 [0.1.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.1.0

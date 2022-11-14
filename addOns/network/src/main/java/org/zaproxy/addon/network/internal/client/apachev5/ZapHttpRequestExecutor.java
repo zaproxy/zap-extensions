@@ -47,6 +47,7 @@ import org.apache.hc.core5.io.Closer;
  */
 public class ZapHttpRequestExecutor extends HttpRequestExecutor {
 
+    public static final String CONNECTION = "zap.connection";
     public static final String CONNECTION_SOCKET = "zap.connection.socket";
     public static final String CONNECTION_INPUT_STREAM = "zap.connection.inputstream";
 
@@ -108,6 +109,7 @@ public class ZapHttpRequestExecutor extends HttpRequestExecutor {
             } else if (MessageSupport.canResponseHaveBody(request.getMethod(), response)) {
                 conn.receiveResponseEntity(response);
             }
+            context.setAttribute(CONNECTION, conn);
             return response;
 
         } catch (final HttpException | IOException | RuntimeException ex) {

@@ -22,8 +22,11 @@ package org.zaproxy.addon.network.internal.client.apachev5;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
@@ -43,6 +46,7 @@ import org.apache.hc.client5.http.impl.auth.NTLMSchemeFactory;
 import org.apache.hc.client5.http.impl.auth.SPNegoSchemeFactory;
 import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
 import org.apache.hc.client5.http.impl.classic.CustomHttpClientCreator;
+import org.apache.hc.client5.http.impl.classic.ZapProtocolExec;
 import org.apache.hc.client5.http.impl.classic.ZapRequestAddCookies;
 import org.apache.hc.client5.http.impl.io.ManagedHttpClientConnectionFactory;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager;
@@ -63,6 +67,7 @@ import org.apache.hc.core5.http.ProtocolVersion;
 import org.apache.hc.core5.http.config.CharCodingConfig;
 import org.apache.hc.core5.http.config.Lookup;
 import org.apache.hc.core5.http.config.RegistryBuilder;
+import org.apache.hc.core5.http.io.HttpClientConnection;
 import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
@@ -83,13 +88,16 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpSender;
+import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.network.ClientCertificatesOptions;
 import org.zaproxy.addon.network.ConnectionOptions;
+import org.zaproxy.addon.network.common.ZapSocketTimeoutException;
+import org.zaproxy.addon.network.common.ZapUnknownHostException;
 import org.zaproxy.addon.network.internal.client.BaseHttpSender;
 import org.zaproxy.addon.network.internal.client.LegacyUtils;
 import org.zaproxy.addon.network.internal.client.ResponseBodyConsumer;
 import org.zaproxy.addon.network.internal.client.SocksProxy;
-import org.zaproxy.zap.ZapGetMethod;
+import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
 import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.users.User;
 
@@ -101,6 +109,7 @@ public class HttpSenderApache
 
     private final Supplier<CookieStore> globalCookieStoreProvider;
     private final ConnectionOptions options;
+    private final Supplier<LegacyProxyListenerHandler> legacyProxyListenerHandler;
 
     private final Lookup<AuthSchemeFactory> authSchemeRegistry;
 
@@ -122,9 +131,11 @@ public class HttpSenderApache
     public HttpSenderApache(
             Supplier<CookieStore> globalCookieStoreProvider,
             ConnectionOptions options,
-            ClientCertificatesOptions clientCertificatesOptions) {
+            ClientCertificatesOptions clientCertificatesOptions,
+            Supplier<LegacyProxyListenerHandler> legacyProxyListenerHandler) {
         this.globalCookieStoreProvider = Objects.requireNonNull(globalCookieStoreProvider);
         this.options = Objects.requireNonNull(options);
+        this.legacyProxyListenerHandler = legacyProxyListenerHandler;
 
         authSchemeRegistry =
                 RegistryBuilder.<AuthSchemeFactory>create()
@@ -174,7 +185,6 @@ public class HttpSenderApache
                 HttpProcessorBuilder.create()
                         .add(zapRequestAddCookies)
                         .add(new ResponseProcessCookies())
-                        .add(new RemoveAuthHeader(options))
                         .add(new RemoveTransferEncoding())
                         .build();
 
@@ -241,10 +251,6 @@ public class HttpSenderApache
             context.setAttribute(SslConnectionSocketFactory.LAX_ATTR_NAME, Boolean.TRUE);
         }
 
-        if (ctx.isRemoveUserDefinedAuthHeaders()) {
-            context.setAttribute(RemoveAuthHeader.ATTR_NAME, Boolean.TRUE);
-        }
-
         context.setAttribute(RequestRetryStrategy.CUSTOM_RETRY, ctx.getRequestRetryStrategy());
 
         if (requestConfig.getSoTimeout() != HttpRequestConfig.NO_VALUE_SET) {
@@ -286,6 +292,12 @@ public class HttpSenderApache
             throws IOException {
         try {
             sendImpl0(ctx, requestContext, message, responseBodyConsumer);
+        } catch (SocketTimeoutException e) {
+            LOGGER.debug("A timeout occurred while sending the request:", e);
+            throw new ZapSocketTimeoutException(e.getMessage(), options.getTimeoutInSecs());
+        } catch (UnknownHostException e) {
+            LOGGER.debug("An unknown host exception occurred while sending the request:", e);
+            throw new ZapUnknownHostException(e.getMessage(), isProxyHost(e.getMessage()));
         } catch (IOException e) {
             LOGGER.debug("An I/O error occurred while sending the request:", e);
             throw e;
@@ -293,6 +305,14 @@ public class HttpSenderApache
             LOGGER.warn("An error occurred while sending the request:", e);
             throw new IOException(e);
         }
+    }
+
+    private boolean isProxyHost(String exceptionMessage) {
+        if (!options.isHttpProxyEnabled() || exceptionMessage == null) {
+            return false;
+        }
+        // Exception message can be just the host or the host plus some other details.
+        return exceptionMessage.startsWith(options.getHttpProxy().getHost());
     }
 
     private void sendImpl0(
@@ -305,13 +325,31 @@ public class HttpSenderApache
         RequestConfig.Builder requestConfigBuilder =
                 RequestConfig.copy(requestCtx.getRequestConfig());
 
+        boolean reauthenticate = false;
+        boolean reauthenticateProxy =
+                ctx.isRemoveUserDefinedAuthHeaders()
+                        && credentialsProvider.hasProxyAuth()
+                        && message.getRequestHeader().getHeader(HttpHeader.PROXY_AUTHORIZATION)
+                                != null;
+        if (reauthenticateProxy
+                || (!ctx.isRemoveUserDefinedAuthHeaders()
+                        && message.getRequestHeader().getHeader(HttpHeader.PROXY_AUTHORIZATION)
+                                != null)) {
+            requestCtx.setAttribute(ZapProtocolExec.PROXY_AUTH_DISABLED_ATTR, Boolean.TRUE);
+        }
         User user = ctx.getUser(message);
         if (user != null) {
             requestConfigBuilder.setCookieSpec(StandardCookieSpec.RELAXED);
             requestCtx.setCookieStore(
                     LegacyUtils.httpStateToCookieStore(user.getCorrespondingHttpState()));
-            requestCtx.setCredentialsProvider(
-                    new HttpStateCredentialsProvider(user.getCorrespondingHttpState()));
+
+            boolean authHeaderPresent =
+                    message.getRequestHeader().getHeader(HttpHeader.AUTHORIZATION) != null;
+            reauthenticate = ctx.isRemoveUserDefinedAuthHeaders() && authHeaderPresent;
+            if (!authHeaderPresent) {
+                requestCtx.setCredentialsProvider(
+                        new HttpStateCredentialsProvider(user.getCorrespondingHttpState()));
+            }
         } else {
             switch (ctx.getCookieUsage()) {
                 case GLOBAL:
@@ -338,7 +376,6 @@ public class HttpSenderApache
         ClassicHttpRequest request = createHttpRequest(message);
 
         requestCtx.increaseRequestCount();
-        message.setTimeSentMillis(System.currentTimeMillis());
         try {
             if (HttpRequestHeader.CONNECT.equals(message.getRequestHeader().getMethod())) {
                 String host = message.getRequestHeader().getHostName();
@@ -359,6 +396,7 @@ public class HttpSenderApache
                     }
                 }
 
+                message.setTimeSentMillis(System.currentTimeMillis());
                 httpConnector.connect(
                         request,
                         requestCtx,
@@ -368,13 +406,28 @@ public class HttpSenderApache
                             message.setUserObject(socket);
                         });
             } else {
-                clientImpl.execute(
-                        request,
-                        requestCtx,
-                        response -> {
-                            copyResponse(response, message, responseBodyConsumer);
-                            return null;
-                        });
+                for (; ; ) {
+                    message.setTimeSentMillis(System.currentTimeMillis());
+                    clientImpl.execute(
+                            request,
+                            requestCtx,
+                            response -> {
+                                copyResponse(response, message, responseBodyConsumer);
+                                return null;
+                            });
+
+                    if (reauthenticateProxy && isProxyAuthNeeded(request, message)) {
+                        reauthenticateProxy = false;
+                        requestCtx.setAttribute(
+                                ZapProtocolExec.PROXY_AUTH_DISABLED_ATTR, Boolean.FALSE);
+                        continue;
+                    }
+
+                    if (!reauthenticate || !isAuthNeeded(requestCtx, user, request, message)) {
+                        break;
+                    }
+                    reauthenticate = false;
+                }
             }
         } finally {
             message.setTimeElapsedMillis(
@@ -401,21 +454,90 @@ public class HttpSenderApache
                     user.getCorrespondingHttpState(), requestCtx.getCookieStore());
         }
 
+        HttpClientConnection connection =
+                (HttpClientConnection) requestCtx.getAttribute(ZapHttpRequestExecutor.CONNECTION);
+        if (!connection.isOpen()) {
+            message.setUserObject(Collections.singletonMap("connection.closed", Boolean.TRUE));
+            return;
+        }
+
         Socket socket = (Socket) requestCtx.getAttribute(ZapHttpRequestExecutor.CONNECTION_SOCKET);
-        if (socket != null) {
-            InputStream inputStream =
-                    (InputStream)
-                            requestCtx.getAttribute(ZapHttpRequestExecutor.CONNECTION_INPUT_STREAM);
-            ZapGetMethod method =
-                    new ZapGetMethod() {
-                        @Override
-                        public InputStream getResponseBodyAsStream() {
-                            return inputStream;
-                        }
-                    };
-            method.setUpgradedSocket(socket);
-            method.setUpgradedInputStream(socket.getInputStream());
-            message.setUserObject(method);
+        processSocket(requestCtx, message, socket);
+    }
+
+    private static boolean isAuthNeeded(
+            ZapHttpClientContext requestCtx,
+            User user,
+            ClassicHttpRequest request,
+            HttpMessage message) {
+        int statusCode = message.getResponseHeader().getStatusCode();
+        if (statusCode != HttpStatusCode.UNAUTHORIZED && statusCode != HttpStatusCode.FORBIDDEN) {
+            return false;
+        }
+
+        request.removeHeaders(HttpHeader.AUTHORIZATION);
+        requestCtx.setCredentialsProvider(
+                new HttpStateCredentialsProvider(user.getCorrespondingHttpState()));
+        return true;
+    }
+
+    private static boolean isProxyAuthNeeded(ClassicHttpRequest request, HttpMessage message) {
+        int statusCode = message.getResponseHeader().getStatusCode();
+        if (statusCode != HttpStatusCode.PROXY_AUTHENTICATION_REQUIRED
+                && statusCode != HttpStatusCode.FORBIDDEN) {
+            return false;
+        }
+
+        request.removeHeaders(HttpHeader.PROXY_AUTHORIZATION);
+        return true;
+    }
+
+    @SuppressWarnings("deprecation")
+    private void processSocket(ZapHttpClientContext requestCtx, HttpMessage message, Socket socket)
+            throws IOException {
+        if (socket == null) {
+            return;
+        }
+
+        InputStream inputStream =
+                (InputStream)
+                        requestCtx.getAttribute(ZapHttpRequestExecutor.CONNECTION_INPUT_STREAM);
+        org.zaproxy.zap.ZapGetMethod method =
+                new org.zaproxy.zap.ZapGetMethod() {
+                    @Override
+                    public InputStream getResponseBodyAsStream() {
+                        return inputStream;
+                    }
+                };
+        method.setUpgradedSocket(socket);
+        method.setUpgradedInputStream(socket.getInputStream());
+        Object userObject = message.getUserObject();
+        message.setUserObject(method);
+
+        if (isPersistentManualConnection(userObject)
+                && !legacyProxyListenerHandler
+                        .get()
+                        .notifyPersistentConnectionListener(message, null, method)) {
+            closeSilently(socket);
+        }
+    }
+
+    private static boolean isPersistentManualConnection(Object userObject) {
+        if (userObject instanceof Map) {
+            Map<?, ?> metadata = (Map<?, ?>) userObject;
+            Object persistent = metadata.get("connection.manual.persistent");
+            if (persistent == Boolean.TRUE) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static void closeSilently(Socket socket) {
+        try {
+            socket.close();
+        } catch (IOException ignore) {
+            // Nothing to do.
         }
     }
 

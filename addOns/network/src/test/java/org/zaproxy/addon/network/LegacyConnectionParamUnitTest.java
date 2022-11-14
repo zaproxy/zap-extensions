@@ -219,20 +219,6 @@ class LegacyConnectionParamUnitTest {
     }
 
     @Test
-    @SuppressWarnings("deprecation")
-    void shouldSetProxyChainSkipName() {
-        // Given
-        String proxyChainSkipName = "example.org;example.com";
-        // When
-        legacyConnectionParam.setProxyChainSkipName(proxyChainSkipName);
-        // Then
-        verify(connectionOptions).setHttpProxyExclusions(exclusionsCaptor.capture());
-        List<HttpProxyExclusion> exclusions = exclusionsCaptor.getValue();
-        assertExclusion(exclusions.get(0), "\\Qexample.org\\E", true);
-        assertExclusion(exclusions.get(1), "\\Qexample.com\\E", true);
-    }
-
-    @Test
     void shouldGetProxyChainPortFromConnectionOptions() {
         // Given
         given(connectionOptions.getHttpProxy()).willReturn(HTTP_PROXY);

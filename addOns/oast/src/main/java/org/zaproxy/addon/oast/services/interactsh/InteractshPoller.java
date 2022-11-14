@@ -26,6 +26,7 @@ import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.zaproxy.addon.oast.OastRequest;
 import org.zaproxy.addon.oast.OastState;
+import org.zaproxy.addon.oast.OastState.OastStateEventType;
 
 public class InteractshPoller implements Runnable {
 
@@ -44,7 +45,8 @@ public class InteractshPoller implements Runnable {
                 new OastState(
                         interactshService.getName(),
                         interactshService.isRegistered(),
-                        LocalDateTime.now()));
+                        LocalDateTime.now(),
+                        OastStateEventType.POLLED));
     }
 
     private void handleInteraction(InteractshEvent event) {

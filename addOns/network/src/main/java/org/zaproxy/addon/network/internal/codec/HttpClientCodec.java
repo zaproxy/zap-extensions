@@ -29,7 +29,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
 /**
- * Encodes a HTTP request and decodes a HTTP response into a {@link HttpMessage}.
+ * Encodes an HTTP request and decodes an HTTP response into a {@link HttpMessage}.
  *
  * <p>Based on Netty's {@code HttpClientCodec}.
  */
