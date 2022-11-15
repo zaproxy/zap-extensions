@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [30] - 2022-11-15
 ### Changed
 - Dependency updates.
 - Each imported endpoint is included in the selected context, unless its URL matches an already existing *Include in
@@ -238,6 +238,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[30]: https://github.com/zaproxy/zap-extensions/releases/openapi-v30
 [29]: https://github.com/zaproxy/zap-extensions/releases/openapi-v29
 [28]: https://github.com/zaproxy/zap-extensions/releases/openapi-v28
 [27]: https://github.com/zaproxy/zap-extensions/releases/openapi-v27
