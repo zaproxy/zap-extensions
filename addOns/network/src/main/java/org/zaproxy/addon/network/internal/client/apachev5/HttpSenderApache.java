@@ -56,6 +56,7 @@ import org.apache.hc.client5.http.protocol.ResponseProcessCookies;
 import org.apache.hc.client5.http.socket.LayeredConnectionSocketFactory;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ClassicHttpResponse;
+import org.apache.hc.core5.http.ConnectionClosedException;
 import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpEntity;
 import org.apache.hc.core5.http.HttpHost;
@@ -69,7 +70,6 @@ import org.apache.hc.core5.http.config.Lookup;
 import org.apache.hc.core5.http.config.RegistryBuilder;
 import org.apache.hc.core5.http.io.HttpClientConnection;
 import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.http.protocol.HttpProcessor;
@@ -78,6 +78,8 @@ import org.apache.hc.core5.http.protocol.RequestTargetHost;
 import org.apache.hc.core5.http2.HttpVersionPolicy;
 import org.apache.hc.core5.io.CloseMode;
 import org.apache.hc.core5.net.URIAuthority;
+import org.apache.hc.core5.util.Args;
+import org.apache.hc.core5.util.ByteArrayBuffer;
 import org.apache.hc.core5.util.Timeout;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -106,6 +108,8 @@ public class HttpSenderApache
         extends BaseHttpSender<HttpSenderContextApache, ZapHttpClientContext, HttpEntity> {
 
     private static final Logger LOGGER = LogManager.getLogger(HttpSenderApache.class);
+
+    private static final int BUFFER_SIZE = 4096;
 
     private final Supplier<CookieStore> globalCookieStoreProvider;
     private final ConnectionOptions options;
@@ -274,7 +278,31 @@ public class HttpSenderApache
 
     @Override
     protected byte[] getBytes(HttpEntity body) throws IOException {
-        return EntityUtils.toByteArray(body);
+        int entityContentLength = (int) Args.checkContentLength(body);
+        int contentLength = entityContentLength < 0 ? BUFFER_SIZE : entityContentLength;
+        try (InputStream is = body.getContent()) {
+            if (is == null) {
+                return null;
+            }
+            ByteArrayBuffer bb = new ByteArrayBuffer(contentLength);
+            byte[] buffer = new byte[BUFFER_SIZE];
+            int read;
+            try {
+                while ((read = is.read(buffer)) != -1) {
+                    bb.append(buffer, 0, read);
+                }
+            } catch (ConnectionClosedException e) {
+                rethrowIfNotPrematureEnd(e);
+            }
+            return bb.toByteArray();
+        }
+    }
+
+    private static void rethrowIfNotPrematureEnd(ConnectionClosedException e) throws IOException {
+        String message = e.getMessage();
+        if (message == null || !message.startsWith("Premature end")) {
+            throw e;
+        }
     }
 
     @Override
@@ -408,13 +436,18 @@ public class HttpSenderApache
             } else {
                 for (; ; ) {
                     message.setTimeSentMillis(System.currentTimeMillis());
-                    clientImpl.execute(
-                            request,
-                            requestCtx,
-                            response -> {
-                                copyResponse(response, message, responseBodyConsumer);
-                                return null;
-                            });
+                    try {
+                        clientImpl.execute(
+                                request,
+                                requestCtx,
+                                response -> {
+                                    copyResponse(response, message, responseBodyConsumer);
+                                    return null;
+                                });
+                    } catch (ConnectionClosedException e) {
+                        rethrowIfNotPrematureEnd(e);
+                        break;
+                    }
 
                     if (reauthenticateProxy && isProxyAuthNeeded(request, message)) {
                         reauthenticateProxy = false;
