@@ -28,6 +28,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpHeader;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
@@ -174,10 +175,15 @@ public class HttpSenderHandler implements HttpMessageHandler {
             int statusCode,
             String reasonPhrase,
             String message) {
-        HttpResponseHeader responseHeader = new HttpResponseHeader();
-        responseHeader.setVersion(HttpHeader.HTTP11);
-        responseHeader.setStatusCode(statusCode);
-        responseHeader.setReasonPhrase(reasonPhrase);
+        HttpResponseHeader responseHeader;
+        try {
+            responseHeader =
+                    new HttpResponseHeader(
+                            HttpHeader.HTTP11 + " " + statusCode + " " + reasonPhrase);
+        } catch (HttpMalformedHeaderException e) {
+            LOGGER.error("Failed to create valid header.", e);
+            return;
+        }
         responseHeader.setHeader(HttpHeader.CONTENT_TYPE, "text/plain; charset=UTF-8");
         responseHeader.setHeader(
                 HttpHeader.CONTENT_LENGTH,
