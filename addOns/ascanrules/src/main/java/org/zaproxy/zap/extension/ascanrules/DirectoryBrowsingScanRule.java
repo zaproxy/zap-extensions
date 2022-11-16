@@ -29,6 +29,7 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
@@ -142,13 +143,24 @@ public class DirectoryBrowsingScanRule extends AbstractAppPlugin {
         }
 
         if (result) {
-            newAlert()
-                    .setConfidence(confidence)
-                    .setAttack(msg.getRequestHeader().getURI().toString())
-                    .setEvidence(evidence.toString())
+            createAlert(msg.getRequestHeader().getURI().toString(), confidence, evidence.toString())
                     .setMessage(msg)
                     .raise();
         }
+    }
+
+    private AlertBuilder createAlert(String attack, int confidence, String evidence) {
+        return newAlert().setConfidence(confidence).setAttack(attack).setEvidence(evidence);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                createAlert(
+                                "https://example.org/uploads/",
+                                Alert.CONFIDENCE_MEDIUM,
+                                "Parent Directory")
+                        .build());
     }
 
     @Override

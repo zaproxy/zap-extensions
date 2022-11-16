@@ -33,6 +33,7 @@
 // ZAP: 2020/06/22 Normalise scan rule class naming and i18n keys.
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -153,7 +154,6 @@ public class InfoSessionIdUrlScanRule extends PluginPassiveScanner {
 
         TreeSet<HtmlParameter> urlParams = msg.getUrlParams();
 
-        String uri = msg.getRequestHeader().getURI().toString();
         boolean found = false;
 
         // The Session ID list from option param (panel)
@@ -172,16 +172,15 @@ public class InfoSessionIdUrlScanRule extends PluginPassiveScanner {
                     // If the param value length is greater than MIN_LENGTH (therefore there is a
                     // value)
                     if (param.getValue().length() > SESSION_TOKEN_MIN_LENGTH) {
-                        newAlert()
-                                .setRisk(getRisk())
-                                .setConfidence(Alert.CONFIDENCE_HIGH)
-                                .setDescription(getDescription())
-                                .setParam(param.getName())
-                                .setSolution(getSolution())
-                                .setReference(getReference())
-                                .setEvidence(param.getValue())
-                                .setCweId(getCweId())
-                                .setWascId(getWascId())
+                        createAlert(
+                                        getName(),
+                                        getDescription(),
+                                        getSolution(),
+                                        getRisk(),
+                                        Alert.CONFIDENCE_HIGH,
+                                        param.getValue(),
+                                        param.getName(),
+                                        "-1")
                                 .raise();
                         // We don't break on this one.
                         // There shouldn't be more than one per URL but bizarre things do happen.
@@ -202,15 +201,15 @@ public class InfoSessionIdUrlScanRule extends PluginPassiveScanner {
             } catch (URIException e) {
             }
             if (jsessMatcher != null && jsessMatcher.find()) {
-                newAlert()
-                        .setRisk(getRisk())
-                        .setConfidence(Alert.CONFIDENCE_HIGH)
-                        .setDescription(getDescription())
-                        .setSolution(getSolution())
-                        .setReference(getReference())
-                        .setEvidence(jsessMatcher.group())
-                        .setCweId(getCweId())
-                        .setWascId(getWascId())
+                createAlert(
+                                getName(),
+                                getDescription(),
+                                getSolution(),
+                                getRisk(),
+                                Alert.CONFIDENCE_HIGH,
+                                jsessMatcher.group(),
+                                "",
+                                "-2")
                         .raise();
                 found = true;
             }
@@ -286,22 +285,82 @@ public class InfoSessionIdUrlScanRule extends PluginPassiveScanner {
             if (matcher.find()) {
                 linkHostName = matcher.group(1);
                 if (host.compareToIgnoreCase(linkHostName) != 0) {
-
-                    newAlert()
-                            .setName(getRefererAlert())
-                            .setRisk(risk)
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setDescription(getRefererDescription())
-                            .setSolution(getRefererSolution())
-                            .setReference(getReference())
-                            .setEvidence(linkHostName)
-                            .setCweId(getCweId())
-                            .setWascId(getWascId())
+                    createAlert(
+                                    getRefererAlert(),
+                                    getRefererDescription(),
+                                    getRefererSolution(),
+                                    risk,
+                                    Alert.CONFIDENCE_MEDIUM,
+                                    linkHostName,
+                                    "",
+                                    "-3")
                             .raise();
 
                     break; // Only need one
                 }
             }
         }
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        List<Alert> alerts = new ArrayList<>();
+        alerts.add(
+                createAlert(
+                                getName(),
+                                getDescription(),
+                                getSolution(),
+                                getRisk(),
+                                Alert.CONFIDENCE_HIGH,
+                                "1A530637289A03B07199A44E8D531427",
+                                "jsessionid",
+                                "-1")
+                        .build());
+        alerts.add(
+                createAlert(
+                                getName(),
+                                getDescription(),
+                                getSolution(),
+                                getRisk(),
+                                Alert.CONFIDENCE_HIGH,
+                                "jsessionid=1A530637289A03B07199A44E8D531427",
+                                "",
+                                "-2")
+                        .build());
+        alerts.add(
+                createAlert(
+                                getRefererAlert(),
+                                getRefererDescription(),
+                                getRefererSolution(),
+                                Alert.RISK_MEDIUM,
+                                Alert.CONFIDENCE_MEDIUM,
+                                "www.example.org",
+                                "",
+                                "-3")
+                        .build());
+        return alerts;
+    }
+
+    private AlertBuilder createAlert(
+            String name,
+            String desc,
+            String soln,
+            int risk,
+            int confidence,
+            String evidence,
+            String param,
+            String alertRef) {
+        return newAlert()
+                .setName(name)
+                .setRisk(risk)
+                .setConfidence(confidence)
+                .setDescription(desc)
+                .setSolution(soln)
+                .setReference(getReference())
+                .setParam(param)
+                .setEvidence(evidence)
+                .setCweId(getCweId())
+                .setWascId(getWascId())
+                .setAlertRef(getPluginId() + alertRef);
     }
 }
