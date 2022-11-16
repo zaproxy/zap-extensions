@@ -558,6 +558,28 @@ class HttpSenderImplUnitTest {
         @ParameterizedTest
         @MethodSource(
                 "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+        void shouldBeReceivedEvenWithLessContentThanContentLength(SenderMethod method)
+                throws Exception {
+            // Given
+            String responseHeader =
+                    "HTTP/1.1 200 OK\r\nContent-Length: 420\r\nConnection: close\r\n\r\n";
+            String responseBody = "Response Body";
+            server.setHttpMessageHandler(
+                    (ctx, msg) -> {
+                        msg.setResponseHeader(responseHeader);
+                        msg.setResponseBody(responseBody);
+                    });
+            // When
+            method.sendWith(httpSender, message);
+            // Then
+            assertThat(server.getReceivedMessages(), hasSize(1));
+            assertThat(message.getResponseHeader().toString(), is(equalTo(responseHeader)));
+            assertThat(message.getResponseBody().toString(), is(equalTo(responseBody)));
+        }
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
         void shouldPreserveNonAsciiCharactersInHeader(SenderMethod method) throws Exception {
             // Given
             String responseHeader = "HTTP/1.1 200 OK\r\nJ/ψ:  → VP\r\nContent-Length: 0\r\n\r\n";
