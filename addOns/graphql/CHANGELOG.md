@@ -4,7 +4,15 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- The GraphQL Support Script has been superseded by a variant.
+- Argument names will now be used to get values from the form handler add-on, instead of argument types.
+- Dependency updates and maintenance changes.
 
+### Fixed
+- Introspection was not working for some applications (Issue 7602).
+- Variables in JSON queries were being added incorrectly.
+- Attack payloads were being injected outside the quotes of inline string arguments.
 
 ## [0.11.0] - 2022-10-27
 ### Changed

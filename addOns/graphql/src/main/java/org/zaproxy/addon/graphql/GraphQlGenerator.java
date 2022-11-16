@@ -41,6 +41,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,14 +54,14 @@ public class GraphQlGenerator {
     private static final Logger LOG = LogManager.getLogger(GraphQlGenerator.class);
     private final Requestor requestor;
     private final GraphQlParam param;
-    private GraphQLSchema schema;
+    private final GraphQLSchema schema;
     private boolean inlineArgsEnabled;
 
     public enum RequestType {
         QUERY,
         MUTATION,
         SUBSCRIPTION
-    };
+    }
 
     private final ValueGenerator valueGenerator;
 
@@ -130,7 +132,7 @@ public class GraphQlGenerator {
         try {
             inlineArgsEnabled = false;
             StringBuilder query = new StringBuilder();
-            StringBuilder variables = new StringBuilder();
+            JSONObject variables = new JSONObject();
             generate(query, variables, getRequestTypeObject(requestType), 0);
             prefixRequestType(query, requestType);
             return new String[] {query.toString(), variables.toString()};
@@ -163,7 +165,7 @@ public class GraphQlGenerator {
     private void sendFull(RequestType requestType) {
         try {
             StringBuilder query = new StringBuilder();
-            StringBuilder variables = new StringBuilder();
+            JSONObject variables = new JSONObject();
             generate(query, variables, getRequestTypeObject(requestType), 0);
             prefixRequestType(query, requestType);
             requestor.sendQuery(query.toString(), variables.toString(), param.getRequestMethod());
@@ -175,7 +177,7 @@ public class GraphQlGenerator {
     private void sendByLeaf(RequestType requestType) {
         try {
             StringBuilder query = new StringBuilder();
-            StringBuilder variables = new StringBuilder();
+            JSONObject variables = new JSONObject();
             generate(
                     query,
                     variables,
@@ -194,7 +196,7 @@ public class GraphQlGenerator {
         List<GraphQLFieldDefinition> fields = object.getFieldDefinitions();
         for (GraphQLFieldDefinition field : fields) {
             StringBuilder query = new StringBuilder();
-            StringBuilder variables = new StringBuilder();
+            JSONObject variables = new JSONObject();
             GraphQLType fieldType = field.getType();
             if (GraphQLTypeUtil.isWrapped(fieldType)) {
                 fieldType = GraphQLTypeUtil.unwrapAll(fieldType);
@@ -240,7 +242,7 @@ public class GraphQlGenerator {
     }
 
     /** Convenience method for generate, generateWithVariables, sendFull, and sendByField methods */
-    private void generate(StringBuilder query, StringBuilder variables, GraphQLType type, int depth)
+    private void generate(StringBuilder query, JSONObject variables, GraphQLType type, int depth)
             throws InterruptedException {
         generate(query, variables, new StringBuilder(), type, depth, null, RequestType.QUERY);
     }
@@ -251,14 +253,14 @@ public class GraphQlGenerator {
      * @param query StringBuilder for the GraphQL query to be generated.
      * @param variables StringBuilder for query variables when inline arguments are disabled.
      * @param variableName StringBuilder for variable names when inline arguments are disabled.
-     * @param type the type of a GraphQL field.
+     * @param type the type of GraphQL field.
      * @param depth the current depth for the query being generated.
      * @param requestor Requestor for the sendByLeaf method.
      * @param requestType RequestType for the sendByLeaf method.
      */
     private void generate(
             StringBuilder query,
-            StringBuilder variables,
+            JSONObject variables,
             StringBuilder variableName,
             GraphQLType type,
             int depth,
@@ -302,9 +304,7 @@ public class GraphQlGenerator {
                     addArguments(query, variables, variableName, field);
                     variableName.setLength(variableName.length() - field.getName().length() - 1);
                     if (requestor != null) {
-                        for (int i = 0; i <= depth; ++i) {
-                            query.append("} ");
-                        }
+                        query.append("} ".repeat(depth + 1));
                         prefixRequestType(query, requestType);
                         requestor.sendQuery(
                                 query.toString(), variables.toString(), param.getRequestMethod());
@@ -359,18 +359,18 @@ public class GraphQlGenerator {
      * @return the generated query
      */
     private String getFirstLeafQuery(
-            GraphQLType type, StringBuilder variables, StringBuilder variableName) {
+            GraphQLType type, JSONObject variables, StringBuilder variableName) {
 
         class Node {
             final GraphQLType graphQLType;
             final StringBuilder query;
             final StringBuilder variableName;
-            final StringBuilder variables;
+            final JSONObject variables;
 
             Node(
                     GraphQLType graphQLType,
                     StringBuilder query,
-                    StringBuilder variables,
+                    JSONObject variables,
                     StringBuilder variableName) {
                 this.graphQLType = graphQLType;
                 this.query = query;
@@ -381,7 +381,7 @@ public class GraphQlGenerator {
             Node(GraphQLType graphQLType, Node parent) {
                 this.graphQLType = graphQLType;
                 query = new StringBuilder(parent.getQuery());
-                variables = new StringBuilder(parent.getVariables());
+                variables = JSONObject.fromObject(parent.getVariables());
                 variableName = new StringBuilder(parent.getVariableName());
             }
 
@@ -393,7 +393,7 @@ public class GraphQlGenerator {
                 return query;
             }
 
-            public StringBuilder getVariables() {
+            public JSONObject getVariables() {
                 return variables;
             }
 
@@ -407,7 +407,7 @@ public class GraphQlGenerator {
                 new Node(
                         type,
                         new StringBuilder("{ "),
-                        variables != null ? variables : new StringBuilder(),
+                        variables != null ? variables : new JSONObject(),
                         variableName != null ? variableName : new StringBuilder()));
         for (int depth = 0; depth < param.getMaxAdditionalQueryDepth(); ++depth) {
             List<Node> childrenList = new ArrayList<>();
@@ -429,7 +429,8 @@ public class GraphQlGenerator {
                                             StringUtils.countMatches(
                                                     leaf.getQuery().toString(), '{')));
                     if (variables != null) {
-                        variables.replace(0, variables.length(), leaf.getVariables().toString());
+                        variables.clear();
+                        variables.putAll(leaf.getVariables());
                     }
                     return leaf.getQuery().toString();
                 }
@@ -490,13 +491,13 @@ public class GraphQlGenerator {
     }
 
     private void addArguments(
-            StringBuilder query, StringBuilder variables, GraphQLFieldDefinition field) {
+            StringBuilder query, JSONObject variables, GraphQLFieldDefinition field) {
         addArguments(query, variables, null, field);
     }
 
     private void addArguments(
             StringBuilder query,
-            StringBuilder variables,
+            JSONObject variables,
             StringBuilder variableName,
             GraphQLFieldDefinition field) {
         List<GraphQLArgument> args = field.getArguments();
@@ -508,7 +509,7 @@ public class GraphQlGenerator {
                 if (param.getOptionalArgsEnabled() || GraphQLTypeUtil.isNonNull(argType)) {
                     query.append(arg.getName()).append(": ");
                     if (inlineArgsEnabled) {
-                        query.append(getDefaultValue(argType, 0)).append(", ");
+                        query.append(getDefaultValue(arg.getName(), argType, 0, true)).append(", ");
                     } else {
                         String var_name;
                         if (variableName != null) {
@@ -535,22 +536,8 @@ public class GraphQlGenerator {
                         }
 
                         if (variables != null) {
-                            if (!variables.toString().isEmpty()) {
-                                variables.insert(
-                                        1,
-                                        '"'
-                                                + var_name
-                                                + "\": "
-                                                + getDefaultValue(argType, 0)
-                                                + ", ");
-                            } else {
-                                variables
-                                        .append("{\"")
-                                        .append(var_name)
-                                        .append("\": ")
-                                        .append(getDefaultValue(argType, 0))
-                                        .append("}");
-                            }
+                            variables.put(
+                                    var_name, getDefaultValue(arg.getName(), argType, 0, false));
                         }
                     }
                     nonZeroArguments = true;
@@ -565,96 +552,101 @@ public class GraphQlGenerator {
         }
     }
 
-    private String getDefaultValue(GraphQLType type, int depth) {
-        if (depth > param.getMaxArgsDepth()) return "null";
-        StringBuilder defaultValue = new StringBuilder();
+    private Object getDefaultValue(
+            String argName, GraphQLType type, int depth, boolean quoteStrings) {
+        if (depth > param.getMaxArgsDepth()) return null;
+
         if (type instanceof GraphQLNonNull) {
             GraphQLNonNull nonNullType = (GraphQLNonNull) type;
             type = nonNullType.getWrappedType();
         }
+
+        HashMap<String, String> fieldAttributes = new HashMap<>();
+        fieldAttributes.put("Control Type", "TEXT");
+        fieldAttributes.put("type", argName);
+        String value =
+                valueGenerator.getValue(
+                        null,
+                        null,
+                        argName,
+                        "",
+                        Collections.emptyList(),
+                        Collections.emptyMap(),
+                        fieldAttributes);
+        if (value != null && !value.isEmpty()) {
+            if (quoteStrings
+                    && type instanceof GraphQLScalarType
+                    && "String".equals(((GraphQLScalarType) type).getName())) {
+                return '"' + value + '"';
+            }
+            return value;
+        }
+
         if (type instanceof GraphQLScalarType) {
             GraphQLScalarType scalar = (GraphQLScalarType) type;
             switch (scalar.getName()) {
                 case "Int":
                 case "ID":
-                    defaultValue.append("1");
-                    break;
+                    return 1;
                 case "Float":
-                    defaultValue.append("3.14");
-                    break;
+                    return 3.14;
                 case "String":
-                    defaultValue.append("\"ZAP\"");
-                    break;
+                    return quoteStrings ? "\"ZAP\"" : "ZAP";
                 case "Boolean":
-                    defaultValue.append("true");
-                    break;
+                    return true;
+                default:
+                    return null;
             }
         } else if (type instanceof GraphQLEnumType) {
             GraphQLEnumType enumType = (GraphQLEnumType) type;
-            if (inlineArgsEnabled) {
-                defaultValue.append(enumType.getValues().get(0).getName());
-            } else {
-                defaultValue.append('"').append(enumType.getValues().get(0).getName()).append('"');
-            }
+            return enumType.getValues().get(0).getName();
         } else if (type instanceof GraphQLInputObjectType) {
             GraphQLInputObjectType object = (GraphQLInputObjectType) type;
-            defaultValue.append("{ ");
             List<GraphQLInputObjectField> fields = object.getFields();
             if (inlineArgsEnabled) {
+                StringBuilder defaultValue = new StringBuilder();
+                defaultValue.append("{ ");
                 for (GraphQLInputObjectField field : fields) {
                     defaultValue
                             .append(field.getName())
                             .append(": ")
-                            .append(getDefaultValue(field.getType(), depth + 1))
+                            .append(
+                                    getDefaultValue(
+                                            field.getName(),
+                                            field.getType(),
+                                            depth + 1,
+                                            quoteStrings))
                             .append(", ");
                 }
+                defaultValue.setLength(defaultValue.length() - 2);
+                defaultValue.append(" }");
+                return defaultValue.toString();
             } else {
+                JSONObject defaultValue = new JSONObject();
                 for (GraphQLInputObjectField field : fields) {
-                    defaultValue
-                            .append('"')
-                            .append(field.getName())
-                            .append("\": ")
-                            .append(getDefaultValue(field.getType(), depth + 1))
-                            .append(", ");
+                    defaultValue.put(
+                            field.getName(),
+                            getDefaultValue(
+                                    field.getName(), field.getType(), depth + 1, quoteStrings));
                 }
+                return defaultValue;
             }
-            defaultValue.setLength(defaultValue.length() - 2);
-            defaultValue.append(" }");
         } else if (type instanceof GraphQLList) {
             GraphQLList list = (GraphQLList) type;
-            String wrappedValue = getDefaultValue(list.getWrappedType(), depth + 1);
-            defaultValue
-                    .append("[")
-                    .append(wrappedValue)
-                    .append(", ")
-                    .append(wrappedValue)
-                    .append(", ")
-                    .append(wrappedValue)
-                    .append("]");
-        } else {
-            defaultValue.append("null");
-        }
-
-        if (type instanceof GraphQLNamedType) {
-            GraphQLNamedType namedType = (GraphQLNamedType) type;
-            String typeName = namedType.getName();
-            HashMap<String, String> fieldAttributes = new HashMap<>();
-            fieldAttributes.put("Control Type", "TEXT");
-            fieldAttributes.put("type", typeName);
-            String value =
-                    valueGenerator.getValue(
-                            null,
-                            null,
-                            typeName,
-                            "",
-                            Collections.<String>emptyList(),
-                            Collections.<String, String>emptyMap(),
-                            fieldAttributes);
-            if (value != null && !value.isEmpty()) {
-                return value;
+            if (inlineArgsEnabled) {
+                Object wrappedValue = getDefaultValue(null, list.getWrappedType(), depth + 1, true);
+                return "[" + wrappedValue + ", " + wrappedValue + ", " + wrappedValue + ']';
+            } else {
+                JSONArray defaultValue = new JSONArray();
+                Object wrappedValue =
+                        getDefaultValue(null, list.getWrappedType(), depth + 1, false);
+                defaultValue.add(wrappedValue);
+                defaultValue.add(wrappedValue);
+                defaultValue.add(wrappedValue);
+                return defaultValue;
             }
+        } else {
+            return null;
         }
-
-        return defaultValue.toString();
     }
 }
