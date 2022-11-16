@@ -95,6 +95,10 @@ public class CertificateEntry {
         }
     }
 
+    public SSLContext getSslContext() {
+        return sslContext;
+    }
+
     public SSLSocketFactory getSocketFactory() {
         if (sslContext == null) {
             return null;

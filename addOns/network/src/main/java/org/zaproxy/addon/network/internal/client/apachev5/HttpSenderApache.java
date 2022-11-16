@@ -27,9 +27,12 @@ import java.net.UnknownHostException;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Supplier;
 import org.apache.commons.httpclient.URI;
 import org.apache.hc.client5.http.auth.AuthSchemeFactory;
@@ -39,6 +42,8 @@ import org.apache.hc.client5.http.config.RequestConfig;
 import org.apache.hc.client5.http.config.TlsConfig;
 import org.apache.hc.client5.http.cookie.CookieStore;
 import org.apache.hc.client5.http.cookie.StandardCookieSpec;
+import org.apache.hc.client5.http.impl.async.CloseableHttpAsyncClient;
+import org.apache.hc.client5.http.impl.async.CustomH2AsyncClientCreator;
 import org.apache.hc.client5.http.impl.auth.BasicSchemeFactory;
 import org.apache.hc.client5.http.impl.auth.DigestSchemeFactory;
 import org.apache.hc.client5.http.impl.auth.KerberosSchemeFactory;
@@ -54,6 +59,7 @@ import org.apache.hc.client5.http.impl.io.ZapHttpClientConnectionOperator;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.client5.http.protocol.ResponseProcessCookies;
 import org.apache.hc.client5.http.socket.LayeredConnectionSocketFactory;
+import org.apache.hc.core5.concurrent.FutureCallback;
 import org.apache.hc.core5.http.ClassicHttpRequest;
 import org.apache.hc.core5.http.ClassicHttpResponse;
 import org.apache.hc.core5.http.ConnectionClosedException;
@@ -71,6 +77,7 @@ import org.apache.hc.core5.http.config.RegistryBuilder;
 import org.apache.hc.core5.http.io.HttpClientConnection;
 import org.apache.hc.core5.http.io.entity.ByteArrayEntity;
 import org.apache.hc.core5.http.message.BasicClassicHttpRequest;
+import org.apache.hc.core5.http.message.BasicHttpRequest;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.apache.hc.core5.http.protocol.HttpProcessor;
 import org.apache.hc.core5.http.protocol.HttpProcessorBuilder;
@@ -99,6 +106,9 @@ import org.zaproxy.addon.network.internal.client.BaseHttpSender;
 import org.zaproxy.addon.network.internal.client.LegacyUtils;
 import org.zaproxy.addon.network.internal.client.ResponseBodyConsumer;
 import org.zaproxy.addon.network.internal.client.SocksProxy;
+import org.zaproxy.addon.network.internal.client.apachev5.h2.HttpMessageRequestProducer;
+import org.zaproxy.addon.network.internal.client.apachev5.h2.HttpMessageResponseConsumer;
+import org.zaproxy.addon.network.internal.client.apachev5.h2.ZapClientTlsStrategy;
 import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
 import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.users.User;
@@ -113,6 +123,7 @@ public class HttpSenderApache
 
     private final Supplier<CookieStore> globalCookieStoreProvider;
     private final ConnectionOptions options;
+    private final ClientCertificatesOptions clientCertificatesOptions;
     private final Supplier<LegacyProxyListenerHandler> legacyProxyListenerHandler;
 
     private final Lookup<AuthSchemeFactory> authSchemeRegistry;
@@ -121,6 +132,7 @@ public class HttpSenderApache
     private final ProxyCredentialsProvider credentialsProvider;
     private final RequestConfig defaultRequestConfig;
     private final ManagedHttpClientConnectionFactory managedHttpClientConnectionFactory;
+    private final CharCodingConfig charCodingConfig;
     private final OutgoingContentStrategy outgoingContentStrategy;
     private final LayeredConnectionSocketFactory sslSocketFactory;
 
@@ -130,7 +142,9 @@ public class HttpSenderApache
     private final HttpProcessor mainHttpProcessor;
     private final RequestRetryStrategy requestRetryStrategy;
     private final CloseableHttpClient clientImpl;
+    private final CloseableHttpAsyncClient h2ClientImpl;
     private final HttpConnector httpConnector;
+    private ConnectionConfig connConfig;
 
     public HttpSenderApache(
             Supplier<CookieStore> globalCookieStoreProvider,
@@ -139,6 +153,7 @@ public class HttpSenderApache
             Supplier<LegacyProxyListenerHandler> legacyProxyListenerHandler) {
         this.globalCookieStoreProvider = Objects.requireNonNull(globalCookieStoreProvider);
         this.options = Objects.requireNonNull(options);
+        this.clientCertificatesOptions = Objects.requireNonNull(clientCertificatesOptions);
         this.legacyProxyListenerHandler = legacyProxyListenerHandler;
 
         authSchemeRegistry =
@@ -160,14 +175,16 @@ public class HttpSenderApache
 
         outgoingContentStrategy = new OutgoingContentStrategy();
 
+        charCodingConfig =
+                CharCodingConfig.custom()
+                        .setCharset(StandardCharsets.UTF_8)
+                        .setMalformedInputAction(CodingErrorAction.REPLACE)
+                        .setUnmappableInputAction(CodingErrorAction.REPLACE)
+                        .build();
+
         managedHttpClientConnectionFactory =
                 ManagedHttpClientConnectionFactory.builder()
-                        .charCodingConfig(
-                                CharCodingConfig.custom()
-                                        .setCharset(StandardCharsets.UTF_8)
-                                        .setMalformedInputAction(CodingErrorAction.REPLACE)
-                                        .setUnmappableInputAction(CodingErrorAction.REPLACE)
-                                        .build())
+                        .charCodingConfig(charCodingConfig)
                         .outgoingContentLengthStrategy(outgoingContentStrategy)
                         .responseParserFactory(new LenientMessageParserFactory())
                         .build();
@@ -208,6 +225,20 @@ public class HttpSenderApache
         refreshConnectionManager();
         options.addChangesListener(this::refreshConnectionManager);
 
+        h2ClientImpl =
+                CustomH2AsyncClientCreator.create(
+                        charCodingConfig,
+                        routePlanner,
+                        authSchemeRegistry,
+                        credentialsProvider,
+                        defaultRequestConfig,
+                        proxyHttpProcessor,
+                        mainHttpProcessor,
+                        requestRetryStrategy,
+                        host -> connConfig,
+                        new ZapClientTlsStrategy(false, options, clientCertificatesOptions));
+        h2ClientImpl.start();
+
         httpConnector =
                 new HttpConnector(
                         managedHttpClientConnectionFactory,
@@ -217,11 +248,12 @@ public class HttpSenderApache
 
     private void refreshConnectionManager() {
         Timeout timeout = Timeout.ofSeconds(options.getTimeoutInSecs());
-        connectionManager.setDefaultConnectionConfig(
+        connConfig =
                 ConnectionConfig.custom()
                         .setConnectTimeout(timeout)
                         .setSocketTimeout(timeout)
-                        .build());
+                        .build();
+        connectionManager.setDefaultConnectionConfig(connConfig);
 
         connectionManager.setDefaultTlsConfig(
                 TlsConfig.custom()
@@ -234,6 +266,7 @@ public class HttpSenderApache
     @Override
     public void close() {
         clientImpl.close(CloseMode.GRACEFUL);
+        h2ClientImpl.close(CloseMode.GRACEFUL);
     }
 
     @Override
@@ -401,32 +434,29 @@ public class HttpSenderApache
         }
         requestCtx.setRequestConfig(requestConfigBuilder.build());
 
-        ClassicHttpRequest request = createHttpRequest(message);
+        Map<String, Object> properties = getProperties(message);
+        HttpRequest request = createHttpRequest(properties, message);
 
         requestCtx.increaseRequestCount();
         try {
             if (HttpRequestHeader.CONNECT.equals(message.getRequestHeader().getMethod())) {
                 String host = message.getRequestHeader().getHostName();
                 int port = message.getRequestHeader().getHostPort();
-                Object userObject = message.getUserObject();
-                if (userObject instanceof Map) {
-                    Map<?, ?> metadata = (Map<?, ?>) userObject;
-                    Object hostValue = metadata.get("target.host");
-                    if (hostValue != null) {
-                        host = hostValue.toString();
-                    }
-                    Object portValue = metadata.get("target.port");
-                    if (portValue != null) {
-                        try {
-                            port = Integer.parseInt(portValue.toString());
-                        } catch (NumberFormatException ignore) {
-                        }
+                Object hostValue = properties.get("target.host");
+                if (hostValue != null) {
+                    host = hostValue.toString();
+                }
+                Object portValue = properties.get("target.port");
+                if (portValue != null) {
+                    try {
+                        port = Integer.parseInt(portValue.toString());
+                    } catch (NumberFormatException ignore) {
                     }
                 }
 
                 message.setTimeSentMillis(System.currentTimeMillis());
                 httpConnector.connect(
-                        request,
+                        (ClassicHttpRequest) request,
                         requestCtx,
                         new HttpHost(host, port),
                         (response, socket) -> {
@@ -436,17 +466,21 @@ public class HttpSenderApache
             } else {
                 for (; ; ) {
                     message.setTimeSentMillis(System.currentTimeMillis());
-                    try {
-                        clientImpl.execute(
-                                request,
-                                requestCtx,
-                                response -> {
-                                    copyResponse(response, message, responseBodyConsumer);
-                                    return null;
-                                });
-                    } catch (ConnectionClosedException e) {
-                        rethrowIfNotPrematureEnd(e);
-                        break;
+                    if (isHttp2(properties, message)) {
+                        sendHttp2(message, request, requestCtx);
+                    } else {
+                        try {
+                            clientImpl.execute(
+                                    (ClassicHttpRequest) request,
+                                    requestCtx,
+                                    response -> {
+                                        copyResponse(response, message, responseBodyConsumer);
+                                        return null;
+                                    });
+                        } catch (ConnectionClosedException e) {
+                            rethrowIfNotPrematureEnd(e);
+                            break;
+                        }
                     }
 
                     if (reauthenticateProxy && isProxyAuthNeeded(request, message)) {
@@ -489,20 +523,105 @@ public class HttpSenderApache
 
         HttpClientConnection connection =
                 (HttpClientConnection) requestCtx.getAttribute(ZapHttpRequestExecutor.CONNECTION);
+        if (connection == null) {
+            return;
+        }
+
         if (!connection.isOpen()) {
             message.setUserObject(Collections.singletonMap("connection.closed", Boolean.TRUE));
             return;
         }
 
         Socket socket = (Socket) requestCtx.getAttribute(ZapHttpRequestExecutor.CONNECTION_SOCKET);
-        processSocket(requestCtx, message, socket);
+        processSocket(properties, requestCtx, message, socket);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> getProperties(HttpMessage message) {
+        Object userObject = message.getUserObject();
+        if (!(userObject instanceof Map)) {
+            userObject = new HashMap<>();
+        }
+        return (Map<String, Object>) userObject;
+    }
+
+    private static boolean isHttp2(Map<String, Object> properties, HttpMessage message) {
+        if (Boolean.TRUE.equals(properties.get("zap.h2"))) {
+            return true;
+        }
+        return "HTTP/2".equalsIgnoreCase(message.getRequestHeader().getVersion());
+    }
+
+    private void sendHttp2(
+            HttpMessage message, HttpRequest request, ZapHttpClientContext requestCtx)
+            throws IOException {
+
+        CloseableHttpAsyncClient client;
+        boolean lax =
+                Boolean.TRUE.equals(
+                        requestCtx.getAttribute(SslConnectionSocketFactory.LAX_ATTR_NAME));
+        if (lax) {
+            client = h2ClientImpl;
+        } else {
+            client =
+                    CustomH2AsyncClientCreator.create(
+                            charCodingConfig,
+                            routePlanner,
+                            authSchemeRegistry,
+                            credentialsProvider,
+                            defaultRequestConfig,
+                            proxyHttpProcessor,
+                            mainHttpProcessor,
+                            requestRetryStrategy,
+                            host -> connConfig,
+                            new ZapClientTlsStrategy(false, options, clientCertificatesOptions));
+            client.start();
+        }
+
+        try {
+            client.execute(
+                            new HttpMessageRequestProducer(request, message.getRequestBody()),
+                            new HttpMessageResponseConsumer(message),
+                            requestCtx,
+                            new FutureCallback<HttpMessage>() {
+
+                                @Override
+                                public void completed(HttpMessage response) {
+                                    // Nothing to do.
+                                }
+
+                                @Override
+                                public void failed(Exception ex) {
+                                    // Nothing to do.
+                                }
+
+                                @Override
+                                public void cancelled() {
+                                    // Nothing to do.
+                                }
+                            })
+                    .get();
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IOException(e);
+        } catch (ExecutionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof IOException) {
+                throw (IOException) cause;
+            }
+            throw new IOException(cause);
+        } catch (Exception e) {
+            throw new IOException(e);
+        } finally {
+            if (!lax) {
+                client.close(CloseMode.GRACEFUL);
+            }
+        }
     }
 
     private static boolean isAuthNeeded(
-            ZapHttpClientContext requestCtx,
-            User user,
-            ClassicHttpRequest request,
-            HttpMessage message) {
+            ZapHttpClientContext requestCtx, User user, HttpRequest request, HttpMessage message) {
         int statusCode = message.getResponseHeader().getStatusCode();
         if (statusCode != HttpStatusCode.UNAUTHORIZED && statusCode != HttpStatusCode.FORBIDDEN) {
             return false;
@@ -514,7 +633,7 @@ public class HttpSenderApache
         return true;
     }
 
-    private static boolean isProxyAuthNeeded(ClassicHttpRequest request, HttpMessage message) {
+    private static boolean isProxyAuthNeeded(HttpRequest request, HttpMessage message) {
         int statusCode = message.getResponseHeader().getStatusCode();
         if (statusCode != HttpStatusCode.PROXY_AUTHENTICATION_REQUIRED
                 && statusCode != HttpStatusCode.FORBIDDEN) {
@@ -526,7 +645,11 @@ public class HttpSenderApache
     }
 
     @SuppressWarnings("deprecation")
-    private void processSocket(ZapHttpClientContext requestCtx, HttpMessage message, Socket socket)
+    private void processSocket(
+            Map<String, Object> properties,
+            ZapHttpClientContext requestCtx,
+            HttpMessage message,
+            Socket socket)
             throws IOException {
         if (socket == null) {
             return;
@@ -544,10 +667,9 @@ public class HttpSenderApache
                 };
         method.setUpgradedSocket(socket);
         method.setUpgradedInputStream(socket.getInputStream());
-        Object userObject = message.getUserObject();
         message.setUserObject(method);
 
-        if (isPersistentManualConnection(userObject)
+        if (isPersistentManualConnection(properties)
                 && !legacyProxyListenerHandler
                         .get()
                         .notifyPersistentConnectionListener(message, null, method)) {
@@ -555,13 +677,10 @@ public class HttpSenderApache
         }
     }
 
-    private static boolean isPersistentManualConnection(Object userObject) {
-        if (userObject instanceof Map) {
-            Map<?, ?> metadata = (Map<?, ?>) userObject;
-            Object persistent = metadata.get("connection.manual.persistent");
-            if (persistent == Boolean.TRUE) {
-                return true;
-            }
+    private static boolean isPersistentManualConnection(Map<String, Object> properties) {
+        Object persistent = properties.get("connection.manual.persistent");
+        if (persistent == Boolean.TRUE) {
+            return true;
         }
         return false;
     }
@@ -575,7 +694,7 @@ public class HttpSenderApache
     }
 
     private static void copyResponse(
-            ClassicHttpResponse response,
+            HttpResponse response,
             HttpMessage message,
             ResponseBodyConsumer<HttpEntity> responseBodyConsumer)
             throws IOException {
@@ -589,9 +708,12 @@ public class HttpSenderApache
             throw new IOException(e);
         }
         copyHeaders(response, responseHeader);
-        HttpEntity entity = response.getEntity();
-        if (entity != null) {
-            responseBodyConsumer.accept(message, entity);
+
+        if (response instanceof ClassicHttpResponse) {
+            HttpEntity entity = ((ClassicHttpResponse) response).getEntity();
+            if (entity != null) {
+                responseBodyConsumer.accept(message, entity);
+            }
         }
     }
 
@@ -622,15 +744,34 @@ public class HttpSenderApache
         }
     }
 
-    private static ClassicHttpRequest createHttpRequest(HttpMessage msg) {
-        String host = null;
-        Object userObject = msg.getUserObject();
-        if (userObject instanceof Map) {
-            Map<?, ?> metadata = (Map<?, ?>) userObject;
-            Object hostValue = metadata.get("host");
-            if (hostValue != null) {
-                host = hostValue.toString();
+    private static HttpRequest createHttpRequest(Map<String, Object> properties, HttpMessage msg) {
+        if (isHttp2(properties, msg)) {
+            HttpRequestHeader requestHeader = msg.getRequestHeader();
+
+            String path = requestHeader.getURI().getEscapedPathQuery();
+            URI uri = requestHeader.getURI();
+            HttpRequest request =
+                    new BasicHttpRequest(
+                            requestHeader.getMethod(),
+                            uri.getScheme() == null ? HttpHeader.HTTPS : uri.getScheme(),
+                            new URIAuthority(new String(uri.getRawHost()), uri.getPort()),
+                            path == null ? "/" : path);
+
+            for (HttpHeaderField header : requestHeader.getHeaders()) {
+                String name = header.getName().toLowerCase(Locale.ROOT);
+                String value = header.getValue();
+                if (!skipHttp2Header(name, value)) {
+                    request.addHeader(name, value);
+                }
             }
+
+            return request;
+        }
+
+        String host = null;
+        Object hostValue = properties.get("host");
+        if (hostValue != null) {
+            host = hostValue.toString();
         }
 
         addHostHeader(msg, host);
@@ -661,6 +802,20 @@ public class HttpSenderApache
         copy.setEntity(new ByteArrayEntity(msg.getRequestBody().getBytes(), null));
 
         return copy;
+    }
+
+    private static boolean skipHttp2Header(String name, String value) {
+        if (name.equalsIgnoreCase(HttpHeader.CONNECTION)
+                || name.equalsIgnoreCase(HttpHeader._KEEP_ALIVE)
+                || name.equalsIgnoreCase(HttpHeader.PROXY_CONNECTION)
+                || name.equalsIgnoreCase(HttpHeader.TRANSFER_ENCODING)
+                || name.equalsIgnoreCase(HttpRequestHeader.HOST)
+                || name.equalsIgnoreCase("Upgrade")
+                || (name.equalsIgnoreCase("TE") && !value.equalsIgnoreCase("trailers"))) {
+            LOGGER.debug("Ignoring illegal header: {}: {}", name, value);
+            return true;
+        }
+        return false;
     }
 
     private static String getPath(HttpMessage msg) {

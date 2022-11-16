@@ -41,6 +41,7 @@ public final class TlsUtils {
     public static final String TLS_V1_3 = "TLSv1.3";
 
     public static final String APPLICATION_PROTOCOL_HTTP_1_1 = "http/1.1";
+    public static final String APPLICATION_PROTOCOL_HTTP_2 = "h2";
 
     private static final Logger LOGGER = LogManager.getLogger(TlsUtils.class);
 
