@@ -44,236 +44,267 @@ class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    void scalarFieldsOnly() throws Exception {
+    void scalarFieldsOnly() {
         generator = createGraphQlGenerator(getHtml("scalarFieldsOnly.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery = "query { name id age height human } ";
-        assertEquals(query, expectedQuery);
+        assertEquals(expectedQuery, query);
     }
 
     @Test
-    void zeroDepthObjects() throws Exception {
+    void zeroDepthObjects() {
         generator = createGraphQlGenerator(getHtml("zeroDepthObjects.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
                 "query { gymName dumbbell { fixedWeight weight } treadmill { maxSpeed manufacturer } } ";
-        assertEquals(query, expectedQuery);
+        assertEquals(expectedQuery, query);
     }
 
     @Test
-    void nestedObjects() throws Exception {
+    void nestedObjects() {
         generator = createGraphQlGenerator(getHtml("nestedObjects.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
                 "query { book { id name pageCount author { id firstName lastName } } } ";
-        assertEquals(query, expectedQuery);
+        assertEquals(expectedQuery, query);
     }
 
     @Test
-    void circularRelationship() throws Exception {
+    void circularRelationship() {
         generator = createGraphQlGenerator(getHtml("circularRelationship.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
                 "query { thread { id message { text thread { id message { text thread { id } } } } } } ";
-        assertEquals(query, expectedQuery);
+        assertEquals(expectedQuery, query);
     }
 
     @Test
-    void scalarArguments() throws Exception {
+    void scalarArguments() {
         generator = createGraphQlGenerator(getHtml("scalarArguments.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery = "query { polygon (sides: 1, regular: true) { perimeter area } } ";
-        assertEquals(query, expectedQuery);
+        assertEquals(expectedQuery, query);
     }
 
     @Test
-    void nonNullableScalarArguments() throws Exception {
+    void nonNullableScalarArguments() {
         generator = createGraphQlGenerator(getHtml("nonNullableScalarArguments.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery = "query { getLyrics (song: \"ZAP\", artist: \"ZAP\") } ";
-        assertEquals(query, expectedQuery);
+        assertEquals(expectedQuery, query);
     }
 
     @Test
-    void enumArgument() throws Exception {
+    void nonNullableScalarArgumentsWithValueGenerator() {
+        // Given
+        String song = "Never Gonna Give You Up";
+        String artist = "Rick Astley";
+        ValueGenerator vg =
+                (uri,
+                        url,
+                        fieldId,
+                        defaultValue,
+                        definedValues,
+                        envAttributes,
+                        fieldAttributes) -> {
+                    if (fieldId.equals("song")) {
+                        return song;
+                    } else if (fieldId.equals("artist")) {
+                        return artist;
+                    }
+                    return null;
+                };
+        generator =
+                new GraphQlGenerator(
+                        vg, getHtml("nonNullableScalarArguments.graphql"), null, param);
+        // When
+        String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
+        // Then
+        String expectedQuery =
+                "query { getLyrics (song: \"" + song + "\", artist: \"" + artist + "\") } ";
+        assertEquals(expectedQuery, query);
+    }
+
+    @Test
+    void enumArgument() {
         generator = createGraphQlGenerator(getHtml("enumArgument.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery = "query { location (direction: NORTH) } ";
-        assertEquals(query, expectedQuery);
+        assertEquals(expectedQuery, query);
     }
 
     @Test
-    void listAsArgument() throws Exception {
+    void listAsArgument() {
         generator = createGraphQlGenerator(getHtml("listAsArgument.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
                 "query { sum (numbers: [3.14, 3.14, 3.14]) concat (words: [\"ZAP\", \"ZAP\", \"ZAP\"]) "
                         + "compare (objects: [{ size: 1, colour: \"ZAP\" }, { size: 1, colour: \"ZAP\" }, { size: 1, colour: \"ZAP\" }]) } ";
-        assertEquals(query, expectedQuery);
+        assertEquals(expectedQuery, query);
     }
 
     @Test
-    void inputObjectArgument() throws Exception {
+    void inputObjectArgument() {
         generator = createGraphQlGenerator(getHtml("inputObjectArgument.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery = "query { plot (point: { x: 3.14, y: 3.14 }) } ";
-        assertEquals(query, expectedQuery);
+        assertEquals(expectedQuery, query);
     }
 
     @Test
-    void listsAndNonNull() throws Exception {
+    void listsAndNonNull() {
         generator = createGraphQlGenerator(getHtml("listsAndNonNull.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
                 "query { jellyBean { count } marshmallow { count } nougat { count } pie { count } } ";
-        assertEquals(query, expectedQuery);
+        assertEquals(expectedQuery, query);
     }
 
     @Test
-    void nonNullableFields() throws Exception {
+    void nonNullableFields() {
         generator = createGraphQlGenerator(getHtml("nonNullableFields.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery = "query { name phone child { id name school } } ";
-        assertEquals(query, expectedQuery);
+        assertEquals(expectedQuery, query);
     }
 
     @Test
-    void objectsImplementInterface() throws Exception {
+    void objectsImplementInterface() {
         generator = createGraphQlGenerator(getHtml("objectsImplementInterface.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
                 "query { character { ... on Hero { id name superPower weakness } ... on Villain { id name grudge origin } } } ";
-        assertEquals(query, expectedQuery);
+        assertEquals(expectedQuery, query);
     }
 
     @Test
-    void implementMultipleInterfaces() throws Exception {
+    void implementMultipleInterfaces() {
         generator = createGraphQlGenerator(getHtml("implementMultipleInterfaces.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
                 "query { someAnimal { ... on Swallow { wingspan speed } } someBird { ... on Swallow { wingspan speed } } } ";
-        assertEquals(query, expectedQuery);
+        assertEquals(expectedQuery, query);
     }
 
     @Test
-    void interfaceImplementsInterface() throws Exception {
+    void interfaceImplementsInterface() {
         generator = createGraphQlGenerator(getHtml("interfaceImplementsInterface.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery = "query { picture { ... on Photo { id url thumbnail filter } } } ";
-        assertEquals(query, expectedQuery);
+        assertEquals(expectedQuery, query);
     }
 
     @Test
-    void unionType() throws Exception {
+    void unionType() {
         generator = createGraphQlGenerator(getHtml("unionType.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
                 "query { firstSearchResult { ... on Photo { height width } ... on Person { name age } } } ";
-        assertEquals(query, expectedQuery);
+        assertEquals(expectedQuery, query);
     }
 
     @Test
-    void enumType() throws Exception {
+    void enumType() {
         generator = createGraphQlGenerator(getHtml("enumType.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery = "query { direction } ";
-        assertEquals(query, expectedQuery);
+        assertEquals(expectedQuery, query);
     }
 
     @Test
-    void mutation() throws Exception {
+    void mutation() {
         generator = createGraphQlGenerator(getHtml("mutation.graphql"));
         String mutation = generator.generate(GraphQlGenerator.RequestType.MUTATION);
         String expectedMutation =
                 "mutation { createStudent (id: 1, name: \"ZAP\") { id name college { name location } } } ";
-        assertEquals(mutation, expectedMutation);
+        assertEquals(expectedMutation, mutation);
     }
 
     @Test
-    void subscription() throws Exception {
+    void subscription() {
         generator = createGraphQlGenerator(getHtml("subscription.graphql"));
         String subscription = generator.generate(GraphQlGenerator.RequestType.SUBSCRIPTION);
         String expectedSubscription = "subscription { newMessage (roomId: 1) { sender text } } ";
-        assertEquals(subscription, expectedSubscription);
+        assertEquals(expectedSubscription, subscription);
     }
 
     // Tests for Arguments that use variables (i.e. not inline arguments)
 
     @Test
-    void separatedScalarArguments() throws Exception {
+    void separatedScalarArguments() {
         generator = createGraphQlGenerator(getHtml("scalarArguments.graphql"));
         String[] request = generator.generateWithVariables(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
                 "query ($polygon_regular: Boolean, $polygon_sides: Int) "
                         + "{ polygon (sides: $polygon_sides, regular: $polygon_regular) { perimeter area } } ";
-        String expectedVariables = "{\"polygon_regular\": true, \"polygon_sides\": 1}";
-        assertEquals(request[0], expectedQuery);
-        assertEquals(request[1], expectedVariables);
+        String expectedVariables = "{\"polygon_sides\":1,\"polygon_regular\":true}";
+        assertEquals(expectedQuery, request[0]);
+        assertEquals(expectedVariables, request[1]);
     }
 
     @Test
-    void separatedNonNullableScalarArguments() throws Exception {
+    void separatedNonNullableScalarArguments() {
         generator = createGraphQlGenerator(getHtml("nonNullableScalarArguments.graphql"));
         String[] request = generator.generateWithVariables(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
                 "query ($getLyrics_artist: String!, $getLyrics_song: String!) "
                         + "{ getLyrics (song: $getLyrics_song, artist: $getLyrics_artist) } ";
-        String expectedVariables = "{\"getLyrics_artist\": \"ZAP\", \"getLyrics_song\": \"ZAP\"}";
-        assertEquals(request[0], expectedQuery);
-        assertEquals(request[1], expectedVariables);
+        String expectedVariables = "{\"getLyrics_song\":\"ZAP\",\"getLyrics_artist\":\"ZAP\"}";
+        assertEquals(expectedQuery, request[0]);
+        assertEquals(expectedVariables, request[1]);
     }
 
     @Test
-    void separatedEnumArgumentVariable() throws Exception {
+    void separatedEnumArgumentVariable() {
         generator = createGraphQlGenerator(getHtml("enumArgument.graphql"));
         String[] request = generator.generateWithVariables(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
                 "query ($location_direction: Direction) { location (direction: $location_direction) } ";
-        String expectedVariables = "{\"location_direction\": \"NORTH\"}";
-        assertEquals(request[0], expectedQuery);
-        assertEquals(request[1], expectedVariables);
+        String expectedVariables = "{\"location_direction\":\"NORTH\"}";
+        assertEquals(expectedQuery, request[0]);
+        assertEquals(expectedVariables, request[1]);
     }
 
     @Test
-    void separatedListAsArgument() throws Exception {
+    void separatedListAsArgument() {
         generator = createGraphQlGenerator(getHtml("listAsArgument.graphql"));
         String[] request = generator.generateWithVariables(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
                 "query ($compare_objects: [Object], $concat_words: [String!]!, $sum_numbers: [Float]) "
                         + "{ sum (numbers: $sum_numbers) concat (words: $concat_words) compare (objects: $compare_objects) } ";
         String expectedVariables =
-                "{\"compare_objects\": [{ \"size\": 1, \"colour\": \"ZAP\" }, "
-                        + "{ \"size\": 1, \"colour\": \"ZAP\" }, { \"size\": 1, \"colour\": \"ZAP\" }], "
-                        + "\"concat_words\": [\"ZAP\", \"ZAP\", \"ZAP\"], \"sum_numbers\": [3.14, 3.14, 3.14]}";
-        assertEquals(request[0], expectedQuery);
-        assertEquals(request[1], expectedVariables);
+                "{\"sum_numbers\":[3.14,3.14,3.14],\"concat_words\":[\"ZAP\",\"ZAP\",\"ZAP\"],"
+                        + "\"compare_objects\":[{\"size\":1,\"colour\":\"ZAP\"},"
+                        + "{\"size\":1,\"colour\":\"ZAP\"},{\"size\":1,\"colour\":\"ZAP\"}]}";
+        assertEquals(expectedQuery, request[0]);
+        assertEquals(expectedVariables, request[1]);
     }
 
     @Test
-    void separatedInputObjectArgument() throws Exception {
+    void separatedInputObjectArgument() {
         generator = createGraphQlGenerator(getHtml("inputObjectArgument.graphql"));
         String[] request = generator.generateWithVariables(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery = "query ($plot_point: Point2D) { plot (point: $plot_point) } ";
-        String expectedVariables = "{\"plot_point\": { \"x\": 3.14, \"y\": 3.14 }}";
-        assertEquals(request[0], expectedQuery);
-        assertEquals(request[1], expectedVariables);
+        String expectedVariables = "{\"plot_point\":{\"x\":3.14,\"y\":3.14}}";
+        assertEquals(expectedQuery, request[0]);
+        assertEquals(expectedVariables, request[1]);
     }
 
     @Test
-    void variableNamesClash() throws Exception {
+    void variableNamesClash() {
         generator = createGraphQlGenerator(getHtml("variableNamesClash.graphql"));
         String[] request = generator.generateWithVariables(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
                 "query ($field2_name_id: ID, $field1_name_id: ID) { field1 { name (id: $field1_name_id) } field2 { name (id: $field2_name_id) } } ";
-        String expectedVariables = "{\"field2_name_id\": 1, \"field1_name_id\": 1}";
-        assertEquals(request[0], expectedQuery);
-        assertEquals(request[1], expectedVariables);
+        String expectedVariables = "{\"field1_name_id\":1,\"field2_name_id\":1}";
+        assertEquals(expectedQuery, request[0]);
+        assertEquals(expectedVariables, request[1]);
     }
 
     // Tests for queries that exceed maximum query depth (Lenient Max Query Depth Enabled)
 
     @Test
-    void lenientDepthDeepNestedLeaf() throws Exception {
+    void lenientDepthDeepNestedLeaf() {
         param = new GraphQlParam(0, true, 5, 5, true, null, null, null);
         generator = createGraphQlGenerator(getHtml("deepNestedLeaf.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
@@ -283,7 +314,7 @@ class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    void strictDepthScalarArguments() throws Exception {
+    void strictDepthScalarArguments() {
         param = new GraphQlParam(1, false, 5, 5, true, null, null, null);
         generator = createGraphQlGenerator(getHtml("scalarArguments.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
@@ -292,7 +323,7 @@ class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    void lenientDepthScalarArguments() throws Exception {
+    void lenientDepthScalarArguments() {
         param = new GraphQlParam(0, true, 5, 5, true, null, null, null);
         generator = createGraphQlGenerator(getHtml("scalarArguments.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
@@ -301,7 +332,7 @@ class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    void lenientDepthObjectsImplementInterface() throws Exception {
+    void lenientDepthObjectsImplementInterface() {
         param = new GraphQlParam(0, true, 5, 5, true, null, null, null);
         generator = createGraphQlGenerator(getHtml("objectsImplementInterface.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
@@ -310,7 +341,7 @@ class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    void lenientDepthUnionType() throws Exception {
+    void lenientDepthUnionType() {
         param = new GraphQlParam(0, true, 5, 5, true, null, null, null);
         generator = createGraphQlGenerator(getHtml("unionType.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
@@ -319,7 +350,7 @@ class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    void lenientDepthEnumType() throws Exception {
+    void lenientDepthEnumType() {
         param = new GraphQlParam(0, true, 5, 5, true, null, null, null);
         generator = createGraphQlGenerator(getHtml("enumType.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
@@ -328,20 +359,20 @@ class GraphQlGeneratorUnitTest extends TestUtils {
     }
 
     @Test
-    void lenientDepthScalarArgumentsVariables() throws Exception {
+    void lenientDepthScalarArgumentsVariables() {
         param = new GraphQlParam(0, true, 5, 5, true, null, null, null);
         generator = createGraphQlGenerator(getHtml("scalarArguments.graphql"));
         String[] request = generator.generateWithVariables(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
                 "query ($polygon_regular: Boolean, $polygon_sides: Int) "
                         + "{ polygon (sides: $polygon_sides, regular: $polygon_regular) { perimeter } } ";
-        String expectedVariables = "{\"polygon_regular\": true, \"polygon_sides\": 1}";
+        String expectedVariables = "{\"polygon_sides\":1,\"polygon_regular\":true}";
         assertEquals(expectedQuery, request[0]);
         assertEquals(expectedVariables, request[1]);
     }
 
     @Test
-    void lenientDepthExceeded() throws Exception {
+    void lenientDepthExceeded() {
         param = new GraphQlParam(0, true, 3, 5, true, null, null, null);
         generator = createGraphQlGenerator(getHtml("deepNestedLeaf.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);

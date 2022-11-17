@@ -2,15 +2,15 @@
 <HTML>
 <HEAD>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
-<TITLE>GraphQL Support Script</TITLE>
+<TITLE>GraphQL Variant</TITLE>
 </HEAD>
 <BODY>
-	<H1>GraphQL Support Script</H1>
+	<H1>GraphQL Variant</H1>
 
-	The GraphQL Support script is responsible for two things:
+	The GraphQL variant is responsible for two things:
 	<ol>
-		<li>Correctly representing the nodes for a GraphQL request in the sites tree (since ZAP 2.10.0).</li>
-		<li>Adding GraphQL support for Active Scan Input Vectors.</li>
+		<li>Correctly representing the nodes for a GraphQL request in the sites tree.</li>
+		<li>Allow injecting payloads in GraphQL queries (Active Scan Input Vector support).</li>
 	</ol>
 
 	The following sections will elaborate a little on each of these functionalities.
@@ -29,11 +29,10 @@
 
 	<h2>Active Scan Input Vectors</h2>
 
-	If Active Scan Script Input Vectors are enabled,
-	values are injected for inline arguments in all queries proxied through ZAP. 
+	Values are injected for inline arguments in all queries proxied through ZAP.
 	If a query uses variables, then variables are replaced inline and variable definitions are deleted.
 	<br>
-	Note that the built-in JSON Input Vector handler also works when a request is sent as JSON.
+	Note that, unless disabled, the built-in JSON Input Vector handler also works when a request is sent as JSON.
 
 	<h2>See also</h2>
 	<table>
