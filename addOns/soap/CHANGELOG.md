@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [16] - 2022-11-17
 ### Changed
 - The `SOAP Support.js` input vector script is removed when the add-on is uninstalled.
 - Dependency updates.
@@ -121,6 +121,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[16]: https://github.com/zaproxy/zap-extensions/releases/soap-v16
 [15]: https://github.com/zaproxy/zap-extensions/releases/soap-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/soap-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/soap-v13
