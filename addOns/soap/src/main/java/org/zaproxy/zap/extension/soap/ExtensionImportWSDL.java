@@ -54,6 +54,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 
     private static final Logger LOG = LogManager.getLogger(ExtensionImportWSDL.class);
     private static final String THREAD_PREFIX = "ZAP-Import-WSDL-";
+    private static final String SCRIPT_NAME = "SOAP Support.js";
 
     private ZapMenuItem menuImportLocalWSDL = null;
     private ZapMenuItem menuImportUrlWSDL = null;
@@ -102,6 +103,12 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
         } catch (IOException e) {
             LOG.warn("Could not add SOAP Support script.");
         }
+    }
+
+    @Override
+    public void unload() {
+        super.unload();
+        removeScript();
     }
 
     @Override
@@ -189,8 +196,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
     private void addScript() throws IOException {
         ExtensionScript extScript =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
-        String scriptName = "SOAP Support.js";
-        if (extScript != null && extScript.getScript(scriptName) == null) {
+        if (extScript != null && extScript.getScript(SCRIPT_NAME) == null) {
             ScriptType variantType =
                     extScript.getScriptType(ExtensionActiveScan.SCRIPT_TYPE_VARIANT);
             ScriptEngineWrapper engine = getEngine(extScript, "Oracle Nashorn");
@@ -201,11 +207,11 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
                                         ExtensionScript.SCRIPTS_DIR,
                                         ExtensionScript.SCRIPTS_DIR,
                                         ExtensionActiveScan.SCRIPT_TYPE_VARIANT,
-                                        scriptName)
+                                        SCRIPT_NAME)
                                 .toFile();
                 ScriptWrapper script =
                         new ScriptWrapper(
-                                scriptName,
+                                SCRIPT_NAME,
                                 Constant.messages.getString("soap.script.description"),
                                 engine,
                                 variantType,
@@ -215,6 +221,14 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
                 script.reloadScript();
                 extScript.addScript(script, false);
             }
+        }
+    }
+
+    private void removeScript() {
+        ExtensionScript extScript =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+        if (extScript != null && extScript.getScript(SCRIPT_NAME) != null) {
+            extScript.removeScript(extScript.getScript(SCRIPT_NAME));
         }
     }
 
