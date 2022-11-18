@@ -36,8 +36,9 @@ public enum SarifLevel {
 
     /* The rule specified by ruleId was evaluated and a problem was found. */
     WARNING(Alert.RISK_MEDIUM),
+
     /*
-     * he rule specified by ruleId was evaluated and a minor problem or an
+     * The rule specified by ruleId was evaluated and a minor problem or an
      * opportunity to improve the code was found.
      */
     NOTE(Alert.RISK_LOW),

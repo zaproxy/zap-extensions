@@ -46,8 +46,7 @@ public class SarifReportDataSupport {
     private List<SarifResult> results;
 
     // we use a sorted map here, so values set will always be sorted available - so
-    // same report will produce same
-    // ordering etc.
+    // same report will produce same ordering etc.
     private SortedMap<Integer, SarifRule> rulesMap;
     private Collection<SarifTaxonomy> taxonomies;
 
@@ -93,7 +92,7 @@ public class SarifReportDataSupport {
         List<SarifTaxonomy> list = new ArrayList<>();
 
         /* currently we provide only CWE */
-        createCWETaxonomy(list);
+        createCweTaxonomy(list);
 
         return list;
     }
@@ -111,7 +110,7 @@ public class SarifReportDataSupport {
         return list;
     }
 
-    private void createCWETaxonomy(List<SarifTaxonomy> list) {
+    private void createCweTaxonomy(List<SarifTaxonomy> list) {
         SarifTaxonomy taxonomy = new SarifTaxonomy(SarifToolData.INSTANCE.getCwe());
         list.add(taxonomy);
 

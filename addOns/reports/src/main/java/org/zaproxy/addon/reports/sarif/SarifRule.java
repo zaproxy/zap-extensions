@@ -36,7 +36,7 @@ public class SarifRule implements Comparable<SarifRule> {
         requireNonNull(alert, "alert parameter may not be null!");
         this.alert = alert;
         SarifMessage solution =
-                SarifMessage.builder().setContentAsHTML(alert.getSolution()).build();
+                SarifMessage.builder().setContentAsHtml(alert.getSolution()).build();
 
         ruleProperties = new SarifRuleProperties();
         ruleProperties.solution = solution;
@@ -49,7 +49,7 @@ public class SarifRule implements Comparable<SarifRule> {
     }
 
     public String getId() {
-        return "" + alert.getPluginId();
+        return String.valueOf(alert.getPluginId());
     }
 
     public String getName() {

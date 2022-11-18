@@ -42,7 +42,7 @@ public class SarifGuid {
         return createByProvider(identifier, taxonomy);
     }
 
-    public static SarifGuid createToolcomponentGUID(SarifTaxonomyDataProvider component) {
+    public static SarifGuid createToolComponentGUID(SarifTaxonomyDataProvider component) {
         return createByProvider("<<tool-component>>", component);
     }
 
@@ -56,7 +56,7 @@ public class SarifGuid {
     }
 
     /**
-     * Creates a SARFI guid object by using data from taxonomy provider and the given taxonomy id.
+     * Creates a SARIF guid object by using data from taxonomy provider and the given taxonomy id.
      * If your are calling this method twice for the same given id and same provider the created
      * objects will be equal. Otherwise the created objects are NOT equal.
      *

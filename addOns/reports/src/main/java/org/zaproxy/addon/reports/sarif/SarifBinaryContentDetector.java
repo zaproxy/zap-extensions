@@ -49,16 +49,16 @@ public class SarifBinaryContentDetector {
 
     private boolean isTextBasedContentType(String contentType) {
         return isPlainText(contentType)
-                || isJSON(contentType)
-                || isXML(contentType)
+                || isJson(contentType)
+                || isXml(contentType)
                 || isJavaScript(contentType);
     }
 
-    private boolean isXML(String contentType) {
+    private boolean isXml(String contentType) {
         return contentType.contains("/xml");
     }
 
-    private boolean isJSON(String contentType) {
+    private boolean isJson(String contentType) {
         return contentType.contains("/json");
     }
 

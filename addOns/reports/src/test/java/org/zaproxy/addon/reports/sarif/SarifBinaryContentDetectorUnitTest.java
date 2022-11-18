@@ -72,6 +72,13 @@ class SarifBinaryContentDetectorUnitTest {
         /* official javascript setup - see https://www.rfc-editor.org/rfc/rfc4329.txt */
         "application/javascript,false",
         "application/ecmascript,false",
+
+        /* some additions in combination with charset defined */
+        "text/html; charset=utf-8, false",
+        "text/html; charset=utf-8   , false",
+        "text/html;    charset=utf-8   , false",
+        "application/zip; charset=utf-8, true",
+        "; charset=utf-16,true",
     })
     @ParameterizedTest(name = "content type:{0} is binary:{1}")
     void normalizedHeaderContenTypeNotNulltHandledAsExpected(

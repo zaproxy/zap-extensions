@@ -107,7 +107,7 @@ public class SarifResult implements Comparable<SarifResult> {
                 // no other info available - this depends on the alert rule implementation...
                 messageText = alert.getDescription(); // fallback to description
             }
-            result.message = SarifMessage.builder().setContentAsHTML(messageText).build();
+            result.message = SarifMessage.builder().setContentAsHtml(messageText).build();
             result.ruleId = "" + alert.getPluginId();
 
             /* location */

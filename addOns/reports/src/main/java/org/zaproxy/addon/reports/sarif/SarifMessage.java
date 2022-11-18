@@ -26,7 +26,7 @@ public class SarifMessage {
         private SarifHtmlToPlainTextConverter converter = SarifHtmlToPlainTextConverter.DEFAULT;
         private String plainText;
 
-        public SarifMessageBuilder setContentAsHTML(String html) {
+        public SarifMessageBuilder setContentAsHtml(String html) {
             this.plainText = converter.convertToPlainText(html);
             return this;
         }

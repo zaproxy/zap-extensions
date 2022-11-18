@@ -81,7 +81,7 @@ public class SarifToolData {
             SarifToolDataProvider component = new SarifToolDataProvider();
             component.name = name;
             component.taxonomyShortDescription =
-                    SarifMessage.builder().setContentAsHTML(shortDescription).build();
+                    SarifMessage.builder().setContentAsHtml(shortDescription).build();
             component.taxonomyVersion = taxonomyVersion;
             component.taxonomyDownloadUri = taxonomyDownloadUri;
             component.taxonomyInformationUri = taxonomyInformationUri;
@@ -89,7 +89,7 @@ public class SarifToolData {
             component.taxonomyReleaseDateUtc = taxonomyReleaseDateUtc;
             component.organization = organization;
 
-            component.sarifGuid = SarifGuid.createToolcomponentGUID(component);
+            component.sarifGuid = SarifGuid.createToolComponentGUID(component);
 
             return component;
         }

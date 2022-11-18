@@ -19,16 +19,15 @@
  */
 package org.zaproxy.addon.reports.sarif;
 
-/**
- * Internal class to hold protocol and version separated. Provides also parse functionality inside.
- */
+/** Internal class to hold protocol and version separated. Also provides parse functionality. */
 class SarifProtocolData {
 
     private String protocol;
     private String version;
 
     private SarifProtocolData() {
-        // private constructor - so static method must be used
+        // private constructor - so static parse method must be used to create the protocol data
+        // object
     }
 
     public static SarifProtocolData parseProtocolAndVersion(String versionString) {
