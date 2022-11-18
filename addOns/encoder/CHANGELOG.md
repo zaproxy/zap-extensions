@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Maintenance changes.
 - Allow script processors to return strings without requiring an "EncodeDecodeResult" wrapper.
 - Show help and options buttons in the main dialog.
+- The Base64 decoder now uses a Mime decoder and handles line wrapped input.
 
 ## [0.7.0] - 2022-10-27
 ### Changed
