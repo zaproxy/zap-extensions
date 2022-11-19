@@ -24,6 +24,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.ssl.SslClosedEngineException;
 import java.nio.channels.ClosedChannelException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -105,12 +106,16 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
     }
 
     private static boolean isClosed(HttpMessage msg) {
-        Object userObject = msg.getUserObject();
-        if (userObject instanceof Map) {
-            Map<?, ?> properties = (Map<?, ?>) userObject;
-            return Boolean.TRUE.equals(properties.get("connection.closed"));
+        return Boolean.TRUE.equals(getProperties(msg).get("connection.closed"));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> getProperties(HttpMessage message) {
+        Object userObject = message.getUserObject();
+        if (!(userObject instanceof Map)) {
+            return Collections.emptyMap();
         }
-        return false;
+        return (Map<String, Object>) userObject;
     }
 
     protected HandlerResult processMessage(HttpMessage msg) {
@@ -193,6 +198,10 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
 
     private static boolean isConnectionClose(HttpMessage msg) {
         if (HttpRequestHeader.CONNECT.equalsIgnoreCase(msg.getRequestHeader().getMethod())) {
+            return false;
+        }
+
+        if (Boolean.TRUE.equals(getProperties(msg).get("zap.h2"))) {
             return false;
         }
 

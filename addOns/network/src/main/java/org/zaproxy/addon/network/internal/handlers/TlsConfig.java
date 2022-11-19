@@ -36,7 +36,7 @@ public class TlsConfig {
                     TlsUtils.TLS_V1_3);
 
     private static final List<String> DEFAULT_APPLICATION_PROTOCOLS =
-            List.of(TlsUtils.APPLICATION_PROTOCOL_HTTP_1_1);
+            List.of(TlsUtils.APPLICATION_PROTOCOL_HTTP_1_1, TlsUtils.APPLICATION_PROTOCOL_HTTP_2);
 
     private List<String> tlsProtocols;
     private boolean alpnEnabled;

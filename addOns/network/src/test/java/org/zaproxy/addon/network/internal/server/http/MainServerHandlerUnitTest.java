@@ -405,6 +405,25 @@ class MainServerHandlerUnitTest {
     }
 
     @Test
+    void shouldNotCloseChannelIfUserObjectContainsHttp2Property() {
+        // Given
+        String request = "GET / HTTP/2\r\nConnection: close\r\n\r\n";
+        String response = "HTTP/2 200\r\nConnection: close\r\n\r\n";
+        handler1.addAction(
+                0,
+                (ctx, msg) -> {
+                    msg.setResponseHeader(response);
+                    msg.setUserObject(Collections.singletonMap("zap.h2", Boolean.TRUE));
+                });
+        // When
+        written(request);
+        // Then
+        assertThat(exceptionsThrown, hasSize(0));
+        assertChannelActive(true);
+        assertResponse(response);
+    }
+
+    @Test
     void shouldNotBeRecursiveIfNotSet() {
         // Given
         String request = "GET / HTTP/1.1\r\n\r\n";

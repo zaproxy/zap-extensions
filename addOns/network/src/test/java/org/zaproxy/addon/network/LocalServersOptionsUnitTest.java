@@ -57,7 +57,7 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 /** Unit test for {@link LocalServersOptions}. */
 class LocalServersOptionsUnitTest {
 
-    private static final List<String> DEFAULT_APPLICATION_PROTOCOLS = List.of("http/1.1");
+    private static final List<String> DEFAULT_APPLICATION_PROTOCOLS = List.of("http/1.1", "h2");
     private static final String ALIAS_KEY = "network.localServers.aliases.alias";
     private static final String PASS_THROUGH_KEY = "network.localServers.passThroughs.passThrough";
     private static final String MAIN_PROXY_KEY = "network.localServers.mainProxy";
@@ -81,6 +81,7 @@ class LocalServersOptionsUnitTest {
                     + "          <enabled>true</enabled>\n"
                     + "          <protocols>\n"
                     + "            <protocol>http/1.1</protocol>\n"
+                    + "            <protocol>h2</protocol>\n"
                     + "          </protocols>\n"
                     + "        </alpn>\n"
                     + "        <behindNat>true</behindNat>\n"
@@ -103,6 +104,7 @@ class LocalServersOptionsUnitTest {
                     + "          <protocols>\n"
                     + "            <protocol>http/1.1</protocol>\n"
                     + "            <protocol>h1</protocol>\n"
+                    + "            <protocol>h2</protocol>\n"
                     + "          </protocols>\n"
                     + "        </alpn>\n"
                     + "        <behindNat>false</behindNat>\n"
@@ -482,6 +484,7 @@ class LocalServersOptionsUnitTest {
                                 + "        <enabled>true</enabled>\n"
                                 + "        <protocols>\n"
                                 + "          <protocol>http/1.1</protocol>\n"
+                                + "          <protocol>h2</protocol>\n"
                                 + "        </protocols>\n"
                                 + "      </alpn>\n"
                                 + "      <behindNat>true</behindNat>\n"
