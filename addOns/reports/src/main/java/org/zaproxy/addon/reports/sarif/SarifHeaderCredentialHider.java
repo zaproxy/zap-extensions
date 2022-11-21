@@ -19,6 +19,8 @@
  */
 package org.zaproxy.addon.reports.sarif;
 
+import java.util.Locale;
+
 /**
  * This class does hide credentials inside HTTP headers. When a credential is detected for a header,
  * the header value will replaced by a string containing only asterisks.
@@ -44,7 +46,7 @@ public class SarifHeaderCredentialHider {
             return originHeaderValue;
         }
 
-        String lowerCasedHeaderName = headerName.toLowerCase();
+        String lowerCasedHeaderName = headerName.toLowerCase(Locale.ROOT);
 
         if (lowerCasedHeaderName.equals("authorization")) {
             return CREDENTIAL_REPLACEMENT_ASTERISKS;

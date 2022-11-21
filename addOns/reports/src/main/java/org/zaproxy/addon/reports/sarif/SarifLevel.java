@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.reports.sarif;
 
+import java.util.Locale;
 import org.parosproxy.paros.core.scanner.Alert;
 
 /**
@@ -75,6 +76,6 @@ public enum SarifLevel {
      * @return level value (e.g. "error") - always lower cased (as defined by SARIF spec)
      */
     public String getValue() {
-        return name().toLowerCase();
+        return name().toLowerCase(Locale.ROOT);
     }
 }

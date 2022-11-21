@@ -25,10 +25,7 @@ class SarifProtocolData {
     private String protocol;
     private String version;
 
-    private SarifProtocolData() {
-        // private constructor - so static parse method must be used to create the protocol data
-        // object
-    }
+    private SarifProtocolData() {}
 
     public static SarifProtocolData parseProtocolAndVersion(String versionString) {
         SarifProtocolData data = new SarifProtocolData();

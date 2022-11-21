@@ -21,6 +21,7 @@ package org.zaproxy.addon.reports.sarif;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Locale;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -49,6 +50,6 @@ class SarifLevelUnitTest {
     @ParameterizedTest(name = "Sarif level {0} has value as lowerecased")
     @EnumSource(value = SarifLevel.class)
     void getValueJustRepresentsLowerCasedNameOfEnum(SarifLevel level) {
-        assertEquals(level.name().toLowerCase(), level.getValue());
+        assertEquals(level.name().toLowerCase(Locale.ROOT), level.getValue());
     }
 }
