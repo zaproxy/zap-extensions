@@ -34,8 +34,7 @@ public class SarifBigContentShrinker {
      *
      * @param bytes the byte array to shrink
      * @param maxAllowedBytes amount of maximum allowed bytes
-     * @return array with maximum allowed bytes or <code>null</code> of given array was <code>null
-     *     </code>
+     * @return array with maximum allowed bytes or {@code null} if given array was {@code null}
      */
     public byte[] shrinkBytesArray(byte[] bytes, int maxAllowedBytes) {
         if (bytes == null) {
@@ -59,13 +58,13 @@ public class SarifBigContentShrinker {
      *
      * <h3>Example</h3>
      *
-     * A String with <code>'1234567890Test1234567890'</code> with maximum allowed characters of 7
-     * and a snippet <code>'Test'</code> will result in <code>'[...]0Test1[...]'</code>
+     * A String with {@code '1234567890Test1234567890'} with maximum allowed characters of 7 and a
+     * snippet {@code 'Test'} will result in {@code '[...]0Test1[...]}
      *
      * @param content the content to shrink
      * @param maxAllowedCharacters
-     * @param snippet defines an (optional) text area to locate. Can be <code>null</code>
-     * @return result text or <code>null</code> when origin content was also <code>null</code>
+     * @param snippet defines an (optional) text area to locate. Can be {@code null}
+     * @return result text or {@code null} when origin content was also {@code null}
      */
     public String shrinkTextToSnippetAreaWithMarkers(
             String content, int maxAllowedCharacters, String snippet) {

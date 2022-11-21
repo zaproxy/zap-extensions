@@ -34,7 +34,7 @@ public class SarifBinaryContentDetector {
      * for a list of mime types.
      *
      * @param header the HTTP header to inspect
-     * @return <code>true</code> when binary content otherwise <code>false</code>
+     * @return {@code true} when binary content otherwise {@code false}
      */
     public boolean isBinaryContent(HttpHeader header) {
         requireNonNull(header, "Header parameter may not be null!");

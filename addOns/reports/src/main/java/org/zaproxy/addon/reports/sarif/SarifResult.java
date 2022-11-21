@@ -322,7 +322,7 @@ public class SarifResult implements Comparable<SarifResult> {
         /**
          * Checks if start line value is invalid or not
          *
-         * @return <code>true</code> when {@link #getStartLine()} returns an invalid value
+         * @return {@code true} when {@link #getStartLine()} returns an invalid value
          */
         public boolean isStartLineInvalid() {
             return startLine <= 0;
