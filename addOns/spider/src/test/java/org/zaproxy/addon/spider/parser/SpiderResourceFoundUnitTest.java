@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
@@ -38,8 +39,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 
 /** Unit test for {@link SpiderResourceFound}. */
 class SpiderResourceFoundUnitTest {
@@ -52,13 +56,50 @@ class SpiderResourceFoundUnitTest {
     }
 
     @Test
+    void shouldHaveHttp11VersionByDefault() {
+        // Given / When
+        SpiderResourceFound resource = builder.build();
+        // Then
+        assertThat(resource.getHttpVersion(), is(equalTo(HttpHeader.HTTP11)));
+    }
+
+    @Test
     void shouldSetMessage() {
         // Given
-        HttpMessage message = mock(HttpMessage.class);
+        HttpMessage message = mockHttpMessage();
         // When
         SpiderResourceFound resource = builder.setMessage(message).build();
         // Then
         assertThat(resource.getMessage(), is(equalTo(message)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {HttpHeader.HTTP10, HttpHeader.HTTP11, "HTTP/2"})
+    void shouldSetVersionFromMessage(String httpVersion) {
+        // Given
+        HttpMessage message = mockHttpMessage();
+        given(message.getRequestHeader().getVersion()).willReturn(httpVersion);
+        // When
+        SpiderResourceFound resource = builder.setMessage(message).build();
+        // Then
+        assertThat(resource.getHttpVersion(), is(equalTo(httpVersion)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {HttpHeader.HTTP10, HttpHeader.HTTP11, "HTTP/2"})
+    void shouldSetHttpVersion(String httpVersion) {
+        // Given / When
+        SpiderResourceFound resource = builder.setHttpVersion(httpVersion).build();
+        // Then
+        assertThat(resource.getHttpVersion(), is(equalTo(httpVersion)));
+    }
+
+    @Test
+    void shouldThrowExceptionForNullHttpVersion() {
+        // Given
+        String httpVersion = null;
+        // When / Then
+        assertThrows(IllegalArgumentException.class, () -> builder.setHttpVersion(httpVersion));
     }
 
     @Test
@@ -205,5 +246,23 @@ class SpiderResourceFoundUnitTest {
         SpiderResourceFound resource = builder.setHeaders(headers).build();
         // Then
         assertThat(resource.getHeaders(), contains(header1, header2));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {HttpHeader.HTTP10, HttpHeader.HTTP11, "HTTP/2"})
+    void showUseHttpVersionFromOtherResourceFound(String httpVersion) {
+        // Given
+        SpiderResourceFound otherResource = builder.setHttpVersion(httpVersion).build();
+        // When
+        SpiderResourceFound resource = SpiderResourceFound.builder(otherResource).build();
+        // Then
+        assertThat(resource.getHttpVersion(), is(equalTo(httpVersion)));
+    }
+
+    private static HttpMessage mockHttpMessage() {
+        HttpMessage message = mock(HttpMessage.class);
+        HttpRequestHeader requestHeader = mock(HttpRequestHeader.class);
+        given(message.getRequestHeader()).willReturn(requestHeader);
+        return message;
     }
 }

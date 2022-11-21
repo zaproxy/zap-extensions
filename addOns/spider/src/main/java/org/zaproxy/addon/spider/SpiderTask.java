@@ -99,7 +99,8 @@ public class SpiderTask implements Runnable {
         // using HistoryReference
         try {
             HttpRequestHeader requestHeader =
-                    new HttpRequestHeader(resourceFound.getMethod(), uri, HttpHeader.HTTP11);
+                    new HttpRequestHeader(
+                            resourceFound.getMethod(), uri, resourceFound.getHttpVersion());
             // Intentionally adding supplied request headers before the referer header
             // to prioritize "send referer header" option
             for (HttpHeaderField header : resourceFound.getHeaders()) {

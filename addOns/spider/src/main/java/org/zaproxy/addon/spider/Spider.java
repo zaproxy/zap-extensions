@@ -37,6 +37,7 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
@@ -86,7 +87,7 @@ public class Spider {
     private DefaultFetchFilter defaultFetchFilter;
 
     /** The seed list. */
-    private LinkedHashSet<URI> seedList;
+    private LinkedHashSet<Seed> seedList;
 
     /** The extension. */
     private ExtensionSpider2 extension;
@@ -196,8 +197,8 @@ public class Spider {
      * @param msg the message used for seed. The request URI is used from the Request Header
      */
     public void addSeed(HttpMessage msg) {
-        URI uri = msg.getRequestHeader().getURI();
-        addSeed(uri);
+        HttpRequestHeader header = msg.getRequestHeader();
+        addSeed(header.getURI(), header.getVersion());
     }
 
     /**
@@ -206,6 +207,17 @@ public class Spider {
      * @param uri the uri
      */
     public void addSeed(URI uri) {
+        addSeed(uri, HttpHeader.HTTP11);
+    }
+
+    /**
+     * Adds a new seed for the Spider.
+     *
+     * @param uri the uri
+     * @param httpVersion the HTTP version for the seed.
+     * @since 0.2.0
+     */
+    public void addSeed(URI uri, String httpVersion) {
         // Update the scope of the spidering process
         String host = null;
 
@@ -218,24 +230,24 @@ public class Spider {
         }
         // Add the seed to the list -- it will be added to the task list only when the spider is
         // started
-        this.seedList.add(uri);
+        this.seedList.add(new Seed(uri, httpVersion));
         // Add the appropriate 'robots.txt' as a seed
         if (getSpiderParam().isParseRobotsTxt()) {
-            addRootFileSeed(uri, "robots.txt");
+            addRootFileSeed(uri, "robots.txt", httpVersion);
         }
         // Add the appropriate 'sitemap.xml' as a seed
         if (getSpiderParam().isParseSitemapXml()) {
-            addRootFileSeed(uri, "sitemap.xml");
+            addRootFileSeed(uri, "sitemap.xml", httpVersion);
         }
         // And add '.svn/entries' as a seed, for SVN based spidering
         if (getSpiderParam().isParseSVNEntries()) {
-            addFileSeed(uri, ".svn/entries", SVN_URL_PATTERN);
-            addFileSeed(uri, ".svn/wc.db", SVN_URL_PATTERN);
+            addFileSeed(uri, ".svn/entries", SVN_URL_PATTERN, httpVersion);
+            addFileSeed(uri, ".svn/wc.db", SVN_URL_PATTERN, httpVersion);
         }
 
         // And add '.git/index' as a seed, for Git based spidering
         if (getSpiderParam().isParseGit()) {
-            addFileSeed(uri, ".git/index", GIT_URL_PATTERN);
+            addFileSeed(uri, ".git/index", GIT_URL_PATTERN, httpVersion);
         }
     }
 
@@ -247,8 +259,9 @@ public class Spider {
      *
      * @param baseUri the base URI.
      * @param fileName the file name.
+     * @param httpVersion the HTTP version for the seed.
      */
-    private void addRootFileSeed(URI baseUri, String fileName) {
+    private void addRootFileSeed(URI baseUri, String fileName, String httpVersion) {
         String seed =
                 buildUri(
                         baseUri.getScheme(),
@@ -256,7 +269,7 @@ public class Spider {
                         baseUri.getPort(),
                         "/" + fileName);
         try {
-            this.seedList.add(new URI(seed, true));
+            this.seedList.add(new Seed(new URI(seed, true), httpVersion));
         } catch (Exception e) {
             log.warn("Error while creating [{}] seed: {}", fileName, seed, e);
         }
@@ -295,8 +308,9 @@ public class Spider {
      * @param baseUri the base URI to construct the file seed.
      * @param fileName the name of the file seed.
      * @param condition the condition to add the file seed.
+     * @param httpVersion the HTTP version for the seed.
      */
-    private void addFileSeed(URI baseUri, String fileName, Pattern condition) {
+    private void addFileSeed(URI baseUri, String fileName, Pattern condition, String httpVersion) {
         String fullpath = baseUri.getEscapedPath();
         if (fullpath == null) {
             fullpath = "";
@@ -323,7 +337,7 @@ public class Spider {
                         baseUri.getPort(),
                         pathminusfilename + fileName);
         try {
-            this.seedList.add(new URI(uri, true));
+            this.seedList.add(new Seed(new URI(uri, true), httpVersion));
         } catch (Exception e) {
             log.warn(
                     "Error while creating a seed URI for file [{}] from [{}] using [{}]:",
@@ -506,9 +520,9 @@ public class Spider {
         httpSender.setFollowRedirect(false);
 
         // Add the seeds
-        for (URI uri : seedList) {
-            log.debug("Adding seed for spider: {}", uri);
-            controller.addSeed(uri, HttpRequestHeader.GET);
+        for (Seed seed : seedList) {
+            log.debug("Adding seed for spider: {}", seed);
+            controller.addSeed(seed.getUri(), HttpRequestHeader.GET, seed.getHttpVersion());
         }
         // Mark the process as completely initialized
         initialized = true;
@@ -527,10 +541,10 @@ public class Spider {
             return;
         }
 
-        for (Iterator<URI> it = seedList.iterator(); it.hasNext(); ) {
-            URI seed = it.next();
+        for (Iterator<Seed> it = seedList.iterator(); it.hasNext(); ) {
+            Seed seed = it.next();
             for (FetchFilter filter : controller.getFetchFilters()) {
-                FetchStatus filterReason = filter.checkFilter(seed);
+                FetchStatus filterReason = filter.checkFilter(seed.getUri());
                 if (filterReason != FetchStatus.VALID) {
                     log.debug("Seed: {} was filtered with reason: {}", seed, filterReason);
                     it.remove();
@@ -832,6 +846,29 @@ public class Spider {
                 t.setPriority(Thread.NORM_PRIORITY);
             }
             return t;
+        }
+    }
+
+    private static class Seed {
+        private final URI uri;
+        private final String httpVersion;
+
+        Seed(URI uri, String httpVersion) {
+            this.uri = uri;
+            this.httpVersion = httpVersion;
+        }
+
+        URI getUri() {
+            return uri;
+        }
+
+        String getHttpVersion() {
+            return httpVersion;
+        }
+
+        @Override
+        public String toString() {
+            return uri.toString();
         }
     }
 }

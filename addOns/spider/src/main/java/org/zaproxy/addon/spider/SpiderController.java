@@ -162,10 +162,15 @@ public class SpiderController implements SpiderParserListener {
      *
      * @param uri the uri
      * @param method the http method used for fetching the resource
+     * @param httpVersion the HTTP version for fetching the resource.
      */
-    protected void addSeed(URI uri, String method) {
+    protected void addSeed(URI uri, String method, String httpVersion) {
         SpiderResourceFound resourceFound =
-                SpiderResourceFound.builder().setUri(uri.toString()).setMethod(method).build();
+                SpiderResourceFound.builder()
+                        .setUri(uri.toString())
+                        .setMethod(method)
+                        .setHttpVersion(httpVersion)
+                        .build();
         // Check if the uri was processed already
         String resourceIdentifier = "";
         try {

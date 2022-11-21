@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -37,6 +38,8 @@ public class SpiderResourceFound {
     private final int depth;
     /** HTTP method for resource. */
     private final String method;
+    /** The HTTP version to use when sending the message. */
+    private final String httpVersion;
     /** Uniform resource identifier of resource. */
     private final String uri;
     /** Body for the resource. */
@@ -53,6 +56,7 @@ public class SpiderResourceFound {
      * @param depth the depth of this resource in the crawling process
      * @param uri the universal resource locator
      * @param method HTTP method for the resource found
+     * @param httpVersion HTTP version to use when sending the message.
      * @param body request body for the resource
      * @param shouldIgnore flag to ignore the resource found
      * @param headers additional request headers for the resource
@@ -62,6 +66,7 @@ public class SpiderResourceFound {
             int depth,
             String uri,
             String method,
+            String httpVersion,
             String body,
             boolean shouldIgnore,
             List<HttpHeaderField> headers) {
@@ -69,6 +74,7 @@ public class SpiderResourceFound {
         this.depth = depth;
         this.uri = uri;
         this.method = method;
+        this.httpVersion = httpVersion;
         this.body = body;
         this.shouldIgnore = shouldIgnore;
         this.headers = headers;
@@ -99,6 +105,16 @@ public class SpiderResourceFound {
      */
     public String getMethod() {
         return method;
+    }
+
+    /**
+     * Gets the HTTP version to use when sending the message.
+     *
+     * @return the version, never {@code null}.
+     * @since 0.2.0
+     */
+    public String getHttpVersion() {
+        return httpVersion;
     }
 
     /**
@@ -139,7 +155,7 @@ public class SpiderResourceFound {
 
     @Override
     public int hashCode() {
-        return Objects.hash(body, depth, headers, message, method, shouldIgnore, uri);
+        return Objects.hash(body, depth, headers, message, method, httpVersion, shouldIgnore, uri);
     }
 
     @Override
@@ -156,6 +172,7 @@ public class SpiderResourceFound {
                 && Objects.equals(headers, other.headers)
                 && Objects.equals(message, other.message)
                 && Objects.equals(method, other.method)
+                && Objects.equals(httpVersion, other.httpVersion)
                 && shouldIgnore == other.shouldIgnore
                 && Objects.equals(uri, other.uri);
     }
@@ -168,6 +185,8 @@ public class SpiderResourceFound {
                 .append(method)
                 .append(", URI=")
                 .append(uri)
+                .append(", HTTPVersion=")
+                .append(httpVersion)
                 .append(", Headers=")
                 .append(headers)
                 .append(", Body=")
@@ -209,6 +228,7 @@ public class SpiderResourceFound {
         private HttpMessage message;
         private int depth;
         private String method;
+        private String httpVersion;
         private String uri;
         private String body;
         private boolean shouldIgnore;
@@ -218,6 +238,7 @@ public class SpiderResourceFound {
             this.method = HttpRequestHeader.GET;
             this.uri = "";
             this.body = "";
+            this.httpVersion = HttpHeader.HTTP11;
             this.headers = Collections.emptyList();
         }
 
@@ -226,6 +247,7 @@ public class SpiderResourceFound {
             this.depth = resourceFound.getDepth();
             this.method = resourceFound.getMethod();
             this.uri = resourceFound.getUri();
+            this.httpVersion = resourceFound.getHttpVersion();
             this.body = resourceFound.getBody();
             this.shouldIgnore = resourceFound.isShouldIgnore();
             this.headers = resourceFound.getHeaders();
@@ -234,11 +256,17 @@ public class SpiderResourceFound {
         /**
          * Sets the message where the resource was found.
          *
+         * <p>The HTTP version is set to the one of the message.
+         *
          * @param message HTTP message where the resource as found (null allowed).
          * @return the builder.
+         * @see #setHttpVersion(String)
          */
         public Builder setMessage(HttpMessage message) {
             this.message = message;
+            if (message != null) {
+                httpVersion = message.getRequestHeader().getVersion();
+            }
             return this;
         }
 
@@ -269,6 +297,22 @@ public class SpiderResourceFound {
                 throw new IllegalArgumentException("Parameter method must not be null.");
             }
             this.method = method;
+            return this;
+        }
+
+        /**
+         * Sets the HTTP version to use when sending the request.
+         *
+         * @param httpVersion the HTTP version.
+         * @return the builder.
+         * @throws IllegalArgumentException if the given parameter is {@code null}.
+         * @since 0.2.0
+         */
+        public Builder setHttpVersion(String httpVersion) {
+            if (httpVersion == null) {
+                throw new IllegalArgumentException("Parameter httpVersion must not be null.");
+            }
+            this.httpVersion = httpVersion;
             return this;
         }
 
@@ -352,7 +396,7 @@ public class SpiderResourceFound {
          */
         public SpiderResourceFound build() {
             return new SpiderResourceFound(
-                    message, depth, uri, method, body, shouldIgnore, headers);
+                    message, depth, uri, method, httpVersion, body, shouldIgnore, headers);
         }
     }
 }
