@@ -88,12 +88,20 @@ class TlsUtilsUnitTest {
         // Given
         List<String> protocols =
                 Arrays.asList(
-                        "Unknown A", TlsUtils.APPLICATION_PROTOCOL_HTTP_1_1, "Unknown B", null);
+                        "Unknown A",
+                        TlsUtils.APPLICATION_PROTOCOL_HTTP_1_1,
+                        TlsUtils.APPLICATION_PROTOCOL_HTTP_2,
+                        "Unknown B",
+                        null);
         // When
         List<String> filteredApplicationProtocols =
                 TlsUtils.filterUnsupportedApplicationProtocols(protocols);
         // Then
-        assertThat(filteredApplicationProtocols, contains(TlsUtils.APPLICATION_PROTOCOL_HTTP_1_1));
+        assertThat(
+                filteredApplicationProtocols,
+                contains(
+                        TlsUtils.APPLICATION_PROTOCOL_HTTP_1_1,
+                        TlsUtils.APPLICATION_PROTOCOL_HTTP_2));
     }
 
     @ParameterizedTest

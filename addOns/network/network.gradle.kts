@@ -43,6 +43,7 @@ spotless {
             fileTree(projectDir) {
                 include("src/**/*.java")
                 exclude("src/main/java/org/apache/hc/client5/**/Zap*.java")
+                exclude("src/main/java/org/zaproxy/addon/network/internal/codec/netty/*.java")
             }
         )
     }
@@ -52,6 +53,7 @@ dependencies {
     val nettyVersion = "4.1.84.Final"
     implementation("io.netty:netty-codec:$nettyVersion")
     implementation("io.netty:netty-handler:$nettyVersion")
+    implementation("io.netty:netty-codec-http2:$nettyVersion")
 
     implementation("org.apache.httpcomponents.client5:httpclient5:5.2")
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.19.0") {

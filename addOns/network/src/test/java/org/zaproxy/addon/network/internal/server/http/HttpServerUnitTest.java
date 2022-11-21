@@ -24,8 +24,17 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
@@ -36,6 +45,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
+import org.zaproxy.addon.network.internal.TlsUtils;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateService;
 import org.zaproxy.addon.network.server.Server;
 
@@ -161,5 +172,47 @@ class HttpServerUnitTest {
             assertThrows(
                     NullPointerException.class, () -> server.setMainServerHandler(handlerSupplier));
         }
+    }
+
+    @Test
+    void shouldNotChangePipelineForHttp1() throws Exception {
+        // Given
+        ChannelHandlerContext ctx = mock(ChannelHandlerContext.class);
+        String protocol = TlsUtils.APPLICATION_PROTOCOL_HTTP_1_1;
+        // When
+        HttpServer.protocolConfiguration(ctx, protocol);
+        // Then
+        verifyNoInteractions(ctx);
+    }
+
+    @Test
+    void shouldReconfigurePipelineForHttp2() throws Exception {
+        // Given
+        ChannelHandlerContext ctx = mock(ChannelHandlerContext.class);
+        ChannelPipeline pipeline = mock(ChannelPipeline.class);
+        given(ctx.pipeline()).willReturn(pipeline);
+        InOrder inOrder = inOrder(pipeline);
+        String protocol = TlsUtils.APPLICATION_PROTOCOL_HTTP_2;
+        // When
+        HttpServer.protocolConfiguration(ctx, protocol);
+        // Then
+        inOrder.verify(pipeline).remove("timeout");
+        inOrder.verify(pipeline).remove("http.decoder");
+        inOrder.verify(pipeline).replace(eq("http.encoder"), eq("http2.codec"), any());
+        verifyNoMoreInteractions(pipeline);
+        verify(ctx).pipeline();
+        verifyNoMoreInteractions(ctx);
+    }
+
+    @Test
+    void shouldCloseConnectionForUnsupportedApplicationProtocol() throws Exception {
+        // Given
+        ChannelHandlerContext ctx = mock(ChannelHandlerContext.class);
+        String protocol = "Unsupported Protocol";
+        // When
+        HttpServer.protocolConfiguration(ctx, protocol);
+        // Then
+        verify(ctx).close();
+        verifyNoMoreInteractions(ctx);
     }
 }

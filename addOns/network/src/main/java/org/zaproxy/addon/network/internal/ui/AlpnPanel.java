@@ -65,6 +65,7 @@ public class AlpnPanel extends JPanel {
                 new JLabel(Constant.messages.getString("network.ui.options.alpn.protocols.label"));
         checkBoxesProtocols = new LinkedHashMap<>();
         createCheckBox(TlsUtils.APPLICATION_PROTOCOL_HTTP_1_1, "http1.1");
+        createCheckBox(TlsUtils.APPLICATION_PROTOCOL_HTTP_2, "http2");
 
         GroupLayout layout = new GroupLayout(this);
         this.setLayout(layout);

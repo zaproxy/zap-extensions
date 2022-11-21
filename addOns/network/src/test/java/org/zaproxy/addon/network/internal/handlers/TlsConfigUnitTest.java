@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.zaproxy.addon.network.internal.TlsUtils.APPLICATION_PROTOCOL_HTTP_1_1;
+import static org.zaproxy.addon.network.internal.TlsUtils.APPLICATION_PROTOCOL_HTTP_2;
 import static org.zaproxy.addon.network.internal.TlsUtils.TLS_V1_2;
 import static org.zaproxy.addon.network.internal.TlsUtils.getSupportedApplicationProtocols;
 import static org.zaproxy.addon.network.internal.TlsUtils.getSupportedTlsProtocols;
@@ -48,7 +49,7 @@ class TlsConfigUnitTest {
 
     private static final List<String> TLS_PROTOCOLS = List.of(TLS_V1_2);
     private static final List<String> APPLICATION_PROTOCOLS =
-            List.of(APPLICATION_PROTOCOL_HTTP_1_1);
+            List.of(APPLICATION_PROTOCOL_HTTP_1_1, APPLICATION_PROTOCOL_HTTP_2);
 
     @BeforeAll
     static void setup() {
@@ -171,7 +172,7 @@ class TlsConfigUnitTest {
         // When
         int hashCode = tlsConfig.hashCode();
         // Then
-        assertThat(hashCode, is(equalTo(1746407413)));
+        assertThat(hashCode, is(equalTo(2014107303)));
     }
 
     @Test

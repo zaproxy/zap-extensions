@@ -61,7 +61,7 @@ public final class TlsUtils {
     private static final List<String> SUPPORTED_TLS_PROTOCOLS;
 
     private static final List<String> SUPPORTED_APPLICATION_PROTOCOLS =
-            List.of(APPLICATION_PROTOCOL_HTTP_1_1);
+            List.of(APPLICATION_PROTOCOL_HTTP_1_1, APPLICATION_PROTOCOL_HTTP_2);
 
     static {
         LOGGER.debug("Reading supported SSL/TLS protocols...");
