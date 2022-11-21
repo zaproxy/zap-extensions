@@ -36,7 +36,7 @@ public class Base64Decoder extends DefaultEncodeDecodeProcessor {
                         .getExtensionLoader()
                         .getExtension(ExtensionEncoder.class)
                         .getOptions();
-        return new String(Base64.getDecoder().decode(value), encDecOpts.getBase64Charset());
+        return new String(Base64.getMimeDecoder().decode(value), encDecOpts.getBase64Charset());
     }
 
     public static Base64Decoder getSingleton() {

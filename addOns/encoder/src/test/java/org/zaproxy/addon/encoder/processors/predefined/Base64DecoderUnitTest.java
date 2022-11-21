@@ -57,17 +57,15 @@ public class Base64DecoderUnitTest extends ProcessorTests<Base64Decoder> {
     }
 
     @Test
-    void shouldFailToDecodeWhenInputIsWrapped() throws Exception {
+    void shouldNotFailToDecodeWhenInputIsWrapped() throws Exception {
         // Given / When
         EncodeDecodeResult result =
                 processor.process(
                         "TG9yZW0gaXBzdW0gZG9sb3Igc2l0IGFtZXQsIGNvbnNlY3RldHVyIGFkaXBpc2NpbmcgZWxpdC4g\r\n"
                                 + "TnVsbGFtIHRyaXN0aXF1ZSBtb3JiaS4=");
         // Then
-        assertThat(result.hasError(), is(equalTo(true)));
-        assertThat(
-                result.getResult(),
-                is(equalTo("IllegalArgumentException: Illegal base64 character d")));
+        assertThat(result.hasError(), is(equalTo(false)));
+        assertThat(result.getResult(), is(equalTo(EIGHTY_CHARS_LOREM)));
     }
 
     @Test
