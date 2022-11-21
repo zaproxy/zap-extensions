@@ -19,27 +19,38 @@
  */
 package org.zaproxy.addon.spider;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.apache.commons.httpclient.URI;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
 import org.parosproxy.paros.db.RecordHistory;
 import org.parosproxy.paros.db.TableAlert;
 import org.parosproxy.paros.db.TableHistory;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
+import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.spider.parser.SpiderResourceFound;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -47,31 +58,50 @@ import org.zaproxy.zap.testutils.TestUtils;
 /** Unit test for {@link SpiderController}. */
 class SpiderControllerUnitTest extends TestUtils {
 
+    private TableHistory tableHistory;
+    private long sessionId;
+    private Session session;
+
     private Spider spider;
     private SpiderController spiderController;
 
-    @BeforeAll
-    static void setUpTables() throws Exception {
-        TableHistory tableHistory = mock(TableHistory.class);
+    @BeforeEach
+    void setUp() throws Exception {
+        tableHistory = mock(TableHistory.class, withSettings().lenient());
         given(tableHistory.write(anyLong(), anyInt(), any())).willReturn(mock(RecordHistory.class));
         HistoryReference.setTableHistory(tableHistory);
         HistoryReference.setTableAlert(mock(TableAlert.class));
+
+        spider = mock(Spider.class);
+
+        given(spider.getSpiderParam()).willReturn(new SpiderParam());
+        Model model = mock(Model.class, withSettings().lenient());
+        given(spider.getModel()).willReturn(model);
+
+        session = mock(Session.class, withSettings().lenient());
+        given(model.getSession()).willReturn(session);
+        sessionId = 1234;
+        given(session.getSessionId()).willReturn(sessionId);
+
+        spiderController = new SpiderController(spider, Collections.emptyList());
     }
 
-    @AfterAll
-    static void cleanUpTables() {
+    @AfterEach
+    void cleanUp() {
         HistoryReference.setTableHistory(null);
         HistoryReference.setTableAlert(null);
     }
 
-    @BeforeEach
-    void setUp() {
-        spider = mock(Spider.class);
-
-        given(spider.getSpiderParam()).willReturn(new SpiderParam());
-        given(spider.getModel()).willReturn(Model.getSingleton());
-
-        spiderController = new SpiderController(spider, Collections.emptyList());
+    @ParameterizedTest
+    @ValueSource(strings = {HttpHeader.HTTP10, HttpHeader.HTTP11, "HTTP/2"})
+    void shouldCreateTaskWithHttpVersionFromAddedSeed(String httpVersion) throws Exception {
+        // Given
+        URI uri = new URI("http://127.0.0.1", true);
+        // When
+        spiderController.addSeed(uri, HttpRequestHeader.GET, httpVersion);
+        // Then
+        HttpMessage msg = messageWrittenToSession();
+        assertThat(msg.getRequestHeader().getVersion(), is(equalTo(httpVersion)));
     }
 
     @Test
@@ -294,5 +324,12 @@ class SpiderControllerUnitTest extends TestUtils {
                 .setBody(body)
                 .setHeaders(requestHeaders)
                 .build();
+    }
+
+    private HttpMessage messageWrittenToSession() throws Exception {
+        ArgumentCaptor<HttpMessage> argument = ArgumentCaptor.forClass(HttpMessage.class);
+        verify(tableHistory)
+                .write(eq(sessionId), eq(HistoryReference.TYPE_SPIDER_TASK), argument.capture());
+        return argument.getValue();
     }
 }
