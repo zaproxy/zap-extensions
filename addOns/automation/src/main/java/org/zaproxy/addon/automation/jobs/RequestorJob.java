@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -36,6 +37,7 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.automation.AutomationData;
@@ -50,6 +52,8 @@ public class RequestorJob extends AutomationJob {
 
     public static final String JOB_NAME = "requestor";
     private static final String REQUESTS = "requests";
+
+    private static final Pattern HTTP_VERSION_PATTERN = Pattern.compile("HTTP/\\d+(?:\\.\\d+)?");
 
     private Parameters parameters = new Parameters();
     private Data data;
@@ -92,6 +96,9 @@ public class RequestorJob extends AutomationJob {
                 Request req = new Request();
                 JobUtils.applyParamsToObject( // Here request needs to be mapped to req object
                         (LinkedHashMap<?, ?>) request, req, this.getName(), null, progress);
+                if (validateHttpVersion(progress, request, req)) {
+                    continue;
+                }
                 if (req.getUrl() == null) {
                     progress.error(
                             Constant.messages.getString(
@@ -126,6 +133,24 @@ public class RequestorJob extends AutomationJob {
         }
     }
 
+    public static boolean isValidHttpVersion(String httpVersion) {
+        return httpVersion == null
+                || httpVersion.isBlank()
+                || HTTP_VERSION_PATTERN.matcher(httpVersion).matches();
+    }
+
+    private boolean validateHttpVersion(AutomationProgress progress, Object request, Request req) {
+        String httpVersion = req.getHttpVersion();
+        if (isValidHttpVersion(httpVersion)) {
+            return false;
+        }
+
+        progress.error(
+                Constant.messages.getString(
+                        "automation.error.requestor.httpversion", getName(), httpVersion, request));
+        return true;
+    }
+
     @Override
     public void applyParameters(AutomationProgress progress) {}
 
@@ -149,6 +174,11 @@ public class RequestorJob extends AutomationJob {
                 }
             }
             msg.getRequestHeader().setMethod(method);
+            String httpVersion = req.getHttpVersion();
+            if (httpVersion == null || httpVersion.isBlank()) {
+                httpVersion = HttpHeader.HTTP11;
+            }
+            msg.getRequestHeader().setVersion(httpVersion);
             String url = env.replaceVars(req.getUrl());
             try {
                 msg.getRequestHeader().setURI(new URI(url, true));
@@ -325,6 +355,7 @@ public class RequestorJob extends AutomationJob {
         private String url;
         private String name;
         private String method;
+        private String httpVersion;
         private List<Header> headers;
         private String data;
         private Integer responseCode;
@@ -332,11 +363,7 @@ public class RequestorJob extends AutomationJob {
         public Request() {}
 
         public Request(String url, String name, String method, String data, Integer responseCode) {
-            this.url = url;
-            this.name = name;
-            this.method = method;
-            this.data = data;
-            this.responseCode = responseCode;
+            this(url, name, method, data, responseCode, null);
         }
 
         public Request(
@@ -346,16 +373,28 @@ public class RequestorJob extends AutomationJob {
                 String data,
                 Integer responseCode,
                 List<Header> headers) {
+            this(url, name, method, HttpHeader.HTTP11, data, responseCode, headers);
+        }
+
+        public Request(
+                String url,
+                String name,
+                String method,
+                String httpVersion,
+                String data,
+                Integer responseCode,
+                List<Header> headers) {
             this.url = url;
             this.name = name;
             this.method = method;
+            this.httpVersion = httpVersion;
             this.data = data;
             this.responseCode = responseCode;
             this.headers = headers;
         }
 
         public Request copy() {
-            return new Request(url, name, method, data, responseCode, headers);
+            return new Request(url, name, method, httpVersion, data, responseCode, headers);
         }
 
         public String getUrl() {
@@ -380,6 +419,14 @@ public class RequestorJob extends AutomationJob {
 
         public void setMethod(String method) {
             this.method = method;
+        }
+
+        public String getHttpVersion() {
+            return httpVersion;
+        }
+
+        public void setHttpVersion(String httpVersion) {
+            this.httpVersion = httpVersion;
         }
 
         public String getData() {
