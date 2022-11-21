@@ -54,6 +54,7 @@ public class AddRequestDialog extends StandardFieldsDialog {
     private static final String URL_PARAM = "automation.dialog.addreq.url";
     private static final String NAME_PARAM = "automation.dialog.addreq.name";
     private static final String METHOD_PARAM = "automation.dialog.addreq.method";
+    private static final String HTTP_VERSION_PARAM = "automation.dialog.addreq.httpversion";
     private static final String DATA_PARAM = "automation.dialog.addreq.data";
     private static final String CODE_PARAM = "automation.dialog.addreq.responsecode";
 
@@ -95,6 +96,7 @@ public class AddRequestDialog extends StandardFieldsDialog {
 
         this.addTextField(0, NAME_PARAM, rule.getName());
         this.addTextField(0, METHOD_PARAM, rule.getMethod());
+        this.addTextField(0, HTTP_VERSION_PARAM, rule.getHttpVersion());
         this.addMultilineField(0, DATA_PARAM, rule.getData());
         this.addNumberField(
                 0, CODE_PARAM, 0, Integer.MAX_VALUE, JobUtils.unBox(rule.getResponseCode()));
@@ -116,6 +118,7 @@ public class AddRequestDialog extends StandardFieldsDialog {
             ((ZapNumberSpinner) this.getField(CODE_PARAM)).setValue(hr.getStatusCode());
             try {
                 HttpMessage msg = hr.getHttpMessage();
+                setFieldValue(HTTP_VERSION_PARAM, msg.getRequestHeader().getVersion());
                 ((ZapTextArea) this.getField(DATA_PARAM)).setText(msg.getRequestBody().toString());
             } catch (Exception e) {
                 // Ignore
@@ -128,6 +131,7 @@ public class AddRequestDialog extends StandardFieldsDialog {
         rule.setUrl(this.getStringValue(URL_PARAM));
         rule.setName(this.getStringValue(NAME_PARAM));
         rule.setMethod(this.getStringValue(METHOD_PARAM));
+        rule.setHttpVersion(getStringValue(HTTP_VERSION_PARAM));
         rule.setData(this.getStringValue(DATA_PARAM));
         rule.setHeadersList(this.getHeadersModel().getHeaders());
         if (this.getIntValue(CODE_PARAM) == 0) {
@@ -146,6 +150,9 @@ public class AddRequestDialog extends StandardFieldsDialog {
     @Override
     public String validateFields() {
         // TODO check url present & ok
+        if (!RequestorJob.isValidHttpVersion(getStringValue(HTTP_VERSION_PARAM))) {
+            return Constant.messages.getString("automation.dialog.addreq.error.httpversion");
+        }
         return null;
     }
 

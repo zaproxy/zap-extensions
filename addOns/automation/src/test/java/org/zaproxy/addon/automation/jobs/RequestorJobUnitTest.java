@@ -21,27 +21,34 @@ package org.zaproxy.addon.automation.jobs;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
 import java.io.IOException;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.yaml.snakeyaml.Yaml;
@@ -54,6 +61,8 @@ class RequestorJobUnitTest {
     private ExtensionLoader extensionLoader;
     private ExtensionHistory extHistory;
 
+    private HttpSender httpSender;
+
     @BeforeEach
     void setUp() throws Exception {
         Constant.messages = new I18N(Locale.ENGLISH);
@@ -64,6 +73,8 @@ class RequestorJobUnitTest {
         extHistory = new ExtensionHistory();
         given(extensionLoader.getExtension(ExtensionHistory.class)).willReturn(extHistory);
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
+        httpSender = mock(HttpSender.class);
     }
 
     @Test
@@ -159,7 +170,6 @@ class RequestorJobUnitTest {
         // Given
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = new AutomationEnvironment(progress);
-        HttpSender httpSender = mock(HttpSender.class);
         RequestorJob job = new RequestorJob(httpSender);
 
         String yamlStr = "requests:\n" + "- url: https://www.example.com\n";
@@ -174,12 +184,10 @@ class RequestorJobUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
-        ArgumentCaptor<HttpMessage> argument = ArgumentCaptor.forClass(HttpMessage.class);
-        verify(httpSender).sendAndReceive(argument.capture());
+        HttpMessage msg = getMessagesSent(1).get(0);
         assertThat(
-                argument.getValue().getRequestHeader().getURI().toString(),
-                is(equalTo("https://www.example.com")));
-        assertThat(argument.getValue().getRequestHeader().getMethod(), is(equalTo("GET")));
+                msg.getRequestHeader().getURI().toString(), is(equalTo("https://www.example.com")));
+        assertThat(msg.getRequestHeader().getMethod(), is(equalTo("GET")));
     }
 
     @Test
@@ -187,7 +195,6 @@ class RequestorJobUnitTest {
         // Given
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = new AutomationEnvironment(progress);
-        HttpSender httpSender = mock(HttpSender.class);
         RequestorJob job = new RequestorJob(httpSender);
 
         String yamlStr = "requests:\n" + "- url: https://www.example.com\n" + "  method: \n";
@@ -202,12 +209,110 @@ class RequestorJobUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
-        ArgumentCaptor<HttpMessage> argument = ArgumentCaptor.forClass(HttpMessage.class);
-        verify(httpSender).sendAndReceive(argument.capture());
+        HttpMessage msg = getMessagesSent(1).get(0);
         assertThat(
-                argument.getValue().getRequestHeader().getURI().toString(),
-                is(equalTo("https://www.example.com")));
-        assertThat(argument.getValue().getRequestHeader().getMethod(), is(equalTo("GET")));
+                msg.getRequestHeader().getURI().toString(), is(equalTo("https://www.example.com")));
+        assertThat(msg.getRequestHeader().getMethod(), is(equalTo("GET")));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {"   ", HttpHeader.HTTP10, HttpHeader.HTTP11, "HTTP/2"})
+    void shouldBeValidHttpVersion(String httpVersion) {
+        // Given / When
+        boolean valid = RequestorJob.isValidHttpVersion(httpVersion);
+        // Then
+        assertThat(valid, is(equalTo(true)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"HTP/1.1", "HTTP/a"})
+    void shouldBeInvalidHttpVersion(String httpVersion) {
+        // Given / When
+        boolean valid = RequestorJob.isValidHttpVersion(httpVersion);
+        // Then
+        assertThat(valid, is(equalTo(false)));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = "   ")
+    void shouldUseDefaultHttpVersion(String httpVersion) throws IOException {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(progress);
+        RequestorJob job = new RequestorJob(httpSender);
+
+        String yamlStr = "requests:\n" + "- url: https://www.example.com\n";
+        if (httpVersion != null) {
+            yamlStr += "  httpVersion: \"" + httpVersion + "\"\n";
+        }
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> jobData = (LinkedHashMap<?, ?>) yaml.load(yamlStr);
+
+        // When
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        HttpMessage msg = getMessagesSent(1).get(0);
+        assertThat(msg.getRequestHeader().getVersion(), is(equalTo(HttpHeader.HTTP11)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {HttpHeader.HTTP10, HttpHeader.HTTP11, "HTTP/2"})
+    void shouldUseProvidedHttpVersion(String httpVersion) throws IOException {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(progress);
+        RequestorJob job = new RequestorJob(httpSender);
+
+        String yamlStr =
+                "requests:\n"
+                        + "- url: https://www.example.com\n"
+                        + "  httpVersion: "
+                        + httpVersion
+                        + "\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> jobData = (LinkedHashMap<?, ?>) yaml.load(yamlStr);
+
+        // When
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        HttpMessage msg = getMessagesSent(1).get(0);
+        assertThat(msg.getRequestHeader().getVersion(), is(equalTo(httpVersion)));
+    }
+
+    @Test
+    void shouldErrorIfInvalidHttpVersion() {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        RequestorJob job = new RequestorJob();
+
+        String yamlStr =
+                "requests:\n" + "- url: https://www.example.com\n" + "  httpVersion: HT/1.a\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> jobData = (LinkedHashMap<?, ?>) yaml.load(yamlStr);
+
+        // When
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.getErrors(), hasSize(1));
+        assertThat(
+                progress.getErrors().get(0),
+                is(equalTo("!automation.error.requestor.httpversion!")));
     }
 
     @Test
@@ -266,7 +371,6 @@ class RequestorJobUnitTest {
         // Given
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = new AutomationEnvironment(progress);
-        HttpSender httpSender = mock(HttpSender.class);
         RequestorJob job = new RequestorJob(httpSender);
 
         String yamlStr =
@@ -301,7 +405,6 @@ class RequestorJobUnitTest {
         // Given
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = new AutomationEnvironment(progress);
-        HttpSender httpSender = mock(HttpSender.class);
         RequestorJob job = new RequestorJob(httpSender);
 
         String yamlStr =
@@ -340,7 +443,6 @@ class RequestorJobUnitTest {
         // Given
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = new AutomationEnvironment(progress);
-        HttpSender httpSender = mock(HttpSender.class);
         RequestorJob job = new RequestorJob(httpSender);
 
         String yamlStr =
@@ -359,13 +461,11 @@ class RequestorJobUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
-        ArgumentCaptor<HttpMessage> argument = ArgumentCaptor.forClass(HttpMessage.class);
-        verify(httpSender).sendAndReceive(argument.capture());
+        HttpMessage msg = getMessagesSent(1).get(0);
         assertThat(
-                argument.getValue().getRequestHeader().getURI().toString(),
-                is(equalTo("https://www.example.com")));
-        assertThat(argument.getValue().getRequestHeader().getMethod(), is(equalTo("POST")));
-        assertThat(argument.getValue().getRequestBody().toString(), is(equalTo("aaa=bbb&ccc=ddd")));
+                msg.getRequestHeader().getURI().toString(), is(equalTo("https://www.example.com")));
+        assertThat(msg.getRequestHeader().getMethod(), is(equalTo("POST")));
+        assertThat(msg.getRequestBody().toString(), is(equalTo("aaa=bbb&ccc=ddd")));
     }
 
     @Test
@@ -373,7 +473,6 @@ class RequestorJobUnitTest {
         // Given
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = new AutomationEnvironment(progress);
-        HttpSender httpSender = mock(HttpSender.class);
         RequestorJob job = new RequestorJob(httpSender);
 
         String yamlStr =
@@ -395,13 +494,10 @@ class RequestorJobUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
-        ArgumentCaptor<HttpMessage> argument = ArgumentCaptor.forClass(HttpMessage.class);
-        verify(httpSender).sendAndReceive(argument.capture());
-        assertThat(
-                argument.getValue().getRequestHeader().getHeader("header1"), is(equalTo("value1")));
-        assertThat(
-                argument.getValue().getRequestHeader().getHeader("header2"), is(equalTo("value2")));
-        assertThat(argument.getValue().getRequestHeader().getHeader("header3"), is(equalTo("")));
+        HttpMessage msg = getMessagesSent(1).get(0);
+        assertThat(msg.getRequestHeader().getHeader("header1"), is(equalTo("value1")));
+        assertThat(msg.getRequestHeader().getHeader("header2"), is(equalTo("value2")));
+        assertThat(msg.getRequestHeader().getHeader("header3"), is(equalTo("")));
     }
 
     @Test
@@ -409,7 +505,6 @@ class RequestorJobUnitTest {
         // Given
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = new AutomationEnvironment(progress);
-        HttpSender httpSender = mock(HttpSender.class);
         RequestorJob job = new RequestorJob(httpSender);
 
         String yamlStr =
@@ -428,9 +523,8 @@ class RequestorJobUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
-        ArgumentCaptor<HttpMessage> argument = ArgumentCaptor.forClass(HttpMessage.class);
-        verify(httpSender).sendAndReceive(argument.capture());
-        assertThat(argument.getValue().getRequestHeader().getHeader("header1"), is(equalTo("")));
+        HttpMessage msg = getMessagesSent(1).get(0);
+        assertThat(msg.getRequestHeader().getHeader("header1"), is(equalTo("")));
     }
 
     @Test
@@ -438,7 +532,6 @@ class RequestorJobUnitTest {
         // Given
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = new AutomationEnvironment(progress);
-        HttpSender httpSender = mock(HttpSender.class);
         RequestorJob job = new RequestorJob(httpSender);
 
         String yamlStr = "requests:\n" + "- url: https://www.example.com\n" + "  headers: []";
@@ -460,7 +553,6 @@ class RequestorJobUnitTest {
         // Given
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = new AutomationEnvironment(progress);
-        HttpSender httpSender = mock(HttpSender.class);
         RequestorJob job = new RequestorJob(httpSender);
 
         String yamlStr =
@@ -480,14 +572,9 @@ class RequestorJobUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
-        ArgumentCaptor<HttpMessage> argument = ArgumentCaptor.forClass(HttpMessage.class);
-        verify(httpSender).sendAndReceive(argument.capture());
-        assertThat(
-                argument.getValue().getRequestHeader().getHeaders().get(0).getName(),
-                is(equalTo("header1")));
-        assertThat(
-                argument.getValue().getRequestHeader().getHeaders().get(1).getName(),
-                is(equalTo("header2")));
+        HttpMessage msg = getMessagesSent(1).get(0);
+        assertThat(msg.getRequestHeader().getHeaders().get(0).getName(), is(equalTo("header1")));
+        assertThat(msg.getRequestHeader().getHeaders().get(1).getName(), is(equalTo("header2")));
     }
 
     @Test
@@ -495,7 +582,6 @@ class RequestorJobUnitTest {
         // Given
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = new AutomationEnvironment(progress);
-        HttpSender httpSender = mock(HttpSender.class);
         RequestorJob job = new RequestorJob(httpSender);
 
         String yamlStr =
@@ -515,14 +601,9 @@ class RequestorJobUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
-        ArgumentCaptor<HttpMessage> argument = ArgumentCaptor.forClass(HttpMessage.class);
-        verify(httpSender).sendAndReceive(argument.capture());
-        assertThat(
-                argument.getValue().getRequestHeader().getHeaders().get(0).getName(),
-                is(equalTo("header1")));
-        assertThat(
-                argument.getValue().getRequestHeader().getHeaders().get(1).getName(),
-                is(equalTo("header1")));
+        HttpMessage msg = getMessagesSent(1).get(0);
+        assertThat(msg.getRequestHeader().getHeaders().get(0).getName(), is(equalTo("header1")));
+        assertThat(msg.getRequestHeader().getHeaders().get(1).getName(), is(equalTo("header1")));
     }
 
     @Test
@@ -530,7 +611,6 @@ class RequestorJobUnitTest {
         // Given
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = new AutomationEnvironment(progress);
-        HttpSender httpSender = mock(HttpSender.class);
         RequestorJob job = new RequestorJob(httpSender);
 
         String yamlStr =
@@ -551,12 +631,16 @@ class RequestorJobUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
-        ArgumentCaptor<HttpMessage> argument = ArgumentCaptor.forClass(HttpMessage.class);
-        verify(httpSender).sendAndReceive(argument.capture());
+        HttpMessage msg = getMessagesSent(1).get(0);
         assertThat(
-                argument.getValue().getRequestHeader().getURI().toString(),
-                is(equalTo("https://www.example.com")));
-        assertThat(argument.getValue().getRequestHeader().getMethod(), is(equalTo("POST")));
-        assertThat(argument.getValue().getRequestBody().toString(), is(equalTo("aaa=bbb&ccc=xxx")));
+                msg.getRequestHeader().getURI().toString(), is(equalTo("https://www.example.com")));
+        assertThat(msg.getRequestHeader().getMethod(), is(equalTo("POST")));
+        assertThat(msg.getRequestBody().toString(), is(equalTo("aaa=bbb&ccc=xxx")));
+    }
+
+    private List<HttpMessage> getMessagesSent(int number) throws IOException {
+        ArgumentCaptor<HttpMessage> argument = ArgumentCaptor.forClass(HttpMessage.class);
+        verify(httpSender, times(number)).sendAndReceive(argument.capture());
+        return argument.getAllValues();
     }
 }

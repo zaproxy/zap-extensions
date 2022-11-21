@@ -62,6 +62,7 @@ jobs:
       - url:                           # String: A mandatory URL of the request to be made
         name:                          # String: Optional name for the request, for documentation only
         method:                        # String: A non-empty request method, default: GET
+        httpVersion:                   # String: The HTTP version to send the request with, default: HTTP/1.1
         headers:                       # An optional list of headers
             # - "header1:value1"
         data:                          # String: Optional data to send in the request body, supports vars
