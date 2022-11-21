@@ -29,9 +29,15 @@ public class SarifBinaryContentDetector {
 
     /**
      * Detect binary content by inspecting the given HTTP header and the returned normalized
-     * (lowercased) content type. see <a
-     * href="https://www.iana.org/assignments/media-types/media-types.xhtml">IANA Mime type list</a>
-     * for a list of mime types.
+     * (lowercased) content type. Everything which is not a textual MIME type will be identified as
+     * binary.<br>
+     * <br>
+     * See <a href="https://www.iana.org/assignments/media-types/media-types.xhtml">IANA Media
+     * types</a> for a list of official MIME types. The <a href=
+     * "https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types">MDN
+     * web docs</a> describe also some additional wellknown content types. And there are also still
+     * some unofficial types which can be found in the wild. Even when it is an unofficial MIME
+     * textual type, this method will gracefully accept them.
      *
      * @param header the HTTP header to inspect
      * @return {@code true} when binary content otherwise {@code false}
@@ -50,20 +56,25 @@ public class SarifBinaryContentDetector {
     private boolean isTextBasedContentType(String contentType) {
         return isPlainText(contentType)
                 || isJson(contentType)
+                || isYaml(contentType)
                 || isXml(contentType)
                 || isJavaScript(contentType);
     }
 
     private boolean isXml(String contentType) {
-        return contentType.contains("/xml");
+        return contentType.contains("xml");
     }
 
     private boolean isJson(String contentType) {
-        return contentType.contains("/json");
+        return contentType.contains("json");
+    }
+
+    private boolean isYaml(String contentType) {
+        return contentType.contains("yaml");
     }
 
     private boolean isPlainText(String contentType) {
-        return contentType.startsWith("text");
+        return contentType.startsWith("text") || contentType.startsWith("txt");
     }
 
     private boolean isJavaScript(String contentType) {

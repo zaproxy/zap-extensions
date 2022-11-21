@@ -79,6 +79,21 @@ class SarifBinaryContentDetectorUnitTest {
         "text/html;    charset=utf-8   , false",
         "application/zip; charset=utf-8, true",
         "; charset=utf-16,true",
+
+        /* some additions found "in the wild" */
+        "aplication/health+json,false",
+        "aplication/octet-stream,true",
+        "aplication/problem+json,false",
+        "aplication/problem+xml,false",
+        "aplication/soap+xml,false",
+        "aplication/vnd.api+json,false",
+        "aplication/xml,false",
+        "aplication/x-ndjson,false",
+        "aplication/x-yaml,false",
+        "txt/x-json,false",
+        "txt/json,false",
+        "txt/yaml,false",
+        "txt/plain,false"
     })
     @ParameterizedTest(name = "content type:{0} is binary:{1}")
     void normalizedHeaderContenTypeNotNulltHandledAsExpected(

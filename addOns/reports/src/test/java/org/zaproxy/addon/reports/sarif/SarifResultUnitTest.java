@@ -65,6 +65,7 @@ class SarifResultUnitTest {
     @ParameterizedTest
     @ValueSource(longs = {0, -1, -100})
     void sarifRegionGetValidStartLineOrFallbackForInvalidStartLine(long value) {
+
         /* prepare */
         SarifRegion region = new SarifRegion();
         region.startLine = value;
@@ -82,6 +83,7 @@ class SarifResultUnitTest {
     @ParameterizedTest
     @ValueSource(longs = {1, 2, 4711})
     void sarifRegionGetValidStartLineOrFallbackForValidStartLine(long value) {
+
         /* prepare */
         SarifRegion region = new SarifRegion();
         region.startLine = value;
@@ -134,8 +136,8 @@ class SarifResultUnitTest {
             "When content detector decides it is binary - SARIF Webresponse body has no text, but binary with base64 encoded body bytes")
     @Test
     void webResponseBinary() {
-        /* prepare */
 
+        /* prepare */
         Alert alert =
                 newAlertBuilder()
                         .setResponseBody(A_SIMPLE_BODY)
@@ -164,8 +166,8 @@ class SarifResultUnitTest {
             "When content detector decides its NOT binary - SARIF Webresponse body has plain text")
     @Test
     void webResponseNotBinary() {
-        /* prepare */
 
+        /* prepare */
         Alert alert =
                 newAlertBuilder()
                         .setResponseBody(A_SIMPLE_BODY)
@@ -194,8 +196,8 @@ class SarifResultUnitTest {
             "When content detector decides it is binary - SARIF Webrequest body has no text, but binary with base64 encoded body bytes")
     @Test
     void webRequestBinary() {
-        /* prepare */
 
+        /* prepare */
         Alert alert =
                 newAlertBuilder()
                         .setRequestBody(A_SIMPLE_BODY)
@@ -224,8 +226,8 @@ class SarifResultUnitTest {
             "When content detector decides it is NOT binary - SARIF Webrequest body has plain text")
     @Test
     void webRequestNotBinary() {
-        /* prepare */
 
+        /* prepare */
         Alert alert =
                 newAlertBuilder()
                         .setRequestBody(A_SIMPLE_BODY)
@@ -252,8 +254,8 @@ class SarifResultUnitTest {
 
     @Test
     void headerContainingBasicAuthAuthorizationInfoWillBeHiddenInReport() {
-        /* prepare */
 
+        /* prepare */
         Alert alert =
                 newAlertBuilder()
                         .setRequestBody(A_SIMPLE_BODY)
@@ -291,6 +293,7 @@ class SarifResultUnitTest {
     })
     void sortingDoneByLevelAndPluginId(
             String creationOrderString, String expectedSortedOrderString) {
+
         /* prepare */
         OrderedCSVTestData[] creationOrder =
                 extractOrderAndAlertRiskFromString(creationOrderString);
