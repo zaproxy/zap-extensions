@@ -5,7 +5,7 @@
 		<tocitem text="Дополнения" tocid="addons">
 			<tocitem text="Поддержка GraphQL " image="graphql-icon" target="graphql">
 				<tocitem text="Параметры" image="graphql-icon" target="graphql.options"/>
-				<tocitem text="Скрипт" image="graphql-icon" target="graphql.script"/>
+				<tocitem text="Variant" image="graphql-icon" target="graphql.variant"/>
 				<tocitem text="Автоматизация " image="graphql-icon" target="graphql.automation"/>
 			</tocitem>
 		</tocitem>
