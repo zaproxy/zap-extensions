@@ -140,6 +140,10 @@ public class HttpToHttp2ConnectionHandler extends Http2ConnectionHandler {
         this.defaultScheme = httpScheme;
     }
 
+    public String getDefaultScheme() {
+        return defaultScheme;
+    }
+
     private int getStreamId(HttpMessage msg) throws Exception {
         Integer streamId = getProperty(getProperties(msg), "zap.h2.stream.id", null);
         if (streamId == null) {
