@@ -88,6 +88,7 @@ class ConnectRequestHandlerUnitTest {
                                 exceptionsThrown.add(cause);
                             }
                         });
+        channel.attr(ChannelAttributes.TLS_CONFIG).set(new TlsConfig());
         channel.attr(ChannelAttributes.TLS_UPGRADED).set(Boolean.FALSE);
         channel.attr(ChannelAttributes.REMOTE_ADDRESS).set(SENDER_ADDRESS);
     }

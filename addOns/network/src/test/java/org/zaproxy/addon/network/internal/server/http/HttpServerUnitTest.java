@@ -26,16 +26,17 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.util.Attribute;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.EventExecutorGroup;
@@ -45,9 +46,15 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
+import org.parosproxy.paros.network.HttpHeader;
+import org.zaproxy.addon.network.internal.ChannelAttributes;
 import org.zaproxy.addon.network.internal.TlsUtils;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateService;
+import org.zaproxy.addon.network.internal.codec.HttpToHttp2ConnectionHandler;
 import org.zaproxy.addon.network.server.Server;
 
 /** Unit test for {@link HttpServer}. */
@@ -185,12 +192,19 @@ class HttpServerUnitTest {
         verifyNoInteractions(ctx);
     }
 
-    @Test
-    void shouldReconfigurePipelineForHttp2() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {HttpHeader.HTTP, HttpHeader.HTTPS})
+    void shouldReconfigurePipelineForHttp2(String scheme) throws Exception {
         // Given
         ChannelHandlerContext ctx = mock(ChannelHandlerContext.class);
         ChannelPipeline pipeline = mock(ChannelPipeline.class);
         given(ctx.pipeline()).willReturn(pipeline);
+        Channel channel = mock(Channel.class);
+        given(ctx.channel()).willReturn(channel);
+        @SuppressWarnings("unchecked")
+        Attribute<Boolean> attribute = mock(Attribute.class);
+        given(channel.attr(ChannelAttributes.TLS_UPGRADED)).willReturn(attribute);
+        given(attribute.get()).willReturn(HttpHeader.HTTPS.equals(scheme));
         InOrder inOrder = inOrder(pipeline);
         String protocol = TlsUtils.APPLICATION_PROTOCOL_HTTP_2;
         // When
@@ -198,9 +212,15 @@ class HttpServerUnitTest {
         // Then
         inOrder.verify(pipeline).remove("timeout");
         inOrder.verify(pipeline).remove("http.decoder");
-        inOrder.verify(pipeline).replace(eq("http.encoder"), eq("http2.codec"), any());
+        ArgumentCaptor<HttpToHttp2ConnectionHandler> connectionHandlerCaptor =
+                ArgumentCaptor.forClass(HttpToHttp2ConnectionHandler.class);
+        inOrder.verify(pipeline)
+                .replace(eq("http.encoder"), eq("http2.codec"), connectionHandlerCaptor.capture());
+        HttpToHttp2ConnectionHandler connectionHandler = connectionHandlerCaptor.getValue();
+        assertThat(connectionHandler.getDefaultScheme(), is(equalTo(scheme)));
         verifyNoMoreInteractions(pipeline);
         verify(ctx).pipeline();
+        verify(ctx).channel();
         verifyNoMoreInteractions(ctx);
     }
 

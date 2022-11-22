@@ -131,7 +131,7 @@ public class HttpServer extends BaseServer {
         ch.attr(ChannelAttributes.CERTIFICATE_SERVICE).set(certificateService);
         ch.attr(ChannelAttributes.SERVER_CONFIG).set(serverConfig);
         ch.attr(ChannelAttributes.TLS_CONFIG).set(DEFAULT_TLS_CONFIG);
-        ch.attr(ChannelAttributes.TLS_PIPELINE_CONFIGURATOR).set(HttpServer::protocolConfiguration);
+        ch.attr(ChannelAttributes.PIPELINE_CONFIGURATOR).set(HttpServer::protocolConfiguration);
 
         ch.pipeline()
                 .addLast(
@@ -155,6 +155,9 @@ public class HttpServer extends BaseServer {
             case TlsUtils.APPLICATION_PROTOCOL_HTTP_2:
                 DefaultHttp2Connection connection = new DefaultHttp2Connection(true);
 
+                boolean tlsUpgraded =
+                        Boolean.TRUE.equals(
+                                ctx.channel().attr(ChannelAttributes.TLS_UPGRADED).get());
                 ChannelPipeline pipeline = ctx.pipeline();
                 pipeline.remove(TIMEOUT_HANDLER_NAME);
                 pipeline.remove(HTTP_DECODER_HANDLER_NAME);
@@ -165,7 +168,7 @@ public class HttpServer extends BaseServer {
                                 new InboundHttp2ToHttpAdapter(connection),
                                 null,
                                 connection,
-                                HttpHeader.HTTPS));
+                                tlsUpgraded ? HttpHeader.HTTPS : HttpHeader.HTTP));
                 break;
 
             default:

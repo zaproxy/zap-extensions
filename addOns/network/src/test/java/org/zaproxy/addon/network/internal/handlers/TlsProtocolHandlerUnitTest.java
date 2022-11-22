@@ -35,6 +35,8 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -56,6 +58,7 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import io.netty.util.Attribute;
 import io.netty.util.NettyRuntime;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import java.io.IOException;
@@ -80,7 +83,6 @@ import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.network.internal.ChannelAttributes;
 import org.zaproxy.addon.network.internal.TlsUtils;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateService;
-import org.zaproxy.addon.network.internal.handlers.TlsProtocolHandler.PipelineConfigurator;
 import org.zaproxy.addon.network.internal.server.BaseServer;
 import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.addon.network.testutils.TestServerCertificateService;
@@ -183,7 +185,7 @@ class TlsProtocolHandlerUnitTest {
     private void initDefaultChannel(SocketChannel ch, TlsProtocolHandler tlsProtocolHandler) {
         ch.attr(ChannelAttributes.CERTIFICATE_SERVICE).set(certificateService);
         ch.attr(ChannelAttributes.TLS_CONFIG).set(tlsConfig);
-        ch.attr(ChannelAttributes.TLS_PIPELINE_CONFIGURATOR).set(pipelineConfigurator);
+        ch.attr(ChannelAttributes.PIPELINE_CONFIGURATOR).set(pipelineConfigurator);
 
         ch.pipeline()
                 .addFirst(
@@ -230,6 +232,33 @@ class TlsProtocolHandlerUnitTest {
             clientTls.close();
             clientTls = null;
         }
+    }
+
+    @Test
+    void shouldAddHttp2PrefaceHandlerIfNoAlpn() throws Exception {
+        // Given
+        TlsProtocolHandler handler = new TlsProtocolHandler();
+        ChannelHandlerContext ctx = mock(ChannelHandlerContext.class);
+        ChannelPipeline pipeline = mock(ChannelPipeline.class);
+        withAlpnEnabled(ctx, pipeline, false);
+        // When
+        handler.handlerAdded(ctx);
+        // Then
+        verify(pipeline).addAfter(any(), eq("http2.preface"), any());
+        verifyNoMoreInteractions(pipeline);
+    }
+
+    @Test
+    void shouldNotAddHttp2PrefaceHandlerIfAlpn() throws Exception {
+        // Given
+        TlsProtocolHandler handler = new TlsProtocolHandler();
+        ChannelHandlerContext ctx = mock(ChannelHandlerContext.class);
+        ChannelPipeline pipeline = mock(ChannelPipeline.class);
+        withAlpnEnabled(ctx, pipeline, true);
+        // When
+        handler.handlerAdded(ctx);
+        // Then
+        verifyNoInteractions(pipeline);
     }
 
     @Test
@@ -531,6 +560,19 @@ class TlsProtocolHandlerUnitTest {
                 SelectorFailureBehavior.NO_ADVERTISE,
                 SelectedListenerFailureBehavior.ACCEPT,
                 protocols);
+    }
+
+    private static void withAlpnEnabled(
+            ChannelHandlerContext ctx, ChannelPipeline pipeline, boolean enabled) {
+        given(ctx.pipeline()).willReturn(pipeline);
+        Channel channel = mock(Channel.class);
+        given(ctx.channel()).willReturn(channel);
+        @SuppressWarnings("unchecked")
+        Attribute<TlsConfig> attribute = mock(Attribute.class);
+        given(channel.attr(ChannelAttributes.TLS_CONFIG)).willReturn(attribute);
+        TlsConfig tlsConfig = mock(TlsConfig.class);
+        given(attribute.get()).willReturn(tlsConfig);
+        given(tlsConfig.isAlpnEnabled()).willReturn(enabled);
     }
 
     private static class AlpnTestHandler extends ApplicationProtocolNegotiationHandler {
