@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -102,6 +103,34 @@ class InfoSessionIdUrlScanRuleUnitTest extends PassiveScannerTest<InfoSessionIdU
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_SESS_04_SESS_EXPOSED.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_SESS_04_SESS_EXPOSED.getValue())));
+    }
+
+    @Test
+    void shouldReturnExpectedExampleAlerts() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(3)));
+
+        Alert alert1 = alerts.get(0);
+        assertThat(alert1.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        assertThat(alert1.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
+        assertThat(alert1.getParam(), is(equalTo("jsessionid")));
+        assertThat(alert1.getEvidence(), is(equalTo("1A530637289A03B07199A44E8D531427")));
+        assertThat(alert1.getAlertRef(), is(equalTo(rule.getPluginId() + "-1")));
+
+        Alert alert2 = alerts.get(1);
+        assertThat(alert2.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        assertThat(alert2.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
+        assertThat(
+                alert2.getEvidence(), is(equalTo("jsessionid=1A530637289A03B07199A44E8D531427")));
+        assertThat(alert2.getAlertRef(), is(equalTo(rule.getPluginId() + "-2")));
+
+        Alert alert3 = alerts.get(2);
+        assertThat(alert3.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        assertThat(alert3.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alert3.getEvidence(), is(equalTo("www.example.org")));
+        assertThat(alert3.getAlertRef(), is(equalTo(rule.getPluginId() + "-3")));
     }
 
     @Test
