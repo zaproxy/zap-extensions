@@ -28,6 +28,8 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 
@@ -216,14 +218,16 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
         assertThat(alertsRaised, hasSize(0));
     }
 
-    @Test
-    void shouldNotRaiseCorpAlertGivenCorsHeaderIsSet() throws Exception {
+    @ParameterizedTest
+    @ValueSource(strings = {"Access-Control-Allow-Origin", "access-control-allow-origin"})
+    void shouldNotRaiseCorpAlertGivenCorsHeaderIsSet(String corsFieldName) throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET / HTTP/1.1");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
-                        + "Access-Control-Allow-Origin: *\r\n"
+                        + corsFieldName
+                        + ": *\r\n"
                         + "Cross-Origin-Embedder-Policy: require-corp\r\n"
                         + "Cross-Origin-Opener-Policy: same-origin\r\n");
         given(passiveScanData.isPage200(any())).willReturn(false);

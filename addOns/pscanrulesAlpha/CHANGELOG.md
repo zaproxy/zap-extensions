@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Fixed
+- Use case insensitive HTTP field name check in Insufficient Site Isolation Against Spectre Vulnerability scan rule.
 
 ## [37] - 2022-10-27
 ### Changed
