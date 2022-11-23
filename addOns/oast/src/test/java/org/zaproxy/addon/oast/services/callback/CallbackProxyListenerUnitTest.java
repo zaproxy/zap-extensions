@@ -132,6 +132,19 @@ class CallbackProxyListenerUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldRemoveConnectionHeaderIfHttp2Request() throws Exception {
+        // Given
+        given(ctx.isFromClient()).willReturn(true);
+        message.getRequestHeader().setVersion("HTTP/2");
+        // When
+        listener.handleMessage(ctx, message);
+        // Then
+        assertThat(
+                message.getResponseHeader().toString(),
+                is(equalTo("HTTP/1.1 200\r\nContent-Length: 0\r\n\r\n")));
+    }
+
+    @Test
     void shouldNotNotifyOfResponse() throws Exception {
         // Given
         given(ctx.isFromClient()).willReturn(false);

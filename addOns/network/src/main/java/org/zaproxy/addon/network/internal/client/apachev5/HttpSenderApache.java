@@ -382,6 +382,7 @@ public class HttpSenderApache
             HttpMessage message,
             ResponseBodyConsumer<HttpEntity> responseBodyConsumer)
             throws IOException {
+        message.setResponseFromTargetHost(false);
 
         RequestConfig.Builder requestConfigBuilder =
                 RequestConfig.copy(requestCtx.getRequestConfig());
@@ -601,6 +602,7 @@ public class HttpSenderApache
                                 }
                             })
                     .get();
+            message.setResponseFromTargetHost(true);
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -758,11 +760,10 @@ public class HttpSenderApache
                             path == null ? "/" : path);
 
             for (HttpHeaderField header : requestHeader.getHeaders()) {
+                // XXX Remove lower case once the codebase uses fields' names compatible with HTTP/2
                 String name = header.getName().toLowerCase(Locale.ROOT);
                 String value = header.getValue();
-                if (!skipHttp2Header(name, value)) {
-                    request.addHeader(name, value);
-                }
+                request.addHeader(name, value);
             }
 
             return request;
@@ -802,20 +803,6 @@ public class HttpSenderApache
         copy.setEntity(new ByteArrayEntity(msg.getRequestBody().getBytes(), null));
 
         return copy;
-    }
-
-    private static boolean skipHttp2Header(String name, String value) {
-        if (name.equalsIgnoreCase(HttpHeader.CONNECTION)
-                || name.equalsIgnoreCase(HttpHeader._KEEP_ALIVE)
-                || name.equalsIgnoreCase(HttpHeader.PROXY_CONNECTION)
-                || name.equalsIgnoreCase(HttpHeader.TRANSFER_ENCODING)
-                || name.equalsIgnoreCase(HttpRequestHeader.HOST)
-                || name.equalsIgnoreCase("Upgrade")
-                || (name.equalsIgnoreCase("TE") && !value.equalsIgnoreCase("trailers"))) {
-            LOGGER.debug("Ignoring illegal header: {}: {}", name, value);
-            return true;
-        }
-        return false;
     }
 
     private static String getPath(HttpMessage msg) {

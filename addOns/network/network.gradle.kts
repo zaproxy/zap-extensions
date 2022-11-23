@@ -5,6 +5,9 @@ description = "Provides core networking capabilities."
 val bouncyCastle by configurations.creating
 configurations.api { extendsFrom(bouncyCastle) }
 
+val hc by configurations.creating
+configurations.implementation { extendsFrom(hc) }
+
 zapAddOn {
     addOnName.set("Network")
     addOnStatus.set(AddOnStatus.BETA)
@@ -21,6 +24,7 @@ zapAddOn {
 
         bundledLibs {
             libs.from(bouncyCastle)
+            libs.from(hc)
         }
     }
 
@@ -43,6 +47,7 @@ spotless {
             fileTree(projectDir) {
                 include("src/**/*.java")
                 exclude("src/main/java/org/apache/hc/client5/**/Zap*.java")
+                exclude("src/main/java/org/apache/hc/core5/**/*.java")
                 exclude("src/main/java/org/zaproxy/addon/network/internal/codec/netty/*.java")
             }
         )
@@ -55,7 +60,7 @@ dependencies {
     implementation("io.netty:netty-handler:$nettyVersion")
     implementation("io.netty:netty-codec-http2:$nettyVersion")
 
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.2")
+    hc("org.apache.httpcomponents.client5:httpclient5:5.2")
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.19.0") {
         // Provided by ZAP.
         exclude(group = "org.apache.logging.log4j")

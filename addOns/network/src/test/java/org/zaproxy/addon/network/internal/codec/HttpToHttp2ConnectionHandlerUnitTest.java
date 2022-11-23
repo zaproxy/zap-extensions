@@ -180,7 +180,6 @@ class HttpToHttp2ConnectionHandlerUnitTest {
         assertRequestHeader(
                 receivedRequest,
                 "METHOD http://127.0.0.1:" + port + "/path?a=b HTTP/2",
-                "host: 127.0.0.1:" + port,
                 "header-a: 1",
                 "header-b: 2",
                 "content-length: 12");
@@ -208,7 +207,6 @@ class HttpToHttp2ConnectionHandlerUnitTest {
         assertRequestHeader(
                 receivedRequest,
                 "METHOD http://127.0.0.1:" + port + "/path?a=b HTTP/2",
-                "host: 127.0.0.1:" + port,
                 "header-a: 1",
                 "header-b: 2",
                 "content-length: 12");
@@ -233,7 +231,6 @@ class HttpToHttp2ConnectionHandlerUnitTest {
         assertRequestHeader(
                 receivedRequest,
                 "METHOD http://127.0.0.1:" + port + "/path?a=b HTTP/2",
-                "host: 127.0.0.1:" + port,
                 "header-a: 1",
                 "header-b: 2",
                 "content-length: 0");

@@ -40,6 +40,7 @@ import org.zaproxy.addon.network.internal.codec.HttpRequestDecoder;
 import org.zaproxy.addon.network.internal.codec.HttpResponseEncoder;
 import org.zaproxy.addon.network.internal.codec.HttpToHttp2ConnectionHandler;
 import org.zaproxy.addon.network.internal.codec.InboundHttp2ToHttpAdapter;
+import org.zaproxy.addon.network.internal.handlers.CommonMessagePropertiesHandler;
 import org.zaproxy.addon.network.internal.handlers.ConnectRequestHandler;
 import org.zaproxy.addon.network.internal.handlers.ReadTimeoutHandler;
 import org.zaproxy.addon.network.internal.handlers.RecursiveRequestHandler;
@@ -140,6 +141,7 @@ public class HttpServer extends BaseServer {
                 .addLast("tls.upgrade", new TlsProtocolHandler())
                 .addLast(HTTP_DECODER_HANDLER_NAME, new HttpRequestDecoder())
                 .addLast(HTTP_ENCODER_HANDLER_NAME, HttpResponseEncoder.getInstance())
+                .addLast(CommonMessagePropertiesHandler.getInstance())
                 .addLast("http.connect", ConnectRequestHandler.getInstance())
                 .addLast("http.recursive", RecursiveRequestHandler.getInstance())
                 .addLast(mainHandlerExecutor, "http.main-handler", handler.get())

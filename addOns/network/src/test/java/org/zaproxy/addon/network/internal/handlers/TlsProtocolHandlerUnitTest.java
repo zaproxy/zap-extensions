@@ -242,7 +242,7 @@ class TlsProtocolHandlerUnitTest {
         ChannelPipeline pipeline = mock(ChannelPipeline.class);
         withAlpnEnabled(ctx, pipeline, false);
         // When
-        handler.handlerAdded(ctx);
+        handler.channelActive(ctx);
         // Then
         verify(pipeline).addAfter(any(), eq("http2.preface"), any());
         verifyNoMoreInteractions(pipeline);
@@ -256,7 +256,7 @@ class TlsProtocolHandlerUnitTest {
         ChannelPipeline pipeline = mock(ChannelPipeline.class);
         withAlpnEnabled(ctx, pipeline, true);
         // When
-        handler.handlerAdded(ctx);
+        handler.channelActive(ctx);
         // Then
         verifyNoInteractions(pipeline);
     }
