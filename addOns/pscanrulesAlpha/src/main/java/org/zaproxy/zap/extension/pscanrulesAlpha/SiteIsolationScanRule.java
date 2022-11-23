@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -158,7 +159,7 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
     static class CorpHeaderScanRule extends SiteIsolationHeaderScanRule {
         public static final String HEADER = "Cross-Origin-Resource-Policy";
         private static final String CORP_MESSAGE_PREFIX = SITE_ISOLATION_MESSAGE_PREFIX + "corp.";
-        public static final String CORS_PREFIX = "Access-Control-Allow-";
+        public static final String CORS_PREFIX = "access-control-allow-";
 
         CorpHeaderScanRule(Supplier<AlertBuilder> newAlert) {
             super(newAlert);
@@ -168,7 +169,11 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
         List<AlertBuilder> build(HttpResponseHeader responseHeader) {
             boolean hasCorsHeader =
                     responseHeader.getHeaders().stream()
-                            .anyMatch(header -> header.getName().startsWith(CORS_PREFIX));
+                            .anyMatch(
+                                    header ->
+                                            header.getName()
+                                                    .toLowerCase(Locale.ROOT)
+                                                    .startsWith(CORS_PREFIX));
             if (hasCorsHeader) {
                 return Collections.emptyList();
             }
