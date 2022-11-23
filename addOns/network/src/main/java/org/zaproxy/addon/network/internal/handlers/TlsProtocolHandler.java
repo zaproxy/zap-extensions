@@ -82,11 +82,11 @@ public class TlsProtocolHandler extends ByteToMessageDecoder {
     }
 
     @Override
-    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
-        super.handlerAdded(ctx);
+    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        super.channelActive(ctx);
 
         TlsConfig config = ctx.channel().attr(ChannelAttributes.TLS_CONFIG).get();
-        if (!config.isAlpnEnabled()) {
+        if (config != null && !config.isAlpnEnabled()) {
             ctx.pipeline().addAfter(ctx.name(), "http2.preface", new Http2PrefaceHandler());
         }
     }

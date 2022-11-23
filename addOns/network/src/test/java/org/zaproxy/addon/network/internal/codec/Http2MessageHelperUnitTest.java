@@ -90,7 +90,6 @@ class Http2MessageHelperUnitTest {
         // Then
         assertRequestHeader(
                 "METHOD " + scheme + "://127.0.0.1:8080/path?query=a HTTP/2",
-                "host: 127.0.0.1:8080",
                 "header-a: value-a",
                 "header-b: value-b");
         assertRequestBody("");
@@ -169,10 +168,7 @@ class Http2MessageHelperUnitTest {
         setHttpRequest(STREAM_ID, headers, msg);
         // Then
         assertRequestHeader(
-                "METHOD https://127.0.0.1:8080/ HTTP/2",
-                "host: 127.0.0.1:8080",
-                "header-a: value-a",
-                "header-b: value-b");
+                "METHOD https://127.0.0.1:8080/ HTTP/2", "header-a: value-a", "header-b: value-b");
         assertRequestBody("");
     }
 
@@ -193,7 +189,6 @@ class Http2MessageHelperUnitTest {
         // Then
         assertRequestHeader(
                 "METHOD " + scheme + "://127.0.0.1:8080/path?query=a HTTP/2",
-                "host: 127.0.0.1:8080",
                 ":invalid-1: value-1",
                 ":invalid-2: value-2",
                 "header-a: value-a",
@@ -219,7 +214,6 @@ class Http2MessageHelperUnitTest {
         // Then
         assertRequestHeader(
                 "METHOD " + scheme + "://127.0.0.1:8080/path?query=a HTTP/2",
-                "host: 127.0.0.1:8080",
                 "header-a: value-a",
                 "header-b: value-b",
                 "cookie: sid=B; csrftoken=A; a=2");
@@ -243,7 +237,6 @@ class Http2MessageHelperUnitTest {
         // Then
         assertRequestHeader(
                 "METHOD " + scheme + "://127.0.0.1:8080/path?query=a HTTP/2",
-                "host: 127.0.0.1:8080",
                 "header-a: value-a",
                 "header-b: value-b",
                 "cookie: sid=B; csrftoken=A; a=2");
@@ -265,8 +258,7 @@ class Http2MessageHelperUnitTest {
         // When
         setHttpRequest(STREAM_ID, headers, msg);
         // Then
-        assertRequestHeader(
-                "CONNECT 127.0.0.1:8080 HTTP/2", "host: 127.0.0.1:8080", "header: value");
+        assertRequestHeader("CONNECT 127.0.0.1:8080 HTTP/2", "header: value");
         assertRequestBody("");
     }
 
@@ -281,8 +273,7 @@ class Http2MessageHelperUnitTest {
         // When
         setHttpRequest(STREAM_ID, headers, msg);
         // Then
-        assertRequestHeader(
-                "OPTIONS " + scheme + "://127.0.0.1:8080/path HTTP/2", "host: 127.0.0.1:8080");
+        assertRequestHeader("OPTIONS " + scheme + "://127.0.0.1:8080/path HTTP/2");
         assertRequestBody("");
     }
 
@@ -297,8 +288,8 @@ class Http2MessageHelperUnitTest {
         // When / Then
         setHttpRequest(STREAM_ID, headers, msg);
         // XXX Not supported by core, should result in e.g.:
-        // assertRequestHeader("OPTIONS * HTTP/2", "host: 127.0.0.1:8080");
-        assertRequestHeader("OPTIONS " + scheme + "://null* HTTP/2", "host: 127.0.0.1:8080");
+        // assertRequestHeader("OPTIONS * HTTP/2");
+        assertRequestHeader("OPTIONS " + scheme + "://null* HTTP/2");
         assertRequestBody("");
     }
 

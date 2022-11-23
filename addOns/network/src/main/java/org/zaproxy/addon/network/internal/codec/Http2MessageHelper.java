@@ -42,7 +42,6 @@ import org.parosproxy.paros.network.HttpResponseHeader;
 /** Helper class to map between {@link HttpMessage} and {@link Http2Headers}. */
 public class Http2MessageHelper {
 
-    private static final AsciiString AUTHORITY_PSEUDO_HEADER = AsciiString.cached(":authority");
     private static final String HOST = HttpRequestHeader.HOST.toLowerCase(Locale.ROOT);
 
     private Http2MessageHelper() {}
@@ -136,9 +135,7 @@ public class Http2MessageHelper {
                 CharSequence name = entry.getKey();
                 CharSequence value = entry.getValue();
 
-                if (AUTHORITY_PSEUDO_HEADER.contentEqualsIgnoreCase(name)) {
-                    toHeader.addHeader(HOST, value.toString());
-                } else if (!Http2Headers.PseudoHeaderName.isPseudoHeader(name)) {
+                if (!Http2Headers.PseudoHeaderName.isPseudoHeader(name)) {
                     if (COOKIE.contentEqualsIgnoreCase(name)) {
                         if (cookies == null) {
                             cookies = InternalThreadLocalMap.get().stringBuilder();

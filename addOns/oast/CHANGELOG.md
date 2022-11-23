@@ -8,6 +8,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- Do not include the Connection header in Callback responses for HTTP/2.
 
 ## [0.13.0] - 2022-10-27
 ### Changed
