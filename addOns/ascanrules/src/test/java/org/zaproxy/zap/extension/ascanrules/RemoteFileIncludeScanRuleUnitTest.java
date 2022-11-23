@@ -29,8 +29,10 @@ import static org.zaproxy.zap.extension.ascanrules.utils.Constants.NULL_BYTE_CHA
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -77,6 +79,17 @@ class RemoteFileIncludeScanRuleUnitTest extends ActiveScannerTest<RemoteFileIncl
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ.getValue())));
+    }
+
+    @Test
+    void shouldReturnExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+        Alert alert1 = alerts.get(0);
+        assertThat(alert1.getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(alert1.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 
     @Test

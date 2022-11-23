@@ -29,6 +29,7 @@ import static org.hamcrest.Matchers.is;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.ArrayUtils;
 import org.junit.jupiter.api.Test;
@@ -103,6 +104,34 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
     }
 
     @Test
+    void shouldReturnExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(5)));
+        Alert alert1 = alerts.get(0);
+        assertThat(alert1.getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(alert1.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alert1.getAlertRef(), is(equalTo("6-1")));
+        Alert alert2 = alerts.get(1);
+        assertThat(alert2.getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(alert2.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alert2.getAlertRef(), is(equalTo("6-2")));
+        Alert alert3 = alerts.get(2);
+        assertThat(alert3.getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(alert3.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alert3.getAlertRef(), is(equalTo("6-3")));
+        Alert alert4 = alerts.get(3);
+        assertThat(alert4.getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(alert4.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alert4.getAlertRef(), is(equalTo("6-4")));
+        Alert alert5 = alerts.get(4);
+        assertThat(alert5.getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(alert5.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
+        assertThat(alert5.getAlertRef(), is(equalTo("6-5")));
+    }
+
+    @Test
     void shouldNotAlertIfAttackResponseDoesNotListDirectories() throws Exception {
         // Given
         rule.init(getHttpMessage("/?p=v"), parent);
@@ -128,7 +157,7 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         assertThat(alertsRaised.get(0).getAttack(), is(equalTo("c:/")));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
-        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("Check 3")));
+        assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-3")));
     }
 
     @Test
@@ -146,7 +175,7 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         assertThat(alertsRaised.get(0).getAttack(), is(equalTo("/")));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
-        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("Check 3")));
+        assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-3")));
     }
 
     @Test
@@ -206,7 +235,7 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         rule.scan();
         // Then
         assertThat(alertsRaised, hasSize(1));
-        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("Check 2")));
+        assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-2")));
     }
 
     @Test
@@ -222,7 +251,7 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         rule.scan();
         // Then
         assertThat(alertsRaised, hasSize(1));
-        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("Check 1")));
+        assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-1")));
     }
 
     @ParameterizedTest
@@ -242,7 +271,7 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         // Then
         assertThat(alertsRaised, hasSize(1));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
-        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo("Check 5")));
+        assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-5")));
     }
 
     @Test

@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import org.apache.logging.log4j.LogManager;
@@ -211,14 +212,7 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
                         paramName,
                         phpPayload);
 
-                newAlert()
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setName(Constant.messages.getString(MESSAGE_PREFIX + "name.php"))
-                        .setParam(paramName)
-                        .setAttack(phpPayload)
-                        .setEvidence(PHP_CONTROL_TOKEN)
-                        .setMessage(msg)
-                        .raise();
+                createPhpAlert(paramName, phpPayload).setMessage(msg).raise();
 
                 // All done. No need to look for vulnerabilities on subsequent
                 // parameters on the same request (to reduce performance impact)
@@ -271,14 +265,7 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
                         paramName,
                         aspPayload);
 
-                newAlert()
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setName(Constant.messages.getString(MESSAGE_PREFIX + "name.asp"))
-                        .setParam(paramName)
-                        .setAttack(aspPayload)
-                        .setEvidence(evidence)
-                        .setMessage(msg)
-                        .raise();
+                createAspAlert(paramName, aspPayload, evidence).setMessage(msg).raise();
                 return true;
             }
         }
@@ -288,5 +275,33 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
 
     private static int getRandomValue() {
         return RAND.nextInt(MAX_VALUE) + 1;
+    }
+
+    private AlertBuilder createPhpAlert(String param, String attack) {
+        return newAlert()
+                .setName(Constant.messages.getString(MESSAGE_PREFIX + "name.php"))
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setParam(param)
+                .setAttack(attack)
+                .setEvidence(PHP_CONTROL_TOKEN)
+                .setAlertRef(getId() + "-1");
+    }
+
+    private AlertBuilder createAspAlert(String param, String attack, String evidence) {
+        return newAlert()
+                .setName(Constant.messages.getString(MESSAGE_PREFIX + "name.asp"))
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setParam(param)
+                .setAttack(attack)
+                .setEvidence(evidence)
+                .setAlertRef(getId() + "-2");
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        Alert phpAlert = createPhpAlert("param", PHP_PAYLOADS[0]).build();
+        String aspPayload = MessageFormat.format(ASP_PAYLOADS[0], 268327, 513977);
+        Alert aspAlert = createAspAlert("param", aspPayload, String.valueOf(137913906479L)).build();
+        return List.of(phpAlert, aspAlert);
     }
 }

@@ -24,6 +24,7 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
@@ -47,6 +48,7 @@ public class BufferOverflowScanRule extends AbstractAppParamPlugin {
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A03_INJECTION,
                     CommonAlertTag.OWASP_2017_A01_INJECTION);
+    private static final String CONNECTION_CLOSED = "Connection: close";
 
     private static final int PLUGIN_ID = 30001;
     private static Logger log = LogManager.getLogger(BufferOverflowScanRule.class);
@@ -109,7 +111,6 @@ public class BufferOverflowScanRule extends AbstractAppParamPlugin {
         try {
             // This is where you change the 'good' request to attack the application
             // You can make multiple requests if needed
-            String checkStringHeader1 = "Connection: close"; // Un natural close
             String returnAttack = randomCharacterString(2100);
             setParameter(msg, param, returnAttack);
             try {
@@ -128,15 +129,10 @@ public class BufferOverflowScanRule extends AbstractAppParamPlugin {
             // response
             String chkerrorheader = requestReturn.getHeadersAsString();
             log.debug("Header: {}", chkerrorheader);
-            if (isPage500(msg) && chkerrorheader.contains(checkStringHeader1)) {
+            if (isPage500(msg) && chkerrorheader.contains(CONNECTION_CLOSED)) {
                 log.debug("Found Header");
-                newAlert()
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                createAlert(param, returnAttack)
                         .setUri(this.getBaseMsg().getRequestHeader().getURI().toString())
-                        .setParam(param)
-                        .setAttack(returnAttack)
-                        .setEvidence(checkStringHeader1)
-                        .setOtherInfo(getOther())
                         .setMessage(msg)
                         .raise();
                 return;
@@ -187,5 +183,57 @@ public class BufferOverflowScanRule extends AbstractAppParamPlugin {
             sb1.append((char) character);
         }
         return sb1.toString();
+    }
+
+    private AlertBuilder createAlert(String param, String attack) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setParam(param)
+                .setAttack(attack)
+                .setEvidence(CONNECTION_CLOSED)
+                .setOtherInfo(getOther());
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        String exampleAttack =
+                "KhZKxdtfqYFjhxVQJtLkrbwCGcNZniIAVZxUYquyOOCeD"
+                        + "MKpOdlhOJwacfgaykjOArmgJyGyPqfUvAVjYONicaZiRlhVDhmPgZQsXEn"
+                        + "fqguyqWxVxThMavkfVqUtPMAwuFNafNuMsjmkpYqUsWHepaWkgONwoRLdB"
+                        + "nyYDEfhyDIqcuAbTuPKmexjoTvSYLnmbexwaJOiuacXEBnNTdWhAHMtQyR"
+                        + "AeqsNYJoQQBTPoBUUTQEulPZLcQfaGvDxWUaRXTFGkuxHCGuujSofMQGZJ"
+                        + "JPZwEAVrZqhrZjasmtdodpoVaOnIbhAlANAdRqBSCjSsJmUhNkXbIcTtWW"
+                        + "gBVRBGUPaujPPdZAGLbBkjvUpONUeENlcNKYRtHCInMVJycQBQQFNAOaYW"
+                        + "dacABgwYMSLZMwdRRmhkaPQHnksukNnyntncYqKjMTXqfHvWOTKUngiHaG"
+                        + "qOxnZmYknJOaaqkQEWWWlGNxgNFfWmQTYOsqiOrKTLrBCuNYCssbWaZKVR"
+                        + "mPwRVlLohCHKIZuBSArhBcgiAuJdqMsMAqgqMtmpTrAadBPhIraDqSLfaA"
+                        + "ZIpIgmRTuNjYSSHnYuWMnhOOFjIAfjJgCqXZEiwZZxCuDYvDaFveGklnVW"
+                        + "nhGLZeORZeyhHLpVUBuiLxZIcZlNcCEGVUtMHtbvSydGwoYfGOdWRJWHhF"
+                        + "CstDOsNlwbOegSaPpkjoZIvoFlgGfYBrbBrqtvrGYtFSsZukZZBmsmBuJE"
+                        + "HQEowUUZIGQOWpGGJuXVTjaouJJsYLXQXaJQNQKcAJwmljYXKJvhnRVtLx"
+                        + "aUVxsPYfpNTpcbNmHAuRcBqYcOdrKvtrrFuLBNgRpQfSMnwWjAAxrFmLTF"
+                        + "TwuaDSoZJEbwBfQxqoqwPAXVIoEYGGwJEHQGAiZaraXEDFrFSmDfWyiYfe"
+                        + "PQjBMoquZAOlaAKogmBghDTxPHGLVdbLXkQWTQcFcbLthOjdlZPirWgAJT"
+                        + "iFBeEBYnOXxxtINdEBsUkvLqMdGkNUoHRJUfjbyGUDLitdIEhwVBCJVLAg"
+                        + "kDtRiMVgXNZaQlloKxTqiXRIePCQcPqUPrxwPuGgyhFVTrxqQhwKHrkuvP"
+                        + "rLJpJfjpNkTCijONqBhjTJyuZVBwEBNCcYSsZCgsvRFSRNJMwJOwfGEtMi"
+                        + "MRNutSUnBvhXwgTXEgskwbhEKRnqITuLQvwNhIdRNuIxRHqoLgsqjIilQj"
+                        + "TPKMVGbcdefocCDKjFtWgOLHaeGVNNFYsElkyTWYHsmCygvVDXIgdeQWnA"
+                        + "HGyMKWTWRJBxISToIYrmejvTMCAEmfjgixKJniVdyGJceGqejcPyGLKBlE"
+                        + "cewqRCBvqfVfauIyGGThxLymHoBbDHnmWjunyiQgConaRflHQggNNyGLpy"
+                        + "cssLMPOOArePQoepIZWPeDnfKtbmKTtWRQdBOaAeDRBHhljwjLkJgZHNMm"
+                        + "wANJXFOhesscPQBxvSRJSSStAUwrsBNryfdHAopbsXBEVudMgvEttYhwSY"
+                        + "fYOoeDPVgoQwhVuwKKTRhKsCPAPMKlepTsxeVOOddTOOXXCsvxykRZBUBE"
+                        + "QYnOZSEwXHAqnpXwpgVKUbYWvxUiqiAkSFPZcgDcvIGAgfWPljFBdbQnnA"
+                        + "SoodkjLKZFyxCxCquXNrmDLBeagJesKlCcgqhVSHfFxtEVxcYOvHDGjgkJ"
+                        + "cjMSvIHvOKnLtZYOoPidykjKnQuGQlxwgfLAFGkNHDDSqLwjaeyBdeUdox"
+                        + "SixIuQLODSNeAYWeGmYXHSJKKlhKDUUwbeuvkcpnclbxLwkQxVIWwvfdju"
+                        + "hpkvltHIFfMeEZrHAukjoLCaBrZmAVXLoMqdGMCNSsIHxhfCucDxtgkXPa"
+                        + "OYucjPIvktsPXigaYKXTnVyhpcDPBxenlpxNnZBNRnRedTlqrxgmhPFkbd"
+                        + "CMwyrZTCOIlvgUMgbWEdEuWgKBThtFtodQCULnQIUfCVMqtJmHHAgMcABh"
+                        + "ZnobhoGghWCAxZScwStcbYoNwsbmGhQgcvmirRtwctsvIrUHruskOFPwZx"
+                        + "qErTmRVWAJqQYHnnudhogyNPBpTgVrjUMwxxWeALruRrjCTWsYTaoljKOx"
+                        + "cbeutTuQHsfFirXBfiiedvrBd";
+        return List.of((createAlert("param", exampleAttack).build()));
     }
 }

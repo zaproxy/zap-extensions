@@ -4,7 +4,14 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119 & 7100).
+    - Buffer Overflow
+    - Cloud Metadata
+    - Code Injection
+    - Path Traversal
+    - Remote File Include
+- The Path Traversal scan rule no longer populates the Other Info field with check information, as the Alert Reference now provides that detail.
 
 ## [51] - 2023-01-03
 ### Changed
