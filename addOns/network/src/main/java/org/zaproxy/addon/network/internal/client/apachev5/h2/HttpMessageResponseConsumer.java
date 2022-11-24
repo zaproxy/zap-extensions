@@ -37,6 +37,8 @@ public class HttpMessageResponseConsumer
 
     private static final Logger LOGGER = LogManager.getLogger(HttpMessageResponseConsumer.class);
 
+    private static final byte[] EMPTY_BODY = {};
+
     private HttpMessage message;
 
     public HttpMessageResponseConsumer(HttpMessage message) {
@@ -63,7 +65,7 @@ public class HttpMessageResponseConsumer
         for (Header headerField : response.getHeaders()) {
             header.addHeader(headerField.getName(), headerField.getValue());
         }
-        message.setResponseBody(entity);
+        message.setResponseBody(entity == null ? EMPTY_BODY : entity);
         return message;
     }
 }
