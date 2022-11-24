@@ -21,7 +21,9 @@ package org.zaproxy.addon.network.internal.server.http;
 
 import io.netty.channel.ChannelHandlerContext;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.network.internal.handlers.LegacySocketAdapter;
@@ -54,7 +56,8 @@ public class MainProxyHandler extends MainServerHandler {
     @Override
     @SuppressWarnings("deprecation")
     protected boolean postWriteResponse(ChannelHandlerContext ctx, HttpMessage msg) {
-        if (msg.getResponseHeader().getStatusCode() != 101 && !msg.isEventStream()) {
+        if (Boolean.TRUE.equals(getProperties(msg).get("zap.h2"))
+                || msg.getResponseHeader().getStatusCode() != 101 && !msg.isEventStream()) {
             return false;
         }
 
@@ -78,5 +81,14 @@ public class MainProxyHandler extends MainServerHandler {
         // No add-on to process the data.
         close(ctx);
         return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> getProperties(HttpMessage message) {
+        Object userObject = message.getUserObject();
+        if (!(userObject instanceof Map)) {
+            return Collections.emptyMap();
+        }
+        return (Map<String, Object>) userObject;
     }
 }

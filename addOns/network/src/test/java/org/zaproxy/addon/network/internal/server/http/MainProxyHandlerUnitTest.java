@@ -91,6 +91,16 @@ class MainProxyHandlerUnitTest {
     }
 
     @Test
+    void shouldNotSkipIfHttp2() {
+        // Given
+        given(msg.getUserObject()).willReturn(Collections.singletonMap("zap.h2", Boolean.TRUE));
+        // When
+        boolean skip = handler.postWriteResponse(ctx, msg);
+        // Then
+        assertThat(skip, is(equalTo(false)));
+    }
+
+    @Test
     void shouldNotSkipIfNotUpgrade() {
         // Given
         given(responseHeader.getStatusCode()).willReturn(200);
