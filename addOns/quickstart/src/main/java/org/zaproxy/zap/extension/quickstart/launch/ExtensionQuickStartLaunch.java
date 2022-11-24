@@ -122,6 +122,7 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
     public void unload() {
         if (hasView()) {
             this.getExtQuickStart().setLaunchPanel(null);
+            launchPanel.unload();
         }
     }
 

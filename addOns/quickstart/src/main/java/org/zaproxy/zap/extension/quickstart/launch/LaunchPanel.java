@@ -438,4 +438,8 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
             this.canLaunch = canLaunchNow;
         }
     }
+
+    void unload() {
+        ZAP.getEventBus().unregisterConsumer(this);
+    }
 }
