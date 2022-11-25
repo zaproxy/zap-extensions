@@ -142,7 +142,7 @@ public class InboundHttp2ToHttpAdapter extends Http2EventAdapter {
         if (msg == null) {
             msg = newMessage(server, stream, headers);
         } else {
-            Http2MessageHelper.copyHeaders(stream.id(), headers, msg, server);
+            Http2MessageHelper.addTrailerHeaders(stream.id(), headers, msg, server);
         }
 
         if (mustSendImmediately(server, msg)) {

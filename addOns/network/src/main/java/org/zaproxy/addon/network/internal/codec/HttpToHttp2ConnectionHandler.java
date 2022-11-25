@@ -204,8 +204,28 @@ public class HttpToHttp2ConnectionHandler extends Http2ConnectionHandler {
 
             if (!endStream) {
                 ByteBuf content = Unpooled.wrappedBuffer(body.getBytes());
+                Http2Headers trailers =
+                        Http2MessageHelper.createTrailerHttp2Headers(msg, encodeRequest);
                 encoder.writeData(
-                        ctx, currentStreamId, content, 0, true, promiseAggregator.newPromise());
+                        ctx,
+                        currentStreamId,
+                        content,
+                        0,
+                        trailers.isEmpty(),
+                        promiseAggregator.newPromise());
+
+                if (!trailers.isEmpty()) {
+                    encoder.writeHeaders(
+                            ctx,
+                            currentStreamId,
+                            trailers,
+                            dependencyId,
+                            weight,
+                            false,
+                            0,
+                            true,
+                            promiseAggregator.newPromise());
+                }
             }
         } catch (Throwable t) {
             onError(ctx, true, t);

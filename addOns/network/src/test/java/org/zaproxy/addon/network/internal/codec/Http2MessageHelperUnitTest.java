@@ -30,6 +30,7 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zaproxy.addon.network.internal.codec.Http2MessageHelper.copyHeaders;
 import static org.zaproxy.addon.network.internal.codec.Http2MessageHelper.createHttp2Headers;
+import static org.zaproxy.addon.network.internal.codec.Http2MessageHelper.createTrailerHttp2Headers;
 import static org.zaproxy.addon.network.internal.codec.Http2MessageHelper.setHttpRequest;
 import static org.zaproxy.addon.network.internal.codec.Http2MessageHelper.setHttpResponse;
 
@@ -39,7 +40,9 @@ import io.netty.handler.codec.http2.Http2Exception;
 import io.netty.handler.codec.http2.Http2Headers;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
@@ -399,7 +402,6 @@ class Http2MessageHelperUnitTest {
         headers.add("header-a", "value-a");
         headers.add("Transfer-Encoding", "chunked");
         headers.add("header-b", "value-b");
-        headers.add("Trailer", "TE");
         // When
         copyHeaders(STREAM_ID, headers, msg, true);
         // Then
@@ -425,7 +427,6 @@ class Http2MessageHelperUnitTest {
         headers.add("header-a", "value-a");
         headers.add("Transfer-Encoding", "chunked");
         headers.add("header-b", "value-b");
-        headers.add("Trailer", "TE");
         // When
         copyHeaders(STREAM_ID, headers, msg, false);
         // Then
@@ -550,6 +551,34 @@ class Http2MessageHelperUnitTest {
         assertThat(
                 toHeaderFields(headers),
                 contains(header(":status", status), header("a", "1"), header("b", "2")));
+    }
+
+    @Test
+    void shouldCreateHttp2HeadersFromRequestTrailers() throws Exception {
+        // Given
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(
+                "zap.h2.trailers.req",
+                List.of(new HttpHeaderField("a", "1"), new HttpHeaderField("b", "2")));
+        msg.setUserObject(properties);
+        // When
+        headers = createTrailerHttp2Headers(msg, true);
+        // Then
+        assertThat(toHeaderFields(headers), contains(header("a", "1"), header("b", "2")));
+    }
+
+    @Test
+    void shouldCreateHttp2HeadersFromResponseTrailers() throws Exception {
+        // Given
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(
+                "zap.h2.trailers.resp",
+                List.of(new HttpHeaderField("a", "1"), new HttpHeaderField("b", "2")));
+        msg.setUserObject(properties);
+        // When
+        headers = createTrailerHttp2Headers(msg, false);
+        // Then
+        assertThat(toHeaderFields(headers), contains(header("a", "1"), header("b", "2")));
     }
 
     private void assertRequestHeader(String requestLine, String... headerFields) {
