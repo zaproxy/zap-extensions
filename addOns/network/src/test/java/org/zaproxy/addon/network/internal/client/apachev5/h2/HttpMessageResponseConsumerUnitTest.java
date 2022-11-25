@@ -21,16 +21,23 @@ package org.zaproxy.addon.network.internal.client.apachev5.h2;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import org.apache.hc.core5.http.Header;
 import org.apache.hc.core5.http.HttpResponse;
+import org.apache.hc.core5.http.message.BasicHeader;
 import org.apache.hc.core5.http.message.BasicHttpResponse;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.network.HttpHeader;
+import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 
 /** Unit test for {@link HttpMessageResponseConsumer}. */
@@ -72,6 +79,35 @@ class HttpMessageResponseConsumerUnitTest {
         // Then
         String expectedBody = body == null ? "" : body;
         assertThat(msg.getResponseBody().toString(), is(equalTo(expectedBody)));
+    }
+
+    @Test
+    void shouldSetTrailersIntoMessage() throws Exception {
+        // Given
+        List<? extends Header> trailers =
+                List.of(new BasicHeader("a", "1"), new BasicHeader("b", "2"));
+        // When
+        consumer.streamEnd(trailers);
+        // Then
+        assertThat(
+                msg.getUserObject(),
+                is(
+                        equalTo(
+                                Map.of(
+                                        "zap.h2.trailers.resp",
+                                        List.of(
+                                                new HttpHeaderField("a", "1"),
+                                                new HttpHeaderField("b", "2"))))));
+    }
+
+    @Test
+    void shouldNotSetTrailersIntoMessageIfNone() throws Exception {
+        // Given
+        List<? extends Header> trailers = null;
+        // When
+        consumer.streamEnd(trailers);
+        // Then
+        assertThat(msg.getUserObject(), is(nullValue()));
     }
 
     private void assertResponseHeader(String statusLine, String... headerFields) {

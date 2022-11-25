@@ -199,7 +199,7 @@ class InboundHttp2ToHttpAdapterUnitTest {
         // When
         adapter.onHeadersRead(ctx, streamId, headers, padding, endOfStream);
         // Then
-        helper.verify(() -> Http2MessageHelper.copyHeaders(streamId, headers, msg, server));
+        helper.verify(() -> Http2MessageHelper.addTrailerHeaders(streamId, headers, msg, server));
         verifyNoInteractions(ctx);
     }
 
@@ -272,7 +272,7 @@ class InboundHttp2ToHttpAdapterUnitTest {
         // When
         adapter.onHeadersRead(ctx, streamId, headers, padding, endOfStream);
         // Then
-        helper.verify(() -> Http2MessageHelper.copyHeaders(streamId, headers, msg, server));
+        helper.verify(() -> Http2MessageHelper.addTrailerHeaders(streamId, headers, msg, server));
         verifyNoInteractions(ctx);
     }
 
@@ -318,7 +318,7 @@ class InboundHttp2ToHttpAdapterUnitTest {
         adapter.onHeadersRead(
                 ctx, streamId, headers, streamDependency, weight, false, padding, endOfStream);
         // Then
-        helper.verify(() -> Http2MessageHelper.copyHeaders(streamId, headers, msg, server));
+        helper.verify(() -> Http2MessageHelper.addTrailerHeaders(streamId, headers, msg, server));
         verifyNoInteractions(ctx);
     }
 
@@ -396,7 +396,7 @@ class InboundHttp2ToHttpAdapterUnitTest {
         adapter.onHeadersRead(
                 ctx, streamId, headers, streamDependency, weight, false, padding, endOfStream);
         // Then
-        helper.verify(() -> Http2MessageHelper.copyHeaders(streamId, headers, msg, server));
+        helper.verify(() -> Http2MessageHelper.addTrailerHeaders(streamId, headers, msg, server));
         verifyNoInteractions(ctx);
     }
 

@@ -35,7 +35,7 @@ import io.netty.util.NettyRuntime;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -48,6 +48,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpBody;
 import org.parosproxy.paros.network.HttpHeader;
+import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.network.internal.server.BaseServer;
@@ -188,6 +189,41 @@ class HttpToHttp2ConnectionHandlerUnitTest {
     }
 
     @Test
+    void shouldWriteRequestWithBodyAndTrailers() throws Exception {
+        // Given
+        int port = server.start(Server.ANY_PORT);
+        createRequestHeader(
+                "METHOD http://127.0.0.1:" + port + "/path?a=b HTTP/2",
+                "header-a: 1",
+                "header-b: 2");
+        msg.setRequestBody("Body Request");
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(
+                "zap.h2.trailers.req",
+                List.of(new HttpHeaderField("a", "1"), new HttpHeaderField("b", "2")));
+        msg.setUserObject(properties);
+        // When
+        client.send(port, msg);
+        // Then
+        waitForResponse();
+        assertThat(requests, hasSize(1));
+        HttpMessage receivedRequest = requests.get(0);
+        assertRequestHeader(
+                receivedRequest,
+                "METHOD http://127.0.0.1:" + port + "/path?a=b HTTP/2",
+                "header-a: 1",
+                "header-b: 2",
+                "content-length: 12");
+        assertRequestBody(receivedRequest, "Body Request");
+        assertMessageProperties(receivedRequest, 3);
+        assertProperty(
+                receivedRequest,
+                hasEntry(
+                        "zap.h2.trailers.req",
+                        List.of(new HttpHeaderField("a", "1"), new HttpHeaderField("b", "2"))));
+    }
+
+    @Test
     void shouldWriteRequestWithCustomStreamId() throws Exception {
         // Given
         int port = server.start(Server.ANY_PORT);
@@ -197,7 +233,9 @@ class HttpToHttp2ConnectionHandlerUnitTest {
                 "header-b: 2");
         msg.setRequestBody("Body Request");
         int streamId = 17;
-        msg.setUserObject(Collections.singletonMap("zap.h2.stream.id", streamId));
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("zap.h2.stream.id", streamId);
+        msg.setUserObject(properties);
         // When
         client.send(port, msg);
         // Then
@@ -258,6 +296,38 @@ class HttpToHttp2ConnectionHandlerUnitTest {
                 receivedResponse, "HTTP/2 200", "header-a: 1", "header-b: 2", "content-length: 13");
         assertResponseBody(receivedResponse, "Body Response");
         assertMessageProperties(receivedResponse, 3);
+    }
+
+    @Test
+    void shouldWriteResponseWithBodyAndTrailers() throws Exception {
+        // Given
+        int port = server.start(Server.ANY_PORT);
+        createRequestHeader("GET http://127.0.0.1:" + port + "/ HTTP/2");
+        responseProducer =
+                msg -> {
+                    msg.setResponseHeader("HTTP/2 200\r\nheader-a: 1\r\nheader-b: 2\r\n");
+                    msg.setResponseBody("Body Response");
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> properties = (Map<String, Object>) msg.getUserObject();
+                    properties.put(
+                            "zap.h2.trailers.resp",
+                            List.of(new HttpHeaderField("a", "1"), new HttpHeaderField("b", "2")));
+                };
+        // When
+        client.send(port, msg);
+        // Then
+        waitForResponse();
+        assertThat(responses, hasSize(1));
+        HttpMessage receivedResponse = responses.get(0);
+        assertResponseHeader(
+                receivedResponse, "HTTP/2 200", "header-a: 1", "header-b: 2", "content-length: 13");
+        assertResponseBody(receivedResponse, "Body Response");
+        assertMessageProperties(receivedResponse, 3);
+        assertProperty(
+                receivedResponse,
+                hasEntry(
+                        "zap.h2.trailers.resp",
+                        List.of(new HttpHeaderField("a", "1"), new HttpHeaderField("b", "2"))));
     }
 
     @Test

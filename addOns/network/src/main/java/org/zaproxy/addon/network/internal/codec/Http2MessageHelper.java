@@ -28,8 +28,11 @@ import io.netty.handler.codec.http2.Http2Exception;
 import io.netty.handler.codec.http2.Http2Headers;
 import io.netty.util.AsciiString;
 import io.netty.util.internal.InternalThreadLocalMap;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import org.apache.commons.httpclient.URI;
@@ -157,7 +160,27 @@ public class Http2MessageHelper {
         }
 
         toHeader.setHeader(HttpHeader.TRANSFER_ENCODING, null);
-        toHeader.setHeader("Trailer", null);
+    }
+
+    public static void addTrailerHeaders(
+            int streamId, Http2Headers from, HttpMessage to, boolean toRequest)
+            throws Http2Exception {
+        List<HttpHeaderField> trailers = getTrailerHeaders(to, toRequest);
+
+        for (Entry<CharSequence, CharSequence> entry : from) {
+            trailers.add(
+                    new HttpHeaderField(entry.getKey().toString(), entry.getValue().toString()));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<HttpHeaderField> getTrailerHeaders(HttpMessage to, boolean request) {
+        String key = request ? "zap.h2.trailers.req" : "zap.h2.trailers.resp";
+        Map<String, Object> properties = (Map<String, Object>) to.getUserObject();
+        if (properties == null) {
+            properties = new HashMap<>();
+        }
+        return (List<HttpHeaderField>) properties.computeIfAbsent(key, k -> new ArrayList<>());
     }
 
     public static Http2Headers createHttp2Headers(String scheme, HttpHeader from) {
@@ -185,6 +208,13 @@ public class Http2MessageHelper {
 
         copyHeaders(headers, to);
 
+        return to;
+    }
+
+    public static Http2Headers createTrailerHttp2Headers(HttpMessage from, boolean request) {
+        List<HttpHeaderField> trailers = getTrailerHeaders(from, request);
+        Http2Headers to = new DefaultHttp2Headers(false, trailers.size());
+        copyHeaders(trailers, to);
         return to;
     }
 
