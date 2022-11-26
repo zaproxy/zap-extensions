@@ -38,6 +38,19 @@ class ModernAppDetectionScanRuleUnitTest extends PassiveScannerTest<ModernAppDet
     }
 
     @Test
+    void shouldNotRaiseAlertWithNonHtmlContentType() throws Exception {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        msg.setResponseHeader("HTTP/1.1 200\r\n" + "Content-Type: application/foo\r\n");
+        msg.setResponseBody("content that would normally raise <a> an alert");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(0));
+    }
+
+    @Test
     void shouldNotRaiseAlertWithBasicHtml() throws Exception {
         // Given
         HttpMessage msg = new HttpMessage();
@@ -55,6 +68,7 @@ class ModernAppDetectionScanRuleUnitTest extends PassiveScannerTest<ModernAppDet
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        msg.setResponseHeader("HTTP/1.1 200\r\n" + "Content-Type: text/html; charset=UTF-8\r\n");
         msg.setResponseBody("<html><head></head><body><a href=\"#\">Link</a></body></html>");
         // When
         scanHttpResponseReceive(msg);
@@ -68,6 +82,7 @@ class ModernAppDetectionScanRuleUnitTest extends PassiveScannerTest<ModernAppDet
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        msg.setResponseHeader("HTTP/1.1 200\r\n" + "Content-Type: text/html; charset=UTF-8\r\n");
         msg.setResponseBody("<html><head></head><body><a href=\"#blah\">Link</a></body></html>");
         // When
         scanHttpResponseReceive(msg);
@@ -80,6 +95,7 @@ class ModernAppDetectionScanRuleUnitTest extends PassiveScannerTest<ModernAppDet
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        msg.setResponseHeader("HTTP/1.1 200\r\n" + "Content-Type: text/html; charset=UTF-8\r\n");
         msg.setResponseBody(
                 "<html><head></head><body><a href=\"link\" target=\"_self\">Link</a></body></html>");
         // When
@@ -96,6 +112,7 @@ class ModernAppDetectionScanRuleUnitTest extends PassiveScannerTest<ModernAppDet
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        msg.setResponseHeader("HTTP/1.1 200\r\n" + "Content-Type: text/html; charset=UTF-8\r\n");
         msg.setResponseBody("<html><head></head><body><a href=\"\">Link</a></body></html>");
         // When
         scanHttpResponseReceive(msg);
@@ -109,6 +126,7 @@ class ModernAppDetectionScanRuleUnitTest extends PassiveScannerTest<ModernAppDet
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        msg.setResponseHeader("HTTP/1.1 200\r\n" + "Content-Type: text/html; charset=UTF-8\r\n");
         msg.setResponseBody(
                 "<html><head></head><body><script src=\"/script.js\"></script></body></html>");
         // When
@@ -123,6 +141,7 @@ class ModernAppDetectionScanRuleUnitTest extends PassiveScannerTest<ModernAppDet
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        msg.setResponseHeader("HTTP/1.1 200\r\n" + "Content-Type: text/html; charset=UTF-8\r\n");
         msg.setResponseBody(
                 "<html><head><script src=\"/script.js\"></script></head><body></body></html>");
         // When
@@ -137,6 +156,7 @@ class ModernAppDetectionScanRuleUnitTest extends PassiveScannerTest<ModernAppDet
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        msg.setResponseHeader("HTTP/1.1 200\r\n" + "Content-Type: text/html; charset=UTF-8\r\n");
         msg.setResponseBody(
                 "<html><head><script src=\"/script.js\"></script></head><body><a href=\"link\">link</a><noscript>You need to enable JavaScript to run this app.</noscript></body></html>");
         // When
