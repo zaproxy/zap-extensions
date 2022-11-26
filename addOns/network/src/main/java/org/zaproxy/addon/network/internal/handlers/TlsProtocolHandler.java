@@ -52,6 +52,8 @@ public class TlsProtocolHandler extends ByteToMessageDecoder {
     /** The name of the handler added to handle the SSL/TLS connection. */
     public static final String TLS_HANDLER_NAME = "tls";
 
+    private static final String HTTP2_PREFACE_HANDLER = "http2.preface";
+
     private static final int SSL_RECORD_HEADER_LENGTH = 5;
 
     private final String authority;
@@ -82,13 +84,8 @@ public class TlsProtocolHandler extends ByteToMessageDecoder {
     }
 
     @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        super.channelActive(ctx);
-
-        TlsConfig config = ctx.channel().attr(ChannelAttributes.TLS_CONFIG).get();
-        if (config != null && !config.isAlpnEnabled()) {
-            ctx.pipeline().addAfter(ctx.name(), "http2.preface", new Http2PrefaceHandler());
-        }
+    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+        ctx.pipeline().addAfter(ctx.name(), HTTP2_PREFACE_HANDLER, new Http2PrefaceHandler());
     }
 
     @Override
@@ -159,6 +156,8 @@ public class TlsProtocolHandler extends ByteToMessageDecoder {
                 return;
             }
             LOGGER.debug("Negotiated protocol: {}", protocol);
+
+            ctx.pipeline().remove(HTTP2_PREFACE_HANDLER);
 
             PipelineConfigurator configurator =
                     ctx.channel().attr(ChannelAttributes.PIPELINE_CONFIGURATOR).get();
