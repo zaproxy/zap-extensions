@@ -35,7 +35,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import io.netty.channel.Channel;
@@ -80,6 +79,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.zaproxy.addon.network.internal.ChannelAttributes;
 import org.zaproxy.addon.network.internal.TlsUtils;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateService;
@@ -99,6 +100,7 @@ class TlsProtocolHandlerUnitTest {
     private TextTestClient clientTls;
     private BaseServer server;
     private CountDownLatch serverChannelReady;
+    private CountDownLatch serverChannelException;
     private Channel serverChannel;
     private List<Object> messagesReceived;
     private TlsConfig tlsConfig;
@@ -215,6 +217,9 @@ class TlsProtocolHandlerUnitTest {
                             @Override
                             public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
                                     throws Exception {
+                                if (serverChannelException != null) {
+                                    serverChannelException.await(5, TimeUnit.SECONDS);
+                                }
                                 ctx.close();
                             }
                         });
@@ -234,31 +239,48 @@ class TlsProtocolHandlerUnitTest {
         }
     }
 
-    @Test
-    void shouldAddHttp2PrefaceHandlerIfNoAlpn() throws Exception {
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldAddHttp2PrefaceHandlerAlways(boolean alpnEnabled) throws Exception {
         // Given
         TlsProtocolHandler handler = new TlsProtocolHandler();
         ChannelHandlerContext ctx = mock(ChannelHandlerContext.class);
         ChannelPipeline pipeline = mock(ChannelPipeline.class);
-        withAlpnEnabled(ctx, pipeline, false);
+        withAlpnEnabled(ctx, pipeline, alpnEnabled);
         // When
-        handler.channelActive(ctx);
+        handler.handlerAdded(ctx);
         // Then
         verify(pipeline).addAfter(any(), eq("http2.preface"), any());
         verifyNoMoreInteractions(pipeline);
     }
 
     @Test
-    void shouldNotAddHttp2PrefaceHandlerIfAlpn() throws Exception {
+    void shouldRemoveHttp2PrefaceHandlerIfProtocolNegotiated() throws Exception {
         // Given
-        TlsProtocolHandler handler = new TlsProtocolHandler();
-        ChannelHandlerContext ctx = mock(ChannelHandlerContext.class);
-        ChannelPipeline pipeline = mock(ChannelPipeline.class);
-        withAlpnEnabled(ctx, pipeline, true);
+        int port = server.start(Server.ANY_PORT);
+        String protocol = "h0";
+        createClientTls(port, new AlpnTestHandler(), createAlpnConfig(protocol));
+        given(tlsConfig.isAlpnEnabled()).willReturn(true);
+        given(tlsConfig.getApplicationProtocols()).willReturn(List.of(protocol));
         // When
-        handler.channelActive(ctx);
+        clientTls.connect(port, "");
         // Then
-        verifyNoInteractions(pipeline);
+        assertThat(serverChannel.pipeline().get("http2.preface"), is(nullValue()));
+    }
+
+    @Test
+    void shouldNotRemoveHttp2PrefaceHandlerIfNoProtocolNegotiated() throws Exception {
+        // Given
+        int port = server.start(Server.ANY_PORT);
+        createClientTls(port, new AlpnTestHandler(), createAlpnConfig("h0"));
+        given(tlsConfig.isAlpnEnabled()).willReturn(true);
+        given(tlsConfig.getApplicationProtocols()).willReturn(List.of("different-protocol"));
+        serverChannelException = new CountDownLatch(1);
+        // When
+        assertThrows(SSLHandshakeException.class, () -> clientTls.connect(port, ""));
+        // Then
+        assertThat(serverChannel.pipeline().get("http2.preface"), is(notNullValue()));
+        serverChannelException.countDown();
     }
 
     @Test
