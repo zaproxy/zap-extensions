@@ -21,12 +21,14 @@ package org.zaproxy.addon.graphql;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import net.sf.json.JSONObject;
-import org.apache.commons.httpclient.URIException;
+import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
+import org.zaproxy.zap.extension.api.ApiOther;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
 
@@ -38,6 +40,9 @@ public class GraphQlApi extends ApiImplementor {
     private static final String PARAM_FILE = "file";
     private static final String PARAM_URL = "url";
     private static final String PARAM_ENDPOINT = "endurl";
+    private static final String OTHER_GRAPHIQL = "graphiql";
+
+    private static byte[] graphiqlHtml;
 
     public GraphQlApi() {
         this.addApiAction(
@@ -47,6 +52,8 @@ public class GraphQlApi extends ApiImplementor {
                         ACTION_IMPORT_URL,
                         new String[] {PARAM_ENDPOINT},
                         new String[] {PARAM_URL}));
+        this.addApiOthers(new ApiOther(OTHER_GRAPHIQL));
+        this.addApiShortcut(OTHER_GRAPHIQL);
     }
 
     /**
@@ -80,6 +87,42 @@ public class GraphQlApi extends ApiImplementor {
         return ApiResponseElement.OK;
     }
 
+    @Override
+    public HttpMessage handleShortcut(HttpMessage msg) throws ApiException {
+        if (msg.getRequestHeader().getURI().getEscapedPath().startsWith("/" + OTHER_GRAPHIQL)) {
+            return handleApiOther(msg, OTHER_GRAPHIQL, null);
+        }
+        throw new ApiException(
+                ApiException.Type.URL_NOT_FOUND, msg.getRequestHeader().getURI().toString());
+    }
+
+    @Override
+    public HttpMessage handleApiOther(HttpMessage msg, String name, JSONObject params)
+            throws ApiException {
+        if (!OTHER_GRAPHIQL.equals(name)) {
+            throw new ApiException(ApiException.Type.BAD_OTHER);
+        }
+        msg.setResponseBody(getGraphiqlHtml());
+        msg.getResponseHeader().setHeader("Content-Type", "text/html; charset=UTF-8");
+        return msg;
+    }
+
+    private static byte[] getGraphiqlHtml() throws ApiException {
+        if (graphiqlHtml != null) {
+            return graphiqlHtml;
+        }
+        try (InputStream in = GraphQlApi.class.getResourceAsStream("resources/graphiql.html")) {
+            if (in == null) {
+                throw new ApiException(
+                        ApiException.Type.INTERNAL_ERROR, "Unable to load GraphiQL.");
+            }
+            graphiqlHtml = in.readAllBytes();
+            return graphiqlHtml;
+        } catch (Exception e) {
+            throw new ApiException(ApiException.Type.INTERNAL_ERROR, "Unable to load GraphiQL", e);
+        }
+    }
+
     private void importFile(JSONObject params) throws ApiException {
         try {
             GraphQlParser parser =
@@ -88,8 +131,6 @@ public class GraphQlApi extends ApiImplementor {
                             HttpSender.MANUAL_REQUEST_INITIATOR,
                             true);
             parser.importFile(params.getString(PARAM_FILE));
-        } catch (URIException e) {
-            throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, e.getMessage());
         } catch (FileNotFoundException e) {
             throw new ApiException(ApiException.Type.DOES_NOT_EXIST, e.getMessage());
         } catch (IOException e) {

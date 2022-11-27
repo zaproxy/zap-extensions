@@ -1,0 +1,56 @@
+/**
+ * Stylesheet for custom GraphiQL elements added by ZAP.
+ */
+[data-reach-combobox]:not([data-state="idle"]) .graphiql-schema-settings-endpoint-input {
+    background: hsl(var(--color-base));
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0
+}
+.graphiql-schema-settings-endpoint-input {
+    align-items: center;
+    background-color: hsla(var(--color-neutral), var(--alpha-background-light));
+    border-radius: var(--border-radius-4);
+    display: flex;
+    padding: var(--px-8) var(--px-12)
+}
+.graphiql-schema-settings-endpoint-submit {
+    align-items: center;
+    background-color: hsla(var(--color-secondary),var(--alpha-background-heavy));
+    border-radius: var(--border-radius-4);
+    border-color: var(--color-tertiary) var(--color-secondary) var(--color-secondary) var(--color-tertiary);
+    display: flex;
+    padding: var(--px-8) var(--px-12)
+}
+.graphiql-schema-settings-endpoint-submit:hover {
+    background-color:hsla(var(--color-secondary),var(--alpha-background-light));
+}
+.graphiql-schema-settings-header {
+    display: flex;
+    justify-content: space-between;
+    position: relative
+}
+.graphiql-schema-settings-header:focus-within .graphiql-schema-settings-title {
+    visibility: hidden
+}
+.graphiql-schema-settings-header:focus-within .graphiql-doc-explorer-back:not(:focus) {
+    color: transparent
+}
+.graphiql-schema-settings-header-content {
+    display: flex;
+    flex-direction: column;
+    min-width: 0
+}
+a.graphiql-schema-settings-title {
+    visibility: unset
+}
+.graphiql-schema-settings-title {
+    font-weight: var(--font-weight-medium);
+    font-size: var(--font-size-h2);
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap
+}
+.graphiql-schema-settings-title:not(:first-child) {
+    font-size: var(--font-size-h3);
+    margin-top: var(--px-8)
+}

@@ -1,3 +1,5 @@
+import org.zaproxy.gradle.tasks.GenerateGraphiQlHtmlPage
+
 description = "Inspect and attack GraphQL endpoints."
 
 zapAddOn {
@@ -76,3 +78,10 @@ dependencies {
     testImplementation(parent!!.childProjects.get("spider")!!)
     testImplementation(project(":testutils"))
 }
+
+val resourcesDir = layout.buildDirectory.dir("resources/main/org/zaproxy/addon/graphql/resources/")
+val generateGraphiQlHtmlPage by tasks.registering(GenerateGraphiQlHtmlPage::class) {
+    inputs.dir("src/main/graphiql")
+    outputs.file(resourcesDir.get().file("graphiql.html"))
+}
+sourceSets["main"].output.dir(mapOf("builtBy" to generateGraphiQlHtmlPage), resourcesDir)

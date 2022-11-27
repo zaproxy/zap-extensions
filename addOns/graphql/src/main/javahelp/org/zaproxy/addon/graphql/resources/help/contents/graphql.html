@@ -56,6 +56,20 @@ The following operations are added to the API:
 
 The definitions will be imported synchronously and any warnings will be returned.
 
+<h3>GraphiQL IDE</h3>
+A customized version of the <a href="https://github.com/graphql/graphiql">GraphiQL IDE</a> can be accessed via the ZAP
+API Server.
+
+The GraphiQL IDE is made available at <code>/graphiql</code> as well as <code>OTHER/graphql/other/graphiql</code> by the
+add-on. Note that the IDE is served like any other endpoint, and a valid API key must be specified in order to access
+it. For example,
+
+<code>http://zap/graphiql/?apikey=kg81tm90636s0q1s86qckr8ckp</code>
+
+When the IDE is used in a proxied browser, all queries made to the target endpoint are populated in the sites tree.
+GraphiQL supports various features like syntax highlighting, query autocompletion, etc. which may be useful when testing
+endpoints manually.
+
 <H2>Command Line</H2>
 The following Command Line options are added:
 <ul>
@@ -72,11 +86,6 @@ The definitions will be imported synchronously and any warnings will be displaye
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td><a href="options.html">GraphQL Options</a></td>
         <td>for information about the optional parameters.</td>
-    </tr>
-    <tr>
-        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-        <td><a href="script.html">GraphQL Script</a></td>
-        <td>for information about the bundled script.</td>
     </tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
