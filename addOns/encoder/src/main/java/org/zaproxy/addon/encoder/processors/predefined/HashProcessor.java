@@ -21,6 +21,9 @@ package org.zaproxy.addon.encoder.processors.predefined;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import org.parosproxy.paros.control.Control;
+import org.zaproxy.addon.encoder.EncodeDecodeOptions;
+import org.zaproxy.addon.encoder.ExtensionEncoder;
 
 public class HashProcessor extends DefaultEncodeDecodeProcessor {
 
@@ -32,7 +35,13 @@ public class HashProcessor extends DefaultEncodeDecodeProcessor {
 
     @Override
     protected String processInternal(String value) throws NoSuchAlgorithmException {
-        return HexStringEncoder.getHexString(getHash(value.getBytes()));
+        EncodeDecodeOptions encDecOpts =
+                Control.getSingleton()
+                        .getExtensionLoader()
+                        .getExtension(ExtensionEncoder.class)
+                        .getOptions();
+        String output = HexStringEncoder.getHexString(getHash(value.getBytes()));
+        return encDecOpts.isHashersLowerCase() ? output.toLowerCase() : output;
     }
 
     private byte[] getHash(byte[] buf) throws NoSuchAlgorithmException {

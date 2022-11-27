@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Show help and options buttons in the main dialog.
 - The Base64 decoder now uses a Mime decoder and handles line wrapped input.
 
+### Added
+- Add an option which controls whether or not Hash output panels use full caps or lower case (Issue 7503).
+
 ## [0.7.0] - 2022-10-27
 ### Changed
 - Maintenance changes.
