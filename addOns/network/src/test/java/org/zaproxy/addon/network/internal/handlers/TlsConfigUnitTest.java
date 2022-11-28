@@ -62,7 +62,7 @@ class TlsConfigUnitTest {
         TlsConfig tlsConfig = new TlsConfig();
         // Then
         assertThat(tlsConfig.getTlsProtocols(), hasItem(TLS_V1_2));
-        assertThat(tlsConfig.isAlpnEnabled(), is(equalTo(false)));
+        assertThat(tlsConfig.isAlpnEnabled(), is(equalTo(true)));
         assertThat(
                 tlsConfig.getApplicationProtocols(),
                 is(equalTo(getSupportedApplicationProtocols())));

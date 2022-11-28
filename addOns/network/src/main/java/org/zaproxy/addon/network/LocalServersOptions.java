@@ -447,7 +447,7 @@ public class LocalServersOptions extends VersionedAbstractParam {
                 serverConfig.setTlsProtocols(TlsUtils.getSupportedTlsProtocols());
             }
 
-            serverConfig.setAlpnEnabled(config.getBoolean(SERVER_ALPN_ENABLED, false));
+            serverConfig.setAlpnEnabled(config.getBoolean(SERVER_ALPN_ENABLED, true));
             protocols =
                     config.getList(SERVER_ALPN_PROTOCOLS + "." + SERVER_ALPN_PROTOCOL).stream()
                             .map(Object::toString)

@@ -154,7 +154,7 @@ class LocalServersOptionsUnitTest {
         assertThat(mainProxy.getPort(), is(equalTo(LocalServerConfig.DEFAULT_PORT)));
         assertThat(mainProxy.getMode(), is(equalTo(LocalServerConfig.ServerMode.API_AND_PROXY)));
         assertThat(mainProxy.getTlsProtocols(), is(equalTo(TlsUtils.getSupportedTlsProtocols())));
-        assertThat(mainProxy.isAlpnEnabled(), is(equalTo(false)));
+        assertThat(mainProxy.isAlpnEnabled(), is(equalTo(true)));
         assertThat(
                 mainProxy.getApplicationProtocols(),
                 is(equalTo(TlsUtils.getSupportedApplicationProtocols())));
@@ -305,7 +305,7 @@ class LocalServersOptionsUnitTest {
         assertThat(
                 config.getProperty(MAIN_PROXY_KEY + ".tlsProtocols.protocol(0)"),
                 is(notNullValue()));
-        assertThat(config.getProperty(MAIN_PROXY_KEY + ".alpn.enabled"), is(equalTo(false)));
+        assertThat(config.getProperty(MAIN_PROXY_KEY + ".alpn.enabled"), is(equalTo(true)));
         assertThat(
                 config.getProperty(MAIN_PROXY_KEY + ".alpn.protocols.protocol(0)"),
                 is(notNullValue()));
@@ -358,7 +358,7 @@ class LocalServersOptionsUnitTest {
         assertThat(config.getProperty(SERVER_KEY + ".api"), is(equalTo(api)));
         assertThat(
                 config.getProperty(SERVER_KEY + ".tlsProtocols.protocol(0)"), is(notNullValue()));
-        assertThat(config.getProperty(SERVER_KEY + ".alpn.enabled"), is(equalTo(false)));
+        assertThat(config.getProperty(SERVER_KEY + ".alpn.enabled"), is(equalTo(true)));
         assertThat(
                 config.getProperty(SERVER_KEY + ".alpn.protocols.protocol(0)"), is(notNullValue()));
         assertThat(config.getProperty(SERVER_KEY + ".behindNat"), is(equalTo(behindNat)));
@@ -585,7 +585,7 @@ class LocalServersOptionsUnitTest {
                 true,
                 true,
                 true,
-                false,
+                true,
                 DEFAULT_APPLICATION_PROTOCOLS);
     }
 
@@ -613,7 +613,7 @@ class LocalServersOptionsUnitTest {
                 true,
                 true,
                 true,
-                false,
+                true,
                 DEFAULT_APPLICATION_PROTOCOLS);
     }
 
@@ -831,7 +831,7 @@ class LocalServersOptionsUnitTest {
                 true,
                 true,
                 true,
-                false,
+                true,
                 DEFAULT_APPLICATION_PROTOCOLS);
     }
 
@@ -863,7 +863,7 @@ class LocalServersOptionsUnitTest {
                 true,
                 true,
                 true,
-                false,
+                true,
                 DEFAULT_APPLICATION_PROTOCOLS);
     }
 
@@ -907,7 +907,7 @@ class LocalServersOptionsUnitTest {
                 true,
                 true,
                 true,
-                false,
+                true,
                 DEFAULT_APPLICATION_PROTOCOLS);
     }
 
@@ -1485,7 +1485,7 @@ class LocalServersOptionsUnitTest {
                 false,
                 false,
                 true,
-                false,
+                true,
                 DEFAULT_APPLICATION_PROTOCOLS);
         assertThat(config.getProperty("proxy.ip"), is(nullValue()));
     }
@@ -1506,7 +1506,7 @@ class LocalServersOptionsUnitTest {
                 true,
                 true,
                 true,
-                false,
+                true,
                 DEFAULT_APPLICATION_PROTOCOLS);
         assertThat(config.getProperty("proxy.port"), is(nullValue()));
     }
@@ -1573,7 +1573,7 @@ class LocalServersOptionsUnitTest {
                 true,
                 true,
                 true,
-                false,
+                true,
                 DEFAULT_APPLICATION_PROTOCOLS);
         assertServerFields(
                 options.getServers().get(1),
@@ -1584,7 +1584,7 @@ class LocalServersOptionsUnitTest {
                 false,
                 false,
                 false,
-                false,
+                true,
                 DEFAULT_APPLICATION_PROTOCOLS);
         assertThat(config.getProperty("proxies.confirmRemoveProxy"), is(nullValue()));
         assertThat(config.getProperty("proxies.all"), is(nullValue()));

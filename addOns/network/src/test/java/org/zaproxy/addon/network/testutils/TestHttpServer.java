@@ -32,7 +32,10 @@ import java.util.Collections;
 import java.util.List;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.network.internal.ChannelAttributes;
+import org.zaproxy.addon.network.internal.TlsUtils;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateService;
+import org.zaproxy.addon.network.internal.handlers.TlsConfig;
 import org.zaproxy.addon.network.internal.server.http.HttpServer;
 import org.zaproxy.addon.network.internal.server.http.MainServerHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
@@ -43,6 +46,11 @@ public class TestHttpServer extends HttpServer {
 
     private static final ServerCertificateService CERTIFICATE_SERVICE =
             TestServerCertificateService.createInstance();
+    private static final TlsConfig DEFAULT_TLS_CONFIG =
+            new TlsConfig(
+                    TlsUtils.getSupportedTlsProtocols(),
+                    false,
+                    TlsUtils.getSupportedApplicationProtocols());
 
     private final List<HttpMessage> receivedMessages;
     private HttpMessageHandler handler;
@@ -65,6 +73,8 @@ public class TestHttpServer extends HttpServer {
     @Override
     protected void initChannel(SocketChannel ch) {
         super.initChannel(ch);
+
+        ch.attr(ChannelAttributes.TLS_CONFIG).set(DEFAULT_TLS_CONFIG);
 
         if (fixedLengthMessage != null) {
             ch.pipeline()
