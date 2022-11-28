@@ -34,11 +34,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
@@ -186,7 +186,7 @@ class SpringActuatorScanRuleUnitTest extends ActiveScannerTest<SpringActuatorSca
         String path = "";
         HttpMessage msg = getHttpMessage(path);
         msg.getRequestHeader().setMethod(HttpRequestHeader.POST);
-        msg.getRequestHeader().addHeader(HttpHeader.CONTENT_TYPE, ACTUATOR_CONTENT_TYPE);
+        msg.getRequestHeader().addHeader(HttpFieldsNames.CONTENT_TYPE, ACTUATOR_CONTENT_TYPE);
         msg.setRequestBody("field1=value1&field2=value2");
         rule.init(msg, parent);
 

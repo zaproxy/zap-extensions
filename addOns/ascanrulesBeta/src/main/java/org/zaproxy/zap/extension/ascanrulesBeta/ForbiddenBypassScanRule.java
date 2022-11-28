@@ -33,6 +33,7 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 
 /**
  * Active scan rule which attempts various 403 bypass techniques.
@@ -125,24 +126,25 @@ public class ForbiddenBypassScanRule extends AbstractAppPlugin {
     private boolean sendHeaderPayloads(String path, String host, String schema, URI uri)
             throws IOException {
         String[] headerPayloads = {
-            "X-Rewrite-URL: " + path,
-            "X-Original-URL: " + path,
-            "Referer: " + path,
-            "X-Custom-IP-Authorization: 127.0.0.1",
-            "X-Originating-IP: 127.0.0.1",
-            "X-Forwarded-For: 127.0.0.1",
-            "X-Remote-IP: 127.0.0.1",
-            "X-Client-IP: 127.0.0.1",
-            "X-Host: 127.0.0.1",
-            "X-Forwarded-Host: 127.0.0.1"
+            HttpFieldsNames.X_REWRITE_URL + ": " + path,
+            HttpFieldsNames.X_ORIGINAL_URL + ": " + path,
+            HttpFieldsNames.REFERER + ": " + path,
+            "x-custom-ip-authorization: 127.0.0.1",
+            "x-originating-ip: 127.0.0.1",
+            HttpFieldsNames.X_FORWARDED_FOR + ": 127.0.0.1",
+            "x-remote-ip: 127.0.0.1",
+            "x-client-ip: 127.0.0.1",
+            "x-host: 127.0.0.1",
+            "x-forwarded-host: 127.0.0.1"
         };
 
         for (String header : headerPayloads) {
             String tmpUri = schema + "://" + host;
 
-            if (header.contains("X-Rewrite-URL") || header.contains("Referer")) {
+            if (header.contains(HttpFieldsNames.X_REWRITE_URL)
+                    || header.contains(HttpFieldsNames.REFERER)) {
                 tmpUri = tmpUri + "/anything";
-            } else if (header.contains("X-Original-URL")) {
+            } else if (header.contains(HttpFieldsNames.X_ORIGINAL_URL)) {
                 tmpUri = tmpUri + "/";
             } else {
                 tmpUri = tmpUri + path;

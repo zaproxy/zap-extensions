@@ -32,11 +32,11 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.core.scanner.Plugin;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.SourceSinkUtils;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.extension.ascanrules.httputils.HtmlContext;
 import org.zaproxy.zap.extension.ascanrules.httputils.HtmlContextAnalyser;
 import org.zaproxy.zap.model.Vulnerabilities;
@@ -642,7 +642,9 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
                                                 if (StringUtils.containsIgnoreCase(
                                                         ctx.getMsg()
                                                                 .getResponseHeader()
-                                                                .getHeader(HttpHeader.CONTENT_TYPE),
+                                                                .getHeader(
+                                                                        HttpFieldsNames
+                                                                                .CONTENT_TYPE),
                                                         "json")) {
                                                     newAlert()
                                                             .setRisk(Alert.RISK_LOW)

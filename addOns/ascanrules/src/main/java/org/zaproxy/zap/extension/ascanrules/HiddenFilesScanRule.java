@@ -41,12 +41,12 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 
 /**
  * Active scan rule which checks whether various URL paths are exposed.
@@ -172,7 +172,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
                             generatePath(baseUri.getPath(), file.getPath()));
             testMsg.getRequestHeader().setURI(testUri);
             testMsg.getRequestHeader().setMethod(HttpRequestHeader.GET);
-            testMsg.getRequestHeader().setHeader(HttpHeader.CONTENT_TYPE, null);
+            testMsg.getRequestHeader().setHeader(HttpFieldsNames.CONTENT_TYPE, null);
             testMsg.setRequestBody("");
             sendAndReceive(testMsg, false);
             return testMsg;

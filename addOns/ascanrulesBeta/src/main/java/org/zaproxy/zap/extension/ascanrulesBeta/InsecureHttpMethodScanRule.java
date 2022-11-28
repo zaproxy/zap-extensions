@@ -46,12 +46,12 @@ import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HtmlParameter;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
@@ -163,8 +163,8 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
 
             sendAndReceive(optionsmsg, false); // do not follow redirects
 
-            String allowedmethods = getNonNullHeader(optionsmsg, HttpHeader.METHODS_ALLOW);
-            String publicmethods = getNonNullHeader(optionsmsg, HttpHeader.METHODS_PUBLIC);
+            String allowedmethods = getNonNullHeader(optionsmsg, HttpFieldsNames.ALLOW);
+            String publicmethods = getNonNullHeader(optionsmsg, HttpFieldsNames.PUBLIC);
 
             /*
              * //DEBUG only, to test the CONNECT method against a Squid

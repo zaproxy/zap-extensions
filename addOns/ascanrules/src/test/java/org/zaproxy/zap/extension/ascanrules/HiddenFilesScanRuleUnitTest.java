@@ -46,11 +46,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.extension.ascanrules.HiddenFilesScanRule.HiddenFile;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.testutils.StaticContentServerHandler;
@@ -112,7 +112,7 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
         HttpMessage msg = getHttpMessage(path);
         msg.getRequestHeader().setMethod(HttpRequestHeader.POST);
         msg.getRequestHeader()
-                .addHeader(HttpHeader.CONTENT_TYPE, "application/x-www-form-urlencoded");
+                .addHeader(HttpFieldsNames.CONTENT_TYPE, "application/x-www-form-urlencoded");
         msg.setRequestBody("field1=value1&field2=value2");
         rule.init(msg, parent);
         HiddenFilesScanRule.addTestPayload(
@@ -129,7 +129,8 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
         // Then
         assertThat(httpMessagesSent, hasSize(greaterThanOrEqualTo(1)));
         assertEquals(HttpRequestHeader.GET, httpMessagesSent.get(0).getRequestHeader().getMethod());
-        assertNull(httpMessagesSent.get(0).getRequestHeader().getHeader(HttpHeader.CONTENT_TYPE));
+        assertNull(
+                httpMessagesSent.get(0).getRequestHeader().getHeader(HttpFieldsNames.CONTENT_TYPE));
         assertEquals(0, httpMessagesSent.get(0).getRequestBody().length());
     }
 
@@ -774,7 +775,7 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
             Response resp =
                     NanoHTTPD.newFixedLengthResponse(
                             Response.Status.REDIRECT, "text/html", REDIRECT_RESPONSE);
-            resp.addHeader(HttpHeader.LOCATION, NOT_FOUND_PATH);
+            resp.addHeader(HttpFieldsNames.LOCATION, NOT_FOUND_PATH);
             return resp;
         }
     }

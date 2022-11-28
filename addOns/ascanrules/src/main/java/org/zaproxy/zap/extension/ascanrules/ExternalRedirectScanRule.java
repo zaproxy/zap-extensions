@@ -39,6 +39,7 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
@@ -348,7 +349,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
         // http://en.wikipedia.org/wiki/HTTP_location
         // HTTP/1.1 302 Found
         // Location: http://www.example.org/index.php
-        String value = msg.getResponseHeader().getHeader(HttpHeader.LOCATION);
+        String value = msg.getResponseHeader().getHeader(HttpFieldsNames.LOCATION);
         if (checkPayload(value, payload)) {
             return REDIRECT_LOCATION_HEADER;
         }
@@ -357,7 +358,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
         // http://en.wikipedia.org/wiki/URL_redirection
         // HTTP/1.1 200 ok
         // Refresh: 0; url=http://www.example.com/
-        value = msg.getResponseHeader().getHeader("Refresh");
+        value = msg.getResponseHeader().getHeader(HttpFieldsNames.REFRESH);
         if (value != null) {
             // Usually redirect content is configured with a delay
             // so extract the url component
@@ -380,7 +381,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
             value = el.getAttributeValue("http-equiv");
 
             if (value != null) {
-                if (value.equalsIgnoreCase(HttpHeader.LOCATION)) {
+                if (value.equalsIgnoreCase(HttpFieldsNames.LOCATION)) {
                     // Get the content attribute value
                     value = getLocationUrl(el.getAttributeValue("content"));
 

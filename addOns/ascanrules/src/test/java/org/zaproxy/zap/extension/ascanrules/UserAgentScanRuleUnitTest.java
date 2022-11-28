@@ -27,7 +27,6 @@ import static org.hamcrest.Matchers.is;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.network.HttpHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 /** Unit test for {@link UserAgentScanRule}. */
@@ -62,7 +61,7 @@ class UserAgentScanRuleUnitTest extends ActiveScannerTest<UserAgentScanRule> {
         assertThat(alert.getTags(), hasKey(CommonAlertTag.CUSTOM_PAYLOADS.getTag()));
         assertThat(alert.getRisk(), is(equalTo(Alert.RISK_INFO)));
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
-        assertThat(alert.getParam(), is(equalTo("Header " + HttpHeader.USER_AGENT)));
+        assertThat(alert.getParam(), is(equalTo("Header User-Agent")));
         assertThat(alert.getAttack(), is(equalTo("ExampleBot 1.1")));
     }
 }

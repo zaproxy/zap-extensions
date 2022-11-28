@@ -43,6 +43,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.addon.network.common.ZapSocketTimeoutException;
 
 /**
@@ -242,12 +243,14 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
             traceRequestHeader.setURI(traceURI);
             traceRequestHeader.setVersion(HttpRequestHeader.HTTP11); // or 1.1?
             traceRequestHeader.setSecure(traceRequestHeader.isSecure());
-            traceRequestHeader.setHeader("Max-Forwards", String.valueOf(MAX_FORWARDS_MAXIMUM));
             traceRequestHeader.setHeader(
-                    "Cache-Control",
+                    HttpFieldsNames.MAX_FORWARDS, String.valueOf(MAX_FORWARDS_MAXIMUM));
+            traceRequestHeader.setHeader(
+                    HttpFieldsNames.CACHE_CONTROL,
                     "no-cache"); // we do not want cached content. we want content from the origin
             // server
-            traceRequestHeader.setHeader("Pragma", "no-cache"); // similarly, for HTTP/1.0
+            traceRequestHeader.setHeader(
+                    HttpFieldsNames.PRAGMA, "no-cache"); // similarly, for HTTP/1.0
 
             HttpMessage tracemsg = getNewMsg();
             tracemsg.setRequestHeader(traceRequestHeader);
@@ -433,16 +436,18 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
                         log.debug(
                                 "Blind-spot testing, using a HTTP connection, to try detect an initial proxy, which we might not see via HTTPS");
                         requestHeader.setSecure(false);
-                        requestHeader.setHeader("Max-Forwards", "0");
+                        requestHeader.setHeader(HttpFieldsNames.MAX_FORWARDS, "0");
                     } else {
                         requestHeader.setSecure(origRequestHeader.isSecure());
-                        requestHeader.setHeader("Max-Forwards", Integer.toString(maxForwards));
+                        requestHeader.setHeader(
+                                HttpFieldsNames.MAX_FORWARDS, Integer.toString(maxForwards));
                     }
                     requestHeader.setHeader(
-                            "Cache-Control",
+                            HttpFieldsNames.CACHE_CONTROL,
                             "no-cache"); // we do not want cached content. we want content from the
                     // origin server
-                    requestHeader.setHeader("Pragma", "no-cache"); // similarly, for HTTP/1.0
+                    requestHeader.setHeader(
+                            HttpFieldsNames.PRAGMA, "no-cache"); // similarly, for HTTP/1.0
 
                     HttpMessage mfMethodMsg = getNewMsg();
                     mfMethodMsg.setRequestHeader(requestHeader);
@@ -465,7 +470,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
                         log.error(
                                 "Failed to send a request in step 2 with method {}, Max-Forwards: {}: {}",
                                 httpMethod,
-                                requestHeader.getHeader("Max-Forwards"),
+                                requestHeader.getHeader(HttpFieldsNames.MAX_FORWARDS),
                                 e.getMessage());
                         break; // to the next method
                     }
@@ -485,11 +490,12 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
                     // the server header + powered by list is what we will record if a key attribute
                     // changes between requests.
                     HttpResponseHeader responseHeader = mfMethodMsg.getResponseHeader();
-                    String serverHeader = responseHeader.getHeader("Server");
+                    String serverHeader = responseHeader.getHeader(HttpFieldsNames.SERVER);
                     if (serverHeader == null) serverHeader = "";
 
                     String poweredBy;
-                    List<String> poweredByList = responseHeader.getHeaderValues("X-Powered-By");
+                    List<String> poweredByList =
+                            responseHeader.getHeaderValues(HttpFieldsNames.X_POWERED_BY);
                     if (!poweredByList.isEmpty())
                         poweredBy = poweredByList.toString(); // uses format: "[a,b,c]"
                     else poweredBy = "";
@@ -585,12 +591,14 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
 
             trackRequestHeader.setVersion(HttpRequestHeader.HTTP11); //
             trackRequestHeader.setSecure(trackRequestHeader.isSecure());
-            trackRequestHeader.setHeader("Max-Forwards", String.valueOf(MAX_FORWARDS_MAXIMUM));
             trackRequestHeader.setHeader(
-                    "Cache-Control",
+                    HttpFieldsNames.MAX_FORWARDS, String.valueOf(MAX_FORWARDS_MAXIMUM));
+            trackRequestHeader.setHeader(
+                    HttpFieldsNames.CACHE_CONTROL,
                     "no-cache"); // we do not want cached content. we want content from the origin
             // server
-            trackRequestHeader.setHeader("Pragma", "no-cache"); // similarly, for HTTP/1.0
+            trackRequestHeader.setHeader(
+                    HttpFieldsNames.PRAGMA, "no-cache"); // similarly, for HTTP/1.0
 
             HttpMessage trackmsg = getNewMsg();
             trackmsg.setRequestHeader(trackRequestHeader);

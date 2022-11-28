@@ -39,10 +39,10 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HtmlParameter;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.extension.httpsessions.HttpSessionsParam;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -115,7 +115,7 @@ class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRule> {
                                 + "\n"
                                 + "return YF\n"
                                 + "}");
-        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "application/javascript");
+        msg.getResponseHeader().setHeader(HttpFieldsNames.CONTENT_TYPE, "application/javascript");
         rule.init(msg, parent);
         // When
         rule.scan();
@@ -349,7 +349,7 @@ class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRule> {
         msg.setRequestHeader(compatMsg.getRequestHeader());
         msg.setRequestBody(compatMsg.getRequestBody());
         msg.setResponseHeader(compatMsg.getResponseHeader());
-        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "text/html");
+        msg.getResponseHeader().setHeader(HttpFieldsNames.CONTENT_TYPE, "text/html");
         msg.setResponseBody(compatMsg.getResponseBody());
 
         return msg;

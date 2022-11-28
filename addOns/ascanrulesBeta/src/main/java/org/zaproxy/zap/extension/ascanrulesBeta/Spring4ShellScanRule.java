@@ -33,6 +33,7 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
@@ -90,7 +91,7 @@ public class Spring4ShellScanRule extends AbstractAppPlugin {
         String body = msg.getRequestBody().toString();
         if (body.isEmpty()
                 || !HttpHeader.FORM_URLENCODED_CONTENT_TYPE.equals(
-                        msg.getRequestHeader().getHeader(HttpHeader.CONTENT_TYPE))) {
+                        msg.getRequestHeader().getHeader(HttpFieldsNames.CONTENT_TYPE))) {
             // If its not FORM_URLENCODED_CONTENT_TYPE then replace the whole body
             body = payload;
         } else {
@@ -98,7 +99,7 @@ public class Spring4ShellScanRule extends AbstractAppPlugin {
         }
         msg.setRequestBody(body);
         msg.getRequestHeader()
-                .setHeader(HttpHeader.CONTENT_TYPE, HttpHeader.FORM_URLENCODED_CONTENT_TYPE);
+                .setHeader(HttpFieldsNames.CONTENT_TYPE, HttpHeader.FORM_URLENCODED_CONTENT_TYPE);
     }
 
     private boolean isVulnerable(boolean isGet, String attack) {

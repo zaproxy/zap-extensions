@@ -39,11 +39,11 @@ import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HtmlParameter;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.authentication.FormBasedAuthenticationMethodType.FormBasedAuthenticationMethod;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.model.Context;
@@ -234,7 +234,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                     // but it ain't always so...
                     URI newLocation =
                             new URI(
-                                    msgCpy.getResponseHeader().getHeader(HttpHeader.LOCATION),
+                                    msgCpy.getResponseHeader().getHeader(HttpFieldsNames.LOCATION),
                                     true);
                     try {
                         msgRedirect.getRequestHeader().setURI(newLocation);
@@ -245,7 +245,8 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                         URI newLocationWorkaround =
                                 new URI(
                                         msgCpy.getRequestHeader().getURI(),
-                                        msgCpy.getResponseHeader().getHeader(HttpHeader.LOCATION),
+                                        msgCpy.getResponseHeader()
+                                                .getHeader(HttpFieldsNames.LOCATION),
                                         true);
                         // try again, except this time, if it fails, don't try to handle it
                         LOG.debug(
@@ -468,7 +469,8 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                         // absolute, but it ain't always so...
                         URI newLocation =
                                 new URI(
-                                        msgCpy.getResponseHeader().getHeader(HttpHeader.LOCATION),
+                                        msgCpy.getResponseHeader()
+                                                .getHeader(HttpFieldsNames.LOCATION),
                                         true);
                         try {
                             msgRedirect.getRequestHeader().setURI(newLocation);
@@ -480,7 +482,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                                     new URI(
                                             msgCpy.getRequestHeader().getURI(),
                                             msgCpy.getResponseHeader()
-                                                    .getHeader(HttpHeader.LOCATION),
+                                                    .getHeader(HttpFieldsNames.LOCATION),
                                             true);
                             // try again, except this time, if it fails, don't try to handle it
                             LOG.debug(

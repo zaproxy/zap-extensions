@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - The Directory Browsing scan rule now includes example alert functionality for documentation generation purposes (Issue 6119).
+- Use lower case HTTP field names for compatibility with HTTP/2.
 
 ### Fixed
 - Preserve the HTTP version in the scan rules:

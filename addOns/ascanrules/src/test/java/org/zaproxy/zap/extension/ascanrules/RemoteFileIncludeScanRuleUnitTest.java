@@ -32,9 +32,9 @@ import fi.iki.elonen.NanoHTTPD.Response;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -146,7 +146,7 @@ class RemoteFileIncludeScanRuleUnitTest extends ActiveScannerTest<RemoteFileIncl
                                             NanoHTTPD.Response.Status.REDIRECT,
                                             NanoHTTPD.MIME_HTML,
                                             "<html><title>Redirecting</title></html>");
-                            response.addHeader(HttpHeader.LOCATION, file);
+                            response.addHeader(HttpFieldsNames.LOCATION, file);
                             return response;
                         }
                         String response = "<html><body></body></html>";

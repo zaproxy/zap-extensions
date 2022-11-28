@@ -26,8 +26,8 @@ import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.scanner.HostProcess;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 
 /**
  * MessageCache caches HTTP messages.
@@ -93,8 +93,8 @@ public class MessageCache {
             } catch (Exception e) {
                 log.debug("Could not set the cookies from the base request: ", e);
             }
-            requestmsg.getRequestHeader().setHeader(HttpHeader.IF_MODIFIED_SINCE, null);
-            requestmsg.getRequestHeader().setHeader(HttpHeader.IF_NONE_MATCH, null);
+            requestmsg.getRequestHeader().setHeader(HttpFieldsNames.IF_MODIFIED_SINCE, null);
+            requestmsg.getRequestHeader().setHeader(HttpFieldsNames.IF_NONE_MATCH, null);
             requestmsg.getRequestHeader().setContentLength(requestmsg.getRequestBody().length());
             parent.getHttpSender().sendAndReceive(requestmsg, followRedirects);
             parent.notifyNewMessage(requestmsg);

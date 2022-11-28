@@ -32,6 +32,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
@@ -132,7 +133,7 @@ public class HttPoxyScanRule extends AbstractAppPlugin {
                     String hostPort = inetAddr.getHostAddress() + ":" + proxyPort;
 
                     HttpMessage newRequest = getNewMsg();
-                    newRequest.getRequestHeader().setHeader("Proxy", hostPort);
+                    newRequest.getRequestHeader().setHeader(HttpFieldsNames.PROXY, hostPort);
                     try {
                         sendAndReceive(newRequest, false);
                     } catch (Exception e) {
@@ -144,7 +145,7 @@ public class HttPoxyScanRule extends AbstractAppPlugin {
                         newAlert()
                                 .setConfidence(Alert.CONFIDENCE_HIGH)
                                 .setUri(getBaseMsg().getRequestHeader().getURI().toString())
-                                .setAttack("Proxy: " + hostPort)
+                                .setAttack(HttpFieldsNames.PROXY + ": " + hostPort)
                                 .setOtherInfo(
                                         Constant.messages.getString(
                                                 MESSAGE_PREFIX + "otherinfo", listener.getMsgUrl()))

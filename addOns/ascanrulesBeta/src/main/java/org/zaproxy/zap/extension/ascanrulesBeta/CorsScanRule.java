@@ -33,11 +33,10 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 
 /**
  * The CORS scan rule identifies Cross-Origin Resource Sharing (CORS) support and overly lenient or
@@ -48,7 +47,6 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 public class CorsScanRule extends AbstractAppPlugin {
     private static final Logger LOG = LogManager.getLogger(CorsScanRule.class);
     private static final String RANDOM_NAME = RandomStringUtils.random(8, true, true);
-    private static final String ACAC = "Access-Control-Allow-Credentials";
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
@@ -83,12 +81,12 @@ public class CorsScanRule extends AbstractAppPlugin {
 
         for (String payload : payloads) {
             HttpMessage msg = getNewMsg();
-            msg.getRequestHeader().setHeader(HttpRequestHeader.ORIGIN, payload);
+            msg.getRequestHeader().setHeader(HttpFieldsNames.ORIGIN, payload);
             try {
                 sendAndReceive(msg);
 
                 HttpResponseHeader respHead = msg.getResponseHeader();
-                String acaoVal = respHead.getHeader(HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN);
+                String acaoVal = respHead.getHeader(HttpFieldsNames.ACCESS_CONTROL_ALLOW_ORIGIN);
 
                 // If there is an ACAO header an alert will be triggered
                 if (acaoVal == null) {
@@ -96,7 +94,8 @@ public class CorsScanRule extends AbstractAppPlugin {
                 }
 
                 int risk = Alert.RISK_INFO;
-                String acacVal = respHead.getHeader(ACAC);
+                String acacVal =
+                        respHead.getHeader(HttpFieldsNames.ACCESS_CONTROL_ALLOW_CREDENTIALS);
                 acacVal = acacVal == null ? "" : acacVal;
 
                 // Evaluates the risk for this alert
@@ -112,15 +111,15 @@ public class CorsScanRule extends AbstractAppPlugin {
                         Pattern.compile(
                                         String.format(
                                                 "^\\s*%s[:\\s]+%s(\\s+%s[:\\s]+%s)?",
-                                                HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN,
+                                                HttpFieldsNames.ACCESS_CONTROL_ALLOW_ORIGIN,
                                                 Pattern.quote(acaoVal),
-                                                ACAC,
+                                                HttpFieldsNames.ACCESS_CONTROL_ALLOW_CREDENTIALS,
                                                 acacVal),
                                         Pattern.MULTILINE)
                                 .matcher(respHead.toString());
                 buildAlert(risk)
                         .setMessage(msg)
-                        .setAttack(HttpRequestHeader.ORIGIN + ": " + payload)
+                        .setAttack(HttpFieldsNames.ORIGIN + ": " + payload)
                         .setEvidence(m.find() ? m.group(0) : null)
                         .raise();
                 return;
