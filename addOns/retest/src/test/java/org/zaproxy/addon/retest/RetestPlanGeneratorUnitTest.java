@@ -29,6 +29,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
@@ -50,6 +51,7 @@ class RetestPlanGeneratorUnitTest {
     static void init() {
         List<AlertData> alertData = new ArrayList<>();
         HttpMessage msgOne = new HttpMessage();
+        msgOne.getRequestHeader().setVersion(HttpHeader.HTTP11);
         Alert alertOne = new Alert(100);
         alertOne.setSource(Alert.Source.ACTIVE);
         AlertData alertOneData = new AlertData();
@@ -67,6 +69,7 @@ class RetestPlanGeneratorUnitTest {
         alertOneData.setAlert(alertOne);
 
         HttpMessage msgTwo = new HttpMessage();
+        msgTwo.getRequestHeader().setVersion("HTTP/2");
         msgTwo.setRequestBody(new HttpRequestBody("Test Body"));
         Alert alertTwo = new Alert(200);
         alertTwo.setSource(Alert.Source.PASSIVE);
@@ -129,11 +132,13 @@ class RetestPlanGeneratorUnitTest {
         assertThat(requests.get(0).getName(), is(equalTo("Test Alert One")));
         assertThat(requests.get(0).getData(), is(equalTo("")));
         assertThat(requests.get(0).getResponseCode(), is(equalTo(null)));
+        assertThat(requests.get(0).getHttpVersion(), is(equalTo(HttpHeader.HTTP11)));
         assertThat(requests.get(1).getUrl(), is(equalTo("https://www.exampletwo.com")));
         assertThat(requests.get(1).getMethod(), is(equalTo("POST")));
         assertThat(requests.get(1).getName(), is(equalTo("Test Alert Two")));
         assertThat(requests.get(1).getData(), is(equalTo("Test Body")));
         assertThat(requests.get(1).getResponseCode(), is(equalTo(null)));
+        assertThat(requests.get(1).getHttpVersion(), is(equalTo("HTTP/2")));
     }
 
     @Test

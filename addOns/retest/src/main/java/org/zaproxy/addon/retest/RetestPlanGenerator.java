@@ -88,7 +88,9 @@ public class RetestPlanGenerator {
                                                 t.getUrl(),
                                                 t.getAlertName(),
                                                 t.getMethod(),
+                                                t.getMsg().getRequestHeader().getVersion(),
                                                 t.getMsg().getRequestBody().toString(),
+                                                null,
                                                 null))
                         .collect(Collectors.toList());
         reqJob.getData().setRequests(requests);
