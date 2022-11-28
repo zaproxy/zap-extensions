@@ -13,6 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Add an option which controls whether or not Hash output panels use full caps or lower case (Issue 7503).
+- Utility processors (not shown by default).
+    - Lower case
+    - Remove Whitespace
+    - Reverse
+    - Upper case
 
 ## [0.7.0] - 2022-10-27
 ### Changed

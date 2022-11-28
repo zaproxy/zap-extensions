@@ -51,6 +51,10 @@ import org.zaproxy.addon.encoder.processors.predefined.UnicodeDecoder;
 import org.zaproxy.addon.encoder.processors.predefined.UnicodeEncoder;
 import org.zaproxy.addon.encoder.processors.predefined.UrlDecoder;
 import org.zaproxy.addon.encoder.processors.predefined.UrlEncoder;
+import org.zaproxy.addon.encoder.processors.predefined.utility.LowerCase;
+import org.zaproxy.addon.encoder.processors.predefined.utility.RemoveWhitespace;
+import org.zaproxy.addon.encoder.processors.predefined.utility.Reverse;
+import org.zaproxy.addon.encoder.processors.predefined.utility.UpperCase;
 import org.zaproxy.addon.encoder.processors.script.ScriptBasedEncodeDecodeProcessor;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
@@ -92,6 +96,11 @@ public class EncodeDecodeProcessors {
         addPredefined("illegalutf8with2byteencoder", IllegalUTF8With2ByteEncoder.getSingleton());
         addPredefined("illegalutf8with3byteencoder", IllegalUTF8With3ByteEncoder.getSingleton());
         addPredefined("illegalutf8with4byteencoder", IllegalUTF8With4ByteEncoder.getSingleton());
+
+        addPredefined("removewhitespace", RemoveWhitespace.getSingleton());
+        addPredefined("reverse", Reverse.getSingleton());
+        addPredefined("lowercase", LowerCase.getSingleton());
+        addPredefined("uppercase", UpperCase.getSingleton());
     }
 
     private Map<String, EncodeDecodeProcessorItem> scriptProcessors = new HashMap<>();
