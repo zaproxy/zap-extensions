@@ -43,6 +43,7 @@ public class ModernAppDetectionScanRule extends PluginPassiveScanner {
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         if (!msg.getResponseHeader().isHtml()) {
             // Only check HTML responses
+            return;
         }
         String evidence = null;
         String otherInfo = null;
