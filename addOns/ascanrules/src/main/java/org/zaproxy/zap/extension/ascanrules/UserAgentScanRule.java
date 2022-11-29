@@ -32,10 +32,10 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 
 /** @author kniepdennis@gmail.com */
 public class UserAgentScanRule extends AbstractAppPlugin {
@@ -173,7 +173,7 @@ public class UserAgentScanRule extends AbstractAppPlugin {
         try {
             HttpMessage newMsg = getNewMsg();
             HttpRequestHeader header = newMsg.getRequestHeader();
-            header.setHeader(HttpHeader.USER_AGENT, userAgent);
+            header.setHeader(HttpFieldsNames.USER_AGENT, userAgent);
             sendAndReceive(newMsg);
             return newMsg;
         } catch (UnknownHostException | URIException e) {

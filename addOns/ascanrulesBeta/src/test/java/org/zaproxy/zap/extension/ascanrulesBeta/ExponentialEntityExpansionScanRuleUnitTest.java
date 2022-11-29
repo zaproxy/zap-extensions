@@ -27,8 +27,8 @@ import fi.iki.elonen.NanoHTTPD;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 class ExponentialEntityExpansionScanRuleUnitTest
@@ -51,7 +51,7 @@ class ExponentialEntityExpansionScanRuleUnitTest
         String path = "/endpoint/";
         nano.addHandler(new OkResponse(path));
         HttpMessage msg = this.getHttpMessage(path);
-        msg.getRequestHeader().setHeader(HttpHeader.CONTENT_TYPE, contentType);
+        msg.getRequestHeader().setHeader(HttpFieldsNames.CONTENT_TYPE, contentType);
         rule.init(msg, this.parent);
         // When
         rule.scan();
@@ -77,7 +77,7 @@ class ExponentialEntityExpansionScanRuleUnitTest
         String path = "/endpoint/";
         nano.addHandler(new OkResponse(path));
         HttpMessage msg = this.getHttpMessage(path);
-        msg.getRequestHeader().setHeader(HttpHeader.CONTENT_TYPE, contentType);
+        msg.getRequestHeader().setHeader(HttpFieldsNames.CONTENT_TYPE, contentType);
         rule.init(msg, this.parent);
         // When
         rule.scan();
@@ -95,7 +95,7 @@ class ExponentialEntityExpansionScanRuleUnitTest
         String path = "/endpoint/";
         nano.addHandler(new OkResponse(path));
         HttpMessage msg = this.getHttpMessage(path);
-        msg.getRequestHeader().setHeader(HttpHeader.CONTENT_TYPE, contentType);
+        msg.getRequestHeader().setHeader(HttpFieldsNames.CONTENT_TYPE, contentType);
         rule.init(msg, this.parent);
         // When
         rule.scan();

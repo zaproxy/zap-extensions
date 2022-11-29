@@ -33,10 +33,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link CorsScanRule}. */
@@ -166,11 +165,11 @@ class CorsScanRuleUnitTest extends ActiveScannerTest<CorsScanRule> {
             }
             String acaoVal = null;
             if (acaoBehavior.equals("REFLECT")) {
-                acaoVal = session.getHeaders().get(HttpRequestHeader.ORIGIN);
+                acaoVal = session.getHeaders().get(HttpFieldsNames.ORIGIN);
             } else {
                 acaoVal = acaoBehavior;
             }
-            resp.addHeader(HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN, acaoVal);
+            resp.addHeader(HttpFieldsNames.ACCESS_CONTROL_ALLOW_ORIGIN, acaoVal);
 
             if (isAcac) {
                 resp.addHeader(ACAC, "true");

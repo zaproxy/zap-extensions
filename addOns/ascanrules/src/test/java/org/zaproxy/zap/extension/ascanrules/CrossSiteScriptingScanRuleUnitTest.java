@@ -48,6 +48,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -1415,7 +1416,7 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         msg.setFormParams(paramSet);
         msg.getRequestHeader()
                 .addHeader(
-                        HttpRequestHeader.CONTENT_TYPE,
+                        HttpFieldsNames.CONTENT_TYPE,
                         HttpRequestHeader.FORM_URLENCODED_CONTENT_TYPE);
         msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
 

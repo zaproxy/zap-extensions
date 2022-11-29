@@ -33,9 +33,9 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
@@ -82,7 +82,7 @@ class SourceCodeDisclosureCve20121823ScanRuleUnitTest
     void shouldIgnoreNonTextResponses() throws Exception {
         // Given
         HttpMessage message = getHttpMessage("/");
-        message.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "image/jpeg");
+        message.getResponseHeader().setHeader(HttpFieldsNames.CONTENT_TYPE, "image/jpeg");
         rule.init(message, parent);
         // When
         rule.scan();

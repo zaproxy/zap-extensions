@@ -46,6 +46,7 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
@@ -190,7 +191,7 @@ class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
     void shouldScanOnlyIfRequestContentTypeIsXml() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = this.getHttpMessage("/test");
-        msg.getRequestHeader().setHeader("Content-Type", "application/json");
+        msg.getRequestHeader().setHeader(HttpFieldsNames.CONTENT_TYPE, "application/json");
         // The mismatch in request body and content-type is intentional.
         // For any reason if the rule fails to check the Content-Type, then createLfrPayload() will
         // send a message converting the XML body into an attack payload.

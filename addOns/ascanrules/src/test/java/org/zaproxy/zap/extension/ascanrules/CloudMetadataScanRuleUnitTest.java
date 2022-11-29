@@ -38,6 +38,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link CloudMetadataScanRule}. */
@@ -114,7 +115,7 @@ class CloudMetadataScanRuleUnitTest extends ActiveScannerTest<CloudMetadataScanR
         return new NanoServerHandler(path) {
             @Override
             protected Response serve(IHTTPSession session) {
-                if (session.getHeaders().get("host").equals(host) || host.isEmpty()) {
+                if (session.getHeaders().get(HttpFieldsNames.HOST).equals(host) || host.isEmpty()) {
                     return newFixedLengthResponse(status, NanoHTTPD.MIME_HTML, body);
                 }
                 return newFixedLengthResponse(Response.Status.NOT_FOUND, NanoHTTPD.MIME_HTML, "");

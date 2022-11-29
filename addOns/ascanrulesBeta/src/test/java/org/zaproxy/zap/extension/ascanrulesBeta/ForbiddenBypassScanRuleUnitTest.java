@@ -38,6 +38,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link ForbiddenBypassScanRule}. */
@@ -119,7 +120,7 @@ class ForbiddenBypassScanRuleUnitTest extends ActiveScannerTest<ForbiddenBypassS
     void shouldAlertIfOkWithRewriteUrlHeader() throws Exception {
         // Given
         nano.addHandler(new ForbiddenResponse(PROTECTED_PATH));
-        nano.addHandler(new ResponseWithHeaderPayload("/anything", "x-rewrite-url"));
+        nano.addHandler(new ResponseWithHeaderPayload("/anything", HttpFieldsNames.X_REWRITE_URL));
         HttpMessage msg = this.getHttpMessage(PROTECTED_PATH);
         rule.init(msg, this.parent);
         // When
@@ -127,7 +128,7 @@ class ForbiddenBypassScanRuleUnitTest extends ActiveScannerTest<ForbiddenBypassS
         // Then
         assertThat(alertsRaised, hasSize(1));
         Alert alert = alertsRaised.get(0);
-        assertEquals("X-Rewrite-URL: " + PROTECTED_PATH, alert.getAttack());
+        assertEquals(HttpFieldsNames.X_REWRITE_URL + ": " + PROTECTED_PATH, alert.getAttack());
         assertAlert(alert);
     }
 
@@ -135,7 +136,7 @@ class ForbiddenBypassScanRuleUnitTest extends ActiveScannerTest<ForbiddenBypassS
     void shouldAlertIfOkWithRefererHeader() throws Exception {
         // Given
         nano.addHandler(new ForbiddenResponse(PROTECTED_PATH));
-        nano.addHandler(new ResponseWithHeaderPayload("/anything", "referer"));
+        nano.addHandler(new ResponseWithHeaderPayload("/anything", HttpFieldsNames.REFERER));
         HttpMessage msg = this.getHttpMessage(PROTECTED_PATH);
         rule.init(msg, this.parent);
         // When
@@ -143,7 +144,7 @@ class ForbiddenBypassScanRuleUnitTest extends ActiveScannerTest<ForbiddenBypassS
         // Then
         assertThat(alertsRaised, hasSize(1));
         Alert alert = alertsRaised.get(0);
-        assertEquals("Referer: " + PROTECTED_PATH, alert.getAttack());
+        assertEquals(HttpFieldsNames.REFERER + ": " + PROTECTED_PATH, alert.getAttack());
         assertAlert(alert);
     }
 
@@ -151,7 +152,7 @@ class ForbiddenBypassScanRuleUnitTest extends ActiveScannerTest<ForbiddenBypassS
     void shouldAlertIfOkWithOriginalUrlHeader() throws Exception {
         // Given
         nano.addHandler(new ForbiddenResponse(PROTECTED_PATH));
-        nano.addHandler(new ResponseWithHeaderPayload("/", "x-original-url"));
+        nano.addHandler(new ResponseWithHeaderPayload("/", HttpFieldsNames.X_ORIGINAL_URL));
         HttpMessage msg = this.getHttpMessage(PROTECTED_PATH);
         rule.init(msg, this.parent);
         // When
@@ -159,7 +160,7 @@ class ForbiddenBypassScanRuleUnitTest extends ActiveScannerTest<ForbiddenBypassS
         // Then
         assertThat(alertsRaised, hasSize(1));
         Alert alert = alertsRaised.get(0);
-        assertEquals("X-Original-URL: " + PROTECTED_PATH, alert.getAttack());
+        assertEquals(HttpFieldsNames.X_ORIGINAL_URL + ": " + PROTECTED_PATH, alert.getAttack());
         assertAlert(alert);
     }
 
@@ -174,7 +175,7 @@ class ForbiddenBypassScanRuleUnitTest extends ActiveScannerTest<ForbiddenBypassS
         // Then
         assertThat(alertsRaised, hasSize(1));
         Alert alert = alertsRaised.get(0);
-        assertEquals("X-Custom-IP-Authorization: 127.0.0.1", alert.getAttack());
+        assertEquals("x-custom-ip-authorization: 127.0.0.1", alert.getAttack());
         assertAlert(alert);
     }
 

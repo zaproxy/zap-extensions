@@ -33,9 +33,9 @@ import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 
 /**
  * Active scan rule which raises an alert if a site accessed via HTTP is not served under HTTPS
@@ -171,7 +171,7 @@ public class HttpOnlySiteScanRule extends AbstractHostPlugin {
                     break;
                 }
                 String redirect =
-                        newRequest.getResponseHeader().getHeader(HttpResponseHeader.LOCATION);
+                        newRequest.getResponseHeader().getHeader(HttpFieldsNames.LOCATION);
                 if (redirect == null || redirect.isEmpty()) {
                     raiseAlert(newRequest, "noredirection");
                     return;

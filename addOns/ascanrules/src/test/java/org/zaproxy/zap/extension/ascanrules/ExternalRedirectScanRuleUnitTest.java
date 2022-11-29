@@ -34,6 +34,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link ExternalRedirectScanRule}. */
@@ -128,7 +129,7 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {HttpHeader.LOCATION, "Refresh"})
+    @ValueSource(strings = {HttpFieldsNames.LOCATION, HttpFieldsNames.REFRESH})
     void shouldReportRedirectWithLocationOrRefreshHeader(String header) throws Exception {
         // Given
         String test = "/shouldReportSimpleRedirect/";
@@ -149,7 +150,8 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
         // Given
         String test = "/shouldReportSimpleRedirect/";
 
-        nano.addHandler(createHttpRedirectHandler(test, HttpHeader.LOCATION, PayloadHandling.TRIM));
+        nano.addHandler(
+                createHttpRedirectHandler(test, HttpFieldsNames.LOCATION, PayloadHandling.TRIM));
         HttpMessage msg = getHttpMessage(test + "?site=xxx");
         rule.init(msg, parent);
         // When
@@ -163,7 +165,8 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
         // Given
         String test = "/shouldReportSimpleRedirect/";
 
-        nano.addHandler(createHttpRedirectHandler(test, HttpHeader.LOCATION, PayloadHandling.ADD));
+        nano.addHandler(
+                createHttpRedirectHandler(test, HttpFieldsNames.LOCATION, PayloadHandling.ADD));
         HttpMessage msg = getHttpMessage(test + "?site=xxx");
         rule.init(msg, parent);
         // When
@@ -191,7 +194,7 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
                                             NanoHTTPD.Response.Status.REDIRECT,
                                             NanoHTTPD.MIME_HTML,
                                             "Redirect");
-                            response.addHeader(HttpHeader.LOCATION, site);
+                            response.addHeader(HttpFieldsNames.LOCATION, site);
                             return response;
                         }
                         String response = "<html><body></body></html>";
@@ -209,7 +212,7 @@ class ExternalRedirectScanRuleUnitTest extends ActiveScannerTest<ExternalRedirec
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {HttpHeader.LOCATION, "refresh"})
+    @ValueSource(strings = {HttpFieldsNames.LOCATION, HttpFieldsNames.REFRESH})
     void shouldReportRedirectWithMetaLocationOrRefresh(String type) throws Exception {
         // Given
         String test = "/shouldReportSimpleRedirect/";

@@ -41,9 +41,9 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 
 /**
  * a scan rule that looks for server side issues that could cause confusion as to the relative path
@@ -423,7 +423,7 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                 //       that ends in ".css", to see if the web server changes the content type to
                 // "text/css" (unlikely!)
                 String contentType =
-                        hackedMessage.getResponseHeader().getHeader(HttpHeader.CONTENT_TYPE);
+                        hackedMessage.getResponseHeader().getHeader(HttpFieldsNames.CONTENT_TYPE);
                 if (contentType != null) {
 
                     log.debug(
@@ -556,7 +556,7 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                         String frameHeader =
                                 hackedMessage
                                         .getResponseHeader()
-                                        .getHeader(HttpHeader.X_FRAME_OPTION);
+                                        .getHeader(HttpFieldsNames.X_FRAME_OPTIONS);
                         if (frameHeader != null) {
                             if (frameHeader.toUpperCase().equals("DENY")) {
                                 // definitely rules out the framing attack (unless the user is using

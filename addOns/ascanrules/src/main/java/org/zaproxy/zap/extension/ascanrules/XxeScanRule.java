@@ -31,9 +31,9 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
@@ -184,7 +184,7 @@ public class XxeScanRule extends AbstractAppPlugin {
     public void scan() {
         // Prepare the message
         HttpMessage msg = getBaseMsg();
-        String contentType = msg.getRequestHeader().getHeader(HttpHeader.CONTENT_TYPE);
+        String contentType = msg.getRequestHeader().getHeader(HttpFieldsNames.CONTENT_TYPE);
 
         // first check if it's an XML otherwise it's useless...
         if ((contentType != null) && (contentType.contains("xml"))) {

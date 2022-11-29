@@ -41,6 +41,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 class WebCacheDeceptionScanRuleUnitTest extends ActiveScannerTest<WebCacheDeceptionScanRule> {
@@ -79,9 +80,9 @@ class WebCacheDeceptionScanRuleUnitTest extends ActiveScannerTest<WebCacheDecept
         // Given
         HttpMessage message = this.getHttpMessage(basePath);
         HttpRequestHeader headers = message.getRequestHeader();
-        headers.addHeader("authorization", "Basic YWxhZGRpbjpvcGVuc2VzYW1l");
+        headers.addHeader(HttpFieldsNames.AUTHORIZATION, "Basic YWxhZGRpbjpvcGVuc2VzYW1l");
         message.setRequestHeader(headers);
-        nano.addHandler(new CachedTestResponse(basePath, "authorization"));
+        nano.addHandler(new CachedTestResponse(basePath, HttpFieldsNames.AUTHORIZATION));
         rule.init(message, this.parent);
         // When
         rule.scan();
@@ -94,9 +95,9 @@ class WebCacheDeceptionScanRuleUnitTest extends ActiveScannerTest<WebCacheDecept
         // Given
         HttpMessage message = this.getHttpMessage("/private");
         HttpRequestHeader headers = message.getRequestHeader();
-        headers.addHeader("authorization", "Basic YWxhZGRpbjpvcGVuc2VzYW1l");
+        headers.addHeader(HttpFieldsNames.AUTHORIZATION, "Basic YWxhZGRpbjpvcGVuc2VzYW1l");
         message.setRequestHeader(headers);
-        nano.addHandler(new CachedTestResponse("/private", "authorization"));
+        nano.addHandler(new CachedTestResponse("/private", HttpFieldsNames.AUTHORIZATION));
         rule.init(message, this.parent);
         // When
         rule.scan();
@@ -112,10 +113,10 @@ class WebCacheDeceptionScanRuleUnitTest extends ActiveScannerTest<WebCacheDecept
         // Given
         HttpMessage message = this.getHttpMessage("/private");
         HttpRequestHeader headers = message.getRequestHeader();
-        headers.addHeader("authorization", "Basic YWxhZGRpbjpvcGVuc2VzYW1l");
+        headers.addHeader(HttpFieldsNames.AUTHORIZATION, "Basic YWxhZGRpbjpvcGVuc2VzYW1l");
         message.setRequestHeader(headers);
         message.getResponseHeader().setStatusCode(status);
-        nano.addHandler(new CachedTestResponse("/private", "authorization"));
+        nano.addHandler(new CachedTestResponse("/private", HttpFieldsNames.AUTHORIZATION));
         rule.init(message, this.parent);
         // When
         rule.scan();
@@ -142,9 +143,9 @@ class WebCacheDeceptionScanRuleUnitTest extends ActiveScannerTest<WebCacheDecept
         // Given
         HttpMessage message = this.getHttpMessage("/private");
         HttpRequestHeader headers = message.getRequestHeader();
-        headers.addHeader("authorization", "Basic YWxhZGRpbjpvcGVuc2VzYW1l");
+        headers.addHeader(HttpFieldsNames.AUTHORIZATION, "Basic YWxhZGRpbjpvcGVuc2VzYW1l");
         message.setRequestHeader(headers);
-        nano.addHandler(new SecondInitialTestResponse("/private", "authorization"));
+        nano.addHandler(new SecondInitialTestResponse("/private", HttpFieldsNames.AUTHORIZATION));
         rule.init(message, this.parent);
         // When
         rule.scan();
@@ -158,9 +159,9 @@ class WebCacheDeceptionScanRuleUnitTest extends ActiveScannerTest<WebCacheDecept
         // Given
         HttpMessage message = this.getHttpMessage("/private");
         HttpRequestHeader headers = message.getRequestHeader();
-        headers.addHeader("authorization", "Basic YWxhZGRpbjpvcGVuc2VzYW1l");
+        headers.addHeader(HttpFieldsNames.AUTHORIZATION, "Basic YWxhZGRpbjpvcGVuc2VzYW1l");
         message.setRequestHeader(headers);
-        nano.addHandler(new NotCachedTestResponse("/private", "authorization"));
+        nano.addHandler(new NotCachedTestResponse("/private", HttpFieldsNames.AUTHORIZATION));
         rule.init(message, this.parent);
         // When
         rule.scan();

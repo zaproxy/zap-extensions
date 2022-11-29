@@ -30,10 +30,10 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
@@ -180,7 +180,7 @@ public class SpringActuatorScanRule extends AbstractHostPlugin {
             testMsg.getRequestHeader().setURI(testUri);
             testMsg.getRequestHeader().setMethod(HttpRequestHeader.GET);
             testMsg.getRequestHeader()
-                    .setHeader(HttpHeader.ACCEPT_ENCODING, encodingType); // Set this correctly
+                    .setHeader(HttpFieldsNames.ACCEPT_ENCODING, encodingType); // Set this correctly
             testMsg.setRequestBody("");
             sendAndReceive(testMsg);
             return testMsg;
