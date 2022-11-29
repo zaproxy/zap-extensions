@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
-- Support HTTP/2.
+- Support HTTP/2 (Issue 5038).
 
 ### Changed
 - Update dependency.

@@ -39,7 +39,7 @@ public class LocalServerPropertiesDialogue extends AbstractFormDialog {
                 Constant.messages.getString("network.ui.options.localservers.modify.main.title"),
                 false);
 
-        this.propertiesPanel = new LocalServerPropertiesPanel(false);
+        this.propertiesPanel = new LocalServerPropertiesPanel(false, true);
         this.serverConfig = new LocalServerConfig();
 
         setConfirmButtonEnabled(true);
