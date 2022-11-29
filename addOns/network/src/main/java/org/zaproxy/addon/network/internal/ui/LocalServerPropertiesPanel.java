@@ -50,12 +50,17 @@ public class LocalServerPropertiesPanel extends JPanel {
     private ServerMode selectedMode;
 
     public LocalServerPropertiesPanel(boolean canDisableProxy) {
+        this(true, false);
+    }
+
+    public LocalServerPropertiesPanel(boolean canDisableProxy, boolean addContainerGaps) {
         modeButtonGroup = new ButtonGroup();
         modeRadioButtons = new HashMap<>();
 
         GroupLayout layout = new GroupLayout(this);
         setLayout(layout);
         layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(addContainerGaps);
 
         securityProtocolsPanel = new SecurityProtocolsPanel();
 
@@ -104,8 +109,16 @@ public class LocalServerPropertiesPanel extends JPanel {
 
         layout.setHorizontalGroup(
                 layout.createParallelGroup()
-                        .addComponent(securityProtocolsPanel)
-                        .addComponent(alpnPanel)
+                        .addComponent(
+                                securityProtocolsPanel,
+                                GroupLayout.DEFAULT_SIZE,
+                                GroupLayout.DEFAULT_SIZE,
+                                Integer.MAX_VALUE)
+                        .addComponent(
+                                alpnPanel,
+                                GroupLayout.DEFAULT_SIZE,
+                                GroupLayout.DEFAULT_SIZE,
+                                Integer.MAX_VALUE)
                         .addGroup(
                                 layout.createSequentialGroup()
                                         .addGroup(
