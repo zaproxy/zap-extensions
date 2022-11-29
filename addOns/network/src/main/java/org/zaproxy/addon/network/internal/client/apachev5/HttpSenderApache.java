@@ -29,7 +29,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
@@ -760,8 +759,7 @@ public class HttpSenderApache
                             path == null ? "/" : path);
 
             for (HttpHeaderField header : requestHeader.getHeaders()) {
-                // XXX Remove lower case once the codebase uses fields' names compatible with HTTP/2
-                String name = header.getName().toLowerCase(Locale.ROOT);
+                String name = header.getName();
                 String value = header.getValue();
                 request.addHeader(name, value);
             }

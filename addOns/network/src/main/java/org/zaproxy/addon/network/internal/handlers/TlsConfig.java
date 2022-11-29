@@ -44,10 +44,10 @@ public class TlsConfig {
 
     /**
      * Constructs a {@code TlsConfig} with all the SSL/TLS protocol versions supported, with ALPN
-     * disabled, and with all application protocols.
+     * enabled, and with all application protocols.
      */
     public TlsConfig() {
-        this(DEFAULT_PROTOCOLS, false, DEFAULT_APPLICATION_PROTOCOLS);
+        this(DEFAULT_PROTOCOLS, true, DEFAULT_APPLICATION_PROTOCOLS);
     }
 
     /**
