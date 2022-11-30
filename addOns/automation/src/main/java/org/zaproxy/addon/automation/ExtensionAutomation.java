@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
-import javax.swing.ImageIcon;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
@@ -76,9 +75,6 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     protected static final String JOBS_RUN_STATS_POSTFIX = ".run";
     protected static final String ERROR_COUNT_STATS = "stats.auto.errors";
     protected static final String WARNING_COUNT_STATS = "stats.auto.warnings";
-
-    public static final ImageIcon ICON =
-            new ImageIcon(ExtensionAutomation.class.getResource(RESOURCES_DIR + "robot.png"));
 
     private static final Logger LOG = LogManager.getLogger(ExtensionAutomation.class);
 

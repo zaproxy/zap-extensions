@@ -167,7 +167,10 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
     public AutomationPanel(ExtensionAutomation ext) {
         this.ext = ext;
         this.setName(Constant.messages.getString("automation.panel.title"));
-        this.setIcon(ExtensionAutomation.ICON);
+        this.setIcon(
+                new ImageIcon(
+                        ExtensionAutomation.class.getResource(
+                                ExtensionAutomation.RESOURCES_DIR + "robot.png")));
         this.setLayout(new GridBagLayout());
 
         this.add(this.getToolbar(), LayoutHelper.getGBC(0, 0, 1, 1.0));

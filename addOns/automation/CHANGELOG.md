@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Allow to specify the HTTP version for requests in the `requestor` job.
 
+### Fixed
+- Prevent exception if no display.
+
 ## [0.19.0] - 2022-10-27
 ### Changed
 - Update minimum ZAP version to 2.12.0.
