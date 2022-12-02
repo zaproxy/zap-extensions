@@ -23,12 +23,64 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.Mockito.mockStatic;
 
 import net.sf.json.JSONObject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.MockedStatic;
+import org.parosproxy.paros.Constant;
+import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 
 class ExtensionCallHomeUnitTest {
+
+    @ParameterizedTest
+    @EnumSource(value = ZAP.ProcessType.class)
+    void shouldHaveZapTypeInMandatoryRequestData(ZAP.ProcessType type) {
+        try (MockedStatic<ZAP> zap = mockStatic(ZAP.class); ) {
+            // Given
+            zap.when(ZAP::getProcessType).thenReturn(type);
+            // When
+            JSONObject data = ExtensionCallHome.getMandatoryRequestData();
+            // Then
+            assertThat(data.get("zapType"), is(equalTo(type.name())));
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"container 1", "container 2"})
+    void shouldHaveContainerInMandatoryRequestData(String containerName) {
+        try (MockedStatic<Constant> constant = mockStatic(Constant.class);
+                MockedStatic<ZAP> zap = mockStatic(ZAP.class); ) {
+            // Given
+            zap.when(ZAP::getProcessType).thenReturn(ZAP.ProcessType.daemon);
+            constant.when(Constant::isInContainer).thenReturn(true);
+            constant.when(Constant::getContainerName).thenReturn(containerName);
+            // When
+            JSONObject data = ExtensionCallHome.getMandatoryRequestData();
+            // Then
+            assertThat(data.get("container"), is(equalTo(containerName)));
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"container 1", "container 2"})
+    void shouldHaveEmptyContainerIfNotContainerInMandatoryRequestData(String containerName) {
+        try (MockedStatic<Constant> constant = mockStatic(Constant.class);
+                MockedStatic<ZAP> zap = mockStatic(ZAP.class); ) {
+            // Given
+            zap.when(ZAP::getProcessType).thenReturn(ZAP.ProcessType.daemon);
+            constant.when(Constant::isInContainer).thenReturn(false);
+            constant.when(Constant::getContainerName).thenReturn(containerName);
+            // When
+            JSONObject data = ExtensionCallHome.getMandatoryRequestData();
+            // Then
+            assertThat(data.get("container"), is(equalTo("")));
+        }
+    }
 
     @Test
     void shouldAddFilteredGlobalStats() {

@@ -73,20 +73,10 @@ public class ExtensionCallHome extends ExtensionAdaptor
     private static final String ZAP_NEWS_SERVICE = "https://news.zaproxy.org/ZAPnews";
     private static final String ZAP_TEL_SERVICE = "https://tel.zaproxy.org/ZAPtel";
 
-    private static final String ISSUE_FILE = "/etc/issue";
-
     private static final Pattern PSCAN_PATTERN = Pattern.compile("stats\\.pscan\\..\\d+\\..*");
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionCallHome.class);
 
-    private static final String ZAP_CONTAINER_FILE = "/zap/container";
-    private static final String FLATPAK_FILE = "/.flatpak-info";
-    public static final String FLATPAK_NAME = "flatpak";
-    private static final String SNAP_FILE = "meta/snap.yaml";
-    public static final String SNAP_NAME = "snapcraft";
-    private static final String HOME_ENVVAR = "HOME";
-    public static final String WEBSWING_NAME = "webswing";
-    public static final String KALI_NAME = "kali";
     private static final String BACK_BOX_ID = "BackBox";
     private static final HttpRequestConfig HTTP_REQUEST_CONFIG =
             HttpRequestConfig.builder().setFollowRedirects(true).setNotifyListeners(false).build();
@@ -115,10 +105,6 @@ public class ExtensionCallHome extends ExtensionAdaptor
     private CallHomeParam param;
 
     private static OS os;
-    private static Boolean onBackBox = null;
-    private static Boolean inContainer = null;
-    private static String containerName;
-
     private int telIndex = 0;
 
     private JSONObject lastTelemetryData;
@@ -178,7 +164,7 @@ public class ExtensionCallHome extends ExtensionAdaptor
         return true;
     }
 
-    private JSONObject getMandatoryRequestData() {
+    static JSONObject getMandatoryRequestData() {
         JSONObject json = new JSONObject();
         json.put("zapVersion", Constant.PROGRAM_VERSION);
         json.put("os", getOS().toString());
@@ -187,7 +173,7 @@ public class ExtensionCallHome extends ExtensionAdaptor
                 System.getProperty("os.name") + " : " + System.getProperty("os.version"));
         json.put("javaVersion", System.getProperty("java.version"));
         json.put("zapType", ZAP.getProcessType().name());
-        json.put("container", Constant.isInContainer() ? containerName : "");
+        json.put("container", Constant.isInContainer() ? Constant.getContainerName() : "");
         return json;
     }
 
