@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.6.0] - 2022-12-02
 ### Fixed
 - Include container field for CFUs.
 
@@ -53,6 +53,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version supports Check for Updates and News calls.
 
+[0.6.0]: https://github.com/zaproxy/zap-extensions/releases/callhome-v0.6.0
 [0.5.0]: https://github.com/zaproxy/zap-extensions/releases/callhome-v0.5.0
 [0.4.0]: https://github.com/zaproxy/zap-extensions/releases/callhome-v0.4.0
 [0.3.0]: https://github.com/zaproxy/zap-extensions/releases/callhome-v0.3.0
