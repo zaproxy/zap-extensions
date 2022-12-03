@@ -22,7 +22,7 @@
     ],
     "description": "UIKit is the framework used for developing iOS applications.",
     "html": "<[^>]+class=\"[^\"]*(?:uk-container|uk-section)",
-    "icon": "UIKit.png",
+    "icon": "UIKit.svg",
     "scriptSrc": "uikit.*\\.js",
     "website": "https://getuikit.com"
   },
@@ -673,7 +673,7 @@
       68
     ],
     "description": "UserWay is a web accessibility overlay for websites that claims to improve compliance with accessibility standards.",
-    "icon": "UserWay.png",
+    "icon": "UserWay.svg",
     "scriptSrc": "cdn\\.userway\\.org/widget.*\\.js",
     "website": "https://userway.org/"
   },
@@ -831,6 +831,18 @@
     ],
     "saas": true,
     "website": "https://ulogin.ru"
+  },
+  "uPlot": {
+    "cats": [
+      25
+    ],
+    "description": "uPlot is a small, fast chart for time series, lines, areas, ohlc and bars.",
+    "icon": "uPlot.png",
+    "js": {
+      "uPlot": ""
+    },
+    "oss": true,
+    "website": "https://leeoniya.github.io/uPlot"
   },
   "uPortal": {
     "cats": [

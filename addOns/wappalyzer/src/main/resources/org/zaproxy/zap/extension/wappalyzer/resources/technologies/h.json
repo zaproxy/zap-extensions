@@ -1166,7 +1166,8 @@
     "description": "HubSpot is a marketing and sales software that helps companies attract visitors, convert leads, and close customers.",
     "dns": {
       "TXT": [
-        "hubspotemail\\.net"
+        "hubspotemail\\.net",
+        "hubspot-developer-verification"
       ]
     },
     "html": "<!-- Start of Async HubSpot",

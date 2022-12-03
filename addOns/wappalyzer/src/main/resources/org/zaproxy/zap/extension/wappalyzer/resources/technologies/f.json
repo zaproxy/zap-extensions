@@ -234,7 +234,7 @@
       59
     ],
     "description": "FancyBox is a tool for displaying images, html content and multi-media in a Mac-style 'lightbox' that floats overtop of web page.",
-    "icon": "FancyBox.png",
+    "icon": "FancyBox.svg",
     "implies": "jQuery",
     "js": {
       "$.fancybox.version": "^(.+)$\\;version:\\1",
@@ -522,7 +522,8 @@
     },
     "pricing": [
       "mid",
-      "recurring"
+      "recurring",
+      "payg"
     ],
     "saas": true,
     "website": "https://fenicio.io"
@@ -844,17 +845,17 @@
   },
   "Fleksa": {
     "cats": [
-      6,
       93
     ],
     "description": "Fleksa is an online ordering system for restaurants and delivery.",
-    "dom": "link[href*='//fleksa-cdn']",
     "icon": "Fleksa.svg",
+    "dom": "a[href*='play.google.com/store/apps/details?id=com.fleksa.'][target='_blank']",
     "implies": [
       "Node.js",
       "Next.js"
     ],
     "pricing": [
+      "payg",
       "mid",
       "recurring"
     ],
@@ -1093,7 +1094,7 @@
       "<link[^>]* href=[^>]+(?:([\\d.]+)/)?(?:css/)?font-awesome(?:\\.min)?\\.css\\;version:\\1",
       "<link[^>]* href=[^>]*kit\\-pro\\.fontawesome\\.com/releases/v([0-9.]+)/\\;version:\\1"
     ],
-    "icon": "font-awesome.svg",
+    "icon": "Font Awesome.svg",
     "js": {
       "FontAwesomeCdnConfig": "",
       "___FONT_AWESOME___": ""
@@ -1600,7 +1601,7 @@
       "style[id='__FRSH_STYLE']",
       "script[id='__FRSH_STATE']"
     ],
-    "icon": "fresh.svg",
+    "icon": "Fresh.svg",
     "implies": [
       "Deno",
       "Preact"
@@ -1831,7 +1832,7 @@
     "icon": "frontity.png",
     "implies": [
       "React",
-      "webpack",
+      "Webpack",
       "WordPress"
     ],
     "meta": {
@@ -1856,6 +1857,25 @@
     "saas": true,
     "scriptSrc": "frosmo\\.easy\\.js",
     "website": "https://frosmo.com"
+  },
+  "FullCalendar": {
+    "cats": [
+      5
+    ],
+    "description": "FullCalendar is a full-sized drag and drop JavaScript event calendar.",
+    "icon": "FullCalendar.png",
+    "implies": "TypeScript",
+    "js": {
+      "FullCalendar.version": "^([\\d\\.\\-\\w]+)$\\;version:\\1"
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "poa"
+    ],
+    "oss": true,
+    "scriptSrc": "/fullcalendar\\.min\\.js",
+    "website": "https://fullcalendar.io"
   },
   "FullContact": {
     "cats": [
@@ -1904,6 +1924,22 @@
     },
     "saas": true,
     "website": "https://fundiin.vn"
+  },
+  "Funding Choices": {
+    "cats": [
+      67
+    ],
+    "description": "Funding Choices is a messaging tool that can help you comply with the EU General Data Protection Regulation (GDPR), and recover lost revenue from ad blocking users.",
+    "dns": {
+      "SOA": "fundingchoicesmessages"
+    },
+    "dom": ".fc-consent-root, iframe[name='googlefcLoaded'], iframe[name='googlefcPresent'], .fc-dialog, .fc-choice-dialog",
+    "icon": "Google.svg",
+    "js": {
+      "__googlefc": ""
+    },
+    "scriptSrc": "fundingchoicesmessages\\.google\\.com",
+    "website": "https://developers.google.com/funding-choices"
   },
   "FunnelCockpit": {
     "cats": [

@@ -314,7 +314,7 @@
       24
     ],
     "description": "Quill is a free open-source WYSIWYG editor.",
-    "icon": "Quill.png",
+    "icon": "Quill.svg",
     "js": {
       "Quill": ""
     },

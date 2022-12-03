@@ -788,21 +788,24 @@
     },
     "website": "https://www.bizweb.vn"
   },
-  "Blackbaud Luminate Online": {
+  "Blackbaud CRM": {
     "cats": [
-      32,
-      41,
       53
     ],
-    "description": "Blackbaud Luminate Online provides online fundraising and marketing automation for nonprofits.",
-    "icon": "Blackbaud-Luminate-Online.png",
+    "description": "Blackbaud CRM gathers fundraising, online applications, actionable prospect research and analytics, and multichannel direct marketing into one platform.",
+    "icon": "Blackbaud.png",
     "js": {
       "BLACKBAUD": "",
       "don_premium_map": ""
     },
     "scriptSrc": "js/convio/modules\\.js",
     "url": "/site/Donation2?.*df_id=",
-    "website": "https://www.blackbaud.com/products/blackbaud-luminate-online"
+    "saas": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://www.blackbaud.com"
   },
   "Blade": {
     "cats": [

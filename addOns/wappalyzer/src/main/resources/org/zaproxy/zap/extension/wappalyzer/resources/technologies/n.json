@@ -248,7 +248,7 @@
       10
     ],
     "description": "Naver Analytics is a Korean based analytics service.",
-    "icon": "Naver.svg",
+    "icon": "Naver Analytics.svg",
     "meta": {
       "naver-site-verification": ""
     },
@@ -265,7 +265,7 @@
       35
     ],
     "description": "Naver Maps help develop location-based services which provided by Naver.",
-    "icon": "Naver.svg",
+    "icon": "Naver Maps.svg",
     "js": {
       "naver.maps": ""
     },
@@ -566,10 +566,10 @@
     "headers": {
       "x-powered-by": "^Next\\.js ?([0-9.]+)?\\;version:\\1"
     },
-    "icon": "vercel.svg",
+    "icon": "Next.js.svg",
     "implies": [
       "React",
-      "webpack",
+      "Webpack",
       "Node.js"
     ],
     "js": {
@@ -657,6 +657,20 @@
     "saas": true,
     "scriptSrc": "(?:api|sdk)\\.nextsale\\.io/",
     "website": "https://nextsale.io"
+  },
+  "Nextra": {
+    "cats": [
+      57
+    ],
+    "description": "Nextra is Next.js based static site generator.",
+    "dom": "div.nextra-container",
+    "js": {
+      "__nextra_internal__": ""
+    },
+    "icon": "Next.js.svg",
+    "requires": "Next.js",
+    "oss": true,
+    "website": "https://nextra.vercel.app/"
   },
   "NexusPIPE": {
     "cats": [
@@ -801,7 +815,7 @@
     ],
     "cpe": "cpe:2.3:a:nodejs:node.js:*:*:*:*:*:*:*:*",
     "description": "Node.js is an open-source, cross-platform, JavaScript runtime environment that executes JavaScript code outside a web browser.",
-    "icon": "node.js.png",
+    "icon": "Node.js.svg",
     "website": "http://nodejs.org"
   },
   "NodeBB": {

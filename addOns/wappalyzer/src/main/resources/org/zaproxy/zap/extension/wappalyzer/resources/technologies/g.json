@@ -25,6 +25,37 @@
     "saas": true,
     "website": "https://www.geovendas.com"
   },
+  "GLPI": {
+    "cats": [
+      18,
+      53
+    ],
+    "cpe": "cpe:2.3:a:glpi-project:glpi:*:*:*:*:*:*:*:* ",
+    "description": "GLPI is an open-source IT Asset Management, issue tracking and service desk system.",
+    "dom": {
+      "div[id*='footer-login'] > a": {
+        "text": "GLPI\\s+version\\s+([\\d\\.]+)\\;version:\\1"
+      },
+      "input[name='_glpi_csrf_token']": {
+        "exists": ""
+      }
+    },
+    "icon": "GLPI.png",
+    "implies": "PHP",
+    "js": {
+      "glpiUnsavedFormChanges": ""
+    },
+    "meta": {
+      "glpi:csrf_token": ""
+    },
+    "oss": true,
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "scriptSrc": "//.*glpi.+common\\.min\\.js\\?v=(\\d+\\.\\d+\\.\\d+)\\;version:\\1",
+    "website": "https://glpi-project.org"
+  },
   "GLS": {
     "cats": [
       99
@@ -221,7 +252,7 @@
     "icon": "Gatsby.svg",
     "implies": [
       "React",
-      "webpack"
+      "Webpack"
     ],
     "meta": {
       "generator": "^Gatsby(?: ([0-9.]+))?$\\;version:\\1"
@@ -1140,6 +1171,15 @@
     "scriptSrc": "/wp-content/plugins/coblocks/",
     "website": "https://github.com/godaddy-wordpress/coblocks"
   },
+  "GoDaddy Domain Parking": {
+    "cats": [
+      109
+    ],
+    "description": "GoDaddy is used as a web host and domain registrar.",
+    "icon": "GoDaddy.svg",
+    "scripts": "wsimg\\.com/parking-lander",
+    "website": "https://www.godaddy.com"
+  },
   "GoDaddy Escapade": {
     "cats": [
       80
@@ -1480,7 +1520,7 @@
     ],
     "cpe": "cpe:2.3:a:google:cloud_platform:*:*:*:*:*:*:*:*",
     "description": "Google Cloud is a suite of cloud computing services.",
-    "icon": "google_cloud.svg",
+    "icon": "Google Cloud.svg",
     "website": "https://cloud.google.com"
   },
   "Google Cloud CDN": {
@@ -1558,7 +1598,7 @@
         }
       }
     },
-    "icon": "Google Font API.png",
+    "icon": "Google Font API.svg",
     "js": {
       "WebFonts": ""
     },
@@ -1581,6 +1621,7 @@
     ],
     "description": "Google Maps is a web mapping service. It offers satellite imagery, aerial photography, street maps, 360° interactive panoramic views of streets, real-time traffic conditions, and route planning for traveling by foot, car, bicycle and air, or public transportation.",
     "icon": "Google Maps.svg",
+    "dom": "iframe[src*='google.com/maps']",
     "scriptSrc": [
       "(?:maps\\.google\\.com/maps\\?file=api(?:&v=([\\d.]+))?|maps\\.google\\.com/maps/api/staticmap)\\;version:API v\\1",
       "//maps\\.google(?:apis)?\\.com/maps/api/js"
@@ -1754,7 +1795,7 @@
         "googlemail\\.com"
       ]
     },
-    "icon": "Google Workspace.svg",
+    "icon": "Google.svg",
     "website": "https://workspace.google.com/"
   },
   "Gorgias": {
@@ -2164,7 +2205,7 @@
     ],
     "description": "GumGum is a technology and media company specializing in contextual intelligence.",
     "dom": "iframe[src*='gumgum.com'], img[src*='gumgum.com']",
-    "icon": "GumGum.png",
+    "icon": "GumGum.svg",
     "pricing": [
       "low",
       "recurring"
@@ -2192,6 +2233,16 @@
     ],
     "description": "Gumroad is a self-publishing digital marketplace platform to sell digital services such as books, memberships, courses and other digital services.",
     "icon": "Gumroad.svg",
+    "dns": {
+      "CNAME": "\\.gumroad\\.com"
+    },
+    "dom": [
+      "iframe[src^='https://gumroad.com/l/']"
+    ],
+    "cookies": {
+      "_gumroad_app_session": "",
+      "_gumroad_guid": ""
+    },
     "js": {
       "GumroadOverlay": "",
       "createGumroadOverlay": ""
@@ -2200,7 +2251,11 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "gumroad\\.com/js/gumroad\\.js",
+    "scriptSrc": [
+      "gumroad\\.com/js/gumroad\\.js",
+      "gumroad\\.com/js/gumroad-embed\\.js",
+      "gumroad\\.com/packs/js/"
+    ],
     "website": "https://gumroad.com"
   },
   "Gumstack": {

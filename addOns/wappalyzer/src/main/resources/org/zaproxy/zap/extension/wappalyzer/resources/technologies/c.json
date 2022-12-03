@@ -56,6 +56,27 @@
     "scriptSrc": "cc\\.cdn\\.civiccomputing\\.com",
     "website": "https://www.civicuk.com/cookie-control"
   },
+  "CiviCRM": {
+    "cats": [
+      53
+    ],
+    "description": "CiviCRM is a web-based suite of internationalised open-source software for constituency relationship management.",
+    "icon": "CiviCRM.png",
+    "dom": "a[href*='/civicrm/contribute/transact'], link[href*='/com_civicrm/civicrm/']",
+    "oss": true,
+    "website": "https://civicrm.org"
+  },
+  "CiviCRM plugins": {
+    "cats": [
+      87
+    ],
+    "description": "CiviCRM is a web-based suite of internationalised open-source software for constituency relationship management.",
+    "icon": "CiviCRM.png",
+    "implies": "CiviCRM",
+    "requires": "WordPress",
+    "scriptSrc": "wp-content/plugins/(?:[\\w\\-]+)?civicrm(?:[\\w\\-]+)?/",
+    "website": "https://wordpress.org/plugins/search/civicrm/"
+  },
   "CJDropshipping app": {
     "cats": [
       100
@@ -171,7 +192,7 @@
       "freemium"
     ],
     "requires": [
-      "Apache",
+      "Apache HTTP Server",
       "PHP"
     ],
     "website": "https://www.brainformatik.com"
@@ -301,15 +322,17 @@
     "cats": [
       18
     ],
+    "description": "CakePHP is an open-source web framework. It follows the model–view–controller (MVC) approach and is written in PHP.",
     "cookies": {
       "cakephp": ""
     },
     "cpe": "cpe:2.3:a:cakephp:cakephp:*:*:*:*:*:*:*:*",
-    "icon": "CakePHP.png",
+    "icon": "CakePHP.svg",
     "implies": "PHP",
     "meta": {
       "application-name": "CakePHP"
     },
+    "oss": true,
     "website": "http://cakephp.org"
   },
   "Caldera Forms": {
@@ -489,6 +512,28 @@
     "saas": true,
     "website": "https://www.canto.com"
   },
+  "Canvas LMS": {
+    "cats": [
+      21
+    ],
+    "description": "Canvas LMS is a web-based learning management system, or LMS.",
+    "headers": {
+      "x-canvas-meta": "login/canvas"
+    },
+    "icon": "Canvas LMS.svg",
+    "implies": [
+      "Ruby on Rails",
+      "React"
+    ],
+    "js": {
+      "webpackChunkcanvas_lms": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.instructure.com/canvas"
+  },
   "Captch Me": {
     "cats": [
       16,
@@ -507,7 +552,7 @@
     ],
     "description": "Carbon Ads is an ad tech company, that connects advertisers to users through targeted verticals called Circles.",
     "dom": "div#carbonads-container",
-    "icon": "Carbon Ads.png",
+    "icon": "Carbon Ads.svg",
     "js": {
       "_carbonads": "",
       "_carbonads_go": ""
@@ -578,7 +623,7 @@
       "low",
       "recurring"
     ],
-    "requires": "Apache",
+    "requires": "Apache HTTP Server",
     "saas": true,
     "scripts": "\\(\\!section\\s\\|\\|\\ssection\\.tagName\\s\\!\\=\\s\\'SECTION\\'\\)",
     "website": "https://carrd.co"
@@ -855,8 +900,30 @@
       "Server": "CentOS",
       "X-Powered-By": "CentOS"
     },
-    "icon": "CentOS.png",
+    "icon": "CentOS.svg",
     "website": "http://centos.org"
+  },
+  "Centra": {
+    "cats": [
+      6
+    ],
+    "description": "Centra is the headless ecommerce platform.",
+    "dom":"img[src*='.centracdn.net/']",
+    "excludes": "Magento",
+    "headers": {
+      "Content-Security-Policy": "\\.centra(?:cdn)?\\.(?:com|net)"
+    },
+    "icon": "Centra.svg",
+    "js": {
+      "CENTRA_IMAGE_SIZES": ""
+    },
+    "scripts": "centraCheckoutScript",
+    "saas": true,
+    "pricing": [
+      "recurring",
+      "poa"
+    ],
+    "website": "https://centra.com"
   },
   "Centminmod": {
     "cats": [
@@ -950,6 +1017,24 @@
       "generator": "Chamilo ([\\d.]+)\\;version:\\1"
     },
     "website": "http://www.chamilo.org"
+  },
+  "Channel.io": {
+    "cats": [
+      52,
+      53
+    ],
+    "description": "Channel.io is an all-in-one business communication platform that helps businesses connect with customers.",
+    "icon": "Channel.io.png",
+    "js": {
+      "ChannelIO": ""
+    },
+    "saas": true,
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "website": "https://channel.io"
   },
   "ChannelAdvisor": {
     "cats": [
@@ -1425,6 +1510,20 @@
     ],
     "website": "https://www.citymail.se"
   },
+  "CivicTheme": {
+    "cats": [
+      66
+    ],
+    "description": "CivicTheme is an open source, inclusive and component-based design system. It was created so governments and corporations can rapidly assemble modern, consistent and compliant digital experiences.",
+    "dom": [
+      "img[class*='civictheme-image']",
+      "img[class*='civic-image']",
+      "img[class*='ct-image']"
+    ],
+    "icon": "civictheme.png",
+    "oss": true,
+    "website": "https://www.civictheme.io/"
+  },
   "Ckan": {
     "cats": [
       1
@@ -1553,6 +1652,24 @@
       "reveal\\.clearbit\\.com/v[(0-9)]/"
     ],
     "website": "https://clearbit.com/reveal"
+  },
+  "Clerk": {
+    "cats": [
+      69
+    ],
+    "description": "Clerk is a user management platform.",
+    "icon": "Clerk.svg",
+    "js": {
+      "Clerk.version": "([\\d\\.]+)\\;version:\\1",
+      "Clerk.authenticateWithMetamask": "",
+      "Clerk.openSignIn": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://clerk.dev"
   },
   "Clerk.io": {
     "cats": [
@@ -1890,6 +2007,23 @@
     ],
     "saas": true,
     "website": "https://www.cloudflare.com/products/turnstile"
+  },
+  "Cloudflare Zaraz": {
+    "cats": [
+      92
+    ],
+    "description": "Cloudflare Zaraz gives you complete control over third-party tools and services for your website, and allows you to offload them to Cloudflare’s edge, improving the speed and security of your website.",
+    "icon": "CloudFlare.svg",
+    "js": {
+      "zaraz": "",
+      "zarazData": ""
+    },
+    "pricing": [
+      "freemium",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.cloudflare.com/products/zaraz/"
   },
   "Cloudimage": {
     "cats": [
@@ -3064,6 +3198,23 @@
     "scriptSrc": "copypoison\\.com/cp\\.js",
     "website": "https://copypoison.com/"
   },
+  "CoreMedia Content Cloud": {
+    "cats": [
+      1,
+      95
+    ],
+    "description": "CoreMedia Content Cloud is an agile content management and digital asset management platform.",
+    "icon": "CoreMedia Content Cloud.svg",
+    "meta": {
+      "coremedia_content_id": "",
+      "generator": "^CoreMedia C(?:ontent Cloud|MS)$"
+    },
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.coremedia.com"
+  },
   "CoreUI": {
     "cats": [
       66
@@ -3371,6 +3522,22 @@
     "saas": true,
     "scriptSrc": "client\\.crisp\\.chat/",
     "website": "https://crisp.chat/"
+  },
+  "Crikle": {
+    "cats": [
+      52
+    ],
+    "description": "Crikle is a multichannel customer engagement software.",
+    "icon": "Crikle.svg",
+    "js": {
+      "crikle.contactId": "",
+      "crikle.openConvertWidget": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.crikle.com"
   },
   "Criteo": {
     "cats": [

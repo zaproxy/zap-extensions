@@ -306,7 +306,8 @@
     "oss": true,
     "scriptSrc": [
       "js/mage",
-      "skin/frontend/(?:default|(enterprise))\\;version:\\1?Enterprise:Community",
+      "skin/frontend/(?:default|(enterprise))\\;version:\\1?1 (Enterprise):1 (Community)",
+      "skin/frontend/\\;confidence:50\\;version:\\1",
       "static/_requirejs\\;confidence:50\\;version:2"
     ],
     "website": "https://magento.com"
@@ -682,7 +683,7 @@
       35
     ],
     "description": "Mapbox GL JS is a JavaScript library that uses WebGL to render interactive maps from vector tiles and Mapbox styles.",
-    "dom": "link[href*='mapbox-gl.css']",
+    "dom": "link[href*='mapbox-gl.css'], div.mapboxgl-map",
     "icon": "Mapbox.svg",
     "js": {
       "mapboxgl.version": "^(.+)$\\;version:\\1\\;confidence:0"
@@ -815,7 +816,7 @@
       59
     ],
     "cpe": "cpe:2.3:a:marked_project:marked:*:*:*:*:*:*:*:*",
-    "icon": "marked.svg",
+    "icon": "Marked.svg",
     "js": {
       "marked": ""
     },
@@ -844,7 +845,7 @@
       32
     ],
     "description": "Marketo develops and sells marketing automation software for account-based marketing and other marketing services and products including SEO and content creation.",
-    "icon": "Marketo.png",
+    "icon": "Marketo.svg",
     "js": {
       "Munchkin": ""
     },
@@ -860,7 +861,7 @@
       5
     ],
     "description": "Marketo Forms help create web forms without programming knowledge. Forms can reside on Marketo landing pages and also be embedded on any page of website.",
-    "icon": "Marketo.png",
+    "icon": "Marketo.svg",
     "js": {
       "formatMarketoForm": ""
     },
@@ -988,7 +989,7 @@
     },
     "cpe": "cpe:2.3:a:matomo:matomo:*:*:*:*:*:*:*:*",
     "description": "Matomo Analytics is a free and open-source web analytics application, that runs on a PHP/MySQL web-server.",
-    "icon": "Matomo.png",
+    "icon": "Matomo.svg",
     "js": {
       "Matomo": "",
       "Piwik": "",
@@ -1012,7 +1013,7 @@
       42
     ],
     "description": "Matomo Tag Manager manages tracking and marketing tags.",
-    "icon": "Matomo.png",
+    "icon": "Matomo.svg",
     "js": {
       "MatomoTagManager": ""
     },
@@ -1300,7 +1301,7 @@
     ],
     "icon": "melis-platform.svg",
     "implies": [
-      "Apache",
+      "Apache HTTP Server",
       "PHP",
       "MySQL",
       "Symfony",
@@ -1947,7 +1948,7 @@
         "mixpanel-domain-verify"
       ]
     },
-    "icon": "Mixpanel.png",
+    "icon": "Mixpanel.svg",
     "js": {
       "mixpanel": ""
     },
@@ -2131,9 +2132,9 @@
       19
     ],
     "description": "Module Federation is a webpack technology for dynamically loading parts of other independently deployed builds.",
-    "icon": "Module Federation.png",
+    "icon": "Webpack.svg",
     "implies": [
-      "webpack"
+      "Webpack"
     ],
     "scripts": [
       "data-webpack\\;confidence:50",
@@ -3010,7 +3011,7 @@
       "Server": "mod_auth_pam(?:/([\\d\\.]+))?\\;version:\\1"
     },
     "icon": "Apache.svg",
-    "implies": "Apache",
+    "implies": "Apache HTTP Server",
     "website": "http://pam.sourceforge.net/mod_auth_pam"
   },
   "mod_dav": {
@@ -3022,7 +3023,7 @@
       "Server": "\\b(?:mod_)?DAV\\b(?:/([\\d.]+))?\\;version:\\1"
     },
     "icon": "Apache.svg",
-    "implies": "Apache",
+    "implies": "Apache HTTP Server",
     "website": "http://webdav.org/mod_dav"
   },
   "mod_fastcgi": {
@@ -3034,7 +3035,7 @@
       "Server": "mod_fastcgi(?:/([\\d.]+))?\\;version:\\1"
     },
     "icon": "Apache.svg",
-    "implies": "Apache",
+    "implies": "Apache HTTP Server",
     "website": "http://www.fastcgi.com/mod_fastcgi/docs/mod_fastcgi.html"
   },
   "mod_jk": {
@@ -3048,7 +3049,7 @@
     "icon": "Apache.svg",
     "implies": [
       "Apache Tomcat",
-      "Apache"
+      "Apache HTTP Server"
     ],
     "website": "http://tomcat.apache.org/tomcat-3.3-doc/mod_jk-howto.html"
   },
@@ -3064,7 +3065,7 @@
     "icon": "mod_perl.png",
     "implies": [
       "Perl",
-      "Apache"
+      "Apache HTTP Server"
     ],
     "website": "http://perl.apache.org"
   },
@@ -3080,7 +3081,7 @@
     "icon": "mod_python.png",
     "implies": [
       "Python",
-      "Apache"
+      "Apache HTTP Server"
     ],
     "website": "http://www.modpython.org"
   },
@@ -3096,7 +3097,7 @@
     "icon": "Phusion Passenger.png",
     "implies": [
       "Ruby on Rails\\;confidence:50",
-      "Apache"
+      "Apache HTTP Server"
     ],
     "website": "http://phusionpassenger.com"
   },
@@ -3112,7 +3113,7 @@
     "icon": "Phusion Passenger.png",
     "implies": [
       "Ruby on Rails\\;confidence:50",
-      "Apache"
+      "Apache HTTP Server"
     ],
     "website": "http://phusionpassenger.com"
   },
@@ -3126,7 +3127,7 @@
       "Server": "mod_ssl(?:/([\\d.]+))?\\;version:\\1"
     },
     "icon": "mod_ssl.png",
-    "implies": "Apache",
+    "implies": "Apache HTTP Server",
     "website": "http://modssl.org"
   },
   "mod_wsgi": {
@@ -3142,7 +3143,7 @@
     "icon": "mod_wsgi.png",
     "implies": [
       "Python\\;confidence:50",
-      "Apache"
+      "Apache HTTP Server"
     ],
     "website": "https://code.google.com/p/modwsgi"
   }

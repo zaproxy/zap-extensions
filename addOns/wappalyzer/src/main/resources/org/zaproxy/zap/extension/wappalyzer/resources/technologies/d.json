@@ -225,6 +225,23 @@
     },
     "website": "https://www.dailymotion.com"
   },
+  "daisyUI": {
+    "cats": [
+      66
+    ],
+    "description": "daisyUI is a customisable Tailwind CSS component library that prevents verbose markup in frontend applications. With a focus on customising and creating themes for user interfaces, daisyUI uses pure CSS and Tailwind utility classes, allowing developers to write clean HTML.",
+    "icon": "daisyUI.png",
+    "implies": "Tailwind CSS",
+    "dom": {
+      "link[href*='npm/daisyui']": {
+        "attributes": {
+          "href": "/npm/daisyui@([\\d\\.]+)/dist/\\;version:\\1"
+        }
+      }
+    },
+    "oss": true,
+    "website": "https://daisyui.com"
+  },
   "Dancer": {
     "cats": [
       18
@@ -251,7 +268,7 @@
     },
     "icon": "Danneo CMS.png",
     "implies": [
-      "Apache",
+      "Apache HTTP Server",
       "PHP"
     ],
     "meta": {
@@ -323,7 +340,7 @@
     "icon": "DataLife Engine.svg",
     "implies": [
       "PHP",
-      "Apache"
+      "Apache HTTP Server"
     ],
     "js": {
       "dle_root": ""
@@ -490,6 +507,23 @@
     },
     "scriptSrc": "dedeajax",
     "website": "http://dedecms.com"
+  },
+  "Delacon": {
+    "cats": [
+      10
+    ],
+    "description": "Delacon provides Australian businesses with Call Tracking, Call Management and Speech Analytics solutions.",
+    "icon": "Delacon.png",
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "js": {
+      "dela_247_call": "",
+      "delaconphonenums": ""
+    },
+    "website": "https://www.delacon.com.au"
   },
   "Delivengo": {
     "cats": [
@@ -782,7 +816,7 @@
     "icon": "DirectAdmin.png",
     "implies": [
       "PHP",
-      "Apache"
+      "Apache HTTP Server"
     ],
     "website": "https://www.directadmin.com"
   },
@@ -1039,7 +1073,7 @@
     "icon": "docusaurus.svg",
     "implies": [
       "React",
-      "webpack"
+      "Webpack"
     ],
     "js": {
       "search.indexName": ""
@@ -1165,6 +1199,45 @@
     "saas": true,
     "scriptSrc": "cdn\\.doofinder\\.com/",
     "website": "https://www.doofinder.com"
+  },
+  "Doppler": {
+    "cats": [
+      75
+    ],
+    "description": "Doppler is an email marketing and transactional email service.",
+    "icon": "Doppler.svg",
+    "scriptSrc": "//(?:hub|cdn)\\.fromdoppler\\.com/",
+    "saas": true,
+    "pricing": [
+      "recurring",
+      "payg"
+    ],
+    "website": "https://www.fromdoppler.com"
+  },
+  "Doppler Forms": {
+    "cats": [
+      87
+    ],
+    "description": "The Doppler Forms plugin allows you to create fully customised subscription forms that you can add to your website or blog.",
+    "icon": "Doppler.svg",
+    "implies": "Doppler",
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/doppler-form/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/doppler-form/"
+  },
+  "Doppler for WooCommerce": {
+    "cats": [
+      87
+    ],
+    "description": "The Doppler for WooCommerce plugin adds submit your WooCommerce customers and buyers to a Doppler List.",
+    "icon": "Doppler.svg",
+    "implies": "Doppler",
+    "requires": [
+      "WordPress",
+      "WooCommerce"
+    ],
+    "scriptSrc": "/wp-content/plugins/doppler-for-woocommerce/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/doppler-for-woocommerce/"
   },
   "Dotclear": {
     "cats": [
@@ -1328,7 +1401,7 @@
       "X-Powered-By": "Dragon Native ([\\d.]+)\\;version:\\1"
     },
     "icon": "Dragon.png",
-    "implies": "Apache",
+    "implies": "Apache HTTP Server",
     "url": "^.*(?:\\.dgn)$",
     "website": "https://dragon-lang.org"
   },
@@ -1345,6 +1418,46 @@
     "requiresCategory": 6,
     "scriptSrc": "draprpubsubtest\\.firebaseapp\\.com/",
     "website": "https://www.drapr.com"
+  },
+  "DreamApply": {
+    "cats": [
+      101,
+      19
+    ],
+    "description": "DreamApply is a specialised student application management system designed with and for education institutions.",
+    "icon": "DreamApply.png",
+    "implies": [
+      "Linkedin Sign-in",
+      "Facebook Login",
+      "Google Sign-in"
+    ],
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "app\\.cdn\\.dreamapply\\.com/",
+    "website": "https://dreamapply.com"
+  },
+  "Dreamdata": {
+    "cats": [
+      32,
+      10
+    ],
+    "description": "Dreamdata is a B2B revenue attribution platform.",
+    "dom": "link[href*='.bizible.com']",
+    "icon": "Dreamdata.svg",
+    "js": {
+      "BizTrackingA": "",
+      "Bizible": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.bizible\\.com/",
+    "website": "https://dreamdata.io"
   },
   "DreamHost": {
     "cats": [
@@ -1379,27 +1492,6 @@
       "MM_showMenu": ""
     },
     "website": "https://www.adobe.com/products/dreamweaver.html"
-  },
-  "Dreamdata": {
-    "cats": [
-      32,
-      10
-    ],
-    "description": "Dreamdata is a B2B revenue attribution platform.",
-    "dom": "link[href*='.bizible.com']",
-    "icon": "Dreamdata.png",
-    "js": {
-      "BizTrackingA": "",
-      "Bizible": ""
-    },
-    "pricing": [
-      "freemium",
-      "mid",
-      "recurring"
-    ],
-    "saas": true,
-    "scriptSrc": "\\.bizible\\.com/",
-    "website": "https://dreamdata.io"
   },
   "Drift": {
     "cats": [

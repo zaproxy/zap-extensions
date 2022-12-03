@@ -491,6 +491,20 @@
     ],
     "website": "https://kibocommerce.com/personalization-software"
   },
+  "Kiliba": {
+    "cats": [
+      32
+    ],
+    "description": "Kiliba has developed a module that automates the marketing process from creating an email to distributing it.",
+    "icon": "Kiliba.svg",
+    "saas": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "url": "/modules/kiliba/logo\\.png",
+    "website": "https://en.kiliba.com"
+  },
   "KineticJS": {
     "cats": [
       25

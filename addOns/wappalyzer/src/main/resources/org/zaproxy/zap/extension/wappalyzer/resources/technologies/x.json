@@ -41,7 +41,7 @@
     "html": "<title>XAMPP(?: Version ([\\d\\.]+))?</title>\\;version:\\1",
     "icon": "XAMPP.png",
     "implies": [
-      "Apache",
+      "Apache HTTP Server",
       "MySQL",
       "PHP",
       "Perl"
