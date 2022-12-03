@@ -457,8 +457,11 @@
         }
       }
     },
+    "js": {
+      "tailwind": ""
+    },
     "icon": "tailwindcss.svg",
-    "scriptSrc": "\\.tailwindcss\\.com",
+    "scriptSrc": "\\.tailwindcss(?:tailwind-config-cdn)?\\.(?:com|js)",
     "website": "https://tailwindcss.com/"
   },
   "TakeDrop": {
@@ -747,6 +750,10 @@
           "text": "Tebex"
         }
       }
+    },
+    "headers": {
+      "tb-cache-group": "^webstore$\\;confidence:50",
+      "tb-cache-country": "^\\w+$\\;confidence:50"
     },
     "icon": "Tebex.svg",
     "implies": [
@@ -3038,8 +3045,10 @@
     ],
     "description": "Twitter Emoji is a set of open-source emoticons and emojis for Twitter, TweetDeck, and also for Android and iOS versions of the application.",
     "js": {
-      "twemoji": ""
+      "twemoji": "",
+      "twemoji.base": "twemoji\\.maxcdn\\.com/v/([\\d\\.]+)/\\;version:\\1"
     },
+    "oss": true,
     "scriptSrc": "twemoji(?:\\.min)?\\.js",
     "website": "https://twitter.github.io/twemoji/"
   },

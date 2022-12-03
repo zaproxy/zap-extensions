@@ -706,6 +706,23 @@
     ],
     "website": "https://rechargepayments.com"
   },
+  "Recharts": {
+    "cats": [
+      25
+    ],
+    "description": "Recharts is a component-based charting library, which is exclusively built for React applications.",
+    "dom": {
+      "div > div > svg.recharts-surface": {
+        "attributes": {
+          "class": ""
+        }
+      }
+    },
+    "icon": "Recharts.svg",
+    "implies": "React",
+    "oss": true,
+    "website": "https://recharts.org/"
+  },
   "Recite Me": {
     "cats": [
       68
@@ -857,7 +874,7 @@
       2
     ],
     "html": "(?:<a[^>]+Powered by Reddit|powered by <a[^>]+>reddit<)",
-    "icon": "Reddit.png",
+    "icon": "Reddit.svg",
     "implies": "Python",
     "js": {
       "reddit": ""
@@ -870,7 +887,7 @@
       36
     ],
     "description": "Reddit Ads is an online advertising offering from Reddit.",
-    "icon": "Reddit.png",
+    "icon": "Reddit.svg",
     "scriptSrc": "www\\.redditstatic\\.com",
     "website": "https://advertising.reddithelp.com/"
   },
@@ -1152,7 +1169,7 @@
       12
     ],
     "description": "RequireJS is a JavaScript library and file loader which manages the dependencies between JavaScript files and in modular programming.",
-    "icon": "RequireJS.png",
+    "icon": "RequireJS.svg",
     "js": {
       "requirejs.version": "^(.+)$\\;version:\\1"
     },
@@ -1639,12 +1656,13 @@
     "cats": [
       12
     ],
+    "description": "RightJS is a modular JavaScript framework.",
     "icon": "RightJS.png",
     "js": {
       "RightJS": ""
     },
-    "scriptSrc": "right\\.js",
-    "website": "http://rightjs.org"
+    "oss": true,
+    "website": "https://github.com/rightjs"
   },
   "Riot": {
     "cats": [
@@ -1829,6 +1847,27 @@
     ],
     "saas": true,
     "website": "https://rocket.chat"
+  },
+  "Rocketfy": {
+    "cats": [
+      6,
+      51
+    ],
+    "description": "Rocketfy is a platform that allows users to build an online store and allows dropshipping at the same time.",
+    "icon": "Rocketfy.svg",
+    "implies": [
+      "React",
+      "Next.js"
+    ],
+    "meta": {
+      "generator": "^Rocketfy\\sMaker\\s-\\sv([\\d\\.]+)$\\;version:\\1"
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.rocketfy\\.mx/",
+    "website": "https://rocketfy.mx"
   },
   "Rokt": {
     "cats": [

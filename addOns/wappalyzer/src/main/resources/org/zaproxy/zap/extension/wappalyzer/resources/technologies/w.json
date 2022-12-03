@@ -1957,12 +1957,12 @@
     },
     "website": "http://webedition.de/en"
   },
-  "webpack": {
+  "Webpack": {
     "cats": [
       19
     ],
     "description": "Webpack is an open-source JavaScript module bundler.",
-    "icon": "webpack.svg",
+    "icon": "Webpack.svg",
     "js": {
       "webpackChunk": "",
       "webpackJsonp": ""

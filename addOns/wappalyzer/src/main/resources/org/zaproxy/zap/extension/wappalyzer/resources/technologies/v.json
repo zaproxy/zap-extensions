@@ -87,6 +87,7 @@
       "vtex_session": ""
     },
     "description": "VTEX is an ecommerce software that manages multiple online stores.",
+    "dom":"link[href*='.vteximg.com.br'], source[srcset*='.vteximg.com.br']",
     "headers": {
       "Server": "^VTEX IO$",
       "powered": "vtex"
@@ -284,6 +285,10 @@
     "cats": [
       62
     ],
+    "description": "Vercel is a cloud platform for static frontends and serverless functions.",
+    "dns": {
+      "SOA": "\\.vercel-dns\\.com"
+    },
     "headers": {
       "server": "^now|Vercel$",
       "x-now-trace": "",
@@ -291,6 +296,12 @@
       "x-vercel-id": ""
     },
     "icon": "vercel.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
     "website": "https://vercel.com"
   },
   "Vercel Analytics": {
@@ -986,6 +997,7 @@
     "icon": "vue.svg",
     "js": {
       "Vue.version": "^(.+)$\\;version:\\1",
+      "Vue": "",
       "VueRoot": "",
       "__VUE_HOT_MAP__": "",
       "__VUE__": "",

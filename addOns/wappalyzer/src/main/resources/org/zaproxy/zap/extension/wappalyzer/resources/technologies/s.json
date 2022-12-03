@@ -676,6 +676,54 @@
     "scriptSrc": "cdn\\.evgnet\\.com",
     "website": "https://www.salesforce.com/products/marketing-cloud/customer-interaction"
   },
+  "Salesforce Marketing Cloud Account Engagement": {
+    "cats": [
+      32
+    ],
+    "description": "Salesforce Marketing Cloud Account Engagement (formerly known as Pardot) is an application specifically designed for B2B marketing automation.",
+    "dns": {
+      "TXT": [
+        "pardot"
+      ]
+    },
+    "dom": "iframe[scr*='.pardot.com/']",
+    "headers": {
+      "X-Pardot-LB": "",
+      "X-Pardot-Route": "",
+      "X-Pardot-Rsp": ""
+    },
+    "icon": "Salesforce.svg",
+    "js": {
+      "piAId": "",
+      "piCId": "",
+      "piHostname": "",
+      "piProtocol": "",
+      "piTracker": ""
+    },
+    "saas": true,
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "website": "https://www.salesforce.com/products/marketing-cloud/marketing-automation"
+  },
+  "Salesforce Marketing Cloud Email Studio": {
+    "cats": [
+      75
+    ],
+    "description": "Salesforce Marketing Cloud Email Studio is a powerful tool that allows you to build and send personalised emails.",
+    "icon": "Salesforce.svg",
+    "headers": {
+      "content-security-policy": "\\.exacttarget\\.com/"
+    },
+    "dom": "a[href*='.exacttarget.com/'][target='_blank']",
+    "saas": true,
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "website": "https://www.salesforce.com/products/marketing-cloud/email-marketing"
+  },
   "Salesforce Service Cloud": {
     "cats": [
       52,
@@ -709,6 +757,19 @@
     ],
     "saas": true,
     "website": "https://salesloft.com"
+  },
+  "Salesnauts": {
+    "cats": [
+      6
+    ],
+    "description": "Salesnauts is a fashion ecommerce platform.",
+    "dom": "link[href*='//image.salesnauts.com/']",
+    "icon": "Salesnauts.png",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://salesnauts.com"
   },
   "Salla": {
     "cats": [
@@ -1276,7 +1337,9 @@
     },
     "icon": "Segment.svg",
     "js": {
-      "analytics.VERSION": "(.+)\\;version:\\1"
+      "analytics.VERSION": "(.+)\\;version:\\1",
+      "analytics.SNIPPET_VERSION": "(.+)\\;version:\\1",
+      "__SEGMENT_INSPECTOR__": ""
     },
     "pricing": [
       "mid",
@@ -1319,6 +1382,25 @@
     "saas": true,
     "scriptSrc": "cdn\\.segmentstream\\.com",
     "website": "https://segmentstream.com"
+  },
+  "Seko OmniReturns": {
+    "cats": [
+      102
+    ],
+    "description": "Seko OmniReturns is an online portal used on ecommerce websites for customers to create returns and shipping labels globally. Seko is a global logistics company offering both the technology and reverse logistics.",
+    "icon": "Seko OmniReturns.png",
+    "implies": [
+      "MySQL",
+      "PHP"
+    ],
+    "scriptSrc": "//cdn\\.omniparcelreturns\\.com/",
+    "saas": true,
+    "pricing": [
+      "recurring",
+      "poa",
+      "payg"
+    ],
+    "website": "https://www.sekologistics.com/us/global-cross-border-returns"
   },
   "Select2": {
     "cats": [
@@ -2832,6 +2914,20 @@
     },
     "website": "http://example.com"
   },
+  "SimpleSAMLphp": {
+    "cats": [
+      69
+    ],
+    "cookies": {
+      "SimpleSAML": "",
+      "SimpleSAMLSessionID": ""
+    },
+    "description": "SimpleSAMLphp is an open-source PHP authentication application that provides support for SAML 2.0 as a Service Provider (SP) or Identity Provider (IdP).",
+    "icon": "default.svg",
+    "implies": "PHP",
+    "oss": true,
+    "website": "https://simplesamlphp.org"
+  },
   "Simplero": {
     "cats": [
       32
@@ -3190,6 +3286,40 @@
     ],
     "website": "https://sitepad.com"
   },
+  "Sitepark IES": {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:sitepark:information_enterprise_server:*:*:*:*:*:*:*:*",
+    "description": "Sitepark IES is a content management system written in PHP and paired with a MySQL database.",
+    "icon": "Sitepark.png",
+    "implies": [
+      "MySQL",
+      "Lucene"
+    ],
+    "meta": {
+      "generator": "^Sitepark\\sInformation\\sEnterprise\\sServer\\s-\\sIES\\sGenerator\\sv([\\d\\.]+)$\\;version:\\1"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.sitepark.com/oeffentlicher-sektor/produkte/cms-technologie.php"
+  },
+  "Sitepark InfoSite": {
+    "cats": [
+      1
+    ],
+    "description": "Sitepark InfoSite is a content management system and complete application of Sitepark IES which written in PHP and paired with a MySQL database.",
+    "icon": "Sitepark.png",
+    "implies": "Sitepark IES",
+    "meta": {
+      "generator": "^InfoSite\\s([\\d\\.]+)\\s-\\sSitepark\\sInformation\\sEnterprise\\sServer$\\;version:\\1"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.sitepark.com/mittelstand/content-management-system/index.php"
+  },
   "SiteSpect": {
     "cats": [
       74
@@ -3245,7 +3375,8 @@
     "cookies": {
       "SC_ANALYTICS_GLOBAL_COOKIE": "",
       "SC_OS_SessionId": "",
-      "sc_expview": ""
+      "sc_expview": "",
+      "sxa_site": ""
     },
     "cpe": "cpe:2.3:a:sitecore:*:*:*:*:*:*:*:*:*",
     "description": "Sitecore provides web content management, and multichannel marketing automation software.",
@@ -3380,7 +3511,7 @@
     "cats": [
       1
     ],
-    "description": "Skilldo is a content management system written in PHP and paired with a MySQL or MariaDB database. ",
+    "description": "Skilldo is a content management system written in PHP and paired with a MySQL or MariaDB database.",
     "headers": {
       "cms-name": "^Skilldo$",
       "cms-version": "([\\d\\.]+)\\;version:\\1\\;confidence:0"
@@ -3510,6 +3641,7 @@
     "html": "<link [^>]+(?:/([\\d.]+)/)?slick-theme\\.css\\;version:\\1",
     "implies": "jQuery",
     "scriptSrc": "(?:/([\\d.]+))?/slick(?:\\.min)?\\.js\\;version:\\1",
+    "icon": "Slick.svg",
     "website": "https://kenwheeler.github.io/slick"
   },
   "SlickStack": {
@@ -4044,7 +4176,7 @@
     "cats": [
       12
     ],
-    "icon": "Socket.IO.svg",
+    "icon": "Socket.io.svg",
     "implies": "Node.js",
     "js": {
       "io.Socket": "",
@@ -4487,7 +4619,7 @@
     ],
     "description": "Sphinx is a tool that makes it easy to create documentation.",
     "html": "Created using <a href=\"https?://(?:www\\.)?sphinx-doc\\.org/\">Sphinx</a> ([0-9.]+)\\.\\;version:\\1",
-    "icon": "Sphinx.png",
+    "icon": "Sphinx.svg",
     "js": {
       "DOCUMENTATION_OPTIONS": ""
     },
@@ -4768,6 +4900,24 @@
     "saas": true,
     "scriptSrc": "\\.creator-spring\\.com/",
     "website": "https://www.spri.ng"
+  },
+  "SprintHub": {
+    "cats": [
+      32
+    ],
+    "description": "SprintHub is an all-in-one marketing platform.",
+    "icon": "SprintHub.svg",
+    "js": {
+      "SprintHUB": "",
+      "SprintHUBLoaded": ""
+    },
+    "pricing": [
+      "poa",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.sprinthub\\.io/",
+    "website": "https://lp.sprinthub.com"
   },
   "Spryker": {
     "cats": [
@@ -5231,6 +5381,23 @@
     "scriptSrc": "static\\.status\\.io/",
     "website": "https://status.io"
   },
+  "StatusCast": {
+    "cats": [
+      13
+    ],
+    "description": "StatusCast is a hosted status page management software.",
+    "icon": "StatusCast.svg",
+    "js": {
+      "statuscast.ui": "",
+      "statuscast.libs.datatables": ""
+    },
+    "saas": true,
+    "pricing": [
+      "mid",
+      "recurring"
+    ], 
+    "website": "https://statuscast.com/status-page/"
+  },
   "Staytus": {
     "cats": [
       13
@@ -5272,7 +5439,7 @@
     ],
     "description": "A modest JavaScript framework for the HTML you already have.",
     "html": "<[^>]+data-controller",
-    "icon": "Stimulus.png",
+    "icon": "Stimulus.svg",
     "website": "https://stimulusjs.org/"
   },
   "StimulusReflex": {
@@ -5392,9 +5559,14 @@
       1
     ],
     "description": "Storyblok is a headless CMS with a visual editor for developers, marketers and content editors. Storyblok helps your team to manage content and digital experiences for every use-case from corporate websites, ecommerce, helpdesks, mobile apps, screen displays, and more.",
+    "headers": {
+      "content-security-policy": "app\\.storyblok\\.com",
+      "x-frame-options": "app\\.storyblok\\.com"
+    },
     "icon": "Storyblok.svg",
-    "meta": {
-      "generator": "storyblok"
+    "js": {
+      "StoryblokBridge": "",
+      "storyblokRegisterEvent": ""
     },
     "pricing": [
       "recurring",
@@ -5723,6 +5895,25 @@
     "scriptSrc": "\\.sumo(?:me)?\\.com/",
     "website": "http://sumo.com"
   },
+  "Suncel": {
+    "cats": [
+      1
+    ],
+    "icon": "Suncel.svg",
+    "description": "Suncel is a powerful and versatile content platform with a simple visual builder for marketers and publishers.",
+    "requires": "Next.js",
+    "dom": "img[srcset*='assets.suncel.io']",
+    "js": {
+      "__NEXT_DATA__.props.pageProps.suncel": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://suncel.io"
+  },
   "SunOS": {
     "cats": [
       28
@@ -5934,7 +6125,7 @@
     "description": "SweetAlert2 is a beautiful, responsive, customizable, accessible replacement for JavaScript's popup boxes.",
     "excludes": "SweetAlert",
     "html": "<link[^>]+?href=\"[^\"]+sweetalert2(?:\\.min)?\\.css",
-    "icon": "SweetAlert2.png",
+    "icon": "SweetAlert2.svg",
     "js": {
       "Sweetalert2": ""
     },
@@ -5966,12 +6157,23 @@
     },
     "website": "https://www.swell.is/"
   },
+  "Swiffy Slider": {
+    "cats": [
+      59
+    ],
+    "description": "Swiffy Slider is a wrapper defined in html with slides, navigation and indicators as its children.",
+    "icon": "Swiffy Slider.svg",
+    "dom": "link[href*='/swiffy-slider.min.css']",
+    "scriptSrc": "/npm/swiffy-slider@([\\d\\.]+)/\\;version:\\1",
+    "oss": true,
+    "website": "https://swiffyslider.com"
+  },
   "Swiftype": {
     "cats": [
       29
     ],
     "description": "Swiftype provides search software for organisations, websites, and computer programs.",
-    "icon": "swiftype.png",
+    "icon": "Swiftype.svg",
     "js": {
       "Swiftype": ""
     },
@@ -5984,7 +6186,7 @@
     ],
     "description": "Swiper is a JavaScript library that creates modern touch sliders with hardware-accelerated transitions.",
     "dom": "div[data-swiper-slide-index], [swiper-container]",
-    "icon": "swiper.svg",
+    "icon": "Swiper.svg",
     "js": {
       "Swiper": ""
     },
@@ -6116,6 +6318,22 @@
       "SyntaxHighlighter": ""
     },
     "website": "https://github.com/syntaxhighlighter"
+  },
+  "Systeme.io": {
+    "cats": [
+      32
+    ],
+    "description": "Systeme.io is an all-in-one marketing platform that helps businesses create and launch sales funnels, affiliate programs, email marketing campaigns, online courses, blogs, and websites.",
+    "icon": "Systeme.io.svg",
+    "dom": "from[action*='//systeme.io/'], a[href*='//systeme.io/']",
+    "scriptSrc": "//systeme\\.io/",
+    "saas": true,
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "website": "https://systeme.io"
   },
   "Syte": {
     "cats": [
@@ -6278,7 +6496,7 @@
         "text": ""
       }
     },
-    "icon": "styled-components.png",
+    "icon": "styled-components.svg",
     "implies": "React",
     "js": {
       "styled": ""

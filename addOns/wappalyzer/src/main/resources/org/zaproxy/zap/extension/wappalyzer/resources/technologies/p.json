@@ -384,7 +384,7 @@
       "x-pantheon-styx-hostname": "",
       "x-styx-req-id": ""
     },
-    "icon": "pantheon.svg",
+    "icon": "Pantheon.svg",
     "implies": [
       "PHP",
       "Nginx",
@@ -420,31 +420,6 @@
       "\\bParcelforce\\b"
     ],
     "website": "https://www.parcelforce.com"
-  },
-  "Pardot": {
-    "cats": [
-      32
-    ],
-    "description": "Pardot is a Software-as-a-Service (SaaS) marketing automation platform.",
-    "dns": {
-      "TXT": [
-        "pardot"
-      ]
-    },
-    "headers": {
-      "X-Pardot-LB": "",
-      "X-Pardot-Route": "",
-      "X-Pardot-Rsp": ""
-    },
-    "icon": "Pardot.png",
-    "js": {
-      "piAId": "",
-      "piCId": "",
-      "piHostname": "",
-      "piProtocol": "",
-      "piTracker": ""
-    },
-    "website": "https://www.pardot.com"
   },
   "ParkingCrew": {
     "cats": [
@@ -981,7 +956,7 @@
       "_pxvid": ""
     },
     "description": "PerimeterX is a provider of scalable, behavior-based threat protection technology for the web, cloud, and mobile.",
-    "icon": "perimeterx.svg",
+    "icon": "PerimeterX.svg",
     "js": {
       "_pxAppId": ""
     },
@@ -1159,7 +1134,7 @@
     "icon": "sazito-phoenix.png",
     "implies": [
       "React",
-      "webpack",
+      "Webpack",
       "Node.js"
     ],
     "js": {

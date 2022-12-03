@@ -173,5 +173,18 @@
       "web.startComponents": ""
     },
     "website": "https://github.com/sulu/web-js"
+  },
+  "_hyperscript ": {
+    "cats": [
+      59
+    ],
+    "description": "_​hyperscript is a scripting language for adding interactivity to the front-end.",
+    "icon": "_hyperscript.png",
+    "js": {
+      "_hyperscript": ""
+    },
+    "oss": true,
+    "scriptSrc": "//unpkg\\.com/hyperscript\\.org@([\\d\\.]+)\\;version:\\1",
+    "website": "https://hyperscript.org"
   }
 }

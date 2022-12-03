@@ -40,9 +40,9 @@
     "headers": {
       "Server": "^(?:Microsoft-)?IIS(?:/([\\d.]+))?\\;version:\\1"
     },
-    "icon": "IIS.png",
+    "icon": "Microsoft.svg",
     "implies": "Windows Server",
-    "website": "http://www.iis.net"
+    "website": "https://www.iis.net"
   },
   "INFOnline": {
     "cats": [
@@ -208,6 +208,31 @@
       "IAI_Ajax": ""
     },
     "website": "https://www.idosell.com"
+  },
+  "Ikas": {
+    "cats": [
+      6
+    ],
+    "description": "Ikas is a new generation ecommerce platform designed for small businesses.",
+    "headers": {
+      "server": "^ikas$",
+      "x-powered-by": "^ikas$"
+    },
+    "icon": "Ikas.svg",
+    "implies": [
+      "Next.js",
+      "GraphQL",
+      "MongoDB"
+    ],
+    "js": {
+      "IkasEvents.subscribe": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://ikas.com"
   },
   "Iluria": {
     "cats": [
@@ -483,7 +508,7 @@
     "html": "<(?:link|a href) [^>]+ndxz-studio",
     "implies": [
       "PHP",
-      "Apache",
+      "Apache HTTP Server",
       "Exhibit"
     ],
     "meta": {
@@ -603,6 +628,24 @@
       "recurring"
     ],
     "website": "https://www.infomaniak.com"
+  },
+  "Infoset": {
+    "cats": [
+      52,
+      53
+    ],
+    "description": "Infoset is an advanced communication and support solutions.",
+    "icon": "Infoset.svg",
+    "js": {
+      "InfosetChat": "",
+      "InfosetRoot": ""
+    },
+    "pricing": [
+      "recurring",
+      "low"
+    ],
+    "saas": true,
+    "website": "https://infoset.app"
   },
   "Insider": {
     "cats": [
@@ -1136,7 +1179,7 @@
     "icon": "iEXExchanger.png",
     "implies": [
       "PHP",
-      "Apache",
+      "Apache HTTP Server",
       "Angular"
     ],
     "meta": {
@@ -1253,15 +1296,19 @@
     "cats": [
       1
     ],
-    "html": "<imp:live-info sysid=\"[0-9a-f-]+\"(?: node_id=\"[0-9/]*\")? *\\/>",
+    "description": "imperia CMS is a headless content management for large editorial.",
+    "dom": "source[srcset*='.de/imperia/md/images/']",
     "icon": "imperiaCMS.svg",
     "implies": "Perl",
     "meta": {
-      "GENERATOR": "^IMPERIA ([0-9.]{2,3})\\;version:\\1",
-      "X-Imperia-Live-Info": ""
+      "generator": "^IMPERIA\\s([\\d\\.\\_]+)\\;version:\\1",
+      "x-imperia-live-info": ""
     },
-    "url": "imperia/md/",
-    "website": "https://www.pirobase-imperia.com/de/produkte/produktuebersicht/imperia-cms"
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.pirobase-imperia.com/de/solutions/imperia-cms"
   },
   "inSales": {
     "cats": [

@@ -395,7 +395,7 @@
     ],
     "cpe": "cpe:2.3:a:ektron:ektron_content_management_system:*:*:*:*:*:*:*:*",
     "description": "Ektron CMS is developed on the Microsoft .NET framework and is 100% ASP.NET. In 2015 Ektron merged with EPiServer.",
-    "icon": "optimizely-cms.svg",
+    "icon": "Optimizely.svg",
     "implies": "Microsoft ASP.NET",
     "js": {
       "Ektron": ""
@@ -537,20 +537,43 @@
   },
   "Elementor": {
     "cats": [
-      51
+      51,
+      87
     ],
     "description": "Elementor is a website builder platform for professionals on WordPress.",
-    "html": [
-      "<div class=(?:\"|')[^\"']*elementor",
-      "<section class=(?:\"|')[^\"']*elementor",
-      "<link [^>]*href=(?:\"|')[^\"']*elementor/assets",
-      "<link [^>]*href=(?:\"|')[^\"']*uploads/elementor/css"
-    ],
-    "icon": "Elementor.png",
+    "icon": "Elementor.svg",
+    "dom": "link[href*='/wp-content/plugins/elementor/']",
     "js": {
-      "elementorFrontend.getElements": ""
+      "elementorFrontend.getElements": "",
+      "elementorFrontendConfig.version": "([\\d\\.]+)\\;version:\\1"
     },
-    "scriptSrc": "elementor/assets/js/[^/]+\\.js\\?ver=([\\d.]+)$\\;version:\\1",
+    "scriptSrc": "/wp-content/plugins/elementor(?:-pro)?/.+frontend-modules\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "requires": "WordPress",
+    "saas": true,
+    "pricing": [
+      "freemium",
+      "onetime",
+      "recurring"
+    ],
+    "website": "https://elementor.com"
+  },
+  "Elementor Cloud": {
+    "cats": [
+      88
+    ],
+    "description": "Elementor Cloud is a platform for creating and hosting WordPress websites with Elementor.",
+    "headers": {
+      "x-powered-by": "Elementor Cloud"
+    },
+    "icon": "Elementor.svg",
+    "implies": [
+      "WordPress",
+      "Elementor"
+    ],
+    "pricing": [
+      "recurring",
+      "low"
+    ],
     "website": "https://elementor.com"
   },
   "Elementor Header & Footer Builder": {
@@ -793,6 +816,22 @@
     "saas": true,
     "scriptSrc": "emotivecdn\\.io/",
     "website": "https://emotive.io"
+  },
+  "Empretienda": {
+    "cats": [
+      6
+    ],
+    "description": "Empretienda is a platform that allows you to create and manage your own online store.",
+    "headers": {
+      "set-cookie": "^EMPRETIENDA_SESSION"
+    },
+    "icon": "Empretienda.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.empretienda.com"
   },
   "Enable": {
     "cats": [
@@ -1450,7 +1489,7 @@
     "headers": {
       "X-Powered-By": "^Express(?:$|,)"
     },
-    "icon": "Express.png",
+    "icon": "Express.svg",
     "implies": "Node.js",
     "website": "http://expressjs.com"
   },

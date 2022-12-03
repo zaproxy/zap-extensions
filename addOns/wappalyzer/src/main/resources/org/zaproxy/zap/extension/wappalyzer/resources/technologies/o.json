@@ -103,6 +103,26 @@
     "scriptSrc": "cdn\\.shopify\\.com/extensions/.+/([\\.\\d]{3,})/assets/upsell\\.min\\.js\\;version:\\1",
     "website": "https://obsidianapps.co"
   },
+  "Obsidian Publish": {
+    "cats": [
+      4
+    ],
+    "description": "Obsidian Publish is an official, paid plugin for Obsidian that allows users to post selected notes to a directory on the publish.obsidian.md domain.",
+    "icon": "Obsidian Publish.svg",
+    "implies": [
+      "Prism",
+      "PIXIjs"
+    ],
+    "js": {
+      "siteInfo.host": "\\.obsidian\\.md"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://obsidian.md/publish"
+  },
   "Obviyo": {
     "cats": [
       100,
@@ -235,6 +255,9 @@
     "implies": "Laravel",
     "meta": {
       "generator": "OctoberCMS"
+    },
+    "js": {
+      "ocJSON": ""
     },
     "oss": true,
     "website": "http://octobercms.com"
@@ -679,6 +702,9 @@
     "cookies": {
       "OptanonConsent": ""
     },
+    "dns": {
+      "TXT": "onetrust-domain-verification="
+    },
     "description": "OneTrust is a cloud-based data privacy management compliance platform.",
     "icon": "OneTrust.png",
     "scriptSrc": [
@@ -865,7 +891,7 @@
       22
     ],
     "cpe": "cpe:2.3:a:openbsd:openbsd:*:*:*:*:*:*:*:*",
-    "excludes": "Apache",
+    "excludes": "Apache HTTP Server",
     "headers": {
       "Server": "^OpenBSD httpd"
     },
@@ -998,7 +1024,7 @@
     "headers": {
       "Server": "openresty(?:/([\\d.]+))?\\;version:\\1"
     },
-    "icon": "OpenResty.png",
+    "icon": "OpenResty.svg",
     "implies": [
       "Nginx"
     ],
@@ -1146,7 +1172,8 @@
   },
   "Optimizely": {
     "cats": [
-      74
+      74,
+      76
     ],
     "cookies": {
       "optimizelyEndUserId": ""
@@ -1166,22 +1193,48 @@
     "scriptSrc": "optimizely\\.com.*\\.js",
     "website": "https://www.optimizely.com"
   },
-  "Optimizely CMS": {
+  "Optimizely Content Management": {
     "cats": [
       1
     ],
     "cookies": {
       "EPiServer": "",
       "EPiSessionId": "",
-      "EPiTrace": ""
+      "EPiTrace": "",
+      "EPi:StateMarker": ""
     },
     "cpe": "cpe:2.3:a:episerver:episerver:*:*:*:*:*:*:*:*",
-    "icon": "optimizely-cms.svg",
+    "description": "Optimizely Content Management (formerly EPiServer) is digital content, ecommerce, and marketing management solution designed for editors and marketers.",
+    "icon": "Optimizely.svg",
     "implies": "Microsoft ASP.NET",
     "meta": {
       "generator": "EPiServer"
     },
-    "website": "https://www.optimizely.com/"
+    "headers": {
+      "content-security-policy": "\\.episerver\\.net"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.optimizely.com/products/content/"
+  },
+  "Optimizely Commerce": {
+    "cats": [
+      6
+    ],
+    "cookies": {
+      "EPi:StateMarker": ""
+    },
+    "description": "Optimizely Commerce is a complete suite for digital ecommerce and content management that uses artificial intelligence to deliver personalised experiences, individualised search rankings and product recommendations.",
+    "icon": "Optimizely.svg",
+    "requiresCategory": 6,
+    "meta": {
+      "generator": "EPiServer"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.optimizely.com/products/commerce/b2c/"
   },
   "Optimove": {
     "cats": [
