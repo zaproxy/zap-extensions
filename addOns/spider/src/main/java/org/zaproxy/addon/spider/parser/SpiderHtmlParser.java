@@ -417,7 +417,7 @@ public class SpiderHtmlParser extends SpiderParser {
             CustomUrlProcessor customUrlProcessor) {
         // The URL as written in the attribute (can be relative or absolute)
         String localURL = element.getAttributeValue(attributeName);
-        if (localURL == null) {
+        if (localURL == null || localURL.equals("#")) {
             return false;
         }
 
