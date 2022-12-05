@@ -57,9 +57,6 @@ import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 
 public class ExtensionHttpFuzzer extends ExtensionAdaptor {
 
-    private static final ImageIcon HTTP_FUZZER_PROCESSOR_SCRIPT_ICON =
-            new ImageIcon(ZAP.class.getResource("/resource/icon/16/script-fuzz.png"));
-
     private static final List<Class<? extends Extension>> DEPENDENCIES;
 
     static {
@@ -117,7 +114,11 @@ public class ExtensionHttpFuzzer extends ExtensionAdaptor {
                     new ScriptType(
                             HttpFuzzerProcessorScript.TYPE_NAME,
                             "fuzz.httpfuzzer.script.type.fuzzerprocessor",
-                            HTTP_FUZZER_PROCESSOR_SCRIPT_ICON,
+                            hasView()
+                                    ? new ImageIcon(
+                                            ZAP.class.getResource(
+                                                    "/resource/icon/16/script-fuzz.png"))
+                                    : null,
                             true,
                             true);
             extensionScript.registerScriptType(scriptType);

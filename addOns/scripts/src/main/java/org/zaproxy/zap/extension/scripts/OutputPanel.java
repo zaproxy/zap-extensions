@@ -143,7 +143,7 @@ public class OutputPanel extends AbstractPanel {
             scriptLockButton.setSelectedToolTipText(
                     Constant.messages.getString(
                             "scripts.output.scriptLock.button.enabled.toolTip"));
-            scriptLockButton.setIcon(DisplayUtils.getScaledIcon(ExtensionScriptsUI.ICON));
+            scriptLockButton.setIcon(DisplayUtils.getScaledIcon(ExtensionScriptsUI.getIcon()));
             scriptLockButton.addActionListener(
                     e -> extension.setLockOutputToDisplayedScript(scriptLockButton.isSelected()));
 

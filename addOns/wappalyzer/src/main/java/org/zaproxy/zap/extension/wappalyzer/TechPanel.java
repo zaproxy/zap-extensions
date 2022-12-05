@@ -95,7 +95,9 @@ public class TechPanel extends AbstractPanel {
         this.setLayout(new CardLayout());
         this.setSize(474, 251);
         this.setName(Constant.messages.getString("wappalyzer.panel.title"));
-        this.setIcon(ExtensionWappalyzer.WAPPALYZER_ICON);
+        this.setIcon(
+                new ImageIcon(
+                        getClass().getResource(ExtensionWappalyzer.RESOURCE + "/wappalyzer.png")));
         this.setDefaultAccelerator(
                 this.extension
                         .getView()

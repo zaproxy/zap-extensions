@@ -38,7 +38,7 @@ class WappalyzerAppsJsonParseUnitTest {
         WappalyzerJsonParser parser =
                 new WappalyzerJsonParser(
                         (pattern, e) -> errs.add(e.toString()), parsingExceptions::add);
-        parser.parse("categories.json", generateFileList());
+        parser.parse("categories.json", generateFileList(), true);
         // Then
         assertEquals(Collections.emptyList(), errs);
         assertEquals(Collections.emptyList(), parsingExceptions);

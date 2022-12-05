@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.swing.SwingUtilities;
 import org.apache.commons.configuration.Configuration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -65,6 +64,7 @@ import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.model.StructuralNode;
 import org.zaproxy.zap.model.StructuralSiteNode;
 import org.zaproxy.zap.utils.Stats;
+import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.view.AbstractContextPropertiesPanel;
 import org.zaproxy.zap.view.ContextPanelFactory;
 
@@ -454,7 +454,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
                 this.handleAlert(alert);
             } else {
                 // Have to add the SiteNode on the EDT
-                SwingUtilities.invokeLater(
+                ThreadUtils.invokeLater(
                         () -> {
                             try {
                                 StructuralNode node =

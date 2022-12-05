@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Prevent exception if no display (Issue 3978).
+
 ## [0.1.0] - 2022-10-27
 
 ### Functional Improvements Compared to Previous Core Release

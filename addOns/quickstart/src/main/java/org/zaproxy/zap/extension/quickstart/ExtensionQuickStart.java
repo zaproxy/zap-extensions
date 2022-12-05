@@ -33,7 +33,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 import javax.swing.ComboBoxModel;
-import javax.swing.ImageIcon;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.tree.ConfigurationNode;
 import org.apache.commons.httpclient.URI;
@@ -59,7 +58,6 @@ import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.reports.ExtensionReports;
 import org.zaproxy.zap.extension.ext.ExtensionExtension;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
-import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public class ExtensionQuickStart extends ExtensionAdaptor
@@ -67,28 +65,6 @@ public class ExtensionQuickStart extends ExtensionAdaptor
 
     public static final String NAME = "ExtensionQuickStart";
     public static final String RESOURCES = "/org/zaproxy/zap/extension/quickstart/resources";
-    public static final ImageIcon ZAP_ICON =
-            DisplayUtils.getScaledIcon(
-                    new ImageIcon(
-                            QuickStartSubPanel.class.getResource(RESOURCES + "/zap64x64.png")));
-    public static final ImageIcon HUD_ICON =
-            DisplayUtils.getScaledIcon(
-                    new ImageIcon(
-                            QuickStartSubPanel.class.getResource(
-                                    RESOURCES + "/hud_logo_64px.png")));
-    public static final ImageIcon HELP_ICON =
-            DisplayUtils.getScaledIcon(
-                    new ImageIcon(QuickStartSubPanel.class.getResource(RESOURCES + "/help.png")));
-    public static final ImageIcon ONLINE_DOC_ICON =
-            DisplayUtils.getScaledIcon(
-                    new ImageIcon(
-                            QuickStartSubPanel.class.getResource(
-                                    RESOURCES + "/document-globe.png")));
-    public static final ImageIcon PDF_DOC_ICON =
-            DisplayUtils.getScaledIcon(
-                    new ImageIcon(
-                            QuickStartSubPanel.class.getResource(
-                                    RESOURCES + "/document-pdf-text.png")));
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionQuickStart.class);
 

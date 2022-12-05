@@ -75,11 +75,12 @@ public class WappalyzerJsonParser {
         this.parsingExceptionHandler = parsingExceptionHandler;
     }
 
-    WappalyzerData parse(String categories, List<String> technologies) {
+    WappalyzerData parse(String categories, List<String> technologies, boolean createIcons) {
         logger.info("Starting to parse Wappalyzer technologies.");
         WappalyzerData wappalyzerData = new WappalyzerData();
         parseCategories(wappalyzerData, getStringResource(categories));
-        technologies.forEach(path -> parseJson(wappalyzerData, getStringResource(path)));
+        technologies.forEach(
+                path -> parseJson(wappalyzerData, getStringResource(path), createIcons));
         logger.info("Loaded {} Wappalyzer technologies.", wappalyzerData.getApplications().size());
         return wappalyzerData;
     }
@@ -118,7 +119,7 @@ public class WappalyzerJsonParser {
     }
 
     @SuppressWarnings("unchecked")
-    private void parseJson(WappalyzerData wappalyzerData, String jsonStr) {
+    private void parseJson(WappalyzerData wappalyzerData, String jsonStr, boolean createIcons) {
 
         try {
             if (!jsonStr.isEmpty()) {
@@ -149,19 +150,24 @@ public class WappalyzerJsonParser {
                     app.setImplies(this.jsonToStringList(appData.get("implies")));
                     app.setCpe(appData.optString("cpe"));
 
-                    URL iconUrl =
-                            ExtensionWappalyzer.class.getResource(
-                                    ExtensionWappalyzer.RESOURCE + "/icons/" + appName + ".png");
-                    if (iconUrl != null) {
-                        app.setIcon(createPngIcon(iconUrl));
-                    } else {
-                        iconUrl =
+                    if (createIcons) {
+                        URL iconUrl =
                                 ExtensionWappalyzer.class.getResource(
                                         ExtensionWappalyzer.RESOURCE
                                                 + "/icons/"
                                                 + appName
-                                                + ".svg");
-                        app.setIcon(createSvgIcon(iconUrl));
+                                                + ".png");
+                        if (iconUrl != null) {
+                            app.setIcon(createPngIcon(iconUrl));
+                        } else {
+                            iconUrl =
+                                    ExtensionWappalyzer.class.getResource(
+                                            ExtensionWappalyzer.RESOURCE
+                                                    + "/icons/"
+                                                    + appName
+                                                    + ".svg");
+                            app.setIcon(createSvgIcon(iconUrl));
+                        }
                     }
 
                     wappalyzerData.addApplication(app);

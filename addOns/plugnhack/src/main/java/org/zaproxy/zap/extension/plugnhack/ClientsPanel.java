@@ -90,7 +90,7 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
         this.setLayout(new CardLayout());
         this.setSize(274, 251);
         this.setName(Constant.messages.getString("plugnhack.client.panel.title"));
-        this.setIcon(ExtensionPlugNHack.CLIENT_ACTIVE_ICON);
+        this.setIcon(ExtensionPlugNHack.getClientActiveIcon());
         this.setDefaultAccelerator(
                 this.extension
                         .getView()
@@ -168,9 +168,9 @@ public class ClientsPanel extends AbstractPanel implements MonitoredPageListener
             final ZapToggleButton activeSwitch = new ZapToggleButton();
             activeSwitch.setSelected(true);
             activeSwitch.setIcon(
-                    DisplayUtils.getScaledIcon(ExtensionPlugNHack.CLIENT_INACTIVE_ICON));
+                    DisplayUtils.getScaledIcon(ExtensionPlugNHack.getClientInactiveIcon()));
             activeSwitch.setSelectedIcon(
-                    DisplayUtils.getScaledIcon(ExtensionPlugNHack.CLIENT_ACTIVE_ICON));
+                    DisplayUtils.getScaledIcon(ExtensionPlugNHack.getClientActiveIcon()));
             activeSwitch.setToolTipText(
                     Constant.messages.getString("plugnhack.client.button.active.off"));
             activeSwitch.setSelectedToolTipText(

@@ -101,19 +101,7 @@ import org.zaproxy.zest.impl.ZestScriptEngineFactory;
 public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, ScriptEventListener {
 
     public static final String NAME = "ExtensionZest";
-    public static final ImageIcon ZEST_ICON =
-            new ImageIcon(
-                    ExtensionZest.class.getResource(
-                            "/org/zaproxy/zap/extension/zest/resources/icons/fruit-orange.png"));
-
-    private static final ImageIcon RECORD_OFF_ICON =
-            new ImageIcon(
-                    ExtensionZest.class.getResource(
-                            "/org/zaproxy/zap/extension/zest/resources/icons/cassette.png"));
-    private static final ImageIcon RECORD_ON_ICON =
-            new ImageIcon(
-                    ExtensionZest.class.getResource(
-                            "/org/zaproxy/zap/extension/zest/resources/icons/cassette-red.png"));
+    private static ImageIcon zestIcon;
 
     public static final String HTTP_HEADER_X_SECURITY_PROXY = "X-Security-Proxy";
     public static final String VALUE_RECORD = "record";
@@ -160,6 +148,16 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     public ExtensionZest() {
         super(NAME);
         this.setOrder(73); // Almost looks like ZE ;)
+    }
+
+    public static ImageIcon getZestIcon() {
+        if (zestIcon == null) {
+            zestIcon =
+                    new ImageIcon(
+                            ExtensionZest.class.getResource(
+                                    "/org/zaproxy/zap/extension/zest/resources/icons/fruit-orange.png"));
+        }
+        return zestIcon;
     }
 
     @Override
@@ -394,8 +392,16 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     private JToggleButton getRecordButton() {
         if (recordButton == null) {
             recordButton = new ZapToggleButton();
-            recordButton.setIcon(RECORD_OFF_ICON);
-            recordButton.setSelectedIcon(RECORD_ON_ICON);
+            recordButton.setIcon(
+                    new ImageIcon(
+                            getClass()
+                                    .getResource(
+                                            "/org/zaproxy/zap/extension/zest/resources/icons/cassette.png")));
+            recordButton.setSelectedIcon(
+                    new ImageIcon(
+                            getClass()
+                                    .getResource(
+                                            "/org/zaproxy/zap/extension/zest/resources/icons/cassette-red.png")));
             recordButton.setToolTipText(
                     Constant.messages.getString("zest.toolbar.button.record.off"));
             recordButton.setSelectedToolTipText(

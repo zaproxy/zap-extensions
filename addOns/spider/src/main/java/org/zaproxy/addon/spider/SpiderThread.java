@@ -49,6 +49,7 @@ import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.model.StructuralNode;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.users.User;
+import org.zaproxy.zap.utils.ThreadUtils;
 
 /**
  * The Class SpiderThread that controls the spidering process on a particular site. Being a
@@ -450,25 +451,16 @@ public class SpiderThread extends ScanThread implements SpiderListener {
 
     private void addUriToAddedNodesModel(
             final String uri, final String method, final String params) {
-        if (!EventQueue.isDispatchThread()) {
-            EventQueue.invokeLater(
-                    new Runnable() {
+        ThreadUtils.invokeLater(
+                () -> {
+                    // Add the new result
+                    addedNodesModel.addScanResult(uri, method, null, false);
 
-                        @Override
-                        public void run() {
-                            addUriToAddedNodesModel(uri, method, params);
-                        }
-                    });
-            return;
-        }
-
-        // Add the new result
-        addedNodesModel.addScanResult(uri, method, null, false);
-
-        if (extension.getView() != null) {
-            // Update the count of added nodes
-            extension.getSpiderPanel().updateAddedCount();
-        }
+                    if (extension.getView() != null) {
+                        // Update the count of added nodes
+                        extension.getSpiderPanel().updateAddedCount();
+                    }
+                });
     }
 
     private String getStatusLabel(FetchStatus status) {

@@ -50,6 +50,7 @@ public class LearnMorePanel extends QuickStartSubPanel {
     private static final String ZAP_VIDEOS_LINK = "https://www.zaproxy.org/videos/";
     private static final String ZAP_AUTOMATE_LINK = "https://www.zaproxy.org/docs/automate/";
 
+    private ImageIcon icon;
     private JPanel contentPanel;
     private JLabel lowerPadding;
     private int paddingY;
@@ -129,7 +130,13 @@ public class LearnMorePanel extends QuickStartSubPanel {
                 if (isGuideAvailable) {
                     JLabel qsLabel =
                             ulJLabel(Constant.messages.getString("quickstart.link.startguide"));
-                    qsLabel.setIcon(ExtensionQuickStart.PDF_DOC_ICON);
+                    qsLabel.setIcon(
+                            DisplayUtils.getScaledIcon(
+                                    new ImageIcon(
+                                            getClass()
+                                                    .getResource(
+                                                            ExtensionQuickStart.RESOURCES
+                                                                    + "/document-pdf-text.png"))));
                     qsLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
                     qsLabel.addMouseListener(
                             new MouseAdapter() {
@@ -250,7 +257,13 @@ public class LearnMorePanel extends QuickStartSubPanel {
 
     private JLabel getOnlineLink(String key, String url) {
         JLabel label = ulJLabel(Constant.messages.getString(key));
-        label.setIcon(ExtensionQuickStart.ONLINE_DOC_ICON);
+        label.setIcon(
+                DisplayUtils.getScaledIcon(
+                        new ImageIcon(
+                                getClass()
+                                        .getResource(
+                                                ExtensionQuickStart.RESOURCES
+                                                        + "/document-globe.png"))));
         label.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         label.addMouseListener(
                 new MouseAdapter() {
@@ -278,7 +291,15 @@ public class LearnMorePanel extends QuickStartSubPanel {
 
     @Override
     public ImageIcon getIcon() {
-        return ExtensionQuickStart.HELP_ICON;
+        if (icon == null) {
+            icon =
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(
+                                    getClass()
+                                            .getResource(
+                                                    ExtensionQuickStart.RESOURCES + "/help.png")));
+        }
+        return icon;
     }
 
     @Override

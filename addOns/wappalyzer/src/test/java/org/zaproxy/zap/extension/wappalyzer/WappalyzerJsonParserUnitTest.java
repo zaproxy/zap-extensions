@@ -33,7 +33,7 @@ class WappalyzerJsonParserUnitTest {
         // Given
         WappalyzerJsonParser wjp = new WappalyzerJsonParser();
         WappalyzerData wappData =
-                wjp.parse("categories.json", Collections.singletonList("apps.json"));
+                wjp.parse("categories.json", Collections.singletonList("apps.json"), true);
         List<String> expectedCategory = new ArrayList<>(1);
         expectedCategory.add("Advertising"); // 36 - Advertising
         // When

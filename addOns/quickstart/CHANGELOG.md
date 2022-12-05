@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Fixed
 - Correctly unload the add-on.
+- Prevent exception if no display (Issue 3978).
 
 ## [35] - 2022-10-27
 ### Changed
