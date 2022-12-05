@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.is;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.zap.model.TechSet;
 
 /** Unit test for {@link LdapInjectionScanRule}. */
 class LdapInjectionScanRuleUnitTest extends ActiveScannerTest<LdapInjectionScanRule> {
@@ -63,5 +64,16 @@ class LdapInjectionScanRuleUnitTest extends ActiveScannerTest<LdapInjectionScanR
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_INPV_06_LDAPI.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_INPV_06_LDAPI.getValue())));
+    }
+
+    @Test
+    void shouldTargetExpectedTech() {
+        // Given / When
+        TechSet allButLdap = techSetWithout(LdapInjectionScanRule.LDAP);
+        TechSet justLdap = techSet(LdapInjectionScanRule.LDAP);
+
+        // Then
+        assertThat(rule.targets(allButLdap), is(equalTo(false)));
+        assertThat(rule.targets(justLdap), is(equalTo(true)));
     }
 }
