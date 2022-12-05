@@ -64,12 +64,7 @@ import org.zaproxy.zap.model.Context;
 public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventListener, ScriptUI {
 
     public static final String NAME = "ExtensionScripts";
-    public static final ImageIcon ICON =
-            new ImageIcon(ZAP.class.getResource("/resource/icon/16/059.png")); // Script icon
-    public static final ImageIcon SCRIPT_EXT_ICON =
-            new ImageIcon(
-                    ExtensionScriptsUI.class.getResource(
-                            "/org/zaproxy/zap/extension/scripts/resources/icons/script-extender.png")); // Script icon
+    private static ImageIcon icon;
     public static final String SCRIPT_EXT_TYPE = "extender";
 
     /**
@@ -86,8 +81,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionScriptsUI.class);
 
-    private ScriptType extScriptType =
-            new ScriptType(SCRIPT_EXT_TYPE, "scripts.type.extender", SCRIPT_EXT_ICON, true, true);
+    private ScriptType extScriptType;
     private ExtenderScriptHelper helper;
     private Map<String, ExtenderScript> installedExtenderScripts = new HashMap<>();
     private ScriptEngineWrapper nullEngineWrapper = null;
@@ -135,10 +129,28 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
         }
     }
 
+    public static ImageIcon getIcon() {
+        if (icon == null) {
+            icon = new ImageIcon(ZAP.class.getResource("/resource/icon/16/059.png"));
+        }
+        return icon;
+    }
+
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
         this.getExtScript().addListener(this);
+        extScriptType =
+                new ScriptType(
+                        SCRIPT_EXT_TYPE,
+                        "scripts.type.extender",
+                        hasView()
+                                ? new ImageIcon(
+                                        ExtensionScriptsUI.class.getResource(
+                                                "/org/zaproxy/zap/extension/scripts/resources/icons/script-extender.png"))
+                                : null,
+                        true,
+                        true);
         this.getExtScript().registerScriptType(extScriptType);
 
         nullEngineWrapper = new NullScriptEngineWrapper();

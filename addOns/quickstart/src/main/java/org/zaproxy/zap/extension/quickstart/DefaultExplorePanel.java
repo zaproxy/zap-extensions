@@ -49,6 +49,7 @@ public class DefaultExplorePanel extends QuickStartSubPanel {
     private static final String OWASP_ZAP_ROOT_CA_FILENAME =
             OWASP_ZAP_ROOT_CA_NAME + OWASP_ZAP_ROOT_CA_FILE_EXT;
 
+    private ImageIcon icon;
     private JPanel contentPanel;
     private JButton saveButton;
     private ZapTextField hostPortField;
@@ -204,7 +205,16 @@ public class DefaultExplorePanel extends QuickStartSubPanel {
 
     @Override
     public ImageIcon getIcon() {
-        return ExtensionQuickStart.HUD_ICON;
+        if (icon == null) {
+            icon =
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(
+                                    getClass()
+                                            .getResource(
+                                                    ExtensionQuickStart.RESOURCES
+                                                            + "/hud_logo_64px.png")));
+        }
+        return icon;
     }
 
     @Override

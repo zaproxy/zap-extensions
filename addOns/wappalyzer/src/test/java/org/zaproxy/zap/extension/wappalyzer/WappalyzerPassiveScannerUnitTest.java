@@ -49,7 +49,8 @@ class WappalyzerPassiveScannerUnitTest extends PassiveScannerTestUtils<Wappalyze
                 defaultHolder = new WappalyzerApplicationTestHolder();
                 WappalyzerJsonParser parser = new WappalyzerJsonParser();
                 WappalyzerData result =
-                        parser.parse("categories.json", Collections.singletonList("apps.json"));
+                        parser.parse(
+                                "categories.json", Collections.singletonList("apps.json"), true);
                 defaultHolder.setApplications(result.getApplications());
             } catch (Exception ex) {
                 throw new RuntimeException(ex);

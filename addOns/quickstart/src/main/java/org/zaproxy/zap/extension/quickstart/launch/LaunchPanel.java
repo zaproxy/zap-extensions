@@ -66,6 +66,7 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
     private static final String EVENT_HUD_ENABLED_FOR_DESKTOP = "desktop.enabled";
     private static final String EVENT_HUD_DISABLED_FOR_DESKTOP = "desktop.disabled";
 
+    private ImageIcon icon;
     private ExtensionQuickStartLaunch extLaunch;
     private JXPanel contentPanel;
     private JComboBox<String> urlField;
@@ -388,7 +389,16 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
 
     @Override
     public ImageIcon getIcon() {
-        return ExtensionQuickStart.HUD_ICON;
+        if (icon == null) {
+            icon =
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(
+                                    getClass()
+                                            .getResource(
+                                                    ExtensionQuickStart.RESOURCES
+                                                            + "/hud_logo_64px.png")));
+        }
+        return icon;
     }
 
     @Override

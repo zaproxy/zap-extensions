@@ -7,7 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Updated with upstream Wappalyzer icon and pattern changes.
 
-
+### Fixed
+- Prevent exception if no display (Issue 3978).
 
 ## [21.16.0] - 2022-11-14
 ### Changed

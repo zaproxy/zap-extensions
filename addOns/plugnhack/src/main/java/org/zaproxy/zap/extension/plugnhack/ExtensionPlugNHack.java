@@ -124,27 +124,8 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
     public static final String SAFARI_ICON_RESOURCE =
             "/org/zaproxy/zap/extension/plugnhack/resources/icons/safari-icon.png";
 
-    public static final ImageIcon CLIENT_ACTIVE_ICON =
-            new ImageIcon(ZAP.class.getResource(CLIENT_ACTIVE_ICON_RESOURCE));
-    public static final ImageIcon CLIENT_INACTIVE_ICON =
-            new ImageIcon(ZAP.class.getResource(CLIENT_INACTIVE_ICON_RESOURCE));
-
-    public static final ImageIcon CHANGED_ICON =
-            new ImageIcon(
-                    ExtensionPlugNHack.class.getResource(
-                            "/org/zaproxy/zap/extension/plugnhack/resources/icons/screwdriver.png"));
-    public static final ImageIcon DROPPED_ICON =
-            new ImageIcon(
-                    ExtensionPlugNHack.class.getResource(
-                            "/org/zaproxy/zap/extension/plugnhack/resources/icons/bin-metal.png"));
-    public static final ImageIcon PENDING_ICON =
-            new ImageIcon(
-                    ExtensionPlugNHack.class.getResource(
-                            "/org/zaproxy/zap/extension/plugnhack/resources/icons/hourglass.png"));
-    public static final ImageIcon ORACLE_ICON =
-            new ImageIcon(
-                    ExtensionPlugNHack.class.getResource(
-                            "/org/zaproxy/zap/extension/plugnhack/resources/icons/burn.png"));
+    private static ImageIcon clientActiveIcon;
+    private static ImageIcon clientInactiveIcon;
 
     private static final int poll = 3000;
 
@@ -190,6 +171,21 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
     @Override
     public List<Class<? extends Extension>> getDependencies() {
         return DEPENDENCIES;
+    }
+
+    public static ImageIcon getClientActiveIcon() {
+        if (clientActiveIcon == null) {
+            clientActiveIcon = new ImageIcon(ZAP.class.getResource(CLIENT_ACTIVE_ICON_RESOURCE));
+        }
+        return clientActiveIcon;
+    }
+
+    public static ImageIcon getClientInactiveIcon() {
+        if (clientInactiveIcon == null) {
+            clientInactiveIcon =
+                    new ImageIcon(ZAP.class.getResource(CLIENT_INACTIVE_ICON_RESOURCE));
+        }
+        return clientInactiveIcon;
     }
 
     @Override

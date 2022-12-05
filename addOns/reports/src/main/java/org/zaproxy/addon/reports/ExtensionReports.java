@@ -83,9 +83,6 @@ public class ExtensionReports extends ExtensionAdaptor {
 
     private static final String RESOURCES_DIR = "/org/zaproxy/addon/reports/resources/";
 
-    private static final ImageIcon REPORT_ICON =
-            new ImageIcon(ExtensionReports.class.getResource(RESOURCES_DIR + "report.png"));
-
     private static final String SITE_PATTERN = "[[site]]";
     private static final String DATETIME_REGEX = "\\{\\{(.*)\\}\\}";
     private static final Pattern DATETIME_PATTERN = Pattern.compile(DATETIME_REGEX);
@@ -143,7 +140,8 @@ public class ExtensionReports extends ExtensionAdaptor {
     private JButton getReportButton() {
         if (reportButton == null) {
             reportButton = new JButton();
-            reportButton.setIcon(REPORT_ICON);
+            reportButton.setIcon(
+                    new ImageIcon(getClass().getResource(RESOURCES_DIR + "report.png")));
             reportButton.setToolTipText(
                     Constant.messages.getString("reports.toolbar.button.genreport"));
             reportButton.addActionListener(

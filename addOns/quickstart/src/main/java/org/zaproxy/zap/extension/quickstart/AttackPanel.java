@@ -49,6 +49,7 @@ public class AttackPanel extends QuickStartSubPanel {
 
     private static final String DEFAULT_VALUE_URL_FIELD = "http://";
 
+    private ImageIcon icon;
     private JButton attackButton;
     private JButton stopButton;
     private JComboBox<String> urlField;
@@ -460,7 +461,16 @@ public class AttackPanel extends QuickStartSubPanel {
 
     @Override
     public ImageIcon getIcon() {
-        return ExtensionQuickStart.ZAP_ICON;
+        if (icon == null) {
+            icon =
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(
+                                    getClass()
+                                            .getResource(
+                                                    ExtensionQuickStart.RESOURCES
+                                                            + "/zap64x64.png")));
+        }
+        return icon;
     }
 
     @Override

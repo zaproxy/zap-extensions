@@ -58,7 +58,7 @@ public class ZestResultsPanel extends AbstractPanel {
         this.extension = extension;
         this.setLayout(new CardLayout());
         this.setName(Constant.messages.getString("zest.results.panel.title"));
-        this.setIcon(ExtensionZest.ZEST_ICON);
+        this.setIcon(ExtensionZest.getZestIcon());
         this.setDefaultAccelerator(
                 this.extension
                         .getView()

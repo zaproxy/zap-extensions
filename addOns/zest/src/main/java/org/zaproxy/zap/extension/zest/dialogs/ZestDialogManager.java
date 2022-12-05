@@ -132,7 +132,7 @@ public class ZestDialogManager extends AbstractPanel {
     private void initialize() {
         this.setLayout(new CardLayout());
         this.setName(Constant.messages.getString("zest.scripts.panel.title"));
-        this.setIcon(ExtensionZest.ZEST_ICON);
+        this.setIcon(ExtensionZest.getZestIcon());
 
         mouseListener =
                 new java.awt.event.MouseAdapter() {
