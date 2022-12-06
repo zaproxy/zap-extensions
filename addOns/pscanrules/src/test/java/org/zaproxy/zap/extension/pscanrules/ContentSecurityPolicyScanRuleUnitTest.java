@@ -342,6 +342,23 @@ class ContentSecurityPolicyScanRuleUnitTest
     }
 
     @Test
+    void shouldRaiseAlertWhenCspIncludesScriptUnsafeEval() {
+        // Given
+        HttpMessage msg = createHttpMessage("script-src 'unsafe-eval'");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(3));
+        // Verify the specific alerts
+        assertThat(alertsRaised.get(1).getName(), equalTo("CSP: style-src unsafe-inline"));
+
+        assertThat(alertsRaised.get(2).getName(), equalTo("CSP: script-src unsafe-eval"));
+        assertThat(alertsRaised.get(2).getRisk(), equalTo(Alert.RISK_MEDIUM));
+        assertThat(alertsRaised.get(2).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
+        assertThat(alertsRaised.get(2).getAlertRef(), equalTo("10055-9"));
+    }
+
+    @Test
     void shouldRaiseAlertOnSecondCspHasIssueFirstDoesNot() {
         // Given
         HttpMessage msg = createHttpMessageWithReasonableCsp(HTTP_HEADER_CSP);

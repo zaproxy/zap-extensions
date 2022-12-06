@@ -165,6 +165,11 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                     buildStyleUnsafeHashAlert(getHeaderField(msg, HTTP_HEADER_CSP).get(0), csp)
                             .raise();
                 }
+
+                if (allowsUnsafeEval(policy, FetchDirectiveKind.ScriptSrc)) {
+                    buildScriptUnsafeEvalAlert(getHeaderField(msg, HTTP_HEADER_CSP).get(0), csp)
+                            .raise();
+                }
             }
         }
 
@@ -265,6 +270,15 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
         if (fetchDirective.isPresent()) {
             SourceExpressionDirective kind = fetchDirective.get();
             return kind.unsafeHashes();
+        }
+        return false;
+    }
+
+    private static boolean allowsUnsafeEval(Policy policy, FetchDirectiveKind source) {
+        Optional<SourceExpressionDirective> fetchDirective = policy.getFetchDirective(source);
+        if (fetchDirective.isPresent()) {
+            SourceExpressionDirective kind = fetchDirective.get();
+            return kind.unsafeEval();
         }
         return false;
     }
@@ -555,6 +569,18 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                 .setReference(
                         Constant.messages.getString(
                                 MESSAGE_PREFIX + "stylesrc.unsafe.hashes.refs"));
+    }
+
+    private AlertBuilder buildScriptUnsafeEvalAlert(String param, String evidence) {
+        return getBuilder(
+                        Constant.messages.getString(MESSAGE_PREFIX + "scriptsrc.unsafe.eval.name"),
+                        "9")
+                .setRisk(Alert.RISK_MEDIUM)
+                .setParam(param)
+                .setEvidence(evidence)
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                MESSAGE_PREFIX + "scriptsrc.unsafe.eval.otherinfo"));
     }
 
     private AlertBuilder buildMalformedAlert(String param, String evidence, String badChars) {
