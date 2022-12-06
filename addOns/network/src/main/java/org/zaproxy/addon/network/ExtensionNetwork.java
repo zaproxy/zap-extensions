@@ -100,7 +100,6 @@ import org.zaproxy.addon.network.internal.server.AliasChecker;
 import org.zaproxy.addon.network.internal.server.http.HttpServer;
 import org.zaproxy.addon.network.internal.server.http.LocalServer;
 import org.zaproxy.addon.network.internal.server.http.LocalServerConfig;
-import org.zaproxy.addon.network.internal.server.http.LocalServerConfig.ServerMode;
 import org.zaproxy.addon.network.internal.server.http.LocalServerHandler;
 import org.zaproxy.addon.network.internal.server.http.MainProxyHandler;
 import org.zaproxy.addon.network.internal.server.http.MainServerHandler;
@@ -805,10 +804,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         }
 
         updateCoreProxy(serverConfig);
-
-        if (commandLineMode) {
-            serverConfig.setMode(ServerMode.PROXY);
-        }
 
         mainProxyServer = createLocalServer(serverConfig);
         if (overridePort == INVALID_PORT) {
