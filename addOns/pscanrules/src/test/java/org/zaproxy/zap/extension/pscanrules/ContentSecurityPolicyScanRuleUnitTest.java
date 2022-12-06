@@ -97,7 +97,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         rule.setAlertThreshold(AlertThreshold.LOW);
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(4));
+        assertThat(alertsRaised.size(), equalTo(5));
     }
 
     @Test
@@ -107,7 +107,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(4));
+        assertThat(alertsRaised.size(), equalTo(5));
 
         assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Notices"));
         assertThat(
@@ -147,7 +147,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(4));
+        assertThat(alertsRaised.size(), equalTo(5));
         assertThat(alertsRaised.get(1).getName(), equalTo("CSP: Wildcard Directive"));
         assertThat(alertsRaised.get(1).getOtherInfo(), not(containsString("frame-ancestors")));
         assertThat(
@@ -313,7 +313,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(3));
+        assertThat(alertsRaised.size(), equalTo(4));
         // Verify the specific alerts
         assertThat(alertsRaised.get(1).getName(), equalTo("CSP: script-src unsafe-inline"));
         assertThat(alertsRaised.get(1).getRisk(), equalTo(Alert.RISK_MEDIUM));
@@ -324,6 +324,23 @@ class ContentSecurityPolicyScanRuleUnitTest
     }
 
     @Test
+    void shouldRaiseAlertWhenCspIncludesScriptUnsafeEval() {
+        // Given
+        HttpMessage msg = createHttpMessage("script-src 'unsafe-eval'");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(3));
+        // Verify the specific alerts
+        assertThat(alertsRaised.get(1).getName(), equalTo("CSP: style-src unsafe-inline"));
+
+        assertThat(alertsRaised.get(2).getName(), equalTo("CSP: script-src unsafe-eval"));
+        assertThat(alertsRaised.get(2).getRisk(), equalTo(Alert.RISK_MEDIUM));
+        assertThat(alertsRaised.get(2).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+        assertThat(alertsRaised.get(2).getAlertRef(), equalTo("10055-7"));
+    }
+
+    @Test
     void shouldRaiseAlertOnSecondCspHasIssueFirstDoesNot() {
         // Given
         HttpMessage msg = createHttpMessageWithReasonableCsp(HTTP_HEADER_CSP);
@@ -331,7 +348,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertThat(alertsRaised.size(), equalTo(3));
+        assertThat(alertsRaised.size(), equalTo(4));
         // Verify the specific alerts
         assertThat(alertsRaised.get(0).getName(), equalTo("CSP: Wildcard Directive"));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("style-src 'unsafe-inline'"));

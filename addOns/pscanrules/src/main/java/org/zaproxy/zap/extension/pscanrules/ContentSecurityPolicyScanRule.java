@@ -223,6 +223,18 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                             csp,
                             "6");
                 }
+
+                if (policy.allowsEval()) {
+                    raiseAlert(
+                            Constant.messages.getString(
+                                    MESSAGE_PREFIX + "scriptsrc.unsafe.eval.name"),
+                            Constant.messages.getString(
+                                    MESSAGE_PREFIX + "scriptsrc.unsafe.eval.otherinfo"),
+                            "",
+                            Alert.RISK_MEDIUM,
+                            csp,
+                            "7");
+                }
             }
         }
 
