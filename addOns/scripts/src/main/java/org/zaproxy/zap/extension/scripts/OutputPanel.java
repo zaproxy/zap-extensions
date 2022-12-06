@@ -37,6 +37,7 @@ import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ZapTextArea;
 import org.zaproxy.zap.view.ZapToggleButton;
 
+@SuppressWarnings("serial")
 public class OutputPanel extends AbstractPanel {
 
     private static final long serialVersionUID = -947074835463140074L;
@@ -142,7 +143,7 @@ public class OutputPanel extends AbstractPanel {
             scriptLockButton.setSelectedToolTipText(
                     Constant.messages.getString(
                             "scripts.output.scriptLock.button.enabled.toolTip"));
-            scriptLockButton.setIcon(DisplayUtils.getScaledIcon(ExtensionScriptsUI.ICON));
+            scriptLockButton.setIcon(DisplayUtils.getScaledIcon(ExtensionScriptsUI.getIcon()));
             scriptLockButton.addActionListener(
                     e -> extension.setLockOutputToDisplayedScript(scriptLockButton.isSelected()));
 

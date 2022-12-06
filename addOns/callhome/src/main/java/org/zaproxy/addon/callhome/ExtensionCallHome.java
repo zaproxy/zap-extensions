@@ -23,9 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.lang.management.ManagementFactory;
-import java.lang.reflect.Method;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -49,7 +46,6 @@ import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -62,6 +58,7 @@ import org.zaproxy.zap.control.ExtensionFactory;
 import org.zaproxy.zap.extension.autoupdate.ExtensionAutoUpdate;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
+import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public class ExtensionCallHome extends ExtensionAdaptor
@@ -76,21 +73,13 @@ public class ExtensionCallHome extends ExtensionAdaptor
     private static final String ZAP_NEWS_SERVICE = "https://news.zaproxy.org/ZAPnews";
     private static final String ZAP_TEL_SERVICE = "https://tel.zaproxy.org/ZAPtel";
 
-    private static final String ISSUE_FILE = "/etc/issue";
-
     private static final Pattern PSCAN_PATTERN = Pattern.compile("stats\\.pscan\\..\\d+\\..*");
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionCallHome.class);
 
-    private static final String ZAP_CONTAINER_FILE = "/zap/container";
-    private static final String FLATPAK_FILE = "/.flatpak-info";
-    public static final String FLATPAK_NAME = "flatpak";
-    private static final String SNAP_FILE = "meta/snap.yaml";
-    public static final String SNAP_NAME = "snapcraft";
-    private static final String HOME_ENVVAR = "HOME";
-    public static final String WEBSWING_NAME = "webswing";
-    public static final String KALI_NAME = "kali";
     private static final String BACK_BOX_ID = "BackBox";
+    private static final HttpRequestConfig HTTP_REQUEST_CONFIG =
+            HttpRequestConfig.builder().setFollowRedirects(true).setNotifyListeners(false).build();
 
     public enum OS {
         WINDOWS,
@@ -116,10 +105,6 @@ public class ExtensionCallHome extends ExtensionAdaptor
     private CallHomeParam param;
 
     private static OS os;
-    private static Boolean onBackBox = null;
-    private static Boolean inContainer = null;
-    private static String containerName;
-
     private int telIndex = 0;
 
     private JSONObject lastTelemetryData;
@@ -134,6 +119,8 @@ public class ExtensionCallHome extends ExtensionAdaptor
     public ExtensionCallHome() {
         super(NAME);
         setI18nPrefix(PREFIX);
+        // Just before the Network extension.
+        setOrder(Integer.MAX_VALUE - 1);
     }
 
     @Override
@@ -142,7 +129,7 @@ public class ExtensionCallHome extends ExtensionAdaptor
         extensionHook.addCommandLine(getCommandLineArguments());
         extensionHook.addOptionsParamSet(getParam());
         extensionHook.addSessionListener(this);
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookView().addOptionPanel(getOptionsPanel());
         }
     }
@@ -165,19 +152,10 @@ public class ExtensionCallHome extends ExtensionAdaptor
     }
 
     private void setAutoUpdateSupplier(Supplier<ZapXmlConfiguration> supplier) {
-        // XXX Change to not use reflection after 2.12.0
         ExtensionAutoUpdate extAu =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionAutoUpdate.class);
         if (extAu != null) {
-            try {
-                Method setSupplierMethod =
-                        extAu.getClass().getMethod("setCheckForUpdatesSupplier", Supplier.class);
-                LOGGER.debug("Setting CheckForUpdates supplier: {}", supplier);
-                setSupplierMethod.invoke(extAu, supplier);
-            } catch (Exception e) {
-                LOGGER.debug(
-                        "Failed to set CheckForUpdates supplier - expected to fail at 2.11.0", e);
-            }
+            extAu.setCheckForUpdatesSupplier(supplier);
         }
     }
 
@@ -186,7 +164,7 @@ public class ExtensionCallHome extends ExtensionAdaptor
         return true;
     }
 
-    private JSONObject getMandatoryRequestData() {
+    static JSONObject getMandatoryRequestData() {
         JSONObject json = new JSONObject();
         json.put("zapVersion", Constant.PROGRAM_VERSION);
         json.put("os", getOS().toString());
@@ -195,7 +173,7 @@ public class ExtensionCallHome extends ExtensionAdaptor
                 System.getProperty("os.name") + " : " + System.getProperty("os.version"));
         json.put("javaVersion", System.getProperty("java.version"));
         json.put("zapType", ZAP.getProcessType().name());
-        json.put("container", isInContainer() ? containerName : "");
+        json.put("container", Constant.isInContainer() ? Constant.getContainerName() : "");
         return json;
     }
 
@@ -216,8 +194,7 @@ public class ExtensionCallHome extends ExtensionAdaptor
         msg.getRequestHeader().setHeader(HttpHeader.CONTENT_TYPE, HttpHeader.JSON_CONTENT_TYPE);
         msg.getRequestBody().setBody(data.toString());
         msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
-
-        getHttpSender().sendAndReceive(msg, true);
+        getHttpSender().sendAndReceive(msg, HTTP_REQUEST_CONFIG);
         if (msg.getResponseHeader().getStatusCode() != HttpStatusCode.OK) {
             throw new IOException(
                     "Expected '200 OK' but got '"
@@ -304,7 +281,8 @@ public class ExtensionCallHome extends ExtensionAdaptor
         @Override
         public boolean test(Entry<String, Long> t) {
             String key = t.getKey();
-            return key.startsWith("openapi.")
+            return key.startsWith("domxss.")
+                    || key.startsWith("openapi.")
                     || key.startsWith("soap.")
                     || key.startsWith("spiderAjax.")
                     || key.startsWith("stats.alertFilter")
@@ -381,7 +359,7 @@ public class ExtensionCallHome extends ExtensionAdaptor
                 os = OS.WINDOWS;
             } else if (Constant.isKali()) {
                 os = OS.KALI;
-            } else if (isBackBox()) {
+            } else if (Constant.isBackBox()) {
                 os = OS.BACK_BOX;
             } else if (Constant.isLinux()) {
                 os = OS.LINUX;
@@ -394,72 +372,9 @@ public class ExtensionCallHome extends ExtensionAdaptor
         return os;
     }
 
-    // XXX: Use Constant.isBackBox() from 2.12.0
-    private static boolean isBackBox() {
-        if (onBackBox == null) {
-            onBackBox = Boolean.FALSE;
-            File issueFile = new File(ISSUE_FILE);
-            if (Constant.isLinux() && !Constant.isDailyBuild() && issueFile.exists()) {
-                // Ignore the fact we're on BackBox if this is a daily build - they will only have
-                // been installed manually
-                try {
-                    String content = new String(Files.readAllBytes(issueFile.toPath()));
-                    if (content.startsWith(BACK_BOX_ID)) {
-                        onBackBox = Boolean.TRUE;
-                    }
-                } catch (Exception e) {
-                    // Ignore
-                }
-            }
-        }
-        return onBackBox;
-    }
-
-    /** Copied from core Constant to fix a bug in the webswing & kali detection logic in 2.11.0 */
-    // XXX Change back to using the core after 2.12.0
-    public static boolean isInContainer() {
-        if (inContainer == null) {
-            // This is created by the Docker files from 2.11
-            File containerFile = new File(ZAP_CONTAINER_FILE);
-            File flatpakFile = new File(FLATPAK_FILE);
-            File snapFile = new File(SNAP_FILE);
-            if (Constant.isLinux() && containerFile.exists()) {
-                inContainer = true;
-                String home = System.getenv(HOME_ENVVAR);
-                boolean inWebSwing = home != null && home.contains(WEBSWING_NAME);
-                try {
-                    containerName =
-                            new String(
-                                            Files.readAllBytes(containerFile.toPath()),
-                                            StandardCharsets.UTF_8)
-                                    .trim();
-                    if (inWebSwing) {
-                        // Append the webswing name so we don't loose the docker image name
-                        containerName += "." + WEBSWING_NAME;
-                    }
-                } catch (IOException e) {
-                    // Ignore
-                }
-            } else if (flatpakFile.exists()) {
-                inContainer = true;
-                containerName = FLATPAK_NAME;
-            } else if (snapFile.exists()) {
-                inContainer = true;
-                containerName = SNAP_NAME;
-            } else {
-                inContainer = false;
-            }
-        }
-        return inContainer;
-    }
-
     private HttpSender getHttpSender() {
         if (httpSender == null) {
-            httpSender =
-                    new HttpSender(
-                            Model.getSingleton().getOptionsParam().getConnectionParam(),
-                            true,
-                            HttpSender.CHECK_FOR_UPDATES_INITIATOR);
+            httpSender = new HttpSender(HttpSender.CHECK_FOR_UPDATES_INITIATOR);
         }
         return httpSender;
     }

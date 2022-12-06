@@ -42,6 +42,7 @@ import org.zaproxy.zest.core.v1.ZestRequest;
 import org.zaproxy.zest.core.v1.ZestResponse;
 import org.zaproxy.zest.core.v1.ZestVariables;
 
+@SuppressWarnings("serial")
 public class ZestRequestDialog extends StandardFieldsDialog implements ZestDialog {
 
     private static final String FIELD_URL = "zest.dialog.request.label.url";

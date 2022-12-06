@@ -24,6 +24,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
 
+@SuppressWarnings("serial")
 public class NotesTableModel extends AbstractTableModel {
 
     private static final String PREFIX = "allinonenotes";

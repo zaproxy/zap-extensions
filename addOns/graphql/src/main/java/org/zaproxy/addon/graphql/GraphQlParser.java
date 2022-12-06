@@ -22,7 +22,6 @@ package org.zaproxy.addon.graphql;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
-import graphql.introspection.IntrospectionQuery;
 import graphql.introspection.IntrospectionResultToSchema;
 import graphql.language.Document;
 import graphql.schema.idl.SchemaPrinter;
@@ -46,6 +45,8 @@ public class GraphQlParser {
 
     private static final Logger LOG = LogManager.getLogger(GraphQlParser.class);
     private static final String THREAD_PREFIX = "ZAP-GraphQL-Parser";
+    private static final String INTROSPECTION_QUERY =
+            "query IntrospectionQuery{__schema{queryType{name}mutationType{name}subscriptionType{name}types{...FullType}directives{name description locations args{...InputValue}}}} fragment FullType on __Type {kind name description fields{name description args{...InputValue}type{...TypeRef}}inputFields{...InputValue}interfaces{...TypeRef}enumValues{name description}possibleTypes{...TypeRef}} fragment InputValue on __InputValue {name description type{...TypeRef}defaultValue} fragment TypeRef on __Type {kind name ofType{kind name ofType{kind name ofType{kind name ofType{kind name ofType{kind name ofType{kind name ofType{kind name}}}}}}}}";
     private static AtomicInteger threadId = new AtomicInteger();
 
     private final Requestor requestor;
@@ -78,8 +79,7 @@ public class GraphQlParser {
     public void introspect() throws IOException {
         HttpMessage importMessage =
                 requestor.sendQuery(
-                        IntrospectionQuery.INTROSPECTION_QUERY,
-                        GraphQlParam.RequestMethodOption.POST_JSON);
+                        INTROSPECTION_QUERY, GraphQlParam.RequestMethodOption.POST_JSON);
         if (importMessage == null) {
             throw new IOException("Could not obtain schema via Introspection.");
         }
@@ -151,11 +151,13 @@ public class GraphQlParser {
 
     private void generate(String schema) {
         try {
-            GraphQlGenerator generator = new GraphQlGenerator(schema, requestor, param);
+            GraphQlGenerator generator =
+                    new GraphQlGenerator(
+                            extensionGraphQl.getValueGenerator(), schema, requestor, param);
             generator.checkServiceMethods();
             generator.generateAndSend();
         } catch (Exception e) {
-            LOG.error(e.getMessage());
+            LOG.error(e.getMessage(), e);
         }
     }
 

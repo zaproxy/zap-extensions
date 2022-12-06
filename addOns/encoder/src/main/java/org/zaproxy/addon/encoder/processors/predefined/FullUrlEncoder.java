@@ -23,8 +23,14 @@ import java.io.IOException;
 
 public class FullUrlEncoder extends DefaultEncodeDecodeProcessor {
 
+    private static final FullUrlEncoder INSTANCE = new FullUrlEncoder();
+
     @Override
     protected String processInternal(String value) throws IOException {
         return HexStringEncoder.getPercentHexString(value.getBytes());
+    }
+
+    public static FullUrlEncoder getSingleton() {
+        return INSTANCE;
     }
 }

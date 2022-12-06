@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE map
+  PUBLIC "-//Sun Microsystems Inc.//DTD JavaHelp Map Version 1.0//EN"
+         "http://java.sun.com/products/javahelp/map_1_0.dtd">
+
+<map version="1.0">
+	<mapID target="param-digger-icon" url="contents/images/hard-hat-mine.png" />
+    <mapID target="paramdigger" url="contents/paramdigger.html" />
+    <mapID target="paramdigger.about" url="contents/about.html" />
+    <mapID target="paramdigger.dialog" url="contents/dialog.html" />
+    <mapID target="paramdigger.tab" url="contents/tab.html" />
+</map>

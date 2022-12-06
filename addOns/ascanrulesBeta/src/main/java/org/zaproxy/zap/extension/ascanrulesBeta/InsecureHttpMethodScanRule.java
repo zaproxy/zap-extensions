@@ -27,6 +27,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -35,9 +36,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.httpclient.ProxyClient;
-import org.apache.commons.httpclient.ProxyClient.ConnectResponse;
-import org.apache.commons.httpclient.StatusLine;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -48,11 +46,12 @@ import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HtmlParameter;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
@@ -164,8 +163,8 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
 
             sendAndReceive(optionsmsg, false); // do not follow redirects
 
-            String allowedmethods = getNonNullHeader(optionsmsg, HttpHeader.METHODS_ALLOW);
-            String publicmethods = getNonNullHeader(optionsmsg, HttpHeader.METHODS_PUBLIC);
+            String allowedmethods = getNonNullHeader(optionsmsg, HttpFieldsNames.ALLOW);
+            String publicmethods = getNonNullHeader(optionsmsg, HttpFieldsNames.PUBLIC);
 
             /*
              * //DEBUG only, to test the CONNECT method against a Squid
@@ -407,16 +406,28 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
         String connecthost = baseMsg.getRequestHeader().getURI().getHost();
         int connectport = baseMsg.getRequestHeader().getURI().getPort();
 
-        // this cannot currently be done using the existing HttpSender class, so
-        // do it natively using HttpClient,
-        // in as simple as possible a manner.
-        ByteArrayOutputStream bos = null;
-        ProxyClient client = new ProxyClient();
-        ConnectResponse connectResponse = null;
-        client.getHostConfiguration().setProxy(connecthost, connectport);
-        client.getHostConfiguration().setHost(thirdpartyHost, thirdpartyPort);
+        HttpRequestHeader requestHeader = baseMsg.getRequestHeader();
+        HttpMessage connectMessage = baseMsg.cloneRequest();
+        connectMessage
+                .getRequestHeader()
+                .setMessage(
+                        HttpRequestHeader.CONNECT
+                                + " "
+                                + thirdpartyHost
+                                + ":"
+                                + thirdpartyPort
+                                + " "
+                                + requestHeader.getVersion()
+                                + "\r\n"
+                                + requestHeader.getHeadersAsString());
+
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("target.host", connecthost);
+        metadata.put("target.port", connectport);
+        connectMessage.setUserObject(metadata);
+
         try {
-            connectResponse = client.connect();
+            sendAndReceive(connectMessage, false);
         } catch (IOException ex) {
             log.debug(
                     "Could not establish a client connection to a third party using the CONNECT HTTP method",
@@ -424,18 +435,34 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
             return;
         }
 
-        Socket socket = connectResponse.getSocket();
+        Object userObject = connectMessage.getUserObject();
+        if (!(userObject instanceof Socket)) {
+            return;
+        }
+
+        HttpResponseHeader responseHeader = connectMessage.getResponseHeader();
+        log.debug("The status line returned: {}", responseHeader.getPrimeHeader());
+        handleConnectResponse(
+                thirdpartyHost,
+                thirdpartyPort,
+                thirdPartyContentPattern,
+                responseHeader.getStatusCode(),
+                (Socket) userObject);
+    }
+
+    private void handleConnectResponse(
+            String thirdpartyHost,
+            int thirdpartyPort,
+            Pattern thirdPartyContentPattern,
+            int statusCode,
+            Socket socket)
+            throws IOException {
         if (socket == null) {
             return;
         }
+
         try (OutputStream os = socket.getOutputStream();
                 InputStream is = socket.getInputStream()) {
-
-            StatusLine statusLine = connectResponse.getConnectMethod().getStatusLine();
-
-            log.debug("The status line returned: {}", statusLine);
-
-            int statusCode = statusLine.getStatusCode();
 
             if (statusCode == HttpStatusCode.OK) {
                 // we have a socket and a 200 status.
@@ -451,10 +478,9 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
                 pw.write("GET http://" + thirdpartyHost + ":" + thirdpartyPort + "/ HTTP/1.1\n");
                 pw.write("Host: " + thirdpartyHost + "\n\n");
                 pw.flush();
-                pw.close();
 
                 // read the response via a 4k buffer
-                bos = new ByteArrayOutputStream();
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 byte[] buffer = new byte[4096];
                 int bytesRead = is.read(buffer);
                 int totalBytesRead = 0;
@@ -489,7 +515,6 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
                             .setEvidence(response)
                             .setMessage(this.getBaseMsg())
                             .raise();
-                    return;
                 } else {
                     log.debug("Response does *not* match expected third party pattern");
                 }
@@ -497,7 +522,6 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
             } else {
                 log.debug(
                         "Could not establish a socket connection to a third party using the CONNECT HTTP method: NULL socket returned, or non-200 response");
-                log.debug("The status line returned: {}", statusLine);
             }
         } catch (Exception e) {
             log.debug(

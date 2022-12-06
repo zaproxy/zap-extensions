@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.sse;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -32,7 +33,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
-import org.zaproxy.zap.ZapGetMethod;
 import org.zaproxy.zap.extension.sse.db.ServerSentEventStream;
 
 public class EventStreamProxy {
@@ -71,14 +71,10 @@ public class EventStreamProxy {
     private ServerSentEventStream dataStreamObject;
 
     public EventStreamProxy(
-            HttpMessage message,
-            BufferedReader reader,
-            BufferedWriter writer,
-            ZapGetMethod method) {
-        //		this.message = message;
+            HttpMessage message, BufferedReader reader, BufferedWriter writer, Socket socket) {
         this.writer = writer;
 
-        listener = new EventStreamListener(this, reader, method);
+        listener = new EventStreamListener(this, reader, socket);
 
         HttpRequestHeader reqHeader = message.getRequestHeader();
 

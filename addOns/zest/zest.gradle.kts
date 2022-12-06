@@ -16,7 +16,7 @@ description = "A graphical security scripting language, ZAPs macro language on s
 zapAddOn {
     addOnName.set("Zest - Graphical Security Scripting Language")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.11.1")
+    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -38,7 +38,7 @@ zapAddOn {
 dependencies {
     compileOnly(parent!!.childProjects.get("network")!!)
     compileOnly(parent!!.childProjects.get("selenium")!!)
-    implementation("org.zaproxy:zest:0.15.0") {
+    implementation("org.zaproxy:zest:0.16.0") {
         // Provided by Selenium add-on.
         exclude(group = "org.seleniumhq.selenium")
         exclude(group = "com.codeborne", module = "phantomjsdriver")

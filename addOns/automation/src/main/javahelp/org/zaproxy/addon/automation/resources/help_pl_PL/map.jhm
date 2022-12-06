@@ -7,13 +7,17 @@
 	<mapID target="automation-icon" url="contents/images/robot.png" />
     <mapID target="automation" url="contents/automation.html" />
     <mapID target="automation.gui" url="contents/gui.html" />
+    <mapID target="automation.options" url="contents/options.html" />
     <mapID target="automation.env" url="contents/environment.html" />
     <mapID target="automation.auth" url="contents/authentication.html" />
     <mapID target="automation.addons" url="contents/job-addons.html" />
     <mapID target="automation.pscanconf" url="contents/job-pscanconf.html" />
     <mapID target="automation.pscanwait" url="contents/job-pscanwait.html" />
-    <mapID target="automation.spider" url="contents/job-spider.html" />
     <mapID target="automation.ascan" url="contents/job-ascan.html" />
     <mapID target="automation.about" url="contents/about.html" />
     <mapID target="automation.tests" url="contents/tests.html" />
+    <mapID target="automation.tests.alert" url="contents/test-alert.html" />
+    <mapID target="automation.tests.monitor" url="contents/test-monitor.html" />
+    <mapID target="automation.tests.stats" url="contents/test-stats.html" />
+    <mapID target="automation.tests.url" url="contents/test-url.html" />
 </map>

@@ -49,6 +49,7 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 import org.zaproxy.zap.view.HttpPanelManager;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class FuzzerDialog<
                 M extends Message, FO extends FuzzerOptions, FMP extends FuzzerMessageProcessor<M>>
         extends StandardFieldsDialog {

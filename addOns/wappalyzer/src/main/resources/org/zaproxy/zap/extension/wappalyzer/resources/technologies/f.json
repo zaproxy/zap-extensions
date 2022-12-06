@@ -13,12 +13,28 @@
       "MRHSession": "",
       "TIN": ""
     },
+    "cpe": "cpe:2.3:a:f5:big-ip:*:*:*:*:*:*:*:*",
     "description": "F5's BIG-IP is a family of products covering software and hardware designed around application availability, access control, and security solutions.",
     "headers": {
       "server": "^big-?ip$"
     },
     "icon": "F5.png",
     "website": "https://www.f5.com/products/big-ip-services"
+  },
+  "FARFETCH Black & White": {
+    "cats": [
+      6
+    ],
+    "description": "Farfetch Platform Solutions is a full service platform and agency providing end-to-end, multichannel e-commerce solutions for luxury fashion brands under the name Farfetch Black & White.",
+    "icon": "Farfetch.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn-static\\.farfetch-contents.com\\.js"
+    ],
+    "website": "https://www.farfetchplatformsolutions.com/"
   },
   "FAST ESP": {
     "cats": [
@@ -42,6 +58,24 @@
     ],
     "url": "Pages/SearchResults\\.aspx\\?k=",
     "website": "http://sharepoint.microsoft.com/en-us/product/capabilities/search/Pages/Fast-Search.aspx"
+  },
+  "FUDforum": {
+    "cats": [
+      2
+    ],
+    "cpe": "cpe:2.3:a:fudforum:fudforum:*:*:*:*:*:*:*:*",
+    "description": "FUDforum is a discussion forum software with support for posts, topics, polls and attachments.",
+    "icon": "default.svg",
+    "implies": [
+      "Perl",
+      "PHP"
+    ],
+    "js": {
+      "fud_msg_focus": "",
+      "fud_tree_msg_focus": ""
+    },
+    "oss": true,
+    "website": "https://github.com/fudforum/FUDforum"
   },
   "Fabric": {
     "cats": [
@@ -200,7 +234,7 @@
       59
     ],
     "description": "FancyBox is a tool for displaying images, html content and multi-media in a Mac-style 'lightbox' that floats overtop of web page.",
-    "icon": "FancyBox.png",
+    "icon": "FancyBox.svg",
     "implies": "jQuery",
     "js": {
       "$.fancybox.version": "^(.+)$\\;version:\\1",
@@ -251,6 +285,26 @@
     "saas": true,
     "scriptSrc": "fareharbor\\.com/embeds/api/",
     "website": "https://fareharbor.com"
+  },
+  "Fast Bundle": {
+    "cats": [
+      100
+    ],
+    "description": "Fast Bundle gives you the ability to create product bundle offers with discounts.",
+    "icon": "Fast Bundle.svg",
+    "implies": "Shopify",
+    "js": {
+      "FastBundleConf.bundleBox": "",
+      "FastBundleConf.cartInfo.app_version": "v([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "freemium",
+      "recurring",
+      "low"
+    ],
+    "saas": true,
+    "scriptSrc": "api\\.fastbundle\\.co/",
+    "website": "https://fastbundle.co"
   },
   "Fast Checkout": {
     "cats": [
@@ -314,8 +368,9 @@
       "Fastly-Debug-Digest": "",
       "Vary": "Fastly-SSL",
       "X-Fastly-Request-ID": "",
+      "server": "Fastly",
       "x-fastly-origin": "",
-      "x-served-by": "^cache-",
+      "x-fastly-request-id": "",
       "x-via-fastly:": ""
     },
     "icon": "Fastly.svg",
@@ -418,7 +473,7 @@
     "cats": [
       28
     ],
-    "cpe": "cpe:/o:fedoraproject:fedora",
+    "cpe": "cpe:2.3:o:fedoraproject:fedora:*:*:*:*:*:*:*:*",
     "description": "Fedora is a free open-source Linux-based operating system.",
     "headers": {
       "Server": "Fedora"
@@ -467,7 +522,8 @@
     },
     "pricing": [
       "mid",
-      "recurring"
+      "recurring",
+      "payg"
     ],
     "saas": true,
     "website": "https://fenicio.io"
@@ -535,6 +591,22 @@
     "scriptSrc": "@findify/bundle@([\\d.]+)/dist/.+\\.js\\;version:\\1",
     "website": "https://www.findify.io"
   },
+  "Findmeashoe": {
+    "cats": [
+      76
+    ],
+    "description": "Findmeashoe is a footwear recommendation portal that aims to improve shopping efficiency and experience of footwear shoppers.",
+    "icon": "Findmeashoe.png",
+    "js": {
+      "FmasJavaScript": "",
+      "fmasGenderSizeTextVariantIdCollection": "",
+      "fmasUniversalWidgetJsFileName": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://findmeashoe.com"
+  },
   "Fing": {
     "cats": [
       62
@@ -593,18 +665,27 @@
   },
   "Firebase": {
     "cats": [
-      34
+      34,
+      47
     ],
-    "description": "Firebase is a Backend-as-a-Service (Baas) for creating mobile and web applications.",
-    "icon": "Firebase.png",
+    "cpe": "cpe:2.3:a:google:firebase_cloud_messaging:*:*:*:*:*:*:*:*",
+    "description": "Firebase is a Google-backed application development software that enables developers to develop iOS, Android and Web apps.",
+    "headers": {
+      "vary": "x-fh-requested-host"
+    },
+    "icon": "Firebase.svg",
     "js": {
       "firebase.SDK_VERSION": "([\\d.]+)$\\;version:\\1"
     },
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
     "scriptSrc": [
       "/(?:([\\d.]+)/)?firebase(?:\\.min)?\\.js\\;version:\\1",
       "/firebasejs/([\\d.]+)/firebase\\;version:\\1"
     ],
-    "website": "https://firebase.com"
+    "website": "https://firebase.google.com"
   },
   "Fireblade": {
     "cats": [
@@ -705,7 +786,7 @@
     "cats": [
       2
     ],
-    "cpe": "cpe:/a:flarum:flarum",
+    "cpe": "cpe:2.3:a:flarum:flarum:*:*:*:*:*:*:*:*",
     "description": "Flarum is a discussion platform.",
     "html": "<div id=\"flarum-loading\"",
     "icon": "flarum.png",
@@ -724,6 +805,7 @@
       18,
       22
     ],
+    "cpe": "cpe:2.3:a:palletsprojects:flask:*:*:*:*:*:*:*:*",
     "headers": {
       "Server": "Werkzeug/?([\\d\\.]+)?\\;version:\\1"
     },
@@ -740,6 +822,45 @@
     "icon": "Flat UI.png",
     "implies": "Bootstrap",
     "website": "https://designmodo.github.io/Flat-UI/"
+  },
+  "Flazio": {
+    "cats": [
+      1,
+      51
+    ],
+    "description": "Flazio is an Italian website builder.",
+    "icon": "Flazio.svg",
+    "js": {
+      "_exaudiflazio": "",
+      "flazio_global_conversion": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "//flazio\\.org/",
+    "website": "https://flazio.com"
+  },
+  "Fleksa": {
+    "cats": [
+      93
+    ],
+    "description": "Fleksa is an online ordering system for restaurants and delivery.",
+    "icon": "Fleksa.svg",
+    "dom": "a[href*='play.google.com/store/apps/details?id=com.fleksa.'][target='_blank']",
+    "implies": [
+      "Node.js",
+      "Next.js"
+    ],
+    "pricing": [
+      "payg",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://fleksa.com"
   },
   "FlexCMP": {
     "cats": [
@@ -772,11 +893,31 @@
     "cats": [
       59
     ],
+    "description": "Flickity is a JavaScript slider library, built by David DeSandro of Metafizzy fame.",
+    "dom": "style[data-context='foundation-flickity-css'], div.flickity-enabled",
     "js": {
       "Flickity": ""
     },
-    "scriptSrc": "/flickity(?:\\.pkgd)?(?:\\.min)?\\.js",
-    "website": "https://flickity.metafizzy.co/"
+    "oss": true,
+    "scriptSrc": "flickity(?:/|@)([\\d\\.]+).+flickity(?:\\.pkgd)?(?:\\.min)?\\.js\\;version:\\1",
+    "website": "https://flickity.metafizzy.co"
+  },
+  "Flits": {
+    "cats": [
+      100
+    ],
+    "description": "Flits is a customer account pages that get all your shopper data in one place.",
+    "icon": "Flits.png",
+    "implies": "Shopify",
+    "js": {
+      "flitsObjects.accountPage": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://getflits.com"
   },
   "Flocktory": {
     "cats": [
@@ -815,6 +956,17 @@
     "scriptSrc": "(?:shopify-)?cdn\\.flow\\.io/",
     "website": "https://www.flow.io/"
   },
+  "Flowbite": {
+    "cats": [
+      66
+    ],
+    "description": "Flowbite is an open-source library of UI components based on the utility-first Tailwind CSS framework featuring dark mode support, a Figma design system, and more.",
+    "icon": "Flowbite.svg",
+    "implies": "Tailwind CSS",
+    "oss": true,
+    "scriptSrc": "/flowbite(?:@([\\d\\.]+)/|\\.bundle\\.js)\\;version:\\1",
+    "website": "https://github.com/themesberg/flowbite"
+  },
   "Flowplayer": {
     "cats": [
       14
@@ -841,6 +993,8 @@
     "icon": "Flutter.svg",
     "implies": "Dart",
     "js": {
+      "_flutter.loader": "",
+      "_flutter_web_set_location_strategy": "",
       "flutterCanvasKit": ""
     },
     "meta": {
@@ -853,11 +1007,31 @@
     "cats": [
       2
     ],
-    "cpe": "cpe:/a:fluxbb:fluxbb",
+    "cpe": "cpe:2.3:a:fluxbb:fluxbb:*:*:*:*:*:*:*:*",
     "html": "<p id=\"poweredby\">[^<]+<a href=\"https?://fluxbb\\.org/\">",
     "icon": "FluxBB.png",
     "implies": "PHP",
     "website": "https://fluxbb.org"
+  },
+  "Fly.io": {
+    "cats": [
+      22
+    ],
+    "cookies": {
+      "_fly": ""
+    },
+    "description": "Fly is a platform for running full stack apps and databases.",
+    "headers": {
+      "fly-request-id": "",
+      "server": "^Fly/[\\w]+\\s\\(.*\\)$",
+      "via": "^.*\\sfly\\.io$"
+    },
+    "icon": "Fly.io.png",
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "website": "https://fly.io"
   },
   "Flyspray": {
     "cats": [
@@ -909,11 +1083,18 @@
       17
     ],
     "description": "Font Awesome is a font and icon toolkit based on CSS and Less.",
+    "dom": {
+      "link[href*='font-awesome']": {
+        "attributes": {
+          "href": "/font-awesome/([\\d\\.]+)/css/\\;version:\\1"
+        }
+      }
+    },
     "html": [
       "<link[^>]* href=[^>]+(?:([\\d.]+)/)?(?:css/)?font-awesome(?:\\.min)?\\.css\\;version:\\1",
       "<link[^>]* href=[^>]*kit\\-pro\\.fontawesome\\.com/releases/v([0-9.]+)/\\;version:\\1"
     ],
-    "icon": "font-awesome.svg",
+    "icon": "Font Awesome.svg",
     "js": {
       "FontAwesomeCdnConfig": "",
       "___FONT_AWESOME___": ""
@@ -928,6 +1109,21 @@
       "\\.fontawesome\\.com/([0-9a-z]+).js"
     ],
     "website": "https://fontawesome.com/"
+  },
+  "FontServer": {
+    "cats": [
+      17
+    ],
+    "description": "FontServer is a online font delivery network service-provider for websites.",
+    "dom": {
+      "link[href*='.font']": {
+        "attributes": {
+          "href": "\\.font(?:api|cdn)\\.ir"
+        }
+      }
+    },
+    "icon": "FontServer.svg",
+    "website": "https://fontserver.ir"
   },
   "Fontify": {
     "cats": [
@@ -969,6 +1165,33 @@
     "requires": "WordPress",
     "website": "https://fooplugins.com/foogallery-wordpress-gallery-plugin"
   },
+  "Food-Ordering.co.uk": {
+    "cats": [
+      6,
+      93
+    ],
+    "description": "Food-Ordering.co.uk is a multi-lingual food ordering system for several hospitality scenarios including online ordering for delivery/takeout, in-store ordering (order at table, room service, self ordering kiosk), telephone ordering with callerID, and table booking.",
+    "icon": "Food-Ordering.co.uk.png",
+    "js": {
+      "GetOrderAcceptFor": "\\;confidence:25",
+      "StoreToC": "\\;confidence:25",
+      "disablecollection": "No\\;confidence:25",
+      "disabledelivery": "No\\;confidence:25"
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "requires": [
+      "Microsoft ASP.NET",
+      "Bootstrap",
+      "Plesk",
+      "Google Maps"
+    ],
+    "saas": true,
+    "website": "https://www.food-ordering.co.uk"
+  },
   "FoodBooking": {
     "cats": [
       93
@@ -985,6 +1208,23 @@
     "saas": true,
     "scriptSrc": "\\.(?:fbgcdn|foodbooking)\\.com/",
     "website": "https://www.foodbooking.com"
+  },
+  "Foodomaa": {
+    "cats": [
+      93
+    ],
+    "cookies": {
+      "foodomaa_session": ""
+    },
+    "description": "Foodomaa is a multi-restaurant food ordering and restaurant membership system.",
+    "icon": "Foodomaa.svg",
+    "pricing": [
+      "freemium",
+      "recurring",
+      "low"
+    ],
+    "saas": true,
+    "website": "https://foodomaa.com"
   },
   "Fork Awesome": {
     "cats": [
@@ -1011,7 +1251,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:fork-cms:fork_cms",
+    "cpe": "cpe:2.3:a:fork-cms:fork_cms:*:*:*:*:*:*:*:*",
     "icon": "ForkCMS.png",
     "implies": "Symfony",
     "meta": {
@@ -1115,7 +1355,7 @@
       "FOSWIKISTRIKEONE": "",
       "SFOSWIKISID": ""
     },
-    "cpe": "cpe:/a:foswiki:foswiki",
+    "cpe": "cpe:2.3:a:foswiki:foswiki:*:*:*:*:*:*:*:*",
     "description": "Foswiki is a free open-source collaboration platform.",
     "headers": {
       "X-Foswikiaction": "",
@@ -1208,8 +1448,10 @@
     "icon": "Framer Sites.svg",
     "implies": "React",
     "js": {
+      "Framer": "",
       "Framer.Animatable": "",
-      "Framer.version": "([\\d\\.]+)\\;version:\\1\\;confidence:0"
+      "Framer.version": "([\\d\\.]+)\\;version:\\1\\;confidence:0",
+      "__framer_importFromPackage": ""
     },
     "oss": false,
     "pricing": [
@@ -1232,6 +1474,25 @@
       "\\bFrance Express\\b"
     ],
     "website": "https://www.france-express.com"
+  },
+  "Frappe": {
+    "cats": [
+      18
+    ],
+    "description": "Frappe is a full stack, batteries-included, web framework written in Python and Javascript.",
+    "icon": "Frappe.png",
+    "implies": [
+      "Python",
+      "MariaDB"
+    ],
+    "js": {
+      "frappe.avatar": ""
+    },
+    "meta": {
+      "generator": "^frappe$"
+    },
+    "oss": true,
+    "website": "https://frappeframework.com"
   },
   "FreakOut": {
     "cats": [
@@ -1256,7 +1517,7 @@
     "cats": [
       28
     ],
-    "cpe": "cpe:/o:freebsd:freebsd",
+    "cpe": "cpe:2.3:o:freebsd:freebsd:*:*:*:*:*:*:*:*",
     "description": "FreeBSD is a free and open-source Unix-like operating system.",
     "headers": {
       "Server": "FreeBSD(?: ([\\d.]+))?\\;version:\\1"
@@ -1328,6 +1589,25 @@
       "freemium"
     ],
     "website": "https://github.com/staaky/fresco"
+  },
+  "Fresh": {
+    "cats": [
+      18,
+      22
+    ],
+    "description": "Fresh is a full stack modern web framework for JavaScript and TypeScript developers, designed to make it trivial to create high-quality, performant, and personalized web applications.",
+    "dom": [
+      "style[id='__FRSH_TWIND']",
+      "style[id='__FRSH_STYLE']",
+      "script[id='__FRSH_STATE']"
+    ],
+    "icon": "Fresh.svg",
+    "implies": [
+      "Deno",
+      "Preact"
+    ],
+    "oss": true,
+    "website": "https://fresh.deno.dev"
   },
   "Freshchat": {
     "cats": [
@@ -1427,12 +1707,57 @@
     ],
     "website": "https://www.friendbuy.com"
   },
+  "Friendly Captcha": {
+    "cats": [
+      16
+    ],
+    "description": "Friendly Captcha is a proof-of-work based solution in which the user’s device does all the work.",
+    "dom": "div.frc-captcha",
+    "icon": "FriendlyCaptcha.svg",
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "x-frc-client\",\"js-(\\d+(\\.\\d+)+)\\;version:\\1",
+    "website": "https://friendlycaptcha.com",
+    "xhr": "api.friendlycaptcha.com"
+  },
+  "Frizbit": {
+    "cats": [
+      32
+    ],
+    "description": "Frizbit is a marketing tool that helps digital marketeers increase web traffic and revenue by combining web push notification.",
+    "dom": "link[href*='cdn.frizbit.com']",
+    "icon": "Frizbit.png",
+    "js": {
+      "frizbit.configurationManager": "",
+      "frizbit.remoteConfigs": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.frizbit\\.com/",
+    "website": "https://frizbit.com"
+  },
   "Froala Editor": {
     "cats": [
       24
     ],
     "description": "Froala Editor is a WYSIWYG HTML Editor written in Javascript that enables rich text editing capabilities for applications.",
-    "dom": ".fr-view, .fr-box, .fr-popup, .froala-box",
+    "dom": {
+      ".fr-view, .fr-box, .fr-popup": {
+        "exists": "\\;version:2+"
+      },
+      ".froala-box": {
+        "exists": "\\;version:1"
+      }
+    },
     "icon": "Froala.svg",
     "implies": [
       "jQuery",
@@ -1443,11 +1768,28 @@
     },
     "website": "http://froala.com/wysiwyg-editor"
   },
+  "Front Chat": {
+    "cats": [
+      52
+    ],
+    "description": "Front Chat is the live website chat solution that you can manage straight from your inbox.",
+    "icon": "Front Chat.svg",
+    "js": {
+      "FrontChat": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "//chat-assets\\.frontapp\\.com/",
+    "website": "https://front.com"
+  },
   "FrontPage": {
     "cats": [
       20
     ],
-    "cpe": "cpe:/a:microsoft:frontpage",
+    "cpe": "cpe:2.3:a:microsoft:frontpage:*:*:*:*:*:*:*:*",
     "description": "FrontPage is a program for developing and maintaining websites.",
     "icon": "FrontPage.png",
     "meta": {
@@ -1490,7 +1832,7 @@
     "icon": "frontity.png",
     "implies": [
       "React",
-      "webpack",
+      "Webpack",
       "WordPress"
     ],
     "meta": {
@@ -1516,6 +1858,42 @@
     "scriptSrc": "frosmo\\.easy\\.js",
     "website": "https://frosmo.com"
   },
+  "FullCalendar": {
+    "cats": [
+      5
+    ],
+    "description": "FullCalendar is a full-sized drag and drop JavaScript event calendar.",
+    "icon": "FullCalendar.png",
+    "implies": "TypeScript",
+    "js": {
+      "FullCalendar.version": "^([\\d\\.\\-\\w]+)$\\;version:\\1"
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "poa"
+    ],
+    "oss": true,
+    "scriptSrc": "/fullcalendar\\.min\\.js",
+    "website": "https://fullcalendar.io"
+  },
+  "FullContact": {
+    "cats": [
+      10
+    ],
+    "description": "FullContact is a privacy-safe Identity Resolution company building trust between people and brands.",
+    "icon": "FullContact.svg",
+    "js": {
+      "Fullcontact": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "tags\\.fullcontact\\.com/",
+    "website": "https://www.fullcontact.com"
+  },
   "FullStory": {
     "cats": [
       10
@@ -1533,6 +1911,62 @@
     "saas": true,
     "scriptSrc": "\\.fullstory\\.com/",
     "website": "https://www.fullstory.com"
+  },
+  "Fundiin": {
+    "cats": [
+      91
+    ],
+    "description": "Fundiin is the BNPL leader in Vietnam in providing zero-cost buy-now-pay-later facilities.",
+    "icon": "Fundiin.svg",
+    "js": {
+      "websiteEnableSuggestFundiin": "true",
+      "websiteMaximumSuggestFundiinWithPrediction": ""
+    },
+    "saas": true,
+    "website": "https://fundiin.vn"
+  },
+  "Funding Choices": {
+    "cats": [
+      67
+    ],
+    "description": "Funding Choices is a messaging tool that can help you comply with the EU General Data Protection Regulation (GDPR), and recover lost revenue from ad blocking users.",
+    "dns": {
+      "SOA": "fundingchoicesmessages"
+    },
+    "dom": ".fc-consent-root, iframe[name='googlefcLoaded'], iframe[name='googlefcPresent'], .fc-dialog, .fc-choice-dialog",
+    "icon": "Google.svg",
+    "js": {
+      "__googlefc": ""
+    },
+    "scriptSrc": "fundingchoicesmessages\\.google\\.com",
+    "website": "https://developers.google.com/funding-choices"
+  },
+  "FunnelCockpit": {
+    "cats": [
+      32
+    ],
+    "description": "FunnelCockpit is an all-in-one funnel builder.",
+    "dom": "a[href*='.funnelcockpit.com/'][target='_blank'], iframe[src*='.funnelcockpit.com/']",
+    "icon": "FunnelCockpit.png",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.funnelcockpit\\.com/",
+    "website": "https://funnelcockpit.com"
+  },
+  "FurnitureDealer": {
+    "cats": [
+      6
+    ],
+    "description": "FurnitureDealer is the internet partner of more than 100 leading local full service brick and mortar furniture retailers.",
+    "icon": "FurnitureDealer.png",
+    "pricing": [
+      "poa"
+    ],
+    "scriptSrc": "\\.furnituredealer\\.net/",
+    "website": "https://www.furnituredealer.net"
   },
   "Fusion Ads": {
     "cats": [

@@ -296,6 +296,7 @@ public class UserHttpFuzzerMessageProcessorUIHandler
         }
     }
 
+    @SuppressWarnings("serial")
     private static class ContextUI extends AbstractListModel<UserUI>
             implements ComboBoxModel<UserUI> {
 

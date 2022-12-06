@@ -28,7 +28,25 @@ import javax.swing.ImageIcon;
 import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
 
+@SuppressWarnings("serial")
 public class MessageListTableModel extends AbstractTableModel {
+
+    private static final ImageIcon CHANGED_ICON =
+            new ImageIcon(
+                    ExtensionPlugNHack.class.getResource(
+                            "/org/zaproxy/zap/extension/plugnhack/resources/icons/screwdriver.png"));
+    private static final ImageIcon DROPPED_ICON =
+            new ImageIcon(
+                    ExtensionPlugNHack.class.getResource(
+                            "/org/zaproxy/zap/extension/plugnhack/resources/icons/bin-metal.png"));
+    private static final ImageIcon PENDING_ICON =
+            new ImageIcon(
+                    ExtensionPlugNHack.class.getResource(
+                            "/org/zaproxy/zap/extension/plugnhack/resources/icons/hourglass.png"));
+    private static final ImageIcon ORACLE_ICON =
+            new ImageIcon(
+                    ExtensionPlugNHack.class.getResource(
+                            "/org/zaproxy/zap/extension/plugnhack/resources/icons/burn.png"));
 
     private static final SimpleDateFormat SDF = new SimpleDateFormat("HH:mm:ss.SSS");
     private static final long serialVersionUID = 1L;
@@ -78,20 +96,20 @@ public class MessageListTableModel extends AbstractTableModel {
                 switch (msg.getState()) {
                     case received:
                         if (msg.isChanged()) {
-                            obj = ExtensionPlugNHack.CHANGED_ICON;
+                            obj = CHANGED_ICON;
                         }
                         break;
                     case pending:
-                        obj = ExtensionPlugNHack.PENDING_ICON;
+                        obj = PENDING_ICON;
                         break;
                     case resent:
-                        obj = ExtensionPlugNHack.CHANGED_ICON;
+                        obj = CHANGED_ICON;
                         break;
                     case dropped:
-                        obj = ExtensionPlugNHack.DROPPED_ICON;
+                        obj = DROPPED_ICON;
                         break;
                     case oraclehit:
-                        obj = ExtensionPlugNHack.ORACLE_ICON;
+                        obj = ORACLE_ICON;
                         break;
                 }
                 break;

@@ -42,9 +42,9 @@ import org.zaproxy.zap.extension.alert.ExtensionAlert;
  * An {@link ExtensionPopupMenuItem} that exposes the selected {@link Alert alerts} of the Alerts
  * tree.
  *
- * @since TODO add version
  * @see #performAction(Alert)
  */
+@SuppressWarnings("serial")
 public abstract class PopupMenuItemAlert extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;

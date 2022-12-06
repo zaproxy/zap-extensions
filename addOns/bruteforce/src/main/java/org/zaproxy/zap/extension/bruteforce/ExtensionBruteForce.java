@@ -100,7 +100,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
 
         extensionHook.addOptionsParamSet(getBruteForceParam());
 
-        if (getView() != null) {
+        if (hasView()) {
             @SuppressWarnings("unused")
             ExtensionHookView pv = extensionHook.getHookView();
             extensionHook.getHookView().addStatusPanel(getBruteForcePanel());
@@ -117,7 +117,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
 
     @Override
     public void unload() {
-        if (getView() != null) {
+        if (hasView()) {
             getBruteForcePanel().unload();
         }
 
@@ -131,7 +131,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
 
     @Override
     public List<String> getActiveActions() {
-        if (getView() == null) {
+        if (!hasView()) {
             return Collections.emptyList();
         }
 
@@ -139,9 +139,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
         List<String> activeActions = new ArrayList<>();
         for (BruteForce scan : getBruteForceScans()) {
             if (scan.isAlive()) {
-                activeActions.add(
-                        MessageFormat.format(
-                                activeActionPrefix, scan.getScanTarget().toPlainString()));
+                activeActions.add(MessageFormat.format(activeActionPrefix, scan.getScanTarget()));
             }
         }
         return activeActions;
@@ -163,7 +161,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
 
     @Override
     public void optionsLoaded() {
-        if (getView() != null) {
+        if (hasView()) {
             this.getBruteForcePanel().setDefaultFile(this.getBruteForceParam().getDefaultFile());
         }
     }
@@ -327,7 +325,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
 
     @Override
     public void sessionChanged(final Session session) {
-        if (getView() == null) {
+        if (!hasView()) {
             return;
         }
 
@@ -347,7 +345,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
         stopAllScans();
         lastScanId = 0;
 
-        if (getView() != null) {
+        if (hasView()) {
             this.getBruteForcePanel().reset();
             if (session == null) {
                 // Closedown
@@ -373,7 +371,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
 
     @Override
     public boolean onHttpRequestSend(HttpMessage msg) {
-        if (getView() != null) {
+        if (hasView()) {
             this.getBruteForcePanel().addSite(msg.getRequestHeader().getURI());
         }
         return true;
@@ -467,7 +465,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
 
     public void refreshFileList() {
         fileList = null;
-        if (getView() != null) {
+        if (hasView()) {
             this.getBruteForcePanel().refreshFileList();
         }
     }
@@ -513,7 +511,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
     }
 
     public void setDefaultFile(ForcedBrowseFile file) {
-        if (getView() != null) {
+        if (hasView()) {
             this.getBruteForcePanel().setDefaultFile(file);
         }
     }
@@ -528,7 +526,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
 
     @Override
     public void sessionScopeChanged(Session session) {
-        if (getView() != null) {
+        if (hasView()) {
             this.getBruteForcePanel().sessionScopeChanged(session);
         }
     }
@@ -538,7 +536,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
         if (mode.equals(Mode.safe)) {
             stopAllScans();
         }
-        if (getView() != null) {
+        if (hasView()) {
             this.getBruteForcePanel().sessionModeChanged(mode);
         }
     }
@@ -556,14 +554,14 @@ public class ExtensionBruteForce extends ExtensionAdaptor
     @Override
     public void scanFinshed(ScanTarget target) {
         this.activeScans.remove(target);
-        if (getView() != null) {
+        if (hasView()) {
             this.getBruteForcePanel().scanFinshed(target);
         }
     }
 
     @Override
     public void scanProgress(ScanTarget target, int done, int todo) {
-        if (getView() != null) {
+        if (hasView()) {
             this.getBruteForcePanel().scanProgress(target, done, todo);
         }
     }

@@ -46,13 +46,13 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HtmlParameter.Type;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.http.HttpDateUtils;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.model.Context;
 
@@ -289,7 +289,8 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                         // absolute, but it ain't always so...
                         URI newLocation =
                                 new URI(
-                                        temp.getResponseHeader().getHeader(HttpHeader.LOCATION),
+                                        temp.getResponseHeader()
+                                                .getHeader(HttpFieldsNames.LOCATION),
                                         true);
 
                         // and follow the forward url
@@ -309,7 +310,8 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                             URI newLocationWorkaround =
                                     new URI(
                                             temp.getRequestHeader().getURI(),
-                                            temp.getResponseHeader().getHeader(HttpHeader.LOCATION),
+                                            temp.getResponseHeader()
+                                                    .getHeader(HttpFieldsNames.LOCATION),
                                             true);
                             // try again, except this time, if it fails, don't try to handle it
                             log.debug(
@@ -761,7 +763,8 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                         // absolute, but it ain't always so...
                         URI newLocation =
                                 new URI(
-                                        temp2.getResponseHeader().getHeader(HttpHeader.LOCATION),
+                                        temp2.getResponseHeader()
+                                                .getHeader(HttpFieldsNames.LOCATION),
                                         true);
 
                         // and follow the forward url
@@ -783,7 +786,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                                     new URI(
                                             temp2.getRequestHeader().getURI(),
                                             temp2.getResponseHeader()
-                                                    .getHeader(HttpHeader.LOCATION),
+                                                    .getHeader(HttpFieldsNames.LOCATION),
                                             true);
 
                             // try again, except this time, if it fails, don't try to handle it
@@ -987,7 +990,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                         // either way, the parameter/url combo is not vulnerable, so continue with
                         // the next parameter
                         log.debug(
-                                "The URL parameter [{}] was NOT set in any links in the response, when {()} URL param [{}] was set to NULL in the request, so it is likely not a session id field",
+                                "The URL parameter [{}] was NOT set in any links in the response, when ({}) URL param [{}] was set to NULL in the request, so it is likely not a session id field",
                                 currentHtmlParameter.getName(),
                                 isPseudoUrlParameter ? "pseudo/URL rewritten" : "",
                                 currentHtmlParameter.getName());

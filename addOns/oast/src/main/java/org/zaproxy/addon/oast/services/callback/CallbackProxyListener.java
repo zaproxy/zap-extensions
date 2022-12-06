@@ -70,6 +70,9 @@ class CallbackProxyListener implements HttpMessageHandler {
                     path,
                     msg.getRequestHeader().getSenderAddress());
             msg.setResponseHeader(RESPONSE_HEADER);
+            if ("HTTP/2".equalsIgnoreCase(msg.getRequestHeader().getVersion())) {
+                msg.getResponseHeader().setHeader(HttpHeader.CONNECTION, null);
+            }
             String uuid = path.substring(1);
             String handler = callbackService.getHandlers().get(uuid);
             if (handler != null) {

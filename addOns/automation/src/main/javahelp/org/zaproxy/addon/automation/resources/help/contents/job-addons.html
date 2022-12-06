@@ -8,21 +8,14 @@ Automation Framework - addOns Job
 <BODY>
 <H1>Automation Framework - addOns Job</H1>
 
-This job allows you to manage the ZAP add-ons.
+This job has been depreciated, no longer does anything, and should no longer be used.
 <p>
-The add-on identifiers to use in the 'install' and 'uninstall' lists are shown in the ZAP Desktop 'Manage Add-ons' dialog or 
-can be found on the <a href="https://www.zaproxy.org/addons/">ZAP Marketplace</a> page.
-
-<H2>YAML</H2>
-
-<pre>
-  - type: addOns                       # Add-on management
-    parameters:
-      updateAddOns: false              # Currently disabled due to problems updating the framework and jobs while they are running
-    install:                           # A list of non standard add-ons to install from the ZAP Marketplace
-    uninstall:                         # A list of standard add-ons to uninstall
-</pre>
-
+Previously it allowed you to manage the ZAP add-ons.
+However it turns out that adding and updating add-ons when running a plan is a bad idea and does not work well.
+<p>
+For more details on how to manage add-ons see https://www.zaproxy.org/docs/automate/automation-framework/#updating-add-ons
+<p>
+This job will be removed in the next major release of this add-on.
 </BODY>
 </HTML>
 

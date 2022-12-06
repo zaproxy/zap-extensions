@@ -1,3 +1,11 @@
+
+pluginManagement {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
 rootProject.name = "zap-extensions"
 
 val addOnsProjectName = "addOns"
@@ -25,6 +33,7 @@ var addOns = listOf(
     "commonlib",
     "coreLang",
     "custompayloads",
+    "database",
     "diff",
     "directorylistv1",
     "directorylistv2_3",
@@ -54,6 +63,7 @@ var addOns = listOf(
     "openapi",
     "packpentester",
     "packscanrules",
+    "paramdigger",
     "plugnhack",
     "portscan",
     "pscanrules",

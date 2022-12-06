@@ -37,6 +37,7 @@ import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.table.HistoryReferencesTable;
 
+@SuppressWarnings("serial")
 public class ZestResultsPanel extends AbstractPanel {
 
     private static final long serialVersionUID = 1L;
@@ -57,7 +58,7 @@ public class ZestResultsPanel extends AbstractPanel {
         this.extension = extension;
         this.setLayout(new CardLayout());
         this.setName(Constant.messages.getString("zest.results.panel.title"));
-        this.setIcon(ExtensionZest.ZEST_ICON);
+        this.setIcon(ExtensionZest.getZestIcon());
         this.setDefaultAccelerator(
                 this.extension
                         .getView()

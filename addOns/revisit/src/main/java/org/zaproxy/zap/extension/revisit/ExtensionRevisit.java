@@ -118,7 +118,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
         extensionHook.addProxyListener(this);
         extensionHook.addSessionListener(new SessionChangedListenerImpl());
 
-        if (getView() != null) {
+        if (hasView()) {
             // Register our popup menu item
             extensionHook
                     .getHookMenu()

@@ -37,6 +37,7 @@ import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -381,6 +382,45 @@ class MainServerHandlerUnitTest {
         assertThat(exceptionsThrown, hasSize(0));
         assertChannelActive(false);
         assertResponse("HTTP/1.1 200\r\n\r\nNot empty body");
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"1.0", "1.1"})
+    void shouldCloseChannelIfUserObjectContainsConnectionClosed(String httpVersion) {
+        // Given
+        String request = "GET / HTTP/" + httpVersion + "\r\nConnection: keep-alive\r\n\r\n";
+        String response = "HTTP/" + httpVersion + " 200\r\nConnection: keep-alive\r\n\r\n";
+        handler1.addAction(
+                0,
+                (ctx, msg) -> {
+                    msg.setResponseHeader(response);
+                    msg.setUserObject(Collections.singletonMap("connection.closed", Boolean.TRUE));
+                });
+        // When
+        written(request);
+        // Then
+        assertThat(exceptionsThrown, hasSize(0));
+        assertChannelActive(false);
+        assertResponse(response);
+    }
+
+    @Test
+    void shouldNotCloseChannelIfUserObjectContainsHttp2Property() {
+        // Given
+        String request = "GET / HTTP/2\r\nConnection: close\r\n\r\n";
+        String response = "HTTP/2 200\r\nConnection: close\r\n\r\n";
+        handler1.addAction(
+                0,
+                (ctx, msg) -> {
+                    msg.setResponseHeader(response);
+                    msg.setUserObject(Collections.singletonMap("zap.h2", Boolean.TRUE));
+                });
+        // When
+        written(request);
+        // Then
+        assertThat(exceptionsThrown, hasSize(0));
+        assertChannelActive(true);
+        assertResponse(response);
     }
 
     @Test

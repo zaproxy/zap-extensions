@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.openapi;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -39,18 +40,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -64,9 +57,7 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.extension.ascan.VariantFactory;
-import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.model.Context;
-import org.zaproxy.zap.model.StructuralNodeModifier;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -84,14 +75,12 @@ class ExtensionOpenApiTest extends AbstractServerTest {
         Model.setSingletonForTesting(model);
 
         extensionOpenApi = new ExtensionOpenApi();
+        extensionOpenApi.initModel(model);
 
         ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
 
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
         Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
-
-        given(extensionLoader.getExtension(ExtensionSpider.class))
-                .willReturn(mock(ExtensionSpider.class));
 
         tableHistory = mock(TableHistory.class);
         HistoryReference.setTableHistory(tableHistory);
@@ -195,42 +184,52 @@ class ExtensionOpenApiTest extends AbstractServerTest {
 
     @ParameterizedTest
     @NullAndEmptySource
-    void shouldGenerateDataDrivenNodesOnContext(String target) throws IOException {
+    void shouldIncludeAllRegexUrlsInContextWithNoExistingMatchingRegex(String target)
+            throws IOException {
         // Given
         File file = createLocalDefinition("v3/PetStore_defn.json").toFile();
-        Context ctx = createContext();
+        Context context = model.getSession().getNewContext("Test Context");
         String serverUrl = "http://localhost:" + nano.getListeningPort();
         String targetUrl = target != null ? serverUrl + "/v1" : null;
         String expectedUrl = target != null ? targetUrl : serverUrl + "/PetStore";
-
         // When
-        extensionOpenApi.importOpenApiDefinition(file, targetUrl, false, ctx.getId());
-
+        extensionOpenApi.importOpenApiDefinition(file, targetUrl, false, context.getId());
         // Then
+        assertThat(context.getIncludeInContextRegexs().size(), is(13));
         assertThat(
-                ctx.getDataDrivenNodes(),
+                context.getIncludeInContextRegexs(),
                 contains(
-                        expectedUrl + "(/pet/)(.+?)(/.*)",
-                        expectedUrl + "(/store/order/)(.+?)(/.*)",
-                        expectedUrl + "(/user/)(.+?)(/.*)"));
+                        expectedUrl + "/pet",
+                        expectedUrl + "/pet/findByStatus",
+                        expectedUrl + "/pet/findByTags",
+                        expectedUrl + "/pet/[^/?]+",
+                        expectedUrl + "/store/inventory",
+                        expectedUrl + "/store/order",
+                        expectedUrl + "/store/order/[^/?]+",
+                        expectedUrl + "/user",
+                        expectedUrl + "/user/createWithArray",
+                        expectedUrl + "/user/createWithList",
+                        expectedUrl + "/user/login",
+                        expectedUrl + "/user/logout",
+                        expectedUrl + "/user/[^/?]+"));
     }
 
-    @Test
-    void shouldGenerateDataDrivenNodesOnContextForMultiVarPath() throws IOException {
+    @ParameterizedTest
+    @NullAndEmptySource
+    void shouldNotIncludeRegexUrlsInContextWithExistingMatchingRegex(String target)
+            throws IOException {
         // Given
-        File file = createLocalDefinition("v3/MultiVarPath_defn.yaml").toFile();
-        Context ctx = createContext();
+        File file = createLocalDefinition("v3/PetStore_defn.json").toFile();
+        Context context = model.getSession().getNewContext("Test Context");
         String serverUrl = "http://localhost:" + nano.getListeningPort();
-
+        String targetUrl = target != null ? serverUrl + "/v1" : null;
+        String includedRegex = serverUrl + ".*";
+        context.addIncludeInContextRegex(includedRegex);
         // When
-        extensionOpenApi.importOpenApiDefinition(file, null, false, ctx.getId());
-
+        extensionOpenApi.importOpenApiDefinition(file, targetUrl, false, context.getId());
         // Then
-        assertThat(
-                ctx.getDataDrivenNodes(),
-                contains(
-                        serverUrl + "(/api/stuff/.+?/subthing/)(.+?)(/.*)",
-                        serverUrl + "(/api/stuff/)(.+?)(/.*)"));
+        assertThat(context.getIncludeInContextRegexs().size(), is(1));
+        assertThat(context.getIncludeInContextRegexs(), contains(includedRegex));
     }
 
     private Path createLocalDefinition(String path) throws IOException {
@@ -257,10 +256,6 @@ class ExtensionOpenApiTest extends AbstractServerTest {
         return localDefinition.toFile();
     }
 
-    private static Context createContext() {
-        return Model.getSingleton().getSession().getNewContext("Test Context");
-    }
-
     private static class EmptyServerHandler extends NanoServerHandler {
 
         EmptyServerHandler() {
@@ -271,56 +266,5 @@ class ExtensionOpenApiTest extends AbstractServerTest {
         protected NanoHTTPD.Response serve(NanoHTTPD.IHTTPSession session) {
             return newFixedLengthResponse("");
         }
-    }
-
-    private static Matcher<List<StructuralNodeModifier>> contains(String... regexes) {
-        List<String> expectedValues = new ArrayList<>();
-        expectedValues.addAll(Arrays.asList(regexes));
-        Collections.sort(expectedValues);
-
-        return new BaseMatcher<List<StructuralNodeModifier>>() {
-
-            @Override
-            public boolean matches(Object actualValue) {
-                @SuppressWarnings("unchecked")
-                List<StructuralNodeModifier> values = (List<StructuralNodeModifier>) actualValue;
-                if (values.isEmpty()) {
-                    return false;
-                }
-
-                List<String> matched = new ArrayList<>(expectedValues);
-                for (StructuralNodeModifier value : values) {
-                    if (!matched.remove(value.getPattern().pattern())) {
-                        return false;
-                    }
-                }
-                return matched.isEmpty();
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description
-                        .appendText("the DDN regular expressions to be ")
-                        .appendValue(expectedValues);
-            }
-
-            @Override
-            public void describeMismatch(Object item, Description description) {
-                @SuppressWarnings("unchecked")
-                List<StructuralNodeModifier> values = (List<StructuralNodeModifier>) item;
-                if (values.isEmpty()) {
-                    description.appendText("had no DDNs");
-                } else {
-                    description
-                            .appendText("were ")
-                            .appendValue(
-                                    values.stream()
-                                            .map(StructuralNodeModifier::getPattern)
-                                            .map(Pattern::pattern)
-                                            .sorted()
-                                            .collect(Collectors.toList()));
-                }
-            }
-        };
     }
 }

@@ -68,30 +68,26 @@ public class ExtensionExim extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuSaveRawMessage());
             extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuSaveXmlMessage());
             extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuItemSaveHarMessage());
 
-            // If this is deprecated then the others are as well, due to timing/co-ordination
-            if (isDeprecated(org.zaproxy.zap.extension.stdmenus.PopupMenuCopyUrls.class)) {
-
-                if (getExtensionHistory() != null) {
-                    getMenuExport().add(getPopupMenuExportMessages());
-                    getMenuExport().add(getPopupMenuExportResponses());
-                }
-
-                extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuExportContextUrls());
-                getMenuExport().add(getPopupMenuExportContextUrls());
-
-                extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuExportSelectedUrls());
-                getMenuExport().add(getPopupMenuExportSelectedUrls());
-
-                extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuExportUrls());
-                getMenuExport().add(getPopupMenuExportUrls());
-
-                extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuCopyUrls());
+            if (getExtensionHistory() != null) {
+                getMenuExport().add(getPopupMenuExportMessages());
+                getMenuExport().add(getPopupMenuExportResponses());
             }
+
+            extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuExportContextUrls());
+            getMenuExport().add(getPopupMenuExportContextUrls());
+
+            extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuExportSelectedUrls());
+            getMenuExport().add(getPopupMenuExportSelectedUrls());
+
+            extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuExportUrls());
+            getMenuExport().add(getPopupMenuExportUrls());
+
+            extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuCopyUrls());
 
             MainMenuBar menuBar = getView().getMainFrame().getMainMenuBar();
             menuBar.add(getMenuExport(), menuBar.getMenuCount() - 2); // Before Online and Help
@@ -101,10 +97,6 @@ public class ExtensionExim extends ExtensionAdaptor {
             extensionHook.getHookMenu().addImportMenuItem(new MenuItemImportLogs());
         }
         extensionHook.addApiImplementor(new ImportExportApi());
-    }
-
-    private static boolean isDeprecated(Class<?> classToCheck) {
-        return classToCheck.getAnnotation(Deprecated.class) != null;
     }
 
     @Override

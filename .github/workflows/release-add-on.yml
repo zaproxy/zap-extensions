@@ -12,18 +12,19 @@ jobs:
     name: Build and Release Add-On
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         fetch-depth: 0
         persist-credentials: false
     - name: Setup Java
-      uses: actions/setup-java@v1
+      uses: actions/setup-java@v3
       with:
-        java-version: 8
+        distribution: 'temurin'
+        java-version: 11
     - name: Generate Release State
       run: ./gradlew :addOns:generateReleaseStateLastCommit
     - name: Build and Release Add-On
       env:
         ZAPBOT_TOKEN: ${{ secrets.ZAPBOT_TOKEN }}
         CROWDIN_AUTH_TOKEN: ${{ secrets.ZAPBOT_CROWDIN_TOKEN }}
-      run: ./gradlew :addOns:releaseAddOn
+      run: ./gradlew -Dorg.gradle.jvmargs=-Xmx4g :addOns:releaseAddOn

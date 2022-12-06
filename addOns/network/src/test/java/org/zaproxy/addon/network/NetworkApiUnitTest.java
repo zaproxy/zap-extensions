@@ -82,7 +82,6 @@ import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiParameter;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
-import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link NetworkApi}. */
 class NetworkApiUnitTest extends TestUtils {
@@ -91,11 +90,11 @@ class NetworkApiUnitTest extends TestUtils {
     private ServerCertificatesOptions serverCertificatesOptions;
     private LocalServersOptions localServersOptions;
     private ConnectionOptions connectionOptions;
+    private ClientCertificatesOptions clientCertificatesOptions;
     private ExtensionNetwork extensionNetwork;
 
     @BeforeEach
     void setUp() {
-        ExtensionNetwork.handleConnection = false;
         mockMessages(new ExtensionNetwork());
         Model model = mock(Model.class, withSettings().lenient());
         Model.setSingletonForTesting(model);
@@ -110,13 +109,15 @@ class NetworkApiUnitTest extends TestUtils {
         connectionOptions = mock(ConnectionOptions.class, withSettings().lenient());
         given(connectionOptions.getHttpProxy()).willReturn(ConnectionOptions.DEFAULT_HTTP_PROXY);
         given(extensionNetwork.getConnectionOptions()).willReturn(connectionOptions);
+        clientCertificatesOptions = mock(ClientCertificatesOptions.class);
+        given(extensionNetwork.getClientCertificatesOptions())
+                .willReturn(clientCertificatesOptions);
         networkApi = new NetworkApi(extensionNetwork);
     }
 
     @AfterAll
     static void cleanUp() {
         Constant.messages = null;
-        ExtensionNetwork.handleConnection = false;
     }
 
     @Test
@@ -129,51 +130,10 @@ class NetworkApiUnitTest extends TestUtils {
 
     @Test
     void shouldAddApiElements() {
-        // Given
-        given(extensionNetwork.isHandleServerCerts()).willReturn(false);
-        // When
+        // Given / When
         networkApi = new NetworkApi(extensionNetwork);
         // Then
-        assertThat(networkApi.getApiActions(), hasSize(2));
-        assertThat(networkApi.getApiViews(), hasSize(0));
-        assertThat(networkApi.getApiOthers(), hasSize(1));
-    }
-
-    @Test
-    void shouldAddAdditionalApiElementsWhenHandlingServerCerts() {
-        // Given
-        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
-        // When
-        networkApi = new NetworkApi(extensionNetwork);
-        // Then
-        assertThat(networkApi.getApiActions(), hasSize(4));
-        assertThat(networkApi.getApiViews(), hasSize(2));
-        assertThat(networkApi.getApiOthers(), hasSize(1));
-    }
-
-    @Test
-    void shouldAddAdditionalApiElementsWhenHandlingLocalServers() {
-        // Given
-        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
-        // When
-        networkApi = new NetworkApi(extensionNetwork);
-        // Then
-        assertThat(networkApi.getApiActions(), hasSize(12));
-        assertThat(networkApi.getApiViews(), hasSize(5));
-        assertThat(networkApi.getApiOthers(), hasSize(2));
-    }
-
-    @Test
-    void shouldAddAdditionalApiElementsWhenHandlingConnection() {
-        // Given
-        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
-        ExtensionNetwork.handleConnection = true;
-        // When
-        networkApi = new NetworkApi(extensionNetwork);
-        // Then
-        assertThat(networkApi.getApiActions(), hasSize(24));
+        assertThat(networkApi.getApiActions(), hasSize(26));
         assertThat(networkApi.getApiViews(), hasSize(15));
         assertThat(networkApi.getApiOthers(), hasSize(3));
     }
@@ -183,8 +143,6 @@ class NetworkApiUnitTest extends TestUtils {
     @ValueSource(strings = {"unknown", "something"})
     void shouldThrowApiExceptionForUnknownShortcut(String path) throws Exception {
         // Given
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
-        ExtensionNetwork.handleConnection = true;
         HttpMessage message = new HttpMessage(new URI("http://zap/" + path, true));
         // When
         ApiException exception =
@@ -194,9 +152,8 @@ class NetworkApiUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnProxyPacFromShortcutIfHandlingLocalServers() throws Exception {
+    void shouldReturnProxyPacFromShortcut() throws Exception {
         // Given
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         String proxyPacContent = "Proxy PAC Content";
         given(extensionNetwork.getProxyPacContent(any())).willReturn(proxyPacContent);
         HttpMessage message = new HttpMessage(new URI("http://zap/proxy.pac", true));
@@ -208,23 +165,8 @@ class NetworkApiUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldThrowApiExceptionWhenGettingProxyPacFromShortcutIfNotHandlingLocalServers()
-            throws Exception {
+    void shouldSetProxyWithShortcut() throws Exception {
         // Given
-        given(extensionNetwork.isHandleLocalServers()).willReturn(false);
-        HttpMessage message = new HttpMessage(new URI("http://zap/proxy.pac", true));
-        // When
-        ApiException exception =
-                assertThrows(ApiException.class, () -> networkApi.handleShortcut(message));
-        // Then
-        assertThat(exception.getType(), is(equalTo(ApiException.Type.URL_NOT_FOUND)));
-        verify(extensionNetwork, times(0)).getProxyPacContent(any());
-    }
-
-    @Test
-    void shouldSetProxyWithShortcutIfHandlingConnection() throws Exception {
-        // Given
-        ExtensionNetwork.handleConnection = true;
         HttpMessage message = new HttpMessage(new URI("http://zap/setproxy", true));
         message.setRequestBody(
                 "{\"type\":1,\"http\":{\"host\":\"proxy.example.org\",\"port\":8090}}");
@@ -235,20 +177,6 @@ class NetworkApiUnitTest extends TestUtils {
         verify(connectionOptions).getHttpProxy();
         verify(connectionOptions).setHttpProxy(newHttpProxy("proxy.example.org", 8090, "", "", ""));
         verifyNoMoreInteractions(connectionOptions);
-    }
-
-    @Test
-    void shouldThrowApiExceptionWhenSettingProxyWithShortcutIfNotHandlingConnection()
-            throws Exception {
-        // Given
-        ExtensionNetwork.handleConnection = false;
-        HttpMessage message = new HttpMessage(new URI("http://zap/setproxy", true));
-        // When
-        ApiException exception =
-                assertThrows(ApiException.class, () -> networkApi.handleShortcut(message));
-        // Then
-        assertThat(exception.getType(), is(equalTo(ApiException.Type.URL_NOT_FOUND)));
-        verifyNoInteractions(connectionOptions);
     }
 
     @ParameterizedTest
@@ -326,27 +254,11 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "setRootCaCertValidity";
         JSONObject params = new JSONObject();
         params.put("validity", 123);
-        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
         // Then
         assertThat(response, is(equalTo(ApiResponseElement.OK)));
         verify(serverCertificatesOptions).setRootCaCertValidity(Duration.ofDays(123));
-    }
-
-    @Test
-    void shouldThrowApiExceptionWhenSettingRootCaCertValidityIfNotHandlingServerCerts()
-            throws Exception {
-        // Given
-        String name = "setRootCaCertValidity";
-        JSONObject params = new JSONObject();
-        params.put("validity", 123);
-        given(extensionNetwork.isHandleServerCerts()).willReturn(false);
-        // When
-        ApiException exception =
-                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
-        // Then
-        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_ACTION)));
     }
 
     @Test
@@ -358,7 +270,6 @@ class NetworkApiUnitTest extends TestUtils {
         willThrow(IllegalArgumentException.class)
                 .given(serverCertificatesOptions)
                 .setRootCaCertValidity(any());
-        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
         // When
         ApiException exception =
                 assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
@@ -372,27 +283,11 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "setServerCertValidity";
         JSONObject params = new JSONObject();
         params.put("validity", 123);
-        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
         // Then
         assertThat(response, is(equalTo(ApiResponseElement.OK)));
         verify(serverCertificatesOptions).setServerCertValidity(Duration.ofDays(123));
-    }
-
-    @Test
-    void shouldThrowApiExceptionWhenSettingServerCertValidityIfNotHandlingServerCerts()
-            throws Exception {
-        // Given
-        String name = "setServerCertValidity";
-        JSONObject params = new JSONObject();
-        params.put("validity", 123);
-        given(extensionNetwork.isHandleServerCerts()).willReturn(false);
-        // When
-        ApiException exception =
-                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
-        // Then
-        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_ACTION)));
     }
 
     @Test
@@ -404,7 +299,6 @@ class NetworkApiUnitTest extends TestUtils {
         willThrow(IllegalArgumentException.class)
                 .given(serverCertificatesOptions)
                 .setServerCertValidity(any());
-        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
         // When
         ApiException exception =
                 assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
@@ -428,11 +322,10 @@ class NetworkApiUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldReturnProxyPacIfHandlingLocalServers() throws Exception {
+    void shouldReturnProxyPac() throws Exception {
         // Given
         String name = "proxy.pac";
         JSONObject params = new JSONObject();
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         String proxyPacContent = "Proxy PAC Content";
         given(extensionNetwork.getProxyPacContent(any())).willReturn(proxyPacContent);
         HttpMessage message = new HttpMessage(new URI("http://zap/OTHER/network/proxy.pac", true));
@@ -441,22 +334,6 @@ class NetworkApiUnitTest extends TestUtils {
         // Then
         assertThat(response.getResponseBody().toString(), is(equalTo(proxyPacContent)));
         verify(extensionNetwork).getProxyPacContent("zap");
-    }
-
-    @Test
-    void shouldThrowApiExceptionWhenGettingProxyPacIfNotHandlingLocalServers() throws Exception {
-        // Given
-        String name = "proxy.pac";
-        JSONObject params = new JSONObject();
-        given(extensionNetwork.isHandleLocalServers()).willReturn(false);
-        HttpMessage message = new HttpMessage(new URI("http://zap/OTHER/network/proxy.pac", true));
-        // When
-        ApiException exception =
-                assertThrows(
-                        ApiException.class, () -> networkApi.handleApiOther(message, name, params));
-        // Then
-        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_OTHER)));
-        verify(extensionNetwork, times(0)).getProxyPacContent(any());
     }
 
     @Test
@@ -521,9 +398,8 @@ class NetworkApiUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldSetProxyWithOtherEndpointIfHandlingConnection() throws Exception {
+    void shouldSetProxyWithOtherEndpoint() throws Exception {
         // Given
-        ExtensionNetwork.handleConnection = true;
         HttpMessage message = new HttpMessage();
         String name = "setProxy";
         JSONObject params = new JSONObject();
@@ -541,7 +417,6 @@ class NetworkApiUnitTest extends TestUtils {
     @ValueSource(strings = {"null", "\"a\"", "[]"})
     void shouldNotSetProxyWithOtherEndpointIfTypeNotSupported(String type) throws Exception {
         // Given
-        ExtensionNetwork.handleConnection = true;
         HttpMessage message = new HttpMessage();
         String name = "setProxy";
         JSONObject params = new JSONObject();
@@ -559,7 +434,6 @@ class NetworkApiUnitTest extends TestUtils {
     @ValueSource(strings = {"\"host\":\"\",", ""})
     void shouldNotSetProxyWithOtherEndpointIfHostNotValid(String host) throws Exception {
         // Given
-        ExtensionNetwork.handleConnection = true;
         HttpMessage message = new HttpMessage();
         String name = "setProxy";
         JSONObject params = new JSONObject();
@@ -575,7 +449,6 @@ class NetworkApiUnitTest extends TestUtils {
     @ValueSource(strings = {"null", "\"a\"", "[]"})
     void shouldNotSetProxyWithOtherEndpointIfPortNotValid(String port) throws Exception {
         // Given
-        ExtensionNetwork.handleConnection = true;
         HttpMessage message = new HttpMessage();
         String name = "setProxy";
         JSONObject params = new JSONObject();
@@ -593,7 +466,6 @@ class NetworkApiUnitTest extends TestUtils {
     void shouldThrowApiExceptionWhenSettingProxyWithOtherEndpointIfMalformedJson()
             throws Exception {
         // Given
-        ExtensionNetwork.handleConnection = true;
         HttpMessage message = new HttpMessage();
         String name = "setProxy";
         JSONObject params = new JSONObject();
@@ -604,23 +476,6 @@ class NetworkApiUnitTest extends TestUtils {
                         ApiException.class, () -> networkApi.handleApiOther(message, name, params));
         // Then
         assertThat(exception.getType(), is(equalTo(ApiException.Type.ILLEGAL_PARAMETER)));
-        verifyNoInteractions(connectionOptions);
-    }
-
-    @Test
-    void shouldThrowApiExceptionWhenSettingProxyWithOtherEndpointIfNotHandlingConnection()
-            throws Exception {
-        // Given
-        HttpMessage message = new HttpMessage();
-        String name = "setProxy";
-        JSONObject params = new JSONObject();
-        ExtensionNetwork.handleConnection = false;
-        // When
-        ApiException exception =
-                assertThrows(
-                        ApiException.class, () -> networkApi.handleApiOther(message, name, params));
-        // Then
-        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_OTHER)));
         verifyNoInteractions(connectionOptions);
     }
 
@@ -643,28 +498,12 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "getRootCaCertValidity";
         JSONObject params = new JSONObject();
         given(serverCertificatesOptions.getRootCaCertValidity()).willReturn(Duration.ofDays(123));
-        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiView(name, params);
         // Then
         assertThat(response.getName(), is(equalTo(name)));
         assertThat(response, is(instanceOf(ApiResponseElement.class)));
         assertThat(((ApiResponseElement) response).getValue(), is(equalTo("123")));
-    }
-
-    @Test
-    void shouldThrowApiExceptionWhenGettingRootCaCertValidityIfNotHandlingServerCerts()
-            throws Exception {
-        // Given
-        String name = "getRootCaCertValidity";
-        JSONObject params = new JSONObject();
-        given(serverCertificatesOptions.getRootCaCertValidity()).willReturn(Duration.ofDays(123));
-        given(extensionNetwork.isHandleServerCerts()).willReturn(false);
-        // When
-        ApiException exception =
-                assertThrows(ApiException.class, () -> networkApi.handleApiView(name, params));
-        // Then
-        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_VIEW)));
     }
 
     @Test
@@ -673,28 +512,12 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "getServerCertValidity";
         JSONObject params = new JSONObject();
         given(serverCertificatesOptions.getServerCertValidity()).willReturn(Duration.ofDays(123));
-        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiView(name, params);
         // Then
         assertThat(response.getName(), is(equalTo(name)));
         assertThat(response, is(instanceOf(ApiResponseElement.class)));
         assertThat(((ApiResponseElement) response).getValue(), is(equalTo("123")));
-    }
-
-    @Test
-    void shouldThrowApiExceptionWhenGettingServerCertValidityIfNotHandlingServerCerts()
-            throws Exception {
-        // Given
-        String name = "getServerCertValidity";
-        JSONObject params = new JSONObject();
-        given(serverCertificatesOptions.getServerCertValidity()).willReturn(Duration.ofDays(123));
-        given(extensionNetwork.isHandleServerCerts()).willReturn(false);
-        // When
-        ApiException exception =
-                assertThrows(ApiException.class, () -> networkApi.handleApiView(name, params));
-        // Then
-        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_VIEW)));
     }
 
     @Test
@@ -704,7 +527,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("name", "example.org");
         params.put("enabled", "false");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
         // Then
@@ -718,7 +540,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "addAlias";
         JSONObject params = new JSONObject();
         params.put("name", "example.org");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
         // Then
@@ -732,7 +553,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "removeAlias";
         JSONObject params = new JSONObject();
         params.put("name", "example.org");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.removeAlias(any())).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
@@ -747,7 +567,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "removeAlias";
         JSONObject params = new JSONObject();
         params.put("name", "example.org");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.removeAlias(any())).willReturn(false);
         // When
         ApiException exception =
@@ -764,7 +583,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("name", "example.org");
         params.put("enabled", "false");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.setAliasEnabled(any(), anyBoolean())).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
@@ -780,7 +598,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("name", "example.org");
         params.put("enabled", "true");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.setAliasEnabled(any(), anyBoolean())).willReturn(false);
         // When
         ApiException exception =
@@ -795,7 +612,6 @@ class NetworkApiUnitTest extends TestUtils {
         // Given
         String name = "getAliases";
         JSONObject params = new JSONObject();
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.getAliases())
                 .willReturn(
                         Arrays.asList(
@@ -819,7 +635,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("host", "example.org");
         params.put("enabled", "false");
-        ExtensionNetwork.handleConnection = true;
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
         // Then
@@ -835,7 +650,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("host", "*");
         params.put("enabled", "true");
-        ExtensionNetwork.handleConnection = true;
         // When
         ApiException exception =
                 assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
@@ -849,7 +663,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "addHttpProxyExclusion";
         JSONObject params = new JSONObject();
         params.put("host", "example.org");
-        ExtensionNetwork.handleConnection = true;
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
         // Then
@@ -863,7 +676,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "removeHttpProxyExclusion";
         JSONObject params = new JSONObject();
         params.put("host", "example.org");
-        ExtensionNetwork.handleConnection = true;
         given(connectionOptions.removeHttpProxyExclusion(any())).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
@@ -878,7 +690,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "removeHttpProxyExclusion";
         JSONObject params = new JSONObject();
         params.put("host", "example.org");
-        ExtensionNetwork.handleConnection = true;
         given(connectionOptions.removeHttpProxyExclusion(any())).willReturn(false);
         // When
         ApiException exception =
@@ -895,7 +706,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("host", "example.org");
         params.put("enabled", "false");
-        ExtensionNetwork.handleConnection = true;
         given(connectionOptions.setHttpProxyExclusionEnabled(any(), anyBoolean())).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
@@ -911,7 +721,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("host", "example.org");
         params.put("enabled", "true");
-        ExtensionNetwork.handleConnection = true;
         given(connectionOptions.setHttpProxyExclusionEnabled(any(), anyBoolean()))
                 .willReturn(false);
         // When
@@ -927,7 +736,6 @@ class NetworkApiUnitTest extends TestUtils {
         // Given
         String name = "getHttpProxyExclusions";
         JSONObject params = new JSONObject();
-        ExtensionNetwork.handleConnection = true;
         given(connectionOptions.getHttpProxyExclusions())
                 .willReturn(
                         Arrays.asList(
@@ -960,7 +768,6 @@ class NetworkApiUnitTest extends TestUtils {
         params.put("username", username);
         String password = "password";
         params.put("password", password);
-        ExtensionNetwork.handleConnection = true;
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
         // Then
@@ -976,7 +783,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("host", "host");
         params.put("port", port);
-        ExtensionNetwork.handleConnection = true;
         // When
         ApiException exception =
                 assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
@@ -991,7 +797,6 @@ class NetworkApiUnitTest extends TestUtils {
         // Given
         String name = "isHttpProxyAuthEnabled";
         JSONObject params = new JSONObject();
-        ExtensionNetwork.handleConnection = true;
         given(connectionOptions.isHttpProxyAuthEnabled()).willReturn(enabled);
         // When
         ApiResponse response = networkApi.handleApiView(name, params);
@@ -1007,7 +812,6 @@ class NetworkApiUnitTest extends TestUtils {
         // Given
         String name = "isHttpProxyEnabled";
         JSONObject params = new JSONObject();
-        ExtensionNetwork.handleConnection = true;
         given(connectionOptions.isHttpProxyEnabled()).willReturn(enabled);
         // When
         ApiResponse response = networkApi.handleApiView(name, params);
@@ -1024,7 +828,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "setHttpProxyAuthEnabled";
         JSONObject params = new JSONObject();
         params.put("enabled", enabled);
-        ExtensionNetwork.handleConnection = true;
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
         // Then
@@ -1039,7 +842,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "setHttpProxyEnabled";
         JSONObject params = new JSONObject();
         params.put("enabled", enabled);
-        ExtensionNetwork.handleConnection = true;
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
         // Then
@@ -1052,7 +854,6 @@ class NetworkApiUnitTest extends TestUtils {
         // Given
         String name = "getHttpProxy";
         JSONObject params = new JSONObject();
-        ExtensionNetwork.handleConnection = true;
 
         given(connectionOptions.getHttpProxy())
                 .willReturn(newHttpProxy("example.com", 443, "realm", "username", "password"));
@@ -1084,7 +885,6 @@ class NetworkApiUnitTest extends TestUtils {
         params.put("username", username);
         String password = "password";
         params.put("password", password);
-        ExtensionNetwork.handleConnection = true;
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
         // Then
@@ -1101,7 +901,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("host", "host");
         params.put("port", port);
-        ExtensionNetwork.handleConnection = true;
         // When
         ApiException exception =
                 assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
@@ -1116,7 +915,6 @@ class NetworkApiUnitTest extends TestUtils {
         // Given
         String name = "isSocksProxyEnabled";
         JSONObject params = new JSONObject();
-        ExtensionNetwork.handleConnection = true;
         given(connectionOptions.isSocksProxyEnabled()).willReturn(enabled);
         // When
         ApiResponse response = networkApi.handleApiView(name, params);
@@ -1131,7 +929,6 @@ class NetworkApiUnitTest extends TestUtils {
         // Given
         String name = "getSocksProxy";
         JSONObject params = new JSONObject();
-        ExtensionNetwork.handleConnection = true;
 
         given(connectionOptions.getSocksProxy())
                 .willReturn(
@@ -1160,7 +957,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("authority", "example.org");
         params.put("enabled", "false");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
         // Then
@@ -1175,7 +971,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("authority", "*");
         params.put("enabled", "true");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         // When
         ApiException exception =
                 assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
@@ -1189,7 +984,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "addPassThrough";
         JSONObject params = new JSONObject();
         params.put("authority", "example.org");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
         // Then
@@ -1203,7 +997,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "removePassThrough";
         JSONObject params = new JSONObject();
         params.put("authority", "example.org");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.removePassThrough(any())).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
@@ -1218,7 +1011,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "removePassThrough";
         JSONObject params = new JSONObject();
         params.put("authority", "example.org");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.removePassThrough(any())).willReturn(false);
         // When
         ApiException exception =
@@ -1235,7 +1027,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("authority", "example.org");
         params.put("enabled", "false");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.setPassThroughEnabled(any(), anyBoolean())).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
@@ -1251,7 +1042,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("authority", "example.org");
         params.put("enabled", "true");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.setPassThroughEnabled(any(), anyBoolean())).willReturn(false);
         // When
         ApiException exception =
@@ -1266,7 +1056,6 @@ class NetworkApiUnitTest extends TestUtils {
         // Given
         String name = "getPassThroughs";
         JSONObject params = new JSONObject();
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.getPassThroughs())
                 .willReturn(
                         Arrays.asList(
@@ -1292,7 +1081,6 @@ class NetworkApiUnitTest extends TestUtils {
         params.put("address", "localhost");
         int port = getRandomPort();
         params.put("port", port);
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.getMainProxy()).willReturn(newLocalServer("localhost", 8080));
         given(localServersOptions.getServers()).willReturn(Collections.emptyList());
         // When
@@ -1309,7 +1097,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("address", "localhost");
         params.put("port", "8080");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.getMainProxy()).willReturn(newLocalServer("localhost", 8080));
         given(localServersOptions.getServers()).willReturn(Collections.emptyList());
         // When
@@ -1328,7 +1115,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("address", "localhost");
         params.put("port", "8080");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.getMainProxy()).willReturn(newLocalServer("localhost", 8081));
         given(localServersOptions.getServers())
                 .willReturn(Arrays.asList(newLocalServer("localhost", 8080)));
@@ -1347,7 +1133,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("address", "localhost");
         params.put("port", "80");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.getMainProxy()).willReturn(newLocalServer("localhost", 8080));
         given(localServersOptions.getServers())
                 .willReturn(Arrays.asList(newLocalServer("localhost", 8081)));
@@ -1366,7 +1151,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("address", "localhost");
         params.put("port", "808080808");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         // When
         ApiException exception =
                 assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
@@ -1393,7 +1177,6 @@ class NetworkApiUnitTest extends TestUtils {
         server.setBehindNat(true);
         server.setRemoveAcceptEncoding(false);
         server.setDecodeResponse(false);
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.getMainProxy()).willReturn(newLocalServer("localhost", 8080));
         given(localServersOptions.getServers()).willReturn(Collections.emptyList());
         // When
@@ -1410,7 +1193,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("address", "localhost");
         params.put("port", "8080");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.removeServer(any(), anyInt())).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
@@ -1426,7 +1208,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         params.put("address", "localhost");
         params.put("port", "8080");
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.removeServer(any(), anyInt())).willReturn(false);
         // When
         ApiException exception =
@@ -1441,7 +1222,6 @@ class NetworkApiUnitTest extends TestUtils {
         // Given
         String name = "getLocalServers";
         JSONObject params = new JSONObject();
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
         given(localServersOptions.getServers())
                 .willReturn(
                         Arrays.asList(
@@ -1466,7 +1246,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "setConnectionTimeout";
         JSONObject params = new JSONObject();
         params.put("timeout", timeout);
-        ExtensionNetwork.handleConnection = true;
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
         // Then
@@ -1480,7 +1259,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "setConnectionTimeout";
         JSONObject params = new JSONObject();
         params.put("timeout", "a");
-        ExtensionNetwork.handleConnection = true;
         // When
         ApiException exception =
                 assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
@@ -1495,7 +1273,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "getConnectionTimeout";
         JSONObject params = new JSONObject();
         given(connectionOptions.getTimeoutInSecs()).willReturn(123);
-        ExtensionNetwork.handleConnection = true;
         // When
         ApiResponse response = networkApi.handleApiView(name, params);
         // Then
@@ -1510,7 +1287,6 @@ class NetworkApiUnitTest extends TestUtils {
         JSONObject params = new JSONObject();
         String userAgent = "User-Agent";
         params.put("userAgent", userAgent);
-        ExtensionNetwork.handleConnection = true;
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
         // Then
@@ -1524,7 +1300,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "getDefaultUserAgent";
         JSONObject params = new JSONObject();
         given(connectionOptions.getDefaultUserAgent()).willReturn("User-Agent");
-        ExtensionNetwork.handleConnection = true;
         // When
         ApiResponse response = networkApi.handleApiView(name, params);
         // Then
@@ -1541,7 +1316,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "setDnsTtlSuccessfulQueries";
         JSONObject params = new JSONObject();
         params.put("ttl", ttl);
-        ExtensionNetwork.handleConnection = true;
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
         // Then
@@ -1555,7 +1329,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "setDnsTtlSuccessfulQueries";
         JSONObject params = new JSONObject();
         params.put("ttl", "a");
-        ExtensionNetwork.handleConnection = true;
         // When
         ApiException exception =
                 assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
@@ -1570,7 +1343,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "getDnsTtlSuccessfulQueries";
         JSONObject params = new JSONObject();
         given(connectionOptions.getDnsTtlSuccessfulQueries()).willReturn(123);
-        ExtensionNetwork.handleConnection = true;
         // When
         ApiResponse response = networkApi.handleApiView(name, params);
         // Then
@@ -1587,7 +1359,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "setUseGlobalHttpState";
         JSONObject params = new JSONObject();
         params.put("use", use);
-        ExtensionNetwork.handleConnection = true;
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
         // Then
@@ -1601,7 +1372,6 @@ class NetworkApiUnitTest extends TestUtils {
         String name = "isUseGlobalHttpState";
         JSONObject params = new JSONObject();
         given(connectionOptions.isUseGlobalHttpState()).willReturn(true);
-        ExtensionNetwork.handleConnection = true;
         // When
         ApiResponse response = networkApi.handleApiView(name, params);
         // Then
@@ -1610,103 +1380,69 @@ class NetworkApiUnitTest extends TestUtils {
                 response.toJSON().toString(), is(equalTo("{\"isUseGlobalHttpState\":\"true\"}")));
     }
 
-    @ParameterizedTest
-    @ValueSource(
-            strings = {
-                "addAlias",
-                "removeAlias",
-                "setAliasEnabled",
-                "addPassThrough",
-                "removePassThrough",
-                "setPassThroughEnabled",
-                "addLocalServer",
-                "removeLocalServer"
-            })
-    void shouldThrowApiExceptionForUnsupportedActionsIfNotHandlingLocalServers(String name)
-            throws Exception {
+    @Test
+    void shouldAddPkcs12ClientCertificate() throws Exception {
         // Given
+        String name = "addPkcs12ClientCertificate";
         JSONObject params = new JSONObject();
-        given(extensionNetwork.isHandleLocalServers()).willReturn(false);
+        String file = "/path/to/file";
+        params.put("filePath", file);
+        String password = "password";
+        params.put("password", password);
+        int index = 1234;
+        params.put("index", index);
+        given(clientCertificatesOptions.addPkcs12Certificate()).willReturn(true);
+        // When
+        ApiResponse response = networkApi.handleApiAction(name, params);
+        // Then
+        assertThat(response, is(equalTo(ApiResponseElement.OK)));
+        verify(clientCertificatesOptions).setPkcs12File(file);
+        verify(clientCertificatesOptions).setPkcs12Password(password);
+        verify(clientCertificatesOptions).setPkcs12Index(index);
+        verify(clientCertificatesOptions).addPkcs12Certificate();
+        verify(clientCertificatesOptions).setUseCertificate(true);
+    }
+
+    @Test
+    void shouldThrowApiExceptionIfNotAbleToAddPkcs12ClientCertificate() throws Exception {
+        // Given
+        String name = "addPkcs12ClientCertificate";
+        JSONObject params = new JSONObject();
+        String file = "/path/to/file";
+        params.put("filePath", file);
+        String password = "password";
+        params.put("password", password);
+        int index = 1234;
+        params.put("index", index);
+        given(clientCertificatesOptions.addPkcs12Certificate()).willReturn(false);
         // When
         ApiException exception =
                 assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
         // Then
-        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_ACTION)));
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_EXTERNAL_DATA)));
+        verify(clientCertificatesOptions).setPkcs12File(file);
+        verify(clientCertificatesOptions).setPkcs12Password(password);
+        verify(clientCertificatesOptions).setPkcs12Index(index);
+        verify(clientCertificatesOptions).addPkcs12Certificate();
+        verify(clientCertificatesOptions, times(0)).setUseCertificate(true);
     }
 
     @ParameterizedTest
-    @ValueSource(
-            strings = {
-                "addHttpProxyExclusion",
-                "removeHttpProxyExclusion",
-                "setConnectionTimeout",
-                "setDefaultUserAgent",
-                "setDnsTtlSuccessfulQueries",
-                "setHttpProxy",
-                "setHttpProxyAuthEnabled",
-                "setHttpProxyEnabled",
-                "setHttpProxyExclusionEnabled",
-                "setSocksProxy",
-                "setSocksProxyEnabled",
-                "setUseGlobalHttpState"
-            })
-    void shouldThrowApiExceptionForUnsupportedActionsIfNotHandlingConnection(String name)
-            throws Exception {
+    @ValueSource(booleans = {true, false})
+    void shouldSetUseClientCertificate(boolean use) throws Exception {
         // Given
+        String name = "setUseClientCertificate";
         JSONObject params = new JSONObject();
-        ExtensionNetwork.handleConnection = false;
+        params.put("use", use);
         // When
-        ApiException exception =
-                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
+        ApiResponse response = networkApi.handleApiAction(name, params);
         // Then
-        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_ACTION)));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"getAliases", "getPassThroughs", "getLocalServers"})
-    void shouldThrowApiExceptionForUnsupportedViewsIfNotHandlingLocalServers(String name)
-            throws Exception {
-        // Given
-        JSONObject params = new JSONObject();
-        given(extensionNetwork.isHandleLocalServers()).willReturn(false);
-        // When
-        ApiException exception =
-                assertThrows(ApiException.class, () -> networkApi.handleApiView(name, params));
-        // Then
-        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_VIEW)));
-    }
-
-    @ParameterizedTest
-    @ValueSource(
-            strings = {
-                "getConnectionTimeout",
-                "getDefaultUserAgent",
-                "getDnsTtlSuccessfulQueries",
-                "getHttpProxy",
-                "getHttpProxyExclusions",
-                "getSocksProxy",
-                "isHttpProxyAuthEnabled",
-                "isHttpProxyEnabled",
-                "isSocksProxyEnabled",
-                "isUseGlobalHttpState"
-            })
-    void shouldThrowApiExceptionForUnsupportedViewsIfNotHandlingConnection(String name)
-            throws Exception {
-        // Given
-        JSONObject params = new JSONObject();
-        ExtensionNetwork.handleConnection = false;
-        // When
-        ApiException exception =
-                assertThrows(ApiException.class, () -> networkApi.handleApiView(name, params));
-        // Then
-        assertThat(exception.getType(), is(equalTo(ApiException.Type.BAD_VIEW)));
+        assertThat(response, is(equalTo(ApiResponseElement.OK)));
+        verify(clientCertificatesOptions).setUseCertificate(use);
     }
 
     @Test
     void shouldHaveDescriptionsForAllApiElements() {
-        given(extensionNetwork.isHandleServerCerts()).willReturn(true);
-        given(extensionNetwork.isHandleLocalServers()).willReturn(true);
-        ExtensionNetwork.handleConnection = true;
         networkApi = new NetworkApi(extensionNetwork);
         List<String> missingKeys = new ArrayList<>();
         checkKey(networkApi.getDescriptionKey(), missingKeys);

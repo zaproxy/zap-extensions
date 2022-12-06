@@ -27,6 +27,7 @@ import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.regextester.ui.model.RegexModel;
 import org.zaproxy.zap.extension.regextester.ui.util.SimpleDocumentListener;
 
+@SuppressWarnings("serial")
 public class TestValuePanel extends JPanel {
     private static final long serialVersionUID = 1L;
 

@@ -4,15 +4,61 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- The Directory Browsing scan rule now includes example alert functionality for documentation generation purposes (Issue 6119).
+- Use lower case HTTP field names for compatibility with HTTP/2.
+
+### Fixed
+- Preserve the HTTP version in the scan rules:
+  - Remote Code Execution - CVE-2012-1823
+  - Source Code Disclosure - CVE-2012-1823
+  - Source Code Disclosure - /WEB-INF folder
+
+## [49] - 2022-10-27
+### Added
+- The following scan rules were added, having been promoted from Beta:
+    - .env Information Leak
+    - Cloud Metadata Attack
+    - GET for POST
+    - Heartbleed OpenSSL Vulnerability
+    - Hidden File Finder
+    - Padding Oracle
+    - Remote Code Execution - CVE-2012-1823
+    - Source Code Disclosure - CVE-2012-1823
+    - SQL Injection - Hypersonic (Time Based)
+    - SQL Injection - MsSQL (Time Based)
+    - SQL Injection - MySQL (Time Based)
+    - SQL Injection - Oracle (Time Based)
+    - SQL Injection - PostgreSQL (Time Based)
+    - SQL Injection - SQLite
+    - Trace.axd Information Leak
+    - User Agent Fuzzer
+    - XSLT Injection
+    - XXE
+
+### Changed
+- Update minimum ZAP version to 2.12.0.
+- Maintenance changes.
+- Rely on Network add-on to obtain more information about socket timeouts.
+
+## [48] - 2022-09-22
+### Changed
+- Command Injection Scan Rule: Decode HTML entities in HTML responses before attempting to search for attack validation patterns.
+
+## [47] - 2022-08-16
 ### Added
 - Cross Site Scripting header splitting attacks.
+- The External Redirect scan rule now includes alert references on Alerts, and has example alert functionality for documentation generation purposes.
 
 ### Changed
 - Maintenance changes.
+- Updated the External Redirect scan rule to be more accurate.
+- The Reflected XSS scan rule now generates alerts for all content-types when alert threshold set to LOW. If alert threshold MEDIUM or HIGH, alerts are raised for HTML responses only.
 
 ### Fixed
 - The Remote File Inclusion scan rule no longer follows redirects before checking the response for content indicating a vulnerability (Issue 5887).
 - False positive where Cross Site Scripting payloads are safely rendered in a textarea tag.
+- Unescaped tag end causing Cross Site Scripting rule to throw an exception.
 
 ## [46] - 2022-03-21
 ### Changed
@@ -315,6 +361,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[49]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v49
+[48]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v48
+[47]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v47
 [46]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v46
 [45]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v45
 [44]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v44

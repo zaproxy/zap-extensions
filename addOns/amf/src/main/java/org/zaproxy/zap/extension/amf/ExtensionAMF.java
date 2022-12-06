@@ -45,7 +45,7 @@ public class ExtensionAMF extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-        if (getView() != null) {
+        if (hasView()) {
             HttpPanelManager panelManager = HttpPanelManager.getInstance();
             panelManager.addRequestViewFactory(
                     RequestSplitComponent.NAME, new RequestAMFTextViewFactory());
@@ -78,7 +78,7 @@ public class ExtensionAMF extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        if (getView() != null) {
+        if (hasView()) {
             HttpPanelManager panelManager = HttpPanelManager.getInstance();
             panelManager.removeRequestViewFactory(
                     RequestSplitComponent.NAME, RequestAMFTextViewFactory.NAME);

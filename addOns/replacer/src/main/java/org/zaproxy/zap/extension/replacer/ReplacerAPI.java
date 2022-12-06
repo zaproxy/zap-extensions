@@ -55,6 +55,7 @@ public class ReplacerAPI extends ApiImplementor {
     private static final String REPLACEMENT = "replacement";
     private static final String INITIATORS = "initiators";
     private static final String PARAM_BOOL = "bool";
+    private static final String URL = "url";
 
     private ExtensionReplacer extension = null;
 
@@ -72,7 +73,7 @@ public class ReplacerAPI extends ApiImplementor {
                 new ApiAction(
                         ACTION_ADD_RULE,
                         new String[] {DESC, ENABLED, MATCH_TYPE, MATCH_REGEX, MATCH_STRING},
-                        new String[] {REPLACEMENT, INITIATORS}));
+                        new String[] {REPLACEMENT, INITIATORS, URL}));
 
         this.addApiAction(new ApiAction(ACTION_REMOVE_RULE, new String[] {DESC}));
         this.addApiAction(new ApiAction(ACTION_SET_ENABLED, new String[] {DESC, PARAM_BOOL}));
@@ -154,11 +155,21 @@ public class ReplacerAPI extends ApiImplementor {
                 throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, ENABLED, e);
             }
 
+            String url = getParam(params, URL, "");
+            if (!url.isEmpty()) {
+                try {
+                    Pattern.compile(url);
+                } catch (PatternSyntaxException e) {
+                    throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, URL, e);
+                }
+            }
+
             this.extension
                     .getParams()
                     .addRule(
                             new ReplacerParamRule(
                                     desc,
+                                    url,
                                     type,
                                     matchString,
                                     matchRegex,
@@ -190,6 +201,7 @@ public class ReplacerAPI extends ApiImplementor {
     private ApiResponse ruleToResponse(ReplacerParamRule rule) {
         Map<String, String> map = new HashMap<>();
         map.put(DESC, rule.getDescription());
+        map.put(URL, rule.getUrl());
         map.put(ENABLED, Boolean.toString(rule.isEnabled()));
         map.put(MATCH_TYPE, rule.getMatchType().name());
         map.put(MATCH_REGEX, Boolean.toString(rule.isMatchRegex()));

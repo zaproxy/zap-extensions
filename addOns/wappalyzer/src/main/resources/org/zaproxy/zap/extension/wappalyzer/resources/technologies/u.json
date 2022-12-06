@@ -22,7 +22,7 @@
     ],
     "description": "UIKit is the framework used for developing iOS applications.",
     "html": "<[^>]+class=\"[^\"]*(?:uk-container|uk-section)",
-    "icon": "UIKit.png",
+    "icon": "UIKit.svg",
     "scriptSrc": "uikit.*\\.js",
     "website": "https://getuikit.com"
   },
@@ -103,7 +103,7 @@
   },
   "USWDS": {
     "cats": [
-      18
+      66
     ],
     "description": "USWDS is a design system for the federal government.",
     "icon": "USWDS.svg",
@@ -123,16 +123,35 @@
     "scriptSrc": "uc_cart/uc_cart_block\\.js",
     "website": "http://www.ubercart.org"
   },
+  "Ubiliz": {
+    "cats": [
+      5,
+      6
+    ],
+    "description": "Ubiliz is a gift voucher ecommerce solution.",
+    "icon": "Ubiliz.svg",
+    "js": {
+      "ubilizSettings": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.ubiliz.com"
+  },
   "Ubuntu": {
     "cats": [
       28
     ],
+    "cpe": "cpe:2.3:o:canonical:ubuntu_linux:*:*:*:*:*:*:*:*",
     "description": "Ubuntu is a free and open-source operating system on Linux for the enterprise server, desktop, cloud, and IoT.",
     "headers": {
       "Server": "Ubuntu",
       "X-Powered-By": "Ubuntu"
     },
-    "icon": "Ubuntu.png",
+    "icon": "Ubuntu.svg",
     "website": "http://www.ubuntu.com/server"
   },
   "Ueeshop": {
@@ -200,6 +219,9 @@
     ],
     "description": "Umami is a self-hosted web analytics solution. It's goal is to provide a friendlier, privacy-focused alternative to Google Analytics and a free, open-sourced alternative to paid solutions.",
     "icon": "umami.svg",
+    "js": {
+      "umami": ""
+    },
     "oss": true,
     "scriptSrc": "umami\\.js",
     "website": "https://umami.is/"
@@ -209,6 +231,7 @@
       1
     ],
     "description": "Umbraco is an open-source Microsoft ASP.NET based content management system.",
+    "dom": "script[src*='/UmbracoForms/']",
     "headers": {
       "X-Umbraco-Version": "^(.+)$\\;version:\\1"
     },
@@ -232,8 +255,21 @@
     "saas": true,
     "scripts": "/Umbraco/Api/",
     "url": "/umbraco/login\\.aspx(?:$|\\?)",
-    "website": "http://umbraco.com",
+    "website": "https://umbraco.com/",
     "xhr": "/umbraco/api/"
+  },
+  "UmiJs": {
+    "cats": [
+      12
+    ],
+    "description": "UmiJs is a scalable, enterprise-class frontend application framework that supports both configuration and conventional routing while maintaining functional completeness, such as dynamic routing, nested routing, and permission routing.",
+    "icon": "UmiJs.png",
+    "implies": "Node.js",
+    "js": {
+      "g_umi.version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://umijs.org"
   },
   "Umso": {
     "cats": [
@@ -323,6 +359,41 @@
     "scriptSrc": "cmp\\.uniconsent\\.mgr\\.consensu\\.org/dfp\\.js",
     "website": "https://www.uniconsent.com/"
   },
+  "Unicorn Platform": {
+    "cats": [
+      1,
+      51
+    ],
+    "description": "Unicorn Platform is a drag and drop website and blog builder for startups, mobile apps, and SaaS.",
+    "icon": "Unicorn Platform.svg",
+    "js": {
+      "unicornplatform": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://unicornplatform.com"
+  },
+  "UnoCSS": {
+    "cats": [
+      66
+    ],
+    "css": "--un-(?:rotate|translate|space-x|text-opacity|border-opacity)",
+    "description": "UnoCSS is instant on-demand Atomic CSS engine.",
+    "dom": {
+      "style[data-unocss]": {
+        "attributes": {
+          "data-unocss": "([\\d\\.]+)\\;version:\\1"
+        }
+      }
+    },
+    "icon": "UnoCSS.svg",
+    "oss": true,
+    "website": "https://uno.antfu.me/"
+  },
   "Unpkg": {
     "cats": [
       31
@@ -370,6 +441,19 @@
     "scriptSrc": "www\\.upsellit\\.com/",
     "website": "https://us.upsellit.com"
   },
+  "Upfluence": {
+    "cats": [
+      71
+    ],
+    "description": "Upfluence is the all-in-one affiliate and influencer marketing platform for ecommerce and direct-to-consumer brands.",
+    "icon": "Upfluence.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.upfluence\\.co/",
+    "website": "https://www.upfluence.com"
+  },
   "Uploadcare": {
     "cats": [
       31
@@ -385,6 +469,20 @@
       "payg"
     ],
     "website": "https://uploadcare.com"
+  },
+  "Upptime": {
+    "cats": [
+      13
+    ],
+    "description": "Upptime is the open-source uptime monitor and status page, powered entirely by GitHub Actions, Issues, and Pages.",
+    "dom": {
+      "p > a[href*='upptime.js.org']": {
+        "text": "^Upptime$"
+      }
+    },
+    "icon": "Upptime.svg",
+    "oss": true,
+    "website": "https://upptime.js.org"
   },
   "Upserve": {
     "cats": [
@@ -405,7 +503,13 @@
       13
     ],
     "description": "UptimeRobot is a web-based software that is designed to monitor the sites frequently to check whether any site is down owing to server problem or any bug in coding.",
-    "dom": "a[href*='stats.uptimerobot.com/']",
+    "dom": {
+      "a[href*='uptimerobot.com']": {
+        "attributes": {
+          "href": "(?:\\.|//)uptimerobot\\.com/"
+        }
+      }
+    },
     "headers": {
       "content-security-policy": "\\.uptimerobot\\.com"
     },
@@ -416,8 +520,25 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "stats\\.uptimerobot\\.com/",
+    "scriptSrc": "\\.uptimerobot\\.com/",
     "website": "https://uptimerobot.com"
+  },
+  "Uptrends": {
+    "cats": [
+      78,
+      13
+    ],
+    "description": "Uptrends is a website and web performance monitoring solution.",
+    "icon": "Uptrends.svg",
+    "js": {
+      "UTBOOMR.version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.uptrendsdata\\.com/",
+    "website": "https://www.uptrends.com"
   },
   "Upvoty": {
     "cats": [
@@ -486,6 +607,7 @@
     "description": "Userlike is a cloud-based live chat solution that can be integrated with existing websites.",
     "icon": "UserLike.svg",
     "js": {
+      "__USERLIKE_MOUNT_GUARD__": "",
       "userlike": "",
       "userlikeInit": ""
     },
@@ -551,7 +673,7 @@
       68
     ],
     "description": "UserWay is a web accessibility overlay for websites that claims to improve compliance with accessibility standards.",
-    "icon": "UserWay.png",
+    "icon": "UserWay.svg",
     "scriptSrc": "cdn\\.userway\\.org/widget.*\\.js",
     "website": "https://userway.org/"
   },
@@ -710,6 +832,18 @@
     "saas": true,
     "website": "https://ulogin.ru"
   },
+  "uPlot": {
+    "cats": [
+      25
+    ],
+    "description": "uPlot is a small, fast chart for time series, lines, areas, ohlc and bars.",
+    "icon": "uPlot.png",
+    "js": {
+      "uPlot": ""
+    },
+    "oss": true,
+    "website": "https://leeoniya.github.io/uPlot"
+  },
   "uPortal": {
     "cats": [
       21
@@ -751,7 +885,7 @@
       15
     ],
     "description": "Utterances is a lightweight comments widget built on GitHub issues.",
-    "dom": "iframe[src*='utteranc.es/client.js']",
+    "dom": "iframe[src*='utteranc.es']",
     "icon": "utterances.png",
     "oss": true,
     "website": "https://github.com/utterance/utterances",

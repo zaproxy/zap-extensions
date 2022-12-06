@@ -36,6 +36,7 @@ import org.zaproxy.zap.extension.websocket.fuzz.WebSocketFuzzer;
 import org.zaproxy.zap.extension.websocket.fuzz.WebSocketFuzzerListener;
 import org.zaproxy.zap.utils.StickyScrollbarAdjustmentListener;
 
+@SuppressWarnings("serial")
 public class WebSocketFuzzResultsContentPanel extends JPanel
         implements FuzzResultsContentPanel<WebSocketMessageDTO, WebSocketFuzzer> {
 

@@ -5,7 +5,7 @@ description = "The beta status Active Scanner rules"
 zapAddOn {
     addOnName.set("Active scanner rules (beta)")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.11.1")
+    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -14,28 +14,16 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">= 1.7.0 & < 2.0.0")
+                    version.set(">= 1.12.0 & < 2.0.0")
                 }
                 register("network") {
-                    version.set(">= 0.1.0")
+                    version.set(">= 0.3.0")
                 }
                 register("oast") {
                     version.set(">= 0.7.0")
                 }
-            }
-        }
-
-        extensions {
-            register("org.zaproxy.zap.extension.ascanrulesBeta.payloader.ExtensionPayloader") {
-                classnames {
-                    allowed.set(listOf("org.zaproxy.zap.extension.ascanrulesBeta.payloader"))
-                }
-                dependencies {
-                    addOns {
-                        register("custompayloads") {
-                            version.set(">= 0.9.0 & < 1.0.0")
-                        }
-                    }
+                register("database") {
+                    version.set(">= 0.1.0")
                 }
             }
         }
@@ -44,7 +32,7 @@ zapAddOn {
 
 dependencies {
     compileOnly(parent!!.childProjects.get("commonlib")!!)
-    compileOnly(parent!!.childProjects.get("custompayloads")!!)
+    compileOnly(parent!!.childProjects.get("database")!!)
     compileOnly(parent!!.childProjects.get("network")!!)
     compileOnly(parent!!.childProjects.get("oast")!!)
 
@@ -53,7 +41,7 @@ dependencies {
 
     testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
-    testImplementation(parent!!.childProjects.get("custompayloads")!!)
+    testImplementation(parent!!.childProjects.get("database")!!)
     testImplementation(parent!!.childProjects.get("network")!!)
     testImplementation(parent!!.childProjects.get("oast")!!)
     testImplementation(project(":testutils"))

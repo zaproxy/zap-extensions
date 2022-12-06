@@ -72,7 +72,7 @@ public class ExtensionHttpPanelBrowserView extends ExtensionAdaptor {
 
         extensionHook.addOptionsParamSet(browserViewParam);
 
-        if (getView() != null) {
+        if (hasView()) {
             javaFxAvailable = isJavaFxAvailable();
 
             if (javaFxAvailable) {
@@ -112,7 +112,7 @@ public class ExtensionHttpPanelBrowserView extends ExtensionAdaptor {
     public void start() {
         super.start();
 
-        if (getView() != null && !javaFxAvailable && browserViewParam.isWarnOnJavaFXInitError()) {
+        if (hasView() && !javaFxAvailable && browserViewParam.isWarnOnJavaFXInitError()) {
             JCheckBox checkBoxDoNotShowErrorAgain =
                     new JCheckBox(
                             getMessages()
@@ -139,7 +139,7 @@ public class ExtensionHttpPanelBrowserView extends ExtensionAdaptor {
     public void unload() {
         super.unload();
 
-        if (getView() != null && javaFxAvailable) {
+        if (hasView() && javaFxAvailable) {
             HttpPanelManager panelManager = HttpPanelManager.getInstance();
             panelManager.removeResponseViewFactory(
                     ResponseSplitComponent.NAME, ResponseBrowserViewFactory.NAME);

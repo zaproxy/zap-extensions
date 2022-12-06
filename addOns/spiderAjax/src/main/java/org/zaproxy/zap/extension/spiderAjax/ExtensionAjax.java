@@ -109,7 +109,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 
         extensionHook.addSessionListener(new SpiderSessionChangedListener());
 
-        if (getView() != null) {
+        if (hasView()) {
 
             extensionHook.getHookView().addStatusPanel(getSpiderPanel());
             extensionHook.getHookView().addOptionPanel(getOptionsSpiderPanel());
@@ -332,7 +332,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
      */
     @SuppressWarnings("fallthrough")
     public void startScan(String displayName, AjaxSpiderTarget target, SpiderListener listener) {
-        if (getView() != null) {
+        if (hasView()) {
             switch (Control.getSingleton().getMode()) {
                 case safe:
                     throw new IllegalStateException("Scans are not allowed in Safe mode");
@@ -439,7 +439,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
         @Override
         public void sessionAboutToChange(Session session) {
             ajaxSpiderApi.reset();
-            if (getView() != null) {
+            if (hasView()) {
                 getSpiderPanel().reset();
                 if (spiderDialog != null) {
                     spiderDialog.reset();
@@ -452,7 +452,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
 
         @Override
         public void sessionModeChanged(Mode mode) {
-            if (getView() != null) {
+            if (hasView()) {
                 getSpiderPanel().sessionModeChanged(mode);
                 getMenuItemCustomScan().setEnabled(mode != Mode.safe);
             }

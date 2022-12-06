@@ -56,6 +56,9 @@ function invokeWith(msg) {
 		if(keyval[0].trim() != "Host")
 			string += " -H '"+header[i].trim()+"' ";
 	}
+	// if no User-Agent present ensures that curl request doesn't add one
+	if(string.indexOf("User-Agent") < 0)
+		string += " -A '' ";
 	string += " \\\n";
 	body = msg.getRequestBody().toString();
 	if(body.length() != 0){

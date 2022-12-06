@@ -23,6 +23,8 @@ import java.io.IOException;
 
 public class FullUrlDecoder extends DefaultEncodeDecodeProcessor {
 
+    private static final FullUrlDecoder INSTANCE = new FullUrlDecoder();
+
     @Override
     protected String processInternal(String value) throws IOException {
         return getURLDecode(value);
@@ -30,5 +32,9 @@ public class FullUrlDecoder extends DefaultEncodeDecodeProcessor {
 
     String getURLDecode(String value) {
         return HexStringDecoder.hexDecode(value.replace("%", ""));
+    }
+
+    public static FullUrlDecoder getSingleton() {
+        return INSTANCE;
     }
 }

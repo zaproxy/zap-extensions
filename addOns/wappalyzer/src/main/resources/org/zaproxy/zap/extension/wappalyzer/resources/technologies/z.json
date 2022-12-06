@@ -28,6 +28,7 @@
     "cats": [
       19
     ],
+    "cpe": "cpe:2.3:a:zabbix:zabbix:*:*:*:*:*:*:*:*",
     "html": "<body[^>]+zbxCallPostScripts",
     "icon": "Zabbix.png",
     "implies": "PHP",
@@ -126,22 +127,6 @@
     "scriptSrc": "zanox\\.com/scripts/zanox\\.js$",
     "website": "http://zanox.com"
   },
-  "Zaraz": {
-    "cats": [
-      92
-    ],
-    "description": "Zaraz allows most tools to send their information through the Zaraz backend, replacing multiple network requests with a single request. Zaraz replaces heavy third-party widgets with a lighter-weight version that loads first so that the full-featured tool loads only when the browser reaches interactivity or upon user interaction.",
-    "icon": "Zaraz.svg",
-    "js": {
-      "zaraz": "",
-      "zarazData": ""
-    },
-    "pricing": [
-      "poa"
-    ],
-    "saas": true,
-    "website": "https://zaraz.com"
-  },
   "Zeleris": {
     "cats": [
       99
@@ -170,6 +155,7 @@
     "cookies": {
       "ZENDSERVERSESSID": ""
     },
+    "cpe": "cpe:2.3:a:zend:zend_server:*:*:*:*:*:*:*:*",
     "headers": {
       "X-Powered-By": "Zend(?:Server)?(?:[\\s/]?([0-9.]+))?\\;version:\\1"
     },
@@ -196,7 +182,7 @@
     "headers": {
       "x-zendesk-user-id": ""
     },
-    "icon": "Zendesk.png",
+    "icon": "Zendesk.svg",
     "js": {
       "Zendesk": ""
     },
@@ -220,6 +206,21 @@
     "saas": true,
     "scriptSrc": "v2\\.zopim\\.com",
     "website": "http://zopim.com"
+  },
+  "Zendesk Sunshine Conversations": {
+    "cats": [
+      52
+    ],
+    "description": "Zendesk Sunshine Conversations lets you share a single, continuous conversation with every team in your business. With a unified API and native connectors to popular business applications like Zendesk and Slack, everyone in your organization can get access to a single view of the customer conversation.",
+    "icon": "Zendesk.svg",
+    "implies": "Zendesk",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.smooch\\.io/",
+    "website": "https://www.zendesk.com/platform/conversations"
   },
   "Zenfolio": {
     "cats": [
@@ -317,6 +318,7 @@
     "cookies": {
       "ZM_TEST": "true"
     },
+    "cpe": "cpe:2.3:a:zimbra:zimbra:*:*:*:*:*:*:*:*",
     "icon": "Zimbra.png",
     "implies": "Java",
     "website": "https://www.zimbra.com/"
@@ -387,6 +389,38 @@
       "zip\\.co"
     ],
     "website": "https://www.zip.co/"
+  },
+  "Zipify OCU": {
+    "cats": [
+      100
+    ],
+    "description": "Zipify OCU allows you to add upsells and cross-sells to your checkout sequence.",
+    "icon": "Zipify OCU.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "/zipify-oneclickupsell-vendor\\.js",
+    "website": "https://zipify.com/apps/ocu/"
+  },
+  "Zipify Pages": {
+    "cats": [
+      100,
+      51
+    ],
+    "description": "Zipify Pages the first landing page builder uniquely designed for ecommerce.",
+    "icon": "Zipify Pages.svg",
+    "implies": "Shopify",
+    "js": {
+      "ZipifyPages": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://zipify.com/apps/pages/"
   },
   "Zipkin": {
     "cats": [
@@ -533,6 +567,7 @@
     "js": {
       "Zone.root": ""
     },
+    "icon": "Angular.svg",
     "website": "https://github.com/angular/angular/tree/master/packages/zone.js"
   },
   "Zonos": {
@@ -615,10 +650,7 @@
     "meta": {
       "generator": "Zozo Ecommerce"
     },
-    "scriptSrc": [
-      "catalog/view/theme/[^\"]+/javascript/common\\.js",
-      "zozo-main\\.min\\.js"
-    ],
+    "scriptSrc": "zozo-main\\.min\\.js",
     "website": "https://zozo.vn"
   },
   "Zuppler": {

@@ -37,6 +37,7 @@ import org.zaproxy.zap.extension.scripts.automation.actions.ScriptAction;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class ScriptJobDialog extends StandardFieldsDialog {
 
     private static final long serialVersionUID = 1L;

@@ -4,11 +4,37 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [30] - 2022-11-15
+### Changed
+- Dependency updates.
+- Each imported endpoint is included in the selected context, unless its URL matches an already existing *Include in
+  Context* regex entry.
+
+## [29] - 2022-10-27
+### Changed
+- Update minimum ZAP version to 2.12.0.
+- Remove parser used for core spider (Related to Issue 3113).
+- Maintenance changes.
+
+
+## [28] - 2022-09-21
+### Added
+- Imported specs are now persisted to the session database. They are used by the new variant to mark path parameters as
+  Data Driven Nodes.
+
 ### Fixed
 - JSON body examples specified under `schema` were being enclosed in quotes.
+- Error message when `apiFile` field is not accessible was outputting the `targetUrl` and not the incorrect filename (Issue 7370).
 
 ### Changed
 - Maintenance changes.
+- Use Spider add-on (Issue 3113).
+- Use Form Handler add-on directly.
+- DDNs added as Structural Modifiers have been superseded by a custom variant. The variant supports nested DDNs and leaf
+  DDNs, prevents non-parameter URL paths from being merged with DDNs, and treats paths with different HTTP methods
+  uniquely. DDNs are named with the parameter name from the spec.
 
 ## [27] - 2022-03-29
 ### Added
@@ -215,6 +241,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[30]: https://github.com/zaproxy/zap-extensions/releases/openapi-v30
+[29]: https://github.com/zaproxy/zap-extensions/releases/openapi-v29
+[28]: https://github.com/zaproxy/zap-extensions/releases/openapi-v28
 [27]: https://github.com/zaproxy/zap-extensions/releases/openapi-v27
 [26]: https://github.com/zaproxy/zap-extensions/releases/openapi-v26
 [25]: https://github.com/zaproxy/zap-extensions/releases/openapi-v25

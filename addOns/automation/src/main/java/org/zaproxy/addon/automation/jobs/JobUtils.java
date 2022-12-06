@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.logging.log4j.LogManager;
@@ -46,9 +48,11 @@ import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
+import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
+/** This class contains different helper functions to perform tasks like object mapping. */
 public class JobUtils {
 
     private static final String THRESHOLD_I18N_PREFIX = "ascan.options.level.";
@@ -111,7 +115,10 @@ public class JobUtils {
             threshold = AlertThreshold.OFF;
         } else {
             progress.warn(
-                    Constant.messages.getString("automation.error.ascan.threshold", jobName, o));
+                    Constant.messages.getString(
+                            "automation.error.ascan.threshold",
+                            jobName,
+                            o.getClass().getCanonicalName()));
         }
         return threshold;
     }
@@ -245,7 +252,7 @@ public class JobUtils {
             if (ignoreList.contains(key)) {
                 continue;
             }
-
+            /** Mapping the setters of all the corresponding parameters of job */
             String paramMethodName = "set" + key.toUpperCase().charAt(0) + key.substring(1);
             Method optMethod = methodMap.get(paramMethodName);
             if (optMethod != null) {
@@ -330,7 +337,7 @@ public class JobUtils {
         if (ignore != null) {
             ignoreList =
                     Arrays.asList(ignore).stream()
-                            .map(e -> "get" + e.toUpperCase().charAt(0) + e.substring(1))
+                            .map(e -> e.toUpperCase().charAt(0) + e.substring(1))
                             .collect(Collectors.toList());
         }
 
@@ -338,12 +345,22 @@ public class JobUtils {
             Method[] methods = srcObject.getClass().getMethods();
             for (Method m : methods) {
                 String getterName = m.getName();
-                if (getterName.startsWith("get")
+
+                if ((getterName.startsWith("get") || getterName.startsWith("is"))
                         && m.getParameterCount() == 0
-                        && !getterName.equals("getClass")
-                        && !ignoreList.contains(getterName)) {
+                        && !getterName.equals("getClass")) {
                     // Its a getter so process it
-                    String setterName = "s" + getterName.substring(1);
+                    String baseName;
+                    if (getterName.startsWith("get")) {
+                        baseName = getterName.substring(3);
+                    } else {
+                        // is...
+                        baseName = getterName.substring(2);
+                    }
+                    if (ignoreList.contains(baseName)) {
+                        continue;
+                    }
+                    String setterName = "set" + baseName;
                     try {
                         Object value = m.invoke(srcObject);
                         if (value == null) {
@@ -351,11 +368,25 @@ public class JobUtils {
                         }
 
                         Method setterMethod = null;
+                        Class<?> returnType = m.getReturnType();
                         try {
-                            setterMethod =
-                                    destObject.getClass().getMethod(setterName, m.getReturnType());
+                            setterMethod = destObject.getClass().getMethod(setterName, returnType);
                         } catch (Exception e) {
                             // Ignore
+                        }
+                        if (setterMethod == null) {
+                            try {
+                                if (returnType.isPrimitive()) {
+                                    returnType = ClassUtils.primitiveToWrapper(returnType);
+                                } else {
+                                    returnType = ClassUtils.wrapperToPrimitive(returnType);
+                                }
+
+                                setterMethod =
+                                        destObject.getClass().getMethod(setterName, returnType);
+                            } catch (Exception e) {
+                                // Ignore
+                            }
                         }
                         if (setterMethod == null) {
                             Class<?> c = toBaseClass(m.getReturnType());
@@ -433,6 +464,16 @@ public class JobUtils {
             } else {
                 LOG.error("Unable to map to a Map from {}", obj.getClass().getCanonicalName());
             }
+
+        } else if (List.class.equals(t)) {
+            if (obj instanceof List) {
+                List<String> list = new ArrayList<>();
+                list.addAll((ArrayList) obj);
+                return (T) list;
+            } else {
+                LOG.error("Unable to map to an List from {}", obj.getClass().getCanonicalName());
+            }
+
         } else if (Enum.class.isAssignableFrom((Class<T>) t)) {
             T enumType = (T) EnumUtils.getEnumIgnoreCase((Class<Enum>) t, obj.toString());
             if (enumType != null) {
@@ -571,7 +612,8 @@ public class JobUtils {
                                                 scriptType,
                                                 true,
                                                 file));
-                        extScript.addScript(wrapper, false);
+                        ScriptNode scriptNode = extScript.addScript(wrapper, false);
+                        wrapper = (ScriptWrapper) scriptNode.getUserObject();
                     } catch (IOException e) {
                         progress.error(
                                 Constant.messages.getString(

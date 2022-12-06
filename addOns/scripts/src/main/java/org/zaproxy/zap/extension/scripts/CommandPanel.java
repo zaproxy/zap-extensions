@@ -23,7 +23,6 @@ import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
 import java.awt.event.KeyListener;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
@@ -32,7 +31,9 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.zaproxy.zap.extension.scripts.autocomplete.ScriptAutoCompleteKeyListener;
 import org.zaproxy.zap.utils.FontUtils;
+import org.zaproxy.zap.utils.ZapLabel;
 
+@SuppressWarnings("serial")
 public class CommandPanel extends AbstractPanel {
 
     private static final long serialVersionUID = -947074835463140074L;
@@ -49,7 +50,7 @@ public class CommandPanel extends AbstractPanel {
     private boolean largeScriptContentSet = false;
     private String largeScriptContent = "";
     private JPanel largeScriptPanel = new JPanel(new BorderLayout());
-    private JLabel largeScriptLabel = new JLabel();
+    private ZapLabel largeScriptLabel;
 
     /** */
     public CommandPanel(KeyListener listener) {
@@ -60,7 +61,10 @@ public class CommandPanel extends AbstractPanel {
         this.setName("ConsoleCommandPanel");
 
         this.add(getJScrollPane(), getJScrollPane().getName());
-        largeScriptPanel.add(largeScriptLabel);
+        largeScriptLabel = new ZapLabel();
+        largeScriptLabel.setLineWrap(true);
+        largeScriptLabel.setWrapStyleWord(true);
+        largeScriptPanel.add(new JScrollPane(largeScriptLabel));
     }
     /**
      * This method initializes jScrollPane

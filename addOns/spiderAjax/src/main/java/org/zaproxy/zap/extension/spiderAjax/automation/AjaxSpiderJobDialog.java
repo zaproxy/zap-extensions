@@ -34,6 +34,7 @@ import org.zaproxy.zap.extension.spiderAjax.automation.AjaxSpiderJob.Parameters;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class AjaxSpiderJobDialog extends StandardFieldsDialog {
 
     private static final long serialVersionUID = 1L;
@@ -53,6 +54,8 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
             "spiderajax.automation.dialog.ajaxspider.maxcrawldepth";
     private static final String NUM_BROWSERS_PARAM =
             "spiderajax.automation.dialog.ajaxspider.numbrowsers";
+    private static final String ONLY_IF_MODERN =
+            "spiderajax.automation.dialog.ajaxspider.runOnlyIfModern";
     private static final String FIELD_ADVANCED = "spiderajax.automation.dialog.ajaxspider.advanced";
 
     private static final String BROWSER_ID_PARAM =
@@ -112,9 +115,11 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
         this.addNumberField(
                 0,
                 NUM_BROWSERS_PARAM,
-                0,
+                1,
                 Integer.MAX_VALUE,
                 JobUtils.unBox(this.job.getParameters().getNumberOfBrowsers()));
+        this.addCheckBoxField(
+                0, ONLY_IF_MODERN, JobUtils.unBox(this.job.getParameters().getRunOnlyIfModern()));
         this.addCheckBoxField(0, FIELD_ADVANCED, advOptionsSet());
 
         this.addFieldListener(
@@ -210,6 +215,7 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
         this.job.getParameters().setMaxDuration(this.getIntValue(MAX_DURATION_PARAM));
         this.job.getParameters().setMaxCrawlDepth(this.getIntValue(MAX_CRAWL_DEPTH_PARAM));
         this.job.getParameters().setNumberOfBrowsers(this.getIntValue(NUM_BROWSERS_PARAM));
+        this.job.getParameters().setRunOnlyIfModern(this.getBoolValue(ONLY_IF_MODERN));
 
         if (this.getBoolValue(FIELD_ADVANCED)) {
             String browserName = this.getStringValue(BROWSER_ID_PARAM);

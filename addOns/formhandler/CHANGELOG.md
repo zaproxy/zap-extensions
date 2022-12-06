@@ -4,9 +4,27 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [6.1.0] - 2022-10-27
+### Changed
+- Update minimum ZAP version to 2.12.0.
+- No longer provide the value generator through the core spider (Related to Issue 3113).
+- Maintenance changes.
+
+
+## [6.0.0] - 2022-09-21
+### Changed
+- Maintenance changes.
+- Expose value generator for other add-ons (Related to Issue 3113).
+
+## [5] - 2022-07-20
 ### Changed
 - Update minimum ZAP version to 2.11.1.
 - Maintenance changes.
+
+### Fixed
+- Fix an exception when generating values for unidentified fields (Issue 7386).
 
 ## [4] - 2021-10-06
 ### Changed
@@ -29,5 +47,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[6.1.0]: https://github.com/zaproxy/zap-extensions/releases/formhandler-v6.1.0
+[6.0.0]: https://github.com/zaproxy/zap-extensions/releases/formhandler-v6.0.0
+[5]: https://github.com/zaproxy/zap-extensions/releases/formhandler-v5
 [4]: https://github.com/zaproxy/zap-extensions/releases/formhandler-v4
 [3]: https://github.com/zaproxy/zap-extensions/releases/formhandler-v3

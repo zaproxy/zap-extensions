@@ -39,6 +39,7 @@ import org.zaproxy.zap.utils.FontUtils;
  *
  * @see TlsUtils
  */
+@SuppressWarnings("serial")
 public class SecurityProtocolsPanel extends JPanel {
 
     private static final long serialVersionUID = 1L;
@@ -88,7 +89,7 @@ public class SecurityProtocolsPanel extends JPanel {
 
     public void setSecurityProtocolsEnabled(List<String> selectedProtocols) {
         if (!supportedSecurityProtocolsInitialised) {
-            List<String> protocols = TlsUtils.getSupportedProtocols();
+            List<String> protocols = TlsUtils.getSupportedTlsProtocols();
             for (String protocol : protocols) {
                 JCheckBox checkBox = checkBoxesSslTlsProtocols.get(protocol);
                 if (checkBox != null) {

@@ -7,11 +7,12 @@
 </head>
 <body>
 <h1>Правила Пассивного Сканирования - Alpha</h1>
-В эту надстройку включены следующие правила пассивного сканирования Альфа-качества:
 
-<h2>Пример правила пассивного сканирования, которое загружает данные из файла </h2>
-Это реализует пример правила пассивного сканирования, которое загружает строки из файла, который пользователь может редактировать. <br>
-Подробнее см.:  <a href="https://www.zaproxy.org/blog/2014-04-03-hacking-zap-3-passive-scan-rules/">Взлом ZAP, часть 3: правила пассивного сканирования </a>.
+The following alpha status passive scan rules are included in this add-on:
+
+<h2>An example passive scan rule which loads data from a file</h2>
+This implements an example passive scan rule that loads strings from a file that the user can edit.<br>
+For more details see: <a href="https://www.zaproxy.org/blog/2014-04-03-hacking-zap-3-passive-scan-rules/">Взлом ZAP, часть 3: правила пассивного сканирования </a>.
 <p>
 Последний код:  <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleFilePassiveScanRule.java">ExampleFilePassiveScanRule.java</a>
 
@@ -23,110 +24,60 @@
 </ul>
 <strong>Примечание: </strong> При низком пороге будут включены все вхождения в каждом ответе. 
 <p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/Base64Disclosure.java">Base64Disclosure.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/Base64Disclosure.java">Base64Disclosure.java</a>
 
-<h2>Кэшируемость контента</h2>
-Это правило сканирования анализирует управление кешем и заголовки прагмы в HTTP-трафике и сообщает о кэшируемости запросов с точки зрения RFC7234. 
-<p>
-Сгенерированные оповещения: 
+<h2>Site Isolation Scan Rule</h2>
+Spectre is a side-channel attack allowing an attacker to read data
+from memory. One of the counter-measures is to prevent sensitive data
+from entering the memory and to separate trusted and untrusted documents in
+different browsing contexts. Three headers have been defined to enable that:
 <ul>
- <li><b>Не сохраняемый контент</b></li>
- <li><b>Сохраняемый, но не кэшируемый контент </b></li>
- <li><b>Сохраняемый и кэшируемый контент </b></li>
-</ul>
-<p>
-Последний код:  <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/CacheableScanRule.java">CacheableScanRule.java</a>
-
-<h2>Правило сканирования изоляции сайта </h2>
-Spectre — это атака по сторонним каналам, позволяющая злоумышленнику считывать данные.
-из памяти.  Одной из контрмер является предотвращение конфиденциальных данных
-от попадания в память и разделять доверенные и ненадежные документы в
-различные контексты просмотра.  Для этого были определены три заголовка: 
-<ul>
- <li>Политика кросс-происхождения ресурсов </li>
+ <li>Cross-Origin-Resource-Policy</li>
  <li>Cross-Origin-Embedder-Policy</li>
  <li>Cross-Origin-Opener-Policy</li>
 </ul>
-Заголовок Cross-Origin-Embedder-Policy (COEP)  <q>предотвращает документ от
-  загрузка любых ресурсов не того же происхождения, которые явно не предоставляют документ
-  разрешение на загрузку. </q> от
-<a href="https://docs.google.com/document/d/1zDlfvfTJ_9e8Jdc8ehuV4zMEu9ySMCiTGMS9y0GU92k/edit">COOP и COEP объяснили </a>).
+The Cross-Origin-Embedder-Policy (COEP) header <q>prevents a document from
+ loading any non-same-origin resources which don't explicitly grant the document
+ permission to be loaded.</q> (from
+<a href="https://docs.google.com/document/d/1zDlfvfTJ_9e8Jdc8ehuV4zMEu9ySMCiTGMS9y0GU92k/edit">COOP and COEP explained</a>).
 <blockquote cite="https://resourcepolicy.fyi/">
- Заголовок Cross-Origin-Resource-Policy (CORP) позволяет вам
-  управлять набором источников, которые уполномочены включать
-  ресурс.  Это надежная защита от таких атак, как Spectre,
-  поскольку это позволяет браузерам блокировать заданный ответ до того, как он войдет
-  процесс злоумышленника. 
+ The Cross-Origin-Resource-Policy (CORP) header allows you
+ to control the set of origins that are empowered to include
+ a resource. It is a robust defense against attacks like Spectre,
+ as it allows browsers to block a given response before it enters
+ an attacker's process.
 </blockquote>
-Например, сайт злоумышленника может содержать тег изображения с атрибутом
-src к внутреннему содержимому.  Браузер загрузит данные.  С
-атакой по побочному каналу, злоумышленник сможет прочитать его. 
+For example, an attacker site can include an image tag with an attribute
+src to an internal content. The browser will load the data. With a
+side-channel attack, an attacker will be able to read it.
 
-Заголовок Cross-Origin-Opener-Policy (COOP) заставляет браузер создавать
-несколько контекстов просмотра для разделения надежных и ненадежных документов. 
+The Cross-Origin-Opener-Policy (COOP) header forces the browser to create
+multiple browsing contexts to separate trusted and untrusted documents.
 
-Изоляция сайта дополняет блокировку ресурсов разных источников,
-механизм, управляемый браузером независимо. 
+Site Isolation is complementary with Cross-Origin-Resource-Blocking, a
+mechanism managed independently by the browser.
 
 <p>
  Сгенерированные оповещения: 
 <ul>
- <li><b>Заголовок Cross-Origin-Resource-Policy отсутствует или недействителен </b></li>
- <li><b>Заголовок Cross-Origin-Embedder-Policy отсутствует или недействителен </b></li>
- <li><b>Заголовок Cross-Origin-Opener-Policy отсутствует или недействителен </b></li>
+ <li><b>Cross-Origin-Resource-Policy Header Missing or Invalid</b></li>
+ <li><b>Cross-Origin-Embedder-Policy Header Missing or Invalid</b></li>
+ <li><b>Cross-Origin-Opener-Policy Header Missing or Invalid</b></li>
 </ul>
 <p>
- Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SiteIsolationScanRule.java">SiteIsolationScanRule.java</a>
+ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SiteIsolationScanRule.java">SiteIsolationScanRule.java</a>
 
-<h2>Пример правила пассивного сканирования: отказ в обслуживании</h2>
-Это реализует очень простой пример правила пассивного сканирования.<br>
-Подробнее см.: <a href="https://www.zaproxy.org/blog/2014-04-03-hacking-zap-3-passive-scan-rules/">Взлом ZAP, часть 3: правила пассивного сканирования</a>. .
+<h2>Example Passive Scan Rule: Denial of Service</h2>
+This implements a very simple example passive scan rule.<br>
+For more details see: <a href="https://www.zaproxy.org/blog/2014-04-03-hacking-zap-3-passive-scan-rules/">Hacking ZAP Part 3: Passive Scan Rules</a>.
 <p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleSimplePassiveScanRule.java">ExampleSimplePassiveScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleSimplePassiveScanRule.java">ExampleSimplePassiveScanRule.java</a>
 
-<h2>Утечка информации из баннера на странице</h2>
-Анализирует содержимое тела ответа на наличие веб-баннеров или баннеров сервера приложений (если ответы содержат коды состояния ошибки).<br>
-Если Threshold низкий, то также анализируются ответы со статусом 200 – Ok.<br>
-Наличие таких баннеров может способствовать более целенаправленным атакам против известных уязвимостей. 
+<h2>Source Code Disclosure</h2>
+Application Source Code was disclosed by the web server.<br>
+NOTE: Ignores CSS, JavaScript, images, and font files.
 <p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/InPageBannerInfoLeakScanRule.java">InPageBannerInfoLeakScanRule.java</a>
-
-<h2>Объект сериализации Java</h2>
-Java Serialization Object (JSO) — это способ сохранения и обмена объектами между Java-приложениями.<br>
-Различные проблемы связаны с JSO.  Конфиденциальные данные могут попасть в поток байтов.<br>
-Злоумышленник также может изменить данные и использовать JSO для удаленного выполнения кода на сервере.<br>
-JSO не должен использоваться программами Java.  Над сериализованными данными должен быть строгий контроль.<br>
-JSO — это тип уязвимостей, связанных с A8:2017-Insecure Deserialization. 
-<p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/JsoScanRule.java">JsoScanRule.java</a>
-
-<h2>Заголовок политики разрешений не задан</h2>
-Это правило проверяет заголовки ответов HTTP (в ответах HTML и JavaScript) на наличие заголовка «Permissions-Policy».
-и предупреждает, если он не найден.<br>
-Перенаправления игнорируются, за исключением нижнего порога. 
-<p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/PermissionsPolicyScanRule.java">PermissionsPolicyScanRule.java</a>
-
-<h2>Раскрытие исходного кода</h2>
-Исходный код приложения был раскрыт веб-сервером.<br>
-ПРИМЕЧАНИЕ. Игнорирует файлы CSS, JavaScript, изображения и шрифты. 
-<p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SourceCodeDisclosureScanRule.java">SourceCodeDisclosureScanRule.java</a>
-
-<h2>Отсутствует атрибут целостности подресурса</h2>
-Это правило проверяет, отсутствует ли атрибут целостности в скрипте или элемент ссылки, обслуживаемый внешним ресурсом (например, CDN).<br>
-Это помогает смягчить атаку, когда сеть CDN была скомпрометирована, а содержимое было заменено вредоносным содержимым.<br>
-Примечание. Рекомендуемое хеш-значение целостности будет присутствовать в соответствующей информации «Другая информация» соответствующего предупреждения, если его можно преобразовать в сценарий в дереве сайтов. 
-<p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SubResourceIntegrityAttributeScanRule.java">SubResourceIntegrityAttributeScanRule.java</a>
-
-<h2>Опасные функции JS</h2>
-Это правило сканирования проверяет любые опасные функции JS, присутствующие в ответе сайта.<br>
-<strong>Примечание.</strong> Если установлен аддон Custom Payloads, вы можете добавить свои собственные имена функций (payloads) на панели параметров Custom Payloads. 
-Их также будут искать в ответах, поскольку они пассивно сканируются.  Имейте в виду, что чем больше количество полезных данных, тем больше времени требуется для пассивного сканирования. 
-<strong>Примечание:</strong> $$; удаляется с самого начала строк/полезных данных и необязательно включается при сборке шаблонов. 
-<p>
-Последний код: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/JsFunctionScanRule.java">JsFunctionScanRule.java</a> 
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SourceCodeDisclosureScanRule.java">SourceCodeDisclosureScanRule.java</a>
 
 </body>
 </html>

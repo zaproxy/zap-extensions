@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Update minimum ZAP version to 2.12.0.
+
+## [9] - 2022-09-23
+### Changed
 - Updated RAFT lists based on more recent SecLists contributions
 - Update minimum ZAP version to 2.11.1.
 
@@ -52,6 +56,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 First version.
 
+[9]: https://github.com/zaproxy/zap-extensions/releases/fuzzdb-v9
 [8]: https://github.com/zaproxy/zap-extensions/releases/fuzzdb-v8
 [7]: https://github.com/zaproxy/zap-extensions/releases/fuzzdb-v7
 [6]: https://github.com/zaproxy/zap-extensions/releases/fuzzdb-v6

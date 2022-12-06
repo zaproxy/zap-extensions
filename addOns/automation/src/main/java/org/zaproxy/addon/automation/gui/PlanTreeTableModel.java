@@ -34,6 +34,7 @@ import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress.JobResults;
 import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 
+@SuppressWarnings("serial")
 public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableModel {
 
     private static final long serialVersionUID = 1L;

@@ -35,10 +35,10 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.core.scanner.Plugin;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.extension.ascanrules.httputils.HtmlContext;
 import org.zaproxy.zap.extension.ascanrules.httputils.HtmlContextAnalyser;
 import org.zaproxy.zap.model.Vulnerabilities;
@@ -60,6 +60,8 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
     protected static final String IMG_ONERROR_LOG = "<img src=x onerror=console.log(1);>";
     protected static final String SVG_ONLOAD_ALERT = "<svg onload=alert(1)>";
     protected static final String B_MOUSE_ALERT = "<b onMouseOver=alert(1);>test</b>";
+    protected static final String ACCESSKEY_ATTRIBUTE_ALERT = "accesskey='x' onclick='alert(1)' b";
+    protected static final String TAG_ONCLICK_ALERT = "button onclick='alert(1)'/";
 
     /**
      * Null byte injection payload. C/C++ languages treat Null byte or \0 as special character which
@@ -239,6 +241,17 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                 findDecoded ? getURLDecode(evidence) : evidence, null, 0, ignoreSafeParents);
     }
 
+    private void raiseAlert(int confidence, String param, HtmlContext ctx, String otherInfo) {
+        newAlert()
+                .setConfidence(confidence)
+                .setParam(param)
+                .setAttack(ctx.getTarget())
+                .setEvidence(ctx.getTarget())
+                .setMessage(ctx.getMsg())
+                .setOtherInfo(otherInfo)
+                .raise();
+    }
+
     private boolean performDirectAttack(HttpMessage msg, String param, String value) {
         for (String scriptAlert : GENERIC_SCRIPT_ALERT_LIST) {
             List<HtmlContext> contexts2 = performAttack(msg, param, "'\"" + scriptAlert, null, 0);
@@ -247,14 +260,9 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
             }
             if (!contexts2.isEmpty()) {
                 // Yep, its vulnerable
-                newAlert()
-                        .setConfidence(Alert.CONFIDENCE_LOW)
-                        .setParam(param)
-                        .setAttack(contexts2.get(0).getTarget())
-                        .setEvidence(contexts2.get(0).getTarget())
-                        .setMessage(contexts2.get(0).getMsg())
-                        .raise();
-                return true;
+                if (processContexts(contexts2, param, scriptAlert, false)) {
+                    return true;
+                }
             }
 
             if (isStop()) {
@@ -586,6 +594,57 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
         return false;
     }
 
+    private boolean processContexts(
+            List<HtmlContext> contexts, String param, String attack, boolean requiresParent) {
+        for (HtmlContext ctx : contexts) {
+            if (ctx.getParentTag() != null || !requiresParent) {
+                if (ctx.getMsg().getResponseHeader().isHtml()) {
+                    newAlert()
+                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                            .setParam(param)
+                            .setAttack(ctx.getTarget())
+                            .setEvidence(ctx.getTarget())
+                            .setMessage(contexts.get(0).getMsg())
+                            .raise();
+                } else if (AlertThreshold.LOW.equals(this.getAlertThreshold())) {
+                    HttpMessage ctx2Message = contexts.get(0).getMsg();
+                    if (StringUtils.containsIgnoreCase(
+                            ctx.getMsg()
+                                    .getResponseHeader()
+                                    .getHeader(HttpFieldsNames.CONTENT_TYPE),
+                            "json")) {
+                        newAlert()
+                                .setRisk(Alert.RISK_LOW)
+                                .setConfidence(Alert.CONFIDENCE_LOW)
+                                .setName(Constant.messages.getString(MESSAGE_PREFIX + "json.name"))
+                                .setDescription(
+                                        Constant.messages.getString(MESSAGE_PREFIX + "json.desc"))
+                                .setParam(param)
+                                .setAttack(attack)
+                                .setOtherInfo(
+                                        Constant.messages.getString(
+                                                MESSAGE_PREFIX + "otherinfo.nothtml"))
+                                .setMessage(ctx2Message)
+                                .raise();
+                    } else {
+                        newAlert()
+                                .setConfidence(Alert.CONFIDENCE_LOW)
+                                .setParam(param)
+                                .setAttack(ctx.getTarget())
+                                .setOtherInfo(
+                                        Constant.messages.getString(
+                                                MESSAGE_PREFIX + "otherinfo.nothtml"))
+                                .setEvidence(ctx.getTarget())
+                                .setMessage(ctx2Message)
+                                .raise();
+                    }
+                }
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean performOutsideTagsAttack(HtmlContext context, HttpMessage msg, String param) {
         for (String scriptAlert : OUTSIDE_OF_TAGS_PAYLOADS) {
             if (context.getMsg().getResponseBody().toString().contains(context.getTarget())) {
@@ -594,55 +653,8 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                 if (contexts2 == null) {
                     continue;
                 }
-                for (HtmlContext ctx : contexts2) {
-                    if (ctx.getParentTag() != null) {
-                        // Yep, its vulnerable
-                        if (ctx.getMsg().getResponseHeader().isHtml()) {
-                            newAlert()
-                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                    .setParam(param)
-                                    .setAttack(ctx.getTarget())
-                                    .setEvidence(ctx.getTarget())
-                                    .setMessage(contexts2.get(0).getMsg())
-                                    .raise();
-                        } else {
-                            HttpMessage ctx2Message = contexts2.get(0).getMsg();
-                            if (StringUtils.containsIgnoreCase(
-                                    ctx.getMsg()
-                                            .getResponseHeader()
-                                            .getHeader(HttpHeader.CONTENT_TYPE),
-                                    "json")) {
-                                newAlert()
-                                        .setRisk(Alert.RISK_LOW)
-                                        .setConfidence(Alert.CONFIDENCE_LOW)
-                                        .setName(
-                                                Constant.messages.getString(
-                                                        MESSAGE_PREFIX + "json.name"))
-                                        .setDescription(
-                                                Constant.messages.getString(
-                                                        MESSAGE_PREFIX + "json.desc"))
-                                        .setParam(param)
-                                        .setAttack(scriptAlert)
-                                        .setOtherInfo(
-                                                Constant.messages.getString(
-                                                        MESSAGE_PREFIX + "otherinfo.nothtml"))
-                                        .setMessage(ctx2Message)
-                                        .raise();
-                            } else {
-                                newAlert()
-                                        .setConfidence(Alert.CONFIDENCE_LOW)
-                                        .setParam(param)
-                                        .setAttack(ctx.getTarget())
-                                        .setOtherInfo(
-                                                Constant.messages.getString(
-                                                        MESSAGE_PREFIX + "otherinfo.nothtml"))
-                                        .setEvidence(ctx.getTarget())
-                                        .setMessage(ctx2Message)
-                                        .raise();
-                            }
-                        }
-                        return true;
-                    }
+                if (processContexts(contexts2, param, scriptAlert, true)) {
+                    return true;
                 }
             }
             if (isStop()) {
@@ -672,6 +684,57 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                     .setMessage(contextsA.get(0).getMsg())
                     .raise();
             return true;
+        }
+        return false;
+    }
+
+    private void raiseAccessKeyAlert(String param, HtmlContext ctx) {
+        raiseAlert(
+                Alert.CONFIDENCE_MEDIUM,
+                param,
+                ctx,
+                Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.accesskey"));
+    }
+
+    private boolean performAttributeAttack(HtmlContext context, HttpMessage msg, String param) {
+        List<HtmlContext> context2 =
+                performAttack(msg, param, ACCESSKEY_ATTRIBUTE_ALERT, context, 0);
+        if (context2 == null) {
+            return false;
+        }
+        for (HtmlContext ctx : context2) {
+            if (ctx.hasAttribute("onclick", "alert(1)") && ctx.hasAttribute("accesskey", "x")) {
+                // Yep, its vulnerable
+                raiseAccessKeyAlert(param, ctx);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean performElementAttack(HtmlContext context, HttpMessage msg, String param) {
+        String attackString1 = "tag " + ACCESSKEY_ATTRIBUTE_ALERT;
+        List<HtmlContext> context2 = performAttack(msg, param, attackString1, context, 0);
+        if (context2 == null) {
+            context2 = performAttack(msg, param, TAG_ONCLICK_ALERT, context, 0);
+            if (context2 == null) {
+                return false;
+            }
+            for (HtmlContext ctx : context2) {
+                if (ctx.hasAttribute("onclick", "alert(1)")) {
+                    // Yep, its vulnerable
+                    raiseAlert(Alert.CONFIDENCE_MEDIUM, param, ctx, "");
+                    return true;
+                }
+            }
+        }
+
+        for (HtmlContext ctx : context2) {
+            if (ctx.hasAttribute("accesskey", "x") && ctx.hasAttribute("onclick", "alert(1)")) {
+                // Yep, its vulnerable
+                raiseAccessKeyAlert(param, ctx);
+                return true;
+            }
         }
         return false;
     }
@@ -747,6 +810,10 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                     // its in a tag attribute - lots of attack vectors possible
                     attackWorked = performTagAttack(context, msg, param, value);
 
+                } else if (context.isInAttributeName()) {
+
+                    attackWorked = performAttributeAttack(context, msg, param);
+
                 } else if (context.isHtmlComment()) {
                     // Try breaking out of the comment
                     attackWorked = performCommentAttack(context, msg, param);
@@ -775,6 +842,10 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                         // tags
                         attackWorked = performOutsideTagsAttack(context, msg, param);
                     }
+                }
+                if (context.isInElementName()) {
+
+                    attackWorked = performElementAttack(context, msg, param);
                 }
             }
             // Always attack the header if the eyecatcher is reflected in it - this will be

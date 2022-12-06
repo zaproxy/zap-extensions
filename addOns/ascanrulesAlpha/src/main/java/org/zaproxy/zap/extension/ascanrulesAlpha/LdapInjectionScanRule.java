@@ -38,6 +38,8 @@ import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.DiceMatcher;
+import org.zaproxy.zap.model.Tech;
+import org.zaproxy.zap.model.TechSet;
 
 /**
  * The LdapInjectionScanRule scan rule identifies LDAP injection vulnerabilities with LDAP based
@@ -73,6 +75,10 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
     private static final char[] RANDOM_PARAMETER_CHARS =
             "abcdefghijklmnopqrstuvwyxz0123456789".toCharArray();
 
+    public static final Tech Protocol =
+            new Tech("Protocol", I18N_PREFIX + "ldapinjection.technologies.protocol");
+    public static final Tech LDAP = new Tech(Protocol, "LDAP");
+
     static {
         ResourceBundle resourceBundle =
                 ResourceBundle.getBundle(
@@ -104,6 +110,9 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                 LDAP_ERRORS.put(errorPattern, ldapImplementation);
             }
         }
+
+        Tech.add(Protocol);
+        Tech.add(LDAP);
     }
 
     @Override
@@ -134,6 +143,11 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
     @Override
     public String getReference() {
         return Constant.messages.getString(I18N_PREFIX + "ldapinjection.refs");
+    }
+
+    @Override
+    public boolean targets(TechSet technologies) {
+        return technologies.includes(LDAP);
     }
 
     @Override
@@ -286,8 +300,8 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                             randomParamMsg1.getResponseBody().toString(),
                             randomParamMsg2.getResponseBody().toString());
             log.debug(
-                    "Got percentage match for a random parameter (against another identical request): "
-                            + randomVersusRandomMatch);
+                    "Got percentage match for a random parameter (against another identical request): {}",
+                    randomVersusRandomMatch);
             if (!(randomVersusRandomMatch > matchThreshold)) {
                 // the output for the random parameter is .
                 log.debug(

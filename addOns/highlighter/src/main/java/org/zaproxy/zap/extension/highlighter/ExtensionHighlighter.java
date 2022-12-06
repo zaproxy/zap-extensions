@@ -39,7 +39,7 @@ public class ExtensionHighlighter extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookView().addStatusPanel(getHighlighterPanel());
 
             // TODO enable (and correct the key) once the add-on provides help

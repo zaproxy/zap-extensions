@@ -4,5 +4,9 @@
          "http://java.sun.com/products/javahelp/index_2_0.dtd">
 
 <index version="2.0">
-    <indexitem text="Spider" target="spider" />
+    <indexitem text="Spider" target="addon.spider"/>
+	<indexitem text="spider automation" target="addon.spider.automation" />
+    <indexitem text="Spider dialog" target="addon.spider.dialog"/>
+    <indexitem text="Spider tab" target="addon.spider.tab"/>
+    <indexitem text="Spider options" target="addon.spider.options"/>
 </index>

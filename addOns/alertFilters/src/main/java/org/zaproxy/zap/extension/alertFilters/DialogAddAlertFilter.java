@@ -36,12 +36,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.zap.extension.alertFilters.internal.ScanRulesInfo;
+import org.zaproxy.zap.extension.alertFilters.internal.ui.ScanRulesInfoComboBoxModel;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.AbstractFormDialog;
 import org.zaproxy.zap.view.LayoutHelper;
 
 /** The Dialog for adding and configuring a new {@link AlertFilter}. */
+@SuppressWarnings("serial")
 public class DialogAddAlertFilter extends AbstractFormDialog {
 
     /** The Constant serialVersionUID. */
@@ -62,7 +65,7 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
     private JPanel fieldsPanel;
     private Insets insets = new Insets(4, 8, 2, 4);
     private JCheckBox enabledCheckBox;
-    private JComboBox<String> alertCombo;
+    private JComboBox<ScanRulesInfo.Entry> alertCombo;
     private JComboBox<String> newLevelCombo;
     private ZapTextField urlTextField;
     private JCheckBox urlRegexCheckBox;
@@ -137,7 +140,8 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
             log.debug("Initializing add alertFilter dialog for: {}", oldAlertFilter);
             getAlertCombo()
                     .setSelectedItem(
-                            ExtensionAlertFilters.getRuleNameForId(oldAlertFilter.getRuleId()));
+                            ExtensionAlertFilters.getScanRulesInfo()
+                                    .getById(oldAlertFilter.getRuleId()));
             getNewLevelCombo()
                     .setSelectedItem(AlertFilter.getNameForRisk(oldAlertFilter.getNewRisk()));
             getUrlTextField().setText(oldAlertFilter.getUrl());
@@ -219,14 +223,14 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
     }
 
     private AlertFilter fieldsToFilter() {
-        String alertName = (String) getAlertCombo().getSelectedItem();
+        ScanRulesInfo.Entry scanRuleInfo = (ScanRulesInfo.Entry) getAlertCombo().getSelectedItem();
         if (canChangeContext) {
             workingContext = this.getChosenContext();
         }
 
         return new AlertFilter(
                 workingContext != null ? workingContext.getId() : -1,
-                ExtensionAlertFilters.getIdForRuleName(alertName),
+                scanRuleInfo.getId(),
                 getNewLevel(),
                 getUrlTextField().getText(),
                 getUrlRegexCheckBox().isSelected(),
@@ -516,12 +520,12 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
         return evidenceRegexCheckBox;
     }
 
-    protected JComboBox<String> getAlertCombo() {
+    protected JComboBox<ScanRulesInfo.Entry> getAlertCombo() {
         if (alertCombo == null) {
-            alertCombo = new JComboBox<>();
-            for (String name : ExtensionAlertFilters.getAllRuleNames()) {
-                alertCombo.addItem(name);
-            }
+            alertCombo =
+                    new JComboBox<>(
+                            new ScanRulesInfoComboBoxModel(
+                                    ExtensionAlertFilters.getScanRulesInfo()));
         }
         return alertCombo;
     }

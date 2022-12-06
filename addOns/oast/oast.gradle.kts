@@ -1,8 +1,13 @@
+import org.rm3l.datanucleus.gradle.DataNucleusApi
+import org.rm3l.datanucleus.gradle.extensions.enhance.EnhanceExtension
+import org.zaproxy.gradle.addon.AddOnStatus
+
 description = "Allows you to exploit out-of-band vulnerabilities"
 
 zapAddOn {
     addOnName.set("OAST Support")
-    zapVersion.set("2.11.1")
+    addOnStatus.set(AddOnStatus.BETA)
+    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -10,6 +15,9 @@ zapAddOn {
 
         dependencies {
             addOns {
+                register("database") {
+                    version.set(">= 0.1.0")
+                }
                 register("network") {
                     version.set(">= 0.1.0")
                 }
@@ -30,11 +38,6 @@ zapAddOn {
             }
         }
     }
-
-    apiClientGen {
-        api.set("org.zaproxy.addon.oast.OastApi")
-        messages.set(file("src/main/resources/org/zaproxy/addon/oast/resources/Messages.properties"))
-    }
 }
 
 crowdin {
@@ -45,7 +48,17 @@ crowdin {
     }
 }
 
+datanucleus {
+    enhance(
+        closureOf<EnhanceExtension> {
+            api(DataNucleusApi.JDO)
+            persistenceUnitName(zapAddOn.addOnId.get())
+        }
+    )
+}
+
 dependencies {
+    compileOnly(parent!!.childProjects["database"]!!)
     compileOnly(parent!!.childProjects["graaljs"]!!)
     compileOnly(parent!!.childProjects["network"]!!)
 

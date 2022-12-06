@@ -29,6 +29,7 @@ import static org.mockito.Mockito.withSettings;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.model.Model;
@@ -299,6 +300,7 @@ class CookieHttpOnlyScanRuleUnitTest extends PassiveScannerTest<CookieHttpOnlySc
 
         DateTimeFormatter df =
                 DateTimeFormatter.ofPattern("EEE, dd-MMM-yyyy HH:mm:ss zzz")
+                        .withLocale(Locale.US)
                         .withZone(ZoneOffset.UTC);
         LocalDateTime dateTime = LocalDateTime.now().plusYears(1);
         String expiry = dateTime.format(df);

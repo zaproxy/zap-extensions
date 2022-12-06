@@ -26,6 +26,7 @@ import java.util.List;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class AbstractColumnDialog<T> extends StandardFieldsDialog {
 
     private static final long serialVersionUID = 1L;

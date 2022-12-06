@@ -25,6 +25,7 @@ import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class ZestCookieDialog extends StandardFieldsDialog implements ZestDialog {
 
     private static final String FIELD_PARAM_DOMAIN = "zest.dialog.cookies.label.domain";

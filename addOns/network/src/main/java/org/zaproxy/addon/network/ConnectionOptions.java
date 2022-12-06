@@ -32,7 +32,6 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpRequestHeader;
-import org.parosproxy.paros.network.SSLConnector;
 import org.zaproxy.addon.network.internal.TlsUtils;
 import org.zaproxy.addon.network.internal.client.HttpProxy;
 import org.zaproxy.addon.network.internal.client.HttpProxyExclusion;
@@ -46,7 +45,7 @@ public class ConnectionOptions extends VersionedAbstractParam {
     private static final Logger LOGGER = LogManager.getLogger(ConnectionOptions.class);
 
     public static final String DEFAULT_DEFAULT_USER_AGENT =
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:100.0) Gecko/20100101 Firefox/100.0";
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:105.0) Gecko/20100101 Firefox/105.0";
 
     /** The default connection timeout (in seconds). */
     public static final int DEFAULT_TIMEOUT = 20;
@@ -63,7 +62,7 @@ public class ConnectionOptions extends VersionedAbstractParam {
      * @see #CONFIG_VERSION_KEY
      * @see #updateConfigsImpl(int)
      */
-    private static final int CURRENT_CONFIG_VERSION = 1;
+    protected static final int CURRENT_CONFIG_VERSION = 2;
 
     private static final String BASE_KEY = "network.connection";
 
@@ -141,11 +140,13 @@ public class ConnectionOptions extends VersionedAbstractParam {
 
     private static final boolean DEFAULT_STORE_HTTP_PROXY_PASS = true;
 
+    private List<ChangesListener> changesListeners = new ArrayList<>();
+
     private int timeoutInSecs = DEFAULT_TIMEOUT;
     private String defaultUserAgent = DEFAULT_DEFAULT_USER_AGENT;
     private boolean useGlobalHttpState;
     private int dnsTtlSuccessfulQueries = DNS_DEFAULT_TTL_SUCCESSFUL_QUERIES;
-    private List<String> tlsProtocols = TlsUtils.getSupportedProtocols();
+    private List<String> tlsProtocols = TlsUtils.getSupportedTlsProtocols();
     private boolean allowUnsafeRenegotiation;
 
     private boolean httpProxyEnabled;
@@ -170,7 +171,9 @@ public class ConnectionOptions extends VersionedAbstractParam {
 
     @Override
     protected void updateConfigsImpl(int fileVersion) {
-        // Nothing to do.
+        if (fileVersion < CURRENT_CONFIG_VERSION) {
+            setDefaultUserAgent(DEFAULT_DEFAULT_USER_AGENT);
+        }
     }
 
     @Override
@@ -193,22 +196,23 @@ public class ConnectionOptions extends VersionedAbstractParam {
                         .map(Object::toString)
                         .collect(Collectors.toList());
         if (protocols.isEmpty()) {
-            protocols = TlsUtils.getSupportedProtocols();
+            protocols = TlsUtils.getSupportedTlsProtocols();
         } else {
             try {
-                protocols = TlsUtils.filterUnsupportedProtocols(protocols);
+                protocols = TlsUtils.filterUnsupportedTlsProtocols(protocols);
             } catch (Exception e) {
                 LOGGER.warn("An error occurred while setting TLS protocols:", e);
-                protocols = TlsUtils.getSupportedProtocols();
+                protocols = TlsUtils.getSupportedTlsProtocols();
             }
         }
         tlsProtocols = protocols;
-        applyTlsProtocols();
         allowUnsafeRenegotiation = getBoolean(TLS_ALLOW_UNSAFE_RENEGOTIATION, false);
         setAllowUnsafeRenegotiationSystemProperty(allowUnsafeRenegotiation);
 
         parseHttpProxyOptions();
         parseSocksProxyOptions();
+
+        notifyChangesListeners();
     }
 
     private void migrateCoreConfigs() {
@@ -221,7 +225,7 @@ public class ConnectionOptions extends VersionedAbstractParam {
             List<Object> list = getConfig().getList("connection.securityProtocolsEnabled.protocol");
             if (!list.isEmpty()) {
                 persistTlsProtocols(
-                        TlsUtils.filterUnsupportedProtocols(
+                        TlsUtils.filterUnsupportedTlsProtocols(
                                 list.stream()
                                         .map(Object::toString)
                                         .filter(e -> !e.isEmpty())
@@ -300,6 +304,12 @@ public class ConnectionOptions extends VersionedAbstractParam {
     public void setTimeoutInSecs(int timeoutInSecs) {
         setTimeoutInSecsImpl(timeoutInSecs);
         getConfig().setProperty(TIMEOUT_KEY, this.timeoutInSecs);
+
+        notifyChangesListeners();
+    }
+
+    private void notifyChangesListeners() {
+        changesListeners.forEach(ChangesListener::optionsChanged);
     }
 
     private void setTimeoutInSecsImpl(int timeoutInSecs) {
@@ -395,9 +405,10 @@ public class ConnectionOptions extends VersionedAbstractParam {
      * @throws IllegalArgumentException if no protocol is provided or none supported.
      */
     public void setTlsProtocols(List<String> tlsProtocols) {
-        this.tlsProtocols = TlsUtils.filterUnsupportedProtocols(tlsProtocols);
+        this.tlsProtocols = TlsUtils.filterUnsupportedTlsProtocols(tlsProtocols);
         persistTlsProtocols(tlsProtocols);
-        applyTlsProtocols();
+
+        notifyChangesListeners();
     }
 
     private void persistTlsProtocols(List<String> tlsProtocols) {
@@ -405,20 +416,6 @@ public class ConnectionOptions extends VersionedAbstractParam {
         for (int i = 0; i < tlsProtocols.size(); ++i) {
             String elementBaseKey = TLS_PROTOCOL_KEY + "(" + i + ")";
             getConfig().setProperty(elementBaseKey, tlsProtocols.get(i));
-        }
-    }
-
-    private void applyTlsProtocols() {
-        try {
-            SSLConnector.setClientEnabledProtocols(tlsProtocols.toArray(new String[0]));
-        } catch (IllegalArgumentException e) {
-            LOGGER.warn(
-                    "Failed to apply protocols {} falling back to {} caused by: {}",
-                    tlsProtocols,
-                    TlsUtils.getSupportedProtocols(),
-                    e.getMessage());
-            tlsProtocols = TlsUtils.getSupportedProtocols();
-            SSLConnector.setClientEnabledProtocols(tlsProtocols.toArray(new String[0]));
         }
     }
 
@@ -523,7 +520,7 @@ public class ConnectionOptions extends VersionedAbstractParam {
                                     sub.getBoolean(HTTP_PROXY_EXCLUSION_ENABLED_KEY, true)));
                 }
             } catch (ConversionException e) {
-                LOGGER.warn("An error occurred while reading a HTTP proxy exclusion:", e);
+                LOGGER.warn("An error occurred while reading an HTTP proxy exclusion:", e);
             }
         }
         confirmRemoveHttpProxyExclusion = getBoolean(HTTP_PROXY_EXCLUSIONS_CONFIRM_REMOVE, true);
@@ -724,7 +721,7 @@ public class ConnectionOptions extends VersionedAbstractParam {
     }
 
     /**
-     * Removes a HTTP proxy exclusion.
+     * Removes an HTTP proxy exclusion.
      *
      * @param host the value of the host.
      * @return {@code true} if the HTTP proxy exclusion was removed, {@code false} otherwise.
@@ -764,7 +761,7 @@ public class ConnectionOptions extends VersionedAbstractParam {
     }
 
     /**
-     * Sets whether or not the removal of a HTTP proxy exclusion needs confirmation.
+     * Sets whether or not the removal of an HTTP proxy exclusion needs confirmation.
      *
      * @param confirmRemove {@code true} if the removal needs confirmation, {@code false} otherwise.
      */
@@ -775,7 +772,7 @@ public class ConnectionOptions extends VersionedAbstractParam {
     }
 
     /**
-     * Tells whether or not the removal of a HTTP proxy exclusion needs confirmation.
+     * Tells whether or not the removal of an HTTP proxy exclusion needs confirmation.
      *
      * @return {@code true} if the removal needs confirmation, {@code false} otherwise.
      */
@@ -928,5 +925,15 @@ public class ConnectionOptions extends VersionedAbstractParam {
         if (socksProxyEnabled) {
             applySocksProxy();
         }
+    }
+
+    public void addChangesListener(ChangesListener listener) {
+        Objects.requireNonNull(listener);
+        changesListeners.add(listener);
+    }
+
+    public interface ChangesListener {
+
+        void optionsChanged();
     }
 }

@@ -53,6 +53,7 @@ import java.util.ResourceBundle;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -66,9 +67,17 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.network.ClientCertificatesOptions;
+import org.zaproxy.addon.network.ConnectionOptions;
+import org.zaproxy.addon.network.internal.client.CloseableHttpSenderImpl;
+import org.zaproxy.addon.network.internal.client.KeyStores;
+import org.zaproxy.addon.network.internal.client.apachev5.HttpSenderApache;
+import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.utils.I18N;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /**
  * Class with utility/helper methods for general tests.
@@ -91,6 +100,8 @@ public abstract class TestUtils {
     private static String zapInstallDir;
     private static String zapHomeDir;
 
+    private static CloseableHttpSenderImpl<?> httpSender;
+
     /**
      * The resource bundle of the extension under test.
      *
@@ -108,13 +119,44 @@ public abstract class TestUtils {
     protected HTTPDTestServer nano;
 
     @BeforeAll
+    static void beforeAll() {
+        ConnectionOptions options = new ConnectionOptions();
+        options.load(new ZapXmlConfiguration());
+        ClientCertificatesOptions clientCertificatesOptions = mock(ClientCertificatesOptions.class);
+        LegacyProxyListenerHandler legacyProxyListenerHandler =
+                mock(LegacyProxyListenerHandler.class);
+        KeyStores keyStores = mock(KeyStores.class);
+        given(clientCertificatesOptions.getKeyStores()).willReturn(keyStores);
+
+        httpSender =
+                new HttpSenderApache(
+                        () -> null,
+                        options,
+                        clientCertificatesOptions,
+                        () -> legacyProxyListenerHandler);
+        HttpSender.setImpl(httpSender);
+    }
+
+    @AfterAll
+    static void afterAll() {
+        HttpSender.setImpl(null);
+        if (httpSender != null) {
+            httpSender.close();
+        }
+    }
+
+    @BeforeAll
     public static void beforeClass() throws Exception {
         Path installDir = Files.createDirectory(tempDir.resolve("install"));
         Path xmlDir = Files.createDirectory(installDir.resolve("xml"));
         Files.createFile(xmlDir.resolve("log4j2.properties"));
 
         zapInstallDir = installDir.toAbsolutePath().toString();
-        zapHomeDir = Files.createDirectory(tempDir.resolve("home")).toAbsolutePath().toString();
+        createHomeDirectory();
+    }
+
+    private static void createHomeDirectory() throws Exception {
+        zapHomeDir = Files.createTempDirectory(tempDir, "home").toAbsolutePath().toString();
     }
 
     /**
@@ -126,6 +168,7 @@ public abstract class TestUtils {
      */
     protected void setUpZap() throws Exception {
         Constant.setZapInstall(zapInstallDir);
+        createHomeDirectory();
         Constant.setZapHome(zapHomeDir);
 
         Control control = mock(Control.class, withSettings().lenient());

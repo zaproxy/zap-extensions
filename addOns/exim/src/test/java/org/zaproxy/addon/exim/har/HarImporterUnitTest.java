@@ -21,6 +21,7 @@ package org.zaproxy.addon.exim.har;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -37,12 +38,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.ui.ProgressPaneListener;
 import org.zaproxy.zap.utils.HarUtils;
 import org.zaproxy.zap.utils.I18N;
 
 /** Unit test for {@link HarImporter}. */
 class HarImporterUnitTest {
+
+    private static final byte[] EMPTY_BODY = {};
 
     @BeforeAll
     static void setup() {
@@ -67,15 +71,37 @@ class HarImporterUnitTest {
                         "HTTP/1.1 200 OK\r\nContent-Type: text/plain;charset=US-ASCII\r\n\r\n",
                         responseBody);
 
-        HarLog harLog = HarUtils.createZapHarLog();
-        HarEntries harEntries = new HarEntries();
-        harEntries.addEntry(HarUtils.createHarEntry(httpMessage));
-        harLog.setEntries(harEntries);
+        HarLog harLog = createHarLog(httpMessage);
         // When
         List<HttpMessage> deserialized = HarImporter.getHttpMessages(harLog);
         // Then
         assertThat(deserialized.size(), equalTo(1));
         assertThat(deserialized.get(0), equalTo(httpMessage));
+    }
+
+    @Test
+    void shouldHaveValidResponseSetFromTargetHost() throws Exception {
+        // Given
+        HarLog harLog =
+                createHarLog(
+                        new HttpMessage(
+                                "GET / HTTP/1.1", EMPTY_BODY, "HTTP/1.1 200 OK", EMPTY_BODY));
+        // When
+        List<HttpMessage> messages = HarImporter.getHttpMessages(harLog);
+        // Then
+        assertThat(messages, hasSize(1));
+        assertThat(messages.get(0).isResponseFromTargetHost(), equalTo(true));
+    }
+
+    @Test
+    void shouldHaveInvalidResponseNotSetFromTargetHost() throws Exception {
+        // Given
+        HarLog harLog = createHarLog(new HttpMessage(new HttpRequestHeader("GET / HTTP/1.1")));
+        // When
+        List<HttpMessage> messages = HarImporter.getHttpMessages(harLog);
+        // Then
+        assertThat(messages, hasSize(1));
+        assertThat(messages.get(0).isResponseFromTargetHost(), equalTo(false));
     }
 
     @Test
@@ -98,5 +124,13 @@ class HarImporterUnitTest {
         // Then
         assertThat(importer.isSuccess(), equalTo(false));
         verify(listener).completed();
+    }
+
+    private static HarLog createHarLog(HttpMessage message) {
+        HarLog harLog = HarUtils.createZapHarLog();
+        HarEntries harEntries = new HarEntries();
+        harEntries.addEntry(HarUtils.createHarEntry(message));
+        harLog.setEntries(harEntries);
+        return harLog;
     }
 }

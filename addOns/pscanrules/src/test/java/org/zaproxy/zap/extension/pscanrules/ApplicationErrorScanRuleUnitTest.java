@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.pscanrules;
 import static java.lang.String.format;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -34,6 +35,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
@@ -104,6 +106,24 @@ class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<ApplicationErr
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_ERRH_02_STACK.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_ERRH_02_STACK.getValue())));
+    }
+
+    @Test
+    void shouldReturnExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        Alert alert = alerts.get(0);
+        Map<String, String> tags = alert.getTags();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+        assertThat(alert.getTags().size(), is(equalTo(5)));
+        assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()));
+        assertThat(tags, hasKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()));
+        assertThat(tags, hasKey(CommonAlertTag.WSTG_V42_ERRH_01_ERR.getTag()));
+        assertThat(tags, hasKey(CommonAlertTag.WSTG_V42_ERRH_02_STACK.getTag()));
+        assertThat(tags, hasKey(CommonAlertTag.CUSTOM_PAYLOADS.getTag()));
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 
     @Test

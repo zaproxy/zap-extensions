@@ -20,28 +20,27 @@
 package org.zaproxy.addon.network.internal.server.http.handlers;
 
 import java.io.IOException;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import javax.net.ssl.SSLException;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.network.ConnectionParam;
 import org.parosproxy.paros.network.HttpHeader;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpStatusCode;
+import org.zaproxy.addon.network.common.ZapSocketTimeoutException;
+import org.zaproxy.addon.network.common.ZapUnknownHostException;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.zap.network.HttpRequestConfig;
 
-/** A {@link HttpMessageHandler} that sends and receives a HTTP message. */
+/** A {@link HttpMessageHandler} that sends and receives an HTTP message. */
 public class HttpSenderHandler implements HttpMessageHandler {
 
     private static final Logger LOGGER = LogManager.getLogger(HttpSenderHandler.class);
@@ -53,19 +52,15 @@ public class HttpSenderHandler implements HttpMessageHandler {
     private static final HttpRequestConfig EXCLUDED_REQ_CONFIG =
             HttpRequestConfig.builder().setNotifyListeners(false).build();
 
-    private ConnectionParam connectionParam;
     private HttpSender httpSender;
 
     /**
-     * Constructs a {@code HttpSenderHandler} with the given connection configuration and HTTP
-     * sender.
+     * Constructs a {@code HttpSenderHandler} with the given HTTP sender.
      *
-     * @param connectionParam the connection configuration.
      * @param httpSender the HTTP sender.
-     * @throws NullPointerException if the HTTP sender and given handler are {@code null}.
+     * @throws NullPointerException if the HTTP sender is {@code null}.
      */
-    public HttpSenderHandler(ConnectionParam connectionParam, HttpSender httpSender) {
-        this.connectionParam = Objects.requireNonNull(connectionParam);
+    public HttpSenderHandler(HttpSender httpSender) {
         this.httpSender = Objects.requireNonNull(httpSender);
     }
 
@@ -83,16 +78,12 @@ public class HttpSenderHandler implements HttpMessageHandler {
                 httpSender.sendAndReceive(msg);
             }
 
-        } catch (HttpException e) {
-            LOGGER.error(e.getMessage(), e);
-            ctx.close();
-
-        } catch (SocketTimeoutException e) {
+        } catch (ZapSocketTimeoutException e) {
             String message =
                     Constant.messages.getString(
                             "network.httpsender.error.readtimeout",
                             msg.getRequestHeader().getURI(),
-                            connectionParam.getTimeoutInSecs());
+                            e.getTimeout());
             LOGGER.warn(message);
             setErrorResponse(
                     ctx,
@@ -103,10 +94,13 @@ public class HttpSenderHandler implements HttpMessageHandler {
 
         } catch (IOException e) {
             setErrorResponse(ctx, msg, HttpStatusCode.BAD_GATEWAY, BAD_GATEWAY_REASON_PHRASE, e);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+            ctx.close();
         }
     }
 
-    private void setErrorResponse(
+    private static void setErrorResponse(
             HttpMessageHandlerContext ctx,
             HttpMessage msg,
             int statusCode,
@@ -132,13 +126,31 @@ public class HttpSenderHandler implements HttpMessageHandler {
                             "network.httpsender.ssl.error.help",
                             Constant.messages.getString("network.httpsender.ssl.error.help.url")));
 
-            LOGGER.warn(strBuilder.toString());
+            LOGGER.warn(strBuilder);
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug(cause, cause);
                 strBuilder.append("\n\nStack Trace:\n");
                 for (String stackTraceFrame : ExceptionUtils.getRootCauseStackTrace(cause)) {
                     strBuilder.append(stackTraceFrame).append('\n');
                 }
+            }
+        } else if (cause instanceof ZapUnknownHostException) {
+            strBuilder.append(
+                    Constant.messages.getString("network.httpsender.error.badhost.connect"));
+            strBuilder.append(msg.getRequestHeader().getURI().toString()).append('\n');
+            strBuilder
+                    .append(
+                            Constant.messages.getString(
+                                    "network.httpsender.error.badhost.exception"))
+                    .append(cause.getMessage())
+                    .append('\n');
+            strBuilder.append(
+                    Constant.messages.getString(
+                            "network.httpsender.error.badhost.help",
+                            Constant.messages.getString(
+                                    "network.httpsender.error.badhost.help.url")));
+            if (((ZapUnknownHostException) cause).isFromOutgoingProxy()) {
+                strBuilder.append(Constant.messages.getString("network.httpsender.error.proxy"));
             }
         } else {
             strBuilder
@@ -148,11 +160,6 @@ public class HttpSenderHandler implements HttpMessageHandler {
                     .append("]: ")
                     .append(cause.getLocalizedMessage())
                     .append("\n");
-            if (cause instanceof UnknownHostException
-                    && connectionParam.isUseProxyChain()
-                    && connectionParam.getProxyChainName().equalsIgnoreCase(cause.getMessage())) {
-                strBuilder.append(Constant.messages.getString("network.httpsender.error.proxy"));
-            }
             strBuilder.append("\n\nStack Trace:\n");
             for (String stackTraceFrame : ExceptionUtils.getRootCauseStackTrace(cause)) {
                 strBuilder.append(stackTraceFrame).append('\n');
@@ -168,10 +175,15 @@ public class HttpSenderHandler implements HttpMessageHandler {
             int statusCode,
             String reasonPhrase,
             String message) {
-        HttpResponseHeader responseHeader = new HttpResponseHeader();
-        responseHeader.setVersion(HttpHeader.HTTP11);
-        responseHeader.setStatusCode(statusCode);
-        responseHeader.setReasonPhrase(reasonPhrase);
+        HttpResponseHeader responseHeader;
+        try {
+            responseHeader =
+                    new HttpResponseHeader(
+                            HttpHeader.HTTP11 + " " + statusCode + " " + reasonPhrase);
+        } catch (HttpMalformedHeaderException e) {
+            LOGGER.error("Failed to create valid header.", e);
+            return;
+        }
         responseHeader.setHeader(HttpHeader.CONTENT_TYPE, "text/plain; charset=UTF-8");
         responseHeader.setHeader(
                 HttpHeader.CONTENT_LENGTH,

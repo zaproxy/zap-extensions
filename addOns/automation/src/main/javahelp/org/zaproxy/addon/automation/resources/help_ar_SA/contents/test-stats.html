@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+  <TITLE>
+    Automation Framework - Statistics Job Test
+  </TITLE>
+</HEAD>
+<BODY>
+<H1>Automation Framework - Statistics Job Test</H1>
+
+Statistics-based tests are supported by all add-ons that have an automation job. If there is a relevant
+statistic used by an add-on, a test can be created for it.<br>
+An up to date list of the statistics ZAP maintains can be found at 
+<a href="https://www.zaproxy.org/docs/internal-statistics/">https://www.zaproxy.org/docs/internal-statistics/</a>.
+<p>
+A job can have tests for multiple statistics and multiple tests can be created for the same statistic.
+<p>
+Note that statistics-based tests will function correctly only if in memory statistics have been 
+<a href="https://www.zaproxy.org/docs/desktop/ui/dialogs/options/stats/#in-memory-statistics-enabled">enabled</a>.
+
+<H2>YAML</H2>
+
+<pre>
+  jobs:
+  - type: example
+    parameters:
+      jobSpecificParam: 'value'
+    tests:
+      - name: 'test one'                      # Name of the test, optional
+        type: stats                           # Specifies that the test is of type 'stats'
+        statistic: 'stats.addon.something'    # Name of an integer / long statistic
+        site:                                 # Name of the site for site specific tests, supports vars
+        operator: '>='                        # One of '==', '!=', '&gt;=', '&gt;', '&lt;', '&lt;='
+        value: 10                             # Value to compare statistic against
+        onFail: 'info'                        # String: One of 'warn', 'error', 'info', mandatory
+
+</pre>
+</BODY>
+</HTML>
+

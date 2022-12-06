@@ -19,24 +19,26 @@
  */
 package org.zaproxy.zap.extension.sse.ui.filter;
 
-import java.awt.Dimension;
+import java.awt.BorderLayout;
 import java.awt.Frame;
-import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractDialog;
 import org.zaproxy.zap.extension.sse.ui.EventStreamUiHelper;
+import org.zaproxy.zap.utils.ZapLabel;
 
 /** Filter Server-Sent Events in EventStream-Panel. Show only specific ones. */
+@SuppressWarnings("serial")
 public class EventStreamViewFilterDialog extends AbstractDialog {
     private static final long serialVersionUID = 4750602961870366348L;
 
@@ -103,19 +105,16 @@ public class EventStreamViewFilterDialog extends AbstractDialog {
      */
     private JPanel getJPanel() {
         if (dialogPanel == null) {
-            dialogPanel = new JPanel();
-            dialogPanel.setLayout(new GridBagLayout());
-            dialogPanel.setPreferredSize(new Dimension(sseUiHelper.getDialogWidth() + 20, 280));
-
-            int y = 0;
-
-            JLabel description = new JLabel(MSG);
-            description.setPreferredSize(new Dimension(sseUiHelper.getDialogWidth() - 20, 60));
-            description.setMaximumSize(new Dimension(sseUiHelper.getDialogWidth() - 20, 100));
-            dialogPanel.add(description, sseUiHelper.getDescriptionConstraints(0, y++));
-
-            // add submit panel
-            dialogPanel.add(getActionsPanel(), sseUiHelper.getFieldConstraints(1, y));
+            dialogPanel = new JPanel(new BorderLayout());
+            ZapLabel description = new ZapLabel(MSG);
+            description.setRows(10);
+            description.setColumns(10);
+            description.setLineWrap(true);
+            description.setWrapStyleWord(true);
+            JScrollPane scrollPane = new JScrollPane(description);
+            scrollPane.setBorder(BorderFactory.createEmptyBorder());
+            dialogPanel.add(scrollPane, BorderLayout.CENTER);
+            dialogPanel.add(getActionsPanel(), BorderLayout.SOUTH);
         }
 
         return dialogPanel;

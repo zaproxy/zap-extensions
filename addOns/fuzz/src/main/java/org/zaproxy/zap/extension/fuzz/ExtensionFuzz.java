@@ -128,15 +128,6 @@ public class ExtensionFuzz extends ExtensionAdaptor {
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionFuzz.class);
 
-    private static final ImageIcon SCRIPT_PAYLOAD_GENERATOR_ICON =
-            new ImageIcon(
-                    ExtensionFuzz.class.getResource(
-                            "resources/icons/script-payload-generator.png"));
-    private static final ImageIcon SCRIPT_PAYLOAD_PROCESSOR_ICON =
-            new ImageIcon(
-                    ExtensionFuzz.class.getResource(
-                            "resources/icons/script-payload-processor.png"));
-
     public static final String NAME = "ExtensionFuzz";
 
     private static final String JBROFUZZ_CATEGORY_PREFIX = "jbrofuzz";
@@ -308,7 +299,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
                     new ScriptType(
                             ScriptStringPayloadGenerator.TYPE_NAME,
                             "fuzz.payloads.script.type.payloadgenerator",
-                            SCRIPT_PAYLOAD_GENERATOR_ICON,
+                            createIcon("script-payload-generator.png"),
                             true,
                             true);
             extensionScript.registerScriptType(scriptTypeGenerator);
@@ -320,7 +311,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
                     new ScriptType(
                             ScriptStringPayloadProcessor.TYPE_NAME,
                             "fuzz.payloads.script.type.payloadprocessor",
-                            SCRIPT_PAYLOAD_PROCESSOR_ICON,
+                            createIcon("script-payload-processor.png"),
                             true,
                             true);
             extensionScript.registerScriptType(scriptTypeProcessor);
@@ -333,6 +324,13 @@ public class ExtensionFuzz extends ExtensionAdaptor {
         serverMessagePanelManager = new MessagePanelManager();
     }
 
+    private ImageIcon createIcon(String path) {
+        if (hasView()) {
+            return new ImageIcon(getClass().getResource("resources/icons/" + path));
+        }
+        return null;
+    }
+
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
@@ -340,7 +338,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
         extensionHook.addOptionsParamSet(fuzzOptions);
         extensionHook.addAddonFilesChangedListener(new FuzzerFilesUpdater());
 
-        if (getView() != null) {
+        if (hasView()) {
             PayloadGeneratorUIHandlersRegistry payloadGeneratorsUIRegistry =
                     PayloadGeneratorUIHandlersRegistry.getInstance();
             payloadGeneratorsUIRegistry.registerPayloadUI(
@@ -371,7 +369,7 @@ public class ExtensionFuzz extends ExtensionAdaptor {
             fuzzScansPanel.unload();
         }
 
-        if (getView() != null) {
+        if (hasView()) {
             ExtensionScript extensionScript =
                     Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
 

@@ -6,6 +6,17 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 ### Changed
+- Include the HTTP version of the alerts' message when creating the `requestor` job.
+
+## [0.4.0] - 2022-10-27
+### Changed
+- Update minimum ZAP version to 2.12.0.
+
+### Fixed
+- Correct the Automation Framework plan generation with localized languages.
+
+## [0.3.0] - 2022-09-23
+### Changed
 - Update minimum ZAP version to 2.11.1.
 - Scan Rule ID values are no longer displayed with commas.
 - Maintenance changes.
@@ -30,6 +41,8 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Allow retesting for the presence/absence of certain alerts using the Automation Framework.
 
 
+[0.4.0]: https://github.com/zaproxy/zap-extensions/releases/retest-v0.4.0
+[0.3.0]: https://github.com/zaproxy/zap-extensions/releases/retest-v0.3.0
 [0.2.0]: https://github.com/zaproxy/zap-extensions/releases/retest-v0.2.0
 [0.1.0]: https://github.com/zaproxy/zap-extensions/releases/retest-v0.1.0
 [0.0.1]: https://github.com/zaproxy/zap-extensions/releases/retest-v0.0.1

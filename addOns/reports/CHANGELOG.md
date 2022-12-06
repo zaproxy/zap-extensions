@@ -4,8 +4,42 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Fixed
+- Prevent exception if no display (Issue 3978).
+
+## [0.17.0] - 2022-11-22
+### Added
+- SARIF reporting
+
+### Changed
+- The XML and JSON reports now include programName metadata elements (Issue 6640).
+
+## [0.16.0] - 2022-10-27
+### Added
+- "XML Plus" report format for XML with requests and responses
+- Tags to "JSON Plus" report.
+
+### Changed
+- Update minimum ZAP version to 2.12.0.
+- Maintenance changes.
+
+### Fixed
+- Correct the ID of reports' sections in the help.
+
+## [0.15.0] - 2022-07-20
+
+### Fixed
+- API problems:
+  - Mixed case sections could not be referenced
+  - Risk-confidence-html report failed if no context specified
+  - No theme is used if one was not specified, breaking theme links
+
+## [0.14.0] - 2022-06-22
 ### Changed
 - Maintenance changes.
+
+### Fixed
+- Exceptions when generating some reports without the Automation add-on being installed.
 
 ## [0.13.0] - 2022-04-05
 ### Changed
@@ -136,6 +170,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.17.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.17.0
+[0.16.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.16.0
+[0.15.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.15.0
+[0.14.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.14.0
 [0.13.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.13.0
 [0.12.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.12.0
 [0.11.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.11.0

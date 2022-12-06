@@ -26,8 +26,8 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
 /**
- * Handles HTTTP CONNECT requests by inserting a {@link TlsProtocolHandler} in the pipeline with the
- * requested authority.
+ * Handles HTTP/1.x CONNECT requests by inserting a {@link TlsProtocolHandler} in the pipeline with
+ * the requested authority.
  *
  * <p>The handler removes itself after processing the HTTP message.
  *

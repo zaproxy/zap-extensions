@@ -88,7 +88,9 @@ public class RetestPlanGenerator {
                                                 t.getUrl(),
                                                 t.getAlertName(),
                                                 t.getMethod(),
+                                                t.getMsg().getRequestHeader().getVersion(),
                                                 t.getMsg().getRequestBody().toString(),
+                                                null,
                                                 null))
                         .collect(Collectors.toList());
         reqJob.getData().setRequests(requests);
@@ -121,7 +123,7 @@ public class RetestPlanGenerator {
     private AutomationAlertTest getAlertTest(AlertData alertData, AutomationJob job) {
         AutomationAlertTest alertTest =
                 new AutomationAlertTest(
-                        "alertTest", AbstractAutomationTest.OnFail.WARN.toString(), job);
+                        "alertTest", AbstractAutomationTest.OnFail.WARN.name(), job);
         alertTest.getData().setOnFail(AbstractAutomationTest.OnFail.WARN);
         alertTest.getData().setScanRuleId(alertData.getScanRuleId());
         alertTest.getData().setAlertName(alertData.getAlertName());

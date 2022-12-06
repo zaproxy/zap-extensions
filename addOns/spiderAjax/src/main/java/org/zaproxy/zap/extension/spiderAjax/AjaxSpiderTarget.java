@@ -269,7 +269,7 @@ public final class AjaxSpiderTarget {
             if (context != null) {
                 if (!context.isInContext(startUri.toString())) {
                     throw new IllegalStateException(
-                            "The starting URI does not belong to the context.");
+                            "The starting URI does not belong to the context: " + startUri);
                 }
             } else if (inScopeOnly && !session.isInScope(startUri.toString())) {
                 throw new IllegalStateException("The starting URI is not in scope.");

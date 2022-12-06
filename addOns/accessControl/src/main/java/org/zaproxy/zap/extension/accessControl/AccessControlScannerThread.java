@@ -121,11 +121,7 @@ public class AccessControlScannerThread
         this.authorizationDetection =
                 getStartOptions().targetContext.getAuthorizationDetectionMethod();
         // Initialize the HTTP sender
-        this.httpSender =
-                new HttpSender(
-                        Model.getSingleton().getOptionsParam().getConnectionParam(),
-                        true,
-                        HttpSender.ACCESS_CONTROL_SCANNER_INITIATOR);
+        this.httpSender = new HttpSender(HttpSender.ACCESS_CONTROL_SCANNER_INITIATOR);
         // Do not follow redirections because we want to check the initial response
         httpSender.setFollowRedirect(false);
 

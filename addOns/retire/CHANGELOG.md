@@ -4,7 +4,44 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [0.18.0] - 2022-12-02
 ### Changed
+- Updated with upstream retire.js pattern changes.
+
+
+
+## [0.17.0] - 2022-11-14
+### Changed
+- Updated with upstream retire.js pattern changes.
+
+
+
+## [0.16.0] - 2022-10-27
+### Changed
+- Update minimum ZAP version to 2.12.0.
+
+### Fixed
+- NPE in example alert generation.
+
+## [0.15.0] - 2022-09-22
+### Changed
+- Updated with upstream retire.js pattern changes.
+
+## [0.14.0] - 2022-08-15
+### Changed
+- Updated with upstream retire.js pattern changes.
+
+## [0.13.0] - 2022-08-02
+### Changed
+- Updated with upstream retire.js pattern changes.
+- Performance improvements (Issue 6959).
+- Add Retire.js reference to the Rule name to make it more obvious in the options panel.
+
+## [0.12.0] - 2022-05-26
+### Changed
+- Updated with upstream retire.js pattern changes.
 - Relevant CVEs will now be added as Alert Tags when available.
 
 ## [0.11.0] - 2022-05-03
@@ -72,6 +109,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - First release.
 
+[0.18.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.18.0
+[0.17.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.17.0
+[0.16.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.16.0
+[0.15.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.15.0
+[0.14.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.14.0
+[0.13.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.13.0
+[0.12.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.12.0
 [0.11.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.11.0
 [0.10.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.10.0
 [0.9.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.9.0

@@ -25,6 +25,7 @@ import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.zaproxy.zap.extension.brk.BreakpointsPanel;
 import org.zaproxy.zap.extension.brk.ExtensionBreak;
 
+@SuppressWarnings("serial")
 public class PopupMenuEditBreak extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;

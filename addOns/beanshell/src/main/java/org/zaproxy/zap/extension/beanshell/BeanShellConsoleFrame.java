@@ -45,6 +45,7 @@ import org.parosproxy.paros.view.AbstractFrame;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
+@SuppressWarnings("serial")
 public class BeanShellConsoleFrame extends AbstractFrame {
 
     private static final long serialVersionUID = 1L;
@@ -307,11 +308,7 @@ public class BeanShellConsoleFrame extends AbstractFrame {
             gbc.fill = java.awt.GridBagConstraints.BOTH;
             gbc.anchor = java.awt.GridBagConstraints.NORTHWEST;
 
-            HttpSender sender =
-                    new HttpSender(
-                            Model.getSingleton().getOptionsParam().getConnectionParam(),
-                            true,
-                            HttpSender.BEAN_SHELL_INITIATOR);
+            HttpSender sender = new HttpSender(HttpSender.BEAN_SHELL_INITIATOR);
             try {
                 getInterpreter().set("model", Model.getSingleton());
                 getInterpreter().set("sites", Model.getSingleton().getSession().getSiteTree());

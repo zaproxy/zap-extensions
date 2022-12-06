@@ -41,6 +41,25 @@
     "scriptSrc": "sdk\\.qikify\\.com/",
     "website": "https://qikify.com"
   },
+  "Qstomizer": {
+    "cats": [
+      76
+    ],
+    "description": "Qstomizer app is the app for Shopify and Woocomerce that allows you to add a visual custom product designer to your shop.",
+    "icon": "Qstomizer.png",
+    "js": {
+      "jQueryQSMZ": "",
+      "loadScript_qsmz": "",
+      "qstomizer_script": ""
+    },
+    "pricing": [
+      "recurring",
+      "low"
+    ],
+    "saas": true,
+    "scriptSrc": "/qsmz-scripttag/qstomizer_st(?:\\.min)?\\.js",
+    "website": "https://www.qstomizer.com"
+  },
   "Qualaroo": {
     "cats": [
       73
@@ -60,6 +79,24 @@
     "scriptSrc": "\\.qualaroo\\.com",
     "website": "https://qualaroo.com"
   },
+  "Qualified": {
+    "cats": [
+      52,
+      32
+    ],
+    "description": "Qualified is a B2B marketer that allows buyers and sales reps to connect through real-time website conversations.",
+    "icon": "Qualified.svg",
+    "js": {
+      "QualifiedObject": "^qualified$"
+    },
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.qualified\\.com/",
+    "website": "https://www.qualified.com"
+  },
   "Qualtrics": {
     "cats": [
       73
@@ -76,6 +113,27 @@
     "saas": true,
     "scriptSrc": "\\.qualtrics\\.com/",
     "website": "https://www.qualtrics.com"
+  },
+  "Quanta": {
+    "cats": [
+      78,
+      10
+    ],
+    "cookies": {
+      "_qta_rum": ""
+    },
+    "description": "Quanta is web performance management solution. Quanta offers the only analytics solution specifically designed to enable business and technical members of ecommerce teams to collaborate effectively with the end in mind: use web performance to directly impact online revenue at all times.",
+    "icon": "Quanta.svg",
+    "js": {
+      "QUANTA.app_id": "",
+      "QuantaTagRUMSpeedIndex": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.quanta\\.io/(?:.+/quanta-rum-v([\\d\\.]+)\\.min\\.js)?\\;version:\\1",
+    "website": "https://www.quanta.io"
   },
   "Quantcast Choice": {
     "cats": [
@@ -191,7 +249,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:opensolution:quick.cms",
+    "cpe": "cpe:2.3:a:opensolution:quick.cms:*:*:*:*:*:*:*:*",
     "html": "<a href=\"[^>]+opensolution\\.org/\">CMS by",
     "icon": "Quick.CMS.png",
     "meta": {
@@ -209,6 +267,20 @@
       "generator": "Quick\\.Cart(?: v([\\d.]+))?\\;version:\\1"
     },
     "website": "http://opensolution.org"
+  },
+  "QuickSell": {
+    "cats": [
+      6
+    ],
+    "description": "QuickSell is a sales acceleration platform helping businesses transform conversations to conversions by leveraging personal commerce.",
+    "icon": "QuickSell.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.quicksell\\.co/",
+    "website": "https://quicksell.co"
   },
   "Quicklink": {
     "cats": [
@@ -242,7 +314,7 @@
       24
     ],
     "description": "Quill is a free open-source WYSIWYG editor.",
-    "icon": "Quill.png",
+    "icon": "Quill.svg",
     "js": {
       "Quill": ""
     },
@@ -275,5 +347,22 @@
     "icon": "Qwik.svg",
     "oss": true,
     "website": "https://qwik.builder.io"
+  },
+  "qiankun": {
+    "cats": [
+      59
+    ],
+    "description": "qiankun is a JS library who helps developers to build a micro frontends system.",
+    "dom": {
+      "div[id^='__qiankun_']": {
+        "attributes": {
+          "data-version": "([\\d\\.]+)\\;version:\\1"
+        }
+      }
+    },
+    "icon": "qiankun.svg",
+    "oss": true,
+    "scripts": "__POWERED_BY_QIANKUN__",
+    "website": "https://qiankun.umijs.org"
   }
 }

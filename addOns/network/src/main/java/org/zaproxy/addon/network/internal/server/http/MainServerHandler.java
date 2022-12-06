@@ -24,7 +24,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.ssl.SslClosedEngineException;
 import java.nio.channels.ClosedChannelException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,7 +35,9 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.network.internal.ChannelAttributes;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 
-/** The main handler of a HTTP server, notifies {@link HttpMessageHandler}s and acts accordingly. */
+/**
+ * The main handler of an HTTP server, notifies {@link HttpMessageHandler}s and acts accordingly.
+ */
 public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> {
 
     private static final String ERROR_WRITE =
@@ -51,7 +55,7 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
     protected final DefaultHttpMessageHandlerContext handlerContext;
 
     /**
-     * Constructs a {@code HttpMessageServerBridge} with the given handlers.
+     * Constructs a {@code MainServerHandler} with the given handlers.
      *
      * @param handlers the message handlers.
      * @throws NullPointerException if the given list is {@code null}.
@@ -87,6 +91,11 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
 
         writeResponse(ctx, msg);
 
+        if (isClosed(msg)) {
+            close(ctx);
+            return;
+        }
+
         if (postWriteResponse(ctx, msg)) {
             return;
         }
@@ -94,6 +103,19 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
         if (isConnectionClose(msg)) {
             close(ctx);
         }
+    }
+
+    private static boolean isClosed(HttpMessage msg) {
+        return Boolean.TRUE.equals(getProperties(msg).get("connection.closed"));
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> getProperties(HttpMessage message) {
+        Object userObject = message.getUserObject();
+        if (!(userObject instanceof Map)) {
+            return Collections.emptyMap();
+        }
+        return (Map<String, Object>) userObject;
     }
 
     protected HandlerResult processMessage(HttpMessage msg) {
@@ -176,6 +198,10 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
 
     private static boolean isConnectionClose(HttpMessage msg) {
         if (HttpRequestHeader.CONNECT.equalsIgnoreCase(msg.getRequestHeader().getMethod())) {
+            return false;
+        }
+
+        if (Boolean.TRUE.equals(getProperties(msg).get("zap.h2"))) {
             return false;
         }
 

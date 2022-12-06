@@ -53,6 +53,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
@@ -69,7 +70,6 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.utils.Stats;
@@ -80,10 +80,11 @@ public class WSDLCustomParser {
     private static final Logger LOG = LogManager.getLogger(WSDLCustomParser.class);
     private static int keyIndex = -1;
     private SOAPMsgConfig lastConfig; // Only used for unit testing purposes.
+    private final Supplier<ValueGenerator> valueGeneratorSupplier;
     private final TableWsdl table;
-    private ValueGenerator valueGenerator;
 
-    public WSDLCustomParser(TableWsdl table) {
+    public WSDLCustomParser(Supplier<ValueGenerator> valueGeneratorSupplier, TableWsdl table) {
+        this.valueGeneratorSupplier = valueGeneratorSupplier;
         this.table = table;
     }
 
@@ -217,11 +218,7 @@ public class WSDLCustomParser {
                 }
                 return;
             }
-            HttpSender sender =
-                    new HttpSender(
-                            Model.getSingleton().getOptionsParam().getConnectionParam(),
-                            true,
-                            HttpSender.MANUAL_REQUEST_INITIATOR);
+            HttpSender sender = new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR);
             try {
                 sender.sendAndReceive(httpRequest, true);
             } catch (IOException e) {
@@ -471,26 +468,20 @@ public class WSDLCustomParser {
             return formParams;
         }
 
-        if (valueGenerator == null) {
-            valueGenerator =
-                    Control.getSingleton()
-                            .getExtensionLoader()
-                            .getExtension(ExtensionSpider.class)
-                            .getValueGenerator();
-        }
-
         Map<String, String> fieldAttributes = new HashMap<>();
         fieldAttributes.put("Control Type", "TEXT");
         fieldAttributes.put("type", name);
         String valGenValue =
-                valueGenerator.getValue(
-                        null,
-                        null,
-                        name,
-                        "",
-                        Collections.emptyList(),
-                        Collections.emptyMap(),
-                        fieldAttributes);
+                valueGeneratorSupplier
+                        .get()
+                        .getValue(
+                                null,
+                                null,
+                                name,
+                                "",
+                                Collections.emptyList(),
+                                Collections.emptyMap(),
+                                fieldAttributes);
         if (valGenValue != null && !valGenValue.isEmpty()) {
             formParams.put("xpath:/" + path, valGenValue);
             return formParams;
@@ -599,11 +590,7 @@ public class WSDLCustomParser {
         /* Avoids connection if message has no proper body. */
         if (body == null || body.getBytes().length <= 0) return;
         /* Connection. */
-        HttpSender sender =
-                new HttpSender(
-                        Model.getSingleton().getOptionsParam().getConnectionParam(),
-                        true,
-                        HttpSender.MANUAL_REQUEST_INITIATOR);
+        HttpSender sender = new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR);
         /* Send request. */
         try {
             sender.sendAndReceive(httpRequest, true);
@@ -657,9 +644,5 @@ public class WSDLCustomParser {
 
     SOAPMsgConfig getLastConfig() {
         return lastConfig;
-    }
-
-    protected void setValueGenerator(ValueGenerator valueGenerator) {
-        this.valueGenerator = valueGenerator;
     }
 }

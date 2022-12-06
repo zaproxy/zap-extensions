@@ -44,7 +44,7 @@ public class ExtensionRegExTester extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-        if (getView() != null) {
+        if (hasView()) {
             dialogs = new ArrayList<>();
             extensionHook.getHookMenu().addToolsMenuItem(getMenuItemRegExTester());
             extensionHook.getHookMenu().addPopupMenuItem(new RegExTesterPopupMenuItem(this));

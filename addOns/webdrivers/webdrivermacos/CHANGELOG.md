@@ -6,11 +6,56 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [48] - 2022-12-01
+### Changed
+- Update ChromeDriver to 108.0.5359.71.
+
+
+
+## [47] - 2022-10-27
+### Changed
+- Update minimum ZAP version to 2.12.0.
+- Update ChromeDriver to 107.0.5304.62.
+
+
+
+## [46] - 2022-10-14
+### Changed
+- Update geckodriver to 0.32.0.
+
+
+
+## [45] - 2022-09-29
+### Changed
+- Update ChromeDriver to 106.0.5249.61.
+
+
+
+## [44] - 2022-09-01
+### Changed
+- Update ChromeDriver to 105.0.5195.52.
+
+
+
+## [43] - 2022-08-04
+### Changed
+- Update ChromeDriver to 104.0.5112.79.
+
+## [42] - 2022-07-21
+### Changed
+- Update ChromeDriver to 103.0.5060.134.
+
+## [41] - 2022-06-23
+### Changed
+- Update ChromeDriver to 103.0.5060.53.
+
+## [40] - 2022-05-26
+### Changed
+- Update ChromeDriver to 102.0.5005.61.
+
 ## [39] - 2022-04-28
 ### Changed
 - Update ChromeDriver to 101.0.4951.41.
-
-
 
 ## [38] - 2022-04-17
 ### Changed
@@ -184,6 +229,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27
 
+[48]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v48
+[47]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v47
+[46]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v46
+[45]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v45
+[44]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v44
+[43]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v43
+[42]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v42
+[41]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v41
+[40]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v39
 [38]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v38
 [37]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v37

@@ -4,11 +4,20 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [12] - 2022-10-28
 ### Changed
+- Update minimum ZAP version to 2.12.0.
+
+## [11] - 2022-09-23
+### Changed
+- Maintenance changes.
 - Update minimum ZAP version to 2.11.1.
 
 ### Fixed
  - Properly close the server side connection when no longer in use (Issue 6424).
+- Increase the size of the URL column (Issue 7354).
 
 ## [10] - 2021-10-07
 ### Added
@@ -62,4 +71,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[12]: https://github.com/zaproxy/zap-extensions/releases/sse-v12
+[11]: https://github.com/zaproxy/zap-extensions/releases/sse-v11
 [10]: https://github.com/zaproxy/zap-extensions/releases/sse-v10

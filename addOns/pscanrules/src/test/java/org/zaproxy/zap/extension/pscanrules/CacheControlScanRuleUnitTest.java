@@ -30,6 +30,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpHeader;
@@ -59,7 +60,7 @@ class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheControlScanRu
     }
 
     @Test
-    void httpRequest() throws HttpMalformedHeaderException {
+    void shouldNotAlertOnHttpRequest() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET http://www.example.com/test/ HTTP/1.1");
@@ -80,7 +81,7 @@ class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheControlScanRu
     }
 
     @Test
-    void httpsAllPresentCacheRequest() throws HttpMalformedHeaderException {
+    void shouldNotAlertOnHttpsAllPresentCacheRequest() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -122,7 +123,7 @@ class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheControlScanRu
     }
 
     @Test
-    void httpsMissingNoCacheRequest() throws HttpMalformedHeaderException {
+    void shouldAlertOnHttpsMissingNoCacheRequest() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -141,12 +142,16 @@ class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheControlScanRu
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.CACHE_CONTROL));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("no-store, must-revalidate"));
+        Alert alert = alertsRaised.get(0);
+        assertThat(alert.getRisk(), equalTo(Alert.RISK_INFO));
+        assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
+        assertThat(alert.getParam(), equalTo(HttpHeader.CACHE_CONTROL));
+        assertThat(alert.getEvidence(), equalTo("no-store, must-revalidate"));
+        assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
     }
 
     @Test
-    void httpsMissingNoStoreCacheRequest() throws HttpMalformedHeaderException {
+    void shouldAlertOnHttpsMissingNoStoreCacheRequest() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -167,10 +172,11 @@ class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheControlScanRu
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.CACHE_CONTROL));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("no-cache, must-revalidate"));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
     }
 
     @Test
-    void httpsMissingMustRevalidateCacheRequest() throws HttpMalformedHeaderException {
+    void shouldAlertOnHttpsMissingMustRevalidateCacheRequest() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
@@ -191,10 +197,11 @@ class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheControlScanRu
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.CACHE_CONTROL));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo("no-store, no-cache"));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
     }
 
     @Test
-    void httpsRedirectLowCacheRequest() throws HttpMalformedHeaderException {
+    void shouldAlertOnHttpsRedirectLowCacheRequest() throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(AlertThreshold.LOW);
         HttpMessage msg = new HttpMessage();
@@ -216,13 +223,14 @@ class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheControlScanRu
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.CACHE_CONTROL));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
     }
 
     @ParameterizedTest
     @EnumSource(
             value = Plugin.AlertThreshold.class,
             names = {"MEDIUM", "HIGH"})
-    void httpsRedirectMedHighCacheRequest(AlertThreshold threshold)
+    void shouldNotAlertOnHttpsRedirectMedHighCacheRequest(AlertThreshold threshold)
             throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(threshold);
@@ -244,7 +252,7 @@ class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheControlScanRu
     }
 
     @Test
-    void httpsErrorLowCacheRequest() throws HttpMalformedHeaderException {
+    void shouldAlertOnHttpsErrorLowCacheRequest() throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(AlertThreshold.LOW);
         HttpMessage msg = new HttpMessage();
@@ -265,13 +273,14 @@ class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheControlScanRu
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.CACHE_CONTROL));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
     }
 
     @ParameterizedTest
     @EnumSource(
             value = Plugin.AlertThreshold.class,
             names = {"MEDIUM", "HIGH"})
-    void httpsErrorMedHighCacheRequest(AlertThreshold threshold)
+    void shouldNotAlertOnHttpsErrorMedHighCacheRequest(AlertThreshold threshold)
             throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(threshold);
@@ -294,7 +303,7 @@ class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheControlScanRu
     }
 
     @Test
-    void httpsJavaScriptLowCacheRequest() throws HttpMalformedHeaderException {
+    void shouldAlertOnttpsJavaScriptLowCacheRequest() throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(AlertThreshold.LOW);
         HttpMessage msg = new HttpMessage();
@@ -315,13 +324,14 @@ class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheControlScanRu
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.CACHE_CONTROL));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
     }
 
     @ParameterizedTest
     @EnumSource(
             value = Plugin.AlertThreshold.class,
             names = {"MEDIUM", "HIGH"})
-    void httpsJavaScriptMedHighCacheRequest(AlertThreshold threshold)
+    void shouldNotAlertOnHttpsJavaScriptMedHighCacheRequest(AlertThreshold threshold)
             throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(threshold);
@@ -344,7 +354,7 @@ class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheControlScanRu
     }
 
     @Test
-    void httpsCssLowCacheRequest() throws HttpMalformedHeaderException {
+    void shouldAlertOnHttpsCssLowCacheRequest() throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(AlertThreshold.LOW);
         HttpMessage msg = new HttpMessage();
@@ -365,13 +375,15 @@ class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheControlScanRu
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo(HttpHeader.CACHE_CONTROL));
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(""));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
     }
 
     @ParameterizedTest
     @EnumSource(
             value = Plugin.AlertThreshold.class,
             names = {"MEDIUM", "HIGH"})
-    void httpsCssMedHighCacheRequest(AlertThreshold threshold) throws HttpMalformedHeaderException {
+    void shouldNotAlertHttpsCssMedHighCacheRequest(AlertThreshold threshold)
+            throws HttpMalformedHeaderException {
         // Given
         rule.setAlertThreshold(threshold);
         HttpMessage msg = new HttpMessage();

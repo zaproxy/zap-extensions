@@ -80,7 +80,7 @@ public class CacheControlScanRule extends PluginPassiveScanner {
         }
         newAlert()
                 .setRisk(getRisk())
-                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setConfidence(Alert.CONFIDENCE_LOW)
                 .setDescription(getDescription())
                 .setParam(header)
                 .setSolution(getSolution())

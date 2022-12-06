@@ -42,9 +42,10 @@ import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.openapi.ExtensionOpenApi;
+import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
 
-class OpenApiJobUnitTest {
+class OpenApiJobUnitTest extends TestUtils {
 
     private ExtensionOpenApi extOpenApi;
 
@@ -83,10 +84,11 @@ class OpenApiJobUnitTest {
         Map<String, String> params = job.getCustomConfigParameters();
 
         // Then
-        assertThat(params.size(), is(equalTo(3)));
+        assertThat(params.size(), is(equalTo(4)));
         assertThat(params.get("apiFile"), is(equalTo("")));
         assertThat(params.get("apiUrl"), is(equalTo("")));
         assertThat(params.get("targetUrl"), is(equalTo("")));
+        assertThat(params.get("context"), is(equalTo("")));
     }
 
     @Test
@@ -96,6 +98,7 @@ class OpenApiJobUnitTest {
         String apiFile = "C:\\Users\\ZAPBot\\Documents\\test file.json";
         String apiUrl = "https://example.com/test%20file.json";
         String targetUrl = "https://example.com/endpoint/";
+        String context = "My Context";
         String yamlStr =
                 "parameters:\n"
                         + "  apiUrl: "
@@ -105,7 +108,10 @@ class OpenApiJobUnitTest {
                         + apiFile
                         + "\n"
                         + "  targetUrl: "
-                        + targetUrl;
+                        + targetUrl
+                        + "\n"
+                        + "  context: "
+                        + context;
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
 
@@ -120,6 +126,7 @@ class OpenApiJobUnitTest {
         assertThat(job.getParameters().getApiFile(), is(equalTo(apiFile)));
         assertThat(job.getParameters().getApiUrl(), is(equalTo(apiUrl)));
         assertThat(job.getParameters().getTargetUrl(), is(equalTo(targetUrl)));
+        assertThat(job.getParameters().getContext(), is(equalTo(context)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
     }
@@ -150,7 +157,7 @@ class OpenApiJobUnitTest {
     @Test
     void shouldFailIfInvalidFile() {
         // Given
-        Constant.messages = new I18N(Locale.ENGLISH);
+        mockMessages(new ExtensionOpenApi());
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = mock(AutomationEnvironment.class);
         String yamlStr = "parameters:\n" + "  apiFile: 'Invalid file path'";
@@ -167,6 +174,8 @@ class OpenApiJobUnitTest {
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(true)));
-        assertThat(progress.getErrors().get(0), is(equalTo("!openapi.automation.error.file!")));
+        assertThat(
+                progress.getErrors().get(0),
+                is(equalTo("Job openapi cannot read file: Invalid file path")));
     }
 }

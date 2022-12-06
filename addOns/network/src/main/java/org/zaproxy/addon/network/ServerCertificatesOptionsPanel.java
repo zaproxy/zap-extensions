@@ -55,6 +55,7 @@ import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
+@SuppressWarnings("serial")
 class ServerCertificatesOptionsPanel extends AbstractParamPanel {
 
     private static final Logger LOGGER = LogManager.getLogger(ServerCertificatesOptionsPanel.class);

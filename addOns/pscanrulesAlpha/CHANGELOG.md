@@ -4,9 +4,30 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Fixed
+- Use case insensitive HTTP field name check in Insufficient Site Isolation Against Spectre Vulnerability scan rule.
+
+## [37] - 2022-10-27
+### Changed
+- Update minimum ZAP version to 2.12.0.
+
+### Removed
+- The following scan rules were removed, having been promoted to Beta:
+  - Content Cacheable
+  - In Page Banner Info Leak
+  - JS Function
+  - JSO
+  - Permissions Policy
+  - Sub Resource Integrity Attribute
+
+## [36] - 2022-09-16
 ### Changed
 - Update minimum ZAP version to 2.11.1.
 - Maintenance changes.
+- Sub Resource Integrity Attribute Missing scan rule now supports Trusted Domains.
+- The Base64 Disclosure scan rule will now ignore headers which are known to contain irrelevant Base64 like strings or are covered by other rules (ETag, Authorization, X-ChromeLogger-Data, X-ChromePhp-Data) (Issue 6619).
+- Added new Custom Payloads alert tag to the example alerts of the Dangerous JS Function scan rule.
+- Permissions Policy scan rule updated for consistency and documentation purposes (Issue 7458).
 
 ### Fixed
 - False positive condition from Sub Resource Integrity Attribute Missing scan rule when rel=canonical is used (Issue 7040).
@@ -303,6 +324,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Updated User Controlled Open Redirect, Cookie and Charset rules after testing with
 - http://www.testcases.org/watcher/ test pages.
 
+[37]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v37
+[36]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v36
 [35]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v35
 [34]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v34
 [33]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v33

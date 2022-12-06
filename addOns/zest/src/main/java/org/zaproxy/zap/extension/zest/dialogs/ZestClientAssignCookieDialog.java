@@ -33,6 +33,7 @@ import org.zaproxy.zap.view.StandardFieldsDialog;
 import org.zaproxy.zest.core.v1.ZestClientAssignCookie;
 import org.zaproxy.zest.core.v1.ZestStatement;
 
+@SuppressWarnings("serial")
 public class ZestClientAssignCookieDialog extends StandardFieldsDialog implements ZestDialog {
 
     private static final String FIELD_VARIABLE = "zest.dialog.assign.label.variable";

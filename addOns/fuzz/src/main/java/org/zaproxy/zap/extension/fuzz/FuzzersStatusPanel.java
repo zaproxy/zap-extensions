@@ -36,6 +36,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.ScanPanel2;
 
+@SuppressWarnings("serial")
 public class FuzzersStatusPanel extends ScanPanel2<Fuzzer<?>, FuzzersController> {
 
     private static final long serialVersionUID = -935993931749054827L;

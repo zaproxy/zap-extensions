@@ -25,6 +25,7 @@ import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.automation.ContextWrapper;
 
+@SuppressWarnings("serial")
 public class ContextsTableModel extends AbstractTableModel {
 
     private static final long serialVersionUID = 1L;

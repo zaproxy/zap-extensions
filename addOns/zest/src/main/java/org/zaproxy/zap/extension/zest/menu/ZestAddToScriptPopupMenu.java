@@ -33,6 +33,7 @@ import org.zaproxy.zap.view.popup.PopupMenuItemHistoryReferenceContainer;
 import org.zaproxy.zest.core.v1.ZestConditional;
 import org.zaproxy.zest.core.v1.ZestElement;
 
+@SuppressWarnings("serial")
 public class ZestAddToScriptPopupMenu extends PopupMenuItemHistoryReferenceContainer {
 
     private static final long serialVersionUID = 2282358266003940700L;

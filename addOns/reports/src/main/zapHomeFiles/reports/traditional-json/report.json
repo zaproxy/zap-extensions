@@ -1,4 +1,5 @@
 {
+	"@programName": [[${programName}]],
 	"@version": [[${zapVersion}]],
 	"@generated": [[${generatedString}]],
 	"site":[ [#th:block th:each="site, siteState: ${reportData.sites}"][#th:block th:if="${! siteState.first}"],[/th:block]

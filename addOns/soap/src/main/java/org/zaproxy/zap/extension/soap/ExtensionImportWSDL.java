@@ -43,7 +43,8 @@ import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
-import org.zaproxy.zap.extension.spider.ExtensionSpider;
+import org.zaproxy.zap.model.DefaultValueGenerator;
+import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionImportWSDL extends ExtensionAdaptor {
@@ -53,18 +54,33 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 
     private static final Logger LOG = LogManager.getLogger(ExtensionImportWSDL.class);
     private static final String THREAD_PREFIX = "ZAP-Import-WSDL-";
+    private static final String SCRIPT_NAME = "SOAP Support.js";
 
     private ZapMenuItem menuImportLocalWSDL = null;
     private ZapMenuItem menuImportUrlWSDL = null;
     private int threadId = 1;
 
     private final TableWsdl table = new TableWsdl();
-    private final WSDLCustomParser parser = new WSDLCustomParser(table);
-    private WSDLSpider spiderParser;
+    private final WSDLCustomParser parser = new WSDLCustomParser(this::getValueGenerator, table);
+    private ValueGenerator valueGenerator;
 
     public ExtensionImportWSDL() {
         super(NAME);
         this.setOrder(158);
+
+        setValueGenerator(null);
+    }
+
+    public void setValueGenerator(ValueGenerator valueGenerator) {
+        this.valueGenerator = valueGenerator == null ? new DefaultValueGenerator() : valueGenerator;
+    }
+
+    private ValueGenerator getValueGenerator() {
+        return valueGenerator;
+    }
+
+    public WSDLCustomParser getParser() {
+        return parser;
     }
 
     @Override
@@ -73,20 +89,9 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 
         extensionHook.addApiImplementor(new SoapAPI(this));
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportLocalWSDL());
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportUrlWSDL());
-
-            /*
-             * Custom spider parser is added in order to explore not only WSDL files, but
-             * also their WSDL endpoints.
-             */
-            ExtensionSpider spider =
-                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.class);
-            if (spider != null) {
-                spiderParser = new WSDLSpider(parser);
-                spider.addCustomParser(spiderParser);
-            }
         }
     }
 
@@ -103,13 +108,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
     @Override
     public void unload() {
         super.unload();
-
-        if (spiderParser != null) {
-            Control.getSingleton()
-                    .getExtensionLoader()
-                    .getExtension(ExtensionSpider.class)
-                    .removeCustomParser(spiderParser);
-        }
+        removeScript();
     }
 
     @Override
@@ -197,8 +196,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
     private void addScript() throws IOException {
         ExtensionScript extScript =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
-        String scriptName = "SOAP Support.js";
-        if (extScript != null && extScript.getScript(scriptName) == null) {
+        if (extScript != null && extScript.getScript(SCRIPT_NAME) == null) {
             ScriptType variantType =
                     extScript.getScriptType(ExtensionActiveScan.SCRIPT_TYPE_VARIANT);
             ScriptEngineWrapper engine = getEngine(extScript, "Oracle Nashorn");
@@ -209,11 +207,11 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
                                         ExtensionScript.SCRIPTS_DIR,
                                         ExtensionScript.SCRIPTS_DIR,
                                         ExtensionActiveScan.SCRIPT_TYPE_VARIANT,
-                                        scriptName)
+                                        SCRIPT_NAME)
                                 .toFile();
                 ScriptWrapper script =
                         new ScriptWrapper(
-                                scriptName,
+                                SCRIPT_NAME,
                                 Constant.messages.getString("soap.script.description"),
                                 engine,
                                 variantType,
@@ -223,6 +221,14 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
                 script.reloadScript();
                 extScript.addScript(script, false);
             }
+        }
+    }
+
+    private void removeScript() {
+        ExtensionScript extScript =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+        if (extScript != null && extScript.getScript(SCRIPT_NAME) != null) {
+            extScript.removeScript(extScript.getScript(SCRIPT_NAME));
         }
     }
 

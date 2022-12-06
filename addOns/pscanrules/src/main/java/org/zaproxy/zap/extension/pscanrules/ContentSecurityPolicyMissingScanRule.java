@@ -21,6 +21,8 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.List;
 import java.util.Map;
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,6 +44,7 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
 
     private static final String MESSAGE_PREFIX = "pscanrules.contentsecuritypolicymissing.";
     private static final int PLUGIN_ID = 10038;
+    private static final String HEADER_CSP = "Content-Security-Policy";
 
     private static final Logger logger =
             LogManager.getLogger(ContentSecurityPolicyMissingScanRule.class);
@@ -69,8 +72,7 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
 
         // Content-Security-Policy is supported by Chrome 25+, Firefox 23+, Safari 7+, but not but
         // Internet Exploder
-        List<String> cspOptions =
-                msg.getResponseHeader().getHeaderValues("Content-Security-Policy");
+        List<String> cspOptions = msg.getResponseHeader().getHeaderValues(HEADER_CSP);
         if (!cspOptions.isEmpty()) {
             cspHeaderFound = true;
         }
@@ -95,20 +97,7 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
             xWebKitHeaderFound = true;
         }
 
-        // TODO: parse the CSP values out, and look at them in more detail.  In particular, look for
-        // things like...
-        // script-src *
-        // style-src *
-        // img-src *
-        // connect-src *
-        // font-src *
-        // object-src *
-        // media-src *
-        // frame-src *
-        // script-src 'unsafe-inline'
-        // script-src 'unsafe-eval'
-
-        if (!cspHeaderFound
+        if (!cspHeaderFound && !hasMetaCsp(source)
                 || (AlertThreshold.LOW.equals(this.getAlertThreshold())
                         && (!xCspHeaderFound || !xWebKitHeaderFound))) {
             // Always report if the latest header isnt found,
@@ -157,5 +146,15 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    private static boolean hasMetaCsp(Source source) {
+        for (Element metaElement : source.getAllElements(HTMLElementName.META)) {
+            String httpEquiv = metaElement.getAttributeValue("http-equiv");
+            if (HEADER_CSP.equalsIgnoreCase(httpEquiv)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

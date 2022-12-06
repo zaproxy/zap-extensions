@@ -23,6 +23,8 @@ import java.util.function.Consumer;
 
 public class HexStringEncoder extends DefaultEncodeDecodeProcessor {
 
+    private static final HexStringEncoder INSTANCE = new HexStringEncoder();
+
     @Override
     protected String processInternal(String value) {
         return getHexString(value.getBytes());
@@ -48,5 +50,9 @@ public class HexStringEncoder extends DefaultEncodeDecodeProcessor {
 
     static String getPercentHexString(byte[] buf) {
         return getHexString(buf, sb -> sb.append('%'));
+    }
+
+    public static HexStringEncoder getSingleton() {
+        return INSTANCE;
     }
 }

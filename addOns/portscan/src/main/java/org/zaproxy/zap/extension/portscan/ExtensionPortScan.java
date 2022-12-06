@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.portscan;
 
 import java.awt.EventQueue;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import javax.swing.tree.TreeNode;
@@ -29,6 +30,7 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.core.proxy.ProxyListener;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
@@ -37,6 +39,7 @@ import org.parosproxy.paros.extension.history.ProxyListenerLog;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.extension.XmlReporterExtension;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.view.SiteMapListener;
@@ -46,6 +49,9 @@ public class ExtensionPortScan extends ExtensionAdaptor
         implements SessionChangedListener, ProxyListener, SiteMapListener, XmlReporterExtension {
 
     private static final Logger logger = LogManager.getLogger(ExtensionPortScan.class);
+
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            Collections.singletonList(ExtensionNetwork.class);
 
     // Could be after the last one that saves the HttpMessage, as this ProxyListener doesn't change
     // the HttpMessage.
@@ -65,13 +71,18 @@ public class ExtensionPortScan extends ExtensionAdaptor
     }
 
     @Override
+    public List<Class<? extends Extension>> getDependencies() {
+        return DEPENDENCIES;
+    }
+
+    @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
         extensionHook.addSessionListener(this);
         extensionHook.addProxyListener(this);
         extensionHook.addSiteMapListener(this);
 
-        if (getView() != null) {
+        if (hasView()) {
             @SuppressWarnings("unused")
             ExtensionHookView pv = extensionHook.getHookView();
             extensionHook.getHookView().addStatusPanel(getPortScanPanel());
@@ -91,7 +102,7 @@ public class ExtensionPortScan extends ExtensionAdaptor
 
     @Override
     public void unload() {
-        if (getView() != null) {
+        if (hasView()) {
             getPortScanPanel().unload();
         }
         super.unload();
@@ -113,7 +124,7 @@ public class ExtensionPortScan extends ExtensionAdaptor
 
     @Override
     public void sessionChanged(final Session session) {
-        if (getView() == null) {
+        if (!hasView()) {
             return;
         }
         if (EventQueue.isDispatchThread()) {
@@ -151,7 +162,7 @@ public class ExtensionPortScan extends ExtensionAdaptor
 
     @Override
     public boolean onHttpRequestSend(HttpMessage msg) {
-        if (getView() != null) {
+        if (hasView()) {
             // The panel will handle duplicates
             this.getPortScanPanel().addSite(msg.getRequestHeader().getHostName(), false);
         }
@@ -232,7 +243,7 @@ public class ExtensionPortScan extends ExtensionAdaptor
     }
 
     public List<Integer> getPorts(String site) {
-        if (getView() == null) {
+        if (!hasView()) {
             return null;
         }
 
@@ -264,7 +275,7 @@ public class ExtensionPortScan extends ExtensionAdaptor
 
     @Override
     public void sessionScopeChanged(Session session) {
-        if (getView() != null) {
+        if (hasView()) {
             this.getPortScanPanel().sessionScopeChanged(session);
         }
     }

@@ -7,6 +7,8 @@
                 <tocitem text="API" target="addon.network.api"/>
                 <tocitem text="командная строка" target="addon.network.cmdline"/>
                 <tocitem text="Параметры " target="addon.network.options">
+                    <tocitem text="Client Certificates" target="addon.network.options.clientcertificates"/>
+                    <tocitem text="Connection" target="addon.network.options.connection"/>
                     <tocitem text="Local Servers/Proxies" target="addon.network.options.localservers"/>
                     <tocitem text="Server Certificates" target="addon.network.options.servercertificates"/>
                 </tocitem>

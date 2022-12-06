@@ -85,6 +85,9 @@ public final class InlineInjector {
                 for (Argument arg : args) {
                     String argName = variableName + arg.getName();
                     String argValue = AstPrinter.printAstCompact(arg.getValue());
+                    if (argValue.startsWith("\"") && argValue.endsWith("\"")) {
+                        argValue = argValue.substring(1, argValue.length() - 1);
+                    }
                     nameValueMap.put(argName, argValue);
                 }
             }
@@ -124,7 +127,6 @@ public final class InlineInjector {
         Document document = Parser.parse(AstPrinter.printAstCompact(tempDocument));
         StringBuilder queryBuilder = new StringBuilder(AstPrinter.printAstCompact(document));
 
-        HashMap<String, String> nameValueMap = new HashMap<>();
         String definitionName = name.substring(0, name.indexOf('.'));
 
         // First check fragment spreads.
@@ -178,7 +180,7 @@ public final class InlineInjector {
                                 .map(AstPrinter::printAstCompact)
                                 .collect(Collectors.joining(", "));
                 if (csVars.isEmpty()) {
-                    // Remove parantheses and extra whitespace.
+                    // Remove parentheses and extra whitespace.
                     startPos -= 2;
                     endPos++;
                 }
@@ -203,11 +205,18 @@ public final class InlineInjector {
                         for (Argument arg : args) {
                             if (argName.equals(arg.getName())) {
                                 Value argValue = arg.getValue();
+                                String argValueString = AstPrinter.printAstCompact(argValue);
                                 // Start Location of argument value.
                                 int ivStartPos = argValue.getSourceLocation().getColumn() - 1;
                                 // End Location of argument value.
-                                int ivEndPos =
-                                        ivStartPos + AstPrinter.printAstCompact(argValue).length();
+                                int ivEndPos = ivStartPos + argValueString.length();
+
+                                if (argValueString.startsWith("\"")
+                                        && argValueString.endsWith("\"")) {
+                                    ivStartPos++;
+                                    ivEndPos--;
+                                }
+
                                 queryBuilder.replace(ivStartPos, ivEndPos, value);
                                 return;
                             }
@@ -268,7 +277,7 @@ public final class InlineInjector {
                     // Add '1' if it has variables.
                     queryPrefix.insert(0, 1);
 
-                    // -1 for offset, -1 for paranthesis, -1 for whitespace.
+                    // -1 for offset, -1 for parenthesis, -1 for whitespace.
                     int startPos = vars.get(0).getSourceLocation().getColumn() - 3;
                     VariableDefinition endVar = vars.get(vars.size() - 1);
                     int endPos =
@@ -304,7 +313,7 @@ public final class InlineInjector {
             }
             List<Argument> args = field.getArguments();
             if (args != null && !args.isEmpty()) {
-                // -1 for offset, -1 for paranthesis.
+                // -1 for offset, -1 for parenthesis.
                 int startPos = args.get(0).getSourceLocation().getColumn() - 2;
                 Argument endArg = args.get(args.size() - 1);
                 int endPos =
@@ -350,7 +359,7 @@ public final class InlineInjector {
      */
     public boolean validateQuery(String query) {
         try {
-            Document document = Parser.parse(query);
+            Parser.parse(query);
             return true;
         } catch (Exception e) {
             return false;

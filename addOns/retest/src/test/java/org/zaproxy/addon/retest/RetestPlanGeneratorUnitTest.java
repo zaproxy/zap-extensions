@@ -23,24 +23,18 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.extension.ExtensionLoader;
-import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.ContextWrapper;
-import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob;
 import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
@@ -48,19 +42,16 @@ import org.zaproxy.addon.automation.jobs.RequestorJob;
 import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 import org.zaproxy.addon.automation.tests.AutomationAlertTest;
 import org.zaproxy.zap.network.HttpRequestBody;
-import org.zaproxy.zap.testutils.TestUtils;
-import org.zaproxy.zap.utils.I18N;
 
-class RetestPlanGeneratorUnitTest extends TestUtils {
+class RetestPlanGeneratorUnitTest {
 
     private static AutomationPlan retestPlan;
 
     @BeforeAll
     static void init() {
-        Constant.messages = mock(I18N.class);
-        mockMessages(new ExtensionAutomation());
         List<AlertData> alertData = new ArrayList<>();
         HttpMessage msgOne = new HttpMessage();
+        msgOne.getRequestHeader().setVersion(HttpHeader.HTTP11);
         Alert alertOne = new Alert(100);
         alertOne.setSource(Alert.Source.ACTIVE);
         AlertData alertOneData = new AlertData();
@@ -78,6 +69,7 @@ class RetestPlanGeneratorUnitTest extends TestUtils {
         alertOneData.setAlert(alertOne);
 
         HttpMessage msgTwo = new HttpMessage();
+        msgTwo.getRequestHeader().setVersion("HTTP/2");
         msgTwo.setRequestBody(new HttpRequestBody("Test Body"));
         Alert alertTwo = new Alert(200);
         alertTwo.setSource(Alert.Source.PASSIVE);
@@ -99,14 +91,6 @@ class RetestPlanGeneratorUnitTest extends TestUtils {
         alertData.add(alertTwoData);
 
         retestPlan = new RetestPlanGenerator(alertData).getPlan();
-    }
-
-    @BeforeEach
-    void setUp() throws Exception {
-        mockMessages(new ExtensionAutomation());
-        super.setUpZap();
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
-        Control.initSingletonForTesting(mock(Model.class), extensionLoader);
     }
 
     @Test
@@ -148,11 +132,13 @@ class RetestPlanGeneratorUnitTest extends TestUtils {
         assertThat(requests.get(0).getName(), is(equalTo("Test Alert One")));
         assertThat(requests.get(0).getData(), is(equalTo("")));
         assertThat(requests.get(0).getResponseCode(), is(equalTo(null)));
+        assertThat(requests.get(0).getHttpVersion(), is(equalTo(HttpHeader.HTTP11)));
         assertThat(requests.get(1).getUrl(), is(equalTo("https://www.exampletwo.com")));
         assertThat(requests.get(1).getMethod(), is(equalTo("POST")));
         assertThat(requests.get(1).getName(), is(equalTo("Test Alert Two")));
         assertThat(requests.get(1).getData(), is(equalTo("Test Body")));
         assertThat(requests.get(1).getResponseCode(), is(equalTo(null)));
+        assertThat(requests.get(1).getHttpVersion(), is(equalTo("HTTP/2")));
     }
 
     @Test

@@ -84,6 +84,8 @@ public class LocalServerConfig extends Enableable implements ServerConfig {
     private boolean anyLocalAddress;
     private int port;
     private List<String> tlsProtocols;
+    private boolean alpnEnabled;
+    private List<String> applicationProtocols;
     private TlsConfig tlsConfig;
     private boolean behindNat;
     private boolean removeAcceptEncoding;
@@ -95,7 +97,9 @@ public class LocalServerConfig extends Enableable implements ServerConfig {
         address = DEFAULT_ADDRESS;
         port = DEFAULT_PORT;
         mode = ServerMode.API_AND_PROXY;
-        setTlsProtocols(TlsUtils.getSupportedProtocols());
+        tlsProtocols = TlsUtils.getSupportedTlsProtocols();
+        alpnEnabled = true;
+        applicationProtocols = TlsUtils.getSupportedApplicationProtocols();
         removeAcceptEncoding = true;
         decodeResponse = true;
         setEnabled(true);
@@ -140,7 +144,10 @@ public class LocalServerConfig extends Enableable implements ServerConfig {
         anyLocalAddress = other.anyLocalAddress;
         mode = other.mode;
         port = other.port;
-        setTlsProtocols(other.getTlsProtocols());
+        tlsProtocols = other.getTlsProtocols();
+        alpnEnabled = other.alpnEnabled;
+        applicationProtocols = other.getApplicationProtocols();
+        tlsConfig = other.tlsConfig;
         behindNat = other.behindNat;
         removeAcceptEncoding = other.removeAcceptEncoding;
         decodeResponse = other.decodeResponse;
@@ -246,8 +253,50 @@ public class LocalServerConfig extends Enableable implements ServerConfig {
      * @throws NullPointerException if the given list is {@code null}.
      */
     public void setTlsProtocols(List<String> tlsProtocols) {
-        this.tlsProtocols = Objects.requireNonNull(tlsProtocols);
-        this.tlsConfig = new TlsConfig(tlsProtocols);
+        this.tlsProtocols =
+                TlsUtils.filterUnsupportedTlsProtocols(Objects.requireNonNull(tlsProtocols));
+        tlsConfig = null;
+    }
+
+    /**
+     * Tells whether or not ALPN is enabled.
+     *
+     * @return {@code true} if ALPN is enabled, {@code false} otherwise.
+     */
+    public boolean isAlpnEnabled() {
+        return alpnEnabled;
+    }
+
+    /**
+     * Sets whether or not ALPN is enabled.
+     *
+     * @param alpnEnabled {@code true} if ALPN should be enabled, {@code false} otherwise.
+     */
+    public void setAlpnEnabled(boolean alpnEnabled) {
+        this.alpnEnabled = alpnEnabled;
+        tlsConfig = null;
+    }
+
+    /**
+     * Gets the applications protocols to use with ALPN.
+     *
+     * @return the applications protocols.
+     */
+    public List<String> getApplicationProtocols() {
+        return applicationProtocols;
+    }
+
+    /**
+     * Sets the applications protocols to use with ALPN.
+     *
+     * @param protocols the applications protocols.
+     * @throws IllegalArgumentException if no protocol is provided or none supported.
+     * @throws NullPointerException if the given list is {@code null}.
+     */
+    public void setApplicationProtocols(List<String> protocols) {
+        this.applicationProtocols =
+                TlsUtils.filterUnsupportedApplicationProtocols(Objects.requireNonNull(protocols));
+        tlsConfig = null;
     }
 
     /**
@@ -256,6 +305,9 @@ public class LocalServerConfig extends Enableable implements ServerConfig {
      * @return the config, never {@code null}.
      */
     public TlsConfig getTlsConfig() {
+        if (tlsConfig == null) {
+            tlsConfig = new TlsConfig(tlsProtocols, alpnEnabled, applicationProtocols);
+        }
         return tlsConfig;
     }
 
@@ -329,7 +381,9 @@ public class LocalServerConfig extends Enableable implements ServerConfig {
                                 mode,
                                 port,
                                 removeAcceptEncoding,
-                                tlsProtocols);
+                                tlsProtocols,
+                                alpnEnabled,
+                                applicationProtocols);
         return result;
     }
 
@@ -351,7 +405,9 @@ public class LocalServerConfig extends Enableable implements ServerConfig {
                 && mode == other.mode
                 && port == other.port
                 && removeAcceptEncoding == other.removeAcceptEncoding
-                && Objects.equals(tlsProtocols, other.tlsProtocols);
+                && Objects.equals(tlsProtocols, other.tlsProtocols)
+                && alpnEnabled == other.alpnEnabled
+                && Objects.equals(applicationProtocols, other.applicationProtocols);
     }
 
     private static boolean isAnyLocalAddress(String address) {

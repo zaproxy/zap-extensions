@@ -35,6 +35,7 @@ import org.zaproxy.zap.extension.zest.ZestZapRunner;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 import org.zaproxy.zest.core.v1.ZestScript;
 
+@SuppressWarnings("serial")
 public class ZestRunScriptWithParamsDialog extends StandardFieldsDialog implements ZestDialog {
 
     private static final String FIELD_PARAMS = "zest.dialog.run.label.params";

@@ -45,7 +45,6 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.zap.PersistentConnectionListener;
-import org.zaproxy.zap.ZapGetMethod;
 
 /** Unit test for {@link LegacyProxyListenerHandler}. */
 class LegacyProxyListenerHandlerUnitTest {
@@ -55,10 +54,14 @@ class LegacyProxyListenerHandlerUnitTest {
     private HttpResponseHeader responseHeader;
     private HttpMessage message;
     private Socket socket;
-    private ZapGetMethod method;
+
+    @SuppressWarnings("deprecation")
+    private org.zaproxy.zap.ZapGetMethod method;
+
     private LegacyProxyListenerHandler handler;
 
     @BeforeEach
+    @SuppressWarnings("deprecation")
     void setUp() {
         ctx = mock(HttpMessageHandlerContext.class);
         given(ctx.isFromClient()).willReturn(true);
@@ -70,7 +73,7 @@ class LegacyProxyListenerHandlerUnitTest {
         given(responseHeader.isEmpty()).willReturn(true);
         given(message.getResponseHeader()).willReturn(responseHeader);
         socket = mock(Socket.class);
-        method = mock(ZapGetMethod.class);
+        method = mock(org.zaproxy.zap.ZapGetMethod.class);
         handler = new LegacyProxyListenerHandler();
     }
 

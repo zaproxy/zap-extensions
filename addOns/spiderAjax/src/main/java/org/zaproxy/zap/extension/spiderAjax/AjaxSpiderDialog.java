@@ -43,6 +43,7 @@ import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class AjaxSpiderDialog extends StandardFieldsDialog {
 
     protected static final String[] LABELS = {

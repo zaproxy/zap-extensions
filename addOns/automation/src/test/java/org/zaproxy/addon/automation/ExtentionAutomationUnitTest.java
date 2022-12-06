@@ -29,7 +29,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -50,15 +49,12 @@ import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
-import org.zaproxy.addon.automation.jobs.AddOnJob;
 import org.zaproxy.addon.automation.jobs.DelayJob;
 import org.zaproxy.addon.automation.jobs.ParamsJob;
 import org.zaproxy.addon.automation.jobs.PassiveScanConfigJob;
 import org.zaproxy.addon.automation.jobs.PassiveScanWaitJob;
 import org.zaproxy.addon.automation.jobs.RequestorJob;
-import org.zaproxy.addon.automation.jobs.SpiderJob;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
-import org.zaproxy.zap.extension.spider.ExtensionSpider;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
@@ -72,13 +68,11 @@ class ExtentionAutomationUnitTest extends TestUtils {
     @BeforeAll
     static void init() throws Exception {
         mockedCmdLine = Mockito.mockStatic(CommandLine.class);
-        updateEnv("myEnvVar", "envVarValue");
     }
 
     @AfterAll
     static void close() throws ReflectiveOperationException {
         mockedCmdLine.close();
-        updateEnv("myEnvVar", "");
     }
 
     @BeforeEach
@@ -101,6 +95,7 @@ class ExtentionAutomationUnitTest extends TestUtils {
         assertThat(extAuto.getAuthor(), is(equalTo("ZAP Dev Team")));
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     void shouldRegisterBuiltInJobsOnInit() {
         // Given
@@ -111,11 +106,12 @@ class ExtentionAutomationUnitTest extends TestUtils {
         Map<String, AutomationJob> jobs = extAuto.getAutomationJobs();
 
         // Then
-        assertThat(jobs.size(), is(equalTo(8)));
-        assertThat(jobs.containsKey(AddOnJob.JOB_NAME), is(equalTo(true)));
+        assertThat(jobs.size(), is(equalTo(7)));
+        assertThat(
+                jobs.containsKey(org.zaproxy.addon.automation.jobs.AddOnJob.JOB_NAME),
+                is(equalTo(true)));
         assertThat(jobs.containsKey(PassiveScanConfigJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(PassiveScanWaitJob.JOB_NAME), is(equalTo(true)));
-        assertThat(jobs.containsKey(SpiderJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(DelayJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(ActiveScanJob.JOB_NAME), is(equalTo(true)));
         assertThat(jobs.containsKey(ParamsJob.JOB_NAME), is(equalTo(true)));
@@ -202,9 +198,6 @@ class ExtentionAutomationUnitTest extends TestUtils {
 
         ExtensionPassiveScan extPscan = mock(ExtensionPassiveScan.class, withSettings().lenient());
         given(extensionLoader.getExtension(ExtensionPassiveScan.class)).willReturn(extPscan);
-
-        ExtensionSpider extSpider = mock(ExtensionSpider.class, withSettings().lenient());
-        given(extensionLoader.getExtension(ExtensionSpider.class)).willReturn(extSpider);
 
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
         Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
@@ -723,14 +716,6 @@ class ExtentionAutomationUnitTest extends TestUtils {
         assertThat(
                 progress.getWarnings().get(0), is(equalTo("!automation.error.options.unknown!")));
         assertThat(job.wasRun(), is(equalTo(false)));
-    }
-
-    @SuppressWarnings({"unchecked"})
-    public static void updateEnv(String name, String val) throws ReflectiveOperationException {
-        Map<String, String> env = System.getenv();
-        Field field = env.getClass().getDeclaredField("m");
-        field.setAccessible(true);
-        ((Map<String, String>) field.get(env)).put(name, val);
     }
 
     @Test

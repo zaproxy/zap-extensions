@@ -4,11 +4,55 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Allow to specify the HTTP version for requests in the `requestor` job.
+
+### Fixed
+- Prevent exception if no display.
+
+## [0.19.0] - 2022-10-27
+### Changed
+- Update minimum ZAP version to 2.12.0.
+
+### Removed
+- The spider job was removed, it is provided by the Spider add-on (Issue 3113).
+
+## [0.18.0] - 2022-10-12
+### Added
+- Add support for headers in the requestor job (Issue 6917).
+
+### Changed
+- Maintenance changes.
+
+### Fixed
+- Allow spider to run if no OK response (Issue 7510).
+- Bug in passive scan reporting code which prevented specified alerts from being read.
+- NPE when adding users to more than one context.
+
+## [0.17.0] - 2022-09-09
+### Added
+- Add Save As button that allows user to save the automation plan to a different file (Issue 7178).
+- Support for monitor tests.
+
+### Changed
+- Maintenance changes.
+- Rely on spider add-on (Issue 3113).
+- passiveScan-config job resets the state, as scanOnlyInScope is often confusing in the GUI. 
+- Deprecated the addOns job.
+
+### Fixed
+- Correct loading of custom scripts (e.g. Zest).
+- The activeScan and spider jobs no longer switch tabs when they run.
+
+## [0.16.0] - 2022-06-22
 ### Changed
 - Maintenance changes.
 
 ### Fixed
 - Show each context URL in its own line when editing in the GUI (Issue 7241).
+- Correct error messages.
+- Wrong API end point reference in help
+- Fix exception when alerts found during active scan no longer exist when creating the data for the report.
 
 ## [0.15.0] - 2022-04-25
 ### Added
@@ -163,6 +207,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.19.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.19.0
+[0.18.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.18.0
+[0.17.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.17.0
+[0.16.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.16.0
 [0.15.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.15.0
 [0.14.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.14.0
 [0.13.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.13.0

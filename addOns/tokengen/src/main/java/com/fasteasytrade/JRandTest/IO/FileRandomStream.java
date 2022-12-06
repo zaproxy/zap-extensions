@@ -42,7 +42,7 @@ import java.io.FileInputStream;
  * @author Zur Aougav
  *  
  */
-public class FileRandomStream implements RandomStream {
+public class FileRandomStream implements RandomStream, AutoCloseable {
 
 	public boolean open = false;
 
@@ -197,7 +197,7 @@ public class FileRandomStream implements RandomStream {
 	 *  
 	 */
 	@Override
-	public void finalize() {
+	public void close() {
 		if (infile != null) {
 			try {
 				infile.close();

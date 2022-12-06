@@ -49,10 +49,6 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
     private ExtensionScript extScript;
     private ExtensionActiveScan extActiveScan;
     public static final Logger logger = LogManager.getLogger(ExtensionSequence.class);
-    public static final ImageIcon ICON =
-            new ImageIcon(
-                    ExtensionSequence.class.getResource(
-                            "/org/zaproxy/zap/extension/sequence/resources/icons/script-sequence.png"));
     public static final String TYPE_SEQUENCE = "sequence";
 
     static {
@@ -122,12 +118,16 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
                 new ScriptType(
                         TYPE_SEQUENCE,
                         "script.type.sequence",
-                        ICON,
+                        hasView()
+                                ? new ImageIcon(
+                                        getClass()
+                                                .getResource("resources/icons/script-sequence.png"))
+                                : null,
                         false,
                         new String[] {"append"});
         getExtScript().registerScriptType(scriptType);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionhook
                     .getHookMenu()
                     .addPopupMenuItem(new SequencePopupMenuItem(this, getExtScript()));

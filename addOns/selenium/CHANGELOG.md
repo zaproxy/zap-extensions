@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 
+## [15.11.0] - 2022-10-27
+### Changed
+- Update minimum ZAP version to 2.12.0.
+
+## [15.10.0] - 2022-09-23
+### Added
+- Option to register and run 'browserHooks'.
+
+### Changed
+- Maintenance changes.
+
 ## [15.9.0] - 2022-05-06
 ### Changed
 - Use Network add-on to obtain main proxy address/port.
@@ -146,6 +157,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated to Selenium 2.45 and moved to release
 
+[15.11.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.11.0
+[15.10.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.10.0
 [15.9.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.9.0
 [15.8.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.8.0
 [15.7.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.7.0

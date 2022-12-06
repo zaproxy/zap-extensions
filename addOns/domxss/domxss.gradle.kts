@@ -4,8 +4,8 @@ description = "DOM XSS Active scanner rule"
 
 zapAddOn {
     addOnName.set("DOM XSS Active scanner rule")
-    addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.11.1")
+    addOnStatus.set(AddOnStatus.RELEASE)
+    zapVersion.set("2.12.0")
 
     manifest {
         author.set("Aabha Biyani, ZAP Dev Team")
@@ -44,8 +44,11 @@ dependencies {
 }
 
 tasks.withType<Test>().configureEach {
-    systemProperties.putAll(mapOf(
+    systemProperties.putAll(
+        mapOf(
             "wdm.chromeDriverVersion" to "83.0.4103.39",
             "wdm.geckoDriverVersion" to "0.29.0",
-            "wdm.forceCache" to "true"))
+            "wdm.forceCache" to "true"
+        )
+    )
 }

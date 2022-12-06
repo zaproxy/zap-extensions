@@ -24,6 +24,7 @@ import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTableModel;
 
+@SuppressWarnings("serial")
 public class AllowedResourcesTableModel extends AbstractMultipleOptionsTableModel<AllowedResource> {
 
     private static final long serialVersionUID = 1L;

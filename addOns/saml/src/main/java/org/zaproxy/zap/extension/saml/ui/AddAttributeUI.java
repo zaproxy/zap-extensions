@@ -36,7 +36,10 @@ import javax.xml.xpath.XPathFactory;
 import org.zaproxy.zap.extension.saml.Attribute;
 import org.zaproxy.zap.extension.saml.AttributeListener;
 import org.zaproxy.zap.extension.saml.SamlI18n;
+import org.zaproxy.zap.utils.FontUtils;
+import org.zaproxy.zap.utils.FontUtils.Size;
 
+@SuppressWarnings("serial")
 public class AddAttributeUI extends JFrame {
 
     private static final long serialVersionUID = 1L;
@@ -56,6 +59,7 @@ public class AddAttributeUI extends JFrame {
         setContentPane(contentPane);
 
         JLabel lblAddNewAttribute = new JLabel(SamlI18n.getMessage("saml.addattrib.header"));
+        lblAddNewAttribute.setFont(FontUtils.getFont(Size.larger));
         contentPane.add(lblAddNewAttribute, BorderLayout.PAGE_START);
 
         JPanel centerPanel = new JPanel();

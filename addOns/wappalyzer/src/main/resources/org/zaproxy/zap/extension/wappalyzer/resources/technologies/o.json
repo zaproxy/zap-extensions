@@ -69,6 +69,60 @@
     "implies": "PHP",
     "website": "https://www.oxid-esales.com"
   },
+  "OXID eShop Professional Edition": {
+    "cats": [
+      6
+    ],
+    "description": "OXID eShop Professional Edition is an e-ommerce platform for both small start-up companies and experience online retailers with a wide range of functions, software maintenance and support.",
+    "excludes": "OXID eShop",
+    "html": "<!--[^-]*OXID eShop Professional Edition, Version (\\d+)\\;version:\\1",
+    "icon": "OXID eShop.svg",
+    "implies": "PHP",
+    "pricing": [
+      "high",
+      "onetime"
+    ],
+    "website": "https://exchange.oxid-esales.com/OXID-Products/OXID-eShop/OXID-eShop-Professional-Edition-6-Professional-Edition-6-Stable-PE-6-0-x.html"
+  },
+  "Obsidian Incentivize": {
+    "cats": [
+      100
+    ],
+    "description": "Obsidian Incentivize is designed to increase your average order size through in-cart upsells, cross sells and personalised product recommendations.",
+    "icon": "Obsidian.png",
+    "js": {
+      "Obsidian.IncentiveApi": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "freemium"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "cdn\\.shopify\\.com/extensions/.+/([\\.\\d]{3,})/assets/upsell\\.min\\.js\\;version:\\1",
+    "website": "https://obsidianapps.co"
+  },
+  "Obsidian Publish": {
+    "cats": [
+      4
+    ],
+    "description": "Obsidian Publish is an official, paid plugin for Obsidian that allows users to post selected notes to a directory on the publish.obsidian.md domain.",
+    "icon": "Obsidian Publish.svg",
+    "implies": [
+      "Prism",
+      "PIXIjs"
+    ],
+    "js": {
+      "siteInfo.host": "\\.obsidian\\.md"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://obsidian.md/publish"
+  },
   "Obviyo": {
     "cats": [
       100,
@@ -153,6 +207,24 @@
     "scriptSrc": "ocnk-min\\.js",
     "website": "https://www.ocnk.com"
   },
+  "Oct8ne": {
+    "cats": [
+      52
+    ],
+    "description": "Oct8ne is a visual customer service software.",
+    "icon": "Oct8ne.png",
+    "js": {
+      "oct8ne.agentsAvailable": "",
+      "oct8neApi": "",
+      "oct8neVars.pluginVersion": "([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.oct8ne\\.com/",
+    "website": "https://oct8ne.com"
+  },
   "Octane AI": {
     "cats": [
       5,
@@ -161,15 +233,14 @@
     "description": "Octane AI provides an all-in-one platform for engaging quizzes, data collection, and personalised Facebook Messenger and SMS automation.",
     "icon": "Octane AI.svg",
     "js": {
-      "OctaneConfig": "",
-      "oct8neApi": ""
+      "OctaneConfig": ""
     },
     "pricing": [
       "low",
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.(?:octaneai|oct8ne)\\.com/",
+    "scriptSrc": "\\.octaneai\\.com/",
     "website": "https://www.octaneai.com"
   },
   "October CMS": {
@@ -184,6 +255,9 @@
     "implies": "Laravel",
     "meta": {
       "generator": "OctoberCMS"
+    },
+    "js": {
+      "ocJSON": ""
     },
     "oss": true,
     "website": "http://octobercms.com"
@@ -222,7 +296,7 @@
       1,
       6
     ],
-    "cpe": "cpe:/a:odoo:odoo",
+    "cpe": "cpe:2.3:a:odoo:odoo:*:*:*:*:*:*:*:*",
     "description": "Odoo is business management software which includes CRM, ecommerce, billing, accounting, manufacturing, warehouse, project management, and inventory management.",
     "html": "<link[^>]* href=[^>]+/web/css/(?:web\\.assets_common/|website\\.assets_frontend/)\\;confidence:25",
     "icon": "Odoo.png",
@@ -238,6 +312,23 @@
     "oss": true,
     "scriptSrc": "/web/js/(?:web\\.assets_common/|website\\.assets_frontend/)\\;confidence:25",
     "website": "http://odoo.com"
+  },
+  "Oh Dear": {
+    "cats": [
+      13
+    ],
+    "description": "The all-in-one monitoring tool for your entire website. Oh Dear monitors uptime, SSL certificates, broken links, scheduled tasks, application health, DNS, domain expiry and more.",
+    "icon": "Oh Dear.svg",
+    "js": {
+      "__NEXT_DATA__.props.pageProps.config.userAgent": "OhDear\\.app"
+    },
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.ohdear\\.app/",
+    "website": "https://ohdear.app"
   },
   "Okendo": {
     "cats": [
@@ -270,11 +361,14 @@
     "cats": [
       69
     ],
+    "cpe": "cpe:2.3:a:okta:*:*:*:*:*:*:*:*:*",
     "description": "Okta is a platform in the Identity-as-a-Service (IDaaS) category. Okta features include Provisioning, Single Sign-On (SSO), Active Directory (AD) and LDAP integration, the centralized de-provisioning of users, multi-factor authentication (MFA), mobile identity management.",
     "icon": "Okta.svg",
     "js": {
       "OktaAuth": "",
       "isOktaEnabled": "",
+      "okta.cdnUrlHostname": "",
+      "okta.locale": "",
       "oktaCurrentSessionUrl": ""
     },
     "pricing": [
@@ -319,6 +413,19 @@
     "scriptSrc": "\\.olark\\.com/",
     "website": "https://www.olark.com/"
   },
+  "Omeka": {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:omeka:omeka:*:*:*:*:*:*:*:*:*",
+    "description": "Omeka is a free Content Management System (CMS) used by archives, historical societies, libraries, museums, and individual researchers for publishing digital collections.",
+    "icon": "Omeka.png",
+    "js": {
+      "Omeka": ""
+    },
+    "oss": true,
+    "website": "https://omeka.org"
+  },
   "Ometria": {
     "cats": [
       32,
@@ -357,6 +464,19 @@
     ],
     "scriptSrc": "cdn\\.omise\\.co",
     "website": "https://www.omise.co"
+  },
+  "Omni CMS": {
+    "cats": [
+      1
+    ],
+    "description": "Omni CMS (formerly OU Campus) is a web content management system developed by Modern Campus. Modern Campus is a SaaS-based student lifecycle management software designed to manage continuing education and non-degree programs.",
+    "dom": "a[href*='a.cms.omniupdate.com/11/']",
+    "icon": "Modern Campus.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://moderncampus.com/products/web-content-management.html"
   },
   "Omniconvert": {
     "cats": [
@@ -399,6 +519,38 @@
     "saas": true,
     "scriptSrc": "omnisrc\\.com",
     "website": "https://www.omnisend.com"
+  },
+  "Omny Studio": {
+    "cats": [
+      5
+    ],
+    "description": "Omny Studio is a podcast hosting solution, which enables radio stations and enterprises to manage, monetize, publish, share, edit and analyze audio episodes.",
+    "dom": "iframe[src*='//omny.fm/shows/']",
+    "icon": "Omny Studio.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://omnystudio.com"
+  },
+  "Omurga Sistemi": {
+    "cats": [
+      1
+    ],
+    "icon": "Omurga Sistemi.svg",
+    "implies": [
+      "MySQL",
+      "PHP"
+    ],
+    "meta": {
+      "generator": "^OS-Omurga Sistemi"
+    },
+    "pricing": [
+      "poa",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.os.com.tr"
   },
   "OnShop": {
     "cats": [
@@ -550,6 +702,9 @@
     "cookies": {
       "OptanonConsent": ""
     },
+    "dns": {
+      "TXT": "onetrust-domain-verification="
+    },
     "description": "OneTrust is a cloud-based data privacy management compliance platform.",
     "icon": "OneTrust.png",
     "scriptSrc": [
@@ -617,6 +772,27 @@
     "scriptSrc": "\\.speedtestcustom\\.com/",
     "website": "https://www.ookla.com/speedtest-custom"
   },
+  "Oopy": {
+    "cats": [
+      51
+    ],
+    "description": "Oopy provides you with a simple and easy way to turn your Notion page into a performant website.",
+    "icon": "Oopy.png",
+    "implies": [
+      "Notion",
+      "Next.js"
+    ],
+    "js": {
+      "__OOPY__": ""
+    },
+    "oss": false,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://oopy.us/"
+  },
   "Open AdStream": {
     "cats": [
       36
@@ -631,13 +807,23 @@
     "cats": [
       6
     ],
-    "cpe": "cpe:/a:open-classifieds:open_classifieds",
+    "cpe": "cpe:2.3:a:open-classifieds:open_classifieds:*:*:*:*:*:*:*:*",
     "icon": "Open Classifieds.png",
     "meta": {
       "author": "open-classifieds\\.com",
       "copyright": "Open Classifieds ?([0-9.]+)?\\;version:\\1"
     },
     "website": "http://open-classifieds.com"
+  },
+  "Open Graph": {
+    "cats": [
+      19
+    ],
+    "description": "Open Graph is a protocol that is used to integrate any web page into the social graph.",
+    "dom": "meta[property*='og:']",
+    "icon": "Open Graph.png",
+    "oss": true,
+    "website": "https://ogp.me"
   },
   "Open Journal Systems": {
     "cats": [
@@ -646,7 +832,7 @@
     "cookies": {
       "OJSSID": ""
     },
-    "cpe": "cpe:/a:public_knowledge_project:open_journal_systems",
+    "cpe": "cpe:2.3:a:public_knowledge_project:open_journal_systems:*:*:*:*:*:*:*:*",
     "description": "Open Journal Systems (OJS) is an open-source software application for managing and publishing scholarly journals.",
     "icon": "Open Journal Systems.png",
     "implies": "PHP",
@@ -659,7 +845,7 @@
     "cats": [
       10
     ],
-    "cpe": "cpe:/a:openwebanalytics:open_web_analytics",
+    "cpe": "cpe:2.3:a:openwebanalytics:open_web_analytics:*:*:*:*:*:*:*:*",
     "html": "<!-- (?:Start|End) Open Web Analytics Tracker -->",
     "icon": "Open Web Analytics.png",
     "js": {
@@ -681,11 +867,31 @@
     },
     "website": "http://open-eshop.com/"
   },
+  "Open-Xchange App Suite": {
+    "cats": [
+      30,
+      75
+    ],
+    "cpe": "cpe:2.3:a:open-xchange:app_suite:*:*:*:*:*:*:*:*",
+    "description": "Open-Xchange is a web-based communication, collaboration and office productivity software suite.",
+    "dom": "#io-ox-core, form > input[value='open-xchange-appsuite']",
+    "icon": "openxchange.svg",
+    "implies": "Java",
+    "js": {
+      "ox.version": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.open-xchange.com/"
+  },
   "OpenBSD httpd": {
     "cats": [
       22
     ],
-    "excludes": "Apache",
+    "cpe": "cpe:2.3:a:openbsd:openbsd:*:*:*:*:*:*:*:*",
+    "excludes": "Apache HTTP Server",
     "headers": {
       "Server": "^OpenBSD httpd"
     },
@@ -700,22 +906,34 @@
     "cookies": {
       "OCSESSID": ""
     },
-    "cpe": "cpe:/a:opencart:opencart",
+    "cpe": "cpe:2.3:a:opencart:opencart:*:*:*:*:*:*:*:*",
     "icon": "OpenCart.png",
     "implies": "PHP",
     "website": "http://www.opencart.com"
+  },
+  "OpenCities": {
+    "cats": [
+      1
+    ],
+    "description": "OpenCities is a content management system built for government organizations.",
+    "icon": "granicus.svg",
+    "js": {
+      "OpenCities": ""
+    },
+    "website": "https://granicus.com/solution/govaccess/opencities/"
   },
   "OpenCms": {
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:alkacon:opencms",
+    "cpe": "cpe:2.3:a:alkacon:opencms:*:*:*:*:*:*:*:*",
     "headers": {
       "Server": "OpenCms"
     },
     "html": "<link href=\"/opencms/",
     "icon": "OpenCms.png",
     "implies": "Java",
+    "oss": true,
     "scriptSrc": "opencms",
     "website": "http://www.opencms.org"
   },
@@ -806,7 +1024,7 @@
     "headers": {
       "Server": "openresty(?:/([\\d.]+))?\\;version:\\1"
     },
-    "icon": "OpenResty.png",
+    "icon": "OpenResty.svg",
     "implies": [
       "Nginx"
     ],
@@ -816,7 +1034,7 @@
     "cats": [
       33
     ],
-    "cpe": "cpe:/a:openssl:openssl",
+    "cpe": "cpe:2.3:a:openssl:openssl:*:*:*:*:*:*:*:*",
     "description": "OpenSSL is a software library for applications that secure communications over computer networks against eavesdropping or need to identify the party at the other end.",
     "headers": {
       "Server": "OpenSSL(?:/([\\d.]+[a-z]?))?\\;version:\\1"
@@ -891,7 +1109,7 @@
     "cats": [
       36
     ],
-    "cpe": "cpe:/a:openx:openx",
+    "cpe": "cpe:2.3:a:openx:openx:*:*:*:*:*:*:*:*",
     "description": "OpenX is a programmatic advertising technology company.",
     "dom": "iframe[src*='.openx.net'], img[src*='.openx.net'], link[href*='.openx.net']",
     "icon": "OpenX.png",
@@ -954,7 +1172,8 @@
   },
   "Optimizely": {
     "cats": [
-      74
+      74,
+      76
     ],
     "cookies": {
       "optimizelyEndUserId": ""
@@ -973,6 +1192,49 @@
     "saas": true,
     "scriptSrc": "optimizely\\.com.*\\.js",
     "website": "https://www.optimizely.com"
+  },
+  "Optimizely Content Management": {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "EPiServer": "",
+      "EPiSessionId": "",
+      "EPiTrace": "",
+      "EPi:StateMarker": ""
+    },
+    "cpe": "cpe:2.3:a:episerver:episerver:*:*:*:*:*:*:*:*",
+    "description": "Optimizely Content Management (formerly EPiServer) is digital content, ecommerce, and marketing management solution designed for editors and marketers.",
+    "icon": "Optimizely.svg",
+    "implies": "Microsoft ASP.NET",
+    "meta": {
+      "generator": "EPiServer"
+    },
+    "headers": {
+      "content-security-policy": "\\.episerver\\.net"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.optimizely.com/products/content/"
+  },
+  "Optimizely Commerce": {
+    "cats": [
+      6
+    ],
+    "cookies": {
+      "EPi:StateMarker": ""
+    },
+    "description": "Optimizely Commerce is a complete suite for digital ecommerce and content management that uses artificial intelligence to deliver personalised experiences, individualised search rankings and product recommendations.",
+    "icon": "Optimizely.svg",
+    "requiresCategory": 6,
+    "meta": {
+      "generator": "EPiServer"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.optimizely.com/products/commerce/b2c/"
   },
   "Optimove": {
     "cats": [
@@ -1022,11 +1284,27 @@
     "scriptSrc": "/wp-content/plugins/optinmonster/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://optinmonster.com"
   },
+  "Oracle Application Express": {
+    "cats": [
+      51
+    ],
+    "description": "Oracle Application Express (APEX) is an enterprise low-code development platform from Oracle Corporation. APEX is a fully supported no-cost feature of Oracle Database.",
+    "icon": "Oracle.svg",
+    "js": {
+      "apex.libVersions": "",
+      "apex_img_dir": ""
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "saas": true,
+    "website": "https://apex.oracle.com"
+  },
   "Oracle Application Server": {
     "cats": [
       22
     ],
-    "cpe": "cpe:/a:oracle:application_server",
+    "cpe": "cpe:2.3:a:oracle:application_server:*:*:*:*:*:*:*:*",
     "headers": {
       "Server": "Oracle[- ]Application[- ]Server(?: Containers for J2EE)?(?:[- ](\\d[\\da-z./]+))?\\;version:\\1"
     },
@@ -1054,7 +1332,7 @@
     "cats": [
       6
     ],
-    "cpe": "cpe:/a:oracle:commerce_platform",
+    "cpe": "cpe:2.3:a:oracle:commerce_platform:*:*:*:*:*:*:*:*",
     "description": "Oracle Commerce is a unified B2B and B2C ecommerce platform.",
     "dom": "input[name*='/atg/commerce/'], .atgShoppingBagContent",
     "headers": {
@@ -1090,7 +1368,7 @@
     "cats": [
       22
     ],
-    "cpe": "cpe:/a:oracle:http_server",
+    "cpe": "cpe:2.3:a:oracle:http_server:*:*:*:*:*:*:*:*",
     "headers": {
       "Server": "Oracle-HTTP-Server(?:/([\\d.]+))?\\;version:\\1"
     },
@@ -1140,7 +1418,7 @@
     "cats": [
       23
     ],
-    "cpe": "cpe:/a:oracle:web_cache",
+    "cpe": "cpe:2.3:a:oracle:web_cache:*:*:*:*:*:*:*:*",
     "description": "Oracle Web Cache is a browser and content management server, which improves the performance of web sites.",
     "headers": {
       "Server": "Oracle(?:AS)?[- ]Web[- ]Cache(?:[- /]([\\da-z./]+))?\\;version:\\1"
@@ -1178,16 +1456,24 @@
     "requires": "WordPress",
     "website": "https://themeisle.com/plugins/orbit-fox-companion"
   },
-  "Orchard CMS": {
+  "Orchard Core": {
     "cats": [
       1
     ],
-    "icon": "Orchard CMS.png",
+    "cpe": "cpe:2.3:a:orchardcore:orchard_core:*:*:*:*:*:*:*:*",
+    "description": "Orchard Core is an open-source modular and multi-tenant application framework built with ASP.NET Core, and a content management system (CMS).",
+    "headers": {
+      "x-generator": "^Orchard$",
+      "x-powered-by": "OrchardCore"
+    },
+    "icon": "Orchard Core.png",
     "implies": "Microsoft ASP.NET",
     "meta": {
       "generator": "Orchard"
     },
-    "website": "http://orchardproject.net"
+    "oss": true,
+    "scriptSrc": "/OrchardCore\\.",
+    "website": "https://orchardcore.net"
   },
   "Orckestra": {
     "cats": [
@@ -1212,12 +1498,30 @@
     "saas": true,
     "website": "https://www.orckestra.com"
   },
+  "Order Deadline": {
+    "cats": [
+      100
+    ],
+    "description": "Order Deadline is an estimated delivery, countdown timer, shipping date Shopify app.",
+    "icon": "Order Deadline.png",
+    "implies": "Shopify",
+    "js": {
+      "orderDeadlineAppByEESL": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://apps.shopify.com/order-deadline"
+  },
   "OrderLogic app": {
     "cats": [
       100
     ],
     "description": "OrderLogic app allows you to define minimum and maximum product quantities for all products in your Shopify store.",
     "icon": "OrderLogic app.png",
+    "implies": "Shopify",
     "js": {
       "OrderLogic.ALERTS_KEY": "",
       "OrderLogic.DEFAULT_MONEY_FORMAT": "",
@@ -1227,7 +1531,6 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
     "saas": true,
     "website": "https://apps.shopify.com/orderlogic"
   },
@@ -1266,18 +1569,6 @@
     "saas": true,
     "scriptSrc": "cdn\\.ordersify\\.com/sdk/productalerts-shopify\\.js",
     "website": "https://ordersify.com/products/product-alerts"
-  },
-  "Oribi": {
-    "cats": [
-      10
-    ],
-    "description": "Oribi is an all-in-one marketing analytics tool.",
-    "icon": "Oribi.svg",
-    "js": {
-      "ORIBI": ""
-    },
-    "scriptSrc": "cdn\\.oribi\\.io",
-    "website": "https://oribi.io/"
   },
   "OroCommerce": {
     "cats": [
@@ -1393,6 +1684,7 @@
     "cats": [
       30
     ],
+    "cpe": "cpe:2.3:a:microsoft:outlook_web_access:*:*:*:*:*:*:*:*",
     "description": "Outlook on the web is an information manager web app. It includes a web-based email client, a calendar tool, a contact manager, and a task manager.",
     "headers": {
       "X-OWA-Version": "([\\d\\.]+)?\\;version:\\1"
@@ -1448,6 +1740,35 @@
       "wp-content/plugins/oxygen"
     ],
     "website": "https://oxygenbuilder.com"
+  },
+  "ocStore": {
+    "cats": [
+      6
+    ],
+    "description": "ocStore is an online store based on Opencart and open-source.",
+    "html": "<!--[^>]+ocStore(?:\\s([\\d\\.a-z]+))?\\;version:\\1",
+    "icon": "ocStore.png",
+    "implies": "OpenCart",
+    "oss": true,
+    "website": "https://ocstore.com"
+  },
+  "onpublix": {
+    "cats": [
+      1
+    ],
+    "description": "onpublix is a web content management system (CMS) platform for eBusinesses.",
+    "icon": "onpublix.svg",
+    "meta": {
+      "generator": "^onpublix\\s([\\d\\.]+)$\\;version:\\1"
+    },
+    "pricing": [
+      "onetime",
+      "mid",
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.onpublix.de"
   },
   "osCommerce": {
     "cats": [

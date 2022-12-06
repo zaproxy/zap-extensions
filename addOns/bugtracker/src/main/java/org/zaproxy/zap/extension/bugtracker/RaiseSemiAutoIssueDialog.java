@@ -29,6 +29,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class RaiseSemiAutoIssueDialog extends StandardFieldsDialog {
 
     private static final long serialVersionUID = -3223449799557586758L;

@@ -53,23 +53,6 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
 
     public static final String RESOURCES = "/org/zaproxy/zap/extension/quickstart/resources";
 
-    private static final ImageIcon CHROME_ICON =
-            DisplayUtils.getScaledIcon(
-                    new ImageIcon(
-                            ExtensionQuickStart.class.getResource(RESOURCES + "/chrome.png")));
-    private static final ImageIcon CHROMIUM_ICON =
-            DisplayUtils.getScaledIcon(
-                    new ImageIcon(
-                            ExtensionQuickStart.class.getResource(RESOURCES + "/chromium.png")));
-    private static final ImageIcon FIREFOX_ICON =
-            DisplayUtils.getScaledIcon(
-                    new ImageIcon(
-                            ExtensionQuickStart.class.getResource(RESOURCES + "/firefox.png")));
-    private static final ImageIcon SAFARI_ICON =
-            DisplayUtils.getScaledIcon(
-                    new ImageIcon(
-                            ExtensionQuickStart.class.getResource(RESOURCES + "/safari.png")));
-
     private OptionsQuickStartLaunchPanel optionsPanel;
     private LaunchPanel launchPanel;
 
@@ -83,6 +66,11 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
         dependencies.add(ExtensionSelenium.class);
         DEPENDENCIES = Collections.unmodifiableList(dependencies);
     }
+
+    private ImageIcon chromeIcon;
+    private ImageIcon chromiumIcon;
+    private ImageIcon firefoxIcon;
+    private ImageIcon safariIcon;
 
     public ExtensionQuickStartLaunch() {
         super(NAME);
@@ -100,7 +88,7 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
         extensionHook.addAddOnInstallationStatusListener(this);
         extensionHook.addOptionsChangedListener(this);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookView().addMainToolBarComponent(getLaunchToolbarButton());
             extensionHook.getHookView().addOptionPanel(getOptionsPanel());
 
@@ -120,8 +108,9 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
 
     @Override
     public void unload() {
-        if (getView() != null) {
+        if (hasView()) {
             this.getExtQuickStart().setLaunchPanel(null);
+            launchPanel.unload();
         }
     }
 
@@ -172,15 +161,33 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
     }
 
     protected void setToolbarButtonIcon(String browser) {
+        initBrowserIcons();
+
         if ("firefox".equalsIgnoreCase(browser)) {
-            launchToolbarButton.setIcon(FIREFOX_ICON);
+            launchToolbarButton.setIcon(firefoxIcon);
         } else if ("chrome".equalsIgnoreCase(browser)) {
-            launchToolbarButton.setIcon(CHROME_ICON);
+            launchToolbarButton.setIcon(chromeIcon);
         } else if ("safari".equalsIgnoreCase(browser)) {
-            launchToolbarButton.setIcon(SAFARI_ICON);
+            launchToolbarButton.setIcon(safariIcon);
         } else {
-            launchToolbarButton.setIcon(CHROMIUM_ICON);
+            launchToolbarButton.setIcon(chromiumIcon);
         }
+    }
+
+    private void initBrowserIcons() {
+        chromeIcon =
+                DisplayUtils.getScaledIcon(
+                        new ImageIcon(getClass().getResource(RESOURCES + "/chrome.png")));
+
+        chromiumIcon =
+                DisplayUtils.getScaledIcon(
+                        new ImageIcon(getClass().getResource(RESOURCES + "/chromium.png")));
+        firefoxIcon =
+                DisplayUtils.getScaledIcon(
+                        new ImageIcon(getClass().getResource(RESOURCES + "/firefox.png")));
+        safariIcon =
+                DisplayUtils.getScaledIcon(
+                        new ImageIcon(getClass().getResource(RESOURCES + "/safari.png")));
     }
 
     @Override
@@ -265,7 +272,7 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
 
     @Override
     public void addOnUninstalled(AddOn addOn, boolean successfully) {
-        if (getView() != null && addOn.getId().equals("hud")) {
+        if (hasView() && addOn.getId().equals("hud")) {
             this.launchPanel.hudAddOnUninstalled();
         }
     }

@@ -56,6 +56,7 @@ import org.zaproxy.zap.view.AbstractMultipleOptionsTableModel;
  *
  * @see SeleniumOptions
  */
+@SuppressWarnings("serial")
 class SeleniumOptionsPanel extends AbstractParamPanel {
 
     private static final long serialVersionUID = -4918932139321106800L;

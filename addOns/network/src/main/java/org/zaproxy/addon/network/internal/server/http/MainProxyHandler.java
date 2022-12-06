@@ -21,13 +21,14 @@ package org.zaproxy.addon.network.internal.server.http;
 
 import io.netty.channel.ChannelHandlerContext;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.network.internal.handlers.LegacySocketAdapter;
 import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
-import org.zaproxy.zap.ZapGetMethod;
 
 /**
  * A {@link MainServerHandler} for proxies, attempts to keep the connection open for other protocols
@@ -53,15 +54,17 @@ public class MainProxyHandler extends MainServerHandler {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     protected boolean postWriteResponse(ChannelHandlerContext ctx, HttpMessage msg) {
-        if (msg.getResponseHeader().getStatusCode() != 101 && !msg.isEventStream()) {
+        if (Boolean.TRUE.equals(getProperties(msg).get("zap.h2"))
+                || msg.getResponseHeader().getStatusCode() != 101 && !msg.isEventStream()) {
             return false;
         }
 
         LegacySocketAdapter passThroughAdapter = new LegacySocketAdapter(ctx.channel());
-        ZapGetMethod method = (ZapGetMethod) msg.getUserObject();
+        org.zaproxy.zap.ZapGetMethod method = (org.zaproxy.zap.ZapGetMethod) msg.getUserObject();
         if (method == null) {
-            method = new ZapGetMethod();
+            method = new org.zaproxy.zap.ZapGetMethod();
             method.setUpgradedSocket(passThroughAdapter.getSocket());
             try {
                 method.setUpgradedInputStream(passThroughAdapter.getSocket().getInputStream());
@@ -78,5 +81,14 @@ public class MainProxyHandler extends MainServerHandler {
         // No add-on to process the data.
         close(ctx);
         return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> getProperties(HttpMessage message) {
+        Object userObject = message.getUserObject();
+        if (!(userObject instanceof Map)) {
+            return Collections.emptyMap();
+        }
+        return (Map<String, Object>) userObject;
     }
 }

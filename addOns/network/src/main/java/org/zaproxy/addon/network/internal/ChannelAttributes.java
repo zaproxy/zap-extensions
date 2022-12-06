@@ -21,7 +21,8 @@ package org.zaproxy.addon.network.internal;
 
 import io.netty.util.AttributeKey;
 import java.net.InetSocketAddress;
-import org.parosproxy.paros.security.SslCertificateService;
+import org.zaproxy.addon.network.internal.cert.ServerCertificateService;
+import org.zaproxy.addon.network.internal.handlers.PipelineConfigurator;
 import org.zaproxy.addon.network.internal.handlers.TlsConfig;
 import org.zaproxy.addon.network.internal.server.ServerConfig;
 
@@ -38,13 +39,17 @@ public final class ChannelAttributes {
     public static final AttributeKey<InetSocketAddress> REMOTE_ADDRESS =
             AttributeKey.newInstance("zap.remote-address");
 
-    /** The attribute that contains the {@link SslCertificateService}. */
-    public static final AttributeKey<SslCertificateService> CERTIFICATE_SERVICE =
+    /** The attribute that contains the {@link ServerCertificateService}. */
+    public static final AttributeKey<ServerCertificateService> CERTIFICATE_SERVICE =
             AttributeKey.newInstance("zap.certificate-service");
 
     /** The attribute that contains the {@link TlsConfig}. */
     public static final AttributeKey<TlsConfig> TLS_CONFIG =
             AttributeKey.newInstance("zap.tls-config");
+
+    /** The attribute that contains a {@link PipelineConfigurator}. */
+    public static final AttributeKey<PipelineConfigurator> PIPELINE_CONFIGURATOR =
+            AttributeKey.newInstance("zap.pipeline-configurator");
 
     /** The attribute that indicates if a channel was upgraded to use the SSL/TLS protocol. */
     public static final AttributeKey<Boolean> TLS_UPGRADED =

@@ -39,6 +39,7 @@ import org.zaproxy.addon.graphql.automation.GraphQlJob.Parameters;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class GraphQlJobDialog extends StandardFieldsDialog {
 
     private static final long serialVersionUID = 1L;

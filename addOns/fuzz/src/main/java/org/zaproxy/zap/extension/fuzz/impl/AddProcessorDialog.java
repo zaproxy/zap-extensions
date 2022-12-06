@@ -35,6 +35,7 @@ import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
 import org.zaproxy.zap.utils.SortedComboBoxModel;
 import org.zaproxy.zap.view.AbstractFormDialog;
 
+@SuppressWarnings("serial")
 public class AddProcessorDialog extends AbstractFormDialog {
 
     private static final long serialVersionUID = 4460797449668634319L;

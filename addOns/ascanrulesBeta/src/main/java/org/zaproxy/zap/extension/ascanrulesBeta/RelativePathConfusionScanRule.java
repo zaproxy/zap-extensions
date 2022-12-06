@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.httpclient.CircularRedirectException;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.RandomStringUtils;
@@ -42,9 +41,9 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
-import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 
 /**
  * a scan rule that looks for server side issues that could cause confusion as to the relative path
@@ -245,16 +244,18 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                                 null,
                                 null);
                 HttpMessage hackedMessage = new HttpMessage(hackedUri);
+                hackedMessage
+                        .getRequestHeader()
+                        .setVersion(getBaseMsg().getRequestHeader().getVersion());
                 try {
                     hackedMessage.setCookieParams(originalMsg.getCookieParams());
                 } catch (Exception e) {
-                    log.warn("Could not set the cookies from the base request: {}", e);
+                    log.warn(
+                            "Could not set the cookies from the base request: {}",
+                            e.getMessage(),
+                            e);
                 }
-                try {
-                    sendAndReceive(hackedMessage, true); // follow redirects
-                } catch (CircularRedirectException e) {
-                    log.warn("Ignoring a CircularRedirectException {}", e);
-                }
+                sendAndReceive(hackedMessage, true); // follow redirects
 
                 // get ready to parse the HTML
                 Document doc = Jsoup.parse(new String(hackedMessage.getResponseBody().getBytes()));
@@ -422,7 +423,7 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                 //       that ends in ".css", to see if the web server changes the content type to
                 // "text/css" (unlikely!)
                 String contentType =
-                        hackedMessage.getResponseHeader().getHeader(HttpHeader.CONTENT_TYPE);
+                        hackedMessage.getResponseHeader().getHeader(HttpFieldsNames.CONTENT_TYPE);
                 if (contentType != null) {
 
                     log.debug(
@@ -555,7 +556,7 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                         String frameHeader =
                                 hackedMessage
                                         .getResponseHeader()
-                                        .getHeader(HttpHeader.X_FRAME_OPTION);
+                                        .getHeader(HttpFieldsNames.X_FRAME_OPTIONS);
                         if (frameHeader != null) {
                             if (frameHeader.toUpperCase().equals("DENY")) {
                                 // definitely rules out the framing attack (unless the user is using

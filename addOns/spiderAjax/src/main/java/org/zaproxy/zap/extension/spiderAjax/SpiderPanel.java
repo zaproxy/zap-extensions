@@ -23,7 +23,6 @@ import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -49,6 +48,7 @@ import org.zaproxy.zap.view.table.HistoryReferencesTable;
  * This class creates the Spider AJAX Panel where the found URLs are displayed It has a button to
  * stop the crawler and another one to open the options.
  */
+@SuppressWarnings("serial")
 public class SpiderPanel extends AbstractPanel implements SpiderListener {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LogManager.getLogger(SpiderPanel.class);
@@ -72,8 +72,6 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
 
     private ScanStatus scanStatus = null;
 
-    private JLabel activeScansNameLabel = null;
-    private JLabel activeScansValueLabel = null;
     private List<String> activeScans = new ArrayList<>();
 
     private String targetSite;
@@ -392,42 +390,8 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
         }
     }
 
-    /** @return the active scans name label */
-    private JLabel getActiveScansNameLabel() {
-        if (activeScansNameLabel == null) {
-            activeScansNameLabel = new javax.swing.JLabel();
-            activeScansNameLabel.setText(
-                    Constant.messages.getString("spiderajax.panel.toolbar.currentscans.label"));
-        }
-        return activeScansNameLabel;
-    }
-
-    /** @return he number of active scans */
-    private JLabel getActiveScansValueLabel() {
-        if (activeScansValueLabel == null) {
-            activeScansValueLabel = new javax.swing.JLabel();
-            activeScansValueLabel.setText("" + activeScans.size());
-        }
-        return activeScansValueLabel;
-    }
-
     /** sets the number of active scans */
     private void setActiveScanLabels() {
-        getActiveScansValueLabel().setText("" + activeScans.size());
-        StringBuilder sb = new StringBuilder();
-        Iterator<String> iter = activeScans.iterator();
-        sb.append("<html>");
-        while (iter.hasNext()) {
-            sb.append(iter.next());
-            sb.append("<br>");
-        }
-        sb.append("</html>");
-
-        final String toolTip = sb.toString();
-
-        getActiveScansNameLabel().setToolTipText(toolTip);
-        getActiveScansValueLabel().setToolTipText(toolTip);
-
         scanStatus.setScanCount(activeScans.size());
     }
 

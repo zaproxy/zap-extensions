@@ -2,7 +2,7 @@ description = "Inspect and attack GraphQL endpoints."
 
 zapAddOn {
     addOnName.set("GraphQL Support")
-    zapVersion.set("2.11.1")
+    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -16,6 +16,32 @@ zapAddOn {
                     addOns {
                         register("automation") {
                             version.set(">=0.12.0")
+                        }
+                    }
+                }
+            }
+
+            register("org.zaproxy.addon.graphql.formhandler.ExtensionGraphQlFormHandler") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.graphql.formhandler"))
+                }
+                dependencies {
+                    addOns {
+                        register("formhandler") {
+                            version.set(">=6.0.0 & < 7.0.0")
+                        }
+                    }
+                }
+            }
+
+            register("org.zaproxy.addon.graphql.spider.ExtensionGraphQlSpider") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.graphql.spider"))
+                }
+                dependencies {
+                    addOns {
+                        register("spider") {
+                            version.set(">=0.1.0")
                         }
                     }
                 }
@@ -40,9 +66,13 @@ crowdin {
 
 dependencies {
     compileOnly(parent!!.childProjects.get("automation")!!)
-    implementation("com.google.code.gson:gson:2.8.8")
-    implementation("com.graphql-java:graphql-java:17.3")
+    compileOnly(parent!!.childProjects.get("formhandler")!!)
+    compileOnly(parent!!.childProjects.get("spider")!!)
+    implementation("com.google.code.gson:gson:2.10")
+    implementation("com.graphql-java:graphql-java:19.2")
 
     testImplementation(parent!!.childProjects.get("automation")!!)
+    testImplementation(parent!!.childProjects.get("formhandler")!!)
+    testImplementation(parent!!.childProjects.get("spider")!!)
     testImplementation(project(":testutils"))
 }

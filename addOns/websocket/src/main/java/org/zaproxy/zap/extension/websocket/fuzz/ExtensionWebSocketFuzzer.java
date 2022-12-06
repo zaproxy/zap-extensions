@@ -49,9 +49,6 @@ import org.zaproxy.zap.extension.websocket.ui.WebSocketPanel;
 
 public class ExtensionWebSocketFuzzer extends ExtensionAdaptor {
 
-    private static final ImageIcon WEBSOCKET_FUZZER_PROCESSOR_SCRIPT_ICON =
-            new ImageIcon(ZAP.class.getResource("/resource/icon/16/script-fuzz.png"));
-
     private static final List<Class<? extends Extension>> DEPENDENCIES;
 
     static {
@@ -107,7 +104,11 @@ public class ExtensionWebSocketFuzzer extends ExtensionAdaptor {
                     new ScriptType(
                             WebSocketFuzzerProcessorScript.TYPE_NAME,
                             "websocket.fuzzer.script.type.fuzzerprocessor",
-                            WEBSOCKET_FUZZER_PROCESSOR_SCRIPT_ICON,
+                            hasView()
+                                    ? new ImageIcon(
+                                            ZAP.class.getResource(
+                                                    "/resource/icon/16/script-fuzz.png"))
+                                    : null,
                             true,
                             true);
             extensionScript.registerScriptType(scriptType);
@@ -125,7 +126,7 @@ public class ExtensionWebSocketFuzzer extends ExtensionAdaptor {
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionFuzz.class);
         extensionFuzz.addFuzzerHandler(websocketFuzzerHandler);
 
-        if (getView() != null) {
+        if (hasView()) {
             // Disable for now, there are no places where it would be used
             // extensionHook.getHookMenu()
             //       .addPopupMenuItem(new WebSocketFuzzAttackPopupMenuItem(extensionFuzz,
@@ -151,7 +152,7 @@ public class ExtensionWebSocketFuzzer extends ExtensionAdaptor {
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionWebSocket.class);
         extensionWebSocket.removeAllChannelObserver(getAllChannelObserver());
 
-        if (getView() != null) {
+        if (hasView()) {
             ExtensionScript extensionScript =
                     Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
             if (extensionScript != null) {

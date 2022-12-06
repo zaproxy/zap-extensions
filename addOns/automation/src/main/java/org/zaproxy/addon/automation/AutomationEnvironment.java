@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -42,6 +43,9 @@ public class AutomationEnvironment {
 
     private static final String YAML_FILE = "env.yaml";
     private static final Pattern varPattern = Pattern.compile("\\$\\{(.+?)\\}");
+
+    static final Supplier<Map<String, String>> DEFAULT_ENV = System::getenv;
+    static Supplier<Map<String, String>> envSupplier = DEFAULT_ENV;
 
     private AutomationProgress progress;
     private List<ContextWrapper> contexts = new ArrayList<>();
@@ -145,7 +149,7 @@ public class AutomationEnvironment {
         }
         if (this.combinedVars == null) {
             this.combinedVars = new HashMap<>(this.getData().getVars());
-            this.combinedVars.putAll(System.getenv());
+            this.combinedVars.putAll(envSupplier.get());
         }
         String text = value.toString();
         Matcher matcher = varPattern.matcher(text);

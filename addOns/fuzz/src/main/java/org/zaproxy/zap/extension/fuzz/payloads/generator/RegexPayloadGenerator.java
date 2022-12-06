@@ -327,7 +327,7 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
      */
     private static class TimeOutRunner {
 
-        @SuppressWarnings("deprecation")
+        @SuppressWarnings({"deprecation", "removal"})
         public static boolean run(Runnable runnable, int time, TimeUnit timeUnit) {
             final Thread thread = new Thread(runnable);
             ExecutorService executor = null;

@@ -25,6 +25,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
 
+@SuppressWarnings("serial")
 public class OptionsZestIgnoreHeadersTableModel extends AbstractTableModel {
 
     private static final long serialVersionUID = 1L;

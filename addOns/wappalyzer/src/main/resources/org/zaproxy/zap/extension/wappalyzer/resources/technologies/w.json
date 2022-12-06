@@ -38,13 +38,18 @@
   },
   "WEBXPAY": {
     "cats": [
-      6
+      41
     ],
-    "html": "Powered by <a href=\"https://www\\.webxpay\\.com\">WEBXPAY<",
+    "description": "WEBXPAY is a specialised online payment gateway that expedites buying and selling in a highly secured environment.",
     "icon": "WEBXPAY.png",
     "js": {
       "WEBXPAY": ""
     },
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
     "website": "https://webxpay.com"
   },
   "WEN Themes Education Hub": {
@@ -149,6 +154,27 @@
     "scriptSrc": "/wp-content/plugins/wp-google-map-plugin/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.wpmapspro.com"
   },
+  "WP Job Openings": {
+    "cats": [
+      87,
+      101
+    ],
+    "description": "WP Job Openings is a job listing and recruitment plugin for WordPress websites.",
+    "icon": "WP Job Openings.svg",
+    "js": {
+      "awsmJobs": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "saas": true,
+    "scriptSrc": "/wp-content/plugins/wp-job-openings/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://wpjobopenings.com"
+  },
   "WP Maintenance Mode": {
     "cats": [
       87
@@ -183,14 +209,26 @@
       87
     ],
     "description": "WP Rocket is a caching and performance optimisation plugin to improve the loading speed of WordPress websites.",
+    "dom": "style#wpr-usedcss",
     "headers": {
       "X-Powered-By": "WP Rocket(?:/([\\d.]+))?\\;version:\\1",
       "X-Rocket-Nginx-Bypass": ""
     },
     "html": "<!--[^>]+WP Rocket",
     "icon": "WP Rocket.png",
+    "js": {
+      "RocketLazyLoadScripts": "",
+      "RocketPreloadLinksConfig": "",
+      "rocket_lazy": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
     "requires": "WordPress",
-    "website": "http://wp-rocket.me"
+    "saas": true,
+    "scriptSrc": "/wp-content/plugins/wp-rocket/",
+    "website": "https://wp-rocket.me"
   },
   "WP-Optimize": {
     "cats": [
@@ -367,7 +405,7 @@
       "Python"
     ],
     "oss": true,
-    "website": "https://wagtail.io/"
+    "website": "https://wagtail.org/"
   },
   "Wair": {
     "cats": [
@@ -458,7 +496,7 @@
       "onetime"
     ],
     "requires": "WordPress",
-    "scriptSrc": "/wp-content/themes/weaver-xtreme/.+weaverxjslib-end\\.min.\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": "/wp-content/themes/weaver-xtreme/.+weaverxjslib-end\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://weavertheme.com"
   },
   "Web Shop Manager": {
@@ -647,6 +685,15 @@
     "saas": true,
     "website": "https://www.webnode.com"
   },
+  "WebRTC": {
+    "cats": [
+      19
+    ],
+    "description": "WebRTC is an open-source project that enables real-time voice, text and video communications capabilities between web browsers and devices.",
+    "icon": "WebRTC.svg",
+    "oss": true,
+    "website": "https://webrtc.org"
+  },
   "WebSite X5": {
     "cats": [
       20
@@ -657,6 +704,27 @@
       "generator": "Incomedia WebSite X5 (\\w+ [\\d.]+)\\;version:\\1"
     },
     "website": "http://websitex5.com"
+  },
+  "WebZi": {
+    "cats": [
+      1,
+      51
+    ],
+    "description": "WebZi is a professional website builder.",
+    "icon": "Webzi.svg",
+    "js": {
+      "WebziCart": "",
+      "WebziValidate": ""
+    },
+    "meta": {
+      "generator": "^Webzi\\.ir\\sWebsite\\sBuilder$"
+    },
+    "pricing": [
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "//webzi\\.ir/",
+    "website": "https://webzi.ir"
   },
   "Webflow": {
     "cats": [
@@ -696,6 +764,27 @@
     "scriptSrc": "\\bwebix\\.js",
     "website": "http://webix.com"
   },
+  "Weblication": {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:weblication:cms_core_&_grid:*:*:*:*:*:*:*:*",
+    "description": "Weblication is an enterprise-class website content management system developed by Scholl Communications AG in Germany.",
+    "icon": "Weblication.svg",
+    "implies": [
+      "PHP",
+      "XSLT"
+    ],
+    "meta": {
+      "generator": "^Weblication® CMS$"
+    },
+    "pricing": [
+      "recurring",
+      "onetime",
+      "payg"
+    ],
+    "website": "https://weblication.de"
+  },
   "Weblium": {
     "cats": [
       1,
@@ -718,6 +807,28 @@
     "scriptSrc": "res2\\.weblium\\.site/common/core\\.min\\.js",
     "url": "\\.weblium\\.site",
     "website": "https://weblium.com"
+  },
+  "Weblogic Server": {
+    "cats": [
+      22
+    ],
+    "description": "WebLogic Server is an Application Server that runs on a middle tier, between back-end databases and related applications and browser-based thin clients.",
+    "headers": {
+      "Server": "^WebLogic\\sServer\\s([\\d\\.]+)?\\;version:\\1"
+    },
+    "icon": "Oracle.svg",
+    "implies": "JavaServer Pages",
+    "website": "https://www.oracle.com/java/weblogic"
+  },
+  "Webmin": {
+    "cats": [
+      19
+    ],
+    "description": "Webmin is a free, open-source application for Linux server administration.",
+    "icon": "Webmin.png",
+    "implies": "Perl",
+    "oss": true,
+    "website": "https://www.webmin.com"
   },
   "Webriti Busiprof": {
     "cats": [
@@ -806,25 +917,43 @@
     },
     "website": "http://worldwide.webtrends.com"
   },
-  "Webzi": {
+  "Webx": {
     "cats": [
-      1
+      6
     ],
-    "icon": "Webzi.svg",
-    "js": {
-      "Webzi": ""
-    },
+    "description": "Webx is a hosted ecommerce solution from Pakistan.",
+    "dom": "div#divPowered > div > p > a[href*='.webx.pk']",
+    "icon": "Webx.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.webx.pk"
+  },
+  "Webzie": {
+    "cats": [
+      1,
+      6,
+      51
+    ],
+    "description": "Webzie is a website builder optimised for performance.",
+    "icon": "Webzie.svg",
     "meta": {
-      "generator": "^Webzi"
+      "generator": "^Webzie\\.com\\sWebsite\\sBuilder$"
     },
-    "scriptSrc": "cdn\\.6th\\.ir",
-    "website": "https://webzi.ir"
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.webzie.com/"
   },
   "Weebly": {
     "cats": [
       1
     ],
-    "description": "Weebly is a website and eCommerce service.",
+    "description": "Weebly is a website and ecommerce service.",
     "icon": "Weebly.svg",
     "implies": [
       "PHP",
@@ -864,7 +993,7 @@
     "cookies": {
       "usces_cookie": ""
     },
-    "cpe": "cpe:/a:welcart:welcart",
+    "cpe": "cpe:2.3:a:welcart:welcart:*:*:*:*:*:*:*:*",
     "description": "Welcart is a free ecommerce plugin for WordPress with top market share in Japan.",
     "html": [
       "<link[^>]+?href=\"[^\"]+usces_default(?:\\.min)?\\.css",
@@ -874,6 +1003,23 @@
     "requires": "WordPress",
     "scriptSrc": "uscesL10n",
     "website": "https://www.welcart.com"
+  },
+  "WeltPixel Pearl Theme": {
+    "cats": [
+      19
+    ],
+    "description": "Pearl Theme for Magento 2 by WeltPixel. Pearl Theme is following the Magento architecture, layouts and best practice in order to assure highest compatibility with 3rd party extensions.",
+    "dom": "body.theme-pearl",
+    "icon": "WeltPixel.svg",
+    "implies": "Magento\\;version:2",
+    "js": {
+      "Pearl": ""
+    },
+    "pricing": [
+      "high",
+      "onetime"
+    ],
+    "website": "https://www.weltpixel.com/magento-2-theme-pearl"
   },
   "Whatfix": {
     "cats": [
@@ -935,6 +1081,21 @@
     "html": "<iframe src=\"[^>]+whooshkaa\\.com",
     "icon": "Whooshkaa.svg",
     "website": "https://www.whooshkaa.com"
+  },
+  "WideBundle": {
+    "cats": [
+      100
+    ],
+    "description": "WideBundle is a Shopify application that allows a merchant to set up bundles on his store.",
+    "icon": "WideBundle.png",
+    "implies": "Shopify",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "//widebundle\\.com/",
+    "website": "https://en.widebundle.com"
   },
   "Widen": {
     "cats": [
@@ -1166,7 +1327,10 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "\\.rch\\.io/",
+    "scriptSrc": [
+      "\\.rch\\.io/",
+      "checkout\\.gointerpay\\.net"
+    ],
     "website": "https://www.withreach.com"
   },
   "Wix": {
@@ -1449,7 +1613,7 @@
       1,
       11
     ],
-    "cpe": "cpe:/a:wordpress:wordpress",
+    "cpe": "cpe:2.3:a:wordpress:wordpress:*:*:*:*:*:*:*:*",
     "description": "WordPress is a free and open-source content management system written in PHP and paired with a MySQL or MariaDB database. Features include a plugin architecture and a template system.",
     "headers": {
       "X-Pingback": "/xmlrpc\\.php$",
@@ -1471,6 +1635,7 @@
       "generator": "^WordPress(?: ([\\d.]+))?\\;version:\\1",
       "shareaholic:wp_version": ""
     },
+    "oss": true,
     "pricing": [
       "low",
       "recurring",
@@ -1595,12 +1760,23 @@
     "cats": [
       6
     ],
-    "description": "Workarea is a SaaS commerce platform for medium to large businesses.",
-    "icon": "Workarea.png",
+    "description": "Workarea is a SaaS ecommerce platform for medium to large businesses.",
+    "icon": "Workarea.svg",
+    "implies": [
+      "Ruby on Rails",
+      "MongoDB",
+      "Elasticsearch"
+    ],
     "js": {
+      "WEBLINC.cartCount": "",
       "workarea": ""
     },
-    "website": "https://www.workarea.com/"
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.workarea.com"
   },
   "World4You": {
     "cats": [
@@ -1669,6 +1845,31 @@
     "saas": true,
     "website": "https://www.wufoo.com"
   },
+  "Wuilt": {
+    "cats": [
+      1,
+      51
+    ],
+    "description": "Wuilt is the first Arab platform of its kind to help individuals and businesses create ready-made websites and ecommerce stores.",
+    "dom": {
+      "img[src*='wuilt-assets-v']": {
+        "attributes": {
+          "src": "wuilt-assets-v\\d+-dev\\.s\\d+\\.amazonaws\\.com/"
+        }
+      }
+    },
+    "icon": "Wuilt.png",
+    "implies": [
+      "React",
+      "Node.js"
+    ],
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://wuilt.com"
+  },
   "Wunderkind": {
     "cats": [
       32
@@ -1704,6 +1905,31 @@
     "scriptSrc": "\\.wurfl\\.io",
     "website": "https://web.wurfl.io/"
   },
+  "WysiBB": {
+    "cats": [
+      24
+    ],
+    "description": "WysiBB very simple and functional open-source WYSIWYG BBCode editor based on jQuery.",
+    "icon": "WysiBB.svg",
+    "implies": "jQuery",
+    "oss": true,
+    "scriptSrc": "/jquery\\.wysibb\\.min\\.js",
+    "website": "http://wysibb.com"
+  },
+  "wBuy": {
+    "cats": [
+      6
+    ],
+    "description": "wBuy is a SaaS ecommerce platform.",
+    "icon": "wBuy.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.sistemawbuy\\.com\\.br/",
+    "website": "https://www.wbuy.com.br"
+  },
   "web-vitals": {
     "cats": [
       59,
@@ -1723,7 +1949,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:webedition:webedition_cms",
+    "cpe": "cpe:2.3:a:webedition:webedition_cms:*:*:*:*:*:*:*:*",
     "icon": "webEdition.png",
     "meta": {
       "DC.title": "webEdition",
@@ -1731,13 +1957,14 @@
     },
     "website": "http://webedition.de/en"
   },
-  "webpack": {
+  "Webpack": {
     "cats": [
       19
     ],
     "description": "Webpack is an open-source JavaScript module bundler.",
-    "icon": "webpack.svg",
+    "icon": "Webpack.svg",
     "js": {
+      "webpackChunk": "",
       "webpackJsonp": ""
     },
     "website": "https://webpack.js.org/"

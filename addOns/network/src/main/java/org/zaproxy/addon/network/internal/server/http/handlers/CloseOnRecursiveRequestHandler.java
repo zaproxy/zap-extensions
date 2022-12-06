@@ -20,15 +20,16 @@
 package org.zaproxy.addon.network.internal.server.http.handlers;
 
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 
 /**
- * A {@link HttpRequestHandler} that {@link HttpMessageHandlerContext#close closes} if a recursive
+ * A {@link HttpMessageHandler} that {@link HttpMessageHandlerContext#close closes} if a recursive
  * request.
  *
  * @see #getInstance()
  */
-public class CloseOnRecursiveRequestHandler extends HttpRequestHandler {
+public class CloseOnRecursiveRequestHandler implements HttpMessageHandler {
 
     private static final CloseOnRecursiveRequestHandler INSTANCE =
             new CloseOnRecursiveRequestHandler();
@@ -43,8 +44,8 @@ public class CloseOnRecursiveRequestHandler extends HttpRequestHandler {
     }
 
     @Override
-    protected void handleRequest(HttpMessageHandlerContext ctx, HttpMessage msg) {
-        if (ctx.isRecursive()) {
+    public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) {
+        if (ctx.isFromClient() && ctx.isRecursive()) {
             ctx.close();
         }
     }

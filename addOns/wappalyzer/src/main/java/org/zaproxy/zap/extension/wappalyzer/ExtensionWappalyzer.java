@@ -31,7 +31,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import javax.swing.ImageIcon;
 import javax.swing.tree.TreeNode;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -60,8 +59,6 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
 
     public static final String RESOURCE = "/org/zaproxy/zap/extension/wappalyzer/resources";
 
-    public static final ImageIcon WAPPALYZER_ICON =
-            new ImageIcon(ExtensionWappalyzer.class.getResource(RESOURCE + "/wappalyzer.png"));
     public static final String TECHNOLOGIES_PATH = "resources/technologies/";
     public static final String CATEGORIES_PATH = "resources/categories.json";
 
@@ -116,7 +113,8 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
             logger.error("Failed to enumerate Wappalyzer technologies:", e);
         }
 
-        WappalyzerData result = new WappalyzerJsonParser().parse(CATEGORIES_PATH, technologyFiles);
+        WappalyzerData result =
+                new WappalyzerJsonParser().parse(CATEGORIES_PATH, technologyFiles, hasView());
         this.applications = result.getApplications();
         this.categories = result.getCategories();
 
@@ -285,7 +283,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         try {
             return lead + uri.getAuthority();
         } catch (URIException e) {
-            logger.debug("Unable to get authority from: {}", uri.toString(), e);
+            logger.debug("Unable to get authority from: {}", uri, e);
             // Shouldn't happen, but sure fallback
             return ScanPanel.cleanSiteName(uri.toString(), true);
         }
@@ -338,7 +336,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
 
     @Override
     public void sessionChanged(final Session session) {
-        if (getView() == null) {
+        if (!hasView()) {
             return;
         }
 

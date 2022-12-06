@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -134,9 +135,10 @@ public class ReportApi extends ApiImplementor {
                                     params.getString(PARAM_TEMPLATE)));
                 }
 
+                List<String> themes = template.getThemes();
                 if (isContainedParam(PARAM_THEME, params)) {
                     String theme = params.getString(PARAM_THEME);
-                    if (!template.getThemes().contains(theme)) {
+                    if (!themes.contains(theme)) {
                         throw new ApiException(
                                 Type.ILLEGAL_PARAMETER,
                                 Constant.messages.getString(
@@ -145,6 +147,8 @@ public class ReportApi extends ApiImplementor {
                                         template.getConfigName()));
                     }
                     reportData.setTheme(theme);
+                } else if (!themes.isEmpty()) {
+                    reportData.setTheme(themes.get(0));
                 }
 
                 reportData.setDescription(params.optString(PARAM_DESCRIPTION, ""));
@@ -156,6 +160,8 @@ public class ReportApi extends ApiImplementor {
                         contextsList.add(ApiUtils.getContextByName(contextName));
                     }
                     reportData.setContexts(contextsList);
+                } else {
+                    reportData.setContexts(Collections.emptyList());
                 }
 
                 List<String> sitesList = new ArrayList<>();
@@ -171,7 +177,6 @@ public class ReportApi extends ApiImplementor {
                     List<String> inputSections =
                             Arrays.stream(params.getString(PARAM_SECTIONS).split(DELIMITER_REGEX))
                                     .map(String::trim)
-                                    .map(s -> s.toLowerCase(Locale.ROOT))
                                     .collect(Collectors.toList());
                     List<String> invalidSections =
                             inputSections.stream()

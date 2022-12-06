@@ -25,6 +25,7 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.model.HistoryReference;
 import org.zaproxy.zap.view.popup.PopupMenuItemHistoryReferenceContainer;
 
+@SuppressWarnings("serial")
 public class PopupMenuDiff extends PopupMenuItemHistoryReferenceContainer {
 
     private static final Logger LOGGER = LogManager.getLogger(PopupMenuDiff.class);

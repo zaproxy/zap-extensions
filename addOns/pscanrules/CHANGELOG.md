@@ -5,8 +5,60 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- The Private Address Disclosure and Session ID in URL Rewrite scan rules now include example alert functionality for documentation generation purposes (Issue 6119 and 7100).
+
+### Fixed
+- The Modern App Detection scan rule now ignores non-HTML files (Issue 7617).
+
+## [44] - 2022-10-27
+### Added
+- The following scan rules were added, having been promoted from Beta:
+  - Big Redirects
+  - Directory Browsing
+  - Hash Disclosure
+  - HeartBleed
+  - Insecure Form Load
+  - Insecure Form Post
+  - Link Target
+  - Modern App Detection
+  - PII
+  - Retrieved From Cache
+  - Server Header Info Leak
+  - Strict Transport Security
+  - User Controlled Charset
+  - User Controlled Cookie
+  - User Controlled HTML Attributes
+  - User Controlled Javascript Event
+  - User Controlled Open Redirect
+  - X-Backend-Server Information Leak
+  - X-ChromeLogger-Data Info Leak
+
+### Changed
+- Update minimum ZAP version to 2.12.0.
+- The Server Header Information Leak scan rule now has functionality to generate example alerts for documentation purposes (Issue 6119).
+- Maintenance changes.
+
+## [43] - 2022-09-15
+### Changed
+- Reduce Cache Control scan rule confidence to Low, and add new reference (Issue 6446).
+- Added new Custom Payloads alert tag to the example alerts of the Username IDOR and Application Error scan rules.
+- Maintenance changes.
+- The Timestamp Disclosure scan rule is now scoped to a 10 year range with a cap at the Y2038 rollover point (Issue 6741).
+- The Content Security Policy Header Not Set scan rule will no longer alert if CSP is specified via META tag (Issue 7303).
+
+## [42] - 2022-07-15
+### Changed
+- The Content Security Policy scan rule will now raise alerts at High confidence, all alerts now include the appropriate header as the "parameter" value, and has functionality to generate example alerts for documentation purposes.
+- The Content Security Policy scan rule will now raise an alert when the assessed policy contains non-ASCII characters (Issue 7379).
+
+## [41] - 2022-06-24
+### Changed
 - Maintenance changes.
 - The "Viewstate without MAC Signature (Unsure)" alert will now only be raised at Low Alert Threshold (Issue 7230).
+- The Content Security Policy scan rule will now alert when "unsafe-hashes" are allowed.
+
+### Fixed
+-  Correct parameter and evidence for Cookie without SameSite Attribute when SAMESITE was set to None (Issue 7358).
 
 ## [40] - 2022-04-05
 ### Changed
@@ -185,7 +237,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Maintenance changes.
 - Migrate CSP Scanner into the main passive scan release package (promoting it to Release). Upgrade Salvation (dependency) to 2.6.0.
-- Application Error scanner change for HTTP 500. Alert changed to low risk for HTTP 500, and not raised at all when Threshold is High.  
+- Application Error scanner change for HTTP 500. Alert changed to low risk for HTTP 500, and not raised at all when Threshold is High.
 - Updated the reference link for the alert: Web Browser XSS Protection Not Enabled.
 - Promote Charset Mismatch Scanner to release (Issue 4460).
 - Promote ViewState Scanner to release (Issue 4453).
@@ -304,6 +356,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[44]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v44
+[43]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v43
+[42]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v42
+[41]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v39
 [38]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v38

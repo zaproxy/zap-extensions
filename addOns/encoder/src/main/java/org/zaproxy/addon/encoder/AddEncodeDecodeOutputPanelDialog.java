@@ -31,6 +31,7 @@ import org.zaproxy.addon.encoder.processors.EncodeDecodeProcessors;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.AbstractFormDialog;
 
+@SuppressWarnings("serial")
 class AddEncodeDecodeOutputPanelDialog extends AbstractFormDialog {
 
     private static final long serialVersionUID = 1L;

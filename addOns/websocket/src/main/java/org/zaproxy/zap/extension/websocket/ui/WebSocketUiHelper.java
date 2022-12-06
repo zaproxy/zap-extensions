@@ -24,6 +24,7 @@ import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -43,6 +44,7 @@ import org.zaproxy.zap.extension.websocket.WebSocketMessage;
 import org.zaproxy.zap.extension.websocket.WebSocketMessage.Direction;
 import org.zaproxy.zap.extension.websocket.utility.WebSocketUtils;
 import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.utils.ZapLabel;
 import org.zaproxy.zap.utils.ZapTextField;
 
 public class WebSocketUiHelper {
@@ -106,6 +108,16 @@ public class WebSocketUiHelper {
         gbc.gridwidth = 3;
         gbc.weightx = 1;
         return gbc;
+    }
+
+    public JComponent getDescriptionComponent(String text) {
+        ZapLabel description = new ZapLabel(text);
+        description.setColumns(1);
+        description.setLineWrap(true);
+        description.setWrapStyleWord(true);
+        JScrollPane scrollPane = new JScrollPane(description);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        return scrollPane;
     }
 
     // ************************************************************************

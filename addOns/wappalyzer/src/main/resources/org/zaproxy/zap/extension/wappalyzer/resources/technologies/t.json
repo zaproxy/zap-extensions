@@ -7,6 +7,98 @@
     "icon": "Tsoft.png",
     "website": "https://www.tsoft.com.tr/"
   },
+  "T1 Comercios": {
+    "cats": [
+      19
+    ],
+    "description": "T1 Comercios is an integrator platform with marketplaces(https://www.claroshop.com/,https://www.sears.com.mx/,https://www.sanborns.com.mx/).",
+    "icon": "T1 Comercios.svg",
+    "meta": {
+      "generator": "^T1COMERCIOS$"
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "saas": true,
+    "website": "https://www.t1comercios.com"
+  },
+  "T1 Envios": {
+    "cats": [
+      99
+    ],
+    "description": "T1 Envios is a delivery solution, allows the business to select the best courier to send their packages.",
+    "icon": "T1 Envios.svg",
+    "meta": {
+      "generator": "^T1ENVIOS$"
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://t1envios.com"
+  },
+  "T1 Paginas": {
+    "cats": [
+      6
+    ],
+    "description": "T1 Paginas is an ecommerce platform.",
+    "icon": "T1 Paginas.svg",
+    "implies": [
+      "AngularJS",
+      "Node.js",
+      "MongoDB"
+    ],
+    "meta": {
+      "generator": "^T1PAGINAS$"
+    },
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://t1paginas.com"
+  },
+  "T1 Pagos": {
+    "cats": [
+      41
+    ],
+    "description": "T1 Pagos is a payment processing platform.",
+    "icon": "T1 Pagos.svg",
+    "meta": {
+      "generator": "^T1PAGOS$"
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://www.t1pagos.com"
+  },
+  "TCAdmin": {
+    "cats": [
+      9
+    ],
+    "description": "TCAdmin is the game hosting control panel.",
+    "icon": "TCAdmin.png",
+    "js": {
+      "TCAdmin": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "website": "https://www.tcadmin.com"
+  },
+  "TDesign": {
+    "cats": [
+      66
+    ],
+    "description": "TDesign launched by Tencent contains rich and reusable design component resources, such as color system, text system, motion design, etc.",
+    "dom": ".t-button__text, .t-layout",
+    "icon": "TDesign.svg",
+    "scriptSrc": "tdesign\\.gtimg\\.com/",
+    "website": "https://tdesign.tencent.com"
+  },
   "THG Ingenuity": {
     "cats": [
       6
@@ -113,6 +205,7 @@
     "cats": [
       1
     ],
+    "cpe": "cpe:2.3:a:typo3:typo3:*:*:*:*:*:*:*:*",
     "description": "TYPO3 is a free and open-source Web content management system written in PHP.",
     "html": [
       "<link[^>]+ href=\"/?typo3(?:conf|temp)/",
@@ -255,6 +348,22 @@
     "oss": true,
     "website": "https://tachyons.io"
   },
+  "Tada": {
+    "cats": [
+      100
+    ],
+    "description": "Tada offers interactive website popups that allow Shopify merchants to collect more emails and increase sales by engaging website visitors through gamification.",
+    "icon": "Tada.png",
+    "implies": "Shopify",
+    "pricing": [
+      "freemium",
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.trytada\\.com/",
+    "website": "https://trytada.com"
+  },
   "TagPro": {
     "cats": [
       42
@@ -348,7 +457,11 @@
         }
       }
     },
+    "js": {
+      "tailwind": ""
+    },
     "icon": "tailwindcss.svg",
+    "scriptSrc": "\\.tailwindcss(?:tailwind-config-cdn)?\\.(?:com|js)",
     "website": "https://tailwindcss.com/"
   },
   "TakeDrop": {
@@ -385,6 +498,36 @@
     "saas": true,
     "website": "https://www.talkable.com"
   },
+  "Tallentor": {
+    "cats": [
+      10
+    ],
+    "description": "Tallentor is a subscription-based software website analytics, heatmap, channel chat intergration.",
+    "icon": "Tallentor.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "tallentor\\.com/js/script_tracker\\.js",
+    "website": "https://tallentor.com"
+  },
+  "Tallentor Widget": {
+    "cats": [
+      52
+    ],
+    "cookies": {
+      "tallentor_widget": ""
+    },
+    "description": "Tallentor is a subscription-based software website analytics, heatmap, channel chat intergration.",
+    "icon": "Tallentor.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://tallentor.com"
+  },
   "Tamago": {
     "cats": [
       5
@@ -406,6 +549,38 @@
     "saas": true,
     "scriptSrc": "cdn\\.tamara\\.co",
     "website": "https://tamara.co/"
+  },
+  "Tangled Network": {
+    "cats": [
+      88
+    ],
+    "description": "Tangled Network provides a managed services in website devleopment, web and database hosting and domain registration, with a focus on everything managed for small and medium sized businesses.",
+    "dns": {
+      "NS": "\\.tanglednetwork\\.com",
+      "SOA": "\\.tanglednetwork\\.com"
+    },
+    "headers": {
+      "X-Hosting-Provider": "Tangled Network"
+    },
+    "icon": "atws.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://tanglednetwork.com"
+  },
+  "Tapad": {
+    "cats": [
+      36
+    ],
+    "description": "Tapad is a venture-funded startup company that develops and markets software and services for cross-device advertising and content delivery.",
+    "dom": "link[href*='pixel.tapad.com'], img[src*='pixel.tapad.com']",
+    "icon": "Tapad.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.tapad.com"
   },
   "Tapcart": {
     "cats": [
@@ -439,12 +614,12 @@
     "cats": [
       36
     ],
-    "description": "Tatari is a data and analytics company focused on buying and measuring ads across TV and streaming platforms",
-    "icon": "Tatari.png",
+    "description": "Tatari is a data and analytics company focused on buying and measuring ads across TV and streaming platforms.",
+    "icon": "Tatari.svg",
     "js": {
       "tatari": ""
     },
-    "website": "https://www.tatari.tv/"
+    "website": "https://www.tatari.tv"
   },
   "Tawk.to": {
     "cats": [
@@ -563,6 +738,34 @@
     },
     "website": "https://www.jetbrains.com/teamcity/"
   },
+  "Tebex": {
+    "cats": [
+      6
+    ],
+    "description": "Tebex specialises in providing gcommerce solutions for online games.",
+    "dom": {
+      "a[href*='.tebex.io']": {
+        "attributes": {
+          "target": "_blank",
+          "text": "Tebex"
+        }
+      }
+    },
+    "headers": {
+      "tb-cache-group": "^webstore$\\;confidence:50",
+      "tb-cache-country": "^\\w+$\\;confidence:50"
+    },
+    "icon": "Tebex.svg",
+    "implies": [
+      "MySQL",
+      "Sass",
+      "PHP"
+    ],
+    "requires": "Cart Functionality",
+    "saas": true,
+    "scripts": "\\.tebexLogin",
+    "website": "https://www.tebex.io"
+  },
   "Telescope": {
     "cats": [
       1
@@ -641,6 +844,19 @@
     "icon": "termly.svg",
     "scriptSrc": "app\\.termly\\.io/embed\\.min\\.js",
     "website": "https://termly.io/"
+  },
+  "Tern": {
+    "cats": [
+      100
+    ],
+    "description": "Tern is a plug and play ecommerce app, built for Shopify, that offers merchants the ability to provide a seamless trade-in service.",
+    "icon": "Tern.png",
+    "pricing": [
+      "payg"
+    ],
+    "requires": "Shopify",
+    "scriptSrc": "live\\.tern-returns\\.eastsideapps\\.io/",
+    "website": "https://www.tern.eco"
   },
   "TerriaJS": {
     "cats": [
@@ -724,6 +940,10 @@
     "description": "The Events Calendar is a free event management plugin for WordPress.",
     "dom": "link[href*='/wp-content/plugins/the-events-calendar/']",
     "icon": "The Events Calendar.png",
+    "js": {
+      "TribeCalendar": "",
+      "tribe_l10n_datatables": ""
+    },
     "pricing": [
       "freemium",
       "low",
@@ -732,6 +952,45 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/the-events-calendar(?:-pro)?/",
     "website": "https://theeventscalendar.com"
+  },
+  "The Hotels Network": {
+    "cats": [
+      10,
+      76
+    ],
+    "description": "The Hotels Network provides a SaaS software that enhances hotelier websites with predictive marketing personalisation and user behavior analytics.",
+    "headers": {
+      "content-security-policy": "\\.thehotelsnetwork\\.com",
+      "content-security-policy-report-only": "\\.thehotelsnetwork\\.com"
+    },
+    "icon": "The Hotels Network.svg",
+    "js": {
+      "thn.data.version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "freemium",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.thehotelsnetwork\\.com/",
+    "website": "https://thehotelsnetwork.com"
+  },
+  "The SEO Framework": {
+    "cats": [
+      54,
+      87
+    ],
+    "description": "The SEO Framework is the only WordPress plugin that can intelligently generate critical SEO meta tags by reading your WordPress environment.",
+    "html": "<!--[^>]+The SEO Framework by Sybre Waaijer",
+    "icon": "The SEO Framework.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "saas": true,
+    "website": "https://theseoframework.com"
   },
   "The Theme Foundry Make": {
     "cats": [
@@ -1320,11 +1579,17 @@
     "cats": [
       18
     ],
+    "cookies": {
+      "thinkphp_show_page_trace": ""
+    },
+    "cpe": "cpe:2.3:a:thinkphp:thinkphp:*:*:*:*:*:*:*:*",
+    "description": "ThinkPHP is an open-source PHP framework with MVC structure developed and maintained by Shanghai Topthink Company.",
     "headers": {
       "X-Powered-By": "ThinkPHP"
     },
     "icon": "ThinkPHP.png",
     "implies": "PHP",
+    "oss": true,
     "website": "http://www.thinkphp.cn"
   },
   "Thinkific": {
@@ -1379,6 +1644,104 @@
     ],
     "saas": true,
     "website": "https://www.threekit.com"
+  },
+  "Thrive Apprentice": {
+    "cats": [
+      87,
+      21
+    ],
+    "description": "Thrive Apprentice is a WordPress plugin for creating online courses and also a membership plugin.",
+    "dom": "link[href*='/wp-content/plugins/thrive-apprentice/']",
+    "icon": "Thrive.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "saas": true,
+    "scriptSrc": "/wp-content/plugins/thrive-apprentice/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://thrivethemes.com/apprentice/"
+  },
+  "Thrive Architect": {
+    "cats": [
+      87,
+      51
+    ],
+    "description": "Thrive Architect is the visual page builder for WordPress.",
+    "dom": "link[href*='/wp-content/plugins/thrive-visual-editor/']",
+    "icon": "Thrive.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "saas": true,
+    "scriptSrc": "/wp-content/plugins/thrive-visual-editor/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://thrivethemes.com/architect/"
+  },
+  "Thrive Comments": {
+    "cats": [
+      87
+    ],
+    "description": "Thrive Comments plugin replaces the standard WordPress comments from your website.",
+    "dom": "link[href*='/wp-content/plugins/thrive-comments/']",
+    "icon": "Thrive.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "saas": true,
+    "scriptSrc": "/wp-content/plugins/thrive-comments/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://thrivethemes.com/comments/"
+  },
+  "Thrive Leads": {
+    "cats": [
+      87
+    ],
+    "description": "Thrive Leads is an all-in-one email list building plugin for WordPress.",
+    "dom": "link[href*='/wp-content/plugins/thrive-leads/']",
+    "icon": "Thrive.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "saas": true,
+    "scriptSrc": "/wp-content/plugins/thrive-leads/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://thrivethemes.com/leads/"
+  },
+  "Thrive Quiz Builder": {
+    "cats": [
+      87
+    ],
+    "description": "Thrive Quiz Builder is a powerful WordPress plugin that can help you to create quizzes for your website or blog.",
+    "dom": "link[href*='/wp-content/plugins/thrive-quiz-builder/']",
+    "icon": "Thrive.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "saas": true,
+    "scriptSrc": "/wp-content/plugins/thrive-quiz-builder/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://thrivethemes.com/quizbuilder"
+  },
+  "Thrive Ultimatum": {
+    "cats": [
+      87
+    ],
+    "description": "Thrive Ultimatum is a WordPress scarcity marketing plugin with built-in templates and campaign tracking tools from developer Thrive Themes.",
+    "dom": "link[href*='/wp-content/plugins/thrive-ultimatum/']",
+    "icon": "Thrive.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "saas": true,
+    "scriptSrc": "/wp-content/plugins/thrive-ultimatum/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://thrivethemes.com/ultimatum/"
   },
   "ThriveCart": {
     "cats": [
@@ -1519,6 +1882,28 @@
     "scriptSrc": "tilda(?:cdn|\\.ws|-blocks)",
     "website": "https://tilda.cc"
   },
+  "Tiledesk": {
+    "cats": [
+      52
+    ],
+    "description": "Tiledesk is the full-stack open-source Live Chat with built-in Chatbots, written in Node.js and Angular.",
+    "icon": "Tiledesk.png",
+    "js": {
+      "Tiledesk": "",
+      "tileDeskAsyncInit": "",
+      "tiledesk": "",
+      "tiledeskSettings": ""
+    },
+    "oss": true,
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://tiledesk.com"
+  },
   "Timeplot": {
     "cats": [
       25
@@ -1547,11 +1932,21 @@
     "scriptSrc": "\\.timify\\.com/",
     "website": "https://www.timify.com"
   },
+  "Tiny Slider": {
+    "cats": [
+      59
+    ],
+    "description": "Tiny Slider is a vanilla javascript slider for all purposes.",
+    "icon": "default.svg",
+    "oss": true,
+    "scriptSrc": "(?:/([\\d\\.]+)/min/)?tiny-slider(?:\\.min)?\\.js\\;version:\\1",
+    "website": "https://github.com/ganlanyuan/tiny-slider"
+  },
   "TinyMCE": {
     "cats": [
       24
     ],
-    "cpe": "cpe:/a:tiny:tinymce",
+    "cpe": "cpe:2.3:a:tiny:tinymce:*:*:*:*:*:*:*:*",
     "description": "TinyMCE is an online rich-text editor released as open-source software. TinyMCE is designed to integrate with JavaScript libraries, Vue.js, and AngularJS as well as content management systems such as Joomla!, and WordPress.",
     "icon": "TinyMCE.png",
     "js": {
@@ -1559,6 +1954,20 @@
     },
     "scriptSrc": "/tiny_?mce(?:\\.min)?\\.js",
     "website": "http://tinymce.com"
+  },
+  "Tippy.js": {
+    "cats": [
+      59
+    ],
+    "description": "Tippy.js is the complete tooltip, popover, dropdown, and menu solution for the web, powered by Popper.",
+    "dom": "style[data-tippy-stylesheet]",
+    "icon": "Tippy.js.svg",
+    "js": {
+      "tippy.defaultProps": ""
+    },
+    "oss": true,
+    "scriptSrc": "/tippy\\.js(?:@|/)?([\\d\\.]+)?\\;version:\\1",
+    "website": "https://atomiks.github.io/tippyjs"
   },
   "Tipsa": {
     "cats": [
@@ -1668,6 +2077,21 @@
     ],
     "website": "https://www.totango.com"
   },
+  "Totara": {
+    "cats": [
+      21
+    ],
+    "cookies": {
+      "TotaraSession": ""
+    },
+    "description": "Totara is a learning management system designed for businesses.",
+    "icon": "Totara.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.totaralearning.com"
+  },
   "Touch2Success": {
     "cats": [
       6
@@ -1720,6 +2144,22 @@
     "scriptSrc": "cdn\\.trackjs\\.com",
     "website": "http://trackjs.com"
   },
+  "Trackify X": {
+    "cats": [
+      100,
+      10
+    ],
+    "description": "Trackify X is a pixel engine that helps merchants backup their pixel data and manage multiple pixels.",
+    "icon": "Trackify X.png",
+    "implies": "Shopify",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "trackifyx\\.redretarget\\.com/",
+    "website": "https://trackifyapp.com"
+  },
   "Tradedoubler": {
     "cats": [
       71
@@ -1737,6 +2177,22 @@
     "scriptSrc": "swrap\\.tradedoubler\\.com",
     "website": "https://www.tradedoubler.com/"
   },
+  "Traek": {
+    "cats": [
+      10
+    ],
+    "description": "Traek is a website insights, analytics and lead generation tool.",
+    "icon": "Traek.svg",
+    "js": {
+      "Traek": ""
+    },
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.traek.io"
+  },
   "TrafficStars": {
     "cats": [
       36
@@ -1750,6 +2206,21 @@
     "saas": true,
     "scriptSrc": "\\.tsyndicate\\.com/",
     "website": "https://trafficstars.com"
+  },
+  "Transcend": {
+    "cats": [
+      67
+    ],
+    "description": "Transcend is data privacy management compliance platform.",
+    "icon": "Transcend.svg",
+    "js": {
+      "transcend": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "http://www.transcend.io"
   },
   "Transcy": {
     "cats": [
@@ -1781,6 +2252,20 @@
     },
     "website": "https://www.transifex.com"
   },
+  "Transistor.fm": {
+    "cats": [
+      5
+    ],
+    "description": "Transistor.fm is a podcast host, distribution and management platform.",
+    "dom": "iframe[src*='.transistor.fm/']",
+    "icon": "Transistor.fm.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://transistor.fm"
+  },
   "Translate WordPress": {
     "cats": [
       87,
@@ -1791,18 +2276,6 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/google-language-translator/.+scripts\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://gtranslate.io"
-  },
-  "Translucide": {
-    "cats": [
-      1
-    ],
-    "icon": "translucide.svg",
-    "implies": [
-      "PHP",
-      "jQuery"
-    ],
-    "scriptSrc": "lucide\\.init(?:\\.min)?\\.js",
-    "website": "http://www.translucide.net"
   },
   "Transmart": {
     "cats": [
@@ -1886,6 +2359,41 @@
     "scriptSrc": "\\.widget\\.trengo\\.eu/",
     "website": "https://trengo.com"
   },
+  "Triggerbee": {
+    "cats": [
+      76
+    ],
+    "description": "Triggerbee is an onsite personalisation platform that lets you use customer and behavioral data to build and launch personalised campaigns.",
+    "icon": "Triggerbee.png",
+    "js": {
+      "triggerbee": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://triggerbee.com"
+  },
+  "Trinity Audio": {
+    "cats": [
+      5
+    ],
+    "description": "Trinity Audio's AI-driven solutions help publishers and content creators create a world of smart audio experiences for their audiences, covering every stage of the audio journey from creation to distribution.",
+    "icon": "Trinity Audio.svg",
+    "js": {
+      "TRINITY_DISPLAY": "",
+      "TRINITY_PLAYER": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "//trinitymedia\\.ai/",
+    "website": "https://www.trinityaudio.ai"
+  },
   "Tripadviser.Widget": {
     "cats": [
       5
@@ -1894,6 +2402,20 @@
     "icon": "Tripadviser.Widget.svg",
     "scriptSrc": "tripadvisor\\.[\\w]+/WidgetEmbed",
     "website": "https://www.tripadvisor.com/Widgets"
+  },
+  "Triple Whale": {
+    "cats": [
+      10
+    ],
+    "description": "The Triple Whale platform combines centralization, visualization, and attribution into a dashboard that presents and illustrates KPIs in an actionable way.",
+    "icon": "triplewhale.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://triplewhale.com/",
+    "xhr": "triplewhale-pixel\\.web\\.app"
   },
   "TripleLift": {
     "cats": [
@@ -1915,6 +2437,22 @@
     "saas": true,
     "website": "https://triplelift.com",
     "xhr": "\\.3lift\\.com"
+  },
+  "Tritac Katana Commerce": {
+    "cats": [
+      6
+    ],
+    "description": "Katana Commerce is Tritac's B2B and B2C ecommerce platform.",
+    "icon": "Tritac.svg",
+    "meta": {
+      "powered-by": "^Katana\\sCommerce$"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.tritac.com/nl/producten/katana-commerce/"
   },
   "Trix": {
     "cats": [
@@ -2101,6 +2639,43 @@
     "scriptSrc": "trustspot\\.io",
     "website": "https://trustspot.io/"
   },
+  "Trustvox": {
+    "cats": [
+      90
+    ],
+    "description": "Trustvox collects reviews from customers who purchased ecommerce products and publishes them on product pages with Sincerity Seals.",
+    "icon": "Trustvox.png",
+    "js": {
+      "TrustvoxCertificateWidget": "",
+      "TrustvoxRatesWidget": "",
+      "_trustvox": "",
+      "_trustvox_colt": "",
+      "_trustvox_shelf_rate": "",
+      "trustvox_id": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://site.trustvox.com.br"
+  },
+  "TryNow": {
+    "cats": [
+      91
+    ],
+    "description": "TryNow is an ecommerce platform designed to offer a try before you buy experience for shoppers.",
+    "icon": "TryNow.svg",
+    "js": {
+      "TryNowConfig": "",
+      "tryNowCheckout": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.trynow\\.net/shopify/([\\d\\.]+)/\\;version:\\1",
+    "website": "https://www.trynow.io"
+  },
   "Tumblr": {
     "cats": [
       11
@@ -2151,22 +2726,6 @@
     },
     "scriptSrc": "(turf@[\\d.]+)?/?turf\\.min\\.js",
     "website": "https://turfjs.org/"
-  },
-  "TurnTo": {
-    "cats": [
-      90
-    ],
-    "description": "TurnTo Networks Inc provides customer-generated content solutions platform for large retailers and the global brands that sell through them.",
-    "icon": "TurnTo.svg",
-    "js": {
-      "TurnTo": "",
-      "turnToConfig": ""
-    },
-    "pricing": [
-      "poa"
-    ],
-    "saas": true,
-    "website": "https://www.turntonetworks.com"
   },
   "Twenty Eleven": {
     "cats": [
@@ -2385,6 +2944,19 @@
     "scriptSrc": "cdn\\.twik\\.io",
     "website": "https://www.twik.io/"
   },
+  "Twikoo": {
+    "cats": [
+      15
+    ],
+    "description": "Twikoo is a simple, safe, free comment system.",
+    "icon": "Twikoo.png",
+    "js": {
+      "twikoo.version": "^([\\d\\.]+)$\\;version:\\1"
+    },
+    "oss": true,
+    "scriptSrc": "/twikoo/dist/twikoo\\.all\\.min\\.js",
+    "website": "https://twikoo.js.org"
+  },
   "Twilight CMS": {
     "cats": [
       1
@@ -2473,8 +3045,10 @@
     ],
     "description": "Twitter Emoji is a set of open-source emoticons and emojis for Twitter, TweetDeck, and also for Android and iOS versions of the application.",
     "js": {
-      "twemoji": ""
+      "twemoji": "",
+      "twemoji.base": "twemoji\\.maxcdn\\.com/v/([\\d\\.]+)/\\;version:\\1"
     },
+    "oss": true,
     "scriptSrc": "twemoji(?:\\.min)?\\.js",
     "website": "https://twitter.github.io/twemoji/"
   },
@@ -2548,6 +3122,25 @@
     "url": "/admin/login\\.php?referer=http%3A%2F%2F",
     "website": "http://typecho.org/"
   },
+  "Typeform": {
+    "cats": [
+      73
+    ],
+    "description": "Typeform is a Spanish online software as a service (SaaS) company that specialises in online form building and online surveys.",
+    "dom": "link[href*='.typeform.com/']",
+    "icon": "Typeform.png",
+    "js": {
+      "tf.createPopover": "",
+      "tf.createWidget": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "embed\\.typeform\\.com/",
+    "website": "https://www.typeform.com"
+  },
   "Typekit": {
     "cats": [
       17
@@ -2583,6 +3176,27 @@
     "saas": true,
     "scriptSrc": "portal/js/typof\\.js\\;confidence:50",
     "website": "https://typof.com"
+  },
+  "Tyslo EasySell": {
+    "cats": [
+      100
+    ],
+    "description": "Tyslo EasySell replaces default Shopify checkout process by embedding (or popup) a simple order form on the product or cart page.",
+    "icon": "Tyslo EasySell.png",
+    "implies": "Shopify",
+    "js": {
+      "openTysloForm": "",
+      "tysloApplyDiscount": "",
+      "tysloConfigVersion": "",
+      "tysloEasysellConfig": ""
+    },
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://tyslo.com"
   },
   "theTradeDesk": {
     "cats": [
@@ -2627,7 +3241,7 @@
     "cats": [
       22
     ],
-    "cpe": "cpe:/a:acme:thttpd",
+    "cpe": "cpe:2.3:a:acme:thttpd:*:*:*:*:*:*:*:*",
     "headers": {
       "Server": "\\bthttpd(?:/([\\d.]+))?\\;version:\\1"
     },

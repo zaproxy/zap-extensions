@@ -35,36 +35,70 @@ public class TlsConfig {
                     TlsUtils.TLS_V1_2,
                     TlsUtils.TLS_V1_3);
 
-    private List<String> enabledProtocols;
+    private static final List<String> DEFAULT_APPLICATION_PROTOCOLS =
+            List.of(TlsUtils.APPLICATION_PROTOCOL_HTTP_1_1, TlsUtils.APPLICATION_PROTOCOL_HTTP_2);
 
-    /** Constructs a {@code TlsConfig} with all the SSL/TLS protocol versions supported. */
+    private List<String> tlsProtocols;
+    private boolean alpnEnabled;
+    private List<String> applicationProtocols;
+
+    /**
+     * Constructs a {@code TlsConfig} with all the SSL/TLS protocol versions supported, with ALPN
+     * enabled, and with all application protocols.
+     */
     public TlsConfig() {
-        this.enabledProtocols = TlsUtils.filterUnsupportedProtocols(DEFAULT_PROTOCOLS);
+        this(DEFAULT_PROTOCOLS, true, DEFAULT_APPLICATION_PROTOCOLS);
     }
 
     /**
-     * Constructs a {@code TlsConfig} with the given SSL/TLS protocol versions.
+     * Constructs a {@code TlsConfig} with the given SSL/TLS protocol versions, if ALPN is enabled,
+     * and with the given application protocols.
      *
-     * @param enabledProtocols the enabled protocols
+     * @param tlsProtocols the enabled protocols
+     * @param alpnEnabled {@code true} if ALPN should be enabled, {@code false} otherwise.
+     * @param applicationProtocols the application protocols, if not empty
      * @throws IllegalArgumentException if no protocol is provided or none supported.
-     * @throws NullPointerException if the given {@code enabledProtocols} is {@code null}.
+     * @throws NullPointerException if the given {@code tlsProtocols} or {@code
+     *     applicationProtocols} is {@code null}.
      */
-    public TlsConfig(List<String> enabledProtocols) {
-        this.enabledProtocols = TlsUtils.filterUnsupportedProtocols(enabledProtocols);
+    public TlsConfig(
+            List<String> tlsProtocols, boolean alpnEnabled, List<String> applicationProtocols) {
+        this.tlsProtocols = TlsUtils.filterUnsupportedTlsProtocols(tlsProtocols);
+        this.alpnEnabled = alpnEnabled;
+        this.applicationProtocols =
+                TlsUtils.filterUnsupportedApplicationProtocols(applicationProtocols);
     }
 
     /**
-     * Gets the enabled protocols.
+     * Gets the TLS protocols.
      *
-     * @return a list with the enabled protocols.
+     * @return a list with the TLS protocols.
      */
-    public List<String> getEnabledProtocols() {
-        return enabledProtocols;
+    public List<String> getTlsProtocols() {
+        return tlsProtocols;
+    }
+
+    /**
+     * Tells whether or not ALPN is enabled.
+     *
+     * @return {@code true} if ALPN is enabled, {@code false} otherwise.
+     */
+    public boolean isAlpnEnabled() {
+        return alpnEnabled;
+    }
+
+    /**
+     * Gets the application protocols to use when ALPN is enabled.
+     *
+     * @return the application protocols.
+     */
+    public List<String> getApplicationProtocols() {
+        return applicationProtocols;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(enabledProtocols);
+        return Objects.hash(tlsProtocols, alpnEnabled, applicationProtocols);
     }
 
     @Override
@@ -76,6 +110,8 @@ public class TlsConfig {
             return false;
         }
         TlsConfig other = (TlsConfig) object;
-        return Objects.equals(enabledProtocols, other.enabledProtocols);
+        return Objects.equals(tlsProtocols, other.tlsProtocols)
+                && alpnEnabled == other.alpnEnabled
+                && Objects.equals(applicationProtocols, other.applicationProtocols);
     }
 }

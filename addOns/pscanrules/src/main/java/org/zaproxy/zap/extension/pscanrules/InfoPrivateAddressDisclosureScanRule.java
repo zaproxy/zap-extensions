@@ -34,6 +34,7 @@
 
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -179,18 +180,26 @@ public class InfoPrivateAddressDisclosureScanRule extends PluginPassiveScanner {
         }
 
         if (sbTxtFound.length() != 0) {
-            newAlert()
-                    .setRisk(getRisk())
-                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                    .setDescription(getDescription())
-                    .setOtherInfo(sbTxtFound.toString())
-                    .setSolution(getSolution())
-                    .setReference(getReference())
-                    .setEvidence(firstOne)
-                    .setCweId(getCweId())
-                    .setWascId(getWascId())
-                    .raise();
+            createAlert(sbTxtFound.toString(), firstOne).raise();
         }
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(createAlert("192.168.36.127", "192.168.36.127").build());
+    }
+
+    private AlertBuilder createAlert(String otherInfo, String evidence) {
+        return newAlert()
+                .setRisk(getRisk())
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription())
+                .setOtherInfo(otherInfo)
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(evidence)
+                .setCweId(getCweId())
+                .setWascId(getWascId());
     }
 
     public int getRisk() {

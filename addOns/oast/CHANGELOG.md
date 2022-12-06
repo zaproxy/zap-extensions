@@ -8,10 +8,36 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- Do not include the Connection header in Callback responses for HTTP/2.
+
+## [0.13.0] - 2022-10-27
+### Changed
+- Update minimum ZAP version to 2.12.0.
+
+### Added
+- BOAST Payloads are persisted in the permanent database, and polled in future ZAP sessions.
+
+## [0.12.0] - 2022-10-19
+### Fixed
+- Deregister the Interactsh service even in case of error (Issue 7504).
+- Clear Interactsh payloads from the GUI when the service is deregistered.
+- Error logged when interactsh server returns null data.
+
+## [0.11.0] - 2022-09-23
+### Changed
+- Maintenance changes.
+- Rename the `OAST Register Request Handler.js` script template to `OAST Request Handler.js`
+  and use the Extender script type for it. The request handler is now removed when the
+  script is disabled.
+- Promoted to Beta status.
 
 ### Added
 - Default services notes in the help documents.
 - Extension description and UI name.
+- Allow unregistering specific OAST Request handlers.
+
+### Fixed
+- Synchronized alerts cache access to avoid locks
 
 ## [0.10.0] - 2022-02-18
 ### Added
@@ -110,6 +136,9 @@ Button is disabled in that case.
 
 ## [0.1.0] - 2021-08-04
 
+[0.13.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.13.0
+[0.12.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.12.0
+[0.11.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.11.0
 [0.10.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.10.0
 [0.9.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.9.0
 [0.8.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.8.0

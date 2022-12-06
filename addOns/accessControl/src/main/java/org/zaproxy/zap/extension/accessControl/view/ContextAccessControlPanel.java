@@ -61,11 +61,14 @@ import org.zaproxy.zap.extension.accessControl.widgets.SiteTreeNode;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.users.User;
+import org.zaproxy.zap.utils.FontUtils;
+import org.zaproxy.zap.utils.ZapLabel;
 import org.zaproxy.zap.view.AbstractContextPropertiesPanel;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.widgets.ContextPanelUsersSelectComboBox;
 
 /** The context configuration panel used for specifying the Access Control rules. */
+@SuppressWarnings("serial")
 public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 
     private static final Logger log = LogManager.getLogger(ContextAccessControlPanel.class);
@@ -101,9 +104,7 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
         this.setLayout(new GridBagLayout());
 
         this.add(
-                new JLabel(
-                        Constant.messages.getHtmlWrappedString(
-                                "accessControl.contextPanel.label.description")),
+                createLabel("accessControl.contextPanel.label.description"),
                 LayoutHelper.getGBC(0, 0, 2, 1.0D, new Insets(0, 0, 10, 0)));
 
         // The user selection box
@@ -119,11 +120,16 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
                         0, 2, 2, 1.0D, 1.0D, GridBagConstraints.BOTH, new Insets(10, 0, 0, 5)));
 
         // The warning regarding changing structure parameters
-        this.add(
-                new JLabel(
-                        Constant.messages.getHtmlWrappedString(
-                                "accessControl.contextPanel.label.warning")),
-                LayoutHelper.getGBC(0, 3, 2, 1.0D));
+        ZapLabel label = createLabel("accessControl.contextPanel.label.warning");
+        label.setFont(FontUtils.getFont(FontUtils.Size.smaller));
+        this.add(label, LayoutHelper.getGBC(0, 3, 2, 1.0D));
+    }
+
+    private static ZapLabel createLabel(String key) {
+        ZapLabel label = new ZapLabel(Constant.messages.getString(key));
+        label.setLineWrap(true);
+        label.setWrapStyleWord(true);
+        return label;
     }
 
     private JScrollPane getContextSiteTreePane() {

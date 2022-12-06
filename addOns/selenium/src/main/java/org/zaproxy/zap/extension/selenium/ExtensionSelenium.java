@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javax.swing.ImageIcon;
@@ -39,6 +40,8 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.Validate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.MutableCapabilities;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.WebDriver;
@@ -82,6 +85,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionSelenium";
     public static final String SCRIPT_TYPE_SELENIUM = "selenium";
+
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionSelenium.class);
 
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
             Collections.unmodifiableList(Arrays.asList(ExtensionNetwork.class));
@@ -127,6 +132,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
     private List<WeakReference<ProvidedBrowsersComboBoxModel>> providedBrowserComboBoxModels =
             new ArrayList<>();
+
+    private List<BrowserHook> browserHooks = new ArrayList<>();
 
     private ExtensionScript extScript;
 
@@ -204,7 +211,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         extensionHook.addOptionsParamSet(getOptions());
         extensionHook.addAddonFilesChangedListener(addonFilesChangedListener);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookView().addOptionPanel(getOptionsPanel());
             extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuOpenInBrowser(this));
         }
@@ -231,7 +238,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     }
 
     private ImageIcon createScriptIcon() {
-        if (getView() == null) {
+        if (!hasView()) {
             return null;
         }
         return new ImageIcon(
@@ -290,7 +297,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
         final int idx = providedBrowserUIList.indexOf(pbui);
 
-        if (getView() != null) {
+        if (hasView()) {
             SwingUtilities.invokeLater(
                     () -> {
                         ListDataEvent ev =
@@ -346,7 +353,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         providedBrowsers.remove(webDriverProvider.getProvidedBrowser().getId());
         buildProvidedBrowserUIList();
 
-        if (getView() != null) {
+        if (hasView()) {
             SwingUtilities.invokeLater(
                     () -> {
                         ListDataEvent ev =
@@ -765,6 +772,20 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                             .get(providedBrowser.getProviderId())
                             .getWebDriver(requester, proxyAddress, proxyPort, enableExtensions);
         }
+
+        SeleniumScriptUtils ssu =
+                new SeleniumScriptUtils(wd, requester, providedBrowserId, proxyAddress, proxyPort);
+
+        // Run any hooks registered by add-ons first
+        browserHooks.forEach(
+                script -> {
+                    try {
+                        script.browserLaunched(ssu);
+                    } catch (Exception e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                });
+
         if (getExtScript() != null) {
             boolean synchronously = requester == HttpSender.AJAX_SPIDER_INITIATOR;
             List<ScriptWrapper> scripts = extScript.getScripts(SCRIPT_TYPE_SELENIUM);
@@ -777,13 +798,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                             Runnable runnable =
                                     () -> {
                                         try {
-                                            s.browserLaunched(
-                                                    new SeleniumScriptUtils(
-                                                            wd,
-                                                            requester,
-                                                            providedBrowserId,
-                                                            proxyAddress,
-                                                            proxyPort));
+                                            s.browserLaunched(ssu);
                                         } catch (Exception e) {
                                             extScript.handleScriptException(script, e);
                                         }
@@ -1230,5 +1245,25 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                 // All the rest should work on all platforms
                 return true;
         }
+    }
+
+    /**
+     * Register a browser hook. These are always executed synchronously.
+     *
+     * @param hook the hook to register
+     */
+    public void registerBrowserHook(BrowserHook hook) {
+        Objects.requireNonNull(hook);
+        this.browserHooks.add(hook);
+    }
+
+    /**
+     * Deregister a browser hook.
+     *
+     * @param hook the hook to deregister
+     */
+    public void deregisterBrowserHook(BrowserHook hook) {
+        Objects.requireNonNull(hook);
+        this.browserHooks.remove(hook);
     }
 }

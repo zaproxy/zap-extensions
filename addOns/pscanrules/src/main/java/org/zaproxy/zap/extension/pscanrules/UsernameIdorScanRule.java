@@ -109,7 +109,12 @@ public class UsernameIdorScanRule extends PluginPassiveScanner {
 
     private void raiseAlert(
             String username, String evidence, String hashType, int id, HttpMessage msg) {
-        newAlert()
+        buildAlert(username, evidence, hashType, id, msg).raise();
+    }
+
+    private AlertBuilder buildAlert(
+            String username, String evidence, String hashType, int id, HttpMessage msg) {
+        return newAlert()
                 .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_HIGH)
                 .setDescription(getDescription(username))
@@ -118,8 +123,19 @@ public class UsernameIdorScanRule extends PluginPassiveScanner {
                 .setReference(getReference())
                 .setEvidence(evidence)
                 .setCweId(getCweId())
-                .setWascId(getWascId())
-                .raise();
+                .setWascId(getWascId());
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        List<Alert> alerts = new ArrayList<>();
+        Alert example =
+                buildAlert(ADMIN_2, "d033e22ae348aeb5660fc2140aec35850c4da997", "SHA1", 0, null)
+                        .build();
+        example.setTags(
+                CommonAlertTag.mergeTags(example.getTags(), CommonAlertTag.CUSTOM_PAYLOADS));
+        alerts.add(example);
+        return alerts;
     }
 
     @Override

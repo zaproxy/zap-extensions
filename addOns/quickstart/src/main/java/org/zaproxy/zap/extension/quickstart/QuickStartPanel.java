@@ -44,14 +44,15 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.model.OptionsParam;
 import org.zaproxy.zap.ZAP;
-import org.zaproxy.zap.extension.tab.Tab;
 import org.zaproxy.zap.utils.DesktopUtils;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.FontUtils.Size;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.view.LayoutHelper;
 
-public class QuickStartPanel extends AbstractPanel implements Tab {
+@SuppressWarnings("serial")
+public class QuickStartPanel extends AbstractPanel {
 
     private static final long serialVersionUID = 1L;
 
@@ -259,6 +260,12 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
         this.explorePanel = panel;
     }
 
+    public void setTraditionalSpider(TraditionalSpider traditionalSpider) {
+        if (this.attackPanel != null) {
+            this.attackPanel.setTraditionalSpider(traditionalSpider);
+        }
+    }
+
     public void addPlugableSpider(PlugableSpider pe) {
         if (this.attackPanel != null) {
             this.attackPanel.addPlugableSpider(pe);
@@ -309,9 +316,13 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
                     extension.getQuickStartParam().setClearedNewsItem(newsItem.getId());
                 });
 
-        JButton learnMoreButton =
+        JButton newsLearnMoreButton =
                 new JButton(Constant.messages.getString("quickstart.button.news"));
-        learnMoreButton.addActionListener(e -> DesktopUtils.openUrlInBrowser(newsItem.getUri()));
+        newsLearnMoreButton.addActionListener(
+                e -> {
+                    Stats.incCounter("stats.quickstart.news." + newsItem.getId());
+                    DesktopUtils.openUrlInBrowser(newsItem.getUri());
+                });
 
         innerPanel.setBorder(
                 BorderFactory.createTitledBorder(
@@ -320,7 +331,8 @@ public class QuickStartPanel extends AbstractPanel implements Tab {
         innerPanel.add(
                 new JLabel(newsItem.getText()),
                 LayoutHelper.getGBC(0, 0, 1, 0.0D, new Insets(5, 5, 5, 5)));
-        innerPanel.add(learnMoreButton, LayoutHelper.getGBC(1, 0, 1, 0.0D, new Insets(5, 5, 5, 5)));
+        innerPanel.add(
+                newsLearnMoreButton, LayoutHelper.getGBC(1, 0, 1, 0.0D, new Insets(5, 5, 5, 5)));
         innerPanel.add(closeButton, LayoutHelper.getGBC(2, 0, 1, 0.0D));
 
         newsPanel.add(

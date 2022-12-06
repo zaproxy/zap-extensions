@@ -5,7 +5,7 @@ description = "The beta status Passive Scanner rules"
 zapAddOn {
     addOnName.set("Passive scanner rules (beta)")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.11.1")
+    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -14,7 +14,21 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">= 1.7.0 & < 2.0.0")
+                    version.set(">= 1.10.0 & < 2.0.0")
+                }
+            }
+        }
+        extensions {
+            register("org.zaproxy.zap.extension.pscanrulesBeta.payloader.ExtensionPayloader") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.pscanrulesBeta.payloader"))
+                }
+                dependencies {
+                    addOns {
+                        register("custompayloads") {
+                            version.set(">= 0.9.0 & < 1.0.0")
+                        }
+                    }
                 }
             }
         }
@@ -22,10 +36,10 @@ zapAddOn {
 }
 
 dependencies {
-    implementation("com.google.re2j:re2j:1.6")
-
     compileOnly(parent!!.childProjects.get("commonlib")!!)
+    compileOnly(parent!!.childProjects.get("custompayloads")!!)
 
     testImplementation(parent!!.childProjects.get("commonlib")!!)
+    testImplementation(parent!!.childProjects.get("custompayloads")!!)
     testImplementation(project(":testutils"))
 }

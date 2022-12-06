@@ -26,8 +26,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.zaproxy.zap.extension.params.ExtensionParams;
-import org.zaproxy.zap.extension.spider.ExtensionSpider;
-import org.zaproxy.zap.model.DefaultValueGenerator;
+import org.zaproxy.zap.model.ValueGenerator;
 
 public class ExtensionFormHandler extends ExtensionAdaptor {
 
@@ -36,6 +35,7 @@ public class ExtensionFormHandler extends ExtensionAdaptor {
     protected static final String PREFIX = "formhandler";
 
     private FormHandlerParam param;
+    private ValueGenerator valueGenerator;
 
     private OptionsFormHandlerPanel optionsFormHandlerPanel;
     private PopupMenuAddFormhandlerParam popupMenuAddFormhandlerParam;
@@ -44,18 +44,29 @@ public class ExtensionFormHandler extends ExtensionAdaptor {
         super(NAME);
     }
 
+    /**
+     * Gets the value generator, with user provided values.
+     *
+     * @return the value generator.
+     * @since 6.0.0
+     */
+    public ValueGenerator getValueGenerator() {
+        return valueGenerator;
+    }
+
+    @Override
+    public void init() {
+        valueGenerator = new FormHandlerValueGenerator(getParam());
+    }
+
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
         extensionHook.addOptionsParamSet(getParam());
         ExtensionLoader extLoader = Control.getSingleton().getExtensionLoader();
-        ExtensionSpider extension = extLoader.getExtension(ExtensionSpider.class);
-        if (extension != null) {
-            extension.setValueGenerator(new FormHandlerValueGenerator(getParam()));
-        }
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookView().addOptionPanel(getOptionsFormHandlerPanel());
             if (extLoader.isExtensionEnabled(ExtensionParams.NAME)) {
                 extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuAddFormhandlerParam());
@@ -65,19 +76,7 @@ public class ExtensionFormHandler extends ExtensionAdaptor {
 
     @Override
     public boolean canUnload() {
-        // The extension can be dynamically unloaded, all resources used/added can be freed/removed
-        // from core.
         return true;
-    }
-
-    @Override
-    public void unload() {
-        super.unload();
-        ExtensionSpider extension =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.class);
-        if (extension != null) {
-            extension.setValueGenerator(new DefaultValueGenerator());
-        }
     }
 
     // Method for creating and obtaining the Options Panel

@@ -447,6 +447,9 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                                     randomfilepath,
                                     null,
                                     null));
+            nonexistfilemsg
+                    .getRequestHeader()
+                    .setVersion(getBaseMsg().getRequestHeader().getVersion());
             setMessageCookies(nonexistfilemsg, originalMessage);
             sendAndReceive(nonexistfilemsg, false);
             byte[] nonexistfilemsgdata = nonexistfilemsg.getResponseBody().getBytes();
@@ -494,6 +497,9 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                                         randomparentpath,
                                         null,
                                         null));
+                nonexistparentmsg
+                        .getRequestHeader()
+                        .setVersion(getBaseMsg().getRequestHeader().getVersion());
                 setMessageCookies(nonexistparentmsg, originalMessage);
                 sendAndReceive(nonexistparentmsg, false);
                 nonexistparentmsgdata = nonexistparentmsg.getResponseBody().getBytes();

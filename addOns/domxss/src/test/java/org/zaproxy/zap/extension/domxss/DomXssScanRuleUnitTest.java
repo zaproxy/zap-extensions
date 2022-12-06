@@ -40,6 +40,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
@@ -60,10 +61,10 @@ class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
         WebDriverManager.chromedriver().setup();
 
         extensionNetwork = new ExtensionNetwork();
-        extensionNetwork.init();
         Model model = Model.getSingleton();
         extensionNetwork.initModel(model);
         Control.initSingletonForTesting(model, mock(ExtensionLoader.class));
+        extensionNetwork.init();
         extensionNetwork.hook(new ExtensionHook(model, null));
     }
 
@@ -87,6 +88,14 @@ class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
     @Override
     protected void setUpMessages() {
         mockMessages(new ExtensionDomXSS());
+    }
+
+    @Override
+    protected int getRecommendMaxNumberMessagesPerParam(AttackStrength strength) {
+        if (strength == AttackStrength.LOW) {
+            return NUMBER_MSGS_ATTACK_STRENGTH_LOW + 3;
+        }
+        return super.getRecommendMaxNumberMessagesPerParam(strength);
     }
 
     @Test

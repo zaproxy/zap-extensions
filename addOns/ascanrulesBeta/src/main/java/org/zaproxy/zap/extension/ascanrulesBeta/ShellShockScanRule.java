@@ -31,6 +31,7 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 
 /**
@@ -47,7 +48,7 @@ public class ShellShockScanRule extends AbstractAppParamPlugin {
     /** the logger object */
     private static final Logger log = LogManager.getLogger(ShellShockScanRule.class);
 
-    private final String attackHeader = "X-Powered-By";
+    private final String attackHeader = HttpFieldsNames.X_POWERED_BY;
 
     // Use a standard HTTP response header, to make sure the header is not dropped by load
     // balancers, proxies, etc

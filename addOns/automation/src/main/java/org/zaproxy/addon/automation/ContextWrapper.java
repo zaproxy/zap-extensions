@@ -369,7 +369,7 @@ public class ContextWrapper {
     }
 
     public User getUser(String name) {
-        if (getExtUserMgmt() != null) {
+        if (getExtUserMgmt() != null && context != null) {
             for (User user : extUserMgmt.getContextUserAuthManager(context.getId()).getUsers()) {
                 if (user.getName().equals(name)) {
                     LOG.debug("User {} found in context {}", name, context.getName());
@@ -377,7 +377,7 @@ public class ContextWrapper {
                 }
             }
         }
-        LOG.debug("User {} not found in context {}", name, context.getName());
+        LOG.debug("User {} not found in context {}", name, data.getName());
         return null;
     }
 

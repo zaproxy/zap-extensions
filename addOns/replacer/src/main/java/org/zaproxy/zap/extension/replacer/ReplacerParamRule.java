@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.replacer;
 
 import java.util.List;
+import java.util.regex.Pattern;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.utils.Enableable;
 
@@ -35,6 +36,8 @@ public class ReplacerParamRule extends Enableable {
     }
 
     private String description;
+    private String url;
+    private Pattern urlPattern;
     private String matchString;
     private String replacement;
     private String escapedReplacement;
@@ -74,8 +77,34 @@ public class ReplacerParamRule extends Enableable {
             String replacement,
             List<Integer> initiators,
             boolean enabled) {
+        this(description, "", matchType, matchString, matchRegex, replacement, initiators, enabled);
+    }
+
+    /**
+     * Constructor
+     *
+     * @param description whatever makes sense to the user
+     * @param url the URL that the rule applies to, interpreted as a regular expression.
+     * @param matchType the type of matching to be performed
+     * @param matchString the string to match against
+     * @param matchRegex true if the matchString is a regex
+     * @param replacement the string to replace with
+     * @param initiators a list of initiators as defined in {@link
+     *     org.parosproxy.paros.network.HttpSender}
+     * @param enabled true if the rule is enabled
+     */
+    public ReplacerParamRule(
+            String description,
+            String url,
+            MatchType matchType,
+            String matchString,
+            boolean matchRegex,
+            String replacement,
+            List<Integer> initiators,
+            boolean enabled) {
         super(enabled);
 
+        setUrl(url);
         this.description = description;
         this.matchType = matchType;
         this.matchString = matchString;
@@ -88,6 +117,7 @@ public class ReplacerParamRule extends Enableable {
     public ReplacerParamRule(ReplacerParamRule token) {
         this(
                 token.description,
+                token.url,
                 token.matchType,
                 token.matchString,
                 token.matchRegex,
@@ -102,6 +132,28 @@ public class ReplacerParamRule extends Enableable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        if (url == null || url.isEmpty()) {
+            this.url = "";
+            urlPattern = null;
+            return;
+        }
+
+        this.urlPattern = Pattern.compile(url);
+        this.url = url;
+    }
+
+    public boolean matchesUrl(String targetUrl) {
+        if (url.isEmpty()) {
+            return true;
+        }
+        return urlPattern.matcher(targetUrl).matches();
     }
 
     public String getMatchString() {
@@ -164,6 +216,7 @@ public class ReplacerParamRule extends Enableable {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + url.hashCode();
         result = prime * result + ((initiators == null) ? 0 : initiators.hashCode());
         result = prime * result + (matchRegex ? 1231 : 1237);
         result = prime * result + ((matchString == null) ? 0 : matchString.hashCode());
@@ -187,6 +240,9 @@ public class ReplacerParamRule extends Enableable {
         if (description == null) {
             if (other.description != null) return false;
         } else if (!description.equals(other.description)) return false;
+        if (!url.equals(other.url)) {
+            return false;
+        }
         if (initiators == null) {
             if (other.initiators != null) return false;
         } else if (!initiators.equals(other.initiators)) return false;

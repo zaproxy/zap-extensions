@@ -34,6 +34,7 @@ import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class AddJobDialog extends StandardFieldsDialog {
 
     private static final long serialVersionUID = 1L;
@@ -54,6 +55,7 @@ public class AddJobDialog extends StandardFieldsDialog {
         List<AutomationJob> jobs =
                 ext.getAutomationJobs().values().stream()
                         .filter(j -> !j.isDataJob())
+                        .filter(j -> j.getClass().getAnnotation(Deprecated.class) == null)
                         .collect(Collectors.toList());
 
         Collections.sort(jobs);
@@ -80,7 +82,7 @@ public class AddJobDialog extends StandardFieldsDialog {
                     .showWarningDialog(
                             thisDialog,
                             Constant.messages.getString(
-                                    "automation.dialog.error.misc ", e.getMessage()));
+                                    "automation.dialog.error.misc", e.getMessage()));
         }
     }
 

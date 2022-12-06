@@ -25,6 +25,7 @@ import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.network.internal.server.http.LocalServerConfig;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTableModel;
 
+@SuppressWarnings("serial")
 public class LocalServersTableModel extends AbstractMultipleOptionsTableModel<LocalServerConfig> {
 
     private static final long serialVersionUID = 1L;

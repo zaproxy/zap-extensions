@@ -41,7 +41,7 @@
     "html": "<title>XAMPP(?: Version ([\\d\\.]+))?</title>\\;version:\\1",
     "icon": "XAMPP.png",
     "implies": [
-      "Apache",
+      "Apache HTTP Server",
       "MySQL",
       "PHP",
       "Perl"
@@ -222,6 +222,21 @@
     "scriptSrc": "apps\\.xpresslane\\.in/",
     "website": "https://www.xpresslane.in"
   },
+  "Xretail": {
+    "cats": [
+      6
+    ],
+    "description": "Xretail is a subscription based product that enables the omni-channel ecommerce approach to its customers.",
+    "icon": "Xretail.png",
+    "meta": {
+      "author": "^Xretail team$"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://xretail.com"
+  },
   "Xserver": {
     "cats": [
       88
@@ -236,6 +251,27 @@
       "recurring"
     ],
     "website": "https://www.xserver.ne.jp"
+  },
+  "Xtra": {
+    "cats": [
+      80
+    ],
+    "description": "Xtra is a creative, responsive, live drag and drop and easy-to-use WordPress theme for any kind of websites.",
+    "dom": {
+      "link[href*='/wp-content/themes/xtra/']": {
+        "attributes": {
+          "href": "/wp-content/themes/xtra/.+core(?:-laptop|-mobile)?\\.css(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+        }
+      }
+    },
+    "icon": "Xtra.png",
+    "pricing": [
+      "low",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/xtra/.+custom\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://xtratheme.com"
   },
   "Xtremepush": {
     "cats": [

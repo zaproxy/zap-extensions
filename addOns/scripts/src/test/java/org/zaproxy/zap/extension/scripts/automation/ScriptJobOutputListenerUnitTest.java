@@ -23,10 +23,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
@@ -78,5 +82,29 @@ public class ScriptJobOutputListenerUnitTest {
         listener.output(script, "Proxy\n");
         assertThat(progress.getInfos().size(), is(3));
         assertThat(progress.getInfos(), contains("Hello", "", "ZAPProxy"));
+    }
+
+    @Test
+    void shouldCallInfoOnOutputWithView() {
+        String testString = "Hello World";
+        try (MockedStatic<View> view = mockStatic(View.class)) {
+            view.when(View::isInitialised).thenReturn(true);
+            progress = mock(AutomationProgress.class);
+            listener = new ScriptJobOutputListener(progress, SCRIPT_NAME);
+            listener.output(script, testString + "\n");
+            verify(progress).info(testString);
+        }
+    }
+
+    @Test
+    void shouldCallInfoNoStdoutOnOutputWithoutView() {
+        String testString = "Hello World";
+        try (MockedStatic<View> view = mockStatic(View.class)) {
+            view.when(View::isInitialised).thenReturn(false);
+            progress = mock(AutomationProgress.class);
+            listener = new ScriptJobOutputListener(progress, SCRIPT_NAME);
+            listener.output(script, testString + "\n");
+            verify(progress).infoNoStdout(testString);
+        }
     }
 }

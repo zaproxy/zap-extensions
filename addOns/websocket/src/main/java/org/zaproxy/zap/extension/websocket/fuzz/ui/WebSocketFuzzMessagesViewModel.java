@@ -37,6 +37,7 @@ import org.zaproxy.zap.extension.websocket.ui.WebSocketMessagesViewModel;
  * This {@link TableModel} is also backed by the database, but has got some additional columns.
  * Moreover, erroneous entries are stored into an extra {@link List}.
  */
+@SuppressWarnings("serial")
 public class WebSocketFuzzMessagesViewModel extends WebSocketMessagesViewModel {
     private static final long serialVersionUID = 5435325545219552543L;
 

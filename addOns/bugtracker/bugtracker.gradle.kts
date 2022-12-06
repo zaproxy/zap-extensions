@@ -1,12 +1,8 @@
 description = "Bug Tracker extension."
 
-tasks.withType<JavaCompile> {
-    options.compilerArgs = options.compilerArgs - "-Werror" + "-proc:none"
-}
-
 zapAddOn {
     addOnName.set("Bug Tracker")
-    zapVersion.set("2.11.1")
+    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -15,6 +11,10 @@ zapAddOn {
 }
 
 dependencies {
+    compileOnly("com.infradna.tool:bridge-method-annotation:1.18") {
+        exclude(group = "org.jenkins-ci")
+    }
+    compileOnly("com.github.spotbugs:spotbugs-annotations:3.1.12")
     implementation("com.j2bugzilla:j2bugzilla:2.2.1") {
         // Not needed.
         exclude(group = "junit")

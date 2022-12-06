@@ -25,6 +25,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -188,7 +189,11 @@ public class ApplicationErrorScanRule extends PluginPassiveScanner {
 
     // Internal service method for alert management
     private void raiseAlert(HttpMessage msg, int id, String evidence, int risk) {
-        newAlert() // has PluginId, msg, URI, name
+        buildAlert(msg, id, evidence, risk).raise();
+    }
+
+    private AlertBuilder buildAlert(HttpMessage msg, int id, String evidence, int risk) {
+        return newAlert()
                 .setRisk(risk)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(getDescription())
@@ -196,8 +201,18 @@ public class ApplicationErrorScanRule extends PluginPassiveScanner {
                 .setReference(getReference())
                 .setEvidence(evidence)
                 .setCweId(getCweId())
-                .setWascId(getWascId())
-                .raise();
+                .setWascId(getWascId());
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        List<Alert> alerts = new ArrayList<>();
+        Alert example =
+                buildAlert(null, 0, "ERROR: parser: parse error at or near", getRisk()).build();
+        example.setTags(
+                CommonAlertTag.mergeTags(example.getTags(), CommonAlertTag.CUSTOM_PAYLOADS));
+        alerts.add(example);
+        return alerts;
     }
 
     static Supplier<Iterable<String>> getCustomPayloads() {

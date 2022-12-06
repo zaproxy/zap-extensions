@@ -21,11 +21,14 @@ package org.zaproxy.zap.extension.spiderAjax.automation;
 
 import java.net.URI;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import org.apache.commons.lang.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
@@ -34,10 +37,14 @@ import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ContextWrapper;
+import org.zaproxy.addon.automation.JobResultData;
 import org.zaproxy.addon.automation.jobs.JobData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData;
+import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData.RuleData;
 import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 import org.zaproxy.addon.automation.tests.AutomationStatisticTest;
+import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderTarget;
 import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
 import org.zaproxy.zap.extension.spiderAjax.SpiderListener;
@@ -52,8 +59,12 @@ public class AjaxSpiderJob extends AutomationJob {
 
     private static final String PARAM_CONTEXT = "context";
     private static final String PARAM_URL = "url";
+    private static final String PARAM_USER = "user";
+    private static final String PARAM_ONLY_RUN_IF_MODERN = "runOnlyIfModern";
     private static final String PARAM_FAIL_IF_LESS_URLS = "failIfFoundUrlsLessThan";
     private static final String PARAM_WARN_IF_LESS_URLS = "warnIfFoundUrlsLessThan";
+
+    private static final int MODERN_WEB_DETECTION_RULE_ID = 10109;
 
     private ExtensionAjax extSpider;
 
@@ -103,7 +114,12 @@ public class AjaxSpiderJob extends AutomationJob {
                 JobUtils.getJobOptions(this, progress),
                 this.getName(),
                 new String[] {
-                    PARAM_CONTEXT, PARAM_URL, PARAM_FAIL_IF_LESS_URLS, PARAM_WARN_IF_LESS_URLS
+                    PARAM_CONTEXT,
+                    PARAM_URL,
+                    PARAM_USER,
+                    PARAM_ONLY_RUN_IF_MODERN,
+                    PARAM_FAIL_IF_LESS_URLS,
+                    PARAM_WARN_IF_LESS_URLS
                 },
                 progress,
                 this.getPlan().getEnv());
@@ -114,7 +130,14 @@ public class AjaxSpiderJob extends AutomationJob {
         Map<String, String> map = super.getCustomConfigParameters();
         map.put(PARAM_CONTEXT, "");
         map.put(PARAM_URL, "");
+        map.put(PARAM_USER, "");
+        map.put(PARAM_ONLY_RUN_IF_MODERN, Boolean.FALSE.toString());
         return map;
+    }
+
+    @Override
+    public boolean supportsMonitorTests() {
+        return true;
     }
 
     @Override
@@ -136,7 +159,7 @@ public class AjaxSpiderJob extends AutomationJob {
         User user = this.getUser(this.getParameters().getUser(), progress);
 
         String uriStr = this.getParameters().getUrl();
-        if (uriStr == null) {
+        if (StringUtils.isEmpty(uriStr)) {
             uriStr = context.getUrls().get(0);
         }
         uriStr = env.replaceVars(uriStr);
@@ -146,6 +169,41 @@ public class AjaxSpiderJob extends AutomationJob {
         } catch (Exception e1) {
             progress.error(Constant.messages.getString("automation.error.context.badurl", uriStr));
             return;
+        }
+
+        if (Boolean.TRUE.equals(this.getParameters().getRunOnlyIfModern())) {
+            JobResultData resultData = progress.getJobResultData(PassiveScanJobResultData.KEY);
+            if (resultData == null) {
+                // They havnt run the passive scan wait job
+                progress.warn(
+                        Constant.messages.getString("spiderajax.automation.error.nopscanresults"));
+            } else if (resultData instanceof PassiveScanJobResultData) {
+                PassiveScanJobResultData pscanResultData = (PassiveScanJobResultData) resultData;
+
+                List<RuleData> modernRuleData =
+                        pscanResultData.getAllRuleData().stream()
+                                .filter(r -> r.getId() == MODERN_WEB_DETECTION_RULE_ID)
+                                .collect(Collectors.toList());
+
+                if (modernRuleData.isEmpty()
+                        || AlertThreshold.OFF.equals(modernRuleData.get(0).getThreshold())) {
+                    // Rule is not present or turned off
+                    progress.warn(
+                            Constant.messages.getString(
+                                    "spiderajax.automation.error.nomodernrule"));
+                } else if (resultData.getAlertData(MODERN_WEB_DETECTION_RULE_ID) == null) {
+                    progress.info(
+                            Constant.messages.getString("spiderajax.automation.info.notmodern"));
+                    return;
+                } else {
+                    progress.info(Constant.messages.getString("spiderajax.automation.info.modern"));
+                }
+            } else {
+                progress.error(
+                        Constant.messages.getString(
+                                "spiderajax.automation.error.badresultdata",
+                                resultData.getClass().getCanonicalName()));
+            }
         }
 
         AjaxSpiderTarget.Builder targetBuilder =
@@ -178,27 +236,33 @@ public class AjaxSpiderJob extends AutomationJob {
         }
 
         // Wait for the ajax spider to finish
+        boolean forceStop = false;
+        int numUrlsFound = 0;
+        int lastCount = 0;
 
         while (true) {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                // Ignore
-            }
+            this.sleep(500);
+
+            numUrlsFound = listener.getMessagesFound();
+            Stats.incCounter("spiderAjax.urls.added", numUrlsFound - lastCount);
+            lastCount = numUrlsFound;
+
             if (!spiderThread.isRunning()) {
                 break;
             }
-            if (System.currentTimeMillis() > endTime) {
-                // It should have stopped but didn't (happens occasionally)
-                spiderThread.stopSpider();
+            if (!this.runMonitorTests(progress) || System.currentTimeMillis() > endTime) {
+                forceStop = true;
                 break;
             }
         }
-        int numUrlsFound = listener.getMessagesFound();
+        if (forceStop) {
+            spiderThread.stopSpider();
+            progress.info(Constant.messages.getString("automation.info.jobstopped", getType()));
+        }
+
         progress.info(
                 Constant.messages.getString(
                         "automation.info.urlsfound", this.getType(), numUrlsFound));
-        Stats.incCounter("spiderAjax.urls.added", numUrlsFound);
     }
 
     @Override
@@ -334,9 +398,9 @@ public class AjaxSpiderJob extends AutomationJob {
         private String context;
         private String user;
         private String url;
-        private Integer maxDuration;
-        private Integer maxCrawlDepth;
-        private Integer numberOfBrowsers;
+        private Integer maxDuration = AjaxSpiderParam.DEFAULT_MAX_DURATION;
+        private Integer maxCrawlDepth = AjaxSpiderParam.DEFAULT_MAX_CRAWL_DEPTH;
+        private Integer numberOfBrowsers = AjaxSpiderParam.DEFAULT_NUMBER_OF_BROWSERS;
 
         private String browserId;
         private Integer maxCrawlStates;
@@ -345,6 +409,8 @@ public class AjaxSpiderJob extends AutomationJob {
         private Boolean clickDefaultElems;
         private Boolean clickElemsOnce;
         private Boolean randomInputs;
+
+        private Boolean runOnlyIfModern;
 
         // These 2 fields are deprecated
         private Boolean failIfFoundUrlsLessThan;
@@ -452,6 +518,14 @@ public class AjaxSpiderJob extends AutomationJob {
 
         public void setReloadWait(Integer reloadWait) {
             this.reloadWait = reloadWait;
+        }
+
+        public Boolean getRunOnlyIfModern() {
+            return runOnlyIfModern;
+        }
+
+        public void setRunOnlyIfModern(Boolean runOnlyIfModern) {
+            this.runOnlyIfModern = runOnlyIfModern;
         }
 
         public Boolean getFailIfFoundUrlsLessThan() {

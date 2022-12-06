@@ -42,6 +42,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.HTMLElementName;
+import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.retire.Result;
@@ -80,6 +83,10 @@ public class Repo {
         }
     }
 
+    public Result scanJS(HttpMessage msg) {
+        return scanJS(msg, new Source(msg.getResponseBody().toString()));
+    }
+
     /*
      * This is the top level function called from the scanner. It first checks if:
      * 1)Matching vulnerability is found in database for JS file URL, if YES return return HashSet of related info.
@@ -88,11 +95,11 @@ public class Repo {
      * 4)Matching vulnerability is found in database for JS file hash, if YES return HashSet of related info .
      * 5)Return empty HashSet.
      */
-    public Result scanJS(HttpMessage msg) {
+    public Result scanJS(HttpMessage msg, Source source) {
 
         String uri = msg.getRequestHeader().getURI().toString();
         String fileName = RetireUtil.getFileName(msg.getRequestHeader().getURI());
-        String content = msg.getResponseBody().toString();
+        String content = getCleanContent(msg, source);
         Result result;
 
         // Check if included in don't check section
@@ -128,6 +135,17 @@ public class Repo {
         return scanHash(hash);
     }
 
+    private String getCleanContent(HttpMessage msg, Source source) {
+        if (msg.getResponseHeader().isHtml()) {
+            StringBuilder contents = new StringBuilder();
+            for (Element scriptElement : source.getAllElements(HTMLElementName.SCRIPT)) {
+                contents.append(scriptElement.toString());
+                contents.append('\n');
+            }
+            return contents.toString();
+        }
+        return msg.getResponseBody().toString();
+    }
     /*
      * This function computes the SHA 1 hash of the HTTP response body,
      * IF the hash matches that of an existing entry in the vulnerability database

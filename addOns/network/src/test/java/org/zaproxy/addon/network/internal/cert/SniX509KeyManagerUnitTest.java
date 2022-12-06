@@ -40,8 +40,6 @@ import javax.net.ssl.SNIHostName;
 import javax.net.ssl.SSLEngine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.parosproxy.paros.security.CertData;
-import org.parosproxy.paros.security.SslCertificateService;
 
 /** Unit test for {@link SniX509KeyManager}. */
 class SniX509KeyManagerUnitTest {
@@ -57,7 +55,7 @@ class SniX509KeyManagerUnitTest {
         }
     }
 
-    private SslCertificateService sslCertificateService;
+    private ServerCertificateService certificateService;
     private String fallbackHostname;
     private SniX509KeyManager sniX509KeyManager;
     private String keyType;
@@ -68,11 +66,10 @@ class SniX509KeyManagerUnitTest {
 
     @BeforeEach
     void setup() throws Exception {
-        sslCertificateService = mock(SslCertificateService.class);
+        certificateService = mock(ServerCertificateService.class);
         fallbackHostname = "example.org";
         sniX509KeyManager =
-                new SniX509KeyManager(
-                        sslCertificateService, LISTENING_INET_ADDRESS, fallbackHostname);
+                new SniX509KeyManager(certificateService, LISTENING_INET_ADDRESS, fallbackHostname);
         keyType = "RSA";
         issuers = null;
         sslSession = mock(ExtendedSSLSession.class);
@@ -86,24 +83,24 @@ class SniX509KeyManagerUnitTest {
     void shouldUseListeningAddressIfNoFallbackHostnameNorSni() throws Exception {
         // Given
         CertData certData = createIpCertData(LISTENING_ADDRESS);
-        given(sslCertificateService.createCertForHost(certData)).willReturn(keyStore);
+        given(certificateService.createCertificate(certData)).willReturn(keyStore);
         SniX509KeyManager sniX509KeyManager =
-                new SniX509KeyManager(sslCertificateService, LISTENING_INET_ADDRESS, null);
+                new SniX509KeyManager(certificateService, LISTENING_INET_ADDRESS, null);
         // When
         sniX509KeyManager.chooseEngineServerAlias(keyType, issuers, engine);
         // Then
-        verify(sslCertificateService).createCertForHost(certData);
+        verify(certificateService).createCertificate(certData);
     }
 
     @Test
     void shouldUseFallbackHostnameIfNoSni() throws Exception {
         // Given
         CertData certData = new CertData(fallbackHostname);
-        given(sslCertificateService.createCertForHost(certData)).willReturn(keyStore);
+        given(certificateService.createCertificate(certData)).willReturn(keyStore);
         // When
         sniX509KeyManager.chooseEngineServerAlias(keyType, issuers, engine);
         // Then
-        verify(sslCertificateService).createCertForHost(certData);
+        verify(certificateService).createCertificate(certData);
     }
 
     @Test
@@ -111,14 +108,13 @@ class SniX509KeyManagerUnitTest {
         // Given
         fallbackHostname = "127.0.0.4";
         SniX509KeyManager sniX509KeyManager =
-                new SniX509KeyManager(
-                        sslCertificateService, LISTENING_INET_ADDRESS, fallbackHostname);
+                new SniX509KeyManager(certificateService, LISTENING_INET_ADDRESS, fallbackHostname);
         CertData certData = createIpCertData(fallbackHostname);
-        given(sslCertificateService.createCertForHost(certData)).willReturn(keyStore);
+        given(certificateService.createCertificate(certData)).willReturn(keyStore);
         // When
         sniX509KeyManager.chooseEngineServerAlias(keyType, issuers, engine);
         // Then
-        verify(sslCertificateService).createCertForHost(certData);
+        verify(certificateService).createCertificate(certData);
     }
 
     @Test
@@ -127,11 +123,11 @@ class SniX509KeyManagerUnitTest {
         String sni = "example.com";
         CertData certData = new CertData(sni);
         given(sslSession.getRequestedServerNames()).willReturn(Arrays.asList(new SNIHostName(sni)));
-        given(sslCertificateService.createCertForHost(certData)).willReturn(keyStore);
+        given(certificateService.createCertificate(certData)).willReturn(keyStore);
         // When
         sniX509KeyManager.chooseEngineServerAlias(keyType, issuers, engine);
         // Then
-        verify(sslCertificateService).createCertForHost(certData);
+        verify(certificateService).createCertificate(certData);
     }
 
     @Test
@@ -140,17 +136,17 @@ class SniX509KeyManagerUnitTest {
         String sni = "127.0.0.5";
         CertData certData = createIpCertData(sni);
         given(sslSession.getRequestedServerNames()).willReturn(Arrays.asList(new SNIHostName(sni)));
-        given(sslCertificateService.createCertForHost(certData)).willReturn(keyStore);
+        given(certificateService.createCertificate(certData)).willReturn(keyStore);
         // When
         sniX509KeyManager.chooseEngineServerAlias(keyType, issuers, engine);
         // Then
-        verify(sslCertificateService).createCertForHost(certData);
+        verify(certificateService).createCertificate(certData);
     }
 
     @Test
     void shouldThrowIfErrorDuringCertGeneration() throws Exception {
         // Given
-        given(sslCertificateService.createCertForHost(any(CertData.class)))
+        given(certificateService.createCertificate(any(CertData.class)))
                 .willThrow(IOException.class);
         // When / Then
         Exception e =

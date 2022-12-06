@@ -44,7 +44,7 @@ public class ZestEngineWrapper extends DefaultEngineWrapper {
 
     @Override
     public ImageIcon getIcon() {
-        return ExtensionZest.ZEST_ICON;
+        return ExtensionZest.getZestIcon();
     }
 
     @Override

@@ -38,7 +38,7 @@ public class ExtensionTreeTools extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuTreeTools());
         }
     }

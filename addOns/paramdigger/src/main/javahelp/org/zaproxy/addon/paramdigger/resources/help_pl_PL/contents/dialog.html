@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+Param Digger dialog
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Param Digger dialog</H1>
+<p>
+This dialog launches the <a href="paramdigger.html">Param Digger</a>.<br>
+</p>
+
+<H2>Control</H2>
+The first tab allows you to select or change the URL along with selection of guessers.<br>
+If the URL is in one or more Contexts then you will be able to choose one of them.<br>
+You can also modify the number of threads that would be used for the Param Digger. <br> <br>
+If you select/check the 'URL Guess' checkbox, then the URL Guess tab will be shown which provides fine 
+grain control over the guessing process for URL parameters. <br>
+At this time Param Digger can perform guessing attacks and has only one of the guessers 
+available which is the URL Parameter Guesser, which is enabled by default. <br> <br>
+If you select/check the 'Header Guess' checkbox, then the Header Guess tab will be shown which 
+provides control over the guessing process for HTTP Headers.(Not yet available)<br><br>
+If you select/check the 'Cookie Guess' checkbox, then the Cookie Guess tab will be shown which
+provides control over the guessing process for Cookies.(Not yet available)<br><br>
+<br><br>
+ 
+<H2>URL Guess</H2>
+    This tab allows you to configure the URL guessing procedure. <br>
+    If you select/check the 'Add fcbz cache buster' then a static cache buster would be added/appended 
+    to the URL. (Not yet being used)<br><br>
+
+    The Wordlist dropdown is the one which offers users the ability to specify their wordlist. <br>
+    By default the 'Predefined' option is selected, which means the predefined wordlist, consisting of 
+    835 parameters. <br>
+    If you select the 'Custom' option, then you will be able to enter your own wordlist. <br>
+    If you select the 'Both' option, then it will use the predefined wordlist and the custom wordlist 
+    that you have specified. <br>
+    For your custom wordlist, you have to make sure that the words are separated by a newline.
+    <br><br>
+    As of the current release, the predefined wordlist used by the add-on is based on 
+    <a href="https://github.com/s0md3v/Arjun">Arjun</a>'s small wordlist.
+    <br><br>
+
+
+    The 'Number of Chunks' field is the one which allows you to control the number of chunks that are used.
+    If you are using a wordlist having more than 1000 words, then you can increase the number of chunks to your
+    desired requirement. Otherwise you can use the default value.
+    <br><br>
+
+    The 'Methods' list allows you to select the methods that you want to use. By default GET is the one 
+    which is selected. You can choose one or multiple methods from the list, by simply using ctrl + click or (cmd + click).
+    <br><br>
+
+<H2>Header Guess</H2>
+Coming soon..<br><br>
+<H2>Cookie Guess</H2>
+Coming soon..<br><br>
+
+<H2>Accessed via</H2>
+<table>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="tab.html">Param Digger tab</a></td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>Sites tab</td><td>'Attack / Param Digger...' right click menu item</td></tr>
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>History tab</td><td>'Attack / Param Digger...' right click menu item</td></tr>
+</table>
+
+</BODY>
+</HTML>

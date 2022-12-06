@@ -31,12 +31,13 @@ import org.parosproxy.paros.network.HttpInputStream;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpOutputStream;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.network.HttpRequestBody;
 
 /** Handles API requests by calling the {@link API}. */
-public class ZapApiHandler extends HttpRequestHandler {
+public class ZapApiHandler implements HttpMessageHandler {
 
     private static final Logger LOGGER = LogManager.getLogger(ZapApiHandler.class);
 
@@ -53,7 +54,13 @@ public class ZapApiHandler extends HttpRequestHandler {
     }
 
     @Override
-    protected void handleRequest(HttpMessageHandlerContext ctx, HttpMessage msg) {
+    public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) {
+        if (ctx.isFromClient()) {
+            handleRequest(ctx, msg);
+        }
+    }
+
+    private void handleRequest(HttpMessageHandlerContext ctx, HttpMessage msg) {
         if (!state.isEnabled()) {
             return;
         }

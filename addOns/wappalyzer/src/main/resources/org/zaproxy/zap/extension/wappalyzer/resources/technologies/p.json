@@ -41,7 +41,7 @@
     "cookies": {
       "PHPSESSID": ""
     },
-    "cpe": "cpe:/a:php:php",
+    "cpe": "cpe:2.3:a:php:php:*:*:*:*:*:*:*:*",
     "description": "PHP is a general-purpose scripting language used for web development.",
     "headers": {
       "Server": "php/?([\\d.]+)?\\;version:\\1",
@@ -55,7 +55,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:phpnuke:php-nuke",
+    "cpe": "cpe:2.3:a:phpnuke:php-nuke:*:*:*:*:*:*:*:*",
     "html": "<[^>]+Powered by PHP-Nuke",
     "icon": "PHP-Nuke.png",
     "implies": "PHP",
@@ -82,7 +82,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:phpfusion:phpfusion",
+    "cpe": "cpe:2.3:a:phpfusion:phpfusion:*:*:*:*:*:*:*:*",
     "headers": {
       "X-PHPFusion": "(.+)$\\;version:\\1",
       "X-Powered-By": "PHPFusion (.+)$\\;version:\\1"
@@ -102,15 +102,31 @@
     "cats": [
       25
     ],
-    "description": "PixiJS - The HTML5 Creation Engine. 2D WebGL renderer.",
-    "icon": "pixijs.png",
+    "description": "PIXIjs is a free open-source 2D engine used to make animated websites and HTML5 games.",
+    "icon": "PIXIjs.svg",
     "js": {
       "PIXI": "",
       "PIXI.VERSION": "^(.+)$\\;version:\\1"
     },
+    "oss": true,
     "scriptSrc": "pixi\\.(min\\.)?js$",
     "url": ".+\\.pixijs\\.com",
-    "website": "https://www.pixijs.com/"
+    "website": "https://www.pixijs.com"
+  },
+  "POLi Payment": {
+    "cats": [
+      41
+    ],
+    "description": "POLi Payment(formerly known as Centricom) is an online payment service in Australia and New Zealand.",
+    "icon": "POLi Payment.svg",
+    "js": {
+      "wc_ga_pro.available_gateways.poli": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://www.polipayments.com"
   },
   "POWR": {
     "cats": [
@@ -131,9 +147,18 @@
     "scriptSrc": "www\\.powr\\.io/powr\\.js",
     "website": "https://www.powr.io"
   },
+  "PWA": {
+    "cats": [
+      19
+    ],
+    "description": "Progressive Web Apps (PWAs) are web apps built and enhanced with modern APIs to deliver enhanced capabilities, reliability, and installability while reaching anyone, anywhere, on any device, all with a single codebase.",
+    "dom": "link[rel='manifest']",
+    "icon": "PWA.svg",
+    "website": "https://web.dev/progressive-web-apps/"
+  },
   "PWA Studio": {
     "cats": [
-      6
+      108
     ],
     "description": "PWA Studio is a collection of tools that lets developers build complex Progressive Web Applications on top of Magento 2 or Adobe Commerce stores.",
     "icon": "PWA Studio.png",
@@ -262,7 +287,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:pagekit:pagekit",
+    "cpe": "cpe:2.3:a:pagekit:pagekit:*:*:*:*:*:*:*:*",
     "icon": "Pagekit.png",
     "meta": {
       "generator": "Pagekit"
@@ -331,6 +356,24 @@
     "scriptSrc": "\\.getpaloma\\.com/",
     "website": "https://www.getpaloma.com"
   },
+  "Panelbear": {
+    "cats": [
+      10,
+      13
+    ],
+    "description": "Panelbear is a simple website performance and traffic analytics tool.",
+    "icon": "Panelbear.svg",
+    "js": {
+      "panelbear": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://panelbear.com"
+  },
   "Pantheon": {
     "cats": [
       62
@@ -341,7 +384,7 @@
       "x-pantheon-styx-hostname": "",
       "x-styx-req-id": ""
     },
-    "icon": "pantheon.svg",
+    "icon": "Pantheon.svg",
     "implies": [
       "PHP",
       "Nginx",
@@ -349,6 +392,22 @@
       "Fastly"
     ],
     "website": "https://pantheon.io/"
+  },
+  "Paradox": {
+    "cats": [
+      101
+    ],
+    "description": "Paradox is an AI company that helps companies capture and screen candidates, improve conversions, and answer all candidate questions.",
+    "icon": "Paradox.svg",
+    "js": {
+      "_applybase": "\\.paradox\\.ai",
+      "oliviaChatBaseUrl": "\\.paradox\\.ai"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.paradox.ai"
   },
   "Parcelforce": {
     "cats": [
@@ -361,31 +420,6 @@
       "\\bParcelforce\\b"
     ],
     "website": "https://www.parcelforce.com"
-  },
-  "Pardot": {
-    "cats": [
-      32
-    ],
-    "description": "Pardot is a Software-as-a-Service (SaaS) marketing automation platform.",
-    "dns": {
-      "TXT": [
-        "pardot"
-      ]
-    },
-    "headers": {
-      "X-Pardot-LB": "",
-      "X-Pardot-Route": "",
-      "X-Pardot-Rsp": ""
-    },
-    "icon": "Pardot.png",
-    "js": {
-      "piAId": "",
-      "piCId": "",
-      "piHostname": "",
-      "piProtocol": "",
-      "piTracker": ""
-    },
-    "website": "https://www.pardot.com"
   },
   "ParkingCrew": {
     "cats": [
@@ -605,7 +639,7 @@
     "cats": [
       41
     ],
-    "cpe": "cpe:/a:paypal:paypal",
+    "cpe": "cpe:2.3:a:paypal:paypal:*:*:*:*:*:*:*:*",
     "description": "PayPal is an online payments system that supports online money transfers and serves as an electronic alternative to traditional paper methods like checks and money orders.",
     "dom": {
       "button": {
@@ -626,7 +660,8 @@
       "enablePaypal": "",
       "paypal": "",
       "paypalClientId": "",
-      "paypalJs": ""
+      "paypalJs": "",
+      "wc_ga_pro.available_gateways.paypal": ""
     },
     "meta": {
       "id": "in-context-paypal-metadata"
@@ -638,6 +673,22 @@
     "scriptSrc": "paypalobjects\\.com",
     "website": "https://paypal.com",
     "xhr": "\\.paypal\\.com"
+  },
+  "PayPal Credit": {
+    "cats": [
+      91
+    ],
+    "description": "PayPal Credit is a reusable line of credit that lets you pay for online purchases over time.",
+    "dom": "img[alt*='PayPal Credit'], a[title*='PayPal Credit']",
+    "icon": "PayPal.svg",
+    "implies": "PayPal",
+    "js": {
+      "PaypalOffersObject": "",
+      "payPalCreditPopover": ""
+    },
+    "requiresCategory": 6,
+    "scriptSrc": "\\.paypalobjects\\.com/.+/smart-credit-message@([\\d\\.]+)\\.js\\;version:\\1",
+    "website": "https://www.paypal.com/uk/webapps/mpp/paypal-virtual-credit"
   },
   "PayPal Marketing Solutions": {
     "cats": [
@@ -710,6 +761,19 @@
     "saas": true,
     "website": "https://www.paylocity.com"
   },
+  "PebblePost": {
+    "cats": [
+      77
+    ],
+    "description": "PebblePost provides marketers a way to transform recent online data into intelligent direct mail programs that perform.",
+    "icon": "PebblePost.svg",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.pbbl\\.co/",
+    "website": "https://www.pebblepost.com"
+  },
   "Peek": {
     "cats": [
       5,
@@ -724,6 +788,21 @@
     },
     "scriptSrc": "js\\.peek\\.\\w+",
     "website": "https://www.peek.com/"
+  },
+  "PeerBoard": {
+    "cats": [
+      2
+    ],
+    "description": "PeerBoard is a plug-and-play community solution, which helps groups, clubs, startups, marketplaces and businesses create discussion forums.",
+    "icon": "PeerBoard.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.peerboard\\.com/",
+    "website": "https://peerboard.com"
   },
   "PeerTube": {
     "cats": [
@@ -854,6 +933,18 @@
     "scriptSrc": "/assets/themes/perfex/js/global\\.min\\.js(?:\\?v=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.perfexcrm.com"
   },
+  "Performance Lab": {
+    "cats": [
+      87
+    ],
+    "description": "Performance plugin from the WordPress Performance Group, which is a collection of standalone performance modules.",
+    "icon": "Performance Lab.svg",
+    "meta": {
+      "generator": "^Performance Lab ?([\\d.]+)?\\;version:\\1"
+    },
+    "requires": "WordPress",
+    "website": "https://wordpress.org/plugins/performance-lab/"
+  },
   "PerimeterX": {
     "cats": [
       16
@@ -865,7 +956,7 @@
       "_pxvid": ""
     },
     "description": "PerimeterX is a provider of scalable, behavior-based threat protection technology for the web, cloud, and mobile.",
-    "icon": "perimeterx.svg",
+    "icon": "PerimeterX.svg",
     "js": {
       "_pxAppId": ""
     },
@@ -897,7 +988,7 @@
     "cats": [
       27
     ],
-    "cpe": "cpe:/a:perl:perl",
+    "cpe": "cpe:2.3:a:perl:perl:*:*:*:*:*:*:*:*",
     "description": "Perl is a family of two high-level, general-purpose, interpreted, dynamic programming languages.",
     "headers": {
       "Server": "\\bPerl\\b(?: ?/?v?([\\d.]+))?\\;version:\\1"
@@ -1043,7 +1134,7 @@
     "icon": "sazito-phoenix.png",
     "implies": [
       "React",
-      "webpack",
+      "Webpack",
       "Node.js"
     ],
     "js": {
@@ -1053,6 +1144,25 @@
       "generator": "^phoenix"
     },
     "website": "https://github.com/Sazito/phoenix/"
+  },
+  "Phoenix Site": {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "phoenix_p_session": ""
+    },
+    "description": "Phoenix Site software has been developed by the Internet Marketing Union and is especially intended for entrepreneurs (without technical knowledge) who want to score better in Google (SEO) and get more leads and customers (conversion) from their website.",
+    "icon": "Phoenix Site.png",
+    "js": {
+      "phxsite.pages_version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://phoenixsite.nl"
   },
   "Photo Gallery": {
     "cats": [
@@ -1117,11 +1227,46 @@
     "saas": true,
     "website": "https://brands.photoshelter.com"
   },
+  "PhotoSwipe": {
+    "cats": [
+      7,
+      59
+    ],
+    "description": "PhotoSwipe is an open-source gallery to support JavaScript-based image zooming.",
+    "icon": "PhotoSwipe.png",
+    "js": {
+      "PhotoSwipe": "",
+      "PhotoSwipeUI_Default": "",
+      "photoswipeParseHash": ""
+    },
+    "oss": true,
+    "scriptSrc": "photoswipe/([\\d\\.]+)/photoswipe\\.min\\.js\\;version:\\1",
+    "website": "https://photoswipe.com"
+  },
+  "Photoslurp": {
+    "cats": [
+      96
+    ],
+    "description": "Photoslurp is a visual commerce platform that collects photos and videos of customers using your products from across social networks.",
+    "icon": "Photoslurp.svg",
+    "js": {
+      "Photoslurp": "",
+      "photoSlurpWidgetSettings": "",
+      "photoslurp_script": "",
+      "photoslurp_wdgts": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://hi.photoslurp.com"
+  },
   "Phusion Passenger": {
     "cats": [
       22
     ],
-    "cpe": "cpe:/a:phusionpassenger:phusion_passenger",
+    "cpe": "cpe:2.3:a:phusionpassenger:phusion_passenger:*:*:*:*:*:*:*:*",
     "description": "Phusion Passenger is a free web server and application server with support for Ruby, Python and Node.js.",
     "headers": {
       "Server": "Phusion Passenger ([\\d.]+)\\;version:\\1",
@@ -1149,6 +1294,24 @@
       "\\.piano\\.io"
     ],
     "website": "https://piano.io"
+  },
+  "PickyStory": {
+    "cats": [
+      100
+    ],
+    "description": "PickyStory is the ecommerce conversion platform.",
+    "icon": "PickyStory.png",
+    "implies": "Shopify",
+    "js": {
+      "pickystory.overrideStore": ""
+    },
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.pickystory\\.com/",
+    "website": "https://pickystory.com"
   },
   "Pico": {
     "cats": [
@@ -1203,12 +1366,22 @@
     ],
     "website": "https://picturepark.com"
   },
+  "Piman": {
+    "cats": [
+      68
+    ],
+    "description": "Piman is an open-source accessibility UI framework create by Blueplanet Inc.",
+    "dom": "button.bpa-btn",
+    "icon": "Piman.svg",
+    "oss": true,
+    "website": "https://ya-sai.github.io/piman/"
+  },
   "Pimcore": {
     "cats": [
       1,
       6
     ],
-    "cpe": "cpe:/a:pimcore:pimcore",
+    "cpe": "cpe:2.3:a:pimcore:pimcore:*:*:*:*:*:*:*:*",
     "description": "Pimcore is an open-source digital platform that aggregates, enriches, and manages enterprise data and provides up-to-date, consistent, and personalised experiences to customers.",
     "dom": ".pimcore_area_content",
     "headers": {
@@ -1220,7 +1393,7 @@
     "pricing": [
       "poa"
     ],
-    "website": "http://pimcore.org"
+    "website": "https://pimcore.com/en/digital-experience-platform"
   },
   "Pin Payments": {
     "cats": [
@@ -1255,6 +1428,24 @@
       "designer": "Pingoteam"
     },
     "website": "https://www.pingoteam.ir/"
+  },
+  "PinnacleCart": {
+    "cats": [
+      6
+    ],
+    "description": "PinnacleCart is an ecommerce platform.",
+    "icon": "PinnacleCart.png",
+    "js": {
+      "USER_DELETE_ADDRESS": "^DeleteShippingAddress$\\;confidence:49",
+      "USER_DELETE_PAYMENT_PROFILE": "^DeletePaymentProfile$\\;confidence:49"
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.pinnaclecart.com"
   },
   "Pinterest": {
     "cats": [
@@ -1302,6 +1493,35 @@
     "saas": true,
     "website": "https://www.pipedrive.com/"
   },
+  "Piwik PRO Core": {
+    "cats": [
+      10
+    ],
+    "description": "Piwik PRO Core is a free alternative to Google Analytics that is privacy & compliance focused.",
+    "excludes": "Matomo Analytics",
+    "icon": "Piwik PRO Core.svg",
+    "pricing": [
+      "freemium",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.piwik\\.pro/",
+    "website": "https://piwik.pro"
+  },
+  "Pixc": {
+    "cats": [
+      19
+    ],
+    "description": "Pixc is human powered image editing platform.",
+    "icon": "Pixc.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "//pixc\\.com/",
+    "website": "https://pixc.com"
+  },
   "PixelFed": {
     "cats": [
       2
@@ -1341,19 +1561,54 @@
     "scriptSrc": "/wp-content/plugins/pixelyoursite/",
     "website": "https://www.pixelyoursite.com"
   },
-  "Pixlee": {
+  "Pixieset Store": {
+    "cats": [
+      6
+    ],
+    "description": "Pixieset Store lets you sell professional print products, digital downloads, and other items directly from your galleries.",
+    "icon": "Pixieset.svg",
+    "js": {
+      "PixiesetProductEditor": "",
+      "PixiesetProductOptionSelection": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://pixieset.com"
+  },
+  "Pixieset Website": {
+    "cats": [
+      1,
+      51
+    ],
+    "description": "Pixieset Website is a space to create your own beautiful photography website.",
+    "icon": "Pixieset.svg",
+    "meta": {
+      "generator": "^Pixieset$"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://pixieset.com"
+  },
+  "Pixlee TurnTo": {
     "cats": [
       96
     ],
-    "description": "Pixlee is a visual marketing platform that helps brands leverage user-generated content to improve their marketing performance.",
-    "icon": "Pixlee.png",
+    "description": "Pixlee TurnTo is a social UGC, ratings and reviews, and influencer marketing platform for community-driven brands.",
+    "icon": "Pixelee TurnTo.png",
     "js": {
       "Pixlee": "",
-      "Pixlee_Analytics": ""
+      "Pixlee_Analytics": "",
+      "TurnTo": "",
+      "turnToConfig": ""
     },
     "pricing": [
-      "mid",
-      "recurring"
+      "poa"
     ],
     "saas": true,
     "scriptSrc": "assets\\.pixlee\\.com",
@@ -1383,6 +1638,26 @@
       "recurring"
     ],
     "website": "https://www.pizzanetz.de"
+  },
+  "Plaid": {
+    "cats": [
+      41,
+      19
+    ],
+    "description": "Plaid is a fintech company that facilitates communication between financial services apps and users' banks and credit card providers.",
+    "headers": {
+      "content-security-policy": "cdn\\.plaid\\.com/"
+    },
+    "icon": "Plaid.svg",
+    "js": {
+      "Plaid.version": "([\\.\\d]+)\\;version:\\1"
+    },
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "scriptSrc": "\\.plaid\\.com/",
+    "website": "https://plaid.com"
   },
   "Planet": {
     "cats": [
@@ -1439,7 +1714,7 @@
     "cookies": {
       "PLAY_SESSION": ""
     },
-    "cpe": "cpe:/a:playframework:play_framework",
+    "cpe": "cpe:2.3:a:playframework:play_framework:*:*:*:*:*:*:*:*",
     "icon": "Play.svg",
     "implies": "Scala",
     "website": "https://www.playframework.com"
@@ -1479,6 +1754,7 @@
     "cats": [
       9
     ],
+    "cpe": "cpe:2.3:a:parallels:parallels_plesk_panel:*:*:*:*:*:*:*:*",
     "description": "Plesk is a web hosting and server data centre automation software with a control panel developed for Linux and Windows-based retail hosting service providers.",
     "headers": {
       "X-Powered-By": "^Plesk(?:L|W)in",
@@ -1492,7 +1768,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:pligg:pligg_cms",
+    "cpe": "cpe:2.3:a:pligg:pligg_cms:*:*:*:*:*:*:*:*",
     "html": "<span[^>]+id=\"xvotes-0",
     "icon": "Pligg.svg",
     "js": {
@@ -1507,13 +1783,15 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:plone:plone",
+    "cpe": "cpe:2.3:a:plone:plone:*:*:*:*:*:*:*:*",
+    "description": "Plone is a free and open source content management system (CMS) built on top of the Zope application server.",
     "icon": "Plone.svg",
     "implies": "Python",
     "meta": {
       "generator": "Plone"
     },
-    "website": "http://plone.org"
+    "oss": true,
+    "website": "https://plone.org/"
   },
   "Plotly": {
     "cats": [
@@ -1531,13 +1809,15 @@
     "cats": [
       14
     ],
-    "description": "Rlyr is a set of tools for splitting, applying and combining Data. ",
+    "css": "--plyr-progress",
+    "description": "Plyr is a simple, lightweight, accessible and customizable HTML5, YouTube and Vimeo media player that supports modern browsers.",
     "icon": "Plyr.png",
     "js": {
       "Plyr": ""
     },
-    "scriptSrc": "https://cdn\\.plyr\\.io/([0-9.]+)/.+\\.js\\;version:\\1",
-    "website": "https://plyr.io/"
+    "oss": true,
+    "scriptSrc": "cdn\\.plyr\\.io/([0-9.]+)/.+\\.js\\;version:\\1",
+    "website": "https://plyr.io"
   },
   "Po.st": {
     "cats": [
@@ -1569,6 +1849,23 @@
     "saas": true,
     "scriptSrc": "cdn\\.podia\\.com",
     "website": "https://www.podia.com"
+  },
+  "Podigee": {
+    "cats": [
+      5
+    ],
+    "description": "Podigee is an independent company for podcast publishers. Podigee offers hosting, distribution, analytics and monetisation of podcasts.",
+    "dom": "iframe[src*='cdn.podigee.com/']",
+    "icon": "Podigee.svg",
+    "js": {
+      "podigeePodcastPlayers": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.podigee.com"
   },
   "Podium": {
     "cats": [
@@ -1638,12 +1935,21 @@
       87,
       89
     ],
-    "description": "Polylang is a WordPress plugin which allows you to create a bilingual or multilingual WordPress site.",
-    "dom": "img[src*='/wp-content/plugins/polylang/']",
+    "cookies": {
+      "pll_language": "[a-z]{2}"
+    },
+    "description": "Polylang is a WordPress plugin which allows you to create multilingual WordPress site.",
+    "dom": "#pll_switcher",
+    "headers": {
+      "x-redirected-by": "Polylang(?: (Pro))?\\;version:\\1"
+    },
     "icon": "Polylang.svg",
     "oss": true,
+    "pricing": [
+      "freemium"
+    ],
     "requires": "WordPress",
-    "website": "https://github.com/polylang/polylang"
+    "website": "https://wordpress.org/plugins/polylang"
   },
   "Polymer": {
     "cats": [
@@ -1690,10 +1996,14 @@
     "icon": "Popper.svg",
     "js": {
       "Popper.Defaults": "",
+      "Popper.applyStyles": "",
       "createPopper": ""
     },
     "oss": true,
-    "scriptSrc": "/popper(?:\\.min)?\\.js(?:/([0-9.]+))?\\;version:\\1",
+    "scriptSrc": [
+      "/popper(?:\\.min)?\\.js(?:/([0-9.]+))?\\;version:\\1",
+      "popperjs(?:/|-)core(?:@|-)([\\d\\.]+)\\;version:\\1"
+    ],
     "website": "https://popper.js.org"
   },
   "PopularFX": {
@@ -1794,7 +2104,7 @@
     "cats": [
       34
     ],
-    "cpe": "cpe:/a:postgresql:postgresql",
+    "cpe": "cpe:2.3:a:postgresql:postgresql:*:*:*:*:*:*:*:*",
     "description": "PostgreSQL, also known as Postgres, is a free and open-source relational database management system emphasizing extensibility and SQL compliance.",
     "icon": "PostgreSQL.png",
     "website": "http://www.postgresql.org/"
@@ -1891,7 +2201,8 @@
     "icon": "Prebid.png",
     "js": {
       "PREBID_TIMEOUT": "",
-      "pbjs": ""
+      "pbjs": "",
+      "pbjs.version": "v([\\d\\.]+)\\;version:\\1"
     },
     "oss": true,
     "scriptSrc": [
@@ -1928,6 +2239,25 @@
     },
     "scriptSrc": "prefixfree\\.js",
     "website": "https://leaverou.github.io/prefixfree/"
+  },
+  "Premio Chaty": {
+    "cats": [
+      87
+    ],
+    "description": "Chat with your website visitors via their favorite channels with Chaty by Premio.",
+    "icon": "Premio.png",
+    "js": {
+      "chaty_settings.chaty_widgets": "",
+      "chaty_settings.object_settings": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "saas": true,
+    "scriptSrc": "/wp-content/plugins/chaty/",
+    "website": "https://premio.io/downloads/chaty"
   },
   "Press Customizr": {
     "cats": [
@@ -2001,7 +2331,7 @@
     "cookies": {
       "PrestaShop": ""
     },
-    "cpe": "cpe:/a:prestashop:prestashop",
+    "cpe": "cpe:2.3:a:prestashop:prestashop:*:*:*:*:*:*:*:*",
     "description": "PrestaShop is a freemium, open-source ecommerce solution, written in the PHP programming language with support for the MySQL database management system.",
     "dom": "img[src*='/modules/prestablog/themes/'], img[data-src*='/modules/prestablog/themes/']",
     "headers": {
@@ -2062,6 +2392,48 @@
     "scriptSrc": "cdn\\.pricespider\\.com/",
     "website": "https://www.pricespider.com"
   },
+  "PrimeNG": {
+    "cats": [
+      66
+    ],
+    "css": "\\.p-(?:toast|calendar|dialog-mask|menuitem-text)(?:-content)?\\{",
+    "description": "PrimeNG is a rich set of open-source UI Components for Angular.",
+    "icon": "PrimeNG.svg",
+    "oss": true,
+    "pricing": [
+      "onetime"
+    ],
+    "requires": "Angular",
+    "website": "https://www.primefaces.org"
+  },
+  "PrimeReact": {
+    "cats": [
+      66
+    ],
+    "css": "\\.p-(?:toast|calendar|dialog-mask|menuitem-text)(?:-content)?\\{",
+    "description": "PrimeReact is a rich set of open-source UI Components for React.",
+    "icon": "PrimeReact.svg",
+    "oss": true,
+    "pricing": [
+      "onetime"
+    ],
+    "requires": "React",
+    "website": "https://www.primefaces.org"
+  },
+  "PrimeVue": {
+    "cats": [
+      66
+    ],
+    "css": "\\.p-(?:toast|calendar|dialog-mask|menuitem-text)(?:-content)?\\{",
+    "description": "PrimeVue is a rich set of open-source UI Components for Vue.js.",
+    "icon": "PrimeVue.svg",
+    "oss": true,
+    "pricing": [
+      "onetime"
+    ],
+    "requires": "Vue.js",
+    "website": "https://www.primefaces.org"
+  },
   "Primis": {
     "cats": [
       36
@@ -2118,7 +2490,8 @@
     "description": "Prism is an extensible syntax highlighter.",
     "icon": "Prism.svg",
     "js": {
-      "Prism": ""
+      "Prism": "",
+      "apex.libVersions.prismJs": "^([\\d\\.]+)$\\;version:\\1"
     },
     "scriptSrc": "prism\\.js",
     "website": "http://prismjs.com"
@@ -2136,6 +2509,7 @@
       "recurring"
     ],
     "saas": true,
+    "scriptSrc": "\\.prismic\\.io/",
     "website": "https://prismic.io",
     "xhr": "\\.cdn\\.prismic\\.io"
   },
@@ -2160,6 +2534,42 @@
     "scriptSrc": "\\.privy\\.com/",
     "website": "https://www.privy.com"
   },
+  "ProcessWire": {
+    "cats": [
+      1
+    ],
+    "description": "ProcessWire is an open source content management system (CMS) and framework (CMF).",
+    "headers": {
+      "X-Powered-By": "ProcessWire CMS"
+    },
+    "icon": "ProcessWire.svg",
+    "implies": "PHP",
+    "js": {
+      "ProcessWire": ""
+    },
+    "oss": true,
+    "website": "https://processwire.com/"
+  },
+  "Product Hunt": {
+    "cats": [
+      19
+    ],
+    "description": "Product Hunt is a community-based website that allows makers and marketers to launch their products or services and get in touch with their first real users.",
+    "dom": {
+      "a[href*='.producthunt.com/']": {
+        "attributes": {
+          "href": "\\.producthunt\\.com/(?:post|tech|products)"
+        }
+      }
+    },
+    "icon": "Product Hunt.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "website": "https://www.producthunt.com"
+  },
   "Product Personalizer": {
     "cats": [
       100,
@@ -2180,6 +2590,9 @@
     "cats": [
       87
     ],
+    "cookies": {
+      "ppwp_wp_session": ""
+    },
     "description": "ProfilePress is a WordPress registration plugin that lets you create login forms, registration forms, user profiles, and more.",
     "dom": "link[href*='/wp-content/plugins/wp-user-avatar/']",
     "icon": "ProfilePress.svg",
@@ -2234,6 +2647,7 @@
       "promobuilding_session": ""
     },
     "description": "PromoBuilding is a subscription-based website builder for optimising budgets for creating promotional campaigns.",
+    "html": "<!-- made with https://promobuilding\\.ru",
     "icon": "PromoBuilding.svg",
     "js": {
       "promoApi": "\\;confidence:25",
@@ -2252,7 +2666,7 @@
     "cats": [
       12
     ],
-    "cpe": "cpe:/a:prototypejs:prototype",
+    "cpe": "cpe:2.3:a:prototypejs:prototype:*:*:*:*:*:*:*:*",
     "description": "Prototype is a JavaScript Framework that aims to ease development of web applications.",
     "icon": "Prototype.png",
     "js": {
@@ -2330,6 +2744,24 @@
     },
     "website": "https://www.proximis.com"
   },
+  "Pterodactyl Panel": {
+    "cats": [
+      9
+    ],
+    "cookies": {
+      "pterodactyl_session": ""
+    },
+    "description": "Pterodactyl Panel is a free, open-source game server management panel built with PHP, React, and Go.",
+    "icon": "Pterodactyl Panel.svg",
+    "implies": [
+      "Go",
+      "PHP",
+      "React",
+      "Laravel"
+    ],
+    "oss": true,
+    "website": "https://pterodactyl.io"
+  },
   "PubGuru": {
     "cats": [
       36
@@ -2395,6 +2827,7 @@
     "cookies": {
       "DSSIGNIN": ""
     },
+    "cpe": "cpe:2.3:a:pulsesecure:pulse_connect_secure:*:*:*:*:*:*:*:*",
     "description": "Pulse Secure allows to deploy VPNs to securely to your internal resources.",
     "icon": "PulseSecure.png",
     "url": "/dana-na/auth/",
@@ -2445,6 +2878,22 @@
     ],
     "saas": true,
     "website": "https://www.purecars.com"
+  },
+  "PurpleAds": {
+    "cats": [
+      36
+    ],
+    "description": "PurpleAds is an online advertising solution that businesses use to promote their products and services on Google Search, YouTube and other sites across the web.",
+    "icon": "PurpleAds.svg",
+    "meta": {
+      "purpleads-verification": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.purpleads\\.io/",
+    "website": "https://purpleads.io"
   },
   "PushDaddy Whatsapp Chat": {
     "cats": [
@@ -2520,11 +2969,21 @@
     "scriptSrc": "api\\.pushnami\\.com",
     "website": "https://pushnami.com"
   },
+  "PyScript": {
+    "cats": [
+      19
+    ],
+    "description": "PyScript is a python script that can be run in the browser using a mix of Python and standard HTML.",
+    "dom": "py-script",
+    "icon": "PyScript.svg",
+    "oss": true,
+    "website": "https://pyscript.net"
+  },
   "Pygments": {
     "cats": [
       19
     ],
-    "cpe": "cpe:/a:pygments:pygments",
+    "cpe": "cpe:2.3:a:pygments:pygments:*:*:*:*:*:*:*:*",
     "html": "<link[^>]+pygments\\.css[\"']",
     "icon": "pygments.png",
     "website": "http://pygments.org"
@@ -2547,13 +3006,32 @@
     "cats": [
       27
     ],
-    "cpe": "cpe:/a:python:python",
+    "cpe": "cpe:2.3:a:python:python:*:*:*:*:*:*:*:*",
     "description": "Python is an interpreted and general-purpose programming language.",
     "headers": {
       "Server": "(?:^|\\s)Python(?:/([\\d.]+))?\\;version:\\1"
     },
     "icon": "Python.png",
     "website": "http://python.org"
+  },
+  "PythonAnywhere": {
+    "cats": [
+      62,
+      88
+    ],
+    "description": "PythonAnywhere is an online integrated development environment (IDE) and web hosting service (Platform as a service) based on the Python programming language.",
+    "headers": {
+      "Server": "^PythonAnywhere$"
+    },
+    "icon": "PythonAnywhere.svg",
+    "implies": "Python",
+    "oss": false,
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "saas": false,
+    "website": "https://www.pythonanywhere.com"
   },
   "papaya CMS": {
     "cats": [
@@ -2569,6 +3047,9 @@
       19
     ],
     "icon": "Parcel.png",
+    "implies": [
+      "SWC"
+    ],
     "js": {
       "parcelRequire": ""
     },
@@ -2579,12 +3060,24 @@
       25
     ],
     "description": "Particles.js is a JavaScript library for creating particles.",
-    "html": "<div id=\"particles-js\">",
+    "dom": "div#particles-js",
     "js": {
       "particlesJS": ""
     },
+    "oss": true,
     "scriptSrc": "/particles(?:\\.min)?\\.js",
-    "website": "https://vincentgarreau.com/particles.js/"
+    "website": "https://github.com/VincentGarreau/particles.js"
+  },
+  "petite-vue": {
+    "cats": [
+      19
+    ],
+    "description": "petite-vue is an alternative distribution of Vue optimised for progressive enhancement.",
+    "icon": "vue.svg",
+    "oss": true,
+    "scriptSrc": "/petite-vue",
+    "scripts": "/petite-vue@([\\d\\.]+)/\\;version:\\1",
+    "website": "https://github.com/vuejs/petite-vue"
   },
   "phpAlbum": {
     "cats": [
@@ -2603,6 +3096,7 @@
     "cookies": {
       "phpbb": ""
     },
+    "cpe": "cpe:2.3:a:phpbb:phpbb:*:*:*:*:*:*:*:*",
     "description": "phpBB is a free open-source Internet forum package in the PHP scripting language.",
     "html": [
       "Powered by <a[^>]+phpBB",
@@ -2626,6 +3120,7 @@
     "cats": [
       1
     ],
+    "cpe": "cpe:2.3:a:phpcms:phpcms:*:*:*:*:*:*:*:*",
     "icon": "PHP.svg",
     "implies": "PHP",
     "js": {
@@ -2647,6 +3142,7 @@
     "cats": [
       3
     ],
+    "cpe": "cpe:2.3:a:phpmyadmin:phpmyadmin:*:*:*:*:*:*:*:*",
     "description": "PhpMyAdmin is a free and open-source administration tool for MySQL and MariaDB.",
     "html": [
       "!\\[CDATA\\[[^<]*PMA_VERSION:\\\"([\\d.]+)\\;version:\\1",
@@ -2666,10 +3162,31 @@
     "cats": [
       3
     ],
+    "cpe": "cpe:2.3:a:phppgadmin_project:phppgadmin:*:*:*:*:*:*:*:*",
     "html": "(?:<title>phpPgAdmin</title>|<span class=\"appname\">phpPgAdmin)",
     "icon": "phpPgAdmin.png",
     "implies": "PHP",
     "website": "http://phppgadmin.sourceforge.net"
+  },
+  "phpRS": {
+    "cats": [
+      1
+    ],
+    "description": "phpRS is a content management software written in PHP.",
+    "dom": {
+      "a[href*='.php']": {
+        "attributes": {
+          "href": "search\\.php\\?.+all-phpRS-all"
+        }
+      }
+    },
+    "icon": "default.svg",
+    "implies": "PHP",
+    "meta": {
+      "generator": "^phpRS$"
+    },
+    "oss": true,
+    "website": "https://phprs.net"
   },
   "phpSQLiteCMS": {
     "cats": [

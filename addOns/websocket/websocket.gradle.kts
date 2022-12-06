@@ -5,7 +5,7 @@ description = "Allows you to inspect WebSocket communication."
 zapAddOn {
     addOnName.set("WebSockets")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.11.1")
+    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -26,6 +26,19 @@ zapAddOn {
                     }
                 }
             }
+
+            register("org.zaproxy.zap.extension.websocket.manualsend.ExtensionWebSocketManualSend") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.websocket.manualsend"))
+                }
+                dependencies {
+                    addOns {
+                        register("requester") {
+                            version.set("7.*")
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -37,6 +50,7 @@ zapAddOn {
 
 dependencies {
     compileOnly(parent!!.childProjects.get("fuzz")!!)
+    compileOnly(parent!!.childProjects.get("requester")!!)
 
     testImplementation(project(":testutils"))
 }

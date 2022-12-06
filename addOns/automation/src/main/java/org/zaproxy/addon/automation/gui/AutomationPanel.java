@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -49,6 +50,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jdesktop.swingx.JXTreeTable;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.AutomationEnvironment;
@@ -64,6 +66,7 @@ import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.LayoutHelper;
 
+@SuppressWarnings("serial")
 public class AutomationPanel extends AbstractPanel implements EventConsumer {
 
     private static final long serialVersionUID = 1L;
@@ -77,6 +80,11 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
     private static final ImageIcon SAVE_ICON =
             DisplayUtils.getScaledIcon(
                     new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/096.png")));
+    private static final ImageIcon SAVE_AS_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(
+                            AutomationPanel.class.getResource(
+                                    ExtensionAutomation.RESOURCES_DIR + "save-as.png")));
     private static final ImageIcon ADD_PLAN_ICON =
             DisplayUtils.getScaledIcon(
                     new ImageIcon(
@@ -138,6 +146,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
     private JButton addPlanButton;
     private JButton runPlanButton;
     private JButton savePlanButton;
+    private JButton saveAsPlanButton;
     private JButton jobUpButton;
     private JButton jobDownButton;
     private JButton addJobButton;
@@ -145,6 +154,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
     private JTabbedPane tabbedPane;
     private JButton addTestButton;
     private JButton removeTestButton;
+    private JButton optionsButton;
     private JXTreeTable tree;
     private PlanTreeTableModel treeModel;
     private JScrollPane outputScrollpane;
@@ -157,7 +167,10 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
     public AutomationPanel(ExtensionAutomation ext) {
         this.ext = ext;
         this.setName(Constant.messages.getString("automation.panel.title"));
-        this.setIcon(ExtensionAutomation.ICON);
+        this.setIcon(
+                new ImageIcon(
+                        ExtensionAutomation.class.getResource(
+                                ExtensionAutomation.RESOURCES_DIR + "robot.png")));
         this.setLayout(new GridBagLayout());
 
         this.add(this.getToolbar(), LayoutHelper.getGBC(0, 0, 1, 1.0));
@@ -174,6 +187,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             toolbar.add(getAddPlanButton());
             toolbar.add(getLoadPlanButton());
             toolbar.add(getSavePlanButton());
+            toolbar.add(getSaveAsPlanButton());
             toolbar.add(getRunPlanButton());
             toolbar.addSeparator();
             toolbar.add(getAddJobButton());
@@ -182,6 +196,9 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             toolbar.add(getJobDownButton());
             toolbar.add(getAddTestButton());
             toolbar.add(getRemoveTestButton());
+
+            toolbar.add(Box.createHorizontalGlue());
+            toolbar.add(getOptionsButton());
         }
         return toolbar;
     }
@@ -203,6 +220,58 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
         return runPlanButton;
     }
 
+    private void savePlan(boolean promptForFile) {
+        if (currentPlan == null) {
+            return;
+        }
+        try {
+            if (promptForFile) {
+                final JFileChooser chooser = new JFileChooser(ext.getParam().getPlanDirectory());
+                chooser.setAcceptAllFileFilterUsed(false);
+                chooser.addChoosableFileFilter(
+                        new FileFilter() {
+
+                            @Override
+                            public boolean accept(File f) {
+                                String lcFileName = f.getName().toLowerCase();
+                                return (f.isDirectory()
+                                        || lcFileName.endsWith(".yaml")
+                                        || lcFileName.endsWith(".yml"));
+                            }
+
+                            @Override
+                            public String getDescription() {
+                                return Constant.messages.getString("automation.panel.load.yaml");
+                            }
+                        });
+                int rc = chooser.showSaveDialog(View.getSingleton().getMainFrame());
+                if (rc == JFileChooser.APPROVE_OPTION) {
+                    ext.getParam()
+                            .setPlanDirectory(
+                                    chooser.getSelectedFile().getParentFile().getAbsolutePath());
+                    File f = chooser.getSelectedFile();
+                    String fileNameLc = f.getName().toLowerCase(Locale.ROOT);
+                    if (!f.exists()
+                            && !(fileNameLc.endsWith(".yaml") || fileNameLc.endsWith(".yml"))) {
+                        f = new File(f.getAbsolutePath() + ".yaml");
+                    }
+                    currentPlan.setFile(f);
+                } else {
+                    // they cancelled the dialog
+                    return;
+                }
+            }
+            currentPlan.save();
+            ext.getParam().setLastPlanPath(currentPlan.getFile().getAbsolutePath());
+        } catch (JsonProcessingException | FileNotFoundException e1) {
+            LOG.error(e1.getMessage(), e1);
+            View.getSingleton()
+                    .showWarningDialog(
+                            Constant.messages.getString(
+                                    "automation.dialog.error.save", e1.getMessage()));
+        }
+    }
+
     private JButton getSavePlanButton() {
         if (savePlanButton == null) {
             savePlanButton = new JButton();
@@ -211,64 +280,21 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                     Constant.messages.getString("automation.dialog.plan.save"));
             savePlanButton.setEnabled(false);
             savePlanButton.addActionListener(
-                    e -> {
-                        if (currentPlan == null) {
-                            return;
-                        }
-                        try {
-                            if (currentPlan.getFile() == null) {
-                                final JFileChooser chooser =
-                                        new JFileChooser(ext.getParam().getPlanDirectory());
-                                chooser.setAcceptAllFileFilterUsed(false);
-                                chooser.addChoosableFileFilter(
-                                        new FileFilter() {
-
-                                            @Override
-                                            public boolean accept(File f) {
-                                                String lcFileName = f.getName().toLowerCase();
-                                                return (f.isDirectory()
-                                                        || lcFileName.endsWith(".yaml")
-                                                        || lcFileName.endsWith(".yml"));
-                                            }
-
-                                            @Override
-                                            public String getDescription() {
-                                                return Constant.messages.getString(
-                                                        "automation.panel.load.yaml");
-                                            }
-                                        });
-                                int rc = chooser.showSaveDialog(View.getSingleton().getMainFrame());
-                                if (rc == JFileChooser.APPROVE_OPTION) {
-                                    ext.getParam()
-                                            .setPlanDirectory(
-                                                    chooser.getSelectedFile()
-                                                            .getParentFile()
-                                                            .getAbsolutePath());
-                                    File f = chooser.getSelectedFile();
-                                    String fileNameLc = f.getName().toLowerCase(Locale.ROOT);
-                                    if (!f.exists()
-                                            && !(fileNameLc.endsWith(".yaml")
-                                                    || fileNameLc.endsWith(".yml"))) {
-                                        f = new File(f.getAbsolutePath() + ".yaml");
-                                    }
-                                    currentPlan.setFile(f);
-                                } else {
-                                    // they cancelled the dialog
-                                    return;
-                                }
-                            }
-                            currentPlan.save();
-                        } catch (JsonProcessingException | FileNotFoundException e1) {
-                            LOG.error(e1.getMessage(), e1);
-                            View.getSingleton()
-                                    .showWarningDialog(
-                                            Constant.messages.getString(
-                                                    "automation.dialog.error.save",
-                                                    e1.getMessage()));
-                        }
-                    });
+                    e -> savePlan(currentPlan != null && currentPlan.getFile() == null));
         }
         return savePlanButton;
+    }
+
+    private JButton getSaveAsPlanButton() {
+        if (saveAsPlanButton == null) {
+            saveAsPlanButton = new JButton();
+            saveAsPlanButton.setIcon(SAVE_AS_ICON);
+            saveAsPlanButton.setToolTipText(
+                    Constant.messages.getString("automation.dialog.plan.save-as"));
+            saveAsPlanButton.setEnabled(false);
+            saveAsPlanButton.addActionListener(e -> savePlan(true));
+        }
+        return saveAsPlanButton;
     }
 
     private JButton getLoadPlanButton() {
@@ -325,6 +351,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
     private void loadPlan(File f) {
         try {
             loadPlan(ext.loadPlan(f));
+            ext.getParam().setLastPlanPath(f.getAbsolutePath());
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
             View.getSingleton()
@@ -532,6 +559,25 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
         return removeTestButton;
     }
 
+    private JButton getOptionsButton() {
+        if (optionsButton == null) {
+            optionsButton = new JButton();
+            optionsButton.setToolTipText(Constant.messages.getString("automation.dialog.options"));
+            optionsButton.setIcon(
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(ZAP.class.getResource("/resource/icon/16/041.png"))));
+
+            optionsButton.addActionListener(
+                    e ->
+                            Control.getSingleton()
+                                    .getMenuToolsControl()
+                                    .options(
+                                            Constant.messages.getString(
+                                                    "automation.optionspanel.name")));
+        }
+        return optionsButton;
+    }
+
     public void loadPlan(AutomationPlan plan) {
         setCurrentPlan(plan);
         ext.registerPlan(currentPlan);
@@ -558,6 +604,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
         getRunPlanButton().setEnabled(currentPlan != null);
         getAddJobButton().setEnabled(currentPlan != null);
         getSavePlanButton().setEnabled(false);
+        getSaveAsPlanButton().setEnabled(currentPlan != null);
     }
 
     public List<String> getUnsavedPlans() {

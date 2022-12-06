@@ -5,8 +5,79 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Use lower case HTTP field names for compatibility with HTTP/2.
+
+### Fixed
+- Preserve the HTTP version in the scan rules:
+  - Backup File Disclosure
+  - Bypassing 403
+  - Cross-Domain Misconfiguration
+  - Relative Path Confusion
+  - Source Code Disclosure - Git
+  - Source Code Disclosure - SVN
+  - Possible Username Enumeration
+
+## [43] - 2022-10-27
+### Changed
+- Update minimum ZAP version to 2.12.0.
+- Depend on `database` add-on.
+- Maintenance changes.
+- Rely on Network add-on to obtain more information about socket timeouts.
+
+### Added
+- The following scan rules were added, having been promoted to Beta:
+    - CORS
+    - Exponential Entity Expansion
+    - Forbidden Bypass
+    - Log4Shell
+    - Out-of-Band XSS
+    - Spring4Shell
+    - Spring Actuator
+    - Blind SSTI
+    - SSTI
+
+### Fixed
+- NPE in Source Code Disclosure File Inclusion Scan Rule
+
+### Removed
+- The following scan rules were removed, having been promoted to Release:
+    - .env Information Leak
+    - Cloud Metadata Attack
+    - GET for POST
+    - Heartbleed OpenSSL Vulnerability
+    - Hidden File Finder
+    - Padding Oracle
+    - Remote Code Execution - CVE-2012-1823
+    - Source Code Disclosure - CVE-2012-1823
+    - SQL Injection - Hypersonic (Time Based)
+    - SQL Injection - MsSQL (Time Based)
+    - SQL Injection - MySQL (Time Based)
+    - SQL Injection - Oracle (Time Based)
+    - SQL Injection - PostgreSQL (Time Based)
+    - SQL Injection - SQLite
+    - Trace.axd Information Leak
+    - User Agent Fuzzer
+    - XSLT Injection
+    - XXE
+
+## [42] - 2022-09-22
+### Changed
+- Maintenance changes.
+- Improved description, solution, and references for the Integer Overflow scan rule.
+- Added new Custom Payloads alert tag to the example alerts of the Hidden File Finder and User Agent scan rules.
+
+### Added
+- New User Agent strings to the User Agent fuzz scan rule.
+- Additional source control paths for the Hidden Files finder scan rule.
+
+## [41] - 2022-06-08
+### Changed
 - Maintenance changes.
 - Adding more checks to Hidden File Finder scan rule.
+- The Cloud Metadata scan rule will now be attempted with additional payloads (using DNS not just IPs), and supporting Alibaba.
+
+### Fixed
+- False Positive in XSLT Injection where "Microsoft-Azure-Application-Gateway" can be returned in a 403 if the gateway detects an attack.
 
 ## [40] - 2022-03-15
 ### Changed
@@ -347,6 +418,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[43]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v43
+[42]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v42
+[41]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v39
 [38]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v38

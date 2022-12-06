@@ -54,9 +54,6 @@ public class ExtensionAllInOneNotes extends ExtensionAdaptor implements SessionC
      */
     private static final String RESOURCES = "resources";
 
-    private static final ImageIcon ICON =
-            new ImageIcon(ExtensionAllInOneNotes.class.getResource(RESOURCES + "/notepad.png"));
-
     private AbstractPanel statusPanel;
     private NotesTableModel notesTableModel = null;
     private JXTable notesTable = null;
@@ -82,7 +79,7 @@ public class ExtensionAllInOneNotes extends ExtensionAdaptor implements SessionC
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
         // As long as we're not running as a daemon
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.addSessionListener(this);
             hookView = extensionHook.getHookView();
             eventConsumerImpl = new EventConsumerImpl(getNotesTableModel());
@@ -144,7 +141,7 @@ public class ExtensionAllInOneNotes extends ExtensionAdaptor implements SessionC
             statusPanel = new AbstractPanel();
             statusPanel.setLayout(new BorderLayout());
             statusPanel.setName(Constant.messages.getString(PREFIX + ".panel.title"));
-            statusPanel.setIcon(ICON);
+            statusPanel.setIcon(new ImageIcon(getClass().getResource(RESOURCES + "/notepad.png")));
             statusPanel.add(getToolBar(), BorderLayout.NORTH);
             statusPanel.add(new JScrollPane(getNotesTable()), BorderLayout.CENTER);
         }

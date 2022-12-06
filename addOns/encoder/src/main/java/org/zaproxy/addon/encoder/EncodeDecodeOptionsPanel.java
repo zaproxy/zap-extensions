@@ -46,14 +46,20 @@ public class EncodeDecodeOptionsPanel extends AbstractParamPanel {
             Constant.messages.getString("encoder.optionspanel.base64.charset");
     private static final String BREAK_LINES_LABEL =
             Constant.messages.getString("encoder.optionspanel.base64.breaklines");
+    private static final String NAME_HASHERS =
+            Constant.messages.getString("encoder.optionspanel.hashers");
+    private static final String HASHERS_LOWERCASE_LABEL =
+            Constant.messages.getString("encoder.optionspanel.hashers.output.lowercase");
 
     private static final String[] CHARSETS = {"ISO-8859-1", "US-ASCII", "UTF-8"};
 
     private JComboBox<String> comboBoxBase64Charset;
 
     private JCheckBox checkBoxBase64DoBreakLines;
+    private JCheckBox checkBoxHashersLowerCase;
 
     private JPanel base64Panel;
+    private JPanel hashersPanel;
 
     public EncodeDecodeOptionsPanel() {
         super();
@@ -61,12 +67,22 @@ public class EncodeDecodeOptionsPanel extends AbstractParamPanel {
 
         setLayout(new BorderLayout(0, 0));
 
-        final JPanel panel = new JPanel(new BorderLayout());
+        final JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(new EmptyBorder(2, 2, 2, 2));
 
-        panel.add(getBase64Panel(), BorderLayout.NORTH);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.insets = new java.awt.Insets(2, 2, 2, 2);
+        gbc.anchor = GridBagConstraints.NORTH;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weighty = 0.0D;
+        gbc.weightx = 1.0D;
+        panel.add(getBase64Panel(), gbc);
+        gbc.gridy = 1;
+        panel.add(getHashersPanel(), gbc);
 
-        add(panel);
+        add(panel, BorderLayout.NORTH);
     }
 
     private JPanel getBase64Panel() {
@@ -124,6 +140,41 @@ public class EncodeDecodeOptionsPanel extends AbstractParamPanel {
         return checkBoxBase64DoBreakLines;
     }
 
+    private JPanel getHashersPanel() {
+        if (hashersPanel == null) {
+            hashersPanel = new JPanel();
+            hashersPanel.setLayout(new GridBagLayout());
+
+            GridBagConstraints gbc = new GridBagConstraints();
+
+            hashersPanel.setBorder(
+                    BorderFactory.createTitledBorder(
+                            null,
+                            NAME_HASHERS,
+                            TitledBorder.DEFAULT_JUSTIFICATION,
+                            TitledBorder.DEFAULT_POSITION,
+                            FontUtils.getFont(FontUtils.Size.standard)));
+
+            gbc.anchor = GridBagConstraints.NORTHWEST;
+            gbc.gridx = 0;
+            gbc.gridy = 1;
+            gbc.weightx = 1.0D;
+            hashersPanel.add(new JLabel(HASHERS_LOWERCASE_LABEL), gbc);
+
+            gbc.gridx = 1;
+            gbc.gridy = 1;
+            hashersPanel.add(getCheckBoxHashersLowerCase(), gbc);
+        }
+        return hashersPanel;
+    }
+
+    private JCheckBox getCheckBoxHashersLowerCase() {
+        if (checkBoxHashersLowerCase == null) {
+            checkBoxHashersLowerCase = new JCheckBox();
+        }
+        return checkBoxHashersLowerCase;
+    }
+
     @Override
     public void initParam(Object obj) {
         final OptionsParam options = (OptionsParam) obj;
@@ -132,6 +183,7 @@ public class EncodeDecodeOptionsPanel extends AbstractParamPanel {
         comboBoxBase64Charset.setSelectedItem(param.getBase64Charset());
 
         checkBoxBase64DoBreakLines.setSelected(param.isBase64DoBreakLines());
+        checkBoxHashersLowerCase.setSelected(param.isHashersLowerCase());
     }
 
     @Override
@@ -142,6 +194,7 @@ public class EncodeDecodeOptionsPanel extends AbstractParamPanel {
         param.setBase64Charset((String) comboBoxBase64Charset.getSelectedItem());
 
         param.setBase64DoBreakLines(checkBoxBase64DoBreakLines.isSelected());
+        param.setHashersLowerCase(checkBoxHashersLowerCase.isSelected());
     }
 
     @Override

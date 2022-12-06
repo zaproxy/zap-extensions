@@ -56,6 +56,16 @@
     "scriptSrc": "vk\\.com/js/api/openapi\\.js",
     "website": "https://vk.com/"
   },
+  "VKUI": {
+    "cats": [
+      66
+    ],
+    "description": "VKUI is a set of React components with which you can create interfaces that are visually indistinguishable from our iOS and Android applications.",
+    "dom": "html.vkui",
+    "icon": "vk.svg",
+    "oss": true,
+    "website": "https://vkcom.github.io/VKUI"
+  },
   "VP-ASP": {
     "cats": [
       6
@@ -77,6 +87,7 @@
       "vtex_session": ""
     },
     "description": "VTEX is an ecommerce software that manages multiple online stores.",
+    "dom":"link[href*='.vteximg.com.br'], source[srcset*='.vteximg.com.br']",
     "headers": {
       "Server": "^VTEX IO$",
       "powered": "vtex"
@@ -134,6 +145,7 @@
     "cats": [
       18
     ],
+    "description": "Vaadin is an open-source framework for building user interfaces and single-page applications using Java and TypeScript.",
     "icon": "Vaadin.svg",
     "implies": "Java",
     "js": {
@@ -180,7 +192,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:vardot:varbase",
+    "cpe": "cpe:2.3:a:vardot:varbase:*:*:*:*:*:*:*:*",
     "dom": "meta[content='Varbase'],div[class*='varbase_'],div[class*='_varbase'],div[class*='varbase-'],div[class*='block-varbase'],div[class*='blockvarbase']",
     "icon": "varbase.png",
     "implies": "Drupal",
@@ -190,10 +202,25 @@
     "oss": true,
     "website": "https://www.vardot.com/solutions/varbase"
   },
+  "Variti": {
+    "cats": [
+      16
+    ],
+    "description": "Variti is a network security solutions firm that blocks bad bots, protects users from various automated abuse, attacks and fraud techniques.",
+    "headers": {
+      "X-VARITI-CCR": ""
+    },
+    "icon": "Variti.png",
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://variti.io"
+  },
   "Varnish": {
     "cats": [
       23
     ],
+    "cpe": "cpe:2.3:a:varnish-software:varnich_cache:*:*:*:*:*:*:*:*",
     "description": "Varnish is a reverse caching proxy.",
     "headers": {
       "Via": "varnish(?: \\(Varnish/([\\d.]+)\\))?\\;version:\\1",
@@ -205,6 +232,17 @@
     },
     "icon": "Varnish.svg",
     "website": "http://www.varnish-cache.org"
+  },
+  "Ve Global": {
+    "cats": [
+      10
+    ],
+    "description": "Ve Global, formerly known as Ve Interactive, is a global technology company that provides ecommerce businesses with a managed-service of proprietary marketing software and digital advertising solutions.",
+    "icon": "Ve Global.png",
+    "js": {
+      "veTagData.appsServicesUrl": "\\.veinteractive\\.com"
+    },
+    "website": "https://ve.com"
   },
   "Venmo": {
     "cats": [
@@ -247,6 +285,10 @@
     "cats": [
       62
     ],
+    "description": "Vercel is a cloud platform for static frontends and serverless functions.",
+    "dns": {
+      "SOA": "\\.vercel-dns\\.com"
+    },
     "headers": {
       "server": "^now|Vercel$",
       "x-now-trace": "",
@@ -254,7 +296,27 @@
       "x-vercel-id": ""
     },
     "icon": "vercel.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
     "website": "https://vercel.com"
+  },
+  "Vercel Analytics": {
+    "cats": [
+      10
+    ],
+    "icon": "vercel.svg",
+    "js": {
+      "va": ""
+    },
+    "requires": [
+      "Vercel"
+    ],
+    "scriptSrc": "/va/script\\.js",
+    "website": "https://vercel.com/analytics"
   },
   "Verifone 2Checkout": {
     "cats": [
@@ -367,6 +429,21 @@
     "scriptSrc": "\\.vidazoo\\.com",
     "website": "https://www.vidazoo.com"
   },
+  "Video Greet": {
+    "cats": [
+      100
+    ],
+    "description": "Video Greet lets your customers add a video message to gifts with QR codes.",
+    "icon": "Video Greet.png",
+    "js": {
+      "__vg.video_greet_button_src": ""
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "Shopify",
+    "website": "https://apps.shopify.com/videogreet-gift-messages"
+  },
   "VideoJS": {
     "cats": [
       14
@@ -400,6 +477,24 @@
     "icon": "vigbo.png",
     "scriptSrc": "(?:\\.vigbo\\.com|\\.gophotoweb\\.com)",
     "website": "https://vigbo.com"
+  },
+  "Vigil": {
+    "cats": [
+      13
+    ],
+    "description": "Vigil is a microservices status page. Monitors a distributed infrastructure and sends alerts (Slack, SMS, etc.).",
+    "dom": {
+      "p > a[href*='github.com/valeriansaliou/vigil']": {
+        "text": "^Vigil$"
+      }
+    },
+    "icon": "default.svg",
+    "implies": [
+      "Rust",
+      "Docker"
+    ],
+    "oss": true,
+    "website": "https://github.com/valeriansaliou/vigil"
   },
   "Vignette": {
     "cats": [
@@ -470,19 +565,65 @@
   },
   "Virtooal": {
     "cats": [
-      76
+      105
     ],
     "description": "Virtooal allows shoppers to try on and combine decorative cosmetics, sunglasses, contact lenses, jewellery and fashion accessories using models, their own photo or a live webcam feed.",
     "icon": "Virtooal.svg",
     "pricing": [
       "freemium",
-      "mid",
+      "low",
       "recurring"
     ],
     "requiresCategory": 6,
     "saas": true,
     "scriptSrc": "\\.virtooal\\.com/",
     "website": "https://try.virtooal.com"
+  },
+  "Virtuagym": {
+    "cats": [
+      53
+    ],
+    "description": "Virtuagym is a cloud-based membership management and coaching platform designed for personal trainers and fitness businesses of all sizes.",
+    "dom": "a[href*='.virtuagym.com'][target='_blank'], iframe[src*='.virtuagym.com/']",
+    "icon": "Virtuagym.svg",
+    "js": {
+      "VGTutorial": "",
+      "open_vg_custom_modal": "",
+      "trigger_vg_neutral_message": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://business.virtuagym.com"
+  },
+  "Virtual Chat": {
+    "cats": [
+      52
+    ],
+    "description": "Virtual Chat is a live-chat service for web sites.",
+    "icon": "Virtual Chat.png",
+    "saas": true,
+    "scriptSrc": "virtual-chat\\.co\\.il/",
+    "website": "https://www.virtual-chat.co.il"
+  },
+  "VirtualSpirits": {
+    "cats": [
+      52
+    ],
+    "description": "VirtualSpirits is a chatbot and live-chat service for websites.",
+    "icon": "VirtualSpirits.png",
+    "js": {
+      "vspiritbutton": "",
+      "vspirits_chat_client": "",
+      "vspiritsizeheight": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.virtualspirits.com"
   },
   "VirtueMart": {
     "cats": [
@@ -616,6 +757,23 @@
     "saas": true,
     "website": "https://www.visualsoft.co.uk/"
   },
+  "Visx": {
+    "cats": [
+      25
+    ],
+    "description": "Visx is a collection of React-based data visualisation tools developed by Airbnb.",
+    "dom": {
+      "g.visx-group,g.vx-group": {
+        "attributes": {
+          "class": "(?:v(?:is)?x)-group"
+        }
+      }
+    },
+    "icon": "Visx.svg",
+    "oss": true,
+    "requires": "React",
+    "website": "https://airbnb.io/visx/"
+  },
   "Vitals": {
     "cats": [
       100,
@@ -642,15 +800,36 @@
     "cats": [
       19
     ],
-    "description": "Next Generation Frontend Tooling",
+    "description": "Vite is a rapid development tool for modern web projects.",
     "icon": "vite.svg",
-    "website": "https://vitejs.dev/"
+    "oss": true,
+    "website": "https://vitejs.dev"
+  },
+  "Vitrin.me": {
+    "cats": [
+      51
+    ],
+    "description": "Vitrin.me is a no-code platform that lets anyone build web apps without writing any code.",
+    "icon": "Vitrin.me.svg",
+    "implies": [
+      "Python",
+      "Django",
+      "React",
+      "Next.js"
+    ],
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.vitrin\\.me/",
+    "website": "https://vitrin.me"
   },
   "Vizury": {
     "cats": [
       32
     ],
-    "description": "Vizury is a commerce marketing platform.",
+    "description": "Vizury is a ecommerce marketing platform.",
     "icon": "Vizury.png",
     "js": {
       "safariVizury": "",
@@ -662,6 +841,20 @@
     "saas": true,
     "scriptSrc": "\\.vizury\\.com",
     "website": "https://www.vizury.com"
+  },
+  "Vntana": {
+    "cats": [
+      105
+    ],
+    "description": "Vntana (stylised as VNTANA) is an American social augmented reality company.",
+    "dom": "iframe[src*='embed.vntana.com/'], iframe[nitro-lazy-src*='embed.vntana.com/']",
+    "icon": "Vntana.png",
+    "pricing": [
+      "freemium",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.vntana.com"
   },
   "Volusion": {
     "cats": [
@@ -727,6 +920,25 @@
     "saas": true,
     "website": "https://www.voracio.co.uk"
   },
+  "Vtiger": {
+    "cats": [
+      53
+    ],
+    "cpe": "cpe:2.3:a:vtiger:vtiger_crm:*:*:*:*:*:*:*:*",
+    "description": "Vtiger is a cloud-based suite of marketing, sales and help desk offerings, which can be deployed separately or as an integrated, all-in-one ecosystem.",
+    "icon": "Vtiger.svg",
+    "js": {
+      "Vtiger": "",
+      "Vtiger_Base_Js": "",
+      "Vtiger_Helper_Js": ""
+    },
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.vtiger.com"
+  },
   "VuFind": {
     "cats": [
       29
@@ -744,10 +956,9 @@
   },
   "Vue Storefront": {
     "cats": [
-      6,
-      12
+      108
     ],
-    "description": "Vue Storefront is a frontend platform for headless commerce.",
+    "description": "Vue Storefront is a frontend platform for headless ecommerce.",
     "icon": "vue-storefront.svg",
     "implies": "Vue.js",
     "meta": {
@@ -781,17 +992,37 @@
     ],
     "css": "\\.vue-notification-group",
     "description": "Vue.js is an open-source model–view–viewmodel JavaScript framework for building user interfaces and single-page applications.",
+    "dom": ".vue-app",
     "html": "<[^>]+\\sdata-v(?:ue)?-",
     "icon": "vue.svg",
     "js": {
       "Vue.version": "^(.+)$\\;version:\\1",
-      "__VUE_HOT_MAP__": ""
+      "Vue": "",
+      "VueRoot": "",
+      "__VUE_HOT_MAP__": "",
+      "__VUE__": "",
+      "vueDLL": ""
     },
     "scriptSrc": [
       "vue[.-]([\\d.]*\\d)[^/]*\\.js\\;version:\\1",
       "(?:/([\\d.]+))?/vue(?:\\.min)?\\.js\\;version:\\1"
     ],
     "website": "https://vuejs.org"
+  },
+  "Vue2-animate": {
+    "cats": [
+      19
+    ],
+    "description": "Vue2-animate is a Vue.js port of Animate.css.",
+    "dom": "link[href*='/vue2-animate.min.css']",
+    "icon": "vue.svg",
+    "implies": [
+      "Vue.js",
+      "Sass",
+      "Animate.css"
+    ],
+    "oss": true,
+    "website": "https://github.com/asika32764/vue2-animate"
   },
   "VuePress": {
     "cats": [
@@ -800,9 +1031,13 @@
     "description": "VuePress is a static site generator with a Vue-powered theming system, and a default theme for writing technical documentation.",
     "icon": "VuePress.svg",
     "implies": "Vue.js",
+    "js": {
+      "__VUEPRESS__.version": "([\\d\\.]+)\\;version:\\1"
+    },
     "meta": {
       "generator": "^VuePress(?: ([0-9.]+)(-[a-z]+.[0-9]+)?)?$\\;version:\\1"
     },
+    "oss": true,
     "website": "https://vuepress.vuejs.org/"
   },
   "Vuetify": {
@@ -826,7 +1061,7 @@
       "bblastvisit": "",
       "bbsessionhash": ""
     },
-    "cpe": "cpe:/a:vbulletin:vbulletin",
+    "cpe": "cpe:2.3:a:vbulletin:vbulletin:*:*:*:*:*:*:*:*",
     "description": "vBulletin is tool that is used to create and manage online forums or discussion boards. It is written in PHP and uses a MySQL database server.",
     "html": "<div id=\"copyright\">Powered by vBulletin",
     "icon": "vBulletin.png",
@@ -874,5 +1109,16 @@
       "generator": "vibecommerce"
     },
     "website": "http://vibecommerce.com.br"
+  },
+  "vxe-table": {
+    "cats": [
+      59
+    ],
+    "description": "vxe-table is a Vue.js based PC form component, support add, delete, change, virtual scroll, lazy load, shortcut menu, data validation, tree structure, print export, form rendering, data paging, virtual list, modal window, custom template, renderer, flexible configuration items, extension interface.",
+    "dom": "div[class*='vxe-table']",
+    "icon": "vxe-table.png",
+    "oss": true,
+    "requires": "Vue.js",
+    "website": "https://vxetable.cn"
   }
 }

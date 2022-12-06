@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.portscan;
 import java.awt.EventQueue;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.ArrayList;
@@ -33,7 +34,8 @@ import javax.swing.DefaultListModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.network.ConnectionParam;
+import org.zaproxy.addon.network.ConnectionOptions;
+import org.zaproxy.addon.network.internal.client.HttpProxy;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.ScanListenner;
 import org.zaproxy.zap.model.ScanThread;
@@ -118,11 +120,7 @@ public class PortScan extends ScanThread implements ScanListenner {
             startPort = 1;
         }
 
-        ConnectionParam connParams = Model.getSingleton().getOptionsParam().getConnectionParam();
-        SocketAddress sa =
-                new InetSocketAddress(
-                        connParams.getProxyChainName(), connParams.getProxyChainPort());
-        final java.net.Proxy proxy = new java.net.Proxy(java.net.Proxy.Type.SOCKS, sa);
+        Proxy proxy = getProxy();
 
         for (port = startPort; port < maxPort; port += threads) {
             try {
@@ -152,11 +150,7 @@ public class PortScan extends ScanThread implements ScanListenner {
                     this.listenner.scanProgress(site, port, maxPort);
                 }
 
-                if (useProxy
-                        && Model.getSingleton()
-                                .getOptionsParam()
-                                .getConnectionParam()
-                                .isUseProxy(site)) {
+                if (proxy != Proxy.NO_PROXY) {
 
                     FutureTask<Integer> ft =
                             new FutureTask<>(
@@ -193,6 +187,19 @@ public class PortScan extends ScanThread implements ScanListenner {
         Date stop = new Date();
         log.debug("Finished scan on {} at {}", site, stop);
         log.debug("Took {} mins", ((stop.getTime() - start.getTime()) / 60000));
+    }
+
+    private Proxy getProxy() {
+        if (useProxy) {
+            ConnectionOptions connectionOptions =
+                    Model.getSingleton().getOptionsParam().getParamSet(ConnectionOptions.class);
+            if (connectionOptions.isUseHttpProxy(site)) {
+                HttpProxy proxy = connectionOptions.getHttpProxy();
+                SocketAddress sa = new InetSocketAddress(proxy.getHost(), proxy.getPort());
+                return new Proxy(Proxy.Type.SOCKS, sa);
+            }
+        }
+        return Proxy.NO_PROXY;
     }
 
     private void addResult(final int port) {

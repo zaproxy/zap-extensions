@@ -3,6 +3,6 @@
 <index version="2.0">
 	<indexitem text="GraphQL " target="graphql"/>
   <indexitem text="Параметры GraphQL " target="graphql.options"/>
-  <indexitem text="GraphQL-скрипт " target="graphql.script"/>
+  <indexitem text="GraphQL Variant" target="graphql.variant"/>
   <indexitem text="GraphQL автоматизация " target="graphql.automation"/>
 </index>

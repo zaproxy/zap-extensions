@@ -55,13 +55,11 @@ class ContextWrapperUnitTest {
     @BeforeAll
     static void init() throws Exception {
         mockedCmdLine = Mockito.mockStatic(CommandLine.class);
-        ExtentionAutomationUnitTest.updateEnv("myEnvVar", "envVarValue");
     }
 
     @AfterAll
     static void close() throws Exception {
         mockedCmdLine.close();
-        ExtentionAutomationUnitTest.updateEnv("myEnvVar", "");
     }
 
     @BeforeEach
@@ -603,6 +601,132 @@ class ContextWrapperUnitTest {
         assertThat(
                 env.getContextWrappers().get(0).getData().getUsers().get(1).getCredential("key"),
                 is("123456"));
+    }
+
+    @Test
+    void shouldLoadValidUsersInMultipleContextsNewFormat() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      users:\n"
+                        + "      - name: 'Freda'\n"
+                        + "        username: 'freda@example.com'\n"
+                        + "        password: 'freda123'\n"
+                        + "      - name: 'Fred'\n"
+                        + "        credentials:\n"
+                        + "          username: 'fred@example.com'\n"
+                        + "          password: 'fred456'\n"
+                        + "          key: '123456'\n"
+                        + "    - name: name2\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.org\n"
+                        + "      users:\n"
+                        + "      - name: 'Joan'\n"
+                        + "        username: 'joan@example.org'\n"
+                        + "        password: 'joan321'\n"
+                        + "      - name: 'John'\n"
+                        + "        credentials:\n"
+                        + "          username: 'john@example.org'\n"
+                        + "          password: 'john654'\n"
+                        + "          key: '654321'\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(env.getContextWrappers().size(), is(equalTo(2)));
+        assertNotNull(env.getContextWrappers().get(0).getData().getUsers());
+        assertThat(env.getContextWrappers().get(0).getData().getUsers().size(), is(2));
+        assertThat(
+                env.getContextWrappers().get(0).getData().getUsers().get(0).getName(), is("Freda"));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getUsers()
+                        .get(0)
+                        .getCredential(UserData.USERNAME_CREDENTIAL),
+                is("freda@example.com"));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getUsers()
+                        .get(0)
+                        .getCredential(UserData.PASSWORD_CREDENTIAL),
+                is("freda123"));
+        assertThat(
+                env.getContextWrappers().get(0).getData().getUsers().get(1).getName(), is("Fred"));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getUsers()
+                        .get(1)
+                        .getCredential(UserData.USERNAME_CREDENTIAL),
+                is("fred@example.com"));
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getUsers()
+                        .get(1)
+                        .getCredential(UserData.PASSWORD_CREDENTIAL),
+                is("fred456"));
+        assertThat(
+                env.getContextWrappers().get(0).getData().getUsers().get(1).getCredential("key"),
+                is("123456"));
+        assertNotNull(env.getContextWrappers().get(0).getData().getUsers());
+        assertThat(env.getContextWrappers().get(1).getData().getUsers().size(), is(2));
+        assertThat(
+                env.getContextWrappers().get(1).getData().getUsers().get(0).getName(), is("Joan"));
+        assertThat(
+                env.getContextWrappers()
+                        .get(1)
+                        .getData()
+                        .getUsers()
+                        .get(0)
+                        .getCredential(UserData.USERNAME_CREDENTIAL),
+                is("joan@example.org"));
+        assertThat(
+                env.getContextWrappers()
+                        .get(1)
+                        .getData()
+                        .getUsers()
+                        .get(0)
+                        .getCredential(UserData.PASSWORD_CREDENTIAL),
+                is("joan321"));
+        assertThat(
+                env.getContextWrappers().get(1).getData().getUsers().get(1).getName(), is("John"));
+        assertThat(
+                env.getContextWrappers()
+                        .get(1)
+                        .getData()
+                        .getUsers()
+                        .get(1)
+                        .getCredential(UserData.USERNAME_CREDENTIAL),
+                is("john@example.org"));
+        assertThat(
+                env.getContextWrappers()
+                        .get(1)
+                        .getData()
+                        .getUsers()
+                        .get(1)
+                        .getCredential(UserData.PASSWORD_CREDENTIAL),
+                is("john654"));
+        assertThat(
+                env.getContextWrappers().get(1).getData().getUsers().get(1).getCredential("key"),
+                is("654321"));
     }
 
     @Test

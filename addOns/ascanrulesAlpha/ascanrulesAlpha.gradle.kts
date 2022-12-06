@@ -2,7 +2,7 @@ description = "The alpha status Active Scanner rules"
 
 zapAddOn {
     addOnName.set("Active scanner rules (alpha)")
-    zapVersion.set("2.11.1")
+    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -26,6 +26,7 @@ dependencies {
     compileOnly(parent!!.childProjects.get("oast")!!)
 
     testImplementation(parent!!.childProjects.get("commonlib")!!)
+    testImplementation(parent!!.childProjects.get("database")!!)
     testImplementation(parent!!.childProjects.get("network")!!)
     testImplementation(parent!!.childProjects.get("oast")!!)
     testImplementation(project(":testutils"))

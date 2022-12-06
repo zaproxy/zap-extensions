@@ -4,6 +4,29 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [23.10.0] - 2022-10-27
+### Changed
+- Update minimum ZAP version to 2.12.0.
+- Maintenance changes.
+
+## [23.9.0] - 2022-09-23
+### Changed
+- Maintenance changes.
+
+### Added
+- Support for automation monitor tests.
+- Added 'runOnlyIfModern' Automation Framework option.
+
+### Fixed
+- Automation Framework dialog - min numberOfBrowsers now 1.
+- Automation Framework job - correctly pick up URL from context.
+
+## [23.8.0] - 2022-08-04
+### Added
+- Missing 'user' param in the Automation Framework help
+
 ### Changed
 - Update minimum ZAP version to 2.11.1.
 - Use Network add-on to proxy Crawljax/browser requests.
@@ -216,6 +239,9 @@ By default it allows files with extension `.js` and `.css`.
 
 
 
+[23.10.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.10.0
+[23.9.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.9.0
+[23.8.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.8.0
 [23.7.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.7.0
 [23.6.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.6.0
 [23.5.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.5.0

@@ -44,11 +44,7 @@ env:                                   # The environment, mandatory
     progressToStdout: true             # If set will write job progress to stdout
 
 jobs:
-  - type: addOns                       # Add-on management
-    parameters:
-      updateAddOns: false              # Currently disabled due to problems updating the framework and jobs while they are running
-    install:                           # A list of non standard add-ons to install from the ZAP Marketplace
-    uninstall:                         # A list of standard add-ons to uninstall
+
   - type: passiveScan-config           # Passive scan configuration
     parameters:
       maxAlertsPerRule: 10             # Int: Maximum number of alerts to raise per rule
@@ -59,21 +55,6 @@ jobs:
       user:                            # String: An optional user to use for authenticated requests, must be defined in the env
     requests:                          # A list of requests to make
       - url:                           # String: A mandatory URL of the request to be made
-  - type: spider                       # The traditional spider - fast but doesnt handle modern apps so well
-    parameters:
-      context:                         # String: Name of the context to spider, default: first context
-      user:                            # String: An optional user to use for authentication, must be defined in the env
-      url:                             # String: Url to start spidering from, default: first context URL
-      maxDuration:                     # Int: The max time in minutes the spider will be allowed to run for, default: 0 unlimited
-      maxDepth:                        # Int: The maximum tree depth to explore
-      maxChildren:                     # Int: The maximum number of children to add to each node in the tree
-    tests:
-      - name: 'At least X URLs found'                   # String: Name of the test, default: statistic + operator + value
-        type: 'stats'                                   # String: Type of test, only 'stats' is supported for now
-        statistic: 'automation.spider.urls.added'       # String: Name of an integer / long statistic, currently supported: 'automation.spider.urls.added'
-        operator: '>='                                  # String ['==', '!=', '>=', '>', '<', '<=']: Operator used for testing
-        value: 100                                      # Int: Change this to the number of URLs you expect to find
-        onFail: 'info'                                  # String: One of 'warn', 'error', 'info', mandatory
   - type: delay                        # Pause the plan for a set period of time or event (file created, programmatic method called, API endpoint called)
     parameters:
       time:                            # String: The time to wait, format any of ['hh:mm:ss', 'mm:ss', 'ss'], default: 0

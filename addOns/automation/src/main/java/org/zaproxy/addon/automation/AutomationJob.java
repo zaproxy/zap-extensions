@@ -35,6 +35,7 @@ import org.parosproxy.paros.control.Control;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 import org.zaproxy.addon.automation.tests.AutomationAlertTest;
+import org.zaproxy.addon.automation.tests.AutomationMonitorTest;
 import org.zaproxy.addon.automation.tests.AutomationStatisticTest;
 import org.zaproxy.addon.automation.tests.UrlPresenceTest;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
@@ -124,6 +125,20 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
     }
 
     public void showDialog() {}
+
+    /**
+     * Called when the plan is started - can be used by jobs to save state if necessary.
+     *
+     * @see #planFinished
+     */
+    public void planStarted() {}
+
+    /**
+     * Called when the plan is finished - can be used by jobs to revert state if necessary.
+     *
+     * @see #planStarted
+     */
+    public void planFinished() {}
 
     public abstract void runJob(AutomationEnvironment env, AutomationProgress progress);
 
@@ -366,6 +381,13 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
         }
     }
 
+    private static boolean testTypeExists(ArrayList<?> tests, String type) {
+        return tests.stream()
+                .map(LinkedHashMap.class::cast)
+                .map(t -> t.get("type"))
+                .anyMatch(type::equals);
+    }
+
     protected void addTests(Object testsObj, AutomationProgress progress) {
         if (testsObj == null) {
             return;
@@ -374,20 +396,23 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
             progress.error(Constant.messages.getString("automation.error.job.data", testsObj));
             return;
         }
-        if (((ArrayList<?>) testsObj)
-                        .stream()
-                                .map(LinkedHashMap.class::cast)
-                                .map(t -> t.get("type"))
-                                .anyMatch("stats"::equals)
-                && Control.getSingleton()
-                                .getExtensionLoader()
-                                .getExtension(ExtensionStats.class)
-                                .getInMemoryStats()
-                        == null) {
-            progress.warn(
-                    Constant.messages.getString(
-                            "automation.tests.stats.nullInMemoryStats", getType()));
+
+        ExtensionStats extStats =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionStats.class);
+
+        if (extStats == null || extStats.getInMemoryStats() == null) {
+            if (testTypeExists((ArrayList<?>) testsObj, "stats")) {
+                progress.warn(
+                        Constant.messages.getString(
+                                "automation.tests.stats.nullInMemoryStats", getType()));
+            }
+            if (testTypeExists((ArrayList<?>) testsObj, "monitor")) {
+                progress.warn(
+                        Constant.messages.getString(
+                                "automation.tests.monitor.nullInMemoryStats", getType()));
+            }
         }
+
         for (Object testObj : (ArrayList<?>) testsObj) {
             if (!(testObj instanceof LinkedHashMap<?, ?>)) {
                 progress.error(Constant.messages.getString("automation.error.job.data", testObj));
@@ -429,6 +454,25 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
                 progress.info(
                         Constant.messages.getString(
                                 "automation.tests.add", getType(), testType, test.getName()));
+            } else if ("monitor".equals(testType)) {
+                if (!this.supportsMonitorTests()) {
+                    progress.warn(
+                            Constant.messages.getString(
+                                    "automation.tests.monitorNotSupported",
+                                    getName(),
+                                    this.getType()));
+                } else {
+                    try {
+                        test = new AutomationMonitorTest(testData, this, progress);
+                    } catch (IllegalArgumentException e) {
+                        progress.warn(e.getMessage());
+                        continue;
+                    }
+                    addTest(test);
+                    progress.info(
+                            Constant.messages.getString(
+                                    "automation.tests.add", getType(), testType, test.getName()));
+                }
             } else {
                 progress.warn(
                         Constant.messages.getString("automation.tests.invalidType", testType));
@@ -446,6 +490,20 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
 
     public void logTestsToProgress(AutomationProgress progress) {
         tests.forEach(t -> t.logToProgress(progress));
+    }
+
+    public boolean supportsMonitorTests() {
+        return false;
+    }
+
+    public boolean runMonitorTests(AutomationProgress progress) {
+        if (!supportsMonitorTests()) {
+            return false;
+        }
+
+        return tests.stream()
+                .filter(t -> t.getClass().equals(AutomationMonitorTest.class))
+                .allMatch(t -> t.runTest(progress));
     }
 
     public static <T> T safeCast(Object property, Class<T> clazz) {
@@ -669,5 +727,13 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
             }
         }
         return user;
+    }
+
+    protected void sleep(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            // Ignore
+        }
     }
 }

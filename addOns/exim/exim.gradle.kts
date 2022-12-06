@@ -5,7 +5,7 @@ description = "Import and Export functionality"
 zapAddOn {
     addOnName.set("Import/Export")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.11.1")
+    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team & thatsn0tmysite")
@@ -36,6 +36,11 @@ zapAddOn {
                 }
             }
         }
+    }
+
+    apiClientGen {
+        api.set("org.zaproxy.addon.exim.ImportExportApi")
+        messages.set(file("src/main/resources/org/zaproxy/addon/exim/resources/Messages.properties"))
     }
 }
 

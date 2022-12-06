@@ -59,9 +59,6 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
      */
     private static final String RESOURCES = "resources";
 
-    private static final ImageIcon ICON =
-            new ImageIcon(ExtensionSimpleExample.class.getResource(RESOURCES + "/cake.png"));
-
     private static final String EXAMPLE_FILE = "example/ExampleFile.txt";
 
     private ZapMenuItem menuExample;
@@ -85,7 +82,7 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
         extensionHook.addApiImplementor(this.api);
 
         // As long as we're not running as a daemon
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookMenu().addToolsMenuItem(getMenuExample());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMsgMenuExample());
             extensionHook.getHookView().addStatusPanel(getStatusPanel());
@@ -115,7 +112,7 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
             statusPanel = new AbstractPanel();
             statusPanel.setLayout(new CardLayout());
             statusPanel.setName(Constant.messages.getString(PREFIX + ".panel.title"));
-            statusPanel.setIcon(ICON);
+            statusPanel.setIcon(new ImageIcon(getClass().getResource(RESOURCES + "/cake.png")));
             JTextPane pane = new JTextPane();
             pane.setEditable(false);
             // Obtain (and set) a font with the size defined in the options

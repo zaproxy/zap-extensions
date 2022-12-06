@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -1156,15 +1155,6 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
             if (errorPattern.matcher(tempMsg.getResponseBody().toString()).find()) {
                 lastErrorPageUID = lastRequestUID;
             }
-
-        } catch (HttpException e) {
-            log.debug(
-                    "SQL Injection vulnerability check failed for parameter [{}] and payload [{}] due to: {}",
-                    paramName,
-                    payload,
-                    e.getClass().getCanonicalName(),
-                    e);
-            return null;
 
         } catch (IOException ex) {
             // Ok we got an error, but take in care always the given response

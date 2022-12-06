@@ -316,7 +316,7 @@ class OpenApiUnitTest extends AbstractServerTest {
         // Then
         assertThat(converter.getErrorMessages(), is(empty()));
         assertEquals(
-                "{\"id\":10,\"category\":{\"id\":10,\"name\":\"John Doe\"},\"name\":\"John Doe\",\"photoUrls\":[\"John Doe\"],\"tags\":[{\"id\":10,\"name\":\"John Doe\",\"x\":\"John Doe\"}],\"status\":\"available\"}",
+                "{\"id\":10,\"category\":{\"id\":10,\"name\":\"John Doe\"},\"name\":\"John Doe\",\"photoUrls\":[\"John Doe\"],\"tags\":[{\"id\":10,\"name\":\"John Doe\",\"x\":{\"id\":10,\"category\":{\"id\":10,\"name\":\"John Doe\"},\"name\":\"John Doe\",\"photoUrls\":[\"John Doe\"],\"tags\":[{\"id\":10,\"name\":\"John Doe\",\"x\":\"John Doe\"}],\"status\":\"available\"}}],\"status\":\"available\"}",
                 accessedUrls.get("POST http://" + host + "/PetStore/pet"));
     }
 

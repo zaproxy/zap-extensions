@@ -22,9 +22,14 @@ package org.zaproxy.addon.automation;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.MockedStatic;
+import org.parosproxy.paros.CommandLine;
 import org.zaproxy.addon.automation.AutomationProgress.JobResults;
 import org.zaproxy.zap.testutils.TestUtils;
 
@@ -232,5 +237,30 @@ class AutomationProgressUnitTest extends TestUtils {
         assertThat(progress.getErrors(job1).size(), is(0));
         assertThat(progress.getWarnings(job1).size(), is(0));
         assertThat(progress.getInfos(job1).size(), is(0));
+    }
+
+    @Test
+    void shouldPrintToStdoutOnInfoWhenOutputStdoutIsTrue() {
+        // Given
+        try (MockedStatic<CommandLine> cmdline = mockStatic(CommandLine.class)) {
+            progress.setOutputToStdout(true);
+            // When
+            progress.info("Hello World");
+            // Then
+            cmdline.verify(() -> CommandLine.info("Hello World"));
+        }
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldNotPrintToStdoutOnInfoNoStdout(boolean outputToStdOut) {
+        // Given
+        try (MockedStatic<CommandLine> cmdline = mockStatic(CommandLine.class)) {
+            progress.setOutputToStdout(outputToStdOut);
+            // When
+            progress.infoNoStdout("Hello World");
+            // Then
+            cmdline.verifyNoInteractions();
+        }
     }
 }

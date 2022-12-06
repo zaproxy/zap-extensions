@@ -35,6 +35,7 @@ public class EncodeDecodeOptions extends VersionedAbstractParam {
 
     private static final String PARAM_BASE64_CHARSET = "encoder.base64charset";
     private static final String PARAM_BASE64_DO_BREAK_LINES = "encoder.base64dobreaklines";
+    private static final String PARAM_HASHERS_DO_LOWERCASE = "encoder.hashers.lowercase";
 
     private static final String CORE_PARAM_BASE64_CHARSET = "encode.param.base64charset";
     private static final String CORE_PARAM_BASE64_DO_BREAK_LINES =
@@ -42,9 +43,11 @@ public class EncodeDecodeOptions extends VersionedAbstractParam {
 
     public static final String DEFAULT_CHARSET = "UTF-8";
     public static final boolean DEFAULT_DO_BREAK_LINES = true;
+    public static final boolean DEFAULT_DO_LOWERCASE = true;
 
     private String base64Charset;
     private boolean base64DoBreakLines;
+    private boolean hashersLowerCase;
 
     public EncodeDecodeOptions() {
         base64Charset = DEFAULT_CHARSET;
@@ -69,10 +72,20 @@ public class EncodeDecodeOptions extends VersionedAbstractParam {
         getConfig().setProperty(PARAM_BASE64_DO_BREAK_LINES, base64OuputBreak);
     }
 
+    public boolean isHashersLowerCase() {
+        return hashersLowerCase;
+    }
+
+    public void setHashersLowerCase(boolean hashersLowerCase) {
+        this.hashersLowerCase = hashersLowerCase;
+        getConfig().setProperty(PARAM_HASHERS_DO_LOWERCASE, hashersLowerCase);
+    }
+
     @Override
     protected void parseImpl() {
         base64DoBreakLines = getBoolean(PARAM_BASE64_DO_BREAK_LINES, DEFAULT_DO_BREAK_LINES);
         base64Charset = getString(PARAM_BASE64_CHARSET, DEFAULT_CHARSET);
+        hashersLowerCase = getBoolean(PARAM_HASHERS_DO_LOWERCASE, DEFAULT_DO_LOWERCASE);
     }
 
     @Override

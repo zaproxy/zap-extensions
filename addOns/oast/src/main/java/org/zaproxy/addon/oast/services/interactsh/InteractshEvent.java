@@ -139,9 +139,7 @@ public class InteractshEvent {
     private void extractAndSetMsg(HttpHeader header, HttpBody body, String rawMsg) {
         try {
             int separatorIndex = rawMsg.indexOf("\r\n\r\n") + 4;
-            // TODO: Do not replace HTTP/2.0 with HTTP/1.1
-            String headerString =
-                    rawMsg.substring(0, separatorIndex).replace("HTTP/2.0", "HTTP/1.1");
+            String headerString = rawMsg.substring(0, separatorIndex);
             String bodyString = rawMsg.substring(separatorIndex);
             header.setMessage(headerString);
             body.setBody(bodyString);

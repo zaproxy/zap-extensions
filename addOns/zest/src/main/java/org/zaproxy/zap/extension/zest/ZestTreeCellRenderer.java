@@ -285,7 +285,7 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 
             if (obj != null && obj instanceof ZestScriptWrapper) {
                 OverlayIcon icon =
-                        new OverlayIcon(DisplayUtils.getScaledIcon(ExtensionZest.ZEST_ICON));
+                        new OverlayIcon(DisplayUtils.getScaledIcon(ExtensionZest.getZestIcon()));
                 ZestScriptWrapper script = (ZestScriptWrapper) obj;
 
                 // Copied from ScriptsTreeCellRenderer as we want to add an additional overlay

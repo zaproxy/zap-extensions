@@ -4,8 +4,8 @@ description = "Supports all JSR 223 scripting languages"
 
 zapAddOn {
     addOnName.set("Script Console")
-    addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.11.1")
+    addOnStatus.set(AddOnStatus.RELEASE)
+    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -18,7 +18,7 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("automation") {
-                            version.set(">=0.12.0")
+                            version.set(">=0.18.0")
                         }
                     }
                 }
@@ -29,11 +29,13 @@ zapAddOn {
 
 spotless {
     java {
-        target(fileTree(projectDir) {
-            include("src/**/*.java")
-            // 3rd-party code.
-            exclude("src/**/JScrollPopupMenu.java")
-        })
+        target(
+            fileTree(projectDir) {
+                include("src/**/*.java")
+                // 3rd-party code.
+                exclude("src/**/JScrollPopupMenu.java")
+            }
+        )
     }
 }
 

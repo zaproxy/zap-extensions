@@ -42,7 +42,7 @@ public class ExtensionTodoList extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookView().addWorkPanel(getTodoList());
         }
     }

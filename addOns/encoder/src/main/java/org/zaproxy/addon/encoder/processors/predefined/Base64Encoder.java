@@ -27,6 +27,8 @@ import org.zaproxy.addon.encoder.ExtensionEncoder;
 
 public class Base64Encoder extends DefaultEncodeDecodeProcessor {
 
+    private static final Base64Encoder INSTANCE = new Base64Encoder();
+
     @Override
     protected String processInternal(String value) throws IOException {
         EncodeDecodeOptions encDecOpts =
@@ -42,5 +44,9 @@ public class Base64Encoder extends DefaultEncodeDecodeProcessor {
         return new String(
                 Base64.getEncoder().encode(value.getBytes(encDecOpts.getBase64Charset())),
                 encDecOpts.getBase64Charset());
+    }
+
+    public static Base64Encoder getSingleton() {
+        return INSTANCE;
     }
 }

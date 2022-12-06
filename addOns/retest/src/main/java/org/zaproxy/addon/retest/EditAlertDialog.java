@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractDialog;
 
+@SuppressWarnings("serial")
 public class EditAlertDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;

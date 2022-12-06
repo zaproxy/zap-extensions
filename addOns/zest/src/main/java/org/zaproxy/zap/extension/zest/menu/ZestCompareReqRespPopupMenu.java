@@ -37,6 +37,7 @@ import org.zaproxy.zest.core.v1.ZestRequest;
 import org.zaproxy.zest.core.v1.ZestResponse;
 import org.zaproxy.zest.core.v1.ZestStatement;
 
+@SuppressWarnings("serial")
 public class ZestCompareReqRespPopupMenu extends PopupMenuItemHistoryReferenceContainer {
 
     private static final long serialVersionUID = 2282358266003940700L;

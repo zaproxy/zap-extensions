@@ -26,15 +26,15 @@ import org.parosproxy.paros.network.HttpMessage;
 
 public final class MessageValidator {
 
-    protected enum Result {
+    public enum Result {
         INVALID,
         VALID_SCHEMA,
         VALID_ENDPOINT
-    };
+    }
 
     private MessageValidator() {}
 
-    protected static Result validate(HttpMessage message) {
+    public static Result validate(HttpMessage message) {
         String uri = message.getRequestHeader().getURI().toString();
         if (message.getResponseHeader().getHeader(HttpHeader.CONTENT_TYPE) == null) {
             return Result.INVALID;

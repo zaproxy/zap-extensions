@@ -43,7 +43,6 @@ import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.network.internal.ChannelAttributes;
 import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
-import org.zaproxy.zap.ZapGetMethod;
 
 /** Unit test for {@link MainProxyHandler}. */
 class MainProxyHandlerUnitTest {
@@ -89,6 +88,16 @@ class MainProxyHandlerUnitTest {
         // When / Then
         assertThrows(
                 NullPointerException.class, () -> new MainProxyHandler(legacyHandler, handlers));
+    }
+
+    @Test
+    void shouldNotSkipIfHttp2() {
+        // Given
+        given(msg.getUserObject()).willReturn(Collections.singletonMap("zap.h2", Boolean.TRUE));
+        // When
+        boolean skip = handler.postWriteResponse(ctx, msg);
+        // Then
+        assertThat(skip, is(equalTo(false)));
     }
 
     @Test
@@ -165,7 +174,8 @@ class MainProxyHandlerUnitTest {
     void shouldUseMethodFromMessage() {
         // Given
         given(msg.isEventStream()).willReturn(true);
-        ZapGetMethod method = mock(ZapGetMethod.class);
+        @SuppressWarnings("deprecation")
+        org.zaproxy.zap.ZapGetMethod method = mock(org.zaproxy.zap.ZapGetMethod.class);
         given(msg.getUserObject()).willReturn(method);
         // When
         handler.postWriteResponse(ctx, msg);

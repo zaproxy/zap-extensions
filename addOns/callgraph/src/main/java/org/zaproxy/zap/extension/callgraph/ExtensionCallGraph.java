@@ -39,7 +39,7 @@ public class ExtensionCallGraph extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookMenu().addPopupMenuItem(new PopupMenuCallGraph());
         }
     }

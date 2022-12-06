@@ -35,6 +35,7 @@ import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.ExtensionPopupMenu;
 import org.zaproxy.zap.extension.scripts.SyntaxHighlightTextArea.SyntaxStyle;
 
+@SuppressWarnings("serial")
 public class SyntaxMenu extends ExtensionPopupMenu {
 
     private static final long serialVersionUID = 8472491919281117716L;

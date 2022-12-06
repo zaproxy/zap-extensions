@@ -4,9 +4,17 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Fixed
+- Prevent exception if no display (Issue 3978).
+
+## [14] - 2022-10-27
 ### Changed
-- Update minimum ZAP version to 2.11.1.
+- Update minimum ZAP version to 2.12.0.
 - When the automation Job is edited via UI Dialog then the status will be set to Not started
+- Maintenance changes.
+
+### Fixed
+- Include the ID when listing scan rules, to allow to differentiate scan rules with the same name (Issue 5699).
 
 ## [13] - 2021-10-06
 ### Added
@@ -82,6 +90,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[14]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v13
 [12]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v12
 [11]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v11

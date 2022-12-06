@@ -57,7 +57,7 @@ public class ExtensionOnlineMenu extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
-        if (getView() != null) {
+        if (hasView()) {
             // Homepage
             ZapMenuItem menuHomepage =
                     new ZapMenuItem(

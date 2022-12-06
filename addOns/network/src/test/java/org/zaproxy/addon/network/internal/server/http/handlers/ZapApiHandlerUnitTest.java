@@ -62,13 +62,13 @@ class ZapApiHandlerUnitTest {
     }
 
     @Test
-    void shouldNotHandleExcludedMessage() throws Exception {
+    void shouldHandleExcludedMessage() throws Exception {
         // Given
         given(ctx.isExcluded()).willReturn(true);
         // When
         handler.handleMessage(ctx, message);
         // Then
-        verify(message, times(0)).getRequestHeader();
+        verify(message).getRequestBody();
     }
 
     @Test

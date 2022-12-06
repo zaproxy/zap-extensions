@@ -101,19 +101,7 @@ import org.zaproxy.zest.impl.ZestScriptEngineFactory;
 public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, ScriptEventListener {
 
     public static final String NAME = "ExtensionZest";
-    public static final ImageIcon ZEST_ICON =
-            new ImageIcon(
-                    ExtensionZest.class.getResource(
-                            "/org/zaproxy/zap/extension/zest/resources/icons/fruit-orange.png"));
-
-    private static final ImageIcon RECORD_OFF_ICON =
-            new ImageIcon(
-                    ExtensionZest.class.getResource(
-                            "/org/zaproxy/zap/extension/zest/resources/icons/cassette.png"));
-    private static final ImageIcon RECORD_ON_ICON =
-            new ImageIcon(
-                    ExtensionZest.class.getResource(
-                            "/org/zaproxy/zap/extension/zest/resources/icons/cassette-red.png"));
+    private static ImageIcon zestIcon;
 
     public static final String HTTP_HEADER_X_SECURITY_PROXY = "X-Security-Proxy";
     public static final String VALUE_RECORD = "record";
@@ -162,13 +150,23 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         this.setOrder(73); // Almost looks like ZE ;)
     }
 
+    public static ImageIcon getZestIcon() {
+        if (zestIcon == null) {
+            zestIcon =
+                    new ImageIcon(
+                            ExtensionZest.class.getResource(
+                                    "/org/zaproxy/zap/extension/zest/resources/icons/fruit-orange.png"));
+        }
+        return zestIcon;
+    }
+
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
         extensionHook.addOptionsParamSet(getParam());
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.addProxyListener(this);
             extensionHook.addSessionListener(new ViewSessionChangedListener());
 
@@ -277,7 +275,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
     @Override
     public void optionsLoaded() {
-        if (getView() == null || EventQueue.isDispatchThread()) {
+        if (!hasView() || EventQueue.isDispatchThread()) {
             // Convert scripts loaded on start into real Zest scripts
             for (ScriptType type : this.getExtScript().getScriptTypes()) {
                 for (ScriptWrapper script : this.getExtScript().getScripts(type)) {
@@ -302,7 +300,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
     @Override
     public void unload() {
-        if (getView() != null) {
+        if (hasView()) {
             View view = View.getSingleton();
             view.removeMainToolbarButton(getRecordButton());
             view.removeMainToolbarSeparator(getToolbarSeparator());
@@ -394,8 +392,16 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     private JToggleButton getRecordButton() {
         if (recordButton == null) {
             recordButton = new ZapToggleButton();
-            recordButton.setIcon(RECORD_OFF_ICON);
-            recordButton.setSelectedIcon(RECORD_ON_ICON);
+            recordButton.setIcon(
+                    new ImageIcon(
+                            getClass()
+                                    .getResource(
+                                            "/org/zaproxy/zap/extension/zest/resources/icons/cassette.png")));
+            recordButton.setSelectedIcon(
+                    new ImageIcon(
+                            getClass()
+                                    .getResource(
+                                            "/org/zaproxy/zap/extension/zest/resources/icons/cassette-red.png")));
             recordButton.setToolTipText(
                     Constant.messages.getString("zest.toolbar.button.record.off"));
             recordButton.setSelectedToolTipText(
@@ -798,7 +804,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     }
 
     public final ScriptNode addToParent(ScriptNode parent, ZestExpression newExp) {
-        logger.debug("addToParent parent={} new={}", parent.getNodeName(), newExp.toString());
+        logger.debug("addToParent parent={} new={}", parent.getNodeName(), newExp);
         ScriptNode node;
         ZestElement parentZe = ZestZapUtils.getElement(parent);
         if (parentZe instanceof ZestConditional) {

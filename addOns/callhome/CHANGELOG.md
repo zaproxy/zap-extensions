@@ -4,9 +4,28 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [0.6.0] - 2022-12-02
+### Fixed
+- Include container field for CFUs.
+
+## [0.5.0] - 2022-10-27
+### Added
+- DOM XSS stats to telemetry
+
+### Changed
+- Update minimum ZAP version to 2.12.0.
+- Maintenance changes.
+- Promoted to Release status.
+
+## [0.4.0] - 2022-07-18
 ### Changed
 - Show a more user friendly log and Output tab message when Java's truststore may not contain the CA certificate(s) for intermediate proxy(ies) (Issue 1623).
 - Maintenance changes.
+
+### Fixed
+- HTTP Sender listeners could modify CFU and telemetry requests.
 
 ## [0.3.0] - 2022-01-21
 ### Added
@@ -37,6 +56,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version supports Check for Updates and News calls.
 
+[0.6.0]: https://github.com/zaproxy/zap-extensions/releases/callhome-v0.6.0
+[0.5.0]: https://github.com/zaproxy/zap-extensions/releases/callhome-v0.5.0
+[0.4.0]: https://github.com/zaproxy/zap-extensions/releases/callhome-v0.4.0
 [0.3.0]: https://github.com/zaproxy/zap-extensions/releases/callhome-v0.3.0
 [0.2.0]: https://github.com/zaproxy/zap-extensions/releases/callhome-v0.2.0
 [0.1.0]: https://github.com/zaproxy/zap-extensions/releases/callhome-v0.1.0

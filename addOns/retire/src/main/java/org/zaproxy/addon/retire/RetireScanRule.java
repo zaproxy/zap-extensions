@@ -71,7 +71,7 @@ public class RetireScanRule extends PluginPassiveScanner {
                 LOGGER.error("\tThe Retire.js repository was null.");
                 return;
             }
-            Result result = scanRepo.scanJS(msg);
+            Result result = scanRepo.scanJS(msg, source);
             if (result == null) {
                 LOGGER.debug("\tNo vulnerabilities found in record {} with URL {}", id, uri);
             } else {
@@ -98,6 +98,7 @@ public class RetireScanRule extends PluginPassiveScanner {
         return newAlert()
                 .setRisk(Alert.RISK_MEDIUM)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setName(getAlertName())
                 .setDescription(
                         Constant.messages.getString(
                                 "retire.rule.desc", result.getFilename(), result.getVersion()))
@@ -113,9 +114,13 @@ public class RetireScanRule extends PluginPassiveScanner {
     public List<Alert> getExampleAlerts() {
         List<Alert> alerts = new ArrayList<>();
         alerts.add(
-                buildAlert(new Result("ExampleLibrary", "x.y.z", Collections.emptyMap(), null), "")
+                buildAlert(new Result("ExampleLibrary", "x.y.z", Collections.emptyMap(), ""), "")
                         .build());
         return alerts;
+    }
+
+    private static String getAlertName() {
+        return Constant.messages.getString("retire.alert.name");
     }
 
     private String getDetails(String key, Map<String, Set<String>> info) {

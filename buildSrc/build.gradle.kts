@@ -1,6 +1,6 @@
 plugins {
     `kotlin-dsl`
-    id("com.diffplug.spotless") version "5.14.2"
+    id("com.diffplug.spotless") version "6.11.0"
 }
 
 repositories {
@@ -32,10 +32,15 @@ dependencies {
     implementation("io.github.bonigarcia:webdrivermanager:5.1.0") {
         exclude("com.fasterxml.jackson.core")
     }
-    implementation("com.diffplug.spotless:spotless-plugin-gradle:5.14.2")
+    implementation("com.diffplug.spotless:spotless-plugin-gradle:6.11.0")
 }
 
+val javaVersion = JavaVersion.VERSION_11
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+}
+
+kotlinDslPluginOptions {
+    jvmTarget.set(javaVersion.toString())
 }

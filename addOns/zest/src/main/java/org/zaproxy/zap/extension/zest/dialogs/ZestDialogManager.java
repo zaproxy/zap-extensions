@@ -71,6 +71,7 @@ import org.zaproxy.zest.core.v1.ZestStatement;
 import org.zaproxy.zest.core.v1.ZestStructuredExpression;
 import org.zaproxy.zest.impl.ZestScriptEngineFactory;
 
+@SuppressWarnings("serial")
 public class ZestDialogManager extends AbstractPanel {
 
     private static final long serialVersionUID = 1L;
@@ -131,7 +132,7 @@ public class ZestDialogManager extends AbstractPanel {
     private void initialize() {
         this.setLayout(new CardLayout());
         this.setName(Constant.messages.getString("zest.scripts.panel.title"));
-        this.setIcon(ExtensionZest.ZEST_ICON);
+        this.setIcon(ExtensionZest.getZestIcon());
 
         mouseListener =
                 new java.awt.event.MouseAdapter() {

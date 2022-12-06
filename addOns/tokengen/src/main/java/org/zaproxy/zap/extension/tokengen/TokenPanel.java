@@ -48,6 +48,7 @@ import org.zaproxy.zap.view.ScanStatus;
 import org.zaproxy.zap.view.ZapToggleButton;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
+@SuppressWarnings("serial")
 public class TokenPanel extends AbstractPanel {
 
     private static final long serialVersionUID = 1L;

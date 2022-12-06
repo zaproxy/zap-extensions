@@ -26,6 +26,7 @@ import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
+@SuppressWarnings("serial")
 public class ZestRedactDialog extends StandardFieldsDialog {
 
     private static final String FIELD_REPLACE_STRING = "zest.dialog.redact.label.repstring";

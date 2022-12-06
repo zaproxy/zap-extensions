@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
@@ -48,6 +49,7 @@ public class OpenApiJob extends AutomationJob {
     private static final String PARAM_API_URL = "apiUrl";
     private static final String PARAM_API_FILE = "apiFile";
     private static final String PARAM_TARGET_URL = "targetUrl";
+    private static final String PARAM_CONTEXT = "context";
 
     private ExtensionOpenApi extOpenApi;
 
@@ -93,6 +95,7 @@ public class OpenApiJob extends AutomationJob {
         map.put(PARAM_API_URL, "");
         map.put(PARAM_API_FILE, "");
         map.put(PARAM_TARGET_URL, "");
+        map.put(PARAM_CONTEXT, "");
         return map;
     }
 
@@ -106,12 +109,18 @@ public class OpenApiJob extends AutomationJob {
         if (!StringUtils.isEmpty(targetStr)) {
             targetUrl = env.replaceVars(targetStr);
         }
+        String context = this.getParameters().getContext();
+        int contextId =
+                context != null
+                        ? Model.getSingleton().getSession().getContext(context).getId()
+                        : -1;
 
         if (!StringUtils.isEmpty(apiFile)) {
             File file = new File(apiFile);
             if (file.exists() && file.canRead()) {
                 OpenApiResults results =
-                        getExtOpenApi().importOpenApiDefinitionV2(file, targetUrl, false);
+                        getExtOpenApi()
+                                .importOpenApiDefinitionV2(file, targetUrl, false, contextId);
                 List<String> errors = results.getErrors();
                 if (errors != null && errors.size() > 0) {
                     for (String error : errors) {
@@ -131,10 +140,7 @@ public class OpenApiJob extends AutomationJob {
             } else {
                 progress.error(
                         Constant.messages.getString(
-                                "openapi.automation.error.file",
-                                this.getName(),
-                                targetUrl,
-                                apiFile));
+                                "openapi.automation.error.file", this.getName(), apiFile));
             }
         }
         if (!StringUtils.isEmpty(apiStr)) {
@@ -142,7 +148,7 @@ public class OpenApiJob extends AutomationJob {
             try {
                 URI uri = new URI(apiUrl, true);
                 OpenApiResults results =
-                        getExtOpenApi().importOpenApiDefinitionV2(uri, targetUrl, false);
+                        getExtOpenApi().importOpenApiDefinitionV2(uri, targetUrl, false, contextId);
                 List<String> errors = results.getErrors();
                 if (errors != null && errors.size() > 0) {
                     for (String error : errors) {
@@ -254,6 +260,7 @@ public class OpenApiJob extends AutomationJob {
         private String apiFile;
         private String apiUrl;
         private String targetUrl;
+        private String context;
 
         public String getApiFile() {
             return apiFile;
@@ -277,6 +284,14 @@ public class OpenApiJob extends AutomationJob {
 
         public void setTargetUrl(String targetUrl) {
             this.targetUrl = targetUrl;
+        }
+
+        public String getContext() {
+            return context;
+        }
+
+        public void setContext(String context) {
+            this.context = context;
         }
     }
 }

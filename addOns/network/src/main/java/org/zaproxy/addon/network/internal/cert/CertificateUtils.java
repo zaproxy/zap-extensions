@@ -77,7 +77,6 @@ import org.bouncycastle.operator.OperatorCreationException;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemWriter;
-import org.parosproxy.paros.security.CertData;
 
 /** Utilities for certificate generation and manipulation. */
 public final class CertificateUtils {
@@ -126,6 +125,10 @@ public final class CertificateUtils {
     private static final Duration SERVER_CERTIFICATE_START_ADJUSTMENT = Duration.ofDays(30);
 
     private CertificateUtils() {}
+
+    public static char[] getPassphrase() {
+        return PASSPHRASE.clone();
+    }
 
     /**
      * Creates a new Root CA certificate and returns the private and public key in a {@link

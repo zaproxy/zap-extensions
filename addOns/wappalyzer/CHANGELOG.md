@@ -4,6 +4,44 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Updated with upstream Wappalyzer icon and pattern changes.
+
+### Fixed
+- Prevent exception if no display (Issue 3978).
+
+## [21.16.0] - 2022-11-14
+### Changed
+- Updated with upstream Wappalyzer icon and pattern changes.
+
+
+
+## [21.15.0] - 2022-11-03
+### Changed
+- Updated with upstream Wappalyzer icon and pattern changes.
+
+
+
+## [21.14.0] - 2022-10-27
+### Changed
+- Update minimum ZAP version to 2.12.0.
+- Updated with upstream Wappalyzer icon and pattern changes.
+- Maintenance changes.
+
+## [21.13.0] - 2022-09-23
+### Changed
+- Maintenance changes.
+- Updated with upstream Wappalyzer icon and pattern changes.
+
+## [21.12.0] - 2022-08-15
+### Changed
+- Maintenance changes.
+- Updated with upstream Wappalyzer icon and pattern changes.
+
+## [21.11.0] - 2022-06-03
+###Changed
+- Updated with upstream Wappalyzer icon and pattern changes.
+- Update Wappalyzer URL in help documentation.
 
 ### Fixed
 - Threading issue - only reproducible with currently unreleased core changes.
@@ -43,7 +81,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Updated with upstream Wappalyzer icon and pattern changes.
 - Adapt script source handling to upstream changes.
-
 
 ## [21.4.0] - 2021-10-07
 ### Changed
@@ -136,7 +173,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update with Wappalyzer icon and pattern changes.
 
-
 ## [16] - 2020-01-24
 ### Added
 - Add info and repo URLs.
@@ -227,6 +263,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - First version
 
 
+[21.16.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.16.0
+[21.15.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.15.0
+[21.14.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.14.0
+[21.13.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.13.0
+[21.12.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.12.0
+[21.11.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.11.0
 [21.10.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.10.0
 [21.9.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.9.0
 [21.8.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.8.0

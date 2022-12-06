@@ -26,6 +26,7 @@ import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 
+@SuppressWarnings("serial")
 public class AbstractTableModelAsAbstractColumnTableModelWrapper<T> {
 
     private final AbstractTableModel abstractTableModel;

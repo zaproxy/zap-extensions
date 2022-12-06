@@ -32,14 +32,20 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
+@SuppressWarnings("serial")
 public class PopupMenuExportMessages extends JMenuItem {
 
     private static final long serialVersionUID = 1L;
     private static final String NEWLINE = "\n";
 
     private static final Logger LOG = LogManager.getLogger(PopupMenuExportMessages.class);
+    private static final String STATS_EXPORT_MESSAGES =
+            ExtensionExim.STATS_PREFIX + "export.messages";
+    private static final String STATS_EXPORT_MESSAGES_ERROR =
+            ExtensionExim.STATS_PREFIX + "export.messages.error";
 
     private ExtensionHistory extension;
 
@@ -138,9 +144,11 @@ public class PopupMenuExportMessages extends JMenuItem {
                     }
                 }
             }
+            Stats.incCounter(STATS_EXPORT_MESSAGES);
 
         } catch (Exception e) {
             LOG.warn(e.getMessage(), e);
+            Stats.incCounter(STATS_EXPORT_MESSAGES_ERROR);
         }
     }
 

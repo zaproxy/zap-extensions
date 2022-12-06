@@ -39,6 +39,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Vulnerabilities;
@@ -151,7 +152,7 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin {
             for (String filename : WEBINF_FILES) {
 
                 HttpMessage webinffilemsg =
-                        new HttpMessage(
+                        createHttpMessage(
                                 new URI(
                                         originalURI.getScheme()
                                                 + "://"
@@ -183,7 +184,7 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin {
                 URI classURI = getClassURI(originalURI, classname);
                 log.debug("Looking for Class file: {}", classURI);
 
-                HttpMessage classfilemsg = new HttpMessage(classURI);
+                HttpMessage classfilemsg = createHttpMessage(classURI);
                 sendAndReceive(classfilemsg, false); // do not follow redirects
                 if (isPage200(classfilemsg)) {
                     // to decompile the class file, we need to write it to disk..
@@ -256,7 +257,7 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin {
                             log.debug("Found props file: {}", propsFilename);
 
                             URI propsFileURI = getPropsFileURI(originalURI, propsFilename);
-                            HttpMessage propsfilemsg = new HttpMessage(propsFileURI);
+                            HttpMessage propsfilemsg = createHttpMessage(propsFileURI);
                             sendAndReceive(propsfilemsg, false); // do not follow redirects
                             if (isPage200(propsfilemsg)) {
                                 // Holy sheet.. we found a properties file
@@ -302,6 +303,12 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin {
                     e.getMessage(),
                     e);
         }
+    }
+
+    private HttpMessage createHttpMessage(URI uri) throws HttpMalformedHeaderException {
+        HttpMessage msg = new HttpMessage(uri);
+        msg.getRequestHeader().setVersion(getBaseMsg().getRequestHeader().getVersion());
+        return msg;
     }
 
     /**

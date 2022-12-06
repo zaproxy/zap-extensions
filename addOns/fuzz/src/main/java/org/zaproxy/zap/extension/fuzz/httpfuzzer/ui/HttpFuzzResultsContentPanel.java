@@ -52,6 +52,7 @@ import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzerListener;
 import org.zaproxy.zap.view.ZapToggleButton;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
+@SuppressWarnings("serial")
 public class HttpFuzzResultsContentPanel extends JPanel
         implements FuzzResultsContentPanel<HttpMessage, HttpFuzzer> {
 
@@ -221,7 +222,7 @@ public class HttpFuzzResultsContentPanel extends JPanel
                                                         "fuzz.httpfuzzer.results.toolbar.button.export.showMessageError")
                                                 + "\n"
                                                 + ex.getLocalizedMessage());
-                                logger.error("Export Failed: {}", ex);
+                                logger.error("Export Failed: {}", ex.getMessage(), ex);
                             }
                             // Delay the presentation of success message, to ensure all the data was
                             // already flushed.

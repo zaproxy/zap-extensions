@@ -4,7 +4,17 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Fixed
+- Prevent exception if no display (Issue 3978).
 
+## [27] - 2022-10-27
+### Changed
+- Update minimum ZAP version to 2.12.0.
+- Maintenance changes.
+- Use the Requester add-on for the WebSocket Message Editor dialogues.
+
+### Fixed
+- Correctly handle no message in the WebSocket message panel.
 
 ## [26] - 2022-05-20
 ### Changed
@@ -194,6 +204,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[27]: https://github.com/zaproxy/zap-extensions/releases/websocket-v27
 [26]: https://github.com/zaproxy/zap-extensions/releases/websocket-v26
 [25]: https://github.com/zaproxy/zap-extensions/releases/websocket-v25
 [24]: https://github.com/zaproxy/zap-extensions/releases/websocket-v24

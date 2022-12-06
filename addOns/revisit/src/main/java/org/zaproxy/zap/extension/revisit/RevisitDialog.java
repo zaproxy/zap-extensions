@@ -39,6 +39,7 @@ import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.LayoutHelper;
 
+@SuppressWarnings("serial")
 public class RevisitDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;

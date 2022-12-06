@@ -46,6 +46,7 @@ import javax.crypto.spec.OAEPParameterSpec;
 import javax.crypto.spec.PSource;
 import javax.crypto.spec.SecretKeySpec;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONNull;
 import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -56,16 +57,15 @@ import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemWriter;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.OptionsChangedListener;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
-import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.addon.oast.OastService;
 import org.zaproxy.addon.oast.OastState;
+import org.zaproxy.addon.oast.OastState.OastStateEventType;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.utils.Stats;
 
@@ -98,12 +98,7 @@ public class InteractshService extends OastService implements OptionsChangedList
     }
 
     InteractshService(InteractshParam param) {
-        httpSender =
-                new HttpSender(
-                        Model.getSingleton().getOptionsParam().getConnectionParam(),
-                        true,
-                        // TODO: Replace on next ZAP release with HttpSender.OAST_INITIATOR
-                        ExtensionOast.HTTP_SENDER_OAST_INITIATOR);
+        httpSender = new HttpSender(HttpSender.OAST_INITIATOR);
         secretKey = UUID.randomUUID();
         correlationId = RandomStringUtils.randomAlphanumeric(20).toLowerCase(Locale.ROOT);
         this.param = param;
@@ -229,6 +224,8 @@ public class InteractshService extends OastService implements OptionsChangedList
                     reqMsg.getResponseHeader().getStatusCode(),
                     reqMsg.getResponseBody());
             isRegistered = true;
+            fireOastStateChanged(
+                    new OastState(getName(), false, null, OastStateEventType.REGISTERED));
             if (startPolling) {
                 schedulePoller(0);
             }
@@ -255,10 +252,10 @@ public class InteractshService extends OastService implements OptionsChangedList
     }
 
     public synchronized void deregister() {
+        if (!isRegistered) {
+            return;
+        }
         try {
-            if (!isRegistered) {
-                return;
-            }
             stopPoller();
             URI deregistrationUri = (URI) serverUrl.clone();
             deregistrationUri.setPath("/deregister");
@@ -275,13 +272,14 @@ public class InteractshService extends OastService implements OptionsChangedList
                         "Error during interactsh deregister, due to bad HTTP code {}. Content: {}",
                         deregisterMsg.getResponseHeader().getStatusCode(),
                         deregisterMsg.getResponseBody());
-                return;
             }
             LOGGER.debug("Deregistered correlationId: {}", correlationId);
-            isRegistered = false;
-            fireOastStateChanged(new OastState(getName(), false, null));
         } catch (Exception e) {
             LOGGER.error("Error during interactsh deregister: {}", e.getMessage(), e);
+        } finally {
+            isRegistered = false;
+            fireOastStateChanged(
+                    new OastState(getName(), false, null, OastStateEventType.UNREGISTERED));
         }
     }
 
@@ -372,6 +370,11 @@ public class InteractshService extends OastService implements OptionsChangedList
                 return new ArrayList<>();
             }
             String aesKey = response.getString("aes_key");
+            Object data = response.get("data");
+            if (data instanceof JSONNull) {
+                LOGGER.debug("Interactsh server has returned null data");
+                return new ArrayList<>();
+            }
             JSONArray interactions = response.getJSONArray("data");
             LOGGER.debug(
                     "Polled {} interactions for correlationId: {}",

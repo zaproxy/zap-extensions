@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -32,6 +33,7 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -95,6 +97,22 @@ class UsernameIdorScanRuleUnitTest extends PassiveScannerTest<UsernameIdorScanRu
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_ATHZ_04_IDOR.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_ATHZ_04_IDOR.getValue())));
+    }
+
+    @Test
+    void shouldReturnExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        Alert alert = alerts.get(0);
+        Map<String, String> tags = alert.getTags();
+        // Then
+        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()));
+        assertThat(tags, hasKey(CommonAlertTag.OWASP_2017_A05_BROKEN_AC.getTag()));
+        assertThat(tags, hasKey(CommonAlertTag.WSTG_V42_ATHZ_04_IDOR.getTag()));
+        assertThat(tags, hasKey(CommonAlertTag.CUSTOM_PAYLOADS.getTag()));
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_INFO)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
     }
 
     @Test

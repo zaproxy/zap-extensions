@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import com.shapesecurity.salvation2.Directives.SourceExpressionDirective;
+import com.shapesecurity.salvation2.FetchDirectiveKind;
 import com.shapesecurity.salvation2.Policy;
 import com.shapesecurity.salvation2.Policy.PolicyErrorConsumer;
 import com.shapesecurity.salvation2.PolicyInOrigin;
@@ -35,7 +37,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import net.htmlparser.jericho.Source;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -95,7 +97,6 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         boolean cspHeaderFound = false;
-        int noticesRisk;
 
         LOGGER.debug("Start {} : {}", id, msg.getRequestHeader().getURI());
 
@@ -114,31 +115,8 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
             cspHeaderFound = true;
         }
 
-        // X-Content-Security-Policy is an older header, supported by Firefox
-        // 4.0+, and IE 10+ (in a limited fashion)
-        List<String> xcspOptions = msg.getResponseHeader().getHeaderValues(HTTP_HEADER_XCSP);
-        if (!xcspOptions.isEmpty()) {
-            raiseAlert(
-                    Constant.messages.getString(MESSAGE_PREFIX + "xcsp.name"),
-                    Constant.messages.getString(MESSAGE_PREFIX + "xcsp.otherinfo"),
-                    getHeaderField(msg, HTTP_HEADER_XCSP).get(0),
-                    cspHeaderFound ? Alert.RISK_INFO : Alert.RISK_LOW,
-                    xcspOptions.get(0),
-                    "1");
-        }
-
-        // X-WebKit-CSP is supported by Chrome 14+, and Safari 6+
-        List<String> xwkcspOptions =
-                msg.getResponseHeader().getHeaderValues(HTTP_HEADER_WEBKIT_CSP);
-        if (!xwkcspOptions.isEmpty()) {
-            raiseAlert(
-                    Constant.messages.getString(MESSAGE_PREFIX + "xwkcsp.name"),
-                    Constant.messages.getString(MESSAGE_PREFIX + "xwkcsp.otherinfo"),
-                    getHeaderField(msg, HTTP_HEADER_WEBKIT_CSP).get(0),
-                    cspHeaderFound ? Alert.RISK_INFO : Alert.RISK_LOW,
-                    xwkcspOptions.get(0),
-                    "2");
-        }
+        checkXcsp(msg, cspHeaderFound);
+        checkXWebkitCsp(msg, cspHeaderFound);
 
         if (cspHeaderFound) {
 
@@ -153,75 +131,39 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                     };
 
             for (String csp : cspOptions) {
-                Policy policy = Policy.parseSerializedCSP(csp, consumer);
+                Policy policy = parsePolicy(csp, consumer, msg, id);
+                if (policy == null) {
+                    continue;
+                }
 
                 if (!observedErrors.isEmpty()) {
-                    String cspNoticesString = getCspNoticesString(observedErrors);
-                    if (cspNoticesString.contains(
-                                    Constant.messages.getString(MESSAGE_PREFIX + "notices.errors"))
-                            || cspNoticesString.contains(
-                                    Constant.messages.getString(
-                                            MESSAGE_PREFIX + "notices.warnings"))) {
-                        noticesRisk = Alert.RISK_LOW;
-                    } else {
-                        noticesRisk = Alert.RISK_INFO;
-                    }
-                    raiseAlert(
-                            Constant.messages.getString(MESSAGE_PREFIX + "notices.name"),
-                            cspNoticesString,
-                            "",
-                            noticesRisk,
-                            csp,
-                            "3");
+                    checkObservedErrors(observedErrors, msg, csp);
                 }
 
                 List<String> allowedWildcardSources = getAllowedWildcardSources(csp);
                 if (!allowedWildcardSources.isEmpty()) {
-                    List<String> allowedDirectivesWithoutFallback =
-                            allowedWildcardSources.stream()
-                                    .distinct()
-                                    .filter(DIRECTIVES_WITHOUT_FALLBACK::contains)
-                                    .collect(Collectors.toList());
-                    String allowedWildcardSrcs = String.join(", ", allowedWildcardSources);
-                    String wildcardSrcOtherInfo =
-                            Constant.messages.getString(
-                                    MESSAGE_PREFIX + "wildcard.otherinfo", allowedWildcardSrcs);
-                    if (!allowedDirectivesWithoutFallback.isEmpty()) {
-                        wildcardSrcOtherInfo +=
-                                Constant.messages.getString(
-                                        "pscanrules.csp.otherinfo.extended",
-                                        String.join(", ", allowedDirectivesWithoutFallback));
-                    }
-                    raiseAlert(
-                            Constant.messages.getString(MESSAGE_PREFIX + "wildcard.name"),
-                            wildcardSrcOtherInfo,
-                            "",
-                            Alert.RISK_MEDIUM,
-                            csp,
-                            "4");
+                    checkWildcardSources(allowedWildcardSources, msg, csp);
                 }
 
                 PolicyInOrigin p = new PolicyInOrigin(policy, URI.parseURI(RAND_FQDN).orElse(null));
                 if (p.allowsUnsafeInlineScript()) {
-                    raiseAlert(
-                            Constant.messages.getString(MESSAGE_PREFIX + "scriptsrc.unsafe.name"),
-                            Constant.messages.getString(
-                                    MESSAGE_PREFIX + "scriptsrc.unsafe.otherinfo"),
-                            "",
-                            Alert.RISK_MEDIUM,
-                            csp,
-                            "5");
+                    buildScriptUnsafeInlineAlert(getHeaderField(msg, HTTP_HEADER_CSP).get(0), csp)
+                            .raise();
                 }
 
                 if (p.allowsUnsafeInlineStyle()) {
-                    raiseAlert(
-                            Constant.messages.getString(MESSAGE_PREFIX + "stylesrc.unsafe.name"),
-                            Constant.messages.getString(
-                                    MESSAGE_PREFIX + "stylesrc.unsafe.otherinfo"),
-                            "",
-                            Alert.RISK_MEDIUM,
-                            csp,
-                            "6");
+                    buildStyleUnsafeInlineAlert(getHeaderField(msg, HTTP_HEADER_CSP).get(0), csp)
+                            .raise();
+                }
+
+                if (allowsUnsafeHashes(policy, FetchDirectiveKind.ScriptSrc)) {
+                    buildScriptUnsafeHashAlert(getHeaderField(msg, HTTP_HEADER_CSP).get(0), csp)
+                            .raise();
+                }
+
+                if (allowsUnsafeHashes(policy, FetchDirectiveKind.StyleSrc)) {
+                    buildStyleUnsafeHashAlert(getHeaderField(msg, HTTP_HEADER_CSP).get(0), csp)
+                            .raise();
                 }
 
                 if (policy.allowsEval()) {
@@ -239,6 +181,104 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
         }
 
         LOGGER.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
+    }
+
+    private void checkXcsp(HttpMessage msg, boolean cspHeaderFound) {
+        // X-Content-Security-Policy is an older header, supported by Firefox
+        // 4.0+, and IE 10+ (in a limited fashion)
+        List<String> xcspOptions = msg.getResponseHeader().getHeaderValues(HTTP_HEADER_XCSP);
+        if (!xcspOptions.isEmpty()) {
+            buildXcspAlert(
+                            cspHeaderFound ? Alert.RISK_INFO : Alert.RISK_LOW,
+                            getHeaderField(msg, HTTP_HEADER_XCSP).get(0),
+                            xcspOptions.get(0))
+                    .raise();
+        }
+    }
+
+    private void checkXWebkitCsp(HttpMessage msg, boolean cspHeaderFound) {
+        // X-WebKit-CSP is supported by Chrome 14+, and Safari 6+
+        List<String> xwkcspOptions =
+                msg.getResponseHeader().getHeaderValues(HTTP_HEADER_WEBKIT_CSP);
+        if (!xwkcspOptions.isEmpty()) {
+            buildWebkitCspAlert(
+                            cspHeaderFound ? Alert.RISK_INFO : Alert.RISK_LOW,
+                            getHeaderField(msg, HTTP_HEADER_WEBKIT_CSP).get(0),
+                            xwkcspOptions.get(0))
+                    .raise();
+        }
+    }
+
+    private Policy parsePolicy(String csp, PolicyErrorConsumer consumer, HttpMessage msg, int id) {
+        try {
+            return Policy.parseSerializedCSP(csp, consumer);
+        } catch (IllegalArgumentException iae) {
+            boolean warn = true;
+            if (iae.getMessage().contains("not ascii")) {
+                buildMalformedAlert(
+                                getHeaderField(msg, HTTP_HEADER_CSP).get(0),
+                                csp,
+                                getNonasciiCharacters(csp))
+                        .raise();
+                warn = false;
+            }
+
+            if (warn) {
+                LOGGER.warn("CSP Found but not fully parsed, in message {}.", id);
+            }
+        }
+        return null;
+    }
+
+    private void checkObservedErrors(
+            List<PolicyError> observedErrors, HttpMessage msg, String csp) {
+        String cspNoticesString = getCspNoticesString(observedErrors);
+        int noticesRisk;
+
+        if (cspNoticesString.contains(
+                        Constant.messages.getString(MESSAGE_PREFIX + "notices.errors"))
+                || cspNoticesString.contains(
+                        Constant.messages.getString(MESSAGE_PREFIX + "notices.warnings"))) {
+            noticesRisk = Alert.RISK_LOW;
+        } else {
+            noticesRisk = Alert.RISK_INFO;
+        }
+        buildNoticesAlert(
+                        noticesRisk,
+                        getHeaderField(msg, HTTP_HEADER_CSP).get(0),
+                        csp,
+                        cspNoticesString)
+                .raise();
+    }
+
+    private void checkWildcardSources(
+            List<String> allowedWildcardSources, HttpMessage msg, String csp) {
+        List<String> allowedDirectivesWithoutFallback =
+                allowedWildcardSources.stream()
+                        .distinct()
+                        .filter(DIRECTIVES_WITHOUT_FALLBACK::contains)
+                        .collect(Collectors.toList());
+        String allowedWildcardSrcs = String.join(", ", allowedWildcardSources);
+        String wildcardSrcOtherInfo =
+                Constant.messages.getString(
+                        MESSAGE_PREFIX + "wildcard.otherinfo", allowedWildcardSrcs);
+        if (!allowedDirectivesWithoutFallback.isEmpty()) {
+            wildcardSrcOtherInfo +=
+                    Constant.messages.getString(
+                            "pscanrules.csp.otherinfo.extended",
+                            String.join(", ", allowedDirectivesWithoutFallback));
+        }
+        buildWildcardAlert(getHeaderField(msg, HTTP_HEADER_CSP).get(0), csp, wildcardSrcOtherInfo)
+                .raise();
+    }
+
+    private static boolean allowsUnsafeHashes(Policy policy, FetchDirectiveKind source) {
+        Optional<SourceExpressionDirective> fetchDirective = policy.getFetchDirective(source);
+        if (fetchDirective.isPresent()) {
+            SourceExpressionDirective kind = fetchDirective.get();
+            return kind.unsafeHashes();
+        }
+        return false;
     }
 
     private String getCspNoticesString(List<PolicyError> notices) {
@@ -391,6 +431,17 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                 || predicate.test(HTTPS_URI, Optional.empty());
     }
 
+    private static String getNonasciiCharacters(String csp) {
+        return csp.codePoints()
+                .filter(c -> !isAsciiPrintable(c))
+                .mapToObj(c -> String.valueOf((char) c))
+                .collect(Collectors.joining());
+    }
+
+    private static boolean isAsciiPrintable(int ch) {
+        return ch >= 32 && ch < 127;
+    }
+
     @Override
     public int getPluginId() {
         return PLUGIN_ID;
@@ -422,29 +473,155 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
         return 15; // WASC-15: Application Misconfiguration
     }
 
-    private void raiseAlert(
-            String name,
-            String otherInfo,
-            String param,
-            int risk,
-            String evidence,
-            String alertRef) {
+    private AlertBuilder getBuilder(String name, String alertRef) {
         String alertName = StringUtils.isEmpty(name) ? getName() : getName() + ": " + name;
-
-        newAlert()
+        return newAlert()
                 .setName(alertName)
-                .setRisk(risk)
-                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setConfidence(Alert.CONFIDENCE_HIGH)
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
-                .setOtherInfo(otherInfo)
-                .setParam(param)
                 .setSolution(getSolution())
                 .setReference(getReference())
-                .setEvidence(evidence)
-                .setAlertRef(PLUGIN_ID + "-" + alertRef)
                 .setCweId(getCweId())
                 .setWascId(getWascId())
-                .raise();
+                .setAlertRef(PLUGIN_ID + "-" + alertRef);
+    }
+
+    private AlertBuilder buildXcspAlert(int risk, String param, String evidence) {
+        return getBuilder(Constant.messages.getString(MESSAGE_PREFIX + "xcsp.name"), "1")
+                .setRisk(risk)
+                .setParam(param)
+                .setEvidence(evidence)
+                .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "xcsp.otherinfo"));
+    }
+
+    private AlertBuilder buildWebkitCspAlert(int risk, String param, String evidence) {
+        return getBuilder(Constant.messages.getString(MESSAGE_PREFIX + "xwkcsp.name"), "2")
+                .setRisk(risk)
+                .setParam(param)
+                .setEvidence(evidence)
+                .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "xwkcsp.otherinfo"));
+    }
+
+    private AlertBuilder buildNoticesAlert(
+            int risk, String param, String evidence, String otherinfo) {
+        return getBuilder(Constant.messages.getString(MESSAGE_PREFIX + "notices.name"), "3")
+                .setRisk(risk)
+                .setParam(param)
+                .setEvidence(evidence)
+                .setOtherInfo(otherinfo);
+    }
+
+    private AlertBuilder buildWildcardAlert(String param, String evidence, String otherinfo) {
+        return getBuilder(Constant.messages.getString(MESSAGE_PREFIX + "wildcard.name"), "4")
+                .setRisk(Alert.RISK_MEDIUM)
+                .setParam(param)
+                .setEvidence(evidence)
+                .setOtherInfo(otherinfo);
+    }
+
+    private AlertBuilder buildScriptUnsafeInlineAlert(String param, String evidence) {
+        return getBuilder(
+                        Constant.messages.getString(MESSAGE_PREFIX + "scriptsrc.unsafe.name"), "5")
+                .setRisk(Alert.RISK_MEDIUM)
+                .setParam(param)
+                .setEvidence(evidence)
+                .setOtherInfo(
+                        Constant.messages.getString(MESSAGE_PREFIX + "scriptsrc.unsafe.otherinfo"));
+    }
+
+    private AlertBuilder buildStyleUnsafeInlineAlert(String param, String evidence) {
+        return getBuilder(Constant.messages.getString(MESSAGE_PREFIX + "stylesrc.unsafe.name"), "6")
+                .setRisk(Alert.RISK_MEDIUM)
+                .setParam(param)
+                .setEvidence(evidence)
+                .setOtherInfo(
+                        Constant.messages.getString(MESSAGE_PREFIX + "stylesrc.unsafe.otherinfo"));
+    }
+
+    private AlertBuilder buildScriptUnsafeHashAlert(String param, String evidence) {
+        return getBuilder(
+                        Constant.messages.getString(
+                                MESSAGE_PREFIX + "scriptsrc.unsafe.hashes.name"),
+                        "7")
+                .setRisk(Alert.RISK_MEDIUM)
+                .setParam(param)
+                .setEvidence(evidence)
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                MESSAGE_PREFIX + "scriptsrc.unsafe.hashes.otherinfo"))
+                .setReference(
+                        Constant.messages.getString(
+                                MESSAGE_PREFIX + "scriptsrc.unsafe.hashes.refs"));
+    }
+
+    private AlertBuilder buildStyleUnsafeHashAlert(String param, String evidence) {
+        return getBuilder(
+                        Constant.messages.getString(MESSAGE_PREFIX + "stylesrc.unsafe.hashes.name"),
+                        "8")
+                .setRisk(Alert.RISK_MEDIUM)
+                .setParam(param)
+                .setEvidence(evidence)
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                MESSAGE_PREFIX + "stylesrc.unsafe.hashes.otherinfo"))
+                .setReference(
+                        Constant.messages.getString(
+                                MESSAGE_PREFIX + "stylesrc.unsafe.hashes.refs"));
+    }
+
+    private AlertBuilder buildMalformedAlert(String param, String evidence, String badChars) {
+        return getBuilder(Constant.messages.getString(MESSAGE_PREFIX + "malformed.name"), "9")
+                .setRisk(Alert.RISK_MEDIUM)
+                .setParam(param)
+                .setEvidence(evidence)
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                MESSAGE_PREFIX + "malformed.otherinfo", badChars));
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        List<Alert> alerts = new ArrayList<>();
+        alerts.add(buildXcspAlert(Alert.RISK_LOW, "default-src 'self'", HTTP_HEADER_XCSP).build());
+        alerts.add(
+                buildWebkitCspAlert(Alert.RISK_LOW, "default-src 'self'", HTTP_HEADER_WEBKIT_CSP)
+                        .build());
+        alerts.add(
+                buildNoticesAlert(
+                                Alert.RISK_LOW,
+                                HTTP_HEADER_CSP,
+                                "default-src none; report-to csp-endpoint ",
+                                "Warnings:\\nThis host name is unusual, and likely meant to be a keyword that is missing the required quotes: 'none'.")
+                        .build());
+        alerts.add(
+                buildWildcardAlert(
+                                HTTP_HEADER_CSP,
+                                "connect-src *; default-src 'self'; form-action 'none'; frame-ancestors 'self'",
+                                Constant.messages.getString(
+                                        MESSAGE_PREFIX + "wildcard.otherinfo", "connect-src"))
+                        .build());
+        alerts.add(
+                buildScriptUnsafeInlineAlert(HTTP_HEADER_CSP, "script-src 'unsafe-inline'")
+                        .build());
+        alerts.add(
+                buildStyleUnsafeInlineAlert(HTTP_HEADER_CSP, "style-src 'unsafe-inline'").build());
+        alerts.add(
+                buildScriptUnsafeHashAlert(
+                                HTTP_HEADER_CSP,
+                                "default-src 'self'; script-src 'unsafe-hashes' 'sha256-jzgBGA4UWFFmpOBq0JpdsySukE1FrEN5bUpoK8Z29fY='")
+                        .build());
+        alerts.add(
+                buildStyleUnsafeHashAlert(
+                                HTTP_HEADER_CSP,
+                                "default-src 'self'; style-src 'unsafe-hashes' 'sha256-xyz4zkCjuC3lZcD2UmnqDG0vurmq12W/XKM5Vd0+MlQ='")
+                        .build());
+        alerts.add(
+                buildMalformedAlert(
+                                HTTP_HEADER_CSP,
+                                "\"default-src ‘self’ 'unsafe-eval' 'unsafe-inline' www.example.net;\"",
+                                "‘’")
+                        .build());
+        return alerts;
     }
 
     static class PolicyError {

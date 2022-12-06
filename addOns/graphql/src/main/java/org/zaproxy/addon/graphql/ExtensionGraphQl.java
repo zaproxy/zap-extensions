@@ -21,8 +21,6 @@ package org.zaproxy.addon.graphql;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,14 +39,9 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
-import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
-import org.zaproxy.zap.extension.script.ScriptType;
-import org.zaproxy.zap.extension.script.ScriptWrapper;
-import org.zaproxy.zap.extension.spider.ExtensionSpider;
-import org.zaproxy.zap.spider.filters.ParseFilter;
-import org.zaproxy.zap.spider.parser.SpiderParser;
+import org.zaproxy.zap.model.DefaultValueGenerator;
+import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionGraphQl extends ExtensionAdaptor
@@ -59,8 +52,6 @@ public class ExtensionGraphQl extends ExtensionAdaptor
 
     private ZapMenuItem menuImportLocalGraphQl = null;
     private ZapMenuItem menuImportUrlGraphQl = null;
-    private SpiderParser graphQlSpider;
-    private ParseFilter graphQlParseFilter;
     private GraphQlOptionsPanel graphQlOptionsPanel;
     private GraphQlParam param;
     private List<ParserThread> parserThreads = Collections.synchronizedList(new ArrayList<>());
@@ -69,34 +60,33 @@ public class ExtensionGraphQl extends ExtensionAdaptor
     private static final int ARG_IMPORT_URL_IDX = 1;
     private static final int ARG_END_URL_IDX = 2;
 
+    private ValueGenerator valueGenerator;
+
     public ExtensionGraphQl() {
         super(NAME);
+
+        setValueGenerator(null);
+    }
+
+    public void setValueGenerator(ValueGenerator valueGenerator) {
+        this.valueGenerator = valueGenerator == null ? new DefaultValueGenerator() : valueGenerator;
+    }
+
+    ValueGenerator getValueGenerator() {
+        return valueGenerator;
     }
 
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-        if (!"2.9.0".equals(Constant.PROGRAM_VERSION)) {
-            /* Custom spider is added in order to explore GraphQl schemas. */
-            ExtensionSpider spider =
-                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.class);
-            graphQlSpider = new GraphQlSpider();
-            graphQlParseFilter = new GraphQlParseFilter();
-            if (spider != null) {
-                spider.addCustomParseFilter(graphQlParseFilter);
-                spider.addCustomParser(graphQlSpider);
-                LOG.debug("Added GraphQl spider.");
-            } else {
-                LOG.debug("Could not add GraphQl spider.");
-            }
-        }
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportLocalGraphQl());
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportUrlGraphQl());
             extensionHook.getHookView().addOptionPanel(getGraphQlOptionsPanel());
         }
 
+        extensionHook.addVariant(VariantGraphQl.class);
         extensionHook.addApiImplementor(new GraphQlApi(getParam()));
         extensionHook.addOptionsParamSet(getParam());
         extensionHook.addCommandLine(getCommandLineArguments());
@@ -105,25 +95,11 @@ public class ExtensionGraphQl extends ExtensionAdaptor
 
     @Override
     public void postInit() {
-        super.postInit();
-        try {
-            addScript();
-        } catch (IOException e) {
-            LOG.warn("Could not add GraphQL Input Vectors script.");
-        }
-    }
-
-    @Override
-    public void unload() {
-        super.unload();
-        if (!"2.9.0".equals(Constant.PROGRAM_VERSION)) {
-            ExtensionSpider spider =
-                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionSpider.class);
-            if (spider != null) {
-                spider.removeCustomParseFilter(graphQlParseFilter);
-                spider.removeCustomParser(graphQlSpider);
-                LOG.debug("Removed GraphQl spider.");
-            }
+        ExtensionScript extScript =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+        String scriptName = "GraphQL Support.js";
+        if (extScript != null && extScript.getScript(scriptName) != null) {
+            extScript.removeScript(extScript.getScript(scriptName));
         }
     }
 
@@ -181,47 +157,6 @@ public class ExtensionGraphQl extends ExtensionAdaptor
             }
         }
         parserThreads.clear();
-    }
-
-    private void addScript() throws IOException {
-        ExtensionScript extScript =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
-        String scriptName = "GraphQL Support.js";
-        if (extScript != null && extScript.getScript(scriptName) == null) {
-            ScriptType variantType =
-                    extScript.getScriptType(ExtensionActiveScan.SCRIPT_TYPE_VARIANT);
-            ScriptEngineWrapper engine = getEngine(extScript, "Oracle Nashorn");
-            if (variantType != null && engine != null) {
-                File scriptPath =
-                        Paths.get(
-                                        Constant.getZapHome(),
-                                        ExtensionScript.SCRIPTS_DIR,
-                                        ExtensionScript.SCRIPTS_DIR,
-                                        ExtensionActiveScan.SCRIPT_TYPE_VARIANT,
-                                        scriptName)
-                                .toFile();
-                ScriptWrapper script =
-                        new ScriptWrapper(
-                                scriptName,
-                                Constant.messages.getString("graphql.script.description"),
-                                engine,
-                                variantType,
-                                true,
-                                scriptPath);
-                script.setLoadOnStart(true);
-                script.reloadScript();
-                extScript.addScript(script, false);
-            }
-        }
-    }
-
-    private static ScriptEngineWrapper getEngine(ExtensionScript ext, String engineName) {
-        try {
-            return ext.getEngineWrapper(engineName);
-        } catch (InvalidParameterException e) {
-            LOG.warn("The {} engine was not found, script variant will not be added.", engineName);
-        }
-        return null;
     }
 
     @Override

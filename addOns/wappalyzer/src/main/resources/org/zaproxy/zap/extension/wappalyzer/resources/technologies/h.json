@@ -1,4 +1,23 @@
 {
+  "H2O": {
+    "cats": [
+      22
+    ],
+    "cookies": {
+      "h2o_casper": ""
+    },
+    "description": "H2O is a fast and secure HTTP/2 server written in C by Kazuho Oku.",
+    "headers": {
+      "Server": "^h2o(?:/)?([\\d\\.]+)?\\;version:\\1"
+    },
+    "icon": "default.svg",
+    "implies": [
+      "C",
+      "HTTP/2"
+    ],
+    "oss": true,
+    "website": "https://github.com/h2o/h2o"
+  },
   "HCL Commerce": {
     "cats": [
       6
@@ -19,21 +38,46 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:ibm:websphere_portal",
+    "cpe": "cpe:2.3:a:ibm:websphere_portal:*:*:*:*:*:*:*:*",
+    "description": "HCL Digital Experience software empowers you to create, manage and deliver engaging omni-channel digital experiences to virtually all audiences.",
     "headers": {
       "IBM-Web2-Location": "",
       "Itx-Generated-Timestamp": ""
     },
-    "icon": "IBM.svg",
+    "icon": "hcl-dx.png",
     "implies": "Java",
-    "url": "/wps/",
-    "website": "https://www.hcltechsw.com/products/dx"
+    "js": {
+      "ibmCfg.themeConfig.modulesWebAppBaseURI": "/wps/themeModules"
+    },
+    "pricing": [
+      "high",
+      "poa"
+    ],
+    "url": "/wps/wcm/",
+    "website": "https://www.hcltechsw.com/dx"
+  },
+  "HCL Domino": {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:ibm:lotus_domino:*:*:*:*:*:*:*:*",
+    "description": "HCL Domino, formerly called IBM Domino (1995) and Lotus Domino (1989), is an enterprise server application development platform.",
+    "headers": {
+      "Server": "^Lotus-Domino$"
+    },
+    "icon": "HCL Domino.svg",
+    "implies": "Java",
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "website": "https://www.hcltechsw.com/domino"
   },
   "HHVM": {
     "cats": [
       22
     ],
-    "cpe": "cpe:/a:facebook:hhvm",
+    "cpe": "cpe:2.3:a:facebook:hhvm:*:*:*:*:*:*:*:*",
     "headers": {
       "X-Powered-By": "HHVM/?([\\d.]+)?\\;version:\\1"
     },
@@ -56,12 +100,24 @@
       22,
       46
     ],
+    "cpe": "cpe:2.3:h:hp:integrated_lights-out:*:*:*:*:*:*:*:*",
     "description": "HP iLO is a tool that provides multiple ways to configure, update, monitor, and run servers remotely.",
     "headers": {
       "Server": "HP-iLO-Server(?:/([\\d.]+))?\\;version:\\1"
     },
     "icon": "HP.svg",
     "website": "http://hp.com"
+  },
+  "HSTS": {
+    "cats": [
+      16
+    ],
+    "description": "HTTP Strict Transport Security (HSTS) informs browsers that the site should only be accessed using HTTPS.",
+    "headers": {
+      "Strict-Transport-Security": ""
+    },
+    "url": "^https://[\\w\\d\\.\\-]+(?:\\.dev)(?:/.+||/)$",
+    "website": "https://www.rfc-editor.org/rfc/rfc6797#section-6.1"
   },
   "HTTP/2": {
     "cats": [
@@ -70,10 +126,24 @@
     "description": "HTTP/2 (originally named HTTP/2.0) is a major revision of the HTTP network protocol used by the World Wide Web.",
     "excludes": "SPDY",
     "headers": {
+      "Alt-Svc": "h2",
       "X-Firefox-Spdy": "h2"
     },
-    "icon": "http2.png",
+    "icon": "HTTP2.svg",
     "website": "https://http2.github.io"
+  },
+  "HTTP/3": {
+    "cats": [
+      19
+    ],
+    "description": "HTTP/3 is the third major version of the Hypertext Transfer Protocol used to exchange information on the World Wide Web.",
+    "excludes": "HTTP/2",
+    "headers": {
+      "Alt-Svc": "h3",
+      "X-Firefox-Http3": "h3"
+    },
+    "icon": "HTTP3.svg",
+    "website": "https://httpwg.org/"
   },
   "Haddock": {
     "cats": [
@@ -126,7 +196,7 @@
     "cats": [
       12
     ],
-    "cpe": "cpe:/a:handlebars.js_project:handlebars.js",
+    "cpe": "cpe:2.3:a:handlebars.js_project:handlebars.js:*:*:*:*:*:*:*:*",
     "description": "Handlebars is a JavaScript library used to create reusable webpage templates.",
     "html": "<[^>]*type=[^>]text\\/x-handlebars-template",
     "icon": "Handlebars.png",
@@ -148,6 +218,24 @@
     },
     "scriptSrc": "api\\.handtalk\\.me",
     "website": "https://www.handtalk.me/"
+  },
+  "Hansel": {
+    "cats": [
+      58
+    ],
+    "description": "Hansel is a B2B enterprise software that deploys real-time Nudges to drive feature adoption and address user drop-offs, at scale.",
+    "icon": "Hansel.png",
+    "js": {
+      "Hansel": "",
+      "HanselPX": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.hansel\\.io/web/([\\d\\.]+)/\\;version:\\1",
+    "website": "https://hansel.io"
   },
   "Happy Returns": {
     "cats": [
@@ -224,6 +312,17 @@
     "scriptSrc": "haravan.*\\.js",
     "website": "https://www.haravan.com"
   },
+  "Harbor": {
+    "cats": [
+      60
+    ],
+    "description": "Harbor is an open-source registry that secures artifacts with policies and role-based access control, ensures images are scanned and free from vulnerabilities, and signs images as trusted.",
+    "dom": "harbor-app",
+    "icon": "Harbor.svg",
+    "implies": "Go",
+    "oss": true,
+    "website": "https://goharbor.io"
+  },
   "HashThemes Total": {
     "cats": [
       80
@@ -257,6 +356,21 @@
     "icon": "Haskell.png",
     "website": "http://wiki.haskell.org/Haskell"
   },
+  "Hatena Blog": {
+    "cats": [
+      1,
+      11
+    ],
+    "description": "Hatena Blog is one of the traditional blog platforms in Japan.",
+    "icon": "Hatena.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "scriptSrc": "cdn\\.blog\\.st-hatena\\.com/",
+    "website": "https://hatenablog.com"
+  },
   "HeadJS": {
     "cats": [
       59
@@ -268,6 +382,27 @@
     },
     "scriptSrc": "head\\.(?:core|load)(?:\\.min)?\\.js",
     "website": "http://headjs.com"
+  },
+  "Headless UI": {
+    "cats": [
+      66
+    ],
+    "description": "Headless UI is an unstyled component library for either React.js or Vue.js from the same people that created Tailwind CSS.",
+    "dom": {
+      "button": {
+        "attributes": {
+          "id": "headlessui-"
+        }
+      },
+      "div": {
+        "attributes": {
+          "id": "headlessui-"
+        }
+      }
+    },
+    "icon": "Headless UI.svg",
+    "oss": true,
+    "website": "https://headlessui.dev"
   },
   "Heap": {
     "cats": [
@@ -310,8 +445,11 @@
     ],
     "description": "Helhost is a web hosting provider and internet domain registrar from Democratic Republic of Congo.",
     "dns": {
-      "NS": "ns\\d\\.helhost\\.com",
-      "SOA": "ns\\d\\.helhost\\.com"
+      "NS": "\\.helhost\\.com",
+      "SOA": "\\.helhost\\.com"
+    },
+    "headers": {
+      "x-powered-by": "Helhost"
     },
     "icon": "Helhost.svg",
     "pricing": [
@@ -320,6 +458,30 @@
       "payg"
     ],
     "website": "https://www.helhost.com"
+  },
+  "HeliumWeb": {
+    "cats": [
+      18
+    ],
+    "description": "HeliumWeb is a server-side (backend) web framework written in PHP & JavaScript",
+    "headers": {
+      "X-Powered-By": "Adrikikicp Development"
+    },
+    "implies": "PHP",
+    "js": {
+      "helium.js": ""
+    },
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "helium/src/helium.js/helium_web.js",
+      "http://maven.enriquitomcfh.ml/helium.js/helium_web.js",
+      "http://maven.enriquitomcfh.ml/helium.js/helium_web.min.js"
+    ],
+    "website": "https://heliumweb.adrikikicp-development.ml"
   },
   "Helix Ultimate": {
     "cats": [
@@ -331,6 +493,25 @@
     "implies": "Joomla",
     "oss": true,
     "website": "https://www.joomshaper.com/joomla-templates/helixultimate"
+  },
+  "Helixo UFE": {
+    "cats": [
+      100
+    ],
+    "description": "Helixo UFE is a lightweight Shopify upsell sales funnel app.",
+    "icon": "Helixo.svg",
+    "implies": "Shopify",
+    "js": {
+      "ufe.funnelData": "",
+      "ufeStore.cartTotal": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://helixo.co/upsell-funnel-engine/"
   },
   "Hello Bar": {
     "cats": [
@@ -544,15 +725,51 @@
     ],
     "description": "Free Shipping Bar is a Shopify app built by Hextom. Free Shipping Bar help promote free shipping with progressive messages to motivate customers to buy more.",
     "icon": "Hextom.png",
+    "implies": "Shopify",
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
     "saas": true,
     "scriptSrc": "\\.hextom\\.com/js/freeshippingbar\\.js",
     "website": "https://hextom.com/case_study/free-shipping-bar"
+  },
+  "Hextom Ultimate Sales Boost": {
+    "cats": [
+      100
+    ],
+    "description": "Ultimate Sales Boost by Hextom is an app designed to help you drive more sales by creating a sense of urgency, scarcity and trust.",
+    "icon": "Hextom.png",
+    "implies": "Shopify",
+    "js": {
+      "hextom_usb": "",
+      "ht_usb.isLoaded": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.hextom\\.com/js/ultimatesalesboost\\.js",
+    "website": "https://hextom.com/case_study/ultimate-sales-boost"
+  },
+  "Hi Platform": {
+    "cats": [
+      53
+    ],
+    "description": "Hi Platform provider of an online customer relationship platform.",
+    "dom": "link[href*='.hiplatform.com']",
+    "icon": "Hi Platform.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.hiplatform\\.com/",
+    "website": "https://www.hiplatform.com"
   },
   "Hiawatha": {
     "cats": [
@@ -889,7 +1106,7 @@
   },
   "Hotjar Incoming Feedback": {
     "cats": [
-      5
+      73
     ],
     "description": "Hotjar Incoming Feedback is a widget that sits at the edge of a page.",
     "dom": "a[href*='hotjar.com/incoming-feedback'][target='_blank']",
@@ -928,6 +1145,20 @@
     "scriptSrc": "\\.hrflow\\.ai",
     "website": "https://hrflow.ai"
   },
+  "Htmx": {
+    "cats": [
+      59
+    ],
+    "description": "Htmx is a JavaScript library for performing AJAX requests, triggering CSS transitions, and invoking WebSocket and server-sent events directly from HTML elements.",
+    "dom": "script[data-src*='/dist/htmx.min.js']",
+    "icon": "Htmx.svg",
+    "js": {
+      "htmx": ""
+    },
+    "oss": true,
+    "scriptSrc": "/htmx\\.org@([\\d\\.]+)\\;version:\\1",
+    "website": "https://htmx.org"
+  },
   "HubSpot": {
     "cats": [
       32
@@ -935,11 +1166,12 @@
     "description": "HubSpot is a marketing and sales software that helps companies attract visitors, convert leads, and close customers.",
     "dns": {
       "TXT": [
-        "hubspotemail\\.net"
+        "hubspotemail\\.net",
+        "hubspot-developer-verification"
       ]
     },
     "html": "<!-- Start of Async HubSpot",
-    "icon": "HubSpot.png",
+    "icon": "HubSpot.svg",
     "js": {
       "_hsq": "",
       "hubspot": ""
@@ -956,7 +1188,7 @@
       10
     ],
     "description": "HubSpot is a marketing and sales software that helps companies attract visitors, convert leads, and close customers.",
-    "icon": "HubSpot.png",
+    "icon": "HubSpot.svg",
     "scriptSrc": "js\\.hs-analytics\\.net/analytics",
     "website": "https://www.hubspot.com/products/marketing/analytics"
   },
@@ -969,7 +1201,7 @@
       "x-hs-hub-id": "",
       "x-powered-by": "HubSpot"
     },
-    "icon": "HubSpot.png",
+    "icon": "HubSpot.svg",
     "implies": "HubSpot",
     "meta": {
       "generator": "HubSpot"
@@ -986,7 +1218,7 @@
       52
     ],
     "description": "HubSpot Chat is a tool where you can view, manage, and reply to incoming messages from multiple channels.",
-    "icon": "HubSpot.png",
+    "icon": "HubSpot.svg",
     "js": {
       "HubSpotConversations": ""
     },
@@ -1003,8 +1235,24 @@
     ],
     "description": "HubSpot Cookie Policy banner is a cookie compliance functionality from HubSpot.",
     "dom": "#hs-eu-cookie-confirmation",
-    "icon": "HubSpot.png",
+    "icon": "HubSpot.svg",
     "website": "https://knowledge.hubspot.com/reports/customize-your-cookie-tracking-settings-and-privacy-policy-alert"
+  },
+  "HubSpot WordPress plugin": {
+    "cats": [
+      87
+    ],
+    "description": "HubSpot is a platform with all the tools and integrations you need for marketing, sales, and customer service. HubSpot WordPress plugin allows you to manage contacts (CRM), engage visitors with live chat and chatbots, add beautiful forms to pages, create engaging email marketing campaigns, and more.",
+    "icon": "HubSpot.svg",
+    "implies": [
+      "HubSpot",
+      "HubSpot Analytics"
+    ],
+    "js": {
+      "leadin_wordpress.leadinPluginVersion": "^([\\d.]+)$\\;version:\\1"
+    },
+    "requires": "WordPress",
+    "website": "https://wordpress.org/plugins/leadin/"
   },
   "Huberway": {
     "cats": [
@@ -1044,11 +1292,19 @@
       57
     ],
     "description": "Hugo is an open-source static site generator written in Go.",
-    "html": "powered by <a [^>]*href=\"http://hugo\\.spf13\\.com",
-    "icon": "Hugo.png",
+    "dom": {
+      "a[href*='hugo.']": {
+        "attributes": {
+          "href": "(?:go)?hugo(?:\\..+)?\\.(?:com|io)\\;confidence:0"
+        },
+        "text": "Hugo\\;confidence:99"
+      }
+    },
+    "icon": "Hugo.svg",
     "meta": {
       "generator": "Hugo ([\\d.]+)?\\;version:\\1"
     },
+    "oss": true,
     "website": "http://gohugo.io"
   },
   "HulkApps Age Verification": {
@@ -1193,6 +1449,23 @@
     "scriptSrc": "\\.hushly\\.com/",
     "website": "https://www.hushly.com"
   },
+  "Hydrogen": {
+    "cats": [
+      12
+    ],
+    "description": "Hydrogen is a front-end web development framework used for building Shopify custom storefronts.",
+    "headers": {
+      "powered-by": "^Shopify-Hydrogen$"
+    },
+    "icon": "Hydrogen.svg",
+    "implies": [
+      "Shopify",
+      "React",
+      "Vite"
+    ],
+    "oss": true,
+    "website": "https://hydrogen.shopify.dev"
+  },
   "Hypercorn": {
     "cats": [
       22
@@ -1246,6 +1519,53 @@
     "scriptSrc": "cdn\\.gethypervisual\\.com/",
     "website": "https://gethypervisual.com"
   },
+  "Hypestyle CSS": {
+    "cats": [
+      66
+    ],
+    "description": "Hypestyle CSS is a small CSS library build on utility classes and components.",
+    "dom": {
+      "link[href*='hypestyle']": {
+        "attributes": {
+          "href": "/hypestyle@([\\d\\.]+)/dist/css/hypestyle\\.min\\.css\\;version:\\1"
+        }
+      }
+    },
+    "icon": "Hypestyle CSS.png",
+    "implies": "Sass",
+    "oss": true,
+    "website": "https://www.hypestylecss.xyz"
+  },
+  "Hyva Themes": {
+    "cats": [
+      108
+    ],
+    "description": "Hyva Themes is a performance-optimised theme for Magento 2 which eliminated the third-party libraries and having only two dependencies Alpine.js and Tailwind CSS.",
+    "headers": {
+      "X-Built-With": "^Hyva Themes$"
+    },
+    "icon": "Hyva Themes.svg",
+    "implies": [
+      "Magento\\;version:2",
+      "Tailwind CSS",
+      "Alpine.js"
+    ],
+    "pricing": [
+      "onetime"
+    ],
+    "website": "https://hyva.io"
+  },
+  "h5ai": {
+    "cats": [
+      19
+    ],
+    "description": "h5ai is a modern HTTP web server index for Apache httpd, lighttpd, and nginx.",
+    "icon": "default.svg",
+    "implies": "PHP",
+    "oss": true,
+    "scriptSrc": "/_h5ai/(?:public|client)/js/scripts\\.js",
+    "website": "https://github.com/lrsjng/h5ai"
+  },
   "hCaptcha": {
     "cats": [
       16
@@ -1259,7 +1579,8 @@
     "icon": "hCaptcha.svg",
     "js": {
       "hcaptcha.getRespKey": "",
-      "hcaptchaOnLoad": ""
+      "hcaptchaOnLoad": "",
+      "hcaptcha_sitekey": ""
     },
     "pricing": [
       "freemium",
@@ -1295,20 +1616,5 @@
     "saas": true,
     "scriptSrc": "merchant\\.cdn\\.hoolah\\.co/",
     "website": "https://www.hoolah.co"
-  },
-  "hyva": {
-    "cats": [
-      6
-    ],
-    "description": "Hyvä themes is a frontend for Magento 2.",
-    "headers": {
-      "X-Built-With": "^Hyva Themes$"
-    },
-    "icon": "Hyva.svg",
-    "implies": "Magento",
-    "pricing": [
-      "onetime"
-    ],
-    "website": "https://hyva.io/"
   }
 }

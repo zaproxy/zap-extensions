@@ -3,7 +3,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:lepton-cms:lepton",
+    "cpe": "cpe:2.3:a:lepton-cms:lepton:*:*:*:*:*:*:*:*",
     "icon": "LEPTON.png",
     "implies": "PHP",
     "meta": {
@@ -53,12 +53,36 @@
     "cats": [
       62
     ],
+    "description": "The Open Source Application Delivery Platform for Kubernetes.",
     "headers": {
       "X-LAGOON": "",
       "x-lagoon": ""
     },
-    "icon": "Lagoon.png",
-    "website": "https://www.amazee.io/hosting"
+    "icon": "lagoon.svg",
+    "oss": true,
+    "website": "https://lagoon.sh/"
+  },
+  "LangShop": {
+    "cats": [
+      100,
+      89
+    ],
+    "description": "LangShop is an app for translating Shopify stores.",
+    "icon": "LangShop.svg",
+    "implies": "Shopify",
+    "js": {
+      "LangShop": "",
+      "LangShopConfig": "",
+      "LangShopSDK": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "freemium"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.langshop\\.app/",
+    "website": "https://langshop.io"
   },
   "Laravel": {
     "cats": [
@@ -67,7 +91,7 @@
     "cookies": {
       "laravel_session": ""
     },
-    "cpe": "cpe:/a:laravel:laravel",
+    "cpe": "cpe:2.3:a:laravel:laravel:*:*:*:*:*:*:*:*",
     "description": "Laravel is a free, open-source PHP web framework.",
     "icon": "Laravel.svg",
     "implies": "PHP",
@@ -97,7 +121,8 @@
     "dom": "a[href*='latitudepay.com/'][target='_blank'], img[src='.latitudepayapps.com/']",
     "icon": "LatitudePay.svg",
     "js": {
-      "checkout.enabledpayments.latitudepay": "^true$"
+      "checkout.enabledpayments.latitudepay": "^true$",
+      "wc_ga_pro.available_gateways.latitudepay": ""
     },
     "pricing": [
       "freemium"
@@ -162,7 +187,8 @@
       "LaybuyHelper": "",
       "checkout.enabledpayments.laybuy": "^true$",
       "laybuyEnableCart": "",
-      "laybuyMoneyOverides": ""
+      "laybuyMoneyOverides": "",
+      "wc_ga_pro.available_gateways.laybuy": ""
     },
     "pricing": [
       "payg"
@@ -175,38 +201,42 @@
     ],
     "website": "https://www.laybuy.com"
   },
-  "Layer0": {
+  "LayoutHub": {
     "cats": [
-      31,
-      62
+      100,
+      51
     ],
-    "cookies": {
-      "layer0_bucket": "",
-      "layer0_destination": "",
-      "layer0_eid": ""
-    },
-    "description": "Layer0 is an all-in-one Jamstack platform to develop, deploy, preview, split test, and monitor the company's frontend.",
-    "headers": {
-      "x-0-status": "",
-      "x-0-t": "",
-      "x-0-version": "^\\d+ ([\\d.]+) \\;version:\\1"
-    },
-    "icon": "Layer0.svg",
-    "js": {
-      "Layer0.Metrics": ""
-    },
+    "description": "LayoutHub is an easy page builder that helps merchants quickly set up an online store with any kind of page type by using our library of pre-designed layouts and blocks.",
+    "icon": "LayoutHub.png",
+    "implies": "Shopify",
     "pricing": [
       "freemium",
-      "mid",
+      "low",
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "/__layer0__/cache-manifest\\.js",
-    "website": "https://www.layer0.co"
+    "scriptSrc": "app\\.layouthub\\.com/shopify/layouthub\\.js",
+    "website": "https://layouthub.com"
+  },
+  "Lazada": {
+    "cats": [
+      6
+    ],
+    "description": "Lazada is a B2B2C marketplace model in which so-called merchants sell goods on their platform.",
+    "icon": "Lazada.svg",
+    "meta": {
+      "aplus-auto-exp": "lzdhome\\.desktop\\."
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.lazada.com"
   },
   "LazySizes": {
     "cats": [
-      59
+      59,
+      92
     ],
     "description": "LazySizes is a JavaScript library used to delay the loading of images (iframes, scripts, etc) until they come into view.",
     "icon": "default.svg",
@@ -216,6 +246,38 @@
     },
     "oss": true,
     "website": "https://github.com/aFarkas/lazysizes"
+  },
+  "LazySizes unveilhooks plugin": {
+    "cats": [
+      59,
+      92
+    ],
+    "description": "LazySizes unveilhooks plugin extends lazySizes to lazyload scripts/widgets, background images, styles and video/audio elements.",
+    "icon": "default.svg",
+    "oss": true,
+    "scriptSrc": "ls\\.unveilhooks(?:\\.min)?\\.js",
+    "website": "https://github.com/aFarkas/lazysizes/tree/gh-pages/plugins/unveilhooks"
+  },
+  "Leadfeeder": {
+    "cats": [
+      10
+    ],
+    "description": "Leadfeeder is a B2B visitor identification software that tracks and identifies companies that visit your website.",
+    "headers": {
+      "Content-Security-Policy": "\\.(?:lfeeder|leadfeeder)\\.com"
+    },
+    "icon": "Leadfeeder.png",
+    "js": {
+      "ldfdr.getTracker": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.leadfeeder\\.com/",
+    "website": "https://www.leadfeeder.com"
   },
   "Leadinfo": {
     "cats": [
@@ -234,6 +296,25 @@
     "saas": true,
     "scriptSrc": "cdn\\.leadinfo\\.net",
     "website": "https://www.leadinfo.com"
+  },
+  "Leadster": {
+    "cats": [
+      52
+    ],
+    "description": "Leadster is a conversation marketing plataform based on chatbot.",
+    "icon": "Leadster.svg",
+    "js": {
+      "neurolead.convoScript": "",
+      "neurolead.elChatbot": "",
+      "neuroleadLanguage": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://leadster.com.br"
   },
   "Leaflet": {
     "cats": [
@@ -256,10 +337,10 @@
     ],
     "description": "Leaflet is the price testing platform for Shopify.",
     "icon": "Leaflet platform.png",
+    "implies": "Shopify",
     "pricing": [
       "payg"
     ],
-    "requires": "Shopify",
     "saas": true,
     "scriptSrc": "scripts\\.leaflet\\.co/",
     "website": "https://join.leaflet.co"
@@ -356,6 +437,32 @@
     "scriptSrc": "\\.legalmonster\\.com/",
     "website": "https://www.legalmonster.com"
   },
+  "Lengow": {
+    "cats": [
+      19
+    ],
+    "description": "Lengow is an ecommerce automation solution that enables brands and retailers to integrate, structure and optimise their product content across all distribution channels: marketplaces, comparison shopping engines, affiliate platforms, display and retargeting.",
+    "icon": "Lengow.svg",
+    "pricing": [
+      "payg",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.lengow\\.com/",
+    "website": "https://www.lengow.com"
+  },
+  "Lenis": {
+    "cats": [
+      59
+    ],
+    "description": "Lenis is a smooth scroll library to normalise the scrolling experience across devices.",
+    "icon": "Lenis.svg",
+    "js": {
+      "lenisVersion": "([\\d\\.]+)\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://lenis.studiofreight.com"
+  },
   "Less": {
     "cats": [
       19
@@ -372,6 +479,24 @@
     "description": "Let's Encrypt is a free, automated, and open certificate authority.",
     "icon": "Lets Encrypt.svg",
     "website": "https://letsencrypt.org/"
+  },
+  "Letro": {
+    "cats": [
+      90,
+      96
+    ],
+    "description": "Letro is a UGC and review tool for ecommerce platforms.",
+    "icon": "Letro.svg",
+    "js": {
+      "__letroUgcGadget": "",
+      "letroUgcSet": ""
+    },
+    "pricing": [
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "letro\\.jp/tags",
+    "website": "https://service.aainc.co.jp/product/letro/"
   },
   "Level 5": {
     "cats": [
@@ -405,6 +530,25 @@
     "saas": true,
     "website": "https://www.lever.co"
   },
+  "Lexity": {
+    "cats": [
+      10
+    ],
+    "description": "Lexity is the one-stop-shop of ecommerce services for SMBs.",
+    "icon": "Lexity.png",
+    "scriptSrc": "\\.lexity\\.com/",
+    "website": "http://lexity.com"
+  },
+  "Liberapay": {
+    "cats": [
+      41
+    ],
+    "description": "Liberapay is a non-profit organisation subscription payment platform.",
+    "dom": "a[href*='//liberapay.com/'][target='_blank']",
+    "icon": "Liberapay.svg",
+    "scriptSrc": "//liberapay\\.com/",
+    "website": "https://liberapay.com/"
+  },
   "Libravatar": {
     "cats": [
       19
@@ -434,12 +578,13 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:/a:liferay:liferay_portal",
+    "cpe": "cpe:2.3:a:liferay:liferay_portal:*:*:*:*:*:*:*:*",
     "description": "Liferay is an open-source company that provides free documentation and paid professional service to users of its software.",
     "headers": {
       "Liferay-Portal": "[a-z\\s]+([\\d.]+)\\;version:\\1"
     },
     "icon": "Liferay.svg",
+    "implies": "Java",
     "js": {
       "Liferay": ""
     },
@@ -447,13 +592,13 @@
     "pricing": [
       "poa"
     ],
-    "website": "https://www.liferay.com"
+    "website": "https://www.liferay.com/"
   },
   "Lift": {
     "cats": [
       18
     ],
-    "cpe": "cpe:/a:liftweb:lift",
+    "cpe": "cpe:2.3:a:liftweb:lift:*:*:*:*:*:*:*:*",
     "headers": {
       "X-Lift-Version": "(.+)\\;version:\\1"
     },
@@ -480,7 +625,7 @@
     "cats": [
       59
     ],
-    "cpe": "cpe:/a:lightbox_photo_gallery_project:lightbox_photo_gallery",
+    "cpe": "cpe:2.3:a:lightbox_photo_gallery_project:lightbox_photo_gallery:*:*:*:*:*:*:*:*",
     "html": "<link [^>]*href=\"[^\"]+lightbox(?:\\.min)?\\.css",
     "icon": "Lightbox.png",
     "scriptSrc": "lightbox(?:-plus-jquery)?.{0,32}\\.js",
@@ -550,6 +695,23 @@
     "scriptSrc": "\\.personalizer\\.io/",
     "website": "https://www.limespot.com"
   },
+  "Limepay": {
+    "cats": [
+      91
+    ],
+    "description": "Limepay is a buy now, pay later platform that's fully integrated with the merchant's payment platform.",
+    "icon": "Limepay.svg",
+    "js": {
+      "LimepayIdentity": "",
+      "wc_ga_pro.available_gateways.limepay": ""
+    },
+    "saas": true,
+    "scriptSrc": [
+      "/wp-content/plugins/Limepay-v\\d+/",
+      "/limepay-installment-show\\.js"
+    ],
+    "website": "https://www.limepay.com.au"
+  },
   "Limit Login Attempts Reloaded": {
     "cats": [
       87,
@@ -579,16 +741,46 @@
     "scriptSrc": "^https?://cdn\\.linksmart\\.com/linksmart_([\\d.]+?)(?:\\.min)?\\.js\\;version:\\1",
     "website": "http://linksmart.com"
   },
+  "Linkedin Ads": {
+    "cats": [
+      36
+    ],
+    "description": "Linkedin Ads is a paid marketing tool that offers access to Linkedin social networks through various sponsored posts and other methods.",
+    "dom": {
+      "img[src*='dc.ads.linkedin.com']": {
+        "attributes": {
+          "src": "dc\\.ads\\.linkedin\\.com"
+        }
+      },
+      "link[href*='px.ads.linkedin.com']": {
+        "attributes": {
+          "href": "px\\.ads\\.linkedin\\.com"
+        }
+      }
+    },
+    "headers": {
+      "Content-Security-Policy": "px\\.ads\\.linkedin\\.com"
+    },
+    "html": "<img [^>]*src=\"[^/]*//[^/]*px\\.ads\\.linkedin\\.com",
+    "icon": "Linkedin.svg",
+    "website": "https://business.linkedin.com/marketing-solutions/ads"
+  },
   "Linkedin Insight Tag": {
     "cats": [
       10
     ],
-    "dom": "noscript > img[src*='dc.ads.linkedin.com']",
+    "description": "LinkedIn Insight Tag is a lightweight JavaScript tag that powers conversion tracking, website audiences, and website demographics.",
     "icon": "Linkedin.svg",
     "js": {
-      "_linkedin_data_partner_id": ""
+      "ORIBI": "",
+      "_linkedin_data_partner_id": "",
+      "_linkedin_partner_id": ""
     },
-    "scriptSrc": "snap\\.licdn\\.com/li\\.lms-analytics/insight\\.min\\.js",
+    "scriptSrc": [
+      "snap\\.licdn\\.com/li\\.lms-analytics/insight\\.min\\.js",
+      "cdn\\.oribi\\.io"
+    ],
+    "scripts": "_linkedin_partner_id",
     "website": "https://business.linkedin.com/marketing-solutions/insight-tag"
   },
   "Linkedin Sign-in": {
@@ -611,6 +803,8 @@
     "description": "Linx Commerce is an ecommerce platform, which provides seamless and personalised cross-channel solution that enables a true omni-channel shopping experience.",
     "icon": "Linx.png",
     "js": {
+      "EzGaCfg.Config.Store": "",
+      "EzGaCfg.Shopper": "",
       "linxImpulse.config.integrationFlags.platformProvider": "linxCommerce"
     },
     "pricing": [
@@ -696,7 +890,7 @@
     "cats": [
       22
     ],
-    "cpe": "cpe:/a:litespeedtech:litespeed_web_server",
+    "cpe": "cpe:2.3:a:litespeedtech:litespeed_web_server:*:*:*:*:*:*:*:*",
     "description": "LiteSpeed is a high-scalability web server.",
     "headers": {
       "Server": "^LiteSpeed$"
@@ -735,10 +929,11 @@
   },
   "Littledata": {
     "cats": [
-      10
+      100
     ],
     "description": "Littledata provides a seamless connection between your Shopify site, marketing channels, and Google Analytics.",
     "icon": "Littledata.svg",
+    "implies": "Shopify",
     "js": {
       "LittledataLayer": "",
       "LittledataLayer.version": "v([\\d\\.]+)\\;version:\\1"
@@ -876,6 +1071,23 @@
     "scriptSrc": "gdpr\\.privacymanager\\.io",
     "website": "https://liveramp.com/our-platform/preference-consent-management"
   },
+  "LiveSession": {
+    "cats": [
+      10
+    ],
+    "description": "LiveSession helps increase conversion rates using session replays, and event-based product analytics.",
+    "icon": "LiveSession.svg",
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "cdn\\.livesession\\.io"
+    ],
+    "website": "https://livesession.io/"
+  },
   "LiveStreet CMS": {
     "cats": [
       1
@@ -945,11 +1157,11 @@
     ],
     "description": "Livescale is a video platform that enables teams to transform content and ecommerce into a live shopping experience that reaches engages and monetizes audiences with LiveShopping.",
     "icon": "Livescale.png",
+    "implies": "Shopify",
     "pricing": [
       "mid",
       "recurring"
     ],
-    "requires": "Shopify",
     "saas": true,
     "scriptSrc": "\\.livescale\\.tv/",
     "website": "https://www.livescale.tv"
@@ -959,12 +1171,14 @@
       18,
       19
     ],
+    "description": "Livewire is a full-stack Laravel framework for building dynamic interfaces.",
     "html": "<[^>]{1,512}\\bwire:",
-    "icon": "Livewire.png",
+    "icon": "Livewire.svg",
     "implies": "Laravel",
     "js": {
       "livewire": ""
     },
+    "oss": true,
     "scriptSrc": "livewire(?:\\.min)?\\.js",
     "website": "https://laravel-livewire.com"
   },
@@ -980,6 +1194,17 @@
     },
     "oss": true,
     "website": "https://github.com/gregberge/loadable-components"
+  },
+  "Loadify": {
+    "cats": [
+      92,
+      100
+    ],
+    "description": "Loadify is a shopify app which helps merchants deploy performance techniques like loading screen, transitions & lazy Load.",
+    "icon": "Loadify.png",
+    "implies": "Shopify",
+    "scriptSrc": "\\.loadifyapp\\.ninety9\\.dev",
+    "website": "https://apps.shopify.com/loadify"
   },
   "LocalFocus": {
     "cats": [
@@ -1018,6 +1243,23 @@
     "website": "https://www.localised.com",
     "xhr": "api\\.localised\\.com"
   },
+  "Locksmith": {
+    "cats": [
+      100
+    ],
+    "description": "Locksmith is a shopify app for adding access control capability on shopify stores.",
+    "icon": "Locksmith.png",
+    "implies": "Shopify",
+    "js": {
+      "Locksmith": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://apps.shopify.com/locksmith"
+  },
   "LocomotiveCMS": {
     "cats": [
       1
@@ -1034,10 +1276,10 @@
     "cats": [
       59
     ],
-    "cpe": "cpe:/a:lodash:lodash",
+    "cpe": "cpe:2.3:a:lodash:lodash:*:*:*:*:*:*:*:*",
     "description": "Lodash is a JavaScript library which provides utility functions for common programming tasks using the functional programming paradigm.",
     "excludes": "Underscore.js",
-    "icon": "Lo-dash.png",
+    "icon": "Lodash.svg",
     "js": {
       "_.VERSION": "^(.+)$\\;confidence:0\\;version:\\1",
       "_.differenceBy": "",
@@ -1082,8 +1324,12 @@
     ],
     "description": "LogiCommerce is the headless ecommerce platform.",
     "icon": "LogiCommerce.svg",
+    "js": {
+      "logicommerceGlobal": ""
+    },
     "meta": {
-      "generator": "^LogiCommerce$"
+      "generator": "^LogiCommerce$",
+      "logicommerce": ""
     },
     "pricing": [
       "low",
@@ -1272,6 +1518,7 @@
     ],
     "description": "Loox is a reviews app for Shopify that helps you gather reviews and user-generated photos from your customers.",
     "icon": "Loox.svg",
+    "implies": "Shopify",
     "js": {
       "loox_global_hash": ""
     },
@@ -1279,7 +1526,6 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
     "saas": true,
     "scriptSrc": "loox\\.io/widget",
     "website": "https://loox.app"
@@ -1313,18 +1559,6 @@
       "/dist/tgs-player\\.js"
     ],
     "website": "https://lottiefiles.com"
-  },
-  "Lotus Domino": {
-    "cats": [
-      22
-    ],
-    "cpe": "cpe:/a:ibm:lotus_domino",
-    "headers": {
-      "Server": "Lotus-Domino"
-    },
-    "icon": "Lotus Domino.png",
-    "implies": "Java",
-    "website": "http://www-01.ibm.com/software/lotus/products/domino"
   },
   "LoyaltyLion": {
     "cats": [
@@ -1361,7 +1595,7 @@
     "cats": [
       27
     ],
-    "cpe": "cpe:/a:lua:lua",
+    "cpe": "cpe:2.3:a:lua:lua:*:*:*:*:*:*:*:*",
     "description": "Lua is a multi-paradigm programming language designed primarily for embedded use in applications.",
     "headers": {
       "X-Powered-By": "\\bLua(?: ([\\d.]+))?\\;version:\\1"
@@ -1369,11 +1603,27 @@
     "icon": "Lua.png",
     "website": "http://www.lua.org"
   },
+  "Luana": {
+    "cats": [
+      18
+    ],
+    "description": "Luana is a web framework that uses web browser APIs and features to make a cross-platform web app look like a Native one and bring the same experience.",
+    "icon": "Luana.png",
+    "implies": "PWA",
+    "js": {
+      "luanaframework": ""
+    },
+    "meta": {
+      "generator": "^Luana\\sFramework\\s([\\d\\.]+)$\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://luanaframework.github.io"
+  },
   "Lucene": {
     "cats": [
       34
     ],
-    "cpe": "cpe:/a:apache:lucene",
+    "cpe": "cpe:2.3:a:apache:lucene:*:*:*:*:*:*:*:*",
     "description": "Lucene is a free and open-source search engine software library.",
     "icon": "Lucene.png",
     "implies": "Java",
@@ -1546,5 +1796,15 @@
     },
     "oss": true,
     "website": "https://lit.dev"
+  },
+  "lite-youtube-embed": {
+    "cats": [
+      59
+    ],
+    "description": "The lite-youtube-embed technique renders the YouTube video inside the IFRAME tag only when the play button in clicked thus improving the core web vitals score of your website.",
+    "dom": "lite-youtube",
+    "implies": "YouTube",
+    "oss": true,
+    "website": "https://github.com/paulirish/lite-youtube-embed"
   }
 }

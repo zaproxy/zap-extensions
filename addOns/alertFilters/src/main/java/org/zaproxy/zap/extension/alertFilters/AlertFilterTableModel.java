@@ -26,6 +26,7 @@ import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTableModel;
 
 /** A table model for holding a set of AlertFilter, for a {@link Context}. */
+@SuppressWarnings("serial")
 public class AlertFilterTableModel extends AbstractMultipleOptionsTableModel<AlertFilter> {
 
     /** The Constant defining the table column names. */

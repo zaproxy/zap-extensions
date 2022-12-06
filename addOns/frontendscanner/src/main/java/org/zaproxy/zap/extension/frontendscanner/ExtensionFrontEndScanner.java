@@ -116,7 +116,7 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor {
         extensionHook.addOptionsParamSet(options);
         extensionHook.addApiImplementor(api);
 
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookView().addMainToolBarComponent(getFrontEndScannerButton());
             options.addPropertyChangeListener(
                     "enabled",
@@ -147,7 +147,7 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor {
 
     @Override
     public void optionsLoaded() {
-        if (getView() != null) {
+        if (hasView()) {
             EventQueue.invokeLater(
                     () -> getFrontEndScannerButton().setSelected(options.isEnabled()));
         }
@@ -204,7 +204,7 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor {
     }
 
     private ImageIcon createIcon(String path) {
-        if (getView() == null) {
+        if (!hasView()) {
             return null;
         }
         return new ImageIcon(ExtensionFrontEndScanner.class.getResource(path));

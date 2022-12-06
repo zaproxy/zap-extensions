@@ -29,6 +29,7 @@ import org.zaproxy.zap.view.StandardFieldsDialog;
 import org.zaproxy.zest.core.v1.ZestComment;
 import org.zaproxy.zest.core.v1.ZestStatement;
 
+@SuppressWarnings("serial")
 public class ZestCommentDialog extends StandardFieldsDialog implements ZestDialog {
 
     private static final String FIELD_COMMENT = "zest.dialog.comment.label.comment";

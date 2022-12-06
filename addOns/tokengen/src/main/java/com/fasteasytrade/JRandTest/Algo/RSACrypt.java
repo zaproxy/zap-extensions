@@ -166,104 +166,98 @@ public class RSACrypt extends Cipher {
 	 * encrypt infile to outfile.
 	 */
 	public void encryptFile(String infile, String outfile) throws IOException {
-		FileInputStream fis = new FileInputStream(infile);
-		DataOutputStream out = new DataOutputStream(new FileOutputStream(outfile));
-		
-		byte[] buffer = new byte[ getMessageLength() - 5 ];
-		int len;
-		
-		while (true) {
-			len = fis.read(buffer, 0, buffer.length);
-			if (len < 0)		// Found eof?
-				break;		// End of encryption
-			
-			out.writeInt(len);	// write length of data
-			Vector<BigInteger> vec = encrypt(buffer);
-			if (vec.size() != 1)	// We expect 1 biginteger! 
-				throw new IOException("encrypt does not return a biginteger!");
-			write(vec.elementAt(0), out);	// write biginteger
+		try (FileInputStream fis = new FileInputStream(infile);
+			DataOutputStream out = new DataOutputStream(new FileOutputStream(outfile))) {
+
+			byte[] buffer = new byte[ getMessageLength() - 5 ];
+			int len;
+
+			while (true) {
+				len = fis.read(buffer, 0, buffer.length);
+				if (len < 0)		// Found eof?
+					break;		// End of encryption
+
+				out.writeInt(len);	// write length of data
+				Vector<BigInteger> vec = encrypt(buffer);
+				if (vec.size() != 1)	// We expect 1 biginteger! 
+					throw new IOException("encrypt does not return a biginteger!");
+				write(vec.elementAt(0), out);	// write biginteger
+			}
+
+			out.writeInt(-1);	// write "dummy" EOF - no more bigintegers
 		}
-		
-		out.writeInt(-1);	// write "dummy" EOF - no more bigintegers
-		
-		out.close();
-		fis.close();
 	}
 
 	/**
 	 * decrypt infile to outfile.
 	 */
 	public void decryptFile(String infile, String outfile) throws IOException {
-		DataInputStream in = new DataInputStream(new FileInputStream(infile));
-		FileOutputStream fos = new FileOutputStream(outfile);
+		try (DataInputStream in = new DataInputStream(new FileInputStream(infile));
+			FileOutputStream fos = new FileOutputStream(outfile)) {
 
-		int len;			// real len of data
-		BigInteger v;			// read bigintegers from inputfile
+			int len;			// real len of data
+			BigInteger v;			// read bigintegers from inputfile
 
-		while (true) {
-			len = in.readInt();	// read len of data
-			//if (len < 0)		// Found our "dummy" EOF?
-			if (len < 5)		// Found our "dummy" EOF?
-				break;		// End of decryption
-			v = read(in);		// read biginteger
-			byte[] buffer = decrypt(v).toByteArray();
-			//fos.write(buffer, 0,len);	// write just the len data, not more
-			fos.write(buffer, 5,len -5); // write just the len data, not more
+			while (true) {
+				len = in.readInt();	// read len of data
+				//if (len < 0)		// Found our "dummy" EOF?
+				if (len < 5)		// Found our "dummy" EOF?
+					break;		// End of decryption
+				v = read(in);		// read biginteger
+				byte[] buffer = decrypt(v).toByteArray();
+				//fos.write(buffer, 0,len);	// write just the len data, not more
+				fos.write(buffer, 5,len -5); // write just the len data, not more
+			}
 		}
-		fos.close();
-		in.close();
 	}
 
 	/**
 	 * encrypt infile to outfile with compression.
 	 */
 	public void encryptFileGzip(String infile, String outfile) throws IOException {
-		FileInputStream fis = new FileInputStream(infile);
-		GZIPOutputStream out = new GZIPOutputStream(new FileOutputStream(outfile));
-		
-		byte[] buffer = new byte[ getMessageLength() - 5 ];
-		int len;
-		
-		while (true) {
-			len = fis.read(buffer, 0, buffer.length);
-			if (len < 0)		// Found eof?
-				break;		// End of encryption
-			
-			write(len, out);	// write length of data
-			Vector<BigInteger> vec = encrypt(buffer);
-			if (vec.size() != 1)	// We expect 1 biginteger! 
-				throw new IOException("encrypt does not return a biginteger!");
-			write(vec.elementAt(0), out);	// write biginteger
+		try (FileInputStream fis = new FileInputStream(infile);
+			GZIPOutputStream out = new GZIPOutputStream(new FileOutputStream(outfile))) {
+
+			byte[] buffer = new byte[ getMessageLength() - 5 ];
+			int len;
+
+			while (true) {
+				len = fis.read(buffer, 0, buffer.length);
+				if (len < 0)		// Found eof?
+					break;		// End of encryption
+
+				write(len, out);	// write length of data
+				Vector<BigInteger> vec = encrypt(buffer);
+				if (vec.size() != 1)	// We expect 1 biginteger! 
+					throw new IOException("encrypt does not return a biginteger!");
+				write(vec.elementAt(0), out);	// write biginteger
+			}
+
+			write(-1, out);		// write "dummy" EOF - no more bigintegers
 		}
-		
-		write(-1, out);		// write "dummy" EOF - no more bigintegers
-		
-		out.close();
-		fis.close();
 	}
 
 	/*
 	 * decrypt compressed infile to outfile.
 	 */
 	public void decryptFileGzip(String infile, String outfile) throws IOException {
-		GZIPInputStream in = new GZIPInputStream(new FileInputStream(infile));
-		FileOutputStream fos = new FileOutputStream(outfile);
+		try (GZIPInputStream in = new GZIPInputStream(new FileInputStream(infile));
+			FileOutputStream fos = new FileOutputStream(outfile)) {
 
-		int len;			// real len of data
-		BigInteger v;			// read bigintegers from inputfile
+			int len;			// real len of data
+			BigInteger v;			// read bigintegers from inputfile
 
-		while (true) {
-			len = readInt(in);	// read len of data
-			//if (len < 0)		// Found our "dummy" EOF?
-			if (len < 5)		// Found our "dummy" EOF?
-				break;		// End of decryption
-			v = readBigInteger(in);	// read biginteger
-			byte[] buffer = decrypt(v).toByteArray();
-			//fos.write(buffer, 0,len);	// write just the len data, not more
-			fos.write(buffer, 5,len - 5); // write just the len data, not more
+			while (true) {
+				len = readInt(in);	// read len of data
+				//if (len < 0)		// Found our "dummy" EOF?
+				if (len < 5)		// Found our "dummy" EOF?
+					break;		// End of decryption
+				v = readBigInteger(in);	// read biginteger
+				byte[] buffer = decrypt(v).toByteArray();
+				//fos.write(buffer, 0,len);	// write just the len data, not more
+				fos.write(buffer, 5,len - 5); // write just the len data, not more
+			}
 		}
-		fos.close();
-		in.close();
 	}
 
 	

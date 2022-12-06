@@ -23,6 +23,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
@@ -30,9 +31,12 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractDialog;
+import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.openapi.converter.swagger.UriBuilder;
+import org.zaproxy.zap.model.Context;
 
+@SuppressWarnings("serial")
 abstract class ImportFromAbstractDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
@@ -40,7 +44,9 @@ abstract class ImportFromAbstractDialog extends AbstractDialog {
 
     private final JTextField fieldFrom = new JTextField(35);
     private final JTextField fieldTarget = new JTextField(35);
-
+    private final JComboBox<String> contextsComboBox = new JComboBox<>();
+    private final ContextsChangedListenerImpl contextsChangedListener =
+            new ContextsChangedListenerImpl();
     protected final ExtensionOpenApi caller;
 
     public ImportFromAbstractDialog(
@@ -94,9 +100,23 @@ abstract class ImportFromAbstractDialog extends AbstractDialog {
         constraints.gridwidth = 3;
         add(fieldTarget, constraints);
 
+        constraints.weightx = 0;
+        constraints.gridwidth = 1;
+        constraints.gridx = 0;
+        constraints.gridy = 2;
+        add(new JLabel(Constant.messages.getString(MESSAGE_PREFIX + "labelcontext")), constraints);
+
+        constraints.gridx = 1;
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        constraints.weightx = 1.0;
+        constraints.gridwidth = 3;
+        refreshContextsComboBox();
+        add(contextsComboBox, constraints);
+        caller.getModel().getSession().addOnContextsChangedListener(contextsChangedListener);
+
         constraints.gridwidth = 1;
         constraints.gridx = 2;
-        constraints.gridy = 2;
+        constraints.gridy = 3;
         constraints.anchor = GridBagConstraints.CENTER;
         add(buttonCancel, constraints);
         constraints.gridx = 3;
@@ -130,6 +150,21 @@ abstract class ImportFromAbstractDialog extends AbstractDialog {
         return fieldTarget;
     }
 
+    protected int getSelectedContextId() {
+        if (contextsComboBox.getSelectedItem() == null) {
+            return -1;
+        }
+        String selectedContextName = contextsComboBox.getSelectedItem().toString();
+        if ("".equals(selectedContextName)) {
+            return -1;
+        }
+        Context selectedContext = caller.getModel().getSession().getContext(selectedContextName);
+        if (selectedContext == null) {
+            return -1;
+        }
+        return selectedContext.getId();
+    }
+
     protected void addFromFields(GridBagConstraints constraints) {
         add(fieldFrom, constraints);
     }
@@ -149,6 +184,10 @@ abstract class ImportFromAbstractDialog extends AbstractDialog {
         getTargetField().setText("");
     }
 
+    public void unload() {
+        caller.getModel().getSession().removeOnContextsChangedListener(contextsChangedListener);
+    }
+
     private static void setContextMenu(JTextField field) {
         JMenuItem paste =
                 new JMenuItem(Constant.messages.getString(MESSAGE_PREFIX + "pasteaction"));
@@ -157,5 +196,33 @@ abstract class ImportFromAbstractDialog extends AbstractDialog {
         JPopupMenu jPopupMenu = new JPopupMenu();
         jPopupMenu.add(paste);
         field.setComponentPopupMenu(jPopupMenu);
+    }
+
+    void refreshContextsComboBox() {
+        contextsComboBox.removeAllItems();
+        contextsComboBox.addItem("");
+        caller.getModel().getSession().getContexts().stream()
+                .map(Context::getName)
+                .forEach(contextsComboBox::addItem);
+        if (contextsComboBox.getItemCount() > 1) {
+            contextsComboBox.setSelectedIndex(1);
+        }
+    }
+
+    private class ContextsChangedListenerImpl implements Session.OnContextsChangedListener {
+        @Override
+        public void contextAdded(Context context) {
+            contextsComboBox.addItem(context.getName());
+        }
+
+        @Override
+        public void contextDeleted(Context context) {
+            contextsComboBox.removeItem(context.getName());
+        }
+
+        @Override
+        public void contextsChanged() {
+            refreshContextsComboBox();
+        }
     }
 }

@@ -66,7 +66,7 @@ public class CodeDxExtension extends ExtensionAdaptor {
         super.hook(extensionHook);
         cdxAPIImpl = new CodeDxAPI(this);
         API.getInstance().registerApiImplementor(cdxAPIImpl);
-        if (getView() != null) {
+        if (hasView()) {
             extensionHook.getHookMenu().addReportMenuItem(getUploadMenu());
             extensionHook.getHookMenu().addReportMenuItem(getExportMenu());
         }

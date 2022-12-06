@@ -23,96 +23,25 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.withSettings;
 
 import net.sf.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.db.RecordAlert;
-import org.parosproxy.paros.db.TableAlert;
-import org.parosproxy.paros.db.TableHistory;
-import org.parosproxy.paros.extension.ExtensionLoader;
-import org.parosproxy.paros.model.HistoryReference;
-import org.parosproxy.paros.model.Model;
-import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.zap.extension.api.ApiException;
-import org.zaproxy.zap.testutils.TestUtils;
 
-class RetestAPIUnitTest extends TestUtils {
+class RetestAPIUnitTest {
 
     private ExtensionRetest extRetest;
-    private ExtensionAutomation extAutomation;
 
     private RetestAPI retestAPI;
     private JSONObject params;
 
     @BeforeEach
     void setUp() throws Exception {
-        mockMessages(new ExtensionRetest());
-        super.setUpZap();
         params = new JSONObject();
-        params.put(RetestAPI.ALERT_IDS, "1,2");
-        Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
-        Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
-        extRetest = mock(ExtensionRetest.class, withSettings().lenient());
-        extAutomation = mock(ExtensionAutomation.class, withSettings().lenient());
-        given(extensionLoader.getExtension(ExtensionAutomation.class)).willReturn(extAutomation);
-        Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+        extRetest = mock(ExtensionRetest.class);
         retestAPI = new RetestAPI(extRetest);
-
-        RecordAlert recordOne =
-                new RecordAlert(
-                        1,
-                        1,
-                        100,
-                        "Test Alert One",
-                        1,
-                        1,
-                        "Test Description One",
-                        "Test Uri One",
-                        "Test Param One",
-                        "Test Attack One",
-                        "Test OtherInfo One",
-                        "Test Solution One",
-                        "100Test Reference One",
-                        "Test Evidence One",
-                        1,
-                        1,
-                        1,
-                        1,
-                        1,
-                        "100Test Alert Reference");
-        RecordAlert recordTwo =
-                new RecordAlert(
-                        2,
-                        1,
-                        100,
-                        "Test Alert One",
-                        1,
-                        1,
-                        "Test Description One",
-                        "Test Uri One",
-                        "Test Param One",
-                        "Test Attack One",
-                        "Test OtherInfo One",
-                        "Test Solution One",
-                        "100Test Reference One",
-                        "Test Evidence One",
-                        1,
-                        1,
-                        1,
-                        1,
-                        1,
-                        "100Test Alert Reference");
-
-        TableHistory historyTable = mock(TableHistory.class);
-        HistoryReference.setTableHistory(historyTable);
-        TableAlert alertTable = mock(TableAlert.class);
     }
 
     @Test

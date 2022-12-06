@@ -25,6 +25,7 @@ import javax.swing.table.AbstractTableModel;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.automation.jobs.RequestorJob;
 
+@SuppressWarnings("serial")
 public class RequestsTableModel extends AbstractTableModel {
 
     private static final long serialVersionUID = 1L;
