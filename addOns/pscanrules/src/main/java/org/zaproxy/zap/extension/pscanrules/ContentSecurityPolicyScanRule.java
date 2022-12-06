@@ -571,18 +571,6 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                                 MESSAGE_PREFIX + "stylesrc.unsafe.hashes.refs"));
     }
 
-    private AlertBuilder buildScriptUnsafeEvalAlert(String param, String evidence) {
-        return getBuilder(
-                        Constant.messages.getString(MESSAGE_PREFIX + "scriptsrc.unsafe.eval.name"),
-                        "9")
-                .setRisk(Alert.RISK_MEDIUM)
-                .setParam(param)
-                .setEvidence(evidence)
-                .setOtherInfo(
-                        Constant.messages.getString(
-                                MESSAGE_PREFIX + "scriptsrc.unsafe.eval.otherinfo"));
-    }
-
     private AlertBuilder buildMalformedAlert(String param, String evidence, String badChars) {
         return getBuilder(Constant.messages.getString(MESSAGE_PREFIX + "malformed.name"), "9")
                 .setRisk(Alert.RISK_MEDIUM)
@@ -591,6 +579,18 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                 .setOtherInfo(
                         Constant.messages.getString(
                                 MESSAGE_PREFIX + "malformed.otherinfo", badChars));
+    }
+
+    private AlertBuilder buildScriptUnsafeEvalAlert(String param, String evidence) {
+        return getBuilder(
+                        Constant.messages.getString(MESSAGE_PREFIX + "scriptsrc.unsafe.eval.name"),
+                        "10")
+                .setRisk(Alert.RISK_MEDIUM)
+                .setParam(param)
+                .setEvidence(evidence)
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                MESSAGE_PREFIX + "scriptsrc.unsafe.eval.otherinfo"));
     }
 
     @Override
@@ -634,6 +634,11 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                                 HTTP_HEADER_CSP,
                                 "\"default-src ‘self’ 'unsafe-eval' 'unsafe-inline' www.example.net;\"",
                                 "‘’")
+                        .build());
+        alerts.add(
+                buildScriptUnsafeEvalAlert(
+                                HTTP_HEADER_CSP,
+                                "default-src 'self'; script-src 'unsafe-eval'")
                         .build());
         return alerts;
     }
