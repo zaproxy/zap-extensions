@@ -637,8 +637,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                         .build());
         alerts.add(
                 buildScriptUnsafeEvalAlert(
-                                HTTP_HEADER_CSP,
-                                "default-src 'self'; script-src 'unsafe-eval'")
+                                HTTP_HEADER_CSP, "default-src 'self'; script-src 'unsafe-eval'")
                         .build());
         return alerts;
     }
