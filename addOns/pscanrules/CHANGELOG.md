@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - The Private Address Disclosure and Session ID in URL Rewrite scan rules now include example alert functionality for documentation generation purposes (Issue 6119 and 7100).
+- The Content Security Policy scan rule will now alert when "unsafe-eval" are allowed.
 
 ### Fixed
 - The Modern App Detection scan rule now ignores non-HTML files (Issue 7617).
