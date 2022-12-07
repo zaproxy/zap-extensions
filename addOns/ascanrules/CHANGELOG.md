@@ -14,6 +14,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Source Code Disclosure - CVE-2012-1823
   - Source Code Disclosure - /WEB-INF folder
 
+### Added
+- The Hidden File Finder scan rule will now also check for "/_wpeprivate/config.json".
+
 ## [49] - 2022-10-27
 ### Added
 - The following scan rules were added, having been promoted from Beta:

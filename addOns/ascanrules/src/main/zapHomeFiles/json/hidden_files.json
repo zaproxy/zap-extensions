@@ -59,14 +59,14 @@
       "content":["Apache Status"],
       "links":["https://httpd.apache.org/docs/current/mod/mod_status.html"],
       "type":"apache_server_status",
-      "source":"snallygaster"	
+      "source":"snallygaster"
     },
     {
       "path":"core",
       "binary":"\\x7fELF",
       "links":["https://en.wikipedia.org/wiki/Core_dump"],
       "type":"coredump",
-      "source":"snallygaster"	
+      "source":"snallygaster"
     },
     {
       "path":"sftp-config.json",
@@ -248,35 +248,42 @@
       "content":["Apache Server Information"],
       "links":["https://twitter.com/jae_hak99/status/1286605139042643974","https://httpd.apache.org/docs/current/mod/mod_info.html"],
       "type":"apache_server_info",
-      "source":"twitter"	
+      "source":"twitter"
     },
     {
       "path":"phpinfo.php",
       "content":["phpinfo()"],
-	  "links":["https://www.php.net/manual/en/function.phpinfo.php"],
+      "links":["https://www.php.net/manual/en/function.phpinfo.php"],
       "type":"phpinfo",
       "source":"snallygaster"
     },
     {
       "path":"info.php",
       "content":["phpinfo()"],
-	  "links":["https://www.php.net/manual/en/function.phpinfo.php"],
+      "links":["https://www.php.net/manual/en/function.phpinfo.php"],
       "type":"phpinfo",
       "source":"snallygaster"
     },
     {
       "path":"i.php",
       "content":["phpinfo()"],
-	  "links":["https://www.php.net/manual/en/function.phpinfo.php"],
+      "links":["https://www.php.net/manual/en/function.phpinfo.php"],
       "type":"phpinfo",
       "source":"snallygaster"
     },
     {
       "path":"test.php",
       "content":["phpinfo()"],
-	  "links":["https://www.php.net/manual/en/function.phpinfo.php"],
+      "links":["https://www.php.net/manual/en/function.phpinfo.php"],
       "type":"phpinfo",
       "source":"snallygaster"
+    },
+    {
+      "path":"_wpeprivate/config.json",
+      "content":["WPENGINE_ACCOUNT","DB_USERNAME","DB_PASSWORD"],
+      "links":["https://www.acunetix.com/vulnerabilities/web/wpengine-_wpeprivate-config-json-information-disclosure/","https://twitter.com/nav1n0x/status/1575171517893079043"],
+      "type":"wordpress/WPEngine",
+      "source":"nav1n0x"
     }
   ]
 } 
