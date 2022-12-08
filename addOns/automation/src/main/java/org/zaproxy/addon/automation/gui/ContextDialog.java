@@ -27,6 +27,7 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.lang.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.automation.ContextWrapper;
+import org.zaproxy.addon.automation.TechnologyUtils;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -38,7 +39,8 @@ public class ContextDialog extends StandardFieldsDialog {
     private static final String[] TAB_LABELS = {
         "automation.dialog.context.tab.context",
         "automation.dialog.context.tab.include",
-        "automation.dialog.context.tab.exclude"
+        "automation.dialog.context.tab.exclude",
+        "automation.dialog.context.tab.tech"
     };
 
     private static final String TITLE = "automation.dialog.context.title";
@@ -50,6 +52,7 @@ public class ContextDialog extends StandardFieldsDialog {
     private boolean isNew = false;
     private EnvironmentDialog envDialog;
     private ContextWrapper.Data context;
+    private ContextTechnologyPanel technologyPanel;
 
     public ContextDialog(EnvironmentDialog owner) {
         this(owner, null);
@@ -70,6 +73,11 @@ public class ContextDialog extends StandardFieldsDialog {
         this.addMultilineField(1, INCLUDE_PARAM, listToString(context.getIncludePaths()));
 
         this.addMultilineField(2, EXCLUDE_PARAM, listToString(context.getExcludePaths()));
+
+        this.setCustomTabPanel(3, getTechnologyPanel());
+
+        getTechnologyPanel()
+                .setTechSet(TechnologyUtils.getTechSet(context.getTechnology().getExclude()));
     }
 
     private String listToString(List<String> list) {
@@ -87,12 +95,24 @@ public class ContextDialog extends StandardFieldsDialog {
                 .collect(Collectors.toList());
     }
 
+    private ContextTechnologyPanel getTechnologyPanel() {
+        if (this.technologyPanel == null) {
+            this.technologyPanel = new ContextTechnologyPanel();
+        }
+        return this.technologyPanel;
+    }
+
     @Override
     public void save() {
         this.context.setName(this.getStringValue(NAME_PARAM).trim());
         this.context.setUrls(stringParamToList(URLS_PARAM));
         this.context.setIncludePaths(stringParamToList(INCLUDE_PARAM));
         this.context.setExcludePaths(stringParamToList(EXCLUDE_PARAM));
+        this.context
+                .getTechnology()
+                .setExclude(
+                        TechnologyUtils.techSetToExcludeList(
+                                this.getTechnologyPanel().getTechSet()));
         if (this.isNew) {
             envDialog.addContext(context);
         }
