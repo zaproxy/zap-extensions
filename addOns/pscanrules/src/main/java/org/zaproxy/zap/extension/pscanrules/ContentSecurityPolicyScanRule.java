@@ -165,6 +165,11 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                     buildStyleUnsafeHashAlert(getHeaderField(msg, HTTP_HEADER_CSP).get(0), csp)
                             .raise();
                 }
+
+                if (allowsUnsafeEval(policy, FetchDirectiveKind.ScriptSrc)) {
+                    buildScriptUnsafeEvalAlert(getHeaderField(msg, HTTP_HEADER_CSP).get(0), csp)
+                            .raise();
+                }
             }
         }
 
@@ -265,6 +270,15 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
         if (fetchDirective.isPresent()) {
             SourceExpressionDirective kind = fetchDirective.get();
             return kind.unsafeHashes();
+        }
+        return false;
+    }
+
+    private static boolean allowsUnsafeEval(Policy policy, FetchDirectiveKind source) {
+        Optional<SourceExpressionDirective> fetchDirective = policy.getFetchDirective(source);
+        if (fetchDirective.isPresent()) {
+            SourceExpressionDirective kind = fetchDirective.get();
+            return kind.unsafeEval();
         }
         return false;
     }
@@ -567,6 +581,18 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                                 MESSAGE_PREFIX + "malformed.otherinfo", badChars));
     }
 
+    private AlertBuilder buildScriptUnsafeEvalAlert(String param, String evidence) {
+        return getBuilder(
+                        Constant.messages.getString(MESSAGE_PREFIX + "scriptsrc.unsafe.eval.name"),
+                        "10")
+                .setRisk(Alert.RISK_MEDIUM)
+                .setParam(param)
+                .setEvidence(evidence)
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                MESSAGE_PREFIX + "scriptsrc.unsafe.eval.otherinfo"));
+    }
+
     @Override
     public List<Alert> getExampleAlerts() {
         List<Alert> alerts = new ArrayList<>();
@@ -608,6 +634,10 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                                 HTTP_HEADER_CSP,
                                 "\"default-src ‘self’ 'unsafe-eval' 'unsafe-inline' www.example.net;\"",
                                 "‘’")
+                        .build());
+        alerts.add(
+                buildScriptUnsafeEvalAlert(
+                                HTTP_HEADER_CSP, "default-src 'self'; script-src 'unsafe-eval'")
                         .build());
         return alerts;
     }

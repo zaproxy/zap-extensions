@@ -89,9 +89,9 @@ class ContentSecurityPolicyScanRuleUnitTest
                         .filter(alert -> Alert.RISK_MEDIUM == alert.getRisk())
                         .count();
         // Then
-        assertThat(count, is(equalTo(9)));
+        assertThat(count, is(equalTo(10)));
         assertThat(countLows, is(equalTo(3L)));
-        assertThat(countMediums, is(equalTo(6L)));
+        assertThat(countMediums, is(equalTo(7L)));
     }
 
     @Test
@@ -339,6 +339,21 @@ class ContentSecurityPolicyScanRuleUnitTest
         assertThat(alertsRaised.get(1).getAlertRef(), equalTo("10055-5"));
 
         assertThat(alertsRaised.get(2).getName(), equalTo("CSP: style-src unsafe-inline"));
+    }
+
+    @Test
+    void shouldRaiseAlertWhenCspIncludesScriptUnsafeEval() {
+        // Given
+        HttpMessage msg = createHttpMessage("script-src 'unsafe-eval'");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(3));
+        // Verify the specific alerts
+        assertThat(alertsRaised.get(2).getName(), equalTo("CSP: script-src unsafe-eval"));
+        assertThat(alertsRaised.get(2).getRisk(), equalTo(Alert.RISK_MEDIUM));
+        assertThat(alertsRaised.get(2).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
+        assertThat(alertsRaised.get(2).getAlertRef(), equalTo("10055-10"));
     }
 
     @Test
