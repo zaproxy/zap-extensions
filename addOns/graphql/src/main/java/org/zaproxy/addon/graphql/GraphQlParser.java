@@ -22,6 +22,7 @@ package org.zaproxy.addon.graphql;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import graphql.introspection.IntrospectionQueryBuilder;
 import graphql.introspection.IntrospectionResultToSchema;
 import graphql.language.Document;
 import graphql.schema.idl.SchemaPrinter;
@@ -46,7 +47,11 @@ public class GraphQlParser {
     private static final Logger LOG = LogManager.getLogger(GraphQlParser.class);
     private static final String THREAD_PREFIX = "ZAP-GraphQL-Parser";
     private static final String INTROSPECTION_QUERY =
-            "query IntrospectionQuery{__schema{queryType{name}mutationType{name}subscriptionType{name}types{...FullType}directives{name description locations args{...InputValue}}}} fragment FullType on __Type {kind name description fields{name description args{...InputValue}type{...TypeRef}}inputFields{...InputValue}interfaces{...TypeRef}enumValues{name description}possibleTypes{...TypeRef}} fragment InputValue on __InputValue {name description type{...TypeRef}defaultValue} fragment TypeRef on __Type {kind name ofType{kind name ofType{kind name ofType{kind name ofType{kind name ofType{kind name ofType{kind name ofType{kind name}}}}}}}}";
+            IntrospectionQueryBuilder.build(
+                    IntrospectionQueryBuilder.Options.defaultOptions()
+                            .descriptions(false)
+                            .directiveIsRepeatable(false)
+                            .inputValueDeprecation(false));
     private static AtomicInteger threadId = new AtomicInteger();
 
     private final Requestor requestor;
