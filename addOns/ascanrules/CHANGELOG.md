@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Use lower case HTTP field names for compatibility with HTTP/2.
 
 ### Fixed
+- False positive in case of javascript: protocol xss attacks, when attack payload is modified by the application (Issue 6013).
 - Preserve the HTTP version in the scan rules:
   - Remote Code Execution - CVE-2012-1823
   - Source Code Disclosure - CVE-2012-1823
