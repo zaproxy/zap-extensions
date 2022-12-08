@@ -20,7 +20,6 @@
 package org.zaproxy.addon.graphql;
 
 import java.awt.GridBagConstraints;
-import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -70,7 +69,7 @@ public class ImportFromFileDialog extends ImportFromAbstractDialog {
                                 Model.getSingleton()
                                         .getOptionsParam()
                                         .setUserDirectory(filechooser.getCurrentDirectory());
-                            } catch (IOException e1) {
+                            } catch (Exception e1) {
                                 showWarningDialog(
                                         Constant.messages.getString("graphql.error.filenotfound"));
                             }
@@ -85,7 +84,7 @@ public class ImportFromFileDialog extends ImportFromAbstractDialog {
         try {
             getParser().importFile(getSchemaField().getText());
             return true;
-        } catch (IOException e) {
+        } catch (Exception e) {
             showWarningDialog(e.getMessage());
         }
         return false;

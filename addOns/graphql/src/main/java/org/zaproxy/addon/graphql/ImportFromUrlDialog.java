@@ -19,7 +19,6 @@
  */
 package org.zaproxy.addon.graphql;
 
-import java.io.IOException;
 import javax.swing.JFrame;
 import org.parosproxy.paros.Constant;
 
@@ -42,7 +41,7 @@ public class ImportFromUrlDialog extends ImportFromAbstractDialog {
                 getParser().introspect();
             } else getParser().importUrl(getSchemaField().getText());
             return true;
-        } catch (IOException e) {
+        } catch (Exception e) {
             showWarningDialog(
                     Constant.messages.getString("graphql.error.invalidurl", e.getMessage()));
             getSchemaField().requestFocusInWindow();
