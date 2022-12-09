@@ -263,9 +263,13 @@ public class ExtensionOast extends ExtensionAdaptor {
     }
 
     public String registerAlertAndGetPayload(Alert alert) throws Exception {
+        return registerAlertAndGetOastPayload(alert).getPayload();
+    }
+
+    public OastPayload registerAlertAndGetOastPayload(Alert alert) throws Exception {
         if (getActiveScanOastService() != null) {
-            String payload = getActiveScanOastService().getNewPayload();
-            alertCache.put(payload, alert);
+            OastPayload payload = getActiveScanOastService().getNewOastPayload();
+            alertCache.put(payload.getPayload(), alert);
             return payload;
         }
         return null;
@@ -292,24 +296,31 @@ public class ExtensionOast extends ExtensionAdaptor {
                 return;
             }
 
-            alert.setOtherInfo(
-                    alert.getOtherInfo()
-                            + '\n'
-                            + Constant.messages.getString("oast.alert.otherinfo.request")
-                            + '\n'
-                            + oastReceivedMsg.getRequestHeader()
-                            + oastReceivedMsg.getRequestBody()
-                            + '\n'
-                            + Constant.messages.getString("oast.alert.otherinfo.response")
-                            + '\n'
-                            + oastReceivedMsg.getResponseHeader()
-                            + oastReceivedMsg.getResponseBody()
-                            + "\n--------------------------------");
+            StringBuilder otherInfo = new StringBuilder(alert.getOtherInfo());
+            if (otherInfo.length() > 0) {
+                otherInfo.append('\n');
+            }
+            otherInfo
+                    .append(
+                            Constant.messages.getString(
+                                    "oast.alert.otherinfo.received",
+                                    oastReceivedMsg.getRequestHeader().getPrimeHeader()))
+                    .append('\n')
+                    .append(Constant.messages.getString("oast.alert.otherinfo.request"))
+                    .append('\n')
+                    .append(oastReceivedMsg.getRequestHeader())
+                    .append(oastReceivedMsg.getRequestBody())
+                    .append('\n')
+                    .append(Constant.messages.getString("oast.alert.otherinfo.response"))
+                    .append('\n')
+                    .append(oastReceivedMsg.getResponseHeader())
+                    .append(oastReceivedMsg.getResponseBody())
+                    .append("\n--------------------------------");
+            alert.setOtherInfo(otherInfo.toString());
             if (alert.getAlertId() == -1) {
                 Map<String, String> alertTags = new HashMap<>(alert.getTags());
                 alertTags.putIfAbsent(OAST_ALERT_TAG_KEY, OAST_ALERT_TAG_VALUE);
                 alert.setTags(alertTags);
-                alert.setEvidence(oastReceivedMsg.getRequestHeader().getPrimeHeader());
                 Control.getSingleton()
                         .getExtensionLoader()
                         .getExtension(ExtensionAlert.class)

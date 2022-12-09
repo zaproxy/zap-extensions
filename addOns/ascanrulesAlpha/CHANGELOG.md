@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Preserve the HTTP version in Web Cache Deception scan rule.
 
+### Added
+- Server Side Request Forgery Scan Rule.
+
 ## [41] - 2022-10-27
 ### Changed
 - Update minimum ZAP version to 2.12.0.

@@ -10,6 +10,12 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Maintenance changes.
 - Do not include the Connection header in Callback responses for HTTP/2.
 
+### Added
+- Allow getting both the payload and canary values for OAST services.
+
+### Fixed
+- Interactsh canary values were reversed in the UI.
+
 ## [0.13.0] - 2022-10-27
 ### Changed
 - Update minimum ZAP version to 2.12.0.

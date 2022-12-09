@@ -51,6 +51,7 @@ import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.util.io.pem.PemObject;
@@ -63,6 +64,7 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.oast.OastPayload;
 import org.zaproxy.addon.oast.OastService;
 import org.zaproxy.addon.oast.OastState;
 import org.zaproxy.addon.oast.OastState.OastStateEventType;
@@ -307,6 +309,24 @@ public class InteractshService extends OastService implements OptionsChangedList
                 + RandomStringUtils.randomAlphanumeric(13).toLowerCase(Locale.ROOT)
                 + '.'
                 + serverUrl.getHost();
+    }
+
+    @Override
+    public OastPayload getNewOastPayload() throws URIException, InteractshException {
+        if (!isRegistered) {
+            register();
+        }
+        Stats.incCounter("stats.oast.interactsh.payloadsGenerated");
+        String payloadId =
+                correlationId + RandomStringUtils.randomAlphanumeric(13).toLowerCase(Locale.ROOT);
+        String canary = StringUtils.reverse(payloadId);
+        String payload =
+                RandomStringUtils.randomAlphanumeric(1).toLowerCase(Locale.ROOT)
+                        + '.'
+                        + payloadId
+                        + '.'
+                        + serverUrl.getHost();
+        return new OastPayload(payload, canary);
     }
 
     @Override
