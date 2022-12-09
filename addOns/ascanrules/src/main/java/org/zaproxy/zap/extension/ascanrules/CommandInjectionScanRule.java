@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.configuration.ConversionException;
@@ -665,7 +664,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
                         .setConfidence(Alert.CONFIDENCE_MEDIUM)
                         .setParam(paramName)
                         .setAttack(paramValue)
-                        // just attach this alert to the first sent message
+                        // just attach this alert to the last sent message
                         .setMessage(message.get())
                         .setOtherInfo(otherInfo)
                         .raise();
