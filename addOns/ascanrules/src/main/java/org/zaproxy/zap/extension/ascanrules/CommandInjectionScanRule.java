@@ -609,24 +609,18 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
             paramValue = value + sleepPayload.replace("{0}", String.valueOf(timeSleepSeconds));
 
             // the function that will send each request
-            Function<Double, Double> requestSender =
+            TimingUtils.RequestSender requestSender =
                     x -> {
-                        try {
-                            HttpMessage msg = getNewMsg();
-                            message.set(msg);
-                            String finalPayload =
-                                    value + sleepPayload.replace("{0}", String.valueOf(x));
-                            setParameter(msg, paramName, finalPayload);
-                            log.debug("Testing [{}] = [{}]", paramName, finalPayload);
+                        HttpMessage msg = getNewMsg();
+                        message.set(msg);
+                        String finalPayload =
+                                value + sleepPayload.replace("{0}", String.valueOf(x));
+                        setParameter(msg, paramName, finalPayload);
+                        log.debug("Testing [{}] = [{}]", paramName, finalPayload);
 
-                            // send the request and retrieve the response
-                            sendAndReceive(msg, false);
-                            return msg.getTimeElapsedMillis() / 1000.0;
-                        } catch (IOException e) {
-                            // catch and rethrow as an unchecked exception,
-                            // so we don't have to change the signature of checkTimingDependence
-                            throw new RuntimeException(e);
-                        }
+                        // send the request and retrieve the response
+                        sendAndReceive(msg, false);
+                        return msg.getTimeElapsedMillis() / 1000.0;
                     };
 
             boolean isInjectable = false;
@@ -638,26 +632,23 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
                                 requestSender,
                                 TIME_CORRELATION_ERROR_RANGE,
                                 TIME_SLOPE_ERROR_RANGE);
-            } catch (RuntimeException e) {
-                Throwable cause = e.getCause();
-                if (cause instanceof SocketException) {
-                    log.debug(
-                            "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
-                            cause.getClass().getName(),
-                            cause.getMessage(),
-                            getBaseMsg().getRequestHeader().getURI());
-                    // Something went wrong, move to next blind iteration
-                    continue;
-                } else if (cause instanceof IOException) {
-                    // Do not try to internationalise this... we need an error message in any
-                    // event...
-                    // if it's in English, it's still better than not having it at all.
-                    log.warn(
-                            "Blind Command Injection vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
-                            paramName,
-                            paramValue,
-                            cause);
-                }
+            } catch (SocketException e) {
+                log.debug(
+                        "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
+                        e.getClass().getName(),
+                        e.getMessage(),
+                        getBaseMsg().getRequestHeader().getURI());
+                // Something went wrong, move to next blind iteration
+                continue;
+            } catch (IOException e) {
+                // Do not try to internationalise this... we need an error message in any
+                // event...
+                // if it's in English, it's still better than not having it at all.
+                log.warn(
+                        "Blind Command Injection vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
+                        paramName,
+                        paramValue,
+                        e);
             }
 
             if (isInjectable) {

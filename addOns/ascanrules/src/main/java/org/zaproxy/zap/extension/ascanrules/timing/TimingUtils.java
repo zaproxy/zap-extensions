@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrules.timing;
 
+import java.io.IOException;
 import java.util.function.Function;
 
 /**
@@ -49,13 +50,14 @@ public class TimingUtils {
      * @return true if the response times correlate linearly, false otherwise.
      * @throws IllegalArgumentException if less than 3 is provided as the requestsLimit
      *                                  OR if less than 5 is provided as the secondsLimit
+     * @throws IOException if the RequestSender throws an IOException, it will bubble up here
      */
     public static boolean checkTimingDependence(
             int requestsLimit,
             double secondsLimit,
-            Function<Double, Double> requestSender,
+            RequestSender requestSender,
             double correlationErrorRange,
-            double slopeErrorRange) {
+            double slopeErrorRange) throws IOException {
 
         if (secondsLimit < 5) {
             throw new IllegalArgumentException("requires at least 5 seconds to get meaningful results");
@@ -106,5 +108,10 @@ public class TimingUtils {
         // if the correlation is bad, the relationship is non-linear
         // if the slope is bad, the relationship is not positively 1:1
         return regression.isWithinConfidence(correlationErrorRange, 1.0, slopeErrorRange);
+    }
+
+    @FunctionalInterface
+    public interface RequestSender {
+        double apply(double x) throws IOException;
     }
 }

@@ -24,12 +24,17 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.hamcrest.Matchers.arrayContaining;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-/** Unit test for {@link TimingUtils}. */
+/**
+ * Unit test for {@link TimingUtils}.
+ * The unit tests that test checkTimingDependence won't actually throw an IOException,
+ * they are simply marked that way to simplify the test code.
+ * */
 class TimingUtilsUnitTest {
 
     private static final double CORRELATION_ERROR_RANGE = 0.1;
@@ -45,7 +50,7 @@ class TimingUtilsUnitTest {
 
     @Test
     // verifies that an incrementing sequence of delays is automatically generated
-    void shouldAutoIncrementDelay() {
+    void shouldAutoIncrementDelay() throws IOException {
         // Given
         ArrayList<Double> generatedDelays = new ArrayList<>();
         // When
@@ -66,7 +71,7 @@ class TimingUtilsUnitTest {
 
     @Test
     // incrementing sequence of delays is automatically generated but then loops back to 1
-    void shouldAutoIncrementThenLoop() {
+    void shouldAutoIncrementThenLoop() throws IOException {
         // Given
         ArrayList<Double> generatedDelays = new ArrayList<>();
         // When
@@ -88,7 +93,7 @@ class TimingUtilsUnitTest {
     @Test
     // detect the case where the endpoint isn't injectable and responds quickly
     // should only send 1 request and then bail
-    void shouldGiveUpQuicklyWhenNotInjectable() {
+    void shouldGiveUpQuicklyWhenNotInjectable() throws IOException {
         // When
         boolean result =
                 TimingUtils.checkTimingDependence(
@@ -109,7 +114,7 @@ class TimingUtilsUnitTest {
     @Test
     // detect the case when the wait time is long, but not necessarily injectable
     // should only send 2-3 requests and then bail early
-    void shouldGiveUpQuicklyWhenSlowButNotInjectable() {
+    void shouldGiveUpQuicklyWhenSlowButNotInjectable() throws IOException {
         // When
         boolean result =
                 TimingUtils.checkTimingDependence(
@@ -129,7 +134,7 @@ class TimingUtilsUnitTest {
 
     @Test
     // verify the typical use case: detect correlation with relatively small noise
-    void shouldDetectDependenceWithSmallError() {
+    void shouldDetectDependenceWithSmallError() throws IOException {
         // When
         boolean result =
                 TimingUtils.checkTimingDependence(
