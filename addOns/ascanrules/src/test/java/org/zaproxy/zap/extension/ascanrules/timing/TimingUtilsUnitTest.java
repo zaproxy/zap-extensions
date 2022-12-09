@@ -22,13 +22,18 @@ package org.zaproxy.zap.extension.ascanrules.timing;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
+import static org.hamcrest.Matchers.arrayContaining;
 
+import java.util.ArrayList;
 import java.util.Random;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /** Unit test for {@link TimingUtils}. */
 class TimingUtilsUnitTest {
+
+    private static final double CORRELATION_ERROR_RANGE = 0.1;
+    private static final double SLOPE_ERROR_RANGE = 0.2;
 
     private final Random rand = new Random();
     private int timesCalled;
@@ -39,22 +44,63 @@ class TimingUtilsUnitTest {
     }
 
     @Test
-    // detect the case where the endpoint isn't injectable and responds quickly
-    // should only send 1 request and then bail
-    void shouldGiveUpQuicklyWhenNotInjectable() {
+    // verifies that an incrementing sequence of delays is automatically generated
+    void shouldAutoIncrementDelay() {
         // Given
-        double[] independentVariables = {1, 2, 3, 4, 5};
+        ArrayList<Double> generatedDelays = new ArrayList<>();
         // When
         boolean result =
                 TimingUtils.checkTimingDependence(
-                        independentVariables,
+                        5,
+                        15,
+                        (x) -> {
+                            generatedDelays.add(x);
+                            return x;
+                        },
+                        CORRELATION_ERROR_RANGE,
+                        SLOPE_ERROR_RANGE);
+        // Then
+        assertThat(result, is(true));
+        assertThat(generatedDelays.toArray(), arrayContaining(1.0, 2.0, 3.0, 4.0, 5.0));
+    }
+
+    @Test
+    // incrementing sequence of delays is automatically generated but then loops back to 1
+    void shouldAutoIncrementThenLoop() {
+        // Given
+        ArrayList<Double> generatedDelays = new ArrayList<>();
+        // When
+        boolean result =
+                TimingUtils.checkTimingDependence(
+                        10,
+                        20,
+                        (x) -> {
+                            generatedDelays.add(x);
+                            return x;
+                        },
+                        CORRELATION_ERROR_RANGE,
+                        SLOPE_ERROR_RANGE);
+        // Then
+        assertThat(result, is(true));
+        assertThat(generatedDelays.toArray(), arrayContaining(1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 1.0, 1.0));
+    }
+
+    @Test
+    // detect the case where the endpoint isn't injectable and responds quickly
+    // should only send 1 request and then bail
+    void shouldGiveUpQuicklyWhenNotInjectable() {
+        // When
+        boolean result =
+                TimingUtils.checkTimingDependence(
+                        5,
+                        15,
                         // respond with a low time
                         (x) -> {
                             timesCalled += 1;
                             return 0.5;
                         },
-                        0.1,
-                        0.2);
+                        CORRELATION_ERROR_RANGE,
+                        SLOPE_ERROR_RANGE);
         // Then
         assertThat(result, is(false));
         assertThat(timesCalled, is(1));
@@ -64,19 +110,18 @@ class TimingUtilsUnitTest {
     // detect the case when the wait time is long, but not necessarily injectable
     // should only send 2-3 requests and then bail early
     void shouldGiveUpQuicklyWhenSlowButNotInjectable() {
-        // Given
-        double[] independentVariables = {1, 2, 3, 4, 5};
         // When
         boolean result =
                 TimingUtils.checkTimingDependence(
-                        independentVariables,
+                        5,
+                        15,
                         // source of small error
                         (x) -> {
                             timesCalled += 1;
                             return 10 + rand.nextDouble() * 0.5;
                         },
-                        0.1,
-                        0.2);
+                        CORRELATION_ERROR_RANGE,
+                        SLOPE_ERROR_RANGE);
         // Then
         assertThat(result, is(false));
         assertThat(timesCalled, lessThanOrEqualTo(3));
@@ -85,18 +130,14 @@ class TimingUtilsUnitTest {
     @Test
     // verify the typical use case: detect correlation with relatively small noise
     void shouldDetectDependenceWithSmallError() {
-        // Given
-        double[] independentVariables = {1, 2, 3, 4, 5};
-        double correlationErrorRange = 0.1;
-        double slopeErrorRange = 0.2;
         // When
         boolean result =
                 TimingUtils.checkTimingDependence(
-                        independentVariables,
+                        5, 15,
                         // source of small error
-                        (x) -> x + rand.nextDouble(),
-                        correlationErrorRange,
-                        slopeErrorRange);
+                        (x) -> x + rand.nextDouble() * 0.5,
+                        CORRELATION_ERROR_RANGE,
+                        SLOPE_ERROR_RANGE);
         // Then
         assertThat(result, is(true));
     }

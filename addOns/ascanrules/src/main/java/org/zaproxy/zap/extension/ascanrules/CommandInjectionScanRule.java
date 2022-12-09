@@ -23,13 +23,13 @@ import static org.zaproxy.zap.extension.ascanrules.utils.Constants.NULL_BYTE_CHA
 
 import java.io.IOException;
 import java.net.SocketException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -212,6 +212,13 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
 
     /** The default number of seconds used in time-based attacks (i.e. sleep commands). */
     private static final int DEFAULT_TIME_SLEEP_SEC = 5;
+
+    // time-based attack detection will not send more than the following number of requests
+    private static final int BLIND_REQUEST_LIMIT = 5;
+    // time-based attack detection will try to take less than the following number of seconds
+    // note: detection of this length will generally only happen in the positive (detecting) case.
+    private static final double BLIND_SECONDS_LIMIT = 20.0;
+
     // error range allowable for statistical time-based blind attacks (0-1.0)
     private static final double TIME_CORRELATION_ERROR_RANGE = 0.15;
     private static final double TIME_SLOPE_ERROR_RANGE = 0.30;
@@ -597,20 +604,16 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
         it = blindOsPayloads.iterator();
 
         for (int i = 0; it.hasNext() && (i < blindTargetCount); i++) {
-            ArrayList<HttpMessage> messages = new ArrayList<>();
+            AtomicReference<HttpMessage> message = new AtomicReference<>();
             String sleepPayload = it.next();
             paramValue = value + sleepPayload.replace("{0}", String.valueOf(timeSleepSeconds));
-
-            // use whatever the configured time was, but also throw in some small delays we'll use
-            // to verify
-            double[] expectedTimes = {timeSleepSeconds, 1, 2, 3, 4};
 
             // the function that will send each request
             Function<Double, Double> requestSender =
                     x -> {
                         try {
                             HttpMessage msg = getNewMsg();
-                            messages.add(msg);
+                            message.set(msg);
                             String finalPayload =
                                     value + sleepPayload.replace("{0}", String.valueOf(x));
                             setParameter(msg, paramName, finalPayload);
@@ -631,7 +634,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
                 // use TimingUtils to detect a response to sleep payloads
                 isInjectable =
                         TimingUtils.checkTimingDependence(
-                                expectedTimes,
+                                BLIND_REQUEST_LIMIT, BLIND_SECONDS_LIMIT,
                                 requestSender,
                                 TIME_CORRELATION_ERROR_RANGE,
                                 TIME_SLOPE_ERROR_RANGE);
@@ -672,7 +675,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
                         .setParam(paramName)
                         .setAttack(paramValue)
                         // just attach this alert to the first sent message
-                        .setMessage(messages.get(0))
+                        .setMessage(message.get())
                         .setOtherInfo(otherInfo)
                         .raise();
 
