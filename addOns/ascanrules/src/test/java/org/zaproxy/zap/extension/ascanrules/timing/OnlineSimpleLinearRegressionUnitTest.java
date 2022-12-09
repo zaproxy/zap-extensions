@@ -28,6 +28,22 @@ import org.junit.jupiter.api.Test;
 class OnlineSimpleLinearRegressionUnitTest {
 
     @Test
+    // in a naive implementation that is not as numerically stable,
+    // these inputs will cause catastrophic cancellation
+    void verifyNumericalStability() {
+        // Given
+        double[][] variables = {{1, 1}, {2, 2}, {3, 3}, {4, 4}, {5, 5}, {1, 1}, {2, 2}, {2, 2}, {2, 2}};
+        double slope = 1;
+        double corr = 1;
+        // When
+        OnlineSimpleLinearRegression regression = new OnlineSimpleLinearRegression();
+        for (double[] vars : variables) regression.addPoint(vars[0], vars[1]);
+        // Then
+        assertThat(regression.getSlope(), Matchers.closeTo(slope, 1e-8));
+        assertThat(regression.getCorrelation(), Matchers.closeTo(corr, 1e-8));
+    }
+
+    @Test
     // if given two points, should reduce to the linear case
     void verifyExactLinearRegression() {
         // Given

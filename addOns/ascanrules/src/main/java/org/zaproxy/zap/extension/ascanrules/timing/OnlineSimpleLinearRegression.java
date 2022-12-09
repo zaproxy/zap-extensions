@@ -30,9 +30,8 @@ package org.zaproxy.zap.extension.ascanrules.timing;
  * method</a>, which has comparable numerical stability to the so-called "two-pass" variance
  * computations. <br>
  * <br>
- * This class has a few quirks, most notably that it doesn't compute y-intercept at all, since we're
- * only interested in the slope for ZAP purposes. Additionally, the correlation and slope
- * conventionally fix at 1.0 when insufficient data points (<2) have been added.
+ * By convention, we fix correlation and slope at 1.0 and the intercept at 0.0
+ * when insufficient data points (<2) have been added.
  */
 public class OnlineSimpleLinearRegression {
     private double count;
@@ -46,6 +45,7 @@ public class OnlineSimpleLinearRegression {
     private double sampleCovarianceN;
 
     private double slope = 1;
+    private double intercept = 0;
     private double correlation = 1;
 
     OnlineSimpleLinearRegression() {
@@ -85,17 +85,40 @@ public class OnlineSimpleLinearRegression {
         correlation = slope * Math.sqrt(independentVarianceN / dependentVarianceN);
         correlation *= correlation;
 
+        // derive intercept from slope
+        intercept = independentSum / count - (dependentSum / count) * slope;
+
         // one last correction: if the line in question is FLAT (albeit unrealistic), correlation
         // will NaN. technically though, that means it's a line, so we should set this
-        if (Double.isNaN(correlation)) correlation = 1;
+        if (Double.isNaN(correlation)) {
+            correlation = 1;
+        }
     }
 
     public double getSlope() {
         return slope;
     }
 
+    public double getIntercept() {
+        return intercept;
+    }
+
     public double getCorrelation() {
         return correlation;
+    }
+
+    /**
+     * Uses the current regression to predict an output from an input.
+     * Note that depending on how much data you've given this regression,
+     * and how much the data actually correlates, this estimate could
+     * be infinitely incorrect. Ensure high correlation if the accuracy
+     * of this estimate is going to matter.
+     *
+     * @param x the independent variable
+     * @return the expected dependent value
+     */
+    public double predict(double x) {
+        return slope * x + intercept;
     }
 
     /**
