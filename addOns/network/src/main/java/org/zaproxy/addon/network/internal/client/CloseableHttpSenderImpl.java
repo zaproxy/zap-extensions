@@ -19,6 +19,11 @@
  */
 package org.zaproxy.addon.network.internal.client;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.network.HttpSenderContext;
 import org.zaproxy.zap.network.HttpSenderImpl;
 
@@ -31,4 +36,20 @@ public interface CloseableHttpSenderImpl<T extends HttpSenderContext> extends Ht
 
     /** Close the sender implementation. */
     void close();
+
+    default T getContext(HttpSender httpSender) {
+        return null;
+    }
+
+    default void sendAndReceive(
+            HttpSender parent, HttpRequestConfig config, HttpMessage msg, Path file)
+            throws IOException {
+        sendAndReceive(getContext(parent), config, msg, file);
+    }
+
+    default Object saveState() {
+        return null;
+    }
+
+    default void restoreState(Object implState) {}
 }

@@ -274,7 +274,7 @@ public class HttpSenderApache
     }
 
     @Override
-    public HttpSenderContextApache createContext(HttpSender parent, int initiator) {
+    public HttpSenderContextApache createContextImpl(HttpSender parent, int initiator) {
         return new HttpSenderContextApache(parent, initiator);
     }
 

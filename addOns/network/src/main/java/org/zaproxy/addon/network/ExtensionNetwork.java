@@ -1310,10 +1310,13 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         connectionParam.load(getModel().getOptionsParam().getConfig());
 
         if (httpSenderNetwork != null) {
+            HttpSender.setImpl(null);
             httpSenderNetwork.close();
         }
 
         Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
+        // TODO needs https://github.com/bcgit/bc-java/issues/1254
+        // ThreadUtils.findThreadsByName("BC Entropy Daemon").forEach(Thread::interrupt);
 
         if (hasView()) {
             OptionsDialog optionsDialog = View.getSingleton().getOptionsDialog("");
@@ -1322,6 +1325,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             localServerInfoLabel.unload();
 
             optionsDialog.removeParamPanel(localServersOptionsPanel);
+            optionsDialog.removeParamPanel(connectionOptionsPanel);
+            optionsDialog.removeParamPanel(clientCertificatesOptionsPanel);
 
             if (removeBreakListenerMethod != null) {
                 try {
