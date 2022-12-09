@@ -30,8 +30,8 @@ import org.junit.jupiter.api.Test;
 /** Unit test for {@link TimingUtils}. */
 class TimingUtilsUnitTest {
 
-    private static final Random rand = new Random();
-    private static int timesCalled = 0;
+    private final Random rand = new Random();
+    private int timesCalled;
 
     @BeforeEach
     void init() {

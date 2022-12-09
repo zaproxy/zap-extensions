@@ -607,7 +607,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
 
             // the function that will send each request
             Function<Double, Double> requestSender =
-                    (x) -> {
+                    x -> {
                         try {
                             HttpMessage msg = getNewMsg();
                             messages.add(msg);

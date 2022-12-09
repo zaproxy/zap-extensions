@@ -31,24 +31,25 @@ package org.zaproxy.zap.extension.ascanrules.timing;
  * computations. <br>
  * <br>
  * This class has a few quirks, most notably that it doesn't compute y-intercept at all, since we're
- * only interested in the slope for Zap purposes. Additionally, the correlation and slope
+ * only interested in the slope for ZAP purposes. Additionally, the correlation and slope
  * conventionally fix at 1.0 when insufficient data points (<2) have been added.
  */
 public class OnlineSimpleLinearRegression {
-    private double count = 0;
-    private double independentSum = 0;
-    private double dependentSum = 0;
+    private double count;
+    private double independentSum;
+    private double dependentSum;
 
     // these are not technically the variances, but variance * n, hence the name
     // you can also think of them as the sum of the residuals
-    private double independentVarianceN = 0;
-    private double dependentVarianceN = 0;
-    private double sampleCovarianceN = 0;
+    private double independentVarianceN;
+    private double dependentVarianceN;
+    private double sampleCovarianceN;
 
     private double slope = 1;
     private double correlation = 1;
 
-    OnlineSimpleLinearRegression() {}
+    OnlineSimpleLinearRegression() {
+    }
 
     /**
      * Add a single data point to the linear regression computation and update internal slope and
@@ -67,7 +68,9 @@ public class OnlineSimpleLinearRegression {
         dependentSum += y;
 
         // avoid doing NaN stuff if we don't have enough data yet
-        if (Double.isNaN(independentResidualAdjustment)) return;
+        if (Double.isNaN(independentResidualAdjustment)) {
+            return;
+        }
 
         double independentResidual = x - independentSum / count;
         double dependentResidual = y - dependentSum / count;
@@ -88,24 +91,24 @@ public class OnlineSimpleLinearRegression {
     }
 
     public double getSlope() {
-        return this.slope;
+        return slope;
     }
 
     public double getCorrelation() {
-        return this.correlation;
+        return correlation;
     }
 
     /**
      * Verifies that the correlation and slope are within user-defined error ranges.
      *
      * @param correlationErrorRange the acceptance interval (0.0-1.0) for correlation
-     * @param expectedSlope the expected slope value (typically 1.0)
-     * @param slopeErrorRange the acceptance interval for slope
+     * @param expectedSlope         the expected slope value (typically 1.0)
+     * @param slopeErrorRange       the acceptance interval for slope
      * @return true, if both the correlation and slope are within acceptable error ranges.
      */
     public boolean isWithinConfidence(
             double correlationErrorRange, double expectedSlope, double slopeErrorRange) {
-        return this.correlation > 1.0 - correlationErrorRange
-                && Math.abs(expectedSlope - this.slope) < slopeErrorRange;
+        return correlation > 1.0 - correlationErrorRange
+                && Math.abs(expectedSlope - slope) < slopeErrorRange;
     }
 }
