@@ -170,6 +170,18 @@ class HeadersGeneratorUnitTest {
     }
 
     @Test
+    void shouldAcceptAllContentsIfNoResponsesDefined() {
+        // Given
+        Operation operation = mock(Operation.class);
+        given(operation.getResponses()).willReturn(null);
+        List<HttpHeaderField> headers = new ArrayList<>();
+        // When
+        headersGenerator.generateAcceptHeaders(operation, headers);
+        // Then
+        assertThat(headers, contains(header("Accept", "*/*")));
+    }
+
+    @Test
     void shouldAcceptContentPresentInResponse() {
         // Given
         ApiResponse response = mockResponseWithMediaTypes("text/plain");

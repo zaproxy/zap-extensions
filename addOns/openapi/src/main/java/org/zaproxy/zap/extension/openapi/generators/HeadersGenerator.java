@@ -136,15 +136,17 @@ public class HeadersGenerator {
     void generateAcceptHeaders(Operation operation, List<HttpHeaderField> headers) {
 
         Set<String> contentSet = new LinkedHashSet<>();
-        operation.getResponses().values().stream()
-                .map(
-                        response -> {
-                            if (response.getContent() == null) {
-                                return Collections.<String>emptySet();
-                            }
-                            return response.getContent().keySet();
-                        })
-                .forEach(contentSet::addAll);
+        if (operation.getResponses() != null) {
+            operation.getResponses().values().stream()
+                    .map(
+                            response -> {
+                                if (response.getContent() == null) {
+                                    return Collections.<String>emptySet();
+                                }
+                                return response.getContent().keySet();
+                            })
+                    .forEach(contentSet::addAll);
+        }
         StringBuilder sb = new StringBuilder();
         for (String type : contentSet) {
             // Claim we accept everything
