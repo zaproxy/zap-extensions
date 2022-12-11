@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Allow access to the ZAP API when running in command line mode.
 - Update dependency.
+- Maintenance changes.
 
 ### Fixed
 - Use always a plain connection to the outgoing HTTP proxy (Issue 7594).

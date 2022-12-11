@@ -19,7 +19,7 @@
  */
 package org.zaproxy.addon.commonlib.http;
 
-import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
+import static org.apache.commons.text.StringEscapeUtils.escapeHtml4;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +35,7 @@ import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.Source;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
@@ -275,9 +275,9 @@ public class ComparableResponse {
         String bodyResp2 = response2.body;
 
         int nReflectionsPayload1in1 = StringUtils.countMatches(bodyResp1, req1Value);
-        nReflectionsPayload1in1 += StringUtils.countMatches(bodyResp1, escapeHtml(req1Value));
+        nReflectionsPayload1in1 += StringUtils.countMatches(bodyResp1, escapeHtml4(req1Value));
         int nReflectionsPayload2in2 = StringUtils.countMatches(bodyResp2, req2Value);
-        nReflectionsPayload2in2 += StringUtils.countMatches(bodyResp2, escapeHtml(req2Value));
+        nReflectionsPayload2in2 += StringUtils.countMatches(bodyResp2, escapeHtml4(req2Value));
 
         // In case one payload is a substring of the other it will appear but it is not fixed
         // so we need to remove the payload from the body to know the ones that are independent
@@ -285,15 +285,15 @@ public class ComparableResponse {
             bodyResp2 = bodyResp2.replace(req2Value, "");
         }
         int nReflectionsPayload1in2 = StringUtils.countMatches(bodyResp2, req1Value);
-        if (!escapeHtml(req1Value).equals(req1Value)) {
-            nReflectionsPayload1in2 += StringUtils.countMatches(bodyResp2, escapeHtml(req1Value));
+        if (!escapeHtml4(req1Value).equals(req1Value)) {
+            nReflectionsPayload1in2 += StringUtils.countMatches(bodyResp2, escapeHtml4(req1Value));
         }
         if (req1Value.contains(req2Value)) {
             bodyResp1 = bodyResp1.replace(req1Value, "");
         }
         int nReflectionsPayload2in1 = StringUtils.countMatches(bodyResp1, req2Value);
-        if (!escapeHtml(req2Value).equals(req2Value)) {
-            nReflectionsPayload2in1 += StringUtils.countMatches(bodyResp1, escapeHtml(req2Value));
+        if (!escapeHtml4(req2Value).equals(req2Value)) {
+            nReflectionsPayload2in1 += StringUtils.countMatches(bodyResp1, escapeHtml4(req2Value));
         }
         float nNonPersistentReflectionsPayload1 =
                 (float) 1 + Math.abs(nReflectionsPayload1in1 - nReflectionsPayload1in2);

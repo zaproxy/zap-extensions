@@ -20,11 +20,11 @@
 package org.zaproxy.addon.encoder;
 
 import java.awt.Frame;
+import java.util.Objects;
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import org.apache.commons.lang.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeProcessorItem;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeProcessors;
@@ -156,7 +156,7 @@ class AddEncodeDecodeOutputPanelDialog extends AbstractFormDialog {
 
     private String findProcessorIdByName(String selectedProcessorName) {
         for (EncodeDecodeProcessorItem item : encodeDecodeProcessors.getProcessorItems()) {
-            if (StringUtils.equals(item.getName(), selectedProcessorName)) {
+            if (Objects.equals(item.getName(), selectedProcessorName)) {
                 return item.getId();
             }
         }

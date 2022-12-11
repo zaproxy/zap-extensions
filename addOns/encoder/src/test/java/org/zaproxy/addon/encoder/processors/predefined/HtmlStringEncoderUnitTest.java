@@ -39,7 +39,6 @@ public class HtmlStringEncoderUnitTest extends ProcessorTests<HtmlStringEncoder>
         EncodeDecodeResult result = processor.process("<script>alert('✅')</script>");
         // Then
         assertThat(result.hasError(), is(equalTo(false)));
-        assertThat(
-                result.getResult(), is(equalTo("&lt;script&gt;alert('&#9989;')&lt;/script&gt;")));
+        assertThat(result.getResult(), is(equalTo("&lt;script&gt;alert('✅')&lt;/script&gt;")));
     }
 }

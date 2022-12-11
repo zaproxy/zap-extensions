@@ -27,7 +27,7 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import javax.swing.JTree;
 import javax.swing.tree.TreePath;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.zap.utils.Stats;

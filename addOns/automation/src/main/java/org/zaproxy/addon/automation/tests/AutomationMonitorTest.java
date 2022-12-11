@@ -21,7 +21,7 @@ package org.zaproxy.addon.automation.tests;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.zaproxy.addon.automation.AutomationJob;

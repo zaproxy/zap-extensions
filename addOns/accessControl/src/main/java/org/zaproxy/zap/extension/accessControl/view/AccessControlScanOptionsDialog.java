@@ -23,7 +23,7 @@ import java.awt.Dimension;
 import java.awt.Frame;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;

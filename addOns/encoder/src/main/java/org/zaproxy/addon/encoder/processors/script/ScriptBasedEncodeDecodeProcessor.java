@@ -21,8 +21,8 @@ package org.zaproxy.addon.encoder.processors.script;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Objects;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -51,7 +51,7 @@ public class ScriptBasedEncodeDecodeProcessor implements EncodeDecodeProcessor {
 
     private static ScriptWrapper findScriptByName(String scriptName) {
         for (ScriptWrapper scriptWrapper : ExtensionEncoder.getEncodeDecodeScripts()) {
-            if (StringUtils.equals(scriptWrapper.getName(), scriptName)) {
+            if (scriptName.equals(scriptWrapper.getName())) {
                 return scriptWrapper;
             }
         }
@@ -98,7 +98,7 @@ public class ScriptBasedEncodeDecodeProcessor implements EncodeDecodeProcessor {
         String md5AsHex = null;
         if (cachedScript != null) {
             md5AsHex = getMd5HashAsHex(scriptWrapper.getContents());
-            if (StringUtils.equals(cachedScriptHash, md5AsHex)) {
+            if (Objects.equals(cachedScriptHash, md5AsHex)) {
                 return cachedScript;
             }
         }

@@ -25,8 +25,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.httpclient.URI;
-import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -486,7 +485,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                 // replace the parent folder name with the random one, and build it back into a
                 // string
                 temppathbreak[pathbreak.length - 2] = randomparentfoldername;
-                String randomparentpath = StringUtils.join(temppathbreak, "/");
+                String randomparentpath = String.join("/", temppathbreak);
 
                 log.debug("Trying non-existent parent path: {}", randomparentpath);
                 nonexistparentmsg =

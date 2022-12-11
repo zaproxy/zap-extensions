@@ -19,7 +19,7 @@
  */
 package org.zaproxy.addon.encoder.processors.predefined;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 public class HtmlStringDecoder extends DefaultEncodeDecodeProcessor {
 
@@ -27,7 +27,7 @@ public class HtmlStringDecoder extends DefaultEncodeDecodeProcessor {
 
     @Override
     protected String processInternal(String value) {
-        return StringEscapeUtils.unescapeHtml(value);
+        return StringEscapeUtils.unescapeHtml4(value);
     }
 
     public static HtmlStringDecoder getSingleton() {

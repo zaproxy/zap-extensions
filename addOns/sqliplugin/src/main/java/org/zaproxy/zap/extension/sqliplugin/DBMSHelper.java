@@ -23,7 +23,7 @@ package org.zaproxy.zap.extension.sqliplugin;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.zaproxy.zap.model.Tech;
 
 /**

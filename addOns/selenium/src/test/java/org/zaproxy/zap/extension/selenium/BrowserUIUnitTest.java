@@ -36,7 +36,7 @@ class BrowserUIUnitTest {
         // Given
         String name = null;
         // When / Then
-        assertThrows(IllegalArgumentException.class, () -> new BrowserUI(name, Browser.FIREFOX));
+        assertThrows(NullPointerException.class, () -> new BrowserUI(name, Browser.FIREFOX));
     }
 
     @Test
@@ -52,7 +52,7 @@ class BrowserUIUnitTest {
         // Given
         Browser browser = null;
         // When / Then
-        assertThrows(IllegalArgumentException.class, () -> new BrowserUI("Some Browser", browser));
+        assertThrows(NullPointerException.class, () -> new BrowserUI("Some Browser", browser));
     }
 
     @Test

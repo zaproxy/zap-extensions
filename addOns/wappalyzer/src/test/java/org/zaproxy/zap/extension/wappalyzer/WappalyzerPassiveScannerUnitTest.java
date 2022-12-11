@@ -28,8 +28,8 @@ import static org.mockito.Mockito.mock;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
-import org.apache.commons.lang.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.SiteNode;
@@ -447,7 +447,7 @@ class WappalyzerPassiveScannerUnitTest extends PassiveScannerTestUtils<Wappalyze
 
         Optional<ApplicationMatch> app =
                 appsForSite.stream()
-                        .filter(a -> StringUtils.equals(a.getApplication().getName(), appName))
+                        .filter(a -> Objects.equals(a.getApplication().getName(), appName))
                         .findFirst();
 
         assertThat("Application '" + appName + "' not present", app.isPresent(), is(true));

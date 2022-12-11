@@ -21,7 +21,7 @@ package org.zaproxy.zap.extension.soap;
 
 import java.util.Map;
 import net.htmlparser.jericho.Source;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
