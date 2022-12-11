@@ -29,6 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -209,7 +210,7 @@ public class SpiderHtmlFormParser extends SpiderParser {
                             .filter(this::allowedButtonType)
                             .filter(
                                     element ->
-                                            StringUtils.equals(
+                                            Objects.equals(
                                                     element.getAttributeValue("form"), targetId))
                             .collect(Collectors.toList()));
         }
@@ -249,8 +250,8 @@ public class SpiderHtmlFormParser extends SpiderParser {
     private boolean allowedButtonType(Element element) {
         String type = element.getAttributeValue("type");
         return element.getStartTag().getName().equals(HTMLElementName.BUTTON)
-                && !StringUtils.equalsIgnoreCase(type, "button")
-                && !StringUtils.equalsIgnoreCase(type, "reset");
+                && !"button".equalsIgnoreCase(type)
+                && !"reset".equalsIgnoreCase(type);
     }
 
     /**

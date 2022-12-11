@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 import java.util.zip.Inflater;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.httpclient.URI;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.scanner.HostProcess;

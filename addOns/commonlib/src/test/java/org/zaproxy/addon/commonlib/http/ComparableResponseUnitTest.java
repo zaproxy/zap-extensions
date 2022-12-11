@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.stream.Stream;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -225,7 +225,7 @@ class ComparableResponseUnitTest extends TestUtils {
         HttpMessage msg2 =
                 createBasicMessage(
                         LOREM_FIVE_PARA.replaceAll(
-                                "\n", StringEscapeUtils.escapeHtml("\n\"test\"")));
+                                "\n", StringEscapeUtils.escapeHtml4("\n\"test\"")));
         ComparableResponse response1 = new ComparableResponse(msg, "\"test\"");
         ComparableResponse response2 = new ComparableResponse(msg2, "test");
         // When

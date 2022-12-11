@@ -52,7 +52,7 @@ class BrowsersComboBoxModelUnitTest {
         // Given
         List<BrowserUI> browsers = null;
         // When / Then
-        assertThrows(IllegalArgumentException.class, () -> new BrowsersComboBoxModel(browsers));
+        assertThrows(NullPointerException.class, () -> new BrowsersComboBoxModel(browsers));
     }
 
     @Test

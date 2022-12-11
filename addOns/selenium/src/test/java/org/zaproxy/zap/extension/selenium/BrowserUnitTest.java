@@ -34,7 +34,7 @@ class BrowserUnitTest {
         // Given
         String id = null;
         // When / Then
-        assertThrows(IllegalArgumentException.class, () -> Browser.getBrowserWithId(id));
+        assertThrows(NullPointerException.class, () -> Browser.getBrowserWithId(id));
     }
 
     @Test

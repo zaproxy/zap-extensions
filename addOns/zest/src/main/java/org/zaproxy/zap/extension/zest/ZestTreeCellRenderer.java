@@ -23,7 +23,7 @@ import java.awt.Component;
 import javax.swing.ImageIcon;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -360,7 +360,7 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
                         // Ensure newlines work while not allow any other nasties to get displayed
                         String tooltip =
                                 "<html>"
-                                        + StringEscapeUtils.escapeHtml(
+                                        + StringEscapeUtils.escapeHtml4(
                                                         ((ZestComment) za).getComment())
                                                 .replace("\n", "<br>")
                                         + "</html>";

@@ -30,7 +30,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeSet;
 import org.apache.commons.httpclient.URI;
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;

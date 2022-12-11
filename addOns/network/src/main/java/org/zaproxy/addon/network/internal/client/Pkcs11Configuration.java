@@ -19,7 +19,7 @@
  */
 package org.zaproxy.addon.network.internal.client;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * A representation of PKCS#11 provider configuration. Used to create configurations for instances

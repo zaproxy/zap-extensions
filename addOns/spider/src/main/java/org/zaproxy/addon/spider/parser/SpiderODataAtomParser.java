@@ -21,7 +21,7 @@ package org.zaproxy.addon.spider.parser;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.parosproxy.paros.network.HttpMessage;
 
 /**

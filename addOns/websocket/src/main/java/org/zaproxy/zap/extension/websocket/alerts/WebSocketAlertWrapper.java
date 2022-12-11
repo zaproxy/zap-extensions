@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.websocket.alerts;
 
 import java.util.ArrayList;
 import java.util.Objects;
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -276,7 +275,7 @@ public class WebSocketAlertWrapper {
             if (pluginId == -1) missingValues.add("Plugin ID");
             if (source == null) missingValues.add("Alert Source");
             if (name.isEmpty()) missingValues.add("Alert Name");
-            exceptionMsg.append(StringUtils.join(missingValues, ", ")).append("}");
+            exceptionMsg.append(String.join(", ", missingValues)).append("}");
             throw new IllegalStateException(exceptionMsg.toString());
         }
 

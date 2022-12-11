@@ -30,7 +30,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.websocket.utility.InvalidUtf8Exception;
@@ -546,7 +545,7 @@ public class WebSocketProxyV13 extends WebSocketProxy {
             ByteBuffer newPayload = ByteBuffer.allocate(payload.limit() - 2);
             if (payload.limit() > 4) {
                 newPayload.put(
-                        ArrayUtils.subarray(payload.array(), 4, payload.limit()),
+                        Arrays.copyOfRange(payload.array(), 4, payload.limit()),
                         2,
                         payload.limit() - 4);
             }

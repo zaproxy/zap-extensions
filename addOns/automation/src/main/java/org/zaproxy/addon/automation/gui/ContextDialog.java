@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.httpclient.URI;
-import org.apache.commons.lang.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.zap.utils.DisplayUtils;
@@ -74,7 +73,7 @@ public class ContextDialog extends StandardFieldsDialog {
 
     private String listToString(List<String> list) {
         if (list != null) {
-            return StringUtils.join(list, "\n");
+            return String.join("\n", list);
         }
         return "";
     }

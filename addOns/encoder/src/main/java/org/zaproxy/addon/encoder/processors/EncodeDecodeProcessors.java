@@ -24,8 +24,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
-import org.apache.commons.lang.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.encoder.ExtensionEncoder;
 import org.zaproxy.addon.encoder.processors.predefined.Base64Decoder;
@@ -154,7 +154,7 @@ public class EncodeDecodeProcessors {
 
     public EncodeDecodeProcessorItem findProcessorItemById(String name) {
         for (EncodeDecodeProcessorItem processor : getProcessorItems()) {
-            if (StringUtils.equals(processor.getId(), name)) {
+            if (Objects.equals(processor.getId(), name)) {
                 return processor;
             }
         }

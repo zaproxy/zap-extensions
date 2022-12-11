@@ -19,7 +19,7 @@
  */
 package org.zaproxy.addon.encoder.processors.predefined;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 public class JavaScriptStringEncoder extends DefaultEncodeDecodeProcessor {
 
@@ -27,7 +27,7 @@ public class JavaScriptStringEncoder extends DefaultEncodeDecodeProcessor {
 
     @Override
     protected String processInternal(String value) {
-        return StringEscapeUtils.escapeJavaScript(value);
+        return StringEscapeUtils.escapeEcmaScript(value);
     }
 
     public static JavaScriptStringEncoder getSingleton() {
