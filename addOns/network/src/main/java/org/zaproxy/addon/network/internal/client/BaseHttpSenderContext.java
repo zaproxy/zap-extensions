@@ -19,12 +19,24 @@
  */
 package org.zaproxy.addon.network.internal.client;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.network.HttpSenderContext;
 import org.zaproxy.zap.users.User;
 
 public abstract class BaseHttpSenderContext implements HttpSenderContext {
+
+    static final String INITIATOR_FIELD = "initiator";
+    private static final String FOLLOW_REDIRECTS_FIELD = "followRedirects";
+    private static final String USER_FIELD = "user";
+    private static final String USE_COOKIES_FIELD = "useCookies";
+    private static final String USE_GLOBAL_STATE_FIELD = "useGlobalState";
+    private static final String MAX_REDIRECTS_FIELD = "maxRedirects";
+    private static final String MAX_RETRIES_ON_IO_ERROR_FIELD = "maxRetriesOnIoError";
+    private static final String REMOVE_USER_DEFINED_AUTH_HEADERS_FIELD =
+            "removeUserDefinedAuthHeaders";
 
     private final HttpSender parent;
     private final int initiator;
@@ -42,6 +54,29 @@ public abstract class BaseHttpSenderContext implements HttpSenderContext {
         this.initiator = initiator;
         this.maxRedirects = 100;
         setMaxRetriesOnIoError(3);
+    }
+
+    Map<String, Object> toMap() {
+        Map<String, Object> data = new HashMap<>();
+        data.put(INITIATOR_FIELD, initiator);
+        data.put(FOLLOW_REDIRECTS_FIELD, followRedirects);
+        data.put(USER_FIELD, user);
+        data.put(USE_COOKIES_FIELD, useCookies);
+        data.put(USE_GLOBAL_STATE_FIELD, useGlobalState);
+        data.put(MAX_REDIRECTS_FIELD, maxRedirects);
+        data.put(MAX_RETRIES_ON_IO_ERROR_FIELD, maxRetriesOnIoError);
+        data.put(REMOVE_USER_DEFINED_AUTH_HEADERS_FIELD, removeUserDefinedAuthHeaders);
+        return data;
+    }
+
+    void fromMap(Map<String, Object> data) {
+        setFollowRedirects((boolean) data.get(FOLLOW_REDIRECTS_FIELD));
+        setUser((User) data.get(USER_FIELD));
+        setUseCookies((boolean) data.get(USE_COOKIES_FIELD));
+        setUseGlobalState((boolean) data.get(USE_GLOBAL_STATE_FIELD));
+        setMaxRedirects((int) data.get(MAX_REDIRECTS_FIELD));
+        setMaxRetriesOnIoError((int) data.get(MAX_RETRIES_ON_IO_ERROR_FIELD));
+        setRemoveUserDefinedAuthHeaders((boolean) data.get(REMOVE_USER_DEFINED_AUTH_HEADERS_FIELD));
     }
 
     public int getInitiator() {

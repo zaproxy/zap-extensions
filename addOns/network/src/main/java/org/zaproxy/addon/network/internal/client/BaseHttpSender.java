@@ -27,11 +27,16 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import org.apache.commons.collections.map.AbstractReferenceMap;
+import org.apache.commons.collections.map.ReferenceIdentityMap;
 import org.apache.commons.httpclient.InvalidRedirectLocationException;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -46,6 +51,7 @@ import org.zaproxy.zap.network.HttpRedirectionValidator;
 import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.network.HttpSenderListener;
 import org.zaproxy.zap.users.User;
+import org.zaproxy.zap.utils.Pair;
 
 /**
  * The base implementation of {@link CloseableHttpSenderImpl}.
@@ -56,6 +62,10 @@ import org.zaproxy.zap.users.User;
  */
 public abstract class BaseHttpSender<T1 extends BaseHttpSenderContext, T2, T3>
         implements CloseableHttpSenderImpl<T1> {
+
+    private static final String CONTEXTS_FIELD = "contexts";
+
+    private static final String LISTENERS_FIELD = "listeners";
 
     private static final Logger LOGGER = LogManager.getLogger(BaseHttpSender.class);
 
@@ -69,10 +79,62 @@ public abstract class BaseHttpSender<T1 extends BaseHttpSenderContext, T2, T3>
             HttpRequestConfig.builder().setFollowRedirects(true).build();
 
     private final List<HttpSenderListener> listeners;
+    private final Map<HttpSender, T1> contexts;
 
+    @SuppressWarnings("unchecked")
     protected BaseHttpSender() {
         listeners = new ArrayList<>();
+        contexts =
+                Collections.synchronizedMap(
+                        new ReferenceIdentityMap(
+                                AbstractReferenceMap.WEAK, AbstractReferenceMap.HARD));
     }
+
+    @Override
+    public Object saveState() {
+        synchronized (contexts) {
+            return Map.of(
+                    LISTENERS_FIELD,
+                    listeners,
+                    CONTEXTS_FIELD,
+                    contexts.entrySet().stream()
+                            .map(e -> new Pair<>(e.getKey(), e.getValue().toMap()))
+                            .collect(Collectors.toList()));
+        }
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void restoreState(Object implState) {
+        if (implState == null) {
+            return;
+        }
+
+        Map<String, Object> map = (Map<String, Object>) implState;
+        listeners.addAll((Collection<? extends HttpSenderListener>) map.get(LISTENERS_FIELD));
+        ((List<Pair<HttpSender, Map<String, Object>>>) map.get(CONTEXTS_FIELD))
+                .stream()
+                        .map(e -> new Pair<>(e.first, restoreContext(e.first, e.second)))
+                        .forEach(e -> contexts.put(e.first, e.second));
+    }
+
+    private T1 restoreContext(HttpSender parent, Map<String, Object> data) {
+        T1 ctx = createContextImpl(parent, (int) data.get(BaseHttpSenderContext.INITIATOR_FIELD));
+        ctx.fromMap(data);
+        return ctx;
+    }
+
+    @Override
+    public T1 getContext(HttpSender parent) {
+        return contexts.get(parent);
+    }
+
+    @Override
+    public final T1 createContext(HttpSender parent, int initiator) {
+        return contexts.computeIfAbsent(parent, p -> createContextImpl(parent, initiator));
+    }
+
+    protected abstract T1 createContextImpl(HttpSender parent, int initiator);
 
     @Override
     public void addListener(HttpSenderListener listener) {
