@@ -328,6 +328,7 @@ public class HtmlContextAnalyser {
                             && att.getValue().toLowerCase().indexOf(target.toLowerCase()) >= 0) {
                         // Found the injected value
                         context.setTagAttribute(att.getName());
+                        context.setTagAttributeValue(att.getValue());
                         context.setInUrlAttribute(this.isUrlAttribute(att.getName()));
                         context.setInScriptAttribute(this.isScriptAttribute(att.getName()));
                     } else if (att.getName().equalsIgnoreCase(target)

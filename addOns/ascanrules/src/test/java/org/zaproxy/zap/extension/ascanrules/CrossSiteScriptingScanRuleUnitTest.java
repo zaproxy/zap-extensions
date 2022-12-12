@@ -39,6 +39,8 @@ import java.util.TreeSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -962,8 +964,9 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
 
-    @Test
-    void shouldReportXssInUrlAttributeButNotWhenPayloadIsModified()
+    @ParameterizedTest
+    @ValueSource(strings = {"", "Content After"})
+    void shouldReportXssInUrlAttributeButNotWhenPayloadIsModified(String extraModification)
             throws NullPointerException, IOException {
         String test = "/shouldReportXssInUrlAttributeButNotWhenPayloadIsModified/";
 
@@ -973,12 +976,11 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
                     protected Response serve(IHTTPSession session) {
                         String name = getFirstParamValue(session, "name");
                         String response;
-                        if (name != null) {
-                            // Strip out < and >
+                        if (name != null
+                                && ("0W45pz4p".equals(name) || name.startsWith("javascript:"))) {
                             name =
-                                    name.replaceAll("<", "")
-                                            .replaceAll(">", "")
-                                            .replaceAll("\"", "");
+                                    name.replace("<", "").replace(">", "").replace("\"", "")
+                                            + extraModification;
                             response =
                                     getHtml(
                                             "InputInLinkHrefTagAndFrameSrcTag.html",
