@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- When a definition doesn't define a response then an appropriate warning bubbles up, no longer resulting in a NullPointerException (Issue 7115).
+
 ## [30] - 2022-11-15
 ### Changed
 - Dependency updates.
