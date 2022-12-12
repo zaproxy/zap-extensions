@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.ascanrules.httputils;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
 import java.util.List;
@@ -33,6 +34,22 @@ import org.zaproxy.zap.testutils.TestUtils;
 
 public class HtmlContextAnalyserUnitTest extends TestUtils {
     private HttpMessage msg;
+
+    @Test
+    void shouldGetAttributeAndValue() throws Exception {
+        // Given
+        msg = new HttpMessage();
+        msg.setResponseBody("<html><body att=\" Value with target... \"></body></html>");
+        HtmlContextAnalyser analyser = new HtmlContextAnalyser(msg);
+        String target = "target";
+        // When
+        List<HtmlContext> contexts = analyser.getHtmlContexts(target, null, 0);
+        // Then
+        assertThat(contexts, hasSize(1));
+        HtmlContext ctx = contexts.get(0);
+        assertThat(ctx.getTagAttribute(), is(equalTo("att")));
+        assertThat(ctx.getTagAttributeValue(), is(equalTo(" Value with target... ")));
+    }
 
     @Test
     void shouldGetCorrectParentTag() throws Exception {

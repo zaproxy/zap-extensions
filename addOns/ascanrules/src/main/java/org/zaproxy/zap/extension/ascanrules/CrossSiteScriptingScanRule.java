@@ -25,8 +25,6 @@ import java.net.UnknownHostException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -311,26 +309,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
             }
 
             for (HtmlContext ctx : contexts2) {
-                if (ctx.isInUrlAttribute()) {
-
-                    // No payload modifications should be made in case of "javascript:" protocol
-                    // attacks
-                    Pattern attAndPayloadRegex =
-                            Pattern.compile(
-                                    Pattern.quote(ctx.getTagAttribute())
-                                            + "\\s*=\\s*"
-                                            + Pattern.quote(ctx.getSurroundingQuote())
-                                            + "\\s*"
-                                            + Pattern.quote(ctx.getTarget())
-                                            + "\\s*"
-                                            + Pattern.quote(ctx.getSurroundingQuote()));
-                    Matcher attAndPayloadMatcher =
-                            attAndPayloadRegex.matcher(ctx.getMsg().getResponseBody().toString());
-                    if (!attAndPayloadMatcher.find()) {
-                        // No match found
-                        continue;
-                    }
-
+                if (ctx.isInUrlAttribute() && isJavaScriptSchemeInjectionValid(ctx)) {
                     // Yep, its vulnerable
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -433,6 +412,10 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                 "Failed to find vuln in with simple onmounseover {}",
                 msg.getRequestHeader().getURI());
         return false;
+    }
+
+    private static boolean isJavaScriptSchemeInjectionValid(HtmlContext ctx) {
+        return ctx.getTagAttributeValue().stripLeading().startsWith(ctx.getTarget());
     }
 
     private boolean performCommentAttack(HtmlContext context, HttpMessage msg, String param) {

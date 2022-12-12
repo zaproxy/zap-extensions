@@ -42,6 +42,7 @@ public class HtmlContext {
     private int end = 0;
     private List<String> parentTags = new ArrayList<>();
     private String tagAttribute = null;
+    private String tagAttributeValue;
     private Map<String, String> tagAttributes = new HashMap<>();
     private boolean inScriptAttribute = false;
     private boolean inUrlAttribute = false;
@@ -134,6 +135,14 @@ public class HtmlContext {
 
     public void setTagAttribute(String tagAttribute) {
         this.tagAttribute = tagAttribute;
+    }
+
+    public String getTagAttributeValue() {
+        return tagAttributeValue;
+    }
+
+    public void setTagAttributeValue(String value) {
+        tagAttributeValue = value;
     }
 
     public void addParentTag(String name) {
