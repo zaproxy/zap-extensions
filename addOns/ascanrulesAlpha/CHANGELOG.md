@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [42] - 2022-12-13
 ### Added
 - LDAP protocol technology support.
 
@@ -335,6 +335,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version, including persistent XSS tests
 
+[42]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v39
