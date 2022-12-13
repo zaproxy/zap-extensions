@@ -5,7 +5,7 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [0.14.0] - 2022-12-13
 ### Changed
 - Maintenance changes.
 - Do not include the Connection header in Callback responses for HTTP/2.
@@ -142,6 +142,7 @@ Button is disabled in that case.
 
 ## [0.1.0] - 2021-08-04
 
+[0.14.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.14.0
 [0.13.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.13.0
 [0.12.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.12.0
 [0.11.0]: https://github.com/zaproxy/zap-extensions/releases/oast-v0.11.0

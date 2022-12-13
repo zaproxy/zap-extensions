@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [44] - 2022-12-13
 ### Changed
 - Use lower case HTTP field names for compatibility with HTTP/2.
 
@@ -418,6 +418,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[44]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v41

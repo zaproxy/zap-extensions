@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [50] - 2022-12-13
 ### Changed
 - The Directory Browsing scan rule now includes example alert functionality for documentation generation purposes (Issue 6119).
 - Use lower case HTTP field names for compatibility with HTTP/2.
@@ -366,6 +366,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[50]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v50
 [49]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v49
 [48]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v48
 [47]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v47
