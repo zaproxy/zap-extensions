@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Allow to specify the HTTP version for requests in the `requestor` job.
+- Support for context technology (Issue 7127).
 
 ### Changed
 - Maintenance changes.

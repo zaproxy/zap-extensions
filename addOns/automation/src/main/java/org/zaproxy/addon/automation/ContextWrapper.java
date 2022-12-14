@@ -85,6 +85,7 @@ public class ContextWrapper {
         }
 
         this.data.setSessionManagement(new SessionManagementData(context));
+        this.data.setTechnology(new TechnologyData(context));
         this.data.setAuthentication(new AuthenticationData(context));
 
         if (getExtUserMgmt() != null) {
@@ -170,6 +171,9 @@ public class ContextWrapper {
                     break;
                 case "sessionManagement":
                     data.setSessionManagement(new SessionManagementData(value, progress));
+                    break;
+                case "technology":
+                    data.setTechnology(new TechnologyData(value, progress));
                     break;
                 case "users":
                     if (!(value instanceof ArrayList)) {
@@ -316,6 +320,9 @@ public class ContextWrapper {
         if (getData().getAuthentication() != null) {
             getData().getAuthentication().initContextAuthentication(context, progress, env);
         }
+        if (getData().getTechnology() != null) {
+            getData().getTechnology().initContextTechnology(context, progress);
+        }
         if (getData().getUsers() != null) {
             initContextUsers(context, env);
         }
@@ -400,6 +407,7 @@ public class ContextWrapper {
         private List<String> excludePaths;
         private AuthenticationData authentication;
         private SessionManagementData sessionManagement;
+        private TechnologyData technology;
         private List<UserData> users;
 
         public String getName() {
@@ -448,6 +456,14 @@ public class ContextWrapper {
 
         public void setSessionManagement(SessionManagementData sessionManagement) {
             this.sessionManagement = sessionManagement;
+        }
+
+        public TechnologyData getTechnology() {
+            return technology;
+        }
+
+        public void setTechnology(TechnologyData technology) {
+            this.technology = technology;
         }
 
         public List<UserData> getUsers() {
