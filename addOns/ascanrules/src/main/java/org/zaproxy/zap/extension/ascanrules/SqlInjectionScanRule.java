@@ -467,6 +467,38 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
+    /**
+     * Returns true if the tech is a child of Tech.Db
+     *
+     * @param tech
+     * @return true if the tech is a child of Tech.Db
+     */
+    private static boolean isDb(Tech tech) {
+        Tech parent = tech.getParent();
+        if (parent == null) {
+            return false;
+        }
+        if (Tech.Db.equals(parent)) {
+            return true;
+        }
+        return isDb(parent);
+    }
+
+    /**
+     * Returns true if the tech is an SQL related tech. This method explicitly excludes known no-sql
+     * techs, so will need to be updated with any new no-sql techs or we'll need to add SQL / NoSQL
+     * structure.
+     *
+     * @param tech
+     * @return true if the supplied tech is SQL related
+     */
+    private static boolean isSqlDb(Tech tech) {
+        if (Tech.MongoDB.equals(tech) || Tech.CouchDB.equals(tech)) {
+            return false;
+        }
+        return isDb(tech);
+    }
+
     @Override
     public boolean targets(TechSet technologies) {
         if (technologies.includes(Tech.Db)) {
@@ -474,7 +506,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
         }
 
         for (Tech tech : technologies.getIncludeTech()) {
-            if (Tech.Db.equals(tech.getParent())) {
+            if (isSqlDb(tech)) {
                 return true;
             }
         }

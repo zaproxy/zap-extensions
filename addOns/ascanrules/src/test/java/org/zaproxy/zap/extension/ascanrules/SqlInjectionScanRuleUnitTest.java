@@ -102,6 +102,36 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
     }
 
     @Test
+    void shouldTargetOracleDbTech() {
+        // Given
+        TechSet techSet = techSet(Tech.Oracle);
+        // When
+        boolean targets = rule.targets(techSet);
+        // Then
+        assertThat(targets, is(equalTo(true)));
+    }
+
+    @Test
+    void shouldNotTargetJustNoSqlDbTech() {
+        // Given
+        TechSet techSet = techSet(Tech.MongoDB, Tech.CouchDB);
+        // When
+        boolean targets = rule.targets(techSet);
+        // Then
+        assertThat(targets, is(equalTo(false)));
+    }
+
+    @Test
+    void shouldTargetNoSqlPlusMsSqlDbTech() {
+        // Given
+        TechSet techSet = techSet(Tech.MongoDB, Tech.MsSQL, Tech.CouchDB);
+        // When
+        boolean targets = rule.targets(techSet);
+        // Then
+        assertThat(targets, is(equalTo(true)));
+    }
+
+    @Test
     void shouldTargetDbChildTechs() {
         // Given
         TechSet techSet = techSet(techsOf(Tech.Db));
