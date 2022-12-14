@@ -5,11 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+### BREAKING CHANGE
+- Existing scripts will fail as the process method signature has changed, scripts can be fixed by changing the signature from: process(value) to process(helper, value).
+
 ### Changed
 - Maintenance changes.
+- Add-on promoted to Release status.
 - Allow script processors to return strings without requiring an "EncodeDecodeResult" wrapper.
 - Show help and options buttons in the main dialog.
 - The Base64 decoder now uses a Mime decoder and handles line wrapped input.
+- Updated script templates to use the new process method.
 
 ### Added
 - Add an option which controls whether or not Hash output panels use full caps or lower case (Issue 7503).

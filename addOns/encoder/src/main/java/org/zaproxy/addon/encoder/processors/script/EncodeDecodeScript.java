@@ -20,5 +20,5 @@
 package org.zaproxy.addon.encoder.processors.script;
 
 public interface EncodeDecodeScript {
-    Object process(String value) throws Exception;
+    Object process(EncodeDecodeScriptHelper helper, String value) throws Exception;
 }
