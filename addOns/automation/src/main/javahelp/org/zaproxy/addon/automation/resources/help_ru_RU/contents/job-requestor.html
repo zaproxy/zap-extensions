@@ -20,6 +20,7 @@
     requests:                          # A list of requests to make
       - url:                           # String: A mandatory URL of the request to be made
         method:                        # String: A non-empty request method, default: GET
+        httpVersion:                   # String: The HTTP version to send the request with, default: HTTP/1.1
         headers:                       # An optional list of additional headers to include in the request
             - "header1:value1"
         data:                          # String: Optional data to send in the request body
