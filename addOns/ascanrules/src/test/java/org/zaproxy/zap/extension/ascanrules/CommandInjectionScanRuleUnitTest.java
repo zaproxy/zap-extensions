@@ -27,10 +27,10 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
@@ -39,8 +39,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import org.apache.commons.configuration.Configuration;
 import org.junit.jupiter.api.Test;
@@ -303,7 +303,7 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
                             return newFixedLengthResponse(regularContent);
                         }
                         Matcher match = sleepPattern.matcher(value);
-                        if(!match.find()) {
+                        if (!match.find()) {
                             return newFixedLengthResponse(regularContent);
                         }
                         try {

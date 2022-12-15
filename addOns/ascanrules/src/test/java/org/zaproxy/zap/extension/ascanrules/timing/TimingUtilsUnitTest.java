@@ -20,9 +20,9 @@
 package org.zaproxy.zap.extension.ascanrules.timing;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.arrayContaining;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
-import static org.hamcrest.Matchers.arrayContaining;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,9 +30,7 @@ import java.util.Random;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-/**
- * Unit test for {@link TimingUtils}.
- * */
+/** Unit test for {@link TimingUtils}. */
 class TimingUtilsUnitTest {
 
     private static final double CORRELATION_ERROR_RANGE = 0.1;
@@ -85,7 +83,9 @@ class TimingUtilsUnitTest {
                         SLOPE_ERROR_RANGE);
         // Then
         assertThat(result, is(true));
-        assertThat(generatedDelays.toArray(), arrayContaining(1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 1.0, 1.0));
+        assertThat(
+                generatedDelays.toArray(),
+                arrayContaining(1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 1.0, 1.0));
     }
 
     @Test
@@ -136,7 +136,8 @@ class TimingUtilsUnitTest {
         // When
         boolean result =
                 TimingUtils.checkTimingDependence(
-                        5, 15,
+                        5,
+                        15,
                         // source of small error
                         x -> x + rand.nextDouble() * 0.5,
                         CORRELATION_ERROR_RANGE,

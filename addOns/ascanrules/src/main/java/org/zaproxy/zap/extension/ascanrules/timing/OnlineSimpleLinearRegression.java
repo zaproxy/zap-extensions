@@ -30,8 +30,8 @@ package org.zaproxy.zap.extension.ascanrules.timing;
  * method</a>, which has comparable numerical stability to the so-called "two-pass" variance
  * computations. <br>
  * <br>
- * By convention, we fix correlation and slope at 1.0 and the intercept at 0.0
- * when insufficient data points (<2) have been added.
+ * By convention, we fix correlation and slope at 1.0 and the intercept at 0.0 when insufficient
+ * data points (<2) have been added.
  */
 public class OnlineSimpleLinearRegression {
     private double count;
@@ -48,8 +48,7 @@ public class OnlineSimpleLinearRegression {
     private double intercept;
     private double correlation = 1;
 
-    OnlineSimpleLinearRegression() {
-    }
+    OnlineSimpleLinearRegression() {}
 
     /**
      * Add a single data point to the linear regression computation and update internal slope and
@@ -108,11 +107,10 @@ public class OnlineSimpleLinearRegression {
     }
 
     /**
-     * Uses the current regression to predict an output from an input.
-     * Note that depending on how much data you've given this regression,
-     * and how much the data actually correlates, this estimate could
-     * be infinitely incorrect. Ensure high correlation if the accuracy
-     * of this estimate is going to matter.
+     * Uses the current regression to predict an output from an input. Note that depending on how
+     * much data you've given this regression, and how much the data actually correlates, this
+     * estimate could be infinitely incorrect. Ensure high correlation if the accuracy of this
+     * estimate is going to matter.
      *
      * @param x the independent variable
      * @return the expected dependent value
@@ -125,8 +123,8 @@ public class OnlineSimpleLinearRegression {
      * Verifies that the correlation and slope are within user-defined error ranges.
      *
      * @param correlationErrorRange the acceptance interval (0.0-1.0) for correlation
-     * @param expectedSlope         the expected slope value (typically 1.0)
-     * @param slopeErrorRange       the acceptance interval for slope
+     * @param expectedSlope the expected slope value (typically 1.0)
+     * @param slopeErrorRange the acceptance interval for slope
      * @return true, if both the correlation and slope are within acceptable error ranges.
      */
     public boolean isWithinConfidence(

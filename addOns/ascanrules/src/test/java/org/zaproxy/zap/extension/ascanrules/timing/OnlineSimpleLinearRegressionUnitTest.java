@@ -32,7 +32,9 @@ class OnlineSimpleLinearRegressionUnitTest {
     // these inputs will cause catastrophic cancellation
     void verifyNumericalStability() {
         // Given
-        double[][] variables = {{1, 1}, {2, 2}, {3, 3}, {4, 4}, {5, 5}, {1, 1}, {2, 2}, {2, 2}, {2, 2}};
+        double[][] variables = {
+            {1, 1}, {2, 2}, {3, 3}, {4, 4}, {5, 5}, {1, 1}, {2, 2}, {2, 2}, {2, 2}
+        };
         double slope = 1;
         double corr = 1;
         // When

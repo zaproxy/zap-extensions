@@ -20,11 +20,8 @@
 package org.zaproxy.zap.extension.ascanrules.timing;
 
 import java.io.IOException;
-import java.util.function.Function;
 
-/**
- * Utility class to host time-based blind detection algorithms.
- */
+/** Utility class to host time-based blind detection algorithms. */
 public class TimingUtils {
 
     /**
@@ -35,21 +32,21 @@ public class TimingUtils {
      * false immediately if the correlation dips too low or if the actual delay is less than the
      * expected delay.
      *
-     * @param requestsLimit         the hard limit on how many times at most requestSender will be called.
-     *                              in practice, if there is a correlation, within 0-2 to this number of requests
-     *                              will be sent. if there is no correlation, most likely far fewer.
-     * @param secondsLimit          the soft limit on how much total time at most should be spent
-     *                              on sending requests before forcing a verdict. the limit is necessarily soft
-     *                              since we don't control how long requestSender takes to resolve.
-     * @param requestSender         function that takes in the expected time, sends the request, and returns
-     *                              the actual delay.
+     * @param requestsLimit the hard limit on how many times at most requestSender will be called.
+     *     in practice, if there is a correlation, within 0-2 to this number of requests will be
+     *     sent. if there is no correlation, most likely far fewer.
+     * @param secondsLimit the soft limit on how much total time at most should be spent on sending
+     *     requests before forcing a verdict. the limit is necessarily soft since we don't control
+     *     how long requestSender takes to resolve.
+     * @param requestSender function that takes in the expected time, sends the request, and returns
+     *     the actual delay.
      * @param correlationErrorRange the interval of acceptance for the regression correlation. for
-     *                              example, input 0.2 will return true if 0.8 < correlation
-     * @param slopeErrorRange       the interval of acceptance for the regression slope. for example,
-     *                              input 0.2 will return true if 0.8 < slope < 1.2
+     *     example, input 0.2 will return true if 0.8 < correlation
+     * @param slopeErrorRange the interval of acceptance for the regression slope. for example,
+     *     input 0.2 will return true if 0.8 < slope < 1.2
      * @return true if the response times correlate linearly, false otherwise.
-     * @throws IllegalArgumentException if less than 3 is provided as the requestsLimit
-     *                                  OR if less than 5 is provided as the secondsLimit
+     * @throws IllegalArgumentException if less than 3 is provided as the requestsLimit OR if less
+     *     than 5 is provided as the secondsLimit
      * @throws IOException if the RequestSender throws an IOException, it will bubble up here
      */
     public static boolean checkTimingDependence(
@@ -57,14 +54,17 @@ public class TimingUtils {
             double secondsLimit,
             RequestSender requestSender,
             double correlationErrorRange,
-            double slopeErrorRange) throws IOException {
+            double slopeErrorRange)
+            throws IOException {
 
         if (secondsLimit < 5) {
-            throw new IllegalArgumentException("requires at least 5 seconds to get meaningful results");
+            throw new IllegalArgumentException(
+                    "requires at least 5 seconds to get meaningful results");
         }
 
         if (requestsLimit < 3) {
-            throw new IllegalArgumentException("requires at least 3 requests to get meaningful results");
+            throw new IllegalArgumentException(
+                    "requires at least 3 requests to get meaningful results");
         }
 
         OnlineSimpleLinearRegression regression = new OnlineSimpleLinearRegression();
@@ -77,7 +77,7 @@ public class TimingUtils {
         while (requestsLeft > 0 && secondsLeft > 0) {
 
             // apply the provided function to get the dependent variable
-            double y = requestSender.apply((double) currentDelay);
+            double y = requestSender.apply(currentDelay);
 
             // this is not a general assertion, but in our case, we want to stop early
             // if the expected delay isn't at LEAST as much as the requested delay
@@ -98,7 +98,8 @@ public class TimingUtils {
             requestsLeft = requestsLeft - 1;
             currentDelay = currentDelay + 1;
 
-            // if doing a longer request next would put us over time, wrap around to sending shorter requests
+            // if doing a longer request next would put us over time, wrap around to sending shorter
+            // requests
             if (regression.predict(currentDelay) > secondsLeft) {
                 currentDelay = 1;
             }

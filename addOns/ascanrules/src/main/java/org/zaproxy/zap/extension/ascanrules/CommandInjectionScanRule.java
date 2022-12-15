@@ -627,7 +627,8 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
                 // use TimingUtils to detect a response to sleep payloads
                 isInjectable =
                         TimingUtils.checkTimingDependence(
-                                BLIND_REQUEST_LIMIT, BLIND_SECONDS_LIMIT,
+                                BLIND_REQUEST_LIMIT,
+                                BLIND_SECONDS_LIMIT,
                                 requestSender,
                                 TIME_CORRELATION_ERROR_RANGE,
                                 TIME_SLOPE_ERROR_RANGE);
