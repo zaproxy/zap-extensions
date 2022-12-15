@@ -309,8 +309,6 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
                         try {
                             int sleepInput = Integer.parseInt(match.group(1));
                             Thread.sleep(sleepInput * 1000L);
-                        } catch (NumberFormatException ex) {
-                            fail("time payload was not parsable");
                         } catch (InterruptedException ex) {
                             fail("failed to sleep thread for time-based command injection");
                         }

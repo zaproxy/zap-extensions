@@ -32,8 +32,6 @@ import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for {@link TimingUtils}.
- * The unit tests that test checkTimingDependence won't actually throw an IOException,
- * they are simply marked that way to simplify the test code.
  * */
 class TimingUtilsUnitTest {
 
@@ -58,7 +56,7 @@ class TimingUtilsUnitTest {
                 TimingUtils.checkTimingDependence(
                         5,
                         15,
-                        (x) -> {
+                        x -> {
                             generatedDelays.add(x);
                             return x;
                         },
@@ -79,7 +77,7 @@ class TimingUtilsUnitTest {
                 TimingUtils.checkTimingDependence(
                         10,
                         20,
-                        (x) -> {
+                        x -> {
                             generatedDelays.add(x);
                             return x;
                         },
@@ -100,7 +98,7 @@ class TimingUtilsUnitTest {
                         5,
                         15,
                         // respond with a low time
-                        (x) -> {
+                        x -> {
                             timesCalled += 1;
                             return 0.5;
                         },
@@ -121,7 +119,7 @@ class TimingUtilsUnitTest {
                         5,
                         15,
                         // source of small error
-                        (x) -> {
+                        x -> {
                             timesCalled += 1;
                             return 10 + rand.nextDouble() * 0.5;
                         },
@@ -140,7 +138,7 @@ class TimingUtilsUnitTest {
                 TimingUtils.checkTimingDependence(
                         5, 15,
                         // source of small error
-                        (x) -> x + rand.nextDouble() * 0.5,
+                        x -> x + rand.nextDouble() * 0.5,
                         CORRELATION_ERROR_RANGE,
                         SLOPE_ERROR_RANGE);
         // Then

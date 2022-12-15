@@ -45,7 +45,7 @@ public class OnlineSimpleLinearRegression {
     private double sampleCovarianceN;
 
     private double slope = 1;
-    private double intercept = 0;
+    private double intercept;
     private double correlation = 1;
 
     OnlineSimpleLinearRegression() {
