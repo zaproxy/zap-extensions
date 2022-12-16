@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Do not change the case of the Content-Length header.
 - Use the available response content when the Content-Length is more than what is available.
 - Properly persist proxy error responses.
+- Correctly manage cookies with domain and path attributes (Issue 7631).
 
 ## [0.5.0] - 2022-11-09
 ### Fixed
