@@ -119,7 +119,11 @@ public class TlsProtocolHandler extends ByteToMessageDecoder {
                         .build();
         ctx.pipeline().addAfter(ctx.name(), TLS_HANDLER_NAME, sslCtx.newHandler(ctx.alloc()));
         if (config.isAlpnEnabled()) {
-            ctx.pipeline().addAfter(TLS_HANDLER_NAME, "tls.alpn", new AlpnHandlerImpl());
+            ctx.pipeline()
+                    .addAfter(
+                            TLS_HANDLER_NAME,
+                            "tls.alpn",
+                            new AlpnHandlerImpl(config.getFallbackApplicationProtocol()));
         }
 
         return true;
@@ -143,19 +147,29 @@ public class TlsProtocolHandler extends ByteToMessageDecoder {
 
         private static final String NO_PROTOCOL_NEGOTIATED = "zap.no-protocol";
 
-        protected AlpnHandlerImpl() {
+        private final String fallbackProtocol;
+
+        protected AlpnHandlerImpl(String fallbackProtocol) {
             super(NO_PROTOCOL_NEGOTIATED);
+
+            this.fallbackProtocol = fallbackProtocol;
         }
 
         @Override
-        protected void configurePipeline(ChannelHandlerContext ctx, String protocol)
+        protected void configurePipeline(ChannelHandlerContext ctx, String negotiatedProtocol)
                 throws Exception {
+            String protocol = negotiatedProtocol;
             if (NO_PROTOCOL_NEGOTIATED.equals(protocol)) {
-                LOGGER.warn("ALPN enabled and no protocol negotiated, closing connection.");
-                ctx.close();
-                return;
+                protocol = fallbackProtocol;
+                if (protocol == null) {
+                    LOGGER.warn("ALPN enabled and no protocol negotiated, closing connection.");
+                    ctx.close();
+                    return;
+                }
+                LOGGER.debug("Using fallback protocol: {}", protocol);
+            } else {
+                LOGGER.debug("Negotiated protocol: {}", protocol);
             }
-            LOGGER.debug("Negotiated protocol: {}", protocol);
 
             ctx.pipeline().remove(HTTP2_PREFACE_HANDLER);
 
