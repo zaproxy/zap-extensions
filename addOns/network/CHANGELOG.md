@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Allow access to the ZAP API when running in command line mode.
+- Fallback to HTTP/1.1 in internal local servers/proxies if the client does not negotiate a protocol (ALPN).
 - Update dependency.
 - Maintenance changes.
 

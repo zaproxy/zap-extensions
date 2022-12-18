@@ -41,13 +41,20 @@ public class TlsConfig {
     private List<String> tlsProtocols;
     private boolean alpnEnabled;
     private List<String> applicationProtocols;
+    private String fallbackApplicationProtocol;
 
     /**
      * Constructs a {@code TlsConfig} with all the SSL/TLS protocol versions supported, with ALPN
      * enabled, and with all application protocols.
+     *
+     * <p>If no protocol is negotiated it falls back to HTTP/1.1.
      */
     public TlsConfig() {
-        this(DEFAULT_PROTOCOLS, true, DEFAULT_APPLICATION_PROTOCOLS);
+        this(
+                DEFAULT_PROTOCOLS,
+                true,
+                DEFAULT_APPLICATION_PROTOCOLS,
+                TlsUtils.APPLICATION_PROTOCOL_HTTP_1_1);
     }
 
     /**
@@ -63,10 +70,19 @@ public class TlsConfig {
      */
     public TlsConfig(
             List<String> tlsProtocols, boolean alpnEnabled, List<String> applicationProtocols) {
+        this(tlsProtocols, alpnEnabled, applicationProtocols, null);
+    }
+
+    private TlsConfig(
+            List<String> tlsProtocols,
+            boolean alpnEnabled,
+            List<String> applicationProtocols,
+            String fallbackApplicationProtocol) {
         this.tlsProtocols = TlsUtils.filterUnsupportedTlsProtocols(tlsProtocols);
         this.alpnEnabled = alpnEnabled;
         this.applicationProtocols =
                 TlsUtils.filterUnsupportedApplicationProtocols(applicationProtocols);
+        this.fallbackApplicationProtocol = fallbackApplicationProtocol;
     }
 
     /**
@@ -94,6 +110,15 @@ public class TlsConfig {
      */
     public List<String> getApplicationProtocols() {
         return applicationProtocols;
+    }
+
+    /**
+     * Gets the protocol to use if no protocol was negotiated (ALPN).
+     *
+     * @return the fallback protocol, or {@code null} if none.
+     */
+    public String getFallbackApplicationProtocol() {
+        return fallbackApplicationProtocol;
     }
 
     @Override
