@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The Private Address Disclosure and Session ID in URL Rewrite scan rules now include example alert functionality for documentation generation purposes (Issue 6119 and 7100).
 - The Content Security Policy scan rule will now alert when "unsafe-eval" is allowed.
 - Maintenance changes.
+- The Salvation2 library used by the CSP scan rule was upgraded to v3.0.1. Alerts may now have an alert condition if the policy contains characters outside the accepted set.
+- The CSP scan rule now includes handling for policies defined in META tags, as well as two new alerts pertaining to those policies (Issue 7303).
 
 ### Fixed
 - The Modern App Detection scan rule now ignores non-HTML files (Issue 7617).

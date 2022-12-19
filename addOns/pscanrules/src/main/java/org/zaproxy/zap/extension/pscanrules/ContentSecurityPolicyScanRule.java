@@ -36,6 +36,8 @@ import java.util.function.BiPredicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import net.htmlparser.jericho.Element;
+import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -45,14 +47,12 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
  * Content Security Policy Header passive scan rule https://github.com/zaproxy/zaproxy/issues/527
  * Meant to complement the CSP Header Missing passive scan rule
- *
- * <p>TODO: Add handling for CSP via META tag. See
- * https://github.com/shapesecurity/salvation/issues/149 for info on combining CSP policies
  *
  * @author kingthorin+owaspzap@gmail.com
  */
@@ -68,7 +68,6 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
 
     private static final Logger LOGGER = LogManager.getLogger(ContentSecurityPolicyScanRule.class);
 
-    private static final String HTTP_HEADER_CSP = "Content-Security-Policy";
     private static final String HTTP_HEADER_XCSP = "X-Content-Security-Policy";
     private static final String HTTP_HEADER_WEBKIT_CSP = "X-WebKit-CSP";
 
@@ -110,7 +109,8 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
 
         // Content-Security-Policy is supported by Chrome 25+, Firefox 23+,
         // Safari 7+, Edge but not Internet Explorer
-        List<String> cspOptions = msg.getResponseHeader().getHeaderValues(HTTP_HEADER_CSP);
+        List<String> cspOptions =
+                msg.getResponseHeader().getHeaderValues(HttpFieldsNames.CONTENT_SECURITY_POLICY);
         if (!cspOptions.isEmpty()) {
             cspHeaderFound = true;
         }
@@ -119,7 +119,6 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
         checkXWebkitCsp(msg, cspHeaderFound);
 
         if (cspHeaderFound) {
-
             List<PolicyError> observedErrors = new ArrayList<>();
             PolicyErrorConsumer consumer =
                     (severity, message, directiveIndex, valueIndex) -> {
@@ -137,43 +136,122 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                 }
 
                 if (!observedErrors.isEmpty()) {
-                    checkObservedErrors(observedErrors, msg, csp);
+                    checkObservedErrors(observedErrors, msg, csp, false);
                 }
 
                 List<String> allowedWildcardSources = getAllowedWildcardSources(csp);
                 if (!allowedWildcardSources.isEmpty()) {
-                    checkWildcardSources(allowedWildcardSources, msg, csp);
+                    checkWildcardSources(allowedWildcardSources, msg, csp, false);
                 }
 
                 PolicyInOrigin p = new PolicyInOrigin(policy, URI.parseURI(RAND_FQDN).orElse(null));
                 if (p.allowsUnsafeInlineScript()) {
-                    buildScriptUnsafeInlineAlert(getHeaderField(msg, HTTP_HEADER_CSP).get(0), csp)
+                    buildScriptUnsafeInlineAlert(
+                                    getHeaderField(msg, HttpFieldsNames.CONTENT_SECURITY_POLICY)
+                                            .get(0),
+                                    csp)
                             .raise();
                 }
 
                 if (p.allowsUnsafeInlineStyle()) {
-                    buildStyleUnsafeInlineAlert(getHeaderField(msg, HTTP_HEADER_CSP).get(0), csp)
+                    buildStyleUnsafeInlineAlert(
+                                    getHeaderField(msg, HttpFieldsNames.CONTENT_SECURITY_POLICY)
+                                            .get(0),
+                                    csp)
                             .raise();
                 }
 
                 if (allowsUnsafeHashes(policy, FetchDirectiveKind.ScriptSrc)) {
-                    buildScriptUnsafeHashAlert(getHeaderField(msg, HTTP_HEADER_CSP).get(0), csp)
+                    buildScriptUnsafeHashAlert(
+                                    getHeaderField(msg, HttpFieldsNames.CONTENT_SECURITY_POLICY)
+                                            .get(0),
+                                    csp)
                             .raise();
                 }
 
                 if (allowsUnsafeHashes(policy, FetchDirectiveKind.StyleSrc)) {
-                    buildStyleUnsafeHashAlert(getHeaderField(msg, HTTP_HEADER_CSP).get(0), csp)
+                    buildStyleUnsafeHashAlert(
+                                    getHeaderField(msg, HttpFieldsNames.CONTENT_SECURITY_POLICY)
+                                            .get(0),
+                                    csp)
                             .raise();
                 }
 
                 if (allowsUnsafeEval(policy, FetchDirectiveKind.ScriptSrc)) {
-                    buildScriptUnsafeEvalAlert(getHeaderField(msg, HTTP_HEADER_CSP).get(0), csp)
+                    buildScriptUnsafeEvalAlert(
+                                    getHeaderField(msg, HttpFieldsNames.CONTENT_SECURITY_POLICY)
+                                            .get(0),
+                                    csp)
                             .raise();
                 }
             }
         }
+        if (CspUtils.hasMetaCsp(source)) {
+            checkMetaPolicy(msg, id, source, true, cspHeaderFound);
+        }
 
         LOGGER.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
+    }
+
+    private void checkMetaPolicy(
+            HttpMessage msg, int id, Source source, boolean isMeta, boolean hasHeader) {
+        List<Element> cspMetaElements = getMetaPolicies(source);
+        if (cspMetaElements.isEmpty()) {
+            return;
+        }
+        for (Element element : cspMetaElements) {
+            String metaField = element.getAttributeValue("http-equiv");
+            String metaPolicy = element.getAttributeValue("content");
+            if (HttpFieldsNames.CONTENT_SECURITY_POLICY.equalsIgnoreCase(metaField)
+                    && !StringUtils.isBlank(metaPolicy)) {
+                List<PolicyError> metaObservedErrors = new ArrayList<>();
+                PolicyErrorConsumer metaConsumer =
+                        (severity, message, directiveIndex, valueIndex) -> {
+                            // Skip notices for directives that Salvation doesn't
+                            // handle
+                            if (ALLOWED_DIRECTIVES.stream().noneMatch(message::contains)) {
+                                metaObservedErrors.add(
+                                        new PolicyError(
+                                                severity, message, directiveIndex, valueIndex));
+                            }
+                        };
+                Policy parsedMetaPolicy = parsePolicy(metaPolicy, metaConsumer, msg, id);
+                checkObservedErrors(metaObservedErrors, msg, metaPolicy, true);
+                List<String> metaWildcardSources = getAllowedWildcardSources(metaPolicy);
+                // frame-ancestors isn't applicable in META
+                metaWildcardSources.remove("frame-ancestors");
+                checkWildcardSources(metaWildcardSources, msg, metaPolicy, true);
+                PolicyInOrigin pol =
+                        new PolicyInOrigin(parsedMetaPolicy, URI.parseURI(RAND_FQDN).orElse(null));
+                if (pol.allowsUnsafeInlineScript()) {
+                    buildScriptUnsafeInlineAlert(metaField, metaPolicy).raise();
+                }
+
+                if (pol.allowsUnsafeInlineStyle()) {
+                    buildStyleUnsafeInlineAlert(metaField, metaPolicy).raise();
+                }
+
+                if (allowsUnsafeHashes(parsedMetaPolicy, FetchDirectiveKind.ScriptSrc)) {
+                    buildScriptUnsafeHashAlert(metaField, metaPolicy).raise();
+                }
+
+                if (allowsUnsafeHashes(parsedMetaPolicy, FetchDirectiveKind.StyleSrc)) {
+                    buildStyleUnsafeHashAlert(metaField, metaPolicy).raise();
+                }
+                if (parsedMetaPolicy.sandbox().isPresent()
+                        || parsedMetaPolicy.frameAncestors().isPresent()
+                        || parsedMetaPolicy.reportUri().isPresent()) {
+                    buildBadMetaAlert(metaField, metaPolicy).raise();
+                }
+                if (allowsUnsafeEval(parsedMetaPolicy, FetchDirectiveKind.ScriptSrc)) {
+                    buildScriptUnsafeEvalAlert(HttpFieldsNames.CONTENT_SECURITY_POLICY, metaPolicy)
+                            .raise();
+                }
+            }
+            if (hasHeader) {
+                buildBothAlert().raise();
+            }
+        }
     }
 
     private void checkXcsp(HttpMessage msg, boolean cspHeaderFound) {
@@ -209,7 +287,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
             boolean warn = true;
             if (iae.getMessage().contains("not ascii")) {
                 buildMalformedAlert(
-                                getHeaderField(msg, HTTP_HEADER_CSP).get(0),
+                                getHeaderField(msg, HttpFieldsNames.CONTENT_SECURITY_POLICY).get(0),
                                 csp,
                                 getNonasciiCharacters(csp))
                         .raise();
@@ -224,7 +302,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
     }
 
     private void checkObservedErrors(
-            List<PolicyError> observedErrors, HttpMessage msg, String csp) {
+            List<PolicyError> observedErrors, HttpMessage msg, String csp, boolean isMeta) {
         String cspNoticesString = getCspNoticesString(observedErrors);
         int noticesRisk;
 
@@ -236,16 +314,24 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
         } else {
             noticesRisk = Alert.RISK_INFO;
         }
-        buildNoticesAlert(
-                        noticesRisk,
-                        getHeaderField(msg, HTTP_HEADER_CSP).get(0),
-                        csp,
-                        cspNoticesString)
-                .raise();
+        if (!cspNoticesString.isEmpty()) {
+            buildNoticesAlert(
+                            noticesRisk,
+                            isMeta
+                                    ? HttpFieldsNames.CONTENT_SECURITY_POLICY
+                                    : getHeaderField(msg, HttpFieldsNames.CONTENT_SECURITY_POLICY)
+                                            .get(0),
+                            csp,
+                            cspNoticesString)
+                    .raise();
+        }
     }
 
     private void checkWildcardSources(
-            List<String> allowedWildcardSources, HttpMessage msg, String csp) {
+            List<String> allowedWildcardSources, HttpMessage msg, String csp, boolean isMeta) {
+        if (allowedWildcardSources.isEmpty()) {
+            return;
+        }
         List<String> allowedDirectivesWithoutFallback =
                 allowedWildcardSources.stream()
                         .distinct()
@@ -261,7 +347,13 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                             "pscanrules.csp.otherinfo.extended",
                             String.join(", ", allowedDirectivesWithoutFallback));
         }
-        buildWildcardAlert(getHeaderField(msg, HTTP_HEADER_CSP).get(0), csp, wildcardSrcOtherInfo)
+        buildWildcardAlert(
+                        isMeta
+                                ? HttpFieldsNames.CONTENT_SECURITY_POLICY
+                                : getHeaderField(msg, HttpFieldsNames.CONTENT_SECURITY_POLICY)
+                                        .get(0),
+                        csp,
+                        wildcardSrcOtherInfo)
                 .raise();
     }
 
@@ -399,6 +491,12 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
         }
 
         return allowedSources;
+    }
+
+    private static List<Element> getMetaPolicies(Source source) {
+        return source.getAllElements(HTMLElementName.META).stream()
+                .filter(element -> !element.getAttributeValue("http-equiv").isEmpty())
+                .collect(Collectors.toList());
     }
 
     private static boolean checkPolicy(AllowsFormActionCheck function) {
@@ -593,6 +691,23 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                                 MESSAGE_PREFIX + "scriptsrc.unsafe.eval.otherinfo"));
     }
 
+    private AlertBuilder buildBadMetaAlert(String param, String evidence) {
+        return getBuilder(
+                        Constant.messages.getString(MESSAGE_PREFIX + "meta.bad.directive.name"),
+                        "11")
+                .setRisk(Alert.RISK_MEDIUM)
+                .setParam(param)
+                .setEvidence(evidence)
+                .setDescription(
+                        Constant.messages.getString(MESSAGE_PREFIX + "meta.bad.directive.desc"));
+    }
+
+    private AlertBuilder buildBothAlert() {
+        return getBuilder(Constant.messages.getString(MESSAGE_PREFIX + "both.name"), "12")
+                .setRisk(Alert.RISK_INFO)
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "both.desc"));
+    }
+
     @Override
     public List<Alert> getExampleAlerts() {
         List<Alert> alerts = new ArrayList<>();
@@ -603,42 +718,57 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
         alerts.add(
                 buildNoticesAlert(
                                 Alert.RISK_LOW,
-                                HTTP_HEADER_CSP,
+                                HttpFieldsNames.CONTENT_SECURITY_POLICY,
                                 "default-src none; report-to csp-endpoint ",
                                 "Warnings:\\nThis host name is unusual, and likely meant to be a keyword that is missing the required quotes: 'none'.")
                         .build());
         alerts.add(
                 buildWildcardAlert(
-                                HTTP_HEADER_CSP,
+                                HttpFieldsNames.CONTENT_SECURITY_POLICY,
                                 "connect-src *; default-src 'self'; form-action 'none'; frame-ancestors 'self'",
                                 Constant.messages.getString(
                                         MESSAGE_PREFIX + "wildcard.otherinfo", "connect-src"))
                         .build());
         alerts.add(
-                buildScriptUnsafeInlineAlert(HTTP_HEADER_CSP, "script-src 'unsafe-inline'")
+                buildScriptUnsafeInlineAlert(
+                                HttpFieldsNames.CONTENT_SECURITY_POLICY,
+                                "script-src 'unsafe-inline'")
                         .build());
         alerts.add(
-                buildStyleUnsafeInlineAlert(HTTP_HEADER_CSP, "style-src 'unsafe-inline'").build());
+                buildStyleUnsafeInlineAlert(
+                                HttpFieldsNames.CONTENT_SECURITY_POLICY,
+                                "style-src 'unsafe-inline'")
+                        .build());
         alerts.add(
                 buildScriptUnsafeHashAlert(
-                                HTTP_HEADER_CSP,
+                                HttpFieldsNames.CONTENT_SECURITY_POLICY,
                                 "default-src 'self'; script-src 'unsafe-hashes' 'sha256-jzgBGA4UWFFmpOBq0JpdsySukE1FrEN5bUpoK8Z29fY='")
                         .build());
         alerts.add(
                 buildStyleUnsafeHashAlert(
-                                HTTP_HEADER_CSP,
+                                HttpFieldsNames.CONTENT_SECURITY_POLICY,
                                 "default-src 'self'; style-src 'unsafe-hashes' 'sha256-xyz4zkCjuC3lZcD2UmnqDG0vurmq12W/XKM5Vd0+MlQ='")
                         .build());
         alerts.add(
                 buildMalformedAlert(
-                                HTTP_HEADER_CSP,
+                                HttpFieldsNames.CONTENT_SECURITY_POLICY,
                                 "\"default-src ‘self’ 'unsafe-eval' 'unsafe-inline' www.example.net;\"",
                                 "‘’")
                         .build());
         alerts.add(
                 buildScriptUnsafeEvalAlert(
-                                HTTP_HEADER_CSP, "default-src 'self'; script-src 'unsafe-eval'")
+                                HttpFieldsNames.CONTENT_SECURITY_POLICY,
+                                "default-src 'self'; script-src 'unsafe-eval'")
                         .build());
+        alerts.add(
+                buildBadMetaAlert(
+                                HttpFieldsNames.CONTENT_SECURITY_POLICY,
+                                "default-src 'self'; script-src 'self' "
+                                        + "storage.googleapis.com cdn.temasys.io cdn.tiny.cloud *.google-analytics.com; "
+                                        + "style-src 'self' *.googleapis.com; font-src 'self' data: *.googleapis.com "
+                                        + "fonts.gstatic.com; frame-ancestors 'none'; worker-src 'self'; form-action 'none'")
+                        .build());
+        alerts.add(buildBothAlert().build());
         return alerts;
     }
 
