@@ -24,7 +24,11 @@ import java.awt.Component;
 import java.awt.HeadlessException;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -34,6 +38,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
@@ -51,13 +57,15 @@ import org.zaproxy.addon.requester.MessageEditorPanel;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.extension.httppanel.HttpPanel.OptionsLocation;
-import org.zaproxy.zap.extension.httppanel.HttpPanelResponse;
 import org.zaproxy.zap.extension.httppanel.Message;
+import org.zaproxy.zap.extension.search.SearchMatch;
+import org.zaproxy.zap.extension.search.SearchMatch.Location;
+import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.HttpPanelManager;
 
 @SuppressWarnings("serial")
 public class ManualHttpRequestEditorPanel extends MessageEditorPanel
-        implements OptionsChangedListener {
+        implements OptionsChangedListener, LayoutChangedListener {
 
     private static final long serialVersionUID = -5830450800029295419L;
     private static final Logger logger = LogManager.getLogger(ManualHttpRequestEditorPanel.class);
@@ -68,7 +76,7 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
 
     private RequestResponsePanel requestResponsePanel;
     private CustomHttpPanelRequest requestPanel;
-    private HttpPanelResponse responsePanel;
+    private CustomHttpPanelResponse responsePanel;
 
     private JToolBar footerToolbar = null;
     // footer elements
@@ -77,6 +85,16 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
     private JLabel labelTotalLength = null;
     private String helpKey = null;
     private int defaultView;
+
+    // Find elements
+    private JLabel matchLabel;
+    private ZapTextField findField;
+    private JButton prevButton;
+    private JButton nextButton;
+
+    private Location lastLocation;
+    private int matchIndex;
+    private List<SearchMatch> matches = new ArrayList<>();
 
     public ManualHttpRequestEditorPanel() {
         this(CONFIG_KEY, HELP_KEY, RequestResponsePanel.SIDE_BY_SIDE_VIEW);
@@ -103,12 +121,183 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
         // add footer status bar
         getWindowPanel().add(getFooterStatusBar(), BorderLayout.SOUTH);
 
+        getFindField()
+                .getDocument()
+                .addDocumentListener(
+                        new DocumentListener() {
+
+                            @Override
+                            public void insertUpdate(DocumentEvent e) {
+                                find();
+                            }
+
+                            @Override
+                            public void removeUpdate(DocumentEvent e) {
+                                find();
+                            }
+
+                            @Override
+                            public void changedUpdate(DocumentEvent e) {
+                                find();
+                            }
+                        });
+
+        getFooterStatusBar()
+                .add(new JLabel(Constant.messages.getString("requester.httppanel.find.find")));
+        getFooterStatusBar().add(getFindField());
+        getFooterStatusBar().add(getPrevButton());
+        getFooterStatusBar().add(getNextButton());
+        getFooterStatusBar().add(getMatchLabel());
+
+        getFooterStatusBar().add(Box.createHorizontalGlue());
+
         // setting footer status bar label and separator
         getFooterStatusBar().add(getLabelTimeLapse());
         getFooterStatusBar().addSeparator();
         getFooterStatusBar().add(getLabelContentLength());
         getFooterStatusBar().addSeparator();
         getFooterStatusBar().add(getLabelTotalLength());
+    }
+
+    private JButton getPrevButton() {
+        if (prevButton == null) {
+            prevButton = new JButton(ExtensionRequester.createIcon("fugue/arrow-090-medium.png"));
+            prevButton.setToolTipText(Constant.messages.getString("requester.httppanel.find.prev"));
+            prevButton.addActionListener(a -> prev());
+        }
+        return prevButton;
+    }
+
+    private JButton getNextButton() {
+        if (nextButton == null) {
+            nextButton = new JButton(ExtensionRequester.createIcon("fugue/arrow-270-medium.png"));
+            nextButton.setToolTipText(Constant.messages.getString("requester.httppanel.find.next"));
+            nextButton.addActionListener(a -> next());
+        }
+        return nextButton;
+    }
+
+    private ZapTextField getFindField() {
+        if (findField == null) {
+            findField = new ZapTextField(20);
+            findField.setMaximumSize(findField.getPreferredSize());
+        }
+        return findField;
+    }
+
+    private JLabel getMatchLabel() {
+        if (matchLabel == null) {
+            matchLabel = new JLabel();
+        }
+        return matchLabel;
+    }
+
+    private void highlight() {
+        clearHighlight();
+        if (matches.size() > 0) {
+            SearchMatch sm = matches.get(matchIndex);
+            // For some reason the message is not set in the matches :/
+            SearchMatch sm2 =
+                    new SearchMatch(
+                            (HttpMessage) this.getMessage(),
+                            sm.getLocation(),
+                            sm.getStart(),
+                            sm.getEnd());
+            this.setHighlight(sm2);
+            lastLocation = sm2.getLocation();
+            if (matches.size() == 1) {
+                getMatchLabel()
+                        .setText(
+                                Constant.messages.getString(
+                                        "requester.httppanel.find.find.match.1"));
+            } else {
+                getMatchLabel()
+                        .setText(
+                                Constant.messages.getString(
+                                        "requester.httppanel.find.find.match.x",
+                                        matchIndex + 1,
+                                        matches.size()));
+            }
+        } else {
+            getMatchLabel()
+                    .setText(Constant.messages.getString("requester.httppanel.find.find.match.0"));
+            lastLocation = null;
+        }
+        getPrevButton().setEnabled(matches.size() > 1);
+        getNextButton().setEnabled(matches.size() > 1);
+    }
+
+    private void prev() {
+        matchIndex--;
+        if (matchIndex < 0) {
+            matchIndex = matches.size() - 1;
+        }
+        highlight();
+    }
+
+    private void next() {
+        matchIndex++;
+        if (matchIndex >= matches.size()) {
+            matchIndex = 0;
+        }
+        highlight();
+    }
+
+    @Override
+    public void layoutChanged() {
+        find();
+    }
+
+    private void find() {
+        matches.clear();
+        clearHighlight();
+        lastLocation = null;
+        matchIndex = 0;
+        String str = getFindField().getText();
+        if (str.isEmpty()) {
+            getMatchLabel().setText("");
+        } else {
+            Pattern p = Pattern.compile(Pattern.quote(str), Pattern.CASE_INSENSITIVE);
+            requestPanel.headerSearch(p, matches);
+            if (!requestPanel.isCombinedView()) {
+                requestPanel.bodySearch(p, matches);
+            }
+            responsePanel.headerSearch(p, matches);
+            if (!responsePanel.isCombinedView()) {
+                responsePanel.bodySearch(p, matches);
+            }
+        }
+        highlight();
+    }
+
+    private void clearHighlight() {
+        if (lastLocation != null) {
+            setHighlight(
+                    new SearchMatch((HttpMessage) requestPanel.getMessage(), lastLocation, 0, 0));
+        }
+    }
+
+    private void setHighlight(SearchMatch sm) {
+        switch (sm.getLocation()) {
+            case REQUEST_BODY:
+                requestPanel.highlightBody(sm);
+                requestPanel.setTabFocus();
+                break;
+            case REQUEST_HEAD:
+                requestPanel.highlightHeader(sm);
+                requestPanel.setTabFocus();
+                break;
+            case RESPONSE_BODY:
+                responsePanel.highlightBody(sm);
+                responsePanel.setTabFocus();
+                break;
+            case RESPONSE_HEAD:
+                responsePanel.highlightHeader(sm);
+                responsePanel.setTabFocus();
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
@@ -126,6 +315,9 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
     @Override
     public void setMessage(Message aMessage) {
         if (aMessage == null) {
+            this.lastLocation = null;
+            this.matches.clear();
+            this.matchIndex = 0;
             return;
         }
 
@@ -133,6 +325,7 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
         getResponsePanel().setMessage(aMessage);
         setFooterStatus(null);
         switchToTab(0);
+        find();
     }
 
     @Override
@@ -150,9 +343,9 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
         return requestPanel;
     }
 
-    private HttpPanelResponse getResponsePanel() {
+    private CustomHttpPanelResponse getResponsePanel() {
         if (responsePanel == null) {
-            responsePanel = new HttpPanelResponse(false, configurationKey);
+            responsePanel = new CustomHttpPanelResponse(false, configurationKey);
             responsePanel.setEnableViewSelect(true);
 
             responsePanel.loadConfig(Model.getSingleton().getOptionsParam().getConfig());
@@ -169,6 +362,7 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
                             getMessagePanel(),
                             getResponsePanel(),
                             this::sendButtonTriggered,
+                            this,
                             defaultView);
 
             if (helpKey != null) {
@@ -205,6 +399,7 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
 
         switchToTab(1);
         setFooterStatus((HttpMessage) getResponsePanel().getMessage());
+        find();
     }
 
     /**
@@ -260,6 +455,10 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
 
     @Override
     public void reset() {
+        matches.clear();
+        lastLocation = null;
+        matchIndex = 0;
+        getFindField().discardAllEdits();
         getMessagePanel().clearView();
         getResponsePanel().clearView();
         setDefaultMessage();
@@ -341,7 +540,7 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
         private static final int SIDE_BY_SIDE_VIEW = 2;
 
         private final CustomHttpPanelRequest requestPanel;
-        private final HttpPanelResponse responsePanel;
+        private final CustomHttpPanelResponse responsePanel;
         private final int defaultView;
 
         private int currentView;
@@ -361,11 +560,14 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
 
         private Runnable sendAction;
 
+        private LayoutChangedListener listener;
+
         public RequestResponsePanel(
                 String configurationKey,
                 CustomHttpPanelRequest request,
-                HttpPanelResponse response,
+                CustomHttpPanelResponse response,
                 Runnable sendAction,
+                LayoutChangedListener listener,
                 int defaultView)
                 throws IllegalArgumentException {
             super(new BorderLayout());
@@ -380,6 +582,7 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
             this.requestPanel = request;
             this.responsePanel = response;
             this.sendAction = sendAction;
+            this.listener = listener;
 
             this.currentView = -1;
 
@@ -536,6 +739,9 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
 
                 this.validate();
                 this.repaint();
+                if (this.listener != null) {
+                    this.listener.layoutChanged();
+                }
             }
         }
 
@@ -621,4 +827,9 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
     public void optionsChanged(OptionsParam optionsParam) {
         sender.updateButtonTrackingSessionState();
     }
+}
+
+interface LayoutChangedListener {
+
+    void layoutChanged();
 }

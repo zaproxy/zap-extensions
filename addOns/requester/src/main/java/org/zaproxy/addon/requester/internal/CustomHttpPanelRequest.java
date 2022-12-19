@@ -27,6 +27,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.httppanel.HttpPanelRequest;
 import org.zaproxy.zap.extension.httppanel.InvalidMessageDataException;
+import org.zaproxy.zap.extension.httppanel.component.all.request.RequestAllComponent;
 
 public class CustomHttpPanelRequest extends HttpPanelRequest {
 
@@ -81,5 +82,9 @@ public class CustomHttpPanelRequest extends HttpPanelRequest {
         message.mutateHttpMethod((String) comboChangeMethod.getSelectedItem());
         comboChangeMethod.setSelectedIndex(0);
         updateContent();
+    }
+
+    public boolean isCombinedView() {
+        return this.getCurrentComponent() instanceof RequestAllComponent;
     }
 }
