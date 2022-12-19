@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2016 The ZAP Development Team
+ * Copyright 2020 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,18 +35,19 @@ import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
-/** Unit test for {@link SqlInjectionPostgreScanRule}. */
-class SqlInjectionPostgreScanRuleUnitTest extends ActiveScannerTest<SqlInjectionPostgreScanRule> {
+/** Unit test for {@link SqlInjectionMsSqlTimingScanRule}. */
+class SqlInjectionMsSqlTimingScanRuleUnitTest
+        extends ActiveScannerTest<SqlInjectionMsSqlTimingScanRule> {
 
     @Override
-    protected SqlInjectionPostgreScanRule createScanner() {
-        return new SqlInjectionPostgreScanRule();
+    protected SqlInjectionMsSqlTimingScanRule createScanner() {
+        return new SqlInjectionMsSqlTimingScanRule();
     }
 
     @Test
-    void shouldTargetPostgreSQLTech() throws Exception {
+    void shouldTargetMsSQLTech() throws Exception {
         // Given
-        TechSet techSet = techSet(Tech.PostgreSQL);
+        TechSet techSet = techSet(Tech.MsSQL);
         // When
         boolean targets = rule.targets(techSet);
         // Then
@@ -54,9 +55,9 @@ class SqlInjectionPostgreScanRuleUnitTest extends ActiveScannerTest<SqlInjection
     }
 
     @Test
-    void shouldNotTargetNonPostgreSQLTechs() throws Exception {
+    void shouldNotTargetNonMsSQLTechs() throws Exception {
         // Given
-        TechSet techSet = techSetWithout(Tech.PostgreSQL);
+        TechSet techSet = techSetWithout(Tech.MsSQL);
         // When
         boolean targets = rule.targets(techSet);
         // Then
@@ -75,7 +76,7 @@ class SqlInjectionPostgreScanRuleUnitTest extends ActiveScannerTest<SqlInjection
                     protected Response serve(IHTTPSession session) {
                         String name = getFirstParamValue(session, "name");
                         String response = "<html><body></body></html>";
-                        if (name != null && name.contains("pg_sleep(")) {
+                        if (name != null && name.contains(" WAITFOR DELAY ")) {
                             try {
                                 Thread.sleep(time);
                             } catch (InterruptedException e) {
@@ -96,10 +97,7 @@ class SqlInjectionPostgreScanRuleUnitTest extends ActiveScannerTest<SqlInjection
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
-        assertThat(
-                alertsRaised.get(0).getAttack(),
-                equalTo(
-                        "field: [name], value [case when cast(pg_sleep(1) as varchar) > '' then 0 else 1 end -- ]"));
+        assertThat(alertsRaised.get(0).getAttack(), equalTo("test' WAITFOR DELAY '0:0:1' -- "));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }

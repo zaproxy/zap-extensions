@@ -21,38 +21,24 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
-import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
-import org.apache.commons.configuration.Configuration;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
-import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
@@ -155,75 +141,12 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
     }
 
     @Test
-    void shouldFailToInitWithoutConfig() throws Exception {
-        // Given
-        CommandInjectionScanRule scanner = new CommandInjectionScanRule();
-        HttpMessage msg = getHttpMessage("");
-        // When / Then
-        assertThrows(NullPointerException.class, () -> scanner.init(msg, parent));
-    }
-
-    @Test
     void shouldInitWithConfig() throws Exception {
         // Given
         CommandInjectionScanRule scanner = new CommandInjectionScanRule();
         scanner.setConfig(new ZapXmlConfiguration());
         // When / Then
         assertDoesNotThrow(() -> scanner.init(getHttpMessage(""), parent));
-    }
-
-    @Test
-    void shouldUse5SecsByDefaultForTimeBasedAttacks() throws Exception {
-        // Given / When
-        int time = rule.getTimeSleep();
-        // Then
-        assertThat(time, is(equalTo(5)));
-    }
-
-    @Test
-    void shouldUseTimeDefinedInConfigForTimeBasedAttacks() throws Exception {
-        // Given
-        rule.setConfig(configWithSleepRule("10"));
-        // When
-        rule.init(getHttpMessage(""), parent);
-        // Then
-        assertThat(rule.getTimeSleep(), is(equalTo(10)));
-    }
-
-    @Test
-    void shouldDefaultTo5SecsIfConfigTimeIsMalformedValueForTimeBasedAttacks() throws Exception {
-        // Given
-        rule.setConfig(configWithSleepRule("not a valid value"));
-        // When
-        rule.init(getHttpMessage(""), parent);
-        // Then
-        assertThat(rule.getTimeSleep(), is(equalTo(5)));
-    }
-
-    @Test
-    void shouldUseSpecifiedTimeInAllTimeBasedPayloads() throws Exception {
-        // Given
-        String sleepTime = "987";
-        PayloadCollectorHandler payloadCollector =
-                new PayloadCollectorHandler(
-                        "/", "p", v -> v.contains("sleep") || v.contains("timeout"));
-        nano.addHandler(payloadCollector);
-        rule.setConfig(configWithSleepRule(sleepTime));
-        rule.setAttackStrength(Plugin.AttackStrength.INSANE);
-        rule.init(getHttpMessage("?p=v"), parent);
-        // When
-        rule.scan();
-        // Then
-        for (String payload : payloadCollector.getPayloads()) {
-            assertThat(payload, not(containsString("{0}")));
-            assertThat(payload, containsString(sleepTime));
-        }
-    }
-
-    private static Configuration configWithSleepRule(String value) {
-        Configuration config = new ZapXmlConfiguration();
-        config.setProperty(RuleConfigParam.RULE_COMMON_SLEEP_TIME, value);
-        return config;
     }
 
     @Test
@@ -289,40 +212,6 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
         assertThat(alertsRaised, hasSize(1));
     }
 
-    @Test
-    void shouldDetectTimeBasedInjection() throws HttpMalformedHeaderException {
-        // Given
-        Pattern sleepPattern = Pattern.compile("(?:sleep|timeout /T|start-sleep -s) (\\d+)");
-        String regularContent = "<!DOCTYPE html><html><body>Nothing to see here.</body></html>";
-        nano.addHandler(
-                new NanoServerHandler("/") {
-                    @Override
-                    protected Response serve(IHTTPSession session) {
-                        String value = getFirstParamValue(session, "p");
-                        if (value == null) {
-                            return newFixedLengthResponse(regularContent);
-                        }
-                        Matcher match = sleepPattern.matcher(value);
-                        if (!match.find()) {
-                            return newFixedLengthResponse(regularContent);
-                        }
-                        try {
-                            int sleepInput = Integer.parseInt(match.group(1));
-                            Thread.sleep(sleepInput * 1000L);
-                        } catch (InterruptedException ex) {
-                            fail("failed to sleep thread for time-based command injection");
-                        }
-                        return newFixedLengthResponse(regularContent);
-                    }
-                });
-        rule.init(getHttpMessage("/?p=a"), parent);
-        // When
-        rule.scan();
-        // Then
-        assertThat(alertsRaised, hasSize(1));
-        assertThat(sleepPattern.matcher(alertsRaised.get(0).getAttack()).find(), is(true));
-    }
-
     private static Stream<Arguments> shouldReturnRelevantTechs() {
         return Stream.of(
                 Arguments.of(Tech.Windows), Arguments.of(Tech.Linux), Arguments.of(Tech.MacOS));
@@ -343,34 +232,5 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
         // Then
         assertFalse(httpMessagesSent.get(0).getUrlParams().first().getValue().startsWith("a"));
         assertTrue(httpMessagesSent.get(1).getUrlParams().first().getValue().startsWith("a"));
-    }
-
-    private static class PayloadCollectorHandler extends NanoServerHandler {
-
-        private final String param;
-        private final Predicate<String> valuePredicate;
-        private final List<String> payloads;
-
-        public PayloadCollectorHandler(
-                String path, String param, Predicate<String> valuePredicate) {
-            super(path);
-
-            this.param = param;
-            this.valuePredicate = valuePredicate;
-            this.payloads = new ArrayList<>();
-        }
-
-        public List<String> getPayloads() {
-            return payloads;
-        }
-
-        @Override
-        protected Response serve(IHTTPSession session) {
-            String value = getFirstParamValue(session, param);
-            if (valuePredicate.test(value)) {
-                payloads.add(value);
-            }
-            return newFixedLengthResponse(Response.Status.OK, NanoHTTPD.MIME_HTML, "Content");
-        }
     }
 }

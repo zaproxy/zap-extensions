@@ -23,13 +23,11 @@ import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.startsWith;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
-import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -79,81 +77,6 @@ class SqlInjectionSQLiteScanRuleUnitTest extends ActiveScannerTest<SqlInjectionS
         boolean targets = rule.targets(techSet);
         // Then
         assertThat(targets, is(equalTo(false)));
-    }
-
-    @Test
-    void shouldAlertIfSqlErrorReturned() throws Exception {
-        String test = "/shouldReportSqlErrorMessage/";
-
-        this.nano.addHandler(
-                new NanoServerHandler(test) {
-                    @Override
-                    protected Response serve(IHTTPSession session) {
-                        String name = getFirstParamValue(session, "name");
-                        String response = "<html><body></body></html>";
-                        if (name != null && name.contains(" randomblob(")) {
-                            response =
-                                    "<html><body>SQL error: no such function: randomblob</body></html>";
-                        }
-                        return newFixedLengthResponse(response);
-                    }
-                });
-
-        HttpMessage msg = this.getHttpMessage(test + "?name=test");
-
-        this.rule.init(msg, this.parent);
-
-        this.rule.scan();
-
-        assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("no such function: randomblob"));
-        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
-        assertThat(
-                alertsRaised.get(0).getAttack(),
-                equalTo("case randomblob(100000) when not null then 1 else 1 end "));
-        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
-        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
-    }
-
-    @Test
-    void shouldAlertIfRandomBlobTimesGetLonger() throws Exception {
-        String test = "/shouldReportSqlTimingIssue/";
-
-        this.nano.addHandler(
-                new NanoServerHandler(test) {
-                    private int time = 100;
-
-                    @Override
-                    protected Response serve(IHTTPSession session) {
-                        String name = getFirstParamValue(session, "name");
-                        String response = "<html><body></body></html>";
-                        if (name != null && name.contains(" randomblob(")) {
-                            try {
-                                Thread.sleep(time);
-                            } catch (InterruptedException e) {
-                                // Ignore
-                            }
-                            time += 100;
-                        }
-                        return newFixedLengthResponse(response);
-                    }
-                });
-
-        HttpMessage msg = this.getHttpMessage(test + "?name=test");
-
-        this.rule.init(msg, this.parent);
-        this.rule.setExpectedDelayInMs(90);
-
-        this.rule.scan();
-
-        assertThat(alertsRaised.size(), equalTo(1));
-        assertThat(
-                alertsRaised.get(0).getEvidence(),
-                startsWith("The query time is controllable using parameter value"));
-        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
-        assertThat(alertsRaised.get(0).getAttack(), startsWith("case randomblob(100"));
-        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
-        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
 
     @Test

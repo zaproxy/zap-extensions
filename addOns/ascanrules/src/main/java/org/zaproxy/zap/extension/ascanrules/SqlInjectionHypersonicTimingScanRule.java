@@ -60,7 +60,7 @@ import org.zaproxy.zap.model.TechSet;
  *
  * @author 70pointer
  */
-public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
+public class SqlInjectionHypersonicTimingScanRule extends AbstractAppParamPlugin {
 
     private boolean doUnionBased = false; // TODO: use in Union based, when we implement it
     private boolean doTimeBased = false;
@@ -187,7 +187,8 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
                     CommonAlertTag.WSTG_V42_INPV_05_SQLI);
 
     /** for logging. */
-    private static final Logger LOGGER = LogManager.getLogger(SqlInjectionHypersonicScanRule.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(SqlInjectionHypersonicTimingScanRule.class);
 
     @Override
     public int getId() {

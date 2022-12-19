@@ -35,12 +35,13 @@ import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
-/** Unit test for {@link SqlInjectionMySqlScanRule}. */
-class SqlInjectionMySqlScanRuleUnitTest extends ActiveScannerTest<SqlInjectionMySqlScanRule> {
+/** Unit test for {@link SqlInjectionMySqlTimingScanRule}. */
+class SqlInjectionMySqlTimingScanRuleUnitTest
+        extends ActiveScannerTest<SqlInjectionMySqlTimingScanRule> {
 
     @Override
-    protected SqlInjectionMySqlScanRule createScanner() {
-        return new SqlInjectionMySqlScanRule();
+    protected SqlInjectionMySqlTimingScanRule createScanner() {
+        return new SqlInjectionMySqlTimingScanRule();
     }
 
     @Test

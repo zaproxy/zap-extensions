@@ -46,7 +46,7 @@ import org.zaproxy.zap.model.TechSet;
  * http://www.websec.ca/kb/sql_injection#MSSQL_Stacked_Queries
  * http://pentestmonkey.net/cheat-sheet/sql-injection/mssql-sql-injection-cheat-sheet
  */
-public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
+public class SqlInjectionMsSqlTimingScanRule extends AbstractAppParamPlugin {
 
     /** MSSQL one-line comment */
     private static final String SQL_ONE_LINE_COMMENT = " -- ";
@@ -79,7 +79,8 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
     };
 
     /** for logging. */
-    private static final Logger LOGGER = LogManager.getLogger(SqlInjectionMsSqlScanRule.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(SqlInjectionMsSqlTimingScanRule.class);
 
     private static final int DEFAULT_SLEEP_TIME = 15;
     private static final Map<String, String> ALERT_TAGS =

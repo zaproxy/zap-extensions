@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URIException;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -99,10 +98,6 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
 
     private int expectedDelayInMs = 5000;
 
-    private boolean doTimeBased = false;
-
-    private int doTimeMaxRequests = 0;
-
     private boolean doUnionBased = false;
     private int doUnionMaxRequests = 0;
 
@@ -112,35 +107,6 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
     /**
      * SQLite specific time based injection strings, where each tries to cause a measurable delay
      */
-
-    // Note: <<<<ORIGINALVALUE>>>> is replaced with the original parameter value at runtime in these
-    // examples below
-    // TODO: maybe add support for ')' after the original value, before the sleeps
-    // Note: randomblob is supported from SQLite 3.3.13 (2007-02-13)
-    //		case statement is supported from SQLite 2.4.4 (2002-03-24)
-    private static String[] SQL_SQLITE_TIME_REPLACEMENTS = {
-        // omitting original param
-        "case randomblob(<<<<NUMBLOBBYTES>>>>) when not null then 1 else 1 end ", // integer
-        "' | case randomblob(<<<<NUMBLOBBYTES>>>>) when not null then \"\" else \"\" end | '", // character/string (single quote)
-        "\" | case randomblob(<<<<NUMBLOBBYTES>>>>) when not null then \"\" else \"\" end | \"", // character/string (double quote)
-        "case randomblob(<<<<NUMBLOBBYTES>>>>) when not null then 1 else 1 end "
-                + SQL_ONE_LINE_COMMENT, // integer
-        "' | case randomblob(<<<<NUMBLOBBYTES>>>>) when not null then \"\" else \"\" end "
-                + SQL_ONE_LINE_COMMENT, // character/string (single quote)
-        "\" | case randomblob(<<<<NUMBLOBBYTES>>>>) when not null then \"\" else \"\" end "
-                + SQL_ONE_LINE_COMMENT, // character/string (double quote)
-
-        // with the original parameter
-        "<<<<ORIGINALVALUE>>>> * case randomblob(<<<<NUMBLOBBYTES>>>>) when not null then 1 else 1 end ", // integer
-        "<<<<ORIGINALVALUE>>>>' | case randomblob(<<<<NUMBLOBBYTES>>>>) when not null then \"\" else \"\" end | '", // character/string (single quote)
-        "<<<<ORIGINALVALUE>>>>\" | case randomblob(<<<<NUMBLOBBYTES>>>>) when not null then \"\" else \"\" end | \"", // character/string (double quote)
-        "<<<<ORIGINALVALUE>>>> * case randomblob(<<<<NUMBLOBBYTES>>>>) when not null then 1 else 1 end "
-                + SQL_ONE_LINE_COMMENT, // integer
-        "<<<<ORIGINALVALUE>>>>' | case randomblob(<<<<NUMBLOBBYTES>>>>) when not null then \"\" else \"\" end "
-                + SQL_ONE_LINE_COMMENT, // character/string (single quote)
-        "<<<<ORIGINALVALUE>>>>\" | case randomblob(<<<<NUMBLOBBYTES>>>>) when not null then \"\" else \"\" end "
-                + SQL_ONE_LINE_COMMENT, // character/string (double quote)
-    };
 
     /** if the following errors occur during the attack, it's a SQL injection vuln */
     private Pattern errorMessagePatterns[] = {
@@ -201,14 +167,6 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
         // ,""				//this isn't useful at all
     };
 
-    /** set depending on the attack strength / threshold */
-    private long maxBlobBytes = 0;
-
-    private long minBlobBytes = 100000;
-    private long parseDelayDifference = 0;
-    private long incrementalDelayIncreasesForAlert = 0;
-
-    private char[] RANDOM_PARAMETER_CHARS = "abcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A03_INJECTION,
@@ -259,42 +217,17 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
 
         // set up what we are allowed to do, depending on the attack strength that was set.
         if (this.getAttackStrength() == AttackStrength.LOW) {
-            doTimeBased = true;
-            doTimeMaxRequests = 0;
-            this.maxBlobBytes = 1000000000;
             doUnionBased = false;
             doUnionMaxRequests = 0;
         } else if (this.getAttackStrength() == AttackStrength.MEDIUM) {
-            doTimeBased = true;
-            doTimeMaxRequests = 4;
-            this.maxBlobBytes = 1000000000;
             doUnionBased = false;
             doUnionMaxRequests = 0;
         } else if (this.getAttackStrength() == AttackStrength.HIGH) {
-            doTimeBased = true;
-            doTimeMaxRequests = 20;
-            this.maxBlobBytes = 1000000000;
             doUnionBased = true;
             doUnionMaxRequests = 10;
         } else if (this.getAttackStrength() == AttackStrength.INSANE) {
-            doTimeBased = true;
-            doTimeMaxRequests = 100;
-            this.maxBlobBytes = 1000000000;
             doUnionBased = true;
             doUnionMaxRequests = 200;
-        }
-
-        // the allowable difference between a parse delay and an attack delay is controlled by the
-        // threshold
-        if (this.getAlertThreshold() == AlertThreshold.LOW) {
-            parseDelayDifference = 100;
-            incrementalDelayIncreasesForAlert = 1;
-        } else if (this.getAlertThreshold() == AlertThreshold.MEDIUM) {
-            parseDelayDifference = 200;
-            incrementalDelayIncreasesForAlert = 2;
-        } else if (this.getAlertThreshold() == AlertThreshold.HIGH) {
-            parseDelayDifference = 400;
-            incrementalDelayIncreasesForAlert = 3;
         }
     }
 
@@ -360,258 +293,12 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
             }
             // end of timing baseline check
 
-            int countTimeBasedRequests = 0;
             LOGGER.debug(
                     "Scanning URL [{}] [{}], [{}] with value [{}] for SQL Injection",
                     getBaseMsg().getRequestHeader().getMethod(),
                     getBaseMsg().getRequestHeader().getURI(),
                     paramName,
                     originalParamValue);
-
-            // SQLite specific time-based SQL injection checks
-            boolean foundTimeBased = false;
-            for (int timeBasedSQLindex = 0;
-                    timeBasedSQLindex < SQL_SQLITE_TIME_REPLACEMENTS.length
-                            && doTimeBased
-                            && countTimeBasedRequests < doTimeMaxRequests
-                            && !foundTimeBased;
-                    timeBasedSQLindex++) {
-                // since we have no means to create a deterministic delay in SQLite, we need to take
-                // a different approach:
-                // in each iteration, increase the number of random blobs for SQLite to create.  If
-                // we can detect an increasing delay, we know
-                // that the payload has been successfully injected.
-                int numberOfSequentialIncreases = 0;
-                String detectableDelayParameter = null;
-                long detectableDelay = 0;
-                String maxDelayParameter = null;
-                long maxDelay = 0;
-                HttpMessage detectableDelayMessage = null;
-                long previousDelay = originalTimeUsed;
-                boolean potentialTimeBasedSQLInjection = false;
-                boolean timeExceeded = false;
-
-                for (long numBlobsToCreate = minBlobBytes;
-                        numBlobsToCreate <= this.maxBlobBytes
-                                && !timeExceeded
-                                && numberOfSequentialIncreases < incrementalDelayIncreasesForAlert;
-                        numBlobsToCreate *= 10) {
-
-                    HttpMessage msgDelay = getNewMsg();
-                    String newTimeBasedInjectionValue =
-                            SQL_SQLITE_TIME_REPLACEMENTS[timeBasedSQLindex].replace(
-                                    "<<<<ORIGINALVALUE>>>>", originalParamValue);
-                    newTimeBasedInjectionValue =
-                            newTimeBasedInjectionValue.replace(
-                                    "<<<<NUMBLOBBYTES>>>>", Long.toString(numBlobsToCreate));
-                    setParameter(msgDelay, paramName, newTimeBasedInjectionValue);
-
-                    LOGGER.debug(
-                            "\nTrying '{}'. The number of Sequential Increases already is {}",
-                            newTimeBasedInjectionValue,
-                            numberOfSequentialIncreases);
-
-                    // send it.
-                    try {
-                        sendAndReceive(msgDelay);
-                        countTimeBasedRequests++;
-                    } catch (java.net.SocketTimeoutException e) {
-                        // to be expected occasionally, if the contains some parameters exploiting
-                        // time based SQL injection
-                        LOGGER.debug(
-                                "The time check query timed out on [{}] URL [{}] on field: [{}]",
-                                msgTimeBaseline.getRequestHeader().getMethod(),
-                                msgTimeBaseline.getRequestHeader().getURI(),
-                                paramName);
-                    }
-                    long modifiedTimeUsed = msgDelay.getTimeElapsedMillis();
-
-                    // before we do the time based checking, first check for a known error message
-                    // from the attack, indicating a SQL injection vuln
-                    for (Pattern errorMessagePattern : errorMessagePatterns) {
-                        Matcher matcher =
-                                errorMessagePattern.matcher(msgDelay.getResponseBody().toString());
-                        boolean errorFound = matcher.find();
-                        if (errorFound) {
-                            // Likely an error based SQL Injection. Raise it
-                            String extraInfo =
-                                    Constant.messages.getString(
-                                            "ascanrules.sqlinjection.sqlite.alert.errorbased.extrainfo",
-                                            errorMessagePattern);
-                            // raise the alert
-                            newAlert()
-                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                    .setUri(getBaseMsg().getRequestHeader().getURI().toString())
-                                    .setParam(paramName)
-                                    .setAttack(newTimeBasedInjectionValue)
-                                    .setOtherInfo(extraInfo)
-                                    .setEvidence(matcher.group())
-                                    .setMessage(msgDelay)
-                                    .raise();
-
-                            LOGGER.debug(
-                                    "A likely Error Based SQL Injection Vulnerability has been found with [{}] URL [{}] on field: [{}], by matching for pattern [{}]",
-                                    msgDelay.getRequestHeader().getMethod(),
-                                    msgDelay.getRequestHeader().getURI(),
-                                    paramName,
-                                    errorMessagePattern);
-                            foundTimeBased =
-                                    true; // yeah, I know. we found an error based, while looking
-                            // for a time based. bale out anyways.
-                            break; // out of the loop
-                        }
-                    }
-                    // outta the time based loop..
-                    if (foundTimeBased) break;
-
-                    // no error message detected from the time based attack.. continue looking for
-                    // time based injection point.
-
-                    // cap the time we will delay by to 10 seconds
-                    if (modifiedTimeUsed > 10000) timeExceeded = true;
-
-                    boolean parseTimeEquivalent = false;
-                    if (modifiedTimeUsed > previousDelay) {
-                        LOGGER.debug(
-                                "The response time {} is > the previous response time {}",
-                                modifiedTimeUsed,
-                                previousDelay);
-                        // in order to rule out false positives due to the increasing SQL parse time
-                        // for longer parameter values
-                        // we send a random (alphanumeric only) string value of the same length as
-                        // the attack parameter
-                        // we expect the response time for the SQLi attack to be greater than or
-                        // equal to the response time for
-                        // the random alphanumeric string parameter
-                        // if this is not the case, then we assume that the attack parameter is not
-                        // a potential SQL injection causing payload.
-                        HttpMessage msgParseDelay = getNewMsg();
-                        String parseDelayCheckParameter =
-                                RandomStringUtils.random(
-                                        newTimeBasedInjectionValue.length(),
-                                        RANDOM_PARAMETER_CHARS);
-                        setParameter(msgParseDelay, paramName, parseDelayCheckParameter);
-                        sendAndReceive(msgParseDelay);
-                        countTimeBasedRequests++;
-                        long parseDelayTimeUsed = msgParseDelay.getTimeElapsedMillis();
-
-                        // figure out if the attack delay and the (non-sql-injection) parse delay
-                        // are within X ms of each other..
-                        parseTimeEquivalent =
-                                (Math.abs(modifiedTimeUsed - parseDelayTimeUsed)
-                                        < this.parseDelayDifference);
-                        LOGGER.debug(
-                                "The parse time a random parameter of the same length is {}, so the attack and random parameter are {} equivalent (given the user defined attack threshold)",
-                                parseDelayTimeUsed,
-                                parseTimeEquivalent ? "" : "NOT ");
-                    }
-
-                    if (modifiedTimeUsed > previousDelay && !parseTimeEquivalent) {
-
-                        maxDelayParameter = newTimeBasedInjectionValue;
-                        maxDelay = modifiedTimeUsed;
-
-                        // potential for SQL injection, detectable with "numBlobsToCreate" random
-                        // blobs being created..
-                        numberOfSequentialIncreases++;
-                        if (!potentialTimeBasedSQLInjection) {
-                            LOGGER.debug(
-                                    "Setting the Detectable Delay parameter to '{}'",
-                                    newTimeBasedInjectionValue);
-                            detectableDelayParameter = newTimeBasedInjectionValue;
-                            detectableDelay = modifiedTimeUsed;
-                            detectableDelayMessage = msgDelay;
-                        }
-                        potentialTimeBasedSQLInjection = true;
-                    } else {
-                        // either no SQL injection, invalid SQL syntax, or timing difference is not
-                        // detectable with "numBlobsToCreate" random blobs being created.
-                        // keep trying with larger numbers of "numBlobsToCreate", since that's the
-                        // thing we can most easily control and verify
-                        // note also: if for some reason, an earlier attack with a smaller number of
-                        // blobs indicated there might be a vulnerability
-                        // then this case will rule that out if it was a fluke...
-                        // the timing delay must keep increasing, as the number of blobs is
-                        // increased.
-                        potentialTimeBasedSQLInjection = false;
-                        numberOfSequentialIncreases = 0;
-                        detectableDelayParameter = null;
-                        detectableDelay = 0;
-                        detectableDelayMessage = null;
-                        maxDelayParameter = null;
-                        maxDelay = 0;
-                        // do not break at this point, since we may simply need to keep increasing
-                        // numBlobsToCreate to
-                        // a point where we can detect the resulting delay
-                    }
-                    LOGGER.debug(
-                            "Time Based SQL Injection test for {} random blob bytes: [{}] on field: [{}] with value [{}] took {}ms, where the original took {}ms.",
-                            numBlobsToCreate,
-                            newTimeBasedInjectionValue,
-                            paramName,
-                            newTimeBasedInjectionValue,
-                            modifiedTimeUsed,
-                            originalTimeUsed);
-                    previousDelay = modifiedTimeUsed;
-
-                    // bale out if we were asked nicely
-                    if (isStop()) {
-                        LOGGER.debug("Stopping the scan due to a user request");
-                        return;
-                    }
-                } // end of for loop to increase the number of random blob bytes to create
-
-                // the number of times that we could sequentially increase the delay by increasing
-                // the "number of random blob bytes to create"
-                // is the basis for the threshold of the alert.  In some cases, the user may want to
-                // see a solid increase in delay
-                // for say 4 or 5 iterations, in order to be confident the vulnerability exists.  In
-                // other cases, the user may be happy with just 2 sequential increases...
-                LOGGER.debug("Number of sequential increases: {}", numberOfSequentialIncreases);
-                if (numberOfSequentialIncreases >= this.incrementalDelayIncreasesForAlert) {
-                    // Likely a SQL Injection. Raise it
-                    String extraInfo =
-                            Constant.messages.getString(
-                                    "ascanrules.sqlinjection.sqlite.alert.timebased.extrainfo",
-                                    detectableDelayParameter,
-                                    detectableDelay,
-                                    maxDelayParameter,
-                                    maxDelay,
-                                    originalParamValue,
-                                    originalTimeUsed);
-
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setUri(getBaseMsg().getRequestHeader().getURI().toString())
-                            .setParam(paramName)
-                            .setAttack(detectableDelayParameter)
-                            .setOtherInfo(extraInfo)
-                            .setEvidence(extraInfo)
-                            .setMessage(detectableDelayMessage)
-                            .raise();
-
-                    if (detectableDelayMessage != null)
-                        LOGGER.debug(
-                                "A likely Time Based SQL Injection Vulnerability has been found with [{}] URL [{}] on field: [{}]",
-                                detectableDelayMessage.getRequestHeader().getMethod(),
-                                detectableDelayMessage.getRequestHeader().getURI(),
-                                paramName);
-
-                    // outta the time based loop..
-                    foundTimeBased = true;
-                    break;
-                } // the user-define threshold has been exceeded. raise it.
-
-                // outta the time based loop..
-                if (foundTimeBased) break;
-
-                // bale out if we were asked nicely
-                if (isStop()) {
-                    LOGGER.debug("Stopping the scan due to a user request");
-                    return;
-                }
-            } // for each time based SQL index
-            // end of check for SQLite time based SQL Injection
 
             // TODO: fix this logic, cos it's broken already. it reports version 2.2 and 4.0..
             // (false positives ahoy)

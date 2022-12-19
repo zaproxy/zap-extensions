@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- Move time based attacks to their own scan rules (Issue 7341).
 
 ## [42] - 2022-12-13
 ### Added

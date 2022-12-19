@@ -55,14 +55,19 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 This rule submits *NIX and Windows OS commands as URL parameter values to determine whether or not the web application is passing unchecked
 user input directly to the underlying OS. The injection strings consist of meta-characters that may be interpreted by the OS
 as join commands along with a payload that should generate output in the response if the application is vulnerable. If the content of a response body
-matches the payload, the scanner raises an alert and returns immediately. In the event that none of the error-based matching attempts
-return output in the response, the scanner will attempt a blind injection attack by submitting sleep instructions as the payload and comparing the elapsed time between sending the request
+matches the payload, the scanner raises an alert and returns immediately.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CommandInjectionScanRule.java">CommandInjectionScanRule.java</a>
+
+<H2>Command Injection Timing</H2>
+
+This rule attempts a blind injection attack by submitting sleep instructions as the payload and comparing the elapsed time between sending the request
 and receiving the response against a heuristic time-delay lower limit. If the elapsed time is greater than this limit, an alert is raised with medium confidence
 and the scanner returns immediately.
 <br>
 Post 2.5.0 you can change the length of time used for the blind injection attack by changing the <code>rules.common.sleep</code> parameter via the Options 'Rule configuration' panel.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CommandInjectionScaRule.java">CommandInjectionScaRule.java</a>
+  Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CommandInjectionTimingScanRule.java">CommandInjectionTimingScanRule.java</a>
 
 <H2>Cross Site Scripting (Reflected)</H2>
 
@@ -327,6 +332,11 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 This active scan rule attempts to inject SQLite specific commands into parameter values and analyzes the server's responses to see if the commands were effectively executed on the server (indicating a successful SQL injection attack).
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/SqlInjectionSqLiteScanRule.java">SqlInjectionSqLiteScanRule.java</a>
+
+<H2>Time Based SQL Injection - SQLite</H2>
+This active scan rule attempts to inject time based SQLite specific commands into parameter values and analyzes the server's responses to see if the commands were effectively executed on the server (indicating a successful SQL injection attack).
+<p>
+  Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/SqlInjectionSqLiteTimingScanRule.java">SqlInjectionSqLiteTimingScanRule.java</a>
 
 <H2>Trace.axd Information Leak</H2>
 Tests to see if Trace Viewer (trace.axd) is available. Although this component is convenient for developers and 
