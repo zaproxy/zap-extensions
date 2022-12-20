@@ -167,7 +167,7 @@ public abstract class AbstractAMFTextView implements HttpPanelView, HttpPanelVie
                             .append("]: ")
                             .append(StringEscapeUtils.escapeHtml4(headerObject.toString()))
                             .append("<br />");
-                } catch (Exception exeception) {
+                } catch (Exception exception) {
                     amfHumanReadable.append("Header [").append(i).append("] was unparseable<br />");
                 }
             }
