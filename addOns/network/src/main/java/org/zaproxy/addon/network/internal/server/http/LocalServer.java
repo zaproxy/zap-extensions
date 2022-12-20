@@ -25,6 +25,7 @@ import io.netty.util.concurrent.EventExecutorGroup;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.concurrent.Executor;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.network.internal.ChannelAttributes;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateService;
@@ -42,6 +43,7 @@ import org.zaproxy.addon.network.internal.server.http.handlers.ZapApiHandler;
 /** A local server/proxy, ones managed by the user. */
 public class LocalServer extends HttpServer {
 
+    private final Executor executor;
     private final LegacyProxyListenerHandler legacyHandler;
     private final PassThroughHandler passThroughHandler;
     private final HttpSenderHandler httpSenderHandler;
@@ -61,6 +63,7 @@ public class LocalServer extends HttpServer {
      *
      * @param group the event loop group.
      * @param mainHandlerExecutor the event executor for the main handler.
+     * @param executor the executor to process the HTTP messages.
      * @param certificateService the certificate service.
      * @param legacyHandler the handler for legacy (core) listeners.
      * @param passThroughHandler the pass-through handler.
@@ -72,6 +75,7 @@ public class LocalServer extends HttpServer {
     public LocalServer(
             NioEventLoopGroup group,
             EventExecutorGroup mainHandlerExecutor,
+            Executor executor,
             ServerCertificateService certificateService,
             LegacyProxyListenerHandler legacyHandler,
             PassThroughHandler passThroughHandler,
@@ -80,6 +84,7 @@ public class LocalServer extends HttpServer {
             SerialiseState serialiseState,
             Model model) {
         super(group, mainHandlerExecutor, certificateService);
+        this.executor = executor;
         this.legacyHandler = legacyHandler;
         this.passThroughHandler = Objects.requireNonNull(passThroughHandler);
         this.httpSenderHandler = httpSenderHandler;
@@ -99,6 +104,7 @@ public class LocalServer extends HttpServer {
 
     private MainServerHandler createLocalServerHandler() {
         return new LocalServerHandler(
+                executor,
                 legacyHandler,
                 Arrays.asList(
                         ConnectReceivedHandler.getSetAndContinueInstance(),

@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Use the available response content when the Content-Length is more than what is available.
 - Properly persist proxy error responses.
 - Correctly manage cookies with domain and path attributes (Issue 7631).
+- Do not prevent serving internal requests to the local servers/proxies.
 
 ## [0.5.0] - 2022-11-09
 ### Fixed

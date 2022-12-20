@@ -67,7 +67,10 @@ public class TestHttpServer extends HttpServer {
         super(group, mainHandlerExecutor, CERTIFICATE_SERVICE);
 
         receivedMessages = Collections.synchronizedList(new ArrayList<>());
-        setMainServerHandler(() -> new MainServerHandler(Collections.singletonList(this::handle)));
+        setMainServerHandler(
+                () ->
+                        new MainServerHandler(
+                                cmd -> cmd.run(), Collections.singletonList(this::handle)));
     }
 
     @Override

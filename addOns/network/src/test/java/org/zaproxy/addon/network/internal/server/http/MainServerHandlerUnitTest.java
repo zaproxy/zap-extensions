@@ -74,7 +74,7 @@ class MainServerHandlerUnitTest {
                 new EmbeddedChannel(
                         new HttpRequestDecoder(),
                         HttpResponseEncoder.getInstance(),
-                        new MainServerHandler(Arrays.asList(handler1, handler2)),
+                        new MainServerHandler(cmd -> cmd.run(), Arrays.asList(handler1, handler2)),
                         new SimpleChannelInboundHandler<HttpMessage>() {
 
                             @Override
@@ -100,7 +100,9 @@ class MainServerHandlerUnitTest {
         // Given
         List<HttpMessageHandler> handlers = null;
         // When / Then
-        assertThrows(NullPointerException.class, () -> new MainServerHandler(handlers));
+        assertThrows(
+                NullPointerException.class,
+                () -> new MainServerHandler(cmd -> cmd.run(), handlers));
     }
 
     @Test

@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.Executor;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.network.internal.handlers.LegacySocketAdapter;
 import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
@@ -42,13 +43,16 @@ public class MainProxyHandler extends MainServerHandler {
      * Constructs a {@code HttpMessageServerBridge} with the given legacy handler and message
      * handlers.
      *
+     * @param executor the executor to process the HTTP messages.
      * @param legacyHandler the legacy listeners.
      * @param handlers the message handlers.
      * @throws NullPointerException if any of the parameters is {@code null}.
      */
     public MainProxyHandler(
-            LegacyProxyListenerHandler legacyHandler, List<HttpMessageHandler> handlers) {
-        super(handlers);
+            Executor executor,
+            LegacyProxyListenerHandler legacyHandler,
+            List<HttpMessageHandler> handlers) {
+        super(executor, handlers);
 
         this.legacyHandler = Objects.requireNonNull(legacyHandler);
     }

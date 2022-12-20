@@ -52,6 +52,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -172,6 +174,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     private PassThroughHandler passThroughHandler;
     private AliasChecker aliasChecker;
     private Map<String, LocalServer> localServers;
+    private ExecutorService blockingServerExecutor;
     private LocalServer mainProxyServer;
     private ServerInfo mainProxyServerInfo;
     private LocalServerHandler.SerialiseState serialiseForBreak;
@@ -254,6 +257,9 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     @Override
     public void init() {
         localServers = Collections.synchronizedMap(new HashMap<>());
+        blockingServerExecutor =
+                Executors.newCachedThreadPool(
+                        new DefaultThreadFactory("ZAP-IO-Server", Thread.MAX_PRIORITY));
 
         extensionBreak =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionBreak.class);
@@ -380,7 +386,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         Objects.requireNonNull(handler);
         List<HttpMessageHandler> handlers =
                 Arrays.asList(ConnectReceivedHandler.getSetAndOverrideInstance(), handler);
-        return createHttpServer(() -> new MainServerHandler(handlers));
+        return createHttpServer(() -> new MainServerHandler(blockingServerExecutor, handlers));
     }
 
     private Server createHttpServer(Supplier<MainServerHandler> handler) {
@@ -442,7 +448,10 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                         DecodeResponseHandler.getEnabledInstance(),
                         handler,
                         new HttpSenderHandler(httpSender));
-        return createHttpServer(() -> new MainProxyHandler(legacyProxyListenerHandler, handlers));
+        return createHttpServer(
+                () ->
+                        new MainProxyHandler(
+                                blockingServerExecutor, legacyProxyListenerHandler, handlers));
     }
 
     @Override
@@ -763,6 +772,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         return new LocalServer(
                 getMainEventLoopGroup(),
                 getMainEventExecutorGroup(),
+                blockingServerExecutor,
                 serverCertificateService,
                 legacyProxyListenerHandler,
                 passThroughHandler,
@@ -1215,6 +1225,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     @Override
     public void destroy() {
         shutdownEventGroups();
+
+        blockingServerExecutor.shutdownNow();
 
         if (httpSenderNetwork != null) {
             httpSenderNetwork.close();
