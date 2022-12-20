@@ -55,12 +55,12 @@ spotless {
 }
 
 dependencies {
-    val nettyVersion = "4.1.84.Final"
+    val nettyVersion = "4.1.86.Final"
     implementation("io.netty:netty-codec:$nettyVersion")
     implementation("io.netty:netty-handler:$nettyVersion")
     implementation("io.netty:netty-codec-http2:$nettyVersion")
 
-    hc("org.apache.httpcomponents.client5:httpclient5:5.2")
+    hc("org.apache.httpcomponents.client5:httpclient5:5.2.1")
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.19.0") {
         // Provided by ZAP.
         exclude(group = "org.apache.logging.log4j")
