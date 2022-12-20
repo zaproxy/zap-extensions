@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.Executor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;
@@ -51,16 +52,19 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
 
     private static final Logger LOGGER = LogManager.getLogger(MainServerHandler.class);
 
+    protected final Executor executor;
     protected final List<HttpMessageHandler> pipeline;
     protected final DefaultHttpMessageHandlerContext handlerContext;
 
     /**
      * Constructs a {@code MainServerHandler} with the given handlers.
      *
+     * @param executor the executor to process the HTTP messages.
      * @param handlers the message handlers.
      * @throws NullPointerException if the given list is {@code null}.
      */
-    public MainServerHandler(List<HttpMessageHandler> handlers) {
+    public MainServerHandler(Executor executor, List<HttpMessageHandler> handlers) {
+        this.executor = executor;
         this.pipeline = Objects.requireNonNull(handlers);
         this.handlerContext = new DefaultHttpMessageHandlerContext();
     }
@@ -71,15 +75,18 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
             throw (Exception) msg.getUserObject();
         }
 
-        ctx.channel().attr(ChannelAttributes.PROCESSING_MESSAGE).set(Boolean.TRUE);
-        try {
-            process(ctx, msg);
-        } finally {
-            ctx.channel().attr(ChannelAttributes.PROCESSING_MESSAGE).set(Boolean.FALSE);
-        }
+        executor.execute(
+                () -> {
+                    ctx.channel().attr(ChannelAttributes.PROCESSING_MESSAGE).set(Boolean.TRUE);
+                    try {
+                        process(ctx, msg);
+                    } finally {
+                        ctx.channel().attr(ChannelAttributes.PROCESSING_MESSAGE).set(Boolean.FALSE);
+                    }
+                });
     }
 
-    private void process(ChannelHandlerContext ctx, HttpMessage msg) throws Exception {
+    private void process(ChannelHandlerContext ctx, HttpMessage msg) {
         handlerContext.reset();
         Channel channel = ctx.channel();
         handlerContext.setRecursive(channel.attr(ChannelAttributes.RECURSIVE_MESSAGE).get());

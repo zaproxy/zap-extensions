@@ -36,6 +36,7 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.util.Attribute;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Executor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
@@ -47,6 +48,7 @@ import org.zaproxy.addon.network.server.HttpMessageHandler;
 /** Unit test for {@link MainProxyHandler}. */
 class MainProxyHandlerUnitTest {
 
+    private Executor executor;
     private ChannelHandlerContext ctx;
     private HttpResponseHeader responseHeader;
     private HttpMessage msg;
@@ -68,7 +70,8 @@ class MainProxyHandlerUnitTest {
         msg = mock(HttpMessage.class);
         given(msg.getResponseHeader()).willReturn(responseHeader);
         legacyHandler = mock(LegacyProxyListenerHandler.class);
-        handler = new MainProxyHandler(legacyHandler, Collections.emptyList());
+        executor = cmd -> cmd.run();
+        handler = new MainProxyHandler(executor, legacyHandler, Collections.emptyList());
     }
 
     @Test
@@ -78,7 +81,8 @@ class MainProxyHandlerUnitTest {
         List<HttpMessageHandler> handlers = Collections.emptyList();
         // When / Then
         assertThrows(
-                NullPointerException.class, () -> new MainProxyHandler(legacyHandler, handlers));
+                NullPointerException.class,
+                () -> new MainProxyHandler(executor, legacyHandler, handlers));
     }
 
     @Test
@@ -87,7 +91,8 @@ class MainProxyHandlerUnitTest {
         List<HttpMessageHandler> handlers = null;
         // When / Then
         assertThrows(
-                NullPointerException.class, () -> new MainProxyHandler(legacyHandler, handlers));
+                NullPointerException.class,
+                () -> new MainProxyHandler(executor, legacyHandler, handlers));
     }
 
     @Test

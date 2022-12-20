@@ -21,6 +21,7 @@ package org.zaproxy.addon.network.internal.server.http;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Executor;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
@@ -37,17 +38,19 @@ public class LocalServerHandler extends MainProxyHandler {
     /**
      * Constructs a {@code LocalServer} with the given properties.
      *
+     * @param executor the executor to process the HTTP messages.
      * @param legacyHandler the handler for legacy (core) listeners.
      * @param handlers the message handlers.
      * @param serialiseState the serialisation state.
      * @param model the model to obtain the proxy excludes.
      */
     public LocalServerHandler(
+            Executor executor,
             LegacyProxyListenerHandler legacyHandler,
             List<HttpMessageHandler> handlers,
             SerialiseState serialiseState,
             Model model) {
-        super(legacyHandler, handlers);
+        super(executor, legacyHandler, handlers);
 
         this.serialiseState = serialiseState;
         this.model = Objects.requireNonNull(model);
