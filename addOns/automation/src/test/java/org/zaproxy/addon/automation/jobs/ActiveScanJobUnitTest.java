@@ -372,6 +372,25 @@ class ActiveScanJobUnitTest {
     }
 
     @Test
+    void shouldReturnWarningOnUnexpectedElement() throws MalformedURLException {
+        // Given
+        ActiveScanJob job = new ActiveScanJob();
+        AutomationProgress progress = new AutomationProgress();
+        LinkedHashMap<String, String> data = new LinkedHashMap<>();
+        data.put("unexpected", "data");
+
+        // When
+        job.setJobData(data);
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(
+                progress.getWarnings().get(0), is(equalTo("!automation.error.element.unknown!")));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+    }
+
+    @Test
     void shouldReturnScanPolicyForDefaultData() throws MalformedURLException {
         // Given
         ActiveScanJob job = new ActiveScanJob();
