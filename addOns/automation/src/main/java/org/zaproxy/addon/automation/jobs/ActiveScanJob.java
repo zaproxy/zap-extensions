@@ -82,13 +82,34 @@ public class ActiveScanJob extends AutomationJob {
         if (jobData == null) {
             return;
         }
-        LinkedHashMap<?, ?> params = (LinkedHashMap<?, ?>) jobData.get("parameters");
-        JobUtils.applyParamsToObject(params, this.parameters, this.getName(), null, progress);
+
+        for (Object key : jobData.keySet().toArray()) {
+            switch (key.toString()) {
+                case "parameters":
+                    LinkedHashMap<?, ?> params = (LinkedHashMap<?, ?>) jobData.get(key);
+                    JobUtils.applyParamsToObject(
+                            params, this.parameters, this.getName(), null, progress);
+                    break;
+                case "policyDefinition":
+                    // Parse the policy defn
+                    parsePolicyDefinition(jobData.get(key), progress);
+                    break;
+                case "type":
+                    // Handled before we get here
+                    break;
+                default:
+                    progress.warn(
+                            Constant.messages.getString(
+                                    "automation.error.element.unknown", this.getName(), key));
+
+                    break;
+            }
+        }
 
         this.verifyUser(this.getParameters().getUser(), progress);
+    }
 
-        // Parse the policy defn
-        Object policyDefn = this.getJobData().get("policyDefinition");
+    private void parsePolicyDefinition(Object policyDefn, AutomationProgress progress) {
         if (policyDefn instanceof LinkedHashMap<?, ?>) {
             LinkedHashMap<?, ?> policyDefnData = (LinkedHashMap<?, ?>) policyDefn;
 
