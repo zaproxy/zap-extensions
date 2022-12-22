@@ -121,6 +121,7 @@ import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiElement;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.brk.ExtensionBreak;
+import org.zaproxy.zap.network.HttpSenderImpl;
 import org.zaproxy.zap.utils.ZapPortNumberSpinner;
 
 public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineListener {
@@ -143,6 +144,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     private static final int ARG_HOST_IDX = 3;
     private static final int ARG_PORT_IDX = 4;
+
+    private Boolean dynamicUnload;
 
     private CloseableHttpSenderImpl<?> httpSenderNetwork;
 
@@ -1302,8 +1305,16 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     @Override
     public boolean canUnload() {
-        // Do not allow, the HttpSender implementation is used everywhere.
-        return false;
+        if (dynamicUnload != null) {
+            return dynamicUnload;
+        }
+
+        try {
+            dynamicUnload = HttpSenderImpl.class.getMethod("restoreState", Object.class) != null;
+        } catch (Exception e) {
+            dynamicUnload = false;
+        }
+        return dynamicUnload;
     }
 
     @Override
