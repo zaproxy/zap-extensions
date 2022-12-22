@@ -94,6 +94,8 @@ public class ActiveScanJob extends AutomationJob {
                     // Parse the policy defn
                     parsePolicyDefinition(jobData.get(key), progress);
                     break;
+                case "name":
+                case "tests":
                 case "type":
                     // Handled before we get here
                     break;
