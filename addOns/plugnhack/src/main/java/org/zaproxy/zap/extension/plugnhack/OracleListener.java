@@ -20,7 +20,7 @@
 package org.zaproxy.zap.extension.plugnhack;
 
 /**
- * A listenner that will be informed of any invocations of the (client side) oracle
+ * A listener that will be informed of any invocations of the (client side) oracle
  *
  * @author simon
  */
