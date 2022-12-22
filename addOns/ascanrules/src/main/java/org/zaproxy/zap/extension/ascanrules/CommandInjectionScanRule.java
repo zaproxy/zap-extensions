@@ -633,14 +633,13 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
                                     requestSender,
                                     TIME_CORRELATION_ERROR_RANGE,
                                     TIME_SLOPE_ERROR_RANGE);
-                } catch (SocketException e) {
+                } catch (SocketException ex) {
                     log.debug(
                             "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
-                            e.getClass().getName(),
-                            e.getMessage(),
-                            getBaseMsg().getRequestHeader().getURI());
-                    // Something went wrong, move to next blind iteration
-                    continue;
+                            ex.getClass().getName(),
+                            ex.getMessage(),
+                            msg.getRequestHeader().getURI());
+                    continue; // Something went wrong, move to next blind iteration
                 }
 
                 if (isInjectable) {
@@ -652,7 +651,6 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
                             paramValue);
                     String otherInfo = getOtherInfo("time-based", paramValue);
 
-                    // raise the alert directly with MEDIUM Confidence...
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
                             .setParam(paramName)
@@ -667,7 +665,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
                     return true;
                 }
             } catch (IOException ex) {
-                // Do not try to internationalise this... we need an error message in any event...
+                // Do not try to internationalise this.. we need an error message in any event..
                 // if it's in English, it's still better than not having it at all.
                 log.warn(
                         "Blind Command Injection vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
