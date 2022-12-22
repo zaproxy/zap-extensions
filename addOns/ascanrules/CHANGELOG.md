@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Command Injection Scan Rule: Time-based blind detection heuristic has been replaced with linear regression.
+
 ### Fixed
 - SQL rule should not target NoSQL Dbs.
 
@@ -12,7 +15,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The Directory Browsing scan rule now includes example alert functionality for documentation generation purposes (Issue 6119).
 - Use lower case HTTP field names for compatibility with HTTP/2.
 - Maintenance changes.
-- Command Injection Scan Rule: Time-based blind detection heuristic has been replaced with linear regression.
 
 ### Fixed
 - False positive in case of javascript: protocol xss attacks, when attack payload is modified by the application (Issue 6013).
