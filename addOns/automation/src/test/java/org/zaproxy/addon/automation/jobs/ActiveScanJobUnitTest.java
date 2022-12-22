@@ -377,6 +377,9 @@ class ActiveScanJobUnitTest {
         ActiveScanJob job = new ActiveScanJob();
         AutomationProgress progress = new AutomationProgress();
         LinkedHashMap<String, String> data = new LinkedHashMap<>();
+        data.put("name", "blah");
+        data.put("tests", "");
+        // The only invalid one
         data.put("unexpected", "data");
 
         // When
@@ -385,6 +388,7 @@ class ActiveScanJobUnitTest {
 
         // Then
         assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.getWarnings().size(), is(equalTo(1)));
         assertThat(
                 progress.getWarnings().get(0), is(equalTo("!automation.error.element.unknown!")));
         assertThat(progress.hasErrors(), is(equalTo(false)));
