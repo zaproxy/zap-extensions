@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Use case insensitive HTTP field name check in Insufficient Site Isolation Against Spectre Vulnerability scan rule.
 
+### Changed
+- Maintenance changes.
+
 ## [37] - 2022-10-27
 ### Changed
 - Update minimum ZAP version to 2.12.0.

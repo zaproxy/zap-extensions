@@ -38,8 +38,8 @@ import org.zaproxy.addon.commonlib.http.HttpDateUtils;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
- * Detect "storable" and "cacheable" reponses. "Storable" implies that the response can be stored in
- * some manner by the caching server, even if it is not served in response to any requests.
+ * Detect "storable" and "cacheable" responses. "Storable" implies that the response can be stored
+ * in some manner by the caching server, even if it is not served in response to any requests.
  * "Cacheable" responses are responses that are served by the caching server in response to some
  * request. Unlike "CacheControlScanner", this rule does not attempt to determine if the various
  * cache settings are "incorrectly" set (since that depends on the response contents, and on the
@@ -516,7 +516,7 @@ public class CacheableScanRule extends PluginPassiveScanner {
                     if (expiresHeadersFound > 1) {
                         expiresHeader = null;
                         logger.debug(
-                                "{} had multiple caching lifetime expirys defined by an HTTP response header 'Expires'. Invalidating all of these!",
+                                "{} had multiple caching lifetime expiries defined by an HTTP response header 'Expires'. Invalidating all of these!",
                                 msg.getRequestHeader().getURI());
                     } else {
                         // we now have a single "expiry".

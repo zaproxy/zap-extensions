@@ -39,7 +39,7 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.http.HttpDateUtils;
 
 /* All test-cases should raise storeable and cacheable alerts
- * or should verfiy the absence of exceptions.
+ * or should verify the absence of exceptions.
  */
 class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanRule> {
 

@@ -84,7 +84,7 @@ class UserControlledJavascriptEventScanRuleUnitTest
     }
 
     @Test
-    void shouldNotRaiseAlertIfResponsehasNoContentType() {
+    void shouldNotRaiseAlertIfResponseHasNoContentType() {
         // Given
         HttpMessage msg = createMessage();
         msg.getResponseHeader()
