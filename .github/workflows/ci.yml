@@ -25,5 +25,12 @@ jobs:
           java-version: ${{ matrix.java }}
       - uses: gradle/wrapper-validation-action@v1
       - uses: gradle/gradle-build-action@v2
+        with:
+          gradle-home-cache-includes: |
+            caches
+            notifications
+            wdm
       - run: ./gradlew -Dorg.gradle.jvmargs=-Xmx2g assemble
+        env:
+          WDM_CACHEPATH: "~/.gradle/wdm"
       - run: ./gradlew check
