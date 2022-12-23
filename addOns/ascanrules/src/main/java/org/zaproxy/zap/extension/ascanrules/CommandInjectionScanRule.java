@@ -638,7 +638,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
                             "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
                             ex.getClass().getName(),
                             ex.getMessage(),
-                            msg.getRequestHeader().getURI());
+                            message.get().getRequestHeader().getURI());
                     continue; // Something went wrong, move to next blind iteration
                 }
 
