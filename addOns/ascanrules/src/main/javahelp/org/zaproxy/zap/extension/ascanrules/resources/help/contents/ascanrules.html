@@ -195,7 +195,7 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 
 This rule submits requests with parameter values known to cause errors to be displayed to the user if handled improperly. Responses are checked to make sure that they return
 a server error status code, then compared with a normal HTTP response to make sure it does not raise an alert if the bad parameter has no effect on output. Finally, the content
-of the reponse body is compared against various patterns that may be found in Java servlet, Microsoft VBScript, OLE DB, JET, PHP and Tomcat errors. If a match is found, an alert is raised and
+of the response body is compared against various patterns that may be found in Java servlet, Microsoft VBScript, OLE DB, JET, PHP and Tomcat errors. If a match is found, an alert is raised and
 the scanner returns immediately.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/ParameterTamperScanRule.java">ParameterTamperScanRule.java</a>
@@ -235,7 +235,7 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 <H2>Source Code Disclosure - CVE-2012-1823</H2>
 Exploit CVE-2012-1823 to disclose server-side PHP source code on a PHP-CGI based web server.<br>
 Only analyzes responses that are text based (HTML, JSON, XML, etc.), in order to avoid false positives which may occur with image or other binary content.<br>
-JavaScript responses are only anaylzed when a LOW alert threshold is set.
+JavaScript responses are only analyzed when a LOW alert threshold is set.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/SourceCodeDisclosureCve20121823ScanRule.java">SourceCodeDisclosureCve20121823ScanRule.java</a>
 
