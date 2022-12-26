@@ -89,6 +89,10 @@ jobs:
           git add .
           git commit -m "Webdriver Update" -m "geckodriver update to $GECKO_VERS" --signoff
         fi
+        if [ "$CHROME_VERS" == "null" ] || [ "$GECKO_VERS" == "null" ]; then
+          echo "Could not retrieve one (or both) of the new version identifiers"
+          exit
+        fi
         ## If there are changes: push and PR
         if [ $IS_UPDT -eq 1 ]; then
           git push --set-upstream origin $BRANCH --force
