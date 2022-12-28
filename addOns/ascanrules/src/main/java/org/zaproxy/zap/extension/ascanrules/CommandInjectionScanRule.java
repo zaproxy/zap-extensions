@@ -23,13 +23,13 @@ import static org.zaproxy.zap.extension.ascanrules.utils.Constants.NULL_BYTE_CHA
 
 import java.io.IOException;
 import java.net.SocketException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.configuration.ConversionException;
@@ -42,6 +42,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.zap.extension.ascanrules.timing.TimingUtils;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
@@ -208,12 +209,18 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
         NIX_OS_PAYLOADS.put("&&" + insertedCMD + NULL_BYTE_CHARACTER, NIX_CTRL_PATTERN);
     }
 
-    // Coefficient used for a time-based query delay checking (must be >= 7)
-    private static final int TIME_STDEV_COEFF = 7;
     /** The default number of seconds used in time-based attacks (i.e. sleep commands). */
     private static final int DEFAULT_TIME_SLEEP_SEC = 5;
-    // Standard deviation limit in milliseconds (long requests deviate from a correct model)
-    public static final double WARN_TIME_STDEV = 0.5 * 1000;
+
+    // time-based attack detection will not send more than the following number of requests
+    private static final int BLIND_REQUEST_LIMIT = 5;
+    // time-based attack detection will try to take less than the following number of seconds
+    // note: detection of this length will generally only happen in the positive (detecting) case.
+    private static final double BLIND_SECONDS_LIMIT = 20.0;
+
+    // error range allowable for statistical time-based blind attacks (0-1.0)
+    private static final double TIME_CORRELATION_ERROR_RANGE = 0.15;
+    private static final double TIME_SLOPE_ERROR_RANGE = 0.30;
 
     // *NIX Blind OS Command constants
     private static final String NIX_BLIND_TEST_CMD = "sleep {0}";
@@ -500,8 +507,6 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
         String payload;
         String paramValue;
         Iterator<String> it = osPayloads.keySet().iterator();
-        List<Long> responseTimes = new ArrayList<>(targetCount);
-        long elapsedTime;
         boolean firstPayload = true;
 
         // -----------------------------------------------
@@ -536,8 +541,6 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
                             msg.getRequestHeader().getURI());
                     continue; // Something went wrong, move to next payload iteration
                 }
-                elapsedTime = msg.getTimeElapsedMillis();
-                responseTimes.add(elapsedTime);
 
                 // Check if the injected content has been evaluated and printed
                 String content = msg.getResponseBody().toString();
@@ -592,51 +595,54 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
         // -----------------------------------------------
         // Check 2: Time-based Blind OS Command Injection
         // -----------------------------------------------
-        // Check for a sleep shell execution according to
-        // the previous experimented request time execution
-        // It uses deviations and average for the real delay checking...
-        // 7? =	99.9999999997440% of the values
-        // so response time should be less than 7*stdev([normal response times])
-        // Math reference: http://www.answers.com/topic/standard-deviation
+        // Check for a sleep shell execution by using
+        // linear regression to check for a correlation
+        // between requested delay and actual delay.
         // -----------------------------------------------
-        double deviation = getResponseTimeDeviation(responseTimes);
-        double lowerLimit =
-                (deviation >= 0)
-                        ? getResponseTimeAverage(responseTimes) + TIME_STDEV_COEFF * deviation
-                        : timeSleepSeconds * 1000;
 
         it = blindOsPayloads.iterator();
 
-        String timeSleepSecondsStr = String.valueOf(timeSleepSeconds);
         for (int i = 0; it.hasNext() && (i < blindTargetCount); i++) {
-            HttpMessage msg = getNewMsg();
-            payload = it.next();
+            AtomicReference<HttpMessage> message = new AtomicReference<>();
+            String sleepPayload = it.next();
+            paramValue = value + sleepPayload.replace("{0}", String.valueOf(timeSleepSeconds));
 
-            paramValue = value + payload.replace("{0}", timeSleepSecondsStr);
-            setParameter(msg, paramName, paramValue);
+            // the function that will send each request
+            TimingUtils.RequestSender requestSender =
+                    x -> {
+                        HttpMessage msg = getNewMsg();
+                        message.set(msg);
+                        String finalPayload =
+                                value + sleepPayload.replace("{0}", String.valueOf(x));
+                        setParameter(msg, paramName, finalPayload);
+                        log.debug("Testing [{}] = [{}]", paramName, finalPayload);
 
-            log.debug("Testing [{}] = [{}]", paramName, paramValue);
+                        // send the request and retrieve the response
+                        sendAndReceive(msg, false);
+                        return msg.getTimeElapsedMillis() / 1000.0;
+                    };
 
+            boolean isInjectable;
             try {
-                // Send the request and retrieve the response
                 try {
-                    sendAndReceive(msg, false);
+                    // use TimingUtils to detect a response to sleep payloads
+                    isInjectable =
+                            TimingUtils.checkTimingDependence(
+                                    BLIND_REQUEST_LIMIT,
+                                    BLIND_SECONDS_LIMIT,
+                                    requestSender,
+                                    TIME_CORRELATION_ERROR_RANGE,
+                                    TIME_SLOPE_ERROR_RANGE);
                 } catch (SocketException ex) {
                     log.debug(
                             "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
                             ex.getClass().getName(),
                             ex.getMessage(),
-                            msg.getRequestHeader().getURI());
+                            message.get().getRequestHeader().getURI());
                     continue; // Something went wrong, move to next blind iteration
                 }
-                elapsedTime = msg.getTimeElapsedMillis();
 
-                // Check if enough time has passed
-                if (elapsedTime >= lowerLimit && elapsedTime > timeSleepSeconds * 1000) {
-
-                    // Probably we've to confirm it launching again the query
-                    // But we arise the alert directly with MEDIUM Confidence...
-
+                if (isInjectable) {
                     // We Found IT!
                     // First do logging
                     log.debug(
@@ -649,7 +655,8 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
                             .setParam(paramName)
                             .setAttack(paramValue)
-                            .setMessage(msg)
+                            // just attach this alert to the last sent message
+                            .setMessage(message.get())
                             .setOtherInfo(otherInfo)
                             .raise();
 
@@ -657,14 +664,13 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
                     // payloads on the same request (to reduce performance impact)
                     return true;
                 }
-
             } catch (IOException ex) {
                 // Do not try to internationalise this.. we need an error message in any event..
                 // if it's in English, it's still better than not having it at all.
                 log.warn(
                         "Blind Command Injection vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
                         paramName,
-                        payload,
+                        paramValue,
                         ex);
             }
 
@@ -677,55 +683,6 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
             }
         }
         return false;
-    }
-
-    /**
-     * Computes standard deviation of the responseTimes Reference:
-     * http://www.goldb.org/corestats.html
-     *
-     * @return the current responseTimes deviation
-     */
-    private static double getResponseTimeDeviation(List<Long> responseTimes) {
-        // Cannot calculate a deviation with less than
-        // two response time values
-        if (responseTimes.size() < 2) {
-            return -1;
-        }
-
-        double avg = getResponseTimeAverage(responseTimes);
-        double result = 0;
-        for (long value : responseTimes) {
-            result += Math.pow(value - avg, 2);
-        }
-
-        result = Math.sqrt(result / (responseTimes.size() - 1));
-
-        // Check if there is too much deviation
-        if (result > WARN_TIME_STDEV) {
-            log.warn(
-                    "There is considerable lagging in connection response(s) which gives a standard deviation of {}ms on the sample set which is more than {}ms",
-                    result,
-                    WARN_TIME_STDEV);
-        }
-
-        return result;
-    }
-
-    /**
-     * Computes the arithmetic mean of the responseTimes
-     *
-     * @return the current responseTimes mean
-     */
-    private static double getResponseTimeAverage(List<Long> responseTimes) {
-        double result = 0;
-
-        if (responseTimes.isEmpty()) return result;
-
-        for (long value : responseTimes) {
-            result += value;
-        }
-
-        return result / responseTimes.size();
     }
 
     /**

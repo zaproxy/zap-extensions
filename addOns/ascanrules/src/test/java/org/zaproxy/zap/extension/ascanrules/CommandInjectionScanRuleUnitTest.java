@@ -30,6 +30,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
@@ -38,6 +39,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import org.apache.commons.configuration.Configuration;
 import org.junit.jupiter.api.Test;
@@ -284,6 +287,40 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
         rule.scan();
         // Then
         assertThat(alertsRaised, hasSize(1));
+    }
+
+    @Test
+    void shouldDetectTimeBasedInjection() throws HttpMalformedHeaderException {
+        // Given
+        Pattern sleepPattern = Pattern.compile("(?:sleep|timeout /T|start-sleep -s) (\\d+)");
+        String regularContent = "<!DOCTYPE html><html><body>Nothing to see here.</body></html>";
+        nano.addHandler(
+                new NanoServerHandler("/") {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String value = getFirstParamValue(session, "p");
+                        if (value == null) {
+                            return newFixedLengthResponse(regularContent);
+                        }
+                        Matcher match = sleepPattern.matcher(value);
+                        if (!match.find()) {
+                            return newFixedLengthResponse(regularContent);
+                        }
+                        try {
+                            int sleepInput = Integer.parseInt(match.group(1));
+                            Thread.sleep(sleepInput * 1000L);
+                        } catch (InterruptedException ex) {
+                            fail("failed to sleep thread for time-based command injection");
+                        }
+                        return newFixedLengthResponse(regularContent);
+                    }
+                });
+        rule.init(getHttpMessage("/?p=a"), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(sleepPattern.matcher(alertsRaised.get(0).getAttack()).find(), is(true));
     }
 
     private static Stream<Arguments> shouldReturnRelevantTechs() {
