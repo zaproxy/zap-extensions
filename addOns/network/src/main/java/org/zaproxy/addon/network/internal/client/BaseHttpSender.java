@@ -63,6 +63,8 @@ import org.zaproxy.zap.utils.Pair;
 public abstract class BaseHttpSender<T1 extends BaseHttpSenderContext, T2, T3>
         implements CloseableHttpSenderImpl<T1> {
 
+    protected static final byte[] EMPTY_BODY = {};
+
     private static final String CONTEXTS_FIELD = "contexts";
 
     private static final String LISTENERS_FIELD = "listeners";
@@ -203,7 +205,8 @@ public abstract class BaseHttpSender<T1 extends BaseHttpSenderContext, T2, T3>
                     return;
                 }
 
-                msg.setResponseBody(getBytes(entity));
+                byte[] bodyContent = getBytes(entity);
+                msg.setResponseBody(bodyContent == null ? EMPTY_BODY : bodyContent);
             };
 
     protected abstract InputStream getStream(T3 body) throws IOException;
