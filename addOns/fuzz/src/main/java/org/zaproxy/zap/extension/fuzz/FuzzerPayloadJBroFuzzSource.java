@@ -74,16 +74,16 @@ public class FuzzerPayloadJBroFuzzSource extends FuzzerPayloadSource {
 
             this.database = database;
             this.prototypeId = prototypeId;
-            long nrPaylaods = 0;
+            long nrPayloads = 0;
             try {
-                nrPaylaods = database.createFuzzer(prototypeId, 1).getMaxValue();
+                nrPayloads = database.createFuzzer(prototypeId, 1).getMaxValue();
             } catch (NoSuchFuzzerException ignore) {
                 // The existence was already validated.
             }
             if (limit <= 0) {
-                this.numberOfPayloads = nrPaylaods;
+                this.numberOfPayloads = nrPayloads;
             } else {
-                this.numberOfPayloads = Math.min(limit, nrPaylaods);
+                this.numberOfPayloads = Math.min(limit, nrPayloads);
             }
         }
 

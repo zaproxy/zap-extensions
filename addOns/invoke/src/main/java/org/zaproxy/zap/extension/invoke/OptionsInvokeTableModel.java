@@ -35,7 +35,7 @@ public class OptionsInvokeTableModel extends AbstractMultipleOptionsTableModel<I
         Constant.messages.getString("invoke.options.table.header.command"),
         Constant.messages.getString("invoke.options.table.header.directory"),
         Constant.messages.getString("invoke.options.table.header.parameters"),
-        Constant.messages.getString("invoke.options.table.header.ouput"),
+        Constant.messages.getString("invoke.options.table.header.output"),
         Constant.messages.getString("invoke.options.table.header.toNote")
     };
 
