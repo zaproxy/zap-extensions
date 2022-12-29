@@ -558,6 +558,22 @@ class HttpSenderImplUnitTest {
         @ParameterizedTest
         @MethodSource(
                 "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+        void shouldHaveNoBodyWhenNoBodyExpected(SenderMethod method) throws Exception {
+            // Given
+            String responseHeader = "HTTP/1.1 204\r\n\r\n";
+            server.setHttpMessageHandler((ctx, msg) -> msg.setResponseHeader(responseHeader));
+            message.setResponseBody("Should be cleared.");
+            // When
+            method.sendWith(httpSender, message);
+            // Then
+            assertThat(server.getReceivedMessages(), hasSize(1));
+            assertThat(message.getResponseHeader().toString(), is(equalTo(responseHeader)));
+            assertThat(message.getResponseBody().toString(), is(equalTo("")));
+        }
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
         void shouldBeReceivedEvenWithLessContentThanContentLength(SenderMethod method)
                 throws Exception {
             // Given
@@ -620,6 +636,22 @@ class HttpSenderImplUnitTest {
             httpSender.sendAndReceive(message, file);
             // Then
             assertThat(Files.size(file), is(equalTo(size)));
+        }
+
+        @Test
+        void shouldBeDownloadedToFileEvenIfNoBodyExpected(@TempDir Path dir) throws Exception {
+            // Given
+            Path file = Files.createTempDirectory(dir, "downloads").resolve("download");
+            server.setRawHandler(
+                    (ctx, msg) -> {
+                        ByteBuf out = ctx.alloc().buffer();
+                        ByteBufUtil.writeAscii(out, "HTTP/1.1 204\r\n\r\n");
+                        ctx.writeAndFlush(out).addListener(ChannelFutureListener.CLOSE);
+                    });
+            // When
+            httpSender.sendAndReceive(message, file);
+            // Then
+            assertThat(Files.size(file), is(equalTo(0L)));
         }
 
         @ParameterizedTest

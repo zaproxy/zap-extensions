@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Properly persist proxy error responses.
 - Correctly manage cookies with domain and path attributes (Issue 7631).
 - Do not prevent serving internal requests to the local servers/proxies.
+- Consume the response body even when none expected (e.g. 204, HEAD), otherwise the previous body
+would not be cleared when reusing the same message.
 
 ## [0.5.0] - 2022-11-09
 ### Fixed

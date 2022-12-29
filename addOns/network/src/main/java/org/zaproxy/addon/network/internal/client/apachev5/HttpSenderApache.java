@@ -310,6 +310,10 @@ public class HttpSenderApache
 
     @Override
     protected byte[] getBytes(HttpEntity body) throws IOException {
+        if (body == null) {
+            return null;
+        }
+
         int entityContentLength = (int) Args.checkContentLength(body);
         int contentLength = entityContentLength < 0 ? BUFFER_SIZE : entityContentLength;
         try (InputStream is = body.getContent()) {
@@ -339,6 +343,10 @@ public class HttpSenderApache
 
     @Override
     protected InputStream getStream(HttpEntity body) throws IOException {
+        if (body == null) {
+            return null;
+        }
+
         return body.getContent();
     }
 
@@ -710,12 +718,11 @@ public class HttpSenderApache
         }
         copyHeaders(response, responseHeader);
 
+        HttpEntity entity = null;
         if (response instanceof ClassicHttpResponse) {
-            HttpEntity entity = ((ClassicHttpResponse) response).getEntity();
-            if (entity != null) {
-                responseBodyConsumer.accept(message, entity);
-            }
+            entity = ((ClassicHttpResponse) response).getEntity();
         }
+        responseBodyConsumer.accept(message, entity);
     }
 
     private static boolean isSet(HttpContext context, String attributeName) {
