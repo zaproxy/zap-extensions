@@ -33,7 +33,7 @@ public class PopupMenuTreeTools extends ExtensionPopupMenuItem {
     private JTree sitesTree;
 
     public PopupMenuTreeTools() {
-        super(Constant.messages.getString("treetools.popop"));
+        super(Constant.messages.getString("treetools.popup"));
 
         this.addActionListener(
                 e -> {

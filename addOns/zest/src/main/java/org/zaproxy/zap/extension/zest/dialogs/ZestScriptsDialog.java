@@ -92,7 +92,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
     private ScriptTokensTableModel paramsModel = null;
     private ZestParameterDialog parmaDialog = null;
 
-    private List<HttpMessage> deferedMessages = new ArrayList<>();
+    private List<HttpMessage> deferredMessages = new ArrayList<>();
 
     public ZestScriptsDialog(ExtensionZest ext, Frame owner, Dimension dim) {
         super(
@@ -397,12 +397,12 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
             }
 
             scriptNode = extension.add(scriptWrapper, false);
-            // Add any defered messages
-            for (HttpMessage msg : deferedMessages) {
-                logger.debug("Adding defered message: {}", msg.getRequestHeader().getURI());
+            // Add any deferred messages
+            for (HttpMessage msg : deferredMessages) {
+                logger.debug("Adding deferred message: {}", msg.getRequestHeader().getURI());
                 extension.addToParent(scriptNode, msg, null);
             }
-            deferedMessages.clear();
+            deferredMessages.clear();
         }
         extension.updated(scriptNode);
         this.saved = true;
@@ -440,8 +440,8 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
         return null;
     }
 
-    public void addDeferedMessage(HttpMessage msg) {
-        this.deferedMessages.add(msg);
+    public void addDeferredMessage(HttpMessage msg) {
+        this.deferredMessages.add(msg);
 
         if (this.isEmptyField(FIELD_AUTH_SITE)) {
             try {

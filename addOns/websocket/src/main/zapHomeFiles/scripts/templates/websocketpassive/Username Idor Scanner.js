@@ -16,7 +16,7 @@ OPCODE_TEXT = 0x1;
 RISK_INFO 	= 0;
 CONFIDENCE_HIGH = 3;
 
-var extUserManagment = null;
+var extUserManagement = null;
 var usersList = null;
 
 function scan(helper,msg) {
@@ -87,14 +87,14 @@ function getHashes(username){
 }
 
 function getUsers(){
-    if(( extUserManagment = getExtensionUserManagment()) != null){
+    if(( extUserManagement = getExtensionUserManagement()) != null){
         usersList  = [];
         var contexts = Model.getSingleton().getSession().getContexts();
         var context;
 
         for(var i = 0; i < contexts.size(); i++){
             context = contexts.get(i);
-            var contextUsers = extUserManagment.getContextUserAuthManager(context.getIndex()).getUsers();
+            var contextUsers = extUserManagement.getContextUserAuthManager(context.getIndex()).getUsers();
             if(contextUsers.size() > 0){
                 for(var j = 0; j < contextUsers.size(); j++ ){
                     usersList.push(contextUsers.get(j));
@@ -105,13 +105,13 @@ function getUsers(){
     return usersList;
 }
 
-function getExtensionUserManagment(){
-    if(extUserManagment == null){
-        extUserManagment = Control.getSingleton()
+function getExtensionUserManagement(){
+    if(extUserManagement == null){
+        extUserManagement = Control.getSingleton()
             .getExtensionLoader()
             .getExtension(ExtensionUserManagement.class);
     }
-    return extUserManagment;
+    return extUserManagement;
 }
 
 function getName(){

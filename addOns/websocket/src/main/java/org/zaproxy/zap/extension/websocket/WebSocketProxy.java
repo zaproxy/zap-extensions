@@ -945,12 +945,12 @@ public abstract class WebSocketProxy {
         logger.debug("sending custom message");
         WebSocketMessage message = createWebSocketMessage(msg);
 
-        if (message.forward(getOuputStream(msg))) {
+        if (message.forward(getOutputStream(msg))) {
             notifyMessageObservers(message);
         }
     }
 
-    private OutputStream getOuputStream(WebSocketMessageDTO msg) {
+    private OutputStream getOutputStream(WebSocketMessageDTO msg) {
         if (isServerMode()) {
             return localListener.getOutputStream();
         }
@@ -977,7 +977,7 @@ public abstract class WebSocketProxy {
         WebSocketMessage message = createWebSocketMessage(msg);
 
         notifyMessageSenderListeners(message, initiator);
-        if (message.forward(getOuputStream(msg))) {
+        if (message.forward(getOutputStream(msg))) {
             notifyMessageObservers(message);
         }
     }
@@ -987,7 +987,7 @@ public abstract class WebSocketProxy {
         logger.debug("sending custom message");
         WebSocketMessage message = createWebSocketMessage(msg);
 
-        return message.forward(getOuputStream(msg));
+        return message.forward(getOutputStream(msg));
     }
 
     public boolean send(WebSocketMessageDTO msg, Initiator initiator) throws IOException {
@@ -995,7 +995,7 @@ public abstract class WebSocketProxy {
         WebSocketMessage message = createWebSocketMessage(msg);
 
         notifyMessageSenderListeners(message, initiator);
-        return message.forward(getOuputStream(msg));
+        return message.forward(getOutputStream(msg));
     }
 
     public boolean isClientMode() {

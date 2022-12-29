@@ -91,13 +91,13 @@ public class ZestPopupNodeCopyOrCut extends ExtensionPopupMenuItem {
                         this.setEnabled(false);
                         return false;
                     } else if ((ZestZapUtils.getElement(node) instanceof ZestScript)) {
-                        // Cant copy the whole script
+                        // Can't copy the whole script
                         this.setEnabled(false);
                         return false;
                     } else if (ZestZapUtils.getShadowLevel(node) > 0) {
                         // Ignore these
                     } else if (!(ZestZapUtils.getElement(node) instanceof ZestStatement)) {
-                        // Cant copy these
+                        // Can't copy these
                         this.setEnabled(false);
                         break;
                     } else {

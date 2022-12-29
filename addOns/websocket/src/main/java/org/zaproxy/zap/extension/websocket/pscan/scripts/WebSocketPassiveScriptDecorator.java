@@ -86,7 +86,7 @@ public class WebSocketPassiveScriptDecorator implements WebSocketPassiveScript {
         } catch (UndeclaredThrowableException e) {
             // Python script implementation throws an exception if this optional/default method is
             // not actually implemented by the script (other script implementations,
-            // Zest/ECMAScript, jus tuse the default method).
+            // Zest/ECMAScript, just use the default method).
             if (e.getCause() instanceof NoSuchMethodException
                     && "getName".equals(e.getCause().getMessage())) {
                 LOGGER.debug(

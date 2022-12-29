@@ -325,7 +325,7 @@ public class ZestZapUtils {
         } else if (za instanceof ZestLoopString) {
             ZestLoopString zals = (ZestLoopString) za;
             if (incParams) {
-                // Build up a list of the linitial values
+                // Build up a list of the initial values
                 StringBuilder vals = new StringBuilder();
                 for (String val : zals.getValues()) {
                     if (vals.length() > 0) {

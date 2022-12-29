@@ -119,13 +119,13 @@ public class ViewStateModel extends AbstractHttpByteHttpPanelViewModel {
                     // Loop through all of the elements
                     logger.debug("Found {} inputs", elements.size());
                     for (Element element : elements) {
-                        Attributes atts = element.getAttributes();
+                        Attributes attrs = element.getAttributes();
                         try {
                             //  Get attr name
-                            Attribute name = atts.get("name");
+                            Attribute name = attrs.get("name");
                             if (name != null) {
                                 if (name.getValue().equals(paramName)) {
-                                    param = atts;
+                                    param = attrs;
                                 }
                             }
                         } catch (Exception e) {

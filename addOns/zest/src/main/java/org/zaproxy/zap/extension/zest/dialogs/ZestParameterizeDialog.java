@@ -69,7 +69,7 @@ public class ZestParameterizeDialog extends StandardFieldsDialog {
 
     @Override
     public void save() {
-        this.extension.perameterize(
+        this.extension.parameterize(
                 script,
                 node,
                 request,
