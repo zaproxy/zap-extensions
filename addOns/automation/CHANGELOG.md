@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Warning if unexpected element under `activeScan` job (e.g. misplaced `rules`).
+- Help details warning against specifying default ports (80/443) (Issue 7649).
 
 ## [0.20.0] - 2022-12-14
 ### Added
