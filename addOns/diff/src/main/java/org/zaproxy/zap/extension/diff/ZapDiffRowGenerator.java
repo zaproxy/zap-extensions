@@ -362,7 +362,7 @@ public class ZapDiffRowGenerator {
  /**
   * Wrap the elements in the sequence with the given tag
   * @param startPosition the position from which tag should start. The counting start from a zero.
-  * @param endPosition the position before which tag should should be closed.
+  * @param endPosition the position before which tag should be closed.
   * @param tag the tag name without angle brackets, just a word
   * @param cssClass the optional css class
   */

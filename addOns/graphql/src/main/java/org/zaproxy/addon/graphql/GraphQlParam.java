@@ -124,9 +124,7 @@ public class GraphQlParam extends VersionedAbstractParam {
         POST_JSON,
         /** The method is POST and the Content-type is application/graphql. */
         POST_GRAPHQL,
-        /**
-         * The method is GET and the the query is appended to the endpoint URL in a query string.
-         */
+        /** The method is GET and the query is appended to the endpoint URL in a query string. */
         GET;
 
         public String getName() {

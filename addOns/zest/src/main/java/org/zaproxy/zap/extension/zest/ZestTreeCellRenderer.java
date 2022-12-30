@@ -401,7 +401,7 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
                         setIcon(CLIENT_WINDOW_OPEN_URL_ICON);
                     } else {
                         logger.error(
-                                "Unrecognised element element class={}",
+                                "Unrecognised element class={}",
                                 zew.getElement().getClass().getCanonicalName());
                     }
                 }

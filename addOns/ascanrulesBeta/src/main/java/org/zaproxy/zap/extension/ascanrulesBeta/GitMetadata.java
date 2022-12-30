@@ -303,7 +303,7 @@ public class GitMetadata {
             // There are also separate version numbers in the Git "index file" (unrelated to the
             // "pack index" files mentioned above), which are probably similarly inter-related.
             // I do not have a mapping of the Git version number (1.7.6 / 1.8.5, for instance) to
-            // any of the the internal file version numbers that they create (by default) or
+            // any of the internal file version numbers that they create (by default) or
             // support. So sue me.
 
             URI uri =
@@ -525,7 +525,7 @@ public class GitMetadata {
                     }
                 }
                 // final sanity check, if all of the above panned out for version 1 index file.
-                // Note: we *think* that that "pack index" file version 1 is compatible with "pack"
+                // Note: we *think* that the "pack index" file version 1 is compatible with "pack"
                 // file version 3 and 4, but really, we don't know for sure.. Again, so sue me.
                 int packindexFileVersion = 1;
                 if (packFileVersion != 2 && packFileVersion != 3 && packFileVersion != 4) {

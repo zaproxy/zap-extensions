@@ -213,7 +213,7 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
         // NOTE: We are setting the internal context in the ContextAccessRulesManager as the 'real'
         // Context instead of the UI one, as the ContextSiteTree is, currently, reloaded only in
         // here and with the field separators that have been already defined. If any changes are
-        // done to the the field separators in the currently open SessionProperties Dialog, they
+        // done to the field separators in the currently open SessionProperties Dialog, they
         // will not be visible in the tree. Thus, in order to keep consistency, we stick to also
         // using the 'real' Context in the internal Rules Manager so any rules are inferred
         // according to the 'old' field separators.
