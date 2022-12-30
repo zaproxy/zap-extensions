@@ -155,7 +155,7 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
 
         // Begin scan rule execution
         log.debug(
-                "Checking [{}][{}], parameter [{}] for Dynamic Code Injection vulnerabilites",
+                "Checking [{}][{}], parameter [{}] for Dynamic Code Injection Vulnerabilities",
                 msg.getRequestHeader().getMethod(),
                 msg.getRequestHeader().getURI(),
                 paramName);

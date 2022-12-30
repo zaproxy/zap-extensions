@@ -73,7 +73,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
 
     // characters used in the generation of random parameters
     private static final char[] RANDOM_PARAMETER_CHARS =
-            "abcdefghijklmnopqrstuvwyxz0123456789".toCharArray();
+            "abcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
 
     public static final Tech Protocol =
             new Tech("Protocol", I18N_PREFIX + "ldapinjection.technologies.protocol");

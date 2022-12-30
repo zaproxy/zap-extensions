@@ -370,7 +370,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
             // is it worth looking for a copy of the file?
             if (statusCode == HttpStatusCode.NOT_FOUND) {
                 log.debug(
-                        "The original file request was not successfuly retrieved (status = {}), so there is not much point in looking for a backup of a non-existent file!",
+                        "The original file request was not successfully retrieved (status = {}), so there is not much point in looking for a backup of a non-existent file!",
                         statusCode);
                 return;
             }

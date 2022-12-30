@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Maintenance changes.
 
 ## [42] - 2022-12-13
 ### Added
@@ -227,7 +228,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## 20 - 2017-11-24
 
 - Code changes for Java 9 (Issue 2602).
-- Correct handling of messages with emtpy path.
+- Correct handling of messages with empty path.
 - Add Get for Post Scanner.
 
 ## 19 - 2017-05-25
@@ -327,7 +328,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Promoted to beta XXE and Padding Oracle Plugins
 - Added a new Expression Language Plugin
-- Implemented Internazionalization for ELInjection
+- Implemented Internationalization for ELInjection
 - Added ExampleSimpleActiveScanner
 
 ## 2 - 2013-09-11
