@@ -20,6 +20,11 @@
 package org.zaproxy.zap.extension.replacer;
 
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.UUID;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,6 +47,13 @@ import org.zaproxy.zap.view.ZapMenuItem;
  * @author psiinon
  */
 public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderListener {
+
+    private static final Pattern TOKEN_PATTERN =
+            Pattern.compile("(?<=\\{\\{)[A-Z]+[\\|0-9]*(?=\\}\\})");
+    private static final Pattern INTEGER_PATTERN = Pattern.compile("^\\d+$");
+    private static final String RINT_TOKEN = "RINT";
+    private static final String UUID_TOKEN = "UUID";
+    private static final String TICKS_TOKEN = "TICKS";
 
     public static final String NAME = "ExtensionReplacer";
 
@@ -135,11 +147,78 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
         return original.contains(match);
     }
 
-    private static String replace(String original, String match, Pattern p, String replacement) {
+    private static String replace(
+            String original, String match, Pattern p, String replacement, boolean tokenProcessing) {
+        LOGGER.debug("Static Replacement function.");
+
+        if (tokenProcessing) {
+            List<String> tokens = parseReplacementTokens(replacement);
+
+            if (!tokens.isEmpty()) {
+                LOGGER.debug("Token replacement(s) detected.");
+
+                for (String token : tokens) {
+                    String toReplace = "\\{\\{" + token.replace("|", "\\|") + "\\}\\}";
+
+                    LOGGER.debug("Token replacement: {}", token);
+
+                    if (token.startsWith(RINT_TOKEN)) {
+                        int minVal = 0;
+                        int maxVal = Integer.MAX_VALUE;
+
+                        String[] repl = token.split("\\|");
+
+                        if (repl.length == 2) {
+                            maxVal = parseInt(repl[1], maxVal);
+                        } else if (repl.length == 3) {
+                            minVal = parseInt(repl[1], minVal);
+                            maxVal = parseInt(repl[2], maxVal);
+                        }
+
+                        Random rand = new Random();
+                        String newValue = String.valueOf(rand.nextInt(maxVal - minVal) + minVal);
+                        LOGGER.debug("replacement = replace({},{})", toReplace, newValue);
+                        replacement = replacement.replaceFirst(toReplace, newValue);
+                    } else if (token.equals(TICKS_TOKEN)) {
+                        String ticks = String.valueOf(System.currentTimeMillis());
+                        LOGGER.debug("replacement = replace({},{})", toReplace, ticks);
+                        replacement = replacement.replaceFirst(toReplace, ticks);
+                    } else if (token.equals(UUID_TOKEN)) {
+                        String uuid = UUID.randomUUID().toString();
+                        LOGGER.debug("replacement = replace({}, {})", toReplace, uuid);
+                        replacement = replacement.replaceFirst(toReplace, uuid);
+                    }
+                }
+            }
+            LOGGER.debug("Pattern is null? {}", (p == null));
+            LOGGER.debug("Final replacement: {} => {}", match, replacement);
+        }
+
         if (p != null) {
             return p.matcher(original).replaceAll(replacement);
         }
         return original.replace(match, replacement);
+    }
+
+    private static int parseInt(String value, int defaultValue) {
+        if (INTEGER_PATTERN.matcher(value).matches()) {
+            return Integer.valueOf(value);
+        }
+        return defaultValue;
+    }
+
+    static List<String> parseReplacementTokens(String data) {
+        List<String> replacementTokens = new ArrayList<>();
+        Matcher m = TOKEN_PATTERN.matcher(data);
+
+        while (m.find()) {
+            String key = m.group();
+            if (key.equals(TICKS_TOKEN) || key.equals(UUID_TOKEN) || key.startsWith(RINT_TOKEN)) {
+                replacementTokens.add(key);
+            }
+        }
+
+        return replacementTokens;
     }
 
     @Override
@@ -178,7 +257,8 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                                             header,
                                             rule.getMatchString(),
                                             p,
-                                            rule.getEscapedReplacement());
+                                            rule.getEscapedReplacement(),
+                                            rule.isTokenProcessingEnabled());
                             try {
                                 msg.setRequestHeader(new HttpRequestHeader(header));
                             } catch (HttpMalformedHeaderException e) {
@@ -198,7 +278,8 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                                             body,
                                             rule.getMatchString(),
                                             p,
-                                            rule.getEscapedReplacement());
+                                            rule.getEscapedReplacement(),
+                                            rule.isTokenProcessingEnabled());
                             msg.getRequestBody().setBody(body);
                             msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
                         }
@@ -256,7 +337,8 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                                             header,
                                             rule.getMatchString(),
                                             p,
-                                            rule.getEscapedReplacement());
+                                            rule.getEscapedReplacement(),
+                                            rule.isTokenProcessingEnabled());
                             try {
                                 msg.setResponseHeader(new HttpResponseHeader(header));
                             } catch (HttpMalformedHeaderException e) {
@@ -276,7 +358,8 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                                             body,
                                             rule.getMatchString(),
                                             p,
-                                            rule.getEscapedReplacement());
+                                            rule.getEscapedReplacement(),
+                                            rule.isTokenProcessingEnabled());
                             msg.getResponseBody().setBody(body);
                             msg.getResponseHeader()
                                     .setContentLength(msg.getResponseBody().length());

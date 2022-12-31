@@ -48,6 +48,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
     protected static final String REGEX_FIELD = "replacer.label.regex";
     protected static final String REPLACEMENT_FIELD = "replacer.label.replace";
     protected static final String ENABLE_FIELD = "replacer.label.enable";
+    protected static final String ENABLE_TOKEN_PROCESSING = "replacer.label.tokenprocessing";
     protected static final String INIT_TYPE_SUMMARY_FIELD = "replacer.label.initsummary";
 
     protected static final String INIT_TYPE_ALL_FIELD = "replacer.label.init.all";
@@ -105,6 +106,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
         this.addTextField(0, REPLACEMENT_FIELD, "");
         this.addReadOnlyField(0, INIT_TYPE_SUMMARY_FIELD, "", false);
         this.addCheckBoxField(0, ENABLE_FIELD, false);
+        this.addCheckBoxField(0, ENABLE_TOKEN_PROCESSING, false);
         this.addPadding(0);
 
         this.addCheckBoxField(1, INIT_TYPE_ALL_FIELD, true);
@@ -192,6 +194,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
             this.setFieldValue(REGEX_FIELD, rule.isMatchRegex());
             this.setFieldValue(REPLACEMENT_FIELD, rule.getReplacement());
             this.setFieldValue(ENABLE_FIELD, rule.isEnabled());
+            this.setFieldValue(ENABLE_TOKEN_PROCESSING, rule.isTokenProcessingEnabled());
             if (rule.appliesToAllInitiators()) {
                 this.setFieldValue(INIT_TYPE_ALL_FIELD, true);
             } else {
@@ -287,7 +290,8 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
                         this.getBoolValue(REGEX_FIELD),
                         this.getStringValue(REPLACEMENT_FIELD),
                         initiators,
-                        this.getBoolValue(ENABLE_FIELD));
+                        this.getBoolValue(ENABLE_FIELD),
+                        this.getBoolValue(ENABLE_TOKEN_PROCESSING));
     }
 
     protected String checkIfUnique() {
@@ -320,6 +324,16 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
                 return Constant.messages.getString("replacer.add.warning.badregex");
             }
         }
+        if (Boolean.TRUE.equals(this.getBoolValue(ENABLE_TOKEN_PROCESSING))) {
+            List<String> tokens =
+                    ExtensionReplacer.parseReplacementTokens(
+                            this.getStringValue(REPLACEMENT_FIELD));
+
+            if (tokens.isEmpty()) {
+                return Constant.messages.getString("replacer.add.warning.tokmissing");
+            }
+        }
+
         return checkIfUnique();
     }
 
@@ -480,5 +494,6 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
         this.setFieldValue(MATCH_STR_FIELD, "");
         this.setFieldValue(REPLACEMENT_FIELD, "");
         this.setFieldValue(ENABLE_FIELD, false);
+        this.setFieldValue(ENABLE_TOKEN_PROCESSING, false);
     }
 }
