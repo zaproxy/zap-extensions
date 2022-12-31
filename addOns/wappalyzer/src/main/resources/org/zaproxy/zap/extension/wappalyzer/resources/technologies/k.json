@@ -39,6 +39,19 @@
     "saas": true,
     "website": "https://www.kmk.net.tr"
   },
+  "KPHP": {
+    "cats": [
+      27
+    ],
+    "description": "KPHP (kPHP or KittenPHP) is a free PHP-to- C++ source-to-source translator, developed by VKontakte.",
+    "headers": {
+      "x-powered-by": "^KPHP/([\\d\\.]+)$\\;version:\\1"
+    },
+    "icon": "default.svg",
+    "implies": "PHP",
+    "oss": true,
+    "website": "https://vkcom.github.io/kphp"
+  },
   "KQS.store": {
     "cats": [
       6
@@ -432,6 +445,24 @@
     "icon": "KeyCDN.png",
     "website": "http://www.keycdn.com"
   },
+  "Keybase": {
+    "cats": [
+      16
+    ],
+    "description": "Keybase is for keeping everyone's chats and files safe, from families to communities to companies. MacOS, Windows, Linux, iPhone, and Android.",
+    "dns": {
+      "TXT": [
+        "keybase-site-verification"
+      ]
+    },
+    "icon": "Keybase.svg",
+    "oss": true,
+    "pricing": [
+      "freemium"
+    ],
+    "saas": true,
+    "website": "https://keybase.io/"
+  },
   "Kibana": {
     "cats": [
       29,
@@ -497,11 +528,11 @@
     ],
     "description": "Kiliba has developed a module that automates the marketing process from creating an email to distributing it.",
     "icon": "Kiliba.svg",
-    "saas": true,
     "pricing": [
       "low",
       "recurring"
     ],
+    "saas": true,
     "url": "/modules/kiliba/logo\\.png",
     "website": "https://en.kiliba.com"
   },

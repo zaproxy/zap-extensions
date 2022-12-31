@@ -1,13 +1,25 @@
-<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M32 0H0V32H32V0Z" fill="url(#paint0_linear_0_20)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M8.03213 12.2175L16.0425 8L23.9954 12.2262L24 15.9848L16.0684 11.4786L8 15.9997L8.03213 12.2175Z" fill="#FEFEFE"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M8.00256 17.5812L15.9824 13.1003L23.9847 17.777L23.9835 19.9903L22.7105 20.6665L15.9643 16.9099L9.22469 20.6952L8.00581 20.0086L8.00256 17.5812Z" fill="#FEFEFE"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M10.7606 22.1398L15.9824 19.1187L21.2467 22.1398L18.0584 23.9999L15.9864 22.809L13.9735 23.9065L10.7606 22.1398Z" fill="#4A4A4A"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M10.7606 21.5821L15.9824 18.561L21.2467 21.5821L18.0584 23.4423L15.9864 22.2514L13.9735 23.3489L10.7606 21.5821Z" fill="#FEFEFE"/>
-<defs>
-<linearGradient id="paint0_linear_0_20" x1="8.73718" y1="1.74336" x2="23.2628" y2="30.2566" gradientUnits="userSpaceOnUse">
-<stop stop-color="#5FC5C4"/>
-<stop offset="1" stop-color="#4CC7EC"/>
-</linearGradient>
-</defs>
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: CorelDRAW 2020 (64-Bit) -->
+<svg xmlns="http://www.w3.org/2000/svg" xml:space="preserve" width="32px" height="32px" version="1.1" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+viewBox="0 0 32 32"
+ xmlns:xlink="http://www.w3.org/1999/xlink"
+ xmlns:xodm="http://www.corel.com/coreldraw/odm/2003">
+ <defs>
+  <style type="text/css">
+   <![CDATA[
+    .fil1 {fill:#FEFEFE}
+    .fil2 {fill:#4A4A4A}
+    .fil0 {fill:#009EDB}
+   ]]>
+  </style>
+ </defs>
+ <g id="Layer_x0020_1">
+  <metadata id="CorelCorpID_0Corel-Layer"/>
+  <rect class="fil0" width="32" height="32" rx="4" ry="4"/>
+  <polygon class="fil1" points="8.214,12.61 16.055,8.456 23.84,12.619 23.844,16.32 16.08,11.882 8.183,16.335 "/>
+  <polygon class="fil1" points="8.185,17.893 15.996,13.479 23.829,18.085 23.828,20.265 22.582,20.931 15.978,17.232 9.381,20.96 8.188,20.283 "/>
+  <polygon class="fil2" points="10.885,22.382 15.996,19.407 21.149,22.382 18.028,24.214 16,23.042 14.03,24.122 "/>
+  <polygon class="fil1" points="10.885,21.833 15.996,18.858 21.149,21.833 18.028,23.665 16,22.492 14.03,23.573 "/>
+ </g>
 </svg>

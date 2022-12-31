@@ -253,11 +253,11 @@
     "description": "October is a free, open-source, self-hosted CMS platform based on the Laravel PHP Framework.",
     "icon": "October CMS.png",
     "implies": "Laravel",
-    "meta": {
-      "generator": "OctoberCMS"
-    },
     "js": {
       "ocJSON": ""
+    },
+    "meta": {
+      "generator": "OctoberCMS"
     },
     "oss": true,
     "website": "http://octobercms.com"
@@ -520,6 +520,23 @@
     "scriptSrc": "omnisrc\\.com",
     "website": "https://www.omnisend.com"
   },
+  "Omnisend Email Marketing & SMS": {
+    "cats": [
+      100
+    ],
+    "description": "Omnisend Email Marketing & SMS is an omnichannel marketing automation channel that allows Shopify store owners to manage their SMS, web push notifications, WhatsApp, Facebook messenger, pop-ups, segmentation, and dynamic Facebook and Google ad integrations.",
+    "icon": "Omnisend.svg",
+    "implies": "Omnisend",
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "omnis(?:nippet1|rc)\\.com/inShop/Embed/shopify\\.js",
+    "website": "https://apps.shopify.com/omnisend"
+  },
   "Omny Studio": {
     "cats": [
       5
@@ -702,10 +719,10 @@
     "cookies": {
       "OptanonConsent": ""
     },
+    "description": "OneTrust is a cloud-based data privacy management compliance platform.",
     "dns": {
       "TXT": "onetrust-domain-verification="
     },
-    "description": "OneTrust is a cloud-based data privacy management compliance platform.",
     "icon": "OneTrust.png",
     "scriptSrc": [
       "cdn\\.cookielaw\\.org",
@@ -1193,31 +1210,6 @@
     "scriptSrc": "optimizely\\.com.*\\.js",
     "website": "https://www.optimizely.com"
   },
-  "Optimizely Content Management": {
-    "cats": [
-      1
-    ],
-    "cookies": {
-      "EPiServer": "",
-      "EPiSessionId": "",
-      "EPiTrace": "",
-      "EPi:StateMarker": ""
-    },
-    "cpe": "cpe:2.3:a:episerver:episerver:*:*:*:*:*:*:*:*",
-    "description": "Optimizely Content Management (formerly EPiServer) is digital content, ecommerce, and marketing management solution designed for editors and marketers.",
-    "icon": "Optimizely.svg",
-    "implies": "Microsoft ASP.NET",
-    "meta": {
-      "generator": "EPiServer"
-    },
-    "headers": {
-      "content-security-policy": "\\.episerver\\.net"
-    },
-    "pricing": [
-      "poa"
-    ],
-    "website": "https://www.optimizely.com/products/content/"
-  },
   "Optimizely Commerce": {
     "cats": [
       6
@@ -1227,14 +1219,40 @@
     },
     "description": "Optimizely Commerce is a complete suite for digital ecommerce and content management that uses artificial intelligence to deliver personalised experiences, individualised search rankings and product recommendations.",
     "icon": "Optimizely.svg",
-    "requiresCategory": 6,
     "meta": {
       "generator": "EPiServer"
     },
     "pricing": [
       "poa"
     ],
+    "requiresCategory": 6,
     "website": "https://www.optimizely.com/products/commerce/b2c/"
+  },
+  "Optimizely Content Management": {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "EPi:StateMarker": "",
+      "EPiServer": "",
+      "EPiSessionId": "",
+      "EPiTrace": ""
+    },
+    "cpe": "cpe:2.3:a:episerver:episerver:*:*:*:*:*:*:*:*",
+    "description": "Optimizely Content Management (formerly EPiServer) is digital content, ecommerce, and marketing management solution designed for editors and marketers.",
+    "headers": {
+      "content-security-policy": "\\.episerver\\.net"
+    },
+    "icon": "Optimizely.svg",
+    "implies": "Microsoft ASP.NET",
+    "meta": {
+      "generator": "EPiServer"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "scriptSrc": "\\.episerver.net/",
+    "website": "https://www.optimizely.com/products/content/"
   },
   "Optimove": {
     "cats": [
@@ -1550,6 +1568,22 @@
     ],
     "saas": true,
     "website": "https://orderyoyo.com"
+  },
+  "Ordergroove": {
+    "cats": [
+      41
+    ],
+    "description": "Ordergroove provides a SaaS (Software as a Service) based subscription and membership commerce platform.",
+    "headers": {
+      "content-security-policy": "\\.ordergroove\\.com"
+    },
+    "icon": "ordergroove.svg",
+    "pricing": [
+      "recurring",
+      "mid"
+    ],
+    "scriptSrc": "\\.ordergroove\\.com/",
+    "website": "https://www.ordergroove.com/"
   },
   "Ordersify Product Alerts": {
     "cats": [

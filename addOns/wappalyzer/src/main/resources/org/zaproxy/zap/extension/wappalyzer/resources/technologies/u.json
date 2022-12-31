@@ -886,9 +886,9 @@
     ],
     "description": "Utterances is a lightweight comments widget built on GitHub issues.",
     "dom": "iframe[src*='utteranc.es']",
-    "icon": "utterances.png",
+    "icon": "utterances.svg",
     "oss": true,
-    "website": "https://github.com/utterance/utterances",
+    "website": "https://utteranc.es/",
     "xhr": "\\.utteranc\\.es"
   }
 }

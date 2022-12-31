@@ -381,10 +381,19 @@
     },
     "icon": "generatepress.png",
     "requires": "WordPress",
+    "js": {
+      "generatepressMenu": "",
+      "generatepressNavSearch": ""
+    },
     "scriptSrc": [
       "themes/generatepress\\S*\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1"
     ],
-    "website": "https://generatepress.com/"
+    "pricing": [
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "website": "https://generatepress.com"
   },
   "Genesis theme": {
     "cats": [
@@ -649,16 +658,16 @@
       1,
       11
     ],
-    "description": "Ghost is a free and open-source blogging platform written in JavaScript, designed to simplify the process of online publishing for individual bloggers as well as online publications.",
+    "description": "Ghost is a powerful app for new-media creators to publish, share, and grow a business around their content.",
     "headers": {
       "X-Ghost-Cache-Status": ""
     },
-    "icon": "Ghost.png",
+    "icon": "Ghost.svg",
     "implies": "Node.js",
     "meta": {
       "generator": "Ghost(?:\\s([\\d.]+))?\\;version:\\1"
     },
-    "website": "http://ghost.org"
+    "website": "https://ghost.org"
   },
   "Gist Giftship": {
     "cats": [
@@ -1298,13 +1307,13 @@
   },
   "GoMage": {
     "cats": [
-      19
+      108
     ],
     "description": "GoMage is a Magento development company with 10 years of experience.",
     "icon": "GoMage.svg",
     "implies": [
       "PWA",
-      "Magento"
+      "Magento\\;version:2"
     ],
     "js": {
       "GomageNavigation": "",
@@ -1382,6 +1391,27 @@
     "oss": true,
     "scriptSrc": "js/gogs\\.js",
     "website": "http://gogs.io"
+  },
+  "Gomag": {
+    "cats": [
+      6
+    ],
+    "description": "Gomag is a B2B and B2C ecommerce platform from Romania.",
+    "headers": {
+      "author": "^Gomag$"
+    },
+    "icon": "Gomag.svg",
+    "js": {
+      "$GomagConfig": "",
+      "GomagForm": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.gomag.ro"
   },
   "Google AdSense": {
     "cats": [
@@ -1620,8 +1650,8 @@
       35
     ],
     "description": "Google Maps is a web mapping service. It offers satellite imagery, aerial photography, street maps, 360° interactive panoramic views of streets, real-time traffic conditions, and route planning for traveling by foot, car, bicycle and air, or public transportation.",
-    "icon": "Google Maps.svg",
     "dom": "iframe[src*='google.com/maps']",
+    "icon": "Google Maps.svg",
     "scriptSrc": [
       "(?:maps\\.google\\.com/maps\\?file=api(?:&v=([\\d.]+))?|maps\\.google\\.com/maps/api/staticmap)\\;version:API v\\1",
       "//maps\\.google(?:apis)?\\.com/maps/api/js"
@@ -2231,18 +2261,18 @@
     "cats": [
       6
     ],
+    "cookies": {
+      "_gumroad_app_session": "",
+      "_gumroad_guid": ""
+    },
     "description": "Gumroad is a self-publishing digital marketplace platform to sell digital services such as books, memberships, courses and other digital services.",
-    "icon": "Gumroad.svg",
     "dns": {
       "CNAME": "\\.gumroad\\.com"
     },
     "dom": [
       "iframe[src^='https://gumroad.com/l/']"
     ],
-    "cookies": {
-      "_gumroad_app_session": "",
-      "_gumroad_guid": ""
-    },
+    "icon": "Gumroad.svg",
     "js": {
       "GumroadOverlay": "",
       "createGumroadOverlay": ""

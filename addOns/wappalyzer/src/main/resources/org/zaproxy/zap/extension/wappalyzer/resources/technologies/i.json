@@ -109,8 +109,8 @@
       "x-ipfs-root-cid": "",
       "x-ipfs-roots": ""
     },
-    "icon": "IPFS.png",
-    "website": "https://ipfs.io/"
+    "icon": "IPFS.svg",
+    "website": "https://ipfs.tech/"
   },
   "IPInfoDB": {
     "cats": [
@@ -711,6 +711,18 @@
     "saas": true,
     "scriptSrc": "instafeed\\.nfcube\\.com/",
     "website": "https://apps.shopify.com/instafeed"
+  },
+  "Instamojo": {
+    "cats": [
+      41
+    ],
+    "description": "Instamojo is a Bangalore-based company that provides a platform for selling digital goods and collecting payment online.",
+    "icon": "instamojo.svg",
+    "js": {
+      "INITIAL_STATE.seller.avatar": "\\.instamojo\\.com/",
+      "Instamojo": ""
+    },
+    "website": "https://www.instamojo.com/"
   },
   "Instana": {
     "cats": [

@@ -341,7 +341,7 @@
         }
       }
     },
-    "icon": "default.svg",
+    "icon": "Tachyons.svg",
     "js": {
       "webpackChunkgatsby_starter_blog_tachyons": ""
     },
@@ -457,10 +457,10 @@
         }
       }
     },
+    "icon": "tailwindcss.svg",
     "js": {
       "tailwind": ""
     },
-    "icon": "tailwindcss.svg",
     "scriptSrc": "\\.tailwindcss(?:tailwind-config-cdn)?\\.(?:com|js)",
     "website": "https://tailwindcss.com/"
   },
@@ -527,6 +527,28 @@
     ],
     "saas": true,
     "website": "https://tallentor.com"
+  },
+  "Tally": {
+    "cats": [
+      73
+    ],
+    "description": "Tally is the simplest way to create free forms & surveys. Create any type of form in seconds, without knowing how to code, and for free.",
+    "dom": [
+      "iframe[data-tally-src^='https://tally.so/embed/'",
+      "a[href*='//tally.so/r/']"
+    ],
+    "icon": "Tally.svg",
+    "js": {
+      "Tally": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "//tally\\.so/",
+    "website": "https://tally.so/"
   },
   "Tamago": {
     "cats": [
@@ -629,7 +651,7 @@
       "TawkConnectionTime": ""
     },
     "description": "Tawk.to is a free messaging app to monitor and chat with the visitors to a website, mobile app.",
-    "icon": "TawkTo.png",
+    "icon": "TawkTo.svg",
     "pricing": [
       "freemium",
       "payg"
@@ -738,6 +760,21 @@
     },
     "website": "https://www.jetbrains.com/teamcity/"
   },
+  "Teamtailor": {
+    "cats": [
+      101
+    ],
+    "description": "Teamtailor is an applicant tracking system, career site and analytics dashboard combined, mobile friendly, and  all-in-one recruitment platform.",
+    "icon": "teamtailor.svg",
+    "js": {
+      "Teamtailor.Ziggeo": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "website": "https://www.teamtailor.com"
+  },
   "Tebex": {
     "cats": [
       6
@@ -752,8 +789,8 @@
       }
     },
     "headers": {
-      "tb-cache-group": "^webstore$\\;confidence:50",
-      "tb-cache-country": "^\\w+$\\;confidence:50"
+      "tb-cache-country": "^\\w+$\\;confidence:50",
+      "tb-cache-group": "^webstore$\\;confidence:50"
     },
     "icon": "Tebex.svg",
     "implies": [
@@ -2224,10 +2261,12 @@
   },
   "Transcy": {
     "cats": [
-      89
+      89,
+      100
     ],
-    "description": "Transcy allows you to translate your whole store content into target languages to reach different nation shoppers.",
+    "description": "Transcy is a Shopify translation app. Transcy allows you to translate your whole store content into target languages to reach different nation shoppers.",
     "icon": "Transcy.png",
+    "implies": "Shopify",
     "js": {
       "_transcy": "",
       "transcy_apiURI": "",
@@ -2238,7 +2277,6 @@
       "low",
       "recurring"
     ],
-    "requires": "Shopify",
     "saas": true,
     "website": "https://transcy.io"
   },

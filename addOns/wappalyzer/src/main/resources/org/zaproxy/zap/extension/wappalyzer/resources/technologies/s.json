@@ -162,19 +162,6 @@
     "scriptSrc": "/sim(?:site|core)/js",
     "website": "http://simgroep.nl/internet/portfolio-contentbeheer_41623/"
   },
-  "SMF": {
-    "cats": [
-      2
-    ],
-    "description": "SMF is a free open-source software, used for community forums and is written in PHP.",
-    "html": "credits/?\" title=\"Simple Machines Forum\" target=\"_blank\" class=\"new_win\">SMF ([0-9.]+)</a>\\;version:\\1",
-    "icon": "SMF.png",
-    "implies": "PHP",
-    "js": {
-      "smf_": ""
-    },
-    "website": "http://www.simplemachines.org"
-  },
   "SOBI 2": {
     "cats": [
       19
@@ -700,11 +687,11 @@
       "piProtocol": "",
       "piTracker": ""
     },
-    "saas": true,
     "pricing": [
       "high",
       "recurring"
     ],
+    "saas": true,
     "website": "https://www.salesforce.com/products/marketing-cloud/marketing-automation"
   },
   "Salesforce Marketing Cloud Email Studio": {
@@ -712,16 +699,16 @@
       75
     ],
     "description": "Salesforce Marketing Cloud Email Studio is a powerful tool that allows you to build and send personalised emails.",
-    "icon": "Salesforce.svg",
+    "dom": "a[href*='.exacttarget.com/'][target='_blank']",
     "headers": {
       "content-security-policy": "\\.exacttarget\\.com/"
     },
-    "dom": "a[href*='.exacttarget.com/'][target='_blank']",
-    "saas": true,
+    "icon": "Salesforce.svg",
     "pricing": [
       "mid",
       "recurring"
     ],
+    "saas": true,
     "website": "https://www.salesforce.com/products/marketing-cloud/email-marketing"
   },
   "Salesforce Service Cloud": {
@@ -1006,6 +993,22 @@
     "scriptSrc": "cdn-prod\\.scalefast\\.com/(?:.+\\.js\\?version=([\\d\\.]+))?\\;version:\\1",
     "website": "https://www.scalefast.com"
   },
+  "ScandiPWA": {
+    "cats": [
+      108
+    ],
+    "cpe": "cpe:2.3:a:scandipwa:magento-scripts:*:*:*:*:*:node.js:*:*",
+    "description": "ScandiPWA is the next generation Magento 2 PWA theme developed in React.",
+    "dom": "link[href^='/static/frontend/scandipwa/']",
+    "icon": "ScandiPWA.png",
+    "implies": [
+      "Magento\\;version:2",
+      "React",
+      "PWA"
+    ],
+    "oss": true,
+    "website": "https://scandipwa.com"
+  },
   "Schedule Engine": {
     "cats": [
       52
@@ -1271,7 +1274,8 @@
   },
   "Sections.design Shopify App Optimization": {
     "cats": [
-      92
+      92,
+      100
     ],
     "description": "Sections.design Shopify App Optimization is a Shopify section written in liquid for the purpose of improving performance of Shopify stores by optimizing how Shopify app loads.",
     "dom": "div#shopify-section-app-optimization",
@@ -1337,9 +1341,9 @@
     },
     "icon": "Segment.svg",
     "js": {
-      "analytics.VERSION": "(.+)\\;version:\\1",
+      "__SEGMENT_INSPECTOR__": "",
       "analytics.SNIPPET_VERSION": "(.+)\\;version:\\1",
-      "__SEGMENT_INSPECTOR__": ""
+      "analytics.VERSION": "(.+)\\;version:\\1"
     },
     "pricing": [
       "mid",
@@ -1393,13 +1397,13 @@
       "MySQL",
       "PHP"
     ],
-    "scriptSrc": "//cdn\\.omniparcelreturns\\.com/",
-    "saas": true,
     "pricing": [
       "recurring",
       "poa",
       "payg"
     ],
+    "saas": true,
+    "scriptSrc": "//cdn\\.omniparcelreturns\\.com/",
     "website": "https://www.sekologistics.com/us/global-cross-border-returns"
   },
   "Select2": {
@@ -1655,6 +1659,12 @@
       75
     ],
     "description": "Sendinblue is an email marketing solution for small and medium-sized businesses that want to send and automate email marketing campaigns.",
+    "dns": {
+      "TXT": [
+        "\\.sendinblue\\.com",
+        "Sendinblue-code"
+      ]
+    },
     "dom": "iframe[src*='sibautomation.com/']",
     "icon": "Sendinblue.svg",
     "js": {
@@ -1915,6 +1925,22 @@
     "scriptSrc": "\\.sharethis\\.com/",
     "website": "http://sharethis.com"
   },
+  "Shareaholic": {
+    "cats": [
+      5
+    ],
+    "description": "Shareaholic is a all-in-one content amplification and monetisation platform.",
+    "icon": "shareaholic.svg",
+    "js": {
+      "Shareaholic": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "website": "https://www.shareaholic.com/"
+  },
   "Sharethrough": {
     "cats": [
       36
@@ -2116,17 +2142,52 @@
     "saas": true,
     "website": "https://www.shoefitr.io"
   },
-  "Shogun": {
+  "Shogun Frontend": {
+    "cats": [
+      108
+    ],
+    "description": "Shogun Frontend is an all-in-one ecommerce frontend platform. Shogun Frontend pairs with leading backends: Shopify, BigCommerce, Magento (Adobe Commerce), and more.",
+    "dom": "img[src*='.shgcdn.com/']",
+    "icon": "Shogun Frontend.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://getshogun.com/frontend"
+  },
+  "Shogun Landing Page Builder": {
+    "cats": [
+      100
+    ],
+    "description": "Shogun Landing Page Builder is a drag and drop Shopify page builder for creating high-converting store pages.",
+    "icon": "Shogun Page Builder.svg",
+    "implies": "Shogun Page Builder",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "\\.getshogun\\.com/.+\\.myshopify\\.com",
+    "website": "https://apps.shopify.com/shogun"
+  },
+  "Shogun Page Builder": {
     "cats": [
       51
     ],
     "description": "Shogun is a page builder commonly used with headless implementations.",
-    "icon": "Shogun.svg",
+    "icon": "Shogun Page Builder.svg",
     "js": {
       "shogunAnalytics": ""
     },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
     "saas": true,
-    "website": "https://getshogun.com/"
+    "website": "https://getshogun.com/page-builder"
   },
   "Shop Pay": {
     "cats": [
@@ -2164,6 +2225,26 @@
     ],
     "requires": "Shopify",
     "website": "https://shoppay.affirm.com"
+  },
+  "ShopBase": {
+    "cats": [
+      6,
+      106
+    ],
+    "description": " ShopBase is a cross-border ecommerce platform for all Dropshipping/Print-on-Demand novices and experienced merchants.",
+    "headers": {
+      "content-security-policy": "(?:accounts|templates)\\.shopbase\\.com"
+    },
+    "icon": "ShopBase.svg",
+    "js": {
+      "sbsdk.checkout.setEnableABTestCustomer": ""
+    },
+    "pricing": [
+      "recurring",
+      "low"
+    ],
+    "saas": true,
+    "website": "https://www.shopbase.com"
   },
   "ShopGold": {
     "cats": [
@@ -2339,9 +2420,10 @@
     },
     "icon": "Shopify.svg",
     "js": {
-      "Shopify": "\\;confidence:25",
+      "SHOPIFY_API_BASE_URL": "",
       "ShopifyAPI": "",
-      "ShopifyCustomer": ""
+      "ShopifyCustomer": "",
+      "Shopify": "\\;confidence:25"
     },
     "meta": {
       "shopify-checkout-api-token": "",
@@ -2761,6 +2843,22 @@
     "scriptSrc": "\\.shoutout\\.global/",
     "website": "https://www.shoutout.global"
   },
+  "Showit": {
+    "cats": [
+      51
+    ],
+    "description": "Showit is a drag-and-drop, no-code website builder for photographers and creative professionals.",
+    "icon": "Showit.svg",
+    "js": {
+      "showit.default.siteId": ""
+    },
+    "scriptSrc": "lib\\.showit\\.co/engine/([\\d\\.]+)/\\;version:\\1",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://showit.co"
+  },
   "Shuttle": {
     "cats": [
       1
@@ -2904,6 +3002,27 @@
       "simpleanalytics\\.com"
     ],
     "website": "https://simpleanalytics.com"
+  },
+  "Simple Machines Forum": {
+    "cats": [
+      2
+    ],
+    "cpe": "cpe:2.3:a:simplemachines:simple_machine_forum:*:*:*:*:*:*:*:*",
+    "description": "Simple Machines Forum is a free open-source software, used for community forums and is written in PHP.",
+    "dom": {
+      "li > span > a[title='Simple Machines Forum']": {
+        "text": "^SMF\\s([\\d\\.]+)\\;version:\\1"
+      }
+    },
+    "icon": "Simple Machines Forum.png",
+    "implies": "PHP",
+    "js": {
+      "smf_avatarResize": "",
+      "smf_default_theme_url": "",
+      "smf_theme_url": ""
+    },
+    "oss": true,
+    "website": "http://www.simplemachines.org"
   },
   "SimpleHTTP": {
     "cats": [
@@ -3286,40 +3405,6 @@
     ],
     "website": "https://sitepad.com"
   },
-  "Sitepark IES": {
-    "cats": [
-      1
-    ],
-    "cpe": "cpe:2.3:a:sitepark:information_enterprise_server:*:*:*:*:*:*:*:*",
-    "description": "Sitepark IES is a content management system written in PHP and paired with a MySQL database.",
-    "icon": "Sitepark.png",
-    "implies": [
-      "MySQL",
-      "Lucene"
-    ],
-    "meta": {
-      "generator": "^Sitepark\\sInformation\\sEnterprise\\sServer\\s-\\sIES\\sGenerator\\sv([\\d\\.]+)$\\;version:\\1"
-    },
-    "pricing": [
-      "poa"
-    ],
-    "website": "https://www.sitepark.com/oeffentlicher-sektor/produkte/cms-technologie.php"
-  },
-  "Sitepark InfoSite": {
-    "cats": [
-      1
-    ],
-    "description": "Sitepark InfoSite is a content management system and complete application of Sitepark IES which written in PHP and paired with a MySQL database.",
-    "icon": "Sitepark.png",
-    "implies": "Sitepark IES",
-    "meta": {
-      "generator": "^InfoSite\\s([\\d\\.]+)\\s-\\sSitepark\\sInformation\\sEnterprise\\sServer$\\;version:\\1"
-    },
-    "pricing": [
-      "poa"
-    ],
-    "website": "https://www.sitepark.com/mittelstand/content-management-system/index.php"
-  },
   "SiteSpect": {
     "cats": [
       74
@@ -3385,13 +3470,16 @@
       "img[src^='/-/media/']",
       "img[src*='/~/media/.+\\.ashx']"
     ],
+    "probe": {
+      "/layouts/System/VisitorIdentification.aspx": ""
+    },
     "icon": "Sitecore.svg",
     "pricing": [
       "poa",
       "recurring",
       "high"
     ],
-    "requires": "Microsoft ASP.NET",
+    "implies": "Microsoft ASP.NET",
     "saas": true,
     "website": "https://www.sitecore.com/"
   },
@@ -3425,6 +3513,40 @@
     "saas": true,
     "scriptSrc": "siteglide\\.js",
     "website": "https://www.siteglide.com"
+  },
+  "Sitepark IES": {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:sitepark:information_enterprise_server:*:*:*:*:*:*:*:*",
+    "description": "Sitepark IES is a content management system written in PHP and paired with a MySQL database.",
+    "icon": "Sitepark.png",
+    "implies": [
+      "MySQL",
+      "Lucene"
+    ],
+    "meta": {
+      "generator": "^Sitepark\\sInformation\\sEnterprise\\sServer\\s-\\sIES\\sGenerator\\sv([\\d\\.]+)$\\;version:\\1"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.sitepark.com/oeffentlicher-sektor/produkte/cms-technologie.php"
+  },
+  "Sitepark InfoSite": {
+    "cats": [
+      1
+    ],
+    "description": "Sitepark InfoSite is a content management system and complete application of Sitepark IES which written in PHP and paired with a MySQL database.",
+    "icon": "Sitepark.png",
+    "implies": "Sitepark IES",
+    "meta": {
+      "generator": "^InfoSite\\s([\\d\\.]+)\\s-\\sSitepark\\sInformation\\sEnterprise\\sServer$\\;version:\\1"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.sitepark.com/mittelstand/content-management-system/index.php"
   },
   "Sitevision CMS": {
     "cats": [
@@ -3525,6 +3647,25 @@
       "poa"
     ],
     "website": "https://developers.sikido.vn/docs/cms/"
+  },
+  "Skilljar": {
+    "cats": [
+      21
+    ],
+    "description": "Skilljar is a B2B customer training platform and learning management system.",
+    "icon": "skilljar.svg",
+    "js": {
+      "SKILLJAR_DASHBOARD_GLOBALS": "",
+      "skilljarCatalogPage": "",
+      "skilljarThemeVersionMajor": "",
+      "skilljarTranslate": ""
+    },
+    "pricing": [
+      "poa",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.skilljar.com/"
   },
   "Skimlinks": {
     "cats": [
@@ -3639,9 +3780,9 @@
       59
     ],
     "html": "<link [^>]+(?:/([\\d.]+)/)?slick-theme\\.css\\;version:\\1",
+    "icon": "Slick.svg",
     "implies": "jQuery",
     "scriptSrc": "(?:/([\\d.]+))?/slick(?:\\.min)?\\.js\\;version:\\1",
-    "icon": "Slick.svg",
     "website": "https://kenwheeler.github.io/slick"
   },
   "SlickStack": {
@@ -3921,8 +4062,25 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "js\\.smile\\.io/v([\\d.]+)/\\;version:\\1",
+    "scriptSrc": "\\.(?:smile|sweettooth)\\.io/",
     "website": "https://smile.io"
+  },
+  "Smile App": {
+    "cats": [
+      100
+    ],
+    "description": "Smile App offers a loyalty program for Shopify stores.",
+    "icon": "Smile.svg",
+    "implies": "Smile",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "js\\.smile\\.io/.+smile-shopify\\.js",
+    "website": "https://apps.shopify.com/smile-io"
   },
   "SmtpJS": {
     "cats": [
@@ -4158,6 +4316,22 @@
     "saas": true,
     "scriptSrc": "social9\\.com/.+\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1",
     "website": "https://social9.com"
+  },
+  "SocialJuice": {
+    "cats": [
+      90,
+      5
+    ],
+    "description": "SocialJuice is a simple tool to collect video testimonials or textual testimonials from your clients.",
+    "dom": "iframe[src*='embed.socialjuice.io/']",
+    "icon": "SocialJuice.svg",
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://socialjuice.io"
   },
   "SocialLadder": {
     "cats": [
@@ -5388,14 +5562,14 @@
     "description": "StatusCast is a hosted status page management software.",
     "icon": "StatusCast.svg",
     "js": {
-      "statuscast.ui": "",
-      "statuscast.libs.datatables": ""
+      "statuscast.libs.datatables": "",
+      "statuscast.ui": ""
     },
-    "saas": true,
     "pricing": [
       "mid",
       "recurring"
-    ], 
+    ],
+    "saas": true,
     "website": "https://statuscast.com/status-page/"
   },
   "Staytus": {
@@ -5510,6 +5684,30 @@
     "implies": "Vue.js",
     "oss": true,
     "website": "https://vuestorefront.io/storefront-ui"
+  },
+  "Storeino": {
+    "cats": [
+      6
+    ],
+    "description": "Storeino is an ecommerce platform that enables businesses and physical store owners to open a professional online store and sell products online regardless of their geographical location.",
+    "icon": "Storeino.png",
+    "implies": [
+      "Express",
+      "MongoDB",
+      "Node.js"
+    ],
+    "js": {
+      "StoreinoApp": ""
+    },
+    "meta": {
+      "platform": "^Storeino$"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.storeino.com"
   },
   "Storeplum": {
     "cats": [
@@ -5895,25 +6093,6 @@
     "scriptSrc": "\\.sumo(?:me)?\\.com/",
     "website": "http://sumo.com"
   },
-  "Suncel": {
-    "cats": [
-      1
-    ],
-    "icon": "Suncel.svg",
-    "description": "Suncel is a powerful and versatile content platform with a simple visual builder for marketers and publishers.",
-    "requires": "Next.js",
-    "dom": "img[srcset*='assets.suncel.io']",
-    "js": {
-      "__NEXT_DATA__.props.pageProps.suncel": ""
-    },
-    "pricing": [
-      "freemium",
-      "mid",
-      "recurring"
-    ],
-    "saas": true,
-    "website": "https://suncel.io"
-  },
   "SunOS": {
     "cats": [
       28
@@ -5926,6 +6105,25 @@
     },
     "icon": "Oracle.svg",
     "website": "http://oracle.com/solaris"
+  },
+  "Suncel": {
+    "cats": [
+      1
+    ],
+    "description": "Suncel is a powerful and versatile content platform with a simple visual builder for marketers and publishers.",
+    "dom": "img[srcset*='assets.suncel.io']",
+    "icon": "Suncel.svg",
+    "js": {
+      "__NEXT_DATA__.props.pageProps.suncel": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "requires": "Next.js",
+    "saas": true,
+    "website": "https://suncel.io"
   },
   "Super Builder": {
     "cats": [
@@ -6162,10 +6360,10 @@
       59
     ],
     "description": "Swiffy Slider is a wrapper defined in html with slides, navigation and indicators as its children.",
-    "icon": "Swiffy Slider.svg",
     "dom": "link[href*='/swiffy-slider.min.css']",
-    "scriptSrc": "/npm/swiffy-slider@([\\d\\.]+)/\\;version:\\1",
+    "icon": "Swiffy Slider.svg",
     "oss": true,
+    "scriptSrc": "/npm/swiffy-slider@([\\d\\.]+)/\\;version:\\1",
     "website": "https://swiffyslider.com"
   },
   "Swiftype": {
@@ -6324,15 +6522,15 @@
       32
     ],
     "description": "Systeme.io is an all-in-one marketing platform that helps businesses create and launch sales funnels, affiliate programs, email marketing campaigns, online courses, blogs, and websites.",
-    "icon": "Systeme.io.svg",
     "dom": "from[action*='//systeme.io/'], a[href*='//systeme.io/']",
-    "scriptSrc": "//systeme\\.io/",
-    "saas": true,
+    "icon": "Systeme.io.svg",
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
+    "saas": true,
+    "scriptSrc": "//systeme\\.io/",
     "website": "https://systeme.io"
   },
   "Syte": {

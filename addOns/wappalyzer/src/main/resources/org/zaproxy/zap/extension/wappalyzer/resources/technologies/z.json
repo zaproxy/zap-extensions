@@ -563,11 +563,11 @@
     "cats": [
       12
     ],
+    "icon": "Angular.svg",
     "implies": "Angular",
     "js": {
       "Zone.root": ""
     },
-    "icon": "Angular.svg",
     "website": "https://github.com/angular/angular/tree/master/packages/zone.js"
   },
   "Zonos": {

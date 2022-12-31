@@ -339,6 +339,30 @@
     "scriptSrc": "/jibres\\.js",
     "website": "https://jibres.com"
   },
+  "Jilt App": {
+    "cats": [
+      100,
+      98
+    ],
+    "description": "Jilt App helps ecommerce store owners track and recover abandoned orders. Works seamlessly with Shopify and WooCommerce.",
+    "icon": "Jilt.svg",
+    "js": {
+      "jiltStorefrontParams.platform": "^shopify$"
+    },
+    "requires": "Shopify",
+    "website": "https://community.shopify.com/c/shopify-apps/jilt-is-over-what-app-to-use-for-abandoned-carts-now/td-p/1575095"
+  },
+  "Jilt plugin": {
+    "cats": [
+      87,
+      98
+    ],
+    "description": "Jilt plugin helps ecommerce store owners track and recover abandoned orders. Works seamlessly with Shopify and WooCommerce.",
+    "icon": "Jilt.svg",
+    "requires": "WordPress",
+    "scriptSrc": "\\.jilt\\.com/.+/jilt\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/jilt-for-woocommerce"
+  },
   "Jimdo": {
     "cats": [
       1
@@ -686,6 +710,17 @@
     "scriptSrc": "cdn\\.juo\\.io/",
     "website": "https://get.juo.io"
   },
+  "Juspay": {
+    "cats": [
+      41
+    ],
+    "description": "Juspay is a developer of an online platform designed to be used for mobile-based payments.",
+    "icon": "juspay.svg",
+    "js": {
+      "Juspay": ""
+    },
+    "website": "https://juspay.in"
+  },
   "Justo": {
     "cats": [
       6
@@ -702,10 +737,11 @@
   },
   "Justuno": {
     "cats": [
-      76
+      76,
+      98
     ],
-    "description": "Justuno is a visitor conversion optimization platform.",
-    "icon": "Justuno.png",
+    "description": "Justuno is a visitor conversion optimisation platform.",
+    "icon": "Justuno.svg",
     "js": {
       "JustunoApp": ""
     },
@@ -718,7 +754,24 @@
       "my\\.jst\\.ai",
       "cdn\\.justuno\\.com"
     ],
-    "website": "https://www.justuno.com/"
+    "website": "https://www.justuno.com"
+  },
+  "Justuno App": {
+    "cats": [
+      100
+    ],
+    "description": "Justuno is a premium conversion marketing and analytics platform that provides retailers with powerful tools to increase conversions.",
+    "icon": "Justuno.svg",
+    "implies": "Justuno",
+    "pricing": [
+      "freemium",
+      "recurring",
+      "low"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "//scripttags\\.justuno\\.com/shopify_justuno",
+    "website": "https://apps.shopify.com/justuno-pop-ups-email-conversion"
   },
   "jComponent": {
     "cats": [

@@ -599,6 +599,25 @@
     "scriptSrc": "cdn\\.helpdocs\\.io",
     "website": "https://www.helpdocs.io"
   },
+  "Here": {
+    "cats": [
+      35
+    ],
+    "description": "HERE is a PaaS for creating custom maps, visualize location datasets, gather insights and buy and sell location assets.",
+    "dom": "link[href*='//js\\.api\\.here\\.com/']",
+    "icon": "here.svg",
+    "js": {
+      "H.buildInfo": "",
+      "H.geo": "\\;confidence:50",
+      "H.util": "\\;confidence:50"
+    },
+    "pricing": [
+      "freemium",
+      "payg",
+      "recurring"
+    ],
+    "website": "https://www.here.com"
+  },
   "Hermes": {
     "cats": [
       99
@@ -803,7 +822,7 @@
     ],
     "description": "Highcharts is a charting library written in pure JavaScript, for adding interactive charts to a website or web application.",
     "html": "<svg[^>]*><desc>Created with Highcharts ([\\d.]*)\\;version:\\1",
-    "icon": "Highcharts.png",
+    "icon": "Highcharts.svg",
     "js": {
       "Highcharts": "",
       "Highcharts.version": "^(.+)$\\;version:\\1"
@@ -828,7 +847,7 @@
       25
     ],
     "html": "<svg[^>]*><desc>Created with Highstock ([\\d.]*)\\;version:\\1",
-    "icon": "Highcharts.png",
+    "icon": "Highcharts.svg",
     "scriptSrc": "highstock[.-]?([\\d\\.]*\\d).*\\.js\\;version:\\1",
     "website": "http://highcharts.com/products/highstock"
   },
@@ -950,6 +969,23 @@
     "saas": true,
     "website": "https://www.homestead.com"
   },
+  "Honeybadger": {
+    "cats": [
+      13
+    ],
+    "description": "Honeybadger provides exception and uptime monitoring to keep your web apps error-free.",
+    "icon": "honey-badger.svg",
+    "js": {
+      "Honeybadger": "",
+      "initHoneyBadger": ""
+    },
+    "pricing": [
+      "payg",
+      "freemium",
+      "recurring"
+    ],
+    "website": "https://www.honeybadger.io"
+  },
   "HostEurope": {
     "cats": [
       88
@@ -1017,6 +1053,10 @@
     "description": "Hostinger is an employee-owned Web hosting provider and internet domain registrar.",
     "dns": {
       "SOA": "\\.(?:dns-parking|hostinger)\\.com"
+    },
+    "headers": {
+      "Platform": "hostinger",
+      "Server": "hcdn"
     },
     "icon": "Hostinger.svg",
     "pricing": [
@@ -1167,7 +1207,8 @@
     "dns": {
       "TXT": [
         "hubspotemail\\.net",
-        "hubspot-developer-verification"
+        "hubspot-developer-verification",
+        "hubspot-domain-verification"
       ]
     },
     "html": "<!-- Start of Async HubSpot",
@@ -1397,6 +1438,20 @@
     ],
     "saas": true,
     "website": "https://www.hulkapps.com/products/product-reviews-shopify"
+  },
+  "Human Presence": {
+    "cats": [
+      16
+    ],
+    "description": "Human Presence is a bot detection and spam protection software for WordPress and Shopify.",
+    "icon": "human_presence.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "scriptSrc": "/.*\\.humanpresence\\.(?:io|app)/",
+    "website": "https://www.humanpresence.io"
   },
   "Humm": {
     "cats": [

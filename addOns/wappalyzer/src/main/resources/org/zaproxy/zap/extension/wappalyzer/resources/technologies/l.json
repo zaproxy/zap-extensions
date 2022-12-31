@@ -977,13 +977,16 @@
       52
     ],
     "description": "LiveChat is an online customer service software with online chat, help desk software, and web analytics capabilities.",
-    "icon": "LiveChat.png",
+    "icon": "LiveChat.svg",
+    "js": {
+      "LiveChatWidget": ""
+    },
     "pricing": [
       "payg"
     ],
     "saas": true,
     "scriptSrc": "cdn\\.livechatinc\\.com/.*tracking\\.js",
-    "website": "http://livechatinc.com"
+    "website": "https://www.livechat.com/"
   },
   "LiveHelp": {
     "cats": [

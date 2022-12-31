@@ -130,12 +130,13 @@
       "<form[^>]+id=\"ajaxSearch_form\\;confidence:20",
       "<input[^>]+id=\"ajaxSearch_input\\;confidence:20"
     ],
-    "icon": "MODX.png",
+    "icon": "MODX.svg",
     "implies": "PHP",
     "js": {
       "MODX": "",
       "MODX_MEDIA_PATH": ""
     },
+    "scriptSrc": "/assets/components/templates/\\;confidence:50",
     "meta": {
       "generator": "MODX[^\\d.]*([\\d.]+)?\\;version:\\1"
     },
@@ -153,9 +154,7 @@
     "description": "MRW is a Spanish courier company specialised in express national and international shipping services.",
     "icon": "MRW.png",
     "requiresCategory": 6,
-    "text": [
-      "\\bMRW\\b"
-    ],
+    "text": "\\bMRW\\b",
     "website": "https://www.mrw.es"
   },
   "MSHOP": {
@@ -302,8 +301,10 @@
       "Mage": "",
       "VarienForm": ""
     },
-    "magento": "Magento/([0-9.]+)\\;version:\\1",
     "oss": true,
+    "probe": {
+      "/magento_version": ""
+    },
     "scriptSrc": [
       "js/mage",
       "skin/frontend/(?:default|(enterprise))\\;version:\\1?1 (Enterprise):1 (Community)",
@@ -875,6 +876,27 @@
     ],
     "website": "https://www.marketo.com"
   },
+  "Marketpath CMS": {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "_mp_permissions": "^session\\^"
+    },
+    "description": "Marketpath CMS is a hosted website content management system used by businesses, churches and schools.",
+    "icon": "Marketpath CMS.png",
+    "implies": [
+      "Azure",
+      "ZURB Foundation"
+    ],
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.marketpath.com"
+  },
   "Marko": {
     "cats": [
       18,
@@ -1170,7 +1192,7 @@
       14
     ],
     "description": "MediaElement.js is a set of custom Flash plugins that mimic the HTML5 MediaElement API for browsers that don't support HTML5 or don't support the media codecs.",
-    "icon": "MediaElement.js.png",
+    "icon": "MediaElement.js.svg",
     "js": {
       "mejs": "",
       "mejs.version": "^(.+)$\\;version:\\1"
@@ -1606,7 +1628,7 @@
       10
     ],
     "description": "Microsoft's Clarity is a analytics tool which provides website usage statistics, session recording, and heatmaps.",
-    "icon": "Microsoft.svg",
+    "icon": "Microsoft Clarity.svg",
     "js": {
       "clarity": ""
     },
@@ -2262,9 +2284,7 @@
     "description": "Mondial Relay is a parcel shipping and delivery service in Europe.",
     "icon": "Mondial Relay.svg",
     "requiresCategory": 6,
-    "text": [
-      "\\bMondial Relay\\b"
-    ],
+    "text": "\\bMondial Relay\\b",
     "website": "https://www.mondialrelay.com"
   },
   "Mondo Media": {
@@ -2509,7 +2529,7 @@
     "cats": [
       10
     ],
-    "icon": "mouseflow.png",
+    "icon": "Mouseflow.svg",
     "js": {
       "_mfq": ""
     },
@@ -2622,9 +2642,7 @@
     "description": "My Flying Box is an international parcel shipping company.",
     "icon": "My Flying Box.svg",
     "requiresCategory": 6,
-    "text": [
-      "\\bMy Flying Box\\b"
-    ],
+    "text": "\\bMy Flying Box\\b",
     "website": "https://www.myflyingbox.com/"
   },
   "My Food Link": {
@@ -2654,10 +2672,7 @@
     "cpe": "cpe:2.3:a:mybb:mybb:*:*:*:*:*:*:*:*",
     "description": "MyBB is a free and open-source forum software written in PHP.",
     "icon": "MyBB.png",
-    "implies": [
-      "PHP",
-      "MySQL"
-    ],
+    "implies": "PHP",
     "js": {
       "MyBB": "",
       "MyBBEditor": ""

@@ -541,20 +541,20 @@
       87
     ],
     "description": "Elementor is a website builder platform for professionals on WordPress.",
-    "icon": "Elementor.svg",
     "dom": "link[href*='/wp-content/plugins/elementor/']",
+    "icon": "Elementor.svg",
     "js": {
       "elementorFrontend.getElements": "",
       "elementorFrontendConfig.version": "([\\d\\.]+)\\;version:\\1"
     },
-    "scriptSrc": "/wp-content/plugins/elementor(?:-pro)?/.+frontend-modules\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
-    "requires": "WordPress",
-    "saas": true,
     "pricing": [
       "freemium",
       "onetime",
       "recurring"
     ],
+    "requires": "WordPress",
+    "saas": true,
+    "scriptSrc": "/wp-content/plugins/elementor(?:-pro)?/.+frontend-modules\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://elementor.com"
   },
   "Elementor Cloud": {
@@ -1276,6 +1276,25 @@
     ],
     "website": "https://www.ethicalads.io/"
   },
+  "Eticex": {
+    "cats": [
+      6
+    ],
+    "description": "Eticex is as an ecommerce infrastructure provider that offers ecommerce packages and customisable high-performance ecommerce solutions.",
+    "icon": "Eticex.svg",
+    "implies": [
+      "MySQL",
+      "React",
+      "PHP"
+    ],
+    "pricing": [
+      "recurring",
+      "mid"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.eticex\\.com/",
+    "website": "https://www.eticex.com"
+  },
   "Etix": {
     "cats": [
       104
@@ -1309,6 +1328,16 @@
     "saas": true,
     "scriptSrc": "\\.etracker\\.com",
     "website": "https://www.etracker.com"
+  },
+  "EventOn": {
+    "cats": [
+      72,
+      87
+    ],
+    "description": "EventON is event calendar for WordPress.",
+    "dom": "link#eventon_dynamic_styles-css, link[href*='/css/eventon_styles\\.css']",
+    "icon": "eventon.png",
+    "website": "https://www.myeventon.com"
   },
   "Everflow": {
     "cats": [
