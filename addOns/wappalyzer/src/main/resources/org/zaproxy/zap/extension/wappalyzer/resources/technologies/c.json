@@ -56,27 +56,6 @@
     "scriptSrc": "cc\\.cdn\\.civiccomputing\\.com",
     "website": "https://www.civicuk.com/cookie-control"
   },
-  "CiviCRM": {
-    "cats": [
-      53
-    ],
-    "description": "CiviCRM is a web-based suite of internationalised open-source software for constituency relationship management.",
-    "icon": "CiviCRM.png",
-    "dom": "a[href*='/civicrm/contribute/transact'], link[href*='/com_civicrm/civicrm/']",
-    "oss": true,
-    "website": "https://civicrm.org"
-  },
-  "CiviCRM plugins": {
-    "cats": [
-      87
-    ],
-    "description": "CiviCRM is a web-based suite of internationalised open-source software for constituency relationship management.",
-    "icon": "CiviCRM.png",
-    "implies": "CiviCRM",
-    "requires": "WordPress",
-    "scriptSrc": "wp-content/plugins/(?:[\\w\\-]+)?civicrm(?:[\\w\\-]+)?/",
-    "website": "https://wordpress.org/plugins/search/civicrm/"
-  },
   "CJDropshipping app": {
     "cats": [
       100
@@ -289,6 +268,22 @@
     "oss": true,
     "website": "https://cachethq.io"
   },
+  "CactiveCloud": {
+    "cats": [
+      22
+    ],
+    "description": "CactiveCloud is a freemium based cloud provider and web server for static deployments of websites with HTML builds and serverless functions.",
+    "headers": {
+      "server": "^Cactive$"
+    },
+    "icon": "CactiveCloud.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "website": "https://cactivecloud.com"
+  },
   "Caddy": {
     "cats": [
       22
@@ -322,11 +317,11 @@
     "cats": [
       18
     ],
-    "description": "CakePHP is an open-source web framework. It follows the model–view–controller (MVC) approach and is written in PHP.",
     "cookies": {
       "cakephp": ""
     },
     "cpe": "cpe:2.3:a:cakephp:cakephp:*:*:*:*:*:*:*:*",
+    "description": "CakePHP is an open-source web framework. It follows the model–view–controller (MVC) approach and is written in PHP.",
     "icon": "CakePHP.svg",
     "implies": "PHP",
     "meta": {
@@ -533,6 +528,18 @@
     ],
     "saas": true,
     "website": "https://www.instructure.com/canvas"
+  },
+  "CanvasJS": {
+    "cats": [
+      25
+    ],
+    "description": "CanvasJS charts is a data visualisation library that runs across multiple devices and browsers.",
+    "icon": "canvasjs.svg",
+    "js": {
+      "CanvasJS.Chart": "",
+      "CanvasJS.Chart.version": "^v(.+)$\\;version:\\1"
+    },
+    "website": "https://canvasjs.com"
   },
   "Captch Me": {
     "cats": [
@@ -903,28 +910,6 @@
     "icon": "CentOS.svg",
     "website": "http://centos.org"
   },
-  "Centra": {
-    "cats": [
-      6
-    ],
-    "description": "Centra is the headless ecommerce platform.",
-    "dom":"img[src*='.centracdn.net/']",
-    "excludes": "Magento",
-    "headers": {
-      "Content-Security-Policy": "\\.centra(?:cdn)?\\.(?:com|net)"
-    },
-    "icon": "Centra.svg",
-    "js": {
-      "CENTRA_IMAGE_SIZES": ""
-    },
-    "scripts": "centraCheckoutScript",
-    "saas": true,
-    "pricing": [
-      "recurring",
-      "poa"
-    ],
-    "website": "https://centra.com"
-  },
   "Centminmod": {
     "cats": [
       22
@@ -939,6 +924,28 @@
       "PHP"
     ],
     "website": "https://centminmod.com"
+  },
+  "Centra": {
+    "cats": [
+      6
+    ],
+    "description": "Centra is the headless ecommerce platform.",
+    "dom": "img[src*='.centracdn.net/']",
+    "excludes": "Magento",
+    "headers": {
+      "Content-Security-Policy": "\\.centra(?:cdn)?\\.(?:com|net)"
+    },
+    "icon": "Centra.svg",
+    "js": {
+      "CENTRA_IMAGE_SIZES": ""
+    },
+    "pricing": [
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scripts": "centraCheckoutScript",
+    "website": "https://centra.com"
   },
   "Chabokan": {
     "cats": [
@@ -1028,12 +1035,12 @@
     "js": {
       "ChannelIO": ""
     },
-    "saas": true,
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
+    "saas": true,
     "website": "https://channel.io"
   },
   "ChannelAdvisor": {
@@ -1380,9 +1387,13 @@
     ],
     "description": "Choices.js is a lightweight, configurable select box/text input plugin.",
     "icon": "Choices.png",
+    "js": {
+      "Choices": ""
+    },
     "oss": true,
     "scriptSrc": [
-      "choices\\.js/|@([\\d.]+)(?:/assets)?(?:/scripts)?(?:/styles)?(?:/dist)?/choices(?:\\.min)?\\.js|css\\;version:\\1"
+      "choices\\.js(?:@|/)?([\\d\\.]+)?.+choices\\.min\\.js\\;version:\\1",
+      "/modules/choices/js/choices\\.js"
     ],
     "website": "https://github.com/Choices-js/Choices"
   },
@@ -1509,6 +1520,27 @@
       "\\bCitymail\\b"
     ],
     "website": "https://www.citymail.se"
+  },
+  "CiviCRM": {
+    "cats": [
+      53
+    ],
+    "description": "CiviCRM is a web-based suite of internationalised open-source software for constituency relationship management.",
+    "dom": "a[href*='/civicrm/contribute/transact'], link[href*='/com_civicrm/civicrm/']",
+    "icon": "CiviCRM.png",
+    "oss": true,
+    "website": "https://civicrm.org"
+  },
+  "CiviCRM plugins": {
+    "cats": [
+      87
+    ],
+    "description": "CiviCRM is a web-based suite of internationalised open-source software for constituency relationship management.",
+    "icon": "CiviCRM.png",
+    "implies": "CiviCRM",
+    "requires": "WordPress",
+    "scriptSrc": "wp-content/plugins/(?:[\\w\\-]+)?civicrm(?:[\\w\\-]+)?/",
+    "website": "https://wordpress.org/plugins/search/civicrm/"
   },
   "CivicTheme": {
     "cats": [
@@ -1660,9 +1692,9 @@
     "description": "Clerk is a user management platform.",
     "icon": "Clerk.svg",
     "js": {
-      "Clerk.version": "([\\d\\.]+)\\;version:\\1",
       "Clerk.authenticateWithMetamask": "",
-      "Clerk.openSignIn": ""
+      "Clerk.openSignIn": "",
+      "Clerk.version": "([\\d\\.]+)\\;version:\\1"
     },
     "pricing": [
       "mid",
@@ -1943,6 +1975,10 @@
       "__cfduid": ""
     },
     "description": "Cloudflare is a web-infrastructure and website-security company, providing content-delivery-network services, DDoS mitigation, Internet security, and distributed domain-name-server services.",
+    "dns": {
+      "NS": "\\.cloudflare\\.com",
+      "SOA": "\\.cloudflare\\.com"
+    },
     "headers": {
       "Server": "^cloudflare$",
       "cf-cache-status": "",
@@ -2024,6 +2060,27 @@
     ],
     "saas": true,
     "website": "https://www.cloudflare.com/products/zaraz/"
+  },
+  "Cloudify.store": {
+    "cats": [
+      6,
+      93
+    ],
+    "cookies": {
+      "cloudify_session": ""
+    },
+    "description": "Cloudify.store is a subscription-based platform that allows anyone to set up a hyperlocal quick commerce business.",
+    "icon": "Cloudify.store.png",
+    "implies": [
+      "PHP",
+      "MySQL",
+      "React"
+    ],
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://cloudify.store"
   },
   "Cloudimage": {
     "cats": [
@@ -2114,6 +2171,16 @@
     "icon": "ClustrMaps.svg",
     "scriptSrc": "clustrmaps\\.com",
     "website": "https://clustrmaps.com/"
+  },
+  "Clutch": {
+    "cats": [
+      90,
+      5
+    ],
+    "description": "Clutch review widgets are stand-alone applications that you can embed on your website to show your dynamic ratings and reviews.",
+    "icon": "clutch.svg",
+    "scriptSrc": "//widget\\.clutch\\.co/",
+    "website": "https://clutch.co/content/add-review-widget-your-website"
   },
   "CoConstruct": {
     "cats": [
@@ -2921,6 +2988,37 @@
     "scriptSrc": "cdn\\.conversant\\.mgr\\.consensu\\.org/",
     "website": "https://www.conversantmedia.eu/consent-tool"
   },
+  "Conversio": {
+    "cats": [
+      10
+    ],
+    "description": "Conversio is an optimisation and analytics agency.",
+    "icon": "Conversio.svg",
+    "js": {
+      "Conversio.settings": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.conversio\\.com/",
+    "website": "https://conversio.com"
+  },
+  "Conversio App": {
+    "cats": [
+      100
+    ],
+    "description": "Conversio App is an optimisation and analytics app for Shopify stores.",
+    "icon": "Conversio.svg",
+    "implies": "Conversio",
+    "pricing": [
+      "poa"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "\\.conversio\\.com/.+\\.myshopify\\.com",
+    "website": "https://apps.shopify.com/conversio"
+  },
   "Convert": {
     "cats": [
       74
@@ -3209,10 +3307,10 @@
       "coremedia_content_id": "",
       "generator": "^CoreMedia C(?:ontent Cloud|MS)$"
     },
-    "saas": true,
     "pricing": [
       "poa"
     ],
+    "saas": true,
     "website": "https://www.coremedia.com"
   },
   "CoreUI": {
@@ -3377,11 +3475,14 @@
     "cats": [
       22
     ],
+    "description": "Cowboy is a small, fast, modular HTTP server written in Erlang.",
     "headers": {
       "Server": "^Cowboy$"
     },
     "icon": "Cowboy.png",
-    "website": "http://ninenines.eu"
+    "implies": "Erlang",
+    "oss": true,
+    "website": "https://github.com/ninenines/cowboy"
   },
   "Cozy AntiTheft": {
     "cats": [
@@ -3503,6 +3604,22 @@
     "scriptSrc": "/wp-content/plugins/creative-mail-by-constant-contact/",
     "website": "https://www.creativemail.com"
   },
+  "Crikle": {
+    "cats": [
+      52
+    ],
+    "description": "Crikle is a multichannel customer engagement software.",
+    "icon": "Crikle.svg",
+    "js": {
+      "crikle.contactId": "",
+      "crikle.openConvertWidget": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.crikle.com"
+  },
   "Crisp Live Chat": {
     "cats": [
       52
@@ -3522,22 +3639,6 @@
     "saas": true,
     "scriptSrc": "client\\.crisp\\.chat/",
     "website": "https://crisp.chat/"
-  },
-  "Crikle": {
-    "cats": [
-      52
-    ],
-    "description": "Crikle is a multichannel customer engagement software.",
-    "icon": "Crikle.svg",
-    "js": {
-      "crikle.contactId": "",
-      "crikle.openConvertWidget": ""
-    },
-    "pricing": [
-      "poa"
-    ],
-    "saas": true,
-    "website": "https://www.crikle.com"
   },
   "Criteo": {
     "cats": [
@@ -3779,7 +3880,7 @@
       32
     ],
     "description": "Customer.io is an automated messaging platform for marketers.",
-    "icon": "Customer.io.png",
+    "icon": "Customer.io.svg",
     "pricing": [
       "recurring",
       "mid"
@@ -3804,6 +3905,22 @@
     "saas": true,
     "scriptSrc": "(?:cdn|app)\\.customily\\.com/",
     "website": "https://www.customily.com"
+  },
+  "Cwicly": {
+    "cats": [
+      87
+    ],
+    "description": "Cwicly is an advanced professional design and block toolkit that integrates directly with the WordPress editor.",
+    "dom": "link[href*='/wp-content/uploads/cwicly/']",
+    "icon": "Cwicly.png",
+    "implies": "Gutenberg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/cwicly/",
+    "website": "https://cwicly.com"
   },
   "Cxense": {
     "cats": [

@@ -578,6 +578,20 @@
     },
     "website": "https://nextjs.org"
   },
+  "NextAuth.js": {
+    "cats": [
+      69
+    ],
+    "cookies": {
+      "__Host-next-auth.csrf-token": "",
+      "__Secure-next-auth.callback-url": ""
+    },
+    "description": "NextAuth.js is a complete open-source authentication solution for Next.js applications.",
+    "icon": "Next-Auth.png",
+    "oss": true,
+    "requires": "Next.js",
+    "website": "https://next-auth.js.org"
+  },
   "NextGEN Gallery": {
     "cats": [
       7,
@@ -639,6 +653,25 @@
     "scriptSrc": "ads\\.nextdoor\\.com/",
     "website": "https://help.nextdoor.com/s/article/About-Neighborhood-Ad-Center-NAC-Conversion-Pixel"
   },
+  "Nextra": {
+    "cats": [
+      57
+    ],
+    "description": "Nextra is Next.js based static site generator.",
+    "dom": [
+      "div.nextra-container",
+      "div.nextra-nav-container",
+      "div.nextra-sidebar-container"
+    ],
+    "icon": "Nextra.svg",
+    "js": {
+      "__nextra_internal__": "",
+      "__nextra_pageContext__": ""
+    },
+    "oss": true,
+    "requires": "Next.js",
+    "website": "https://nextra.site/"
+  },
   "Nextsale": {
     "cats": [
       5,
@@ -657,20 +690,6 @@
     "saas": true,
     "scriptSrc": "(?:api|sdk)\\.nextsale\\.io/",
     "website": "https://nextsale.io"
-  },
-  "Nextra": {
-    "cats": [
-      57
-    ],
-    "description": "Nextra is Next.js based static site generator.",
-    "dom": "div.nextra-container",
-    "js": {
-      "__nextra_internal__": ""
-    },
-    "icon": "Next.js.svg",
-    "requires": "Next.js",
-    "oss": true,
-    "website": "https://nextra.vercel.app/"
   },
   "NexusPIPE": {
     "cats": [

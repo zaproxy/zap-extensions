@@ -87,7 +87,7 @@
       "vtex_session": ""
     },
     "description": "VTEX is an ecommerce software that manages multiple online stores.",
-    "dom":"link[href*='.vteximg.com.br'], source[srcset*='.vteximg.com.br']",
+    "dom": "link[href*='.vteximg.com.br'], source[srcset*='.vteximg.com.br']",
     "headers": {
       "Server": "^VTEX IO$",
       "powered": "vtex"
@@ -112,7 +112,9 @@
     "icon": "VWO.svg",
     "js": {
       "VWO": "",
-      "__vwo": ""
+      "__vwo": "",
+      "_vwo_code": "",
+      "_vwo_settings_timer": ""
     },
     "pricing": [
       "mid",
@@ -120,9 +122,10 @@
     ],
     "saas": true,
     "scriptSrc": [
-      "dev\\.visualwebsiteoptimizer\\.com/?([\\d.]+)\\;version:\\1"
+      "dev\\.visualwebsiteoptimizer\\.com/",
+      "/visual-website-optimizer/([\\d\\.])\\;version:\\1"
     ],
-    "website": "https://vwo.com/"
+    "website": "https://vwo.com"
   },
   "VWO Engage": {
     "cats": [
@@ -409,6 +412,22 @@
     "saas": true,
     "scriptSrc": "\\.viabill\\.com/",
     "website": "https://viabill.com"
+  },
+  "Viafoura": {
+    "cats": [
+      86
+    ],
+    "description": "Viafoura is an audience engagement and social monetisation platform.",
+    "icon": "viafoura.svg",
+    "js": {
+      "dfm_viafoura_options": "",
+      "viafoura.bootstrap": "",
+      "viafoura.core": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://viafoura.com"
   },
   "Vidazoo": {
     "cats": [
@@ -996,8 +1015,8 @@
     "html": "<[^>]+\\sdata-v(?:ue)?-",
     "icon": "vue.svg",
     "js": {
-      "Vue.version": "^(.+)$\\;version:\\1",
       "Vue": "",
+      "Vue.version": "^(.+)$\\;version:\\1",
       "VueRoot": "",
       "__VUE_HOT_MAP__": "",
       "__VUE__": "",
@@ -1051,6 +1070,17 @@
     "implies": "Vue.js",
     "oss": true,
     "website": "https://vuetifyjs.com"
+  },
+  "Vuukle": {
+    "cats": [
+      15
+    ],
+    "description": "Vuukle is an audience engagement and commenting platform.",
+    "icon": "vuukle.svg",
+    "js": {
+      "VUUKLE_CONFIG": ""
+    },
+    "website": "https://vuukle.com"
   },
   "vBulletin": {
     "cats": [

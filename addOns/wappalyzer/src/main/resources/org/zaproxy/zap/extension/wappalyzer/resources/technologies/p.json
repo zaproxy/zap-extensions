@@ -106,10 +106,11 @@
     "icon": "PIXIjs.svg",
     "js": {
       "PIXI": "",
-      "PIXI.VERSION": "^(.+)$\\;version:\\1"
+      "PIXI.VERSION": "^(.+)$\\;version:\\1",
+      "PIXI_WEBWORKER_URL": ""
     },
     "oss": true,
-    "scriptSrc": "pixi\\.(min\\.)?js$",
+    "scriptSrc": "pixi(?:\\.min|-legacy)?\\.js$",
     "url": ".+\\.pixijs\\.com",
     "website": "https://www.pixijs.com"
   },
@@ -178,7 +179,10 @@
     "description": "PacePay offers a BNPL (Buy now pay later) solution for merchants.",
     "icon": "Pace.svg",
     "js": {
-      "pacePay": ""
+      "pacePay": "",
+      "rely_month_installment": "",
+      "rely_shop_currency": "",
+      "rely_shop_money_format": ""
     },
     "saas": true,
     "scriptSrc": "pay\\.pacenow\\.co",
@@ -455,7 +459,7 @@
     "cats": [
       10
     ],
-    "icon": "Parse.ly.png",
+    "icon": "Parse.ly.svg",
     "js": {
       "PARSELY": ""
     },
@@ -516,12 +520,12 @@
       92
     ],
     "description": "Partytown is a lazy-loaded library to help relocate resource intensive scripts into a web worker, and off of the main thread.",
-    "icon": "Partytown.png",
+    "icon": "Partytown.svg",
     "js": {
       "partytown.lib": ""
     },
     "oss": true,
-    "website": "https://github.com/BuilderIO/partytown"
+    "website": "https://partytown.builder.io/"
   },
   "Paths.js": {
     "cats": [
@@ -760,6 +764,21 @@
     ],
     "saas": true,
     "website": "https://www.paylocity.com"
+  },
+  "Paysafe": {
+    "cats": [
+      41
+    ],
+    "description": "Paysafe is a payment platform that enables businesses and consumers to connect and transact by payment processing, digital wallet, and online cash solutions.",
+    "icon": "paysafe.svg",
+    "js": {
+      "paysafe": "",
+      "paysafe.checkout": "",
+      "paysafe.fields": "",
+      "paysafe.threedsecure": ""
+    },
+    "scriptSrc": "/hosted\\.paysafe\\.com/",
+    "website": "https://www.paysafe.com/en"
   },
   "PebblePost": {
     "cats": [
@@ -2480,7 +2499,7 @@
     ],
     "description": "Priority Hints exposes a mechanism for developers to signal a relative priority for browsers to consider when fetching resources.",
     "dom": "iframe[fetchpriority], img[fetchpriority], script[fetchpriority], link[fetchpriority]",
-    "icon": "default.svg",
+    "icon": "Priority Hints.svg",
     "website": "https://wicg.github.io/priority-hints/"
   },
   "Prism": {
@@ -2533,6 +2552,23 @@
     "saas": true,
     "scriptSrc": "\\.privy\\.com/",
     "website": "https://www.privy.com"
+  },
+  "Privy App": {
+    "cats": [
+      100
+    ],
+    "description": "Privy App helps you improve your website conversion rate, grow your email list, automate your email marketing, drive repeat purchases and much more.",
+    "icon": "Privy.svg",
+    "implies": "Privy",
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "//shopify\\.privy\\.com/",
+    "website": "https://apps.shopify.com/privy"
   },
   "ProcessWire": {
     "cats": [
@@ -2661,6 +2697,23 @@
     ],
     "saas": true,
     "website": "https://promobuilding.ru"
+  },
+  "Proton Mail": {
+    "cats": [
+      30
+    ],
+    "description": "Proton Mail is the world’s largest secure email service with over 70 million users. Available on Web, iOS, Android, and desktop. Protected by Swiss privacy law.",
+    "dns": {
+      "MX": [
+        "\\.protonmail\\.ch"
+      ],
+      "TXT": [
+        "protonmail-verification="
+      ]
+    },
+    "icon": "Proton Mail.svg",
+    "saas": true,
+    "website": "https://proton.me/mail"
   },
   "Prototype": {
     "cats": [
@@ -2936,6 +2989,9 @@
     ],
     "description": "PushOwl is a push notification platform for ecommerce stores.",
     "icon": "PushOwl.svg",
+    "js": {
+      "pushowl": ""
+    },
     "pricing": [
       "low",
       "freemium",
@@ -2944,6 +3000,24 @@
     "saas": true,
     "scriptSrc": "cdn\\.pushowl\\.com",
     "website": "https://pushowl.com"
+  },
+  "PushOwl Web Push Notifications": {
+    "cats": [
+      98,
+      100
+    ],
+    "description": "PushOwl Web Push Notifications are a Shopify app which helps recover abandoned carts and market better with web push.",
+    "icon": "PushOwl.svg",
+    "implies": "PushOwl",
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "/sdks/pushowl-shopify\\.js",
+    "website": "https://apps.shopify.com/pushowl"
   },
   "PushPushGo": {
     "cats": [

@@ -696,6 +696,18 @@
     ],
     "website": "https://www.billbee.io/"
   },
+  "Binance Pay": {
+    "cats": [
+      41
+    ],
+    "description": "Binance Pay is a contactless, borderless, and secure cryptocurrency payment technology designed by Binance.",
+    "dom": "a[href*='app.binance.com/payment/secpay']",
+    "icon": "Binance.svg",
+    "pricing": [
+      "freemium"
+    ],
+    "website": "https://pay.binance.com"
+  },
   "Birdeye": {
     "cats": [
       32,
@@ -798,13 +810,13 @@
       "BLACKBAUD": "",
       "don_premium_map": ""
     },
-    "scriptSrc": "js/convio/modules\\.js",
-    "url": "/site/Donation2?.*df_id=",
-    "saas": true,
     "pricing": [
       "low",
       "recurring"
     ],
+    "saas": true,
+    "scriptSrc": "js/convio/modules\\.js",
+    "url": "/site/Donation2?.*df_id=",
     "website": "https://www.blackbaud.com"
   },
   "Blade": {
@@ -1271,6 +1283,17 @@
     "scriptSrc": "motivate\\.boldapps\\.net/",
     "website": "https://boldcommerce.com/motivator"
   },
+  "Bold Page Builder": {
+    "cats": [
+      87,
+      51
+    ],
+    "description": "Bold Page Builder is a plugin or a theme component that allows users to structure and design responsive pages.",
+    "icon": "Bold Page Builder.png",
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/bold-page-builder/",
+    "website": "https://wordpress.org/plugins/bold-page-builder"
+  },
   "Bold Product Options": {
     "cats": [
       100
@@ -1314,6 +1337,22 @@
     "saas": true,
     "scriptSrc": "sub\\.boldapps\\.net/",
     "website": "https://boldcommerce.com/shopify-subscription-app"
+  },
+  "Bold Themes": {
+    "cats": [
+      80
+    ],
+    "description": "Bold Themes is a powerful and easy to use premium WordPress themes.",
+    "icon": "Bold Themes.png",
+    "implies": "WordPress",
+    "js": {
+      "BoldThemesURI": "",
+      "boldthemes_theme_loaded": "^true$"
+    },
+    "pricing": [
+      "onetime"
+    ],
+    "website": "https://bold-themes.com/wordpress-themes-plugins/"
   },
   "Bold Upsell": {
     "cats": [
@@ -1526,6 +1565,26 @@
     ],
     "saas": true,
     "website": "https://bookingkit.net/"
+  },
+  "Bookly": {
+    "cats": [
+      72,
+      87
+    ],
+    "description": "Bookly is a WordPress scheduling plugin that allows you to accept online reservations on your website and automate your booking system.",
+    "icon": "bookly.png",
+    "js": {
+      "BooklyL10n.daysShort": "",
+      "bookly": "",
+      "booklyCustomerProfile": ""
+    },
+    "pricing": [
+      "low",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/bookly-responsive-appointment-booking-tool/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://www.booking-wp-plugin.com"
   },
   "Booksy": {
     "cats": [
@@ -2338,6 +2397,20 @@
     "icon": "Business Catalyst.svg",
     "scriptSrc": "CatalystScripts",
     "website": "http://businesscatalyst.com"
+  },
+  "ButterCMS": {
+    "cats": [
+      1
+    ],
+    "description": "ButterCMS is a cloud-based headless content management system.",
+    "dom": "div[data-bg*='cdn.buttercms.com/'], img[src*='cdn.buttercms.com/'], link[href*='cdn.buttercms.com'], a[href*='cdn.buttercms.com/']",
+    "icon": "butter-cms.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "website": "https://buttercms.com"
   },
   "Buy me a coffee": {
     "cats": [

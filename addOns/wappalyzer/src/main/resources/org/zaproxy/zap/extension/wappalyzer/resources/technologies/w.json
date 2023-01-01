@@ -363,11 +363,12 @@
     "cats": [
       1
     ],
+    "cpe": "cpe:2.3:a:torchbox:wagtail:*:*:*:*:*:*:*:*",
     "description": "Wagtail is a Django content management system (CMS) focused on flexibility and user experience.",
     "dom": {
       "[data-block-key]": {
         "attributes": {
-          "data-block-key": "[a-z0-9]{5}"
+          "data-block-key": "^[a-z0-9]{5}$"
         }
       },
       "[style*='images/']": {
@@ -405,7 +406,7 @@
       "Python"
     ],
     "oss": true,
-    "website": "https://wagtail.org/"
+    "website": "https://wagtail.org"
   },
   "Wair": {
     "cats": [
@@ -478,6 +479,17 @@
     "icon": "Warp.png",
     "implies": "Haskell",
     "website": "http://www.stackage.org/package/warp"
+  },
+  "Wazimo": {
+    "cats": [
+      36
+    ],
+    "description": "Wazimo is a digital media company focused on combining engaging content with advanced real-time tendering (RTB) capabilities.",
+    "icon": "wazimo.png",
+    "js": {
+      "wz.mmConfig.buildVersion": ""
+    },
+    "website": "https://wazimo.com"
   },
   "Weaver Xtreme": {
     "cats": [
@@ -730,8 +742,8 @@
     "cats": [
       51
     ],
-    "description": "Webflow is Software-as-a-Service (Saas) for website building and hosting.",
-    "html": "<html[^>]+data-wf-site",
+    "description": "Webflow is Software-as-a-Service (SaaS) for website building and hosting.",
+    "dom": "html[data-wf-site]",
     "icon": "webflow.svg",
     "js": {
       "Webflow": ""
@@ -739,7 +751,30 @@
     "meta": {
       "generator": "Webflow"
     },
+    "saas": true,
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
     "website": "https://webflow.com"
+  },
+  "Webflow Ecommerce": {
+    "cats": [
+      6
+    ],
+    "description": "Webflow is a zero-code visual website builder, with Webflow Ecommerce, you can build and design online stores.",
+    "icon": "webflow.svg",
+    "js": {
+      "__WEBFLOW_CURRENCY_SETTINGS": ""
+    },
+    "requires": "Webflow",
+    "saas": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://webflow.com/ecommerce"
   },
   "Webgains": {
     "cats": [
@@ -829,6 +864,36 @@
     "implies": "Perl",
     "oss": true,
     "website": "https://www.webmin.com"
+  },
+  "Webpack": {
+    "cats": [
+      19
+    ],
+    "description": "Webpack is an open-source JavaScript module bundler.",
+    "icon": "Webpack.svg",
+    "js": {
+      "webpackChunk": "",
+      "webpackJsonp": ""
+    },
+    "website": "https://webpack.js.org/"
+  },
+  "Webpushr": {
+    "cats": [
+      32
+    ],
+    "description": "Webpushr is a web push notification platform that supports mobile and desktop devices.",
+    "icon": "webpushr.svg",
+    "js": {
+      "WebPushr.notificationCard": "",
+      "webpushr_display_button": ""
+    },
+    "pricing": [
+      "recurring",
+      "freemium",
+      "low"
+    ],
+    "scripts": "cdn\\.webpushr\\.com/app\\.min\\.js",
+    "website": "https://www.webpushr.com"
   },
   "Webriti Busiprof": {
     "cats": [
@@ -1830,6 +1895,23 @@
     "scriptSrc": "\\.worldztool\\.com/",
     "website": "https://www.worldz-business.net"
   },
+  "Wowza Video Player": {
+    "cats": [
+      14
+    ],
+    "description": "Wowza Video Player is a robust, industry standard player that provides HTML5, HLS, MPEG-DASH, and LL-DASH playback.",
+    "icon": "wowza.svg",
+    "js": {
+      "WowzaPlayer": "",
+      "WowzaPlayer.jsplayer": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "payg"
+    ],
+    "website": "https://www.wowza.com/video/player"
+  },
   "Wufoo": {
     "cats": [
       73
@@ -1956,18 +2038,6 @@
       "generator": "webEdition"
     },
     "website": "http://webedition.de/en"
-  },
-  "Webpack": {
-    "cats": [
-      19
-    ],
-    "description": "Webpack is an open-source JavaScript module bundler.",
-    "icon": "Webpack.svg",
-    "js": {
-      "webpackChunk": "",
-      "webpackJsonp": ""
-    },
-    "website": "https://webpack.js.org/"
   },
   "wisyCMS": {
     "cats": [

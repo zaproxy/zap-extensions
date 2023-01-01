@@ -545,6 +545,27 @@
     "scriptSrc": "cdn\\.fera\\.ai",
     "website": "https://fera.ai/"
   },
+  "Fera Product Reviews App": {
+    "cats": [
+      100
+    ],
+    "description": "Fera Product Reviews App is a product review and social proof app for Shopify.",
+    "icon": "Fera.svg",
+    "implies": [
+      "Shopify",
+      "Fera"
+    ],
+    "js": {
+      "feraJsUrl": "cdn\\.fera\\.ai/js/fera\\.js.+\\.myshopify\\.com"
+    },
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://apps.shopify.com/fera"
+  },
   "FilePond": {
     "cats": [
       59
@@ -662,6 +683,23 @@
       "poa"
     ],
     "website": "https://fintechos.com"
+  },
+  "FireApps Ali Reviews": {
+    "cats": [
+      100,
+      90
+    ],
+    "description": "FireApps Ali Reviews is an all-in-one solution that helps to collect, showcase, and manage impactful reviews.",
+    "icon": "FireApps.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "//alireviews\\.fireapps\\.io/",
+    "website": "https://apps.shopify.com/ali-reviews"
   },
   "Firebase": {
     "cats": [
@@ -848,8 +886,8 @@
       93
     ],
     "description": "Fleksa is an online ordering system for restaurants and delivery.",
-    "icon": "Fleksa.svg",
     "dom": "a[href*='play.google.com/store/apps/details?id=com.fleksa.'][target='_blank']",
+    "icon": "Fleksa.svg",
     "implies": [
       "Node.js",
       "Next.js"
@@ -1868,12 +1906,12 @@
     "js": {
       "FullCalendar.version": "^([\\d\\.\\-\\w]+)$\\;version:\\1"
     },
+    "oss": true,
     "pricing": [
       "freemium",
       "mid",
       "poa"
     ],
-    "oss": true,
     "scriptSrc": "/fullcalendar\\.min\\.js",
     "website": "https://fullcalendar.io"
   },
@@ -1941,6 +1979,21 @@
     "scriptSrc": "fundingchoicesmessages\\.google\\.com",
     "website": "https://developers.google.com/funding-choices"
   },
+  "Fundraise Up": {
+    "cats": [
+      41
+    ],
+    "description": "Fundraise Up is a platform for online donations.",
+    "icon": "fundraise_up.png",
+    "js": {
+      "FundraiseUp": ""
+    },
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "website": "https://fundraiseup.com"
+  },
   "FunnelCockpit": {
     "cats": [
       32
@@ -1978,6 +2031,24 @@
     },
     "scriptSrc": "^[^\\/]*//[ac]dn\\.fusionads\\.net/(?:api/([\\d.]+)/)?\\;version:\\1",
     "website": "http://fusionads.net"
+  },
+  "FusionCharts": {
+    "cats": [
+      25
+    ],
+    "description": "FusionCharts is a comprehensive charting solution for websites.",
+    "icon": "fusion_charts.png",
+    "js": {
+      "FusionCharts": "",
+      "FusionChartsDataFormats": "",
+      "FusionMaps": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "website": "https://www.fusioncharts.com/charts"
   },
   "Future Shop": {
     "cats": [
