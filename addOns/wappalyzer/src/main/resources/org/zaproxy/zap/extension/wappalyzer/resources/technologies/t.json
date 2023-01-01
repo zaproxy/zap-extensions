@@ -534,7 +534,7 @@
     ],
     "description": "Tally is the simplest way to create free forms & surveys. Create any type of form in seconds, without knowing how to code, and for free.",
     "dom": [
-      "iframe[data-tally-src^='https://tally.so/embed/'",
+      "iframe[data-tally-src^='https://tally.so/embed/']",
       "a[href*='//tally.so/r/']"
     ],
     "icon": "Tally.svg",
