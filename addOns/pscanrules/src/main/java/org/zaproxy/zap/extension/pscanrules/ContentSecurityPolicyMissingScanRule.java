@@ -127,7 +127,7 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
             newAlert()
                     .setName(getAlertAttribute("ro.name"))
                     .setRisk(Alert.RISK_INFO)
-                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                    .setConfidence(Alert.CONFIDENCE_HIGH)
                     .setDescription(getAlertAttribute("ro.desc"))
                     .setSolution(getAlertAttribute("soln"))
                     .setReference(getAlertAttribute("ro.refs"))
