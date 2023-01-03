@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [45] - 2023-01-03
 ### Changed
 - The Private Address Disclosure and Session ID in URL Rewrite scan rules now include example alert functionality for documentation generation purposes (Issue 6119 and 7100).
 - The Content Security Policy scan rule will now alert when "unsafe-eval" is allowed.
@@ -360,6 +360,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[45]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v45
 [44]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v42
