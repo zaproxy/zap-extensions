@@ -120,7 +120,7 @@ class ContentSecurityPolicyMissingScanRuleUnitTest
         assertThat(alertsRaised.size(), is(0));
     }
 
-    @Test // retained as a change in behavior
+    @Test
     void givenCspHeaderAtLowAlertThresholdThenNoAlertRaised() throws Exception {
         // Given
         rule.setAlertThreshold(Plugin.AlertThreshold.LOW);
