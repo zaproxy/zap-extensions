@@ -750,7 +750,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
 
                             // if the "error message" occurs in the result of sending the modified
                             // query, but did NOT occur in the original result of the original query
-                            // then we may may have a SQL Injection vulnerability
+                            // then we may have a SQL Injection vulnerability
                             StringBuilder sb = new StringBuilder();
                             if (!matchBodyPattern(getBaseMsg(), errorPattern, null)
                                     && matchBodyPattern(msg1, errorPattern, sb)) {
@@ -1749,7 +1749,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
 
             // if the "error message" occurs in the result of sending the modified query, but did
             // NOT occur in the original result of the original query
-            // then we may may have a SQL Injection vulnerability
+            // then we may have a SQL Injection vulnerability
             StringBuilder sb = new StringBuilder();
             if (!matchBodyPattern(getBaseMsg(), errorPattern, null)
                     && matchBodyPattern(msg1, errorPattern, sb)) {
@@ -1798,7 +1798,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
 
             // if the "error message" occurs in the result of sending the modified query, but did
             // NOT occur in the original result of the original query
-            // then we may may have a SQL Injection vulnerability
+            // then we may have a SQL Injection vulnerability
             String sqlUnionBodyUnstripped = msg.getResponseBody().toString();
             String sqlUnionBodyStripped =
                     stripOffOriginalAndAttackParam(sqlUnionBodyUnstripped, originalParam, attack);

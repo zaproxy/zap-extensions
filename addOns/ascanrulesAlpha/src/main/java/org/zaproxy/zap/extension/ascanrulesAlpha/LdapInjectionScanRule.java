@@ -102,7 +102,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
             errorMessages = errorMessageFlat.split(":");
 
             for (String errorMessage :
-                    errorMessages) { // for each error message for the given LDAP implemention
+                    errorMessages) { // for each error message for the given LDAP implementation
                 // compile it into a pattern
                 errorPattern = Pattern.compile(errorMessage);
 
@@ -170,7 +170,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                 break;
         }
         // how hard should we try to find an LDAP injection point (primarily by looking at how
-        // deeply embedded it might be in paremtheses)
+        // deeply embedded it might be in parentheses)
         // this is important in complex LDAP expressions which are deeply nested, i.e., where there
         // are various AND, OR, or NOT expressions
         // (&, |, ! respectively in LDAP)
@@ -406,7 +406,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                             .setMessage(getBaseMsg())
                             .raise();
 
-                    logBoolenInjection(
+                    logBooleanInjection(
                             getBaseMsg(), paramname, appendTrueAttack, randomparameterAttack);
 
                     // all done for this parameter. return.
@@ -506,7 +506,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                             .setMessage(getBaseMsg())
                             .raise();
 
-                    logBoolenInjection(
+                    logBooleanInjection(
                             getBaseMsg(), paramname, hopefullyTrueAttack, randomparameterAttack);
 
                     // all done for this parameter. return.
@@ -533,7 +533,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
         }
     }
 
-    private static void logBoolenInjection(
+    private static void logBooleanInjection(
             HttpMessage msg, String parameterName, String attack, String falseAttack) {
         if (!log.isDebugEnabled()) {
             return;
@@ -641,7 +641,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                 }
                 return true; // threw an alert
             }
-        } // for each error message for the given LDAP implemention
+        } // for each error message for the given LDAP implementation
 
         return false; // did not throw an alert
     }

@@ -73,9 +73,9 @@ public class AccessControlScannerThread
          */
         ILLEGAL(Constant.messages.getString("accessControl.scanResult.illegal")),
         /**
-         * This result is associated to nodes whose corresponding corresponding {@link AccessRule}
-         * is {@link AccessRule#UNKNOWN} so we cannot make any assumption regarding the validity of
-         * the access to the resource.
+         * This result is associated to nodes whose corresponding {@link AccessRule} is {@link
+         * AccessRule#UNKNOWN} so we cannot make any assumption regarding the validity of the access
+         * to the resource.
          */
         UNKNOWN(Constant.messages.getString("accessControl.scanResult.unknown"));
 

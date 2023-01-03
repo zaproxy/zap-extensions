@@ -50,7 +50,7 @@ public final class CookieUtils {
      *
      * @param headerValue the value of the header
      * @param attributeName the name of the attribute to check
-     * @return {@code true} if the the header has the attribute, {@code false} otherwise
+     * @return {@code true} if the header has the attribute, {@code false} otherwise
      * @see <a href="https://tools.ietf.org/html/rfc6265#section-5.2">RFC 6265 - Section 5.2</a>
      */
     public static boolean hasAttribute(String headerValue, String attributeName) {

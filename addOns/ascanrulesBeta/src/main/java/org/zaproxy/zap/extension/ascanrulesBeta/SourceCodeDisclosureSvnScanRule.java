@@ -304,7 +304,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
         }
 
         // Look for SVN < 1.7 metadata (i.e. internal SVN format < 29) containing source code
-        // These versions all store the pristine copies in the the same format (insofar as the logic
+        // These versions all store the pristine copies in the same format (insofar as the logic
         // here is concerned, at least)
         try {
             String pathminusfilename = path.substring(0, path.lastIndexOf(urlfilename));

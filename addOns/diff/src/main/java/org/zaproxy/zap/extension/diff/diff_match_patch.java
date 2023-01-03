@@ -547,7 +547,7 @@ public class diff_match_patch {
     String line;
     StringBuilder chars = new StringBuilder();
     // Walk the text, pulling out a substring for each line.
-    // text.split('\n') would would temporarily double our memory footprint.
+    // text.split('\n') would temporarily double our memory footprint.
     // Modifying text would create many large strings to garbage collect.
     while (lineEnd < text.length() - 1) {
       lineEnd = text.indexOf('\n', lineStart);

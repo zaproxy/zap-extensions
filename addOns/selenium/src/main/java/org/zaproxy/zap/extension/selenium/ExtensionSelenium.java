@@ -274,8 +274,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      * Adds the given WebDriver provider.
      *
      * @param webDriverProvider the WebDriver provider to add
-     * @throws IllegalArgumentException if the the given WebDriver provider is {@code null} or its
-     *     ID is {@code null} or empty. Also, if the ID already exists.
+     * @throws IllegalArgumentException if the given WebDriver provider is {@code null} or its ID is
+     *     {@code null} or empty. Also, if the ID already exists.
      * @since 1.1.0
      */
     public void addWebDriverProvider(SingleWebDriverProvider webDriverProvider) {
@@ -324,8 +324,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      * empty ID.
      *
      * @param webDriverProvider the WebDriver provider to validate.
-     * @throws IllegalArgumentException if the the given WebDriver provider is {@code null} or its
-     *     ID is {@code null} or empty.
+     * @throws IllegalArgumentException if the given WebDriver provider is {@code null} or its ID is
+     *     {@code null} or empty.
      */
     private static void validateWebDriverProvider(SingleWebDriverProvider webDriverProvider) {
         if (webDriverProvider == null) {
@@ -342,8 +342,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
      * Removes the given WebDriver provider.
      *
      * @param webDriverProvider the WebDriver provider to remove
-     * @throws IllegalArgumentException if the the given WebDriver provider is {@code null} or its
-     *     ID is {@code null} or empty.
+     * @throws IllegalArgumentException if the given WebDriver provider is {@code null} or its ID is
+     *     {@code null} or empty.
      * @since 1.1.0
      */
     public void removeWebDriverProvider(SingleWebDriverProvider webDriverProvider) {

@@ -218,11 +218,11 @@ public class Base64Disclosure extends PluginPassiveScanner {
                                 base64evidence);
                         if (noDigitInString)
                             log.trace(
-                                    "The candidate Base64 has no digit characters, and the the probability of this occurring for a string of this length is {}%. The threshold is {}%",
+                                    "The candidate Base64 has no digit characters, and the probability of this occurring for a string of this length is {}%. The threshold is {}%",
                                     probabilityOfNoDigitInString * 100, probabilityThreshold * 100);
                         if (noAlphaInString)
                             log.trace(
-                                    "The candidate Base64 has no alphabetic characters, and the the probability of this occurring for a string of this length is {}%. The threshold is {}%",
+                                    "The candidate Base64 has no alphabetic characters, and the probability of this occurring for a string of this length is {}%. The threshold is {}%",
                                     probabilityOfNoAlphaInString * 100, probabilityThreshold * 100);
                         // if (noOtherInString)
                         // log.trace("The candidate Base64 has no 'other' characters, and the
@@ -231,12 +231,12 @@ public class Base64Disclosure extends PluginPassiveScanner {
                         // 100,probabilityThreshold *100);
                         if (noLowerInString)
                             log.trace(
-                                    "The candidate Base64 has no lowercase characters, and the the probability of this occurring for a string of this length is {}%. The threshold is {}%",
+                                    "The candidate Base64 has no lowercase characters, and the probability of this occurring for a string of this length is {}%. The threshold is {}%",
                                     probabilityOfNoLowerInString * 100, probabilityThreshold * 100);
 
                         if (noUpperInString)
                             log.trace(
-                                    "The candidate Base64 has no uppercase characters, and the the probability of this occurring for a string of this length is {}%. The threshold is {}%",
+                                    "The candidate Base64 has no uppercase characters, and the probability of this occurring for a string of this length is {}%. The threshold is {}%",
                                     probabilityOfNoUpperInString * 100, probabilityThreshold * 100);
 
                         continue;

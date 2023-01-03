@@ -89,9 +89,9 @@ public class Repo {
 
     /*
      * This is the top level function called from the scanner. It first checks if:
-     * 1)Matching vulnerability is found in database for JS file URL, if YES return return HashSet of related info.
-     * 2)Matching vulnerability is found in database for JS file name, if YES return return HashSet of related info.
-     * 3)Matching vulnerability is found in database for JS file content, if YES return return HashSet of related info.
+     * 1)Matching vulnerability is found in database for JS file URL, if YES return HashSet of related info.
+     * 2)Matching vulnerability is found in database for JS file name, if YES return HashSet of related info.
+     * 3)Matching vulnerability is found in database for JS file content, if YES return HashSet of related info.
      * 4)Matching vulnerability is found in database for JS file hash, if YES return HashSet of related info .
      * 5)Return empty HashSet.
      */
