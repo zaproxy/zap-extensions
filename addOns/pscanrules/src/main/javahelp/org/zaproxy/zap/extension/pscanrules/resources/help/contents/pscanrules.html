@@ -91,9 +91,14 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 <H2>Content Security Policy (CSP) Header Not Set</H2>
 This checks HTML response headers for the presence of a Content Security Policy header, or the response body for CSP specified via META tag.<br>
 By default this rule checks for the presence of the "Content-Security-Policy" header, 
-and at the Low threshold also checks for the "X-Content-Security-Policy" and "X-WebKit-CSP" headers.<br>
+and at the Low threshold also checks for the presence of the "X-Content-Security-Policy" and "X-WebKit-CSP" headers.<br>
 Redirects and non-HTML responses are ignored except at the Low threshold.
 <p>
+At the Low threshold, an INFO alert is raised if an "X-Content-Security-Policy" or "X-WebKit-CSP" header is found.  This may represent an outdated enforcement implementation.
+<p>
+If a "Content-Security-Policy-Report-Only" header is found on a response an INFO alert is raised. This may represent an enforcement effort 
+that is actively being refined or developed, or one which is only partially implemented.
+
 If a "Content-Security-Policy-Report-Only" header is found on a response an INFO alert is raised. This may represent an enforcement effort 
 that is actively being refined or developed, or one which is only partially implemented.
 <p>

@@ -82,27 +82,38 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
             cspROHeaderFound = true;
         }
 
-        // X-Content-Security-Policy is an older header, supported by Firefox 4.0+, and IE 10+ (in a
-        // limited fashion)
+        // X-Content-Security-Policy is an obsolete header, supported by Firefox 4.0+, and IE 10+
+        // (in a limited fashion), but obsolete since Firefox 23+ and Chrome 25+
         List<String> xcspOptions =
                 msg.getResponseHeader().getHeaderValues("X-Content-Security-Policy");
         if (!xcspOptions.isEmpty()) {
             xCspHeaderFound = true;
         }
 
-        // X-WebKit-CSP is supported by Chrome 14+, and Safari 6+
+        // X-WebKit-CSP is an obsolete header, supported by Chrome 14+, and Safari 6+, but
+        // obsolete since Firefox 23+ and Chrome 25+
         List<String> xwkcspOptions = msg.getResponseHeader().getHeaderValues("X-WebKit-CSP");
         if (!xwkcspOptions.isEmpty()) {
             xWebKitHeaderFound = true;
         }
 
-        if (!cspHeaderFound && !CspUtils.hasMetaCsp(source)
-                || (AlertThreshold.LOW.equals(this.getAlertThreshold())
-                        && (!xCspHeaderFound || !xWebKitHeaderFound))) {
-            // Always report if the latest header isnt found,
-            // but only report if the older ones arent present at Low threshold
+        // Report as a medium risk if the current header isn't found ...
+        if (!cspHeaderFound && !CspUtils.hasMetaCsp(source)) {
             newAlert()
                     .setRisk(Alert.RISK_MEDIUM)
+                    .setConfidence(Alert.CONFIDENCE_HIGH)
+                    .setDescription(getAlertAttribute("desc"))
+                    .setSolution(getAlertAttribute("soln"))
+                    .setReference(getAlertAttribute("refs"))
+                    .setCweId(693) // CWE-693: Protection Mechanism Failure
+                    .setWascId(15) // WASC-15: Application Misconfiguration
+                    .raise();
+        }
+        // ... or as a warning at LOW thresshold if one of the obsolete headers is found
+        if (AlertThreshold.LOW.equals(this.getAlertThreshold())
+                && (xCspHeaderFound || xWebKitHeaderFound)) {
+            newAlert()
+                    .setRisk(Alert.RISK_INFO)
                     .setConfidence(Alert.CONFIDENCE_HIGH)
                     .setDescription(getAlertAttribute("desc"))
                     .setSolution(getAlertAttribute("soln"))
@@ -116,7 +127,7 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
             newAlert()
                     .setName(getAlertAttribute("ro.name"))
                     .setRisk(Alert.RISK_INFO)
-                    .setConfidence(Alert.CONFIDENCE_HIGH)
+                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
                     .setDescription(getAlertAttribute("ro.desc"))
                     .setSolution(getAlertAttribute("soln"))
                     .setReference(getAlertAttribute("ro.refs"))
