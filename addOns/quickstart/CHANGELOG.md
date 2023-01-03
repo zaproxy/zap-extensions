@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [36] - 2023-01-03
 ### Fixed
 - Correctly unload the add-on.
 - Prevent exception if no display (Issue 3978).
@@ -184,6 +184,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[36]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v36
 [35]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v35
 [34]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v34
 [33]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v33

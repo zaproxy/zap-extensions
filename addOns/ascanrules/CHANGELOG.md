@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [51] - 2023-01-03
 ### Changed
 - Command Injection Scan Rule: Time-based blind detection heuristic has been replaced with linear regression.
 
@@ -376,6 +376,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[51]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v51
 [50]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v50
 [49]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v49
 [48]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v48
