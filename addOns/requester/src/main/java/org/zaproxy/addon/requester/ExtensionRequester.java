@@ -26,6 +26,9 @@ import javax.swing.SwingUtilities;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.db.Database;
+import org.parosproxy.paros.db.DatabaseException;
+import org.parosproxy.paros.db.DatabaseUnsupportedException;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookMenu;
@@ -41,6 +44,8 @@ import org.zaproxy.addon.requester.internal.ResendHttpMessageEditorDialog;
 import org.zaproxy.addon.requester.internal.RightClickMsgMenuRequester;
 import org.zaproxy.addon.requester.internal.SendHttpMessageEditorDialog;
 import org.zaproxy.addon.requester.internal.ToolsMenuItemRequester;
+import org.zaproxy.addon.requester.internal.db.RequesterTabStorage;
+import org.zaproxy.addon.requester.internal.db.TableRequesterTab;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.utils.DisplayUtils;
@@ -67,12 +72,15 @@ public class ExtensionRequester extends ExtensionAdaptor {
     private AbstractHttpMessageEditorDialog sendDialog;
     private AbstractHttpMessageEditorDialog resendDialog;
 
+    private final TableRequesterTab tabTable = new TableRequesterTab();
+    private final RequesterTabStorage tabStorage = new RequesterTabStorage(tabTable);
+
     public ExtensionRequester() {
         super(NAME);
         this.setOrder(211);
     }
 
-    public static final ImageIcon getManualIcon() {
+    public static ImageIcon getManualIcon() {
         if (manualIcon == null) {
             manualIcon = createIcon("hand.png");
         }
@@ -195,6 +203,17 @@ public class ExtensionRequester extends ExtensionAdaptor {
         getRequesterPanel().newRequester(msg);
         if (getOptionsParam().isAutoFocus()) {
             getRequesterPanel().setTabFocus();
+        }
+    }
+
+    @Override
+    public void databaseOpen(Database db) throws DatabaseException, DatabaseUnsupportedException {
+        db.addDatabaseListener(tabTable);
+        tabTable.databaseOpen(db.getDatabaseServer());
+
+        // Reload requester panel if it is loaded
+        if (requesterPanel != null) {
+            requesterPanel.load(tabStorage);
         }
     }
 
