@@ -62,43 +62,7 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
             return;
         }
 
-        // Get the various CSP headers
-        boolean cspHeaderFound = false,
-                cspROHeaderFound = false,
-                xCspHeaderFound = false,
-                xWebKitHeaderFound = false;
-
-        // Content-Security-Policy is supported by Chrome 25+, Firefox 23+, Safari 7+, but not but
-        // Internet Exploder
-        List<String> cspOptions =
-                msg.getResponseHeader().getHeaderValues(HttpFieldsNames.CONTENT_SECURITY_POLICY);
-        if (!cspOptions.isEmpty()) {
-            cspHeaderFound = true;
-        }
-
-        List<String> cspROOptions =
-                msg.getResponseHeader().getHeaderValues("Content-Security-Policy-Report-Only");
-        if (!cspROOptions.isEmpty()) {
-            cspROHeaderFound = true;
-        }
-
-        // X-Content-Security-Policy is an obsolete header, supported by Firefox 4.0+, and IE 10+
-        // (in a limited fashion), but obsolete since Firefox 23+ and Chrome 25+
-        List<String> xcspOptions =
-                msg.getResponseHeader().getHeaderValues("X-Content-Security-Policy");
-        if (!xcspOptions.isEmpty()) {
-            xCspHeaderFound = true;
-        }
-
-        // X-WebKit-CSP is an obsolete header, supported by Chrome 14+, and Safari 6+, but
-        // obsolete since Firefox 23+ and Chrome 25+
-        List<String> xwkcspOptions = msg.getResponseHeader().getHeaderValues("X-WebKit-CSP");
-        if (!xwkcspOptions.isEmpty()) {
-            xWebKitHeaderFound = true;
-        }
-
-        // Report as a medium risk if the current header isn't found ...
-        if (!cspHeaderFound && !CspUtils.hasMetaCsp(source)) {
+        if (!hasCspHeader(msg) && !CspUtils.hasMetaCsp(source)) {
             newAlert()
                     .setRisk(Alert.RISK_MEDIUM)
                     .setConfidence(Alert.CONFIDENCE_HIGH)
@@ -109,13 +73,13 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
                     .setWascId(15) // WASC-15: Application Misconfiguration
                     .raise();
         }
-        // ... or as a warning at LOW thresshold if one of the obsolete headers is found
-        if (AlertThreshold.LOW.equals(this.getAlertThreshold())
-                && (xCspHeaderFound || xWebKitHeaderFound)) {
+
+        if (hasObsoleteCspHeader(msg)) {
             newAlert()
+                    .setName(getAlertAttribute("obs.name"))
                     .setRisk(Alert.RISK_INFO)
                     .setConfidence(Alert.CONFIDENCE_HIGH)
-                    .setDescription(getAlertAttribute("desc"))
+                    .setDescription(getAlertAttribute("obs.desc"))
                     .setSolution(getAlertAttribute("soln"))
                     .setReference(getAlertAttribute("refs"))
                     .setCweId(693) // CWE-693: Protection Mechanism Failure
@@ -123,7 +87,7 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
                     .raise();
         }
 
-        if (cspROHeaderFound) {
+        if (hasCspReportOnlyHeader(msg)) {
             newAlert()
                     .setName(getAlertAttribute("ro.name"))
                     .setRisk(Alert.RISK_INFO)
@@ -156,5 +120,34 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    private boolean hasCspHeader(HttpMessage msg) {
+        // Content-Security-Policy is supported by Chrome 25+, Firefox 23+, Safari 7+, but not but
+        // Internet Exploder
+        List<String> cspOptions =
+                msg.getResponseHeader().getHeaderValues(HttpFieldsNames.CONTENT_SECURITY_POLICY);
+
+        return !cspOptions.isEmpty();
+    }
+
+    private boolean hasObsoleteCspHeader(HttpMessage msg) {
+        // X-Content-Security-Policy is an obsolete header, supported by Firefox 4.0+, and IE 10+
+        // (in a limited fashion), but obsolete since Firefox 23+ and Chrome 25+
+        List<String> xcspOptions =
+                msg.getResponseHeader().getHeaderValues("X-Content-Security-Policy");
+
+        // X-WebKit-CSP is an obsolete header, supported by Chrome 14+, and Safari 6+, but
+        // obsolete since Firefox 23+ and Chrome 25+
+        List<String> xwkcspOptions = msg.getResponseHeader().getHeaderValues("X-WebKit-CSP");
+
+        return !xcspOptions.isEmpty() || !xwkcspOptions.isEmpty();
+    }
+
+    private boolean hasCspReportOnlyHeader(HttpMessage msg) {
+        List<String> cspROOptions =
+                msg.getResponseHeader().getHeaderValues("Content-Security-Policy-Report-Only");
+
+        return !cspROOptions.isEmpty();
     }
 }

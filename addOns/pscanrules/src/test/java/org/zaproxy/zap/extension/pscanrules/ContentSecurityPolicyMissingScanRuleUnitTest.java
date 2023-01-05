@@ -77,6 +77,7 @@ class ContentSecurityPolicyMissingScanRuleUnitTest
                         + "\" content=\"default-src 'self'\"></head><H1>Test</H1></html>");
         // When
         scanHttpResponseReceive(msg);
+
         // Then
         assertThat(alertsRaised.size(), is(0));
     }
@@ -108,9 +109,8 @@ class ContentSecurityPolicyMissingScanRuleUnitTest
     }
 
     @Test
-    void givenCspHeaderAtMediumAlertThresholdThenNoAlertRaised() throws Exception {
+    void givenCspHeaderThenNoAlertRaised() throws Exception {
         // Given
-        rule.setAlertThreshold(Plugin.AlertThreshold.MEDIUM);
         HttpMessage msg = createHttpMessageWithHeaders(HEADER_HTML, HEADER_CSP);
 
         // When
@@ -121,74 +121,36 @@ class ContentSecurityPolicyMissingScanRuleUnitTest
     }
 
     @Test
-    void givenCspHeaderAtLowAlertThresholdThenNoAlertRaised() throws Exception {
+    void givenWebKitThenTwoAlertsRaised() throws Exception {
         // Given
-        rule.setAlertThreshold(Plugin.AlertThreshold.LOW);
-        HttpMessage msg = createHttpMessageWithHeaders(HEADER_HTML, HEADER_CSP);
+        HttpMessage msg = createHttpMessageWithHeaders(HEADER_HTML, HEADER_WEBKIT_CSP);
 
         // When
         scanHttpResponseReceive(msg);
 
         // Then
-        assertThat(alertsRaised.size(), is(0));
+        assertThat(alertsRaised.size(), is(2));
+        assertCSPAlertAttributes(alertsRaised.get(0), "", Alert.RISK_MEDIUM);
+        assertCSPAlertAttributes(alertsRaised.get(1), "obs.", Alert.RISK_INFO);
     }
 
     @Test
-    void givenWebKitAtMediumAlertThresholdThenNoAlertRaised() throws Exception {
+    void givenXCspThenTwoAlertsRaised() throws Exception {
         // Given
-        rule.setAlertThreshold(Plugin.AlertThreshold.MEDIUM);
-        HttpMessage msg = createHttpMessageWithHeaders(HEADER_HTML, HEADER_CSP, HEADER_WEBKIT_CSP);
+        HttpMessage msg = createHttpMessageWithHeaders(HEADER_HTML, HEADER_X_CSP);
 
         // When
         scanHttpResponseReceive(msg);
 
         // Then
-        assertThat(alertsRaised.size(), is(0));
+        assertThat(alertsRaised.size(), is(2));
+        assertCSPAlertAttributes(alertsRaised.get(0), "", Alert.RISK_MEDIUM);
+        assertCSPAlertAttributes(alertsRaised.get(1), "obs.", Alert.RISK_INFO);
     }
 
     @Test
-    void givenWebKitAtLowAlertThresholdThenAlertRaised() throws Exception {
+    void givenAllCspHeadersThenAlertRaised() throws Exception {
         // Given
-        rule.setAlertThreshold(Plugin.AlertThreshold.LOW);
-        HttpMessage msg = createHttpMessageWithHeaders(HEADER_HTML, HEADER_CSP, HEADER_WEBKIT_CSP);
-
-        // When
-        scanHttpResponseReceive(msg);
-
-        // Then
-        assertObsoleteSecurityPolicyAlertRaised();
-    }
-
-    @Test
-    void givenXCspAtMediumAlertThresholdThenNoAlertRaised() throws Exception {
-        // Given
-        rule.setAlertThreshold(Plugin.AlertThreshold.MEDIUM);
-        HttpMessage msg = createHttpMessageWithHeaders(HEADER_HTML, HEADER_CSP, HEADER_X_CSP);
-
-        // When
-        scanHttpResponseReceive(msg);
-
-        // Then
-        assertThat(alertsRaised.size(), is(0));
-    }
-
-    @Test
-    void givenXCspAtLowAlertThresholdThenAlertRaised() throws Exception {
-        // Given
-        rule.setAlertThreshold(Plugin.AlertThreshold.LOW);
-        HttpMessage msg = createHttpMessageWithHeaders(HEADER_HTML, HEADER_CSP, HEADER_X_CSP);
-
-        // When
-        scanHttpResponseReceive(msg);
-
-        // Then
-        assertObsoleteSecurityPolicyAlertRaised();
-    }
-
-    @Test
-    void givenAllCspHeadersAtLowAlertThresholdThenAlertRaised() throws Exception {
-        // Given
-        rule.setAlertThreshold(Plugin.AlertThreshold.LOW);
         String[] headers = {HEADER_HTML, HEADER_CSP, HEADER_X_CSP, HEADER_WEBKIT_CSP};
         HttpMessage msg = createHttpMessageWithHeaders(headers);
 
@@ -295,6 +257,7 @@ class ContentSecurityPolicyMissingScanRuleUnitTest
         assertThat(alertsRaised.size(), is(2));
         assertCSPAlertAttributes(alertsRaised.get(0), "", Alert.RISK_MEDIUM);
         assertCSPAlertAttributes(alertsRaised.get(1), "ro.", Alert.RISK_INFO);
+        assertThat(alertsRaised.get(1).getReference(), is(getLocalisedString("ro.refs")));
     }
 
     @Test
@@ -309,6 +272,7 @@ class ContentSecurityPolicyMissingScanRuleUnitTest
         // Then
         assertThat(alertsRaised.size(), is(1));
         assertCSPAlertAttributes(alertsRaised.get(0), "ro.", Alert.RISK_INFO);
+        assertThat(alertsRaised.get(0).getReference(), is(getLocalisedString("ro.refs")));
     }
 
     @Test
@@ -338,14 +302,13 @@ class ContentSecurityPolicyMissingScanRuleUnitTest
 
     private void assertObsoleteSecurityPolicyAlertRaised() {
         assertThat(alertsRaised.size(), is(1));
-        assertCSPAlertAttributes(alertsRaised.get(0), "", Alert.RISK_INFO);
+        assertCSPAlertAttributes(alertsRaised.get(0), "obs.", Alert.RISK_INFO);
     }
 
     private static void assertCSPAlertAttributes(Alert alert, String key, int expectedRisk) {
         assertThat(alert.getRisk(), is(expectedRisk));
         assertThat(alert.getName(), is(getLocalisedString(key + "name")));
         assertThat(alert.getDescription(), is(getLocalisedString(key + "desc")));
-        assertThat(alert.getReference(), is(getLocalisedString(key + "refs")));
         assertThat(alert.getSolution(), is(getLocalisedString("soln")));
         assertThat(alert.getConfidence(), is(Alert.CONFIDENCE_HIGH));
         assertThat(alert.getCweId(), is(693));
