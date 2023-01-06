@@ -48,7 +48,7 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
 
     private ExtensionScript extScript;
     private ExtensionActiveScan extActiveScan;
-    public static final Logger logger = LogManager.getLogger(ExtensionSequence.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionSequence.class);
     public static final String TYPE_SEQUENCE = "sequence";
 
     static {
@@ -188,7 +188,7 @@ public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
                         }
                     }
                 } catch (Exception e) {
-                    logger.debug(
+                    LOGGER.debug(
                             "Exception occurred, while trying to fetch Included Sequence Script: {}",
                             e.getMessage());
                 }

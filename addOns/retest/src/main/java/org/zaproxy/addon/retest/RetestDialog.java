@@ -69,7 +69,7 @@ import org.zaproxy.zap.extension.help.ExtensionHelp;
 public class RetestDialog extends AbstractDialog implements EventConsumer {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger LOG = LogManager.getLogger(RetestDialog.class);
+    private static final Logger LOGGER = LogManager.getLogger(RetestDialog.class);
     private ExtensionRetest extension;
     private JPanel jPanel;
     private JToolBar dialogToolbar;
@@ -225,7 +225,7 @@ public class RetestDialog extends AbstractDialog implements EventConsumer {
             }
             return alerts;
         } catch (Exception e) {
-            LOG.error("Failed to access alerts tree", e);
+            LOGGER.error("Failed to access alerts tree", e);
         }
         return new HashSet<>();
     }
@@ -278,7 +278,7 @@ public class RetestDialog extends AbstractDialog implements EventConsumer {
                 alertTreePaneScroll.setName("alertTreePaneScroll");
                 alertTreePaneScroll.setViewportView(getTreeAlert());
             } catch (Exception e) {
-                LOG.error("Failed to access alerts tree", e);
+                LOGGER.error("Failed to access alerts tree", e);
             }
         }
         return alertTreePaneScroll;

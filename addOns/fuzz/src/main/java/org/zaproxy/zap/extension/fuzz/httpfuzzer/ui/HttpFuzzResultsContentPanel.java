@@ -61,7 +61,7 @@ public class HttpFuzzResultsContentPanel extends JPanel
     public static final String RESULTS_PANEL_NAME = "fuzz.httpfuzzerResultsContentPanel";
     public static final String ERRORS_PANEL_NAME = "fuzz.httpfuzzerErrorsContentPanel";
 
-    private static final Logger logger = LogManager.getLogger(HttpFuzzResultsContentPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(HttpFuzzResultsContentPanel.class);
     private static final String CSV_EXTENSION = ".csv";
 
     private static final HttpFuzzerResultsTableModel EMPTY_RESULTS_MODEL =
@@ -222,7 +222,7 @@ public class HttpFuzzResultsContentPanel extends JPanel
                                                         "fuzz.httpfuzzer.results.toolbar.button.export.showMessageError")
                                                 + "\n"
                                                 + ex.getLocalizedMessage());
-                                logger.error("Export Failed: {}", ex.getMessage(), ex);
+                                LOGGER.error("Export Failed: {}", ex.getMessage(), ex);
                             }
                             // Delay the presentation of success message, to ensure all the data was
                             // already flushed.
@@ -296,7 +296,7 @@ public class HttpFuzzResultsContentPanel extends JPanel
             try {
                 EventQueue.invokeAndWait(this::clear);
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
             return;
         }

@@ -61,7 +61,7 @@ public class SamlExtensionSettingsUI extends JFrame
 
     private SAMLConfiguration configuration;
 
-    protected Logger log = LogManager.getLogger(SamlExtensionSettingsUI.class);
+    protected Logger LOGGER = LogManager.getLogger(SamlExtensionSettingsUI.class);
 
     /** Create the frame. */
     public SamlExtensionSettingsUI() {
@@ -350,7 +350,7 @@ public class SamlExtensionSettingsUI extends JFrame
                     SamlI18n.getMessage("saml.editor.msg.resetfailed"),
                     SamlI18n.getMessage("saml.settings.messages.failed"),
                     JOptionPane.ERROR_MESSAGE);
-            log.error("Resetting settings failed");
+            LOGGER.error("Resetting settings failed");
         }
     }
 

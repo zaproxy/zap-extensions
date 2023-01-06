@@ -51,7 +51,7 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
     private static final long serialVersionUID = -7210879426146833234L;
 
     /** The Constant logger. */
-    protected static final Logger log = LogManager.getLogger(DialogAddAlertFilter.class);
+    protected static final Logger LOGGER = LogManager.getLogger(DialogAddAlertFilter.class);
 
     private static final String DIALOG_TITLE =
             Constant.messages.getString("alertFilters.dialog.add.title");
@@ -137,7 +137,7 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
     @Override
     protected void init() {
         if (this.oldAlertFilter != null) {
-            log.debug("Initializing add alertFilter dialog for: {}", oldAlertFilter);
+            LOGGER.debug("Initializing add alertFilter dialog for: {}", oldAlertFilter);
             getAlertCombo()
                     .setSelectedItem(
                             ExtensionAlertFilters.getScanRulesInfo()

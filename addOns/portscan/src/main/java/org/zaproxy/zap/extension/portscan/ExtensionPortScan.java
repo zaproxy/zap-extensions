@@ -48,7 +48,7 @@ import org.zaproxy.zap.view.SiteMapTreeCellRenderer;
 public class ExtensionPortScan extends ExtensionAdaptor
         implements SessionChangedListener, ProxyListener, SiteMapListener, XmlReporterExtension {
 
-    private static final Logger logger = LogManager.getLogger(ExtensionPortScan.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionPortScan.class);
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
             Collections.singletonList(ExtensionNetwork.class);
@@ -134,7 +134,7 @@ public class ExtensionPortScan extends ExtensionAdaptor
             try {
                 EventQueue.invokeAndWait(() -> sessionChangedEventHandler(session));
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }

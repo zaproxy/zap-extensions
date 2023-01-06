@@ -60,14 +60,14 @@ public class WappalyzerJsonParser {
     private static final String FIELD_SEPARATOR = "\\\\;";
     private static final int SIZE = 16;
 
-    private static final Logger logger = LogManager.getLogger(WappalyzerJsonParser.class);
+    private static final Logger LOGGER = LogManager.getLogger(WappalyzerJsonParser.class);
     private final PatternErrorHandler patternErrorHandler;
     private final ParsingExceptionHandler parsingExceptionHandler;
 
     public WappalyzerJsonParser() {
         this(
-                (pattern, e) -> logger.error("Invalid pattern syntax {}", pattern, e),
-                e -> logger.error(e.getMessage(), e));
+                (pattern, e) -> LOGGER.error("Invalid pattern syntax {}", pattern, e),
+                e -> LOGGER.error(e.getMessage(), e));
     }
 
     WappalyzerJsonParser(PatternErrorHandler peh, ParsingExceptionHandler parsingExceptionHandler) {
@@ -76,12 +76,12 @@ public class WappalyzerJsonParser {
     }
 
     WappalyzerData parse(String categories, List<String> technologies, boolean createIcons) {
-        logger.info("Starting to parse Wappalyzer technologies.");
+        LOGGER.info("Starting to parse Wappalyzer technologies.");
         WappalyzerData wappalyzerData = new WappalyzerData();
         parseCategories(wappalyzerData, getStringResource(categories));
         technologies.forEach(
                 path -> parseJson(wappalyzerData, getStringResource(path), createIcons));
-        logger.info("Loaded {} Wappalyzer technologies.", wappalyzerData.getApplications().size());
+        LOGGER.info("Loaded {} Wappalyzer technologies.", wappalyzerData.getApplications().size());
         return wappalyzerData;
     }
 
@@ -106,13 +106,13 @@ public class WappalyzerJsonParser {
         try {
             JSONObject json = JSONObject.fromObject(jsonStr);
 
-            logger.debug("There seem to be: {} categories to load", json.entrySet().size());
+            LOGGER.debug("There seem to be: {} categories to load", json.entrySet().size());
             for (Object cat : json.entrySet()) {
                 Map.Entry<String, JSONObject> mCat = (Map.Entry<String, JSONObject>) cat;
-                logger.debug("{}:{}", mCat.getKey(), mCat.getValue().getString("name"));
+                LOGGER.debug("{}:{}", mCat.getKey(), mCat.getValue().getString("name"));
                 wappalyzerData.addCategory(mCat.getKey(), mCat.getValue().getString("name"));
             }
-            logger.debug("Parsed {} categories", wappalyzerData.getCategories().size());
+            LOGGER.debug("Parsed {} categories", wappalyzerData.getCategories().size());
         } catch (Exception e) {
             parsingExceptionHandler.handleException(e);
         }
@@ -225,7 +225,7 @@ public class WappalyzerJsonParser {
         try {
             svgIcon = builder.build(new BridgeContext(userAgent, loader), doc);
         } catch (BridgeException | StringIndexOutOfBoundsException ex) {
-            logger.debug("Failed to parse SVG. {}", ex.getMessage());
+            LOGGER.debug("Failed to parse SVG. {}", ex.getMessage());
             return null;
         }
 
@@ -285,7 +285,7 @@ public class WappalyzerJsonParser {
                 if (category != null) {
                     list.add(category);
                 } else {
-                    logger.error("Failed to find category for {}", obj);
+                    LOGGER.error("Failed to find category for {}", obj);
                 }
             }
         }
@@ -316,7 +316,7 @@ public class WappalyzerJsonParser {
                 }
             }
         } else if (json != null) {
-            logger.error(
+            LOGGER.error(
                     "Unexpected JSON type for {} pattern: {} {}",
                     type,
                     json,
@@ -388,7 +388,7 @@ public class WappalyzerJsonParser {
                 }
             }
         } else {
-            logger.debug(
+            LOGGER.debug(
                     "Unexpected JSON type for {} pattern: {} {}",
                     type,
                     json,
@@ -451,17 +451,17 @@ public class WappalyzerJsonParser {
                 } else if (values[i].startsWith(FIELD_VERSION)) {
                     ap.setVersion(values[i].substring(FIELD_VERSION.length()));
                 } else {
-                    logger.error("Unexpected field: {}", values[i]);
+                    LOGGER.error("Unexpected field: {}", values[i]);
                 }
             } catch (Exception e) {
-                logger.error("Invalid field syntax {}", values[i], e);
+                LOGGER.error("Invalid field syntax {}", values[i], e);
             }
         }
         if (pattern.indexOf(FIELD_CONFIDENCE) > -1) {
-            logger.warn("Confidence field in pattern?: {}", pattern);
+            LOGGER.warn("Confidence field in pattern?: {}", pattern);
         }
         if (pattern.indexOf(FIELD_VERSION) > -1) {
-            logger.warn("Version field in pattern?: {}", pattern);
+            LOGGER.warn("Version field in pattern?: {}", pattern);
         }
         ap.setPattern(pattern);
         return ap;
@@ -474,7 +474,7 @@ public class WappalyzerJsonParser {
             }
             return Integer.parseInt(confidence);
         } catch (NumberFormatException nfe) {
-            logger.error("Invalid field value: {}", confidence);
+            LOGGER.error("Invalid field value: {}", confidence);
             return 0;
         }
     }

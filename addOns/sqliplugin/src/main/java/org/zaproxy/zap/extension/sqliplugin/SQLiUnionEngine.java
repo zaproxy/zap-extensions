@@ -75,7 +75,7 @@ public class SQLiUnionEngine {
     private int exploitColumnsCount;
 
     // Logger instance
-    private static final Logger log = LogManager.getLogger(SQLiUnionEngine.class);
+    private static final Logger LOGGER = LogManager.getLogger(SQLiUnionEngine.class);
 
     /** @param plugin */
     public SQLiUnionEngine(SQLInjectionScanRule plugin) {
@@ -167,7 +167,7 @@ public class SQLiUnionEngine {
                 exploitMessage = msg;
 
                 if (plugin.wasLastRequestDBMSError() && count > 1) {
-                    log.warn(
+                    LOGGER.warn(
                             "combined UNION/error-based SQL injection case found on column {}.Maybe could be found a column with better characteristics using a direct testing tool",
                             position + 1);
                 }
@@ -832,7 +832,7 @@ public class SQLiUnionEngine {
         int found = -1;
 
         if (orderByTest(1) && !orderByTest(Integer.parseInt(SQLiPayloadManager.randomInt()))) {
-            log.debug(
+            LOGGER.debug(
                     "ORDER BY technique seems to be usable. This should reduce the time needed to find the right number of query columns. Automatically extending the range for current UNION query injection technique test");
 
             int lowCols = 1;
@@ -923,7 +923,7 @@ public class SQLiUnionEngine {
         if (lowerCount == 1) {
             int found = orderByTechnique();
             if (found >= 0) {
-                log.debug("target url appears to have {} column in query", found);
+                LOGGER.debug("target url appears to have {} column in query", found);
                 return found;
             }
         }

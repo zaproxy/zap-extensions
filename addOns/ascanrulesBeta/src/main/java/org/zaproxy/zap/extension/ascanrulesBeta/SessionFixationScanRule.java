@@ -73,7 +73,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                     CommonAlertTag.WSTG_V42_SESS_03_SESS_FIXATION);
 
     /** for logging. */
-    private static Logger log = LogManager.getLogger(SessionFixationScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(SessionFixationScanRule.class);
 
     @Override
     public int getId() {
@@ -107,7 +107,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
 
     @Override
     public void init() {
-        log.debug("Initialising");
+        LOGGER.debug("Initialising");
     }
 
     /**
@@ -152,7 +152,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
 
             // For now (from Zap 2.0), the Session Fixation scan rule will only run for login pages
             if (loginUrl == false) {
-                log.debug(
+                LOGGER.debug(
                         "For the Session Fixation scan rule to actually do anything, a Login Page *must* be set!");
                 return;
             }
@@ -206,14 +206,14 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                 // In short.. if this happens, we do not want to scan the URL anyway
                 // (because the user never browsed to it), so just do nothing instead.
 
-                log.error("Cannot convert URI [{}] to a URL: {}", requestUri, e.getMessage());
+                LOGGER.error("Cannot convert URI [{}] to a URL: {}", requestUri, e.getMessage());
                 return;
             }
 
             // suck out any pseudo url parameters from the url
             Set<HtmlParameter> pseudoUrlParams = getPseudoUrlParameters(requestUrl);
             htmlParams.addAll(pseudoUrlParams);
-            log.debug("Pseudo url params of URL [{}] : [{}]", requestUrl, pseudoUrlParams);
+            LOGGER.debug("Pseudo url params of URL [{}] : [{}]", requestUrl, pseudoUrlParams);
 
             //// for each parameter in turn,
             // int counter = 0;
@@ -233,7 +233,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                 // leave it out for now.
                 // msg1Initial.setNote("Message 1 for parameter "+ currentHtmlParameter);
 
-                log.debug(
+                LOGGER.debug(
                         "Scanning URL [{}] [{}], [{}] field [{}] with value [{}] for Session Fixation",
                         msg1Initial.getRequestHeader().getMethod(),
                         msg1Initial.getRequestHeader().getURI(),
@@ -314,7 +314,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                                                     .getHeader(HttpFieldsNames.LOCATION),
                                             true);
                             // try again, except this time, if it fails, don't try to handle it
-                            log.debug(
+                            LOGGER.debug(
                                     "The Location [{}] specified in a redirect was not valid. Trying workaround url [{}]",
                                     newLocation,
                                     newLocationWorkaround);
@@ -328,14 +328,14 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                         if (cookieBack1 != null) {
                             // if the previous request sent back a cookie, we need to set that
                             // cookie when following redirects, as a browser would
-                            log.debug("Adding in cookie [{}] for a redirect", cookieBack1);
+                            LOGGER.debug("Adding in cookie [{}] for a redirect", cookieBack1);
                             TreeSet<HtmlParameter> forwardCookieParams =
                                     temp.getRequestHeader().getCookieParams();
                             forwardCookieParams.add(cookieBack1);
                             temp.getRequestHeader().setCookieParams(forwardCookieParams);
                         }
 
-                        log.debug(
+                        LOGGER.debug(
                                 "DEBUG: Cookie Message 1 causes us to follow redirect to [{}]",
                                 newLocation);
 
@@ -364,7 +364,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                     // if non-200 on the final response for message 1, no point in continuing. Bale
                     // out.
                     if (!isPage200(msg1Final)) {
-                        log.debug(
+                        LOGGER.debug(
                                 "Got a non-200 response when sending [{}] with param [{}] = NULL (possibly somewhere in the redirects)",
                                 msg1Initial.getRequestHeader().getURI(),
                                 currentHtmlParameter.getName());
@@ -378,7 +378,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
 
                     if (cookieBack1 == null || cookieBack1.getValue() == null) {
                         // no cookie was set, or the cookie param was set to a null value
-                        log.debug(
+                        LOGGER.debug(
                                 "The Cookie parameter was NOT set in the response, when cookie param [{}] was set to NULL: {}",
                                 currentHtmlParameter.getName(),
                                 cookieBack1);
@@ -456,7 +456,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                                 .setMessage(getBaseMsg())
                                 .raise();
 
-                        log.debug(
+                        LOGGER.debug(
                                 "A session identifier in {} field: [{}] may be sent via an insecure mechanism at [{}] URL [{}]",
                                 currentHtmlParameter.getType(),
                                 currentHtmlParameter.getName(),
@@ -515,7 +515,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                                 .setMessage(getBaseMsg())
                                 .raise();
 
-                        log.debug(
+                        LOGGER.debug(
                                 "A session identifier in [{}] URL [{}] {} field: [{}] may be accessible to JavaScript",
                                 getBaseMsg().getRequestHeader().getMethod(),
                                 getBaseMsg().getRequestHeader().getURI(),
@@ -536,7 +536,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                     // check for the Expires header
                     for (Iterator<String> i = cookieBack1.getFlags().iterator(); i.hasNext(); ) {
                         String cookieBack1Flag = i.next();
-                        // if ( this.debugEnabled ) log.debug("Cookie back 1 flag (checking for
+                        // if ( this.debugEnabled ) LOGGER.debug("Cookie back 1 flag (checking for
                         // Expires): "+ cookieBack1Flag);
                         // match in a case insensitive manner. never know what case various web
                         // servers are going to send back.
@@ -544,7 +544,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                         if (cookieBack1Flag.toLowerCase(Locale.ENGLISH).startsWith("expires=")) {
                             String[] cookieBack1FlagValues = cookieBack1Flag.split("=");
                             if (cookieBack1FlagValues.length > 1) {
-                                log.debug("Cookie Expiry: {}", cookieBack1FlagValues[1]);
+                                LOGGER.debug("Cookie Expiry: {}", cookieBack1FlagValues[1]);
                                 sessionExpiryDescription =
                                         cookieBack1FlagValues[1]; // the Date String
                                 cookieBack1ExpiryDate = parseDate(cookieBack1FlagValues[1]);
@@ -561,7 +561,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                     // use Max-Age, IE uses Expires)
                     for (Iterator<String> i = cookieBack1.getFlags().iterator(); i.hasNext(); ) {
                         String cookieBack1Flag = i.next();
-                        // if ( this.debugEnabled ) log.debug("Cookie back 1 flag (checking for
+                        // if ( this.debugEnabled ) LOGGER.debug("Cookie back 1 flag (checking for
                         // Max-Age): "+ cookieBack1Flag);
                         // match in a case insensitive manner. never know what case various web
                         // servers are going to send back.
@@ -571,7 +571,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                                 // now the Max-Age value is the number of seconds relative to the
                                 // time the browser received the cookie
                                 // (as stored in cookieBack1TimeReceived)
-                                log.debug("Cookie Max Age: {}", cookieBack1FlagValues[1]);
+                                LOGGER.debug("Cookie Max Age: {}", cookieBack1FlagValues[1]);
                                 long cookie1DropDeadMS =
                                         cookieBack1TimeReceived
                                                 + (Long.parseLong(cookieBack1FlagValues[1]) * 1000);
@@ -605,27 +605,28 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                         long aWeekSeconds = aDaySeconds * 7;
 
                         if (datediffSeconds < 0) {
-                            log.debug("The session cookie has expired already");
+                            LOGGER.debug("The session cookie has expired already");
                             sessionExpiryRiskDescription = "ascanbeta.sessionidexpiry.timeexpired";
                             sessionExpiryRiskLevel =
                                     Alert.RISK_INFO; // no risk.. the cookie has expired already
                         } else if (datediffSeconds > aWeekSeconds) {
-                            log.debug("The session cookie is set to last for more than a week!");
+                            LOGGER.debug("The session cookie is set to last for more than a week!");
                             sessionExpiryRiskDescription =
                                     "ascanbeta.sessionidexpiry.timemorethanoneweek";
                             sessionExpiryRiskLevel = Alert.RISK_HIGH;
                         } else if (datediffSeconds > aDaySeconds) {
-                            log.debug("The session cookie is set to last for more than a day");
+                            LOGGER.debug("The session cookie is set to last for more than a day");
                             sessionExpiryRiskDescription =
                                     "ascanbeta.sessionidexpiry.timemorethanoneday";
                             sessionExpiryRiskLevel = Alert.RISK_MEDIUM;
                         } else if (datediffSeconds > anHourSeconds) {
-                            log.debug("The session cookie is set to last for more than an hour");
+                            LOGGER.debug("The session cookie is set to last for more than an hour");
                             sessionExpiryRiskDescription =
                                     "ascanbeta.sessionidexpiry.timemorethanonehour";
                             sessionExpiryRiskLevel = Alert.RISK_LOW;
                         } else {
-                            log.debug("The session cookie is set to last for less than an hour!");
+                            LOGGER.debug(
+                                    "The session cookie is set to last for less than an hour!");
                             sessionExpiryRiskDescription =
                                     "ascanbeta.sessionidexpiry.timelessthanonehour";
                             sessionExpiryRiskLevel = Alert.RISK_INFO;
@@ -685,7 +686,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                                 .setMessage(getBaseMsg())
                                 .raise();
 
-                        log.debug(
+                        LOGGER.debug(
                                 "A session identifier in [{}] URL [{}] {} field: "
                                         + "[{}] may be accessed until [{}], unless the session is destroyed.",
                                 getBaseMsg().getRequestHeader().getMethod(),
@@ -711,7 +712,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                     // we will re-send it.  the aim is then to see if it accepts the cookie (BAD, in
                     // some circumstances),
                     // or if it issues a new session cookie (GOOD, in most circumstances)
-                    log.debug(
+                    LOGGER.debug(
                             "A Cookie was set by the URL for the correct param, when param [{}] was set to NULL: {}",
                             currentHtmlParameter.getName(),
                             cookieBack1);
@@ -790,7 +791,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                                             true);
 
                             // try again, except this time, if it fails, don't try to handle it
-                            log.debug(
+                            LOGGER.debug(
                                     "The Location [{}] specified in a redirect was not valid. Trying workaround url [{}]",
                                     newLocation,
                                     newLocationWorkaround);
@@ -805,7 +806,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                             // if the previous request sent back a cookie, we need to set that
                             // cookie when following redirects, as a browser would
                             // also make sure to delete the previous value set for the cookie value
-                            log.debug(
+                            LOGGER.debug(
                                     "Deleting old cookie [{}], and adding in cookie [{}] for a redirect",
                                     cookieBack2Previous,
                                     cookieBack2);
@@ -835,11 +836,11 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                         // chain
                         msg2Final = temp2;
                     }
-                    log.debug("Done following redirects");
+                    LOGGER.debug("Done following redirects");
 
                     // final result was non-200, no point in continuing. Bale out.
                     if (!isPage200(msg2Final)) {
-                        log.debug(
+                        LOGGER.debug(
                                 "Got a non-200 response when sending [{}] with a borrowed cookie (or by following a redirect) for param [{}]",
                                 msg2Initial.getRequestHeader().getURI(),
                                 currentHtmlParameter.getName());
@@ -933,7 +934,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                                                         + currentHtmlParameter.getValue()),
                                         Matcher.quoteReplacement(
                                                 ";" + currentHtmlParameter.getName() + "="));
-                        log.debug(
+                        LOGGER.debug(
                                 "Removing the pseudo URL parameter from [{}]: [{}]",
                                 requestUrl,
                                 hackedUrl);
@@ -951,7 +952,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
 
                     // if non-200 on the response for message 1, no point in continuing. Bale out.
                     if (!isPage200(msg1Initial)) {
-                        log.debug(
+                        LOGGER.debug(
                                 "Got a non-200 response when sending [{}] with param [{}] = NULL (possibly somewhere in the redirects)",
                                 msg1Initial.getRequestHeader().getURI(),
                                 currentHtmlParameter.getName());
@@ -973,7 +974,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                                     msg1Initial.getResponseBody().toString(),
                                     currentHtmlParameter.getName(),
                                     isPseudoUrlParameter);
-                    log.debug(
+                    LOGGER.debug(
                             "The count of the various values of the [{}] parameters in urls in the result of retrieving the url with a null value for parameter [{}]: {}",
                             currentHtmlParameter.getName(),
                             currentHtmlParameter.getName(),
@@ -989,7 +990,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                         // the app doesn't do sessions (etc.)
                         // either way, the parameter/url combo is not vulnerable, so continue with
                         // the next parameter
-                        log.debug(
+                        LOGGER.debug(
                                 "The URL parameter [{}] was NOT set in any links in the response, when ({}) URL param [{}] was set to NULL in the request, so it is likely not a session id field",
                                 currentHtmlParameter.getName(),
                                 isPseudoUrlParameter ? "pseudo/URL rewritten" : "",
@@ -1014,7 +1015,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                         // if so, use this to eliminate false positives, and to optimise.
                         if (possibleSessionIdIssuedForUrlParam.equals(
                                 currentHtmlParameter.getValue())) {
-                            log.debug(
+                            LOGGER.debug(
                                     "{} URL param [{}], when set to NULL, causes 1 distinct values to be set for it in URLs in the output, but the possible session id value [{}] is the same as the value we over-wrote with NULL. 'Sorry, kid. You got the gift, but it looks like you're waiting for something'",
                                     isPseudoUrlParameter ? "pseudo/URL rewritten" : "",
                                     currentHtmlParameter.getName(),
@@ -1024,7 +1025,8 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                         if (possibleSessionIdIssuedForUrlParam.length() > 3) {
                             // raise an alert here on an exposed session id, even if it is not
                             // subject to a session fixation vulnerability
-                            // log.info("The URL parameter ["+ currentHtmlParameter.getName() + "]
+                            // LOGGER.info("The URL parameter ["+ currentHtmlParameter.getName() +
+                            // "]
                             // was set ["+
                             // parametersInHTMLURls.get(possibleSessionIdIssuedForUrlParam)+ "]
                             // times to ["+ possibleSessionIdIssuedForUrlParam + "] in links in the
@@ -1080,7 +1082,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                                     .setMessage(getBaseMsg())
                                     .raise();
 
-                            log.debug(
+                            LOGGER.debug(
                                     "An exposed session identifier has been found at [{}] URL [{}] on {} {} field: [{}]",
                                     getBaseMsg().getRequestHeader().getMethod(),
                                     getBaseMsg().getRequestHeader().getURI(),
@@ -1090,7 +1092,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                             // Note: do NOT continue to the next field at this point..
                             // since we still need to check for Session Fixation.
                         } else {
-                            log.debug(
+                            LOGGER.debug(
                                     "{} URL param [{}], when set to NULL, causes 1 distinct values to be set for it in URLs in the output, but the possible session id value [{}] is too short to be a real session id.",
                                     isPseudoUrlParameter ? "pseudo/URL rewritten" : "",
                                     currentHtmlParameter.getName(),
@@ -1103,7 +1105,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                         // it could still be a session parameter, but we assume it is *not* a
                         // session id field
                         // log it, but assume it is not a session id
-                        log.debug(
+                        LOGGER.debug(
                                 "{} URL param [{}], when set to NULL, causes [{}] distinct values to be set for it in URLs in the output. Assuming it is NOT a session id as a consequence. This could be a false negative",
                                 isPseudoUrlParameter ? "pseudo/URL rewritten" : "",
                                 currentHtmlParameter.getName(),
@@ -1154,7 +1156,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                                                         + currentHtmlParameter.getName()
                                                         + "="
                                                         + possibleSessionIdIssuedForUrlParam));
-                        log.debug(
+                        LOGGER.debug(
                                 "Changing the pseudo URL parameter from [{}]: [{}]",
                                 requestUrl,
                                 hackedUrl);
@@ -1181,7 +1183,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
 
                     // final result was non-200, no point in continuing. Bale out.
                     if (!isPage200(msg2Initial)) {
-                        log.debug(
+                        LOGGER.debug(
                                 "Got a non-200 response when sending [{}] with a borrowed session (or by following a redirect) for param [{}]",
                                 msg2Initial.getRequestHeader().getURI(),
                                 currentHtmlParameter.getName());
@@ -1195,7 +1197,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                                     msg2Initial.getResponseBody().toString(),
                                     currentHtmlParameter.getName(),
                                     isPseudoUrlParameter);
-                    log.debug(
+                    LOGGER.debug(
                             "The count of the various values of the [{}] parameters in urls in the result of retrieving the url with a borrowed session value for parameter [{}]: {}",
                             currentHtmlParameter.getName(),
                             currentHtmlParameter.getName(),
@@ -1205,7 +1207,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                         // either no values, or multiple values, but not 1 value.  For a session
                         // that was regenerated, we would have expected to see
                         // just 1 new value
-                        log.debug(
+                        LOGGER.debug(
                                 "The HTML has spoken. [{}] doesn't look like a session id field, because there are {} distinct values for this parameter in urls in the HTML output",
                                 currentHtmlParameter.getName(),
                                 parametersInHTMLURls2.size());
@@ -1271,7 +1273,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                         // more likely that the Session is being re-issued for every single request,
                         // or we have issues a login request, which
                         // normally causes a session to be reissued
-                        log.debug(
+                        LOGGER.debug(
                                 "The {} parameter [{}] in url [{}] [{}] changes with requests, and so it likely not vulnerable to Session Fixation",
                                 isPseudoUrlParameter ? "pseudo/URL rewritten" : "",
                                 currentHtmlParameter.getName(),
@@ -1286,7 +1288,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
         } catch (Exception e) {
             // Do not try to internationalise this.. we need an error message in any event..
             // if it's in English, it's still better than not having it at all.
-            log.error("An error occurred checking a url for Session Fixation issues", e);
+            LOGGER.error("An error occurred checking a url for Session Fixation issues", e);
         }
     }
 
@@ -1300,7 +1302,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
 
     private static void logSessionFixation(
             HttpMessage msg, String parameterType, String parameterName) {
-        log.debug(
+        LOGGER.debug(
                 "A likely Session Fixation Vulnerability has been found with [{}] URL [{}] on {} field: [{}]",
                 msg.getRequestHeader().getMethod(),
                 msg.getRequestHeader().getURI(),
@@ -1351,7 +1353,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
         for (Element element : elementList) {
             if (element.getAttributes() != null) {
                 String urlInResults = element.getAttributeValue("href");
-                log.debug(
+                LOGGER.debug(
                         "A HREF in the HTML results of request with NULL value for parameter [{}]: {}",
                         parametername,
                         urlInResults);
@@ -1366,7 +1368,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                     // links in the output
                     if (pseudoUrlParameter) {
                         urlParams = getPseudoUrlParameters(urlInResults);
-                        log.debug(
+                        LOGGER.debug(
                                 "Pseudo url params of Link URL [{}] : [{}]",
                                 urlInResults,
                                 urlParams);
@@ -1376,7 +1378,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                             messageUrlInResults = new HttpMessage(new URI(urlInResults, false));
                         } catch (HttpMalformedHeaderException e) {
                             // the url is in the href is likely not valid. skip to the nexe one.
-                            log.debug(
+                            LOGGER.debug(
                                     "URL [{}] found in HTML results does not seem to be valid, and cannot be analysed for session ids. Skipping it.",
                                     urlInResults);
                             continue;
@@ -1393,7 +1395,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
                         // playing with
                         // record the value (and the number of instances in total found)
                         if (urlParameter.getName().equals(parametername)) {
-                            // if (this.debugEnabled) log.debug("Found a match for the parameter
+                            // if (this.debugEnabled) LOGGER.debug("Found a match for the parameter
                             // ["+currentHtmlParameter.getName() +"] in a url in the results:
                             // "+urlParameter.getValue());
                             Integer parameterValueCount =
@@ -1436,7 +1438,7 @@ public class SessionFixationScanRule extends AbstractAppPlugin {
             String[] pseudoUrlParamKeyValue = pseudoUrlParamNames[i].split("=");
             if (pseudoUrlParamKeyValue.length
                     == 2) { // x=y should break into 2 parts.. no more, no less
-                log.debug(
+                LOGGER.debug(
                         "Pseudo url arguments: [{}]= [{}]",
                         pseudoUrlParamKeyValue[0],
                         pseudoUrlParamKeyValue[1]);

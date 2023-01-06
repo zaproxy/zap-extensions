@@ -44,7 +44,7 @@ import org.zaproxy.zap.extension.sse.ServerSentEvent;
 
 /** Manages writing and reading Server-Sent Event streams and events to the database. */
 public class TableEventStream extends ParosAbstractTable {
-    private static final Logger logger = LogManager.getLogger(TableEventStream.class);
+    private static final Logger LOGGER = LogManager.getLogger(TableEventStream.class);
 
     private Set<Integer> streamIds;
     private LRUMap streamCache;
@@ -173,7 +173,7 @@ public class TableEventStream extends ParosAbstractTable {
                     try {
                         psSelectStreamIds.close();
                     } catch (SQLException e) {
-                        logger.debug(e.getMessage(), e);
+                        LOGGER.debug(e.getMessage(), e);
                     }
                 }
             }
@@ -492,7 +492,7 @@ public class TableEventStream extends ParosAbstractTable {
                         // proceed with insert
                         stmt = psInsertStream;
                         addIdOnSuccess = true;
-                        logger.debug("insert stream: {}", stream);
+                        LOGGER.debug("insert stream: {}", stream);
                     }
 
                     Long startTs = stream.getStartTimestamp();
@@ -520,7 +520,7 @@ public class TableEventStream extends ParosAbstractTable {
                             // safely ignore this exception
                             // on shutdown, the history table is cleaned before
                             // event streams are closed and updated
-                            logger.debug(e.getMessage(), e);
+                            LOGGER.debug(e.getMessage(), e);
                         }
                     }
 
@@ -552,7 +552,7 @@ public class TableEventStream extends ParosAbstractTable {
                         throw new DatabaseException("stream not inserted: " + event.getStreamId());
                     }
 
-                    logger.debug("insert event: {}", event);
+                    LOGGER.debug("insert event: {}", event);
 
                     psInsertEvent.setInt(1, event.getId());
                     psInsertEvent.setInt(2, event.getStreamId());

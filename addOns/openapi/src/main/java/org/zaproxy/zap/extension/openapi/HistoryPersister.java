@@ -33,7 +33,7 @@ import org.zaproxy.zap.utils.ThreadUtils;
 
 public class HistoryPersister implements RequesterListener {
 
-    private static final Logger LOG = LogManager.getLogger(HistoryPersister.class);
+    private static final Logger LOGGER = LogManager.getLogger(HistoryPersister.class);
 
     private final ExtensionHistory extHistory;
 
@@ -67,7 +67,7 @@ public class HistoryPersister implements RequesterListener {
             }
             Stats.incCounter(ExtensionOpenApi.URL_ADDED_STATS);
         } catch (Exception e) {
-            LOG.warn("Failed to persist the message: {}", e.getMessage(), e);
+            LOGGER.warn("Failed to persist the message: {}", e.getMessage(), e);
             return;
         }
 

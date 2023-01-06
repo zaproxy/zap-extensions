@@ -53,7 +53,8 @@ public class HttpPanelViewStateView
     public static final String NAME = "HttpPanelViewStateView";
     private static final String CAPTION_NAME =
             Constant.messages.getString("viewstate.panel.caption");
-    private static Logger logger = LogManager.getLogger(ExtensionHttpPanelViewStateView.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(ExtensionHttpPanelViewStateView.class);
     private HttpPanelHexModel httpPanelHexModel = null;
     private JTable hexTableBody = null;
     private JPanel container = null;
@@ -218,7 +219,7 @@ public class HttpPanelViewStateView
     public void viewStateUpdated(ViewState vs) {
         if (vs != null) {
             String info = "";
-            logger.debug("ViewState updated: {} :: {}", vs.getType(), vs.getValue());
+            LOGGER.debug("ViewState updated: {} :: {}", vs.getType(), vs.getValue());
             if (vs.getType().equalsIgnoreCase(JSFViewState.KEY)) {
                 if (vs.getDecodedValue() != null) {
                     info = Constant.messages.getString("viewstate.en.type") + ": " + vs.getType();

@@ -68,7 +68,7 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 
     TokenAnalyserThread analyserThread = null;
 
-    private static Logger log = LogManager.getLogger(AnalyseTokensDialog.class);
+    private static final Logger LOGGER = LogManager.getLogger(AnalyseTokensDialog.class);
 
     private ResourceBundle messages;
 
@@ -175,7 +175,7 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 
     @Override
     public void notifyTestResult(TokenAnalysisTestResult result) {
-        log.debug("notifyTestResult {} {}", result.getType(), result.getResult().name());
+        LOGGER.debug("notifyTestResult {} {}", result.getType(), result.getResult().name());
         this.getTokenAnalysisResultsTableModel().addResult(result);
         this.addDetailTitle(result.getName());
         this.addDetails(result.getDetails());
@@ -231,7 +231,7 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
             } catch (Exception e) {
                 View.getSingleton()
                         .showWarningDialog(messages.getString("tokengen.analyse.save.error"));
-                log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }

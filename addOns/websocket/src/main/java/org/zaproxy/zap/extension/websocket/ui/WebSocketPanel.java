@@ -74,7 +74,7 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
 
     private static final long serialVersionUID = -2853099315338427006L;
 
-    private static final Logger logger = LogManager.getLogger(WebSocketPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(WebSocketPanel.class);
 
     /** Observe messages after storage handler was called. */
     public static final int WEBSOCKET_OBSERVING_ORDER =
@@ -371,7 +371,7 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
                             try {
                                 msg = handshakeRef.getHttpMessage();
                             } catch (Exception e) {
-                                logger.warn(e.getMessage(), e);
+                                LOGGER.warn(e.getMessage(), e);
                                 return;
                             }
                             showHandshakeMessage(msg);
@@ -479,7 +479,7 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
                 EventQueue.invokeAndWait(() -> updateChannelsState(state, channel));
             }
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -651,7 +651,7 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
                 }
                 channelSelect.setSelectedIndex(index);
             } catch (DatabaseException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }
@@ -706,7 +706,7 @@ public class WebSocketPanel extends AbstractPanel implements WebSocketObserver {
                                 reset();
                             });
                 } catch (Exception e) {
-                    logger.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
         }

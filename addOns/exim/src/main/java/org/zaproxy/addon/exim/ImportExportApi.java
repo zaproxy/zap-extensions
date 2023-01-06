@@ -61,7 +61,7 @@ import org.zaproxy.zap.utils.HarUtils;
 /** The API for importing data from a file. */
 public class ImportExportApi extends ApiImplementor {
 
-    private static final Logger LOG = LogManager.getLogger(ImportExportApi.class);
+    private static final Logger LOGGER = LogManager.getLogger(ImportExportApi.class);
     private static final String PREFIX = "exim";
 
     private static final String PARAM_BASE_URL = "baseurl";
@@ -112,7 +112,7 @@ public class ImportExportApi extends ApiImplementor {
 
     @Override
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
-        LOG.debug("handleApiAction {} {}", name, params);
+        LOGGER.debug("handleApiAction {} {}", name, params);
 
         File file;
         switch (name) {
@@ -168,7 +168,7 @@ public class ImportExportApi extends ApiImplementor {
                         e.toString(API.Format.JSON, incErrorDetails())
                                 .getBytes(StandardCharsets.UTF_8);
             } catch (Exception e) {
-                LOG.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
 
                 ApiException apiException =
                         new ApiException(ApiException.Type.INTERNAL_ERROR, e.getMessage());
@@ -183,7 +183,7 @@ public class ImportExportApi extends ApiImplementor {
                         API.getDefaultResponseHeader(
                                 "application/json; charset=UTF-8", responseBody.length));
             } catch (HttpMalformedHeaderException e) {
-                LOG.error("Failed to create response header: {}", e.getMessage(), e);
+                LOGGER.error("Failed to create response header: {}", e.getMessage(), e);
             }
             msg.setResponseBody(responseBody);
 
@@ -234,7 +234,7 @@ public class ImportExportApi extends ApiImplementor {
                                 e.toString(API.Format.JSON, incErrorDetails())
                                         .getBytes(StandardCharsets.UTF_8);
                     } catch (Exception e) {
-                        LOG.error(e.getMessage(), e);
+                        LOGGER.error(e.getMessage(), e);
 
                         ApiException apiException =
                                 new ApiException(ApiException.Type.INTERNAL_ERROR, e.getMessage());
@@ -251,7 +251,7 @@ public class ImportExportApi extends ApiImplementor {
                         API.getDefaultResponseHeader(
                                 "application/json; charset=UTF-8", responseBody.length));
             } catch (HttpMalformedHeaderException e) {
-                LOG.error("Failed to create response header: {}", e.getMessage(), e);
+                LOGGER.error("Failed to create response header: {}", e.getMessage(), e);
             }
             msg.setResponseBody(responseBody);
 
@@ -275,7 +275,7 @@ public class ImportExportApi extends ApiImplementor {
         try {
             recordHistory = tableHistory.read(id);
         } catch (HttpMalformedHeaderException | DatabaseException e) {
-            LOG.error("Failed to read the history record:", e);
+            LOGGER.error("Failed to read the history record:", e);
             throw new ApiException(ApiException.Type.INTERNAL_ERROR, e);
         }
         if (recordHistory == null) {
@@ -354,7 +354,7 @@ public class ImportExportApi extends ApiImplementor {
                 }
             }
         } catch (HttpMalformedHeaderException | DatabaseException e) {
-            LOG.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw new ApiException(ApiException.Type.INTERNAL_ERROR);
         }
     }
@@ -390,7 +390,7 @@ public class ImportExportApi extends ApiImplementor {
                             HistoryReference.TYPE_ZAP_USER,
                             message);
         } catch (Exception e) {
-            LOG.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
             return;
         }
 

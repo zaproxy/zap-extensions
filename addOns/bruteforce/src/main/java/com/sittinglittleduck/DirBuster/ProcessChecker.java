@@ -32,7 +32,7 @@ public class ProcessChecker extends TimerTask {
     private Vector<Long> lastTen = new Vector<>(10, 1);
 
     /* Logger object for the class */
-    private static final Logger LOG = LogManager.getLogger(ProcessChecker.class);
+    private static final Logger LOGGER = LogManager.getLogger(ProcessChecker.class);
 
     /** Creates a new instance of ProcessChecker */
     public interface ProcessUpdate {
@@ -115,9 +115,9 @@ public class ProcessChecker extends TimerTask {
                 parseQueueLength = String.valueOf(manager.parseQueue.size());
             }
 
-            if (LOG.isDebugEnabled()) {
+            if (LOGGER.isDebugEnabled()) {
                 if (average == 0 || lastTenTotal == 0 || averageLastTen == 0) {
-                    LOG.debug(
+                    LOGGER.debug(
                             "Current Speed: {} requests/sec\nAverage Speed: (T) {}, (C) {} requests/sec\nTotal Requests: {}/{}\nTime To Finish: ~{}",
                             current,
                             average,
@@ -130,7 +130,7 @@ public class ProcessChecker extends TimerTask {
                     long timeLeft = (totalToDo - currentTotal) / averageLastTen;
                     String timeToCompelete = convertSecsToTime(timeLeft);
                     lastTotal = currentTotal;
-                    LOG.debug(
+                    LOGGER.debug(
                             "Current speed: {} request/sec\nAverage Speed: (T) {}, (C) {} requests/sec\nTotal Requests: {}/{}\nTime To Finish: {}\n{}",
                             current,
                             average,
@@ -142,7 +142,7 @@ public class ProcessChecker extends TimerTask {
                 }
 
                 // System.out.println("workQ: " + manager.workQueue.size());
-                LOG.debug("dirQ: {}", manager.dirQueue.size());
+                LOGGER.debug("dirQ: {}", manager.dirQueue.size());
                 // System.out.println("parseQ: " + manager.parseQueue.size());
                 // manager.
             }

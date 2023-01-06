@@ -48,7 +48,7 @@ public class GraphQlParam extends VersionedAbstractParam {
      */
     private static final int PARAM_CURRENT_VERSION = 2;
 
-    private static final Logger LOG = LogManager.getLogger(GraphQlParam.class);
+    private static final Logger LOGGER = LogManager.getLogger(GraphQlParam.class);
 
     public GraphQlParam() {}
 
@@ -204,7 +204,7 @@ public class GraphQlParam extends VersionedAbstractParam {
         try {
             setArgsType(ArgsTypeOption.valueOf(argsType.toUpperCase(Locale.ROOT)));
         } catch (IllegalArgumentException e) {
-            LOG.debug("'{}' is not a valid Arguments Specification Type.", argsType);
+            LOGGER.debug("'{}' is not a valid Arguments Specification Type.", argsType);
             throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, e.getMessage());
         }
     }
@@ -223,7 +223,7 @@ public class GraphQlParam extends VersionedAbstractParam {
         try {
             setQuerySplitType(QuerySplitOption.valueOf(querySplitType.toUpperCase(Locale.ROOT)));
         } catch (IllegalArgumentException e) {
-            LOG.debug("'{}' is not a valid Query Split Type.", querySplitType);
+            LOGGER.debug("'{}' is not a valid Query Split Type.", querySplitType);
             throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, e.getMessage());
         }
     }
@@ -242,7 +242,7 @@ public class GraphQlParam extends VersionedAbstractParam {
         try {
             setRequestMethod(RequestMethodOption.valueOf(requestMethod.toUpperCase(Locale.ROOT)));
         } catch (IllegalArgumentException e) {
-            LOG.debug("'{}' is not a valid Request Method Option.", requestMethod);
+            LOGGER.debug("'{}' is not a valid Request Method Option.", requestMethod);
             throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, e.getMessage());
         }
     }

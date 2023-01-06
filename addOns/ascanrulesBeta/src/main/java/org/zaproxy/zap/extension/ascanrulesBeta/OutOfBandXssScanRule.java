@@ -40,7 +40,7 @@ public class OutOfBandXssScanRule extends AbstractAppParamPlugin {
 
     private static final Vulnerability VULN = Vulnerabilities.getVulnerability("wasc_8");
     private static final int PLUGIN_ID = 40031;
-    private static final Logger LOG = LogManager.getLogger(OutOfBandXssScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(OutOfBandXssScanRule.class);
 
     private static final String SIMPLE_SCRIPT_XSS_ATTACK = "<script src=\"{0}\"></script>";
     private static final String END_TAG_SCRIPT_XSS_ATTACK = "</script><script src=\"{0}\">";
@@ -154,7 +154,7 @@ public class OutOfBandXssScanRule extends AbstractAppParamPlugin {
                 scanWithExternalOastService(param);
             }
         } catch (Exception e) {
-            LOG.warn("Could not perform Out of Band XSS Attack.");
+            LOGGER.warn("Could not perform Out of Band XSS Attack.");
         }
     }
 
@@ -178,7 +178,7 @@ public class OutOfBandXssScanRule extends AbstractAppParamPlugin {
                 setParameter(msg, param, attackString);
                 sendAndReceive(msg);
             } catch (IOException e) {
-                LOG.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
         }
     }
@@ -201,7 +201,7 @@ public class OutOfBandXssScanRule extends AbstractAppParamPlugin {
                 setParameter(msg, param, attackString);
                 sendAndReceive(msg);
             } catch (IOException e) {
-                LOG.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
         }
     }

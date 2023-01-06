@@ -47,7 +47,7 @@ import org.zaproxy.zap.extension.plugnhack.ClientMessage.State;
 public class MessageTable extends ParosAbstractTable {
 
     private static final String TABLE = "PLUGNHACK_MESSAGE";
-    private static final Logger logger = LogManager.getLogger(MessageTable.class);
+    private static final Logger LOGGER = LogManager.getLogger(MessageTable.class);
 
     private PreparedStatement psInsert;
     private PreparedStatement psUpdate;
@@ -146,7 +146,7 @@ public class MessageTable extends ParosAbstractTable {
                 cmsg.setState(State.values()[rs.getInt("state")]);
                 list.add(cmsg);
             } catch (IOException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
         rs.close();

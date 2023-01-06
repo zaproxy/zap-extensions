@@ -65,7 +65,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
 
     private static final String MESSAGE_PREFIX = "ascanrules.hidden.files.";
     private static final int PLUGIN_ID = 40035;
-    private static final Logger LOG = LogManager.getLogger(HiddenFilesScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(HiddenFilesScanRule.class);
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
@@ -113,7 +113,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
         for (HiddenFile file : hfList) {
 
             if (isStop()) {
-                LOG.debug("Scan rule {} stopping.", getName());
+                LOGGER.debug("Scan rule {} stopping.", getName());
                 return;
             }
 
@@ -177,13 +177,13 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
             sendAndReceive(testMsg, false);
             return testMsg;
         } catch (URIException uEx) {
-            LOG.debug(
+            LOGGER.debug(
                     "An error occurred creating or setting a URI for the: {} scan rule. {}",
                     getName(),
                     uEx.getMessage(),
                     uEx);
         } catch (IOException e) {
-            LOG.warn(
+            LOGGER.warn(
                     "An error occurred while checking [{}] [{}] for {} Caught {} {}",
                     testMsg.getRequestHeader().getMethod(),
                     testMsg.getRequestHeader().getURI(),
@@ -222,7 +222,8 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
         try {
             msg = new HttpMessage(new URI("https://example.com/" + testPath, false));
         } catch (URIException | HttpMalformedHeaderException | NullPointerException e) {
-            LOG.warn("The HttpMessage for Example Alerts could not be created for some reason.", e);
+            LOGGER.warn(
+                    "The HttpMessage for Example Alerts could not be created for some reason.", e);
             return Collections.emptyList();
         }
         msg.getResponseHeader().setStatusCode(HttpStatusCode.OK);
@@ -317,7 +318,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
                                 false);
                 hiddenFiles.add(hiddenFile);
 
-                LOG.debug(
+                LOGGER.debug(
                         "File to be located: {} content: {}",
                         hiddenFile.getPath(),
                         hiddenFile.getContent());
@@ -325,7 +326,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
 
             return hiddenFiles;
         } catch (JSONException jEx) {
-            LOG.warn(
+            LOGGER.warn(
                     "Failed to parse {} payloads file due to JSON parsing issue. {}",
                     getName(),
                     jEx.getMessage(),
@@ -341,7 +342,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
         try {
             return jsonObj.getString(key);
         } catch (JSONException jEx) {
-            LOG.warn("Unable to parse JSON ({})", key, jEx);
+            LOGGER.warn("Unable to parse JSON ({})", key, jEx);
             return "";
         }
     }
@@ -354,7 +355,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
         try {
             jsonArray = jsonObj.getJSONArray(key);
         } catch (JSONException jEx) {
-            LOG.warn("Unable to parse JSON ({})", key, jEx);
+            LOGGER.warn("Unable to parse JSON ({})", key, jEx);
             return Collections.emptyList();
         }
         List<String> newList = new ArrayList<>();
@@ -367,13 +368,13 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
     private String readPayloadsFile() {
         File f = new File(Constant.getZapHome() + File.separator + PAYLOADS_FILE_PATH);
         if (!f.exists()) {
-            LOG.error("No such file: {}", f.getAbsolutePath());
+            LOGGER.error("No such file: {}", f.getAbsolutePath());
             return "";
         }
         try {
             return new String(Files.readAllBytes(f.toPath()), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            LOG.error(
+            LOGGER.error(
                     "Error on opening/reading {} payload file. Error: {}",
                     getName(),
                     e.getMessage(),

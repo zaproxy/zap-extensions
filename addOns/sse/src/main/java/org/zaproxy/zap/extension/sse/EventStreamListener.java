@@ -27,7 +27,7 @@ import org.apache.logging.log4j.Logger;
 
 public class EventStreamListener implements Runnable {
 
-    private static final Logger logger = LogManager.getLogger(EventStreamListener.class);
+    private static final Logger LOGGER = LogManager.getLogger(EventStreamListener.class);
 
     private EventStreamProxy proxy;
     private BufferedReader reader;
@@ -64,7 +64,7 @@ public class EventStreamListener implements Runnable {
         } catch (Exception e) {
             // includes SocketException
             // no more reading possible
-            logger.warn(
+            LOGGER.warn(
                     "An exception occurred while reading Server-Sent Events: {}",
                     e.getMessage(),
                     e);

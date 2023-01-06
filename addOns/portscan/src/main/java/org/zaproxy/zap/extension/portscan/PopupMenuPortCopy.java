@@ -36,7 +36,7 @@ public class PopupMenuPortCopy extends ExtensionPopupMenuItem implements Clipboa
 
     private static final long serialVersionUID = 1L;
     private ExtensionPortScan extension = null;
-    private static Logger log = LogManager.getLogger(PopupMenuPortCopy.class);
+    private static final Logger LOGGER = LogManager.getLogger(PopupMenuPortCopy.class);
 
     /** */
     public PopupMenuPortCopy() {
@@ -91,7 +91,7 @@ public class PopupMenuPortCopy extends ExtensionPopupMenuItem implements Clipboa
                 }
 
             } catch (Exception e) {
-                log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
             return true;
         }

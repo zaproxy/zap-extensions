@@ -40,7 +40,7 @@ public class ExampleSimplePassiveScanRule extends PluginPassiveScanner {
 
     // wasc_10 is Denial of Service - well, its just an example ;)
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_10");
-    private static final Logger logger = LogManager.getLogger(ExampleSimplePassiveScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExampleSimplePassiveScanRule.class);
 
     private Random rnd = new Random();
 
@@ -83,7 +83,7 @@ public class ExampleSimplePassiveScanRule extends PluginPassiveScanner {
                     .raise();
         }
 
-        logger.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
+        LOGGER.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
     }
 
     @Override

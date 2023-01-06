@@ -75,7 +75,7 @@ public final class SourceSinkUtils {
      */
     private static Map<String, String> cachedParams;
 
-    private static Logger log = LogManager.getLogger(SourceSinkUtils.class);
+    private static final Logger LOGGER = LogManager.getLogger(SourceSinkUtils.class);
 
     static {
         reset();
@@ -110,7 +110,7 @@ public final class SourceSinkUtils {
     }
 
     private static void setSinkForSource(UserDataSource source, HttpMessage sinkMsg) {
-        log.debug(
+        LOGGER.debug(
                 "setSinkForSource src={} param={} sink={}",
                 source.getUri(),
                 source.getParam(),
@@ -129,7 +129,7 @@ public final class SourceSinkUtils {
             sinks.add(Integer.valueOf(hRef.getHistoryId()));
             sourceToSinks.put(source.toString(), sinks);
         } catch (HttpMalformedHeaderException | DatabaseException e) {
-            log.warn("Failed to persist HTTP message to database:", e);
+            LOGGER.warn("Failed to persist HTTP message to database:", e);
         }
     }
 
@@ -144,7 +144,7 @@ public final class SourceSinkUtils {
      */
     public static Set<Integer> getSinksIdsForSource(HttpMessage sourceMsg, String param) {
         UserDataSource source = new UserDataSource(sourceMsg, param);
-        log.debug(
+        LOGGER.debug(
                 "getSinksIdsForSource src={} param={} sinks={}",
                 source.getUri(),
                 param,
@@ -179,7 +179,7 @@ public final class SourceSinkUtils {
         try {
             return new HistoryReference(sinkMsgId).getHttpMessage();
         } catch (HttpMalformedHeaderException | DatabaseException e) {
-            log.warn("Failed to read HTTP message from database:", e);
+            LOGGER.warn("Failed to read HTTP message from database:", e);
         }
         return null;
     }

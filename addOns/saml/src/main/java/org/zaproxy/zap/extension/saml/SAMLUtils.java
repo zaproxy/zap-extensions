@@ -36,7 +36,7 @@ import org.parosproxy.paros.network.HttpMessage;
 public class SAMLUtils {
     private static final int MAX_INFLATED_SIZE = 100000;
 
-    protected static final Logger log = LogManager.getLogger(SAMLUtils.class);
+    protected static final Logger LOGGER = LogManager.getLogger(SAMLUtils.class);
 
     /** Private constructor, because this class is and Util class and the methods are static */
     private SAMLUtils() {}
@@ -92,7 +92,7 @@ public class SAMLUtils {
                 out = xmlMessageBytes;
                 length = inflatedLength;
             } catch (DataFormatException e) {
-                log.debug("Inflate SAML message failed - Invalid data format", e);
+                LOGGER.debug("Inflate SAML message failed - Invalid data format", e);
             }
             return new String(out, 0, length, "UTF-8");
         } catch (UnsupportedEncodingException e) {
@@ -182,7 +182,7 @@ public class SAMLUtils {
                     break;
             }
         } catch (UnsupportedEncodingException | SAMLException e) {
-            log.error(e);
+            LOGGER.error(e);
         }
         return "";
     }

@@ -47,7 +47,7 @@ public class CrossDomainScriptInclusionScanRule extends PluginPassiveScanner {
 
     private static final int PLUGIN_ID = 10017;
 
-    private static final Logger logger =
+    private static final Logger LOGGER =
             LogManager.getLogger(CrossDomainScriptInclusionScanRule.class);
     private Model model = null;
 
@@ -169,7 +169,7 @@ public class CrossDomainScriptInclusionScanRule extends PluginPassiveScanner {
                 }
             }
         } catch (URIException e) {
-            logger.debug("Error: {}", e.getMessage());
+            LOGGER.debug("Error: {}", e.getMessage());
         }
         return otherDomain;
     }

@@ -31,7 +31,7 @@ public class DirBusterManager extends Manager {
     private BruteForceListenner listenner;
     private int total = 0;
     private boolean finished = false;
-    private static Logger log = LogManager.getLogger(DirBusterManager.class);
+    private static final Logger LOGGER = LogManager.getLogger(DirBusterManager.class);
 
     public DirBusterManager(SimpleHttpClient httpClient, BruteForceListenner listenner) {
         super(httpClient);
@@ -48,11 +48,11 @@ public class DirBusterManager extends Manager {
             BaseCase baseCaseObj) {
         if (url.toString().endsWith("//")) {
             // For some reason DirBuster can go recursive and never finish
-            log.debug("Ignoring url {}", url);
+            LOGGER.debug("Ignoring url {}", url);
             return;
         }
         super.foundDir(url, statusCode, responce, baseCase, rawResponce, baseCaseObj);
-        log.debug("DirBusterManager.foundDir {} code: {}", url, statusCode);
+        LOGGER.debug("DirBusterManager.foundDir {} code: {}", url, statusCode);
         listenner.foundDir(url, statusCode, responce, baseCase, rawResponce, baseCaseObj);
     }
 
@@ -71,7 +71,7 @@ public class DirBusterManager extends Manager {
     @Override
     public synchronized void foundError(URL url, String reason) {
         super.foundError(url, reason);
-        log.warn("DirBusterManager.foundError {} reason: {}", url, reason);
+        LOGGER.warn("DirBusterManager.foundError {} reason: {}", url, reason);
     }
 
     @Override

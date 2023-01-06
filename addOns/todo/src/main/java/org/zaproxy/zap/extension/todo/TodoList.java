@@ -44,7 +44,7 @@ import org.w3c.dom.NodeList;
 
 public class TodoList extends AbstractPanel {
 
-    private static final Logger logger = LogManager.getLogger(TodoList.class);
+    private static final Logger LOGGER = LogManager.getLogger(TodoList.class);
 
     private static final long serialVersionUID = 1L;
     private JPanel panel;
@@ -85,7 +85,7 @@ public class TodoList extends AbstractPanel {
             }
 
         } catch (Exception e) {
-            logger.error("Error occurred while parsing cheatsheet");
+            LOGGER.error("Error occurred while parsing cheatsheet");
         }
 
         thePane = new JScrollPane(panel);

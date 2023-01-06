@@ -74,7 +74,7 @@ import org.zaproxy.zap.utils.XmlUtils;
 
 public class ReportGenerator {
 
-    private static final Logger logger = LogManager.getLogger(ReportGenerator.class);
+    private static final Logger LOGGER = LogManager.getLogger(ReportGenerator.class);
 
     // private static Pattern patternWindows = Pattern.compile("window", Pattern.CASE_INSENSITIVE);
     // private static Pattern patternLinux = Pattern.compile("linux", Pattern.CASE_INSENSITIVE);
@@ -101,7 +101,7 @@ public class ReportGenerator {
             transformer.transform(source, result);
 
         } catch (TransformerException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
 
         return outFile;
@@ -144,7 +144,7 @@ public class ReportGenerator {
                     | SAXException
                     | ParserConfigurationException
                     | IOException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
                 // Save the xml for diagnosing the problem
                 BufferedWriter bw = null;
                 showDialogForGUI();
@@ -155,7 +155,7 @@ public class ReportGenerator {
                                     StandardCharsets.UTF_8);
                     bw.write(inxml);
                 } catch (IOException e2) {
-                    logger.error("Failed to write debug XML file", e);
+                    LOGGER.error("Failed to write debug XML file", e);
                     return new File(outfilename);
                 } finally {
                     try {
@@ -188,7 +188,7 @@ public class ReportGenerator {
 
             } catch (IOException e) {
                 showDialogForGUI();
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
             // Remove the temporary file
             outfile.delete();
@@ -203,7 +203,7 @@ public class ReportGenerator {
                 bw.write(inxml);
             } catch (IOException e2) {
                 showDialogForGUI();
-                logger.error(e2.getMessage(), e2);
+                LOGGER.error(e2.getMessage(), e2);
             } finally {
                 try {
                     if (bw != null) {
@@ -224,7 +224,7 @@ public class ReportGenerator {
             bw.write(stringToJson(inxml));
         } catch (IOException e2) {
             showDialogForGUI();
-            logger.error(e2.getMessage(), e2);
+            LOGGER.error(e2.getMessage(), e2);
         } finally {
             try {
                 if (bw != null) {
@@ -267,7 +267,7 @@ public class ReportGenerator {
                 | ParserConfigurationException
                 | IOException e) {
             showDialogForGUI();
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         } finally {
 
         }
@@ -311,7 +311,7 @@ public class ReportGenerator {
                 | ParserConfigurationException
                 | IOException e) {
             showDialogForGUI();
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         } finally {
 
         }

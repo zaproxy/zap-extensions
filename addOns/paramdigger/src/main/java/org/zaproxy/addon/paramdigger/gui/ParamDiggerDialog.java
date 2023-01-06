@@ -116,7 +116,7 @@ public class ParamDiggerDialog extends StandardFieldsDialog {
     private static final String WORDLIST_NOTFOUND = "paramdigger.dialog.error.wordlist.notfound";
     private static final String HEADER_METHODS = "paramdigger.dialog.headerguess.methods";
 
-    private static final Logger logger = LogManager.getLogger(ParamDiggerDialog.class);
+    private static final Logger LOGGER = LogManager.getLogger(ParamDiggerDialog.class);
 
     private ExtensionParamDigger extension;
     private HttpMessage target;
@@ -167,7 +167,7 @@ public class ParamDiggerDialog extends StandardFieldsDialog {
         if (target != null) {
             this.target = target;
         }
-        logger.debug("init {}", this.target);
+        LOGGER.debug("init {}", this.target);
         config = new ParamDiggerConfig();
         // TODO Add a reset button
         this.panelMap = new HashMap<>();

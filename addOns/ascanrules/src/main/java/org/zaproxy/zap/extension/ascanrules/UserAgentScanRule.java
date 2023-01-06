@@ -40,7 +40,7 @@ import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 /** @author kniepdennis@gmail.com */
 public class UserAgentScanRule extends AbstractAppPlugin {
 
-    private static final Logger log = LogManager.getLogger(UserAgentScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(UserAgentScanRule.class);
 
     private static final int PLUGIN_ID = 10104;
     private static final String MESSAGE_PREFIX = "ascanrules.useragent.";
@@ -177,9 +177,9 @@ public class UserAgentScanRule extends AbstractAppPlugin {
             sendAndReceive(newMsg);
             return newMsg;
         } catch (UnknownHostException | URIException e) {
-            log.debug("Failed to send HTTP message, cause: {}", e.getMessage());
+            LOGGER.debug("Failed to send HTTP message, cause: {}", e.getMessage());
         } catch (IOException e) {
-            log.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
         }
         return null;
     }

@@ -46,7 +46,7 @@ public class HTMLparse extends Thread {
     private boolean continueWorking = true;
 
     /* Logging object for the class */
-    private static final Logger LOG = LogManager.getLogger(HTMLparse.class);
+    private static final Logger LOGGER = LogManager.getLogger(HTMLparse.class);
 
     /** Creates a new instance of HTMLparse */
     public HTMLparse(Manager manager) {
@@ -69,7 +69,7 @@ public class HTMLparse extends Thread {
             try {
                 parseUnit = manager.parseQueue.take();
             } catch (InterruptedException ex) {
-                LOG.debug(ex);
+                LOGGER.debug(ex);
                 return;
             }
             working = true;
@@ -79,8 +79,8 @@ public class HTMLparse extends Thread {
             if (sourceAsString != null || work != null) {
                 if (!sourceAsString.equals("")) {
 
-                    LOG.debug("Parsing text from {}", work.getWork());
-                    LOG.debug("Parsed text - {}", sourceAsString);
+                    LOGGER.debug("Parsing text from {}", work.getWork());
+                    LOGGER.debug("Parsed text - {}", sourceAsString);
 
                     Vector<String> links = new Vector<>(50, 10);
                     Vector<String> foundItems = new Vector<>(20, 10);
@@ -126,14 +126,14 @@ public class HTMLparse extends Thread {
                                 }
 
                             } catch (MalformedURLException e) {
-                                LOG.debug("Bad URL", e);
+                                LOGGER.debug("Bad URL", e);
                             }
                         }
 
                         try {
                             Thread.sleep(100);
                         } catch (InterruptedException ex) {
-                            LOG.debug(ex);
+                            LOGGER.debug(ex);
                             return;
                         }
                     } // end of for loop for elements
@@ -199,9 +199,9 @@ public class HTMLparse extends Thread {
                                             // queue");
                                         }
                                     } catch (MalformedURLException ex) {
-                                        LOG.debug("Bad URL", ex);
+                                        LOGGER.debug("Bad URL", ex);
                                     } catch (InterruptedException ex) {
-                                        LOG.debug(ex);
+                                        LOGGER.debug(ex);
                                         return;
                                     }
                                 }
@@ -243,7 +243,7 @@ public class HTMLparse extends Thread {
 
             return foundItems;
         } catch (InterruptedException ex) {
-            LOG.debug(ex);
+            LOGGER.debug(ex);
             return null;
         }
     }
@@ -285,9 +285,9 @@ public class HTMLparse extends Thread {
             return GenBaseCase.genBaseCase(
                     manager, manager.getFirstPartOfURL() + baseItem, isDir, fileExtention);
         } catch (MalformedURLException ex) {
-            LOG.debug("Bad URL", ex);
+            LOGGER.debug("Bad URL", ex);
         } catch (IOException | InterruptedException ex) {
-            LOG.debug(ex);
+            LOGGER.debug(ex);
         }
 
         return null;

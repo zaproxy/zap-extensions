@@ -52,7 +52,7 @@ public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin {
     private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_20");
 
     /** the logger object */
-    private static final Logger log =
+    private static final Logger LOGGER =
             LogManager.getLogger(RemoteCodeExecutionCve20121823ScanRule.class);
 
     /** a random string (which remains constant across multiple runs, as long as Zap is not */
@@ -174,7 +174,7 @@ public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin {
             if (isPage200(attackmsg)
                     && attackResponseBody.length >= RANDOM_STRING.length()
                     && responseBody.startsWith(RANDOM_STRING)) {
-                log.debug("Remote Code Execution alert for: {}", originalURI);
+                LOGGER.debug("Remote Code Execution alert for: {}", originalURI);
 
                 // bingo.
                 newAlert()
@@ -193,7 +193,7 @@ public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin {
                 return true;
             }
         } catch (Exception e) {
-            log.error(
+            LOGGER.error(
                     "Error scanning a URL for Remote Code Execution via CVE-2012-1823: {}",
                     e.getMessage(),
                     e);
@@ -214,7 +214,7 @@ public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin {
         try {
             return new URI(uri, true);
         } catch (URIException e) {
-            log.warn("Failed to create attack URI [{}], cause: {}", uri, e.getMessage());
+            LOGGER.warn("Failed to create attack URI [{}], cause: {}", uri, e.getMessage());
         }
         return null;
     }

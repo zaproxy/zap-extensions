@@ -49,7 +49,7 @@ import org.zaproxy.zap.utils.ThreadUtils;
 
 public class HarImporter {
 
-    private static final Logger LOG = LogManager.getLogger(HarImporter.class);
+    private static final Logger LOGGER = LogManager.getLogger(HarImporter.class);
     private static final String STATS_HAR_FILE = "import.har.file";
     private static final String STATS_HAR_FILE_ERROR = "import.har.file.errors";
     private static final String STATS_HAR_FILE_MSG = "import.har.file.message";
@@ -124,7 +124,7 @@ public class HarImporter {
             Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_HAR_FILE);
             success = true;
         } catch (IOException e) {
-            LOG.warn(
+            LOGGER.warn(
                     Constant.messages.getString(
                             ExtensionExim.EXIM_OUTPUT_ERROR, file.getAbsolutePath()));
             Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_HAR_FILE_ERROR);
@@ -154,7 +154,7 @@ public class HarImporter {
                             message);
             Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_HAR_FILE_MSG);
         } catch (Exception e) {
-            LOG.warn(e.getMessage());
+            LOGGER.warn(e.getMessage());
             Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_HAR_FILE_MSG_ERROR);
             return;
         }

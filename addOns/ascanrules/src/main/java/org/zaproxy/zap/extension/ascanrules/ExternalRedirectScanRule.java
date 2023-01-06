@@ -112,7 +112,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
     // Get WASC Vulnerability description
     private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_38");
 
-    private static final Logger logger = LogManager.getLogger(ExternalRedirectScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExternalRedirectScanRule.class);
 
     @Override
     public int getId() {
@@ -177,7 +177,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
         int targetCount = 0;
 
         // Debug only
-        logger.debug("Attacking at Attack Strength: {}", this.getAttackStrength());
+        LOGGER.debug("Attacking at Attack Strength: {}", this.getAttackStrength());
 
         // Figure out how aggressively we should test
         switch (this.getAttackStrength()) {
@@ -205,7 +205,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
                 break;
         }
 
-        logger.debug(
+        LOGGER.debug(
                 "Checking [{}][{}], parameter [{}] for Open Redirect Vulnerabilities",
                 getBaseMsg().getRequestHeader().getMethod(),
                 getBaseMsg().getRequestHeader().getURI(),
@@ -228,7 +228,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
             HttpMessage testMsg = getNewMsg();
             setParameter(testMsg, param, payload);
 
-            logger.debug("Testing [{}] = [{}]", param, payload);
+            LOGGER.debug("Testing [{}] = [{}]", param, payload);
 
             try {
                 // Send the request and retrieve the response
@@ -251,7 +251,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
                 if (redirectType != NO_REDIRECT) {
                     // We Found IT!
                     // First do logging
-                    logger.debug(
+                    LOGGER.debug(
                             "[External Redirection Found] on parameter [{}] with payload [{}]",
                             param,
                             payload);
@@ -265,7 +265,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
             } catch (IOException ex) {
                 // Do not try to internationalize this.. we need an error message in any event..
                 // if it's in English, it's still better than not having it at all.
-                logger.warn(
+                LOGGER.warn(
                         "External Redirect vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
                         param,
                         payload,

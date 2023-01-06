@@ -77,7 +77,7 @@ public class SpiderPanel extends ScanPanel2<SpiderScan, ScanController<SpiderSca
     private static final long serialVersionUID = 1L;
 
     /** The Constant log. */
-    private static final Logger log = LogManager.getLogger(SpiderPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(SpiderPanel.class);
 
     private static final String ZERO_REQUESTS_LABEL_TEXT = "0";
 
@@ -487,7 +487,7 @@ public class SpiderPanel extends ScanPanel2<SpiderScan, ScanController<SpiderSca
                             }
                         });
             } catch (InvocationTargetException | InterruptedException e) {
-                log.error("Failed to switch view: {}", e.getMessage(), e);
+                LOGGER.error("Failed to switch view: {}", e.getMessage(), e);
             }
             return;
         }

@@ -78,7 +78,7 @@ public class ZestLoopDialog extends StandardFieldsDialog implements ZestDialog {
     private static final String FIELD_EXACT = "zest.dialog.loop.regex.exact";
     private static final String FIELD_GROUP = "zest.dialog.loop.regex.group";
 
-    private static final Logger logger = LogManager.getLogger(ZestLoopDialog.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestLoopDialog.class);
 
     public ZestLoopDialog(ExtensionZest extension, Frame owner, Dimension dim) {
         super(owner, "zest.dialog.loop.add.title", dim);
@@ -259,7 +259,7 @@ public class ZestLoopDialog extends StandardFieldsDialog implements ZestDialog {
                         new ZestLoopTokenFileSet(selectedFile.getAbsolutePath());
                 loopFile.setSet(fileSet);
             } catch (FileNotFoundException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         } else if (this.loop instanceof ZestLoopInteger) {
             ZestLoopInteger loopInteger = (ZestLoopInteger) this.loop;

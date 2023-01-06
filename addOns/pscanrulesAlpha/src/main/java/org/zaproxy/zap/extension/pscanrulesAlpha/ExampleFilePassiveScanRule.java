@@ -47,7 +47,7 @@ public class ExampleFilePassiveScanRule extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanalpha.examplefile.";
 
     private static final String examplePscanFile = "txt/example-pscan-file.txt";
-    private static final Logger logger = LogManager.getLogger(ExampleFilePassiveScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExampleFilePassiveScanRule.class);
     private List<String> strings = null;
 
     @Override
@@ -118,7 +118,7 @@ public class ExampleFilePassiveScanRule extends PluginPassiveScanner {
         BufferedReader reader = null;
         File f = new File(Constant.getZapHome() + File.separator + file);
         if (!f.exists()) {
-            logger.error("No such file: {}", f.getAbsolutePath());
+            LOGGER.error("No such file: {}", f.getAbsolutePath());
             return strings;
         }
         try {
@@ -130,14 +130,14 @@ public class ExampleFilePassiveScanRule extends PluginPassiveScanner {
                 }
             }
         } catch (IOException e) {
-            logger.error(
+            LOGGER.error(
                     "Error on opening/reading example error file. Error: {}", e.getMessage(), e);
         } finally {
             if (reader != null) {
                 try {
                     reader.close();
                 } catch (IOException e) {
-                    logger.debug("Error on closing the file reader. Error: {}", e.getMessage(), e);
+                    LOGGER.debug("Error on closing the file reader. Error: {}", e.getMessage(), e);
                 }
             }
         }

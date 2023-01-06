@@ -48,7 +48,7 @@ public class SpringActuatorScanRule extends AbstractHostPlugin {
 
     private static final String MESSAGE_PREFIX = "ascanbeta.springactuator.";
     private static final int PLUGIN_ID = 40042;
-    private static final Logger LOG = LogManager.getLogger(SpringActuatorScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(SpringActuatorScanRule.class);
     private static final Pattern CONTENT_TYPE =
             Pattern.compile(
                     "application\\/vnd\\.spring-boot\\.actuator\\.v[0-9]\\+json|application\\/json",
@@ -126,7 +126,7 @@ public class SpringActuatorScanRule extends AbstractHostPlugin {
         for (String endpoint : endpointList) {
             for (String encodingType : encodingTypes) {
                 if (isStop()) {
-                    LOG.debug("Scan rule {} stopping.", getName());
+                    LOGGER.debug("Scan rule {} stopping.", getName());
                     return;
                 }
                 HttpMessage testMsg = sendActuatorRequest(encodingType, endpoint);
@@ -185,7 +185,7 @@ public class SpringActuatorScanRule extends AbstractHostPlugin {
             sendAndReceive(testMsg);
             return testMsg;
         } catch (IOException e) {
-            LOG.warn(
+            LOGGER.warn(
                     "An error occurred while checking [{}] [{}] for {} Caught {} {}",
                     testMsg.getRequestHeader().getMethod(),
                     testMsg.getRequestHeader().getURI(),

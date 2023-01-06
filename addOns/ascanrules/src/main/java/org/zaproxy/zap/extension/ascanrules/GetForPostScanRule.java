@@ -41,7 +41,7 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
  */
 public class GetForPostScanRule extends AbstractAppPlugin {
 
-    private static final Logger LOG = LogManager.getLogger(GetForPostScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(GetForPostScanRule.class);
     private static final String MESSAGE_PREFIX = "ascanrules.getforpost.";
     private static final int PLUGIN_ID = 10058;
     private static final Map<String, String> ALERT_TAGS =
@@ -85,7 +85,7 @@ public class GetForPostScanRule extends AbstractAppPlugin {
         // Check if the user stopped things. One request per URL so check before
         // sending the request
         if (isStop()) {
-            LOG.debug("Scan rule {} Stopping.", getName());
+            LOGGER.debug("Scan rule {} Stopping.", getName());
             return;
         }
 
@@ -107,7 +107,7 @@ public class GetForPostScanRule extends AbstractAppPlugin {
         try {
             sendAndReceive(newRequest);
         } catch (IOException e) {
-            LOG.warn(
+            LOGGER.warn(
                     "An error occurred while checking [{}] [{}] for {} Caught {} {}",
                     newRequest.getRequestHeader().getMethod(),
                     newRequest.getRequestHeader().getURI(),

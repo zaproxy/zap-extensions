@@ -40,7 +40,7 @@ import org.zaproxy.zap.model.Vulnerability;
  * @author cosminstefanxp
  */
 public class AccessControlAlertsProcessor {
-    private static final Logger log = LogManager.getLogger(AccessControlAlertsProcessor.class);
+    private static final Logger LOGGER = LogManager.getLogger(AccessControlAlertsProcessor.class);
 
     private static Vulnerability vulnerabilityAuthentication =
             Vulnerabilities.getVulnerability("wasc_1");
@@ -71,7 +71,7 @@ public class AccessControlAlertsProcessor {
             return;
         }
 
-        log.debug("Raising alert for: {}", result);
+        LOGGER.debug("Raising alert for: {}", result);
 
         if (result.getUser() == null) {
             raiseAuthenticationAlert(result);
@@ -85,7 +85,7 @@ public class AccessControlAlertsProcessor {
         try {
             msg = result.getHistoryReference().getHttpMessage();
         } catch (HttpMalformedHeaderException | DatabaseException e) {
-            log.debug(e);
+            LOGGER.debug(e);
         }
 
         Alert alert =
@@ -117,7 +117,7 @@ public class AccessControlAlertsProcessor {
         try {
             msg = result.getHistoryReference().getHttpMessage();
         } catch (HttpMalformedHeaderException | DatabaseException e) {
-            log.debug(e);
+            LOGGER.debug(e);
         }
 
         Alert alert =

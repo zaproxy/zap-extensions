@@ -63,7 +63,7 @@ public class BruteForceWorkGenerator implements Runnable {
     private boolean doingDirs = true;
 
     /* Logger object for the class */
-    private static final Logger LOG = LogManager.getLogger(BruteForceWorkGenerator.class);
+    private static final Logger LOGGER = LogManager.getLogger(BruteForceWorkGenerator.class);
 
     // find bug UuF
     // HttpState initialState;
@@ -107,7 +107,7 @@ public class BruteForceWorkGenerator implements Runnable {
                     manager.setAuto(false);
                 }
             } catch (IOException e) {
-                LOG.error(e);
+                LOGGER.error(e);
             }
         }
 
@@ -122,7 +122,7 @@ public class BruteForceWorkGenerator implements Runnable {
                 // get any extention that need to be checked
                 extToCheck = tempDirToCheck.getExts();
             } catch (InterruptedException e) {
-                LOG.debug(e);
+                LOGGER.debug(e);
             }
 
             started = currentDir;
@@ -140,7 +140,7 @@ public class BruteForceWorkGenerator implements Runnable {
                             GenBaseCase.genBaseCase(manager, firstPart + currentDir, true, null);
 
                 } catch (IOException e) {
-                    LOG.error(e);
+                    LOGGER.error(e);
                 }
 
                 // baseCaseObj = new BaseCase(null, failcode, true, failurl, baseCase);
@@ -176,7 +176,7 @@ public class BruteForceWorkGenerator implements Runnable {
                                             manager, firstPart + currentDir, false, fileExtention);
 
                         } catch (IOException e) {
-                            LOG.error(e);
+                            LOGGER.error(e);
                         }
 
                         // call function to generate the brute force
@@ -240,9 +240,9 @@ public class BruteForceWorkGenerator implements Runnable {
                 workQueue.put(new WorkUnit(currentURL, false, method, baseCaseObj, temp));
             }
         } catch (InterruptedException e) {
-            LOG.debug(e);
+            LOGGER.debug(e);
         } catch (MalformedURLException e) {
-            LOG.debug("Bad URL", e);
+            LOGGER.debug("Bad URL", e);
         }
     }
 
@@ -290,14 +290,14 @@ public class BruteForceWorkGenerator implements Runnable {
 
     // calculates the total number of tries per pass
     private void calcTotalPerPass(int listLength, int minLen, int maxLen) {
-        LOG.debug("listLen: {} minLen: {} maxLen: {}", listLength, minLen, maxLen);
+        LOGGER.debug("listLen: {} minLen: {} maxLen: {}", listLength, minLen, maxLen);
 
         double total = 0;
         for (int a = minLen; a <= maxLen; a++) {
             total = total + Math.pow(listLength, a);
         }
 
-        LOG.debug("Total for a pure brute force = {}", total);
+        LOGGER.debug("Total for a pure brute force = {}", total);
         manager.setTotalPass(total);
     }
 }

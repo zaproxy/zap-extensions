@@ -153,7 +153,7 @@ public class HashDisclosureScanRule extends PluginPassiveScanner {
         // being retrieved from a database??? => Dangerous.
     }
 
-    private static Logger log = LogManager.getLogger(HashDisclosureScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(HashDisclosureScanRule.class);
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.hashdisclosure.";
@@ -177,7 +177,7 @@ public class HashDisclosureScanRule extends PluginPassiveScanner {
     @Override
     public void scanHttpRequestSend(HttpMessage msg, int id) {
 
-        log.debug("Checking request of message {} for Hashes", msg);
+        LOGGER.debug("Checking request of message {} for Hashes", msg);
 
         // get the request contents as an array of Strings, so we can match against them
         String requestheader = msg.getRequestHeader().getHeadersAsString();
@@ -200,7 +200,7 @@ public class HashDisclosureScanRule extends PluginPassiveScanner {
                 && !AlertThreshold.LOW.equals(this.getAlertThreshold())) {
             return;
         }
-        log.debug("Checking response of message {} for Hashes", msg);
+        LOGGER.debug("Checking response of message {} for Hashes", msg);
 
         // get the response contents as an array of Strings, so we can match against them
         String responseheader = msg.getResponseHeader().getHeadersAsString();
@@ -239,12 +239,12 @@ public class HashDisclosureScanRule extends PluginPassiveScanner {
                 continue;
             }
             hashType = hashalert.getDescription();
-            log.debug("Trying Hash Pattern: {} for hash type {}", hashPattern, hashType);
+            LOGGER.debug("Trying Hash Pattern: {} for hash type {}", hashPattern, hashType);
             for (String haystack : haystacks) {
                 Matcher matcher = hashPattern.matcher(haystack);
                 while (matcher.find()) {
                     String evidence = matcher.group();
-                    log.debug("Found a match for hash type {} : {}", hashType, evidence);
+                    LOGGER.debug("Found a match for hash type {} : {}", hashType, evidence);
                     if (evidence != null && evidence.length() > 0) {
                         // we found something
                         newAlert()

@@ -41,7 +41,7 @@ import org.zaproxy.zest.core.v1.ZestStructuredExpression;
  */
 public class ZestTreeModel {
 
-    private static final Logger logger = LogManager.getLogger(ZestTreeModel.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestTreeModel.class);
 
     private ScriptTreeModel model;
 
@@ -50,7 +50,7 @@ public class ZestTreeModel {
     }
 
     public void addScript(ScriptNode parent, ZestScriptWrapper script) {
-        logger.debug("addScript {}", script.getName());
+        LOGGER.debug("addScript {}", script.getName());
         if (script.getZestScript().getStatements() != null) {
             for (ZestStatement stmt : script.getZestScript().getStatements()) {
                 this.addToNode(parent, stmt);
@@ -71,7 +71,7 @@ public class ZestTreeModel {
     }
 
     public ScriptNode addToNode(ScriptNode parent, ZestElement za) {
-        logger.debug("addToNode {} {}", parent.getNodeName(), za.getElementType());
+        LOGGER.debug("addToNode {} {}", parent.getNodeName(), za.getElementType());
         ScriptNode zestNode = this.getZestNode(za);
         ZestElement parentZe = ZestZapUtils.getElement(parent);
 
@@ -124,7 +124,7 @@ public class ZestTreeModel {
                 }
             }
         } else {
-            logger.debug("added a non container element {}", za.getElementType());
+            LOGGER.debug("added a non container element {}", za.getElementType());
             parent.add(zestNode);
         }
         model.nodeStructureChanged(parent);
@@ -132,7 +132,7 @@ public class ZestTreeModel {
     }
 
     public ScriptNode addToNodeAt(ScriptNode parent, ZestElement za, int index) {
-        logger.debug("addToNode {} {} at {}", parent.getNodeName(), za.getElementType(), index);
+        LOGGER.debug("addToNode {} {} at {}", parent.getNodeName(), za.getElementType(), index);
         ScriptNode zestNode = this.getZestNode(za);
         ZestElement parentZe = ZestZapUtils.getElement(parent);
 
@@ -199,14 +199,14 @@ public class ZestTreeModel {
     }
 
     public ScriptNode addAfterNode(ScriptNode parent, ScriptNode existingNode, ZestStatement stmt) {
-        logger.debug("addAfterNode {} {}", existingNode.getNodeName(), stmt.getElementType());
+        LOGGER.debug("addAfterNode {} {}", existingNode.getNodeName(), stmt.getElementType());
 
         return this.addToNodeAt(parent, stmt, parent.getIndex(existingNode) + 1);
     }
 
     public ScriptNode addBeforeNode(
             ScriptNode parent, ScriptNode existingNode, ZestStatement stmt) {
-        logger.debug("addBeforeNode {} {}", existingNode.getNodeName(), stmt.getElementType());
+        LOGGER.debug("addBeforeNode {} {}", existingNode.getNodeName(), stmt.getElementType());
 
         return this.addToNodeAt(parent, stmt, parent.getIndex(existingNode));
     }
@@ -223,11 +223,11 @@ public class ZestTreeModel {
         ZestElement childZe = ZestZapUtils.getElement(node);
 
         if (parentZe == null) {
-            logger.error("delete: Parent user object null: {}", node);
+            LOGGER.error("delete: Parent user object null: {}", node);
             return;
         }
         if (childZe == null) {
-            logger.error("delete: Child user object null: {}", node);
+            LOGGER.error("delete: Child user object null: {}", node);
             return;
         }
         if (ZestZapUtils.getElement(node) instanceof ZestConditional) {
@@ -240,12 +240,12 @@ public class ZestTreeModel {
         }
         parent.remove(node);
         if (parent.getParent() == null) {
-            logger.error(ZestZapUtils.getElement(parent));
-            logger.error(ZestZapUtils.getElement(node));
+            LOGGER.error(ZestZapUtils.getElement(parent));
+            LOGGER.error(ZestZapUtils.getElement(node));
         }
         if (parent.getParent().isRoot()) {
             if ((childZe instanceof ZestScript)) {
-                logger.error(
+                LOGGER.error(
                         "delete: unexpected child of root node: {}",
                         childZe.getClass().getCanonicalName());
             }
@@ -253,7 +253,7 @@ public class ZestTreeModel {
             if (childZe instanceof ZestStatement) {
                 ((ZestScript) parentZe).remove((ZestStatement) childZe);
             } else {
-                logger.error(
+                LOGGER.error(
                         "delete: unexpected child of script node: {}",
                         childZe.getClass().getCanonicalName());
             }
@@ -276,18 +276,18 @@ public class ZestTreeModel {
             if (childZe instanceof ZestAssertion) {
                 ((ZestRequest) parentZe).removeAssertion((ZestAssertion) childZe);
             } else {
-                logger.error(
+                LOGGER.error(
                         "delete: unexpected child of request node: {}",
                         childZe.getClass().getCanonicalName());
             }
         } else if (parentZe instanceof ZestAction) {
-            logger.error(
+            LOGGER.error(
                     "delete: unexpected child of request node: {}",
                     childZe.getClass().getCanonicalName());
         } else {
-            logger.error("delete: unknown nodes: {} {}", node, parent);
-            logger.error("Parent user object: {}", parentZe.getClass().getCanonicalName());
-            logger.error("Child user object: {}", childZe.getClass().getCanonicalName());
+            LOGGER.error("delete: unknown nodes: {} {}", node, parent);
+            LOGGER.error("Parent user object: {}", parentZe.getClass().getCanonicalName());
+            LOGGER.error("Child user object: {}", childZe.getClass().getCanonicalName());
         }
 
         model.nodeStructureChanged(parent);
@@ -314,7 +314,7 @@ public class ZestTreeModel {
     }
 
     public void update(ScriptNode node) {
-        logger.debug("Update node={}", node.getNodeName());
+        LOGGER.debug("Update node={}", node.getNodeName());
         ZestElement ze = ZestZapUtils.getElement(node);
         node.setNodeName(ZestZapUtils.toUiString(ze, true, ZestZapUtils.getShadowLevel(node)));
         model.nodeChanged(node);
@@ -333,7 +333,7 @@ public class ZestTreeModel {
      */
     public void switchNodes(ScriptNode node1, ScriptNode node2) {
         if (!node1.getParent().equals(node2.getParent())) {
-            logger.error(
+            LOGGER.error(
                     "Nodes have different parents {} {}", node1.getNodeName(), node2.getNodeName());
         } else {
             ScriptNode parent = node1.getParent();

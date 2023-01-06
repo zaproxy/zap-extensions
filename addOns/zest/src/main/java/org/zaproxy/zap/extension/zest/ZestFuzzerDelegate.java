@@ -48,7 +48,7 @@ public class ZestFuzzerDelegate {
 
     public static final String JBROFUZZ_CATEGORY_PREFIX = "jbrofuzz / ";
 
-    private static final Logger logger = LogManager.getLogger(ZestFuzzerDelegate.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestFuzzerDelegate.class);
 
     public ZestFuzzerDelegate() {
         this.loadFiles();
@@ -129,9 +129,9 @@ public class ZestFuzzerDelegate {
                 fuzzer = getJBroFuzzer(fuzzerName);
                 fuzzerFile = fromFuzzer(fuzzer);
             } catch (NoSuchFuzzerException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             } catch (IOException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
 
         } else {

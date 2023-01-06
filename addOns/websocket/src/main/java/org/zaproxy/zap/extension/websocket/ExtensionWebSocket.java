@@ -117,7 +117,7 @@ import org.zaproxy.zap.view.SiteMapTreeCellRenderer;
 public class ExtensionWebSocket extends ExtensionAdaptor
         implements PersistentConnectionListener, SessionChangedListener, SiteMapListener {
 
-    private static final Logger logger = LogManager.getLogger(ExtensionWebSocket.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionWebSocket.class);
 
     /**
      * The script icon.
@@ -285,7 +285,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
             WebSocketProxy.setChannelIdGenerator(table.getMaxChannelId());
 
         } catch (SQLException e) {
-            logger.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
         }
     }
 
@@ -323,7 +323,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
         try {
             setChannelIgnoreList(Model.getSingleton().getSession().getExcludeFromProxyRegexs());
         } catch (WebSocketException e) {
-            logger.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
         }
 
         if (hasView()) {
@@ -554,7 +554,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
         try {
             return Optional.of(this.extensionScript.loadScript(scriptWrapper));
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             return Optional.empty();
         }
     }
@@ -579,7 +579,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
 
             return Optional.of(newScriptPath.toFile());
         } catch (IOException e) {
-            logger.error("Template can't be copied to script directory", e);
+            LOGGER.error("Template can't be copied to script directory", e);
             return Optional.empty();
         }
     }
@@ -680,7 +680,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
         boolean keepSocketOpen = false;
 
         if (httpMessage.isWebSocketUpgrade()) {
-            logger.debug(
+            LOGGER.debug(
                     "Got WebSockets upgrade request. Handle socket connection over to WebSockets extension.");
             if (focusWebSocketsTabOnHandshake) {
                 // Don't constantly request focus on the tab, once is enough.
@@ -699,7 +699,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
 
                 addWebSocketsChannel(httpMessage, inSocket, outSocket, outReader);
             } else {
-                logger.error("Unable to retrieve upgraded outgoing channel.");
+                LOGGER.error("Unable to retrieve upgraded outgoing channel.");
             }
         }
 
@@ -723,7 +723,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
             HttpRequestHeader requestHeader = handshakeMessage.getRequestHeader();
             String targetHost = requestHeader.getHostName();
             int targetPort = requestHeader.getHostPort();
-            if (logger.isDebugEnabled()) {
+            if (LOGGER.isDebugEnabled()) {
                 StringBuilder logMessage = new StringBuilder(200);
                 logMessage.append("Got WebSockets channel from ");
                 if (localSocket != null) {
@@ -737,7 +737,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                 logMessage.append(" to ");
                 logMessage.append(targetHost).append(':').append(targetPort);
 
-                logger.debug(logMessage.toString());
+                LOGGER.debug(logMessage.toString());
             }
 
             // parse HTTP handshake
@@ -793,7 +793,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                 try {
                     localSocket.close();
                 } catch (IOException e1) {
-                    logger.warn(e.getMessage(), e1);
+                    LOGGER.warn(e.getMessage(), e1);
                 }
             }
 
@@ -801,7 +801,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                 try {
                     remoteReader.close();
                 } catch (IOException e1) {
-                    logger.warn(e.getMessage(), e1);
+                    LOGGER.warn(e.getMessage(), e1);
                 }
             }
 
@@ -809,10 +809,10 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                 try {
                     remoteSocket.close();
                 } catch (IOException e1) {
-                    logger.warn(e.getMessage(), e1);
+                    LOGGER.warn(e.getMessage(), e1);
                 }
             }
-            logger.error(
+            LOGGER.error(
                     "Adding WebSockets channel failed due to: '{}' {}",
                     e.getClass(),
                     e.getMessage(),
@@ -906,7 +906,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                     .setUrls(RecordSessionUrl.TYPE_EXCLUDE_FROM_WEBSOCKET, nonEmptyIgnoreList);
             ignoredChannelList = nonEmptyIgnoreList;
         } catch (DatabaseException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
 
             ignoredChannelList.clear();
             preparedIgnoredChannels.clear();
@@ -1066,7 +1066,7 @@ public class ExtensionWebSocket extends ExtensionAdaptor
         try {
         	WebSocketProxy.setChannelIdGenerator(table.getMaxChannelId());
         } catch (SQLException e) {
-        	logger.error("Unable to retrieve current channelId value!", e);
+        	LOGGER.error("Unable to retrieve current channelId value!", e);
         }
         */
 
@@ -1082,12 +1082,12 @@ public class ExtensionWebSocket extends ExtensionAdaptor
                 ignoredList.add(record.getUrl());
             }
         } catch (DatabaseException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         } finally {
             try {
                 setChannelIgnoreList(ignoredList);
             } catch (WebSocketException e) {
-                logger.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
         }
     }

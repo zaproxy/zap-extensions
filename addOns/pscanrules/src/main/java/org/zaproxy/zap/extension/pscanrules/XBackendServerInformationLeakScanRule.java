@@ -41,7 +41,7 @@ public class XBackendServerInformationLeakScanRule extends PluginPassiveScanner 
     private static final String MESSAGE_PREFIX = "pscanrules.xbackendserver.";
     private static final int PLUGIN_ID = 10039;
 
-    private static final Logger logger =
+    private static final Logger LOGGER =
             LogManager.getLogger(XBackendServerInformationLeakScanRule.class);
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
@@ -70,7 +70,7 @@ public class XBackendServerInformationLeakScanRule extends PluginPassiveScanner 
                         .raise();
             }
         }
-        logger.debug("\tScan of record {} took {}ms", id, System.currentTimeMillis() - start);
+        LOGGER.debug("\tScan of record {} took {}ms", id, System.currentTimeMillis() - start);
     }
 
     @Override

@@ -40,7 +40,7 @@ import org.zaproxy.zap.utils.XmlUtils;
 public class PopupMenuSaveXmlMessage extends AbstractPopupMenuSaveMessage {
 
     private static final long serialVersionUID = -7217818541206464572L;
-    private static final Logger LOG = LogManager.getLogger(PopupMenuSaveXmlMessage.class);
+    private static final Logger LOGGER = LogManager.getLogger(PopupMenuSaveXmlMessage.class);
     private static final String STATS_XML_FILE_MSG =
             ExtensionExim.STATS_PREFIX + "save.xml.file.msg";
     private static final String STATS_XML_FILE_MSG_ERROR =
@@ -133,7 +133,7 @@ public class PopupMenuSaveXmlMessage extends AbstractPopupMenuSaveMessage {
                     .showWarningDialog(
                             Constant.messages.getString(
                                     "exim.file.save.error", file.getAbsolutePath()));
-            LOG.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             Stats.incCounter(STATS_XML_FILE_MSG_ERROR + "." + messageComponent.name());
         }
     }

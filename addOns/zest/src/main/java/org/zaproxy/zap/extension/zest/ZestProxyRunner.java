@@ -40,7 +40,7 @@ public class ZestProxyRunner extends ZestZapRunner implements ProxyScript {
     private HttpMessage msg = null;
     private ExtensionZest extension = null;
 
-    private Logger logger = LogManager.getLogger(ZestProxyRunner.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestProxyRunner.class);
 
     public ZestProxyRunner(
             ExtensionZest extension, ExtensionNetwork extensionNetwork, ZestScriptWrapper script) {
@@ -51,7 +51,7 @@ public class ZestProxyRunner extends ZestZapRunner implements ProxyScript {
 
     @Override
     public boolean proxyRequest(HttpMessage msg) throws ScriptException {
-        logger.debug("Zest proxyRequest script: {}", this.script.getName());
+        LOGGER.debug("Zest proxyRequest script: {}", this.script.getName());
         this.msg = msg;
         try {
             // Create the previous request so the script has something to run against
@@ -108,7 +108,7 @@ public class ZestProxyRunner extends ZestZapRunner implements ProxyScript {
 
     @Override
     public boolean proxyResponse(HttpMessage msg) {
-        logger.debug("Zest proxyResponse script: {}", this.script.getName());
+        LOGGER.debug("Zest proxyResponse script: {}", this.script.getName());
         this.msg = msg;
         try {
             // Create the previous request so the script has something to run against
@@ -143,7 +143,7 @@ public class ZestProxyRunner extends ZestZapRunner implements ProxyScript {
             }
 
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return true;
     }

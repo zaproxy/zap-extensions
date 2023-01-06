@@ -81,7 +81,7 @@ public class ParameterTamperScanRule extends AbstractAppParamPlugin {
                     "(Apache Tomcat).*(Caused by:|HTTP Status 500 - Internal Server Error)",
                     PATTERN_PARAM);
     // ZAP: Added logger
-    private static Logger log = LogManager.getLogger(ParameterTamperScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(ParameterTamperScanRule.class);
 
     @Override
     public int getId() {
@@ -128,7 +128,7 @@ public class ParameterTamperScanRule extends AbstractAppParamPlugin {
                 | IllegalArgumentException
                 | URIException
                 | UnknownHostException ex) {
-            log.debug(
+            LOGGER.debug(
                     "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
                     ex.getClass().getName(),
                     ex.getMessage(),
@@ -136,7 +136,7 @@ public class ParameterTamperScanRule extends AbstractAppParamPlugin {
             return; // Something went wrong, no point continuing
         } catch (Exception e) {
             // ZAP: Log exceptions
-            log.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
             return;
         }
 
@@ -162,7 +162,7 @@ public class ParameterTamperScanRule extends AbstractAppParamPlugin {
                         | IllegalArgumentException
                         | URIException
                         | UnknownHostException ex) {
-                    log.debug(
+                    LOGGER.debug(
                             "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
                             ex.getClass().getName(),
                             ex.getMessage(),
@@ -174,7 +174,7 @@ public class ParameterTamperScanRule extends AbstractAppParamPlugin {
                 }
             } catch (Exception e) {
                 // ZAP: Log exceptions
-                log.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
         }
     }

@@ -33,7 +33,7 @@ public class PersistentXssSpiderScanRule extends AbstractAppPlugin {
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.persistentxssspider.";
 
-    private static Logger log = LogManager.getLogger(PersistentXssSpiderScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(PersistentXssSpiderScanRule.class);
 
     @Override
     public int getId() {
@@ -80,7 +80,7 @@ public class PersistentXssSpiderScanRule extends AbstractAppPlugin {
             SourceSinkUtils.testForSink(msg1);
 
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

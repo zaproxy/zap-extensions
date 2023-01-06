@@ -136,7 +136,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
                     CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
     /** for logging. */
-    private static Logger log = LogManager.getLogger(ProxyDisclosureScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(ProxyDisclosureScanRule.class);
 
     @Override
     public int getId() {
@@ -284,13 +284,13 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
                 Matcher matcher = MAX_FORWARDS_RESPONSE_PATTERN.matcher(traceResponseBody);
                 if (matcher.find()) {
                     String maxForwardsResponseValue = matcher.group(1);
-                    log.debug(
+                    LOGGER.debug(
                             "TRACE with \"Max-Forwards: {}\" causes response body Max-Forwards value '{}'",
                             MAX_FORWARDS_MAXIMUM,
                             maxForwardsResponseValue);
                     if (maxForwardsResponseValue.equals(String.valueOf(MAX_FORWARDS_MAXIMUM))) {
                         // (probably) no proxy!
-                        log.debug(
+                        LOGGER.debug(
                                 "TRACE with \"Max-Forwards: {}\" indicates that there is *NO* proxy in place. Note: the TRACE method is supported.. that's an issue in itself! :)",
                                 MAX_FORWARDS_MAXIMUM);
 
@@ -315,7 +315,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
                                 if (!proxyServer.equals("")
                                         && !silentProxySet.contains(proxyServer))
                                     silentProxySet.add(proxyServer);
-                                log.debug(
+                                LOGGER.debug(
                                         "TRACE with \"Max-Forwards: {}\" indicates that there is *NO* proxy in place, but a known proxy cookie ({}, which indicates proxy server '{}') in the response header contradicts this..",
                                         MAX_FORWARDS_MAXIMUM,
                                         cookieDetails,
@@ -334,7 +334,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
                             if (proxyHeaderMatcher.find()) {
                                 String proxyHeaderName = proxyHeaderMatcher.group(1);
                                 proxyActuallyFound = true;
-                                log.debug(
+                                LOGGER.debug(
                                         "TRACE with \"Max-Forwards: {}\" indicates that there is *NO* proxy in place, but a known proxy request header ({}, which indicates proxy server '{}') in the response body contradicts this..",
                                         MAX_FORWARDS_MAXIMUM,
                                         proxyHeaderName,
@@ -348,7 +348,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
                         // for informational purposes
                         step1numberOfProxies =
                                 MAX_FORWARDS_MAXIMUM - Integer.parseInt(maxForwardsResponseValue);
-                        log.debug(
+                        LOGGER.debug(
                                 "TRACE with \"Max-Forwards: {}\" indicates that there *IS* at least one proxy in place (Likely number: {}). Note: the TRACE method is also supported!",
                                 MAX_FORWARDS_MAXIMUM,
                                 step1numberOfProxies);
@@ -357,7 +357,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
                 } else {
                     // The Max-Forwards does not appear in the response body, even though the cookie
                     // value appeared in the response body, using TRACE.. Why?
-                    log.debug(
+                    LOGGER.debug(
                             "TRACE support is indicated via an echoed cookie, but the Max-Forwards value from the request is not echoed in the response. Why? Load balancer? WAF?");
                     proxyActuallyFound = true;
                 }
@@ -366,13 +366,13 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
             } else {
                 // TRACE is NOT enabled, so we can't use this technique to tell if there is *no*
                 // proxy between Zap and the origin server
-                log.debug(
+                LOGGER.debug(
                         "TRACE is not supported, so we cannot quickly check for *no* proxies. Falling back to the hard way");
             }
 
             // bale out if we were asked nicely. it's nice to be nice.
             if (isStop()) {
-                log.debug("Stopping the scan due to a user request (after step 1)");
+                LOGGER.debug("Stopping the scan due to a user request (after step 1)");
                 return;
             }
 
@@ -412,7 +412,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
                     // from the base message
                     HttpRequestHeader origRequestHeader = testMsg.getRequestHeader();
 
-                    log.debug(
+                    LOGGER.debug(
                             "Trying method {} with MAX-FORWARDS: {}",
                             httpMethod,
                             Integer.toString(maxForwards));
@@ -433,7 +433,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
                                     .HTTP11); // OPTIONS and TRACE are supported under 1.0, but for
                     // multi-homing, we need to use 1.1
                     if (tryHttp) {
-                        log.debug(
+                        LOGGER.debug(
                                 "Blind-spot testing, using a HTTP connection, to try detect an initial proxy, which we might not see via HTTPS");
                         requestHeader.setSecure(false);
                         requestHeader.setHeader(HttpFieldsNames.MAX_FORWARDS, "0");
@@ -467,7 +467,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
                     try {
                         sendAndReceive(mfMethodMsg, false); // do not follow redirects.
                     } catch (Exception e) {
-                        log.error(
+                        LOGGER.error(
                                 "Failed to send a request in step 2 with method {}, Max-Forwards: {}: {}",
                                 httpMethod,
                                 requestHeader.getHeader(HttpFieldsNames.MAX_FORWARDS),
@@ -511,7 +511,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
                         // HTTP method).
                         nodeServersForMethod[step2numberOfNodesForMethod] = serverDetails;
                         step2numberOfNodesForMethod++;
-                        log.debug(
+                        LOGGER.debug(
                                 "Identified a new node for method {}, by server details: {}. That makes {} nodes so far.",
                                 httpMethod,
                                 serverDetails,
@@ -523,7 +523,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
                             // node
                             nodeServersForMethod[step2numberOfNodesForMethod] = serverDetails;
                             step2numberOfNodesForMethod++;
-                            log.debug(
+                            LOGGER.debug(
                                     "Identified a new node for method {}, by response status : {}. That makes {} nodes so far.",
                                     httpMethod,
                                     responseStatusCode,
@@ -544,14 +544,14 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
 
                     // bale out if we were asked nicely. it's nice to be nice.
                     if (isStop()) {
-                        log.debug("Stopping the scan due to a user request");
+                        LOGGER.debug("Stopping the scan due to a user request");
                         return;
                     }
                 }
                 // if the number of nodes (proxies+origin web server) detected using this HTTP
                 // method is greater than the number detected thus far, use the data
                 // gained using this HTTP method..
-                log.debug(
+                LOGGER.debug(
                         "The number of nodes detected using method {} is {}",
                         httpMethod,
                         step2numberOfNodesForMethod);
@@ -560,7 +560,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
                     nodeServers = nodeServersForMethod;
                 }
             }
-            log.debug(
+            LOGGER.debug(
                     "The maximum number of nodes detected using any Max-Forwards method  is {}",
                     step2numberOfNodes);
 
@@ -606,12 +606,12 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
             try {
                 sendAndReceive(trackmsg, false); // do not follow redirects.
             } catch (ZapSocketTimeoutException ste) {
-                log.warn(
+                LOGGER.warn(
                         "A timeout occurred while checking [{}] [{}] for Proxy Disclosure.\nThe currently configured timeout is: {}",
                         trackmsg.getRequestHeader().getMethod(),
                         trackmsg.getRequestHeader().getURI(),
                         ste.getTimeout());
-                log.debug("Caught {} {}", ste.getClass().getName(), ste.getMessage());
+                LOGGER.debug("Caught {} {}", ste.getClass().getName(), ste.getMessage());
                 return;
             }
 
@@ -622,14 +622,14 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
                     NOT_SUPPORTED_APACHE_PATTERN.matcher(trackResponseBody);
             if (unsupportedApacheMatcher.find()) {
                 String originServerName = unsupportedApacheMatcher.group(1);
-                log.debug(
+                LOGGER.debug(
                         "Identified the origin node using TRACK, with server header: {}",
                         originServerName);
                 // check if this is the same as the last node we've identified, and if so, discard
                 // it. If not, add it to to the end (as the origin server).
                 if (!nodeServers[step2numberOfNodes - 1].equals(originServerName)) {
                     // it's different to the last one seen.. add it.
-                    log.debug(
+                    LOGGER.debug(
                             "The origin node was not already recorded using the Max-Forwards method, so adding it in.");
                     nodeServers[step2numberOfNodes] = originServerName;
                     step2numberOfNodes++;
@@ -640,14 +640,14 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
 
             // log the nodes we have noted so far
             for (int nodei = 0; nodei < step2numberOfNodes; nodei++) {
-                log.debug(
+                LOGGER.debug(
                         "Node {} is {}",
                         nodei,
                         (!nodeServers[nodei].equals("") ? nodeServers[nodei] : "Unknown"));
             }
             // log the "silent" proxies that we saw.
             for (String silentServer : silentProxySet) {
-                log.debug(
+                LOGGER.debug(
                         "Silent Proxy: {}", (!silentServer.equals("") ? silentServer : "Unknown"));
             }
 
@@ -706,7 +706,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
                     sb.append(silentProxyServerHeader);
                     sb.append("\n");
                     for (String silentServer : silentProxySet) {
-                        // log.debug("Silent Proxy: {}",
+                        // LOGGER.debug("Silent Proxy: {}",
                         // (!silentServer.equals("")?silentServer:"Unknown"));
                         String silentProxyServerNode =
                                 Constant.messages.getString(
@@ -761,7 +761,7 @@ public class ProxyDisclosureScanRule extends AbstractAppPlugin {
         } catch (Exception e) {
             // Do not try to internationalise this.. we need an error message in any event..
             // if it's in English, it's still better than not having it at all.
-            log.error("An error occurred checking for proxy disclosure", e);
+            LOGGER.error("An error occurred checking for proxy disclosure", e);
         }
     }
 

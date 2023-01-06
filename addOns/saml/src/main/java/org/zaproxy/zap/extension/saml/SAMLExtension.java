@@ -31,7 +31,7 @@ import org.zaproxy.zap.view.popup.ExtensionPopupMenuMessageContainer;
 
 public class SAMLExtension extends ExtensionAdaptor {
 
-    protected static final Logger log = LogManager.getLogger(SAMLExtension.class);
+    protected static final Logger LOGGER = LogManager.getLogger(SAMLExtension.class);
 
     @SuppressWarnings("deprecation")
     @Override
@@ -44,7 +44,7 @@ public class SAMLExtension extends ExtensionAdaptor {
             if (conf != null) {
                 conf.initialize();
             } else {
-                log.error("SAML Configuration can't be loaded. Extension will not be loaded...");
+                LOGGER.error("SAML Configuration can't be loaded. Extension will not be loaded...");
             }
             if (hasView() && conf != null) {
                 final SAMLProxyListener proxyListener = new SAMLProxyListener();
@@ -69,7 +69,7 @@ public class SAMLExtension extends ExtensionAdaptor {
                 extensionHook.getHookMenu().addToolsMenuItem(samlActiveEditorMenu);
             }
         } catch (SAMLException e) {
-            log.error("SAML Extension can't be loaded. Configuration not found or invalid", e);
+            LOGGER.error("SAML Extension can't be loaded. Configuration not found or invalid", e);
         }
     }
 

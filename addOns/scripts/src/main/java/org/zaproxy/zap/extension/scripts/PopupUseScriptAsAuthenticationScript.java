@@ -49,7 +49,7 @@ import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
 @SuppressWarnings("serial")
 public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem {
 
-    private static final Logger log =
+    private static final Logger LOGGER =
             LogManager.getLogger(PopupUseScriptAsAuthenticationScript.class);
     private static final long serialVersionUID = -9073920896139520588L;
 
@@ -82,7 +82,7 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
                                 .getExtensionLoader()
                                 .getExtension(ExtensionAuthentication.NAME);
         if (authExtension == null) {
-            log.info(
+            LOGGER.info(
                     "Use Script For Authentication Popup disabled: The Authentication extension is not enabled.");
             return false;
         }
@@ -92,7 +92,7 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
                 authExtension.getAuthenticationMethodTypeForIdentifier(
                         ScriptBasedAuthenticationMethodType.METHOD_IDENTIFIER);
         if (scriptType == null) {
-            log.info(
+            LOGGER.info(
                     "Use Script For Authentication Popup disabled: The ScriptBasedAuthentication method type is not registered.");
             return false;
         }
@@ -180,7 +180,7 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
 
         // Do the work/changes on the UI shared context
         if (uiSharedContext.getAuthenticationMethod() instanceof ScriptBasedAuthenticationMethod) {
-            log.info(
+            LOGGER.info(
                     "Selected Authentication script via popup menu. Changing existing Script-Based Authentication instance for Context {}",
                     contextId);
             ScriptBasedAuthenticationMethod method =
@@ -204,7 +204,7 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
                             ContextAuthenticationPanel.buildName(this.contextId),
                             false);
         } else {
-            log.info(
+            LOGGER.info(
                     "Selected Authentication script via popup menu. Creating new Script-Based Authentication instance for Context {}",
                     this.contextId);
             ScriptBasedAuthenticationMethod method =
@@ -222,7 +222,7 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
                 return;
             }
             if (!confirmUsersDeletion(uiSharedContext)) {
-                log.debug("Cancelled change of authentication type.");
+                LOGGER.debug("Cancelled change of authentication type.");
                 return;
             }
 
@@ -279,7 +279,7 @@ public class PopupUseScriptAsAuthenticationScript extends ExtensionPopupMenuItem
                         && script.getTypeName()
                                 .equals(ScriptBasedAuthenticationMethodType.SCRIPT_TYPE_AUTH);
             } catch (Exception e) {
-                log.debug(e);
+                LOGGER.debug(e);
             }
         }
         return false;

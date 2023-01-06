@@ -74,7 +74,7 @@ public class SpiderTask implements Runnable {
     private ExtensionHistory extHistory;
 
     /** The Constant log. */
-    private static final Logger log = LogManager.getLogger(SpiderTask.class);
+    private static final Logger LOGGER = LogManager.getLogger(SpiderTask.class);
 
     /**
      * Instantiates a new spider task using the target URI. The purpose of this task is to crawl the
@@ -93,7 +93,7 @@ public class SpiderTask implements Runnable {
         this.parent = parent;
         this.resourceFound = resourceFound;
 
-        log.debug("New task submitted for uri: {}", uri);
+        LOGGER.debug("New task submitted for uri: {}", uri);
 
         // Create a new HttpMessage that will be used for the request and persist it in the database
         // using HistoryReference
@@ -121,9 +121,9 @@ public class SpiderTask implements Runnable {
                     new HistoryReference(
                             parent.getModel().getSession(), HistoryReference.TYPE_SPIDER_TASK, msg);
         } catch (HttpMalformedHeaderException e) {
-            log.error("Error while building HttpMessage for uri: {}", uri, e);
+            LOGGER.error("Error while building HttpMessage for uri: {}", uri, e);
         } catch (DatabaseException e) {
-            log.error("Error while persisting HttpMessage for uri: {}", uri, e);
+            LOGGER.error("Error while persisting HttpMessage for uri: {}", uri, e);
         }
     }
 
@@ -131,11 +131,11 @@ public class SpiderTask implements Runnable {
     public void run() {
         try {
             if (reference == null) {
-                log.warn("Null URI. Skipping crawling task: {}", this);
+                LOGGER.warn("Null URI. Skipping crawling task: {}", this);
                 return;
             }
 
-            log.debug(
+            LOGGER.debug(
                     "Spider Task Started. Processing uri at depth {} using already constructed message: {}",
                     resourceFound.getDepth(),
                     reference.getURI());
@@ -143,14 +143,14 @@ public class SpiderTask implements Runnable {
             runImpl();
         } finally {
             parent.postTaskExecution();
-            log.debug("Spider Task finished.");
+            LOGGER.debug("Spider Task finished.");
         }
     }
 
     private void runImpl() {
         // Check if the should stop
         if (parent.isStopped()) {
-            log.debug("Spider process is stopped. Skipping crawling task...");
+            LOGGER.debug("Spider process is stopped. Skipping crawling task...");
             deleteHistoryReference();
             return;
         }
@@ -163,7 +163,7 @@ public class SpiderTask implements Runnable {
         try {
             msg = prepareHttpMessage();
         } catch (Exception e) {
-            log.error("Failed to prepare HTTP message: ", e);
+            LOGGER.error("Failed to prepare HTTP message: ", e);
             return;
         }
 
@@ -180,7 +180,7 @@ public class SpiderTask implements Runnable {
         if (parent.isStopped()) {
             parent.notifyListenersSpiderTaskResult(
                     new SpiderTaskResult(msg, getSkippedMessage("stopped")));
-            log.debug("Spider process is stopped. Skipping crawling task...");
+            LOGGER.debug("Spider process is stopped. Skipping crawling task...");
             return;
         }
         // Check if the crawling process is paused
@@ -199,7 +199,7 @@ public class SpiderTask implements Runnable {
             filterResult = parent.getController().getDefaultParseFilter().filtered(msg);
         }
         if (filterResult.isFiltered()) {
-            log.debug(
+            LOGGER.debug(
                     "Resource [{}] fetched, but will not be parsed due to a ParseFilter rule: {}",
                     msg.getRequestHeader().getURI(),
                     filterResult.getReason());
@@ -213,7 +213,7 @@ public class SpiderTask implements Runnable {
         if (parent.isStopped()) {
             parent.notifyListenersSpiderTaskResult(
                     new SpiderTaskResult(msg, getSkippedMessage("stopped")));
-            log.debug("Spider process is stopped. Skipping crawling task...");
+            LOGGER.debug("Spider process is stopped. Skipping crawling task...");
             return;
         }
         // Check if the crawling process is paused
@@ -339,7 +339,7 @@ public class SpiderTask implements Runnable {
             msg.setResponseHeader(responseHeader);
             msg.setResponseBody(message);
         } catch (HttpMalformedHeaderException e) {
-            log.error("Failed to create error response:", e);
+            LOGGER.error("Failed to create error response:", e);
         }
     }
 
@@ -371,12 +371,12 @@ public class SpiderTask implements Runnable {
         boolean alreadyConsumed = false;
         for (SpiderParser parser : parsers) {
             if (parser.canParseResource(ctx, alreadyConsumed)) {
-                log.debug("Parser {} can parse resource '{}'", parser, path);
+                LOGGER.debug("Parser {} can parse resource '{}'", parser, path);
                 if (parser.parseResource(ctx)) {
                     alreadyConsumed = true;
                 }
             } else {
-                log.debug("Parser {} cannot parse resource '{}'", parser, path);
+                LOGGER.debug("Parser {} cannot parse resource '{}'", parser, path);
             }
         }
     }
@@ -405,19 +405,19 @@ public class SpiderTask implements Runnable {
         try {
             parent.getHttpSender().sendAndReceive(msg);
         } catch (ConnectException e) {
-            log.debug("Failed to connect to: {}", msg.getRequestHeader().getURI(), e);
+            LOGGER.debug("Failed to connect to: {}", msg.getRequestHeader().getURI(), e);
             throw e;
         } catch (SocketTimeoutException e) {
-            log.debug("Socket timeout: {}", msg.getRequestHeader().getURI(), e);
+            LOGGER.debug("Socket timeout: {}", msg.getRequestHeader().getURI(), e);
             throw e;
         } catch (SocketException e) {
-            log.debug("Socket exception: {}", msg.getRequestHeader().getURI(), e);
+            LOGGER.debug("Socket exception: {}", msg.getRequestHeader().getURI(), e);
             throw e;
         } catch (UnknownHostException e) {
-            log.debug("Unknown host: {}", msg.getRequestHeader().getURI(), e);
+            LOGGER.debug("Unknown host: {}", msg.getRequestHeader().getURI(), e);
             throw e;
         } catch (Exception e) {
-            log.error(
+            LOGGER.error(
                     "An error occurred while fetching the resource [{}]: {}",
                     msg.getRequestHeader().getURI(),
                     e.getMessage(),

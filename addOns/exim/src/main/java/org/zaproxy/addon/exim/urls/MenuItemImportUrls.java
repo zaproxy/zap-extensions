@@ -40,7 +40,7 @@ import org.zaproxy.zap.view.ZapMenuItem;
 public class MenuItemImportUrls extends ZapMenuItem {
 
     private static final long serialVersionUID = 2617077109056192411L;
-    private static final Logger LOG = LogManager.getLogger(MenuItemImportUrls.class);
+    private static final Logger LOGGER = LogManager.getLogger(MenuItemImportUrls.class);
     private static final String THREAD_PREFIX = "ZAP-Exim-Import-Urls-";
 
     private int threadId = 1;
@@ -84,7 +84,7 @@ public class MenuItemImportUrls extends ZapMenuItem {
                             stream.filter(line -> !line.startsWith("#") && line.trim().length() > 0)
                                     .count();
         } catch (IOException e) {
-            LOG.warn("Couldn't count lines in: {}", file.getAbsoluteFile());
+            LOGGER.warn("Couldn't count lines in: {}", file.getAbsoluteFile());
         }
         return lineCount;
     }

@@ -49,7 +49,7 @@ public class AlertFilter extends Enableable {
     private String evidence;
     private boolean isEvidenceRegex;
 
-    private static final Logger log = LogManager.getLogger(AlertFilter.class);
+    private static final Logger LOGGER = LogManager.getLogger(AlertFilter.class);
 
     public AlertFilter() {}
 
@@ -255,7 +255,7 @@ public class AlertFilter extends Enableable {
         }
         out.append(FIELD_SEPARATOR);
         out.append(alertFilter.isEvidenceRegex()).append(FIELD_SEPARATOR);
-        // log.debug("Encoded AlertFilter: {}", out.toString());
+        // LOGGER.debug("Encoded AlertFilter: {}", out.toString());
         return out.toString();
     }
 
@@ -287,10 +287,11 @@ public class AlertFilter extends Enableable {
                 alertFilter.setEvidenceRegex(Boolean.parseBoolean(pieces[10]));
             }
         } catch (Exception ex) {
-            log.error("An error occurred while decoding alertFilter from: {}", encodedString, ex);
+            LOGGER.error(
+                    "An error occurred while decoding alertFilter from: {}", encodedString, ex);
             return null;
         }
-        // log.debug("Decoded alertFilter: {}", alertFilter);
+        // LOGGER.debug("Decoded alertFilter: {}", alertFilter);
         return alertFilter;
     }
 
@@ -300,12 +301,13 @@ public class AlertFilter extends Enableable {
 
     public boolean appliesToAlert(Alert alert, boolean ignoreContext) {
         if (!isEnabled()) {
-            log.debug("Filter disabled");
+            LOGGER.debug("Filter disabled");
             return false;
         }
         if (getRuleId() != alert.getPluginId()) {
             // rule ids dont match
-            log.debug("Filter didn't match plugin id: {} != {}", getRuleId(), alert.getPluginId());
+            LOGGER.debug(
+                    "Filter didn't match plugin id: {} != {}", getRuleId(), alert.getPluginId());
             return false;
         }
         if (!ignoreContext && this.contextId != -1) {
@@ -336,7 +338,7 @@ public class AlertFilter extends Enableable {
         if (paramValue != null && paramValue.length() > 0) {
             if (isRegex) {
                 if (!targetValue.matches(paramValue)) {
-                    log.debug(
+                    LOGGER.debug(
                             "Filter didn't match {} regex: {} : {}",
                             paramName,
                             paramValue,
@@ -344,7 +346,8 @@ public class AlertFilter extends Enableable {
                     return false;
                 }
             } else if (!paramValue.equals(targetValue)) {
-                log.debug("Filter didn't match {} : {} : {}", paramName, paramValue, targetValue);
+                LOGGER.debug(
+                        "Filter didn't match {} : {} : {}", paramName, paramValue, targetValue);
                 return false;
             }
         }

@@ -50,7 +50,8 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 public class SOAPActionSpoofingActiveScanRule extends AbstractAppPlugin {
 
     private static final String MESSAGE_PREFIX = "soap.soapactionspoofing.";
-    private static final Logger LOG = LogManager.getLogger(SOAPActionSpoofingActiveScanRule.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(SOAPActionSpoofingActiveScanRule.class);
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A03_INJECTION,
@@ -116,12 +117,12 @@ public class SOAPActionSpoofingActiveScanRule extends AbstractAppPlugin {
         try {
             soapActions = getTable().getSourceSoapActions(originalSoapAction);
         } catch (DatabaseException e) {
-            LOG.warn("Could not retrieve SOAP actions from the database. Ignoring message.", e);
+            LOGGER.warn("Could not retrieve SOAP actions from the database. Ignoring message.", e);
             return;
         }
         if (soapActions == null || soapActions.isEmpty()) {
             // No actions to spoof
-            LOG.info(
+            LOGGER.info(
                     "Ignoring {} because no actions were found. (URL: {})",
                     getName(),
                     originalMsg.getRequestHeader().getURI());
@@ -134,8 +135,8 @@ public class SOAPActionSpoofingActiveScanRule extends AbstractAppPlugin {
             HttpMessage msg = getNewMsg();
             /* Skips the original case. */
             if (originalSoapAction.trim().equals(soapAction.getAction())) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(
                             "Ignoring matching actions: {} : {}",
                             originalSoapAction,
                             soapAction.getAction());
@@ -158,7 +159,7 @@ public class SOAPActionSpoofingActiveScanRule extends AbstractAppPlugin {
             try {
                 sendAndReceive(msg);
             } catch (IOException e) {
-                LOG.warn("Could not send modified SOAP request.");
+                LOGGER.warn("Could not send modified SOAP request.");
                 return;
             }
             /* Checks the response. */
@@ -249,7 +250,7 @@ public class SOAPActionSpoofingActiveScanRule extends AbstractAppPlugin {
                 return ResponseType.SOAPACTION_EXECUTED;
             }
         } catch (IOException | SOAPException e) {
-            LOG.warn("Exception thrown when scanning: ", e);
+            LOGGER.warn("Exception thrown when scanning: ", e);
             return ResponseType.INVALID_FORMAT;
         }
     }

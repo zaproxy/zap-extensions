@@ -31,7 +31,7 @@ import org.zaproxy.zap.extension.api.ZapApiIgnore;
 
 public class BugTrackerBugzillaParam extends AbstractParam {
 
-    private static final Logger logger = LogManager.getLogger(BugTrackerBugzillaParam.class);
+    private static final Logger LOGGER = LogManager.getLogger(BugTrackerBugzillaParam.class);
 
     private static final String GITHUB_BASE_KEY = "bugzilla";
 
@@ -69,13 +69,13 @@ public class BugTrackerBugzillaParam extends AbstractParam {
                 }
             }
         } catch (ConversionException e) {
-            logger.error("Error while loading bugzilla configs: {}", e.getMessage(), e);
+            LOGGER.error("Error while loading bugzilla configs: {}", e.getMessage(), e);
         }
 
         try {
             this.confirmRemoveConfig = getConfig().getBoolean(CONFIRM_REMOVE_CONFIG_KEY, true);
         } catch (ConversionException e) {
-            logger.error(
+            LOGGER.error(
                     "Error while loading the confirm remove config option: {}", e.getMessage(), e);
         }
     }

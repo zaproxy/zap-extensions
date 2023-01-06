@@ -33,7 +33,7 @@ import org.zaproxy.zap.extension.api.ZapApiIgnore;
 
 public class FormHandlerParam extends AbstractParam {
 
-    private static final Logger logger = LogManager.getLogger(FormHandlerParam.class);
+    private static final Logger LOGGER = LogManager.getLogger(FormHandlerParam.class);
 
     private static final String FORM_HANDLER_BASE_KEY = "formhandler";
 
@@ -82,7 +82,7 @@ public class FormHandlerParam extends AbstractParam {
                 }
             }
         } catch (ConversionException e) {
-            logger.error("Error while loading key-value pair fields: {}", e.getMessage(), e);
+            LOGGER.error("Error while loading key-value pair fields: {}", e.getMessage(), e);
             this.fields = new ArrayList<>(DEFAULT_KEY_VALUE_PAIRS.size());
             this.enabledFieldsNames = new ArrayList<>(DEFAULT_KEY_VALUE_PAIRS.size());
         }

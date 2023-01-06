@@ -61,7 +61,7 @@ public class JobUtils {
     private static Map<String, String> strengthI18nToStr;
     private static Map<String, String> thresholdI18nToStr;
 
-    private static final Logger LOG = LogManager.getLogger(JobUtils.class);
+    private static final Logger LOGGER = LogManager.getLogger(JobUtils.class);
 
     static {
         strengthI18nToStr = new HashMap<>();
@@ -237,7 +237,7 @@ public class JobUtils {
                 methodMap.put(m.getName(), m);
             }
         } catch (Exception e1) {
-            LOG.error(e1.getMessage(), e1);
+            LOGGER.error(e1.getMessage(), e1);
             progress.error(
                     Constant.messages.getString(
                             "automation.error.options.methods", objectName, e1.getMessage()));
@@ -406,20 +406,20 @@ public class JobUtils {
                             }
                             setterMethod.invoke(destObject, value);
                         } else {
-                            LOG.error(
+                            LOGGER.error(
                                     "Automation Framework failed to find method {} on {}",
                                     setterName,
                                     destObject.getClass().getCanonicalName());
                         }
 
                     } catch (Exception e) {
-                        LOG.error(e.getMessage(), e);
+                        LOGGER.error(e.getMessage(), e);
                     }
                 }
             }
 
         } catch (Exception e1) {
-            LOG.error(e1.getMessage(), e1);
+            LOGGER.error(e1.getMessage(), e1);
             progress.error(
                     Constant.messages.getString(
                             "automation.error.options.methods", objectName, e1.getMessage()));
@@ -462,7 +462,7 @@ public class JobUtils {
                 map.putAll((Map) obj);
                 return (T) map;
             } else {
-                LOG.error("Unable to map to a Map from {}", obj.getClass().getCanonicalName());
+                LOGGER.error("Unable to map to a Map from {}", obj.getClass().getCanonicalName());
             }
 
         } else if (List.class.equals(t)) {
@@ -471,7 +471,7 @@ public class JobUtils {
                 list.addAll((ArrayList) obj);
                 return (T) list;
             } else {
-                LOG.error("Unable to map to an List from {}", obj.getClass().getCanonicalName());
+                LOGGER.error("Unable to map to an List from {}", obj.getClass().getCanonicalName());
             }
 
         } else if (Enum.class.isAssignableFrom((Class<T>) t)) {
@@ -533,7 +533,7 @@ public class JobUtils {
                 return FieldUtils.readField(field, obj, true);
             }
         } catch (Exception e) {
-            LOG.error(
+            LOGGER.error(
                     "Failed get {} private field: {}",
                     obj.getClass().getCanonicalName(),
                     fieldName,
@@ -550,7 +550,7 @@ public class JobUtils {
                 FieldUtils.writeField(field, obj, value, true);
             }
         } catch (Exception e) {
-            LOG.error(
+            LOGGER.error(
                     "Failed set {} private field: {}",
                     obj.getClass().getCanonicalName(),
                     fieldName,
@@ -561,7 +561,7 @@ public class JobUtils {
     private static Field getClassField(Object obj, Class<?> c, String fieldName) {
         if (c == null) {
             // We've walked all the way up the hierarchy
-            LOG.error(
+            LOGGER.error(
                     "Failed get {} private field: {}",
                     obj.getClass().getCanonicalName(),
                     fieldName);
@@ -601,7 +601,7 @@ public class JobUtils {
                                     "automation.error.env.sessionmgmt.engine.bad", engineName));
                 } else {
                     ScriptType scriptType = extScript.getScriptType(type);
-                    LOG.debug("Loading script {}", file.getAbsolutePath());
+                    LOGGER.debug("Loading script {}", file.getAbsolutePath());
                     try {
                         wrapper =
                                 extScript.loadScript(

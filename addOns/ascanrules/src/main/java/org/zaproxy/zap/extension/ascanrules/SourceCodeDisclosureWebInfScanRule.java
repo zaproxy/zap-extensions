@@ -92,7 +92,7 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin {
      */
     private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_34");
 
-    private static final Logger log =
+    private static final Logger LOGGER =
             LogManager.getLogger(SourceCodeDisclosureWebInfScanRule.class);
 
     @Override
@@ -182,7 +182,7 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin {
             while (javaClassesFound.size() > 0) {
                 String classname = javaClassesFound.get(0);
                 URI classURI = getClassURI(originalURI, classname);
-                log.debug("Looking for Class file: {}", classURI);
+                LOGGER.debug("Looking for Class file: {}", classURI);
 
                 HttpMessage classfilemsg = createHttpMessage(classURI);
                 sendAndReceive(classfilemsg, false); // do not follow redirects
@@ -217,7 +217,7 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin {
                             continue;
                         }
 
-                        log.debug("Source Code Disclosure alert for: {}", classname);
+                        LOGGER.debug("Source Code Disclosure alert for: {}", classname);
 
                         newAlert()
                                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -254,7 +254,7 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin {
                         Matcher propsFileMatcher = PROPERTIES_FILE_PATTERN.matcher(javaSourceCode);
                         while (propsFileMatcher.find()) {
                             String propsFilename = propsFileMatcher.group(1);
-                            log.debug("Found props file: {}", propsFilename);
+                            LOGGER.debug("Found props file: {}", propsFilename);
 
                             URI propsFileURI = getPropsFileURI(originalURI, propsFilename);
                             HttpMessage propsfilemsg = createHttpMessage(propsFileURI);
@@ -286,7 +286,7 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin {
                         // delete the temp file.
                         // this will be deleted when the VM is shut down anyway, but just in case!
                         if (classFile != null && !classFile.delete()) {
-                            log.debug(
+                            LOGGER.debug(
                                     "The temporary file {} could not be deleted.",
                                     classFile.getAbsolutePath());
                         }
@@ -298,7 +298,7 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin {
                 javaClassesHandled.add(classname);
             }
         } catch (Exception e) {
-            log.error(
+            LOGGER.error(
                     "Error scanning a Host for Source Code Disclosure via the WEB-INF folder: {}",
                     e.getMessage(),
                     e);

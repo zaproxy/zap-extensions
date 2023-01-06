@@ -61,7 +61,7 @@ public class BugTrackerBugzilla extends BugTracker {
     private BugTrackerBugzillaTableModel bugzillaModel = null;
     private RaiseSemiAutoIssueDialog dialog = null;
 
-    private static final Logger log = LogManager.getLogger(BugTrackerBugzilla.class);
+    private static final Logger LOGGER = LogManager.getLogger(BugTrackerBugzilla.class);
 
     @Override
     public void setDetails(Set<Alert> alerts) {
@@ -248,10 +248,10 @@ public class BugTrackerBugzilla extends BugTracker {
             conn.executeMethod(report);
             return null;
         } catch (ConnectionException e) {
-            log.debug(e.toString());
+            LOGGER.debug(e.toString());
             return e.getMessage();
         } catch (BugzillaException e) {
-            log.debug(e.toString());
+            LOGGER.debug(e.toString());
             return e.getMessage();
         }
     }
@@ -292,7 +292,7 @@ public class BugTrackerBugzilla extends BugTracker {
                             password);
             return response;
         } catch (IOException e) {
-            log.debug(e.toString());
+            LOGGER.debug(e.toString());
             return e.toString();
         }
     }
@@ -354,7 +354,7 @@ public class BugTrackerBugzilla extends BugTracker {
                             password);
             return response;
         } catch (IOException e) {
-            log.debug(e.toString());
+            LOGGER.debug(e.toString());
             return e.toString();
         }
     }

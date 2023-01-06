@@ -96,7 +96,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     private static final int ARG_IMPORT_URL_IDX = 1;
     private static final int ARG_TARGET_URL_IDX = 2;
 
-    private static final Logger LOG = LogManager.getLogger(ExtensionOpenApi.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionOpenApi.class);
 
     public ExtensionOpenApi() {
         super(NAME);
@@ -158,7 +158,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                 }
             }
         } catch (DatabaseException e) {
-            LOG.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -292,7 +292,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                 View.getSingleton()
                         .showWarningDialog(Constant.messages.getString("openapi.io.error"));
             }
-            LOG.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
         }
         return null;
     }
@@ -383,7 +383,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                 View.getSingleton()
                         .showWarningDialog(Constant.messages.getString("openapi.io.error"));
             }
-            LOG.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
         }
         return null;
     }
@@ -476,7 +476,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                             }
                             errors.add(Constant.messages.getString("openapi.parse.error", e));
                             logErrors(errors, initViaUi);
-                            LOG.warn(e.getMessage(), e);
+                            LOGGER.warn(e.getMessage(), e);
                         } finally {
                             if (currentImportPane != null) {
                                 currentImportPane.completed();
@@ -490,7 +490,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
             try {
                 t.join();
             } catch (InterruptedException e) {
-                LOG.debug(e.getMessage(), e);
+                LOGGER.debug(e.getMessage(), e);
             }
             return errors;
         }
@@ -538,7 +538,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                 }
             }
         } catch (Exception e) {
-            LOG.debug("Error getting tree path for message: {}", msg, e);
+            LOGGER.debug("Error getting tree path for message: {}", msg, e);
         }
         return null;
     }
@@ -549,7 +549,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
             String path = target.getPath();
             return Arrays.asList(path.split("/"));
         } catch (Exception e) {
-            LOG.warn("Error extracting tree path from uri: {}", uri, e);
+            LOGGER.warn("Error extracting tree path from uri: {}", uri, e);
         }
         return null;
     }
@@ -583,7 +583,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                 node.setIncludedInScope(true, false);
             }
         } catch (Exception e) {
-            LOG.warn("Could not update OpenAPI DDNs in the sites tree: {}.", e.getMessage(), e);
+            LOGGER.warn("Could not update OpenAPI DDNs in the sites tree: {}.", e.getMessage(), e);
         }
     }
 
@@ -593,7 +593,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                 if (initViaUi) {
                     View.getSingleton().getOutputPanel().append(error + "\n");
                 } else {
-                    LOG.warn(error);
+                    LOGGER.warn(error);
                 }
             }
         }
@@ -766,7 +766,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                 variantChecksMap.remove(contextId);
                 table.deleteOpenApiSpecForContext(contextId);
             } catch (Exception e) {
-                LOG.debug(
+                LOGGER.debug(
                         "Could not delete OpenAPI definition for context {}.", context.getId(), e);
             }
         }

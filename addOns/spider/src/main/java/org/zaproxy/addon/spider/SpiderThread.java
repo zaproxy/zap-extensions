@@ -83,7 +83,7 @@ public class SpiderThread extends ScanThread implements SpiderListener {
     private int spiderTodo = 1;
 
     /** The Constant log used for logging. */
-    private static final Logger log = LogManager.getLogger(SpiderThread.class);
+    private static final Logger LOGGER = LogManager.getLogger(SpiderThread.class);
 
     /** The just scan in scope. */
     private boolean justScanInScope;
@@ -136,7 +136,7 @@ public class SpiderThread extends ScanThread implements SpiderListener {
             String site,
             ScanListenner listenner) {
         super(site, listenner);
-        log.debug("Initializing spider thread for site: {}", site);
+        LOGGER.debug("Initializing spider thread for site: {}", site);
         this.id = id;
         this.extension = extension;
         this.site = site;
@@ -154,7 +154,7 @@ public class SpiderThread extends ScanThread implements SpiderListener {
         try {
             runScan();
         } catch (Exception e) {
-            log.error("An error occurred while starting the spider:", e);
+            LOGGER.error("An error occurred while starting the spider:", e);
             stopScan();
         }
     }
@@ -164,7 +164,7 @@ public class SpiderThread extends ScanThread implements SpiderListener {
         // Do the scan
         spiderDone = 0;
         started = new Date();
-        log.info("Starting spidering scan on {} at {}", site, started);
+        LOGGER.info("Starting spidering scan on {} at {}", site, started);
         startSpider();
         this.isAlive = true;
     }
@@ -301,10 +301,10 @@ public class SpiderThread extends ScanThread implements SpiderListener {
 
         List<SiteNode> nodesInScope = Collections.emptyList();
         if (this.scanContext != null) {
-            log.debug("Adding seed for Scan of all in context {}", scanContext.getName());
+            LOGGER.debug("Adding seed for Scan of all in context {}", scanContext.getName());
             nodesInScope = this.scanContext.getNodesInContextFromSiteTree();
         } else if (justScanInScope) {
-            log.debug("Adding seed for Scan of all in scope.");
+            LOGGER.debug("Adding seed for Scan of all in scope.");
             nodesInScope = Model.getSingleton().getSession().getNodesInScopeFromSiteTree();
         }
 
@@ -365,7 +365,7 @@ public class SpiderThread extends ScanThread implements SpiderListener {
                 }
             }
         } catch (Exception e) {
-            log.error("Error while adding seed for Spider scan: {}", e.getMessage(), e);
+            LOGGER.error("Error while adding seed for Spider scan: {}", e.getMessage(), e);
         }
     }
 
@@ -393,7 +393,7 @@ public class SpiderThread extends ScanThread implements SpiderListener {
     @Override
     public void spiderComplete(boolean successful) {
         Date finished = new Date();
-        log.info("Spider scanning complete: {} on {} at {}", successful, site, finished);
+        LOGGER.info("Spider scanning complete: {} on {} at {}", successful, site, finished);
         this.timeTakenInMs = finished.getTime() - started.getTime();
         stopScan = true;
         this.isAlive = false;
@@ -496,7 +496,7 @@ public class SpiderThread extends ScanThread implements SpiderListener {
                 addMessageToSitesTree(historyRef, msg);
             }
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -529,7 +529,7 @@ public class SpiderThread extends ScanThread implements SpiderListener {
                         message.getRequestHeader().getMethod(),
                         "");
             } catch (URIException e) {
-                log.error("Error while adding node to added nodes model: {}", e.getMessage(), e);
+                LOGGER.error("Error while adding node to added nodes model: {}", e.getMessage(), e);
             }
         }
     }

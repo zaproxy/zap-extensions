@@ -44,7 +44,7 @@ import org.zaproxy.zap.utils.ApiUtils;
 /** The API for manipulating {@link AlertFilter alert filters}. */
 public class AlertFilterAPI extends ApiImplementor {
 
-    private static final Logger log = LogManager.getLogger(AlertFilterAPI.class);
+    private static final Logger LOGGER = LogManager.getLogger(AlertFilterAPI.class);
 
     private static final String PREFIX = "alertFilter";
 
@@ -200,7 +200,7 @@ public class AlertFilterAPI extends ApiImplementor {
 
     @Override
     public ApiResponse handleApiView(String name, JSONObject params) throws ApiException {
-        log.debug("handleApiView {} {}", name, params);
+        LOGGER.debug("handleApiView {} {}", name, params);
         Context context;
 
         switch (name) {
@@ -231,7 +231,7 @@ public class AlertFilterAPI extends ApiImplementor {
 
     @Override
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
-        log.debug("handleApiAction {} {}", name, params);
+        LOGGER.debug("handleApiAction {} {}", name, params);
 
         AlertFilter af;
         Context context;

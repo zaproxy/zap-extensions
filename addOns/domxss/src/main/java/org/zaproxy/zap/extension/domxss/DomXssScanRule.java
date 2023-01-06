@@ -66,7 +66,7 @@ import org.zaproxy.zap.utils.Stats;
 
 public class DomXssScanRule extends AbstractAppParamPlugin {
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_8");
-    private static Logger log = LogManager.getLogger(DomXssScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(DomXssScanRule.class);
     private static final int UNLIKELY_INT = 5397;
     private static final String UNLIKELY_STR = String.valueOf(UNLIKELY_INT);
 
@@ -191,7 +191,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                 browser = Browser.getBrowserWithIdNoFailSafe(browserId);
             }
         } catch (ConversionException e) {
-            log.debug(
+            LOGGER.debug(
                     "Invalid value for '{}': {}",
                     RULE_BROWSER_ID,
                     this.getConfig().getString(RULE_BROWSER_ID));
@@ -200,14 +200,14 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
         if (browser == null) {
             browser = DEFAULT_BROWSER;
         } else if (!isSupportedBrowser(browser)) {
-            log.warn(
+            LOGGER.warn(
                     "Specified browser {} is not supported, defaulting to: {}",
                     browser,
                     DEFAULT_BROWSER);
             browser = DEFAULT_BROWSER;
         }
 
-        log.debug("Using browser: {}", browser);
+        LOGGER.debug("Using browser: {}", browser);
     }
 
     private static boolean isSupportedBrowser(Browser browser) {
@@ -243,14 +243,14 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                                         // target before sending
                                         sendAndReceive(msg);
                                     } catch (IOException e) {
-                                        log.debug(e);
+                                        LOGGER.debug(e);
                                     }
                                 }
                             });
             try {
                 proxyPort = proxy.start(Server.ANY_PORT);
             } catch (IOException e) {
-                log.warn("An error occurred while starting the proxy.", e);
+                LOGGER.warn("An error occurred while starting the proxy.", e);
             }
         }
         return proxy;
@@ -297,7 +297,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                     reaperThread =
                             new Thread(
                                     () -> {
-                                        log.info("Reaper thread starting");
+                                        LOGGER.info("Reaper thread starting");
                                         reaperThread.setName("ZAP-DomXssReaper");
                                         do {
                                             try {
@@ -317,19 +317,20 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                                                                                     .getTime())
                                                                     / 1000
                                                             > 10) {
-                                                        log.debug(
+                                                        LOGGER.debug(
                                                                 "Driver hung {}",
                                                                 wrapper.getDriver().hashCode());
                                                         wrapper.getDriver().quit();
                                                         wrapper.setDriver(createWebDriver());
-                                                        log.debug(
+                                                        LOGGER.debug(
                                                                 "New driver {}",
                                                                 wrapper.getDriver().hashCode());
                                                     }
                                                 }
                                             }
                                         } while (takenDrivers.size() > 0);
-                                        log.info("Reaper thread exiting {}", takenDrivers.size());
+                                        LOGGER.info(
+                                                "Reaper thread exiting {}", takenDrivers.size());
 
                                         reaperThread = null;
                                     });
@@ -352,7 +353,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                 freeDrivers.computeIfAbsent(driver.getBrowser(), k -> new Stack<>()).push(driver);
 
             } else {
-                log.debug("Driver not in 'taken' list");
+                LOGGER.debug("Driver not in 'taken' list");
             }
         }
     }
@@ -411,11 +412,11 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                 this.getHelper(wrapper, url, retry - 1);
             }
         } catch (ElementNotVisibleException enve) {
-            log.debug(enve);
+            LOGGER.debug(enve);
         } catch (TimeoutException wde) {
-            log.debug(wde);
+            LOGGER.debug(wde);
         } catch (WebDriverException wde) {
-            log.debug(wde);
+            LOGGER.debug(wde);
         }
     }
 
@@ -451,11 +452,11 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                 return this.findHelper(wrapper, by, retry - 1);
             }
         } catch (ElementNotVisibleException enve) {
-            log.debug(enve);
+            LOGGER.debug(enve);
         } catch (TimeoutException wde) {
-            log.debug(wde);
+            LOGGER.debug(wde);
         } catch (WebDriverException wde) {
-            log.debug(wde);
+            LOGGER.debug(wde);
         }
         return new ArrayList<>();
     }
@@ -523,7 +524,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
             } catch (UnhandledAlertException uae) {
                 // Ignore
             } catch (WebDriverException wde) {
-                log.debug(wde);
+                LOGGER.debug(wde);
             } finally {
                 if (getAlertDialogText().equals(UNLIKELY_STR)) {
                     Stats.incCounter("domxss.vulns.possibleDomXSSTriggers2");
@@ -585,14 +586,14 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
             } catch (UnhandledAlertException uae) {
                 // Ignore
             } catch (NoSuchSessionException enve) {
-                log.debug(enve);
+                LOGGER.debug(enve);
                 // replaceDriver(driver);
             } catch (ElementNotVisibleException enve) {
-                log.debug(enve);
+                LOGGER.debug(enve);
             } catch (TimeoutException wde) {
-                log.debug(wde);
+                LOGGER.debug(wde);
             } catch (WebDriverException wde) {
-                log.debug(wde);
+                LOGGER.debug(wde);
             } finally {
                 if (getAlertDialogText().equals(UNLIKELY_STR)) {
                     Stats.incCounter("domxss.vulns.div2");
@@ -632,7 +633,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
         try {
             driver = getWebDriver();
         } catch (Exception e) {
-            log.warn("Skipping scanner, failed to start browser: {}", e.getMessage());
+            LOGGER.warn("Skipping scanner, failed to start browser: {}", e.getMessage());
             getParent()
                     .pluginSkipped(
                             this,

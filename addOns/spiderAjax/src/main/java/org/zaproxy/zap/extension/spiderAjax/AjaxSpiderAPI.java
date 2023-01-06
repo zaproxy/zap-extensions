@@ -59,7 +59,7 @@ import org.zaproxy.zap.utils.ApiUtils;
 
 public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
 
-    private static final Logger logger = LogManager.getLogger(AjaxSpiderAPI.class);
+    private static final Logger LOGGER = LogManager.getLogger(AjaxSpiderAPI.class);
 
     private static final String PREFIX = "ajaxSpider";
 
@@ -388,7 +388,7 @@ public class AjaxSpiderAPI extends ApiImplementor implements SpiderListener {
         try {
             new Thread(spiderThread, "ZAP-AjaxSpiderApi").start();
         } catch (Exception e) {
-            logger.error(e);
+            LOGGER.error(e);
         }
     }
 

@@ -55,7 +55,7 @@ import org.zaproxy.zap.view.LayoutHelper;
 public class DiffDialog extends AbstractDialog implements AdjustmentListener {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = LogManager.getLogger(DiffDialog.class);
+    private static final Logger LOGGER = LogManager.getLogger(DiffDialog.class);
 
     private JPanel jPanel = null;
     private JTextArea txtDisplayLeft = null;
@@ -209,7 +209,7 @@ public class DiffDialog extends AbstractDialog implements AdjustmentListener {
         try {
             hilite.addHighlight(start, end, painter);
         } catch (BadLocationException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -243,7 +243,7 @@ public class DiffDialog extends AbstractDialog implements AdjustmentListener {
             }
 
         } catch (BadLocationException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return end;
     }

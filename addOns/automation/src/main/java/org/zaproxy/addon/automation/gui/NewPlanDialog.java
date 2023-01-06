@@ -117,7 +117,7 @@ public class NewPlanDialog extends StandardFieldsDialog {
 
     private ExtensionAutomation ext;
 
-    private static final Logger LOG = LogManager.getLogger(NewPlanDialog.class);
+    private static final Logger LOGGER = LogManager.getLogger(NewPlanDialog.class);
 
     public NewPlanDialog() {
         super(View.getSingleton().getMainFrame(), TITLE, DisplayUtils.getScaledDimension(300, 450));
@@ -224,7 +224,7 @@ public class NewPlanDialog extends StandardFieldsDialog {
             AutomationEventPublisher.publishEvent(
                     AutomationEventPublisher.PLAN_CREATED, plan, null);
         } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             View.getSingleton()
                     .showWarningDialog(
                             thisDialog,

@@ -43,7 +43,7 @@ import org.zaproxy.addon.commonlib.http.ComparableResponse;
 public class WebCacheDeceptionScanRule extends AbstractAppPlugin {
 
     private static final String MESSAGE_PREFIX = "ascanalpha.webCacheDeception.";
-    private static final Logger LOG = LogManager.getLogger(WebCacheDeceptionScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(WebCacheDeceptionScanRule.class);
 
     protected static final String[] TEST_EXTENSIONS = {
         "css", "jpg", "js", "html", "gif", "png", "svg", "php", "txt", "pdf", "asp"
@@ -118,7 +118,7 @@ public class WebCacheDeceptionScanRule extends AbstractAppPlugin {
                             .raise();
                 }
             } catch (IOException e) {
-                LOG.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
         }
     }
@@ -169,7 +169,7 @@ public class WebCacheDeceptionScanRule extends AbstractAppPlugin {
             }
 
         } catch (IOException e) {
-            LOG.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
         }
         return true;
     }

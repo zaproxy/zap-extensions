@@ -109,7 +109,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
     private boolean lockOutputToDisplayedScript = false;
     // private ZapMenuItem menuEnableScripts = null;
 
-    // private static final Logger logger = Logger.getLogger(ExtensionScriptsUI.class);
+    // private static final Logger LOGGER = Logger.getLogger(ExtensionScriptsUI.class);
 
     static {
         List<Class<? extends Extension>> dependencies = new ArrayList<>(1);

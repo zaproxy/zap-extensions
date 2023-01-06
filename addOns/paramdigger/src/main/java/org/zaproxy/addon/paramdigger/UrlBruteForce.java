@@ -59,7 +59,7 @@ public class UrlBruteForce implements Callable<ParamReasons> {
     private List<ParamGuessResult> guessedParams;
     private List<Integer> ERRORCODES = Arrays.asList(400, 413, 418, 429, 503);
     private String baseValue;
-    private static final Logger logger = LogManager.getLogger(UrlBruteForce.class);
+    private static final Logger LOGGER = LogManager.getLogger(UrlBruteForce.class);
 
     public UrlBruteForce(
             ComparableResponse base,
@@ -183,14 +183,14 @@ public class UrlBruteForce implements Callable<ParamReasons> {
                                                     HistoryReference.TYPE_PARAM_DIGGER,
                                                     msg));
                                 } catch (Exception e) {
-                                    logger.error(e, e);
+                                    LOGGER.error(e, e);
                                 }
                             });
                     return StringUtils.strip(queryString, "?");
                 } catch (Exception e) {
                     // TODO show proper error message on Output Panel (can be timeout or connection
                     // refused)
-                    logger.error(e, e);
+                    LOGGER.error(e, e);
                 }
                 break;
 
@@ -224,7 +224,7 @@ public class UrlBruteForce implements Callable<ParamReasons> {
                     return xmlPayload;
                 } catch (Exception e) {
                     // TODO show proper error message on Output Panel
-                    logger.error(e, e);
+                    LOGGER.error(e, e);
                 }
                 break;
 
@@ -270,7 +270,7 @@ public class UrlBruteForce implements Callable<ParamReasons> {
                     return jsonPayload;
                 } catch (Exception e) {
                     // TODO show proper error message on Output Panel
-                    logger.error(e, e);
+                    LOGGER.error(e, e);
                 }
                 break;
 
@@ -301,7 +301,7 @@ public class UrlBruteForce implements Callable<ParamReasons> {
                     return postPayload;
                 } catch (Exception e) {
                     // TODO show proper error message on Output Panel
-                    logger.error(e);
+                    LOGGER.error(e);
                 }
                 break;
 

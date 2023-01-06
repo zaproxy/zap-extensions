@@ -39,7 +39,7 @@ public class ZestActiveRunner extends ZestZapRunner implements ActiveScript {
     private String param = null;
     private ExtensionZest extension = null;
 
-    private static Logger logger = LogManager.getLogger(ZestActiveRunner.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestActiveRunner.class);
 
     public ZestActiveRunner(
             ExtensionZest extension, ExtensionNetwork extensionNetwork, ZestScriptWrapper script) {
@@ -51,7 +51,7 @@ public class ZestActiveRunner extends ZestZapRunner implements ActiveScript {
     @Override
     public void scan(ScriptsActiveScanner sas, HttpMessage msg, String param, String value)
             throws ScriptException {
-        logger.debug("Zest ActiveScan script: {}", this.script.getName());
+        LOGGER.debug("Zest ActiveScan script: {}", this.script.getName());
         this.sas = sas;
         this.msg = msg;
         this.param = param;

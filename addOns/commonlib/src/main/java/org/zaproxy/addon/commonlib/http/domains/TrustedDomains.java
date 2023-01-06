@@ -26,7 +26,7 @@ import org.apache.logging.log4j.Logger;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 
 public class TrustedDomains {
-    private static final Logger LOG = LogManager.getLogger(TrustedDomains.class);
+    private static final Logger LOGGER = LogManager.getLogger(TrustedDomains.class);
 
     private String trustedConfig = "";
     private List<Trust> trustedDomainRegexesPatterns = new ArrayList<>();
@@ -53,7 +53,7 @@ public class TrustedDomains {
             try {
                 add(new RegexTrust(regexTrim));
             } catch (Exception e) {
-                LOG.warn(
+                LOGGER.warn(
                         "Invalid regex in rule {} : {}",
                         RuleConfigParam.RULE_DOMAINS_TRUSTED,
                         regex,

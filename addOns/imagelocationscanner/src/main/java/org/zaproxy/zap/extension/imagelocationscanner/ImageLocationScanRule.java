@@ -54,7 +54,7 @@ import com.veggiespam.imagelocationscanner.ILS;
  * @see https://www.veggiespam.com/ils/
  */
 public class ImageLocationScanRule extends PluginPassiveScanner {
-	private static final Logger logger = LogManager.getLogger(ImageLocationScanRule.class);
+	private static final Logger LOGGER = LogManager.getLogger(ImageLocationScanRule.class);
 	private static final String MESSAGE_PREFIX = "imagelocationscanner.";
 	public static final int PLUGIN_ID = 10103;
     private static final Map<String, String> ALERT_TAGS =
@@ -71,7 +71,7 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		long start = 0;
-		if (logger.isDebugEnabled()) {
+		if (LOGGER.isDebugEnabled()) {
 			start = System.currentTimeMillis();
 		}
 		
@@ -102,8 +102,8 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
             extension = fileName.substring(i+1).toLowerCase();
         }
 
-        if (logger.isDebugEnabled()) {
-            logger.debug("\tCT: {} url: {} fileName: {} ext: {}", CT, url, fileName, extension);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("\tCT: {} url: {} fileName: {} ext: {}", CT, url, fileName, extension);
         }
         
         // everything is already lowercase
@@ -120,8 +120,8 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
 			}
 			
 		}
-		if (logger.isDebugEnabled()) {
-		    logger.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
+		if (LOGGER.isDebugEnabled()) {
+		    LOGGER.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
 		}
 	}
 

@@ -75,7 +75,7 @@ import org.zaproxy.zap.view.HttpPanelManager.HttpPanelViewFactory;
 public class ExtensionServerSentEvents extends ExtensionAdaptor
         implements PersistentConnectionListener, SessionChangedListener {
 
-    private static final Logger logger = LogManager.getLogger(ExtensionServerSentEvents.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionServerSentEvents.class);
     public static final int HANDSHAKE_LISTENER = 10;
 
     /** Name of this extension. */
@@ -177,7 +177,7 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor
                 storage.setTable(table);
             }
         } catch (DatabaseException e) {
-            logger.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
         }
     }
 
@@ -224,7 +224,7 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor
         boolean keepSocketOpen = false;
 
         if (httpMessage.isEventStream()) {
-            logger.debug("Got Server-Sent Events stream.");
+            LOGGER.debug("Got Server-Sent Events stream.");
 
             org.zaproxy.zap.ZapGetMethod handshakeMethod =
                     (org.zaproxy.zap.ZapGetMethod) httpMessage.getUserObject();
@@ -241,11 +241,11 @@ public class ExtensionServerSentEvents extends ExtensionAdaptor
 
                     addEventStream(httpMessage, inputStream, inSocket.getOutputStream(), inSocket);
                 } catch (IOException e) {
-                    logger.warn(e.getMessage(), e);
+                    LOGGER.warn(e.getMessage(), e);
                     keepSocketOpen = false;
                 }
             } else {
-                logger.error("Was not able to retrieve input stream.");
+                LOGGER.error("Was not able to retrieve input stream.");
             }
         }
 

@@ -31,7 +31,7 @@ import org.zaproxy.zap.utils.ThreadUtils;
 
 public class HistoryPersister implements RequesterListener {
 
-    private static final Logger LOG = LogManager.getLogger(ExtensionGraphQl.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionGraphQl.class);
 
     @Override
     public void handleMessage(final HttpMessage message, int initiator) {
@@ -47,7 +47,7 @@ public class HistoryPersister implements RequesterListener {
                                     : HistoryReference.TYPE_ZAP_USER,
                             message);
         } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             return;
         }
 
@@ -63,7 +63,7 @@ public class HistoryPersister implements RequesterListener {
                                 .addPath(historyRef, message);
                     });
         } catch (Exception e) {
-            LOG.error("Could not add message to sites tree.", e);
+            LOGGER.error("Could not add message to sites tree.", e);
             return;
         }
     }

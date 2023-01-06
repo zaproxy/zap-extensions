@@ -45,7 +45,7 @@ public class AddJobDialog extends StandardFieldsDialog {
     private AutomationPlan plan;
     private ExtensionAutomation ext;
 
-    private static final Logger LOG = LogManager.getLogger(AddJobDialog.class);
+    private static final Logger LOGGER = LogManager.getLogger(AddJobDialog.class);
 
     public AddJobDialog(AutomationPlan plan) {
         super(View.getSingleton().getMainFrame(), TITLE, DisplayUtils.getScaledDimension(300, 200));
@@ -77,7 +77,7 @@ public class AddJobDialog extends StandardFieldsDialog {
             this.plan.addJob(job);
             job.showDialog();
         } catch (AutomationJobException e) {
-            LOG.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             View.getSingleton()
                     .showWarningDialog(
                             thisDialog,

@@ -40,7 +40,7 @@ import org.zaproxy.zap.extension.stats.InMemoryStats;
 
 public class PassiveScanJobResultData extends JobResultData {
 
-    private static final Logger LOG = LogManager.getLogger(PassiveScanJobResultData.class);
+    private static final Logger LOGGER = LogManager.getLogger(PassiveScanJobResultData.class);
     public static final String KEY = "passiveScanData";
 
     private Map<Integer, RuleData> ruleDataMap = new HashMap<>();
@@ -119,7 +119,7 @@ public class PassiveScanJobResultData extends JobResultData {
                 }
             }
         } catch (Exception e) {
-            LOG.error("Failed to access alerts tree", e);
+            LOGGER.error("Failed to access alerts tree", e);
         }
     }
 

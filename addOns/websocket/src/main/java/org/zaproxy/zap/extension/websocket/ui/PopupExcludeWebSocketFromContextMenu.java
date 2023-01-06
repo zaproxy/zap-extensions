@@ -39,7 +39,7 @@ public class PopupExcludeWebSocketFromContextMenu extends ExtensionPopupMenuItem
 
     private static final long serialVersionUID = -2345060529128495874L;
 
-    private static final Logger logger =
+    private static final Logger LOGGER =
             LogManager.getLogger(PopupExcludeWebSocketFromContextMenu.class);
 
     private WebSocketPopupHelper wsPopupHelper;
@@ -73,7 +73,7 @@ public class PopupExcludeWebSocketFromContextMenu extends ExtensionPopupMenuItem
                     try {
                         performAction();
                     } catch (Exception e) {
-                        logger.error(e.getMessage(), e);
+                        LOGGER.error(e.getMessage(), e);
                     }
                 });
     }

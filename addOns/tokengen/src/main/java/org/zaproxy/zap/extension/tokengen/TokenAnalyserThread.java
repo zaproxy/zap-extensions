@@ -44,7 +44,7 @@ public class TokenAnalyserThread extends Thread {
     private OutputDestination outputDestination = null;
     private boolean cancelled = false;
 
-    private static Logger log = LogManager.getLogger(TokenAnalyserThread.class);
+    private static final Logger LOGGER = LogManager.getLogger(TokenAnalyserThread.class);
 
     private ResourceBundle messages;
 
@@ -54,10 +54,10 @@ public class TokenAnalyserThread extends Thread {
 
     @Override
     public void run() {
-        log.debug("run");
+        LOGGER.debug("run");
 
         if (cfm == null) {
-            log.debug("Can't run no map :(");
+            LOGGER.debug("Can't run no map :(");
             return;
         }
 
@@ -131,12 +131,12 @@ public class TokenAnalyserThread extends Thread {
             test.help(); // This outputs a summary to the specified outputDestination
             this.notifyListenners(result);
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
     private void notifyListenners(TokenAnalysisTestResult result) {
-        log.debug("notifyListenners {} {}", result.getType(), result.getResult().name());
+        LOGGER.debug("notifyListenners {} {}", result.getType(), result.getResult().name());
 
         for (TokenAnalyserListenner listener : listeners) {
             listener.notifyTestResult(result);

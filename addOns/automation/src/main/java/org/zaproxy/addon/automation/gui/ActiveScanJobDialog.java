@@ -44,7 +44,7 @@ public class ActiveScanJobDialog extends StandardFieldsDialog {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger LOG = LogManager.getLogger(ActiveScanJobDialog.class);
+    private static final Logger LOGGER = LogManager.getLogger(ActiveScanJobDialog.class);
 
     private static final String[] TAB_LABELS = {
         "automation.dialog.tab.params",
@@ -274,7 +274,7 @@ public class ActiveScanJobDialog extends StandardFieldsDialog {
                             dialog = new AddAscanRuleDialog(getRulesModel());
                             dialog.setVisible(true);
                         } catch (ConfigurationException e1) {
-                            LOG.error(e1.getMessage(), e1);
+                            LOGGER.error(e1.getMessage(), e1);
                         }
                     });
         }
@@ -297,7 +297,7 @@ public class ActiveScanJobDialog extends StandardFieldsDialog {
                                             row);
                             dialog.setVisible(true);
                         } catch (ConfigurationException e1) {
-                            LOG.error(e1.getMessage(), e1);
+                            LOGGER.error(e1.getMessage(), e1);
                         }
                     });
         }
@@ -371,7 +371,7 @@ public class ActiveScanJobDialog extends StandardFieldsDialog {
                                                     row);
                                     dialog.setVisible(true);
                                 } catch (ConfigurationException e1) {
-                                    LOG.error(e1.getMessage(), e1);
+                                    LOGGER.error(e1.getMessage(), e1);
                                 }
                             }
                         }

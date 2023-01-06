@@ -32,7 +32,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class WebSocketListener implements Runnable {
 
-    private static final Logger logger = LogManager.getLogger(WebSocketListener.class);
+    private static final Logger LOGGER = LogManager.getLogger(WebSocketListener.class);
 
     /** Listen from one side of this communication channel. */
     private final InputStream in;
@@ -101,7 +101,7 @@ public class WebSocketListener implements Runnable {
                 in.close();
             }
         } catch (IOException e) {
-            logger.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
         }
     }
 
@@ -112,7 +112,7 @@ public class WebSocketListener implements Runnable {
                 out.close();
             }
         } catch (IOException e) {
-            logger.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
         }
     }
 

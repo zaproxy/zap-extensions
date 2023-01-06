@@ -62,7 +62,7 @@ public class SessionManagementData extends AutomationData {
     private String method;
     private Map<String, String> parameters = new LinkedHashMap<>();
 
-    private static final Logger LOG = LogManager.getLogger(SessionManagementData.class);
+    private static final Logger LOGGER = LogManager.getLogger(SessionManagementData.class);
 
     public SessionManagementData() {}
 
@@ -162,7 +162,7 @@ public class SessionManagementData extends AutomationData {
                             getScriptBasedSessionManagementMethod(context.getId());
 
                     if (sw == null) {
-                        LOG.error(
+                        LOGGER.error(
                                 "Error setting script session management - failed to find script wrapper");
                         progress.error(
                                 Constant.messages.getString(
@@ -170,7 +170,7 @@ public class SessionManagementData extends AutomationData {
                                         f.getAbsolutePath()));
 
                     } else if (smm == null) {
-                        LOG.error(
+                        LOGGER.error(
                                 "Error setting script session management - failed to get session management method");
                         progress.error(
                                 Constant.messages.getString(
@@ -198,7 +198,7 @@ public class SessionManagementData extends AutomationData {
                             type.exportData(config, smm);
                             type.importData(config, smm);
                         } catch (ConfigurationException e) {
-                            LOG.error("Error setting script session management", e);
+                            LOGGER.error("Error setting script session management", e);
                             progress.error(
                                     Constant.messages.getString(
                                             "automation.error.unexpected.internal",

@@ -62,7 +62,7 @@ public class SlackerCookieScanRule extends AbstractAppPlugin {
                     CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
                     CommonAlertTag.WSTG_V42_SESS_02_COOKIE_ATTRS);
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_45");
-    private static Logger log = LogManager.getLogger(SlackerCookieScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(SlackerCookieScanRule.class);
 
     @Override
     public void scan() {
@@ -121,7 +121,7 @@ public class SlackerCookieScanRule extends AbstractAppPlugin {
                         .raise();
             }
         } catch (IOException io) {
-            log.debug("Blew up trying to refresh session with all cookies: {}", io.getMessage());
+            LOGGER.debug("Blew up trying to refresh session with all cookies: {}", io.getMessage());
         }
         return sessionNoLongerGood;
     }
@@ -173,11 +173,11 @@ public class SlackerCookieScanRule extends AbstractAppPlugin {
             sendAndReceive(msg, false);
             int responseLength = msg.getResponseBody().length();
 
-            log.debug(
+            LOGGER.debug(
                     "trying to exclude cookie {}, request header=>{}",
                     oneCookie.getName(),
                     msg.getRequestHeader().getHeadersAsString());
-            log.debug(
+            LOGGER.debug(
                     "response length was:{}, while baseResponseLength was: {}",
                     responseLength,
                     baseResponseLength);
@@ -187,7 +187,7 @@ public class SlackerCookieScanRule extends AbstractAppPlugin {
             }
 
         } catch (IOException ex) {
-            log.debug("caught IOException in SlackerCookieScanRule: {}", ex.getMessage());
+            LOGGER.debug("caught IOException in SlackerCookieScanRule: {}", ex.getMessage());
         }
         return doesThisCookieMatter;
     }

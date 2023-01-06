@@ -44,7 +44,7 @@ public class WebSocketFuzzResultsContentPanel extends JPanel
 
     public static final String RESULTS_PANEL_NAME = "websocketFuzzerResultsContentPanel";
 
-    private static final Logger logger =
+    private static final Logger LOGGER =
             LogManager.getLogger(WebSocketFuzzResultsContentPanel.class);
 
     private static final WebSocketFuzzMessagesViewModel EMPTY_RESULTS_MODEL =
@@ -120,7 +120,7 @@ public class WebSocketFuzzResultsContentPanel extends JPanel
             try {
                 EventQueue.invokeAndWait(this::clear);
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
             return;
         }

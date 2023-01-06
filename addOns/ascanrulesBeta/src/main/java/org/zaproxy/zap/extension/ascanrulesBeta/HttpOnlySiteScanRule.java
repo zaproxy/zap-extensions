@@ -56,7 +56,7 @@ public class HttpOnlySiteScanRule extends AbstractHostPlugin {
                     CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
                     CommonAlertTag.WSTG_V42_SESS_02_COOKIE_ATTRS);
 
-    private static final Logger log = LogManager.getLogger(HttpOnlySiteScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(HttpOnlySiteScanRule.class);
 
     @Override
     public int getId() {
@@ -138,7 +138,7 @@ public class HttpOnlySiteScanRule extends AbstractHostPlugin {
     public void scan() {
 
         if (getBaseMsg().getRequestHeader().isSecure()) { // Base request is HTTPS
-            log.debug(
+            LOGGER.debug(
                     "The original request was HTTPS, so there is not much point in looking further.");
             return;
         }
@@ -149,12 +149,12 @@ public class HttpOnlySiteScanRule extends AbstractHostPlugin {
             String path = newRequest.getRequestHeader().getURI().getPath();
             newRequest.getRequestHeader().setURI(new URI("https", null, host, 443, path));
         } catch (URIException e) {
-            log.error("Error creating HTTPS URL from HTTP URL:", e);
+            LOGGER.error("Error creating HTTPS URL from HTTP URL:", e);
             return;
         }
 
         if (isStop()) {
-            log.debug("Scan rule {} Stopping.", getName());
+            LOGGER.debug("Scan rule {} Stopping.", getName());
             return;
         }
 
@@ -162,7 +162,7 @@ public class HttpOnlySiteScanRule extends AbstractHostPlugin {
             int count = 0;
             while (count < REDIR_LIMIT) {
                 if (isStop()) {
-                    log.debug("Scan rule {} Stopping.", getName());
+                    LOGGER.debug("Scan rule {} Stopping.", getName());
                     return;
                 }
                 sendAndReceive(newRequest, false);
@@ -207,7 +207,7 @@ public class HttpOnlySiteScanRule extends AbstractHostPlugin {
             }
             return;
         } catch (IOException e) {
-            log.error("Request couldn't go through:", e);
+            LOGGER.error("Request couldn't go through:", e);
             return;
         }
     }

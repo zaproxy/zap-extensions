@@ -40,7 +40,7 @@ import org.zaproxy.zap.extension.api.ApiResponseElement;
 
 public class PlugNHackAPI extends ApiImplementor {
 
-    private static Logger logger = LogManager.getLogger(PlugNHackAPI.class);
+    private static final Logger LOGGER = LogManager.getLogger(PlugNHackAPI.class);
     private static final String PREFIX = "pnh";
     private static final String ACTION_MONITOR = "monitor";
     private static final String ACTION_ORACLE = "oracle";
@@ -105,7 +105,7 @@ public class PlugNHackAPI extends ApiImplementor {
 
             ApiResponse resp = this.extension.messageReceived(new ClientMessage(id, json));
             if (response != null) {
-                // logger.debug("Returning {}", response.toString(0));
+                // LOGGER.debug("Returning {}", response.toString(0));
                 response = resp;
             }
 
@@ -232,7 +232,7 @@ public class PlugNHackAPI extends ApiImplementor {
                 msg.setResponseBody(welcomePage);
 
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
 
             return msg;
@@ -256,7 +256,7 @@ public class PlugNHackAPI extends ApiImplementor {
                 msg.setResponseBody(manifest);
 
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
 
             return msg;
@@ -280,7 +280,7 @@ public class PlugNHackAPI extends ApiImplementor {
                 msg.setResponseBody(service);
 
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
 
             return msg;
@@ -311,7 +311,7 @@ public class PlugNHackAPI extends ApiImplementor {
                                 + "\r\n");
 
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
                 throw new ApiException(ApiException.Type.INTERNAL_ERROR);
 
             } finally {
@@ -367,7 +367,7 @@ public class PlugNHackAPI extends ApiImplementor {
             if ((RequestType.action.equals(type)
                             && (ACTION_MONITOR.equals(name) || ACTION_ORACLE.equals(name)))
                     || (RequestType.other.equals(type) && OTHER_MANIFEST.equals(name))) {
-                logger.debug("Adding CORS header for {}", origin);
+                LOGGER.debug("Adding CORS header for {}", origin);
                 msg.getResponseHeader().addHeader("Access-Control-Allow-Origin", origin);
             }
         }
@@ -384,7 +384,7 @@ public class PlugNHackAPI extends ApiImplementor {
             }
 
         } catch (URIException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw new ApiException(ApiException.Type.INTERNAL_ERROR);
         }
 
@@ -415,7 +415,7 @@ public class PlugNHackAPI extends ApiImplementor {
             return sb.toString();
 
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw new ApiException(ApiException.Type.INTERNAL_ERROR);
 
         } finally {
@@ -466,7 +466,7 @@ public class PlugNHackAPI extends ApiImplementor {
             System.out.println("Digest(in hex format):: " + sb.toString());
 
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw new ApiException(ApiException.Type.INTERNAL_ERROR);
 
         } finally {

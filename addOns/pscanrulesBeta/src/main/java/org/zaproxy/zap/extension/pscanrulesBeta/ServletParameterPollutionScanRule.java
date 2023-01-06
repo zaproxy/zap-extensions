@@ -49,7 +49,7 @@ public class ServletParameterPollutionScanRule extends PluginPassiveScanner {
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
                     CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
-    private static final Logger logger =
+    private static final Logger LOGGER =
             LogManager.getLogger(ServletParameterPollutionScanRule.class);
 
     @Override
@@ -68,7 +68,7 @@ public class ServletParameterPollutionScanRule extends PluginPassiveScanner {
 
         if (formElements != null && formElements.size() > 0) {
             // Loop through all of the FORM tags
-            logger.debug("Found {} forms", formElements.size());
+            LOGGER.debug("Found {} forms", formElements.size());
 
             // check for 'target' param
 

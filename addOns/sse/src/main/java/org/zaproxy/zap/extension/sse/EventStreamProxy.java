@@ -37,7 +37,7 @@ import org.zaproxy.zap.extension.sse.db.ServerSentEventStream;
 
 public class EventStreamProxy {
 
-    private static final Logger logger = LogManager.getLogger(EventStreamProxy.class);
+    private static final Logger LOGGER = LogManager.getLogger(EventStreamProxy.class);
 
     private static Comparator<EventStreamObserver> observersComparator;
 
@@ -90,7 +90,7 @@ public class EventStreamProxy {
             try {
                 Thread.sleep(5);
             } catch (InterruptedException e) {
-                logger.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
         }
         dataStreamObject.setHistoryId(message.getHistoryRef().getHistoryId());
@@ -104,7 +104,7 @@ public class EventStreamProxy {
 
     public void stop() {
         try {
-            logger.debug("Close Server-Sent Events stream #{}", dataStreamObject.getId());
+            LOGGER.debug("Close Server-Sent Events stream #{}", dataStreamObject.getId());
 
             listener.close(); // closes reader
             writer.close();
@@ -112,7 +112,7 @@ public class EventStreamProxy {
             notifyStateObservers(State.CLOSED);
             dataStreamObject.setEndTimestamp(Calendar.getInstance().getTimeInMillis());
         } catch (IOException e) {
-            logger.debug("An exception occurred while stopping the proxy:", e);
+            LOGGER.debug("An exception occurred while stopping the proxy:", e);
         }
         // TODO close thread also?
     }
@@ -196,7 +196,7 @@ public class EventStreamProxy {
         sse.setStreamId(dataStreamObject.getId());
         sse.finishData();
 
-        logger.debug("Processed Server-Sent Event {}", sse);
+        LOGGER.debug("Processed Server-Sent Event {}", sse);
 
         boolean doForward = notifyObservers(sse);
         if (doForward) {
@@ -212,7 +212,7 @@ public class EventStreamProxy {
             writer.write(sse.getRawEvent() + "\n\n");
             writer.flush();
         } catch (IOException e) {
-            logger.warn("Forwarding event {} was not possible due to: {}", sse, e.getMessage(), e);
+            LOGGER.warn("Forwarding event {} was not possible due to: {}", sse, e.getMessage(), e);
             stop();
         }
     }

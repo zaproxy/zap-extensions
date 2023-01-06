@@ -45,7 +45,7 @@ import org.zaproxy.zap.utils.Stats;
  */
 public class ExtensionAuthStats extends ExtensionAdaptor implements HttpSenderListener {
 
-    private static final Logger log = LogManager.getLogger(ExtensionAuthStats.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionAuthStats.class);
 
     @Override
     public void hook(ExtensionHook extensionHook) {
@@ -132,7 +132,7 @@ public class ExtensionAuthStats extends ExtensionAdaptor implements HttpSenderLi
                 }
             }
         } catch (URIException e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

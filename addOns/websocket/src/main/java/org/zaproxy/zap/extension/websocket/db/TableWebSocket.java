@@ -52,7 +52,7 @@ import org.zaproxy.zap.extension.websocket.ui.WebSocketMessagesPayloadFilter;
 
 /** Manages writing and reading WebSocket messages to the database. */
 public class TableWebSocket extends ParosAbstractTable {
-    private static final Logger logger = LogManager.getLogger(TableWebSocket.class);
+    private static final Logger LOGGER = LogManager.getLogger(TableWebSocket.class);
 
     private Set<Integer> channelIds;
     private LRUMap channelCache;
@@ -215,7 +215,7 @@ public class TableWebSocket extends ParosAbstractTable {
                     try {
                         psSelectChannelIds.close();
                     } catch (SQLException e) {
-                        logger.debug(e.getMessage(), e);
+                        LOGGER.debug(e.getMessage(), e);
                     }
                 }
             }
@@ -735,10 +735,10 @@ public class TableWebSocket extends ParosAbstractTable {
                         // proceed with insert
                         stmt = psInsertChannel;
                         addIdOnSuccess = true;
-                        logger.debug("insert channel: {}", channel);
+                        LOGGER.debug("insert channel: {}", channel);
                     }
 
-                    logger.debug(
+                    LOGGER.debug(
                             "url (length {}): {}", channel.getUrl().length(), channel.getUrl());
 
                     stmt.setString(1, channel.getHost());
@@ -771,7 +771,7 @@ public class TableWebSocket extends ParosAbstractTable {
                             // safely ignore this exception
                             // on shutdown, the history table is cleaned before
                             // WebSocket channels are closed and updated
-                            logger.debug(e.getMessage(), e);
+                            LOGGER.debug(e.getMessage(), e);
                         }
                     }
 
@@ -803,7 +803,7 @@ public class TableWebSocket extends ParosAbstractTable {
                                 "channel not inserted: " + message.getChannel().getId());
                     }
 
-                    logger.debug("insert message: {}", message);
+                    LOGGER.debug("insert message: {}", message);
 
                     psInsertMessage.setInt(1, message.getId());
                     psInsertMessage.setInt(2, message.getChannel().getId());

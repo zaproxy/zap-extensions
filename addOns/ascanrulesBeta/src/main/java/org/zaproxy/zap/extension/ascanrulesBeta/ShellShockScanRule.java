@@ -46,7 +46,7 @@ public class ShellShockScanRule extends AbstractAppParamPlugin {
                     CommonAlertTag.OWASP_2017_A09_VULN_COMP,
                     CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ);
     /** the logger object */
-    private static final Logger log = LogManager.getLogger(ShellShockScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(ShellShockScanRule.class);
 
     private final String attackHeader = HttpFieldsNames.X_POWERED_BY;
 
@@ -92,11 +92,11 @@ public class ShellShockScanRule extends AbstractAppParamPlugin {
         try {
             this.sleep = this.getConfig().getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, 5);
         } catch (ConversionException e) {
-            log.debug(
+            LOGGER.debug(
                     "Invalid value for 'rules.common.sleep': {}",
                     this.getConfig().getString(RuleConfigParam.RULE_COMMON_SLEEP_TIME));
         }
-        log.debug("Sleep set to {} seconds", sleep);
+        LOGGER.debug("Sleep set to {} seconds", sleep);
     }
 
     @Override
@@ -171,7 +171,7 @@ public class ShellShockScanRule extends AbstractAppParamPlugin {
             }
 
         } catch (Exception e) {
-            log.error("Error scanning a Host for ShellShock: {}", e.getMessage(), e);
+            LOGGER.error("Error scanning a Host for ShellShock: {}", e.getMessage(), e);
         }
     }
 

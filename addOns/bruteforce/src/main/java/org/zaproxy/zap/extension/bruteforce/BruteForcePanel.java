@@ -111,7 +111,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 
     private TableExportButton<HistoryReferencesTable> exportButton = null;
 
-    private static Logger log = LogManager.getLogger(BruteForcePanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(BruteForcePanel.class);
 
     /** @param bruteForceParam */
     public BruteForcePanel(ExtensionBruteForce extension, BruteForceParam bruteForceParam) {
@@ -567,7 +567,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
                 }
                 File file = selectedForcedBrowseFile.getFile();
                 if (!file.exists()) {
-                    log.error("No such file: {}", file.getAbsolutePath());
+                    LOGGER.error("No such file: {}", file.getAbsolutePath());
                     return;
                 }
 
@@ -653,7 +653,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
                                 .getPath();
                 startScan(dir, false);
             } catch (Exception e) {
-                log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }
@@ -671,7 +671,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
                                 .getPath();
                 startScan(dir, true);
             } catch (Exception e) {
-                log.error(e);
+                LOGGER.error(e);
             }
         }
     }
@@ -688,7 +688,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
         }
         File file = selectedForcedBrowseFile.getFile();
         if (!file.exists()) {
-            log.error("No such file: {}", file.getAbsolutePath());
+            LOGGER.error("No such file: {}", file.getAbsolutePath());
             return;
         }
 

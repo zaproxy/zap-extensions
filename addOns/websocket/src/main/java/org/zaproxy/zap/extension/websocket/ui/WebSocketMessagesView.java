@@ -44,7 +44,7 @@ public class WebSocketMessagesView implements Runnable {
 
     public static final String PANEL_NAME = "websocket.table";
 
-    private static final Logger logger = LogManager.getLogger(WebSocketMessagesView.class);
+    private static final Logger LOGGER = LogManager.getLogger(WebSocketMessagesView.class);
 
     protected JXTable view;
     protected WebSocketMessagesViewModel model;
@@ -230,7 +230,7 @@ public class WebSocketMessagesView implements Runnable {
 
             } catch (Exception e) {
                 // ZAP: Added logging.
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
 
             // wait some time to allow another selection event to be triggered

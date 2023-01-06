@@ -51,7 +51,7 @@ import org.zaproxy.zap.view.table.HistoryReferencesTable;
 @SuppressWarnings("serial")
 public class SpiderPanel extends AbstractPanel implements SpiderListener {
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = LogManager.getLogger(SpiderPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(SpiderPanel.class);
 
     private javax.swing.JScrollPane scrollLog = null;
     private javax.swing.JPanel AJAXSpiderPanel = null;
@@ -386,7 +386,7 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
         try {
             new Thread(runnable, "ZAP-AjaxSpider").start();
         } catch (Exception e) {
-            logger.error(e);
+            LOGGER.error(e);
         }
     }
 

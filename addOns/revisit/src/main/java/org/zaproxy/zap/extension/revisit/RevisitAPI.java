@@ -37,7 +37,7 @@ import org.zaproxy.zap.users.User;
 /** The API for manipulating {@link User Users}. */
 public class RevisitAPI extends ApiImplementor {
 
-    private static final Logger log = LogManager.getLogger(RevisitAPI.class);
+    private static final Logger LOGGER = LogManager.getLogger(RevisitAPI.class);
 
     private static final String PREFIX = "revisit";
 
@@ -77,7 +77,7 @@ public class RevisitAPI extends ApiImplementor {
 
     @Override
     public ApiResponse handleApiView(String name, JSONObject params) throws ApiException {
-        log.debug("handleApiView {} {}", name, params);
+        LOGGER.debug("handleApiView {} {}", name, params);
 
         switch (name) {
             case VIEW_REVISIT_LIST:
@@ -94,7 +94,7 @@ public class RevisitAPI extends ApiImplementor {
 
     @Override
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
-        log.debug("handleApiAction {} {}", name, params);
+        LOGGER.debug("handleApiAction {} {}", name, params);
 
         switch (name) {
             case ACTION_REVISIT_SITE_ON:

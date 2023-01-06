@@ -52,7 +52,7 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
                     CommonAlertTag.WSTG_V42_ERRH_01_ERR);
 
     private static final String debugErrorFile = "xml/debug-error-messages.txt";
-    private static final Logger logger =
+    private static final Logger LOGGER =
             LogManager.getLogger(InformationDisclosureDebugErrorsScanRule.class);
     private List<String> errors = null;
 
@@ -104,7 +104,7 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
         BufferedReader reader = null;
         File f = path.toFile();
         if (!f.exists()) {
-            logger.error("No such file: {}", f.getAbsolutePath());
+            LOGGER.error("No such file: {}", f.getAbsolutePath());
             return strings;
         }
         try {
@@ -116,13 +116,13 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
                 }
             }
         } catch (IOException e) {
-            logger.debug("Error on opening/reading debug error file. Error: {}", e.getMessage(), e);
+            LOGGER.debug("Error on opening/reading debug error file. Error: {}", e.getMessage(), e);
         } finally {
             if (reader != null) {
                 try {
                     reader.close();
                 } catch (IOException e) {
-                    logger.debug("Error on closing the file reader. Error: {}", e.getMessage(), e);
+                    LOGGER.debug("Error on closing the file reader. Error: {}", e.getMessage(), e);
                 }
             }
         }

@@ -42,13 +42,13 @@ public class RetrievedFromCacheScanRule extends PluginPassiveScanner {
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS);
 
-    private static final Logger logger = LogManager.getLogger(RetrievedFromCacheScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(RetrievedFromCacheScanRule.class);
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 
         try {
-            logger.debug(
+            LOGGER.debug(
                     "Checking URL {} to see if was served from a shared cache",
                     msg.getRequestHeader().getURI());
 
@@ -74,7 +74,7 @@ public class RetrievedFromCacheScanRule extends PluginPassiveScanner {
                         // strip off any leading space for the second and subsequent proxies
                         if (proxyServerDetails.startsWith(" "))
                             proxyServerDetails = proxyServerDetails.substring(1);
-                        logger.trace("Proxy HIT/MISS details [{}]", proxyServerDetails);
+                        LOGGER.trace("Proxy HIT/MISS details [{}]", proxyServerDetails);
                         String[] proxyServerDetailsArray = proxyServerDetails.split(" ", 3);
                         if (proxyServerDetailsArray.length >= 1) {
                             String hitormiss =
@@ -82,7 +82,7 @@ public class RetrievedFromCacheScanRule extends PluginPassiveScanner {
                             if (hitormiss.equals("HIT")) {
                                 // the response was served from cache, so raise it..
                                 String evidence = proxyServerDetails;
-                                logger.debug(
+                                LOGGER.debug(
                                         "{} was served from a cache, due to presence of a 'HIT' in the 'X-Cache' response header",
                                         msg.getRequestHeader().getURI());
                                 // could be from HTTP/1.0 or HTTP/1.1. We don't know which.
@@ -116,7 +116,7 @@ public class RetrievedFromCacheScanRule extends PluginPassiveScanner {
             List<String> ageHeaders = msg.getResponseHeader().getHeaderValues("Age");
             if (!ageHeaders.isEmpty()) {
                 for (String ageHeader : ageHeaders) {
-                    logger.trace("Validating Age header value [{}]", ageHeader);
+                    LOGGER.trace("Validating Age header value [{}]", ageHeader);
                     Long ageAsLong = null;
                     try {
                         ageAsLong = Long.parseLong(ageHeader);
@@ -125,7 +125,7 @@ public class RetrievedFromCacheScanRule extends PluginPassiveScanner {
                     }
                     if (ageAsLong != null && ageAsLong >= 0) {
                         String evidence = "Age: " + ageHeader;
-                        logger.debug(
+                        LOGGER.debug(
                                 "{} was served from a HTTP/1.1 cache, due to presence of a valid (non-negative decimal integer) 'Age' response header value",
                                 msg.getRequestHeader().getURI());
                         newAlert()
@@ -152,7 +152,7 @@ public class RetrievedFromCacheScanRule extends PluginPassiveScanner {
             }
 
         } catch (Exception e) {
-            logger.error("An error occurred while checking if a URL was served from a cache", e);
+            LOGGER.error("An error occurred while checking if a URL was served from a cache", e);
         }
     }
 

@@ -79,7 +79,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
     /** details of the vulnerability which we are attempting to find 45 = "Fingerprinting" */
     private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_45");
     /** the logger object */
-    private static final Logger log = LogManager.getLogger(InsecureHttpMethodScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(InsecureHttpMethodScanRule.class);
     /**
      * The set of methods that we know are unsafe. It's a combination of the 'default' HTTP methods
      * and the WEBDAV methods.
@@ -169,12 +169,12 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
             /*
              * //DEBUG only, to test the CONNECT method against a Squid
              * instance, which does not support OPTIONS.
-             * log.error("Setting the allowed methods to 'CONNECT'");
+             * LOGGER.error("Setting the allowed methods to 'CONNECT'");
              * allowedmethods = "CONNECT"; publicmethods = null;
              */
 
-            log.debug("allowedmethods: {}", allowedmethods);
-            log.debug("publicmethods: {}", publicmethods);
+            LOGGER.debug("allowedmethods: {}", allowedmethods);
+            LOGGER.debug("publicmethods: {}", publicmethods);
 
             AttackStrength attackStrength = getAttackStrength();
 
@@ -252,7 +252,8 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
                         continue;
                     }
 
-                    log.debug("The following enabled method is being checked: '{}'", enabledmethod);
+                    LOGGER.debug(
+                            "The following enabled method is being checked: '{}'", enabledmethod);
                     String insecureMethod = enabledmethod;
 
                     String evidence = null;
@@ -267,7 +268,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
                     if (threshold != AlertThreshold.LOW) {
                         // != Low threshold --> verify it
                         if (enabledmethod.equals(HttpRequestHeader.CONNECT)) {
-                            log.debug("Verifying a CONNECT");
+                            LOGGER.debug("Verifying a CONNECT");
                             // use a CONNECT method to establish a
                             // socket connection to a third party, via
                             // the server being tested
@@ -279,13 +280,13 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
 
                         } else if (enabledmethod.equals(HttpRequestHeader.TRACE)
                                 || enabledmethod.equals(HttpRequestHeader.TRACK)) {
-                            log.debug("Verifying a TRACE/TRACK");
+                            LOGGER.debug("Verifying a TRACE/TRACK");
                             testTraceOrTrack(enabledmethod);
                         } else if (INSECURE_METHODS.contains(enabledmethod)) {
                             testHttpMethod(enabledmethod);
 
                         } else {
-                            log.debug("Untested method: {}", enabledmethod);
+                            LOGGER.debug("Untested method: {}", enabledmethod);
                         }
 
                     } else {
@@ -305,7 +306,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
                     }
 
                     if (raiseAlert) {
-                        log.debug("Raising alert for Insecure HTTP Method");
+                        LOGGER.debug("Raising alert for Insecure HTTP Method");
 
                         newAlert()
                                 .setRisk(riskLevel)
@@ -326,7 +327,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
                 }
             }
         } catch (Exception e) {
-            log.error("Error scanning a Host for Insecure HTTP Methods: {}", e.getMessage(), e);
+            LOGGER.error("Error scanning a Host for Insecure HTTP Methods: {}", e.getMessage(), e);
         }
     }
 
@@ -429,7 +430,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
         try {
             sendAndReceive(connectMessage, false);
         } catch (IOException ex) {
-            log.debug(
+            LOGGER.debug(
                     "Could not establish a client connection to a third party using the CONNECT HTTP method",
                     ex);
             return;
@@ -441,7 +442,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
         }
 
         HttpResponseHeader responseHeader = connectMessage.getResponseHeader();
-        log.debug("The status line returned: {}", responseHeader.getPrimeHeader());
+        LOGGER.debug("The status line returned: {}", responseHeader.getPrimeHeader());
         handleConnectResponse(
                 thirdpartyHost,
                 thirdpartyPort,
@@ -472,7 +473,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
                 // for instance
                 // Remediation: Check the contents match the expected third
                 // party contents.
-                log.debug("Raw Socket established, in theory to {}", thirdpartyHost);
+                LOGGER.debug("Raw Socket established, in theory to {}", thirdpartyHost);
 
                 PrintWriter pw = new PrintWriter(os, false);
                 pw.write("GET http://" + thirdpartyHost + ":" + thirdpartyPort + "/ HTTP/1.1\n");
@@ -490,11 +491,11 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
                     bytesRead = is.read(buffer);
                 }
                 String response = new String(bos.toByteArray());
-                log.debug("Response is {} bytes: \n{}", totalBytesRead, response);
+                LOGGER.debug("Response is {} bytes: \n{}", totalBytesRead, response);
 
                 Matcher m = thirdPartyContentPattern.matcher(response);
                 if (m.matches()) {
-                    log.debug("Response matches expected third party pattern!");
+                    LOGGER.debug("Response matches expected third party pattern!");
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
                             .setName(
@@ -516,15 +517,15 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
                             .setMessage(this.getBaseMsg())
                             .raise();
                 } else {
-                    log.debug("Response does *not* match expected third party pattern");
+                    LOGGER.debug("Response does *not* match expected third party pattern");
                 }
 
             } else {
-                log.debug(
+                LOGGER.debug(
                         "Could not establish a socket connection to a third party using the CONNECT HTTP method: NULL socket returned, or non-200 response");
             }
         } catch (Exception e) {
-            log.debug(
+            LOGGER.debug(
                     "Could not establish a socket connection to a third party using the CONNECT HTTP method",
                     e);
         } finally {
@@ -560,7 +561,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
             // do not follow redirects. That might ruin our day.
             sendAndReceive(msg, false);
         } catch (IOException e) {
-            log.debug(e.getMessage(), e);
+            LOGGER.debug(e.getMessage(), e);
             return;
         }
 
@@ -576,8 +577,8 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
         enabledStatusCodes.add(HttpStatusCode.PAYMENT_REQUIRED);
         enabledStatusCodes.add(HttpStatusCode.FORBIDDEN);
 
-        log.debug("Request Method: {}", httpMethod);
-        log.debug("Response Code: {}", responseCode);
+        LOGGER.debug("Request Method: {}", httpMethod);
+        LOGGER.debug("Response Code: {}", responseCode);
 
         if (isPage200(msg) || responseCode == HttpStatusCode.CREATED) {
             evidence =

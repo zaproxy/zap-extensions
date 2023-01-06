@@ -50,7 +50,7 @@ public class XPoweredByHeaderInfoLeakScanRule extends PluginPassiveScanner {
                     CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED,
                     CommonAlertTag.WSTG_V42_INFO_08_FINGERPRINT_APP_FRAMEWORK);
 
-    private static final Logger logger =
+    private static final Logger LOGGER =
             LogManager.getLogger(XPoweredByHeaderInfoLeakScanRule.class);
 
     @Override
@@ -60,7 +60,7 @@ public class XPoweredByHeaderInfoLeakScanRule extends PluginPassiveScanner {
         if (isXPoweredByHeaderExist(msg)) {
             List<String> xpbHeaders = getXPoweredByHeaders(msg);
             raiseAlert(msg, id, xpbHeaders);
-            logger.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
+            LOGGER.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
         }
     }
 

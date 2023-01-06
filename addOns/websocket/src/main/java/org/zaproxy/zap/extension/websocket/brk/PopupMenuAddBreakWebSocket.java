@@ -35,7 +35,7 @@ public class PopupMenuAddBreakWebSocket extends ExtensionPopupMenuItem {
     private static final long serialVersionUID = 1L;
     private ExtensionBreak extension = null;
     private JTable tableWebSocket = null;
-    private static Logger log = LogManager.getLogger(PopupMenuAddBreakWebSocket.class);
+    private static final Logger LOGGER = LogManager.getLogger(PopupMenuAddBreakWebSocket.class);
 
     public PopupMenuAddBreakWebSocket(ExtensionBreak extension) {
         super(Constant.messages.getString("brk.add.popup"));
@@ -83,7 +83,7 @@ public class PopupMenuAddBreakWebSocket extends ExtensionPopupMenuItem {
                 }
 
             } catch (Exception e) {
-                log.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
             return true;
         }

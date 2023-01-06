@@ -57,7 +57,7 @@ import org.zaproxy.zest.core.v1.ZestStatement;
 public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript {
 
     private ZestScriptWrapper script = null;
-    private static final Logger logger = LogManager.getLogger(ZestSequenceRunner.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestSequenceRunner.class);
 
     private static final int SEQUENCE_HISTORY_TYPE = HistoryReference.TYPE_SEQUENCE_TEMPORARY;
 
@@ -93,7 +93,7 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
                     requests.add(scrMessage);
                 }
             } catch (Exception e) {
-                logger.debug(
+                LOGGER.debug(
                         "Exception occurred while fetching HttpMessages from sequence script: {}",
                         e.getMessage());
             }
@@ -123,7 +123,7 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
             msgOriginal.setRequestBody(reqBody);
             msgOriginal.getRequestHeader().setContentLength(msgOriginal.getRequestBody().length());
         } catch (Exception e) {
-            logger.debug(
+            LOGGER.debug(
                     "Error running Sequence script in 'runSequenceBefore' method : {}",
                     e.getMessage());
         }
@@ -182,7 +182,7 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
             run(scr, EMPTYPARAMS);
 
         } catch (Exception e) {
-            logger.debug(
+            LOGGER.debug(
                     "Error running Sequence script in 'runSequenceAfter' method : {}",
                     e.getMessage());
         }
@@ -241,7 +241,7 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
                 }
             }
         } catch (Exception e) {
-            logger.debug("Exception in ZestSequenceRunner isSameRequest: {}", e.getMessage());
+            LOGGER.debug("Exception in ZestSequenceRunner isSameRequest: {}", e.getMessage());
         }
         return false;
     }
@@ -255,7 +255,7 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
                 }
             }
         } catch (Exception e) {
-            logger.debug("Exception in getMatchingMessageFromScript: {}", e.getMessage());
+            LOGGER.debug("Exception in getMatchingMessageFromScript: {}", e.getMessage());
         }
         return null;
     }
@@ -312,7 +312,7 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
                     }
                 }
             } catch (Exception e) {
-                logger.error(
+                LOGGER.error(
                         "An exception occurred while scanning sequence directly: {}",
                         e.getMessage(),
                         e);
@@ -343,7 +343,7 @@ public class ZestSequenceRunner extends ZestZapRunner implements SequenceScript 
             getHistory().addHistory(ref);
             temp.setHistoryReference(ref);
         } catch (Exception e) {
-            logger.error(
+            LOGGER.error(
                     "An exception occurred while converting a HttpMessage to SiteNode: {}",
                     e.getMessage(),
                     e);

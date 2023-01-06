@@ -52,7 +52,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
     public static final String NAME = "ExtensionImportWSDL";
     public static final String STATS_ADDED_URLS = "soap.urls.added";
 
-    private static final Logger LOG = LogManager.getLogger(ExtensionImportWSDL.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionImportWSDL.class);
     private static final String THREAD_PREFIX = "ZAP-Import-WSDL-";
     private static final String SCRIPT_NAME = "SOAP Support.js";
 
@@ -101,7 +101,7 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
         try {
             addScript();
         } catch (IOException e) {
-            LOG.warn("Could not add SOAP Support script.");
+            LOGGER.warn("Could not add SOAP Support script.");
         }
     }
 
@@ -236,7 +236,8 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
         try {
             return ext.getEngineWrapper(engineName);
         } catch (InvalidParameterException e) {
-            LOG.warn("The {} engine was not found, script variant will not be added.", engineName);
+            LOGGER.warn(
+                    "The {} engine was not found, script variant will not be added.", engineName);
         }
         return null;
     }

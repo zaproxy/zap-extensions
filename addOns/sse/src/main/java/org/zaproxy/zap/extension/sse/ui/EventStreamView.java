@@ -45,7 +45,7 @@ public class EventStreamView implements Runnable {
 
     public static final String PANEL_NAME = "sse.table";
 
-    private static final Logger logger = LogManager.getLogger(EventStreamView.class);
+    private static final Logger LOGGER = LogManager.getLogger(EventStreamView.class);
 
     protected JXTable view;
     protected EventStreamViewModel model;
@@ -208,7 +208,7 @@ public class EventStreamView implements Runnable {
 
             } catch (Exception e) {
                 // ZAP: Added logging.
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
 
             // wait some time to allow another selection event to be triggered

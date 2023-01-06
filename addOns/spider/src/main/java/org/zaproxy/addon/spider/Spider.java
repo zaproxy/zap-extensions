@@ -93,7 +93,7 @@ public class Spider {
     private ExtensionSpider2 extension;
 
     /** The Constant log. */
-    private static final Logger log = LogManager.getLogger(Spider.class);
+    private static final Logger LOGGER = LogManager.getLogger(Spider.class);
 
     /** The HTTP sender used to effectively send the data. */
     private HttpSender httpSender;
@@ -151,7 +151,7 @@ public class Spider {
             Model model,
             Context scanContext) {
         super();
-        log.info("Spider initializing...");
+        LOGGER.info("Spider initializing...");
         this.id = id;
         this.spiderParam = spiderParam;
         this.model = model;
@@ -225,7 +225,7 @@ public class Spider {
             host = uri.getHost();
             defaultFetchFilter.addScopeRegex(host);
         } catch (URIException e) {
-            log.error("There was an error while adding seed value: {}", uri, e);
+            LOGGER.error("There was an error while adding seed value: {}", uri, e);
             return;
         }
         // Add the seed to the list -- it will be added to the task list only when the spider is
@@ -271,7 +271,7 @@ public class Spider {
         try {
             this.seedList.add(new Seed(new URI(seed, true), httpVersion));
         } catch (Exception e) {
-            log.warn("Error while creating [{}] seed: {}", fileName, seed, e);
+            LOGGER.warn("Error while creating [{}] seed: {}", fileName, seed, e);
         }
     }
 
@@ -339,7 +339,7 @@ public class Spider {
         try {
             this.seedList.add(new Seed(new URI(uri, true), httpVersion));
         } catch (Exception e) {
-            log.warn(
+            LOGGER.warn(
                     "Error while creating a seed URI for file [{}] from [{}] using [{}]:",
                     fileName,
                     baseUri,
@@ -381,7 +381,7 @@ public class Spider {
      * @param excludeList the new exclude list
      */
     public void setExcludeList(List<String> excludeList) {
-        log.debug("New Exclude list: {}", excludeList);
+        LOGGER.debug("New Exclude list: {}", excludeList);
         defaultFetchFilter.setExcludeRegexes(excludeList);
     }
 
@@ -446,18 +446,18 @@ public class Spider {
      */
     protected synchronized void submitTask(SpiderTask task) {
         if (isStopped()) {
-            log.debug("Submitting task skipped ({}) as the Spider process is stopped.", task);
+            LOGGER.debug("Submitting task skipped ({}) as the Spider process is stopped.", task);
             return;
         }
         if (isTerminated()) {
-            log.debug("Submitting task skipped ({}) as the Spider process is terminated.", task);
+            LOGGER.debug("Submitting task skipped ({}) as the Spider process is terminated.", task);
             return;
         }
         this.tasksTotalCount++;
         try {
             this.threadPool.execute(task);
         } catch (RejectedExecutionException e) {
-            log.debug(
+            LOGGER.debug(
                     "Submitted task was rejected ({}), spider state: [stopped={}, terminated={}].",
                     task,
                     isStopped(),
@@ -479,7 +479,7 @@ public class Spider {
     /** Starts the Spider crawling. */
     public void start() {
 
-        log.info("Starting spider...");
+        LOGGER.info("Starting spider...");
 
         this.timeStarted = System.currentTimeMillis();
 
@@ -488,14 +488,14 @@ public class Spider {
         // Check if seeds are available, otherwise the Spider will start, but will not have any
         // seeds and will not stop.
         if (seedList == null || seedList.isEmpty()) {
-            log.warn("No seeds available for the Spider. Cancelling scan...");
+            LOGGER.warn("No seeds available for the Spider. Cancelling scan...");
             notifyListenersSpiderComplete(false);
             notifyListenersSpiderProgress(100, 0, 0);
             return;
         }
 
         if (scanUser != null)
-            log.info(
+            LOGGER.info(
                     "Scan will be performed from the point of view of User: {}",
                     scanUser.getName());
 
@@ -521,7 +521,7 @@ public class Spider {
 
         // Add the seeds
         for (Seed seed : seedList) {
-            log.debug("Adding seed for spider: {}", seed);
+            LOGGER.debug("Adding seed for spider: {}", seed);
             controller.addSeed(seed.getUri(), HttpRequestHeader.GET, seed.getHttpVersion());
         }
         // Mark the process as completely initialized
@@ -546,7 +546,7 @@ public class Spider {
             for (FetchFilter filter : controller.getFetchFilters()) {
                 FetchStatus filterReason = filter.checkFilter(seed.getUri());
                 if (filterReason != FetchStatus.VALID) {
-                    log.debug("Seed: {} was filtered with reason: {}", seed, filterReason);
+                    LOGGER.debug("Seed: {} was filtered with reason: {}", seed, filterReason);
                     it.remove();
                     break;
                 }
@@ -560,7 +560,7 @@ public class Spider {
             return;
         }
         this.stopped = true;
-        log.info("Stopping spidering process by request.");
+        LOGGER.info("Stopping spidering process by request.");
 
         if (this.paused) {
             // Have to resume first or we get a deadlock
@@ -571,14 +571,14 @@ public class Spider {
         this.threadPool.shutdown();
         try {
             if (!this.threadPool.awaitTermination(2, TimeUnit.SECONDS)) {
-                log.warn(
+                LOGGER.warn(
                         "Failed to await for all spider threads to stop in the given time (2s)...");
                 for (Runnable task : this.threadPool.shutdownNow()) {
                     ((SpiderTask) task).cleanup();
                 }
             }
         } catch (InterruptedException ignore) {
-            log.warn("Interrupted while awaiting for all spider threads to stop...");
+            LOGGER.warn("Interrupted while awaiting for all spider threads to stop...");
         }
         httpSender = null;
 
@@ -596,7 +596,7 @@ public class Spider {
             return;
         }
 
-        log.info("Spidering process is complete. Shutting down...");
+        LOGGER.info("Spidering process is complete. Shutting down...");
         this.stopped = true;
         httpSender = null;
 
@@ -730,7 +730,7 @@ public class Spider {
             // Check to see if the scan has exceeded the specified maxDuration
             if (TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - this.timeStarted)
                     > this.spiderParam.getMaxDuration()) {
-                log.info(
+                LOGGER.info(
                         "Spidering process has exceeded maxDuration of {} minute(s)",
                         this.spiderParam.getMaxDuration());
                 this.complete();

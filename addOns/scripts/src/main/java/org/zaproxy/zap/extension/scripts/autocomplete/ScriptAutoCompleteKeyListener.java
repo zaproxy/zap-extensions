@@ -47,7 +47,7 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
     private String scriptType;
     private boolean enabled = true;
 
-    private static final Logger LOG = LogManager.getLogger(ScriptAutoCompleteKeyListener.class);
+    private static final Logger LOGGER = LogManager.getLogger(ScriptAutoCompleteKeyListener.class);
 
     public ScriptAutoCompleteKeyListener(JTextArea textInput) {
         this.textInput = textInput;
@@ -229,7 +229,7 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
                             // Do we have any mappings for this script type?
                             Map<String, String> map = this.typeToClassMaps.get(this.scriptType);
                             if (map == null) {
-                                LOG.debug(
+                                LOGGER.debug(
                                         "No autocomplete map for script type: {}", this.scriptType);
                             } else {
                                 // Try to match the text against a variable name
@@ -241,7 +241,7 @@ public class ScriptAutoCompleteKeyListener extends KeyAdapter {
                                                         .loadClass(className);
                                         this.showMenuForClass(c, p);
                                     } catch (ClassNotFoundException e1) {
-                                        LOG.error("Failed to find class {}", className, e1);
+                                        LOGGER.error("Failed to find class {}", className, e1);
                                     }
                                 }
                             }

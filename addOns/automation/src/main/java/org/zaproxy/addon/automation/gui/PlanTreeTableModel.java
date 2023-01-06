@@ -39,7 +39,7 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger LOG = LogManager.getLogger(PlanTreeTableModel.class);
+    private static final Logger LOGGER = LogManager.getLogger(PlanTreeTableModel.class);
 
     public PlanTreeTableModel(DefaultMutableTreeNode root) {
         super(root);
@@ -226,7 +226,7 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
                 default:
             }
         } else {
-            LOG.error(
+            LOGGER.error(
                     "Unexpected obj object {} value {} node {} column {}",
                     obj.getClass().getCanonicalName(),
                     obj,

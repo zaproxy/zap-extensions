@@ -35,7 +35,7 @@ import org.zaproxy.zap.network.HttpRequestBody;
 
 public class BoastEvent {
 
-    public static final Logger LOGGER = LogManager.getLogger(BoastEvent.class);
+    private static final Logger LOGGER = LogManager.getLogger(BoastEvent.class);
 
     private final String id;
     private final Instant time;

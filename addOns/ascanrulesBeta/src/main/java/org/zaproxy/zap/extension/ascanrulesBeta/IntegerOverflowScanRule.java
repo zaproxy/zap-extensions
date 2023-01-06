@@ -46,7 +46,7 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin {
                     CommonAlertTag.OWASP_2021_A03_INJECTION,
                     CommonAlertTag.OWASP_2017_A01_INJECTION);
 
-    private static final Logger log = LogManager.getLogger(IntegerOverflowScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(IntegerOverflowScanRule.class);
 
     @Override
     public int getId() {
@@ -187,7 +187,7 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin {
 
     private boolean checkStop() {
         if (this.isStop()) { // Check if the user stopped things
-            log.debug("Scan rule {} stopping.", getName());
+            LOGGER.debug("Scan rule {} stopping.", getName());
             return true; // Stop!
         }
         return false;
@@ -203,7 +203,7 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin {
         try {
             sendAndReceive(msg);
             if (isPage500(msg)) {
-                log.debug("Found Header");
+                LOGGER.debug("Found Header");
                 newAlert()
                         .setConfidence(Alert.CONFIDENCE_MEDIUM)
                         .setUri(this.getBaseMsg().getRequestHeader().getURI().toString())
@@ -216,7 +216,7 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin {
                 return true;
             }
         } catch (IOException e) {
-            log.debug(e.getMessage(), e);
+            LOGGER.debug(e.getMessage(), e);
         }
         return false;
     }

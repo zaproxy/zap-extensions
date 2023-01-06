@@ -35,7 +35,7 @@ import org.zaproxy.zap.extension.websocket.WebSocketProxy.State;
  */
 public class WebSocketStorage implements WebSocketObserver {
 
-    private static final Logger logger = LogManager.getLogger(WebSocketStorage.class);
+    private static final Logger LOGGER = LogManager.getLogger(WebSocketStorage.class);
 
     // determines when messages are stored in databases
     public static final int WEBSOCKET_OBSERVING_ORDER = 100;
@@ -59,7 +59,7 @@ public class WebSocketStorage implements WebSocketObserver {
             try {
                 table.insertMessage(message);
             } catch (DatabaseException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
 
@@ -84,10 +84,10 @@ public class WebSocketStorage implements WebSocketObserver {
                 if (table != null) {
                     table.insertOrUpdateChannel(proxy.getDTO());
                 } else if (!state.equals(State.CLOSED)) {
-                    logger.warn("Could not update state of WebSocket channel to '{}'!", state);
+                    LOGGER.warn("Could not update state of WebSocket channel to '{}'!", state);
                 }
             } catch (DatabaseException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         } else if (state.equals(State.EXCLUDED)) {
             // when proxy is excluded from ZAP, then messages are forwarded
@@ -95,7 +95,7 @@ public class WebSocketStorage implements WebSocketObserver {
             try {
                 table.purgeChannel(proxy.getChannelId());
             } catch (SQLException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }

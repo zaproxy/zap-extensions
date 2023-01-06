@@ -66,7 +66,7 @@ public class BruteForce extends Thread implements BruteForceListenner {
 
     private boolean onlyUnderDirectory;
 
-    private static Logger log = LogManager.getLogger(BruteForce.class);
+    private static final Logger LOGGER = LogManager.getLogger(BruteForce.class);
 
     public BruteForce(
             ScanTarget target,
@@ -83,7 +83,7 @@ public class BruteForce extends Thread implements BruteForceListenner {
         this.onlyUnderDirectory = false;
 
         this.tableModel = new BruteForceTableModel();
-        log.debug("BruteForce: {}/{} threads: {}", target.getURI(), directory, threads);
+        LOGGER.debug("BruteForce: {}/{} threads: {}", target.getURI(), directory, threads);
 
         manager = new DirBusterManager(new SimpleHttpClientImpl(), this);
 
@@ -146,11 +146,11 @@ public class BruteForce extends Thread implements BruteForceListenner {
             if (directory != null) {
                 startPoint = directory;
             }
-            log.debug("BruteForce: starting on {}{}", targetURL, startPoint);
+            LOGGER.debug("BruteForce: starting on {}{}", targetURL, startPoint);
 
             final String fileAbsolutePath = file.getAbsolutePath();
 
-            log.debug("BruteForce: file: {} recursive={}", fileAbsolutePath, recursive);
+            LOGGER.debug("BruteForce: file: {} recursive={}", fileAbsolutePath, recursive);
             manager.setupManager(
                     startPoint,
                     fileAbsolutePath,
@@ -200,14 +200,14 @@ public class BruteForce extends Thread implements BruteForceListenner {
                 }
             }
         } catch (MalformedURLException ex) {
-            log.error("Failed brute forcing site {}", target.getURI(), ex);
+            LOGGER.error("Failed brute forcing site {}", target.getURI(), ex);
         }
 
         if (this.listenner != null) {
             this.listenner.scanFinshed(target);
         }
         stopScan = true;
-        log.info("BruteForce: {} finished", target.getURI());
+        LOGGER.info("BruteForce: {} finished", target.getURI());
     }
 
     public void stopScan() {
@@ -311,7 +311,7 @@ public class BruteForce extends Thread implements BruteForceListenner {
                     });
 
         } catch (Exception e) {
-            log.error("Failed to analyse response from {}", url, e);
+            LOGGER.error("Failed to analyse response from {}", url, e);
         }
     }
 

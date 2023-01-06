@@ -58,7 +58,7 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
             Arrays.asList(NameValuePair.TYPE_QUERY_STRING, NameValuePair.TYPE_POST_DATA);
 
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_8");
-    private static Logger log = LogManager.getLogger(PersistentXssScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(PersistentXssScanRule.class);
     private int currentParamType;
 
     @Override
@@ -147,7 +147,7 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
         try {
             sendAndReceive(sourceMsg2);
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
 
         if (isStop()) {
@@ -158,7 +158,7 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
         try {
             sendAndReceive(sinkMsg2);
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
 
         if (isStop()) {
@@ -254,7 +254,7 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
                                     }
                                 }
                                 if (!attackWorked) {
-                                    log.debug(
+                                    LOGGER.debug(
                                             "Failed to find vuln in script attribute on {}",
                                             sourceMsg.getRequestHeader().getURI());
                                 }
@@ -288,7 +288,7 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
                                     }
                                 }
                                 if (!attackWorked) {
-                                    log.debug(
+                                    LOGGER.debug(
                                             "Failed to find vuln in url attribute on {}",
                                             sourceMsg.getRequestHeader().getURI());
                                 }
@@ -319,7 +319,7 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
                                     attackWorked = true;
                                 }
                                 if (!attackWorked) {
-                                    log.debug(
+                                    LOGGER.debug(
                                             "Failed to find vuln in tag with src attribute on {}",
                                             sourceMsg.getRequestHeader().getURI());
                                 }
@@ -353,7 +353,7 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
                                     attackWorked = true;
                                 }
                                 if (!attackWorked) {
-                                    log.debug(
+                                    LOGGER.debug(
                                             "Failed to find vuln with simple script attack {}",
                                             sourceMsg.getRequestHeader().getURI());
                                 }
@@ -387,7 +387,7 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
                                     attackWorked = true;
                                 }
                                 if (!attackWorked) {
-                                    log.debug(
+                                    LOGGER.debug(
                                             "Failed to find vuln in with simple onmounseover {}",
                                             sourceMsg.getRequestHeader().getURI());
                                 }
@@ -691,7 +691,7 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
                 }
             }
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

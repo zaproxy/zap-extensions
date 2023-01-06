@@ -39,7 +39,7 @@ public class PopupMenuExportContextUrls extends PopupMenuExportUrls {
     private static final String STATS_EXPORT_CONTEXT_URLS =
             ExtensionExim.STATS_PREFIX + "export.context.urls";
 
-    private static final Logger LOG = LogManager.getLogger(PopupMenuExportContextUrls.class);
+    private static final Logger LOGGER = LogManager.getLogger(PopupMenuExportContextUrls.class);
 
     public PopupMenuExportContextUrls(String menuItem, Extension extension) {
         super(menuItem, extension);
@@ -64,7 +64,7 @@ public class PopupMenuExportContextUrls extends PopupMenuExportUrls {
                     .getView()
                     .showWarningDialog(
                             Constant.messages.getString("exim.menu.export.popup.context.error"));
-            LOG.debug("No context selected, when trying to export URLs for a context.");
+            LOGGER.debug("No context selected, when trying to export URLs for a context.");
             return;
         }
 

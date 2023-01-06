@@ -59,7 +59,7 @@ public class BugTrackerGithub extends BugTracker {
     private BugTrackerGithubTableModel githubModel = null;
     private RaiseSemiAutoIssueDialog dialog = null;
 
-    private static final Logger log = LogManager.getLogger(BugTrackerGithub.class);
+    private static final Logger LOGGER = LogManager.getLogger(BugTrackerGithub.class);
 
     public BugTrackerGithub() {
         initializeConfigTable();
@@ -272,10 +272,10 @@ public class BugTrackerGithub extends BugTracker {
             GHRepository repository = github.getRepository(repo);
             collaborators = repository.getCollaboratorNames();
         } catch (ArrayIndexOutOfBoundsException e) {
-            log.debug(Constant.messages.getString("bugtracker.trackers.github.issue.msg.repo"));
+            LOGGER.debug(Constant.messages.getString("bugtracker.trackers.github.issue.msg.repo"));
         } catch (HttpException e) {
             String response = e.toString();
-            log.debug(response);
+            LOGGER.debug(response);
             if (response.contains("Unauthorized")) {
                 View.getSingleton()
                         .showWarningDialog(
@@ -310,11 +310,11 @@ public class BugTrackerGithub extends BugTracker {
             issue.create();
             return null;
         } catch (ArrayIndexOutOfBoundsException e) {
-            log.debug(e.toString());
+            LOGGER.debug(e.toString());
             return Constant.messages.getString("bugtracker.trackers.github.issue.msg.repo");
         } catch (HttpException e) {
             String response = e.toString();
-            log.debug(response);
+            LOGGER.debug(response);
             if (response.contains("Unauthorized")) {
                 return Constant.messages.getString("bugtracker.trackers.github.issue.msg.auth");
             } else {
@@ -337,11 +337,11 @@ public class BugTrackerGithub extends BugTracker {
                     raiseOnTracker(repo, title, body, labels, assignee, username, password);
             return response;
         } catch (FileNotFoundException e) {
-            log.debug(e.toString());
+            LOGGER.debug(e.toString());
             return Constant.messages.getString("bugtracker.trackers.github.issue.msg.repo");
         } catch (IOException e) {
             String response = e.toString();
-            log.debug(response);
+            LOGGER.debug(response);
             if (response.contains("missing_field")) {
                 return Constant.messages.getString("bugtracker.trackers.github.issue.msg.missing");
             } else if (response.contains("invalid")) {
@@ -393,11 +393,11 @@ public class BugTrackerGithub extends BugTracker {
                     raiseOnTracker(repo, title, body, labels, assignee, username, password);
             return response;
         } catch (FileNotFoundException e) {
-            log.debug(e.toString());
+            LOGGER.debug(e.toString());
             return Constant.messages.getString("bugtracker.trackers.github.issue.msg.repo");
         } catch (IOException e) {
             String response = e.toString();
-            log.debug(response);
+            LOGGER.debug(response);
             if (response.contains("missing_field")) {
                 return Constant.messages.getString("bugtracker.trackers.github.issue.msg.missing");
             } else if (response.contains("invalid")) {

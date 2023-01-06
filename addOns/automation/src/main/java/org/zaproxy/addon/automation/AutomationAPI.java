@@ -40,7 +40,7 @@ import org.zaproxy.zap.utils.ApiUtils;
 
 public class AutomationAPI extends ApiImplementor {
 
-    private static final Logger LOG = LogManager.getLogger(AutomationAPI.class);
+    private static final Logger LOGGER = LogManager.getLogger(AutomationAPI.class);
 
     private static final String PREFIX = "automation";
 
@@ -77,7 +77,7 @@ public class AutomationAPI extends ApiImplementor {
 
     @Override
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
-        LOG.debug("handleApiAction {} {}", name, params);
+        LOGGER.debug("handleApiAction {} {}", name, params);
 
         if (name.equals(ACTION_RUN_PLAN)) {
             try {
@@ -104,7 +104,7 @@ public class AutomationAPI extends ApiImplementor {
 
     @Override
     public ApiResponse handleApiView(String name, JSONObject params) throws ApiException {
-        LOG.debug("handleApiView {} {}", name, params);
+        LOGGER.debug("handleApiView {} {}", name, params);
 
         if (name.equals(VIEW_PLAN_PROGRESS)) {
             AutomationPlan plan = extension.getPlan(params.getInt(PARAM_PLAN_ID));

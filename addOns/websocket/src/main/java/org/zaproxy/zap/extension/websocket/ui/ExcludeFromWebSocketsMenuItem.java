@@ -39,7 +39,7 @@ import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 public class ExcludeFromWebSocketsMenuItem extends WebSocketMessagesPopupMenuItem {
     private static final long serialVersionUID = 2208451830578743381L;
 
-    private static final Logger logger = LogManager.getLogger(ExcludeFromWebSocketsMenuItem.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExcludeFromWebSocketsMenuItem.class);
 
     private ExtensionWebSocket extWs;
 
@@ -63,7 +63,7 @@ public class ExcludeFromWebSocketsMenuItem extends WebSocketMessagesPopupMenuIte
             try {
                 extWs.setChannelIgnoreList(ignoreList);
             } catch (WebSocketException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
             View.getSingleton()
                     .showSessionDialog(
@@ -112,7 +112,7 @@ public class ExcludeFromWebSocketsMenuItem extends WebSocketMessagesPopupMenuIte
                 return channels.get(0);
             }
         } catch (DatabaseException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
 
         return null;

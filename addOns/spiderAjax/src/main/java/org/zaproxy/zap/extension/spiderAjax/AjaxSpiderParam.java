@@ -34,7 +34,7 @@ import org.zaproxy.zap.extension.selenium.Browser;
 
 public class AjaxSpiderParam extends VersionedAbstractParam {
 
-    private static final Logger logger = LogManager.getLogger(AjaxSpiderParam.class);
+    private static final Logger LOGGER = LogManager.getLogger(AjaxSpiderParam.class);
 
     /**
      * The current version of the configurations. Used to keep track of configuration changes
@@ -223,7 +223,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
         try {
             Browser.getBrowserWithId(browserId);
         } catch (IllegalArgumentException e) {
-            logger.warn(
+            LOGGER.warn(
                     "Unknown browser [{}] using default [{}].", browserId, DEFAULT_BROWSER_ID, e);
             browserId = DEFAULT_BROWSER_ID;
         }
@@ -251,7 +251,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
                 }
             }
         } catch (ConversionException e) {
-            logger.error("Error while loading clickable elements: {}", e.getMessage(), e);
+            LOGGER.error("Error while loading clickable elements: {}", e.getMessage(), e);
             this.elems = new ArrayList<>(DEFAULT_ELEMS_NAMES.length);
             this.enabledElemsNames = new ArrayList<>(DEFAULT_ELEMS_NAMES.length);
         }
@@ -282,7 +282,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
                 }
             }
         } catch (ConversionException e) {
-            logger.error("Error while loading allowed resources: {}", e.getMessage(), e);
+            LOGGER.error("Error while loading allowed resources: {}", e.getMessage(), e);
             this.allowedResources = new ArrayList<>(DEFAULT_ALLOWED_RESOURCES);
         }
         confirmRemoveAllowedResource = getBoolean(CONFIRM_REMOVE_ALLOWED_RESOURCE, true);

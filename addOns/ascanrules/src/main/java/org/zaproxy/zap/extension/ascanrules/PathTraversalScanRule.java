@@ -182,7 +182,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
      */
     private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_33");
 
-    private static final Logger log = LogManager.getLogger(PathTraversalScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(PathTraversalScanRule.class);
 
     @Override
     public int getId() {
@@ -246,9 +246,8 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
             int localTraversalLength = 0;
             String extension = null;
             boolean includeNullByteInjectionPayload = false;
-            // DEBUG only
-            if (log.isDebugEnabled()) {
-                log.debug("Attacking at Attack Strength: {}", this.getAttackStrength());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Attacking at Attack Strength: {}", this.getAttackStrength());
             }
 
             switch (this.getAttackStrength()) {
@@ -295,7 +294,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
                     // Default to off
             }
 
-            log.debug(
+            LOGGER.debug(
                     "Checking [{}] [{}], parameter [{}] for Path Traversal to local files",
                     getBaseMsg().getRequestHeader().getMethod(),
                     getBaseMsg().getRequestHeader().getURI(),
@@ -462,7 +461,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
                         | UnknownHostException
                         | IllegalArgumentException
                         | URIException ex) {
-                    log.debug(
+                    LOGGER.debug(
                             "Caught {} {} when accessing: {}",
                             ex.getClass().getName(),
                             ex.getMessage(),
@@ -480,7 +479,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
                 // url file name may be empty, i.e. there is no file name for next check
                 if (!StringUtils.isEmpty(urlfilename) && (!isPage200(msg) || errorMatcher.find())) {
 
-                    log.debug(
+                    LOGGER.debug(
                             "It is possible to check for local file Path Traversal on the url filename on [{}] [{}], [{}]",
                             msg.getRequestHeader().getMethod(),
                             msg.getRequestHeader().getURI(),
@@ -508,7 +507,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
                                 | UnknownHostException
                                 | IllegalArgumentException
                                 | URIException ex) {
-                            log.debug(
+                            LOGGER.debug(
                                     "Caught {} {} when accessing: {}",
                                     ex.getClass().getName(),
                                     ex.getMessage(),
@@ -548,17 +547,17 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
             // but it would be foiled by simple input validation on "..", for instance.
 
         } catch (ZapSocketTimeoutException ste) {
-            log.warn(
+            LOGGER.warn(
                     "A timeout occurred while checking [{}] [{}], parameter [{}] for Path Traversal. The currently configured timeout is: {}",
                     msg.getRequestHeader().getMethod(),
                     msg.getRequestHeader().getURI(),
                     param,
                     ste.getTimeout());
 
-            log.debug("Caught {} {}", ste.getClass().getName(), ste.getMessage());
+            LOGGER.debug("Caught {} {}", ste.getClass().getName(), ste.getMessage());
 
         } catch (IOException e) {
-            log.warn(
+            LOGGER.warn(
                     "An error occurred while checking [{}] [{}], parameter [{}] for Path Traversal.Caught {} {}",
                     msg.getRequestHeader().getMethod(),
                     msg.getRequestHeader().getURI(),
@@ -581,7 +580,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
         HttpMessage msg = getNewMsg();
         setParameter(msg, param, newValue);
 
-        log.debug(
+        LOGGER.debug(
                 "Checking [{}] [{}], parameter [{}] for Windows Path Traversal (local file) with value [{}]",
                 msg.getRequestHeader().getMethod(),
                 msg.getRequestHeader().getURI(),
@@ -597,7 +596,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
                 | UnknownHostException
                 | IllegalArgumentException
                 | URIException ex) {
-            log.debug(
+            LOGGER.debug(
                     "Caught {} {} when accessing: {}",
                     ex.getClass().getName(),
                     ex.getMessage(),

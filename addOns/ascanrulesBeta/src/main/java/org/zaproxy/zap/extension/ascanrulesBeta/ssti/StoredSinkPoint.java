@@ -54,7 +54,7 @@ public class StoredSinkPoint implements SinkPoint {
     private final HttpMessage originalRequest;
 
     private static final int NOT_DEFINED_REQUEST_PENDING = -1;
-    private static final Logger LOG = LogManager.getLogger(StoredSinkPoint.class);
+    private static final Logger LOGGER = LogManager.getLogger(StoredSinkPoint.class);
 
     public StoredSinkPoint(HttpMessage originalSinkRequest, String payload) {
         originalRequest = originalSinkRequest;
@@ -70,7 +70,7 @@ public class StoredSinkPoint implements SinkPoint {
         try {
             httpSender.sendAndReceive(updatedRequest, false);
         } catch (IOException e) {
-            LOG.debug(e);
+            LOGGER.debug(e);
         }
         return getOriginalComparableResponse()
                 .compareWith(new ComparableResponse(updatedRequest, payload));
@@ -106,7 +106,7 @@ public class StoredSinkPoint implements SinkPoint {
         try {
             httpSender.sendAndReceive(updatedRequest, false);
         } catch (IOException e) {
-            LOG.debug(e);
+            LOGGER.debug(e);
         }
 
         return updatedRequest.getResponseBody().toString()
@@ -125,7 +125,7 @@ public class StoredSinkPoint implements SinkPoint {
         try {
             httpSender.sendAndReceive(referenceHTTPRequest, false);
         } catch (IOException e) {
-            LOG.debug(e);
+            LOGGER.debug(e);
         }
 
         similarityOfReference = NOT_DEFINED_REQUEST_PENDING;

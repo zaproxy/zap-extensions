@@ -79,7 +79,7 @@ public class SwaggerConverter implements Converter {
     /** The base key for internationalised messages. */
     private static final String BASE_KEY_I18N = "openapi.swaggerconverter.";
 
-    private static final Logger LOG = LogManager.getLogger(SwaggerConverter.class);
+    private static final Logger LOGGER = LogManager.getLogger(SwaggerConverter.class);
     private static final Pattern PATH_PART_PATTERN = Pattern.compile("\\{.*?}");
     private final UriBuilder targetUriBuilder;
     private final UriBuilder definitionUriBuilder;
@@ -225,7 +225,7 @@ public class SwaggerConverter implements Converter {
             }
 
             if (!operationsAdded) {
-                LOG.debug("Failed to find any operations for path={}", path);
+                LOGGER.debug("Failed to find any operations for path={}", path);
             }
         }
         return operations;
@@ -292,7 +292,7 @@ public class SwaggerConverter implements Converter {
         try {
             Files.delete(path);
         } catch (IOException e) {
-            LOG.debug("Failed to delete {}", path);
+            LOGGER.debug("Failed to delete {}", path);
         }
     }
 
@@ -304,7 +304,7 @@ public class SwaggerConverter implements Converter {
             String string = Yaml.mapper().writerWithDefaultPrettyPrinter().writeValueAsString(api);
             api = new OpenAPIV3Parser().readContents(string, null, options).getOpenAPI();
         } catch (JsonProcessingException e) {
-            LOG.warn(e.getMessage());
+            LOGGER.warn(e.getMessage());
             api = null;
         }
         return api;
@@ -327,7 +327,7 @@ public class SwaggerConverter implements Converter {
                     if (!definitionUriBuilder.isEmpty()) {
                         message += " Definition URL: " + definitionUriBuilder;
                     }
-                    LOG.warn(message, e);
+                    LOGGER.warn(message, e);
                 }
             }
 
@@ -404,7 +404,7 @@ public class SwaggerConverter implements Converter {
             try {
                 UriBuilder uriBuilder = UriBuilder.parse(url);
                 if (!hasSupportedScheme(uriBuilder)) {
-                    LOG.debug(
+                    LOGGER.debug(
                             "Ignoring server URL {} because of unsupported scheme: {}",
                             url,
                             uriBuilder.getScheme());
@@ -416,7 +416,7 @@ public class SwaggerConverter implements Converter {
 
                 urls.add(uriBuilder.merge(definitionUriBuilder));
             } catch (IllegalArgumentException e) {
-                LOG.warn("Failed to create server URL from: {}", url, e);
+                LOGGER.warn("Failed to create server URL from: {}", url, e);
             }
         }
         return urls;

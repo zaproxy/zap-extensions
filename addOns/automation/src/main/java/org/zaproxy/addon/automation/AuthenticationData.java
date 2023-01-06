@@ -76,7 +76,7 @@ public class AuthenticationData extends AutomationData {
     private Map<String, Object> parameters = new LinkedHashMap<>();
     private VerificationData verification;
 
-    private static final Logger LOG = LogManager.getLogger(AuthenticationData.class);
+    private static final Logger LOGGER = LogManager.getLogger(AuthenticationData.class);
 
     public AuthenticationData() {}
 
@@ -262,7 +262,7 @@ public class AuthenticationData extends AutomationData {
                                 scriptType.createAuthenticationMethod(context.getId());
 
                         if (sw == null) {
-                            LOG.error(
+                            LOGGER.error(
                                     "Error setting script authentication - failed to find script wrapper");
                             progress.error(
                                     Constant.messages.getString(
@@ -280,7 +280,7 @@ public class AuthenticationData extends AutomationData {
                                 scriptType.exportData(config, scriptMethod);
                                 scriptType.importData(config, scriptMethod);
                             } catch (ConfigurationException e) {
-                                LOG.error("Error setting script authentication", e);
+                                LOGGER.error("Error setting script authentication", e);
                                 progress.error(
                                         Constant.messages.getString(
                                                 "automation.error.unexpected.internal",

@@ -122,7 +122,7 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin {
         }
     }
 
-    private static final Logger LOG = LogManager.getLogger(XsltInjectionScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(XsltInjectionScanRule.class);
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A03_INJECTION,
@@ -165,7 +165,7 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin {
         for (String payload : checkType.getPayloads(getBaseMsg())) {
             try {
                 if (isStop() || requestsLimitReached()) { // stop before sending request
-                    LOG.debug("Scan rule {} stopping.", getName());
+                    LOGGER.debug("Scan rule {} stopping.", getName());
                     return true;
                 }
                 HttpMessage msg = sendRequest(param, payload);
@@ -194,7 +194,7 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin {
                     }
                 }
             } catch (Exception e) {
-                LOG.warn(
+                LOGGER.warn(
                         "An error occurred while checking [{}] [{}] for {}. Caught {} {}",
                         getBaseMsg().getRequestHeader().getMethod(),
                         getBaseMsg().getRequestHeader().getURI(),
@@ -221,7 +221,7 @@ public class XsltInjectionScanRule extends AbstractAppParamPlugin {
                     "<xsl:value-of select=\"document('%s')\"/>",
                     "http://" + msg.getRequestHeader().getURI().getHost() + ":22");
         } catch (URIException e) {
-            LOG.warn(
+            LOGGER.warn(
                     "An error occurred while getting Host for {}. Caught {} {}",
                     msg.getRequestHeader().getURI(),
                     e.getClass().getName(),

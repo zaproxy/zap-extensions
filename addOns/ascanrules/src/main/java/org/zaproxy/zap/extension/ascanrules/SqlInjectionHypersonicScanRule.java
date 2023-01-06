@@ -187,7 +187,7 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
                     CommonAlertTag.WSTG_V42_INPV_05_SQLI);
 
     /** for logging. */
-    private static Logger log = LogManager.getLogger(SqlInjectionHypersonicScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(SqlInjectionHypersonicScanRule.class);
 
     @Override
     public int getId() {
@@ -226,7 +226,7 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
 
     @Override
     public void init() {
-        log.debug("Initialising");
+        LOGGER.debug("Initialising");
         // set up what we are allowed to do, depending on the attack strength that was set.
         if (this.getAttackStrength() == AttackStrength.LOW) {
             doTimeBased = true;
@@ -254,11 +254,11 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
             this.sleepInMs =
                     this.getConfig().getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, 15) * 1000;
         } catch (ConversionException e) {
-            log.debug(
+            LOGGER.debug(
                     "Invalid value for 'rules.common.sleep': {}",
                     this.getConfig().getString(RuleConfigParam.RULE_COMMON_SLEEP_TIME));
         }
-        log.debug("Sleep set to {} milliseconds", sleepInMs);
+        LOGGER.debug("Sleep set to {} milliseconds", sleepInMs);
     }
 
     /**
@@ -276,12 +276,12 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
             } catch (java.net.SocketTimeoutException e) {
                 // to be expected occasionally, if the base query was one that contains some
                 // parameters exploiting time based SQL injection?
-                log.debug(
+                LOGGER.debug(
                         "The Base Time Check timed out on [{}] URL [{}]",
                         msgTimeBaseline.getRequestHeader().getMethod(),
                         msgTimeBaseline.getRequestHeader().getURI());
             } catch (SocketException ex) {
-                log.debug(
+                LOGGER.debug(
                         "Caught {} {} when accessing: {} for Base Time Check",
                         ex.getClass().getName(),
                         ex.getMessage(),
@@ -294,7 +294,7 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
             int countUnionBasedRequests = 0;
             int countTimeBasedRequests = 0;
 
-            log.debug(
+            LOGGER.debug(
                     "Scanning URL [{}] [{}], field [{}] with value [{}] for SQL Injection",
                     getBaseMsg().getRequestHeader().getMethod(),
                     getBaseMsg().getRequestHeader().getURI(),
@@ -322,13 +322,13 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
                 } catch (java.net.SocketTimeoutException e) {
                     // this is to be expected, if we start sending slow queries to the database.
                     // ignore it in this case.. and just get the time.
-                    log.debug(
+                    LOGGER.debug(
                             "The time check query timed out on [{}] URL [{}] on field: [{}]",
                             msgTimeBaseline.getRequestHeader().getMethod(),
                             msgTimeBaseline.getRequestHeader().getURI(),
                             paramName);
                 } catch (SocketException ex) {
-                    log.debug(
+                    LOGGER.debug(
                             "Caught {} {} when accessing: {} for time check query",
                             ex.getClass().getName(),
                             ex.getMessage(),
@@ -337,7 +337,7 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
                 }
                 long modifiedTimeUsed = msgAttack.getTimeElapsedMillis();
 
-                log.debug(
+                LOGGER.debug(
                         "Time Based SQL Injection test: [{}] on field: [{}] with value [{}] took {}ms, where the original took {}ms",
                         newTimeBasedInjectionValue,
                         paramName,
@@ -386,7 +386,7 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
                             .setMessage(msgAttack)
                             .raise();
 
-                    log.debug(
+                    LOGGER.debug(
                             "A likely Time Based SQL Injection Vulnerability has been found with [{}] URL [{}] on field: [{}]",
                             msgAttack.getRequestHeader().getMethod(),
                             msgAttack.getRequestHeader().getURI(),
@@ -399,7 +399,7 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
         } catch (Exception e) {
             // Do not try to internationalise this.. we need an error message in any event..
             // if it's in English, it's still better than not having it at all.
-            log.error(
+            LOGGER.error(
                     "An error occurred checking a url for Hypersonic SQL Injection vulnerabilities",
                     e);
         }

@@ -29,7 +29,7 @@ import org.apache.logging.log4j.Logger;
 
 public class ReportWriter {
 
-    private static final Logger log = LogManager.getLogger(ReportWriter.class);
+    private static final Logger LOGGER = LogManager.getLogger(ReportWriter.class);
 
     private final String fileToWriteTo;
     private final Manager manager;
@@ -158,7 +158,7 @@ public class ReportWriter {
             out.close();
 
         } catch (IOException ex) {
-            log.error(ex);
+            LOGGER.error(ex);
         }
     }
 

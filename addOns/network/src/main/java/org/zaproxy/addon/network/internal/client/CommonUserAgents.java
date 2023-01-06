@@ -38,7 +38,7 @@ public final class CommonUserAgents {
     private static final Map<String, String> SYSTEM_TO_USER_AGENT;
     private static final Map<String, String> USER_AGENT_TO_SYSTEM;
 
-    private static final Logger logger = LogManager.getLogger(CommonUserAgents.class);
+    private static final Logger LOGGER = LogManager.getLogger(CommonUserAgents.class);
 
     static {
         SYSTEM_TO_USER_AGENT = new HashMap<>();
@@ -55,7 +55,7 @@ public final class CommonUserAgents {
 
                 String[] array = line.split("\t");
                 if (array.length != 3) {
-                    logger.error("Unexpected format in line: {}", line);
+                    LOGGER.error("Unexpected format in line: {}", line);
                 } else {
                     SYSTEM_TO_USER_AGENT.put(array[2], array[1]);
                     USER_AGENT_TO_SYSTEM.put(array[1], array[2]);
@@ -63,7 +63,7 @@ public final class CommonUserAgents {
             }
 
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

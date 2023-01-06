@@ -83,7 +83,7 @@ public class TokenPanel extends AbstractPanel {
 
     private ScanStatus scanStatus = null;
 
-    private static Logger log = LogManager.getLogger(TokenPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(TokenPanel.class);
 
     public TokenPanel(ExtensionTokenGen extension, TokenParam tokenParam) {
         super();
@@ -367,7 +367,7 @@ public class TokenPanel extends AbstractPanel {
     }
 
     private void stopScan() {
-        log.debug("Stopping token generation");
+        LOGGER.debug("Stopping token generation");
         extension.stopTokenGeneration();
     }
 
@@ -393,7 +393,7 @@ public class TokenPanel extends AbstractPanel {
                 View.getSingleton()
                         .showWarningDialog(
                                 extension.getMessages().getString("tokengen.generate.load.error"));
-                log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }
@@ -425,17 +425,17 @@ public class TokenPanel extends AbstractPanel {
                 View.getSingleton()
                         .showWarningDialog(
                                 extension.getMessages().getString("tokengen.generate.save.error"));
-                log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }
 
     private void pauseScan() {
         if (getPauseScanButton().getModel().isSelected()) {
-            log.debug("Pausing token generation");
+            LOGGER.debug("Pausing token generation");
             extension.pauseTokenGeneration();
         } else {
-            log.debug("Resuming token generation");
+            LOGGER.debug("Resuming token generation");
             extension.resumeTokenGeneration();
         }
     }

@@ -90,7 +90,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
     private static final String HEADER_SPLITTING = "\n\r\n\r";
 
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_8");
-    private static Logger log = LogManager.getLogger(CrossSiteScriptingScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(CrossSiteScriptingScanRule.class);
     private int currentParamType;
 
     @Override
@@ -205,14 +205,14 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
         try {
             sendAndReceive(msg2);
         } catch (URIException e) {
-            log.debug("Failed to send HTTP message, cause: {}", e.getMessage());
+            LOGGER.debug("Failed to send HTTP message, cause: {}", e.getMessage());
             return null;
         } catch (UnknownHostException e) {
             // Not an error, just means we probably attacked the redirect
             // location
             return null;
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
 
         if (isStop()) {
@@ -296,7 +296,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                     return true;
                 }
             }
-            log.debug(
+            LOGGER.debug(
                     "Failed to find vuln in script attribute on {}",
                     msg.getRequestHeader().getURI());
 
@@ -321,7 +321,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                     return true;
                 }
             }
-            log.debug(
+            LOGGER.debug(
                     "Failed to find vuln in url attribute on {}", msg.getRequestHeader().getURI());
         }
         if (context.isInTagWithSrc()) {
@@ -348,7 +348,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                         .raise();
                 return true;
             }
-            log.debug(
+            LOGGER.debug(
                     "Failed to find vuln in tag with src attribute on {}",
                     msg.getRequestHeader().getURI());
         }
@@ -376,7 +376,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                         .raise();
                 return true;
             }
-            log.debug(
+            LOGGER.debug(
                     "Failed to find vuln with simple script attack {}",
                     msg.getRequestHeader().getURI());
             if (isStop()) {
@@ -408,7 +408,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                     .raise();
             return true;
         }
-        log.debug(
+        LOGGER.debug(
                 "Failed to find vuln in with simple onmounseover {}",
                 msg.getRequestHeader().getURI());
         return false;
@@ -759,7 +759,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
             try {
                 sendAndReceive(msg2);
             } catch (URIException e) {
-                log.debug("Failed to send HTTP message, cause: {}", e.getMessage());
+                LOGGER.debug("Failed to send HTTP message, cause: {}", e.getMessage());
                 return;
             } catch (UnknownHostException e) {
                 // Not an error, just means we probably attacked the redirect
@@ -790,7 +790,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                 try {
                     sendAndReceive(msg2);
                 } catch (URIException e) {
-                    log.debug("Failed to send HTTP message, cause: {}", e.getMessage());
+                    LOGGER.debug("Failed to send HTTP message, cause: {}", e.getMessage());
                     return;
                 } catch (UnknownHostException e) {
                     // Second eyecatcher failed for some reason, no need to
@@ -859,7 +859,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
             }
 
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

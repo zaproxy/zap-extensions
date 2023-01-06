@@ -24,7 +24,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class RegexTrust implements Trust {
-    private static final Logger LOG = LogManager.getLogger(RegexTrust.class);
+    private static final Logger LOGGER = LogManager.getLogger(RegexTrust.class);
 
     static final Pattern SIMPLE_URL_REGEX = Pattern.compile("https?://");
 
@@ -32,7 +32,7 @@ public class RegexTrust implements Trust {
 
     public RegexTrust(String regex) {
         if (SIMPLE_URL_REGEX.matcher(regex).find()) {
-            LOG.warn(
+            LOGGER.warn(
                     "Trusted Domains regex seems to contain a URL pattern not just a domain pattern: {}",
                     regex);
         }

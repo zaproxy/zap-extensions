@@ -77,7 +77,7 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
     private static final long serialVersionUID = 3717381205061196129L;
 
     private static final String PANEL_NAME = "AccessControlStatusPanel";
-    private static final Logger log = LogManager.getLogger(AccessControlStatusPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(AccessControlStatusPanel.class);
     private static final AccessControlResultsTableModel EMPTY_RESULTS_MODEL =
             new AccessControlResultsTableModel();
 
@@ -254,7 +254,7 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
                                     extension.generateAccessControlReport(
                                             getSelectedContext().getId(), targetFile);
                         } catch (ParserConfigurationException e1) {
-                            log.error("Failed to generate access control report:", e1);
+                            LOGGER.error("Failed to generate access control report:", e1);
                         }
                         // Check if the generation was OK
                         if (generatedFile == null) {
@@ -325,7 +325,7 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
 
     @Override
     protected void startScan(Context context) {
-        log.debug("Access Control start on Context: {}", context);
+        LOGGER.debug("Access Control start on Context: {}", context);
         extension.showScanOptionsDialog(context);
     }
 
@@ -359,7 +359,7 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
                     try {
                         displayMessageInHttpPanel(hRef.getHttpMessage());
                     } catch (HttpMalformedHeaderException | DatabaseException e) {
-                        log.error(e.getMessage(), e);
+                        LOGGER.error(e.getMessage(), e);
                     }
                 }
             }

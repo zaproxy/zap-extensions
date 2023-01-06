@@ -50,7 +50,7 @@ import org.zaproxy.zap.model.TechSet;
 public class LdapInjectionScanRule extends AbstractAppParamPlugin {
 
     /** for logging. */
-    private static Logger log = LogManager.getLogger(LdapInjectionScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(LdapInjectionScanRule.class);
 
     private static final String I18N_PREFIX = "ascanalpha.";
     // TODO: append "&;" to this string, once they do not incorrectly cause the Sites tab to grow an
@@ -152,7 +152,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
 
     @Override
     public void init() {
-        log.debug("Initialising");
+        LOGGER.debug("Initialising");
         // set up the match threshold percentages based on the alert threshold.
         // allow for the use of common libraries (etc.) in both pass/fail cases by skewing towards
         // the upper end of the range.
@@ -215,7 +215,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
         if (paramvalue == null) paramvalue = "";
 
         try {
-            log.debug(
+            LOGGER.debug(
                     "Scanning URL [{}] [{}], [{}] with value [{}] for LDAP Injection",
                     originalmsg.getRequestHeader().getMethod(),
                     originalmsg.getRequestHeader().getURI(),
@@ -245,7 +245,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
 
             // bale out if we were asked nicely
             if (isStop()) {
-                log.debug("Stopping the scan due to a user request");
+                LOGGER.debug("Stopping the scan due to a user request");
                 return;
             }
 
@@ -259,10 +259,10 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                     DiceMatcher.getMatchPercentage(
                             originalmsg.getResponseBody().toString(),
                             repeatMsg.getResponseBody().toString());
-            log.debug("Got percentage for repeat: {}", repeatMatch);
+            LOGGER.debug("Got percentage for repeat: {}", repeatMatch);
             if (repeatMatch < matchThreshold) {
                 // the URL is not stable, based on the threshold level set. bale.
-                log.debug(
+                LOGGER.debug(
                         "The output is not stable for the original URL. Re-playing it resulted in a match of {}%, compared to a threshold of {}%",
                         repeatMatch, matchThreshold);
                 return;
@@ -270,7 +270,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
 
             // bale out if we were asked nicely
             if (isStop()) {
-                log.debug("Stopping the scan due to a user request");
+                LOGGER.debug("Stopping the scan due to a user request");
                 return;
             }
 
@@ -279,7 +279,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
             // get a random parameter value the same length as the original!
             String randomparameterAttack =
                     RandomStringUtils.random(paramvalue.length(), RANDOM_PARAMETER_CHARS);
-            log.debug("The random parameter chosen was [{}]", randomparameterAttack);
+            LOGGER.debug("The random parameter chosen was [{}]", randomparameterAttack);
 
             HttpMessage randomParamMsg1 = getNewMsg();
             this.setParameter(randomParamMsg1, paramname, randomparameterAttack);
@@ -287,7 +287,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
 
             // bale out if we were asked nicely
             if (isStop()) {
-                log.debug("Stopping the scan due to a user request");
+                LOGGER.debug("Stopping the scan due to a user request");
                 return;
             }
 
@@ -299,12 +299,12 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                     DiceMatcher.getMatchPercentage(
                             randomParamMsg1.getResponseBody().toString(),
                             randomParamMsg2.getResponseBody().toString());
-            log.debug(
+            LOGGER.debug(
                     "Got percentage match for a random parameter (against another identical request): {}",
                     randomVersusRandomMatch);
             if (!(randomVersusRandomMatch > matchThreshold)) {
                 // the output for the random parameter is .
-                log.debug(
+                LOGGER.debug(
                         "The output for a random parameter is unstable. It resulted in a match of {}%, compared to a threshold of %{}",
                         randomVersusRandomMatch, matchThreshold);
                 return;
@@ -315,12 +315,12 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                     DiceMatcher.getMatchPercentage(
                             randomParamMsg1.getResponseBody().toString(),
                             originalmsg.getResponseBody().toString());
-            log.debug(
+            LOGGER.debug(
                     "Got percentage match for a random parameter against the original parameter: {}%, compared to a threshold of %{}",
                     randomVersusOriginalMatch, matchThreshold);
             if (randomVersusOriginalMatch > matchThreshold) {
                 // the output for the random parameter is .
-                log.debug(
+                LOGGER.debug(
                         "The output for a random parameter is too similar to the output for the original parameter. It resulted in a match of {}%, compared to a threshold of %{}",
                         randomVersusOriginalMatch, matchThreshold);
                 return;
@@ -328,7 +328,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
 
             // bale out if we were asked nicely
             if (isStop()) {
-                log.debug("Stopping the scan due to a user request");
+                LOGGER.debug("Stopping the scan due to a user request");
                 return;
             }
 
@@ -359,16 +359,16 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                         DiceMatcher.getMatchPercentage(
                                 appendTrueMsg.getResponseBody().toString(),
                                 originalmsg.getResponseBody().toString());
-                log.debug(
+                LOGGER.debug(
                         "Got percentage for append TRUE expression [{}] versus original: {}",
                         appendTrueAttack,
                         appendTrueVersusOriginalMatch);
                 if (appendTrueVersusOriginalMatch > this.matchThreshold) {
 
-                    log.debug(
+                    LOGGER.debug(
                             "{} seems to produce sufficiently equivalent results to the original",
                             appendTrueAttack);
-                    log.debug("We found an LDAP injection");
+                    LOGGER.debug("We found an LDAP injection");
 
                     String extraInfo =
                             Constant.messages.getString(
@@ -414,7 +414,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                 }
                 // bale out if we were asked nicely
                 if (isStop()) {
-                    log.debug("Stopping the scan due to a user request");
+                    LOGGER.debug("Stopping the scan due to a user request");
                     return;
                 }
             }
@@ -446,7 +446,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                                 paramLength / 2)); // if len == 10 => gets chars at 5- (ie, 5 chars)
                 String hopefullyTrueAttack = new String(temp);
 
-                log.debug(
+                LOGGER.debug(
                         "Trying for LDAP injection with the following '*' based attack: [{}], compared to the original value [{}]",
                         temp,
                         paramvalue);
@@ -459,16 +459,16 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                         DiceMatcher.getMatchPercentage(
                                 hopefullyTrueMsg.getResponseBody().toString(),
                                 originalmsg.getResponseBody().toString());
-                log.debug(
+                LOGGER.debug(
                         "Got percentage for hopefully TRUE expression [{}] versus original: {}",
                         hopefullyTrueAttack,
                         hopefullyTrueVersusOriginalMatch);
                 if (hopefullyTrueVersusOriginalMatch > this.matchThreshold) {
 
-                    log.debug(
+                    LOGGER.debug(
                             " {} seems to produce sufficiently equivalent results to the original",
                             hopefullyTrueAttack);
-                    log.debug("We found an LDAP injection");
+                    LOGGER.debug("We found an LDAP injection");
 
                     String extraInfo =
                             Constant.messages.getString(
@@ -513,7 +513,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                     return;
                 }
             } else {
-                log.debug(
+                LOGGER.debug(
                         "The parameter value [{}] is too short to try inserting wildcards, to find logically equivalent expressions",
                         paramvalue);
             }
@@ -525,17 +525,17 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
             // but that's a task for another day.
 
         } catch (UnknownHostException | URIException e) {
-            log.debug("Failed to send HTTP message, cause: {}", e.getMessage());
+            LOGGER.debug("Failed to send HTTP message, cause: {}", e.getMessage());
         } catch (Exception e) {
             // Do not try to internationalise this.. we need an error message in any event..
             // if it's in English, it's still better than not having it at all.
-            log.error("An error occurred checking a url for LDAP Injection issues", e);
+            LOGGER.error("An error occurred checking a url for LDAP Injection issues", e);
         }
     }
 
     private static void logBooleanInjection(
             HttpMessage msg, String parameterName, String attack, String falseAttack) {
-        if (!log.isDebugEnabled()) {
+        if (!LOGGER.isDebugEnabled()) {
             return;
         }
 
@@ -549,7 +549,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                         parameterName,
                         attack,
                         falseAttack);
-        log.debug(logMessage);
+        LOGGER.debug(logMessage);
     }
 
     /**
@@ -625,7 +625,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                         .setMessage(attackMessage)
                         .raise();
 
-                if (log.isDebugEnabled()) {
+                if (LOGGER.isDebugEnabled()) {
                     String logMessage =
                             MessageFormat.format(
                                     "A likely LDAP injection vulnerability has been found with [{0}] URL [{1}] "
@@ -637,7 +637,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                                     errorAttack,
                                     LDAP_ERRORS.get(errorPattern),
                                     errorPattern);
-                    log.debug(logMessage);
+                    LOGGER.debug(logMessage);
                 }
                 return true; // threw an alert
             }

@@ -45,7 +45,7 @@ public class Spring4ShellScanRule extends AbstractAppPlugin {
             "class.module.classLoader.DefaultAssertionStatus=nonsense";
     private static final String SAFE_PAYLOAD = "aaa=bbb";
 
-    private static final Logger LOG = LogManager.getLogger(Spring4ShellScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(Spring4ShellScanRule.class);
 
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
@@ -128,7 +128,7 @@ public class Spring4ShellScanRule extends AbstractAppPlugin {
                 }
             }
         } catch (Exception e) {
-            LOG.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
         }
         return false;
     }

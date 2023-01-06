@@ -63,7 +63,7 @@ public class BeanShellConsoleFrame extends AbstractFrame {
 
     private JPanel jPanel = null;
 
-    private static final Logger log = LogManager.getLogger(BeanShellConsoleFrame.class);
+    private static final Logger LOGGER = LogManager.getLogger(BeanShellConsoleFrame.class);
 
     /** @throws HeadlessException */
     public BeanShellConsoleFrame() throws HeadlessException {
@@ -133,7 +133,7 @@ public class BeanShellConsoleFrame extends AbstractFrame {
                     input.close();
                 }
             } catch (IOException e) {
-                log.debug(e.getMessage(), e);
+                LOGGER.debug(e.getMessage(), e);
             }
         }
 
@@ -152,7 +152,7 @@ public class BeanShellConsoleFrame extends AbstractFrame {
                     output.close();
                 }
             } catch (IOException e) {
-                log.debug(e.getMessage(), e);
+                LOGGER.debug(e.getMessage(), e);
             }
         }
     }
@@ -183,7 +183,7 @@ public class BeanShellConsoleFrame extends AbstractFrame {
                                 getBeanShellPanel().setSaved(true);
                                 currentScriptFile = fc.getSelectedFile();
                             } catch (IOException ex) {
-                                log.error(ex.getMessage(), ex);
+                                LOGGER.error(ex.getMessage(), ex);
                                 View.getSingleton()
                                         .showWarningDialog(
                                                 Constant.messages.getString(
@@ -209,7 +209,7 @@ public class BeanShellConsoleFrame extends AbstractFrame {
                                         currentScriptFile);
                                 getBeanShellPanel().setSaved(true);
                             } catch (IOException ex) {
-                                log.error(ex.getMessage(), ex);
+                                LOGGER.error(ex.getMessage(), ex);
                                 View.getSingleton()
                                         .showWarningDialog(
                                                 Constant.messages.getString(
@@ -229,7 +229,7 @@ public class BeanShellConsoleFrame extends AbstractFrame {
                                     getBeanShellPanel().setSaved(true);
                                     currentScriptFile = fc.getSelectedFile();
                                 } catch (IOException ex) {
-                                    log.error(ex.getMessage(), ex);
+                                    LOGGER.error(ex.getMessage(), ex);
                                     View.getSingleton()
                                             .showWarningDialog(
                                                     Constant.messages.getString(
@@ -260,7 +260,7 @@ public class BeanShellConsoleFrame extends AbstractFrame {
                                 getBeanShellPanel().setSaved(true);
                                 currentScriptFile = fc.getSelectedFile();
                             } catch (IOException ex) {
-                                log.error(ex.getMessage(), ex);
+                                LOGGER.error(ex.getMessage(), ex);
                                 View.getSingleton()
                                         .showWarningDialog(
                                                 Constant.messages.getString(
@@ -323,7 +323,7 @@ public class BeanShellConsoleFrame extends AbstractFrame {
                 getInterpreter().eval("import org.parosproxy.paros.db.*");
                 getInterpreter().eval("import org.parosproxy.paros.model.*;");
             } catch (EvalError e) {
-                log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
             new Thread(getInterpreter()).start();
             jPanel.add(getBeanShellPanel(), gbc);

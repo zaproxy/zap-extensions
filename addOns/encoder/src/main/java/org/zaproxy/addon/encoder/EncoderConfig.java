@@ -35,7 +35,7 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public class EncoderConfig {
 
-    private static final Logger logger = LogManager.getLogger(EncoderConfig.class);
+    private static final Logger LOGGER = LogManager.getLogger(EncoderConfig.class);
 
     private static final String TABS_KEY = "tabs";
     private static final String TAB_KEY = "tab";
@@ -73,13 +73,13 @@ public class EncoderConfig {
                     EncoderConfig.class.getResourceAsStream(DEFAULT_BUNDLED_CONFIG_FILE)) {
                 Files.copy(in, defaultConfig);
             } catch (IOException e) {
-                logger.warn("Failed to create the default configuration file.", e);
+                LOGGER.warn("Failed to create the default configuration file.", e);
 
                 try (InputStream in =
                         EncoderConfig.class.getResourceAsStream(DEFAULT_BUNDLED_CONFIG_FILE)) {
                     return loadConfig(new ZapXmlConfiguration(in));
                 } catch (IOException e1) {
-                    logger.error("Failed to load the default bundled configuration file.", e1);
+                    LOGGER.error("Failed to load the default bundled configuration file.", e1);
                 }
                 return new ArrayList<>();
             }

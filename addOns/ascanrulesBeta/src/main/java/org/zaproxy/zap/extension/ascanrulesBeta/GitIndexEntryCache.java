@@ -39,10 +39,10 @@ public class GitIndexEntryCache {
     private Map<URI, Map<URI, String>> gitIndexMap =
             Collections.synchronizedMap(new LRUMap(20)); // max: 20 Git index files (LRU)
 
-    private static Logger log = LogManager.getLogger(GitIndexEntryCache.class);
+    private static final Logger LOGGER = LogManager.getLogger(GitIndexEntryCache.class);
 
     private GitIndexEntryCache() {
-        log.debug("Initialising the Git Index Entry Cache");
+        LOGGER.debug("Initialising the Git Index Entry Cache");
     }
 
     public static synchronized GitIndexEntryCache getSingleton() {

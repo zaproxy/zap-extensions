@@ -38,7 +38,7 @@ import org.zaproxy.zap.network.HttpResponseBody;
 
 public class InteractshEvent {
 
-    public static final Logger LOGGER = LogManager.getLogger(InteractshEvent.class);
+    private static final Logger LOGGER = LogManager.getLogger(InteractshEvent.class);
     static final String EMAIL_FROM_HEADER = "Email-From";
 
     private final String protocol;

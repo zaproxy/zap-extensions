@@ -51,7 +51,7 @@ import org.zaproxy.zap.model.ValueGenerator;
 
 public class GraphQlGenerator {
 
-    private static final Logger LOG = LogManager.getLogger(GraphQlGenerator.class);
+    private static final Logger LOGGER = LogManager.getLogger(GraphQlGenerator.class);
     private final Requestor requestor;
     private final GraphQlParam param;
     private final GraphQLSchema schema;
@@ -277,7 +277,7 @@ public class GraphQlGenerator {
                             query.toString(), variables.toString(), param.getRequestMethod());
                 }
             } else if (getFirstLeafField(type) == null) {
-                LOG.warn(
+                LOGGER.warn(
                         "Potentially invalid query generated. Try enabling the Lenient Maximum Query Depth option.");
             }
         } else if (type instanceof GraphQLObjectType) {
@@ -288,7 +288,7 @@ public class GraphQlGenerator {
                 if (Thread.currentThread() instanceof ParserThread) {
                     ParserThread t = (ParserThread) Thread.currentThread();
                     if (!t.isRunning()) {
-                        LOG.debug("Stopping the GraphQL Generator.");
+                        LOGGER.debug("Stopping the GraphQL Generator.");
                         // Break out of recursion.
                         throw new InterruptedException();
                     }
@@ -473,7 +473,7 @@ public class GraphQlGenerator {
             }
             parentList = childrenList;
         }
-        LOG.warn(
+        LOGGER.warn(
                 "Potentially invalid query generated. Try increasing the Additional Query Depth value.");
         return "";
     }

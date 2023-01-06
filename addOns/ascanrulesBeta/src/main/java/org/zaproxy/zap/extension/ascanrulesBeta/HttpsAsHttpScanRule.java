@@ -50,7 +50,7 @@ public class HttpsAsHttpScanRule extends AbstractAppPlugin {
                     CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
                     CommonAlertTag.WSTG_V42_CRYP_03_CRYPTO_FAIL);
 
-    private static final Logger log = LogManager.getLogger(HttpsAsHttpScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(HttpsAsHttpScanRule.class);
 
     @Override
     public int getId() {
@@ -106,7 +106,7 @@ public class HttpsAsHttpScanRule extends AbstractAppPlugin {
     public void scan() {
 
         if (!getBaseMsg().getRequestHeader().isSecure()) { // Base request isn't HTTPS
-            log.debug(
+            LOGGER.debug(
                     "The original request was not HTTPS, so there is not much point in looking further.");
             return;
         }
@@ -114,36 +114,36 @@ public class HttpsAsHttpScanRule extends AbstractAppPlugin {
         int originalStatusCode = getBaseMsg().getResponseHeader().getStatusCode();
         boolean was404 = isPage404(getBaseMsg());
         if (was404) {
-            log.debug(
+            LOGGER.debug(
                     "The original request was not successfully completed (status = {}), so there is not much point in looking further.",
                     originalStatusCode);
-            log.debug("isPage404 returned: {}", was404);
+            LOGGER.debug("isPage404 returned: {}", was404);
             return;
         }
 
-        log.debug(
+        LOGGER.debug(
                 "Checking if {} is available via HTTP.", getBaseMsg().getRequestHeader().getURI());
 
         HttpMessage newRequest = getNewMsg();
 
         try {
             newRequest.getRequestHeader().setSecure(false); // https becomes http
-            log.debug("**{} ", newRequest.getRequestHeader().getURI());
+            LOGGER.debug("**{} ", newRequest.getRequestHeader().getURI());
         } catch (URIException e) {
-            log.error("Error creating HTTP URL from HTTPS URL:", e);
+            LOGGER.error("Error creating HTTP URL from HTTPS URL:", e);
             return;
         }
 
         // Check if the user stopped things. One request per URL so check before sending the request
         if (isStop()) {
-            log.debug("Scan rule {} stopping.", getName());
+            LOGGER.debug("Scan rule {} stopping.", getName());
             return;
         }
 
         try {
             sendAndReceive(newRequest, false);
         } catch (IOException e) {
-            log.error("Error scanning a request via HTTP when the original was HTTPS:", e);
+            LOGGER.error("Error scanning a request via HTTP when the original was HTTPS:", e);
             return;
         }
 

@@ -60,7 +60,7 @@ import org.zaproxy.zap.utils.XmlUtils;
 
 public class SAMLMessage {
 
-    protected static final Logger log = LogManager.getLogger(SAMLMessage.class);
+    protected static final Logger LOGGER = LogManager.getLogger(SAMLMessage.class);
     private boolean messageChanged;
     private HttpMessage httpMessage;
     private String samlMessageString;
@@ -169,7 +169,7 @@ public class SAMLMessage {
                     }
                 }
             } catch (XPathExpressionException e) {
-                log.warn("{} is not a valid XPath", attribute.getxPath(), e);
+                LOGGER.warn("{} is not a valid XPath", attribute.getxPath(), e);
             }
         }
     }
@@ -221,7 +221,7 @@ public class SAMLMessage {
                     }
                 }
             } catch (XPathExpressionException e) {
-                log.warn("{} is not a valid XPath", attribute.getxPath(), e);
+                LOGGER.warn("{} is not a valid XPath", attribute.getxPath(), e);
             }
         }
         if (SAMLConfiguration.getInstance().getXSWEnabled()) {
@@ -237,7 +237,7 @@ public class SAMLMessage {
                     }
                 }
             } catch (XPathExpressionException e) {
-                log.warn("'/Response//Signature' is not a valid XPath", e);
+                LOGGER.warn("'/Response//Signature' is not a valid XPath", e);
             }
         }
     }
@@ -326,11 +326,11 @@ public class SAMLMessage {
             httpMessage.setRequestBody(newParamBuilder.toString());
             httpMessage.getRequestHeader().setContentLength(newParamBuilder.length());
         } catch (UnsupportedEncodingException e) {
-            log.warn("Unsupported encoding.", e);
+            LOGGER.warn("Unsupported encoding.", e);
         } catch (URIException e) {
-            log.warn("Unsupported URI query", e);
+            LOGGER.warn("Unsupported URI query", e);
         } catch (SAMLException e) {
-            log.warn("saml message extraction failed", e);
+            LOGGER.warn("saml message extraction failed", e);
         }
         messageChanged = false; // the message is permanently modified, can't revert from here on
     }
@@ -387,7 +387,7 @@ public class SAMLMessage {
                 buildAttributeMap();
                 messageChanged = false;
             } catch (SAMLException ignored) {
-                log.warn(ignored);
+                LOGGER.warn(ignored);
             }
         }
     }
@@ -433,7 +433,7 @@ public class SAMLMessage {
             transformer.transform(xmlInput, xmlOutput);
             return xmlOutput.getWriter().toString();
         } catch (Exception e) {
-            log.warn("error in parsing saml message.", e);
+            LOGGER.warn("error in parsing saml message.", e);
             return samlMessageString;
         }
     }
@@ -455,7 +455,7 @@ public class SAMLMessage {
                 messageChanged = true;
             } catch (SAMLException e) {
                 this.samlMessageString = oldValue;
-                log.warn("Not a valid saml message", e);
+                LOGGER.warn("Not a valid saml message", e);
             }
         }
     }

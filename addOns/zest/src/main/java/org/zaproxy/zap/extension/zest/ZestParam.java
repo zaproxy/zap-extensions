@@ -85,7 +85,7 @@ public class ZestParam extends AbstractParam {
     private static final String INCLUDE_RESPONSES_KEY = DEFAULT_ZEST_KEY + ".incResponses";
 
     /** The Constant log. */
-    private static final Logger log = LogManager.getLogger(ZestParam.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestParam.class);
 
     /** The full list of headers that can be ignored. */
     private List<String> allHeaders = new ArrayList<>();
@@ -122,7 +122,7 @@ public class ZestParam extends AbstractParam {
             }
 
         } catch (ConversionException e) {
-            log.error("Error while parsing config file: {}", e.getMessage(), e);
+            LOGGER.error("Error while parsing config file: {}", e.getMessage(), e);
             // Use the defaults
             for (String header : DEFAULT_IGNORED_HEADERS) {
                 this.ignoredHeaders.add(header);

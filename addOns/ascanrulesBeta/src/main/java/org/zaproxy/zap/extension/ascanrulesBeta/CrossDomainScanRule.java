@@ -54,7 +54,7 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 public class CrossDomainScanRule extends AbstractHostPlugin {
 
     /** the logger object */
-    private static Logger log = LogManager.getLogger(CrossDomainScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(CrossDomainScanRule.class);
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanbeta.crossdomain.";
@@ -123,7 +123,7 @@ public class CrossDomainScanRule extends AbstractHostPlugin {
             docBuilder = docBuilderFactory.newDocumentBuilder();
             xpath = XPathFactory.newInstance().newXPath();
         } catch (ParserConfigurationException e) {
-            log.error("Failed to create document builder:", e);
+            LOGGER.error("Failed to create document builder:", e);
         }
     }
 
@@ -144,7 +144,7 @@ public class CrossDomainScanRule extends AbstractHostPlugin {
 
         } catch (Exception e) {
             // needed to catch exceptions from the "finally" statement
-            log.error(
+            LOGGER.error(
                     "Error scanning a node for Cross Domain misconfigurations: {}",
                     e.getMessage(),
                     e);
@@ -242,7 +242,7 @@ public class CrossDomainScanRule extends AbstractHostPlugin {
             }
         } catch (SAXException | IOException e) {
             // Could well be a 404 or equivalent
-            log.debug(
+            LOGGER.debug(
                     "An error occurred trying to parse {} as XML {}",
                     ADOBE_CROSS_DOMAIN_POLICY_FILE,
                     e);
@@ -289,7 +289,7 @@ public class CrossDomainScanRule extends AbstractHostPlugin {
                 String uri = exprAllowFromUriNodes.item(i).getNodeValue();
                 if (uri.equals("*")) {
                     // tut, tut, tut.
-                    log.debug(
+                    LOGGER.debug(
                             "Bingo! {}, at /access-policy/cross-domain-access/policy/allow-from/domain/@uri",
                             SILVERLIGHT_CROSS_DOMAIN_POLICY_FILE);
                     newAlert()
@@ -314,7 +314,7 @@ public class CrossDomainScanRule extends AbstractHostPlugin {
 
         } catch (SAXException | IOException e) {
             // Could well be a 404 or equivalent
-            log.debug(
+            LOGGER.debug(
                     "An error occurred trying to parse {} as XML {}",
                     SILVERLIGHT_CROSS_DOMAIN_POLICY_FILE,
                     e);

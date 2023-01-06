@@ -74,7 +74,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     private boolean enabled;
     private WappalyzerParam wappalyzerParam;
 
-    private static final Logger logger = LogManager.getLogger(ExtensionWappalyzer.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionWappalyzer.class);
 
     /** The dependencies of the extension. */
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
@@ -110,7 +110,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
                     .map(ExtensionWappalyzer::techToResourcePath)
                     .forEach(technologyFiles::add);
         } catch (IOException e) {
-            logger.error("Failed to enumerate Wappalyzer technologies:", e);
+            LOGGER.error("Failed to enumerate Wappalyzer technologies:", e);
         }
 
         WappalyzerData result =
@@ -283,7 +283,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         try {
             return lead + uri.getAuthority();
         } catch (URIException e) {
-            logger.debug("Unable to get authority from: {}", uri, e);
+            LOGGER.debug("Unable to get authority from: {}", uri, e);
             // Shouldn't happen, but sure fallback
             return ScanPanel.cleanSiteName(uri.toString(), true);
         }
@@ -294,7 +294,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
             site = normalizeSite(new URI(site == null ? "" : site, false));
         } catch (URIException ue) {
             // Shouldn't happen, but sure fallback
-            logger.debug(
+            LOGGER.debug(
                     "Falling back to 'CleanSiteName'. Failed to create URI from: {}", site, ue);
             site = ScanPanel.cleanSiteName(site, true);
         }
@@ -347,7 +347,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
             try {
                 EventQueue.invokeAndWait(() -> sessionChangedEventHandler(session));
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }

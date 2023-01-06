@@ -29,7 +29,7 @@ public class ValueGenerator {
 
     private org.zaproxy.zap.model.ValueGenerator coreValGen;
 
-    private static final Logger LOG = LogManager.getLogger(ValueGenerator.class);
+    private static final Logger LOGGER = LogManager.getLogger(ValueGenerator.class);
 
     public ValueGenerator(org.zaproxy.zap.model.ValueGenerator coreValGen) {
         this.coreValGen = coreValGen;
@@ -40,7 +40,7 @@ public class ValueGenerator {
             defaultValue = "";
         }
         if (coreValGen == null) {
-            LOG.debug(
+            LOGGER.debug(
                     "Name : {} Type : {} Default : {} Returning default value",
                     name,
                     type,
@@ -60,7 +60,7 @@ public class ValueGenerator {
                         Collections.<String, String>emptyMap(),
                         fieldAtts);
 
-        LOG.debug(
+        LOGGER.debug(
                 "Name : {} Type : {} Default : {} Returning : {}", name, type, defaultValue, value);
 
         return value;

@@ -37,7 +37,7 @@ import org.zaproxy.zap.view.ZapMenuItem;
 public class MenuImportHar extends ZapMenuItem {
 
     private static final long serialVersionUID = -9207224834749823025L;
-    private static final Logger LOG = LogManager.getLogger(MenuImportHar.class);
+    private static final Logger LOGGER = LogManager.getLogger(MenuImportHar.class);
     private static final String THREAD_PREFIX = "ZAP-Import-Har-";
 
     private int threadId = 1;
@@ -73,7 +73,7 @@ public class MenuImportHar extends ZapMenuItem {
                                             indeterminate = false;
                                         } catch (IOException e) {
                                             indeterminate = true;
-                                            LOG.warn(
+                                            LOGGER.warn(
                                                     "Couldn't count entries in: {}",
                                                     file.getAbsoluteFile());
                                         }

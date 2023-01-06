@@ -58,7 +58,7 @@ public class RequestorJob extends AutomationJob {
     private Parameters parameters = new Parameters();
     private Data data;
 
-    private static final Logger LOG = LogManager.getLogger(RequestorJob.class);
+    private static final Logger LOGGER = LogManager.getLogger(RequestorJob.class);
     private HttpSender httpSender = new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR);
 
     public RequestorJob() {
@@ -255,7 +255,7 @@ public class RequestorJob extends AutomationJob {
                     new HistoryReference(
                             Model.getSingleton().getSession(), HistoryReference.TYPE_ZAP_USER, msg);
         } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             return;
         }
 
@@ -266,7 +266,7 @@ public class RequestorJob extends AutomationJob {
                         Model.getSingleton().getSession().getSiteTree().addPath(historyRef, msg);
                     });
         } catch (Exception e) {
-            LOG.error("Could not add message to sites tree.", e);
+            LOGGER.error("Could not add message to sites tree.", e);
         }
     }
 

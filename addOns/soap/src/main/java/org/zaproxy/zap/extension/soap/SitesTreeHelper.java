@@ -29,7 +29,7 @@ import org.w3c.dom.NodeList;
 
 public class SitesTreeHelper {
 
-    private static final Logger LOG = LogManager.getLogger(SitesTreeHelper.class);
+    private static final Logger LOGGER = LogManager.getLogger(SitesTreeHelper.class);
 
     /**
      * Returns a node name based on the SOAP version and the operation name in the provided message.
@@ -59,7 +59,7 @@ public class SitesTreeHelper {
                             : " (v1.1)");
             return leafName.toString();
         } catch (SOAPException | IOException e) {
-            LOG.warn("Malformed SOAP Message.", e);
+            LOGGER.warn("Malformed SOAP Message.", e);
             return "";
         }
     }

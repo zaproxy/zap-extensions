@@ -44,7 +44,7 @@ public class ZestHttpSenderRunner extends ZestZapRunner implements HttpSenderScr
     private ExtensionZest extension = null;
     private HttpSenderScriptHelper helper = null;
 
-    private Logger logger = LogManager.getLogger(ZestHttpSenderRunner.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestHttpSenderRunner.class);
 
     public ZestHttpSenderRunner(
             ExtensionZest extension, ExtensionNetwork extensionNetwork, ZestScriptWrapper script) {
@@ -56,7 +56,7 @@ public class ZestHttpSenderRunner extends ZestZapRunner implements HttpSenderScr
     @Override
     public void sendingRequest(HttpMessage msg, int initiator, HttpSenderScriptHelper helper)
             throws ScriptException {
-        logger.debug("Zest sendingRequest script: {}", this.script.getName());
+        LOGGER.debug("Zest sendingRequest script: {}", this.script.getName());
         this.helper = helper;
         this.msg = msg;
         try {
@@ -92,7 +92,7 @@ public class ZestHttpSenderRunner extends ZestZapRunner implements HttpSenderScr
     @Override
     public void responseReceived(HttpMessage msg, int initiator, HttpSenderScriptHelper helper)
             throws ScriptException {
-        logger.debug("Zest responseReceived script: {}", this.script.getName());
+        LOGGER.debug("Zest responseReceived script: {}", this.script.getName());
         this.msg = msg;
         try {
             // Create the previous request so the script has something to run against
@@ -113,7 +113,7 @@ public class ZestHttpSenderRunner extends ZestZapRunner implements HttpSenderScr
             }
 
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return;
     }

@@ -45,7 +45,7 @@ public class PopupMenuExportUrls extends ExtensionPopupMenuItem {
     private static final long serialVersionUID = 1L;
     protected final Extension extension;
     private static final String HTML_EXT = ".html";
-    private static final Logger LOG = LogManager.getLogger(PopupMenuExportUrls.class);
+    private static final Logger LOGGER = LogManager.getLogger(PopupMenuExportUrls.class);
     private static final String STATS_EXPORT_URLS = ExtensionExim.STATS_PREFIX + "export.urls";
 
     /**
@@ -122,7 +122,7 @@ public class PopupMenuExportUrls extends ExtensionPopupMenuItem {
             }
 
         } catch (Exception e1) {
-            LOG.warn("An error occurred while writing the URLs:", e1);
+            LOGGER.warn("An error occurred while writing the URLs:", e1);
             extension
                     .getView()
                     .showWarningDialog(

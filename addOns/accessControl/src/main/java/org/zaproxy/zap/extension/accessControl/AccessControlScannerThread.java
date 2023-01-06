@@ -92,7 +92,7 @@ public class AccessControlScannerThread
         }
     }
 
-    private static final Logger log = LogManager.getLogger(AccessControlScannerThread.class);
+    private static final Logger LOGGER = LogManager.getLogger(AccessControlScannerThread.class);
 
     /** The HTTP sender used to effectively send the data. */
     private HttpSender httpSender;
@@ -133,9 +133,9 @@ public class AccessControlScannerThread
         try {
             notifyScanStarted();
             scanImpl();
-            log.debug("Access control scan successfully completed.");
+            LOGGER.debug("Access control scan successfully completed.");
         } catch (Exception e) {
-            log.error("An error occurred while scanning:", e);
+            LOGGER.error("An error occurred while scanning:", e);
         } finally {
             setScanProgress(getScanMaximumProgress());
             setRunningState(false);
@@ -150,7 +150,7 @@ public class AccessControlScannerThread
 
         // And set up the state accordingly
         this.setScanMaximumProgress(targetNodes.size() + 1);
-        log.debug(
+        LOGGER.debug(
                 "Starting Access Control scan for {} URLs and {} users",
                 targetNodes.size(),
                 targetUsers.size());
@@ -174,7 +174,7 @@ public class AccessControlScannerThread
             try {
                 originalMessage = sn.getHistoryReference().getHttpMessage();
             } catch (Exception ex) {
-                log.error(
+                LOGGER.error(
                         "An error has occurred while loading history reference message: {}",
                         ex.getMessage(),
                         ex);
@@ -207,7 +207,7 @@ public class AccessControlScannerThread
     }
 
     private void attackNode(SiteTreeNode stn, HttpMessage originalMessage, User user) {
-        log.debug(
+        LOGGER.debug(
                 "Attacking node: '{}' as user: {}",
                 originalMessage.getRequestHeader().getURI(),
                 user != null ? user.getName() : "unauthenticated");
@@ -218,7 +218,7 @@ public class AccessControlScannerThread
         try {
             httpSender.sendAndReceive(scanMessage);
         } catch (IOException e) {
-            log.error(
+            LOGGER.error(
                     "Error occurred while sending/receiving access control testing message to: {}",
                     scanMessage.getRequestHeader().getURI(),
                     e);
@@ -237,7 +237,7 @@ public class AccessControlScannerThread
                             HistoryReference.TYPE_ACCESS_CONTROL,
                             scanMessage);
         } catch (HttpMalformedHeaderException | DatabaseException e) {
-            log.error(
+            LOGGER.error(
                     "An error has occurred while saving AccessControl testing message in HistoryReference: {}",
                     e.getMessage(),
                     e);

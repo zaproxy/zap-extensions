@@ -63,7 +63,7 @@ public class CustomPayloadsMultipleOptionsTablePanel
             Constant.messages.getString(
                     "custompayloads.options.dialog.addMultiplePayload.addPayload.button.name");
 
-    private static final Logger LOG =
+    private static final Logger LOGGER =
             LogManager.getLogger(CustomPayloadsMultipleOptionsTablePanel.class);
 
     private JButton resetButton;
@@ -145,7 +145,7 @@ public class CustomPayloadsMultipleOptionsTablePanel
                         tableModel.addToTable(payloads);
 
                     } catch (IOException ex) {
-                        LOG.warn(ex.getMessage(), ex);
+                        LOGGER.warn(ex.getMessage(), ex);
                         JOptionPane.showMessageDialog(
                                 this,
                                 Constant.messages.getString(

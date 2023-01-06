@@ -71,7 +71,7 @@ import org.zaproxy.zap.view.widgets.ContextPanelUsersSelectComboBox;
 @SuppressWarnings("serial")
 public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 
-    private static final Logger log = LogManager.getLogger(ContextAccessControlPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(ContextAccessControlPanel.class);
     private static final long serialVersionUID = -7569788230643264454L;
 
     private static final String PANEL_NAME =
@@ -157,7 +157,7 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
     }
 
     private ContextUserAccessRulesModel getUserAccessRulesModel(int userId) {
-        log.debug("Getting user model for: {}", userId);
+        LOGGER.debug("Getting user model for: {}", userId);
         ContextUserAccessRulesModel model = userModels.get(userId);
         if (model == null) {
             model = new ContextUserAccessRulesModel(userId, internalRulesManager);
@@ -205,7 +205,7 @@ public class ContextAccessControlPanel extends AbstractContextPropertiesPanel {
 
     @Override
     public void initContextData(Session session, Context uiSharedContext) {
-        log.debug("Initing panel for context: {}", uiSharedContext.getId());
+        LOGGER.debug("Initing panel for context: {}", uiSharedContext.getId());
 
         // Clone the Access Rules Manager so we can support canceling any changes. If the internal
         // manager already existed, just copy the rules, otherwise create a cloned one.

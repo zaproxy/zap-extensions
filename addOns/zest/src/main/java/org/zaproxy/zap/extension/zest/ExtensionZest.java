@@ -106,7 +106,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     public static final String HTTP_HEADER_X_SECURITY_PROXY = "X-Security-Proxy";
     public static final String VALUE_RECORD = "record";
 
-    private static final Logger logger = LogManager.getLogger(ExtensionZest.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionZest.class);
 
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
             Collections.unmodifiableList(
@@ -257,7 +257,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
             } catch (Exception e) {
                 // Its an older version, so just dont try to use it
-                logger.debug(e);
+                LOGGER.debug(e);
             }
         }
     }
@@ -532,7 +532,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     }
 
     public ScriptNode add(ZestScriptWrapper script, boolean display) {
-        logger.debug("add script {}", script.getName());
+        LOGGER.debug("add script {}", script.getName());
         ScriptNode node = this.getExtScript().addScript(script, display);
         this.display(script, node, true);
         if (script.isRecording()) {
@@ -555,7 +555,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         if (node == null) {
             return;
         }
-        logger.debug("Display node={} expand={}", node.getNodeName(), expand);
+        LOGGER.debug("Display node={} expand={}", node.getNodeName(), expand);
         if (View.isInitialised() && this.getExtScript().getScriptUI() != null) {
             this.getExtScript()
                     .getScriptUI()
@@ -568,7 +568,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         if (node == null) {
             return;
         }
-        logger.debug("Updated node={}", node.getNodeName());
+        LOGGER.debug("Updated node={}", node.getNodeName());
         this.getZestTreeModel().update(node);
         ZestScriptWrapper sw = this.getZestTreeModel().getScriptWrapper(node);
         sw.incModCount();
@@ -631,20 +631,20 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         try {
             this.addToParent(parent, sn.getHistoryReference().getHttpMessage(), prefix);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
     public void addToParent(ScriptNode parent, HttpMessage msg, String prefix) {
         if (parent == null) {
             // They're gone for the 'new script' option...
-            logger.debug("addToParent parent=null msg={}", msg.getRequestHeader().getURI());
+            LOGGER.debug("addToParent parent=null msg={}", msg.getRequestHeader().getURI());
             this.dialogManager.showZestEditScriptDialog(null, null, prefix, true);
             if (msg != null) {
                 this.dialogManager.addDeferredMessage(msg);
             }
         } else {
-            logger.debug(
+            LOGGER.debug(
                     "addToParent parent={} msg={}",
                     parent.getNodeName(),
                     msg.getRequestHeader().getURI());
@@ -695,7 +695,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                     for (AntiCsrfToken acsrf : acsrfTokens) {
                         String var = acsrfTokenToVar.get(acsrf.getValue());
                         if (var != null) {
-                            logger.debug(
+                            LOGGER.debug(
                                     "Replacing ACSRF value {} with variable {}",
                                     acsrf.getValue(),
                                     var);
@@ -729,7 +729,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                         fd.setFieldName(acsrf.getName());
                         // Record mapping of value to variable name for later
                         // replacement
-                        logger.debug(
+                        LOGGER.debug(
                                 "Recording ACSRF value {} against variable {}",
                                 acsrf.getValue(),
                                 zafv.getVariableName());
@@ -743,7 +743,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                 this.display(reqNode, false);
 
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }
@@ -804,7 +804,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     }
 
     public final ScriptNode addToParent(ScriptNode parent, ZestExpression newExp) {
-        logger.debug("addToParent parent={} new={}", parent.getNodeName(), newExp);
+        LOGGER.debug("addToParent parent={} new={}", parent.getNodeName(), newExp);
         ScriptNode node;
         ZestElement parentZe = ZestZapUtils.getElement(parent);
         if (parentZe instanceof ZestConditional) {
@@ -839,7 +839,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
     public final ScriptNode addToParent(
             ScriptNode parent, ZestStatement newChild, boolean display) {
-        logger.debug(
+        LOGGER.debug(
                 "addToParent parent={} new={}", parent.getNodeName(), newChild.getElementType());
         ScriptNode node;
         ZestElement parentElement = ZestZapUtils.getElement(parent);
@@ -881,7 +881,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             ScriptNode childNode,
             ZestStatement existingChild,
             ZestStatement newChild) {
-        logger.debug(
+        LOGGER.debug(
                 "addAfterRequest parent={} existing={} new={}",
                 parent.getNodeName(),
                 existingChild.getElementType(),
@@ -932,7 +932,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             ScriptNode childNode,
             ZestStatement existingChild,
             ZestStatement newChild) {
-        logger.debug(
+        LOGGER.debug(
                 "addAfterRequest parent={} existing={} new={}",
                 parent.getNodeName(),
                 existingChild.getElementType(),
@@ -997,7 +997,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                     this.getZestResultsPanel().getModel().fireTableRowsUpdated(row, row);
                 }
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }
@@ -1048,7 +1048,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             next = (ScriptNode) next.getNextSibling();
         }
         if (next == null) {
-            logger.error("Can't move node down {}", node.getNodeName());
+            LOGGER.error("Can't move node down {}", node.getNodeName());
             return;
         }
         if (ZestZapUtils.getElement(node) instanceof ZestScript) {
@@ -1209,7 +1209,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                                 try {
                                     addToParent(getRecordingNode(), msg, null);
                                 } catch (Exception e) {
-                                    logger.error(e.getMessage(), e);
+                                    LOGGER.error(e.getMessage(), e);
                                 }
                             });
 
@@ -1230,7 +1230,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                                 try {
                                     addToParent(node, msg, null);
                                 } catch (Exception e) {
-                                    logger.error(e.getMessage(), e);
+                                    LOGGER.error(e.getMessage(), e);
                                 }
                             });
                 }
@@ -1272,7 +1272,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             ScriptNode beforeChild,
             ScriptNode afterChild) {
         if (cnpNodes != null && cnpNodes.size() > 0) {
-            logger.debug(
+            LOGGER.debug(
                     "pasteToNode parent={} num children={} cut={} before={} after = {}",
                     parent.getNodeName(),
                     cnpNodes.size(),
@@ -1408,7 +1408,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
             View.getSingleton().displayMessage(lastSelectedMessage);
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -1464,7 +1464,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                         try {
                             addToParent(getRecordingNode(), launch);
                         } catch (Exception e) {
-                            logger.error(e.getMessage(), e);
+                            LOGGER.error(e.getMessage(), e);
                         }
                     });
         }
@@ -1480,7 +1480,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                         try {
                             addToParent(getRecordingNode(), winHandle);
                         } catch (Exception e) {
-                            logger.error(e.getMessage(), e);
+                            LOGGER.error(e.getMessage(), e);
                         }
                     });
         }
@@ -1556,7 +1556,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
                 if (key.length() > 1) {
                     // Ignore all 'control' keys, at least initially
-                    logger.debug("Client recording, ignoring {}", key);
+                    LOGGER.debug("Client recording, ignoring {}", key);
                 } else {
                     if (getRecordingNode().getChildCount() > 0) {
                         // We get key presses one at a time - try to combine them up where possible
@@ -1587,7 +1587,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                 }
             }
         } catch (Exception e1) {
-            logger.error(e1.getMessage(), e1);
+            LOGGER.error(e1.getMessage(), e1);
         }
 
         if (stmt != null) {
@@ -1598,7 +1598,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                         try {
                             addToParent(clientRecordingNode, stmtFinal, false);
                         } catch (Exception e) {
-                            logger.error(e.getMessage(), e);
+                            LOGGER.error(e.getMessage(), e);
                         }
                     });
         }
@@ -1609,7 +1609,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         ScriptEngineWrapper ewrap =
                 this.getExtScript().getEngineWrapper(ZestScriptEngineFactory.NAME);
         if (ewrap == null) {
-            logger.error("Failed to find engine Mozilla Zest");
+            LOGGER.error("Failed to find engine Mozilla Zest");
         } else if (script instanceof ZestScriptWrapper) {
             this.getZestScriptEngineFactory()
                     .setRunner(
@@ -1649,7 +1649,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             ScriptNode typeNode =
                     this.getExtScript().getTreeModel().getTypeNode(script.getTypeName());
             if (typeNode == null) {
-                logger.error("Failed to find type node: {}", script.getTypeName());
+                LOGGER.error("Failed to find type node: {}", script.getTypeName());
 
                 typeNode =
                         this.getExtScript()
@@ -1657,7 +1657,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                                 .getTypeNode(ExtensionScript.TYPE_STANDALONE);
             }
 
-            logger.debug("Adding Zest script to tree");
+            LOGGER.debug("Adding Zest script to tree");
 
             ZestScriptWrapper zsw;
             if (script instanceof ZestScriptWrapper) {
@@ -1713,12 +1713,12 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
          *
          * ScriptNode typeNode = this.getExtScript().getTreeModel()
          * .getTypeNode(script.getTypeName()); if (typeNode == null) {
-         * logger.error("Failed to find type node: {}", script.getTypeName());
+         * LOGGER.error("Failed to find type node: {}", script.getTypeName());
          *
          * typeNode = this.getExtScript().getTreeModel()
          * .getTypeNode(ExtensionScript.TYPE_STANDALONE); }
          *
-         * logger.debug("Adding Zest script to tree");
+         * LOGGER.debug("Adding Zest script to tree");
          *
          * ZestScriptWrapper zsw = new ZestScriptWrapper(script); if
          * (zsw.getName() == null) { zsw.setName(script.getName()); }
@@ -1798,7 +1798,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                     requests.add(scrMessage);
                 }
             } catch (Exception e) {
-                logger.debug(
+                LOGGER.debug(
                         "Exception occurred while fetching HttpMessages from sequence script: {}",
                         e.getMessage());
             }

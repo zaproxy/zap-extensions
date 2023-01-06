@@ -43,7 +43,7 @@ public class Requestor {
     private List<RequesterListener> listeners = new ArrayList<>();
     private HttpSender sender;
     private final HttpRequestConfig requestConfig;
-    private static final Logger LOG = LogManager.getLogger(Requestor.class);
+    private static final Logger LOGGER = LogManager.getLogger(Requestor.class);
     private static final String GRAPHQL_CONTENT_TYPE = "application/graphql";
 
     public Requestor(URI endpointUrl, int initiator) {
@@ -71,7 +71,7 @@ public class Requestor {
             send(message);
             return message;
         } catch (IOException e) {
-            LOG.warn(e.getMessage());
+            LOGGER.warn(e.getMessage());
         }
         return null;
     }
@@ -96,7 +96,7 @@ public class Requestor {
             send(message);
             return message;
         } catch (IOException e) {
-            LOG.warn(e.getMessage());
+            LOGGER.warn(e.getMessage());
         }
         return null;
     }
@@ -120,7 +120,7 @@ public class Requestor {
             send(message);
             return message;
         } catch (IOException e) {
-            LOG.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
         }
         return null;
     }
@@ -163,7 +163,7 @@ public class Requestor {
                 try {
                     listener.handleMessage(message, initiator);
                 } catch (Exception e) {
-                    LOG.warn(e.getMessage(), e);
+                    LOGGER.warn(e.getMessage(), e);
                 }
             }
         }

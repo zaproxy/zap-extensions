@@ -55,7 +55,7 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner 
     public static final String URL_SENSITIVE_INFORMATION_DIR = "xml";
     public static final String URL_SENSITIVE_INFORMATION_FILE =
             "URL-information-disclosure-messages.txt";
-    private static final Logger logger =
+    private static final Logger LOGGER =
             LogManager.getLogger(InformationDisclosureReferrerScanRule.class);
     private List<String> messages = null;
     static Pattern emailAddressPattern =
@@ -116,7 +116,7 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner 
                     result = true;
                 }
             } catch (URIException e) {
-                logger.debug("Error: {}", e.getMessage());
+                LOGGER.debug("Error: {}", e.getMessage());
             }
         }
         return result;
@@ -179,7 +179,7 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner 
         List<String> strings = new ArrayList<>();
         File f = new File(Constant.getZapHome() + File.separator + file);
         if (!f.exists()) {
-            logger.error("No such file: {}", f.getAbsolutePath());
+            LOGGER.error("No such file: {}", f.getAbsolutePath());
             return strings;
         }
 
@@ -191,7 +191,7 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner 
                 }
             }
         } catch (IOException e) {
-            logger.debug("Error on opening/reading debug error file. Error: {}", e.getMessage(), e);
+            LOGGER.debug("Error on opening/reading debug error file. Error: {}", e.getMessage(), e);
         }
 
         return strings;
