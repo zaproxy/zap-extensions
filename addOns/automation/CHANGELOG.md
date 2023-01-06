@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.22.0] - 2023-01-06
 ### Added
 - Method to get running plans - can be used by scripts to interact with the plans.
 
@@ -223,6 +223,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.22.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.22.0
 [0.21.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.21.0
 [0.20.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.20.0
 [0.19.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.19.0
