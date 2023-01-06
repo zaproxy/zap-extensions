@@ -6,7 +6,7 @@ env:
   parameters:
     failOnError: true                  
     failOnWarning: false               
-    progressToStdout: true            
+    progressToStdout: false            
 
 jobs:
   - type: job1

@@ -73,5 +73,21 @@
       target:                    # String: The URL to be invoked for "targeted" script type
 	</pre>
 
+	<H2>Interacting with plans</H2>
+
+	Scripts can interact with running plans using code like:
+	
+	<pre><code>
+var extAF = control.getExtensionLoader().getExtension("ExtensionAutomation");
+
+var plans = extAF.getRunningPlans();
+
+if (plans.size() >  0) {
+  plans.get(0).getProgress().info("An info message added by a script");
+} else {
+  print('No running plans');
+}
+	</code></pre>
+
 </BODY>
 </HTML>

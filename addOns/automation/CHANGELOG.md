@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Added
+- Method to get running plans - can be used by scripts to interact with the plans.
 
 ## [0.21.0] - 2023-01-03
 ### Changed

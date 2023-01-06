@@ -84,6 +84,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     private OptionsPanel optionsPanel;
     private AutomationParam param;
     private LinkedHashMap<Integer, AutomationPlan> plans = new LinkedHashMap<>();
+    private List<AutomationPlan> runningPlans = Collections.synchronizedList(new ArrayList<>());
 
     private CommandLineArgument[] arguments = new CommandLineArgument[4];
     private static final int ARG_AUTO_RUN_IDX = 0;
@@ -258,9 +259,20 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                 AutomationEventPublisher.PLAN_FINISHED, plan, plan.getProgress().toMap());
         Stats.incCounter(ERROR_COUNT_STATS, plan.getProgress().getErrors().size());
         Stats.incCounter(WARNING_COUNT_STATS, plan.getProgress().getWarnings().size());
+        runningPlans.remove(plan);
+    }
+
+    /**
+     * Returns a list of currently running plans in the order they were started
+     *
+     * @return a list of currently running plans in the order they were started
+     */
+    public List<AutomationPlan> getRunningPlans() {
+        return Collections.unmodifiableList(runningPlans);
     }
 
     public AutomationProgress runPlan(AutomationPlan plan, boolean resetProgress) {
+        runningPlans.add(plan);
         if (resetProgress) {
             plan.resetProgress();
         }

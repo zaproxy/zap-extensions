@@ -34,6 +34,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -782,6 +783,47 @@ class ExtentionAutomationUnitTest extends TestUtils {
                 is(((AutomationJobImpl) progress.getRunJobs().get(0)).testsLoggedString));
     }
 
+    @Test
+    void shouldReportNoRunningPlansByDefault() {
+        // Given
+        ExtensionAutomation extAuto = new ExtensionAutomation();
+
+        // When
+        List<AutomationPlan> plans = extAuto.getRunningPlans();
+
+        // Then
+        assertThat(plans.size(), is(0));
+    }
+
+    @Test
+    void shouldReportRunningPlan() throws Exception {
+        // Given
+        CountDownLatch startSignal = new CountDownLatch(1);
+        AutomationJobLatchImpl job =
+                new AutomationJobLatchImpl(startSignal) {
+                    @Override
+                    public String getType() {
+                        return "job";
+                    }
+                };
+        ExtensionAutomation extAuto = new ExtensionAutomation();
+        Path filePath = getResourcePath("resources/testPlan-withTests.yaml");
+
+        // When
+        extAuto.registerAutomationJob(job);
+        AutomationPlan plan = new AutomationPlan(extAuto, filePath.toFile());
+        extAuto.runPlanAsync(plan);
+        Thread.sleep(100);
+        int count1 = extAuto.getRunningPlans().size();
+        startSignal.countDown();
+        Thread.sleep(100);
+        int count2 = extAuto.getRunningPlans().size();
+
+        // Then
+        assertThat(count1, is(1));
+        assertThat(count2, is(0));
+    }
+
     // Methods are accessed via reflection
     @SuppressWarnings("unused")
     private static class TestParamContainer {
@@ -916,6 +958,30 @@ class ExtentionAutomationUnitTest extends TestUtils {
             job.order = this.getOrder();
             job.testsLogError = testsLogError;
             return job;
+        }
+    }
+
+    private static class AutomationJobLatchImpl extends AutomationJobImpl {
+
+        private CountDownLatch latch;
+
+        public AutomationJobLatchImpl(CountDownLatch latch) {
+            super("job");
+            this.latch = latch;
+        }
+
+        @Override
+        public void runJob(AutomationEnvironment env, AutomationProgress progress) {
+            try {
+                latch.await();
+            } catch (InterruptedException e) {
+            }
+            super.runJob(env, progress);
+        }
+
+        @Override
+        public AutomationJob newJob() {
+            return new AutomationJobLatchImpl(latch);
         }
     }
 }

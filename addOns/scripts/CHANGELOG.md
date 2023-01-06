@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Added
+- Help explaining how to interact with Automation Framework plans.
 
 ## [34] - 2023-01-03
 ### Fixed
