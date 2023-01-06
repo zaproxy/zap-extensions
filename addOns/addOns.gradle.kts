@@ -207,7 +207,8 @@ subprojects {
             dependsOn(createPullRequestNextDevIter)
 
             if (useCrowdin) {
-                dependsOn(crowdinUploadSourceFiles)
+                // XXX Depend again once the Crowdin upload task is fixed.
+                // dependsOn(crowdinUploadSourceFiles)
             }
         }
 
