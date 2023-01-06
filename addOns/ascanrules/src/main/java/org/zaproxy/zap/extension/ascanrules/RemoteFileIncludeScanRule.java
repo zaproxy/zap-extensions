@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrules;
 import static org.zaproxy.zap.extension.ascanrules.utils.Constants.NULL_BYTE_CHARACTER;
 
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -235,11 +236,7 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
                                     "Not reporting alert - same title as original: {}",
                                     matcher.group());
                         } else {
-                            newAlert()
-                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                    .setParam(param)
-                                    .setAttack(prefix + target)
-                                    .setEvidence(matcher.group())
+                            createAlert(param, prefix + target, matcher.group())
                                     .setMessage(msg)
                                     .raise();
                             // All done. No need to look for vulnerabilities on subsequent
@@ -278,5 +275,19 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
     @Override
     public int getWascId() {
         return 5;
+    }
+
+    private AlertBuilder createAlert(String param, String attack, String evidence) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setParam(param)
+                .setAttack(attack)
+                .setEvidence(evidence);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                createAlert("param", "http://www.google.com/", "<title>Google</title>").build());
     }
 }

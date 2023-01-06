@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -108,6 +109,17 @@ class CloudMetadataScanRuleUnitTest extends ActiveScannerTest<CloudMetadataScanR
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getValue())));
+    }
+
+    @Test
+    void shouldReturnExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+        Alert alert1 = alerts.get(0);
+        assertThat(alert1.getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(alert1.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
     }
 
     private static NanoServerHandler createHandler(

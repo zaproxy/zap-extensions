@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -90,6 +91,22 @@ class CodeInjectionScanRuleUnitTest extends ActiveScannerTest<CodeInjectionScanR
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ.getValue())));
+    }
+
+    @Test
+    void shouldReturnExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(2)));
+        Alert alert1 = alerts.get(0);
+        assertThat(alert1.getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(alert1.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alert1.getAlertRef(), is(equalTo("90019-1")));
+        Alert alert2 = alerts.get(1);
+        assertThat(alert2.getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(alert2.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alert2.getAlertRef(), is(equalTo("90019-2")));
     }
 
     @Test

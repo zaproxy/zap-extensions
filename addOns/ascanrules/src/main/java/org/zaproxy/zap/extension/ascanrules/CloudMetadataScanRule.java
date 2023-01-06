@@ -93,13 +93,12 @@ public class CloudMetadataScanRule extends AbstractHostPlugin {
         return ALERT_TAGS;
     }
 
-    public void raiseAlert(HttpMessage newRequest, String host) {
-        newAlert()
+    public AlertBuilder createAlert(HttpMessage newRequest, String host) {
+        return newAlert()
                 .setConfidence(Alert.CONFIDENCE_LOW)
                 .setAttack(host)
                 .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "otherinfo"))
-                .setMessage(newRequest)
-                .raise();
+                .setMessage(newRequest);
     }
 
     @Override
@@ -111,12 +110,17 @@ public class CloudMetadataScanRule extends AbstractHostPlugin {
                 newRequest.setUserObject(Collections.singletonMap("host", host));
                 sendAndReceive(newRequest, false);
                 if (isSuccess(newRequest) && newRequest.getResponseBody().length() > 0) {
-                    this.raiseAlert(newRequest, host);
+                    this.createAlert(newRequest, host).raise();
                     return;
                 }
             } catch (Exception e) {
                 LOG.warn("Error sending URL {}", newRequest.getRequestHeader().getURI(), e);
             }
         }
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(createAlert(null, "www.example.com").build());
     }
 }

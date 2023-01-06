@@ -24,6 +24,8 @@ import static org.zaproxy.zap.extension.ascanrules.utils.Constants.NULL_BYTE_CHA
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -522,13 +524,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
                             // if it returns OK, and the random string above did NOT return ok, then
                             // raise an alert since the filename has likely been picked up and used
                             // as a file name from the parameter
-                            newAlert()
-                                    .setConfidence(Alert.CONFIDENCE_LOW)
-                                    .setParam(param)
-                                    .setAttack(prefixedUrlfilename)
-                                    .setOtherInfo(
-                                            Constant.messages.getString(
-                                                    "ascanrules.pathtraversal.other", 5))
+                            createUnmatchedAlert(param, prefixedUrlfilename)
                                     .setMessage(msg)
                                     .raise();
 
@@ -615,15 +611,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
 
         // if the output matches, and we get a 200
         if (isPage200(msg) && match != null) {
-            newAlert()
-                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                    .setParam(param)
-                    .setAttack(newValue)
-                    .setEvidence(match)
-                    .setOtherInfo(
-                            Constant.messages.getString("ascanrules.pathtraversal.other", check))
-                    .setMessage(msg)
-                    .raise();
+            createMatchedAlert(param, newValue, match, check).setMessage(msg).raise();
 
             // All done. No need to look for vulnerabilities on subsequent parameters
             // on the same request (to reduce performance impact)
@@ -657,6 +645,38 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
     @Override
     public int getWascId() {
         return 33;
+    }
+
+    private AlertBuilder createUnmatchedAlert(String param, String attack) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_LOW)
+                .setParam(param)
+                .setAttack(attack)
+                .setAlertRef(getId() + "-" + 5);
+    }
+
+    private AlertBuilder createMatchedAlert(
+            String param, String attack, String evidence, int check) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setParam(param)
+                .setAttack(attack)
+                .setEvidence(evidence)
+                .setAlertRef(getId() + "-" + check);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        String param = "query";
+        List<Alert> list = new ArrayList<>(5);
+        list.add(
+                createMatchedAlert(param, "file:///c:/Windows/system.ini", "\\[drivers\\]", 1)
+                        .build());
+        list.add(createMatchedAlert(param, "/etc/passwd", "root:.:0:0", 2).build());
+        list.add(createMatchedAlert(param, "c:\\", "Program\\sFiles", 3).build());
+        list.add(createMatchedAlert(param, "WEB-INF/web.xml", "</web-app>", 4).build());
+        list.add(createUnmatchedAlert(param, "C:/").build());
+        return list;
     }
 
     private static interface ContentsMatcher {
