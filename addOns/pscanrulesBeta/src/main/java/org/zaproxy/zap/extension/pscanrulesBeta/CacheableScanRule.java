@@ -426,9 +426,7 @@ public class CacheableScanRule extends PluginPassiveScanner {
                                     msg.getRequestHeader().getURI());
                             lifetimeFound = true;
                             lifetimesFound++;
-                            // get the portion of the string after "s-maxage="
-                            lifetime =
-                                    Long.parseLong(directiveToken.substring("s-maxage=".length()));
+                            lifetime = extractAgeValue(directiveToken, "s-maxage=".length());
                             freshEvidence = directiveToken;
                         }
                     }
@@ -450,7 +448,8 @@ public class CacheableScanRule extends PluginPassiveScanner {
                 if (!responseHeadersCacheControl.isEmpty()) {
                     int lifetimesFound = 0;
                     for (String directive : responseHeadersCacheControl) {
-                        for (String directiveToken : directive.split(" ")) {
+                        for (String directiveToken :
+                                directive.replaceAll("[ ,]+", ",").split(",")) {
                             // strip off any trailing comma
                             if (directiveToken.endsWith(","))
                                 directiveToken =
@@ -463,13 +462,9 @@ public class CacheableScanRule extends PluginPassiveScanner {
                                 lifetimeFound = true;
                                 lifetimesFound++;
                                 // get the portion of the string after "maxage="
-                                // Split on comma and use 0th item in case there weren't spaces:
                                 // Cache-Control: max-age=7776000,private
                                 try {
-                                    lifetime =
-                                            Long.parseLong(
-                                                    directiveToken.split(",")[0].substring(
-                                                            "max-age=".length()));
+                                    lifetime = extractAgeValue(directiveToken, "max-age=".length());
                                 } catch (NumberFormatException nfe) {
                                     lifetimeFound = false;
                                     lifetimesFound--;
@@ -695,6 +690,14 @@ public class CacheableScanRule extends PluginPassiveScanner {
                     msg.getRequestHeader().getURI(),
                     e);
         }
+    }
+
+    private Long extractAgeValue(String directiveToken, int tokenLength) {
+        int commaLocation = directiveToken.indexOf(",", tokenLength);
+        return Long.parseLong(
+                directiveToken.substring(
+                        tokenLength,
+                        commaLocation == -1 ? directiveToken.length() : commaLocation));
     }
 
     private static Date parseDate(String dateStr) {
