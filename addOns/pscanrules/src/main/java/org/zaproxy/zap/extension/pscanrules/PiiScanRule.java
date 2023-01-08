@@ -98,14 +98,15 @@ public class PiiScanRule extends PluginPassiveScanner {
             for (CreditCard cc : CreditCard.values()) {
                 Matcher matcher = cc.matcher(candidate.getCandidate());
                 while (matcher.find()) {
-                    String evidence = matcher.group();
+                    String evidence = candidate.getOriginal();
                     if (isDecimal(candidate.getContainingString())
                             && !this.getAlertThreshold().equals(AlertThreshold.LOW)) {
                         return;
                     }
-                    if (PiiUtils.isValidLuhn(evidence) && !isSci(candidate.getContainingString())) {
+                    if (PiiUtils.isValidLuhn(candidate.getCandidate())
+                            && !isSci(candidate.getContainingString())) {
                         BinRecord binRec = BinList.getSingleton().get(evidence);
-                        raiseAlert(msg, evidence, cc.name, binRec);
+                        createAlert(evidence, cc.name, binRec).raise();
                     }
                 }
             }
@@ -156,20 +157,20 @@ public class PiiScanRule extends PluginPassiveScanner {
         return containingString.contains(".");
     }
 
-    private void raiseAlert(HttpMessage msg, String evidence, String cardType, BinRecord binRec) {
+    private AlertBuilder createAlert(String evidence, String cardType, BinRecord binRec) {
         String other = Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", cardType);
         if (binRec != null) {
             other = other + '\n' + getBinRecString(binRec);
         }
-        newAlert()
+        return newAlert()
                 .setRisk(Alert.RISK_HIGH)
                 .setConfidence(binRec != null ? Alert.CONFIDENCE_HIGH : Alert.CONFIDENCE_MEDIUM)
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setOtherInfo(other)
                 .setEvidence(evidence)
+                .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
                 .setCweId(359) // CWE-359: Exposure of Private Information ('Privacy Violation')
-                .setWascId(13) // WASC-13: Information Leakage
-                .raise();
+                .setWascId(13); // WASC-13: Information Leakage
     }
 
     private String getBinRecString(BinRecord binRec) {
@@ -210,6 +211,7 @@ public class PiiScanRule extends PluginPassiveScanner {
             int proposedEnd = matcher.end() + 3;
             result.add(
                     new Candidate(
+                            matcher.group(),
                             matcher.group().replaceAll("\\s+", ""),
                             inputString
                                     .substring(
@@ -240,13 +242,29 @@ public class PiiScanRule extends PluginPassiveScanner {
         return ALERT_TAGS;
     }
 
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                createAlert(
+                                "4716 1869 7854 4330",
+                                "Visa",
+                                new BinRecord("471618", "VISA", "PURCHASING", "U.S. BANK N.A. ND"))
+                        .build());
+    }
+
     private static class Candidate {
+        private final String original;
         private final String candidate;
         private final String containingString;
 
-        Candidate(String candidate, String containingString) {
+        Candidate(String original, String candidate, String containingString) {
+            this.original = original;
             this.candidate = candidate;
             this.containingString = containingString;
+        }
+
+        public String getOriginal() {
+            return original;
         }
 
         public String getCandidate() {
