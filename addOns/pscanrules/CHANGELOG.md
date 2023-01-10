@@ -4,7 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- The PII Disclosure scan rule:
+    - Now includes a solution statement.
+    - Now more specifically portrays alert Evidence.
+    - Now includes example alert functionality for documentation generation purposes (Issue 6119).
 
 ## [45] - 2023-01-03
 ### Changed

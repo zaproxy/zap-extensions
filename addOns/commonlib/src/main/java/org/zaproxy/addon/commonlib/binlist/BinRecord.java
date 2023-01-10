@@ -32,7 +32,11 @@ public final class BinRecord {
     private final String category;
     private final String issuer;
 
-    BinRecord(String bin, String brand, String category, String issuer) {
+    /**
+     * This constructor is only public in order to facilitate Example Alerts. Regular use should be
+     * done via {@link BinList#getSingleton()} and {@link BinList#get(String)}
+     */
+    public BinRecord(String bin, String brand, String category, String issuer) {
         this.bin = bin;
         this.brand = brand;
         this.category = category;

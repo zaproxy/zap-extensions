@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import org.apache.commons.httpclient.URI;
@@ -34,6 +35,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -81,7 +83,7 @@ class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
         // Then
         assertThat(alertsRaised.size(), is(1));
         assertThat(alertsRaised.get(0).getName(), equalTo("PII Disclosure"));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo(cardNumber.replaceAll("\\s+", "")));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo(cardNumber));
     }
 
     @Test
@@ -308,6 +310,25 @@ class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getValue())));
+    }
+
+    @Test
+    void shouldReturnExampleAlerts() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+        Alert alert = alerts.get(0);
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
+        assertThat(
+                alert.getOtherInfo(),
+                is(
+                        equalTo(
+                                "Credit Card Type detected: Visa\n"
+                                        + "Bank Identification Number: 471618\n"
+                                        + "Brand: VISA\n"
+                                        + "Category: PURCHASING\n"
+                                        + "Issuer: U.S. BANK N.A. ND")));
     }
 
     private HttpMessage createMsg(String cardNumber) throws HttpMalformedHeaderException {
