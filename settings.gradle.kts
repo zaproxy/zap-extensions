@@ -21,6 +21,7 @@ var addOns = listOf(
     "ascanrules",
     "ascanrulesAlpha",
     "ascanrulesBeta",
+    "authhelper",
     "authstats",
     "automation",
     "beanshell",
