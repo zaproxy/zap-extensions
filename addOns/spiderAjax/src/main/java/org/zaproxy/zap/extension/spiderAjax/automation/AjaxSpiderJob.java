@@ -44,6 +44,7 @@ import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData;
 import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData.RuleData;
 import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 import org.zaproxy.addon.automation.tests.AutomationStatisticTest;
+import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderTarget;
 import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
@@ -400,7 +401,7 @@ public class AjaxSpiderJob extends AutomationJob {
         private String url;
         private Integer maxDuration = AjaxSpiderParam.DEFAULT_MAX_DURATION;
         private Integer maxCrawlDepth = AjaxSpiderParam.DEFAULT_MAX_CRAWL_DEPTH;
-        private Integer numberOfBrowsers = AjaxSpiderParam.DEFAULT_NUMBER_OF_BROWSERS;
+        private Integer numberOfBrowsers = Constants.getDefaultThreadCount();
 
         private String browserId;
         private Integer maxCrawlStates;

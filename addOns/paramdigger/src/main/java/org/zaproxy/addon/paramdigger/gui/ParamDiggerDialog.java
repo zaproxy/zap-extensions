@@ -47,6 +47,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.addon.paramdigger.ExtensionParamDigger;
 import org.zaproxy.addon.paramdigger.Method;
 import org.zaproxy.addon.paramdigger.ParamDiggerConfig;
@@ -290,7 +291,12 @@ public class ParamDiggerDialog extends StandardFieldsDialog {
                         this.getTextField(COOKIE_FILE_LOCATON).setText("");
                     }
                 });
-        this.addNumberField(CONTROL_TAB, THREADPOOL_SIZE, 6, 12, 8);
+        this.addNumberField(
+                CONTROL_TAB,
+                THREADPOOL_SIZE,
+                6,
+                Integer.MAX_VALUE,
+                Constants.getDefaultThreadCount());
         this.addPadding(CONTROL_TAB);
         this.addPadding(URL_GUESS_TAB);
         this.addPadding(HEADER_GUESS_TAB);

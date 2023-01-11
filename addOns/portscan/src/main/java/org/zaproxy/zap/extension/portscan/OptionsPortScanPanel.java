@@ -30,6 +30,8 @@ import javax.swing.JSlider;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
+import org.zaproxy.addon.commonlib.Constants;
+import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapPortNumberSpinner;
 import org.zaproxy.zap.view.LayoutHelper;
 
@@ -38,9 +40,8 @@ public class OptionsPortScanPanel extends AbstractParamPanel {
     private static final long serialVersionUID = 1L;
     private JPanel panelPortScan = null;
     private ZapPortNumberSpinner maxPortValueSpinner = null;
-    private JSlider sliderThreadsPerScan = null;
+    private ZapNumberSpinner threadsPerScanSpinner = null;
     private JSlider sliderTimeoutInMs = null;
-    private JLabel labelThreadsPerScanValue = null;
     private JCheckBox checkUseProxy = null;
 
     public OptionsPortScanPanel() {
@@ -61,32 +62,44 @@ public class OptionsPortScanPanel extends AbstractParamPanel {
             panelPortScan.setLayout(new GridBagLayout());
             panelPortScan.setName("");
 
-            JPanel panelMaxPort = new JPanel();
-            JPanel panelThreadsPerHost = new JPanel();
             JPanel panelProxy = new JPanel();
 
-            panelMaxPort.add(
-                    new JLabel(Constant.messages.getString("ports.options.label.maxPort")));
-            panelMaxPort.add(getMaxPortSpinner());
-
             panelPortScan.add(
-                    panelMaxPort,
-                    LayoutHelper.getGBC(
-                            0, 0, 1, 1.0D, 0, GridBagConstraints.WEST, new Insets(2, 2, 2, 2)));
-
-            panelThreadsPerHost.add(
-                    new JLabel(Constant.messages.getString("ports.options.label.threads")));
-            panelThreadsPerHost.add(getLabelThreadsPerScanValue());
-
-            panelPortScan.add(
-                    panelThreadsPerHost,
-                    LayoutHelper.getGBC(
-                            0, 1, 1, 1.0D, 0, GridBagConstraints.WEST, new Insets(2, 2, 2, 2)));
-            panelPortScan.add(
-                    getSliderThreadsPerScan(),
+                    new JLabel(Constant.messages.getString("ports.options.label.maxPort")),
                     LayoutHelper.getGBC(
                             0,
-                            2,
+                            0,
+                            1,
+                            1.0D,
+                            0,
+                            GridBagConstraints.HORIZONTAL,
+                            new Insets(2, 2, 2, 2)));
+            panelPortScan.add(
+                    getMaxPortSpinner(),
+                    LayoutHelper.getGBC(
+                            1,
+                            0,
+                            1,
+                            1.0D,
+                            0,
+                            GridBagConstraints.HORIZONTAL,
+                            new Insets(2, 2, 2, 2)));
+
+            panelPortScan.add(
+                    new JLabel(Constant.messages.getString("ports.options.label.threads")),
+                    LayoutHelper.getGBC(
+                            0,
+                            1,
+                            1,
+                            1.0D,
+                            0,
+                            GridBagConstraints.HORIZONTAL,
+                            new Insets(2, 2, 2, 2)));
+            panelPortScan.add(
+                    getThreadsPerScanSpinner(),
+                    LayoutHelper.getGBC(
+                            1,
+                            1,
                             1,
                             1.0D,
                             0,
@@ -97,8 +110,8 @@ public class OptionsPortScanPanel extends AbstractParamPanel {
                     new JLabel(Constant.messages.getString("ports.options.label.timeoutInMs")),
                     LayoutHelper.getGBC(
                             0,
-                            3,
-                            1,
+                            2,
+                            2,
                             1.0D,
                             0,
                             GridBagConstraints.HORIZONTAL,
@@ -107,8 +120,8 @@ public class OptionsPortScanPanel extends AbstractParamPanel {
                     getSliderTimeoutInMs(),
                     LayoutHelper.getGBC(
                             0,
-                            4,
-                            1,
+                            3,
+                            2,
                             1.0D,
                             0,
                             GridBagConstraints.HORIZONTAL,
@@ -120,14 +133,14 @@ public class OptionsPortScanPanel extends AbstractParamPanel {
             panelPortScan.add(
                     panelProxy,
                     LayoutHelper.getGBC(
-                            0, 5, 1, 1.0D, 0, GridBagConstraints.WEST, new Insets(2, 2, 2, 2)));
+                            0, 4, 2, 1.0D, 0, GridBagConstraints.WEST, new Insets(2, 2, 2, 2)));
 
             panelPortScan.add(
                     new JLabel(""),
                     LayoutHelper.getGBC(
                             0,
-                            6,
-                            1,
+                            5,
+                            2,
                             1.0D,
                             1.0D,
                             GridBagConstraints.HORIZONTAL,
@@ -142,12 +155,12 @@ public class OptionsPortScanPanel extends AbstractParamPanel {
         PortScanParam param = options.getParamSet(PortScanParam.class);
         if (param == null) {
             getMaxPortSpinner().setValue(PortScanParam.DEFAULT_MAX_PORT);
-            getSliderThreadsPerScan().setValue(PortScanParam.DEFAULT_THREAD_PER_SCAN);
+            getThreadsPerScanSpinner().setValue(Constants.getDefaultThreadCount());
             getSliderTimeoutInMs().setValue(PortScanParam.DEFAULT_TIMEOUT_IN_MS);
             getCheckUseProxy().setSelected(PortScanParam.DEFAULT_USE_PROXY);
         } else {
             getMaxPortSpinner().setValue(param.getMaxPort());
-            getSliderThreadsPerScan().setValue(param.getThreadPerScan());
+            getThreadsPerScanSpinner().setValue(param.getThreadPerScan());
             getSliderTimeoutInMs().setValue(param.getTimeoutInMs());
             getCheckUseProxy().setSelected(param.isUseProxy());
         }
@@ -167,7 +180,7 @@ public class OptionsPortScanPanel extends AbstractParamPanel {
             options.addParamSet(param);
         }
         param.setMaxPort(getMaxPortSpinner().getValue());
-        param.setThreadPerScan(getSliderThreadsPerScan().getValue());
+        param.setThreadPerScan(getThreadsPerScanSpinner().getValue());
         param.setTimeoutInMs(getSliderTimeoutInMs().getValue());
         param.setUseProxy(getCheckUseProxy().isSelected());
     }
@@ -178,48 +191,13 @@ public class OptionsPortScanPanel extends AbstractParamPanel {
         }
         return maxPortValueSpinner;
     }
-    /**
-     * This method initializes sliderThreadsPerHost
-     *
-     * @return JSlider
-     */
-    private JSlider getSliderThreadsPerScan() {
-        if (sliderThreadsPerScan == null) {
-            sliderThreadsPerScan = new JSlider();
-            sliderThreadsPerScan.setMaximum(Constant.MAX_THREADS_PER_SCAN);
-            sliderThreadsPerScan.setMinimum(0);
-            sliderThreadsPerScan.setValue(1);
-            sliderThreadsPerScan.setPaintTicks(true);
-            sliderThreadsPerScan.setPaintLabels(true);
-            sliderThreadsPerScan.setMinorTickSpacing(1);
-            sliderThreadsPerScan.setMajorTickSpacing(5);
-            sliderThreadsPerScan.setSnapToTicks(true);
-            sliderThreadsPerScan.setPaintTrack(true);
-            sliderThreadsPerScan.addChangeListener(
-                    e -> {
-                        // If the minimum is set to 1 then the ticks are at 6, 11 etc
-                        // But we dont want to support 0 threads, hence this hack
-                        if (getSliderThreadsPerScan().getValue() == 0) {
-                            getSliderThreadsPerScan().setValue(1);
-                        }
-                        setLabelThreadsPerScanValue(getSliderThreadsPerScan().getValue());
-                    });
-        }
-        return sliderThreadsPerScan;
-    }
 
-    private void setLabelThreadsPerScanValue(int value) {
-        if (labelThreadsPerScanValue == null) {
-            labelThreadsPerScanValue = new JLabel();
+    private ZapNumberSpinner getThreadsPerScanSpinner() {
+        if (threadsPerScanSpinner == null) {
+            threadsPerScanSpinner =
+                    new ZapNumberSpinner(1, Constants.getDefaultThreadCount(), Integer.MAX_VALUE);
         }
-        labelThreadsPerScanValue.setText("" + value);
-    }
-
-    private JLabel getLabelThreadsPerScanValue() {
-        if (labelThreadsPerScanValue == null) {
-            setLabelThreadsPerScanValue(getSliderThreadsPerScan().getValue());
-        }
-        return labelThreadsPerScanValue;
+        return threadsPerScanSpinner;
     }
 
     private JSlider getSliderTimeoutInMs() {
@@ -239,7 +217,7 @@ public class OptionsPortScanPanel extends AbstractParamPanel {
     }
 
     public int getThreadPerScan() {
-        return this.sliderThreadsPerScan.getValue();
+        return this.threadsPerScanSpinner.getValue();
     }
 
     public int getMaxPort() {

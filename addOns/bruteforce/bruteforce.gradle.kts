@@ -10,10 +10,21 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/forced-browse/")
+
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">= 1.13.0 & < 2.0.0")
+                }
+            }
+        }
     }
 }
 
 dependencies {
+    compileOnly(parent!!.childProjects.get("commonlib")!!)
+
+    testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(project(":testutils"))
 }
 

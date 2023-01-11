@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Add info URL.
+- Constant for default number of threads.
 
 ## [1.12.0] - 2022-12-13
 ### Added

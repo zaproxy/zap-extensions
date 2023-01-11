@@ -30,6 +30,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.addon.spider.internal.IrrelevantParameter;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
@@ -54,7 +55,7 @@ public class SpiderParam extends VersionedAbstractParam {
      * @see #CONFIG_VERSION_KEY
      * @see #updateConfigsImpl(int)
      */
-    private static final int CURRENT_CONFIG_VERSION = 1;
+    private static final int CURRENT_CONFIG_VERSION = 2;
 
     /**
      * The key for the version of the configurations.
@@ -181,7 +182,7 @@ public class SpiderParam extends VersionedAbstractParam {
     /** The max depth of the crawling. */
     private int maxDepth = 5;
     /** The thread count. */
-    private int threadCount = 2;
+    private int threadCount = Constants.getDefaultThreadCount();
     /** Whether comments should be parsed for URIs. */
     private boolean parseComments = true;
     /** Whether robots.txt file should be parsed for URIs. */
@@ -288,7 +289,7 @@ public class SpiderParam extends VersionedAbstractParam {
                         .getExtensionLoader()
                         .getExtension(ExtensionHttpSessions.class);
 
-        this.threadCount = getInt(SPIDER_THREAD, 2);
+        this.threadCount = Math.max(1, getInt(SPIDER_THREAD, Constants.getDefaultThreadCount()));
 
         this.maxDepth = getInt(SPIDER_MAX_DEPTH, 5);
 
@@ -352,12 +353,19 @@ public class SpiderParam extends VersionedAbstractParam {
     }
 
     @Override
+    @SuppressWarnings("fallthrough")
     protected void updateConfigsImpl(int fileVersion) {
         switch (fileVersion) {
             case NO_CONFIG_VERSION:
                 setIrrelevantParameters(
                         Collections.singletonList(
                                 new IrrelevantParameter(Pattern.compile("utm_.*"))));
+                // Fallthrough
+            case 1:
+                if (getInt(SPIDER_THREAD, 2) == 2) {
+                    // the old default
+                    this.setThreadCount(Constants.getDefaultThreadCount());
+                }
                 break;
             default:
         }

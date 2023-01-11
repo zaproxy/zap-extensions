@@ -32,15 +32,15 @@ import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSlider;
 import javax.swing.filechooser.FileFilter;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.FileCopier;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.commonlib.Constants;
+import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapTextField;
-import org.zaproxy.zap.view.PositiveValuesSlider;
 
 @SuppressWarnings("serial")
 public class OptionsBruteForcePanel extends AbstractParamPanel {
@@ -55,9 +55,9 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
     private JCheckBox checkBoxBrowseFilesWithoutExtension = null;
     private JCheckBox checkBoxBrowseFiles = null;
     private ZapTextField txtFileExtensions = null;
-    private JLabel threadsLabel;
     private ZapTextField txtFileExtensionsToMiss = null;
     private ZapTextField txtFailCaseString = null;
+    private ZapNumberSpinner spinnerThreadsPerScan = null;
 
     public OptionsBruteForcePanel(ExtensionBruteForce extension) {
         super();
@@ -65,7 +65,6 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
         initialize();
     }
 
-    private JSlider sliderThreadsPerScan = null;
     /** This method initializes this */
     private void initialize() {
         this.setLayout(new CardLayout());
@@ -89,6 +88,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             JLabel jLabelExtensions = new JLabel();
             JLabel jLabelExtensionsToMiss = new JLabel();
             JLabel jLabelFailCaseString = new JLabel();
+            JLabel jLabelThreads = new JLabel();
 
             GridBagConstraints gridBagConstraintsThreadsLable = new GridBagConstraints();
             GridBagConstraints gridBagConstraintsThreadsSlider = new GridBagConstraints();
@@ -120,6 +120,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
                     Constant.messages.getString(MESSAGE_PREFIX + "label.extensionsToMiss"));
             jLabelFailCaseString.setText(
                     Constant.messages.getString(MESSAGE_PREFIX + "label.failCaseString"));
+            jLabelThreads.setText(Constant.messages.getString(MESSAGE_PREFIX + "label.threads"));
 
             int rowNumber = 2;
 
@@ -131,17 +132,17 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsThreadsLable.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsThreadsLable.insets = new Insets(2, 2, 2, 2);
             gridBagConstraintsThreadsLable.weightx = 1.0D;
-            gridBagConstraintsThreadsLable.gridwidth = 2;
+            gridBagConstraintsThreadsLable.gridwidth = 1;
 
-            gridBagConstraintsThreadsSlider.gridx = 0;
-            gridBagConstraintsThreadsSlider.gridy = ++rowNumber;
+            gridBagConstraintsThreadsSlider.gridx = 1;
+            gridBagConstraintsThreadsSlider.gridy = rowNumber;
             gridBagConstraintsThreadsSlider.weightx = 1.0;
             gridBagConstraintsThreadsSlider.fill = GridBagConstraints.HORIZONTAL;
             gridBagConstraintsThreadsSlider.ipadx = 0;
             gridBagConstraintsThreadsSlider.ipady = 0;
             gridBagConstraintsThreadsSlider.anchor = GridBagConstraints.NORTHWEST;
             gridBagConstraintsThreadsSlider.insets = new Insets(2, 2, 2, 2);
-            gridBagConstraintsThreadsSlider.gridwidth = 2;
+            gridBagConstraintsThreadsSlider.gridwidth = 1;
 
             gridBagConstraintsRecursiveCheckBox.gridx = 0;
             gridBagConstraintsRecursiveCheckBox.gridy = ++rowNumber;
@@ -285,8 +286,8 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             gridBagConstraintsX.gridwidth = 2;
 
             jLabelx.setText(BruteForceParam.EMPTY_STRING);
-            panelPortScan.add(getThreadsLabel(), gridBagConstraintsThreadsLable);
-            panelPortScan.add(getSliderThreadsPerScan(), gridBagConstraintsThreadsSlider);
+            panelPortScan.add(jLabelThreads, gridBagConstraintsThreadsLable);
+            panelPortScan.add(getSpinnerThreadsPerScan(), gridBagConstraintsThreadsSlider);
             panelPortScan.add(getCheckBoxRecursive(), gridBagConstraintsRecursiveCheckBox);
             panelPortScan.add(jLabelDefaultFile, gridBagConstraintsDefaultFileLable);
             panelPortScan.add(getDefaultFileList(), gridBagConstraintsDefaultFlieList);
@@ -305,18 +306,6 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             panelPortScan.add(jLabelx, gridBagConstraintsX);
         }
         return panelPortScan;
-    }
-
-    private JLabel getThreadsLabel() {
-        if (threadsLabel == null) {
-            threadsLabel = new JLabel();
-        }
-        return threadsLabel;
-    }
-
-    private void setThreadsLabelValue(int value) {
-        getThreadsLabel()
-                .setText(Constant.messages.getString(MESSAGE_PREFIX + "label.threads", value));
     }
 
     private JComboBox<ForcedBrowseFile> getDefaultFileList() {
@@ -355,7 +344,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
         OptionsParam options = (OptionsParam) obj;
         BruteForceParam param = options.getParamSet(BruteForceParam.class);
         if (param == null) {
-            getSliderThreadsPerScan().setValue(BruteForceParam.DEFAULT_THREAD_PER_SCAN);
+            getSpinnerThreadsPerScan().setValue(Constants.getDefaultThreadCount());
             getCheckBoxRecursive().setSelected(BruteForceParam.DEFAULT_RECURSIVE);
             getCheckBoxBrowseFiles().setSelected(BruteForceParam.DEFAULT_BROWSE_FILES);
             getcheckBoxBrowseFilesWithoutExtension()
@@ -364,7 +353,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             getTxtExtensionsToMiss().setText(BruteForceParam.DEFAULT_EXTENSIONS_TO_MISS);
             getTxtFailCaseString().setText(BruteForceParam.DEFAULT_FAIL_CASE_STRING);
         } else {
-            getSliderThreadsPerScan().setValue(param.getThreadPerScan());
+            getSpinnerThreadsPerScan().setValue(param.getThreadPerScan());
             getCheckBoxRecursive().setSelected(param.getRecursive());
             getDefaultFileList().setSelectedItem(param.getDefaultFile());
             getCheckBoxBrowseFiles().setSelected(param.isBrowseFiles());
@@ -398,7 +387,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
             param = new BruteForceParam();
             options.addParamSet(param);
         }
-        param.setThreadPerScan(getSliderThreadsPerScan().getValue());
+        param.setThreadPerScan(getSpinnerThreadsPerScan().getValue());
         param.setRecursive(getCheckBoxRecursive().isSelected());
 
         ForcedBrowseFile selectedDefaultFile =
@@ -428,26 +417,12 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
         }
     }
 
-    /**
-     * This method initializes sliderThreadsPerHost
-     *
-     * @return JSlider
-     */
-    private JSlider getSliderThreadsPerScan() {
-        if (sliderThreadsPerScan == null) {
-            sliderThreadsPerScan =
-                    new PositiveValuesSlider(
-                            BruteForceParam.DEFAULT_THREAD_PER_SCAN,
-                            BruteForceParam.MAXIMUM_THREADS_PER_SCAN);
-            sliderThreadsPerScan.setSnapToTicks(false);
-            sliderThreadsPerScan.setMinorTickSpacing(2);
-            sliderThreadsPerScan.setMajorTickSpacing(20);
-
-            sliderThreadsPerScan.addChangeListener(
-                    e -> setThreadsLabelValue(getSliderThreadsPerScan().getValue()));
-            setThreadsLabelValue(sliderThreadsPerScan.getValue());
+    private ZapNumberSpinner getSpinnerThreadsPerScan() {
+        if (spinnerThreadsPerScan == null) {
+            spinnerThreadsPerScan =
+                    new ZapNumberSpinner(1, Constants.getDefaultThreadCount(), Integer.MAX_VALUE);
         }
-        return sliderThreadsPerScan;
+        return spinnerThreadsPerScan;
     }
 
     private JButton getAddFileButton() {
@@ -567,7 +542,7 @@ public class OptionsBruteForcePanel extends AbstractParamPanel {
     }
 
     public int getThreadPerScan() {
-        return this.sliderThreadsPerScan.getValue();
+        return getSpinnerThreadsPerScan().getValue();
     }
 
     public boolean getRecursive() {

@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- Default number of threads to 2 * processor count.
 
 ## [0.2.0] - 2023-01-03
 ### Changed
