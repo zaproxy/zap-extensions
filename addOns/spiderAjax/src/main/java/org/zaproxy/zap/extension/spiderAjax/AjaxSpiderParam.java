@@ -28,6 +28,7 @@ import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
 import org.zaproxy.zap.extension.selenium.Browser;
@@ -45,7 +46,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
      * @see #CONFIG_VERSION_KEY
      * @see #updateConfigsImpl(int)
      */
-    private static final int CURRENT_CONFIG_VERSION = 4;
+    private static final int CURRENT_CONFIG_VERSION = 5;
 
     private static final String AJAX_SPIDER_BASE_KEY = "ajaxSpider";
 
@@ -126,8 +127,6 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
         "ul",
         "video"
     };
-
-    public static final int DEFAULT_NUMBER_OF_BROWSERS = 1;
 
     public static final int DEFAULT_MAX_CRAWL_DEPTH = 10;
 
@@ -211,7 +210,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
 
     @Override
     protected void parseImpl() {
-        this.numberOfBrowsers = getInt(NUMBER_OF_BROWSERS_KEY, DEFAULT_NUMBER_OF_BROWSERS);
+        this.numberOfBrowsers = getInt(NUMBER_OF_BROWSERS_KEY, Constants.getDefaultThreadCount());
         this.maxCrawlDepth = getInt(MAX_CRAWL_DEPTH_KEY, DEFAULT_MAX_CRAWL_DEPTH);
         this.maxCrawlStates = getInt(MAX_CRAWL_STATES_KEY, DEFAULT_CRAWL_STATES);
         this.maxDuration = getInt(MAX_DURATION_KEY, DEFAULT_MAX_DURATION);
@@ -308,6 +307,11 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
                 getConfig().clearProperty(OLD_CONFIG_VERSION_KEY);
             case 3:
                 setAllowedResources(DEFAULT_ALLOWED_RESOURCES);
+            case 4:
+                if (getInt(NUMBER_OF_BROWSERS_KEY, 1) == 1) {
+                    // the old default
+                    this.setNumberOfBrowsers(Constants.getDefaultThreadCount());
+                }
         }
     }
 

@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- Default number of threads to 2 * processor count.
 
 ## [13.9.0] - 2023-01-03
 ### Changed

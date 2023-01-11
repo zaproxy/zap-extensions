@@ -28,6 +28,9 @@ zapAddOn {
         }
         dependencies {
             addOns {
+                register("commonlib") {
+                    version.set(">= 1.13.0 & < 2.0.0")
+                }
                 register("network") {
                     version.set(">=0.1.0")
                 }
@@ -57,6 +60,7 @@ zapAddOn {
 dependencies {
     compileOnly(parent!!.childProjects.get("selenium")!!)
     compileOnly(parent!!.childProjects.get("automation")!!)
+    compileOnly(parent!!.childProjects.get("commonlib")!!)
     compileOnly(parent!!.childProjects.get("network")!!)
     implementation(files("lib/crawljax-core-3.7.jar"))
     implementation("commons-math:commons-math:1.2")
@@ -79,6 +83,8 @@ dependencies {
     }
     implementation("xmlunit:xmlunit:1.6")
     testImplementation(parent!!.childProjects.get("automation")!!)
+    testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(parent!!.childProjects.get("network")!!)
+    testImplementation(parent!!.childProjects.get("selenium")!!)
     testImplementation(project(":testutils"))
 }

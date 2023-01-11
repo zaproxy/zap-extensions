@@ -45,12 +45,12 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.addon.spider.SpiderParam.HandleParametersOption;
 import org.zaproxy.addon.spider.internal.ui.IrrelevantParametersMultipleOptionsPanel;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTablePanel;
 import org.zaproxy.zap.view.LayoutHelper;
-import org.zaproxy.zap.view.PositiveValuesSlider;
 
 /**
  * The Class OptionsSpiderPanel defines the Options Panel showed when configuring settings related
@@ -66,7 +66,7 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
 
     // The controls for the options:
     private JSlider sliderMaxDepth;
-    private JSlider sliderThreads;
+    private ZapNumberSpinner threadsSpinner;
     private ZapNumberSpinner durationNumberSpinner;
     private ZapNumberSpinner maxChildrenNumberSpinner;
     private ZapNumberSpinner maxParseSizeBytesNumberSpinner;
@@ -138,28 +138,29 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
             Insets insets = new Insets(2, 2, 2, 2);
             gbc.insets = insets;
 
-            // Add the components on the panel
             innerPanel.add(maxDepthLabel, gbc);
             innerPanel.add(getSliderMaxDepth(), gbc);
-            innerPanel.add(noThreadsLabel, gbc);
-            innerPanel.add(getSliderThreads(), gbc);
 
             JPanel inlineOptionsPanel = new JPanel(new GridBagLayout());
-            inlineOptionsPanel.add(maxDuration, LayoutHelper.getGBC(0, 0, 1, 1.0D));
-            inlineOptionsPanel.add(getDurationNumberSpinner(), LayoutHelper.getGBC(1, 0, 1, 1.0D));
+
+            inlineOptionsPanel.add(noThreadsLabel, LayoutHelper.getGBC(0, 0, 1, 1.0D));
+            inlineOptionsPanel.add(getThreadsSpinner(), LayoutHelper.getGBC(1, 0, 1, 1.0D));
+
+            inlineOptionsPanel.add(maxDuration, LayoutHelper.getGBC(0, 1, 1, 1.0D));
+            inlineOptionsPanel.add(getDurationNumberSpinner(), LayoutHelper.getGBC(1, 1, 1, 1.0D));
 
             inlineOptionsPanel.add(
                     new JLabel(Constant.messages.getString("spider.options.label.maxChildren")),
-                    LayoutHelper.getGBC(0, 1, 1, 1.0D));
+                    LayoutHelper.getGBC(0, 2, 1, 1.0D));
             inlineOptionsPanel.add(
-                    getMaxChildrenNumberSpinner(), LayoutHelper.getGBC(1, 1, 1, 1.0D));
+                    getMaxChildrenNumberSpinner(), LayoutHelper.getGBC(1, 2, 1, 1.0D));
 
             inlineOptionsPanel.add(
                     new JLabel(
                             Constant.messages.getString("spider.options.label.maxParseSizeBytes")),
-                    LayoutHelper.getGBC(0, 2, 1, 1.0D));
+                    LayoutHelper.getGBC(0, 3, 1, 1.0D));
             inlineOptionsPanel.add(
-                    getMaxParseSizeBytesNumberSpinner(), LayoutHelper.getGBC(1, 2, 1, 1.0D));
+                    getMaxParseSizeBytesNumberSpinner(), LayoutHelper.getGBC(1, 3, 1, 1.0D));
 
             innerPanel.add(inlineOptionsPanel, gbc);
 
@@ -209,7 +210,7 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
 
         SpiderParam param = options.getParamSet(SpiderParam.class);
         getSliderMaxDepth().setValue(param.getMaxDepth());
-        getSliderThreads().setValue(param.getThreadCount());
+        getThreadsSpinner().setValue(param.getThreadCount());
         getDurationNumberSpinner().setValue(param.getMaxDuration());
         getMaxChildrenNumberSpinner().setValue(param.getMaxChildren());
         getMaxParseSizeBytesNumberSpinner().setValue(param.getMaxParseSizeBytes());
@@ -239,7 +240,7 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
         OptionsParam options = (OptionsParam) obj;
         SpiderParam param = options.getParamSet(SpiderParam.class);
         param.setMaxDepth(getSliderMaxDepth().getValue());
-        param.setThreadCount(getSliderThreads().getValue());
+        param.setThreadCount(getThreadsSpinner().getValue());
         param.setMaxDuration(getDurationNumberSpinner().getValue());
         param.setMaxChildren(getMaxChildrenNumberSpinner().getValue());
         param.setMaxParseSizeBytes(getMaxParseSizeBytesNumberSpinner().getValue());
@@ -291,11 +292,13 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
      *
      * @return javax.swing.JSlider
      */
-    private JSlider getSliderThreads() {
-        if (sliderThreads == null) {
-            sliderThreads = new PositiveValuesSlider(Constant.MAX_THREADS_PER_SCAN);
+    private ZapNumberSpinner getThreadsSpinner() {
+        if (threadsSpinner == null) {
+            threadsSpinner =
+                    new ZapNumberSpinner(1, Constants.getDefaultThreadCount(), Integer.MAX_VALUE);
+            ;
         }
-        return sliderThreads;
+        return threadsSpinner;
     }
 
     private ZapNumberSpinner getDurationNumberSpinner() {

@@ -19,9 +19,28 @@
  */
 package org.zaproxy.zap.extension.portscan;
 
-import org.parosproxy.paros.common.AbstractParam;
+import org.zaproxy.addon.commonlib.Constants;
+import org.zaproxy.zap.common.VersionedAbstractParam;
 
-public class PortScanParam extends AbstractParam {
+public class PortScanParam extends VersionedAbstractParam {
+
+    /**
+     * The current version of the configurations. Used to keep track of configuration changes
+     * between releases, in case changes/updates are needed.
+     *
+     * <p>It only needs to be incremented for configuration changes (not releases of the add-on).
+     *
+     * @see #CONFIG_VERSION_KEY
+     * @see #updateConfigsImpl(int)
+     */
+    private static final int CURRENT_CONFIG_VERSION = 1;
+
+    /**
+     * The key for the version of the configurations.
+     *
+     * @see #CURRENT_CONFIG_VERSION
+     */
+    private static final String CONFIG_VERSION_KEY = "portscan" + VERSION_ATTRIBUTE;
 
     private static final String MAX_PORT = "portscan.maxPort";
     private static final String THREAD_PER_SCAN = "portscan.threadPerHost";
@@ -29,7 +48,6 @@ public class PortScanParam extends AbstractParam {
     private static final String USE_PROXY = "portscan.useProxy";
 
     public static final int DEFAULT_MAX_PORT = 10240;
-    public static final int DEFAULT_THREAD_PER_SCAN = 5;
     public static final int DEFAULT_TIMEOUT_IN_MS = 100;
     public static final boolean DEFAULT_USE_PROXY = true;
 
@@ -40,13 +58,21 @@ public class PortScanParam extends AbstractParam {
 
     public PortScanParam() {}
 
-    /* (non-Javadoc)
-     * @see org.parosproxy.paros.common.FileXML#parse()
-     */
     @Override
-    protected void parse() {
+    protected int getCurrentVersion() {
+        return CURRENT_CONFIG_VERSION;
+    }
+
+    @Override
+    protected String getConfigVersionKey() {
+        return CONFIG_VERSION_KEY;
+    }
+
+    @Override
+    protected void parseImpl() {
         try {
-            setThreadPerScan(getConfig().getInt(THREAD_PER_SCAN, DEFAULT_THREAD_PER_SCAN));
+            setThreadPerScan(
+                    getConfig().getInt(THREAD_PER_SCAN, Constants.getDefaultThreadCount()));
         } catch (Exception e) {
         }
         try {
@@ -60,6 +86,20 @@ public class PortScanParam extends AbstractParam {
         try {
             setUseProxy(getConfig().getBoolean(USE_PROXY, true));
         } catch (Exception e) {
+        }
+    }
+
+    @Override
+    @SuppressWarnings("fallthrough")
+    protected void updateConfigsImpl(int fileVersion) {
+        switch (fileVersion) {
+            case NO_CONFIG_VERSION:
+                if (getInt(THREAD_PER_SCAN, 5) == 5) {
+                    // the old default
+                    this.setThreadPerScan(Constants.getDefaultThreadCount());
+                }
+                break;
+            default:
         }
     }
 

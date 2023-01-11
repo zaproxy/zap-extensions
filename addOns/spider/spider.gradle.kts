@@ -17,6 +17,9 @@ zapAddOn {
                 register("network") {
                     version.set(">=0.3.0")
                 }
+                register("commonlib") {
+                    version.set(">= 1.13.0 & < 2.0.0")
+                }
             }
         }
 
@@ -65,11 +68,13 @@ crowdin {
 
 dependencies {
     compileOnly(parent!!.childProjects.get("automation")!!)
+    compileOnly(parent!!.childProjects.get("commonlib")!!)
     compileOnly(parent!!.childProjects.get("database")!!)
     compileOnly(parent!!.childProjects.get("formhandler")!!)
     compileOnly(parent!!.childProjects.get("network")!!)
 
     testImplementation(parent!!.childProjects.get("automation")!!)
+    testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(parent!!.childProjects.get("database")!!)
     testImplementation(parent!!.childProjects.get("formhandler")!!)
     testImplementation(parent!!.childProjects.get("network")!!)

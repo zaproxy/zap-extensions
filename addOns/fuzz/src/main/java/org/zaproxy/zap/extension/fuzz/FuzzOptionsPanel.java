@@ -41,16 +41,15 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JSlider;
 import javax.swing.LayoutStyle;
 import javax.swing.filechooser.FileFilter;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationsReplacementStrategy;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
-import org.zaproxy.zap.view.PositiveValuesSlider;
 
 @SuppressWarnings("serial")
 public class FuzzOptionsPanel extends AbstractParamPanel {
@@ -68,7 +67,7 @@ public class FuzzOptionsPanel extends AbstractParamPanel {
     private final ZapNumberSpinner maxErrorsAllowedNumberSpinner;
     private final JRadioButton depthFirstPayloadReplacementStrategyRadioButton;
     private final JRadioButton breadthFirstPayloadReplacementStrategyRadioButton;
-    private final JSlider defaultThreadsPerFuzzerSlider;
+    private final ZapNumberSpinner defaultThreadsPerFuzzerSpinner;
     private final ZapNumberSpinner defaultFuzzDelayInMsSpinner;
 
     private Path customFuzzerLastSelectedDirectory;
@@ -112,17 +111,11 @@ public class FuzzOptionsPanel extends AbstractParamPanel {
                 new JLabel(resourceBundle.getString("fuzz.options.label.maxErrorsAllowed"));
         maxErrorsAllowedLabel.setLabelFor(maxErrorsAllowedNumberSpinner);
 
-        JLabel currentDefaultThreadsPerFuzzerLabel = new JLabel();
-        defaultThreadsPerFuzzerSlider =
-                createDefaultThreadsPerFuzzerSlider(
-                        FuzzOptions.DEFAULT_THREADS_PER_FUZZER,
-                        FuzzOptions.MAX_THREADS_PER_FUZZER,
-                        currentDefaultThreadsPerFuzzerLabel);
+        defaultThreadsPerFuzzerSpinner =
+                new ZapNumberSpinner(1, Constants.getDefaultThreadCount(), Integer.MAX_VALUE);
         JLabel defaultFuzzThreadsPerFuzzerLabel =
                 new JLabel(resourceBundle.getString("fuzz.options.label.threads"));
-        defaultFuzzThreadsPerFuzzerLabel.setLabelFor(defaultThreadsPerFuzzerSlider);
-        currentDefaultThreadsPerFuzzerLabel.setText(
-                Integer.toString(FuzzOptions.DEFAULT_THREADS_PER_FUZZER));
+        defaultFuzzThreadsPerFuzzerLabel.setLabelFor(defaultThreadsPerFuzzerSpinner);
 
         defaultFuzzDelayInMsSpinner =
                 new ZapNumberSpinner(
@@ -164,7 +157,10 @@ public class FuzzOptionsPanel extends AbstractParamPanel {
                                                         .addComponent(addCustomFuzzerFileLabel)
                                                         .addComponent(maxFinishedFuzzersInUILabel)
                                                         .addComponent(retriesOnIOErrorLabel)
-                                                        .addComponent(maxErrorsAllowedLabel))
+                                                        .addComponent(maxErrorsAllowedLabel)
+                                                        .addComponent(
+                                                                defaultFuzzThreadsPerFuzzerLabel)
+                                                        .addComponent(defaultFuzzDelayLabel))
                                         .addGroup(
                                                 layout.createParallelGroup()
                                                         .addComponent(defaultCategoryComboBox)
@@ -172,8 +168,10 @@ public class FuzzOptionsPanel extends AbstractParamPanel {
                                                         .addComponent(
                                                                 maxFinishedFuzzersInUINumberSpinner)
                                                         .addComponent(retriesOnIOErrorNumberSpinner)
+                                                        .addComponent(maxErrorsAllowedNumberSpinner)
                                                         .addComponent(
-                                                                maxErrorsAllowedNumberSpinner)))
+                                                                defaultThreadsPerFuzzerSpinner)
+                                                        .addComponent(defaultFuzzDelayInMsSpinner)))
                         .addGroup(
                                 layout.createParallelGroup()
                                         .addComponent(payloadReplacementStrategyLabel)
@@ -194,20 +192,7 @@ public class FuzzOptionsPanel extends AbstractParamPanel {
                                                                 LayoutStyle.ComponentPlacement
                                                                         .INDENT)
                                                         .addComponent(
-                                                                breadthFirstPayloadReplacementStrategyRadioButton)))
-                        .addGroup(
-                                layout.createParallelGroup()
-                                        .addGroup(
-                                                layout.createSequentialGroup()
-                                                        .addComponent(
-                                                                defaultFuzzThreadsPerFuzzerLabel)
-                                                        .addComponent(
-                                                                currentDefaultThreadsPerFuzzerLabel))
-                                        .addComponent(defaultThreadsPerFuzzerSlider))
-                        .addGroup(
-                                layout.createSequentialGroup()
-                                        .addComponent(defaultFuzzDelayLabel)
-                                        .addComponent(defaultFuzzDelayInMsSpinner)));
+                                                                breadthFirstPayloadReplacementStrategyRadioButton))));
 
         layout.setVerticalGroup(
                 layout.createSequentialGroup()
@@ -232,41 +217,26 @@ public class FuzzOptionsPanel extends AbstractParamPanel {
                                         .addComponent(maxErrorsAllowedLabel)
                                         .addComponent(maxErrorsAllowedNumberSpinner))
                         .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(defaultFuzzThreadsPerFuzzerLabel)
+                                        .addComponent(defaultThreadsPerFuzzerSpinner))
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(defaultFuzzDelayLabel)
+                                        .addComponent(defaultFuzzDelayInMsSpinner))
+                        .addGroup(
                                 layout.createSequentialGroup()
                                         .addComponent(payloadReplacementStrategyLabel)
                                         .addComponent(
                                                 depthFirstPayloadReplacementStrategyRadioButton)
                                         .addComponent(
                                                 breadthFirstPayloadReplacementStrategyRadioButton))
-                        .addGroup(
-                                layout.createSequentialGroup()
-                                        .addGroup(
-                                                layout.createParallelGroup()
-                                                        .addComponent(
-                                                                defaultFuzzThreadsPerFuzzerLabel)
-                                                        .addComponent(
-                                                                currentDefaultThreadsPerFuzzerLabel))
-                                        .addComponent(defaultThreadsPerFuzzerSlider))
-                        .addGroup(
-                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(defaultFuzzDelayLabel)
-                                        .addComponent(defaultFuzzDelayInMsSpinner)));
+                        .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)));
 
         JScrollPane scrollPane = new JScrollPane(innerPanel);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
 
         add(scrollPane);
-    }
-
-    private JSlider createDefaultThreadsPerFuzzerSlider(
-            int defaultMaxThreadsPerFuzzer,
-            int maxThreadsPerFuzzer,
-            final JLabel currentValueFeedbackLabel) {
-        final JSlider threadsSlider =
-                new PositiveValuesSlider(defaultMaxThreadsPerFuzzer, maxThreadsPerFuzzer);
-        threadsSlider.addChangeListener(
-                e -> currentValueFeedbackLabel.setText(Integer.toString(threadsSlider.getValue())));
-        return threadsSlider;
     }
 
     void setFuzzersDir(FuzzersDir fuzzersDir) {
@@ -417,7 +387,7 @@ public class FuzzOptionsPanel extends AbstractParamPanel {
 
         retriesOnIOErrorNumberSpinner.setValue(options.getDefaultRetriesOnIOError());
         maxErrorsAllowedNumberSpinner.setValue(options.getDefaultMaxErrorsAllowed());
-        defaultThreadsPerFuzzerSlider.setValue(options.getDefaultThreadsPerFuzzer());
+        defaultThreadsPerFuzzerSpinner.setValue(options.getDefaultThreadsPerFuzzer());
         defaultFuzzDelayInMsSpinner.setValue(options.getDefaultFuzzDelayInMs());
         if (options.getDefaultPayloadReplacementStrategy()
                 == MessageLocationsReplacementStrategy.DEPTH_FIRST) {
@@ -447,7 +417,7 @@ public class FuzzOptionsPanel extends AbstractParamPanel {
 
         options.setDefaultRetriesOnIOError(retriesOnIOErrorNumberSpinner.getValue().intValue());
         options.setDefaultMaxErrorsAllowed(maxErrorsAllowedNumberSpinner.getValue().intValue());
-        options.setDefaultThreadsPerFuzzer(defaultThreadsPerFuzzerSlider.getValue());
+        options.setDefaultThreadsPerFuzzer(defaultThreadsPerFuzzerSpinner.getValue());
         options.setDefaultFuzzDelayInMs(defaultFuzzDelayInMsSpinner.getValue());
         if (depthFirstPayloadReplacementStrategyRadioButton.isSelected()) {
             options.setDefaultPayloadReplacementStrategy(

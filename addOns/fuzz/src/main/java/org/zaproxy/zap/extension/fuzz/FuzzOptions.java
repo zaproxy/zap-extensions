@@ -22,15 +22,11 @@ package org.zaproxy.zap.extension.fuzz;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.fuzz.messagelocations.MessageLocationsReplacementStrategy;
 
 public class FuzzOptions extends VersionedAbstractParam {
-
-    public static final int MAX_THREADS_PER_FUZZER = Constant.MAX_THREADS_PER_SCAN;
-
-    public static final int DEFAULT_THREADS_PER_FUZZER = 5;
 
     public static final int DEFAULT_FUZZ_DELAY_IN_MS = 0;
     public static final int MAX_DELAY_IN_MS = 3600000;
@@ -48,7 +44,7 @@ public class FuzzOptions extends VersionedAbstractParam {
      *
      * <p>It only needs to be updated for configurations changes (not releases of the add-on).
      */
-    private static final int CURRENT_VERSION = 1;
+    private static final int CURRENT_VERSION = 2;
 
     /** The base configuration key for all "fuzz" configurations. */
     private static final String BASE_KEY = "fuzz";
@@ -116,17 +112,18 @@ public class FuzzOptions extends VersionedAbstractParam {
                                 DEFAULT_PAYLOAD_REPLACEMENT_STRATEGY_KEY,
                                 MessageLocationsReplacementStrategy.DEPTH_FIRST.getConfigId()));
         defaultThreadsPerFuzzer =
-                getInt(DEFAULT_THREADS_PER_FUZZER_KEY, DEFAULT_THREADS_PER_FUZZER);
+                getInt(DEFAULT_THREADS_PER_FUZZER_KEY, Constants.getDefaultThreadCount());
         defaultFuzzDelayInMs = getInt(DEFAULT_FUZZ_DELAY_IN_MS_KEY, DEFAULT_FUZZ_DELAY_IN_MS);
     }
 
     @Override
+    @SuppressWarnings("fallthrough")
     protected void updateConfigsImpl(int fileVersion) {
         switch (fileVersion) {
             case NO_CONFIG_VERSION:
                 // Previously in core. Normalise the name of old options.
                 String threadPerScanKey = "fuzzer.threadPerScan";
-                int oldThreadPerScan = getInt(threadPerScanKey, DEFAULT_THREADS_PER_FUZZER);
+                int oldThreadPerScan = getInt(threadPerScanKey, Constants.getDefaultThreadCount());
                 getConfig()
                         .setProperty(
                                 DEFAULT_THREADS_PER_FUZZER_KEY, Integer.valueOf(oldThreadPerScan));
@@ -148,6 +145,12 @@ public class FuzzOptions extends VersionedAbstractParam {
                         .setProperty(
                                 CUSTOM_FUZZER_LAST_SELECTED_DIRECTORY_KEY, lastSelectedDirectory);
                 getConfig().clearProperty(lastSelectedDirectoryKey);
+                // Fallthrough
+            case 1:
+                if (getInt(DEFAULT_THREADS_PER_FUZZER_KEY, 5) == 5) {
+                    // the old default
+                    this.setDefaultThreadsPerFuzzer(Constants.getDefaultThreadCount());
+                }
         }
     }
 
