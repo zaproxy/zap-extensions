@@ -259,7 +259,7 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
 
     private static final long serialVersionUID = -4278691012245035225L;
 
-    private static final Logger logger = LogManager.getLogger(ZestTreeCellRenderer.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestTreeCellRenderer.class);
 
     public ZestTreeCellRenderer() {}
 
@@ -400,7 +400,7 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
                     } else if (za instanceof ZestClientWindowOpenUrl) {
                         setIcon(CLIENT_WINDOW_OPEN_URL_ICON);
                     } else {
-                        logger.error(
+                        LOGGER.error(
                                 "Unrecognised element class={}",
                                 zew.getElement().getClass().getCanonicalName());
                     }

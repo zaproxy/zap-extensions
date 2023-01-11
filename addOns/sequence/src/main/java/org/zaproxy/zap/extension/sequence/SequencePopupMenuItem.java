@@ -37,7 +37,7 @@ public class SequencePopupMenuItem extends ExtensionPopupMenuItem {
     private static final long serialVersionUID = 1L;
 
     private final ExtensionScript extScript;
-    public static final Logger logger = LogManager.getLogger(SequencePopupMenuItem.class);
+    private static final Logger LOGGER = LogManager.getLogger(SequencePopupMenuItem.class);
     private ExtensionSequence extension = null;
 
     public SequencePopupMenuItem(ExtensionSequence extension, ExtensionScript extensionScript) {
@@ -72,7 +72,7 @@ public class SequencePopupMenuItem extends ExtensionPopupMenuItem {
                                             MessageFormat.format(msg, wrapper.getName()));
                         }
                     } catch (Exception ex) {
-                        logger.warn(
+                        LOGGER.warn(
                                 "An exception occurred while starting an active scan for a sequence script:",
                                 ex);
                     }

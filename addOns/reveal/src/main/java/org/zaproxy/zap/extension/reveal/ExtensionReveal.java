@@ -44,7 +44,7 @@ import org.zaproxy.zap.view.ZapToggleButton;
 
 public class ExtensionReveal extends ExtensionAdaptor implements ProxyListener {
 
-    private static final Logger logger = LogManager.getLogger(ExtensionReveal.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionReveal.class);
 
     public static final String NAME = "ExtensionReveal";
     public static final int PROXY_LISTENER_ORDER = 10;
@@ -115,7 +115,7 @@ public class ExtensionReveal extends ExtensionAdaptor implements ProxyListener {
         try {
             revealParam.getConfig().save();
         } catch (ConfigurationException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
 
         if (revealButton != null) {
@@ -182,14 +182,14 @@ public class ExtensionReveal extends ExtensionAdaptor implements ProxyListener {
 
         if (formElements != null && formElements.size() > 0) {
             // Loop through all of the FORM tags
-            logger.debug("Found {} forms", formElements.size());
+            LOGGER.debug("Found {} forms", formElements.size());
 
             for (Element formElement : formElements) {
                 List<Element> elements = formElement.getAllElements();
 
                 if (elements != null && elements.size() > 0) {
                     // Loop through all of the elements
-                    logger.debug("Found {} inputs", elements.size());
+                    LOGGER.debug("Found {} inputs", elements.size());
                     for (Element element : elements) {
                         Attributes attrs = element.getAttributes();
 
@@ -201,7 +201,7 @@ public class ExtensionReveal extends ExtensionAdaptor implements ProxyListener {
                                         || ATT_READONLY.equalsIgnoreCase(att.getName())
                                         || (ATT_TYPE.equalsIgnoreCase(att.getName())
                                                 && TYPE_HIDDEN.equalsIgnoreCase(att.getValue()))) {
-                                    logger.debug(
+                                    LOGGER.debug(
                                             "Removing {}: {}",
                                             att.getName(),
                                             response.substring(att.getBegin(), att.getEnd()));

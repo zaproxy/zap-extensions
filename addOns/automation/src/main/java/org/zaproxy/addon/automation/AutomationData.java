@@ -27,7 +27,7 @@ import org.apache.logging.log4j.Logger;
 @JsonFilter("ignoreDefaultFilter")
 public abstract class AutomationData {
 
-    private static final Logger LOG = LogManager.getLogger(AutomationData.class);
+    private static final Logger LOGGER = LogManager.getLogger(AutomationData.class);
 
     public boolean isDefaultValue(String name) {
         String getter = "get" + name.substring(0, 1).toUpperCase() + name.substring(1);
@@ -35,7 +35,7 @@ public abstract class AutomationData {
             Method method = this.getClass().getMethod(getter);
             return method.invoke(this) == null;
         } catch (Exception e) {
-            LOG.debug("Class {} no getter {}", this.getClass().getCanonicalName(), getter);
+            LOGGER.debug("Class {} no getter {}", this.getClass().getCanonicalName(), getter);
         }
         return false;
     }

@@ -82,7 +82,7 @@ import org.zaproxy.zap.view.HttpPanelManager.HttpPanelViewFactory;
 public class ExtensionPlugNHack extends ExtensionAdaptor
         implements ProxyListener, SessionChangedListener {
 
-    private static final Logger logger = LogManager.getLogger(ExtensionPlugNHack.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionPlugNHack.class);
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
             Collections.unmodifiableList(Arrays.asList(ExtensionNetwork.class));
@@ -195,7 +195,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
         try {
             clientTable.databaseOpen(db.getDatabaseServer());
         } catch (DatabaseException e) {
-            logger.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
         }
 
         messageTable = new MessageTable();
@@ -203,7 +203,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
         try {
             messageTable.databaseOpen(db.getDatabaseServer());
         } catch (DatabaseException e) {
-            logger.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
         }
     }
 
@@ -462,7 +462,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                     int endHeadTag = body.indexOf('>', startHeadOffset);
                     if (endHeadTag > 0) {
                         endHeadTag++;
-                        logger.debug(
+                        LOGGER.debug(
                                 "Injecting PnH script into {}", msg.getRequestHeader().getURI());
                         // this assign the unique id
                         MonitoredPage page = mpm.monitorPage(msg);
@@ -473,7 +473,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                                 this.getClientsPanel().setTabFocus();
                             }
                         } catch (SQLException e) {
-                            logger.error(e.getMessage(), e);
+                            LOGGER.error(e.getMessage(), e);
                         }
 
                         body =
@@ -493,14 +493,14 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                         injected = true;
                     }
                     if (!injected) {
-                        logger.debug(
+                        LOGGER.debug(
                                 "Can't inject PnH script into {} no head tag found {}",
                                 msg.getRequestHeader().getURI(),
                                 msg.getResponseHeader().getStatusCode());
                     }
                 }
             } catch (ApiException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
         return true;
@@ -510,7 +510,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
     public void setMonitored(MonitoredPage page, boolean monitored) {
     	SiteNode node = Model.getSingleton().getSession().getSiteTree().findNode(page.getMessage());
     	if (node != null) {
-    		logger.debug("setMonitored {} {}", node.getNodeName(), monitored);
+    		LOGGER.debug("setMonitored {} {}", node.getNodeName(), monitored);
     		if (monitored) {
     			node.addCustomIcon(CLIENT_ACTIVE_ICON_RESOURCE, false);
     		} else {
@@ -533,7 +533,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                 try {
                     this.clientTable.update(page);
                 } catch (SQLException e) {
-                    logger.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
         }
@@ -555,7 +555,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                 this.messageTable.insert(cmsg);
             }
         } catch (SQLException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -565,16 +565,16 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
 
     public boolean isSiteBeingMonitored(String site) {
         if (site == null || site.length() == 0) {
-            logger.debug("isSiteBeingMonitored {} returning false (empty site)", site);
+            LOGGER.debug("isSiteBeingMonitored {} returning false (empty site)", site);
             return false;
         }
         for (MonitoredPage page : this.mpm.getActiveClients()) {
             if (page.getURI().toString().startsWith(site)) {
-                logger.debug("isSiteBeingMonitored {} returning true", site);
+                LOGGER.debug("isSiteBeingMonitored {} returning true", site);
                 return true;
             }
         }
-        logger.debug(
+        LOGGER.debug(
                 "isSiteBeingMonitored {} returning false (did not match any of the {} pages actively monitored)",
                 site,
                 this.mpm.getActiveClients().size());
@@ -618,7 +618,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
             return sb.toString();
 
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw new ApiException(ApiException.Type.INTERNAL_ERROR);
 
         } finally {
@@ -651,7 +651,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
      * Called when the specified oracle is invoked in the client, e.g. as a result on an XSS
      */
     public void oracleInvoked(int id) {
-        logger.debug("Oracle invoked for {}", id);
+        LOGGER.debug("Oracle invoked for {}", id);
         this.oracleManager.oracleInvoked(id);
     }
 
@@ -664,7 +664,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                 this.getClientsPanel().setTabFocus();
             }
         } catch (SQLException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return page.getId();
     }
@@ -710,7 +710,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
             try {
                 EventQueue.invokeAndWait(() -> sessionChangedEventHandler(session));
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }
@@ -745,7 +745,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                 }
             }
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

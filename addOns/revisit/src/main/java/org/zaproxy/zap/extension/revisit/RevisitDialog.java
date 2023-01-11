@@ -43,7 +43,7 @@ import org.zaproxy.zap.view.LayoutHelper;
 public class RevisitDialog extends AbstractDialog {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = LogManager.getLogger(RevisitDialog.class);
+    private static final Logger LOGGER = LogManager.getLogger(RevisitDialog.class);
 
     private JPanel jPanel;
     private JButton resetButton;
@@ -302,7 +302,7 @@ public class RevisitDialog extends AbstractDialog {
         try {
             extension.setEnabledForSite(sn, getStartCal().getTime(), getEndCal().getTime());
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
 
         RevisitDialog.this.dispose();

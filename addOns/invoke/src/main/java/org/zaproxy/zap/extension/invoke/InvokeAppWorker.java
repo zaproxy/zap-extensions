@@ -45,7 +45,7 @@ public class InvokeAppWorker extends SwingWorker<Void, Void> {
     private boolean outputNote = false;
     private HttpMessage msg = null;
 
-    private Logger logger = LogManager.getLogger(InvokeAppWorker.class);
+    private static final Logger LOGGER = LogManager.getLogger(InvokeAppWorker.class);
 
     public InvokeAppWorker(
             String command,
@@ -130,7 +130,7 @@ public class InvokeAppWorker extends SwingWorker<Void, Void> {
             }
         }
 
-        logger.debug("Invoking: {}", cmd);
+        LOGGER.debug("Invoking: {}", cmd);
         View.getSingleton().getOutputPanel().append("\n" + cmd.toString() + "\n");
         ProcessBuilder pb = new ProcessBuilder(cmd);
         if (workingDir != null) {
@@ -147,7 +147,7 @@ public class InvokeAppWorker extends SwingWorker<Void, Void> {
                             Constant.messages.getString("invoke.error")
                                     + e.getLocalizedMessage()
                                     + "\n");
-            logger.warn("Failed to start the process: {}", e.getMessage(), e);
+            LOGGER.warn("Failed to start the process: {}", e.getMessage(), e);
             return null;
         }
 

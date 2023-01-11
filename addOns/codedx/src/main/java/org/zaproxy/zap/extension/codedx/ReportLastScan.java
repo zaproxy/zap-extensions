@@ -69,7 +69,7 @@ import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
 public class ReportLastScan {
 
-   private static final Logger logger = LogManager.getLogger(ReportLastScan.class);
+   private static final Logger LOGGER = LogManager.getLogger(ReportLastScan.class);
 
    private static final String HTM_FILE_EXTENSION = ".htm";
    private static final String HTML_FILE_EXTENSION = ".html";
@@ -131,7 +131,7 @@ public class ReportLastScan {
        String path = "/org/zaproxy/zap/resources/xml/" + xslFileName;
        try (InputStream is = ReportLastScan.class.getResourceAsStream(path)) {
            if (is == null) {
-               logger.error("Bundled file not found: {}", path);
+               LOGGER.error("Bundled file not found: {}", path);
                return new File(reportFile);
            }
            return ReportGenerator.stringToHtml(report, new StreamSource(is), reportFile);
@@ -307,14 +307,14 @@ public class ReportLastScan {
                }
 
                if (Files.notExists(report.toPath())) {
-                   logger.info("Not opening report, does not exist: {}", report);
+                   LOGGER.info("Not opening report, does not exist: {}", report);
                    return;
                }
 
                try {
                    DesktopUtils.openUrlInBrowser(report.toURI());
                } catch (Exception e) {
-                   logger.error(e.getMessage(), e);
+                   LOGGER.error(e.getMessage(), e);
                    view.showMessageDialog(
                            Constant.messages.getString(
                                    "report.complete.warning", report.getAbsolutePath()));
@@ -322,7 +322,7 @@ public class ReportLastScan {
            }
 
        } catch (Exception e) {
-           logger.error(e.getMessage(), e);
+           LOGGER.error(e.getMessage(), e);
            view.showWarningDialog(Constant.messages.getString("report.unexpected.error"));
        }
    }

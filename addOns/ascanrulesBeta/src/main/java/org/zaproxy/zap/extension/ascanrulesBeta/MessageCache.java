@@ -43,10 +43,10 @@ public class MessageCache {
     private Map<URI, HttpMessage> messagecache =
             Collections.synchronizedMap(new LRUMap(100)); // a map of 100 objects, synchronized
 
-    private static Logger log = LogManager.getLogger(MessageCache.class);
+    private static final Logger LOGGER = LogManager.getLogger(MessageCache.class);
 
     private MessageCache(HostProcess hostprocess) {
-        log.debug("Initialising");
+        LOGGER.debug("Initialising");
         parent = hostprocess;
     }
 
@@ -83,7 +83,7 @@ public class MessageCache {
     public synchronized HttpMessage getMessage(
             URI uri, HttpMessage basemsg, boolean followRedirects) throws Exception {
         if (!isMessageCached(uri)) {
-            log.debug("URI '{}' is not in the message cache. Retrieving it.", uri);
+            LOGGER.debug("URI '{}' is not in the message cache. Retrieving it.", uri);
             // request the file, then add the file to the cache
             // use the cookies from an original request, in case authorisation is required
             HttpMessage requestmsg = new HttpMessage(uri);
@@ -91,7 +91,7 @@ public class MessageCache {
             try {
                 requestmsg.setCookieParams(basemsg.getCookieParams());
             } catch (Exception e) {
-                log.debug("Could not set the cookies from the base request: ", e);
+                LOGGER.debug("Could not set the cookies from the base request: ", e);
             }
             requestmsg.getRequestHeader().setHeader(HttpFieldsNames.IF_MODIFIED_SINCE, null);
             requestmsg.getRequestHeader().setHeader(HttpFieldsNames.IF_NONE_MATCH, null);
@@ -100,9 +100,9 @@ public class MessageCache {
             parent.notifyNewMessage(requestmsg);
             // put the message in the cache
             messagecache.put(uri, requestmsg);
-            log.debug("Put URI '{}' in the message cache.", uri);
+            LOGGER.debug("Put URI '{}' in the message cache.", uri);
         } else {
-            log.debug("URI '{}' is cached in the message cache.", uri);
+            LOGGER.debug("URI '{}' is cached in the message cache.", uri);
         }
         // and return the cached message.
         return messagecache.get(uri);

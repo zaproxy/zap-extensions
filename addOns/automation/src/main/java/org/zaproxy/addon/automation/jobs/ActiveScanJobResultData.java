@@ -36,7 +36,7 @@ import org.zaproxy.zap.extension.ascan.ActiveScan;
 
 public class ActiveScanJobResultData extends JobResultData {
 
-    private static final Logger LOG = LogManager.getLogger(ActiveScanJobResultData.class);
+    private static final Logger LOGGER = LogManager.getLogger(ActiveScanJobResultData.class);
     public static final String KEY = "activeScanData";
 
     private Map<Integer, RuleData> ruleDataMap = new HashMap<>();
@@ -66,7 +66,7 @@ public class ActiveScanJobResultData extends JobResultData {
                     alertDataMap.put(id, new Alert(recordAlert));
                 }
             } catch (DatabaseException e) {
-                LOG.error("Could not read alert with id {} from the database : {}", id, e);
+                LOGGER.error("Could not read alert with id {} from the database : {}", id, e);
             }
         }
     }

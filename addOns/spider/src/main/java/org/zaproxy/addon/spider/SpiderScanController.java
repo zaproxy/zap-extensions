@@ -40,7 +40,7 @@ import org.zaproxy.zap.users.User;
 
 public class SpiderScanController implements ScanController<SpiderScan> {
 
-    private static final Logger log = LogManager.getLogger(SpiderScanController.class);
+    private static final Logger LOGGER = LogManager.getLogger(SpiderScanController.class);
 
     private ExtensionSpider2 extension;
 
@@ -105,7 +105,7 @@ public class SpiderScanController implements ScanController<SpiderScan> {
             if (contextSpecificObjects != null) {
                 for (Object obj : contextSpecificObjects) {
                     if (obj instanceof SpiderParam) {
-                        log.debug("Setting custom spider params");
+                        LOGGER.debug("Setting custom spider params");
                         spiderParams = (SpiderParam) obj;
                     } else if (obj instanceof SpiderParser) {
                         customSpiderParsers.add((SpiderParser) obj);
@@ -116,7 +116,7 @@ public class SpiderScanController implements ScanController<SpiderScan> {
                     } else if (obj instanceof URI) {
                         startUri = (URI) obj;
                     } else {
-                        log.error(
+                        LOGGER.error(
                                 "Unexpected contextSpecificObject: {}",
                                 obj.getClass().getCanonicalName());
                     }

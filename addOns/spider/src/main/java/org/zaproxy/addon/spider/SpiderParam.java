@@ -227,7 +227,7 @@ public class SpiderParam extends VersionedAbstractParam {
     private boolean showAdvancedDialog; // TODO load/save
 
     /** The log. */
-    private static final Logger log = LogManager.getLogger(SpiderParam.class);
+    private static final Logger LOGGER = LogManager.getLogger(SpiderParam.class);
 
     /**
      * Flag that indicates if the 'Referer' header should be sent while spidering.
@@ -306,7 +306,7 @@ public class SpiderParam extends VersionedAbstractParam {
             this.postForm = getConfig().getBoolean(SPIDER_POST_FORM, true);
         } catch (ConversionException e) {
             // conversion issue from 1.4.1: convert the field from int to boolean
-            log.info(
+            LOGGER.info(
                     "Warning while parsing config file: {} was not in the expected format due to an upgrade. Converting it!",
                     SPIDER_POST_FORM);
             this.postForm = !getConfig().getProperty(SPIDER_POST_FORM).toString().equals("0");
@@ -397,7 +397,8 @@ public class SpiderParam extends VersionedAbstractParam {
                         Pattern pattern = Pattern.compile(domain, Pattern.CASE_INSENSITIVE);
                         domainsInScope.add(new DomainAlwaysInScopeMatcher(pattern));
                     } catch (IllegalArgumentException e) {
-                        log.error("Failed to migrate a domain always in scope, name: {}", name, e);
+                        LOGGER.error(
+                                "Failed to migrate a domain always in scope, name: {}", name, e);
                     }
                 } else {
                     domainsInScope.add(new DomainAlwaysInScopeMatcher(domain));
@@ -817,7 +818,7 @@ public class SpiderParam extends VersionedAbstractParam {
         for (HierarchicalConfiguration sub : fields) {
             String value = sub.getString(DOMAIN_ALWAYS_IN_SCOPE_VALUE_KEY, "");
             if ("".equals(value)) {
-                log.warn(
+                LOGGER.warn(
                         "Failed to read an spider domain in scope entry, required value is empty.");
             }
 
@@ -828,7 +829,7 @@ public class SpiderParam extends VersionedAbstractParam {
                     Pattern pattern = DomainAlwaysInScopeMatcher.createPattern(value);
                     excludedDomain = new DomainAlwaysInScopeMatcher(pattern);
                 } catch (IllegalArgumentException e) {
-                    log.error(
+                    LOGGER.error(
                             "Failed to read an spider domain in scope entry with regex: {}",
                             value,
                             e);
@@ -1085,7 +1086,8 @@ public class SpiderParam extends VersionedAbstractParam {
         for (HierarchicalConfiguration sub : fields) {
             String value = sub.getString(IRRELEVANT_PARAMETER_VALUE_KEY, "");
             if ("".equals(value)) {
-                log.warn("Failed to read an irrelevant parameter entry, required value is empty.");
+                LOGGER.warn(
+                        "Failed to read an irrelevant parameter entry, required value is empty.");
             }
 
             IrrelevantParameter parameter = null;
@@ -1095,7 +1097,7 @@ public class SpiderParam extends VersionedAbstractParam {
                     Pattern pattern = IrrelevantParameter.createPattern(value);
                     parameter = new IrrelevantParameter(pattern);
                 } catch (IllegalArgumentException e) {
-                    log.error(
+                    LOGGER.error(
                             "Failed to read an irrelevant parameter entry with regex: {}",
                             value,
                             e);

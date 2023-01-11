@@ -47,7 +47,7 @@ import org.zaproxy.zap.view.HttpPanelManager;
 public abstract class MessageEditorPanel extends JPanel {
     private static final long serialVersionUID = 1L;
 
-    private static final Logger logger = LogManager.getLogger(MessageEditorPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(MessageEditorPanel.class);
 
     private boolean isSendEnabled = true;
 
@@ -228,10 +228,10 @@ public abstract class MessageEditorPanel extends JPanel {
                                                 "network.httpsender.ssl.error.help",
                                                 Constant.messages.getString(
                                                         "network.httpsender.ssl.error.help.url")));
-                                logger.debug(sslEx, sslEx);
+                                LOGGER.debug(sslEx, sslEx);
                                 View.getSingleton().showWarningDialog(this, strBuilder.toString());
                             } catch (Exception e) {
-                                logger.debug(e.getMessage(), e);
+                                LOGGER.debug(e.getMessage(), e);
                                 View.getSingleton().showWarningDialog(this, e.getMessage());
                             } finally {
                                 btnSend.setEnabled(true);

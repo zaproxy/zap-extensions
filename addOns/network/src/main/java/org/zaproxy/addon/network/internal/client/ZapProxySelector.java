@@ -35,7 +35,7 @@ public class ZapProxySelector extends ProxySelector {
 
     private static final ZapProxySelector SINGLETON = new ZapProxySelector();
 
-    private static final Logger logger = LogManager.getLogger(ZapProxySelector.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZapProxySelector.class);
 
     private ZapProxySelector() {}
 
@@ -60,13 +60,13 @@ public class ZapProxySelector extends ProxySelector {
     @Override
     public List<Proxy> select(URI uri) {
         List<Proxy> proxies = getDefaultProxySelector().select(uri);
-        logger.debug("Selected proxies for {} {}", uri, proxies);
+        LOGGER.debug("Selected proxies for {} {}", uri, proxies);
         return proxies;
     }
 
     @Override
     public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
-        logger.debug("Connect failed for {} {}", uri, sa, ioe);
+        LOGGER.debug("Connect failed for {} {}", uri, sa, ioe);
 
         getDefaultProxySelector().connectFailed(uri, sa, ioe);
     }

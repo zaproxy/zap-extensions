@@ -52,7 +52,7 @@ public class HttpFuzzerResultsTableModel
 
     private static final long serialVersionUID = -7711293371478878302L;
 
-    private static final Logger logger = LogManager.getLogger(HttpFuzzerResultsTableModel.class);
+    private static final Logger LOGGER = LogManager.getLogger(HttpFuzzerResultsTableModel.class);
 
     private static final Column[] COLUMNS =
             new Column[] {
@@ -114,7 +114,7 @@ public class HttpFuzzerResultsTableModel
                         fireTableRowsInserted(row, row);
                     });
         } catch (HttpMalformedHeaderException | DatabaseException e) {
-            logger.error("Failed to persist (and show) the message:", e);
+            LOGGER.error("Failed to persist (and show) the message:", e);
         }
     }
 
@@ -357,7 +357,7 @@ public class HttpFuzzerResultsTableModel
                     }
                 }
             } catch (HttpMalformedHeaderException | DatabaseException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
         return searchResults;

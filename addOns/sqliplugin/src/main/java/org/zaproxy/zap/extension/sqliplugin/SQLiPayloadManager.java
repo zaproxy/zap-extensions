@@ -95,7 +95,7 @@ public class SQLiPayloadManager {
     private List<SQLiBoundary> boundaries;
     private List<SQLiTest> tests;
 
-    private static final Logger log = LogManager.getLogger(SQLiPayloadManager.class);
+    private static final Logger LOGGER = LogManager.getLogger(SQLiPayloadManager.class);
 
     // Singleton variable
     private static SQLiPayloadManager instance;
@@ -111,7 +111,7 @@ public class SQLiPayloadManager {
                 instance = new SQLiPayloadManager();
 
             } catch (IOException | JDOMException ex) {
-                log.error("Cannot initialize the Payload database instance", ex);
+                LOGGER.error("Cannot initialize the Payload database instance", ex);
             }
         }
 
@@ -140,7 +140,7 @@ public class SQLiPayloadManager {
         }
 
         // Log current execution
-        // log.info("Loaded {} boundary elements", boundaries.size());
+        // LOGGER.info("Loaded {} boundary elements", boundaries.size());
         is.close();
 
         // Load all payloads from resources
@@ -153,7 +153,7 @@ public class SQLiPayloadManager {
         }
 
         // Log current execution
-        // log.info("Loaded {} payload elements", tests.size());
+        // LOGGER.info("Loaded {} payload elements", tests.size());
         is.close();
     }
 

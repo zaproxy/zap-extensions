@@ -37,7 +37,7 @@ public class ZestPopupNodeCopyOrCut extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger logger = LogManager.getLogger(ZestPopupNodeCopyOrCut.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestPopupNodeCopyOrCut.class);
 
     private ExtensionZest extension = null;
     private boolean cut;
@@ -107,7 +107,7 @@ public class ZestPopupNodeCopyOrCut extends ExtensionPopupMenuItem {
 
                 return true;
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
         return false;

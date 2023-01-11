@@ -53,7 +53,7 @@ import org.zaproxy.zap.network.HttpRequestConfig;
 /** Knows how to send {@link HttpMessage} objects. */
 public class HttpPanelSender {
 
-    private static final Logger logger = LogManager.getLogger(HttpPanelSender.class);
+    private static final Logger LOGGER = LogManager.getLogger(HttpPanelSender.class);
 
     private final HttpPanelResponse responsePanel;
     private ExtensionHistory extension;
@@ -151,7 +151,7 @@ public class HttpPanelSender {
                     ioe);
 
         } catch (final Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -171,7 +171,7 @@ public class HttpPanelSender {
             }
             SessionStructure.addPath(Model.getSingleton(), ref, httpMessage);
         } catch (HttpMalformedHeaderException | DatabaseException e) {
-            logger.warn("Failed to persist message sent:", e);
+            LOGGER.warn("Failed to persist message sent:", e);
         }
     }
 

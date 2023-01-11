@@ -85,7 +85,7 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
         timestampPatterns.put(Pattern.compile("\\b(?:1\\d|2[0-2])\\d{8}\\b(?!%)"), "Unix");
     }
 
-    private static Logger log = LogManager.getLogger(TimestampDisclosureScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(TimestampDisclosureScanRule.class);
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.timestampdisclosure.";
@@ -132,7 +132,7 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
         if (ResourceIdentificationUtils.isFont(msg)) {
             return;
         }
-        log.debug("Checking message {} for timestamps", msg.getRequestHeader().getURI());
+        LOGGER.debug("Checking message {} for timestamps", msg.getRequestHeader().getURI());
 
         List<HttpHeaderField> responseheaders = msg.getResponseHeader().getHeaders();
         StringBuffer filteredResponseheaders = new StringBuffer();
@@ -140,7 +140,7 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
             boolean ignoreHeader = false;
             for (String headerToIgnore : RESPONSE_HEADERS_TO_IGNORE) {
                 if (responseheader.getName().equalsIgnoreCase(headerToIgnore)) {
-                    log.debug("Ignoring header {}", responseheader.getName());
+                    LOGGER.debug("Ignoring header {}", responseheader.getName());
                     ignoreHeader = true;
                     break; // out of inner loop
                 }
@@ -163,7 +163,7 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
         while (patternIterator.hasNext()) {
             Pattern timestampPattern = patternIterator.next();
             timestampType = timestampPatterns.get(timestampPattern);
-            log.debug(
+            LOGGER.debug(
                     "Trying Timestamp Pattern: {} for timestamp type {}",
                     timestampPattern,
                     timestampType);
@@ -184,7 +184,7 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
                             continue;
                         }
                     }
-                    log.debug("Found a match for timestamp type {}:{}", timestampType, evidence);
+                    LOGGER.debug("Found a match for timestamp type {}:{}", timestampType, evidence);
 
                     if (evidence != null && evidence.length() > 0) {
                         // we found something.. potentially

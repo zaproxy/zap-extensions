@@ -84,7 +84,7 @@ public class StrictTransportSecurityScanRule extends PluginPassiveScanner {
         HSTS_MALFORMED_CONTENT
     }
 
-    private static final Logger logger =
+    private static final Logger LOGGER =
             LogManager.getLogger(StrictTransportSecurityScanRule.class);
 
     private void raiseAlert(VulnType currentVT, String evidence, HttpMessage msg, int id) {
@@ -166,7 +166,7 @@ public class StrictTransportSecurityScanRule extends PluginPassiveScanner {
             raiseAlert(VulnType.HSTS_META, metaHSTS, msg, id);
         }
 
-        logger.debug("\tScan of record {} took {}ms", id, System.currentTimeMillis() - start);
+        LOGGER.debug("\tScan of record {} took {}ms", id, System.currentTimeMillis() - start);
     }
 
     @Override

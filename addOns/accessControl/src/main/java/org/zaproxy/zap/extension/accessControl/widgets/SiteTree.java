@@ -33,7 +33,7 @@ import org.zaproxy.zap.model.ParameterParser;
 
 public class SiteTree {
 
-    protected static final Logger log = LogManager.getLogger(SiteTree.class);
+    protected static final Logger LOGGER = LogManager.getLogger(SiteTree.class);
 
     private SiteTreeNode root;
 
@@ -109,7 +109,7 @@ public class SiteTree {
 
         } catch (Exception e) {
             // ZAP: Added error
-            log.error("Exception adding {} {}", uri, e.getMessage(), e);
+            LOGGER.error("Exception adding {} {}", uri, e.getMessage(), e);
         }
 
         return leaf;

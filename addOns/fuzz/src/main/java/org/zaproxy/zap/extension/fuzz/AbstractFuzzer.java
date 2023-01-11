@@ -62,7 +62,7 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
         FINISHED
     }
 
-    protected final Logger logger = LogManager.getLogger(getClass());
+    protected final Logger LOGGER = LogManager.getLogger(getClass());
 
     private int fuzzerScanId;
     private String fuzzerScanName;
@@ -164,7 +164,7 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
                     throw new IllegalStateException("Fuzzer ID was not set.");
                 }
 
-                logger.info("Fuzzer started...");
+                LOGGER.info("Fuzzer started...");
                 state = State.RUNNING;
                 Stats.incCounter(
                         ExtensionFuzz.FUZZER_PREFIX
@@ -219,7 +219,7 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
 
     protected boolean submitFuzzerTask(AbstractFuzzerTask<M> task) {
         if (isStopped()) {
-            logger.debug("Submitting task skipped, the Fuzzer is stopped.");
+            LOGGER.debug("Submitting task skipped, the Fuzzer is stopped.");
             return false;
         }
 
@@ -228,7 +228,7 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
             return true;
         } catch (RejectedExecutionException e) {
             postTaskExecution(task.getId(), false);
-            logger.warn(
+            LOGGER.warn(
                     "Submitted task was rejected, fuzzer state: [stopped={}, terminated={}].",
                     isStopped(),
                     fuzzerTaskExecutor.isTerminated());
@@ -296,7 +296,7 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
             if (!State.NOT_STARTED.equals(state)
                     && !State.FINISHED.equals(state)
                     && !State.STOPPED.equals(state)) {
-                logger.info("Stopping fuzzer...");
+                LOGGER.info("Stopping fuzzer...");
                 State previousState = state;
                 state = State.STOPPED;
 
@@ -321,11 +321,11 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
         fuzzerTaskExecutor.shutdownNow();
         try {
             if (!fuzzerTaskExecutor.awaitTermination(2, TimeUnit.SECONDS)) {
-                logger.warn(
+                LOGGER.warn(
                         "Failed to await for all fuzzer tasks to stop in the given time (2s)...");
             }
         } catch (InterruptedException ignore) {
-            logger.warn("Interrupted while awaiting for all fuzzer tasks to stop...");
+            LOGGER.warn("Interrupted while awaiting for all fuzzer tasks to stop...");
         }
         terminated(false);
     }
@@ -343,7 +343,7 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
 
         notifyListenersFuzzerCompleted(successfully);
 
-        logger.info(successfully ? "Fuzzer completed." : "Fuzzer stopped.");
+        LOGGER.info(successfully ? "Fuzzer completed." : "Fuzzer stopped.");
     }
 
     protected void notifyListenersFuzzerCompleted(boolean successfully) {
@@ -555,12 +555,12 @@ public abstract class AbstractFuzzer<M extends Message> implements Fuzzer<M> {
             try {
                 submitTasks();
             } catch (Exception e) {
-                logger.error("An exception occurred while fuzzing:", e);
+                LOGGER.error("An exception occurred while fuzzing:", e);
             } finally {
                 try {
                     multipleMessageLocationsReplacer.close();
                 } catch (Exception e) {
-                    logger.debug("Failed to close the message locations replacer:", e);
+                    LOGGER.debug("Failed to close the message locations replacer:", e);
                 }
 
                 if (fuzzerTaskExecutor != null) {

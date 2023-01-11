@@ -37,7 +37,7 @@ public class ZestPassiveRunner extends ZestZapRunner implements PassiveScript {
     private HttpMessage msg = null;
     private ExtensionZest extension = null;
 
-    private Logger logger = LogManager.getLogger(ZestPassiveRunner.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestPassiveRunner.class);
 
     public ZestPassiveRunner(
             ExtensionZest extension, ExtensionNetwork extensionNetwork, ZestScriptWrapper script) {
@@ -50,7 +50,7 @@ public class ZestPassiveRunner extends ZestZapRunner implements PassiveScript {
     @Override
     public void scan(ScriptsPassiveScanner scriptsPassiveScanner, HttpMessage msg, Source source)
             throws ScriptException {
-        logger.debug("Zest PassiveScan script: {}", this.script.getName());
+        LOGGER.debug("Zest PassiveScan script: {}", this.script.getName());
         this.sps = scriptsPassiveScanner;
         this.msg = msg;
 

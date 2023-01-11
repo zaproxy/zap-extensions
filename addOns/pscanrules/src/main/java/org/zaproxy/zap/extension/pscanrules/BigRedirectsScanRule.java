@@ -41,7 +41,7 @@ public class BigRedirectsScanRule extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanrules.bigredirects.";
     private static final int PLUGIN_ID = 10044;
 
-    private static final Logger logger = LogManager.getLogger(BigRedirectsScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(BigRedirectsScanRule.class);
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
@@ -62,7 +62,7 @@ public class BigRedirectsScanRule extends PluginPassiveScanner {
             if (locationHeaderValue != null) {
                 responseLocationHeaderURILength = locationHeaderValue.length();
             } else { // No location header found
-                logger.debug(
+                LOGGER.debug(
                         "Though the response had a redirect status code it did not have a Location header.\nRequested URL: {}",
                         msg.getRequestHeader().getURI());
             }
@@ -93,7 +93,7 @@ public class BigRedirectsScanRule extends PluginPassiveScanner {
                 }
             }
         }
-        logger.debug("\tScan of record {} took {}ms", id, System.currentTimeMillis() - start);
+        LOGGER.debug("\tScan of record {} took {}ms", id, System.currentTimeMillis() - start);
     }
 
     /**
@@ -105,8 +105,8 @@ public class BigRedirectsScanRule extends PluginPassiveScanner {
      */
     private int getPredictedResponseSize(int redirectURILength) {
         int predictedResponseSize = redirectURILength + 300;
-        logger.debug("Original Response Location Header URI Length: {}", redirectURILength);
-        logger.debug("Predicted Response Size: {}", predictedResponseSize);
+        LOGGER.debug("Original Response Location Header URI Length: {}", redirectURILength);
+        LOGGER.debug("Predicted Response Size: {}", predictedResponseSize);
         return predictedResponseSize;
     }
 

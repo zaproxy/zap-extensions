@@ -42,7 +42,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner {
 
     /** the logger. it logs stuff. */
-    private static Logger log = LogManager.getLogger(CrossDomainMisconfigurationScanRule.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(CrossDomainMisconfigurationScanRule.class);
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.crossdomain.";
@@ -73,7 +74,7 @@ public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner {
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 
         try {
-            log.debug(
+            LOGGER.debug(
                     "Checking message {} for Cross-Domain misconfigurations",
                     msg.getRequestHeader().getURI());
 
@@ -87,7 +88,7 @@ public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner {
             // msg.getResponseHeader().getHeader(HttpHeader.ACCESS_CONTROL_EXPOSE_HEADERS);
 
             if (corsAllowOriginValue != null && corsAllowOriginValue.equals("*")) {
-                log.debug(
+                LOGGER.debug(
                         "Raising a Medium risk Cross Domain alert on {}: {}",
                         HttpHeader.ACCESS_CONTROL_ALLOW_ORIGIN,
                         corsAllowOriginValue);
@@ -139,7 +140,7 @@ public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner {
             }
 
         } catch (Exception e) {
-            log.error(
+            LOGGER.error(
                     "An error occurred trying to passively scan a message for Cross Domain Misconfigurations");
         }
     }

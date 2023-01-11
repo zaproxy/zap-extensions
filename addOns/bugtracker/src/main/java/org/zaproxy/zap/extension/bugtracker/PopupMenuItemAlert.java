@@ -53,7 +53,7 @@ public abstract class PopupMenuItemAlert extends ExtensionPopupMenuItem {
     private Method getAlertPanelMethod;
     private Method getTreeAlert;
 
-    private static final Logger log = LogManager.getLogger(PopupMenuItemAlert.class);
+    private static final Logger LOGGER = LogManager.getLogger(PopupMenuItemAlert.class);
 
     /**
      * Constructs a {@code PopupMenuItemAlert} with the given label and with no support for multiple
@@ -270,7 +270,7 @@ public abstract class PopupMenuItemAlert extends ExtensionPopupMenuItem {
                 Set<Alert> alerts = getAlertNodes();
                 performActions(alerts);
             } catch (Exception e) {
-                log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }

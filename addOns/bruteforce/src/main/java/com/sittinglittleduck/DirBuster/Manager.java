@@ -158,7 +158,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     private boolean onlyUnderStartPoint = true;
 
     /* Logger object for the class */
-    private static final Logger LOG = LogManager.getLogger(Manager.class);
+    private static final Logger LOGGER = LogManager.getLogger(Manager.class);
 
     private final SimpleHttpClient httpClient;
 
@@ -218,10 +218,10 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             // gui.addResult(new ResultsTableObject("Dir", url.getPath(), "---", "Scanning",
             // url.toString(), "Start point of testing", null, null, this.recursive, null));
         } catch (MalformedURLException ex) {
-            LOG.error("Bad URL", ex);
+            LOGGER.error("Bad URL", ex);
         }
 
-        LOG.info("Starting dir/file list based brute forcing");
+        LOGGER.info("Starting dir/file list based brute forcing");
 
         createTheThreads();
         workGen = new WorkerGenerator(this);
@@ -270,10 +270,10 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             // gui.addResult(new ResultsTableObject("Dir", url.getPath(), "---", "Scanning",
             // url.toString(), "Start point of testing", null, null, this.recursive, null));
         } catch (MalformedURLException ex) {
-            LOG.error("Bad URL", ex);
+            LOGGER.error("Bad URL", ex);
         }
 
-        LOG.info("Starting dir/file pure brute forcing");
+        LOGGER.info("Starting dir/file pure brute forcing");
 
         createTheThreads();
         workGenBrute = new BruteForceWorkGenerator(this);
@@ -302,7 +302,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
         urlFuzz = true;
 
-        LOG.info("Starting URL fuzz");
+        LOGGER.info("Starting URL fuzz");
 
         createTheThreads();
         workGenFuzz = new WorkerGeneratorURLFuzz(this);
@@ -347,7 +347,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
         pureBrutefuzz = true;
 
-        LOG.info("Starting URL fuzz");
+        LOGGER.info("Starting URL fuzz");
 
         createTheThreads();
         workGenBruteFuzz = new BruteForceURLFuzz(this);
@@ -386,7 +386,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             // extToUse.clone().
             dirQueue.put(new DirToCheck(startPoint, tempext));
         } catch (InterruptedException e) {
-            LOG.debug(e);
+            LOGGER.debug(e);
         }
     }
 
@@ -434,7 +434,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             }
 
         } catch (Exception e) {
-            LOG.error(e);
+            LOGGER.error(e);
         }
     }
 
@@ -563,7 +563,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
                 }
             }
 
-            LOG.debug("Dir found: {} - {}", url.getFile(), statusCode);
+            LOGGER.debug("Dir found: {} - {}", url.getFile(), statusCode);
 
             // add to list of items that have already processed
             addParsedLink(url.getPath());
@@ -571,7 +571,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             headlessResult.addElement(
                     new HeadlessResult(url.getFile(), statusCode, HeadlessResult.DIR));
         } catch (InterruptedException e) {
-            LOG.debug(e);
+            LOGGER.debug(e);
             return;
         }
     }
@@ -593,7 +593,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             String rawResponce,
             BaseCase baseCaseObj) {
 
-        LOG.debug("File found: {} - {}", url.getFile(), statusCode);
+        LOGGER.debug("File found: {} - {}", url.getFile(), statusCode);
 
         addParsedLink(url.getPath());
 
@@ -604,7 +604,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
     public synchronized void foundError(URL url, String reason) {
         headlessResult.addElement(
                 new HeadlessResult(url.getFile() + ":" + reason, -1, HeadlessResult.ERROR));
-        LOG.warn("{} - {}", url, reason);
+        LOGGER.warn("{} - {}", url, reason);
     }
 
     public String getInputFile() {
@@ -728,7 +728,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             }
         }
 
-        LOG.info("DirBuster Stopped");
+        LOGGER.info("DirBuster Stopped");
 
         /*
          * reset the all the markers for what type of test we are doing
@@ -821,7 +821,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
 
                     totalDirsFound--;
                 } else {
-                    LOG.warn("Failed to remove {} from dir queue", processWork);
+                    LOGGER.warn("Failed to remove {} from dir queue", processWork);
                 }
             }
         }
@@ -835,7 +835,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
             dirQueue.put(new DirToCheck(dir, extToUse));
             totalDirsFound++;
         } catch (InterruptedException ex) {
-            LOG.debug(ex);
+            LOGGER.debug(ex);
             return;
         }
     }
@@ -850,7 +850,7 @@ public class Manager implements ProcessChecker.ProcessUpdate {
         try {
             parseQueue.put(parseWorkUnit);
         } catch (InterruptedException ex) {
-            LOG.debug(ex);
+            LOGGER.debug(ex);
         }
     }
 

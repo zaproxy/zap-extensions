@@ -45,7 +45,7 @@ import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
  * @author CravateRouge
  */
 public class CorsScanRule extends AbstractAppPlugin {
-    private static final Logger LOG = LogManager.getLogger(CorsScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(CorsScanRule.class);
     private static final String RANDOM_NAME = RandomStringUtils.random(8, true, true);
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
@@ -124,7 +124,7 @@ public class CorsScanRule extends AbstractAppPlugin {
                         .raise();
                 return;
             } catch (IOException e) {
-                LOG.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
         }
     }

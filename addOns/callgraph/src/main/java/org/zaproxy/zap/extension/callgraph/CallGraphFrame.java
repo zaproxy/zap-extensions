@@ -67,7 +67,7 @@ public class CallGraphFrame extends AbstractFrame {
 
     private static final long serialVersionUID = 6666666666666666666L;
 
-    private static final Logger log = LogManager.getLogger(CallGraphFrame.class);
+    private static final Logger LOGGER = LogManager.getLogger(CallGraphFrame.class);
     private FontMetrics fontmetrics = null;
     private mxGraph graph =
             new mxGraph() {
@@ -99,7 +99,7 @@ public class CallGraphFrame extends AbstractFrame {
             setupGraph(urlPattern);
             setupFrame();
         } catch (SQLException e) {
-            log.error("Failed to setup the graph", e);
+            LOGGER.error("Failed to setup the graph", e);
         }
     }
 
@@ -178,10 +178,10 @@ public class CallGraphFrame extends AbstractFrame {
                         }
                         addVertex(path, url, "fillColor=" + color);
                     } catch (Exception e) {
-                        log.error("Error graphing node for URL {}", url, e);
+                        LOGGER.error("Error graphing node for URL {}", url, e);
                     }
                 } else {
-                    log.debug(
+                    LOGGER.debug(
                             "URL {} does not match the specified pattern {}, so not adding it as a vertex",
                             url,
                             urlPattern);
@@ -215,7 +215,7 @@ public class CallGraphFrame extends AbstractFrame {
                 // remove urls that do not match the pattern specified (all sites / one site)
                 Matcher urlmatcher1 = urlPattern.matcher(predecessor);
                 if (!urlmatcher1.find()) {
-                    log.debug(
+                    LOGGER.debug(
                             "Predecessor URL {} does not match the specified pattern {}, so not adding it as a vertex",
                             predecessor,
                             urlPattern);
@@ -223,7 +223,7 @@ public class CallGraphFrame extends AbstractFrame {
                 }
                 Matcher urlmatcher2 = urlPattern.matcher(url);
                 if (!urlmatcher2.find()) {
-                    log.debug(
+                    LOGGER.debug(
                             "URL {} does not match the specified pattern {}, so not adding it as a vertex",
                             url,
                             urlPattern);
@@ -235,7 +235,7 @@ public class CallGraphFrame extends AbstractFrame {
                 mxCell predecessorVertex = (mxCell) graphmodel.getCell(predecessor);
                 mxCell postdecessorVertex = (mxCell) graphmodel.getCell(url);
                 if (predecessorVertex == null || postdecessorVertex == null) {
-                    log.warn(
+                    LOGGER.warn(
                             "Could not find graph node for {} or for {}. Ignoring it.",
                             predecessor,
                             url);
@@ -276,7 +276,7 @@ public class CallGraphFrame extends AbstractFrame {
                 }
             }
         } catch (SQLException e) {
-            log.error("Error trying to setup the graph", e);
+            LOGGER.error("Error trying to setup the graph", e);
             throw e;
         } finally {
 

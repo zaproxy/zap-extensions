@@ -195,7 +195,7 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
                     CommonAlertTag.WSTG_V42_INPV_05_SQLI);
 
     /** for logging. */
-    private static Logger log = LogManager.getLogger(SqlInjectionMySqlScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(SqlInjectionMySqlScanRule.class);
 
     @Override
     public int getId() {
@@ -234,7 +234,7 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
 
     @Override
     public void init() {
-        log.debug("Initialising");
+        LOGGER.debug("Initialising");
 
         // set up what we are allowed to do, depending on the attack strength that was set.
         if (this.getAttackStrength() == AttackStrength.LOW) {
@@ -255,11 +255,11 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
         try {
             this.sleep = this.getConfig().getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, 15);
         } catch (ConversionException e) {
-            log.debug(
+            LOGGER.debug(
                     "Invalid value for 'rules.common.sleep': {}",
                     this.getConfig().getString(RuleConfigParam.RULE_COMMON_SLEEP_TIME));
         }
-        log.debug("Sleep set to {} seconds", sleep);
+        LOGGER.debug("Sleep set to {} seconds", sleep);
     }
 
     /**
@@ -278,12 +278,12 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
             } catch (java.net.SocketTimeoutException e) {
                 // to be expected occasionally, if the base query was one that contains some
                 // parameters exploiting time based SQL injection?
-                log.debug(
+                LOGGER.debug(
                         "The Base Time Check timed out on [{}] URL [{}]",
                         msgTimeBaseline.getRequestHeader().getMethod(),
                         msgTimeBaseline.getRequestHeader().getURI());
             } catch (SocketException ex) {
-                log.debug(
+                LOGGER.debug(
                         "Caught {} {} when accessing: {}",
                         ex.getClass().getName(),
                         ex.getMessage(),
@@ -305,12 +305,12 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
                 } catch (java.net.SocketTimeoutException e) {
                     // to be expected occasionally, if the base query was one that contains some
                     // parameters exploiting time based SQL injection?
-                    log.debug(
+                    LOGGER.debug(
                             "Base Time Check 2 timed out on [{}] URL [{}]",
                             msgTimeBaseline.getRequestHeader().getMethod(),
                             msgTimeBaseline.getRequestHeader().getURI());
                 } catch (SocketException ex) {
-                    log.debug(
+                    LOGGER.debug(
                             "Caught {} {} when accessing: {}",
                             ex.getClass().getName(),
                             ex.getMessage(),
@@ -320,7 +320,7 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
                 long originalTimeUsed2 = msgTimeBaseline.getTimeElapsedMillis();
                 if (originalTimeUsed2 > sleep * 1000) {
                     // no better the second time around.  we need to bale out.
-                    log.debug(
+                    LOGGER.debug(
                             "Both base time checks 1 and 2 for [{}] URL [{}] are way too slow to be usable for the purposes of checking for time based SQL Injection checking.  We are aborting the check on this particular url.",
                             msgTimeBaseline.getRequestHeader().getMethod(),
                             msgTimeBaseline.getRequestHeader().getURI());
@@ -335,7 +335,7 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
 
             int countTimeBasedRequests = 0;
 
-            log.debug(
+            LOGGER.debug(
                     "Scanning URL [{}] [{}], [{}] with value [{}] for SQL Injection",
                     getBaseMsg().getRequestHeader().getMethod(),
                     getBaseMsg().getRequestHeader().getURI(),
@@ -362,13 +362,13 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
                 } catch (java.net.SocketTimeoutException e) {
                     // to be expected occasionally, if the contains some parameters exploiting time
                     // based SQL injection
-                    log.debug(
+                    LOGGER.debug(
                             "The time check query timed out on [{}] URL [{}] on field: [{}]",
                             msg3.getRequestHeader().getMethod(),
                             msg3.getRequestHeader().getURI(),
                             paramName);
                 } catch (SocketException ex) {
-                    log.debug(
+                    LOGGER.debug(
                             "Caught {} {} when accessing: {}",
                             ex.getClass().getName(),
                             ex.getMessage(),
@@ -377,7 +377,7 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
                 }
                 long modifiedTimeUsed = msg3.getTimeElapsedMillis();
 
-                log.debug(
+                LOGGER.debug(
                         "Time Based SQL Injection test: [{}] on field: [{}] with value [{}] took {}ms, where the original took {}ms",
                         newTimeBasedInjectionValue,
                         paramName,
@@ -424,7 +424,7 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
                             .setMessage(msg3)
                             .raise();
 
-                    log.debug(
+                    LOGGER.debug(
                             "A likely Time Based SQL Injection Vulnerability has been found with [{}] URL [{}] on field: [{}]",
                             msg3.getRequestHeader().getMethod(),
                             msg3.getRequestHeader().getURI(),
@@ -434,7 +434,7 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
                 } // query took longer than the amount of time we attempted to retard it by
                 // bale out if we were asked nicely
                 if (isStop()) {
-                    log.debug("Stopping the scan due to a user request");
+                    LOGGER.debug("Stopping the scan due to a user request");
                     return;
                 }
             } // for each time based SQL index
@@ -443,7 +443,7 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
         } catch (Exception e) {
             // Do not try to internationalise this.. we need an error message in any event..
             // if it's in English, it's still better than not having it at all.
-            log.error(
+            LOGGER.error(
                     "An error occurred checking a url for MySQL SQL Injection vulnerabilities", e);
         }
     }

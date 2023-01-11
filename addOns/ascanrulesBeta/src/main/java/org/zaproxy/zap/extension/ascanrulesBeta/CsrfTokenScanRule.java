@@ -68,7 +68,7 @@ public class CsrfTokenScanRule extends AbstractAppPlugin {
     // WASC Threat Classification (WASC-9)
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_9");
 
-    private static Logger log = LogManager.getLogger(CsrfTokenScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(CsrfTokenScanRule.class);
 
     @Override
     public int getId() {
@@ -120,7 +120,7 @@ public class CsrfTokenScanRule extends AbstractAppPlugin {
     public void init() {
         String ignoreConf = getConfig().getString(RuleConfigParam.RULE_CSRF_IGNORE_LIST);
         if (ignoreConf != null && ignoreConf.length() > 0) {
-            log.debug("Using ignore list: {}", ignoreConf);
+            LOGGER.debug("Using ignore list: {}", ignoreConf);
             for (String str : ignoreConf.split(",")) {
                 String strTrim = str.trim();
                 if (strTrim.length() > 0) {
@@ -167,7 +167,7 @@ public class CsrfTokenScanRule extends AbstractAppPlugin {
                         final String name = inputElement.getAttributeValue("name");
                         final String value = getNonNullValueAttribute(inputElement);
                         tagsMap.put(name, value);
-                        log.debug("Input Tag: {}, {}", name, value);
+                        LOGGER.debug("Input Tag: {}, {}", name, value);
                     }
                 }
 
@@ -195,7 +195,7 @@ public class CsrfTokenScanRule extends AbstractAppPlugin {
                     // s.equalsIgnoreCase(cookie.getName())))
                     for (String id : sessionIds) {
                         if (id.equalsIgnoreCase(cookie.getName())) {
-                            log.debug("Keeping {} to be authenticated", cookie.getName());
+                            LOGGER.debug("Keeping {} to be authenticated", cookie.getName());
                             newCookies.add(cookie);
                             break; // avoids looping over sessionIds if already found
                         }
@@ -219,7 +219,7 @@ public class CsrfTokenScanRule extends AbstractAppPlugin {
                             final String newValue = getNonNullValueAttribute(element2);
                             final String oldValue = tagsMap.get(name);
                             if (oldValue != null && !newValue.equals(oldValue)) {
-                                log.debug("Found Anti-CSRF token: {}, {}", name, newValue);
+                                LOGGER.debug("Found Anti-CSRF token: {}, {}", name, newValue);
                                 vuln = false;
                             }
                         }
@@ -249,7 +249,7 @@ public class CsrfTokenScanRule extends AbstractAppPlugin {
                 formIdx++;
             }
         } catch (IOException e) {
-            log.error(e);
+            LOGGER.error(e);
         }
     }
 
@@ -258,10 +258,10 @@ public class CsrfTokenScanRule extends AbstractAppPlugin {
         String name = formElement.getAttributeValue("name");
         for (String ignore : ignoreList) {
             if (ignore.equals(id)) {
-                log.debug("Ignoring form with id = {}", id);
+                LOGGER.debug("Ignoring form with id = {}", id);
                 return true;
             } else if (ignore.equals(name)) {
-                log.debug("Ignoring form with name = {}", name);
+                LOGGER.debug("Ignoring form with name = {}", name);
                 return true;
             }
         }

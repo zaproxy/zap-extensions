@@ -31,7 +31,7 @@ import org.zaproxy.zap.view.ZapMenuItem;
 /** A short Getting Started with ZAP Guide. */
 public class ExtensionGettingStarted extends ExtensionAdaptor {
 
-    private static Logger logger = LogManager.getLogger(ExtensionGettingStarted.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionGettingStarted.class);
 
     private static final String DIR = "lang";
 
@@ -69,10 +69,10 @@ public class ExtensionGettingStarted extends ExtensionAdaptor {
                                                     + File.separator
                                                     + Constant.messages.getString(
                                                             "gettingStarted.file"));
-                            logger.debug("Getting started guide: {}", guide.getAbsolutePath());
+                            LOGGER.debug("Getting started guide: {}", guide.getAbsolutePath());
                             Desktop.getDesktop().open(guide);
                         } catch (Exception ex) {
-                            logger.error("Failed to locate or open Getting started guide: ", ex);
+                            LOGGER.error("Failed to locate or open Getting started guide: ", ex);
                         }
                     });
         }

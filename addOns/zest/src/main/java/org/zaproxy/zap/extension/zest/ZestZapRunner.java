@@ -66,7 +66,7 @@ import org.zaproxy.zest.impl.ZestBasicRunner;
 
 public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
-    private static final Logger log = LogManager.getLogger(ZestZapRunner.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestZapRunner.class);
 
     private static final int ZEST_HISTORY_REFERENCE_TYPE = HistoryReference.TYPE_ZEST_SCRIPT;
     private static final int FAIL_ACTION_PLUGIN_ID = 50004;
@@ -92,7 +92,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     public ZestZapRunner(
             ExtensionZest extension, ExtensionNetwork extensionNetwork, ZestScriptWrapper wrapper) {
         super(Default.TIMEOUT_IN_SECONDS, true);
-        log.debug("Constructor");
+        LOGGER.debug("Constructor");
         this.extension = extension;
         this.extensionNetwork = extensionNetwork;
         this.wrapper = wrapper;
@@ -116,7 +116,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
             throws ZestAssertFailException, ZestActionFailException, IOException,
                     ZestInvalidCommonTestException, ZestAssignFailException,
                     ZestClientFailException {
-        log.debug("Run script {}", script.getTitle());
+        LOGGER.debug("Run script {}", script.getTitle());
         // Check for any missing parameters
         boolean missingParams = false;
         for (String[] vars : script.getParameters().getVariables()) {
@@ -158,7 +158,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
             throws ZestAssertFailException, ZestActionFailException, IOException,
                     ZestInvalidCommonTestException, ZestAssignFailException,
                     ZestClientFailException {
-        log.debug("Run script {}", script.getTitle());
+        LOGGER.debug("Run script {}", script.getTitle());
         if (wrapper.getWriter() != null) {
             super.setOutputWriter(wrapper.getWriter());
         } else if (scriptUI != null && !hasOutputWriter()) {
@@ -205,7 +205,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     }
 
     private void notifyActionFailed(ZestActionFailException e) {
-        log.debug("notifyActionFailed", e);
+        LOGGER.debug("notifyActionFailed", e);
         if (e.getAction() instanceof ZestActionFail) {
             int risk = Alert.RISK_LOW;
             ZestActionFail zaf = (ZestActionFail) e.getAction();
@@ -248,7 +248,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     }
 
     private void notifyAssignFailed(ZestAssignFailException e) {
-        log.debug("notifyAssignFailed", e);
+        LOGGER.debug("notifyAssignFailed", e);
         if (View.isInitialised()) {
             if (scriptUI != null && scriptUI.isScriptDisplayed(wrapper)) {
                 if (!hasSameScriptType(wrapper.getZestScript(), ZestScript.Type.Passive)) {
@@ -269,7 +269,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
             ZestScript script, ZestStatement stmt, ZestResponse lastResponse)
             throws ZestAssertFailException, ZestActionFailException, ZestInvalidCommonTestException,
                     IOException, ZestAssignFailException, ZestClientFailException {
-        log.debug("runStatement {}", stmt.getElementType());
+        LOGGER.debug("runStatement {}", stmt.getElementType());
         while (this.isPaused() && !this.isStop) {
             try {
                 Thread.sleep(200);
@@ -286,7 +286,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     @Override
     public String handleAction(ZestScript script, ZestAction action, ZestResponse lastResponse)
             throws ZestActionFailException {
-        log.debug("handleAction {}", action.getElementType());
+        LOGGER.debug("handleAction {}", action.getElementType());
         if (action instanceof ZestActionScan) {
             this.invokeScan(script, (ZestActionScan) action);
         } else if (action instanceof ZestActionIntercept) {
@@ -309,7 +309,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     public String handleAssignment(
             ZestScript script, ZestAssignment assign, ZestResponse lastResponse)
             throws ZestAssignFailException {
-        log.debug("handleAssignment {}", assign.getElementType());
+        LOGGER.debug("handleAssignment {}", assign.getElementType());
         try {
             return super.handleAssignment(script, assign, lastResponse);
         } catch (ZestAssignFailException e) {
@@ -321,7 +321,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     @Override
     public void handleResponse(ZestRequest request, ZestResponse response)
             throws ZestAssertFailException {
-        log.debug("handleResponse {}", request.getElementType());
+        LOGGER.debug("handleResponse {}", request.getElementType());
         try {
             HttpMessage msg = ZestZapUtils.toHttpMessage(request, response);
 
@@ -350,7 +350,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
             this.notifyResponse(zrw);
 
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -360,7 +360,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
         try {
             return super.handleClient(script, client);
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             return null;
         }
     }
@@ -379,7 +379,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     }
 
     private void invokeScan(ZestScript script, ZestActionScan scan) throws ZestActionFailException {
-        log.debug("invokeScan {}", scan.getElementType());
+        LOGGER.debug("invokeScan {}", scan.getElementType());
         this.alerts = new ArrayList<>();
 
         ScannerParam scannerParam = new ScannerParam();
@@ -486,7 +486,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
             this.notifyResponse(zrw);
 
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -496,7 +496,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
     @Override
     public String getVariable(String name) {
-        if (log.isDebugEnabled()) {
+        if (LOGGER.isDebugEnabled()) {
             String value = super.getVariable(name);
             String val = value;
             if (value != null) {
@@ -505,7 +505,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
                     val = val.substring(0, 100) + "...";
                 }
             }
-            log.debug("getVariable {} : {}", name, val);
+            LOGGER.debug("getVariable {} : {}", name, val);
 
             return value;
         } else {
@@ -515,7 +515,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
     @Override
     public void setVariable(String name, String value) {
-        if (log.isDebugEnabled()) {
+        if (LOGGER.isDebugEnabled()) {
             String val = value;
             if (value != null) {
                 val = value.replace("\n", " ");
@@ -523,7 +523,7 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
                     val = val.substring(0, 100) + "...";
                 }
             }
-            log.debug("setVariable {} = {}", name, val);
+            LOGGER.debug("setVariable {} = {}", name, val);
             super.setVariable(name, value);
         } else {
             super.setVariable(name, value);

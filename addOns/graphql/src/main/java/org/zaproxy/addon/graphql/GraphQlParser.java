@@ -44,7 +44,7 @@ import org.parosproxy.paros.network.HttpSender;
 
 public class GraphQlParser {
 
-    private static final Logger LOG = LogManager.getLogger(GraphQlParser.class);
+    private static final Logger LOGGER = LogManager.getLogger(GraphQlParser.class);
     private static final String THREAD_PREFIX = "ZAP-GraphQL-Parser";
     private static final String INTROSPECTION_QUERY =
             IntrospectionQueryBuilder.build(
@@ -162,7 +162,7 @@ public class GraphQlParser {
             generator.checkServiceMethods();
             generator.generateAndSend();
         } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

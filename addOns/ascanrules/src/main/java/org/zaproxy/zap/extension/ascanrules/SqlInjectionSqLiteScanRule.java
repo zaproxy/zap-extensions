@@ -216,7 +216,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                     CommonAlertTag.WSTG_V42_INPV_05_SQLI);
 
     /** for logging. */
-    private static Logger log = LogManager.getLogger(SqlInjectionSqLiteScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(SqlInjectionSqLiteScanRule.class);
 
     @Override
     public int getId() {
@@ -255,7 +255,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
 
     @Override
     public void init() {
-        log.debug("Initialising");
+        LOGGER.debug("Initialising");
 
         // set up what we are allowed to do, depending on the attack strength that was set.
         if (this.getAttackStrength() == AttackStrength.LOW) {
@@ -319,7 +319,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
             } catch (java.net.SocketTimeoutException e) {
                 // to be expected occasionally, if the base query was one that contains some
                 // parameters exploiting time based SQL injection?
-                log.debug(
+                LOGGER.debug(
                         "The Base Time Check timed out on [{}] URL [{}]",
                         msgTimeBaseline.getRequestHeader().getMethod(),
                         msgTimeBaseline.getRequestHeader().getURI());
@@ -339,7 +339,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                 } catch (java.net.SocketTimeoutException e) {
                     // to be expected occasionally, if the base query was one that contains some
                     // parameters exploiting time based SQL injection?
-                    log.debug(
+                    LOGGER.debug(
                             "Base Time Check 2 timed out on [{}] URL [{}]",
                             msgTimeBaseline.getRequestHeader().getMethod(),
                             msgTimeBaseline.getRequestHeader().getURI());
@@ -347,7 +347,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                 long originalTimeUsed2 = msgTimeBaseline.getTimeElapsedMillis();
                 if (originalTimeUsed2 > expectedDelayInMs) {
                     // no better the second time around.  we need to bale out.
-                    log.debug(
+                    LOGGER.debug(
                             "Both base time checks 1 and 2 for [{}] URL [{}] are way too slow to be usable for the purposes of checking for time based SQL Injection checking.  We are aborting the check on this particular url.",
                             msgTimeBaseline.getRequestHeader().getMethod(),
                             msgTimeBaseline.getRequestHeader().getURI());
@@ -361,7 +361,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
             // end of timing baseline check
 
             int countTimeBasedRequests = 0;
-            log.debug(
+            LOGGER.debug(
                     "Scanning URL [{}] [{}], [{}] with value [{}] for SQL Injection",
                     getBaseMsg().getRequestHeader().getMethod(),
                     getBaseMsg().getRequestHeader().getURI(),
@@ -406,7 +406,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                                     "<<<<NUMBLOBBYTES>>>>", Long.toString(numBlobsToCreate));
                     setParameter(msgDelay, paramName, newTimeBasedInjectionValue);
 
-                    log.debug(
+                    LOGGER.debug(
                             "\nTrying '{}'. The number of Sequential Increases already is {}",
                             newTimeBasedInjectionValue,
                             numberOfSequentialIncreases);
@@ -418,7 +418,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                     } catch (java.net.SocketTimeoutException e) {
                         // to be expected occasionally, if the contains some parameters exploiting
                         // time based SQL injection
-                        log.debug(
+                        LOGGER.debug(
                                 "The time check query timed out on [{}] URL [{}] on field: [{}]",
                                 msgTimeBaseline.getRequestHeader().getMethod(),
                                 msgTimeBaseline.getRequestHeader().getURI(),
@@ -449,7 +449,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                                     .setMessage(msgDelay)
                                     .raise();
 
-                            log.debug(
+                            LOGGER.debug(
                                     "A likely Error Based SQL Injection Vulnerability has been found with [{}] URL [{}] on field: [{}], by matching for pattern [{}]",
                                     msgDelay.getRequestHeader().getMethod(),
                                     msgDelay.getRequestHeader().getURI(),
@@ -472,7 +472,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
 
                     boolean parseTimeEquivalent = false;
                     if (modifiedTimeUsed > previousDelay) {
-                        log.debug(
+                        LOGGER.debug(
                                 "The response time {} is > the previous response time {}",
                                 modifiedTimeUsed,
                                 previousDelay);
@@ -500,7 +500,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                         parseTimeEquivalent =
                                 (Math.abs(modifiedTimeUsed - parseDelayTimeUsed)
                                         < this.parseDelayDifference);
-                        log.debug(
+                        LOGGER.debug(
                                 "The parse time a random parameter of the same length is {}, so the attack and random parameter are {} equivalent (given the user defined attack threshold)",
                                 parseDelayTimeUsed,
                                 parseTimeEquivalent ? "" : "NOT ");
@@ -515,7 +515,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                         // blobs being created..
                         numberOfSequentialIncreases++;
                         if (!potentialTimeBasedSQLInjection) {
-                            log.debug(
+                            LOGGER.debug(
                                     "Setting the Detectable Delay parameter to '{}'",
                                     newTimeBasedInjectionValue);
                             detectableDelayParameter = newTimeBasedInjectionValue;
@@ -544,7 +544,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                         // numBlobsToCreate to
                         // a point where we can detect the resulting delay
                     }
-                    log.debug(
+                    LOGGER.debug(
                             "Time Based SQL Injection test for {} random blob bytes: [{}] on field: [{}] with value [{}] took {}ms, where the original took {}ms.",
                             numBlobsToCreate,
                             newTimeBasedInjectionValue,
@@ -556,7 +556,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
 
                     // bale out if we were asked nicely
                     if (isStop()) {
-                        log.debug("Stopping the scan due to a user request");
+                        LOGGER.debug("Stopping the scan due to a user request");
                         return;
                     }
                 } // end of for loop to increase the number of random blob bytes to create
@@ -567,7 +567,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                 // see a solid increase in delay
                 // for say 4 or 5 iterations, in order to be confident the vulnerability exists.  In
                 // other cases, the user may be happy with just 2 sequential increases...
-                log.debug("Number of sequential increases: {}", numberOfSequentialIncreases);
+                LOGGER.debug("Number of sequential increases: {}", numberOfSequentialIncreases);
                 if (numberOfSequentialIncreases >= this.incrementalDelayIncreasesForAlert) {
                     // Likely a SQL Injection. Raise it
                     String extraInfo =
@@ -591,7 +591,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                             .raise();
 
                     if (detectableDelayMessage != null)
-                        log.debug(
+                        LOGGER.debug(
                                 "A likely Time Based SQL Injection Vulnerability has been found with [{}] URL [{}] on field: [{}]",
                                 detectableDelayMessage.getRequestHeader().getMethod(),
                                 detectableDelayMessage.getRequestHeader().getURI(),
@@ -607,7 +607,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
 
                 // bale out if we were asked nicely
                 if (isStop()) {
-                    log.debug("Stopping the scan due to a user request");
+                    LOGGER.debug("Stopping the scan due to a user request");
                     return;
                 }
             } // for each time based SQL index
@@ -677,7 +677,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                                             unionAttack =
                                                     unionAttack.replace("<<<<VALUE>>>>", value);
 
-                                            log.debug(
+                                            LOGGER.debug(
                                                     "About to try to determine the SQLite version with [{}]",
                                                     unionAttack);
                                             HttpMessage unionAttackMessage = getNewMsg();
@@ -698,7 +698,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                                                         Pattern.compile(
                                                                 "\\Q" + versionNumber + "\\E",
                                                                 PATTERN_PARAM);
-                                                log.debug(
+                                                LOGGER.debug(
                                                         "Found a candidate SQLite version number '{}'. About to look for the absence of '{}' in the (re-created) original response body (of length {}) to validate it",
                                                         versionNumber,
                                                         actualVersionNumberPattern,
@@ -716,7 +716,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                                                                         .toString());
                                                 if (!matcherVersionInOriginal.find()) {
                                                     // we have the SQLite version number..
-                                                    log.debug(
+                                                    LOGGER.debug(
                                                             "We found SQLite version [{}]",
                                                             versionNumber);
 
@@ -746,7 +746,7 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
                                             }
                                             // bale out if we were asked nicely
                                             if (isStop()) {
-                                                log.debug(
+                                                LOGGER.debug(
                                                         "Stopping the scan due to a user request");
                                                 return;
                                             }
@@ -760,11 +760,11 @@ public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
             } // end of doUnionBased
 
         } catch (UnknownHostException | URIException e) {
-            log.debug("Failed to send HTTP message, cause: {}", e.getMessage());
+            LOGGER.debug("Failed to send HTTP message, cause: {}", e.getMessage());
         } catch (Exception e) {
             // Do not try to internationalise this.. we need an error message in any event..
             // if it's in English, it's still better than not having it at all.
-            log.error(
+            LOGGER.error(
                     "An error occurred checking a url for SQLite SQL Injection vulnerabilities", e);
         }
     }

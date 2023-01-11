@@ -70,7 +70,7 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
 
     private static final long serialVersionUID = -4518225363808518571L;
 
-    private static final Logger logger = LogManager.getLogger(EventStreamPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(EventStreamPanel.class);
 
     /** Observe messages after storage handler was called. */
     public static final int EVENT_STREAM_OBSERVING_ORDER =
@@ -335,7 +335,7 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
             //						try {
             //                            msg = handshakeRef.getHttpMessage();
             //                        } catch (Exception e) {
-            //                        	logger.warn(e.getMessage(), e);
+            //                        	LOGGER.warn(e.getMessage(), e);
             //                            return;
             //                        }
             //						showHandshakeMessage(msg);
@@ -443,7 +443,7 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
                 EventQueue.invokeAndWait(() -> updateStreamState(state, stream));
             }
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -607,7 +607,7 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
         //				}
         //				channelSelect.setSelectedIndex(index);
         //			} catch (SQLException e) {
-        //				logger.error(e.getMessage(), e);
+        //				LOGGER.error(e.getMessage(), e);
         //			}
         //		}
     }
@@ -661,7 +661,7 @@ public class EventStreamPanel extends AbstractPanel implements EventStreamObserv
                                 reset();
                             });
                 } catch (Exception e) {
-                    logger.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
         }

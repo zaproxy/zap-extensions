@@ -33,7 +33,7 @@ public class PersistentXssPrimeScanRule extends AbstractAppParamPlugin {
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.persistentxssprime.";
 
-    private static Logger log = LogManager.getLogger(PersistentXssPrimeScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(PersistentXssPrimeScanRule.class);
 
     @Override
     public int getId() {
@@ -70,10 +70,10 @@ public class PersistentXssPrimeScanRule extends AbstractAppParamPlugin {
         try {
             HttpMessage msg1 = msg.cloneRequest();
             this.setParameter(msg1, param, SourceSinkUtils.getUniqueValue(msg1, param));
-            log.debug("Prime msg={} param={}", msg1.getRequestHeader().getURI(), param);
+            LOGGER.debug("Prime msg={} param={}", msg1.getRequestHeader().getURI(), param);
             sendAndReceive(msg1, false);
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

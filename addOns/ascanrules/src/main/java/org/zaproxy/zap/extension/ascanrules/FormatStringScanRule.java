@@ -66,7 +66,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
                     CommonAlertTag.OWASP_2017_A01_INJECTION);
 
     private static final int PLUGIN_ID = 30002;
-    private static Logger log = LogManager.getLogger(FormatStringScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(FormatStringScanRule.class);
 
     @Override
     public int getId() {
@@ -115,7 +115,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
     public void scan(HttpMessage msg, String param, String value) {
 
         if (this.isStop()) { // Check if the user stopped things
-            log.debug("Scanner {} Stopping.", getName());
+            LOGGER.debug("Scanner {} Stopping.", getName());
             return; // Stop!
         }
 
@@ -144,7 +144,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
             try {
                 sendAndReceive(testMsg);
             } catch (UnknownHostException ex) {
-                log.debug(
+                LOGGER.debug(
                         "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
                         ex.getClass().getName(),
                         ex.getMessage(),
@@ -180,7 +180,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
             try {
                 sendAndReceive(initialAttackMsg);
             } catch (UnknownHostException ex) {
-                log.debug(
+                LOGGER.debug(
                         "Caught {} {} when accessing: {}.\nThe target may have replied with a poorly formed redirect due to our input.",
                         ex.getClass().getName(),
                         ex.getMessage(),
@@ -201,7 +201,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
                 try {
                     sendAndReceive(verificationMsg);
                 } catch (UnknownHostException ex) {
-                    log.debug(
+                    LOGGER.debug(
                             "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
                             ex.getClass().getName(),
                             ex.getMessage(),
@@ -233,7 +233,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
             // errors.  It is only
             //  used if the GNU and generic C compiler check fails to find a vulnerability.
             if (this.isStop()) { // Check if the user stopped things
-                log.debug("Scanner {} Stopping.", getName());
+                LOGGER.debug("Scanner {} Stopping.", getName());
                 return; // Stop!
             }
             StringBuilder sb2 = new StringBuilder();
@@ -256,7 +256,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
             try {
                 sendAndReceive(microsoftTestMsg);
             } catch (UnknownHostException ex) {
-                log.debug(
+                LOGGER.debug(
                         "Caught {} {} when accessing: {}. \nThe target may have replied with a poorly formed redirect due to our input.",
                         ex.getClass().getName(),
                         ex.getMessage(),
@@ -275,9 +275,9 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
             return;
 
         } catch (URIException e) {
-            log.debug("Failed to send HTTP message, cause: {}", e.getMessage());
+            LOGGER.debug("Failed to send HTTP message, cause: {}", e.getMessage());
         } catch (IOException e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

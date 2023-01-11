@@ -49,7 +49,7 @@ import org.zaproxy.zap.users.User;
  */
 public class ContextAccessRulesManager {
 
-    private static final Logger log = LogManager.getLogger(ContextAccessRulesManager.class);
+    private static final Logger LOGGER = LogManager.getLogger(ContextAccessRulesManager.class);
     /**
      * In order to store access rules for unauthenticated visitors, we'll use -1 as the id, which is
      * an id that should not be generated for normal users.
@@ -122,8 +122,8 @@ public class ContextAccessRulesManager {
      * @return the access rule
      */
     public void addRule(int userId, SiteTreeNode node, AccessRule rule) {
-        if (log.isDebugEnabled()) {
-            log.debug("Adding rule for user {} and node {} : {}", userId, node, rule);
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Adding rule for user {} and node {} : {}", userId, node, rule);
         }
 
         // If the rule is INHERIT (default), remove it from the rules mapping as there's no need to
@@ -165,7 +165,7 @@ public class ContextAccessRulesManager {
             path = context.getUrlParamParser().getTreePath(node.getUri());
             hostname = UriUtils.getHostName(node.getUri());
         } catch (URIException e) {
-            log.error("An error occurred while inferring access rules: {}", e.getMessage(), e);
+            LOGGER.error("An error occurred while inferring access rules: {}", e.getMessage(), e);
             return AccessRule.UNKNOWN;
         }
 
@@ -197,7 +197,7 @@ public class ContextAccessRulesManager {
                 // Find the child node that matches the segment
                 parent = parent.findChild(pathSegment);
                 if (parent == null) {
-                    log.warn(
+                    LOGGER.warn(
                             "Unable to find path segment while inferring rule for {} : {}",
                             node,
                             pathSegment);
@@ -294,14 +294,14 @@ public class ContextAccessRulesManager {
             URI uri = new URI(values[3], true);
             SiteTreeNode node = new SiteTreeNode(nodeName, uri);
             getUserRules(userId).put(node, rule);
-            log.debug(
+            LOGGER.debug(
                     "Imported access control rule (context, userId, node, rule): ({}, {}, {}, {}) ",
                     context.getId(),
                     userId,
                     uri,
                     rule);
         } catch (Exception ex) {
-            log.error(
+            LOGGER.error(
                     "Unable to import serialized rule for context {} : {}",
                     context.getId(),
                     serializedRule,
@@ -332,7 +332,7 @@ public class ContextAccessRulesManager {
             userRules.remove(node);
         }
 
-        log.debug(
+        LOGGER.debug(
                 "Identified hanging rules for context {} and user {}: {}",
                 context.getId(),
                 userId,

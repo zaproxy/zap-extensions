@@ -47,7 +47,7 @@ public class CloudMetadataScanRule extends AbstractHostPlugin {
             Arrays.asList(
                     "169.154.169.254", "aws.zaproxy.org", "100.100.100.200", "alibaba.zaproxy.org");
 
-    private static final Logger LOG = LogManager.getLogger(CloudMetadataScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(CloudMetadataScanRule.class);
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
@@ -114,7 +114,7 @@ public class CloudMetadataScanRule extends AbstractHostPlugin {
                     return;
                 }
             } catch (Exception e) {
-                LOG.warn("Error sending URL {}", newRequest.getRequestHeader().getURI(), e);
+                LOGGER.warn("Error sending URL {}", newRequest.getRequestHeader().getURI(), e);
             }
         }
     }

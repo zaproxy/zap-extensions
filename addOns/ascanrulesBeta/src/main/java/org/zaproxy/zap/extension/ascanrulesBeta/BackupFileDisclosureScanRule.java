@@ -286,7 +286,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
      */
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_34");
 
-    private static Logger log = LogManager.getLogger(BackupFileDisclosureScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(BackupFileDisclosureScanRule.class);
 
     @Override
     public int getId() {
@@ -354,8 +354,8 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
 
     @Override
     public void scan() {
-        log.debug("Attacking at Attack Strength: {}", this.getAttackStrength());
-        log.debug(
+        LOGGER.debug("Attacking at Attack Strength: {}", this.getAttackStrength());
+        LOGGER.debug(
                 "Checking [{}] [{}], for Backup File Disclosure",
                 getBaseMsg().getRequestHeader().getMethod(),
                 getBaseMsg().getRequestHeader().getURI());
@@ -365,11 +365,11 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
             String filename = uri.getName();
 
             int statusCode = this.getBaseMsg().getResponseHeader().getStatusCode();
-            log.debug("About to look for a backup for '{}', which returned {}", uri, statusCode);
+            LOGGER.debug("About to look for a backup for '{}', which returned {}", uri, statusCode);
 
             // is it worth looking for a copy of the file?
             if (statusCode == HttpStatusCode.NOT_FOUND) {
-                log.debug(
+                LOGGER.debug(
                         "The original file request was not successfully retrieved (status = {}), so there is not much point in looking for a backup of a non-existent file!",
                         statusCode);
                 return;
@@ -379,11 +379,12 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                 // file
                 findBackupFile(this.getBaseMsg());
             } else {
-                log.debug(
+                LOGGER.debug(
                         "The URI has no filename component, so there is not much point in looking for a corresponding backup file!");
             }
         } catch (Exception e) {
-            log.error("Error scanning a request for Backup File Disclosure: {}", e.getMessage(), e);
+            LOGGER.error(
+                    "Error scanning a request for Backup File Disclosure: {}", e.getMessage(), e);
         }
     }
 
@@ -437,7 +438,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                             filename.length(), "abcdefghijklmnopqrstuvwxyz0123456789");
             String randomfilepath = temppath.substring(0, slashposition) + "/" + randomfilename;
 
-            log.debug("Trying non-existent file: {}", randomfilepath);
+            LOGGER.debug("Trying non-existent file: {}", randomfilepath);
             HttpMessage nonexistfilemsg =
                     new HttpMessage(
                             new URI(
@@ -455,12 +456,12 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
             // does the server give a 404 for a non-existent file?
             if (nonexistfilemsg.getResponseHeader().getStatusCode() != HttpStatusCode.NOT_FOUND) {
                 gives404s = false;
-                log.debug(
+                LOGGER.debug(
                         "The server does not return a 404 status for a non-existent path: {}",
                         nonexistfilemsg.getRequestHeader().getURI());
             } else {
                 gives404s = true;
-                log.debug(
+                LOGGER.debug(
                         "The server gives a 404 status for a non-existent path: {}",
                         nonexistfilemsg.getRequestHeader().getURI());
             }
@@ -487,7 +488,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                 temppathbreak[pathbreak.length - 2] = randomparentfoldername;
                 String randomparentpath = String.join("/", temppathbreak);
 
-                log.debug("Trying non-existent parent path: {}", randomparentpath);
+                LOGGER.debug("Trying non-existent parent path: {}", randomparentpath);
                 nonexistparentmsg =
                         new HttpMessage(
                                 new URI(
@@ -506,12 +507,12 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                 if (nonexistparentmsg.getResponseHeader().getStatusCode()
                         != HttpStatusCode.NOT_FOUND) {
                     parentgives404s = false;
-                    log.debug(
+                    LOGGER.debug(
                             "The server does not return a 404 status for a non-existent parent path: {}",
                             nonexistparentmsg.getRequestHeader().getURI());
                 } else {
                     parentgives404s = true;
-                    log.debug(
+                    LOGGER.debug(
                             "The server gives a 404 status for a non-existent parent path: {}",
                             nonexistparentmsg.getRequestHeader().getURI());
                 }
@@ -548,14 +549,14 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
             // handle
             // separately
 
-            log.debug("The path is {}", path);
+            LOGGER.debug("The path is {}", path);
 
             // for each file extension to try (both appending, and replacing)
             int counted = 0;
             for (String fileExtensionToTry : fileExtensions) {
                 // to append, inject the file extension at the end of the path
                 String candidateBackupFilePath = path + fileExtensionToTry;
-                log.debug("File Extension (append): '{}'", candidateBackupFilePath);
+                LOGGER.debug("File Extension (append): '{}'", candidateBackupFilePath);
                 candidateBackupFileURIs.add(
                         new URI(
                                 originalURI.getScheme(),
@@ -567,7 +568,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                 // to replace the extension, append the file extension at positionExtensionInjection
                 candidateBackupFilePath =
                         path.substring(0, positionExtensionInjection) + fileExtensionToTry;
-                log.debug("File Extension (replace): '{}'", candidateBackupFilePath);
+                LOGGER.debug("File Extension (replace): '{}'", candidateBackupFilePath);
                 candidateBackupFileURIs.add(
                         new URI(
                                 originalURI.getScheme(),
@@ -583,7 +584,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                             path.substring(0, positionExtensionInjection)
                                     + fileExtensionToTry
                                     + actualfileExtension;
-                    log.debug("File Extension (switch): '{}'", candidateBackupFilePath);
+                    LOGGER.debug("File Extension (switch): '{}'", candidateBackupFilePath);
                     candidateBackupFileURIs.add(
                             new URI(
                                     originalURI.getScheme(),
@@ -608,7 +609,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                                 + (positionFileSuffixInjection >= path.length()
                                         ? ""
                                         : path.substring(positionFileSuffixInjection));
-                log.debug("File Suffix (insert): '{}'", candidateBackupFilePath);
+                LOGGER.debug("File Suffix (insert): '{}'", candidateBackupFilePath);
                 candidateBackupFileURIs.add(
                         new URI(
                                 originalURI.getScheme(),
@@ -632,7 +633,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                                 + (positionFilePrefixInjection >= path.length()
                                         ? ""
                                         : path.substring(positionFilePrefixInjection));
-                log.debug("File Prefix (insert): '{}'", candidateBackupFilePath);
+                LOGGER.debug("File Prefix (insert): '{}'", candidateBackupFilePath);
                 candidateBackupFileURIs.add(
                         new URI(
                                 originalURI.getScheme(),
@@ -659,7 +660,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                                     + (positionDirectorySuffixInjection >= path.length()
                                             ? ""
                                             : path.substring(positionDirectorySuffixInjection));
-                    log.debug("Directory Suffix (insert): '{}'", candidateBackupFilePath);
+                    LOGGER.debug("Directory Suffix (insert): '{}'", candidateBackupFilePath);
                     candidateBackupFileChangedFolderURIs.add(
                             new URI(
                                     originalURI.getScheme(),
@@ -680,7 +681,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                                     + (positionDirectoryPrefixInjection >= path.length()
                                             ? ""
                                             : path.substring(positionDirectoryPrefixInjection));
-                    log.debug("Directory Suffix (insert): '{}'", candidateBackupFilePath);
+                    LOGGER.debug("Directory Suffix (insert): '{}'", candidateBackupFilePath);
                     candidateBackupFileChangedFolderURIs.add(
                             new URI(
                                     originalURI.getScheme(),
@@ -699,7 +700,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
             // user
             // try each candidate URI in turn.
             for (URI candidateBackupFileURI : candidateBackupFileURIs) {
-                log.debug("Trying possible backup file path: {}", candidateBackupFileURI);
+                LOGGER.debug("Trying possible backup file path: {}", candidateBackupFileURI);
                 HttpMessage requestmsg = new HttpMessage(candidateBackupFileURI);
                 setMessageCookies(requestmsg, originalMessage);
                 // Do not follow redirects. They're evil. Yep.
@@ -737,7 +738,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                 }
 
                 if (isStop()) {
-                    log.debug("The scan rule was stopped in response to a user request");
+                    LOGGER.debug("The scan rule was stopped in response to a user request");
                     return;
                 }
             }
@@ -746,7 +747,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
             // the logic here needs to check using the parent 404 logic, and the output for a
             // non-existent parent folder.
             for (URI candidateBackupFileURI : candidateBackupFileChangedFolderURIs) {
-                log.debug(
+                LOGGER.debug(
                         "Trying possible backup file path (with changed parent folder): {}",
                         candidateBackupFileURI);
                 HttpMessage requestmsg = new HttpMessage(candidateBackupFileURI);
@@ -787,13 +788,13 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                 }
 
                 if (isStop()) {
-                    log.debug("The scan rule was stopped in response to a user request");
+                    LOGGER.debug("The scan rule was stopped in response to a user request");
                     return;
                 }
             }
 
         } catch (Exception e) {
-            log.error(
+            LOGGER.error(
                     "Some error occurred when looking for a backup file for '{}'",
                     originalMessage.getRequestHeader().getURI(),
                     e);
@@ -804,7 +805,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
         try {
             newMsg.setCookieParams(originalMsg.getCookieParams());
         } catch (Exception e) {
-            log.debug(
+            LOGGER.debug(
                     "Could not set the cookies from the base request: {}",
                     originalMsg.getRequestHeader().getURI(),
                     e);

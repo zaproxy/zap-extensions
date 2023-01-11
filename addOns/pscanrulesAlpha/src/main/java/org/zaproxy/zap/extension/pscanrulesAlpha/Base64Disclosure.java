@@ -79,7 +79,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
     static Pattern uppercasePattern = Pattern.compile("[A-Z]");
 
     /** the logger. logs stuff. strange that! */
-    private static Logger log = LogManager.getLogger(Base64Disclosure.class);
+    private static final Logger LOGGER = LogManager.getLogger(Base64Disclosure.class);
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanalpha.base64disclosure.";
@@ -106,7 +106,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 
-        log.debug("Checking message {} for Base64 encoded data", msg);
+        LOGGER.debug("Checking message {} for Base64 encoded data", msg);
 
         HttpResponseHeader responseHdr;
         try {
@@ -115,7 +115,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
                 responseHdr.setHeader(hdr, null);
             }
         } catch (HttpMalformedHeaderException e1) {
-            log.debug("Failed to copy response header", e1);
+            LOGGER.debug("Failed to copy response header", e1);
             // Set a placeholder so that the body is still analyzed
             responseHdr = new HttpResponseHeader();
         }
@@ -127,7 +127,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
 
         // for each pattern..
         for (Pattern pattern : base64Patterns) {
-            log.debug("Trying Base64 Pattern: {}", pattern);
+            LOGGER.debug("Trying Base64 Pattern: {}", pattern);
             for (String haystack : responseparts) {
                 Matcher matcher = pattern.matcher(haystack);
                 while (matcher.find()) {
@@ -144,7 +144,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
                         decodeddata = Base64.getDecoder().decode(tempbase64evidence);
                     } catch (IllegalArgumentException e) {
                         // it's not actually Base64. so skip it.
-                        log.debug(
+                        LOGGER.debug(
                                 "[{}] (modified from [{}]) could not be decoded as Base64 data",
                                 tempbase64evidence,
                                 base64evidence);
@@ -213,36 +213,36 @@ public class Base64Disclosure extends PluginPassiveScanner {
                             || (noUpperInString
                                     && probabilityOfNoUpperInString < probabilityThreshold)) {
 
-                        log.trace(
+                        LOGGER.trace(
                                 "The following candidate Base64 has been excluded on probabilistic grounds: [{}] ",
                                 base64evidence);
                         if (noDigitInString)
-                            log.trace(
+                            LOGGER.trace(
                                     "The candidate Base64 has no digit characters, and the probability of this occurring for a string of this length is {}%. The threshold is {}%",
                                     probabilityOfNoDigitInString * 100, probabilityThreshold * 100);
                         if (noAlphaInString)
-                            log.trace(
+                            LOGGER.trace(
                                     "The candidate Base64 has no alphabetic characters, and the probability of this occurring for a string of this length is {}%. The threshold is {}%",
                                     probabilityOfNoAlphaInString * 100, probabilityThreshold * 100);
                         // if (noOtherInString)
-                        // log.trace("The candidate Base64 has no 'other' characters, and the
+                        // LOGGER.trace("The candidate Base64 has no 'other' characters, and the
                         // probability of this occurring for a string of this length is {}%. The
                         // threshold is {}%",probabilityOfNoOtherInString *
                         // 100,probabilityThreshold *100);
                         if (noLowerInString)
-                            log.trace(
+                            LOGGER.trace(
                                     "The candidate Base64 has no lowercase characters, and the probability of this occurring for a string of this length is {}%. The threshold is {}%",
                                     probabilityOfNoLowerInString * 100, probabilityThreshold * 100);
 
                         if (noUpperInString)
-                            log.trace(
+                            LOGGER.trace(
                                     "The candidate Base64 has no uppercase characters, and the probability of this occurring for a string of this length is {}%. The threshold is {}%",
                                     probabilityOfNoUpperInString * 100, probabilityThreshold * 100);
 
                         continue;
                     }
 
-                    log.debug(
+                    LOGGER.debug(
                             "Found a match for Base64, of length {}:{}",
                             base64evidence.length(),
                             base64evidence);
@@ -258,12 +258,12 @@ public class Base64Disclosure extends PluginPassiveScanner {
                         ViewStateDecoder viewstatedecoded = new ViewStateDecoder();
                         try {
 
-                            log.debug(
+                            LOGGER.debug(
                                     "The following Base64 string has a ViewState preamble: [{}]",
                                     base64evidence);
                             viewstatexml = viewstatedecoded.decodeAsXML(base64evidence.getBytes());
 
-                            log.debug(
+                            LOGGER.debug(
                                     "The data was successfully decoded as ViewState data of length {}: {}",
                                     viewstatexml.length(),
                                     viewstatexml);
@@ -274,18 +274,18 @@ public class Base64Disclosure extends PluginPassiveScanner {
                                     ViewStateDecoder.PATTERN_NO_HMAC.matcher(viewstatexml);
                             macless = hmaclessmatcher.find();
 
-                            log.debug("MAC-less??? {}", macless);
+                            LOGGER.debug("MAC-less??? {}", macless);
                         } catch (Exception e) {
                             // no need to do anything here.. just don't set "validviewstate" to true
                             // :)
-                            log.debug(
+                            LOGGER.debug(
                                     "The Base64 value [{}] has a valid ViewState pre-amble, but is not a valid viewstate. It may be an EVENTVALIDATION value, is not yet decodable.",
                                     base64evidence);
                         }
                     }
 
                     if (validviewstate == true) {
-                        log.debug("Raising a ViewState informational alert");
+                        LOGGER.debug("Raising a ViewState informational alert");
 
                         // raise an (informational) Alert with the human readable ViewState data
                         newAlert()
@@ -349,7 +349,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
                         // TODO: if the ViewState contains sensitive data, alert it (particularly if
                         // running over HTTP)
                     } else {
-                        log.debug("Raising a Base64 informational alert");
+                        LOGGER.debug("Raising a Base64 informational alert");
 
                         // the Base64 decoded data is not a valid ViewState (even though it may have
                         // a valid ViewState pre-amble)

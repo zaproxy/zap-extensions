@@ -54,7 +54,7 @@ import org.zaproxy.zap.utils.ApiUtils;
 import org.zaproxy.zap.utils.XMLStringUtil;
 
 public class ReportApi extends ApiImplementor {
-    private static final Logger LOG = LogManager.getLogger(ReportApi.class);
+    private static final Logger LOGGER = LogManager.getLogger(ReportApi.class);
     private static final String DELIMITER_REGEX = "\\|";
 
     private static final String PREFIX = "reports";
@@ -118,7 +118,7 @@ public class ReportApi extends ApiImplementor {
 
     @Override
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
-        LOG.debug("Request for handleApiAction: {} (params: {})", name, params);
+        LOGGER.debug("Request for handleApiAction: {} (params: {})", name, params);
         switch (name) {
             case ACTION_GENERATE:
                 ReportData reportData = new ReportData();
@@ -268,7 +268,7 @@ public class ReportApi extends ApiImplementor {
 
     @Override
     public ApiResponse handleApiView(String name, JSONObject params) throws ApiException {
-        LOG.debug("Request for handleApiView: {} (params: {})", name, params);
+        LOGGER.debug("Request for handleApiView: {} (params: {})", name, params);
         switch (name) {
             case VIEW_TEMPLATES:
                 ApiResponseList resultList = new ApiResponseList(name);

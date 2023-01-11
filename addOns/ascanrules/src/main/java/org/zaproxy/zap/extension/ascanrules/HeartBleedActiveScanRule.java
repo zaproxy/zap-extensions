@@ -49,7 +49,7 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
     private int timeoutMs = 0;
 
     /** the logger object */
-    private static Logger log = LogManager.getLogger(HeartBleedActiveScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(HeartBleedActiveScanRule.class);
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.heartbleed.";
@@ -922,9 +922,9 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
             // or if the URL was via HTTP, rather than via HTTPS (yes, we will still check it)
             if (portnumber == -1 || portnumber == 80) portnumber = 443;
 
-            log.debug("About to look for HeartBleed on {}:{}", hostname, portnumber);
+            LOGGER.debug("About to look for HeartBleed on {}:{}", hostname, portnumber);
             for (int tlsIndex = 0; tlsIndex < tlsBuffers.length; tlsIndex++) {
-                log.debug(
+                LOGGER.debug(
                         "-------------------- Trying {} --------------------", tlsNames[tlsIndex]);
 
                 OutputStream os = null;
@@ -935,12 +935,12 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
 
                     try {
                         socket.connect(new InetSocketAddress(hostname, portnumber), this.timeoutMs);
-                        log.debug("Connected");
+                        LOGGER.debug("Connected");
                         // set a timeout on the socket for reads..
                         socket.setSoTimeout(this.timeoutMs);
                     } catch (Exception e) {
                         // we cannot connect at all.. no point in continuing.
-                        log.debug(
+                        LOGGER.debug(
                                 "Cannot establish a socket connection to {}:{} for HeartBleed",
                                 hostname,
                                 portnumber);
@@ -971,7 +971,7 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
                     os.write(messageLenBytes);
                     os.write(tlsBuffers[tlsIndex]);
                     os.write(helloBuffer);
-                    log.debug("Wrote the Client Hello");
+                    LOGGER.debug("Wrote the Client Hello");
 
                     getParent().notifyNewMessage(this);
 
@@ -984,7 +984,7 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
                                     && sslRecord.pay[0] == 0x0E) {
                                 break;
                             }
-                            log.debug(
+                            LOGGER.debug(
                                     "Got a response from the server, but it was not a server hello 'Done' message");
                         }
                     } catch (SocketTimeoutException es) {
@@ -998,7 +998,7 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
                                         + " is not supported by the server, or a common cipher suite could not be agreed");
                     }
 
-                    log.debug("Got the Server Hello");
+                    LOGGER.debug("Got the Server Hello");
 
                     // all the SSL initialisation is complete.  So is the SSL server vulnerable?
                     boolean vulnerable =
@@ -1009,7 +1009,7 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
                                     tlsBuffers[tlsIndex]); // put a timeout on the check for each of
                     // the TLS variants
                     if (vulnerable) {
-                        log.debug("Vulnerable");
+                        LOGGER.debug("Vulnerable");
                         // bingo!
                         String extraInfo =
                                 Constant.messages.getString(
@@ -1024,19 +1024,19 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
                     if (os != null) os.close();
                 } catch (Exception e) {
                     // this particular variant is not vulnerable. skip to the next one..
-                    log.debug(
+                    LOGGER.debug(
                             "The SSL server does not appear to be vulnerable, using {}: {}",
                             tlsNames[tlsIndex],
                             e.getMessage());
                 } finally {
-                    log.debug("Tidying up");
+                    LOGGER.debug("Tidying up");
                     if (is != null) is.close();
                     if (os != null) os.close();
                 }
             }
         } catch (Exception e) {
             // needed to catch exceptions from the "finally" statement
-            log.error("Error scanning a node for HeartBleed: {}", e.getMessage(), e);
+            LOGGER.error("Error scanning a node for HeartBleed: {}", e.getMessage(), e);
         }
     }
 
@@ -1078,7 +1078,7 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
 
         getParent().notifyNewMessage(this);
 
-        log.debug("Wrote the dodgy heartbeat message");
+        LOGGER.debug("Wrote the dodgy heartbeat message");
 
         long startTime = System.currentTimeMillis();
         long timeoutTime = startTime + timeoutMs;
@@ -1087,7 +1087,7 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
         while (true && currentTime <= timeoutTime) {
             SSLRecord sslRecord = recvmsg(is, timeoutMs);
 
-            log.debug(
+            LOGGER.debug(
                     "Got a message of type 0x{} from the server: {}",
                     Integer.toHexString(sslRecord.typ),
                     Hex.encodeHexString(sslRecord.pay));
@@ -1095,12 +1095,12 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
             if (sslRecord.typ == heartbeatRecordByte) {
                 // received the heartbeat response
                 if (sslRecord.len > 3) {
-                    log.debug("VULNERABLE. Got more data back than what we sent in");
+                    LOGGER.debug("VULNERABLE. Got more data back than what we sent in");
                     // Got > 3 bytes back. Vulnerable.
                     return true;
                 } else {
                     // Got <=3 bytes back. NOT Vulnerable.
-                    log.debug("NOT VULNERABLE. Got back <=3 bytes. Boo hoo.");
+                    LOGGER.debug("NOT VULNERABLE. Got back <=3 bytes. Boo hoo.");
                     return false;
                 }
             }
@@ -1110,8 +1110,8 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
             if (sslRecord.typ == alertRecordByte) {
                 if (sslRecord.pay[0] == 0x02) {
                     // Fatal alert
-                    log.debug("NOT VULNERABLE. We got a fatal alert back from the server");
-                    log.debug("Alert Payload: 0x{}", Hex.encodeHexString(sslRecord.pay));
+                    LOGGER.debug("NOT VULNERABLE. We got a fatal alert back from the server");
+                    LOGGER.debug("Alert Payload: 0x{}", Hex.encodeHexString(sslRecord.pay));
                     String msg = null;
                     switch (sslRecord.pay[1]) {
                         case 0:
@@ -1190,17 +1190,17 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
                             msg = "unsupported_extension";
                             break;
                     }
-                    log.debug("Alert reason: {}", msg);
+                    LOGGER.debug("Alert reason: {}", msg);
                     return false;
                 } else {
                     // warning alert
-                    log.debug("Ignoring a warning alert from the server");
+                    LOGGER.debug("Ignoring a warning alert from the server");
                 }
             }
             currentTime = System.currentTimeMillis();
         }
         // timed out.. and we haven't received a response to the heartbeat.. not vulnerable
-        log.debug("NOT VULNERABLE. No suitable heartbeat response within the timeout");
+        LOGGER.debug("NOT VULNERABLE. No suitable heartbeat response within the timeout");
         return false;
     }
     /**

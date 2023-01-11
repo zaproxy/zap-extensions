@@ -79,7 +79,7 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
     };
 
     // Logger instance
-    private static final Logger log = LogManager.getLogger(CodeInjectionScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(CodeInjectionScanRule.class);
 
     private static final Random RAND = new Random();
     private static final int MAX_VALUE = 999998;
@@ -155,7 +155,7 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
     public void scan(HttpMessage msg, String paramName, String value) {
 
         // Begin scan rule execution
-        log.debug(
+        LOGGER.debug(
                 "Checking [{}][{}], parameter [{}] for Dynamic Code Injection Vulnerabilities",
                 msg.getRequestHeader().getMethod(),
                 msg.getRequestHeader().getURI(),
@@ -190,13 +190,13 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
             HttpMessage msg = getNewMsg();
             setParameter(msg, paramName, phpPayload);
 
-            log.debug("Testing [{}] = [{}]", paramName, phpPayload);
+            LOGGER.debug("Testing [{}] = [{}]", paramName, phpPayload);
 
             // Send the request and retrieve the response
             try {
                 sendAndReceive(msg, false);
             } catch (IOException ex) {
-                log.debug(
+                LOGGER.debug(
                         "Caught {}{} when accessing: {}",
                         ex.getClass().getName(),
                         ex.getMessage(),
@@ -207,7 +207,7 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
             // Check if the injected content has been evaluated and printed
             if (msg.getResponseBody().toString().contains(PHP_CONTROL_TOKEN)) {
                 // We Found IT!
-                log.debug(
+                LOGGER.debug(
                         "[PHP Code Injection Found] on parameter [{}] with payload [{}]",
                         paramName,
                         phpPayload);
@@ -242,13 +242,13 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
             HttpMessage msg = getNewMsg();
             setParameter(msg, paramName, MessageFormat.format(aspPayload, bignum1, bignum2));
 
-            log.debug("Testing [{}] = [{}]", paramName, aspPayload);
+            LOGGER.debug("Testing [{}] = [{}]", paramName, aspPayload);
 
             // Send the request and retrieve the response
             try {
                 sendAndReceive(msg, false);
             } catch (IOException ex) {
-                log.debug(
+                LOGGER.debug(
                         "Caught {} {} when accessing: {}",
                         ex.getClass().getName(),
                         ex.getMessage(),
@@ -260,7 +260,7 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
             String evidence = String.valueOf((long) bignum1 * bignum2);
             if (msg.getResponseBody().toString().contains(evidence)) {
                 // We Found IT!
-                log.debug(
+                LOGGER.debug(
                         "[ASP Code Injection Found] on parameter [{}] with payload [{}]",
                         paramName,
                         aspPayload);

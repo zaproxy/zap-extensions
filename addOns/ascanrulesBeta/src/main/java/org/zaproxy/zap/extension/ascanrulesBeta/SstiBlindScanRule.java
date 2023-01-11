@@ -86,7 +86,7 @@ public class SstiBlindScanRule extends AbstractAppParamPlugin {
         "curl X_URL_X", "wget X_URL_X"
     };
 
-    private static final Logger LOG = LogManager.getLogger(SstiBlindScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(SstiBlindScanRule.class);
 
     @Override
     public int getId() {
@@ -224,13 +224,13 @@ public class SstiBlindScanRule extends AbstractAppParamPlugin {
                 }
             }
         } catch (SocketException ex) {
-            LOG.debug(
+            LOGGER.debug(
                     "Caught {} {} when accessing: {}",
                     ex.getClass().getName(),
                     ex.getMessage(),
                     msg.getRequestHeader().getURI());
         } catch (IOException ex) {
-            LOG.warn(
+            LOGGER.warn(
                     "SSTI vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
                     paramName,
                     payloadFormat,
@@ -263,7 +263,7 @@ public class SstiBlindScanRule extends AbstractAppParamPlugin {
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionOast.class);
 
         if (extOast == null) {
-            LOG.info("Could not use extension OAST in blind SSTI scan rule");
+            LOGGER.info("Could not use extension OAST in blind SSTI scan rule");
             return;
         }
 
@@ -289,7 +289,7 @@ public class SstiBlindScanRule extends AbstractAppParamPlugin {
                     try {
                         url = "http://" + extOast.registerAlertAndGetPayload(alert);
                     } catch (Exception e) {
-                        LOG.warn("Failed to register callback on oast", e);
+                        LOGGER.warn("Failed to register callback on oast", e);
                         return;
                     }
                 } else if (extOast.getCallbackService() != null) {
@@ -297,7 +297,7 @@ public class SstiBlindScanRule extends AbstractAppParamPlugin {
                             extOast.registerAlertAndGetPayloadForCallbackService(
                                     alert, SstiBlindScanRule.class.getSimpleName());
                 } else {
-                    LOG.info("Could not use extension OAST on blind SSTI scan rule");
+                    LOGGER.info("Could not use extension OAST on blind SSTI scan rule");
                     return;
                 }
 
@@ -314,19 +314,19 @@ public class SstiBlindScanRule extends AbstractAppParamPlugin {
                 try {
                     sendAndReceive(msg, false);
                 } catch (SocketException ex) {
-                    LOG.debug(
+                    LOGGER.debug(
                             "Caught {} {} when accessing: {}",
                             ex.getClass().getName(),
                             ex.getMessage(),
                             msg.getRequestHeader().getURI());
                 } catch (IOException ex) {
-                    LOG.warn(
+                    LOGGER.warn(
                             "SSTI vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
                             paramName,
                             payload,
                             ex);
                 } catch (Exception ex) {
-                    LOG.error("Failed SSTI rule with payload [{}]", payload, ex);
+                    LOGGER.error("Failed SSTI rule with payload [{}]", payload, ex);
                 }
             }
         }

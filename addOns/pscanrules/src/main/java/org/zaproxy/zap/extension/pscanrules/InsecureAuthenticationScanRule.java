@@ -50,7 +50,7 @@ public class InsecureAuthenticationScanRule extends PluginPassiveScanner {
                     CommonAlertTag.WSTG_V42_ATHN_01_CREDS_NO_CRYPTO);
 
     /** for logging. */
-    private static Logger log = LogManager.getLogger(InsecureAuthenticationScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(InsecureAuthenticationScanRule.class);
 
     @Override
     public void scanHttpRequestSend(HttpMessage msg, int id) {
@@ -91,12 +91,13 @@ public class InsecureAuthenticationScanRule extends PluginPassiveScanner {
                                         " "); // do NOT convert to lowercase for the split.. will
                         // corrupt the base64 data
                         if (authValues.length == 2) {
-                            log.debug("{} Authentication Value: {}", authMechanism, authValues[1]);
+                            LOGGER.debug(
+                                    "{} Authentication Value: {}", authMechanism, authValues[1]);
                             // now decode it from base64 into the username and password
                             try {
                                 String decoded =
                                         new String(Base64.getDecoder().decode(authValues[1]));
-                                log.debug("Decoded Base64 value: {}", decoded);
+                                LOGGER.debug("Decoded Base64 value: {}", decoded);
                                 String[] usernamePassword = decoded.split(":", 2);
                                 if (usernamePassword.length > 1) {
                                     username = usernamePassword[0];
@@ -110,14 +111,14 @@ public class InsecureAuthenticationScanRule extends PluginPassiveScanner {
                                     alertRisk = Alert.RISK_HIGH;
                                 }
                             } catch (IllegalArgumentException e) {
-                                log.error(
+                                LOGGER.error(
                                         "Invalid Base64 value for {} Authentication: {}",
                                         authMechanism,
                                         authValues[1]);
                             }
                         } else {
                             // malformed Basic Auth header?? warn, but ignore
-                            log.debug(
+                            LOGGER.debug(
                                     "Malformed {} Authentication Header: [{}], {} values found",
                                     authMechanism,
                                     authHeaderValue,
@@ -146,7 +147,8 @@ public class InsecureAuthenticationScanRule extends PluginPassiveScanner {
                                         " ", 2); // do NOT convert to lowercase for the split.. will
                         // corrupt the base64 data
                         if (authValues.length == 2) {
-                            log.debug("{} Authentication Value: {}", authMechanism, authValues[1]);
+                            LOGGER.debug(
+                                    "{} Authentication Value: {}", authMechanism, authValues[1]);
                             // now grab the username from the string
                             Pattern pattern = Pattern.compile(".*username=\"([^\"]+)\".*");
                             Matcher matcher = pattern.matcher(authValues[1]);
@@ -154,7 +156,7 @@ public class InsecureAuthenticationScanRule extends PluginPassiveScanner {
                                 username = matcher.group(1);
                             } else {
                                 // no username in the Digest??
-                                log.debug(
+                                LOGGER.debug(
                                         "Malformed {} Authentication Header: [{}]. No username was found",
                                         authMechanism,
                                         authHeaderValue);
@@ -162,7 +164,7 @@ public class InsecureAuthenticationScanRule extends PluginPassiveScanner {
                             }
                         } else {
                             // malformed Digest Auth header?? warn, but ignore
-                            log.debug(
+                            LOGGER.debug(
                                     "Malformed {} Authentication Header: [{}], {} values found",
                                     authMechanism,
                                     authHeaderValue,
@@ -202,7 +204,7 @@ public class InsecureAuthenticationScanRule extends PluginPassiveScanner {
                             .raise();
 
                     // and log it, without internationalising it.
-                    log.info(
+                    LOGGER.info(
                             "Authentication Credentials were captured. [{}] [{}] uses insecure authentication mechanism [{}], revealing username [{}] and password/additional information [{}]",
                             method,
                             uri,

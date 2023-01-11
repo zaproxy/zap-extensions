@@ -69,7 +69,7 @@ public class HeaderGuesser implements Runnable {
     private HttpMessage baseBusted;
     private List<ParamReasons> allReasons;
     private List<ParamReasons> allPrimaryReasons;
-    private static final Logger logger = LogManager.getLogger(HeaderGuesser.class);
+    private static final Logger LOGGER = LogManager.getLogger(HeaderGuesser.class);
     private static final int RANDOM_SEED = 10000000;
     private static final String POISON_DEFINITION = "paramdigger.results.poison.definition";
     private static final String POISON_DEFINITION_FIRST =
@@ -219,7 +219,7 @@ public class HeaderGuesser implements Runnable {
             HttpMessage msg2 = this.makeRequests(config.getUrl(), method, headers, values, true);
             this.checkPoisoning(msg1, msg2, identifier, poison);
         } catch (Exception e) {
-            logger.error(e, e);
+            LOGGER.error(e, e);
         }
     }
 
@@ -286,7 +286,7 @@ public class HeaderGuesser implements Runnable {
                             break;
                         }
                     } catch (Exception e) {
-                        logger.error(e, e);
+                        LOGGER.error(e, e);
                     }
                 }
             }
@@ -442,7 +442,7 @@ public class HeaderGuesser implements Runnable {
                                             HistoryReference.TYPE_PARAM_DIGGER,
                                             msg));
                         } catch (Exception e) {
-                            logger.error(e, e);
+                            LOGGER.error(e, e);
                         }
                     });
             return msg;

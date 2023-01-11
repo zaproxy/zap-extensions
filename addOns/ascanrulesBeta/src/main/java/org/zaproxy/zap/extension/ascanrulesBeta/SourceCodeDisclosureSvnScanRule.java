@@ -72,7 +72,8 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_34");
 
     /** the logger object */
-    private static Logger log = LogManager.getLogger(SourceCodeDisclosureSvnScanRule.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(SourceCodeDisclosureSvnScanRule.class);
 
     /**
      * patterns expected in the output for common server side file extensions TODO: add support for
@@ -149,8 +150,8 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                 && (isPage404(getBaseMsg()))) return;
 
         // scan the node itself (ie, at URL level, rather than at parameter level)
-        log.debug("Attacking at Attack Strength: {}", this.getAttackStrength());
-        log.debug(
+        LOGGER.debug("Attacking at Attack Strength: {}", this.getAttackStrength());
+        LOGGER.debug(
                 "Checking [{}] [{}], for Source Code Disclosure using SVN meta-data",
                 getBaseMsg().getRequestHeader().getMethod(),
                 getBaseMsg().getRequestHeader().getURI());
@@ -168,11 +169,11 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                     return;
                 }
             } else {
-                log.debug(
+                LOGGER.debug(
                         "The URI has no filename component, so there is not much point in looking for corresponding source code!");
             }
         } catch (Exception e) {
-            log.error(
+            LOGGER.error(
                     "Error scanning a request for SVN based Source Code Disclosure: {}",
                     e.getMessage(),
                     e);
@@ -202,7 +203,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                 matcher = PATTERN_HTML.matcher(new String(data));
                 if (matcher.find()) return matcher.group();
             } else {
-                log.debug(
+                LOGGER.debug(
                         "Unknown file extension {}. Accepting this file type without verifying it. Could therefore be a false positive.",
                         fileExtension);
                 if (getAlertThreshold() == AlertThreshold.LOW) {
@@ -298,7 +299,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
         // Attack Mode. (which goes depth first!)
         // in any event, it doesn't make sense to do this.
         if (path.contains("/.svn/") || path.endsWith("/.svn")) {
-            log.debug(
+            LOGGER.debug(
                     "Nope. It doesn't make any sense to look for a Subversion repo *within* a Subversion repo");
             return false;
         }
@@ -338,7 +339,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                     .getResponseBody()
                     .toString()
                     .equals(svnsourcefileattackmsg.getResponseBody().toString())) {
-                log.debug("Response bodies are exactly the same, so can not be the source code");
+                LOGGER.debug("Response bodies are exactly the same, so can not be the source code");
             } else if (!UNWANTED_RESPONSE_CODES.contains(
                     attackmsgResponseStatusCode)) { // If the response is wanted (not on the
                 // unwanted list)
@@ -351,7 +352,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                                 + ".svn/text-base/"
                                 + urlfilename
                                 + ".svn-base";
-                log.debug(
+                LOGGER.debug(
                         "The contents for request '{}' do not return 404 or 3**, so we possibly have the source code using SVN < 1.7",
                         attackFilename);
                 // check the contents of the output to some degree, if we have a file extension.
@@ -375,17 +376,17 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                     // since this is slow, and we already found an instance
                     return true;
                 } else {
-                    log.debug(
+                    LOGGER.debug(
                             "The HTML output does not look like source code of type {}",
                             fileExtension);
                 }
             } else {
-                log.debug(
+                LOGGER.debug(
                         "Got an unsuitable response code {}, so it looks like SVN < 1.7 source code file was not found",
                         svnsourcefileattackmsg.getResponseHeader().getStatusCode());
             }
         } catch (Exception e) {
-            log.warn(
+            LOGGER.warn(
                     "Got an error trying to find source code using the format used by SVN < 1.7",
                     e);
         }
@@ -446,7 +447,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                         .getResponseBody()
                         .toString()
                         .equals(svnWCDBAttackMsg.getResponseBody().toString())) {
-                    log.debug(
+                    LOGGER.debug(
                             "Response bodies are exactly the same, so can not be the source code");
                 } else if (!UNWANTED_RESPONSE_CODES.contains(
                         svnWCDBAttackMsgStatusCode)) { // If the response is wanted (not on the
@@ -464,10 +465,10 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                     String relPath =
                             path.substring(
                                     path.indexOf(pathminusfilename) + pathminusfilename.length());
-                    log.debug(
+                    LOGGER.debug(
                             "The contents for request '{}' do not return 404 or 3**, so we found the '.svn/wc.db' file for SVN >= 1.7..",
                             wcdbAttackFilename);
-                    log.debug("The relpath to query SQLite is '{}'", relPath);
+                    LOGGER.debug("The relpath to query SQLite is '{}'", relPath);
 
                     // so we found the wc.db file... handle it.
                     // get the binary data, and put it in a temp file we can use with the SQLite
@@ -482,8 +483,8 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                     fos.close();
 
                     org.sqlite.JDBC jdbcDriver = new org.sqlite.JDBC();
-                    log.debug("Created a temporary SQLite database file '{}'", tempSqliteFile);
-                    log.debug(
+                    LOGGER.debug("Created a temporary SQLite database file '{}'", tempSqliteFile);
+                    LOGGER.debug(
                             "SQLite JDBC Driver is version {}.{}",
                             jdbcDriver.getMajorVersion(),
                             jdbcDriver.getMinorVersion());
@@ -509,7 +510,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                                 // manner.
                                 int svnFormat = 0;
                                 while (rsSVNWCFormat.next()) {
-                                    log.debug("Got a row from 'pragma USER_VERSION'");
+                                    LOGGER.debug("Got a row from 'pragma USER_VERSION'");
                                     svnFormat = rsSVNWCFormat.getInt(1);
                                     break;
                                 }
@@ -524,11 +525,11 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                                                     + svnFormat
                                                     + " is not supported at this time.  We support up to and including format 31 (~ SVN 1.8.5)");
                                 }
-                                log.debug(
+                                LOGGER.debug(
                                         "Internal SVN Working Copy Format for {} is {}",
                                         tempSqliteFile,
                                         svnFormat);
-                                log.debug(
+                                LOGGER.debug(
                                         "Refer to http://svn.apache.org/repos/asf/subversion/trunk/subversion/libsvn_wc/wc.h for more details!");
 
                                 // now set the parameter, and execute the query
@@ -537,7 +538,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
 
                                 // and get the internal name of the SVN file stored in the SVN repo
                                 while (rsNode.next()) {
-                                    log.debug(
+                                    LOGGER.debug(
                                             "Got a Node from the SVN wc.db file (format {})",
                                             svnFormat);
                                     // String kind = rsNode.getString(1);
@@ -545,7 +546,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                                     String svnFilename = rsNode.getString(3);
 
                                     if (svnFilename != null && svnFilename.length() > 0) {
-                                        log.debug(
+                                        LOGGER.debug(
                                                 "Found {} in the wc.db: {}", relPath, svnFilename);
 
                                         // try get the source, using the internal SVN file path,
@@ -597,7 +598,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                                                             + pathminusfilename
                                                             + ".svn/"
                                                             + svnFilename;
-                                            log.debug(
+                                            LOGGER.debug(
                                                     "The contents for request '{}' do not return 404 or 3**, so we possibly have the source code using SVN >= 1.7",
                                                     attackFilename);
                                             // check the contents of the output to some degree, if
@@ -632,12 +633,12 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                                                         .raise();
                                                 // do not return.. need to tidy up first
                                             } else {
-                                                log.debug(
+                                                LOGGER.debug(
                                                         "The HTML output does not look like source code of type {}",
                                                         fileExtension);
                                             }
                                         } else {
-                                            log.debug(
+                                            LOGGER.debug(
                                                     "Got an unsuitable response code {}, so it looks like SVN >= 1.7 source code file was not found",
                                                     svnSourceFileAttackMsg
                                                             .getResponseHeader()
@@ -656,9 +657,9 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                                 errorSb.append("': ");
                                 errorSb.append(sqlEx);
                                 errorSb.append("\nThe saved response likely wasn't a SQLite db.");
-                                log.debug(errorSb);
+                                LOGGER.debug(errorSb);
                             } catch (Exception e) {
-                                log.debug(
+                                LOGGER.debug(
                                         "An error has occurred, related to the temporary SVN SQLite DB.",
                                         e);
                             } finally {
@@ -675,7 +676,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                     } catch (Exception e) {
                         // the connection will have been closed already, since we're used a try with
                         // resources
-                        log.error(
+                        LOGGER.error(
                                 "Error parsing temporary SVN SQLite database {}",
                                 sqliteConnectionUrl);
                     } finally {
@@ -684,7 +685,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                         // safe than to run out of disk space.
                         boolean success = tempSqliteFile.delete();
                         if (!success) {
-                            log.debug("Could not delete {}.", tempSqliteFile.getAbsolutePath());
+                            LOGGER.debug("Could not delete {}.", tempSqliteFile.getAbsolutePath());
                         }
                     }
 
@@ -701,7 +702,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
             }
 
         } catch (Exception e) {
-            log.warn(
+            LOGGER.warn(
                     "Got an error trying to find source code using the format used by SVN >= 1.7",
                     e);
         }

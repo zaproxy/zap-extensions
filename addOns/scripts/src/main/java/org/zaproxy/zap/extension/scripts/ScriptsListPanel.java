@@ -85,7 +85,7 @@ public class ScriptsListPanel extends AbstractPanel {
     public static final String TREE = "ScriptListTree";
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = LogManager.getLogger(ScriptsListPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(ScriptsListPanel.class);
 
     private ExtensionScriptsUI extension = null;
 
@@ -438,7 +438,7 @@ public class ScriptsListPanel extends AbstractPanel {
     }
 
     private static void handleExceptionLoadingScript(Exception e, File file) {
-        logger.error(e.getMessage(), e);
+        LOGGER.error(e.getMessage(), e);
         View.getSingleton()
                 .showWarningDialog(
                         Constant.messages.getString("file.load.error")

@@ -51,7 +51,7 @@ public class AutomationPlan {
     private Date started;
     private Date finished;
 
-    private static final Logger LOG = LogManager.getLogger(AutomationPlan.class);
+    private static final Logger LOGGER = LogManager.getLogger(AutomationPlan.class);
 
     public AutomationPlan() {
         super();
@@ -122,7 +122,7 @@ public class AutomationPlan {
 
                         job.addTests(jobData.get("tests"), progress);
                     } catch (AutomationJobException e) {
-                        LOG.debug(e.getMessage(), e);
+                        LOGGER.debug(e.getMessage(), e);
                         progress.error(
                                 Constant.messages.getString(
                                         "automation.error.job.internal", jobType, e.getMessage()));
@@ -267,10 +267,10 @@ public class AutomationPlan {
 
     public boolean save() throws FileNotFoundException, JsonProcessingException {
         if (file == null) {
-            LOG.error("Cannot save plan as it has no file set");
+            LOGGER.error("Cannot save plan as it has no file set");
             return false;
         }
-        LOG.debug("Writing plan to {}", file.getAbsolutePath());
+        LOGGER.debug("Writing plan to {}", file.getAbsolutePath());
         ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
         try (PrintWriter writer = new PrintWriter(file)) {
             Data data = new Data();

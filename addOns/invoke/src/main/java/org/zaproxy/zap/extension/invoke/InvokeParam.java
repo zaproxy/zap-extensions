@@ -31,7 +31,7 @@ import org.zaproxy.zap.extension.api.ZapApiIgnore;
 
 public class InvokeParam extends AbstractParam {
 
-    private static final Logger logger = LogManager.getLogger(InvokeParam.class);
+    private static final Logger LOGGER = LogManager.getLogger(InvokeParam.class);
 
     private static final String INVOKE_BASE_KEY = "invoke";
     private static final String ALL_APPS_KEY = INVOKE_BASE_KEY + ".apps.app";
@@ -95,7 +95,7 @@ public class InvokeParam extends AbstractParam {
             enabledApps.trimToSize();
             this.listInvokeEnabled = enabledApps;
         } catch (ConversionException e) {
-            logger.error("Error while loading invoke applications: {}", e.getMessage(), e);
+            LOGGER.error("Error while loading invoke applications: {}", e.getMessage(), e);
         }
 
         this.confirmRemoveApp = getBoolean(CONFIRM_REMOVE_APP_KEY, true);

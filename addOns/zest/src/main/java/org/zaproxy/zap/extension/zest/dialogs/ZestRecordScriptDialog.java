@@ -58,7 +58,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
     private static final String FIELD_LOAD = "zest.dialog.script.label.load";
     private static final String FIELD_CLIENT_NODE = "zest.dialog.script.label.clientnode";
 
-    private static final Logger logger = LogManager.getLogger(ZestRecordScriptDialog.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestRecordScriptDialog.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -195,7 +195,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
             try {
                 script.setPrefix(this.getStringValue(FIELD_PREFIX));
             } catch (MalformedURLException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
 
@@ -240,7 +240,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
 
                 } catch (Exception e) {
                     // Its an older version, so just dont try to use it
-                    logger.debug(e);
+                    LOGGER.debug(e);
                 }
             }
         }

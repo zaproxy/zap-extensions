@@ -54,7 +54,7 @@ public class BruteForceURLFuzz implements Runnable {
     private String urlFuzzEnd;
 
     /* Logger object for the class */
-    private static final Logger LOG = LogManager.getLogger(BruteForceURLFuzz.class);
+    private static final Logger LOGGER = LogManager.getLogger(BruteForceURLFuzz.class);
 
     /** Creates a new instance of BruteForceWorkGenerator */
     public BruteForceURLFuzz(Manager manager) {
@@ -95,7 +95,7 @@ public class BruteForceURLFuzz implements Runnable {
                     manager.setAuto(false);
                 }
             } catch (IOException e) {
-                LOG.error(e);
+                LOGGER.error(e);
             }
         }
 
@@ -106,10 +106,10 @@ public class BruteForceURLFuzz implements Runnable {
             // get dir name
             currentDir = tempDirToCheck.getName();
         } catch (InterruptedException e) {
-            LOG.debug(e);
+            LOGGER.debug(e);
         }
 
-        LOG.info("Starting fuzz on {}{}{dir}{}", firstPart, urlFuzzStart, urlFuzzEnd);
+        LOGGER.info("Starting fuzz on {}{}{dir}{}", firstPart, urlFuzzStart, urlFuzzEnd);
         started = currentDir;
 
         String baseCase = null;
@@ -123,7 +123,7 @@ public class BruteForceURLFuzz implements Runnable {
                     GenBaseCase.genURLFuzzBaseCase(manager, firstPart + urlFuzzStart, urlFuzzEnd);
 
         } catch (IOException e) {
-            LOG.error(e);
+            LOGGER.error(e);
         }
 
         // baseCaseObj = new BaseCase(null, failcode, true, failurl, baseCase);
@@ -142,7 +142,7 @@ public class BruteForceURLFuzz implements Runnable {
                     incrementCounter(x);
                     Thread.sleep(20);
                 } catch (InterruptedException ex) {
-                    LOG.error("makeList {}", ex.toString());
+                    LOGGER.error("makeList {}", ex.toString());
                 }
             }
             /* re-initialize the index */
@@ -179,9 +179,9 @@ public class BruteForceURLFuzz implements Runnable {
             workQueue.put(new WorkUnit(currentURL, true, method, baseCaseObj, temp));
 
         } catch (InterruptedException e) {
-            LOG.debug(e);
+            LOGGER.debug(e);
         } catch (MalformedURLException e) {
-            LOG.debug("Bad URL", e);
+            LOGGER.debug("Bad URL", e);
         }
     }
 
@@ -229,14 +229,14 @@ public class BruteForceURLFuzz implements Runnable {
 
     // calculates the total number of tries per pass
     private void calcTotalPerPass(int listLength, int minLen, int maxLen) {
-        LOG.debug("listLen: {} minLen: {} maxLen: {}", listLength, minLen, maxLen);
+        LOGGER.debug("listLen: {} minLen: {} maxLen: {}", listLength, minLen, maxLen);
 
         double total = 0;
         for (int a = minLen; a <= maxLen; a++) {
             total = total + Math.pow(listLength, a);
         }
 
-        LOG.debug("Total for a pure brute force = {}", total);
+        LOGGER.debug("Total for a pure brute force = {}", total);
 
         manager.setTotalPass(total);
     }

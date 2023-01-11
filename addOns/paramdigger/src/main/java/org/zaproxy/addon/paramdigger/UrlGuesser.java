@@ -78,7 +78,7 @@ public class UrlGuesser implements Runnable {
     private float lineCountHeuristicThreshold;
     private float wordCountHeuristic;
 
-    private static final Logger logger = LogManager.getLogger(UrlGuesser.class);
+    private static final Logger LOGGER = LogManager.getLogger(UrlGuesser.class);
 
     public UrlGuesser(int id, GuesserScan scan, HttpSender httpSender, ExecutorService executor) {
         this.id = id;
@@ -131,7 +131,7 @@ public class UrlGuesser implements Runnable {
             // TODO show paramGuessResults in GUI(OutputTab)
         } catch (Exception e) {
             // TODO Add exception message using Constants
-            logger.error(e, e);
+            LOGGER.error(e, e);
         }
         for (ParamGuessResult paramGuessResult : paramGuessResults) {
             scan.addParamGuessResult(paramGuessResult);
@@ -175,10 +175,10 @@ public class UrlGuesser implements Runnable {
             paramGroups = Utils.confirmUsableParameters(paramGroups, usableParams);
             this.scan.setMaximum(paramGroups.size());
             this.scan.notifyListenersProgress();
-            logger.debug("param groups size: {}", paramGroups.size());
+            LOGGER.debug("param groups size: {}", paramGroups.size());
         }
 
-        logger.debug("Usable parameters: {}", usableParams.size());
+        LOGGER.debug("Usable parameters: {}", usableParams.size());
         this.scan.setMaximum(usableParams.size());
         paramGuessResults = Collections.synchronizedList(new ArrayList<>());
 
@@ -209,7 +209,7 @@ public class UrlGuesser implements Runnable {
                 ParamReasons paramReasons = future.get();
             } catch (Exception e) {
                 // TODO display exception message in GUI
-                logger.error(e, e);
+                LOGGER.error(e, e);
             }
         }
     }
@@ -250,7 +250,7 @@ public class UrlGuesser implements Runnable {
                 }
             } catch (Exception e) {
                 // TODO Display proper error message to user
-                logger.error(e, e);
+                LOGGER.error(e, e);
             }
         }
         return narrowedParamGroups;

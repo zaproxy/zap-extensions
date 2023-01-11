@@ -43,7 +43,7 @@ import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 public class ForbiddenBypassScanRule extends AbstractAppPlugin {
 
     private static final String MESSAGE_PREFIX = "ascanbeta.forbiddenBypass.";
-    private static final Logger LOG = LogManager.getLogger(ForbiddenBypassScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(ForbiddenBypassScanRule.class);
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
@@ -85,7 +85,7 @@ public class ForbiddenBypassScanRule extends AbstractAppPlugin {
             }
 
         } catch (IOException e) {
-            LOG.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
         }
     }
 

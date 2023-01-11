@@ -83,7 +83,7 @@ public class SstiScanRule extends AbstractAppParamPlugin {
 
     private static final String[] WAYS_TO_FIX_CODE_SYNTAX = {"\"", "'", "1", ""};
 
-    private static final Logger LOG = LogManager.getLogger(SstiScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(SstiScanRule.class);
 
     @Override
     public int getId() {
@@ -192,7 +192,7 @@ public class SstiScanRule extends AbstractAppParamPlugin {
         try {
             sendAndReceive(refMsg, false);
         } catch (IOException e) {
-            LOG.warn(
+            LOGGER.warn(
                     "SSTI vulnerability check failed for parameter [{}] due to an I/O error",
                     paramName,
                     e);
@@ -294,9 +294,9 @@ public class SstiScanRule extends AbstractAppParamPlugin {
                 }
 
             } catch (SocketException ex) {
-                LOG.debug("Caught {} {}", ex.getClass().getName(), ex.getMessage());
+                LOGGER.debug("Caught {} {}", ex.getClass().getName(), ex.getMessage());
             } catch (IOException ex) {
-                LOG.warn(
+                LOGGER.warn(
                         "SSTI vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
                         paramName,
                         polyglot,
@@ -405,9 +405,9 @@ public class SstiScanRule extends AbstractAppParamPlugin {
                         }
                     }
                 } catch (SocketException ex) {
-                    LOG.debug("Caught {} {}", ex.getClass().getName(), ex.getMessage());
+                    LOGGER.debug("Caught {} {}", ex.getClass().getName(), ex.getMessage());
                 } catch (IOException ex) {
-                    LOG.warn(
+                    LOGGER.warn(
                             "SSTI vulnerability check failed for parameter [{}]  due to an I/O error",
                             paramName,
                             ex);

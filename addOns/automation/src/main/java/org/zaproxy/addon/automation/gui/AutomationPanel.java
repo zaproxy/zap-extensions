@@ -137,7 +137,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             DisplayUtils.getScaledIcon(
                     new ImageIcon(AutomationPanel.class.getResource("/resource/icon/16/160.png")));
 
-    private static final Logger LOG = LogManager.getLogger(AutomationPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(AutomationPanel.class);
 
     private ExtensionAutomation ext;
     private JToolBar toolbar;
@@ -264,7 +264,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             currentPlan.save();
             ext.getParam().setLastPlanPath(currentPlan.getFile().getAbsolutePath());
         } catch (JsonProcessingException | FileNotFoundException e1) {
-            LOG.error(e1.getMessage(), e1);
+            LOGGER.error(e1.getMessage(), e1);
             View.getSingleton()
                     .showWarningDialog(
                             Constant.messages.getString(
@@ -353,7 +353,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
             loadPlan(ext.loadPlan(f));
             ext.getParam().setLastPlanPath(f.getAbsolutePath());
         } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             View.getSingleton()
                     .showWarningDialog(
                             Constant.messages.getString(
@@ -646,7 +646,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                                 } else if (userObj instanceof AbstractAutomationTest) {
                                     ((AbstractAutomationTest) userObj).showDialog();
                                 } else if (userObj != null) {
-                                    LOG.error(
+                                    LOGGER.error(
                                             "Unsupported automation framework tree node class {}",
                                             userObj.getClass().getCanonicalName());
                                 }
@@ -784,7 +784,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
 
     private void handleEvent(Event event) {
         AutomationPlan plan;
-        LOG.debug("Event: {}", event.getEventType());
+        LOGGER.debug("Event: {}", event.getEventType());
         switch (event.getEventType()) {
             case AutomationEventPublisher.PLAN_CREATED:
             case AutomationEventPublisher.PLAN_CHANGED:

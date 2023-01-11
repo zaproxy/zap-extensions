@@ -39,7 +39,7 @@ import org.apache.logging.log4j.Logger;
 public class GenBaseCase {
 
     /* Log object for this class */
-    private static final Logger LOG = LogManager.getLogger(GenBaseCase.class);
+    private static final Logger LOGGER = LogManager.getLogger(GenBaseCase.class);
 
     /** Creates a new instance of GenBaseCase */
     private GenBaseCase() {}
@@ -76,7 +76,7 @@ public class GenBaseCase {
             return tempBaseCase;
         }
 
-        LOG.debug("URL to get baseCase for: {}", url);
+        LOGGER.debug("URL to get baseCase for: {}", url);
 
         BaseCase baseCase = null;
         int failcode = 0;
@@ -97,7 +97,7 @@ public class GenBaseCase {
             }
         }
 
-        LOG.debug("Getting: {}", failurl);
+        LOGGER.debug("Getting: {}", failurl);
 
         HttpResponse response = manager.getHttpClient().send(HttpMethod.GET, failurl.toString());
 
@@ -107,7 +107,7 @@ public class GenBaseCase {
 
         // we now need to get the content as we need a base case!
         if (failcode == HttpStatus.OK) {
-            LOG.debug("Base case for {} came back as 200!", failurl);
+            LOGGER.debug("Base case for {} came back as 200!", failurl);
 
             baseResponce = response.getResponseBody();
 
@@ -169,7 +169,7 @@ public class GenBaseCase {
                      */
                 }
 
-                LOG.debug("Base case was set to: {}", baseResponce);
+                LOGGER.debug("Base case was set to: {}", baseResponce);
             }
         }
 
@@ -216,14 +216,14 @@ public class GenBaseCase {
         manager.workDone();
 
         if (failcode == HttpStatus.OK) {
-            LOG.debug("Base case for {} came back as 200!", failurl);
+            LOGGER.debug("Base case for {} came back as 200!", failurl);
 
             baseResponce = response.getResponseBody();
 
             // clean up the base case, based on the basecase URL
             baseResponce = FilterResponce.CleanResponce(baseResponce, failurl, failString);
 
-            LOG.debug("Base case was set to: {}", baseResponce);
+            LOGGER.debug("Base case was set to: {}", baseResponce);
         }
 
         /*
@@ -252,7 +252,7 @@ public class GenBaseCase {
 
         // we now need to get the content as we need a base case!
         if (failcode == HttpStatus.OK) {
-            LOG.debug("Base case for {} came back as 200!", failurl);
+            LOGGER.debug("Base case for {} came back as 200!", failurl);
 
             baseResponce = response.getResponseBody();
 

@@ -34,7 +34,7 @@ public class ParamGuessResult {
     private String paramName;
     private HistoryReference historyReference;
     private List<Reason> reasons;
-    private static final Logger logger = LogManager.getLogger(ParamGuessResult.class);
+    private static final Logger LOGGER = LogManager.getLogger(ParamGuessResult.class);
 
     public ParamGuessResult(String paramName, List<Reason> reasons, HttpMessage httpMessage) {
         this.paramName = paramName;
@@ -46,7 +46,7 @@ public class ParamGuessResult {
                             HistoryReference.TYPE_PARAM_DIGGER,
                             httpMessage);
         } catch (HttpMalformedHeaderException | DatabaseException e) {
-            logger.warn(
+            LOGGER.warn(
                     "Error creating history reference. Exception raised: {}", e.getMessage(), e);
         }
     }
@@ -69,7 +69,7 @@ public class ParamGuessResult {
         try {
             return this.historyReference.getHttpMessage();
         } catch (HttpMalformedHeaderException | DatabaseException e) {
-            logger.warn("Error getting HTTP message. Exception raised: {}", e.getMessage(), e);
+            LOGGER.warn("Error getting HTTP message. Exception raised: {}", e.getMessage(), e);
         }
         return null;
     }

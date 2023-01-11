@@ -48,7 +48,7 @@ public class ExtensionGraphQl extends ExtensionAdaptor
         implements CommandLineListener, SessionChangedListener {
 
     public static final String NAME = "ExtensionGraphQl";
-    private static final Logger LOG = LogManager.getLogger(ExtensionGraphQl.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionGraphQl.class);
 
     private ZapMenuItem menuImportLocalGraphQl = null;
     private ZapMenuItem menuImportUrlGraphQl = null;
@@ -151,7 +151,7 @@ public class ExtensionGraphQl extends ExtensionAdaptor
         synchronized (parserThreads) {
             for (ParserThread thread : parserThreads) {
                 if (thread.isRunning()) {
-                    LOG.debug("Stopping Thread {}", thread.getName());
+                    LOGGER.debug("Stopping Thread {}", thread.getName());
                     thread.stopParser();
                 }
             }

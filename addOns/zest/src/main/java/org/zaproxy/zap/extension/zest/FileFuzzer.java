@@ -37,7 +37,7 @@ public class FileFuzzer {
     private int length = -1;
     private List<String> fuzzStrs = new ArrayList<>();
     private Iterator<String> iter = null;
-    private static Logger log = LogManager.getLogger(FileFuzzer.class);
+    private static final Logger LOGGER = LogManager.getLogger(FileFuzzer.class);
 
     protected FileFuzzer(File file) {
         this.file = file;
@@ -58,15 +58,15 @@ public class FileFuzzer {
             }
 
         } catch (FileNotFoundException e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         } catch (IOException e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         } finally {
             if (in != null) {
                 try {
                     in.close();
                 } catch (IOException e) {
-                    log.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
         }

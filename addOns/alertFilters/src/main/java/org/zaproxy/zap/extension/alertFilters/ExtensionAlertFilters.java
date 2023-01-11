@@ -109,7 +109,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
     private GlobalAlertFilterParam globalAlertFilterParam;
     private OptionsGlobalAlertFilterPanel optionsGlobalAlertFilterPanel;
 
-    private Logger log = LogManager.getLogger(this.getClass());
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionAlertFilters.class);
 
     private OnContextsChangedListenerImpl contextsChangedListener;
     private DialogAddAlertFilter addDialog = null;
@@ -313,7 +313,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
                 afManager.addAlertFilter(af);
             }
         } catch (Exception ex) {
-            log.error("Unable to load AlertFilters.", ex);
+            LOGGER.error("Unable to load AlertFilters.", ex);
         }
     }
 
@@ -329,7 +329,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
                 session.setContextData(context.getId(), TYPE_ALERT_FILTER, encodedAlertFilters);
             }
         } catch (Exception ex) {
-            log.error("Unable to persist AlertFilters", ex);
+            LOGGER.error("Unable to persist AlertFilters", ex);
         }
     }
 
@@ -419,7 +419,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
             try {
                 handleAlert(tableAlert.read(Integer.parseInt(alertId)));
             } catch (Exception e) {
-                log.error("Error handling alert", e);
+                LOGGER.error("Error handling alert", e);
             }
         } else {
             // Required for pre 2.4.3 versions
@@ -445,7 +445,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
     private void handleAlert(final RecordAlert recordAlert) {
         final Alert alert = this.getAlert(recordAlert);
         if (alert == null || alert.getHistoryRef() == null) {
-            log.error(
+            LOGGER.error(
                     "No alert or href for {} {}",
                     recordAlert.getAlertId(),
                     recordAlert.getHistoryId());
@@ -469,7 +469,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
                                 }
                                 handleAlert(alert);
                             } catch (Exception e) {
-                                log.error("Error handling alert", e);
+                                LOGGER.error("Error handling alert", e);
                             }
                         });
             }
@@ -478,7 +478,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
 
     private void handleAlert(Alert alert) {
         String uri = alert.getUri();
-        log.debug("Alert: {} URL: {}", this.lastAlert, uri);
+        LOGGER.debug("Alert: {} URL: {}", this.lastAlert, uri);
         // Loop through global rules and apply as necessary
         for (AlertFilter filter : this.globalAlertFilterParam.getGlobalAlertFilters()) {
             if (filter.appliesToAlert(alert, true)) {
@@ -491,7 +491,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
         for (ContextAlertFilterManager mgr : this.contextManagers.values()) {
             Context context = Model.getSingleton().getSession().getContext(mgr.getContextId());
             if (context.isInContext(uri)) {
-                log.debug(
+                LOGGER.debug(
                         "Is in context {} got {} filters",
                         context.getId(),
                         mgr.getAlertFilters().size());
@@ -518,7 +518,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
             updAlert.setRiskConfidence(filter.getNewRisk(), alert.getConfidence());
         }
         try {
-            log.debug(
+            LOGGER.debug(
                     "Setting Alert with plugin id : {} to {}",
                     alert.getPluginId(),
                     filter.getNewRisk());
@@ -535,7 +535,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
             Stats.incCounter(
                     "stats.alertFilter." + alert.getPluginId() + ".risk." + filter.getNewRisk());
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

@@ -68,7 +68,7 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
         implements OptionsChangedListener, LayoutChangedListener {
 
     private static final long serialVersionUID = -5830450800029295419L;
-    private static final Logger logger = LogManager.getLogger(ManualHttpRequestEditorPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(ManualHttpRequestEditorPanel.class);
     private static final String CONFIG_KEY = "requesterpanel";
     private static final String HELP_KEY = "addon.requester.tab";
 
@@ -473,7 +473,7 @@ public class ManualHttpRequestEditorPanel extends MessageEditorPanel
                     new HttpRequestHeader(HttpRequestHeader.GET, uri, HttpHeader.HTTP11));
             setMessage(msg);
         } catch (HttpMalformedHeaderException | URIException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

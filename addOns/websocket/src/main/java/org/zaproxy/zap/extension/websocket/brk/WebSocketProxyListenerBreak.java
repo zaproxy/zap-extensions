@@ -37,7 +37,7 @@ import org.zaproxy.zap.extension.websocket.db.WebSocketStorage;
 /** Gets notified about WebSocket messages and checks if breakpoint applies. */
 public class WebSocketProxyListenerBreak implements WebSocketObserver {
 
-    private static final Logger logger = LogManager.getLogger(WebSocketProxyListenerBreak.class);
+    private static final Logger LOGGER = LogManager.getLogger(WebSocketProxyListenerBreak.class);
 
     private BreakpointMessageHandler2 wsBrkMessageHandler;
 
@@ -133,7 +133,7 @@ public class WebSocketProxyListenerBreak implements WebSocketObserver {
                 message.setPayload((byte[]) payload);
             }
         } catch (WebSocketException e) {
-            logger.error(e);
+            LOGGER.error(e);
         }
     }
 }

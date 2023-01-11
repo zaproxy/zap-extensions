@@ -44,7 +44,7 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 public class SOAPXMLInjectionActiveScanRule extends AbstractAppParamPlugin {
 
     private static final String MESSAGE_PREFIX = "soap.soapxmlinjection.";
-    private static final Logger LOG = LogManager.getLogger(SOAPXMLInjectionActiveScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(SOAPXMLInjectionActiveScanRule.class);
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A03_INJECTION,
@@ -138,7 +138,7 @@ public class SOAPXMLInjectionActiveScanRule extends AbstractAppParamPlugin {
                 }
             }
         } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -162,12 +162,12 @@ public class SOAPXMLInjectionActiveScanRule extends AbstractAppParamPlugin {
         try {
             SOAPMessage soapMsg = SoapMessageFactory.createMessage(msg.getRequestBody());
             if (soapMsg == null) {
-                LOG.debug("Not a SOAP message.");
+                LOGGER.debug("Not a SOAP message.");
                 return null;
             }
             NodeList nodeList = soapMsg.getSOAPBody().getElementsByTagName(paramName);
             if (nodeList.getLength() == 0) {
-                LOG.debug("Not a SOAP element: {}", paramName);
+                LOGGER.debug("Not a SOAP element: {}", paramName);
                 return null;
             }
             nodeList.item(0).setTextContent(finalValue);
@@ -177,7 +177,7 @@ public class SOAPXMLInjectionActiveScanRule extends AbstractAppParamPlugin {
             attackMsg.setRequestBody(StringEscapeUtils.unescapeXml(outputStream.toString()));
             return attackMsg;
         } catch (SOAPException | IOException e) {
-            LOG.warn("Malformed SOAP Message.");
+            LOGGER.warn("Malformed SOAP Message.");
             return null;
         }
     }

@@ -62,7 +62,7 @@ public class WorkerGeneratorURLFuzz implements Runnable {
     private String urlFuzzEnd;
 
     /* Logger object for the class */
-    private static final Logger LOG = LogManager.getLogger(WorkerGeneratorURLFuzz.class);
+    private static final Logger LOGGER = LogManager.getLogger(WorkerGeneratorURLFuzz.class);
 
     /**
      * Creates a new instance of WorkerGenerator
@@ -114,9 +114,9 @@ public class WorkerGeneratorURLFuzz implements Runnable {
                 }
                 manager.setTotalPass(passTotal);
             } catch (FileNotFoundException ex) {
-                LOG.error("File '{}' not found!", inputFile, ex);
+                LOGGER.error("File '{}' not found!", inputFile, ex);
             } catch (IOException ex) {
-                LOG.error(ex);
+                LOGGER.error(ex);
             }
 
             if (manager.getAuto()) {
@@ -126,24 +126,24 @@ public class WorkerGeneratorURLFuzz implements Runnable {
                             manager.getHttpClient()
                                     .send(HttpMethod.HEAD, headurl.toString())
                                     .getStatusCode();
-                    LOG.debug("Response code for head check = {}", responceCode);
+                    LOGGER.debug("Response code for head check = {}", responceCode);
                     if (responceCode == HttpStatus.NOT_IMPLEMENTED
                             || responceCode == HttpStatus.BAD_REQUEST
                             || responceCode == HttpStatus.METHOD_NOT_ALLOWED) {
-                        LOG.debug(
+                        LOGGER.debug(
                                 "Changing to GET only HEAD test returned 501(method no implmented) or a 400");
                         manager.setAuto(false);
                     }
                 } catch (MalformedURLException e) {
-                    LOG.debug("Malformed URL", e);
+                    LOGGER.debug("Malformed URL", e);
                 } catch (IOException e) {
-                    LOG.debug(e);
+                    LOGGER.debug(e);
                 }
             }
 
             d = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile)));
 
-            LOG.debug("Starting fuzz on {}{}{dir}{}", firstPart, urlFuzzStart, urlFuzzEnd);
+            LOGGER.debug("Starting fuzz on {}{}{dir}{}", firstPart, urlFuzzStart, urlFuzzEnd);
 
             int filesProcessed = 0;
 
@@ -178,17 +178,17 @@ public class WorkerGeneratorURLFuzz implements Runnable {
                 Thread.sleep(3);
             }
         } catch (InterruptedException ex) {
-            LOG.debug(ex.toString());
+            LOGGER.debug(ex.toString());
         } catch (MalformedURLException ex) {
-            LOG.warn("Failed to create the fuzzed URL:", ex);
+            LOGGER.warn("Failed to create the fuzzed URL:", ex);
         } catch (IOException ex) {
-            LOG.warn("Failed to create the fuzzed URL:", ex);
+            LOGGER.warn("Failed to create the fuzzed URL:", ex);
         } finally {
             try {
                 d.close();
                 manager.setURLFuzzGenFinished(true);
             } catch (IOException ex) {
-                LOG.debug(ex.toString());
+                LOGGER.debug(ex.toString());
             }
         }
     }

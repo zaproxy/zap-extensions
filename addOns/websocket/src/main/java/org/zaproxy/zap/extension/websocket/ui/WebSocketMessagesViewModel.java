@@ -44,7 +44,7 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
 
     private static final long serialVersionUID = -5047686640383236512L;
 
-    private static final Logger logger = LogManager.getLogger(WebSocketMessagesViewModel.class);
+    private static final Logger LOGGER = LogManager.getLogger(WebSocketMessagesViewModel.class);
 
     private static final int PAYLOAD_PREVIEW_LENGTH = 150;
 
@@ -149,7 +149,7 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
                 return cachedRowCount;
             }
         } catch (DatabaseException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             return 0;
         }
     }
@@ -176,7 +176,7 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
                 }
                 return inScopeChannelIds;
             } catch (DatabaseException e) {
-                logger.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
         }
 
@@ -266,7 +266,7 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
                     length,
                     PAYLOAD_PREVIEW_LENGTH);
         } catch (DatabaseException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             return new ArrayList<>(0);
         }
     }
@@ -331,7 +331,7 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
 
                 return fullMessage;
             } catch (DatabaseException e) {
-                logger.error("Error retrieving full message!", e);
+                LOGGER.error("Error retrieving full message!", e);
                 return message;
             }
         }
@@ -401,7 +401,7 @@ public class WebSocketMessagesViewModel extends PagingTableModel<WebSocketMessag
         try {
             return table.getIndexOf(criteria, null, null);
         } catch (DatabaseException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             // maybe I'm right with this guess - try
             return message.getId() - 1;
         }

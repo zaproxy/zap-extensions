@@ -43,7 +43,7 @@ public class ServerHeaderInfoLeakScanRule extends PluginPassiveScanner {
 
     private static final int PLUGIN_ID = 10036;
 
-    private static final Logger logger = LogManager.getLogger(ServerHeaderInfoLeakScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(ServerHeaderInfoLeakScanRule.class);
 
     private static final Pattern VERSION_PATTERN = Pattern.compile(".*\\d.*");
     private static final Map<String, String> ALERT_TAGS =
@@ -71,7 +71,7 @@ public class ServerHeaderInfoLeakScanRule extends PluginPassiveScanner {
                 }
             }
         }
-        logger.debug("\tScan of record {} took {}ms", id, System.currentTimeMillis() - start);
+        LOGGER.debug("\tScan of record {} took {}ms", id, System.currentTimeMillis() - start);
     }
 
     @Override

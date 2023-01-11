@@ -61,7 +61,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
                 AddonFilesChangedListener,
                 BruteForceListenner {
 
-    private static final Logger logger = LogManager.getLogger(ExtensionBruteForce.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionBruteForce.class);
 
     // Could be after the last one that saves the HttpMessage, as this ProxyListener doesn't change
     // the HttpMessage.
@@ -250,33 +250,33 @@ public class ExtensionBruteForce extends ExtensionAdaptor
     boolean stopScan(ScanTarget target) {
         BruteForce bruteForce = getBruteForce(target);
         if (bruteForce != null) {
-            logger.debug("Stopping scan on {}", target);
+            LOGGER.debug("Stopping scan on {}", target);
             bruteForce.stopScan();
             return true;
         }
-        logger.debug("Failed to find scan on {}", target);
+        LOGGER.debug("Failed to find scan on {}", target);
         return false;
     }
 
     boolean pauseScan(ScanTarget target) {
         BruteForce bruteForce = getBruteForce(target);
         if (bruteForce != null) {
-            logger.debug("Pausing scan on {}", target);
+            LOGGER.debug("Pausing scan on {}", target);
             bruteForce.pauseScan();
             return true;
         }
-        logger.debug("Failed to find scan on {}", target);
+        LOGGER.debug("Failed to find scan on {}", target);
         return false;
     }
 
     boolean resumeScan(ScanTarget target) {
         BruteForce bruteForce = getBruteForce(target);
         if (bruteForce != null) {
-            logger.debug("Resuming scan on {}", target);
+            LOGGER.debug("Resuming scan on {}", target);
             bruteForce.unpauseScan();
             return true;
         }
-        logger.debug("Failed to find scan on {}", target);
+        LOGGER.debug("Failed to find scan on {}", target);
         return false;
     }
 
@@ -336,7 +336,7 @@ public class ExtensionBruteForce extends ExtensionAdaptor
             try {
                 EventQueue.invokeAndWait(() -> sessionChangedEventHandler(session));
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }

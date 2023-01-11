@@ -42,7 +42,7 @@ public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
 
     private static final long serialVersionUID = -5047686640383236512L;
 
-    private static final Logger logger = LogManager.getLogger(EventStreamViewModel.class);
+    private static final Logger LOGGER = LogManager.getLogger(EventStreamViewModel.class);
 
     private static final int PAYLOAD_PREVIEW_LENGTH = 150;
 
@@ -126,7 +126,7 @@ public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
                 return cachedRowCount;
             }
         } catch (DatabaseException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             return 0;
         }
     }
@@ -144,7 +144,7 @@ public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
                 }
                 return inScopeStreamIds;
             } catch (DatabaseException e) {
-                logger.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
         }
 
@@ -211,7 +211,7 @@ public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
                     length,
                     PAYLOAD_PREVIEW_LENGTH);
         } catch (DatabaseException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             return new ArrayList<>(0);
         }
     }
@@ -273,7 +273,7 @@ public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
 
                 return fullEvent;
             } catch (DatabaseException e) {
-                logger.error("Error retrieving full event!", e);
+                LOGGER.error("Error retrieving full event!", e);
                 return event;
             }
         }
@@ -343,7 +343,7 @@ public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
         try {
             return table.getIndexOf(criteria, null);
         } catch (DatabaseException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             // maybe I'm right with this guess - try
             return event.getId() - 1;
         }

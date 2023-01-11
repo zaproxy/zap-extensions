@@ -149,7 +149,7 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
                     CommonAlertTag.WSTG_V42_INPV_05_SQLI);
 
     /** for logging. */
-    private static Logger log = LogManager.getLogger(SqlInjectionOracleScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(SqlInjectionOracleScanRule.class);
 
     @Override
     public int getId() {
@@ -188,7 +188,7 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
 
     @Override
     public void init() {
-        log.debug("Initialising");
+        LOGGER.debug("Initialising");
 
         // set up what we are allowed to do, depending on the attack strength that was set.
         if (this.getAttackStrength() == AttackStrength.LOW) {
@@ -230,7 +230,7 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
             } catch (java.net.SocketTimeoutException e) {
                 // to be expected occasionally, if the base query was one that contains some
                 // parameters exploiting time based SQL injection?
-                log.debug(
+                LOGGER.debug(
                         "The Base Time Check timed out on [{}] URL [{}]",
                         msgTimeBaseline.getRequestHeader().getMethod(),
                         msgTimeBaseline.getRequestHeader().getURI());
@@ -241,7 +241,7 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
             int countUnionBasedRequests = 0;
             int countTimeBasedRequests = 0;
 
-            log.debug(
+            LOGGER.debug(
                     "Scanning URL [{}] [{}], field [{}] with value [{}] for Oracle SQL Injection",
                     getBaseMsg().getRequestHeader().getMethod(),
                     getBaseMsg().getRequestHeader().getURI(),
@@ -266,7 +266,7 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
                 } catch (java.net.SocketTimeoutException e) {
                     // this is to be expected, if we start sending slow queries to the database.
                     // ignore it in this case.. and just get the time.
-                    log.debug(
+                    LOGGER.debug(
                             "The time check query timed out on [{}] URL [{}] on field: [{}]",
                             msgTimeBaseline.getRequestHeader().getMethod(),
                             msgTimeBaseline.getRequestHeader().getURI(),
@@ -274,7 +274,7 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
                 }
                 long modifiedTimeUsed = msgAttack.getTimeElapsedMillis();
 
-                log.debug(
+                LOGGER.debug(
                         "Time Based SQL Injection test: [{}] on field: [{}] with value [{}] took {}ms, where the original took {}ms",
                         newTimeBasedInjectionValue,
                         paramName,
@@ -321,7 +321,7 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
                             .setMessage(msgAttack)
                             .raise();
 
-                    log.debug(
+                    LOGGER.debug(
                             "A likely Time Based SQL Injection Vulnerability has been found with [{}] URL [{}] on field: [{}]",
                             msgAttack.getRequestHeader().getMethod(),
                             msgAttack.getRequestHeader().getURI(),
@@ -334,7 +334,7 @@ public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
         } catch (Exception e) {
             // Do not try to internationalise this.. we need an error message in any event..
             // if it's in English, it's still better than not having it at all.
-            log.error(
+            LOGGER.error(
                     "An error occurred checking a url for Oracle SQL Injection vulnerabilities", e);
         }
     }

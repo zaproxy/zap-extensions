@@ -54,7 +54,7 @@ import org.zaproxy.zap.utils.Stats;
 
 public class LogsImporter {
 
-    private static final Logger LOG = LogManager.getLogger(LogsImporter.class);
+    private static final Logger LOGGER = LogManager.getLogger(LogsImporter.class);
     private static final String STATS_ZAP_FILE = "import.zap.file";
     private static final String STATS_ZAP_FILE_ERROR = "import.zap.file.errors";
     private static final String STATS_ZAP_FILE_MSG = "import.zap.file.message";
@@ -117,7 +117,7 @@ public class LogsImporter {
                 }
                 break;
             } catch (Exception e) {
-                LOG.warn(e.getMessage());
+                LOGGER.warn(e.getMessage());
             }
         }
 
@@ -150,7 +150,7 @@ public class LogsImporter {
                 processZapLogs(parsedText);
                 ExtensionExim.updateOutput("exim.output.end", newFile.toPath().toString());
             } catch (IOException e) {
-                LOG.warn(e.getMessage());
+                LOGGER.warn(e.getMessage());
                 Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_ZAP_FILE_ERROR);
                 ExtensionExim.updateOutput(
                         ExtensionExim.EXIM_OUTPUT_ERROR, newFile.getAbsolutePath());
@@ -163,7 +163,7 @@ public class LogsImporter {
                 readModSecLogsFromFile(newFile);
                 ExtensionExim.updateOutput("exim.output.end", newFile.toPath().toString());
             } catch (Exception e) {
-                LOG.warn(e.getMessage());
+                LOGGER.warn(e.getMessage());
                 Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_MODSEC2_FILE_ERROR);
                 ExtensionExim.updateOutput(
                         ExtensionExim.EXIM_OUTPUT_ERROR, newFile.getAbsolutePath());
@@ -269,7 +269,7 @@ public class LogsImporter {
                 Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_MODSEC2_FILE_MSG);
             }
         } catch (DatabaseException | HttpMalformedHeaderException | NullPointerException e) {
-            LOG.warn(e.getMessage());
+            LOGGER.warn(e.getMessage());
             if (LogType.ZAP.equals(logType)) {
                 Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_ZAP_FILE_MSG_ERROR);
             } else {

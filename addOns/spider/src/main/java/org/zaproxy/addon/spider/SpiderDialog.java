@@ -68,7 +68,7 @@ public class SpiderDialog extends StandardFieldsDialog {
     private static final String FIELD_PARSE_GIT = "spider.custom.label.parseGit";
     private static final String FIELD_HANDLE_ODATA = "spider.custom.label.handleOdata";
 
-    private static Logger logger = LogManager.getLogger(SpiderDialog.class);
+    private static final Logger LOGGER = LogManager.getLogger(SpiderDialog.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -108,7 +108,7 @@ public class SpiderDialog extends StandardFieldsDialog {
             // If one isn't specified then leave the previously selected one
             this.target = target;
         }
-        logger.debug("Init {}", this.target);
+        LOGGER.debug("Init {}", this.target);
 
         this.removeAllFields();
 

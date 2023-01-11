@@ -36,7 +36,7 @@ import org.apache.logging.log4j.Logger;
 /** A utility class for URL bruteforce related operations for the param digger add-on. */
 public class Utils {
 
-    private static Logger logger = LogManager.getLogger(Utils.class);
+    private static final Logger LOGGER = LogManager.getLogger(Utils.class);
     /**
      * Returns a List of all parameters to be used from a given wordlist file.
      *
@@ -51,7 +51,7 @@ public class Utils {
                 params.add(StringUtils.strip(line));
             }
         } catch (Exception e) {
-            logger.error(e);
+            LOGGER.error(e);
         }
         return params;
     }

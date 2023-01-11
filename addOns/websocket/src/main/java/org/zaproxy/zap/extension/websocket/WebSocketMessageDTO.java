@@ -98,7 +98,7 @@ public class WebSocketMessageDTO implements Message {
                         SimpleDateFormat.SHORT, SimpleDateFormat.MEDIUM, Constant.getLocale());
     }
 
-    private static final Logger LOG = LogManager.getLogger(WebSocketMessageDTO.class);
+    private static final Logger LOGGER = LogManager.getLogger(WebSocketMessageDTO.class);
 
     /** @param channel */
     public WebSocketMessageDTO(WebSocketChannelDTO channel) {
@@ -231,7 +231,7 @@ public class WebSocketMessageDTO implements Message {
                 try {
                     map.put("payload", this.getReadablePayload());
                 } catch (InvalidUtf8Exception e) {
-                    LOG.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
         } else {

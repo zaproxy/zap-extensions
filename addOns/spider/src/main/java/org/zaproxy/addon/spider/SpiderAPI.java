@@ -63,7 +63,7 @@ import org.zaproxy.zap.utils.ApiUtils;
 
 public class SpiderAPI extends ApiImplementor {
 
-    private static final Logger log = LogManager.getLogger(SpiderAPI.class);
+    private static final Logger LOGGER = LogManager.getLogger(SpiderAPI.class);
 
     /** The Constant PREFIX defining the name/prefix of the api. */
     private static final String PREFIX = "spider";
@@ -218,7 +218,7 @@ public class SpiderAPI extends ApiImplementor {
 
     @Override
     public ApiResponse handleApiAction(String name, JSONObject params) throws ApiException {
-        log.debug("Request for handleApiAction: {} (params: {})", name, params);
+        LOGGER.debug("Request for handleApiAction: {} (params: {})", name, params);
         SpiderScan scan;
         int maxChildren = -1;
         Context context = null;
@@ -487,7 +487,7 @@ public class SpiderAPI extends ApiImplementor {
             Context context,
             boolean subtreeOnly)
             throws ApiException {
-        log.debug("API Spider scanning url: {}", url);
+        LOGGER.debug("API Spider scanning url: {}", url);
 
         boolean useUrl = true;
         if (url == null || url.isEmpty()) {

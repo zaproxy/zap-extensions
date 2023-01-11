@@ -93,7 +93,7 @@ public class XpathInjectionScanRule extends AbstractAppParamPlugin {
     private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_39");
 
     // Logger instance
-    private static final Logger log = LogManager.getLogger(XpathInjectionScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(XpathInjectionScanRule.class);
 
     @Override
     public int getId() {
@@ -176,7 +176,7 @@ public class XpathInjectionScanRule extends AbstractAppParamPlugin {
         String responseContent;
 
         // Begin rule execution
-        log.debug(
+        LOGGER.debug(
                 "Checking [{}] [{}], parameter [{}] for XPath Injection vulnerabilities.",
                 msg.getRequestHeader().getMethod(),
                 msg.getRequestHeader().getURI(),
@@ -188,7 +188,7 @@ public class XpathInjectionScanRule extends AbstractAppParamPlugin {
             msg = getNewMsg();
             setParameter(msg, paramName, evilPayload);
 
-            log.trace("Testing [{}] = [{}]", paramName, evilPayload);
+            LOGGER.trace("Testing [{}] = [{}]", paramName, evilPayload);
 
             try {
                 // Send the request and retrieve the response
@@ -212,7 +212,7 @@ public class XpathInjectionScanRule extends AbstractAppParamPlugin {
 
                         // We Found IT!
                         // First do logging
-                        log.debug(
+                        LOGGER.debug(
                                 "[XPath Injection Found] on parameter [{}] with payload [{}]",
                                 paramName,
                                 evilPayload);
@@ -234,7 +234,7 @@ public class XpathInjectionScanRule extends AbstractAppParamPlugin {
             } catch (IOException ex) {
                 // Do not try to internationalise this.. we need an error message in any event..
                 // if it's in English, it's still better than not having it at all.
-                log.warn(
+                LOGGER.warn(
                         "XPath Injection vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error.",
                         paramName,
                         evilPayload,

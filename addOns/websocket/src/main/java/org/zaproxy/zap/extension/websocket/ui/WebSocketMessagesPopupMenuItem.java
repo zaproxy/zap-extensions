@@ -31,7 +31,7 @@ import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 public abstract class WebSocketMessagesPopupMenuItem extends ExtensionPopupMenuItem {
     private static final long serialVersionUID = 4774753835401981588L;
 
-    private static final Logger logger = LogManager.getLogger(WebSocketMessagesPopupMenuItem.class);
+    private static final Logger LOGGER = LogManager.getLogger(WebSocketMessagesPopupMenuItem.class);
 
     /** Will be set by {@link WebSocketMessagesPopupMenuItem#isEnableForComponent(Component)}. */
     private WebSocketPopupHelper wsPopupHelper;
@@ -54,7 +54,7 @@ public abstract class WebSocketMessagesPopupMenuItem extends ExtensionPopupMenuI
                     try {
                         item.performAction();
                     } catch (Exception e) {
-                        logger.error(e.getMessage(), e);
+                        LOGGER.error(e.getMessage(), e);
                     }
                 });
     }
@@ -102,7 +102,7 @@ public abstract class WebSocketMessagesPopupMenuItem extends ExtensionPopupMenuI
                     setEnabled(false);
                 }
             } catch (Exception e) {
-                logger.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
             return true;
         }

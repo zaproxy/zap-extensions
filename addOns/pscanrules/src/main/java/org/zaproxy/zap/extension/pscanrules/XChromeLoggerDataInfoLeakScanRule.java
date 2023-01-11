@@ -47,7 +47,7 @@ public class XChromeLoggerDataInfoLeakScanRule extends PluginPassiveScanner {
                     CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
                     CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED,
                     CommonAlertTag.WSTG_V42_INFO_05_CONTENT_LEAK);
-    private static final Logger logger =
+    private static final Logger LOGGER =
             LogManager.getLogger(XChromeLoggerDataInfoLeakScanRule.class);
 
     @Override
@@ -83,7 +83,7 @@ public class XChromeLoggerDataInfoLeakScanRule extends PluginPassiveScanner {
                         .raise();
             }
         }
-        logger.debug("\tScan of record {} took {}ms", id, System.currentTimeMillis() - start);
+        LOGGER.debug("\tScan of record {} took {}ms", id, System.currentTimeMillis() - start);
     }
 
     @Override

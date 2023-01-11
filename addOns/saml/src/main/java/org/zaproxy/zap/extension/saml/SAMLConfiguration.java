@@ -45,7 +45,7 @@ public class SAMLConfiguration implements AttributeListener {
 
     private SAMLConfigData configData;
 
-    protected static final Logger log = LogManager.getLogger(SAMLConfiguration.class);
+    protected static final Logger LOGGER = LogManager.getLogger(SAMLConfiguration.class);
 
     /**
      * Get the singleton configurations object
@@ -80,7 +80,7 @@ public class SAMLConfiguration implements AttributeListener {
         if (!confFile.exists()) {
             URL confURL = getClass().getResource("resources/" + SAML_CONF_FILE);
             if (confURL == null) {
-                log.error("Configuration file not found ");
+                LOGGER.error("Configuration file not found ");
                 throw new SAMLException("Configuration file not found");
             }
             // try to copy configuration to user directory
@@ -224,7 +224,7 @@ public class SAMLConfiguration implements AttributeListener {
             marshaller.marshal(configData, new File(SAML_CONF_FILE_PATH));
             return true;
         } catch (JAXBException e) {
-            log.error("Saving configuration failed");
+            LOGGER.error("Saving configuration failed");
         } finally {
             Thread.currentThread().setContextClassLoader(cl);
         }

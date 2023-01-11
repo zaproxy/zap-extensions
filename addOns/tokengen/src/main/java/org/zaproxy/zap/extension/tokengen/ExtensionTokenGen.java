@@ -65,7 +65,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
     private CharacterFrequencyMap cfm = null;
     private boolean manuallyStopped = false;
 
-    private static Logger log = LogManager.getLogger(ExtensionTokenGen.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionTokenGen.class);
 
     /** */
     public ExtensionTokenGen() {
@@ -309,7 +309,7 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
         }
 
         this.cfm = new CharacterFrequencyMap();
-        log.debug("startTokenGeneration {} # {}", msg.getRequestHeader().getURI(), numGen);
+        LOGGER.debug("startTokenGeneration {} # {}", msg.getRequestHeader().getURI(), numGen);
         this.getTokenPanel().scanStarted(numGen);
 
         int numThreads = this.getTokenParam().getThreadsPerScan();
@@ -334,10 +334,10 @@ public class ExtensionTokenGen extends ExtensionAdaptor {
 
     protected void generatorStopped(TokenGenerator gen) {
         this.runningGenerators--;
-        log.debug("generatorStopped runningGenerators {}", runningGenerators);
+        LOGGER.debug("generatorStopped runningGenerators {}", runningGenerators);
 
         if (this.runningGenerators <= 0) {
-            log.debug("generatorStopped scanFinished");
+            LOGGER.debug("generatorStopped scanFinished");
             this.getTokenPanel().scanFinshed();
 
             if (!manuallyStopped) {

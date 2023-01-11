@@ -56,7 +56,7 @@ public class CacheController {
     private final String[] methodList = {"PURGE", "FASTLYPURGE"};
     private GuesserScan scan;
 
-    private static final Logger logger = LogManager.getLogger(CacheController.class);
+    private static final Logger LOGGER = LogManager.getLogger(CacheController.class);
 
     public CacheController(HttpSender httpSender, ParamDiggerConfig config) {
         this.httpSender = httpSender;
@@ -82,7 +82,7 @@ public class CacheController {
                                             HistoryReference.TYPE_PARAM_DIGGER,
                                             msg));
                         } catch (Exception e) {
-                            logger.error(e, e);
+                            LOGGER.error(e, e);
                         }
                     });
         }
@@ -196,7 +196,7 @@ public class CacheController {
             }
         } catch (Exception e) {
             // TODO Add error message display in output Panel
-            logger.error(e, e);
+            LOGGER.error(e, e);
         }
     }
 

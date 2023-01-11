@@ -70,7 +70,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
     private static final String FIELD_LOAD = "zest.dialog.script.label.load";
     private static final String FIELD_DEBUG = "zest.dialog.script.label.debug";
 
-    private static final Logger logger = LogManager.getLogger(ZestScriptsDialog.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestScriptsDialog.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -349,7 +349,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
             try {
                 script.setPrefix(this.getStringValue(FIELD_PREFIX));
             } catch (MalformedURLException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
 
@@ -399,7 +399,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
             scriptNode = extension.add(scriptWrapper, false);
             // Add any deferred messages
             for (HttpMessage msg : deferredMessages) {
-                logger.debug("Adding deferred message: {}", msg.getRequestHeader().getURI());
+                LOGGER.debug("Adding deferred message: {}", msg.getRequestHeader().getURI());
                 extension.addToParent(scriptNode, msg, null);
             }
             deferredMessages.clear();
@@ -461,7 +461,7 @@ public class ZestScriptsDialog extends StandardFieldsDialog {
                     }
                 }
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }

@@ -30,7 +30,7 @@ import org.parosproxy.paros.network.HttpSender;
 
 public class SAMLResender {
 
-    private static Logger log = LogManager.getLogger(SAMLResender.class);
+    private static final Logger LOGGER = LogManager.getLogger(SAMLResender.class);
 
     private SAMLResender() {}
 
@@ -55,7 +55,7 @@ public class SAMLResender {
             }
 
         } catch (IOException e) {
-            log.error(e.getMessage());
+            LOGGER.error(e.getMessage());
             throw new SAMLException("Message sending failed", e);
         }
     }

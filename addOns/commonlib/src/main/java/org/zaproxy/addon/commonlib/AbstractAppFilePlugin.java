@@ -40,7 +40,7 @@ import org.parosproxy.paros.network.HttpStatusCode;
  */
 public abstract class AbstractAppFilePlugin extends AbstractAppPlugin {
 
-    private static final Logger LOG = LogManager.getLogger(AbstractAppFilePlugin.class);
+    private static final Logger LOGGER = LogManager.getLogger(AbstractAppFilePlugin.class);
     private final String filename;
     private final String messagePrefix;
 
@@ -107,7 +107,7 @@ public abstract class AbstractAppFilePlugin extends AbstractAppPlugin {
         // Check if the user stopped things. One request per URL so check before
         // sending the request
         if (isStop()) {
-            LOG.debug("Scanner {} Stopping.", getName());
+            LOGGER.debug("Scanner {} Stopping.", getName());
             return;
         }
 
@@ -127,7 +127,7 @@ public abstract class AbstractAppFilePlugin extends AbstractAppPlugin {
                             baseUri.getPort(),
                             createTestablePath(baseUriPath));
         } catch (URIException uEx) {
-            LOG.debug(
+            LOGGER.debug(
                     "An error occurred creating a URI for the: {} scanner. {}",
                     getName(),
                     uEx.getMessage(),
@@ -137,7 +137,7 @@ public abstract class AbstractAppFilePlugin extends AbstractAppPlugin {
         try {
             newRequest.getRequestHeader().setURI(newUri);
         } catch (URIException uEx) {
-            LOG.debug(
+            LOGGER.debug(
                     "An error occurred setting the URI for a new request used by: {} scanner. {}",
                     getName(),
                     uEx.getMessage(),
@@ -156,7 +156,7 @@ public abstract class AbstractAppFilePlugin extends AbstractAppPlugin {
         try {
             sendAndReceive(newRequest, false);
         } catch (IOException e) {
-            LOG.warn(
+            LOGGER.warn(
                     "An error occurred while checking [{}] [{}] for {} Caught {} {}",
                     newRequest.getRequestHeader().getMethod(),
                     newRequest.getRequestHeader().getURI(),

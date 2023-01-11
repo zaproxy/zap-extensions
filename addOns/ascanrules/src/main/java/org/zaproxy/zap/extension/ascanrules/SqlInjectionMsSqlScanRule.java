@@ -79,7 +79,7 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
     };
 
     /** for logging. */
-    private static final Logger log = LogManager.getLogger(SqlInjectionMsSqlScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(SqlInjectionMsSqlScanRule.class);
 
     private static final int DEFAULT_SLEEP_TIME = 15;
     private static final Map<String, String> ALERT_TAGS =
@@ -131,7 +131,7 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
 
     @Override
     public void init() {
-        log.debug("Initialising");
+        LOGGER.debug("Initialising");
 
         // set up what we are allowed to do, depending on the attack strength that was set.
         if (this.getAttackStrength() == AttackStrength.LOW) {
@@ -154,11 +154,11 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
                     this.getConfig()
                             .getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, DEFAULT_SLEEP_TIME);
         } catch (ConversionException e) {
-            log.debug(
+            LOGGER.debug(
                     "Invalid value for 'rules.common.sleep': {}",
                     this.getConfig().getString(RuleConfigParam.RULE_COMMON_SLEEP_TIME));
         }
-        log.debug("Sleep set to {} seconds", sleepInSeconds);
+        LOGGER.debug("Sleep set to {} seconds", sleepInSeconds);
     }
 
     /** scans for SQL Injection vulnerabilities, using MsSQL specific syntax. */
@@ -182,7 +182,7 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
                 long originalTimeUsed2 = getRoundTripTime(msgTimeBaseline);
                 if (originalTimeUsed2 > sleepTimeInMilliSeconds) {
                     // no better the second time around.  we need to bale out.
-                    log.debug(
+                    LOGGER.debug(
                             "Both base time checks 1 and 2 for [{}] URL [{}] are way too slow to be usable for the purposes of checking for time based SQL Injection checking.  We are aborting the check on this particular url.",
                             msgTimeBaseline.getRequestHeader().getMethod(),
                             msgTimeBaseline.getRequestHeader().getURI());
@@ -193,7 +193,7 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
                 originalTimeUsed = originalTimeUsed2;
             }
 
-            log.debug(
+            LOGGER.debug(
                     "Scanning URL [{}] [{}], field [{}] with value [{}] for MsSQL Injection",
                     getBaseMsg().getRequestHeader().getMethod(),
                     getBaseMsg().getRequestHeader().getURI(),
@@ -215,7 +215,7 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
 
                 setParameter(msgAttack, paramName, newTimeBasedInjectionValue);
                 long modifiedTimeUsed = getRoundTripTime(msgAttack);
-                log.debug(
+                LOGGER.debug(
                         "Time Based SQL Injection test: [{}] on field: [{}] with value [{}] took {}ms, where the original took {}ms",
                         newTimeBasedInjectionValue,
                         paramName,
@@ -259,7 +259,7 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
                             .setMessage(msgAttack)
                             .raise();
 
-                    log.debug(
+                    LOGGER.debug(
                             "A likely Time Based SQL Injection Vulnerability has been found with [{}] URL [{}] on field: [{}]",
                             msgAttack.getRequestHeader().getMethod(),
                             msgAttack.getRequestHeader().getURI(),
@@ -268,13 +268,13 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
                 } // query took longer than the amount of time we attempted to delay it by
                 // bale out if we were asked nicely
                 if (isStop()) {
-                    log.debug("Stopping the scan due to a user request");
+                    LOGGER.debug("Stopping the scan due to a user request");
                     return;
                 }
             }
             // end of check for time based SQL Injection
         } catch (Exception e) {
-            log.error("An error occurred checking a url for MsSQL Injection vulnerabilities", e);
+            LOGGER.error("An error occurred checking a url for MsSQL Injection vulnerabilities", e);
         }
     }
 
@@ -284,7 +284,7 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
         } catch (java.net.SocketTimeoutException e) {
             // to be expected occasionally, if the base query was one that contains some parameters
             // exploiting time based SQL injection?
-            log.debug(
+            LOGGER.debug(
                     "The Base Time Check timed out on [{}] URL [{}]",
                     msg.getRequestHeader().getMethod(),
                     msg.getRequestHeader().getURI());

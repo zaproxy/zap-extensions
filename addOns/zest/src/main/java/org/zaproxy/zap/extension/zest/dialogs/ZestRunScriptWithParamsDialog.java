@@ -48,7 +48,7 @@ public class ZestRunScriptWithParamsDialog extends StandardFieldsDialog implemen
     private JTable paramsTable = null;
     private ScriptTokensTableModel paramsModel = null;
 
-    private static final Logger logger = LogManager.getLogger(ZestRunScriptWithParamsDialog.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestRunScriptWithParamsDialog.class);
 
     public ZestRunScriptWithParamsDialog(ExtensionZest ext, Frame owner, Dimension dim) {
         super(owner, "zest.dialog.run.title", dim);
@@ -108,7 +108,7 @@ public class ZestRunScriptWithParamsDialog extends StandardFieldsDialog implemen
                     try {
                         runner.run(script, getParams());
                     } catch (Exception e) {
-                        logger.error(e.getMessage(), e);
+                        LOGGER.error(e.getMessage(), e);
                     }
                 });
     }

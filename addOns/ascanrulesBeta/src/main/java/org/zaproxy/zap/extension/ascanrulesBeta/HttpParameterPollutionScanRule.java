@@ -49,7 +49,7 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin {
                     CommonAlertTag.OWASP_2017_A01_INJECTION,
                     CommonAlertTag.WSTG_V42_INPV_04_PARAM_POLLUTION);
 
-    private static Logger log = LogManager.getLogger(HttpParameterPollutionScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(HttpParameterPollutionScanRule.class);
     private final String payload = "%26zap%3Dzaproxy";
 
     @Override
@@ -90,7 +90,7 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin {
     public void scan() {
 
         try {
-            log.debug("Targeting {}", getBaseMsg().getRequestHeader().getURI());
+            LOGGER.debug("Targeting {}", getBaseMsg().getRequestHeader().getURI());
 
             // pages are not vulnerable if not proved otherwise
             List<String> vulnLinks = new ArrayList<>();
@@ -105,13 +105,13 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin {
                 if (!tags.isEmpty()) {
 
                     // We send the request with the injected payload in the parameters
-                    log.debug("Injecting payload...");
+                    LOGGER.debug("Injecting payload...");
                     HttpMessage newMsg = getNewMsg();
                     newMsg.setGetParams(tags);
                     try {
                         sendAndReceive(newMsg);
                     } catch (IllegalStateException | UnknownHostException ex) {
-                        log.debug(
+                        LOGGER.debug(
                                 "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
                                 ex.getClass().getName(),
                                 ex.getMessage(),
@@ -133,12 +133,12 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin {
                 }
             }
             if (vulnLinks.isEmpty()) {
-                log.debug("Page not vulnerable to HPP attacks");
+                LOGGER.debug("Page not vulnerable to HPP attacks");
             }
         } catch (URIException e) {
-            log.debug("Failed to send HTTP message, cause: {}", e.getMessage());
+            LOGGER.debug("Failed to send HTTP message, cause: {}", e.getMessage());
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -157,7 +157,7 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin {
                 Map<String, List<String>> map = getUrlParameters(link.getAttributeValue("href"));
                 if (map.get(tag.getAttributeValue("name")) != null) {
                     if (map.get(tag.getAttributeValue("name")).contains(this.payload)) {
-                        log.debug(
+                        LOGGER.debug(
                                 "Found Vulnerable Parameter in a link with the injected payload: {}, {}",
                                 tag.getAttributeValue("name"),
                                 map.get(tag.getAttributeValue("name")));
@@ -176,7 +176,7 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin {
                 Map<String, List<String>> map = getUrlParameters(link.getAttributeValue("action"));
                 if (map.get(tag.getAttributeValue("name")) != null) {
                     if (map.get(tag.getAttributeValue("name")).contains(this.payload)) {
-                        log.debug(
+                        LOGGER.debug(
                                 "Found Vulnerable Parameter in a form with the injected payload: {}, {}",
                                 tag.getAttributeValue("name"),
                                 map.get(tag.getAttributeValue("name")));
@@ -206,8 +206,8 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin {
                 tags.add(
                         new HtmlParameter(
                                 HtmlParameter.Type.url, p.getName(), p.getValue() + this.payload));
-                log.debug("The following form parameters have been found:");
-                log.debug("Input Tag: {}, {}", p.getName(), p.getValue());
+                LOGGER.debug("The following form parameters have been found:");
+                LOGGER.debug("Input Tag: {}, {}", p.getName(), p.getValue());
             }
         }
         for (HtmlParameter p : getBaseMsg().getUrlParams()) {
@@ -215,8 +215,8 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin {
                 tags.add(
                         new HtmlParameter(
                                 HtmlParameter.Type.url, p.getName(), p.getValue() + this.payload));
-                log.debug("The following url parameters have been found:");
-                log.debug("Input Tag: {}, {}", p.getName(), p.getValue());
+                LOGGER.debug("The following url parameters have been found:");
+                LOGGER.debug("Input Tag: {}, {}", p.getName(), p.getValue());
             }
         }
         for (Element element : inputTags) {
@@ -227,8 +227,8 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin {
                                 HtmlParameter.Type.url,
                                 element.getAttributeValue("name"),
                                 element.getAttributeValue("value") + this.payload));
-                log.debug("The following input parameters have been found:");
-                log.debug(
+                LOGGER.debug("The following input parameters have been found:");
+                LOGGER.debug(
                         "Input Tag: {}, {}",
                         element.getAttributeValue("name"),
                         element.getAttributeValue("value"));
@@ -274,7 +274,7 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin {
         for (String s : vulnLinks) {
             vulnParams = vulnParams + ", " + s;
         }
-        log.debug("Page vulnerable to HPP attacks");
+        LOGGER.debug("Page vulnerable to HPP attacks");
         String attack = Constant.messages.getString("ascanbeta.HTTPParamPoll.alert.attack");
         newAlert()
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)

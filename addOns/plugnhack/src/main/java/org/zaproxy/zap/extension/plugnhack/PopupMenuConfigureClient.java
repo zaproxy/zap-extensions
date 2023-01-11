@@ -32,7 +32,7 @@ public class PopupMenuConfigureClient extends ExtensionPopupMenuItem {
     private static final long serialVersionUID = 1L;
     private ExtensionPlugNHack extension = null;
     private JList<MonitoredPage> clientsList = null;
-    private static Logger log = LogManager.getLogger(PopupMenuConfigureClient.class);
+    private static final Logger LOGGER = LogManager.getLogger(PopupMenuConfigureClient.class);
 
     public PopupMenuConfigureClient(ExtensionPlugNHack extension) {
         super(Constant.messages.getString("plugnhack.clientconf.popup"));
@@ -67,7 +67,7 @@ public class PopupMenuConfigureClient extends ExtensionPopupMenuItem {
                 }
 
             } catch (Exception e) {
-                log.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
             return true;
         }

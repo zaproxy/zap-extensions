@@ -40,7 +40,7 @@ import org.zaproxy.zap.utils.ResettableAutoCloseableIterator;
  */
 public class RegexPayloadGenerator implements StringPayloadGenerator {
 
-    private static final Logger logger = LogManager.getLogger(RegexPayloadGenerator.class);
+    private static final Logger LOGGER = LogManager.getLogger(RegexPayloadGenerator.class);
 
     /**
      * Default limit for calculation of number of generated payloads of an infinite regular
@@ -66,7 +66,7 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
             generexAutomatonField = Generex.class.getDeclaredField("automaton");
             generexAutomatonField.setAccessible(true);
         } catch (Exception e) {
-            logger.error("Failed to set Generex's automaton accessible.", e);
+            LOGGER.error("Failed to set Generex's automaton accessible.", e);
         }
     }
 
@@ -266,7 +266,7 @@ public class RegexPayloadGenerator implements StringPayloadGenerator {
         try {
             return (Automaton) generexAutomatonField.get(generex);
         } catch (Exception e) {
-            logger.warn("Failed to get automaton.", e);
+            LOGGER.warn("Failed to get automaton.", e);
         }
         return null;
     }

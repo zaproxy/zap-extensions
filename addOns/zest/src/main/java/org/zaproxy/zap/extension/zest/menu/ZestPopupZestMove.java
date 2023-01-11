@@ -37,7 +37,7 @@ public class ZestPopupZestMove extends ExtensionPopupMenuItem {
 
     private static final long serialVersionUID = 1L;
 
-    private static final Logger logger = LogManager.getLogger(ZestPopupZestMove.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestPopupZestMove.class);
 
     private ExtensionZest extension = null;
     private boolean up;
@@ -136,7 +136,7 @@ public class ZestPopupZestMove extends ExtensionPopupMenuItem {
                     return true;
                 }
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
         return false;

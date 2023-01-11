@@ -54,7 +54,7 @@ public class PaddingOracleScanRule extends AbstractAppParamPlugin {
                     CommonAlertTag.WSTG_V42_CRYP_02_PADDING_ORACLE);
 
     // Logger object
-    private static final Logger log = LogManager.getLogger(PaddingOracleScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(PaddingOracleScanRule.class);
 
     @Override
     public int getId() {
@@ -164,7 +164,7 @@ public class PaddingOracleScanRule extends AbstractAppParamPlugin {
                     if (isPage500(msg)) {
                         // We Found IT!
                         // First do logging
-                        log.debug(
+                        LOGGER.debug(
                                 "[Padding Oracle Found] on parameter [{}] with payload [{}]",
                                 paramName,
                                 encodedValue);
@@ -194,7 +194,7 @@ public class PaddingOracleScanRule extends AbstractAppParamPlugin {
 
                             // We Found IT!
                             // First do logging
-                            log.debug(
+                            LOGGER.debug(
                                     "[Padding Oracle Found] on parameter [{}] with payload [{}]",
                                     paramName,
                                     encodedValue);
@@ -223,7 +223,7 @@ public class PaddingOracleScanRule extends AbstractAppParamPlugin {
             } catch (IOException ex) {
                 // Do not try to internationalise this.. we need an error message in any event..
                 // if it's in English, it's still better than not having it at all.
-                log.warn(
+                LOGGER.warn(
                         "Padding Oracle vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
                         paramName,
                         encoder.encode(oracle),

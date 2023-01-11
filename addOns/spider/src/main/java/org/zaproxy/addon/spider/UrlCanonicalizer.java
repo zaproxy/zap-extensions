@@ -49,7 +49,7 @@ import org.zaproxy.addon.spider.parser.ParseContext;
 public final class UrlCanonicalizer {
 
     /** The Constant log. */
-    private static final Logger log = LogManager.getLogger(UrlCanonicalizer.class);
+    private static final Logger LOGGER = LogManager.getLogger(UrlCanonicalizer.class);
 
     private static final String HTTP_SCHEME = "http";
     private static final int HTTP_DEFAULT_PORT = 80;
@@ -92,7 +92,7 @@ public final class UrlCanonicalizer {
         try {
             /* Build the absolute URL, from the url and the baseURL */
             String resolvedURL = UrlResolver.resolveUrl(baseURL == null ? "" : baseURL, url);
-            log.debug("Resolved URL: {}", resolvedURL);
+            LOGGER.debug("Resolved URL: {}", resolvedURL);
             URI canonicalURI;
             try {
                 canonicalURI = new URI(resolvedURL);
@@ -102,7 +102,7 @@ public final class UrlCanonicalizer {
 
             /* Some checking. */
             if (canonicalURI.getScheme() == null) {
-                log.warn(
+                LOGGER.warn(
                         "Protocol could not be reliably evaluated from uri: {} and base url: {}",
                         canonicalURI,
                         baseURL);
@@ -110,7 +110,7 @@ public final class UrlCanonicalizer {
             }
 
             if (canonicalURI.getRawAuthority() == null) {
-                log.debug(
+                LOGGER.debug(
                         "Ignoring URI with no authority (host[\":\"port]): {} (on base {})",
                         canonicalURI,
                         baseURL);
@@ -118,7 +118,7 @@ public final class UrlCanonicalizer {
             }
 
             if (canonicalURI.getHost() == null) {
-                log.warn(
+                LOGGER.warn(
                         "Host could not be reliably evaluated from: {} (on base {})",
                         canonicalURI,
                         baseURL);
@@ -174,7 +174,7 @@ public final class UrlCanonicalizer {
             return result.toExternalForm();
 
         } catch (Exception ex) {
-            log.warn(
+            LOGGER.warn(
                     "Error while Processing URL [{}] in the spidering process (on base {}): {}",
                     url,
                     baseURL,

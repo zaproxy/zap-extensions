@@ -32,7 +32,7 @@ import org.zaproxy.zap.extension.sse.ServerSentEvent;
  */
 public class EventStreamStorage implements EventStreamObserver {
 
-    private static final Logger logger = LogManager.getLogger(EventStreamStorage.class);
+    private static final Logger LOGGER = LogManager.getLogger(EventStreamStorage.class);
 
     /** Determines when events are stored in database. */
     public static final int EVENT_STREAM_OBSERVING_ORDER = 100;
@@ -54,7 +54,7 @@ public class EventStreamStorage implements EventStreamObserver {
         try {
             table.insertEvent(event);
         } catch (DatabaseException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return continueForwarding;
     }
@@ -68,11 +68,11 @@ public class EventStreamStorage implements EventStreamObserver {
                 if (table != null) {
                     table.insertOrUpdateStream(stream);
                 } else if (!state.equals(State.CLOSED)) {
-                    logger.warn(
+                    LOGGER.warn(
                             "Could not update state of Server-Sent Event stream to '{}'!", state);
                 }
             } catch (DatabaseException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         } else if (state.equals(State.EXCLUDED)) {
             // when proxy is excluded from ZAP, then messages are forwarded
@@ -80,7 +80,7 @@ public class EventStreamStorage implements EventStreamObserver {
             try {
                 table.purgeStream(stream.getId());
             } catch (DatabaseException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }

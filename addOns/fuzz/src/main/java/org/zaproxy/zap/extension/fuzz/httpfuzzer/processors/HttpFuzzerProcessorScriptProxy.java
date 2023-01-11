@@ -34,7 +34,7 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 
 class HttpFuzzerProcessorScriptProxy implements HttpFuzzerProcessorScript {
 
-    private static final Logger LOG = LogManager.getLogger(HttpFuzzerProcessorScriptProxy.class);
+    private static final Logger LOGGER = LogManager.getLogger(HttpFuzzerProcessorScriptProxy.class);
     private final ScriptWrapper scriptWrapper;
     private final HttpFuzzerProcessorScript script;
 
@@ -89,7 +89,7 @@ class HttpFuzzerProcessorScriptProxy implements HttpFuzzerProcessorScript {
         try {
             return paramsReader.apply(script);
         } catch (Exception e) {
-            LOG.debug(
+            LOGGER.debug(
                     "An error occurred while calling '{}' on script '{}': {}",
                     methodName,
                     scriptWrapper.getName(),

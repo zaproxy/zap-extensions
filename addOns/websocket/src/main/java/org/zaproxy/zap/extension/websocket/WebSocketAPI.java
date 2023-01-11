@@ -88,7 +88,7 @@ public class WebSocketAPI extends ApiImplementor {
     private static final String PARAM_OUTGOING = "outgoing";
     private static final String PARAM_MESSAGE = "message";
 
-    private static final Logger LOG = LogManager.getLogger(WebSocketAPI.class);
+    private static final Logger LOGGER = LogManager.getLogger(WebSocketAPI.class);
 
     private WebSocketObserver observer;
 
@@ -143,7 +143,7 @@ public class WebSocketAPI extends ApiImplementor {
     @Override
     public String handleCallBack(HttpMessage msg) throws ApiException {
         try {
-            LOG.debug("callback url = {}", msg.getRequestHeader().getURI());
+            LOGGER.debug("callback url = {}", msg.getRequestHeader().getURI());
 
             String connectionHeader = msg.getRequestHeader().getHeader(HttpHeader.CONNECTION);
             String upgradeHeader = msg.getRequestHeader().getHeader("upgrade");
@@ -154,7 +154,7 @@ public class WebSocketAPI extends ApiImplementor {
                     // leaked.
                     String origin = msg.getRequestHeader().getHeader("Origin");
                     if (!API_URL.equals(origin)) {
-                        LOG.warn(
+                        LOGGER.warn(
                                 "Rejecting WebSocket connection, the Origin [{}] did not match [{}]",
                                 origin,
                                 API_URL);
@@ -275,7 +275,7 @@ public class WebSocketAPI extends ApiImplementor {
                                     optionalResponse(proxy, response, json);
                                 }
                             } catch (JSONException e) {
-                                LOG.warn(e.getMessage(), e);
+                                LOGGER.warn(e.getMessage(), e);
                                 try {
                                     ApiException e2 =
                                             new ApiException(
@@ -283,16 +283,16 @@ public class WebSocketAPI extends ApiImplementor {
                                                     e.getMessage());
                                     optionalResponse(proxy, e2, json);
                                 } catch (IOException e1) {
-                                    LOG.error(e.getMessage(), e);
+                                    LOGGER.error(e.getMessage(), e);
                                 }
                             } catch (ApiException e) {
                                 try {
                                     optionalResponse(proxy, e, json);
                                 } catch (IOException e1) {
-                                    LOG.error(e.getMessage(), e);
+                                    LOGGER.error(e.getMessage(), e);
                                 }
                             } catch (Exception e) {
-                                LOG.error(e.getMessage(), e);
+                                LOGGER.error(e.getMessage(), e);
                             }
                             return false;
                         }
@@ -388,7 +388,7 @@ public class WebSocketAPI extends ApiImplementor {
             try {
                 extension.recordMessage(resp);
             } catch (DatabaseException e) {
-                LOG.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
         return sent;
@@ -427,7 +427,7 @@ public class WebSocketAPI extends ApiImplementor {
                 }
                 result = resultList;
             } catch (DatabaseException e) {
-                LOG.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
                 throw new ApiException(ApiException.Type.INTERNAL_ERROR);
             }
         } else if (VIEW_MESSAGE.equals(name)) {
@@ -438,7 +438,7 @@ public class WebSocketAPI extends ApiImplementor {
                                 ApiUtils.getIntParam(params, PARAM_CHANNEL_ID));
                 result = wsMessageToResult(message, true);
             } catch (DatabaseException e) {
-                LOG.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
                 throw new ApiException(ApiException.Type.INTERNAL_ERROR);
             }
         } else if (VIEW_MESSAGES.equals(name)) {
@@ -475,7 +475,7 @@ public class WebSocketAPI extends ApiImplementor {
                 }
                 result = resultList;
             } catch (DatabaseException e) {
-                LOG.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
                 throw new ApiException(ApiException.Type.INTERNAL_ERROR);
             }
         } else if (VIEW_BREAK_TEXT_MESSAGE.equals(name)) {
@@ -528,7 +528,7 @@ public class WebSocketAPI extends ApiImplementor {
                                 ApiException.Type.DOES_NOT_EXIST, "channelId: " + channelId);
                     }
                 } catch (IOException e) {
-                    LOG.warn(e.getMessage(), e);
+                    LOGGER.warn(e.getMessage(), e);
                     throw new ApiException(ApiException.Type.INTERNAL_ERROR, e.getMessage());
                 }
                 break;
@@ -635,10 +635,10 @@ public class WebSocketAPI extends ApiImplementor {
             try {
                 sendWebSocketMessage(channelId, false, json.toString());
             } catch (SocketException e) {
-                LOG.debug("Failed to dispatch event:", e);
+                LOGGER.debug("Failed to dispatch event:", e);
                 removeEventConsumer(this);
             } catch (IOException e) {
-                LOG.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }

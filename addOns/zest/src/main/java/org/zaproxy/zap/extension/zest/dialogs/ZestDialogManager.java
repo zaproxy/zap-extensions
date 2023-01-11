@@ -75,7 +75,7 @@ import org.zaproxy.zest.impl.ZestScriptEngineFactory;
 public class ZestDialogManager extends AbstractPanel {
 
     private static final long serialVersionUID = 1L;
-    private static final Logger logger = LogManager.getLogger(ZestDialogManager.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestDialogManager.class);
 
     private ExtensionZest extension = null;
     private ScriptUI scriptUI = null;
@@ -337,7 +337,7 @@ public class ZestDialogManager extends AbstractPanel {
             try {
                 script.getZestScript().setPrefix(prefix);
             } catch (MalformedURLException e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
         scriptDialog.init(parentNode, script, add, chooseType);

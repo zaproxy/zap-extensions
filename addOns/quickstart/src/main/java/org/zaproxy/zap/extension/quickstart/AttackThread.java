@@ -60,7 +60,7 @@ public class AttackThread extends Thread {
     private boolean stopAttack = false;
     private boolean useStdSpider;
 
-    private static final Logger logger = LogManager.getLogger(AttackThread.class);
+    private static final Logger LOGGER = LogManager.getLogger(AttackThread.class);
 
     public AttackThread(ExtensionQuickStart ext, boolean useStdSpider) {
         super("ZAP-QuickStart-AttackThread");
@@ -89,13 +89,13 @@ public class AttackThread extends Thread {
             SiteNode startNode = this.accessNode(this.url);
 
             if (startNode == null) {
-                logger.debug("Failed to access URL {}", url);
+                LOGGER.debug("Failed to access URL {}", url);
                 // Dont notify progress here - it will have been done where we know more about
                 // the problem
                 return;
             }
             if (stopAttack) {
-                logger.debug("Attack stopped manually");
+                LOGGER.debug("Attack stopped manually");
                 extension.notifyProgress(Progress.stopped);
                 return;
             }
@@ -104,7 +104,7 @@ public class AttackThread extends Thread {
             if (this.useStdSpider) {
 
                 if (traditionalSpider == null) {
-                    logger.error("No spider");
+                    LOGGER.error("No spider");
                     extension.notifyProgress(Progress.failed);
                     return;
                 }
@@ -130,7 +130,7 @@ public class AttackThread extends Thread {
                     // Ignore
                 }
                 if (stopAttack) {
-                    logger.debug("Attack stopped manually");
+                    LOGGER.debug("Attack stopped manually");
                     extension.notifyProgress(Progress.stopped);
                     return;
                 }
@@ -140,7 +140,7 @@ public class AttackThread extends Thread {
             }
 
             if (stopAttack) {
-                logger.debug("Attack stopped manually");
+                LOGGER.debug("Attack stopped manually");
                 extension.notifyProgress(Progress.stopped);
                 return;
             }
@@ -181,7 +181,7 @@ public class AttackThread extends Thread {
                                     .getExtension(ExtensionActiveScan.NAME);
             int scanId;
             if (extAscan == null) {
-                logger.error("No active scanner");
+                LOGGER.error("No active scanner");
                 extension.notifyProgress(Progress.failed);
                 return;
             } else {
@@ -205,7 +205,7 @@ public class AttackThread extends Thread {
             completed = true;
 
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             extension.notifyProgress(
                     Progress.failed,
                     Constant.messages.getString(
@@ -214,10 +214,10 @@ public class AttackThread extends Thread {
             if (!completed) {
                 // Already handled
             } else if (stopAttack) {
-                logger.debug("Attack stopped manually");
+                LOGGER.debug("Attack stopped manually");
                 extension.notifyProgress(Progress.stopped);
             } else {
-                logger.debug("Attack completed");
+                LOGGER.debug("Attack completed");
                 extension.notifyProgress(Progress.complete);
             }
         }
@@ -296,7 +296,7 @@ public class AttackThread extends Thread {
                     Constant.messages.getString(
                             "quickstart.progress.failed.reason", e.getMessage()));
         } catch (Exception e1) {
-            logger.error(e1.getMessage(), e1);
+            LOGGER.error(e1.getMessage(), e1);
             extension.notifyProgress(
                     Progress.failed,
                     Constant.messages.getString(

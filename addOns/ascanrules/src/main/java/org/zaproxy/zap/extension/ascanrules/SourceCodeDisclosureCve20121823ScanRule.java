@@ -67,7 +67,7 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin {
      */
     private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_20");
 
-    private static final Logger log =
+    private static final Logger LOGGER =
             LogManager.getLogger(SourceCodeDisclosureCve20121823ScanRule.class);
 
     @Override
@@ -168,7 +168,7 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin {
                 boolean match2 = matcher2.matches();
 
                 if ((!responseBody.equals(responseBodyDecoded)) && (match1 || match2)) {
-                    log.debug("Source Code Disclosure alert for: {}", originalURI);
+                    LOGGER.debug("Source Code Disclosure alert for: {}", originalURI);
 
                     String sourceCode = null;
                     if (match1) {
@@ -192,7 +192,7 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin {
                 }
             }
         } catch (Exception e) {
-            log.error(
+            LOGGER.error(
                     "Error scanning a Host for Source Code Disclosure via CVE-2012-1823: {}",
                     e.getMessage(),
                     e);
@@ -212,7 +212,7 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin {
         try {
             return new URI(uri, true);
         } catch (URIException e) {
-            log.warn("Failed to create attack URI [{}], cause: {}", uri, e.getMessage());
+            LOGGER.warn("Failed to create attack URI [{}], cause: {}", uri, e.getMessage());
         }
         return null;
     }

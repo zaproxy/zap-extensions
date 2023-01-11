@@ -38,7 +38,7 @@ public class Requestor {
     private List<RequesterListener> listeners = new ArrayList<>();
     private HttpSender sender;
     private final HttpRequestConfig requestConfig;
-    private static final Logger LOG = LogManager.getLogger(Requestor.class);
+    private static final Logger LOGGER = LogManager.getLogger(Requestor.class);
 
     public Requestor(int initiator) {
         this.initiator = initiator;
@@ -72,12 +72,12 @@ public class Requestor {
                                     url,
                                     e.getClass().getName(),
                                     e.getMessage()));
-                    LOG.debug(e.getMessage(), e);
+                    LOGGER.debug(e.getMessage(), e);
                 }
             }
         } catch (IOException e) {
             errors.add(e.getMessage());
-            LOG.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         return errors;
     }
@@ -90,7 +90,7 @@ public class Requestor {
             try {
                 listener.handleMessage(httpRequest, initiator);
             } catch (Exception e) {
-                LOG.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
         return httpRequest.getResponseBody().toString();
@@ -113,7 +113,7 @@ public class Requestor {
                 try {
                     listener.handleMessage(message, initiator);
                 } catch (Exception e) {
-                    LOG.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
         }

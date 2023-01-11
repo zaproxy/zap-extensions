@@ -50,7 +50,7 @@ public class ExampleFileActiveScanRule extends AbstractAppParamPlugin {
 
     private static final String exampleAscanFile = "txt/example-ascan-file.txt";
     private List<String> strings = null;
-    private static Logger log = LogManager.getLogger(ExampleFileActiveScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExampleFileActiveScanRule.class);
 
     @Override
     public int getId() {
@@ -168,7 +168,7 @@ public class ExampleFileActiveScanRule extends AbstractAppParamPlugin {
             }
 
         } catch (IOException e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 
@@ -202,7 +202,7 @@ public class ExampleFileActiveScanRule extends AbstractAppParamPlugin {
         BufferedReader reader = null;
         File f = new File(Constant.getZapHome() + File.separator + file);
         if (!f.exists()) {
-            log.error("No such file: {}", f.getAbsolutePath());
+            LOGGER.error("No such file: {}", f.getAbsolutePath());
             return strings;
         }
         try {
@@ -214,13 +214,14 @@ public class ExampleFileActiveScanRule extends AbstractAppParamPlugin {
                 }
             }
         } catch (IOException e) {
-            log.error("Error on opening/reading example error file. Error: {}", e.getMessage(), e);
+            LOGGER.error(
+                    "Error on opening/reading example error file. Error: {}", e.getMessage(), e);
         } finally {
             if (reader != null) {
                 try {
                     reader.close();
                 } catch (IOException e) {
-                    log.debug("Error on closing the file reader. Error: {}", e.getMessage(), e);
+                    LOGGER.debug("Error on closing the file reader. Error: {}", e.getMessage(), e);
                 }
             }
         }

@@ -43,7 +43,7 @@ public class Worker implements Runnable {
     private boolean stop = false;
 
     /* Logger object for the class */
-    private static final Logger LOG = LogManager.getLogger(Worker.class);
+    private static final Logger LOGGER = LogManager.getLogger(Worker.class);
 
     /**
      * Creates a new instance of Worker
@@ -84,7 +84,7 @@ public class Worker implements Runnable {
                     } catch (InterruptedException e) {
                         return;
                     } catch (Exception e) {
-                        LOG.debug(e);
+                        LOGGER.debug(e);
                     }
                 }
             }
@@ -124,7 +124,7 @@ public class Worker implements Runnable {
                     if (code == HttpStatus.OK) {
                         verifyResponseForValidRequests(code, response, rawResponse);
                     } else if (code == HttpStatus.NOT_FOUND || code == HttpStatus.BAD_REQUEST) {
-                        LOG.debug("Worker[{}]: {} for: {}", threadId, code, url);
+                        LOGGER.debug("Worker[{}]: {} for: {}", threadId, code, url);
                     } else {
                         notifyItemFound(
                                 code, response, rawResponse, work.getBaseCaseObj().getBaseCase());
@@ -140,7 +140,7 @@ public class Worker implements Runnable {
 
                     if (m.find()) {
                         // do nothing as we have a 404
-                        LOG.debug("Worker[{}]: Regex matched 404 code. ({})", threadId, url);
+                        LOGGER.debug("Worker[{}]: Regex matched 404 code. ({})", threadId, url);
 
                     } else {
                         if (Config.parseHTML) {
@@ -210,7 +210,7 @@ public class Worker implements Runnable {
 
     private HttpResponse makeRequest(HttpMethod method, String url)
             throws IOException, InterruptedException {
-        LOG.debug("Worker[{}]: {} : {}", threadId, method, url);
+        LOGGER.debug("Worker[{}]: {} : {}", threadId, method, url);
 
         /*
          * this code is used to limit the number of request/sec
@@ -225,7 +225,7 @@ public class Worker implements Runnable {
 
         HttpResponse response = manager.getHttpClient().send(method, url);
 
-        LOG.debug("Worker[{}]: {} {}", threadId, response.getStatusCode(), url);
+        LOGGER.debug("Worker[{}]: {} {}", threadId, response.getStatusCode(), url);
         return response;
     }
 
@@ -234,7 +234,7 @@ public class Worker implements Runnable {
     }
 
     private void verifyResponseForValidRequests(int code, String response, String rawResponse) {
-        LOG.debug("Worker[{}]: Base Case Check {}", threadId, url);
+        LOGGER.debug("Worker[{}]: Base Case Check {}", threadId, url);
 
         // TODO move this option to the Adv options
         // if the response does not match the base case
@@ -248,7 +248,7 @@ public class Worker implements Runnable {
                         work.getBaseCaseObj().getBaseCase(), work.getItemToCheck());
 
         if (m.find()) {
-            LOG.debug("Worker[{}]: 404 for: {}", threadId, url);
+            LOGGER.debug("Worker[{}]: 404 for: {}", threadId, url);
         } else if (!response.equalsIgnoreCase(basecase)) {
             notifyItemFound(code, response, rawResponse, basecase);
         }
@@ -257,12 +257,12 @@ public class Worker implements Runnable {
     private void notifyItemFound(
             int code, String response, String rawResponse, String basecase, String type) {
         if (work.isDir()) {
-            LOG.debug("Worker[{}]: Found Dir ({}) {}", threadId, type, url);
+            LOGGER.debug("Worker[{}]: Found Dir ({}) {}", threadId, type, url);
             // we found a dir
             manager.foundDir(url, code, response, basecase, rawResponse, work.getBaseCaseObj());
         } else {
             // found a file
-            LOG.debug("Worker[{}]: Found File ({}) {}", threadId, type, url);
+            LOGGER.debug("Worker[{}]: Found File ({}) {}", threadId, type, url);
             manager.foundFile(url, code, response, basecase, rawResponse, work.getBaseCaseObj());
         }
     }

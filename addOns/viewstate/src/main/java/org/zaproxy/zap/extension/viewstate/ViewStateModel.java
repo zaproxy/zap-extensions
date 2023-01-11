@@ -45,7 +45,7 @@ import org.zaproxy.zap.model.StandardParameterParser;
 
 public class ViewStateModel extends AbstractHttpByteHttpPanelViewModel {
 
-    private static Logger logger = LogManager.getLogger(ViewStateModel.class);
+    private static final Logger LOGGER = LogManager.getLogger(ViewStateModel.class);
     public static final int VS_ACTION_REQUEST = 1;
     public static final int VS_ACTION_RESPONSE = 2;
     private ArrayList<ViewState> viewstateParams = new ArrayList<>();
@@ -72,14 +72,14 @@ public class ViewStateModel extends AbstractHttpByteHttpPanelViewModel {
         for (ViewState vsp : viewstateParams) {
             String val = getParamValue(body, vsp.getName());
             if (val != null) {
-                logger.debug("Found ViewState param: {}. Type: {}", vsp.getName(), vsp.getType());
+                LOGGER.debug("Found ViewState param: {}. Type: {}", vsp.getName(), vsp.getType());
                 if (modelAction == VS_ACTION_REQUEST) {
                     String decVal;
                     try {
                         // URL decode value first
                         decVal = URLDecoder.decode(val, "UTF-8");
                     } catch (Exception e) {
-                        logger.error("Could not URL decode ViewState", e);
+                        LOGGER.error("Could not URL decode ViewState", e);
                         return null;
                     }
                     if (vsp.getType().equalsIgnoreCase(ASPViewState.KEY)) {
@@ -110,14 +110,14 @@ public class ViewStateModel extends AbstractHttpByteHttpPanelViewModel {
 
         if (formElements != null && formElements.size() > 0) {
             // Loop through all of the FORM tags
-            logger.debug("Found {} forms", formElements.size());
+            LOGGER.debug("Found {} forms", formElements.size());
 
             for (Element formElement : formElements) {
                 List<Element> elements = formElement.getAllElements();
 
                 if (elements != null && elements.size() > 0) {
                     // Loop through all of the elements
-                    logger.debug("Found {} inputs", elements.size());
+                    LOGGER.debug("Found {} inputs", elements.size());
                     for (Element element : elements) {
                         Attributes attrs = element.getAttributes();
                         try {
@@ -129,7 +129,7 @@ public class ViewStateModel extends AbstractHttpByteHttpPanelViewModel {
                                 }
                             }
                         } catch (Exception e) {
-                            logger.debug("Couldnt get name attribute of parameter", e);
+                            LOGGER.debug("Couldnt get name attribute of parameter", e);
                         }
                     }
                 }
@@ -211,7 +211,7 @@ public class ViewStateModel extends AbstractHttpByteHttpPanelViewModel {
                 String newViewState = new String(data);
                 // Only update if its changed
                 if (!newViewState.equalsIgnoreCase(origViewState)) {
-                    logger.info("Setting ViewState data to: {}", newViewState);
+                    LOGGER.info("Setting ViewState data to: {}", newViewState);
                     // Encode and update original HttpMessage param
                     String newEncViewState = vs.getEncodedValue(data);
                     updateParam(vs.getName(), newEncViewState);
@@ -255,7 +255,7 @@ public class ViewStateModel extends AbstractHttpByteHttpPanelViewModel {
                 // URL encode value
                 value = URLEncoder.encode(value, "UTF-8");
             } catch (Exception e) {
-                logger.error("Could not URL encode ViewState", e);
+                LOGGER.error("Could not URL encode ViewState", e);
                 return;
             }
             if (paramInList(httpMessage.getUrlParams(), name)) {

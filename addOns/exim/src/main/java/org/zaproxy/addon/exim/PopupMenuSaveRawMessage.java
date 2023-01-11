@@ -33,7 +33,7 @@ import org.zaproxy.zap.utils.Stats;
 
 public class PopupMenuSaveRawMessage extends AbstractPopupMenuSaveMessage {
     private static final long serialVersionUID = -7217818541206464572L;
-    private static final Logger LOG = LogManager.getLogger(PopupMenuSaveRawMessage.class);
+    private static final Logger LOGGER = LogManager.getLogger(PopupMenuSaveRawMessage.class);
     private static final String STATS_RAW_FILE_MSG =
             ExtensionExim.STATS_PREFIX + "save.raw.file.msg";
     private static final String STATS_RAW_FILE_MSG_ERROR =
@@ -103,7 +103,7 @@ public class PopupMenuSaveRawMessage extends AbstractPopupMenuSaveMessage {
                     .showWarningDialog(
                             Constant.messages.getString(
                                     "exim.file.save.error", file.getAbsolutePath()));
-            LOG.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             Stats.incCounter(STATS_RAW_FILE_MSG_ERROR + "." + messageComponent.name());
         }
     }

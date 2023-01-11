@@ -60,7 +60,7 @@ public class ContextWrapper {
     private static final String MANUAL_AUTH_CREDS_CANONICAL_NAME =
             "org.zaproxy.zap.authentication.ManualAuthenticationMethodType.ManualAuthenticationCredentials";
 
-    private static final Logger LOG = LogManager.getLogger(ContextWrapper.class);
+    private static final Logger LOGGER = LogManager.getLogger(ContextWrapper.class);
 
     public ContextWrapper(Data data) {
         this.data = data;
@@ -114,7 +114,7 @@ public class ContextWrapper {
                     // Cannot use instanceof as its a private class :/
                     users.add(new UserData(user.getName()));
                 } else {
-                    LOG.debug(
+                    LOGGER.debug(
                             "Auth credentials {} not yet supported",
                             user.getAuthenticationCredentials().getClass().getCanonicalName());
                 }
@@ -358,7 +358,7 @@ public class ContextWrapper {
                     }
                     user.setAuthenticationCredentials(genCreds);
                 } else {
-                    LOG.error(
+                    LOGGER.error(
                             "Users not supported for {}", authMethod.getClass().getCanonicalName());
                 }
                 user.setEnabled(true);
@@ -379,12 +379,12 @@ public class ContextWrapper {
         if (getExtUserMgmt() != null && context != null) {
             for (User user : extUserMgmt.getContextUserAuthManager(context.getId()).getUsers()) {
                 if (user.getName().equals(name)) {
-                    LOG.debug("User {} found in context {}", name, context.getName());
+                    LOGGER.debug("User {} found in context {}", name, context.getName());
                     return user;
                 }
             }
         }
-        LOG.debug("User {} not found in context {}", name, data.getName());
+        LOGGER.debug("User {} not found in context {}", name, data.getName());
         return null;
     }
 

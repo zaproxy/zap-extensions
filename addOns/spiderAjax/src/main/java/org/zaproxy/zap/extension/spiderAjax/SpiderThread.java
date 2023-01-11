@@ -72,7 +72,7 @@ public class SpiderThread implements Runnable {
     private CrawljaxRunner crawljax;
     private boolean running;
     private final Session session;
-    private static final Logger logger = LogManager.getLogger(SpiderThread.class);
+    private static final Logger LOGGER = LogManager.getLogger(SpiderThread.class);
 
     private HttpResponseHeader outOfScopeResponseHeader;
     private HttpResponseBody outOfScopeResponseBody;
@@ -107,7 +107,7 @@ public class SpiderThread implements Runnable {
                                     new URI(target.getStartUri().toASCIIString(), true))
                             : null;
         } catch (URIException e) {
-            logger.error("Failed to create subtree validator:", e);
+            LOGGER.error("Failed to create subtree validator:", e);
         }
         this.httpPrefixUriValidator = validator;
         this.running = false;
@@ -152,7 +152,7 @@ public class SpiderThread implements Runnable {
         try {
             responseHeader = new HttpResponseHeader(strBuilder.toString());
         } catch (HttpMalformedHeaderException e) {
-            logger.error("Failed to create a valid! response header: ", e);
+            LOGGER.error("Failed to create a valid! response header: ", e);
             responseHeader = new HttpResponseHeader();
         }
         outOfScopeResponseHeader = responseHeader;
@@ -223,7 +223,7 @@ public class SpiderThread implements Runnable {
     /** Instantiates the crawljax classes. */
     @Override
     public void run() {
-        logger.info(
+        LOGGER.info(
                 "Running Crawljax (with {}): {}", target.getOptions().getBrowserId(), displayName);
         this.running = true;
         notifyListenersSpiderStarted();
@@ -233,15 +233,15 @@ public class SpiderThread implements Runnable {
                 this.target.toTarget(),
                 this.target.getUser());
 
-        logger.info("Starting proxy...");
+        LOGGER.info("Starting proxy...");
         try {
             this.proxyPort = proxy.start(LOCAL_PROXY_IP);
-            logger.info("Proxy started, listening at port [{}].", proxyPort);
+            LOGGER.info("Proxy started, listening at port [{}].", proxyPort);
 
             crawljax = new CrawljaxRunner(createCrawljaxConfiguration());
             crawljax.call();
         } catch (ProvisionException e) {
-            logger.warn("Failed to start browser {}", target.getOptions().getBrowserId(), e);
+            LOGGER.warn("Failed to start browser {}", target.getOptions().getBrowserId(), e);
             if (View.isInitialised()) {
                 ExtensionSelenium extSelenium =
                         Control.getSingleton()
@@ -253,17 +253,17 @@ public class SpiderThread implements Runnable {
                                 extSelenium.getWarnMessageFailedToStart(providedBrowserId, e));
             }
         } catch (IOException e) {
-            logger.warn("An error occurred while starting the proxy.", e);
+            LOGGER.warn("An error occurred while starting the proxy.", e);
         } catch (Exception e) {
-            logger.error(e, e);
+            LOGGER.error(e, e);
         } finally {
             this.running = false;
-            logger.info("Stopping proxy...");
+            LOGGER.info("Stopping proxy...");
             stopProxy();
-            logger.info("Proxy stopped.");
+            LOGGER.info("Proxy stopped.");
             notifyListenersSpiderStoped();
             SpiderEventPublisher.publishScanEvent(ScanEventPublisher.SCAN_STOPPED_EVENT, 0);
-            logger.info("Finished Crawljax: {}", displayName);
+            LOGGER.info("Finished Crawljax: {}", displayName);
         }
     }
 
@@ -272,7 +272,7 @@ public class SpiderThread implements Runnable {
             try {
                 proxy.close();
             } catch (IOException e) {
-                logger.debug("An error occurred while stopping the proxy.", e);
+                LOGGER.debug("An error occurred while stopping the proxy.", e);
             }
             proxy = null;
         }
@@ -338,26 +338,26 @@ public class SpiderThread implements Runnable {
                 // Nothing to do, state already set to processed.
             } else if (httpPrefixUriValidator != null
                     && !httpPrefixUriValidator.isValid(httpMessage.getRequestHeader().getURI())) {
-                logger.debug("Excluding request [{}] not under subtree.", uri);
+                LOGGER.debug("Excluding request [{}] not under subtree.", uri);
                 state = ResourceState.OUT_OF_SCOPE;
             } else if (target.getContext() != null) {
                 if (!target.getContext().isInContext(uri)) {
-                    logger.debug("Excluding request [{}] not in specified context.", uri);
+                    LOGGER.debug("Excluding request [{}] not in specified context.", uri);
                     state = ResourceState.OUT_OF_CONTEXT;
                 }
             } else if (target.isInScopeOnly()) {
                 if (!session.isInScope(uri)) {
-                    logger.debug("Excluding request [{}] not in scope.", uri);
+                    LOGGER.debug("Excluding request [{}] not in scope.", uri);
                     state = ResourceState.OUT_OF_SCOPE;
                 }
             } else if (!targetHost.equalsIgnoreCase(httpMessage.getRequestHeader().getHostName())) {
-                logger.debug("Excluding request [{}] not on target site [{}].", uri, targetHost);
+                LOGGER.debug("Excluding request [{}] not on target site [{}].", uri, targetHost);
                 state = ResourceState.OUT_OF_SCOPE;
             }
             if (state == ResourceState.PROCESSED) {
                 for (String regex : exclusionList) {
                     if (Pattern.matches(regex, uri)) {
-                        logger.debug("Excluding request [{}] matched regex [{}].", uri, regex);
+                        LOGGER.debug("Excluding request [{}] matched regex [{}].", uri, regex);
                         state = ResourceState.EXCLUDED;
                     }
                 }
@@ -408,7 +408,7 @@ public class SpiderThread implements Runnable {
 
             notifySpiderListenersFoundMessage(historyRef, httpMessage, state);
         } catch (Exception e) {
-            logger.error(e);
+            LOGGER.error(e);
         }
     }
 
@@ -436,7 +436,7 @@ public class SpiderThread implements Runnable {
          */
         @Override
         public EmbeddedBrowser get() {
-            logger.debug("Setting up a Browser");
+            LOGGER.debug("Setting up a Browser");
             // Retrieve the config values used
             ImmutableSortedSet<String> filterAttributes =
                     configuration.getCrawlRules().getPreCrawlConfig().getFilterAttributeNames();

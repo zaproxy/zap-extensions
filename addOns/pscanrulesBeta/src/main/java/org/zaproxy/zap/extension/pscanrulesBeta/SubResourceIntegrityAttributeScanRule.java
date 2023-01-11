@@ -50,7 +50,7 @@ import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 /** Detect missing attribute integrity in supported elements */
 public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner {
 
-    private static final Logger logger =
+    private static final Logger LOGGER =
             LogManager.getLogger(SubResourceIntegrityAttributeScanRule.class);
 
     private enum SupportedElements {
@@ -163,7 +163,7 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner 
                                                                 .toString()));
             }
         } catch (Exception e) {
-            logger.debug("Error occured while calculating the hash. Error: {}", e.getMessage(), e);
+            LOGGER.debug("Error occured while calculating the hash. Error: {}", e.getMessage(), e);
         }
         return integrityHash;
     }

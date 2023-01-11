@@ -51,7 +51,7 @@ public class BufferOverflowScanRule extends AbstractAppParamPlugin {
     private static final String CONNECTION_CLOSED = "Connection: close";
 
     private static final int PLUGIN_ID = 30001;
-    private static Logger log = LogManager.getLogger(BufferOverflowScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(BufferOverflowScanRule.class);
 
     @Override
     public int getId() {
@@ -100,7 +100,7 @@ public class BufferOverflowScanRule extends AbstractAppParamPlugin {
     public void scan(HttpMessage msg, String param, String value) {
 
         if (this.isStop()) { // Check if the user stopped things
-            log.debug("Scanner {} Stopping.", this.getName());
+            LOGGER.debug("Scanner {} Stopping.", this.getName());
             return; // Stop!
         }
         if (isPage500(getBaseMsg())) // Check to see if the page closed initially
@@ -116,7 +116,7 @@ public class BufferOverflowScanRule extends AbstractAppParamPlugin {
             try {
                 sendAndReceive(msg);
             } catch (UnknownHostException ex) {
-                log.debug(
+                LOGGER.debug(
                         "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
                         ex.getClass().getName(),
                         ex.getMessage(),
@@ -128,9 +128,9 @@ public class BufferOverflowScanRule extends AbstractAppParamPlugin {
             // This is where BASE baseResponseBody was you detect potential vulnerabilities in the
             // response
             String chkerrorheader = requestReturn.getHeadersAsString();
-            log.debug("Header: {}", chkerrorheader);
+            LOGGER.debug("Header: {}", chkerrorheader);
             if (isPage500(msg) && chkerrorheader.contains(CONNECTION_CLOSED)) {
-                log.debug("Found Header");
+                LOGGER.debug("Found Header");
                 createAlert(param, returnAttack)
                         .setUri(this.getBaseMsg().getRequestHeader().getURI().toString())
                         .setMessage(msg)
@@ -140,9 +140,9 @@ public class BufferOverflowScanRule extends AbstractAppParamPlugin {
 
             return;
         } catch (URIException e) {
-            log.debug("Failed to send HTTP message, cause: {}", e.getMessage());
+            LOGGER.debug("Failed to send HTTP message, cause: {}", e.getMessage());
         } catch (IOException e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

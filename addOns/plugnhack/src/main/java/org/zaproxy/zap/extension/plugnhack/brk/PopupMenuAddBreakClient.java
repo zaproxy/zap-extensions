@@ -35,7 +35,7 @@ public class PopupMenuAddBreakClient extends ExtensionPopupMenuItem {
     private static final long serialVersionUID = 1L;
     private ExtensionBreak extension = null;
     private JTable messageTable = null;
-    private static Logger log = LogManager.getLogger(PopupMenuAddBreakClient.class);
+    private static final Logger LOGGER = LogManager.getLogger(PopupMenuAddBreakClient.class);
 
     public PopupMenuAddBreakClient(ExtensionBreak extension) {
         super(Constant.messages.getString("brk.add.popup"));
@@ -82,7 +82,7 @@ public class PopupMenuAddBreakClient extends ExtensionPopupMenuItem {
                 }
 
             } catch (Exception e) {
-                log.warn(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
             return true;
         }

@@ -41,7 +41,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  */
 public class SourceCodeDisclosureScanRule extends PluginPassiveScanner {
 
-    private static final Logger log = LogManager.getLogger(SourceCodeDisclosureScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(SourceCodeDisclosureScanRule.class);
 
     /**
      * a consistently ordered map of: a regular expression pattern to the Programming language
@@ -671,7 +671,7 @@ public class SourceCodeDisclosureScanRule extends PluginPassiveScanner {
             Matcher matcher = languagePattern.matcher(responsebody);
             if (matcher.find()) {
                 evidence = matcher.group();
-                log.debug(
+                LOGGER.debug(
                         "Passive Source Code Disclosure on pattern {}, evidence: {}",
                         languagePattern,
                         evidence);

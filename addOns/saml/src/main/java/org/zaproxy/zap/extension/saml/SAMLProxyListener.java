@@ -28,7 +28,7 @@ public class SAMLProxyListener implements ProxyListener {
 
     private SAMLConfiguration configuration;
 
-    protected static final Logger log = LogManager.getLogger(SAMLProxyListener.class);
+    protected static final Logger LOGGER = LogManager.getLogger(SAMLProxyListener.class);
 
     public SAMLProxyListener() {
         configuration = SAMLConfiguration.getInstance();
@@ -54,7 +54,7 @@ public class SAMLProxyListener implements ProxyListener {
                     boolean changed =
                             samlMessage.changeAttributeValueTo(attribute.getName(), value);
                     if (changed) {
-                        log.debug("{}: value changed to {}", attribute.getName(), value);
+                        LOGGER.debug("{}: value changed to {}", attribute.getName(), value);
                     }
                 }
 

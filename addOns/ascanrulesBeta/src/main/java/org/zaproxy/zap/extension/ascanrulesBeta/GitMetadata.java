@@ -45,7 +45,7 @@ import org.parosproxy.paros.network.HttpStatusCode;
 public class GitMetadata {
 
     /** the logger object */
-    private static Logger log = LogManager.getLogger(GitMetadata.class);
+    private static final Logger LOGGER = LogManager.getLogger(GitMetadata.class);
 
     /**
      * a pattern used to determine if a given SHA1 value is valid (from the point of view of the
@@ -131,7 +131,7 @@ public class GitMetadata {
     protected byte[] getURIResponseBody(URI uri, boolean inflate, HttpMessage basemsg)
             throws Exception {
         byte[] data = null;
-        log.debug("Debug: Requesting URI '{}'", uri);
+        LOGGER.debug("Debug: Requesting URI '{}'", uri);
 
         // set a limit of 20 Git URIs to be followed for a single URI
         uriCount++;
@@ -176,7 +176,7 @@ public class GitMetadata {
             return getObjectData(basemsg, gitbasepath, filesha1, false);
         } catch (FileNotFoundException e) {
             // try the packed format instead
-            log.debug(
+            LOGGER.debug(
                     "An unpacked file was not found for SHA1 {}. Trying for a packed file instead",
                     filesha1);
 
@@ -217,7 +217,7 @@ public class GitMetadata {
                             null,
                             null);
 
-            log.debug("The internal Git (loose) file name is {}", gitobjecturi);
+            LOGGER.debug("The internal Git (loose) file name is {}", gitobjecturi);
             byte[] data = getURIResponseBody(gitobjecturi, true, basemsg);
 
             ByteBuffer dataBuffer = ByteBuffer.wrap(data);
@@ -314,13 +314,13 @@ public class GitMetadata {
                             null,
                             null);
 
-            log.debug("The internal Git file containing the name of the pack file is {}", uri);
+            LOGGER.debug("The internal Git file containing the name of the pack file is {}", uri);
 
             byte[] packinfofiledata = null;
             try {
                 packinfofiledata = getURIResponseBody(uri, false, basemsg);
             } catch (FileNotFoundException e) {
-                log.error(
+                LOGGER.error(
                         "We could not read '{}' to get the name of the pack file containing the content: {}",
                         uri,
                         e.getMessage());
@@ -452,7 +452,7 @@ public class GitMetadata {
                     // TODO: use more efficient byte based comparison to find the SHA1 here (and in
                     // similar code in pack index version 2 logic, later..
                     if (packTableSha1.equals(filesha1)) {
-                        log.debug(
+                        LOGGER.debug(
                                 "FOUND our SHA1 {} at entry {} in the v4 pack tables",
                                 packTableSha1,
                                 i);
@@ -496,7 +496,7 @@ public class GitMetadata {
                                     + packEntryCount
                                     + ") from the pack file ");
                 }
-                log.debug(
+                LOGGER.debug(
                         "Got a pack index entry count of {} from the version 1 pack index file",
                         indexEntryCount);
 
@@ -517,7 +517,7 @@ public class GitMetadata {
                     packindexfileV1dataBuffer.get(indexEntryIdBuffer);
                     String indexEntrySha1 = Hex.encodeHexString(indexEntryIdBuffer);
                     if (indexEntrySha1.equals(filesha1)) {
-                        log.debug(
+                        LOGGER.debug(
                                 "FOUND our SHA1 {} at entry {} in the SHA1 table",
                                 indexEntrySha1,
                                 i);
@@ -540,7 +540,7 @@ public class GitMetadata {
             } catch (NotV1GitPackIndexFileException e) {
                 // so it's not a version 1 "pack index" file. Try parsing it as a version 2, 3, 4
                 // (or later versions, once there are more versions, and we support them)
-                log.debug(
+                LOGGER.debug(
                         "The 'pack index' file looks like a > version 1 'pack index' file. Trying to parse it as later formats instead");
 
                 // Parse the "pack index" file header
@@ -619,7 +619,7 @@ public class GitMetadata {
                         packindexfiledataBuffer.get(indexEntryIdBuffer);
                         String indexEntrySha1 = Hex.encodeHexString(indexEntryIdBuffer);
                         if (indexEntrySha1.equals(filesha1)) {
-                            log.debug(
+                            LOGGER.debug(
                                     "FOUND our SHA1 {} at entry {} in the SHA11 table",
                                     indexEntrySha1,
                                     i);
@@ -661,7 +661,7 @@ public class GitMetadata {
             for (int i = 0; i < indexEntryCount; i++) {
                 if (packEntryOffsetArrayOrdered[i] > packEntryOffsetArray[sha1Index]) {
                     nextOffset = packEntryOffsetArrayOrdered[i];
-                    // log.debug("Found the entry with the next offset: {}", nextOffset);
+                    // LOGGER.debug("Found the entry with the next offset: {}", nextOffset);
                     if (nextOffset > (packfiledata.length - 1))
                         throw new Exception(
                                 "A 'next' offset of "
@@ -673,9 +673,10 @@ public class GitMetadata {
             }
             // given the "pack" file offsets, we know the deflated length of the entry in there.
             int entryLength = (nextOffset - packEntryOffsetArray[sha1Index]);
-            log.debug("Our offset into the pack file is {}", packEntryOffsetArray[sha1Index]);
-            log.debug("The offset of the next entry into the pack file is {}", nextOffset);
-            log.debug("The deflated entry length, based on offset differences, is {}", entryLength);
+            LOGGER.debug("Our offset into the pack file is {}", packEntryOffsetArray[sha1Index]);
+            LOGGER.debug("The offset of the next entry into the pack file is {}", nextOffset);
+            LOGGER.debug(
+                    "The deflated entry length, based on offset differences, is {}", entryLength);
 
             // get the data from the pack file and return it.
             byte[] inflatedData =
@@ -742,7 +743,7 @@ public class GitMetadata {
             // #	110	- DELTA_ENCODED object w/ offset to base
             // #	111	- DELTA_ENCODED object w/ base BINARY_OBJ_ID
             byte entryType = (byte) ((typeandsize & (byte) 0x70) >> 4);
-            log.debug("The pack file entry is of type {}", entryType);
+            LOGGER.debug("The pack file entry is of type {}", entryType);
 
             if (entryType == 0x7) {
                 // TODO :support Packed Objects of type 'DELTA_ENCODED object with base
@@ -798,7 +799,7 @@ public class GitMetadata {
                 // for non-deltified objects - this is the simple and common case (in small
                 // repositories, at least)
                 // this includes Commits, Trees, Blobs, and Tags
-                log.debug(
+                LOGGER.debug(
                         "The size of the un-deltified inflated entry should be {}, binary: {}",
                         entrySizeWhenInflated,
                         Integer.toBinaryString(entrySizeWhenInflated));
@@ -806,7 +807,7 @@ public class GitMetadata {
                 // extract the data from the "pack" file, taking into account its total size, based
                 // on the offsets, and the number of type and size bytes already read.
                 int entryDataBytesToRead = entryLength - sizebytescounted;
-                // log.debug("Read {} size bytes, so will read {} bytes of entry data from the
+                // LOGGER.debug("Read {} size bytes, so will read {} bytes of entry data from the
                 // 'pack' file", sizebytescounted, entryDataBytesToRead);
 
                 byte deflatedSource[] = new byte[entryDataBytesToRead];
@@ -820,7 +821,7 @@ public class GitMetadata {
                 // Git repositories.
                 int deltabaseoffset = readBigEndianModifiedBase128Number(entryBuffer);
                 int deltaoffsetBytesRead = this.tempbytesread;
-                log.debug(
+                LOGGER.debug(
                         "DELTA_ENCODED object with offset to base: got a delta base offset of {}, by reading {} bytes",
                         deltabaseoffset,
                         deltaoffsetBytesRead);
@@ -845,7 +846,7 @@ public class GitMetadata {
                 // and the length of the base object, go and get the base object
                 // note that the base entry could be another deltified object, in which case, we
                 // will need to recurse.
-                log.debug(
+                LOGGER.debug(
                         "Getting a packed object from pack file offset {}, delta base offset {}, with inflated base object length {}, and deflated base object length {}",
                         packfiledataoffset,
                         deltabaseoffset,
@@ -874,11 +875,11 @@ public class GitMetadata {
                 // now read the chunks, until there is no more data to be read
                 while (inflateddeltadataBuffer.hasRemaining()) {
                     byte chunkByte = inflateddeltadataBuffer.get();
-                    // log.debug("The delta chunk leading byte (in binary) is "+
+                    // LOGGER.debug("The delta chunk leading byte (in binary) is "+
                     // Integer.toBinaryString(chunkByte & 0xFF) );
 
                     if ((chunkByte & 0x80) == 0) {
-                        // log.debug("The delta chunk leading byte indicates an INSERT");
+                        // LOGGER.debug("The delta chunk leading byte indicates an INSERT");
 
                         // this is an insert chunk, so get its length
                         byte chunkInsertLength =
@@ -911,7 +912,7 @@ public class GitMetadata {
                         // if it passed the checks, append the insert chunk to the result buffer.
                         inflatedObjectData = ArrayUtils.addAll(inflatedObjectData, insertdata);
                     } else {
-                        // log.debug("The delta chunk leading byte indicates a COPY");
+                        // LOGGER.debug("The delta chunk leading byte indicates a COPY");
 
                         // this is a copy chunk (where bit 7 is set on the byte)
                         // so bits 6-0 specify how the remainder of the chunk determine the copy
@@ -1005,7 +1006,7 @@ public class GitMetadata {
 
             return inflatedObjectData;
         } catch (Exception e) {
-            log.error("Some error occurred extracting a packed object", e);
+            LOGGER.error("Some error occurred extracting a packed object", e);
             throw e;
         }
     }
@@ -1086,7 +1087,7 @@ public class GitMetadata {
         dataBuffer.get(dircArray);
 
         int indexFileVersion = dataBuffer.getInt();
-        // log.debug("The Git index file version is {}", indexFileVersion);
+        // LOGGER.debug("The Git index file version is {}", indexFileVersion);
 
         int indexEntryCount = dataBuffer.getInt();
         // og.debug("{} entries were found in the Git index file.", indexEntryCount);
@@ -1123,7 +1124,7 @@ public class GitMetadata {
             entryBytesRead += 4;
             int indexEntrySize = dataBuffer.getInt();
             entryBytesRead += 4;
-            // log.debug("Entry {} has size {}", entryIndex, indexEntrySize);
+            // LOGGER.debug("Entry {} has size {}", entryIndex, indexEntrySize);
 
             // size is unspecified for the entry id, but it seems to be a 40 hex character, SHA-1
             // string stored as 20 bytes, network order
@@ -1176,7 +1177,7 @@ public class GitMetadata {
 
             String indexEntryName = null;
             if (indexFileVersion > 3) {
-                // log.debug("Inflating the (deflated) entry name for index entry {} based on the
+                // LOGGER.debug("Inflating the (deflated) entry name for index entry {} based on the
                 // previous entry name, since Index file version {} requires this", entryIndex,
                 // indexFileVersion);
 
@@ -1196,7 +1197,8 @@ public class GitMetadata {
                     if ((byteRead & msbsetmask) == 0) break; // break if msb is NOT set in the byte
                 }
 
-                // log.debug("We read {} bytes of variable length data from before the start of the
+                // LOGGER.debug("We read {} bytes of variable length data from before the start of
+                // the
                 // entry name", n);
                 if (n > 4)
                     throw new Exception(
@@ -1225,7 +1227,7 @@ public class GitMetadata {
                 indexEntryName = new String(indexEntryNameBuffer);
             }
 
-            log.debug("Entry {} has name {}", entryIndex, indexEntryName);
+            LOGGER.debug("Entry {} has name {}", entryIndex, indexEntryName);
 
             // and store off the index entry name, for the next iteration
             previousIndexEntryName = indexEntryName;
@@ -1251,7 +1253,7 @@ public class GitMetadata {
                 dataBuffer.get(indexEntryPadBuffer);
                 entryBytesRead += entryBytesToRead;
             } else {
-                // log.debug("Not aligning to an 8 byte boundary after
+                // LOGGER.debug("Not aligning to an 8 byte boundary after
                 // Entry {}, since Index file version {} does
                 // not mandate 64 bit alignment for index entries", entryIndex, indexFileVersion);
             }
@@ -1259,7 +1261,7 @@ public class GitMetadata {
             // Git does not store entries for directories, but just files/symlinks/Git links, so no
             // need to handle directories here, unlike with SVN, for instance.
             if (indexEntryName != null && indexEntryName.length() > 0) {
-                // log.info("Found file/symbolic link/gitlink "+ indexEntryName + " in the Git
+                // LOGGER.info("Found file/symbolic link/gitlink "+ indexEntryName + " in the Git
                 // entries file");
                 map.put(indexEntryName, indexEntrySha1);
             }

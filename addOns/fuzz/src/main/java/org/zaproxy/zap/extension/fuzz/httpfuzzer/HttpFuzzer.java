@@ -99,7 +99,7 @@ public class HttpFuzzer extends AbstractFuzzer<HttpMessage> {
                 httpSender.sendAndReceive(originalMessage);
                 messageSent(0, message);
             } catch (IOException e) {
-                logger.debug("Failed to obtain the response of original message: ", e);
+                LOGGER.debug("Failed to obtain the response of original message: ", e);
                 increaseErrorCount(
                         0,
                         Constant.messages.getString(
@@ -200,7 +200,7 @@ public class HttpFuzzer extends AbstractFuzzer<HttpMessage> {
                             Constant.messages.getString(
                                     "fuzz.httpfuzzer.results.error.message.removedProcessorOnError",
                                     messageProcessor.getName()));
-                    logger.warn(
+                    LOGGER.warn(
                             "Error while executing a processor, it will not be called again:", e);
                     it.remove();
                 }
@@ -246,7 +246,7 @@ public class HttpFuzzer extends AbstractFuzzer<HttpMessage> {
                             Constant.messages.getString(
                                     "fuzz.httpfuzzer.results.error.message.removedProcessorOnError",
                                     messageProcessor.getName()));
-                    logger.warn(
+                    LOGGER.warn(
                             "Error while executing a processor, it will not be called again:", e);
                     it.remove();
                 }

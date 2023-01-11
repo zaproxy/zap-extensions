@@ -104,7 +104,7 @@ public class XxeScanRule extends AbstractAppPlugin {
             Pattern.compile(xmlHeaderRegex, Pattern.CASE_INSENSITIVE);
 
     // Logger instance
-    private static final Logger log = LogManager.getLogger(XxeScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(XxeScanRule.class);
 
     @Override
     public int getId() {
@@ -246,7 +246,7 @@ public class XxeScanRule extends AbstractAppPlugin {
                 sendAndReceive(msg);
             }
         } catch (Exception e) {
-            log.warn("Could not perform Remote File Inclusion Attack.", e);
+            LOGGER.warn("Could not perform Remote File Inclusion Attack.", e);
         }
     }
 
@@ -274,7 +274,7 @@ public class XxeScanRule extends AbstractAppPlugin {
                 sendAndReceive(msg);
             }
         } catch (Exception e) {
-            log.warn("Could not perform OOB XXE File Inclusion Attack.", e);
+            LOGGER.warn("Could not perform OOB XXE File Inclusion Attack.", e);
         }
     }
 
@@ -359,7 +359,7 @@ public class XxeScanRule extends AbstractAppPlugin {
         } catch (IOException ex) {
             // Do not try to internationalise this.. we need an error message in any event..
             // if it's in English, it's still better than not having it at all.
-            log.warn(
+            LOGGER.warn(
                     "XXE Injection vulnerability check failed for payload [{}] due to an I/O error",
                     payload,
                     ex);
@@ -394,7 +394,7 @@ public class XxeScanRule extends AbstractAppPlugin {
             try {
                 sendAndReceive(msg);
             } catch (IOException ex) {
-                log.warn(
+                LOGGER.warn(
                         "XXE Injection vulnerability check failed for payload [{}] due to an I/O error",
                         payload,
                         ex);

@@ -49,7 +49,7 @@ public class ZestAddLoopPopupMenu extends ExtensionPopupMenuItem {
 
     private ExtensionZest extension;
 
-    private static final Logger logger = LogManager.getLogger(ZestAddConditionPopupMenu.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestAddConditionPopupMenu.class);
 
     /** This method initializes */
     public ZestAddLoopPopupMenu(ExtensionZest extension) {
@@ -102,7 +102,7 @@ public class ZestAddLoopPopupMenu extends ExtensionPopupMenuItem {
         try {
             createPopupAddActionMenu(parent, children, stmt, new ZestLoopFile());
         } catch (IOException e) {
-            logger.debug(e.getMessage(), e);
+            LOGGER.debug(e.getMessage(), e);
         }
         createPopupAddActionMenu(parent, children, stmt, new ZestLoopInteger());
         createPopupAddActionMenu(parent, children, stmt, new ZestLoopClientElements());

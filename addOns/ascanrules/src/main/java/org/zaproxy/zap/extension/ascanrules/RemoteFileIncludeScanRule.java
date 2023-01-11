@@ -97,7 +97,7 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
     /** details of the vulnerability which we are attempting to find */
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_5");
     /** the logger object */
-    private static Logger log = LogManager.getLogger(RemoteFileIncludeScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(RemoteFileIncludeScanRule.class);
 
     @Override
     public int getId() {
@@ -156,7 +156,7 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
             // DEBUG only
             // this.setAttackStrength(AttackStrength.INSANE);
 
-            log.debug("Attacking at Attack Strength: {}", this.getAttackStrength());
+            LOGGER.debug("Attacking at Attack Strength: {}", this.getAttackStrength());
 
             String origResponse =
                     msg.getResponseHeader().toString() + msg.getResponseBody().toString();
@@ -187,7 +187,7 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
             Matcher matcher;
             Matcher origMatcher;
 
-            log.debug(
+            LOGGER.debug(
                     "Checking [{}] [{}], parameter [{}] for Path Traversal to remote files",
                     getBaseMsg().getRequestHeader().getMethod(),
                     getBaseMsg().getRequestHeader().getURI(),
@@ -214,7 +214,7 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
                     try {
                         sendAndReceive(msg, false);
                     } catch (IllegalStateException | UnknownHostException ex) {
-                        log.debug(
+                        LOGGER.debug(
                                 "Caught {} {} when accessing: {}",
                                 ex.getClass().getName(),
                                 ex.getMessage(),
@@ -232,7 +232,7 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
                         origMatcher = REMOTE_FILE_PATTERNS[i].matcher(origResponse);
                         if (origMatcher.find() && origMatcher.group().equals(matcher.group())) {
                             // Its the same as before
-                            log.debug(
+                            LOGGER.debug(
                                     "Not reporting alert - same title as original: {}",
                                     matcher.group());
                         } else {
@@ -248,7 +248,7 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
             }
 
         } catch (Exception e) {
-            log.debug(
+            LOGGER.debug(
                     "Error checking [{}] [{}], parameter [{}] for Remote File Include. {}",
                     getBaseMsg().getRequestHeader().getMethod(),
                     getBaseMsg().getRequestHeader().getURI(),

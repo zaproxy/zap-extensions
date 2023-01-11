@@ -67,7 +67,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
     private String csrfValIgnoreList;
 
     /** the logger */
-    private static Logger logger = LogManager.getLogger(CsrfCountermeasuresScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(CsrfCountermeasuresScanRule.class);
 
     /**
      * gets the plugin id for this extension
@@ -108,14 +108,14 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
             boolean hasSecurityAnnotation = false;
 
             // Loop through all of the FORM tags
-            logger.debug("Found {} forms", formElements.size());
+            LOGGER.debug("Found {} forms", formElements.size());
 
             int numberOfFormsPassed = 0;
 
             List<String> ignoreList = new ArrayList<>();
             String ignoreConf = getCSRFIgnoreList();
             if (ignoreConf != null && ignoreConf.length() > 0) {
-                logger.debug("Using ignore list: {}", ignoreConf);
+                LOGGER.debug("Using ignore list: {}", ignoreConf);
                 for (String str : ignoreConf.split(",")) {
                     String strTrim = str.trim();
                     if (strTrim.length() > 0) {
@@ -127,7 +127,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
             String ignoreAttValue = getCSRFIgnoreAttValue();
 
             for (Element formElement : formElements) {
-                logger.debug(
+                LOGGER.debug(
                         "FORM [{}] has parent [{}]", formElement, formElement.getParentElement());
                 StringBuilder sbForm = new StringBuilder();
                 SortedSet<String> elementNames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
@@ -137,7 +137,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
                 // any alerts on it.
                 // ie. This logic is necessary to eliminate false positives on non-HTML files.
                 if (formElement.getParentElement() == null) {
-                    logger.debug(
+                    LOGGER.debug(
                             "Skipping HTML form because it has no parent. Likely not actually HTML.");
                     continue; // do not report a missing anti-CSRF field on this form
                 }
@@ -161,7 +161,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
 
                 if (inputElements != null && inputElements.size() > 0) {
                     // Loop through all of the INPUT elements
-                    logger.debug("Found {} inputs", inputElements.size());
+                    LOGGER.debug("Found {} inputs", inputElements.size());
                     for (Element inputElement : inputElements) {
                         String attId = inputElement.getAttributeValue("ID");
                         if (attId != null) {
@@ -229,7 +229,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
                         .raise();
             }
         }
-        logger.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
+        LOGGER.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
     }
 
     private boolean formOnIgnoreList(Element formElement, List<String> ignoreList) {
@@ -237,10 +237,10 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
         String name = formElement.getAttributeValue("name");
         for (String ignore : ignoreList) {
             if (ignore.equals(id)) {
-                logger.debug("Ignoring form with id = {}", id);
+                LOGGER.debug("Ignoring form with id = {}", id);
                 return true;
             } else if (ignore.equals(name)) {
-                logger.debug("Ignoring form with name = {}", name);
+                LOGGER.debug("Ignoring form with name = {}", name);
                 return true;
             }
         }

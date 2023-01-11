@@ -286,7 +286,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
     }
 
     // Logger instance
-    private static final Logger log = LogManager.getLogger(CommandInjectionScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(CommandInjectionScanRule.class);
 
     // Get WASC Vulnerability description
     private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_31");
@@ -367,12 +367,12 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
         try {
             timeSleepSeconds = this.getConfig().getInt(RULE_SLEEP_TIME, DEFAULT_TIME_SLEEP_SEC);
         } catch (ConversionException e) {
-            log.debug(
+            LOGGER.debug(
                     "Invalid value for '{}': {}",
                     RULE_SLEEP_TIME,
                     this.getConfig().getString(RULE_SLEEP_TIME));
         }
-        log.debug("Sleep set to {} seconds", timeSleepSeconds);
+        LOGGER.debug("Sleep set to {} seconds", timeSleepSeconds);
     }
 
     /**
@@ -397,7 +397,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
     public void scan(HttpMessage msg, String paramName, String value) {
 
         // Begin scan rule execution
-        log.debug(
+        LOGGER.debug(
                 "Checking [{}][{}], parameter [{}] for OS Command Injection Vulnerabilities",
                 msg.getRequestHeader().getMethod(),
                 msg.getRequestHeader().getURI(),
@@ -527,14 +527,14 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
             firstPayload = false;
             setParameter(msg, paramName, paramValue);
 
-            log.debug("Testing [{}] = [{}]", paramName, paramValue);
+            LOGGER.debug("Testing [{}] = [{}]", paramName, paramValue);
 
             try {
                 // Send the request and retrieve the response
                 try {
                     sendAndReceive(msg, false);
                 } catch (SocketException ex) {
-                    log.debug(
+                    LOGGER.debug(
                             "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
                             ex.getClass().getName(),
                             ex.getMessage(),
@@ -553,7 +553,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
                 if (matcher.find()) {
                     // We Found IT!
                     // First do logging
-                    log.debug(
+                    LOGGER.debug(
                             "[OS Command Injection Found] on parameter [{}] with value [{}]",
                             paramName,
                             paramValue);
@@ -576,7 +576,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
             } catch (IOException ex) {
                 // Do not try to internationalise this.. we need an error message in any event..
                 // if it's in English, it's still better than not having it at all.
-                log.warn(
+                LOGGER.warn(
                         "Command Injection vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
                         paramName,
                         payload,
@@ -615,7 +615,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
                         String finalPayload =
                                 value + sleepPayload.replace("{0}", String.valueOf(x));
                         setParameter(msg, paramName, finalPayload);
-                        log.debug("Testing [{}] = [{}]", paramName, finalPayload);
+                        LOGGER.debug("Testing [{}] = [{}]", paramName, finalPayload);
 
                         // send the request and retrieve the response
                         sendAndReceive(msg, false);
@@ -634,7 +634,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
                                     TIME_CORRELATION_ERROR_RANGE,
                                     TIME_SLOPE_ERROR_RANGE);
                 } catch (SocketException ex) {
-                    log.debug(
+                    LOGGER.debug(
                             "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
                             ex.getClass().getName(),
                             ex.getMessage(),
@@ -645,7 +645,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
                 if (isInjectable) {
                     // We Found IT!
                     // First do logging
-                    log.debug(
+                    LOGGER.debug(
                             "[Blind OS Command Injection Found] on parameter [{}] with value [{}]",
                             paramName,
                             paramValue);
@@ -667,7 +667,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
             } catch (IOException ex) {
                 // Do not try to internationalise this.. we need an error message in any event..
                 // if it's in English, it's still better than not having it at all.
-                log.warn(
+                LOGGER.warn(
                         "Blind Command Injection vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
                         paramName,
                         paramValue,

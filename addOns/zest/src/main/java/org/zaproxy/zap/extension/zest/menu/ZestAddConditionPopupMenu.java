@@ -60,9 +60,6 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
 
     private ExtensionZest extension;
 
-    // private static final Logger logger =
-    // LogManager.getLogger(ZestAddConditionPopupMenu.class);
-
     /** This method initializes */
     public ZestAddConditionPopupMenu(ExtensionZest extension) {
         super("AddConditionX");

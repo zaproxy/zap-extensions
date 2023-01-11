@@ -49,7 +49,7 @@ public class BodyGenerator {
 
     private Generators generators;
     private DataGenerator dataGenerator;
-    private static final Logger LOG = LogManager.getLogger(BodyGenerator.class);
+    private static final Logger LOGGER = LogManager.getLogger(BodyGenerator.class);
     private static final List<String> PRIMITIVE_TYPES =
             Arrays.asList("boolean", "integer", "number", "string");
     public static final String TEXT_FILE_CONTENTS =
@@ -99,7 +99,7 @@ public class BodyGenerator {
             return "";
         }
 
-        LOG.debug("Generate body for object {}", schema.getName());
+        LOGGER.debug("Generate body for object {}", schema.getName());
 
         if (schema instanceof ArraySchema) {
             return generateFromArraySchema((ArraySchema) schema);
@@ -138,7 +138,7 @@ public class BodyGenerator {
             try {
                 return Json.mapper().writeValueAsString(schema.getExample());
             } catch (JsonProcessingException e) {
-                LOG.warn(
+                LOGGER.warn(
                         "Failed to encode Example Object. Falling back to default example generation",
                         e);
             }
@@ -211,7 +211,7 @@ public class BodyGenerator {
             return schema.getAnyOf().get(0);
         }
         // Should not be reached, allOf schema is resolved by the parser
-        LOG.error("Unknown composed schema type: {}", schema);
+        LOGGER.error("Unknown composed schema type: {}", schema);
         return null;
     }
 

@@ -57,7 +57,7 @@ public enum Browser {
 
     private static final String WEB_DRIVERS_DIR_NAME = "webdriver";
 
-    private static final Logger logger = LogManager.getLogger(Browser.class);
+    private static final Logger LOGGER = LogManager.getLogger(Browser.class);
 
     private static Path zapHomeDir;
 
@@ -159,7 +159,7 @@ public enum Browser {
         try {
             return Paths.get(path).startsWith(getWebDriversDir());
         } catch (InvalidPathException e) {
-            logger.warn("Failed to create path for {}", path, e);
+            LOGGER.warn("Failed to create path for {}", path, e);
             return false;
         }
     }
@@ -218,7 +218,7 @@ public enum Browser {
                 setExecutable(driver);
                 return driver.toAbsolutePath().toString();
             } catch (IOException e) {
-                logger.warn("Failed to set the bundled WebDriver executable:", e);
+                LOGGER.warn("Failed to set the bundled WebDriver executable:", e);
             }
         }
 
@@ -282,7 +282,7 @@ public enum Browser {
             setExecutable(driver);
             return true;
         } catch (IOException e) {
-            logger.warn("Failed to set the bundled WebDriver executable:", e);
+            LOGGER.warn("Failed to set the bundled WebDriver executable:", e);
         }
         return false;
     }

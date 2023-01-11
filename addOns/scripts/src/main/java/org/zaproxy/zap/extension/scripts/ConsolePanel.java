@@ -88,7 +88,7 @@ public class ConsolePanel extends AbstractPanel {
 
     private Map<ScriptWrapper, Integer> scriptWrapperToOffset = new HashMap<>();
 
-    private static final Logger LOG = LogManager.getLogger(ConsolePanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(ConsolePanel.class);
 
     public ConsolePanel(ExtensionScriptsUI extension) {
         super();
@@ -168,7 +168,7 @@ public class ConsolePanel extends AbstractPanel {
                                                 try {
                                                     extension.getExtScript().saveScript(script);
                                                 } catch (IOException e) {
-                                                    LOG.error(e.getMessage(), e);
+                                                    LOGGER.error(e.getMessage(), e);
                                                 }
                                             } else {
                                                 reloadScript();
@@ -178,7 +178,7 @@ public class ConsolePanel extends AbstractPanel {
                                 try {
                                     SwingUtilities.invokeAndWait(dialogRunnable);
                                 } catch (Exception e) {
-                                    LOG.error(e.getMessage(), e);
+                                    LOGGER.error(e.getMessage(), e);
                                 }
                             }
                             try {
@@ -203,7 +203,7 @@ public class ConsolePanel extends AbstractPanel {
             this.script.reloadScript();
             this.updateCommandPanelState(this.script);
         } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

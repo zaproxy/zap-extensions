@@ -94,7 +94,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
         DEPENDENCIES = Collections.unmodifiableList(dependencies);
     }
 
-    private Logger log = LogManager.getLogger(this.getClass());
+    private Logger LOGGER = LogManager.getLogger(this.getClass());
 
     private Map<String, TimeRange> sites = new HashMap<>();
     private RevisitDialog revisitDialog;
@@ -187,7 +187,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
 
         TimeRange rs = this.sites.get(getSiteForURL(url));
         if (rs != null) {
-            log.debug("Revisiting url: {}", url);
+            LOGGER.debug("Revisiting url: {}", url);
             StructuralNode node = null;
             boolean found = false;
             StringBuilder urlsFor404 = new StringBuilder();
@@ -227,7 +227,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
                             }
                             if (hr.getTimeSentMillis() < rs.getStartTime().getTime()) {
                                 // Before specified range
-                                log.debug("Before specified range: {}", url);
+                                LOGGER.debug("Before specified range: {}", url);
                                 if (urlCount <= 10) {
                                     // Add to 404 diags
                                     appendMsgToDiags(
@@ -241,7 +241,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
                             if (hr.getTimeSentMillis() < rs.getStartTime().getTime()
                                     || hr.getTimeSentMillis() > rs.getEndTime().getTime()) {
                                 // After specified range (so no point continuing)
-                                log.debug("After specified range: {}", url);
+                                LOGGER.debug("After specified range: {}", url);
                                 // Always add so that they know there was something after the
                                 // time they specified
                                 appendMsgToDiags(
@@ -254,7 +254,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
                             // any checks we can without it before getting it
                             HttpMessage msg2 = hr.getHttpMessage();
                             if (this.isSameRequest(msg, msg2)) {
-                                log.debug("Returning revisited page: {}", url);
+                                LOGGER.debug("Returning revisited page: {}", url);
                                 copyResponse(msg2, msg);
                                 found = true;
                                 break;
@@ -265,12 +265,12 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
                                         Constant.messages.getString("revisit.diags.params"));
                                 urlCount++;
                             }
-                            log.debug("Not the same request: {}", url);
+                            LOGGER.debug("Not the same request: {}", url);
                         }
                     }
                 }
             } catch (Exception e) {
-                log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
             if (!found) {
                 // Display a 404 adding in any useful info we can
@@ -296,7 +296,7 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
                     msg.getResponseHeader().setContentLength(msg.getResponseBody().length());
                     msg.setTimeSentMillis(new Date().getTime());
                 } catch (HttpMalformedHeaderException e) {
-                    log.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
         }

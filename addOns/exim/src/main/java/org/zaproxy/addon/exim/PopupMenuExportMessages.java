@@ -41,7 +41,7 @@ public class PopupMenuExportMessages extends JMenuItem {
     private static final long serialVersionUID = 1L;
     private static final String NEWLINE = "\n";
 
-    private static final Logger LOG = LogManager.getLogger(PopupMenuExportMessages.class);
+    private static final Logger LOGGER = LogManager.getLogger(PopupMenuExportMessages.class);
     private static final String STATS_EXPORT_MESSAGES =
             ExtensionExim.STATS_PREFIX + "export.messages";
     private static final String STATS_EXPORT_MESSAGES_ERROR =
@@ -105,7 +105,7 @@ public class PopupMenuExportMessages extends JMenuItem {
                                         Constant.messages.getString("file.save.error")
                                                 + file.getAbsolutePath()
                                                 + ".");
-                        LOG.warn(e1.getMessage(), e1);
+                        LOGGER.warn(e1.getMessage(), e1);
                     }
                 });
     }
@@ -147,7 +147,7 @@ public class PopupMenuExportMessages extends JMenuItem {
             Stats.incCounter(STATS_EXPORT_MESSAGES);
 
         } catch (Exception e) {
-            LOG.warn(e.getMessage(), e);
+            LOGGER.warn(e.getMessage(), e);
             Stats.incCounter(STATS_EXPORT_MESSAGES_ERROR);
         }
     }

@@ -35,7 +35,7 @@ public class ZapAuthenticator extends Authenticator {
 
     private static final ZapAuthenticator SINGLETON = new ZapAuthenticator();
 
-    private static final Logger logger = LogManager.getLogger(ZapAuthenticator.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZapAuthenticator.class);
 
     private static ConnectionOptions connectionOptions;
 
@@ -53,7 +53,7 @@ public class ZapAuthenticator extends Authenticator {
     @Override
     protected PasswordAuthentication getPasswordAuthentication() {
         PasswordAuthentication passwordAuthentication = getPasswordAuthenticationImpl();
-        if (logger.isDebugEnabled()) {
+        if (LOGGER.isDebugEnabled()) {
             StringBuilder strBuilder = new StringBuilder();
             strBuilder.append("Getting password authentication for:").append('\n');
             strBuilder.append("Host      = ").append(getRequestingHost()).append('\n');
@@ -71,7 +71,7 @@ public class ZapAuthenticator extends Authenticator {
                 strBuilder.append("[Username: ").append(passwordAuthentication.getUserName());
                 strBuilder.append(", Password: *****]");
             }
-            logger.debug(strBuilder.toString());
+            LOGGER.debug(strBuilder.toString());
         }
         return passwordAuthentication;
     }

@@ -42,7 +42,7 @@ import org.zaproxy.zap.model.Target;
 public class SequenceAscanPanel implements CustomScanPanel {
 
     private SequencePanel sequencePanel = null;
-    public static final Logger logger = LogManager.getLogger(SequenceAscanPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(SequenceAscanPanel.class);
 
     private final ExtensionScript extensionScript;
 
@@ -110,7 +110,7 @@ public class SequenceAscanPanel implements CustomScanPanel {
                 }
                 return new Target(nodes);
             } catch (Exception e) {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
 

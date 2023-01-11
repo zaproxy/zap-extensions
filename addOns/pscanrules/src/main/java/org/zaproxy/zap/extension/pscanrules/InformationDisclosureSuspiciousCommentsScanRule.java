@@ -59,7 +59,7 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
 
     public static final String suspiciousCommentsListDir = "xml";
     public static final String suspiciousCommentsListFile = "suspicious-comments.txt";
-    private static final Logger logger =
+    private static final Logger LOGGER =
             LogManager.getLogger(InformationDisclosureSuspiciousCommentsScanRule.class);
 
     private static List<Pattern> patterns = null;
@@ -210,7 +210,7 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
                     }
                 }
             } catch (IOException e) {
-                logger.error(
+                LOGGER.error(
                         "Error on opening/reading suspicious comments file: {}{}{}{} Error: {}",
                         File.separator,
                         suspiciousCommentsListDir,

@@ -49,7 +49,7 @@ public class HttPoxyScanRule extends AbstractAppPlugin {
                     CommonAlertTag.OWASP_2021_A06_VULN_COMP,
                     CommonAlertTag.OWASP_2017_A09_VULN_COMP);
 
-    private static final Logger log = LogManager.getLogger(HttPoxyScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(HttPoxyScanRule.class);
 
     @Override
     public int getCategory() {
@@ -158,7 +158,7 @@ public class HttPoxyScanRule extends AbstractAppPlugin {
                 }
             }
         } catch (Exception e) {
-            log.debug(e.getMessage(), e);
+            LOGGER.debug(e.getMessage(), e);
         }
     }
 
@@ -173,7 +173,7 @@ public class HttPoxyScanRule extends AbstractAppPlugin {
 
             this.msgReceived = true;
             this.msgUrl = msg.getRequestHeader().getURI().toString();
-            log.debug("Received request {}", msgUrl);
+            LOGGER.debug("Received request {}", msgUrl);
         }
 
         public boolean isMsgReceived() {

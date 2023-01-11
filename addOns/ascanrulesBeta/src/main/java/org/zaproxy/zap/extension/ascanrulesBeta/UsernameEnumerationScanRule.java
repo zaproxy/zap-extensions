@@ -60,7 +60,7 @@ import org.zaproxy.zap.utils.HirshbergMatcher;
  */
 public class UsernameEnumerationScanRule extends AbstractAppPlugin {
 
-    private static final Logger LOG = LogManager.getLogger(UsernameEnumerationScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(UsernameEnumerationScanRule.class);
 
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
@@ -106,10 +106,10 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
 
     @Override
     public void init() {
-        LOG.debug("Initialising");
+        LOGGER.debug("Initialising");
 
         if (!shouldContinue(extAuth.getModel().getSession().getContexts())) {
-            LOG.info(
+            LOGGER.info(
                     "There does not appear to be any configured contexts using Form-based Authentication. Further attempts during the current scan will be skipped.");
             this.getParent().pluginSkipped(this);
         }
@@ -156,7 +156,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                     // we got this far.. only the method (GET/POST), user details, query params,
                     // fragment, and POST params are possibly different from the login page.
                     loginUrl = true;
-                    LOG.info(
+                    LOGGER.info(
                             "{} falls within a context, and is the defined Login URL. Scanning for possible Username Enumeration vulnerability.",
                             requestUri);
                     break;
@@ -164,7 +164,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
             }
 
             if (!loginUrl) {
-                LOG.debug("{} is not a defined Login URL.", requestUri);
+                LOGGER.debug("{} is not a defined Login URL.", requestUri);
                 return; // No need to continue for this URL
             }
 
@@ -212,7 +212,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                 while (HttpStatusCode.isRedirection(msgCpy.getResponseHeader().getStatusCode())) {
                     redirectCount++;
 
-                    LOG.debug(
+                    LOGGER.debug(
                             "Following redirect {} for message {} of {} iterations of the original query",
                             redirectCount,
                             i,
@@ -249,7 +249,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                                                 .getHeader(HttpFieldsNames.LOCATION),
                                         true);
                         // try again, except this time, if it fails, don't try to handle it
-                        LOG.debug(
+                        LOGGER.debug(
                                 "The Location [{}] specified in a redirect was not valid (not absolute?). Trying absolute workaround url [{}]",
                                 newLocation,
                                 newLocationWorkaround);
@@ -271,7 +271,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                         msgRedirect.getRequestHeader().setCookieParams(cookies);
                     }
 
-                    LOG.debug("DEBUG: Following redirect to [{}]", newLocation);
+                    LOGGER.debug("DEBUG: Following redirect to [{}]", newLocation);
                     sendAndReceive(msgRedirect, false, false); // do NOT redirect.. handle it here
 
                     // handle scenario where a cookie is unset in a subsequent iteration, or where
@@ -310,7 +310,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                 // success or not?  Successful or Failed Logins would normally both return an OK
                 // HTTP status
                 if (!HttpStatusCode.isSuccess(msgCpy.getResponseHeader().getStatusCode())) {
-                    LOG.debug(
+                    LOGGER.debug(
                             "The original URL [{}] returned a non-OK HTTP status {} (after {} of {} steps). Could be indicative of SQL Injection, or some other error. The URL is not stable enough to look at Username Enumeration",
                             getBaseMsg().getRequestHeader().getURI(),
                             msgCpy.getResponseHeader().getStatusCode(),
@@ -320,7 +320,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                     // abort straight out of the method
                 }
 
-                LOG.debug("Done following redirects!");
+                LOGGER.debug("Done following redirects!");
 
                 // append the response to the responses so far for this particular instance
                 // this will give us a complete picture of the full set of actual traffic associated
@@ -346,7 +346,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                 if (longestCommonSubstringA.length() == 0) {
                     // this might occur if the output returned for the URL changed mid-way. Perhaps
                     // a CAPTCHA has fired, or a WAF has kicked in.  Let's abort now so.
-                    LOG.debug(
+                    LOGGER.debug(
                             "The original URL [{}] does not produce stable output (at {} of {} steps).  There is no static element in the output that can be used as a basis of comparison for the result of requesting URLs with the parameter values modified. Perhaps a CAPTCHA or WAF has kicked in!!",
                             getBaseMsg().getRequestHeader().getURI(),
                             i + 1,
@@ -371,7 +371,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                     longestCommonSubstringA.replaceAll(
                             "(?<=(&amp;|\\?)[^\\?\"=&;]+=)[^\\?\"=&;]+(?=(&amp;|\"))", "YYYY");
 
-            LOG.debug("The LCS of A is [{}]", longestCommonSubstringA);
+            LOGGER.debug("The LCS of A is [{}]", longestCommonSubstringA);
 
             // 3) for each parameter in the original URL (ie, for URL params, form params, and
             // cookie params)
@@ -380,7 +380,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                 HttpMessage msgModifiedParam = getNewMsg();
                 HtmlParameter currentHtmlParameter = iter.next();
 
-                LOG.debug(
+                LOGGER.debug(
                         "Handling [{}] parameter [{}], with value [{}]",
                         currentHtmlParameter.getType(),
                         currentHtmlParameter.getName(),
@@ -395,7 +395,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                         RandomStringUtils.randomAlphabetic(currentHtmlParameter.getValue().length())
                                 .toLowerCase(Locale.ROOT);
 
-                LOG.debug("The invalid username chosen was [{}]", invalidUsername);
+                LOGGER.debug("The invalid username chosen was [{}]", invalidUsername);
 
                 TreeSet<HtmlParameter> requestParams = null;
                 if (currentHtmlParameter.getType().equals(HtmlParameter.Type.cookie)) {
@@ -427,7 +427,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                     msgModifiedParam.setFormParams(requestParams);
                 }
 
-                LOG.debug(
+                LOGGER.debug(
                         "About to loop for {} iterations with an incorrect user of the same length",
                         numberOfRequests);
 
@@ -447,7 +447,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                             msgCpy.getResponseHeader().getStatusCode())) {
                         redirectCount++;
 
-                        LOG.debug(
+                        LOGGER.debug(
                                 "Following redirect {} for message {} of {} iterations of the modified query.",
                                 redirectCount,
                                 i,
@@ -485,7 +485,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                                                     .getHeader(HttpFieldsNames.LOCATION),
                                             true);
                             // try again, except this time, if it fails, don't try to handle it
-                            LOG.debug(
+                            LOGGER.debug(
                                     "The Location [{}] specified in a redirect was not valid (not absolute?). Trying absolute workaround url [{}]",
                                     newLocation,
                                     newLocationWorkaround);
@@ -547,7 +547,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                     // success or not?  Successful or Failed Logins would normally both return an OK
                     // HTTP status
                     if (!HttpStatusCode.isSuccess(msgCpy.getResponseHeader().getStatusCode())) {
-                        LOG.debug(
+                        LOGGER.debug(
                                 "The modified URL [{}] returned a non-OK HTTP status {} (after {} of {} steps for [{}] parameter {}). Could be indicative of SQL Injection, or some other error. The URL is not stable enough to look at Username Enumeration",
                                 msgModifiedParam.getRequestHeader().getURI(),
                                 msgCpy.getResponseHeader().getStatusCode(),
@@ -559,7 +559,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                         continue; // skip directly to the next parameter
                     }
 
-                    LOG.debug("Done following redirects!");
+                    LOGGER.debug("Done following redirects!");
 
                     // append the response to the responses so far for this particular instance
                     // this will give us a complete picture of the full set of actual traffic
@@ -585,7 +585,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                     if (longestCommonSubstringB.length() == 0) {
                         // this might occur if the output returned for the URL changed mid-way.
                         // Perhaps a CAPTCHA has fired, or a WAF has kicked in.  Let's abort now so.
-                        LOG.debug(
+                        LOGGER.debug(
                                 "The modified URL [{}] (for [{}] parameter {}) does not produce stable output (after {} of {} steps). There is no static element in the output that can be used as a basis of comparison with the static output of the original query. Perhaps a CAPTCHA or WAF has kicked in!!",
                                 msgModifiedParam.getRequestHeader().getURI(),
                                 currentHtmlParameter.getType(),
@@ -623,7 +623,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                                     "(?<=(&amp;|\\?)[^\\?\"=&;]+=)[^\\?\"=&;]+(?=(&amp;|\"))",
                                     "YYYY");
 
-                    LOG.debug("The LCS of B is [{}]", longestCommonSubstringB);
+                    LOGGER.debug("The LCS of B is [{}]", longestCommonSubstringB);
 
                     // 6) If LCS_A <> LCS_B, then there is a Username Enumeration issue on the
                     // current parameter
@@ -696,7 +696,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
                                 .raise();
 
                     } else {
-                        LOG.debug(
+                        LOGGER.debug(
                                 "[{}] parameter [{}] looks ok (Invalid Usernames cannot be distinguished from Valid usernames)",
                                 currentHtmlParameter.getType(),
                                 currentHtmlParameter.getName());
@@ -707,7 +707,7 @@ public class UsernameEnumerationScanRule extends AbstractAppPlugin {
         } catch (Exception e) {
             // Do not try to internationalise this.. we need an error message in any event..
             // if it's in English, it's still better than not having it at all.
-            LOG.error("An error occurred checking a url for Username Enumeration issues", e);
+            LOGGER.error("An error occurred checking a url for Username Enumeration issues", e);
         }
     }
 

@@ -44,7 +44,7 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin {
 
     // Logger object
-    private static final Logger LOG =
+    private static final Logger LOGGER =
             LogManager.getLogger(ExpressionLanguageInjectionScanRule.class);
 
     private static final int MAX_NUM_TRIES = 1000;
@@ -150,7 +150,7 @@ public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin 
                 // Send the request and retrieve the response
                 sendAndReceive(msg);
             } catch (URIException | UnknownHostException | IllegalArgumentException ex) {
-                LOG.debug(
+                LOGGER.debug(
                         "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
                         ex.getClass().getName(),
                         ex.getMessage(),
@@ -161,7 +161,7 @@ public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin 
             if (msg.getResponseBody().toString().contains(addedString)) {
                 // We Found IT!
                 // First do logging
-                LOG.debug(
+                LOGGER.debug(
                         "[Expression Language Injection Found] on parameter [{}]  with payload [{}]",
                         paramName,
                         payload);
@@ -178,7 +178,7 @@ public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin 
         } catch (IOException ex) {
             // Do not try to internationalise this.. we need an error message in any event..
             // if it's in English, it's still better than not having it at all.
-            LOG.error(
+            LOGGER.error(
                     "Expression Language Injection vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
                     paramName,
                     payload,

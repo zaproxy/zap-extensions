@@ -30,7 +30,7 @@ import org.zaproxy.zap.common.VersionedAbstractParam;
 
 public class GlobalAlertFilterParam extends VersionedAbstractParam {
 
-    private static final Logger logger = LogManager.getLogger(GlobalAlertFilterParam.class);
+    private static final Logger LOGGER = LogManager.getLogger(GlobalAlertFilterParam.class);
 
     /**
      * The version of the configurations. Used to keep track of configurations changes between
@@ -166,7 +166,7 @@ public class GlobalAlertFilterParam extends VersionedAbstractParam {
                                 sub.getBoolean(FILTER_ENABLED_KEY, false)));
             }
         } catch (ConversionException e) {
-            logger.error("Error while loading global alert filters: {}", e.getMessage(), e);
+            LOGGER.error("Error while loading global alert filters: {}", e.getMessage(), e);
         }
 
         this.confirmRemoveFilter = getBoolean(CONFIRM_REMOVE_FILTER_KEY, true);

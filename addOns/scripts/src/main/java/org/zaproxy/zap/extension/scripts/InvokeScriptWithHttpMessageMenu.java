@@ -32,7 +32,8 @@ import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
 public class InvokeScriptWithHttpMessageMenu extends PopupMenuItemHttpMessageContainer {
 
     private static final long serialVersionUID = 2282358266003940700L;
-    private static Logger logger = LogManager.getLogger(InvokeScriptWithHttpMessageMenu.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(InvokeScriptWithHttpMessageMenu.class);
 
     private ExtensionScriptsUI extension;
     private ScriptWrapper script;
@@ -55,7 +56,7 @@ public class InvokeScriptWithHttpMessageMenu extends PopupMenuItemHttpMessageCon
 
     @Override
     public void performAction(HttpMessage msg) {
-        logger.debug("Invoke script with {}", msg.getRequestHeader().getURI());
+        LOGGER.debug("Invoke script with {}", msg.getRequestHeader().getURI());
         // Execute in another thread to not occupy the EDT.
         new ScriptExecutorThread(extension, script, msg).start();
     }

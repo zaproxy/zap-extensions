@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Help explaining how to interact with Automation Framework plans.
 
+### Changed
+- Maintenance changes.
+
 ## [34] - 2023-01-03
 ### Fixed
 - Prevent exception if no display (Issue 3978).

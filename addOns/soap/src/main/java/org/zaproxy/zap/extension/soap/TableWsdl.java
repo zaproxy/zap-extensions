@@ -36,7 +36,7 @@ import org.parosproxy.paros.db.paros.ParosAbstractTable;
 /** Manages reading and writing SOAP Actions to the database. */
 public class TableWsdl extends ParosAbstractTable {
 
-    private static final Logger LOG = LogManager.getLogger(TableWsdl.class);
+    private static final Logger LOGGER = LogManager.getLogger(TableWsdl.class);
 
     private PreparedStatement psInsertSoapAction;
     private PreparedStatement psSelectSourceSoapActions;
@@ -89,7 +89,7 @@ public class TableWsdl extends ParosAbstractTable {
             }
 
             do {
-                LOG.debug("insert SOAP action: {}", soapAction.getAction());
+                LOGGER.debug("insert SOAP action: {}", soapAction.getAction());
 
                 psInsertSoapAction.setInt(1, soapAction.getWsdlId());
                 psInsertSoapAction.setNString(2, soapAction.getAction());

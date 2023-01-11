@@ -41,7 +41,7 @@ import org.zaproxy.zap.view.ZapToggleButton;
 public class OutputPanel extends AbstractPanel {
 
     private static final long serialVersionUID = -947074835463140074L;
-    private static final Logger logger = LogManager.getLogger(OutputPanel.class);
+    private static final Logger LOGGER = LogManager.getLogger(OutputPanel.class);
 
     private static final ImageIcon CLEAR_ICON =
             new ImageIcon(
@@ -199,7 +199,7 @@ public class OutputPanel extends AbstractPanel {
             if (e instanceof InterruptedException) {
                 // Ignore - stop button likely to have been used
             } else {
-                logger.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
     }
@@ -211,14 +211,14 @@ public class OutputPanel extends AbstractPanel {
 
     public void append(final ScriptException e) {
         if (Constant.isDevBuild()) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         this.appendError(e.getMessage());
     }
 
     public void append(final Exception e) {
         if (Constant.isDevBuild()) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
         Throwable cause = e.getCause();
         while (cause != null) {

@@ -46,7 +46,7 @@ public class ExampleSimpleActiveScanRule extends AbstractAppParamPlugin {
 
     private Random rnd = new Random();
 
-    private static Logger log = LogManager.getLogger(ExampleSimpleActiveScanRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExampleSimpleActiveScanRule.class);
 
     @Override
     public int getId() {
@@ -147,7 +147,7 @@ public class ExampleSimpleActiveScanRule extends AbstractAppParamPlugin {
             }
 
         } catch (IOException e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         }
     }
 

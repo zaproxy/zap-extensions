@@ -36,7 +36,7 @@ public class ParamGuesser implements Runnable {
     private ExecutorService executor;
 
     private HttpSender httpSender;
-    private static final Logger logger = LogManager.getLogger(ParamGuesser.class);
+    private static final Logger LOGGER = LogManager.getLogger(ParamGuesser.class);
 
     private UrlGuesser urlGuesser;
     private HeaderGuesser headerGuesser;
@@ -66,7 +66,7 @@ public class ParamGuesser implements Runnable {
 
     @Override
     public void run() {
-        logger.debug("Starting param guesser ...");
+        LOGGER.debug("Starting param guesser ...");
         if (stopWatch == null) {
             stopWatch = new StopWatch();
         }
@@ -97,7 +97,7 @@ public class ParamGuesser implements Runnable {
             return;
         }
         this.stopped = true;
-        logger.debug("Stopping guessing process by request.");
+        LOGGER.debug("Stopping guessing process by request.");
 
         if (this.paused) {
             this.resume();
@@ -129,7 +129,7 @@ public class ParamGuesser implements Runnable {
         if (stopped) {
             return;
         }
-        logger.debug("Guessing process is complete. Shutting Down ... ");
+        LOGGER.debug("Guessing process is complete. Shutting Down ... ");
         this.stopped = true;
         stopWatch.stop();
         httpSender = null;

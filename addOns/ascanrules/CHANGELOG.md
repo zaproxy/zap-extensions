@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - Path Traversal
     - Remote File Include
 - The Path Traversal scan rule no longer populates the Other Info field with check information, as the Alert Reference now provides that detail.
+- Maintenance changes.
 
 ## [51] - 2023-01-03
 ### Changed

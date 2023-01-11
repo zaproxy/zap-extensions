@@ -76,7 +76,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     protected static final String ERROR_COUNT_STATS = "stats.auto.errors";
     protected static final String WARNING_COUNT_STATS = "stats.auto.warnings";
 
-    private static final Logger LOG = LogManager.getLogger(ExtensionAutomation.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionAutomation.class);
 
     private Map<String, AutomationJob> jobs = new HashMap<>();
     private SortedSet<AutomationJob> sortedJobs = new TreeSet<>();
@@ -149,7 +149,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                         getAutomationPanel().loadPlan(this.loadPlan(f));
                         getAutomationPanel().setTabFocus();
                     } catch (IOException e) {
-                        LOG.debug(e.getMessage(), e);
+                        LOGGER.debug(e.getMessage(), e);
                     }
                 }
             }
@@ -462,7 +462,7 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
             return progress;
 
         } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             CommandLine.error(
                     Constant.messages.getString(
                             "automation.error.unexpected", f.getAbsolutePath(), e.getMessage()));

@@ -31,7 +31,7 @@ import org.apache.logging.log4j.Logger;
 
 public class ASPViewState extends ViewState {
 
-    private static Logger logger = LogManager.getLogger(ASPViewState.class);
+    private static final Logger LOGGER = LogManager.getLogger(ASPViewState.class);
     public static final String KEY = "ASP";
 
     private boolean isValid = true;
@@ -169,7 +169,7 @@ public class ASPViewState extends ViewState {
         try {
             return Base64.getDecoder().decode(base64);
         } catch (IllegalArgumentException e) {
-            logger.error("Could not decode ASPViewState: {}", e.getMessage(), e);
+            LOGGER.error("Could not decode ASPViewState: {}", e.getMessage(), e);
             return base64.getBytes();
         }
     }

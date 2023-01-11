@@ -69,7 +69,7 @@ public class GenerateTokensDialog extends AbstractDialog {
     private Vector<String> formParams = new Vector<>();
     private Vector<String> urlParams = new Vector<>();
 
-    private static Logger log = LogManager.getLogger(GenerateTokensDialog.class);
+    private static final Logger LOGGER = LogManager.getLogger(GenerateTokensDialog.class);
 
     private ResourceBundle messages;
 
@@ -138,7 +138,7 @@ public class GenerateTokensDialog extends AbstractDialog {
             startButton.setText(messages.getString("tokengen.generate.button.generate"));
             startButton.addActionListener(
                     e -> {
-                        log.debug("getStartButton action {}", e);
+                        LOGGER.debug("getStartButton action {}", e);
                         int numGen = -1;
                         try {
                             numGen =

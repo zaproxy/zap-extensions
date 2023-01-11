@@ -103,7 +103,7 @@ public class ZestZapUtils {
 
     private static final String ZEST_VAR_VALID_CHRS = "-:.";
 
-    private static final Logger log = LogManager.getLogger(ZestZapUtils.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZestZapUtils.class);
 
     /**
      * A map to convert labels to calc operations.
@@ -870,7 +870,7 @@ public class ZestZapUtils {
         try {
             file = Paths.get(filePath);
         } catch (InvalidPathException e) {
-            log.warn("Failed to parse the file path: {}", filePath, e);
+            LOGGER.warn("Failed to parse the file path: {}", filePath, e);
             return "";
         }
 
@@ -962,7 +962,7 @@ public class ZestZapUtils {
                 msg.setRequestHeader(
                         msg.getRequestHeader().getPrimeHeader() + "\r\n" + request.getHeaders());
             } catch (HttpMalformedHeaderException e) {
-                log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
         msg.getRequestHeader().setMethod(request.getMethod());
@@ -973,7 +973,7 @@ public class ZestZapUtils {
             try {
                 msg.setResponseHeader(new HttpResponseHeader(response.getHeaders()));
             } catch (Exception e) {
-                log.error(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
             msg.setResponseBody(response.getBody());
             msg.setTimeElapsedMillis((int) response.getResponseTimeInMs());
@@ -1102,7 +1102,7 @@ public class ZestZapUtils {
         if (node.getUserObject() instanceof ZestElementWrapper) {
             return ((ZestElementWrapper) node.getUserObject()).getElement();
         }
-        log.debug(
+        LOGGER.debug(
                 "getElement {} Unrecognised class: {}",
                 node.getNodeName(),
                 node.getUserObject().getClass().getCanonicalName());

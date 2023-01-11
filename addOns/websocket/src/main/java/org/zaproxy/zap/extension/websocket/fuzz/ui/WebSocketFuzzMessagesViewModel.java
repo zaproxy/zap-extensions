@@ -41,7 +41,7 @@ import org.zaproxy.zap.extension.websocket.ui.WebSocketMessagesViewModel;
 public class WebSocketFuzzMessagesViewModel extends WebSocketMessagesViewModel {
     private static final long serialVersionUID = 5435325545219552543L;
 
-    private static final Logger logger = LogManager.getLogger(WebSocketFuzzMessagesViewModel.class);
+    private static final Logger LOGGER = LogManager.getLogger(WebSocketFuzzMessagesViewModel.class);
 
     /** Names of new columns. */
     private static final String[] COLUMN_NAMES = {
@@ -196,7 +196,7 @@ public class WebSocketFuzzMessagesViewModel extends WebSocketMessagesViewModel {
                     }
                 }
             } catch (DatabaseException e) {
-                logger.warn("Failed to persist fuzzer message:", e);
+                LOGGER.warn("Failed to persist fuzzer message:", e);
             }
         }
     }

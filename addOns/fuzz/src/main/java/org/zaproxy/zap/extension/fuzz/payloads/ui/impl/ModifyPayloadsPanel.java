@@ -50,7 +50,7 @@ import org.zaproxy.zap.utils.ZapTextArea;
 public abstract class ModifyPayloadsPanel<
         T extends Payload, T2 extends PayloadGenerator<T>, T3 extends PayloadGeneratorUI<T, T2>> {
 
-    private final Logger logger = LogManager.getLogger(getClass());
+    private final Logger LOGGER = LogManager.getLogger(getClass());
 
     private static final String PAYLOADS_FIELD_LABEL =
             Constant.messages.getString("fuzz.payloads.generator.generic.edit.payloads.label");
@@ -121,7 +121,7 @@ public abstract class ModifyPayloadsPanel<
                         FileStringPayloadGenerator.calculateNumberOfPayloads(
                                 file, StandardCharsets.UTF_8, -1, "", false, false);
             } catch (IOException e) {
-                logger.warn("Failed to calculate number of payloads: {}", e.getMessage());
+                LOGGER.warn("Failed to calculate number of payloads: {}", e.getMessage());
             }
         } else {
             numberOfPayloads = getPayloadsTextArea().getLineCount();
@@ -162,7 +162,7 @@ public abstract class ModifyPayloadsPanel<
                 bw.write(getPayloadsTextArea().getText(offset, length));
             }
         } catch (Exception e) {
-            logger.warn("Failed to write the payloads to the file: {}", e.getMessage());
+            LOGGER.warn("Failed to write the payloads to the file: {}", e.getMessage());
             View.getSingleton()
                     .showWarningDialog(
                             Constant.messages.getString(
@@ -177,7 +177,7 @@ public abstract class ModifyPayloadsPanel<
             createTempFile = false;
             return true;
         } catch (IOException e) {
-            logger.warn(
+            LOGGER.warn(
                     "Failed to create temporary file to write the payloads: {}", e.getMessage());
             View.getSingleton()
                     .showWarningDialog(
@@ -202,7 +202,7 @@ public abstract class ModifyPayloadsPanel<
                 }
             }
         } catch (Exception e) {
-            logger.warn("Failed to write the payloads to the file: {}", e.getMessage());
+            LOGGER.warn("Failed to write the payloads to the file: {}", e.getMessage());
             View.getSingleton()
                     .showWarningDialog(
                             Constant.messages.getString(
@@ -260,7 +260,7 @@ public abstract class ModifyPayloadsPanel<
         try {
             return !(Files.size(file) >= MAX_FILE_SIZE_FOR_EDITION);
         } catch (IOException e) {
-            logger.warn("Failed to query the size of the file [{}]: {}", file, e.getMessage());
+            LOGGER.warn("Failed to query the size of the file [{}]: {}", file, e.getMessage());
             getPayloadsTextArea()
                     .setText(
                             Constant.messages.getString(
@@ -331,7 +331,7 @@ public abstract class ModifyPayloadsPanel<
             getPayloadsTextArea().setEnabled(true);
             saveButton.setEnabled(true);
         } catch (Exception e) {
-            logger.warn("Failed to read the payloads from the file: {}", e.getMessage(), e);
+            LOGGER.warn("Failed to read the payloads from the file: {}", e.getMessage(), e);
             contents.setLength(0);
             contents.append(
                     Constant.messages.getString("fuzz.payloads.generator.generic.edit.errorRead"));

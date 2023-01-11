@@ -41,7 +41,7 @@ import org.zaproxy.zap.utils.Stats;
 
 public class UrlsImporter {
 
-    private static final Logger LOG = LogManager.getLogger(UrlsImporter.class);
+    private static final Logger LOGGER = LogManager.getLogger(UrlsImporter.class);
     private static final String STATS_URL_FILE = "import.url.file";
     private static final String STATS_URL_FILE_ERROR = "import.url.file.errors";
     private static final String STATS_URL_FILE_URL = "import.url.file.url";
@@ -81,7 +81,7 @@ public class UrlsImporter {
             }
             ExtensionExim.updateOutput("exim.output.end", file.toPath().toString());
         } catch (Exception e) {
-            LOG.warn(
+            LOGGER.warn(
                     Constant.messages.getString(
                             ExtensionExim.EXIM_OUTPUT_ERROR, file.getAbsoluteFile()));
             Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_URL_FILE_ERROR);
@@ -124,7 +124,7 @@ public class UrlsImporter {
     }
 
     private static String handleWarning(String message) {
-        LOG.warn(message);
+        LOGGER.warn(message);
         Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_URL_FILE_URL_ERROR);
         return message;
     }
@@ -143,7 +143,7 @@ public class UrlsImporter {
                             HistoryReference.TYPE_ZAP_USER,
                             message);
         } catch (Exception e) {
-            LOG.warn(e.getMessage());
+            LOGGER.warn(e.getMessage());
             return;
         }
 
