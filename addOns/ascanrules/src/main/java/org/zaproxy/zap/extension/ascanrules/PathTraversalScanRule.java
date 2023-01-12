@@ -45,7 +45,7 @@ import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.Vulnerabilities;
 import org.zaproxy.zap.model.Vulnerability;
 
-/** a scanner that looks for Path Traversal vulnerabilities */
+/** A scan rule that looks for Path Traversal vulnerabilities. */
 public class PathTraversalScanRule extends AbstractAppParamPlugin {
 
     /*
@@ -75,8 +75,6 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
         "..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\Windows\\system.ini",
         "/../../../../../../../../../../../../../../../../Windows/system.ini",
         "\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\Windows\\system.ini",
-        // "../../../../../../../../../../../../../../../../Windows/system.ini%00.html",
-        // "..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\Windows\\system.ini%00.html",
         "Windows/system.ini",
         "Windows\\system.ini",
         // From Wikipedia (http://en.wikipedia.org/wiki/File_URI_scheme)
@@ -123,7 +121,6 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
         // Path traversal intended to obtain the filesystem's root
         "../../../../../../../../../../../../../../../../etc/passwd",
         "/../../../../../../../../../../../../../../../../etc/passwd",
-        // "../../../../../../../../../../../../../../../../etc/passwd%00.html",
         "etc/passwd",
         // From Wikipedia (http://en.wikipedia.org/wiki/File_URI_scheme)
         // file://host/path
@@ -256,7 +253,6 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
                     nixCount = 2;
                     winCount = 2;
                     dirCount = 2;
-                    localTraversalLength = 0;
                     break;
 
                 case MEDIUM:
@@ -301,14 +297,10 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
                     param);
 
             // Check 1: Start detection for Windows patterns
-            // note that depending on the AttackLevel, the number of prefixes that we will try
-            // changes.
             if (inScope(Tech.Windows)) {
 
                 for (int h = 0; h < winCount; h++) {
 
-                    // Check if a there was a finding or the scan has been stopped
-                    // if yes dispose resources and exit
                     if (sendAndCheckPayload(param, WIN_LOCAL_FILE_TARGETS[h], WIN_PATTERN, 1)
                             || isStop()) {
                         // Dispose all resources
@@ -343,8 +335,6 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
             }
 
             // Check 2: Start detection for *NIX patterns
-            // note that depending on the AttackLevel, the number of prefixes that we will try
-            // changes.
             if (inScope(Tech.Linux) || inScope(Tech.MacOS)) {
 
                 for (int h = 0; h < nixCount; h++) {
@@ -386,9 +376,6 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
             }
 
             // Check 3: Detect if this page is a directory browsing component
-            // example: https://www.buggedsite.org/log/index.php?dir=C:\
-            // note that depending on the AttackLevel, the number of prefixes that we will try
-            // changes.
             for (int h = 0; h < dirCount; h++) {
 
                 // Check if a there was a finding or the scan has been stopped
@@ -419,8 +406,6 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
 
                 for (int idx = 0; idx < localTraversalLength; idx++) {
 
-                    // Check if a there was a finding or the scan has been stopped
-                    // if yes dispose resources and exit
                     if (sendAndCheckPayload(param, sslashPattern, WAR_PATTERN, 4)
                             || sendAndCheckPayload(param, bslashPattern, WAR_PATTERN, 4)
                             || sendAndCheckPayload(param, '/' + sslashPattern, WAR_PATTERN, 4)
@@ -678,7 +663,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
         return list;
     }
 
-    private static interface ContentsMatcher {
+    private interface ContentsMatcher {
 
         String match(String contents);
     }
