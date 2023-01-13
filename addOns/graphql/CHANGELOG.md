@@ -5,7 +5,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ### Fixed
 - NullPointerException behaviour in the VariantGraphQI was fixed (Issue 7689).
-- Additional unit tests were added for the same.
 
 ## Unreleased
 ### Changed
