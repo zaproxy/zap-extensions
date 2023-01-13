@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2020 The ZAP Development Team
+ * Copyright 2023 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,32 +22,33 @@ package org.zaproxy.addon.graphql;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
-import org.zaproxy.zap.testutils.TestUtils;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.zap.testutils.TestUtils;
 
-public class VariantGraphQIUnitTest extends TestUtils{
+public class VariantGraphQIUnitTest extends TestUtils {
 
     @Test
-    void shouldNotExtractQueryIfHttpMessageIsNull(){
-        //given
-        VariantGraphQl vargraphqi=new VariantGraphQl();
-        //when
-        HttpMessage httpMsg=null;
-        //then
-        assertThrows(NullPointerException.class,() -> vargraphqi.setMessage(httpMsg));
+    void shouldNotExtractQueryIfHttpMessageIsNull() {
+        // given
+        VariantGraphQl vargraphqi = new VariantGraphQl();
+        // when
+        HttpMessage httpMsg = null;
+        // then
+        assertThrows(NullPointerException.class, () -> vargraphqi.setMessage(httpMsg));
     }
 
     @Test
-    void shouldNotExtractQueryForPostIfBodyIsEmptyAndNoContentTypeIsSet() throws HttpMalformedHeaderException{
-        //given
-        VariantGraphQl vargraphqi=new VariantGraphQl();
-        //when    
-        HttpRequestHeader httpReqHeader=new HttpRequestHeader();
+    void shouldNotExtractQueryForPostIfBodyIsEmptyAndNoContentTypeIsSet()
+            throws HttpMalformedHeaderException {
+        // given
+        VariantGraphQl vargraphqi = new VariantGraphQl();
+        // when
+        HttpRequestHeader httpReqHeader = new HttpRequestHeader();
         httpReqHeader.setMessage("POST /abc/xyz HTTP/1.1");
-        HttpMessage httpMsg=new HttpMessage(httpReqHeader);
-        //then
-        assertThrows(NullPointerException.class,() -> vargraphqi.setMessage(httpMsg));
+        HttpMessage httpMsg = new HttpMessage(httpReqHeader);
+        // then
+        assertThrows(NullPointerException.class, () -> vargraphqi.setMessage(httpMsg));
     }
 }
