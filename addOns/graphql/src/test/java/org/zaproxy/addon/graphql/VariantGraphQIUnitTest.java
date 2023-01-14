@@ -31,7 +31,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
 class VariantGraphQlUnitTest {
-    VariantGraphQl variant;
+    private VariantGraphQl variant;
 
     @BeforeEach
     void setup() {

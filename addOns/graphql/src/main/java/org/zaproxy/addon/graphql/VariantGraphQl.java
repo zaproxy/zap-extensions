@@ -76,10 +76,12 @@ public class VariantGraphQl implements Variant {
         String query = null;
 
         if (HttpRequestHeader.POST.equals(header.getMethod())) {
+            if (body.isEmpty()) {
+                return null;
+            }
             var contentTypeHeader = header.getNormalisedContentTypeValue();
-            if (!body.isEmpty()
-                    && (contentTypeHeader == null
-                            || contentTypeHeader.contains(HttpHeader.JSON_CONTENT_TYPE))) {
+            if (contentTypeHeader == null
+                    || contentTypeHeader.contains(HttpHeader.JSON_CONTENT_TYPE)) {
                 try {
                     JSONObject json = JSONObject.fromObject(body);
                     query = json.get("query").toString();
@@ -89,8 +91,7 @@ public class VariantGraphQl implements Variant {
                     }
                     return null;
                 }
-            } else if (contentTypeHeader != null
-                    && contentTypeHeader.contains("application/graphql")) {
+            } else if (contentTypeHeader.contains("application/graphql")) {
                 query = body;
             }
         } else if (HttpRequestHeader.GET.equals(header.getMethod())) {
