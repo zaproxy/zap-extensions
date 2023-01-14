@@ -19,36 +19,43 @@
  */
 package org.zaproxy.addon.graphql;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
-import org.zaproxy.zap.testutils.TestUtils;
 
-public class VariantGraphQIUnitTest extends TestUtils {
+class VariantGraphQlUnitTest {
+    VariantGraphQl variant;
 
-    @Test
-    void shouldNotExtractQueryIfHttpMessageIsNull() {
-        // given
-        VariantGraphQl vargraphqi = new VariantGraphQl();
-        // when
-        HttpMessage httpMsg = null;
-        // then
-        assertThrows(NullPointerException.class, () -> vargraphqi.setMessage(httpMsg));
+    @BeforeEach
+    void setup() {
+        variant = new VariantGraphQl();
     }
 
     @Test
-    void shouldNotExtractQueryForPostIfBodyIsEmptyAndNoContentTypeIsSet()
+    void shouldFailToExtractParametersFromNullMessage() {
+        // Given
+        HttpMessage msg = null;
+        // When / Then
+        assertThrows(NullPointerException.class, () -> variant.setMessage(msg));
+    }
+
+    @Test
+    void shouldNotExtractParametersForPostIfBodyIsEmptyAndNoContentTypeIsSet()
             throws HttpMalformedHeaderException {
-        // given
-        VariantGraphQl vargraphqi = new VariantGraphQl();
-        // when
+        // Given
         HttpRequestHeader httpReqHeader = new HttpRequestHeader();
         httpReqHeader.setMessage("POST /abc/xyz HTTP/1.1");
-        HttpMessage httpMsg = new HttpMessage(httpReqHeader);
-        // then
-        assertThrows(NullPointerException.class, () -> vargraphqi.setMessage(httpMsg));
+        HttpMessage msg = new HttpMessage(httpReqHeader);
+        // When
+        variant.setMessage(msg);
+        // Then
+        assertThat(variant.getParamList(), is(empty()));
     }
 }

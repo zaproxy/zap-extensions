@@ -3,12 +3,12 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-### Fixed
-- NullPointerException behaviour in the VariantGraphQI was fixed (Issue 7689).
-
 ## Unreleased
 ### Changed
 - Dependency updates and maintenance changes.
+
+### Fixed
+- Fixed exception in the variant when POST message has empty body and no content-type (Issue 7689).
 
 ## [0.12.0] - 2022-11-17
 ### Changed

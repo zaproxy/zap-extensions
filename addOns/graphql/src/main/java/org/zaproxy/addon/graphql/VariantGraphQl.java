@@ -89,7 +89,8 @@ public class VariantGraphQl implements Variant {
                     }
                     return null;
                 }
-            } else if (contentTypeHeader.contains("application/graphql")) {
+            } else if (contentTypeHeader != null
+                    && contentTypeHeader.contains("application/graphql")) {
                 query = body;
             }
         } else if (HttpRequestHeader.GET.equals(header.getMethod())) {
