@@ -24,6 +24,7 @@ import static org.zaproxy.zap.extension.ascanrules.utils.Constants.NULL_BYTE_CHA
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URIException;
@@ -93,6 +94,21 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
                     B_MOUSE_ALERT,
                     SVG_ONLOAD_ALERT,
                     getURLEncode(GENERIC_SCRIPT_ALERT));
+
+    private static final EnumMap<ParserApi.Context, List<String>> JS_CONTEXT_PAYLOADS =
+            new EnumMap<>(ParserApi.Context.class);
+
+    static {
+        JS_CONTEXT_PAYLOADS.put(
+                ParserApi.Context.NO_QUOTE, List.of("alert(1);//", "1,x:alert(1),y:1"));
+        JS_CONTEXT_PAYLOADS.put(
+                ParserApi.Context.SINGLE_QUOTE,
+                List.of("';alert(1);//", "',x:alert(1),y:'", "\';alert(1);//"));
+        JS_CONTEXT_PAYLOADS.put(
+                ParserApi.Context.DOUBLE_QUOTE,
+                List.of("\";alert(1);//", "\",x:alert(1),y:\"", "\\\";alert(1);//"));
+        JS_CONTEXT_PAYLOADS.put(ParserApi.Context.SLASH_QUOTE, List.of("x/;alert(1);//"));
+    }
 
     private static final String HEADER_SPLITTING = "\n\r\n\r";
 
@@ -607,7 +623,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
     }
 
     private boolean runScriptAttack(
-            HtmlContext context, HttpMessage msg, String param, String[] attacks)
+            HtmlContext context, HttpMessage msg, String param, List<String> attacks)
             throws IOException {
         for (String attack : attacks) {
             if (performAttackForScript(msg, param, attack)) {
@@ -639,35 +655,7 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
         }
 
         ParserApi.Context targetContext = parser.getContext(target);
-        boolean attackWorked = false;
-        if (targetContext.equals(ParserApi.Context.NO_QUOTE)) {
-            // no quotes payload
-            attackWorked =
-                    runScriptAttack(
-                            context, msg, param, new String[] {"alert(1);//", "1,x:alert(1),y:1"});
-        } else if (targetContext.equals(ParserApi.Context.SINGLE_QUOTE)) {
-            // single quotes payload
-            attackWorked =
-                    runScriptAttack(
-                            context,
-                            msg,
-                            param,
-                            new String[] {"';alert(1);//", "',x:alert(1),y:'", "\';alert(1);//"});
-        } else if (targetContext.equals(ParserApi.Context.DOUBLE_QUOTE)) {
-            // double quote payload
-            attackWorked =
-                    runScriptAttack(
-                            context,
-                            msg,
-                            param,
-                            new String[] {
-                                "\";alert(1);//", "\",x:alert(1),y:\"", "\\\";alert(1);//"
-                            });
-        } else if (targetContext.equals(ParserApi.Context.SLASH_QUOTE)) {
-            // slash quote payload
-            attackWorked = runScriptAttack(context, msg, param, new String[] {"x/;alert(1);//"});
-        }
-        return attackWorked;
+        return runScriptAttack(context, msg, param, JS_CONTEXT_PAYLOADS.get(targetContext));
     }
 
     private boolean processContexts(
