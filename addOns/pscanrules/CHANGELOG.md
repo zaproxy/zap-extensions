@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - Now includes a solution statement.
     - Now more specifically portrays alert Evidence.
     - Now includes example alert functionality for documentation generation purposes (Issue 6119).
+    - Will now only consider PDFs at Low threshold.
 - Maintenance changes.
 
 ## [45] - 2023-01-03

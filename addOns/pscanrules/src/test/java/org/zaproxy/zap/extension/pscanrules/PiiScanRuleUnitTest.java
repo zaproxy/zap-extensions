@@ -35,6 +35,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -290,6 +291,77 @@ class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
         // Then
         assertThat(alertsRaised.size(), is(1));
         assertEquals("4111111111111111", alertsRaised.get(0).getEvidence());
+    }
+
+    private static Stream<Arguments> provideExtensionsAndThreshold() {
+        return Stream.of(
+                Arguments.of(".pdf", AlertThreshold.MEDIUM),
+                Arguments.of(".pdf", AlertThreshold.HIGH),
+                Arguments.of(".PDF", AlertThreshold.MEDIUM),
+                Arguments.of(".PDF", AlertThreshold.HIGH));
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideExtensionsAndThreshold")
+    void shouldNotAlertWhenRequestUrlSeemsToBeAPdfFileAtMediumOrHighThreshold(
+            String ext, AlertThreshold threshold) throws Exception {
+        // Given
+        String ccNum = "4111 1111 1111 1111";
+        HttpMessage msg = createMsg(ccNum);
+        msg.getRequestHeader().setURI(new URI("http://example.com/test" + ext, true));
+        rule.setAlertThreshold(threshold);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(0));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {".pdf", ".PDF"})
+    void shouldAlertWhenRequestUrlSeemsToBeAPdfFileAndLookingForPdfsAtLowThreshold(String ext)
+            throws Exception {
+        // Given
+        String ccNum = "4111 1111 1111 1111";
+        HttpMessage msg = createMsg(ccNum);
+        msg.getRequestHeader().setURI(new URI("http://example.com/test" + ext, true));
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo(ccNum)));
+    }
+
+    @ParameterizedTest
+    @EnumSource(names = {"HIGH", "MEDIUM"})
+    void shouldNotAlertWhenResponseSeemsToBeAPdfFileAtMediumOrHighThresholds(
+            AlertThreshold threshold) throws Exception {
+        // Given
+        String ccNum = "4111 1111 1111 1111";
+        HttpMessage msg = createMsg(ccNum);
+        msg.getRequestHeader().setURI(new URI("http://example.com/generate/", true));
+        msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "application/pdf");
+        rule.setAlertThreshold(threshold);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(0));
+    }
+
+    @Test
+    void shouldAlertWhenResponseSeemsToBeAPdfFileAndLookingForPdfsAtLowThreshold()
+            throws Exception {
+        // Given
+        String ccNum = "4111 1111 1111 1111";
+        HttpMessage msg = createMsg(ccNum);
+        msg.getRequestHeader().setURI(new URI("http://example.com/generate/", true));
+        msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, "application/pdf");
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo(ccNum)));
     }
 
     @Test

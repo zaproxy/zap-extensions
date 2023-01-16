@@ -52,6 +52,8 @@ public class PiiScanRule extends PluginPassiveScanner {
     private static final String MESSAGE_PREFIX = "pscanrules.pii.";
 
     private static final int PLUGIN_ID = 10062;
+    private static final Pattern PATH_PATTERN =
+            Pattern.compile("(?:\\.pdf)\\z", Pattern.CASE_INSENSITIVE);
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN,
@@ -89,6 +91,9 @@ public class PiiScanRule extends PluginPassiveScanner {
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         if (ResourceIdentificationUtils.isCss(msg) || ResourceIdentificationUtils.isImage(msg)) {
+            return;
+        }
+        if (!getAlertThreshold().equals(AlertThreshold.LOW) && isPdfMessage(msg)) {
             return;
         }
 
@@ -250,6 +255,18 @@ public class PiiScanRule extends PluginPassiveScanner {
                                 "Visa",
                                 new BinRecord("471618", "VISA", "PURCHASING", "U.S. BANK N.A. ND"))
                         .build());
+    }
+
+    private static boolean isPdfMessage(HttpMessage msg) {
+        if (msg.getResponseHeader().hasContentType("pdf")) {
+            return true;
+        }
+
+        String path = msg.getRequestHeader().getURI().getEscapedPath();
+        if (path != null) {
+            return PATH_PATTERN.matcher(path).find();
+        }
+        return false;
     }
 
     private static class Candidate {
