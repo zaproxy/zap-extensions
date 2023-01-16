@@ -65,6 +65,11 @@ public class ParamGuessResult {
         return reasons;
     }
 
+    public HistoryReference getHistoryReference() {
+        this.historyReference.setNote(this.toString());
+        return this.historyReference;
+    }
+
     public HttpMessage getHttpMessage() {
         try {
             return this.historyReference.getHttpMessage();

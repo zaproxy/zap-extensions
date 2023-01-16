@@ -29,7 +29,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.zaproxy.addon.paramdigger.gui.ParamDiggerHistoryTableModel;
+import org.zaproxy.addon.paramdigger.gui.ParamDiggerOutputTableModel;
 import org.zaproxy.zap.model.GenericScanner2;
+import org.zaproxy.zap.utils.ThreadUtils;
 
 public class GuesserScan implements GenericScanner2 {
     private static enum State {
@@ -54,7 +56,7 @@ public class GuesserScan implements GenericScanner2 {
     private final List<GuesserProgressListener> listeners;
     private final ParamDiggerHistoryTableModel tableModel;
     private List<ParamGuessResult> results;
-    private OutputModel outputModel;
+    private ParamDiggerOutputTableModel outputTableModel;
 
     public GuesserScan(int scanId, ParamDiggerConfig config, String name) {
         this.scanId = scanId;
@@ -65,6 +67,7 @@ public class GuesserScan implements GenericScanner2 {
 
         listeners = new ArrayList<>(2);
         tableModel = new ParamDiggerHistoryTableModel();
+        outputTableModel = new ParamDiggerOutputTableModel();
         results = Collections.synchronizedList(new ArrayList<>());
         this.executor =
                 Executors.newFixedThreadPool(
@@ -78,6 +81,10 @@ public class GuesserScan implements GenericScanner2 {
 
     public ParamDiggerHistoryTableModel getTableModel() {
         return tableModel;
+    }
+
+    public ParamDiggerOutputTableModel getOutputTableModel() {
+        return outputTableModel;
     }
 
     public ParamDiggerConfig getConfig() {
@@ -95,13 +102,6 @@ public class GuesserScan implements GenericScanner2 {
     @Override
     public int getScanId() {
         return scanId;
-    }
-
-    public OutputModel getOutputModel() {
-        if (outputModel == null) {
-            outputModel = new OutputModel();
-        }
-        return outputModel;
     }
 
     public String getState() {
@@ -285,9 +285,15 @@ public class GuesserScan implements GenericScanner2 {
 
     public void addParamGuessResult(ParamGuessResult paramGuessResult) {
         this.results.add(paramGuessResult);
-        if (outputModel != null) {
-            outputModel.notifyResult(paramGuessResult);
-        }
+        ThreadUtils.invokeAndWaitHandled(
+                () -> {
+                    try {
+                        this.outputTableModel.addHistoryReference(
+                                paramGuessResult.getHistoryReference());
+                    } catch (Exception e) {
+                        // LOGGER.error(e, e);
+                    }
+                });
     }
 
     public List<ParamGuessResult> getResults() {
