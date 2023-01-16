@@ -21,11 +21,20 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.mock;
 
 import java.util.Map;
+import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.parosproxy.paros.network.HttpHeader;
+import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.zap.network.HttpSenderImpl;
 
 class HttpOnlySiteScanRuleUnitTest extends ActiveScannerTest<HttpOnlySiteScanRule> {
 
@@ -62,5 +71,47 @@ class HttpOnlySiteScanRuleUnitTest extends ActiveScannerTest<HttpOnlySiteScanRul
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_SESS_02_COOKIE_ATTRS.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_SESS_02_COOKIE_ATTRS.getValue())));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"-1, -1", "80, -1", "443, -1", "8080, 8080"})
+    @SuppressWarnings("try")
+    void shouldAccessHttpsWithExpectedPort(int initialPort, int expectedPort) throws Exception {
+        try (var senderImpl = new TestHttpSenderImpl()) {
+            // Given
+            rule.init(getHttpMessage(initialPort), parent);
+            // When
+            rule.scan();
+            // Then
+            assertThat(httpMessagesSent, hasSize(1));
+            URI uri = httpMessagesSent.get(0).getRequestHeader().getURI();
+            assertThat(uri.getScheme(), is(equalTo(HttpHeader.HTTPS)));
+            assertThat(uri.getPort(), is(equalTo(expectedPort)));
+        }
+    }
+
+    private static HttpMessage getHttpMessage(int port) throws Exception {
+        HttpMessage msg = new HttpMessage();
+        StringBuilder header = new StringBuilder();
+        header.append("GET http://localhost");
+        if (port != -1) {
+            header.append(':').append(port);
+        }
+        header.append(" HTTP/1.1\r\n");
+        msg.setRequestHeader(header.toString());
+        return msg;
+    }
+
+    private static class TestHttpSenderImpl implements AutoCloseable {
+
+        @SuppressWarnings("unchecked")
+        TestHttpSenderImpl() {
+            HttpSender.setImpl(mock(HttpSenderImpl.class));
+        }
+
+        @Override
+        public void close() {
+            HttpSender.setImpl(null);
+        }
     }
 }

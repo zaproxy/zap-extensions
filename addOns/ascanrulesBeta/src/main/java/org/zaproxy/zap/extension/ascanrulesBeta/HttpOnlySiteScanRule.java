@@ -147,7 +147,9 @@ public class HttpOnlySiteScanRule extends AbstractHostPlugin {
         try {
             String host = newRequest.getRequestHeader().getURI().getHost();
             String path = newRequest.getRequestHeader().getURI().getPath();
-            newRequest.getRequestHeader().setURI(new URI("https", null, host, 443, path));
+            newRequest
+                    .getRequestHeader()
+                    .setURI(new URI("https", null, host, getPort(newRequest), path));
         } catch (URIException e) {
             LOGGER.error("Error creating HTTPS URL from HTTP URL:", e);
             return;
@@ -210,5 +212,13 @@ public class HttpOnlySiteScanRule extends AbstractHostPlugin {
             LOGGER.error("Request couldn't go through:", e);
             return;
         }
+    }
+
+    private static int getPort(HttpMessage message) {
+        int port = message.getRequestHeader().getURI().getPort();
+        if (port == 80 || port == 443) {
+            return -1;
+        }
+        return port;
     }
 }

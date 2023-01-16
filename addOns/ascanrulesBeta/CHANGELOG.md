@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Use same non-default port in the HTTP Only Site scan rule.
+
 ## [44] - 2022-12-13
 ### Changed
 - Use lower case HTTP field names for compatibility with HTTP/2.
