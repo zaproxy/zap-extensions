@@ -122,29 +122,23 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
         return ALERT_TAGS;
     }
 
-    private boolean hasCspHeader(HttpMessage msg) {
-        // Content-Security-Policy is supported by Chrome 25+, Firefox 23+, Safari 7+, but not but
-        // Internet Exploder
+    private static boolean hasCspHeader(HttpMessage msg) {
         List<String> cspOptions =
                 msg.getResponseHeader().getHeaderValues(HttpFieldsNames.CONTENT_SECURITY_POLICY);
 
         return !cspOptions.isEmpty();
     }
 
-    private boolean hasObsoleteCspHeader(HttpMessage msg) {
-        // X-Content-Security-Policy is an obsolete header, supported by Firefox 4.0+, and IE 10+
-        // (in a limited fashion), but obsolete since Firefox 23+ and Chrome 25+
+    private static boolean hasObsoleteCspHeader(HttpMessage msg) {
         List<String> xcspOptions =
                 msg.getResponseHeader().getHeaderValues("X-Content-Security-Policy");
 
-        // X-WebKit-CSP is an obsolete header, supported by Chrome 14+, and Safari 6+, but
-        // obsolete since Firefox 23+ and Chrome 25+
         List<String> xwkcspOptions = msg.getResponseHeader().getHeaderValues("X-WebKit-CSP");
 
         return !xcspOptions.isEmpty() || !xwkcspOptions.isEmpty();
     }
 
-    private boolean hasCspReportOnlyHeader(HttpMessage msg) {
+    private static boolean hasCspReportOnlyHeader(HttpMessage msg) {
         List<String> cspROOptions =
                 msg.getResponseHeader().getHeaderValues("Content-Security-Policy-Report-Only");
 
