@@ -42,6 +42,7 @@ import org.zaproxy.addon.authhelper.AuthenticationRequestDetails.AuthDataType;
 import org.zaproxy.zap.extension.anticsrf.AntiCsrfToken;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.utils.Stats;
 
 public class AuthenticationDetectionScanRule extends PluginPassiveScanner {
 
@@ -122,8 +123,11 @@ public class AuthenticationDetectionScanRule extends PluginPassiveScanner {
             if (REGISTER_URL_SEGMENTS.stream().anyMatch(urlLc::contains)) {
                 // It looks like a registration request
                 LOGGER.debug("Assumed register request: {} ", msg.getRequestHeader().getURI());
+                Stats.incCounter("stats.auth.detect.register");
             } else {
                 // Looks like an auth request
+                Stats.incCounter("stats.auth.detect.auth." + type.name().toLowerCase(Locale.ROOT));
+
                 AuthenticationRequestDetails ard =
                         new AuthenticationRequestDetails(
                                 msg.getRequestHeader().getURI(),

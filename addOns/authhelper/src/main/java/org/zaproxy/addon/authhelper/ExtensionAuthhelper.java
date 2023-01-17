@@ -42,6 +42,7 @@ import org.zaproxy.zap.authentication.ManualAuthenticationMethodType;
 import org.zaproxy.zap.authentication.PostBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.PostBasedAuthenticationMethodType.PostBasedAuthenticationMethod;
 import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public class ExtensionAuthhelper extends ExtensionAdaptor {
@@ -103,12 +104,14 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
                 encodedUserValue = StringEscapeUtils.escapeJson(ard.getUserParam().getValue());
                 encodedPasswordValue =
                         StringEscapeUtils.escapeJson(ard.getPasswordParam().getValue());
+                Stats.incCounter("stats.auth.configure.auth.json");
                 break;
             case FORM:
             default:
                 methodType = new FormBasedAuthenticationMethodType();
                 encodedUserValue = urlEncode(ard.getUserParam().getValue());
                 encodedPasswordValue = urlEncode(ard.getPasswordParam().getValue());
+                Stats.incCounter("stats.auth.configure.auth.form");
                 break;
         }
         try {
@@ -136,6 +139,7 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
             context.save();
         } catch (Exception e) {
             LOGGER.error("Failed to set authentication method", e);
+            Stats.incCounter("stats.auth.configure.auth.error");
         }
     }
 
