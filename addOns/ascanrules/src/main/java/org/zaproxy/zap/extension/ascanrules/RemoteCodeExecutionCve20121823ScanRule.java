@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -68,11 +69,17 @@ public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin {
             PAYLOAD_BOILERPLATE.replace("<<<<COMMAND>>>>", "cmd.exe /C echo " + RANDOM_STRING);
     private static final String NIX_PAYLOAD =
             PAYLOAD_BOILERPLATE.replace("<<<<COMMAND>>>>", "echo " + RANDOM_STRING);
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A06_VULN_COMP,
-                    CommonAlertTag.OWASP_2017_A09_VULN_COMP,
-                    CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ);
+    private static final String CVE = "CVE-2012-1823";
+    private static final Map<String, String> ALERT_TAGS = new HashMap<>();
+
+    static {
+        ALERT_TAGS.putAll(
+                CommonAlertTag.toMap(
+                        CommonAlertTag.OWASP_2021_A06_VULN_COMP,
+                        CommonAlertTag.OWASP_2017_A09_VULN_COMP,
+                        CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ));
+        ALERT_TAGS.put(CVE, "");
+    }
 
     @Override
     public int getId() {

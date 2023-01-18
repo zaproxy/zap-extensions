@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -66,10 +67,17 @@ public class HeartBleedScanRule extends PluginPassiveScanner {
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.heartbleed.";
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A06_VULN_COMP,
-                    CommonAlertTag.OWASP_2017_A09_VULN_COMP);
+    private static final String CVE = "CVE-2014-0160";
+    private static final Map<String, String> ALERT_TAGS = new HashMap<>();
+
+    static {
+        ALERT_TAGS.putAll(
+                CommonAlertTag.toMap(
+                        CommonAlertTag.OWASP_2021_A06_VULN_COMP,
+                        CommonAlertTag.OWASP_2017_A09_VULN_COMP,
+                        CommonAlertTag.WSTG_V42_CRYP_01_TLS));
+        ALERT_TAGS.put(CVE, "");
+    }
 
     @Override
     public String getName() {

@@ -143,7 +143,7 @@ class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScanRule> {
         // Given / When
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags.size(), is(equalTo(4)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(true)));
@@ -151,11 +151,17 @@ class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScanRule> {
                 tags.containsKey(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getTag()),
                 is(equalTo(true)));
         assertThat(
+                tags.containsKey(CommonAlertTag.WSTG_V42_CRYP_01_TLS.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey("CVE-2014-0160"), is(equalTo(true)));
+        assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getValue())));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.WSTG_V42_CRYP_01_TLS.getTag()),
+                is(equalTo(CommonAlertTag.WSTG_V42_CRYP_01_TLS.getValue())));
     }
 
     private static HttpMessage createMsg(String serverHeader) throws HttpMalformedHeaderException {

@@ -26,6 +26,7 @@ import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.logging.log4j.LogManager;
@@ -54,11 +55,17 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.heartbleed.";
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A06_VULN_COMP,
-                    CommonAlertTag.OWASP_2017_A09_VULN_COMP,
-                    CommonAlertTag.WSTG_V42_CRYP_01_TLS);
+    private static final String CVE = "CVE-2014-0160";
+    private static final Map<String, String> ALERT_TAGS = new HashMap<>();
+
+    static {
+        ALERT_TAGS.putAll(
+                CommonAlertTag.toMap(
+                        CommonAlertTag.OWASP_2021_A06_VULN_COMP,
+                        CommonAlertTag.OWASP_2017_A09_VULN_COMP,
+                        CommonAlertTag.WSTG_V42_CRYP_01_TLS));
+        ALERT_TAGS.put(CVE, "");
+    }
 
     static final byte handShakeClientHello = 0x01;
 

@@ -62,6 +62,8 @@ public class Log4ShellScanRule extends AbstractAppParamPlugin {
     };
     protected static final int ATTACK_PATTERN_COUNT =
             ATTACK_PATTERNS_CVE44228.length + ATTACK_PATTERNS_CVE45046.length;
+    private static final String CVE_44228 = "CVE-2021-44228";
+    private static final String CVE_45046 = "CVE-2021-45046";
 
     @Override
     public int getId() {
@@ -112,6 +114,8 @@ public class Log4ShellScanRule extends AbstractAppParamPlugin {
                                 CommonAlertTag.OWASP_2017_A09_VULN_COMP,
                                 CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ));
         alertTags.put(ExtensionOast.OAST_ALERT_TAG_KEY, ExtensionOast.OAST_ALERT_TAG_VALUE);
+        alertTags.put(CVE_44228, "");
+        alertTags.put(CVE_45046, "");
         return alertTags;
     }
 
@@ -170,7 +174,10 @@ public class Log4ShellScanRule extends AbstractAppParamPlugin {
                 .setDescription(Constant.messages.getString(alertPrefix + "desc"))
                 .setSolution(Constant.messages.getString(alertPrefix + "soln"))
                 .setReference(Constant.messages.getString(alertPrefix + "refs"))
-                .setConfidence(Alert.CONFIDENCE_MEDIUM);
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setAlertRef(PREFIX_CVE44228.equals(alertPrefix) ? getId() + "-1" : getId() + "-2")
+                .setTags(getAlertTags())
+                .removeTag(PREFIX_CVE44228.equals(alertPrefix) ? CVE_45046 : CVE_44228);
     }
 
     @Override

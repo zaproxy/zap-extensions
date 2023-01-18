@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - Remote File Include
 - The Path Traversal scan rule no longer populates the Other Info field with check information, as the Alert Reference now provides that detail.
 - Maintenance changes.
+- CVE-2012-1823 Remote Execution and Source Code Disclosure, and Heart Bleed scan rules now include Alert Tags for the applicable CVEs.
 
 ## [51] - 2023-01-03
 ### Changed
