@@ -76,8 +76,11 @@ public class VariantGraphQl implements Variant {
         String query = null;
 
         if (HttpRequestHeader.POST.equals(header.getMethod())) {
+            if (body.isEmpty()) {
+                return null;
+            }
             var contentTypeHeader = header.getNormalisedContentTypeValue();
-            if (!body.isEmpty() && contentTypeHeader == null
+            if (contentTypeHeader == null
                     || contentTypeHeader.contains(HttpHeader.JSON_CONTENT_TYPE)) {
                 try {
                     JSONObject json = JSONObject.fromObject(body);
