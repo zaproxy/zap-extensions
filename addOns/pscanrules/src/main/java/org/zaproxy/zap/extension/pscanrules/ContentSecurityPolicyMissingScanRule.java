@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
-import java.util.List;
 import java.util.Map;
 import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
@@ -123,25 +122,19 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
     }
 
     private static boolean hasCspHeader(HttpMessage msg) {
-        List<String> cspOptions =
-                msg.getResponseHeader().getHeaderValues(HttpFieldsNames.CONTENT_SECURITY_POLICY);
-
-        return !cspOptions.isEmpty();
+        return !msg.getResponseHeader()
+                .getHeaderValues(HttpFieldsNames.CONTENT_SECURITY_POLICY)
+                .isEmpty();
     }
 
     private static boolean hasObsoleteCspHeader(HttpMessage msg) {
-        List<String> xcspOptions =
-                msg.getResponseHeader().getHeaderValues("X-Content-Security-Policy");
-
-        List<String> xwkcspOptions = msg.getResponseHeader().getHeaderValues("X-WebKit-CSP");
-
-        return !xcspOptions.isEmpty() || !xwkcspOptions.isEmpty();
+        return !msg.getResponseHeader().getHeaderValues("X-Content-Security-Policy").isEmpty()
+                || !msg.getResponseHeader().getHeaderValues("X-WebKit-CSP").isEmpty();
     }
 
     private static boolean hasCspReportOnlyHeader(HttpMessage msg) {
-        List<String> cspROOptions =
-                msg.getResponseHeader().getHeaderValues("Content-Security-Policy-Report-Only");
-
-        return !cspROOptions.isEmpty();
+        return !msg.getResponseHeader()
+                .getHeaderValues("Content-Security-Policy-Report-Only")
+                .isEmpty();
     }
 }
