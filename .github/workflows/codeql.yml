@@ -27,7 +27,22 @@ jobs:
       - uses: github/codeql-action/init@v2
         with:
           languages: ${{ matrix.language }}
-      - uses: github/codeql-action/autobuild@v2
+      - if: matrix.language != 'java'
+        uses: github/codeql-action/autobuild@v2
+
+      - if: matrix.language == 'java'
+        uses: gradle/gradle-build-action@v2
+        with:
+          cache-read-only: true
+          gradle-home-cache-includes: |
+            caches
+            notifications
+            wdm
+      - if: matrix.language == 'java'
+        run: ./gradlew -Dorg.gradle.jvmargs=-Xmx2g --no-build-cache testClasses
+        env:
+          WDM_CACHEPATH: "~/.gradle/wdm"
+
       - uses: github/codeql-action/analyze@v2
         with:
           category: "/language:${{matrix.language}}"
