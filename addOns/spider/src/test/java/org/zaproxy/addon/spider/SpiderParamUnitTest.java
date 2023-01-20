@@ -120,4 +120,27 @@ class SpiderParamUnitTest {
             assertThat(param.getThreadCount(), is(equalTo(3)));
         }
     }
+
+    @Test
+    void shouldNotParseDsStoreByDefault() {
+        // Given
+        configuration = new ZapXmlConfiguration();
+        // When
+        param.load(configuration);
+        // Then
+        assertThat(param.isParseDsStore(), is(equalTo(false)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldParseDsStorePerSetting(boolean enabled) {
+        // Given
+        String configKey = "spider.parseDsStore";
+        configuration = new ZapXmlConfiguration();
+        configuration.setProperty(configKey, enabled);
+        // When
+        param.load(configuration);
+        // Then
+        assertThat(param.isParseDsStore(), is(equalTo(enabled)));
+    }
 }

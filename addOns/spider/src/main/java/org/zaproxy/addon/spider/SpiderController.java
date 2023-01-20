@@ -34,6 +34,7 @@ import org.parosproxy.paros.network.HttpHeaderField;
 import org.zaproxy.addon.spider.filters.FetchFilter;
 import org.zaproxy.addon.spider.filters.FetchFilter.FetchStatus;
 import org.zaproxy.addon.spider.filters.ParseFilter;
+import org.zaproxy.addon.spider.parser.DsStoreParser;
 import org.zaproxy.addon.spider.parser.SpiderGitParser;
 import org.zaproxy.addon.spider.parser.SpiderHtmlFormParser;
 import org.zaproxy.addon.spider.parser.SpiderHtmlParser;
@@ -126,6 +127,11 @@ public class SpiderController implements SpiderParserListener {
         // If parsing of GIT entries is enabled
         if (spider.getSpiderParam().isParseGit()) {
             parser = new SpiderGitParser();
+            parsers.add(parser);
+        }
+
+        if (spider.getSpiderParam().isParseDsStore()) {
+            parser = new DsStoreParser();
             parsers.add(parser);
         }
 

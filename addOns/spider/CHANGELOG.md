@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Maintenance changes.
 - Default number of threads to 2 * processor count.
 
+### Added
+- Support for parsing .DS_Store files to find paths to try (Issue 30).
+
 ## [0.2.0] - 2023-01-03
 ### Changed
 - Maintenance changes.

@@ -30,6 +30,8 @@ import java.util.Enumeration;
 import java.util.ResourceBundle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -219,6 +221,18 @@ class DefaultParseFilterUnitTest {
         DefaultParseFilter filter = createDefaultParseFilter();
         HttpMessage httpMessage = createHttpMessageWithRequestUri("/sitemap.xml");
         httpMessage.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "application/xml");
+        // When
+        FilterResult filterResult = filter.filtered(httpMessage);
+        // Then
+        assertThat(filterResult.isFiltered(), is(equalTo(false)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"/.DS_Store", "/foo/bar/.DS_Store", "/.DS_Store?foo-bar"})
+    void shouldNotFilterHttpMessageWithDsStoreUri(String path) throws Exception {
+        // Given
+        DefaultParseFilter filter = createDefaultParseFilter();
+        HttpMessage httpMessage = createHttpMessageWithRequestUri(path);
         // When
         FilterResult filterResult = filter.filtered(httpMessage);
         // Then

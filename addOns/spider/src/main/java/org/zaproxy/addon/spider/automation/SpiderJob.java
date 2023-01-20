@@ -442,6 +442,7 @@ public class SpiderJob extends AutomationJob {
         private Integer maxParseSizeBytes;
         private Boolean parseComments;
         private Boolean parseGit;
+        private Boolean parseDsStore;
         private Boolean parseRobotsTxt;
         private Boolean parseSitemapXml;
         private Boolean parseSVNEntries;
@@ -557,6 +558,14 @@ public class SpiderJob extends AutomationJob {
 
         public void setParseGit(Boolean parseGit) {
             this.parseGit = parseGit;
+        }
+
+        public Boolean getParseDsStore() {
+            return parseDsStore;
+        }
+
+        public void setParseDsStore(Boolean parseDsStore) {
+            this.parseDsStore = parseDsStore;
         }
 
         public Boolean getParseRobotsTxt() {

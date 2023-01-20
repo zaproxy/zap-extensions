@@ -77,6 +77,7 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
     private JCheckBox parseSitemapXml;
     private JCheckBox parseSVNEntries;
     private JCheckBox parseGit;
+    private JCheckBox parseDsStore;
     private JCheckBox handleODataSpecificParameters;
     private JCheckBox chkSendRefererHeader;
     private JCheckBox chkAcceptCookies;
@@ -183,6 +184,7 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
             innerPanel.add(getChkParseSitemapXml(), gbc);
             innerPanel.add(getChkParseSVNEntries(), gbc);
             innerPanel.add(getChkParseGit(), gbc);
+            innerPanel.add(getChkParseDsStore(), gbc);
             innerPanel.add(getHandleODataSpecificParameters(), gbc);
 
             innerPanel.add(
@@ -227,6 +229,7 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
         getChkParseSitemapXml().setSelected(param.isParseSitemapXml());
         getChkParseSVNEntries().setSelected(param.isParseSVNEntries());
         getChkParseGit().setSelected(param.isParseGit());
+        getChkParseDsStore().setSelected(param.isParseDsStore());
         getComboHandleParameters().setSelectedItem(param.getHandleParameters());
         getHandleODataSpecificParameters().setSelected(param.isHandleODataParametersVisited());
         getIrrelevantQueryParametersPanel()
@@ -257,6 +260,7 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
         param.setParseSitemapXml(getChkParseSitemapXml().isSelected());
         param.setParseSVNEntries(getChkParseSVNEntries().isSelected());
         param.setParseGit(getChkParseGit().isSelected());
+        param.setParseDsStore(getChkParseDsStore().isSelected());
         param.setHandleParameters(
                 (HandleParametersOption) getComboHandleParameters().getSelectedItem());
         param.setHandleODataParametersVisited(getHandleODataSpecificParameters().isSelected());
@@ -447,6 +451,14 @@ public class OptionsSpiderPanel extends AbstractParamPanel {
             parseGit.setText(Constant.messages.getString("spider.options.label.git"));
         }
         return parseGit;
+    }
+
+    private JCheckBox getChkParseDsStore() {
+        if (parseDsStore == null) {
+            parseDsStore =
+                    new JCheckBox(Constant.messages.getString("spider.options.label.dsStore"));
+        }
+        return parseDsStore;
     }
 
     /**
