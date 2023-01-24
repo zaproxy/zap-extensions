@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Show correct error message when unable to access the provided URL, also, add the scheme if none provided.
+
 ## [36] - 2023-01-03
 ### Fixed
 - Correctly unload the add-on.

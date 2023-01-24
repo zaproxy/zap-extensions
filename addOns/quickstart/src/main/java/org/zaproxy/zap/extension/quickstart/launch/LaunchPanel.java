@@ -24,6 +24,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import javax.swing.ComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -38,6 +40,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
@@ -65,6 +68,9 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
 
     private static final String EVENT_HUD_ENABLED_FOR_DESKTOP = "desktop.enabled";
     private static final String EVENT_HUD_DISABLED_FOR_DESKTOP = "desktop.disabled";
+
+    private static final Predicate<String> SCHEME_PREDICATE =
+            Pattern.compile("(?i)^https?://").asPredicate();
 
     private ImageIcon icon;
     private ExtensionQuickStartLaunch extLaunch;
@@ -251,13 +257,26 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
             launchButton.setToolTipText(
                     Constant.messages.getString("quickstart.button.tooltip.launch"));
 
-            launchButton.addActionListener(
-                    e -> {
-                        getExtQuickStart().getQuickStartParam().addRecentUrl(getUrlValue());
-                        extLaunch.launchBrowser(getSelectedBrowser(), getUrlValue());
-                    });
+            launchButton.addActionListener(e -> launchBrowser(true));
         }
         return launchButton;
+    }
+
+    private void launchBrowser(boolean addToRecentList) {
+        String url = getUrlValue();
+        if (addToRecentList) {
+            getExtQuickStart().getQuickStartParam().addRecentUrl(url);
+        }
+        extLaunch.launchBrowser(getSelectedBrowser(), url);
+    }
+
+    /**
+     * Launches the browser with the URL specified in the panel, if any.
+     *
+     * <p>The URL is <strong>not</strong> added to the list of recent URLs.
+     */
+    public void launchBrowser() {
+        launchBrowser(false);
     }
 
     public void postInit() {
@@ -300,16 +319,16 @@ public class LaunchPanel extends QuickStartSubPanel implements EventConsumer {
         }
     }
 
-    protected String getSelectedBrowser() {
+    private String getSelectedBrowser() {
         return getBrowserComboBox().getSelectedItem().toString();
     }
 
-    protected String getUrlValue() {
-        Object item = getUrlField().getSelectedItem();
-        if (item != null) {
-            return item.toString();
+    private String getUrlValue() {
+        String item = (String) getUrlField().getSelectedItem();
+        if (item != null && !SCHEME_PREDICATE.test(item)) {
+            item = HttpHeader.SCHEME_HTTP + item;
         }
-        return null;
+        return item;
     }
 
     private JComboBox<String> getUrlField() {

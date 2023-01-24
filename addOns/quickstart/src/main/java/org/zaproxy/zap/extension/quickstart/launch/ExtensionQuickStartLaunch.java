@@ -152,10 +152,7 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
             launchToolbarButton = new JButton();
             launchToolbarButton.setToolTipText(
                     Constant.messages.getString("quickstart.toolbar.button.tooltip.launch"));
-            launchToolbarButton.addActionListener(
-                    e ->
-                            launchBrowser(
-                                    launchPanel.getSelectedBrowser(), launchPanel.getUrlValue()));
+            launchToolbarButton.addActionListener(e -> launchPanel.launchBrowser());
         }
         return launchToolbarButton;
     }
@@ -222,23 +219,7 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
                                 if (wd != null) {
                                     QuickStartParam params =
                                             getExtQuickStart().getQuickStartParam();
-                                    if (url != null
-                                            && url.length() > 0
-                                            && !url.equals(DEFAULT_VALUE_URL_FIELD)) {
-                                        wd.get(url);
-                                    } else if (params.isLaunchZapStartPage()) {
-                                        wd.get(
-                                                API.getInstance()
-                                                        .getBaseURL(
-                                                                API.Format.OTHER,
-                                                                QuickStartLaunchAPI.API_PREFIX,
-                                                                API.RequestType.other,
-                                                                QuickStartLaunchAPI
-                                                                        .OTHER_START_PAGE,
-                                                                true));
-                                    } else if (!params.isLaunchBlankStartPage()) {
-                                        wd.get(params.getLaunchStartPage());
-                                    }
+                                    accessUrl(wd, params, url);
                                     // Use the same browser next time, as long
                                     // as it worked
                                     params.setLaunchDefaultBrowser(browserName);
@@ -255,6 +236,36 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
                         },
                         "ZAP-BrowserLauncher")
                 .start();
+    }
+
+    private static void accessUrl(WebDriver wd, QuickStartParam params, String userUrl) {
+        String url = null;
+        if (userUrl != null && userUrl.length() > 0 && !userUrl.equals(DEFAULT_VALUE_URL_FIELD)) {
+            url = userUrl;
+        } else if (params.isLaunchZapStartPage()) {
+            url =
+                    API.getInstance()
+                            .getBaseURL(
+                                    API.Format.OTHER,
+                                    QuickStartLaunchAPI.API_PREFIX,
+                                    API.RequestType.other,
+                                    QuickStartLaunchAPI.OTHER_START_PAGE,
+                                    true);
+        } else if (!params.isLaunchBlankStartPage()) {
+            url = params.getLaunchStartPage();
+        }
+
+        if (url != null) {
+            try {
+                wd.get(url);
+            } catch (Exception e) {
+                View.getSingleton()
+                        .showWarningDialog(
+                                Constant.messages.getString(
+                                        "quickstart.launch.start.url.access.error", url));
+                LOGGER.warn("Failed to access the URL {}, cause: {}", url, e.getMessage());
+            }
+        }
     }
 
     public String getDefaultLaunchContent() {
