@@ -20,7 +20,12 @@ The add-on can be used in 2 ways:
 <li>To automatically configure ZAP to handle the authentication features discovered.
 </ul>
 
-See below for the authentication features currently supported.
+The features currently supported are:
+<ul>
+<li><a href="auth-req-id.html">Authentication Request Identification</a>
+<li><a href="session-header.html">Header Based Session Management</a>
+</ul>
+
 <p>
 By default the add-on will raise informational alerts detailing any authentication features identified.
 <br>
@@ -44,30 +49,13 @@ authentication method should be correctly set in the context you have created.<b
 If an authentication request is not identified then check to make sure it is made to a site which is included in the context.<br>
 If it is not then add the site to the context and authenticate again via your browser.
 
-<H2>Authentication Request Identification</H2>
-This add-on includes a passive scan rule which attempts to identify authentication requests.<br>
-It identifies authentication requests by the presence of commonly used username and password field names.
-It also uses commonly used URL segments to identify more likely authentication requests, 
-and uses commonly used registration URL segments to ignore registration requests.<br><br>
-The rule will not attempt to identify very unusual authentication requests - automation is one of the end goals so false negatives
-(missing unusual authentication requests) is more desirable than false positives (incorrectly identifying an authentication request). 
-<br>
-The 'other' field is used to report a set of key-value pairs which can be easily parsed. The current keys supported are:
-<ul>
-<li>userParam
-<li>userValue
-<li>passwordParam
-<li>csrfToken
-</ul>
-There can potentially be multiple csrfTokens.
-<p>
-The rule will currently identify:
-<ul>
-<li>Form-based authentication requests
-<li>JSON-based authentication requests
-</ul>
-
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/authhelper/src/main/java/org/zaproxy/addon/authhelper/AuthenticationDetectionScanRule.java">AuthenticationDetectionScanRule.java</a>
+<H3>Links</H3>
+<table>
+<tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td><a href="https://www.zaproxy.org/blog/2023-01-19-authentication-help/">ZAP Blog Post: Authentication Help/</a></td>
+</tr>
+</table>
 
 </BODY>
 </HTML>

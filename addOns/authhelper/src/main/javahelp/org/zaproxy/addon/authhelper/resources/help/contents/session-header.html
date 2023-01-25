@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Header Based Session Management
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Header Based Session Management</H1>
+
+This <a href="authhelper.html">add-on</a> adds a new session management type which supports an arbitrary number
+of headers.
+<p>
+The header values can include the following tokens:
+
+<table>
+<tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td><code>{%json:path.to.data%}</code></td>
+        <td>JSON authentication response data</td>
+</tr>
+<tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td><code>{%env:env_var%}</code></td>
+        <td>Environmental variable</td>
+</tr>
+<tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td><code>{%script:glob_var%}</code></td>
+        <td>Global script variable</td>
+</tr>
+<tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td><code>{%header:env_var%}</code></td>
+        <td>Authentication response header</td>
+</tr>
+<tr>
+        <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
+        <td><code>{%url:key%}</code></td>
+        <td>Authentication URL param</td>
+</tr>
+</table>
+
+When adding Header Based Session Management via the API the <code>headers</code> parameter is a string of 
+<code>header:value</code> pairs separated by newline characters: <code>\n</code>.
+
+<p>
+
+Note that due to restrictions in the core:
+<ul>
+<li>Existing contexts are not updated in the GUI if you add or remove this add-on
+<li>Header Based Session Management cannot be added to a context via the API
+</ul>
+These restrictions will be addressed in a future release. 
+
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/authhelper/src/main/java/org/zaproxy/addon/authhelper/HeaderBasedSessionManagementMethodType.java">HeaderBasedSessionManagementMethodType.java</a>
+
+</BODY>
+</HTML>
