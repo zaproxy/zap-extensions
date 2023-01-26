@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [49] - 2023-01-26
 ### Added
 - Add aarch64/arm64 geckodriver (Issue 7650).
 
@@ -231,6 +231,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27
 
+[49]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v49
 [48]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v48
 [47]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v47
 [46]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v46
