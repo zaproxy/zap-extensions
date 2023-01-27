@@ -24,10 +24,11 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 
-class CommonAlertTagsUnitTest {
+class CommonAlertTagUnitTest {
 
     private static final Map<String, String> BASE_TAGS =
             CommonAlertTag.toMap(
@@ -67,5 +68,22 @@ class CommonAlertTagsUnitTest {
                         CommonAlertTag.WSTG_V42_CONF_05_ENUMERATE_INFRASTRUCTURE.getTag()));
         assertTrue(allTags.containsKey(CommonAlertTag.CUSTOM_PAYLOADS.getTag()));
         assertTrue(allTags.containsKey(CommonAlertTag.WSTG_V42_SESS_09_SESS_HIJACK.getTag()));
+    }
+
+    @Test
+    void shouldLinkifyCveIdentifierString() {
+        // Given
+        Map<String, String> allTags = new HashMap<>();
+        String cve = "CVE-2020-1234";
+        allTags.put(
+                CommonAlertTag.CUSTOM_PAYLOADS.getTag(), CommonAlertTag.CUSTOM_PAYLOADS.getValue());
+        // When
+        CommonAlertTag.putCve(allTags, cve);
+        String link = allTags.get(cve);
+        // Then
+        assertThat(allTags.size(), is(equalTo(2)));
+        assertTrue(allTags.containsKey(CommonAlertTag.CUSTOM_PAYLOADS.getTag()));
+        assertTrue(allTags.containsKey(cve));
+        assertThat(link, is(equalTo("https://nvd.nist.gov/vuln/detail/CVE-2020-1234")));
     }
 }

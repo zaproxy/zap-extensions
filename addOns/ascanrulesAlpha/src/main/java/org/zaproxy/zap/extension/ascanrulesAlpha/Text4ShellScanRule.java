@@ -96,7 +96,7 @@ public class Text4ShellScanRule extends AbstractAppParamPlugin {
                                 CommonAlertTag.OWASP_2017_A09_VULN_COMP,
                                 CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ));
         alertTags.put(ExtensionOast.OAST_ALERT_TAG_KEY, ExtensionOast.OAST_ALERT_TAG_VALUE);
-        alertTags.put(CVE, "");
+        CommonAlertTag.putCve(alertTags, CVE);
         return alertTags;
     }
 
