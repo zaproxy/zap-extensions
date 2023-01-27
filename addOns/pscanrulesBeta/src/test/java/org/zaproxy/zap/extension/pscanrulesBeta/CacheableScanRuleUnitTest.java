@@ -29,6 +29,8 @@ import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
@@ -121,8 +123,39 @@ class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanRule> {
                         + "Pragma: must-revalidate,no-cache\r\n"
                         + "Content-Type: text/xml;charset=UTF-8\r\n"
                         + "Expires: 0\r\n"
-                        + // http-date expected, Ex: "Wed, 21 Oct 2015 07:28:00 GMT"
-                        "Date: "
+                        + "Date: "
+                        + HttpDateUtils.format(Instant.now())
+                        + "\r\n\r\n");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "s-maxage=600,max-age=0",
+                "s-maxage=600, max-age=0",
+                "s-maxage=600 ,max-age=0",
+                "s-maxage=600 , max-age=0",
+                "s-maxage=600",
+                "s-maxage=600,",
+                "max-age=0,s-maxage=600"
+            })
+    void shouldHandleVariousSMaxAgeFormats(String headerValue)
+            throws URIException, HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createMessage();
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Cache-Control: "
+                        + headerValue
+                        + "\r\n"
+                        + "Pragma: must-revalidate,no-cache\r\n"
+                        + "Content-Type: text/xml;charset=UTF-8\r\n"
+                        + "Expires: 0\r\n"
+                        + "Date: "
                         + HttpDateUtils.format(Instant.now())
                         + "\r\n\r\n");
         // When
@@ -183,26 +216,11 @@ class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanRule> {
         assertStoreAndCacheable("s-maxage=100");
     }
 
-    @Test
-    void shouldRaiseAlertStoreAndCacheableWhenStatusCacheableByDefault()
+    @ParameterizedTest
+    @ValueSource(
+            strings = {"200", "203", "204", "206", "300", "301", "404", "405", "410", "414", "501"})
+    void shouldRaiseAlertStoreAndCacheableWhenStatusCacheableByDefault(String statusCode)
             throws URIException, HttpMalformedHeaderException {
-        shouldRaiseAlertStoreAndCacheableWhenStatusCacheableByDefault("200");
-        shouldRaiseAlertStoreAndCacheableWhenStatusCacheableByDefault("203");
-        shouldRaiseAlertStoreAndCacheableWhenStatusCacheableByDefault("204");
-        shouldRaiseAlertStoreAndCacheableWhenStatusCacheableByDefault("206");
-        shouldRaiseAlertStoreAndCacheableWhenStatusCacheableByDefault("300");
-        shouldRaiseAlertStoreAndCacheableWhenStatusCacheableByDefault("301");
-        shouldRaiseAlertStoreAndCacheableWhenStatusCacheableByDefault("404");
-        shouldRaiseAlertStoreAndCacheableWhenStatusCacheableByDefault("405");
-        shouldRaiseAlertStoreAndCacheableWhenStatusCacheableByDefault("410");
-        shouldRaiseAlertStoreAndCacheableWhenStatusCacheableByDefault("414");
-        shouldRaiseAlertStoreAndCacheableWhenStatusCacheableByDefault("501");
-    }
-
-    private void shouldRaiseAlertStoreAndCacheableWhenStatusCacheableByDefault(String statusCode)
-            throws URIException, HttpMalformedHeaderException {
-        // setup for private method needed
-        alertsRaised.clear();
         // Given
         HttpMessage msg = createMessage();
         msg.setResponseHeader(
@@ -263,18 +281,27 @@ class CacheableScanRuleUnitTest extends PassiveScannerTest<CacheableScanRule> {
         assertStoreAndCacheable("s-maxage=100");
     }
 
-    @Test
-    void shouldRaiseAlertStoreAndCacheableWhenCacheIsFreshAndMaxAgeDirectiveIsSet()
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "max-age=100,public",
+                "max-age=100,",
+                "public,max-age=100,",
+                "max-age=100 ,public",
+                "max-age=100 , public",
+                "max-age=100, public"
+            })
+    void shouldRaiseAlertStoreAndCacheableWhenCacheIsFreshAndMaxAgeDirectiveIsSet(String value)
             throws URIException, HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createMessage();
-        msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Cache-Control: max-age=100,public");
+        msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Cache-Control: " + value);
 
         // When
         scanHttpResponseReceive(msg);
 
         // Then
-        assertStoreAndCacheable("max-age=100,public");
+        assertStoreAndCacheable("max-age=100");
     }
 
     @Test
