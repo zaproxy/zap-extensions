@@ -43,7 +43,7 @@ class HeartBleedActiveScanRuleUnitTest extends ActiveScannerTest<HeartBleedActiv
         // Then
         assertThat(cwe, is(equalTo(119)));
         assertThat(wasc, is(equalTo(20)));
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(4)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(true)));
@@ -52,6 +52,7 @@ class HeartBleedActiveScanRuleUnitTest extends ActiveScannerTest<HeartBleedActiv
                 is(equalTo(true)));
         assertThat(
                 tags.containsKey(CommonAlertTag.WSTG_V42_CRYP_01_TLS.getTag()), is(equalTo(true)));
+        assertThat(tags.containsKey("CVE-2014-0160"), is(equalTo(true)));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A06_VULN_COMP.getValue())));

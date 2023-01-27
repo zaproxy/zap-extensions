@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- The Log4Shell scan rule alerts now include Alert References and Tags.
 
 ### Fixed
 - Use same non-default port in the HTTP Only Site scan rule.

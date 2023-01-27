@@ -30,9 +30,12 @@ import static org.mockito.Mockito.when;
 
 import fi.iki.elonen.NanoHTTPD;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
@@ -111,6 +114,32 @@ class Log4ShellScanRuleUnitTest extends ActiveScannerTest<Log4ShellScanRule> {
 
         // Then
         assertThat(httpMessagesSent, hasSize(1));
+    }
+
+    @Test
+    void shouldReturnExpectedNumberOfAlertTags() {
+        // Given / When
+        Map<String, String> alertTags = rule.getAlertTags();
+        // Then
+        assertThat(alertTags.size(), is(equalTo(6)));
+    }
+
+    @Test
+    void shouldReturnExpectedExampleAlerts() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        Alert alert1 = alerts.get(0);
+        Alert alert2 = alerts.get(1);
+        // Then
+        assertThat(alerts.size(), is(equalTo(2)));
+        assertThat(alert1.getAlertRef(), is(equalTo("40043-1")));
+        assertThat(alert1.getTags().size(), is(equalTo(5)));
+        assertThat(alert1.getTags().containsKey("CVE-2021-44228"), is(equalTo(true)));
+        assertThat(alert1.getName(), is(equalTo("Log4Shell (CVE-2021-44228)")));
+        assertThat(alert2.getAlertRef(), is(equalTo("40043-2")));
+        assertThat(alert2.getTags().containsKey("CVE-2021-45046"), is(equalTo(true)));
+        assertThat(alert2.getTags().size(), is(equalTo(5)));
+        assertThat(alert2.getName(), is(equalTo("Log4Shell (CVE-2021-45046)")));
     }
 
     private static class Log4ShellServerHandler extends NanoServerHandler {

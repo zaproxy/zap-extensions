@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -56,11 +57,16 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin {
             Pattern.compile(
                     ".*(<\\?=.+?\\?>).*",
                     Pattern.MULTILINE | Pattern.DOTALL); // PHP "echo short tag"
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A06_VULN_COMP,
-                    CommonAlertTag.OWASP_2017_A09_VULN_COMP);
+    private static final String CVE = "CVE-2012-1823";
+    private static final Map<String, String> ALERT_TAGS = new HashMap<>();
 
+    static {
+        ALERT_TAGS.putAll(
+                CommonAlertTag.toMap(
+                        CommonAlertTag.OWASP_2021_A06_VULN_COMP,
+                        CommonAlertTag.OWASP_2017_A09_VULN_COMP));
+        ALERT_TAGS.put(CVE, "");
+    }
     /**
      * details of the vulnerability which we are attempting to find WASC 20 = Improper Input
      * Handling

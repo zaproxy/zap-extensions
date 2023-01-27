@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - Now includes example alert functionality for documentation generation purposes (Issue 6119).
     - Will now only consider PDFs at Low threshold.
 - Maintenance changes.
+- The HeartBleed scan rule alert now includes a CVE tag.
 
 ## [45] - 2023-01-03
 ### Changed
