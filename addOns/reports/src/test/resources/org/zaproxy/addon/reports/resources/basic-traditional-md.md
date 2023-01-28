@@ -17,7 +17,7 @@
 
 | !reports.report.alerts.list.name! | !reports.report.alerts.list.risklevel! | !reports.report.alerts.list.numinstances! |
 | --- | --- | --- |
-| XSS | !reports.report.risk.3! | 1 |
+| XSS | !reports.report.risk.3! | 2 |
 
 
 
@@ -41,8 +41,13 @@ XSS Description
   * !reports.report.alerts.detail.param!: `Test Param`
   * !reports.report.alerts.detail.attack!: `Test "Attack\"`
   * !reports.report.alerts.detail.evidence!: `Test <p>Evidence`
+* !reports.report.alerts.detail.url!: http://example.com/example_3
+  * !reports.report.alerts.detail.method!: `GET`
+  * !reports.report.alerts.detail.param!: `Test Param`
+  * !reports.report.alerts.detail.attack!: `Test "Attack\"`
+  * !reports.report.alerts.detail.evidence!: `Test <p>Evidence`
 
-!reports.report.alerts.detail.instances!: 1
+!reports.report.alerts.detail.instances!: 2
 
 ### !reports.report.alerts.detail.solution!
 
