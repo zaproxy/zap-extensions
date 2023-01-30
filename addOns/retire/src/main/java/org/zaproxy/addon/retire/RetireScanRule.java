@@ -136,7 +136,7 @@ public class RetireScanRule extends PluginPassiveScanner {
 
     private Map<String, String> getAllAlertTags(Result result) {
         Map<String, String> alertTags = new HashMap<>();
-        result.getCves().forEach(value -> alertTags.put(value, ""));
+        result.getCves().forEach(value -> CommonAlertTag.putCve(alertTags, value));
         alertTags.putAll(getAlertTags());
         return alertTags;
     }

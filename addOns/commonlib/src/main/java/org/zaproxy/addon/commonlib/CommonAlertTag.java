@@ -424,4 +424,19 @@ public enum CommonAlertTag {
         }
         return map;
     }
+
+    /**
+     * Inserts a CVE reference and standardized link into the provided map of alert tags.
+     *
+     * @param alertTags the map which the CVE reference and link should be added to.
+     * @param cve the CVE identifier (CVE-YYYY-######) to be added.
+     * @since 1.13.0
+     */
+    public static void putCve(Map<String, String> alertTags, String cve) {
+        alertTags.put(cve, createCveLink(cve));
+    }
+
+    private static String createCveLink(String cve) {
+        return "https://nvd.nist.gov/vuln/detail/" + cve;
+    }
 }
