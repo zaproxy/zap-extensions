@@ -5,7 +5,7 @@ plugins {
 description = "Adds an option to render HTML responses like a browser"
 
 javafx {
-    version = "11"
+    version = if (System.getProperty("os.arch")!!.contains("aarch64")) "17" else "11"
     modules("javafx.swing", "javafx.web")
     configuration = "compileOnly"
 }
