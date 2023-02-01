@@ -21,7 +21,7 @@ plugins {
     jacoco
     id("org.rm3l.datanucleus-gradle-plugin") version "1.7.0" apply false
     id("org.zaproxy.add-on") version "0.8.0" apply false
-    id("org.zaproxy.crowdin") version "0.2.1" apply false
+    id("org.zaproxy.crowdin") version "0.3.1" apply false
     id("me.champeau.gradle.japicmp") version "0.3.0" apply false
 }
 
@@ -207,8 +207,10 @@ subprojects {
             dependsOn(createPullRequestNextDevIter)
 
             if (useCrowdin) {
-                // XXX Depend again once the Crowdin upload task is fixed.
-                // dependsOn(crowdinUploadSourceFiles)
+                dependsOn(crowdinUploadSourceFiles)
+                crowdinUploadSourceFiles {
+                    mustRunAfter(prepareNextDevIter)
+                }
             }
         }
 
