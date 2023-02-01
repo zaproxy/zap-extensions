@@ -45,11 +45,6 @@ public class FormHandlerParam extends AbstractParam {
     private static final String CONFIRM_REMOVE_TOKEN_KEY =
             FORM_HANDLER_BASE_KEY + ".confirmRemoveField";
 
-    private List<FormHandlerParamField> fields = null;
-    private List<String> enabledFieldsNames = null;
-
-    private boolean confirmRemoveField = true;
-
     private static final Map<String, String> DEFAULT_KEY_VALUE_PAIRS = new HashMap<>();
 
     static {
@@ -61,15 +56,20 @@ public class FormHandlerParam extends AbstractParam {
         DEFAULT_KEY_VALUE_PAIRS.put("url", "https://www.example.com");
     }
 
+    private List<FormHandlerParamField> fields;
+    private List<String> enabledFieldsNames;
+
+    private boolean confirmRemoveField = true;
+
     @Override
     protected void parse() {
         try {
-            List<HierarchicalConfiguration> fields =
+            List<HierarchicalConfiguration> configFields =
                     ((HierarchicalConfiguration) getConfig()).configurationsAt(ALL_TOKENS_KEY);
-            this.fields = new ArrayList<>(fields.size());
-            enabledFieldsNames = new ArrayList<>(fields.size());
-            List<String> tempFieldsNames = new ArrayList<>(fields.size());
-            for (HierarchicalConfiguration sub : fields) {
+            this.fields = new ArrayList<>(configFields.size());
+            enabledFieldsNames = new ArrayList<>(configFields.size());
+            List<String> tempFieldsNames = new ArrayList<>(configFields.size());
+            for (HierarchicalConfiguration sub : configFields) {
                 String value = sub.getString(TOKEN_VALUE_KEY, "");
                 String name = sub.getString(TOKEN_NAME_KEY, "");
                 if (!"".equals(name) && !tempFieldsNames.contains(name)) {
@@ -117,14 +117,14 @@ public class FormHandlerParam extends AbstractParam {
             String elementBaseKey = ALL_TOKENS_KEY + "(" + i + ").";
             FormHandlerParamField field = fields.get(i);
 
-            getConfig().setProperty(elementBaseKey + TOKEN_NAME_KEY, field.getName().toLowerCase());
+            getConfig().setProperty(elementBaseKey + TOKEN_NAME_KEY, field.getName());
             getConfig().setProperty(elementBaseKey + TOKEN_VALUE_KEY, field.getValue());
             getConfig()
                     .setProperty(
                             elementBaseKey + TOKEN_ENABLED_KEY, Boolean.valueOf(field.isEnabled()));
 
             if (field.isEnabled()) {
-                enabledFields.add(field.getName().toLowerCase());
+                enabledFields.add(field.getName());
             }
         }
 
@@ -152,9 +152,10 @@ public class FormHandlerParam extends AbstractParam {
             }
         }
 
-        this.fields.add(new FormHandlerParamField(name, value));
+        FormHandlerParamField field = new FormHandlerParamField(name, value);
+        this.fields.add(field);
 
-        this.enabledFieldsNames.add(name);
+        this.enabledFieldsNames.add(field.getName());
     }
 
     /**
@@ -211,8 +212,7 @@ public class FormHandlerParam extends AbstractParam {
     public String getEnabledFieldValue(String name) {
         for (FormHandlerParamField field : fields) {
             if (field.getName().equalsIgnoreCase(name) && field.isEnabled()) {
-                String value = field.getValue();
-                return value;
+                return field.getValue();
             }
         }
         return null;

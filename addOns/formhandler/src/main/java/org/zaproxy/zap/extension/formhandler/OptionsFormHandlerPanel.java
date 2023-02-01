@@ -37,7 +37,7 @@ public class OptionsFormHandlerPanel extends AbstractParamPanel {
 
     private FormHandlerMultipleOptionsPanel fieldsOptionsPanel;
 
-    private OptionsFormHandlerTableModel formHandlerModel = null;
+    private OptionsFormHandlerTableModel formHandlerModel;
 
     public OptionsFormHandlerPanel() {
         super();
@@ -117,10 +117,8 @@ public class OptionsFormHandlerPanel extends AbstractParamPanel {
                 Constant.messages.getString(
                         "formhandler.options.dialog.field.remove.checkbox.label");
 
-        private DialogAddField addDialog = null;
-        private DialogModifyField modifyDialog = null;
-
-        private OptionsFormHandlerTableModel model;
+        private DialogAddField addDialog;
+        private DialogModifyField modifyDialog;
 
         public FormHandlerMultipleOptionsPanel(OptionsFormHandlerTableModel model) {
             super(model);

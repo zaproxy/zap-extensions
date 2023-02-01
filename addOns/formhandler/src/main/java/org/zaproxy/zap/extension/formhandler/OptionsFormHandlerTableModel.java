@@ -103,11 +103,9 @@ public class OptionsFormHandlerTableModel
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        if (columnIndex == 0) {
-            if (aValue instanceof Boolean) {
-                fields.get(rowIndex).setEnabled(((Boolean) aValue).booleanValue());
-                fireTableCellUpdated(rowIndex, columnIndex);
-            }
+        if (columnIndex == 0 && aValue instanceof Boolean) {
+            fields.get(rowIndex).setEnabled(((Boolean) aValue).booleanValue());
+            fireTableCellUpdated(rowIndex, columnIndex);
         }
     }
 }

@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.formhandler;
 
+import java.util.Locale;
 import org.zaproxy.zap.utils.Enableable;
 
 class FormHandlerParamField extends Enableable {
@@ -41,7 +42,7 @@ class FormHandlerParamField extends Enableable {
     public FormHandlerParamField(String name, String value, boolean enabled) {
         super(enabled);
 
-        this.name = name.toLowerCase();
+        this.name = name.toLowerCase(Locale.ROOT);
         this.value = value;
     }
 
@@ -54,7 +55,7 @@ class FormHandlerParamField extends Enableable {
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = name.toLowerCase(Locale.ROOT);
     }
 
     public String getValue() {
