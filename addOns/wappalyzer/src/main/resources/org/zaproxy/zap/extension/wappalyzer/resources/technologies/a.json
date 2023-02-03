@@ -1998,7 +1998,7 @@
       5
     ],
     "description": "Airtable is a low-code platform for building collaborative apps.",
-    "dom": "iframe[scr*='//airtable.com/'], a[href*='//airtable.com/][target='_blank']",
+    "dom": "iframe[scr*='//airtable.com/'], a[href*='//airtable.com/'][target='_blank']",
     "icon": "Airtable.svg",
     "pricing": [
       "freemium",
