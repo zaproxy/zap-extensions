@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [52] - 2023-02-03
 ### Changed
 - The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119 & 7100).
     - Buffer Overflow
@@ -391,6 +391,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[52]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v52
 [51]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v51
 [50]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v50
 [49]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v49
