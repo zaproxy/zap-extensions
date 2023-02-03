@@ -15,6 +15,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Maintenance changes.
 - CVE-2012-1823 Remote Execution and Source Code Disclosure, and Heart Bleed scan rules now include Alert Tags for the applicable CVEs.
 
+### Fixed
+- A false positive that could occur in the External Redirect scan rule if the payload was included in the redirect as a param or portion of the value.
+
 ## [51] - 2023-01-03
 ### Changed
 - Command Injection Scan Rule: Time-based blind detection heuristic has been replaced with linear regression.
