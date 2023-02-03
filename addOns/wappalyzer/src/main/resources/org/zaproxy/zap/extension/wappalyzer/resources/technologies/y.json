@@ -162,6 +162,23 @@
     "scriptSrc": "cdn\\.yampi\\.io/",
     "website": "https://www.yampi.com.br/loja-virtual"
   },
+  "Yandex SmartCaptcha": {
+    "cats": [
+      16
+    ],
+    "description": "Yandex SmartCaptcha is a service for verifying queries to identify user requests and block bots.",
+    "dom": "div#smartcaptcha-status",
+    "headers": {
+      "x-yandex-captcha": ""
+    },
+    "icon": "yandex_smartcaptcha.svg",
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://cloud.yandex.com/en/services/smartcaptcha"
+  },
   "Yandex.Cloud": {
     "cats": [
       62

@@ -437,6 +437,21 @@
     "scripts": "var\\slink\\s=\\s'www\\.parkingcrew\\.net'",
     "website": "https://www.parkingcrew.com"
   },
+  "Parmin Cloud": {
+    "cats": [
+      63
+    ],
+    "description": "Parmin Cloud operates in the field of cloud services.",
+    "icon": "Parmin Cloud.svg",
+    "headers": {
+      "x-powered-by": "^ParminCloud$"
+    },
+    "pricing": [
+      "poa",
+      "payg"
+    ],
+    "website": "https://parmin.cloud"
+  },
   "Pars Elecom Portal": {
     "cats": [
       1
@@ -520,9 +535,10 @@
       92
     ],
     "description": "Partytown is a lazy-loaded library to help relocate resource intensive scripts into a web worker, and off of the main thread.",
+    "dom": "script[type*='text/partytown']",
     "icon": "Partytown.svg",
     "js": {
-      "partytown.lib": ""
+      "partytown": ""
     },
     "oss": true,
     "website": "https://partytown.builder.io/"
@@ -1350,6 +1366,16 @@
     ],
     "website": "https://trypico.com"
   },
+  "Pico CSS": {
+    "cats": [
+      66
+    ],
+    "description": "Pico CSS is a minimal CSS framework for semantic HTML, without using classes.",
+    "icon": "Pico CSS.svg",
+    "dom": "link[href*='/pico.min.css']",
+    "oss": true,
+    "website": "https://picocss.com"
+  },
   "Picreel": {
     "cats": [
       77,
@@ -1848,6 +1874,24 @@
     },
     "website": "http://www.po.st/"
   },
+  "Pocket": {
+    "cats": [
+      5
+    ],
+    "description": "Pocket is a social bookmarking service that can be integrated into a website with the use of a web widget.",
+    "dom": "iframe[src*='widgets.getpocket.com/']",
+    "icon": "pocket.svg",
+    "meta": {
+      "pocket-site-verification'": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "scriptSrc": "widgets\\.getpocket\\.com/",
+    "website": "https://getpocket.com"
+  },
   "Podia": {
     "cats": [
       21,
@@ -2081,6 +2125,24 @@
       "(?:affiliate|associate)\\..+/scripts/trackjs\\.js"
     ],
     "website": "https://www.postaffiliatepro.com"
+  },
+  "PostHog": {
+    "cats": [
+      10
+    ],
+    "description": "PostHog is the open-source, all-in-one product analytics platform.",
+    "icon": "PostHog.svg",
+    "js": {
+      "posthog": ""
+    },
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "saas": true,
+    "oss": true,
+    "scriptSrc": "app\\.posthog\\.com/",
+    "website": "https://posthog.com"
   },
   "PostNL": {
     "cats": [

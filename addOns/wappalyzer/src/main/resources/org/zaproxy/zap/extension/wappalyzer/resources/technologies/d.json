@@ -106,7 +106,7 @@
       "<!-- by DotNetNuke Corporation",
       "<!-- DNN Platform"
     ],
-    "icon": "DNN.png",
+    "icon": "DNN.svg",
     "implies": "Microsoft ASP.NET",
     "js": {
       "DotNetNuke": "",
@@ -172,6 +172,24 @@
       "\\bDX\\b"
     ],
     "website": "https://www.dxdelivery.com"
+  },
+  "DX1": {
+    "cats": [
+      53
+    ],
+    "description": "DX1 is an entirely cloud-based dealership management system for the motorcycle and powersports industry. Offering DMS, website, CRM and marketing tools.",
+    "icon": "DX1.png",
+    "js": {
+      "Dx1.Dnn": ""
+    },
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "requires": "DNN",
+    "saas": true,
+    "scriptSrc": "\\.dx1app\\.com/",
+    "website": "https://www.dx1app.com"
   },
   "Dachser": {
     "cats": [
@@ -594,6 +612,19 @@
     "saas": true,
     "website": "https://deno.land/"
   },
+  "Depict": {
+    "cats": [
+      76
+    ],
+    "description": "Depict is an ecommerce personalisation solution for fashion.",
+    "dom": "link[href*='.depict.ai/']",
+    "icon": "Depict.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://depict.ai"
+  },
   "DeskPro": {
     "cats": [
       1,
@@ -936,6 +967,11 @@
       87
     ],
     "description": "Divi is a WordPress Theme and standalone WordPress plugin from Elegant themes that allows users to build websites using the visual drag-and-drop Divi page builder.",
+    "dom": {
+      "style#divi-style-parent-inline-inline-css": {
+        "text": "Version\\:\\s([\\d\\.]+)\\;version:\\1"
+      }
+    },
     "icon": "Divi.svg",
     "js": {
       "DIVI": ""
@@ -1067,10 +1103,14 @@
       "Webpack"
     ],
     "js": {
-      "search.indexName": ""
+      "search.indexName": "",
+      "docusaurus": "",
+      "__DOCUSAURUS_INSERT_BASEURL_BANNER": ""
     },
     "meta": {
-      "generator": "^Docusaurus(?: v(.+))?$\\;version:\\1"
+      "generator": "^Docusaurus(?: v(.+))?$\\;version:\\1",
+      "docusaurus_locale": "",
+      "docusaurus_tag": ""
     },
     "website": "https://docusaurus.io/"
   },
@@ -1172,6 +1212,45 @@
     "saas": true,
     "scriptSrc": "/wp-content/plugins/iwd-checkout-connector/",
     "website": "https://www.dominate.co/woocommerce"
+  },
+  "DonorPerfect": {
+    "cats": [
+      111
+    ],
+    "description": "DonorPerfect is a fundraising management software.",
+    "dom": {
+      "a[href*='.donorperfect.']": {
+        "attributes": {
+          "href": "\\.donorperfect\\.(?:com|net)"
+        }
+      }
+    },
+    "icon": "DonorPerfect.svg",
+    "pricing": [
+      "recurring",
+      "mid"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.donorperfect\\.net/",
+    "website": "https://www.donorperfect.com"
+  },
+  "Donorbox": {
+    "cats": [
+      111
+    ],
+    "description": "Donorbox is a US-based technology company. It offers an online fundraising software that allows individuals and nonprofit organisations to receive donations over the Internet.",
+    "dom": "a[href*='//donorbox.org/'], iframe[src*='//donorbox.org/']",
+    "icon": "Donorbox.svg",
+    "js": {
+      "DONORBOX": "",
+      "DonorBox": "",
+      "donorbox_check_donation_period": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://donorbox.org"
   },
   "Doofinder": {
     "cats": [
@@ -1346,6 +1425,27 @@
     "scriptSrc": "dttrk\\.com",
     "website": "https://dovetale.com/"
   },
+  "Download Monitor": {
+    "cats": [
+      87
+    ],
+    "description": "Download Monitor is a plugin for selling, uploading and managing downloads, tracking downloads and displaying links.",
+    "dom": "link[href*='/wp-content/plugins/download-monitor/']",
+    "icon": "Download Monitor.png",
+    "js": {
+      "DLM_XHR_Download": "",
+      "dlmXHR.prevent_duplicates": ""
+    },
+    "meta": {
+      "dlm-version": "^([\\d\\.]+)$\\;version:\\1"
+    },
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "website": "https://www.download-monitor.com"
+  },
   "Doxygen": {
     "cats": [
       4
@@ -1358,27 +1458,6 @@
       "generator": "Doxygen ([\\d.]+)\\;version:\\1"
     },
     "website": "http://www.doxygen.nl/"
-  },
-  "Download Monitor": {
-    "cats": [
-      87
-    ],
-    "description": "Download Monitor is a plugin for selling, uploading and managing downloads, tracking downloads and displaying links.",
-    "dom": "link[href*='/wp-content/plugins/download-monitor/']",
-    "icon": "Download Monitor.png",
-    "meta": {
-      "dlm-version": "^([\\d\\.]+)$\\;version:\\1"
-    },
-    "js": {
-      "DLM_XHR_Download": "",
-      "dlmXHR.prevent_duplicates": ""
-    },
-    "pricing": [
-      "freemium",
-      "onetime"
-    ],
-    "requires": "WordPress",
-    "website": "https://www.download-monitor.com"
   },
   "Draft.js": {
     "cats": [
@@ -1474,7 +1553,7 @@
     "description": "Dreamweaver is a development tool for creating, publishing, and managing websites and mobile content.",
     "html": [
       "<!--[^>]*(?:InstanceBeginEditable|Dreamweaver([^>]+)target|DWLayoutDefaultTable)\\;version:\\1",
-      "<!-- #BeginDate format:"
+      "<!-- #BeginTemplate\\s\"[\\d_\\w/]+\\.dwt"
     ],
     "icon": "DreamWeaver.png",
     "js": {

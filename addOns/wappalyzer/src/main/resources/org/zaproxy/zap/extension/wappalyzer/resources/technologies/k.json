@@ -347,7 +347,8 @@
       1
     ],
     "cookies": {
-      "CMSPreferredCulture": ""
+      "CMSPreferredCulture": "",
+      "CMSCookieLevel": ""
     },
     "cpe": "cpe:2.3:a:kentico:kentico_cms:*:*:*:*:*:*:*:*",
     "description": "Kentico CMS is a web content management system for building websites, online stores, intranets, and Web 2.0 community sites.",
@@ -362,7 +363,10 @@
       "poa"
     ],
     "saas": true,
-    "scriptSrc": "/CMSPages/GetResource\\.ashx",
+    "scriptSrc": [
+      "/CMSPages/GetResource\\.ashx",
+      "/kentico\\.resource"
+    ],
     "website": "http://www.kentico.com"
   },
   "Keptify": {
@@ -535,6 +539,26 @@
     "saas": true,
     "url": "/modules/kiliba/logo\\.png",
     "website": "https://en.kiliba.com"
+  },
+  "Kindful": {
+    "cats": [
+      111
+    ],
+    "description": "Kindful is a cloud-based donor management and fundraising software and database designed for nonprofit organisations.",
+    "dom": "a[href*='.kindful.com/']",
+    "icon": "Kindful.svg",
+    "js": {
+      "Bloomerang.version": "([\\d\\.]+)\\;version:\\1",
+      "KindfulPaymentsConnect": "",
+      "bloomerangLoadStarted": "",
+      "kindful_gtag": ""
+    },
+    "pricing": [
+      "recurring",
+      "mid"
+    ],
+    "saas": true,
+    "website": "https://kindful.com"
   },
   "KineticJS": {
     "cats": [

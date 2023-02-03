@@ -635,6 +635,22 @@
     "url": "mybigcommerce\\.com",
     "website": "http://www.bigcommerce.com"
   },
+  "BigDataCloud IP Geolocation": {
+    "cats": [
+      79
+    ],
+    "description": "BigDataCloud IP Geolocation API provides detailed and accurate locality and security metrics of an IP address.",
+    "icon": "BigDataCloud-IPGeolocation.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "bigdatacloud\\.net/",
+    "website": "https://www.bigdatacloud.com/packages/ip-geolocation",
+    "xhr": "bigdatacloud\\.net/"
+  },
   "BigTree CMS": {
     "cats": [
       1
@@ -802,7 +818,7 @@
   },
   "Blackbaud CRM": {
     "cats": [
-      53
+      111
     ],
     "description": "Blackbaud CRM gathers fundraising, online applications, actionable prospect research and analytics, and multichannel direct marketing into one platform.",
     "icon": "Blackbaud.png",
@@ -2398,6 +2414,14 @@
     "scriptSrc": "CatalystScripts",
     "website": "http://businesscatalyst.com"
   },
+  "Business Website Builder": {
+    "cats": [
+      1
+    ],
+    "icon": "Google.svg",
+    "url": "https?://[^.]+\\.business\\.page",
+    "website": "https://businesswebsites.google.com/welcome"
+  },
   "ButterCMS": {
     "cats": [
       1
@@ -2415,7 +2439,7 @@
   "Buy me a coffee": {
     "cats": [
       5,
-      41
+      111
     ],
     "description": "Buy me a coffee is a service for online content creators that they may use to receive tips and donations to support their work.",
     "dom": "a[href*='www.buymeacoffee.com/'][target='_blank']",

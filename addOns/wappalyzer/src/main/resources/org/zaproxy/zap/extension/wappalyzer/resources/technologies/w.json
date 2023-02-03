@@ -327,7 +327,8 @@
   },
   "WPForms": {
     "cats": [
-      87
+      87,
+      110
     ],
     "description": "WPForms is a drag and drop WordPress form builder.",
     "icon": "WPForms.svg",
@@ -751,12 +752,12 @@
     "meta": {
       "generator": "Webflow"
     },
-    "saas": true,
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
+    "saas": true,
     "website": "https://webflow.com"
   },
   "Webflow Ecommerce": {
@@ -768,12 +769,12 @@
     "js": {
       "__WEBFLOW_CURRENCY_SETTINGS": ""
     },
-    "requires": "Webflow",
-    "saas": true,
     "pricing": [
       "low",
       "recurring"
     ],
+    "requires": "Webflow",
+    "saas": true,
     "website": "https://webflow.com/ecommerce"
   },
   "Webgains": {
@@ -958,6 +959,22 @@
       "generator": "WebsiteBaker"
     },
     "website": "http://websitebaker2.org/en/home.php"
+  },
+  "WebsiteBuilder": {
+    "cats": [
+      51
+    ],
+    "description": "WebsiteBuilder is a page-builder for creating web pages without knowledge of programming languages.",
+    "icon": "WebsiteBuilder.svg",
+    "js": {
+      "_site.urls.dataproxy": "\\.mywebsitebuilder\\.com"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.websitebuilder.com"
   },
   "Websocket": {
     "cats": [

@@ -127,6 +127,21 @@
     "scriptSrc": "zanox\\.com/scripts/zanox\\.js$",
     "website": "http://zanox.com"
   },
+  "Zeald": {
+    "cats": [
+      6
+    ],
+    "description": "Zeald is a full-service website design and digital marketing company.",
+    "icon": "Zeald.png",
+    "requires": "Cart Functionality",
+    "cookies": {
+      "ZES_BACKEND": "zeald"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.zeald.com"
+  },
   "Zeleris": {
     "cats": [
       99
@@ -630,6 +645,22 @@
     },
     "icon": "Zope.png",
     "website": "http://zope.org"
+  },
+  "Zotabox": {
+    "cats": [
+      32
+    ],
+    "description": "Zotabox is marketing tool which includes popups, header bars, page/form builder, testimonial, live chat, etc.",
+    "icon": "zotabox.png",
+    "js": {
+      "Zotabox": "",
+      "Zotabox_Init ": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://info.zotabox.com"
   },
   "Zozo": {
     "cats": [

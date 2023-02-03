@@ -644,6 +644,20 @@
     "scriptSrc": "api\\.oneall\\.com/socialize",
     "website": "https://www.oneall.com"
   },
+  "OneCause": {
+    "cats": [
+      111
+    ],
+    "description": "OneCause is a fundraising platform designed for nonprofits to manage all types of fundraising campaigns.",
+    "dom": "a[href*='.onecause.com/'][target='_blank']",
+    "icon": "OneCause.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.onecause\\.com/",
+    "website": "https://www.onecause.com"
+  },
   "OnePage Express": {
     "cats": [
       80
@@ -723,7 +737,7 @@
     "dns": {
       "TXT": "onetrust-domain-verification="
     },
-    "icon": "OneTrust.png",
+    "icon": "OneTrust.svg",
     "scriptSrc": [
       "cdn\\.cookielaw\\.org",
       "optanon\\.blob\\.core\\.windows\\.net",
@@ -1139,6 +1153,18 @@
       "https?://[^/]*\\.servedbyopenx\\.com"
     ],
     "website": "http://openx.com"
+  },
+  "OperateBeyond": {
+    "cats": [
+      53
+    ],
+    "description": "OperateBeyond is a software development company that offers website design, automated inventory management, CRM, dealer websites, and DMS.",
+    "icon": "OperateBeyond.png",
+    "pricing": [
+      "poa"
+    ],
+    "scriptSrc": "//dealer-cdn\\.com/",
+    "website": "https://operatebeyond.com/dealer-websites-marketing"
   },
   "OpinionLab": {
     "cats": [
