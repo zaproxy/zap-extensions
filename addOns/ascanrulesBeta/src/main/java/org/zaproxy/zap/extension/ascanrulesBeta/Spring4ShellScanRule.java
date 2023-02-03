@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
@@ -46,14 +47,19 @@ public class Spring4ShellScanRule extends AbstractAppPlugin {
     private static final String SAFE_PAYLOAD = "aaa=bbb";
 
     private static final Logger LOGGER = LogManager.getLogger(Spring4ShellScanRule.class);
+    private static final String CVE = "CVE-2022-22965";
+    private static final Map<String, String> ALERT_TAGS = new HashMap<>();
 
-    private static final Map<String, String> ALERT_TAGS =
-            CommonAlertTag.toMap(
-                    CommonAlertTag.OWASP_2021_A03_INJECTION,
-                    CommonAlertTag.OWASP_2021_A06_VULN_COMP,
-                    CommonAlertTag.OWASP_2017_A01_INJECTION,
-                    CommonAlertTag.OWASP_2017_A09_VULN_COMP,
-                    CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ);
+    static {
+        ALERT_TAGS.putAll(
+                CommonAlertTag.toMap(
+                        CommonAlertTag.OWASP_2021_A03_INJECTION,
+                        CommonAlertTag.OWASP_2021_A06_VULN_COMP,
+                        CommonAlertTag.OWASP_2017_A01_INJECTION,
+                        CommonAlertTag.OWASP_2017_A09_VULN_COMP,
+                        CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ));
+        CommonAlertTag.putCve(ALERT_TAGS, CVE);
+    }
 
     @Override
     public int getId() {
