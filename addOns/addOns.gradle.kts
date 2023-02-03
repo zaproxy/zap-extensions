@@ -208,8 +208,10 @@ subprojects {
 
             if (useCrowdin) {
                 dependsOn(crowdinUploadSourceFiles)
-                crowdinUploadSourceFiles {
-                    mustRunAfter(prepareNextDevIter)
+                if (crowdinUploadSourceFiles!!.isPresent) {
+                    crowdinUploadSourceFiles {
+                        mustRunAfter(createPullRequestNextDevIter)
+                    }
                 }
             }
         }
