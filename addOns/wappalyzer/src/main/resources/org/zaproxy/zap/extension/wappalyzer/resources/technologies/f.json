@@ -1289,18 +1289,53 @@
     "cats": [
       1
     ],
+    "description": "Fork CMS is an open-source content management system.",
     "cpe": "cpe:2.3:a:fork-cms:fork_cms:*:*:*:*:*:*:*:*",
     "icon": "ForkCMS.png",
     "implies": "Symfony",
     "meta": {
       "generator": "^Fork CMS$"
     },
-    "website": "http://www.fork-cms.com/"
+    "oss": true,
+    "website": "http://www.fork-cms.com"
+  },
+  "Formaloo": {
+    "cats": [
+      110
+    ],
+    "description": "Formaloo is a no-code collaboration platform that helps businesses create custom data-driven business applications and internal tools, automate their processes and engage their audience.",
+    "icon": "Formaloo.svg",
+    "dom": "iframe[src*='//formaloo.net/']",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "//formaloo\\.net/",
+    "website": "https://www.formaloo.com"
+  },
+  "FormAssembly": {
+    "cats": [
+      110
+    ],
+    "description": "FormAssembly is a platform that enables to collection of data and processing via workflow.",
+    "dom": "form[action*='tfaforms.net'], iframe[src*='tfaforms.net']",
+    "icon": "FormAssembly.svg",
+    "js": {
+      "wFORMS.VERSION": "^(.+)$\\;version:\\1"
+    },
+    "pricing": [
+      "recurring",
+      "low"
+    ],
+    "website": "https://www.formassembly.com"
   },
   "Formidable Form": {
     "cats": [
       87,
-      73
+      73,
+      110
     ],
     "description": "Formidable Forms is a WordPress plugin that enables you to create quizzes, surveys, calculators, timesheets, multi-page application forms.",
     "dom": "link[href*='/wp-content/plugins/formidable/']",
@@ -1981,10 +2016,10 @@
   },
   "Fundraise Up": {
     "cats": [
-      41
+      111
     ],
     "description": "Fundraise Up is a platform for online donations.",
-    "icon": "fundraise_up.png",
+    "icon": "Fundraise Up.svg",
     "js": {
       "FundraiseUp": ""
     },
@@ -1992,6 +2027,7 @@
       "payg",
       "recurring"
     ],
+    "scriptSrc": "\\.fundraiseup\\.com/",
     "website": "https://fundraiseup.com"
   },
   "FunnelCockpit": {
@@ -2008,6 +2044,24 @@
     "saas": true,
     "scriptSrc": "\\.funnelcockpit\\.com/",
     "website": "https://funnelcockpit.com"
+  },
+  "Funraise": {
+    "cats": [
+      111
+    ],
+    "description": "Funraise is a nonprofit fundraising platform that enables organisations to build fundraising websites as well as manage donations and campaigns.",
+    "dom": "a[href*='.funraise.org/']",
+    "icon": "Funraise.svg",
+    "js": {
+      "FR.IMAGE_BASE_URL": "\\.funraise\\.io"
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://funraise.org"
   },
   "FurnitureDealer": {
     "cats": [

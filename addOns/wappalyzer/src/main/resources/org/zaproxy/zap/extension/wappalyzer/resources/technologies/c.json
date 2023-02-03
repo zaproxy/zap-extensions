@@ -293,7 +293,6 @@
       "Server": "^Caddy$"
     },
     "icon": "caddy.svg",
-    "implies": "Go",
     "website": "http://caddyserver.com"
   },
   "Cafe24": {
@@ -332,7 +331,8 @@
   },
   "Caldera Forms": {
     "cats": [
-      87
+      87,
+      110
     ],
     "description": "Caldera Forms is the free WordPress form builder plugin.",
     "dom": {
@@ -1226,7 +1226,6 @@
   "Checkfront": {
     "cats": [
       5,
-      6,
       72
     ],
     "description": "Checkfront is a cloud-based booking management application and ecommerce platform.",
@@ -1239,6 +1238,25 @@
     "saas": true,
     "scriptSrc": "\\.checkfront\\.com/",
     "website": "https://www.checkfront.com"
+  },
+  "Checkly": {
+    "cats": [
+      13
+    ],
+    "description": "Checkly is the API and E2E monitoring platform for the modern stack: programmable, flexible and loving JavaScript.",
+    "icon": "Checkly.svg",
+    "requires": "Nuxt.js",
+    "js": {
+      "__NUXT__.config.public.apiUrl": "api\\.checklyhq\\.com"
+    },
+    "pricing": [
+      "freemium",
+      "recurring",
+      "mid"
+    ],
+    "saas": true,
+    "xhr": "api\\.checklyhq\\.com/",
+    "website": "https://www.checklyhq.com"
   },
   "Checkout.com": {
     "cats": [
@@ -1754,6 +1772,20 @@
     ],
     "website": "https://www.cleverbridge.com"
   },
+  "Click & Pledge": {
+    "cats": [
+      111
+    ],
+    "description": "Click & Pledge is an all-in-one digital fundraising platform.",
+    "dom": "a[href*='.clickandpledge.com/']",
+    "icon": "Click & Pledge.png",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.clickandpledge\\.com/",
+    "website": "https://clickandpledge.com"
+  },
   "ClickCease": {
     "cats": [
       16
@@ -2028,6 +2060,20 @@
     },
     "website": "https://support.cloudflare.com/hc/en-us/articles/200168056-Understanding-Rocket-Loader"
   },
+  "Cloudflare Stream": {
+    "cats": [
+      14,
+      103
+    ],
+    "description": "Cloudflare Stream is a serverless live and on-demand video streaming platform.",
+    "dom": "iframe[src*='.cloudflarestream\\.com'], iframe[src*='iframe\\.videodelivery\\.net/']",
+    "icon": "CloudFlare.svg",
+    "pricing": [
+      "recurring",
+      "mid"
+    ],
+    "website": "https://www.cloudflare.com/products/cloudflare-stream"
+  },
   "Cloudflare Turnstile": {
     "cats": [
       16
@@ -2043,6 +2089,23 @@
     ],
     "saas": true,
     "website": "https://www.cloudflare.com/products/turnstile"
+  },
+  "Cloudflare Workers": {
+    "cats": [
+      62
+    ],
+    "description": "Cloudflare Workers is a serverless execution environment that allows you to create entirely new applications or augment existing ones without configuring or maintaining infrastructure.",
+    "xhr": "\\.workers\\.dev",
+    "icon": "Cloudflare Workers.svg",
+    "implies": [
+      "Cloudflare"
+    ],
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://workers.cloudflare.com"
   },
   "Cloudflare Zaraz": {
     "cats": [
@@ -2646,6 +2709,20 @@
     "website": "https://commerce7.com",
     "xhr": "api\\.commerce7\\.com"
   },
+  "Community Funded": {
+    "cats": [
+      111
+    ],
+    "description": "Community Funded is a digital fundraising and engagement platform.",
+    "icon": "Community Funded.png",
+    "dom": "a[href*='//give.communityfunded.com/']",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "//give\\.communityfunded\\.com/",
+    "website": "https://www.communityfunded.com"
+  },
   "Complianz": {
     "cats": [
       74,
@@ -2806,7 +2883,8 @@
   },
   "Contact Form 7": {
     "cats": [
-      87
+      87,
+      110
     ],
     "description": "Contact Form 7 is an WordPress plugin which can manage multiple contact forms. The form supports Ajax-powered submitting, CAPTCHA, Akismet spam filtering.",
     "dom": "link[href*='/wp-content/plugins/contact-form-7/']",
@@ -3141,6 +3219,20 @@
     "saas": true,
     "scriptSrc": "cdn\\.conveythis\\.com",
     "website": "https://www.conveythis.com/"
+  },
+  "Conviva": {
+    "cats": [
+      14,
+      103
+    ],
+    "description": "Conviva is a census, continuous measurement and engagement platform for streaming media.",
+    "icon": "conviva.svg",
+    "js": {
+      "Conviva": "",
+      "Conviva.Client": "",
+      "Conviva.Client.version": "^([0-9\\.]+)$\\;version:\\1"
+    },
+    "website": "https://www.conviva.com"
   },
   "Cookie Information": {
     "cats": [
@@ -3674,6 +3766,22 @@
     "scriptSrc": "cdn\\.crobox\\.com",
     "website": "https://crobox.com/"
   },
+  "Crocoblock JetElements": {
+    "cats": [
+      87
+    ],
+    "description": "Crocoblock JetElements is an addon for Elementor that adds additional customisation options to the page builder.",
+    "icon": "Crocoblock.svg",
+    "js": {
+      "jetElements": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "Elementor",
+    "website": "https://crocoblock.com/plugins/jetelements"
+  },
   "Cross Pixel": {
     "cats": [
       77
@@ -4096,6 +4204,10 @@
       "poa",
       "recurring"
     ],
+    "js": {
+      "COMMERCE_TOOLS_HOST_ATT": "",
+      "COMMERCE_TOOLS_PROJECT_KEY_ATT": ""
+    },
     "saas": true,
     "website": "https://commercetools.com"
   },

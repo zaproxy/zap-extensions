@@ -1055,8 +1055,22 @@
       "SOA": "\\.(?:dns-parking|hostinger)\\.com"
     },
     "headers": {
-      "Platform": "hostinger",
-      "Server": "hcdn"
+      "platform": "hostinger"
+    },
+    "icon": "Hostinger.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://www.hostinger.com"
+  },
+  "Hostinger CDN": {
+    "cats": [
+      31
+    ],
+    "description": "Hostinger Content Delivery Network (CDN).",
+    "headers": {
+      "server": "hcdn"
     },
     "icon": "Hostinger.svg",
     "pricing": [
@@ -1366,7 +1380,8 @@
   "HulkApps Form Builder": {
     "cats": [
       73,
-      100
+      100,
+      110
     ],
     "description": "HulkApps Form Builder is an application that creates customizable, job-specific forms for unit needs.",
     "icon": "HulkApps.svg",

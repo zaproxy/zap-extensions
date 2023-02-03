@@ -62,6 +62,24 @@
     "oss": true,
     "website": "https://lagoon.sh/"
   },
+  "Landbot": {
+    "cats": [
+      52
+    ],
+    "description": "Landbot is a no code conversational chatbots, conversational landing pages and website, interactive survey and lead generation bot.",
+    "icon": "landbot.svg",
+    "js": {
+      "LandbotLivechat": "",
+      "initLandbot": ""
+    },
+    "pricing": [
+      "recurring",
+      "freemium",
+      "mid"
+    ],
+    "scriptSrc": "\\.landbot\\.io/.*-([\\d\\.]+)\\.js",
+    "website": "https://landbot.io"
+  },
   "LangShop": {
     "cats": [
       100,
@@ -539,6 +557,20 @@
     "scriptSrc": "\\.lexity\\.com/",
     "website": "http://lexity.com"
   },
+  "LGC": {
+    "cats": [
+      1
+    ],
+    "description": "LGC is a modern CMS designed to improve the management of your website.",
+    "icon": "LGC.png",
+    "meta": {
+      "generator": "^LGC$"
+    },
+    "pricing": [
+      "onetime"
+    ],
+    "website": "https://luigigabrieleconti.com"
+  },
   "Liberapay": {
     "cats": [
       41
@@ -971,6 +1003,23 @@
     ],
     "saas": true,
     "website": "https://www.liveagent.com"
+  },
+  "LiveCanvas": {
+    "cats": [
+      87,
+      51
+    ],
+    "description": "LiveCanvas is a Bootstrap 5 WordPress page builder.",
+    "icon": "LiveCanvas.svg",
+    "implies": "Bootstrap",
+    "pricing": [
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/livecanvas/",
+    "website": "https://livecanvas.com"
   },
   "LiveChat": {
     "cats": [
@@ -1454,6 +1503,26 @@
     "saas": true,
     "scriptSrc": "loja2\\.com\\.br",
     "website": "https://www.loja2.com.br"
+  },
+  "Loom": {
+    "cats": [
+      103
+    ],
+    "dns": {
+      "TXT": "loom-verification"
+    },
+    "icon": "Loom.svg",
+    "saas": true,
+    "pricing": [
+      "freemium",
+      "recurring",
+      "payg"
+    ],
+    "xhr": [
+      "loom\\.com/api",
+      "luna\\.loom\\.com"
+    ],
+    "website": "https://www.loom.com"
   },
   "Loop Returns": {
     "cats": [

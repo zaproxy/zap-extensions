@@ -524,6 +524,21 @@
     },
     "website": "http://eleanor-cms.ru"
   },
+  "Element": {
+    "cats": [
+      52
+    ],
+    "description": "Element is a Matrix-based end-to-end encrypted messenger and secure collaboration app.",
+    "icon": "elementio.svg",
+    "meta": {
+      "application-name": "^Element$"
+    },
+    "pricing": [
+      "payg",
+      "low"
+    ],
+    "website": "https://element.io"
+  },
   "Element UI": {
     "cats": [
       12
@@ -593,6 +608,24 @@
     ],
     "website": "https://github.com/brainstormforce/header-footer-elementor"
   },
+  "ElementsKit": {
+    "cats": [
+      87
+    ],
+    "description": "ElementsKit is an addon for Elementor that adds additional customisation options to the page builder.",
+    "icon": "elementskit.svg",
+    "js": {
+      "ElementsKit_Helper": "",
+      "elementskit": ""
+    },
+    "pricing": [
+      "onetime",
+      "mid",
+      "recurring"
+    ],
+    "requires": "Elementor",
+    "website": "https://wpmet.com/plugin/elementskit"
+  },
   "Elevar": {
     "cats": [
       10
@@ -638,6 +671,23 @@
     "saas": true,
     "scriptSrc": "\\.elfsight\\.com/",
     "website": "https://elfsight.com"
+  },
+  "Ellucian CRM Recruit": {
+    "cats": [
+      53,
+      101
+    ],
+    "description": "Ellucian CRM Recruit is a comprehensive solution that supports your entire recruiting and admissions lifecycle.",
+    "dom": " a[href*='.elluciancrmrecruit.com/']",
+    "icon": "Ellucian CRM Recruit.svg",
+    "js": {
+      "Ellucian.Recruit": "",
+      "ellucianAddressChooseLabel": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.ellucian.com/solutions/ellucian-crm-recruit"
   },
   "Elm": {
     "cats": [
@@ -1353,6 +1403,21 @@
     "scriptSrc": "everflow\\.js",
     "website": "https://www.everflow.io"
   },
+  "EveryAction": {
+    "cats": [
+      111
+    ],
+    "description": "EveryAction provides fundraising software, donor management software, and CRM software to nonprofit organisations.",
+    "dom": "a[href*='secure.everyaction.com/'], div[data-form-url*='secure.everyaction.com/']",
+    "icon": "EveryAction.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.everyaction\\.com/",
+    "website": "https://www.everyaction.com"
+  },
   "Eveve": {
     "cats": [
       5,
@@ -1491,6 +1556,25 @@
     "saas": true,
     "scriptSrc": "expertrec\\.com/api/js/ci_common\\.js\\?id=.*",
     "website": "https://www.expertrec.com/"
+  },
+  "Expivi": {
+    "cats": [
+      105
+    ],
+    "description": "Expivi specialises in 3D visualisation technology for ecommerce stores.",
+    "icon": "Expivi.svg",
+    "dom": "iframe[src*='.expivi.net/']",
+    "js": {
+      "ExpiviComponent": "",
+      "expivi": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.expivi\\.(?:com|net)/",
+    "website": "https://www.expivi.com"
   },
   "Exponea": {
     "cats": [

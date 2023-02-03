@@ -756,5 +756,19 @@
     ],
     "name": "Domain parking",
     "priority": 9
+  },
+  "110": {
+    "groups": [
+      8
+    ],
+    "name": "Form builders",
+    "priority": 8
+  },
+  "111": {
+    "groups": [
+      6
+    ],
+    "name": "Fundraising & donations",
+    "priority": 9
   }
 }

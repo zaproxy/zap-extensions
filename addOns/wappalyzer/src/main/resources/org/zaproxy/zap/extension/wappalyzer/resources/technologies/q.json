@@ -25,6 +25,21 @@
     "scriptSrc": "widgets\\.q4app\\.com/widgets/q4\\.cookiemonster\\.([\\d\\.]+)\\.min\\.js\\;version:\\1",
     "website": "https://q4mobile.github.io/q4widgets-jquery-ui/doc_html/q4.cookieMonster.html"
   },
+  "Qgiv": {
+    "cats": [
+      111
+    ],
+    "description": "Qgiv is an online fundraising platform helping nonprofit, faith-based, healthcare, and education organisations raise funds.",
+    "dom": "a[href*='//secure.qgiv.com/']",
+    "icon": "Qgiv.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "//secure\\.qgiv\\.com/",
+    "website": "https://www.qgiv.com"
+  },
   "Qikify": {
     "cats": [
       100
