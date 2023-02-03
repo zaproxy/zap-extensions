@@ -274,6 +274,24 @@ class CookieUtilsUnitTest {
         assertThat(expired, is(equalTo(false)));
     }
 
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "sessionId=38afes7a8",
+                "sessionId=a3fWa; Expires=Wed, 21 Oct 2015 07:28:00 GMT",
+                "sessionId=a3fWa; Max-Age=2592000",
+                "sessionId=219ffwef9w0f; Domain=somecompany.pt",
+                "sessionId=34d8g; SameSite=None; Secure; Path=/; Partitioned;",
+                "sessionId=value123; HttpOnly",
+                "sessionId=value123; Path=/lala/",
+            })
+    void shouldGetTheCorrectCookieName(String headerValue) {
+        // When / When
+        String name = CookieUtils.getCookieName(headerValue);
+        // Then
+        assertThat(name, is(equalTo("sessionId")));
+    }
+
     static Stream<String> expiresFutureProvider() {
         ZonedDateTime future =
                 ZonedDateTime.ofInstant(Instant.now().plus(1, ChronoUnit.DAYS), ZoneOffset.UTC);

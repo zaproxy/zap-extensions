@@ -119,8 +119,9 @@ public final class CookieUtils {
         }
 
         int nameValuePairIdx = cookieHeaderValue.indexOf('=');
+        int semicolonIdx = cookieHeaderValue.indexOf(';');
         if (nameValuePairIdx == NOT_FOUND
-                || cookieHeaderValue.indexOf('=') > cookieHeaderValue.indexOf(';')) {
+                || (semicolonIdx != NOT_FOUND && nameValuePairIdx > semicolonIdx)) {
             return null;
         }
 

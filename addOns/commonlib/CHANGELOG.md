@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add info URL.
 - Constant for default number of threads.
 
+### Fixed
+- Correctly parse cookie name when set-cookie header value doesn't end with semicolon.
+
 ## [1.12.0] - 2022-12-13
 ### Added
 - Provide HTTP Fields names.
