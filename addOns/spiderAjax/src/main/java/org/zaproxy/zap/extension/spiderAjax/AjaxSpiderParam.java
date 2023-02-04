@@ -292,8 +292,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
     protected void updateConfigsImpl(int fileVersion) {
         switch (fileVersion) {
             case NO_CONFIG_VERSION:
-                // No updates/changes needed, the configurations were not previously persisted
-                // and the current version is already written after this method.
+                setAllowedResources(DEFAULT_ALLOWED_RESOURCES);
                 break;
             case 1:
                 String crawlInDepthKey = AJAX_SPIDER_BASE_KEY + ".crawlInDepth";

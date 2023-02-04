@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.spiderAjax;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
@@ -30,6 +31,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.MockedStatic;
 import org.parosproxy.paros.Constant;
@@ -63,6 +65,22 @@ class AjaxSpiderParamUnitTest {
     @Test
     void shouldHaveConfigVersionKey() {
         assertThat(param.getConfigVersionKey(), is(equalTo("ajaxSpider[@version]")));
+    }
+
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(ints = {1, 2, 3, 4})
+    void shouldHaveAllowedResourcesByDefault(Integer version) {
+        // Given
+        configuration.setProperty(param.getConfigVersionKey(), version);
+        // When
+        param.load(configuration);
+        // Then
+        assertThat(
+                param.getAllowedResources(),
+                contains(
+                        allowedResource("^http.*\\.js(?:\\?.*)?$"),
+                        allowedResource("^http.*\\.css(?:\\?.*)?$")));
     }
 
     @ParameterizedTest
@@ -117,5 +135,9 @@ class AjaxSpiderParamUnitTest {
             // Then
             assertThat(param.getNumberOfBrowsers(), is(equalTo(3)));
         }
+    }
+
+    private static AllowedResource allowedResource(String regex) {
+        return new AllowedResource(AllowedResource.createDefaultPattern(regex), true);
     }
 }

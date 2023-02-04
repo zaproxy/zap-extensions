@@ -66,7 +66,13 @@ public class AllowedResource extends Enableable {
             return false;
         }
         AllowedResource other = (AllowedResource) obj;
-        return pattern.equals(other.pattern);
+        return pattern.flags() == other.pattern.flags()
+                && pattern.pattern().equals(other.pattern.pattern());
+    }
+
+    @Override
+    public String toString() {
+        return "[Enabled=" + isEnabled() + ", Pattern=" + pattern + "]";
     }
 
     /**
