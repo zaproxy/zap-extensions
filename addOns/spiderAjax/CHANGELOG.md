@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Maintenance changes.
 - Default number of threads to 2 * processor count.
 
+### Fixed
+- Ensure default Allowed Resources are present with a new home directory (Issue 7719).
+
 ## [23.10.0] - 2022-10-27
 ### Changed
 - Update minimum ZAP version to 2.12.0.
