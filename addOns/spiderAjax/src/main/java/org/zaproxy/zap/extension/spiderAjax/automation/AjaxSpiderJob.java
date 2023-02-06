@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.spiderAjax.automation;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,7 @@ import org.zaproxy.addon.automation.jobs.PassiveScanJobResultData.RuleData;
 import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 import org.zaproxy.addon.automation.tests.AutomationStatisticTest;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam;
+import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParamElem;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderTarget;
 import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
 import org.zaproxy.zap.extension.spiderAjax.SpiderListener;
@@ -105,6 +107,24 @@ public class AjaxSpiderJob extends AutomationJob {
                             getName(),
                             "automation.spiderAjax.urls.added"));
         }
+
+        int elemsSize = this.parameters.getElems().size();
+        List<AjaxSpiderParamElem> elems = new ArrayList<AjaxSpiderParamElem>(elemsSize);
+
+        for (int i = 0; i < elemsSize; i++) {
+            AjaxSpiderParamElem elem = new AjaxSpiderParamElem("");
+
+            JobUtils.applyParamsToObject(
+            (LinkedHashMap<?, ?>)((List
+            <?>)((Map<?, ?>) jobData.get("parameters")).get("elems")).get(i),
+            elem,
+            this.getName(),
+            null,
+            progress);
+
+            elems.add(elem);
+        }
+        this.parameters.setElems(elems);
     }
 
     @Override
@@ -412,9 +432,21 @@ public class AjaxSpiderJob extends AutomationJob {
 
         private Boolean runOnlyIfModern;
 
+        private List<AjaxSpiderParamElem> elems;
+        private List<String> enabledElemsNames;
+
         // These 2 fields are deprecated
         private Boolean failIfFoundUrlsLessThan;
         private Boolean warnIfFoundUrlsLessThan;
+
+        public Parameters() {
+            this.elems = new ArrayList<>(AjaxSpiderParam.DEFAULT_ELEMS_NAMES.length);
+            this.enabledElemsNames = new ArrayList<>(AjaxSpiderParam.DEFAULT_ELEMS_NAMES.length);
+            for (String elemName : AjaxSpiderParam.DEFAULT_ELEMS_NAMES) {
+                this.elems.add(new AjaxSpiderParamElem(elemName));
+                this.enabledElemsNames.add(elemName);
+            }
+        }
 
         public String getContext() {
             return context;
@@ -526,6 +558,37 @@ public class AjaxSpiderJob extends AutomationJob {
 
         public void setRunOnlyIfModern(Boolean runOnlyIfModern) {
             this.runOnlyIfModern = runOnlyIfModern;
+        }
+
+        public List<AjaxSpiderParamElem> getElems() {
+            return elems;
+        }
+
+        public void setElems(List<AjaxSpiderParamElem> elems) {
+            this.elems = new ArrayList<>(elems);
+
+            ArrayList<String> enabledElems = new ArrayList<>(elems.size());
+            for (int i = 0, size = elems.size(); i < size; ++i) {
+                try {
+                    AjaxSpiderParamElem elem = elems.get(i);
+
+                    if (elem.isEnabled()) {
+                        enabledElems.add(elem.getName());
+                    }
+                }
+                catch (Exception e) {return;}
+            }
+
+            enabledElems.trimToSize();
+            this.enabledElemsNames = enabledElems;
+        }
+
+        public List<String> getElemsNames() {
+            return enabledElemsNames;
+        }
+
+        public void setElemsNames(List<String> elemsNames) {
+            this.enabledElemsNames = elemsNames;
         }
 
         public Boolean getFailIfFoundUrlsLessThan() {

@@ -90,7 +90,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
     private static final String CONFIRM_REMOVE_ELEM_KEY =
             AJAX_SPIDER_BASE_KEY + ".confirmRemoveElem";
 
-    private static final String[] DEFAULT_ELEMS_NAMES = {
+    public static final String[] DEFAULT_ELEMS_NAMES = {
         "a",
         "button",
         "td",
@@ -412,7 +412,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
         return elems;
     }
 
-    protected void setElems(List<AjaxSpiderParamElem> elems) {
+    public void setElems(List<AjaxSpiderParamElem> elems) {
         this.elems = new ArrayList<>(elems);
 
         ((HierarchicalConfiguration) getConfig()).clearTree(ALL_ELEMS_KEY);
@@ -434,6 +434,10 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
 
         enabledElems.trimToSize();
         this.enabledElemsNames = enabledElems;
+    }
+
+    public void setElemsNames(List<String> elemsNames) {
+        this.enabledElemsNames = elemsNames;
     }
 
     protected List<String> getElemsNames() {
