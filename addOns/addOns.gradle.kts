@@ -156,6 +156,7 @@ subprojects {
         apiClientGen {
             classpath.run {
                 setFrom(apiGenClasspath)
+                from(configurations.named(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME))
                 from(tasks.named(JavaPlugin.JAR_TASK_NAME))
             }
         }
