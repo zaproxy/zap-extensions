@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [23.11.0] - 2023-02-06
 ### Changed
 - Maintenance changes.
 - Default number of threads to 2 * processor count.
@@ -244,6 +244,7 @@ By default it allows files with extension `.js` and `.css`.
 
 
 
+[23.11.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.11.0
 [23.10.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.10.0
 [23.9.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.9.0
 [23.8.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.8.0
