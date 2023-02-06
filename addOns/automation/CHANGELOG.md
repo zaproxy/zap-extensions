@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+### Fixed
+- Added workaround for core bug which meant auth header env vars were not being applied.
 
 ## [0.22.0] - 2023-01-06
 ### Added
