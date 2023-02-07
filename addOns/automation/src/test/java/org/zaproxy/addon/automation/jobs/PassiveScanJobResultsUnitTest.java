@@ -41,6 +41,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.quality.Strictness;
 import org.mockito.stubbing.Answer;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
@@ -81,8 +82,10 @@ class PassiveScanJobResultsUnitTest {
         // Given
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
-        ExtensionStats extStats = mock(ExtensionStats.class, withSettings().lenient());
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionStats extStats =
+                mock(ExtensionStats.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionStats.class)).willReturn(extStats);
 
         InMemoryStats stats = new InMemoryStats();
@@ -122,8 +125,10 @@ class PassiveScanJobResultsUnitTest {
         final int pluginId_200 = 200;
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
-        ExtensionAlert extAlert = mock(ExtensionAlert.class, withSettings().lenient());
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionAlert extAlert =
+                mock(ExtensionAlert.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionAlert.class)).willReturn(extAlert);
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
 
@@ -152,7 +157,7 @@ class PassiveScanJobResultsUnitTest {
         given(rootNode.getChildCount()).willReturn(2);
         given(rootNode.getFirstChild()).willReturn(nodeOneParent);
         Answer<AlertNode> answer =
-                new Answer<AlertNode>() {
+                new Answer<>() {
                     @Override
                     public AlertNode answer(InvocationOnMock invocation) throws Throwable {
                         AlertNode node = invocation.getArgument(0, AlertNode.class);

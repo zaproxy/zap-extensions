@@ -1,6 +1,6 @@
 plugins {
     `kotlin-dsl`
-    id("com.diffplug.spotless") version "6.11.0"
+    id("com.diffplug.spotless") version "6.14.1"
 }
 
 repositories {
@@ -32,7 +32,7 @@ dependencies {
     implementation("io.github.bonigarcia:webdrivermanager:5.1.0") {
         exclude("com.fasterxml.jackson.core")
     }
-    implementation("com.diffplug.spotless:spotless-plugin-gradle:6.11.0")
+    implementation("com.diffplug.spotless:spotless-plugin-gradle:6.14.1")
 }
 
 val javaVersion = JavaVersion.VERSION_11

@@ -86,7 +86,7 @@ spotless {
         project,
         listOf(
             "src/**/UrlCanonicalizer.java",
-            "src/**/UrlResolver.java"
-        )
+            "src/**/UrlResolver.java",
+        ),
     )
 }

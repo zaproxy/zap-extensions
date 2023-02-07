@@ -525,7 +525,7 @@ class PacScriptUnitTest extends TestUtils {
     }
 
     private static Matcher<PacScript.Setting> hasType(Type type) {
-        return new BaseMatcher<PacScript.Setting>() {
+        return new BaseMatcher<>() {
 
             @Override
             public boolean matches(Object actualValue) {
@@ -545,7 +545,7 @@ class PacScriptUnitTest extends TestUtils {
     }
 
     private static Matcher<PacScript.Setting> hasHost(String host) {
-        return new BaseMatcher<PacScript.Setting>() {
+        return new BaseMatcher<>() {
 
             @Override
             public boolean matches(Object actualValue) {
@@ -565,7 +565,7 @@ class PacScriptUnitTest extends TestUtils {
     }
 
     private static Matcher<PacScript.Setting> hasPort(int port) {
-        return new BaseMatcher<PacScript.Setting>() {
+        return new BaseMatcher<>() {
 
             @Override
             public boolean matches(Object actualValue) {

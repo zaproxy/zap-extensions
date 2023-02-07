@@ -92,7 +92,7 @@ class XContentTypeOptionScanRuleUnitTest extends PassiveScannerTest<XContentType
         Locale defaultLocale = Locale.getDefault();
         try {
             // Given
-            Locale.setDefault(new Locale("tr", "tr"));
+            Locale.setDefault(new Locale.Builder().setLanguage("tr").setRegion("tr").build());
             HttpMessage msg = new HttpMessage();
             msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
             msg.setResponseBody("<html></html>");

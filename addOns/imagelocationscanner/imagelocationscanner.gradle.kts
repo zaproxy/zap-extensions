@@ -38,7 +38,7 @@ spotless {
                 include("src/**/*.java")
                 // Ignore ILS classes.
                 exclude("src/**/com/veggiespam/**", "src/**/ImageLocationScanRule.java")
-            }
+            },
         )
     }
 }

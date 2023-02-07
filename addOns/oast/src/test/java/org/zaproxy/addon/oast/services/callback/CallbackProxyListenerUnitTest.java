@@ -40,6 +40,7 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
@@ -74,7 +75,8 @@ class CallbackProxyListenerUnitTest extends TestUtils {
         source = InetAddress.getLocalHost();
         message.getRequestHeader().setSenderAddress(source);
         oastRequest = mock(OastRequest.class);
-        oastRequestFactory = mock(OastRequestFactory.class, withSettings().lenient());
+        oastRequestFactory =
+                mock(OastRequestFactory.class, withSettings().strictness(Strictness.LENIENT));
         given(oastRequestFactory.create(any(), anyString(), anyString())).willReturn(oastRequest);
         callbackService = mock(CallbackService.class);
         ctx = mock(HttpMessageHandlerContext.class);

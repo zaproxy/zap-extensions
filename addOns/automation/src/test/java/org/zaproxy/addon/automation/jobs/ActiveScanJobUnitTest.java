@@ -50,6 +50,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentMatcher;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -98,8 +99,9 @@ class ActiveScanJobUnitTest {
 
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
-        extAScan = mock(ExtensionActiveScan.class, withSettings().lenient());
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        extAScan = mock(ExtensionActiveScan.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionActiveScan.class)).willReturn(extAScan);
 
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);

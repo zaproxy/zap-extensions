@@ -46,6 +46,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
@@ -68,8 +69,10 @@ class ReportJobUnitTest {
     @BeforeEach
     void setUp() {
         Constant.messages = new I18N(Locale.ENGLISH);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
-        extensionReports = mock(ExtensionReports.class, withSettings().lenient());
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        extensionReports =
+                mock(ExtensionReports.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionReports.getReportParam()).willReturn(new ReportParam());
         given(extensionLoader.getExtension(ExtensionReports.class)).willReturn(extensionReports);
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);

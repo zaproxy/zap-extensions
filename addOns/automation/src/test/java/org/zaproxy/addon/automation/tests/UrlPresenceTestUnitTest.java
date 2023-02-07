@@ -28,6 +28,7 @@ import static org.mockito.Mockito.withSettings;
 
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
@@ -115,16 +116,16 @@ class UrlPresenceTestUnitTest extends TestUtils {
         String operator = "and";
         AutomationProgress progress = new AutomationProgress();
         setUpZap();
-        Model model = mock(Model.class, withSettings().lenient());
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
         Model.setSingletonForTesting(model);
 
-        Session session = mock(Session.class, withSettings().lenient());
+        Session session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
         given(model.getSession()).willReturn(session);
 
-        SiteMap siteMap = mock(SiteMap.class, withSettings().lenient());
+        SiteMap siteMap = mock(SiteMap.class, withSettings().strictness(Strictness.LENIENT));
         given(session.getSiteTree()).willReturn(siteMap);
 
-        SiteNode siteNode = mock(SiteNode.class, withSettings().lenient());
+        SiteNode siteNode = mock(SiteNode.class, withSettings().strictness(Strictness.LENIENT));
         given(siteMap.findNode(any(URI.class))).willReturn(siteNode);
 
         HistoryReference historyReference = mock(HistoryReference.class);
@@ -179,16 +180,16 @@ class UrlPresenceTestUnitTest extends TestUtils {
         String operator = "or";
         AutomationProgress progress = new AutomationProgress();
         setUpZap();
-        Model model = mock(Model.class, withSettings().lenient());
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
         Model.setSingletonForTesting(model);
 
-        Session session = mock(Session.class, withSettings().lenient());
+        Session session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
         given(model.getSession()).willReturn(session);
 
-        SiteMap siteMap = mock(SiteMap.class, withSettings().lenient());
+        SiteMap siteMap = mock(SiteMap.class, withSettings().strictness(Strictness.LENIENT));
         given(session.getSiteTree()).willReturn(siteMap);
 
-        SiteNode siteNode = mock(SiteNode.class, withSettings().lenient());
+        SiteNode siteNode = mock(SiteNode.class, withSettings().strictness(Strictness.LENIENT));
         given(siteMap.findNode(any(URI.class))).willReturn(siteNode);
 
         HistoryReference historyReference = mock(HistoryReference.class);
@@ -244,16 +245,16 @@ class UrlPresenceTestUnitTest extends TestUtils {
         String operator = "and";
         AutomationProgress progress = new AutomationProgress();
         setUpZap();
-        Model model = mock(Model.class, withSettings().lenient());
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
         Model.setSingletonForTesting(model);
 
-        Session session = mock(Session.class, withSettings().lenient());
+        Session session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
         given(model.getSession()).willReturn(session);
 
-        SiteMap siteMap = mock(SiteMap.class, withSettings().lenient());
+        SiteMap siteMap = mock(SiteMap.class, withSettings().strictness(Strictness.LENIENT));
         given(session.getSiteTree()).willReturn(siteMap);
 
-        SiteNode siteNode = mock(SiteNode.class, withSettings().lenient());
+        SiteNode siteNode = mock(SiteNode.class, withSettings().strictness(Strictness.LENIENT));
         given(siteMap.findNode(any(URI.class))).willReturn(siteNode);
 
         HistoryReference historyReference = mock(HistoryReference.class);
@@ -318,16 +319,16 @@ class UrlPresenceTestUnitTest extends TestUtils {
 
         AutomationProgress progress = new AutomationProgress();
         setUpZap();
-        Model model = mock(Model.class, withSettings().lenient());
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
         Model.setSingletonForTesting(model);
 
-        Session session = mock(Session.class, withSettings().lenient());
+        Session session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
         given(model.getSession()).willReturn(session);
 
-        SiteMap siteMap = mock(SiteMap.class, withSettings().lenient());
+        SiteMap siteMap = mock(SiteMap.class, withSettings().strictness(Strictness.LENIENT));
         given(session.getSiteTree()).willReturn(siteMap);
 
-        SiteNode siteNode = mock(SiteNode.class, withSettings().lenient());
+        SiteNode siteNode = mock(SiteNode.class, withSettings().strictness(Strictness.LENIENT));
         given(siteMap.findNode(any(URI.class))).willReturn(siteNode);
 
         HistoryReference historyReference = mock(HistoryReference.class);
@@ -367,13 +368,13 @@ class UrlPresenceTestUnitTest extends TestUtils {
     void shouldFailOnBadOperator() throws Exception {
         AutomationProgress progress = new AutomationProgress();
         setUpZap();
-        Model model = mock(Model.class, withSettings().lenient());
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
         Model.setSingletonForTesting(model);
-        Session session = mock(Session.class, withSettings().lenient());
+        Session session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
         given(model.getSession()).willReturn(session);
-        SiteMap siteMap = mock(SiteMap.class, withSettings().lenient());
+        SiteMap siteMap = mock(SiteMap.class, withSettings().strictness(Strictness.LENIENT));
         given(session.getSiteTree()).willReturn(siteMap);
-        SiteNode siteNode = mock(SiteNode.class, withSettings().lenient());
+        SiteNode siteNode = mock(SiteNode.class, withSettings().strictness(Strictness.LENIENT));
         given(siteMap.findNode(any(URI.class))).willReturn(siteNode);
         HistoryReference historyReference = mock(HistoryReference.class);
         given(siteNode.getHistoryReference()).willReturn(historyReference);
@@ -421,13 +422,13 @@ class UrlPresenceTestUnitTest extends TestUtils {
     void shouldPassIfNoRegexesAreGivenButUrlExists() throws Exception {
         AutomationProgress progress = new AutomationProgress();
         setUpZap();
-        Model model = mock(Model.class, withSettings().lenient());
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
         Model.setSingletonForTesting(model);
-        Session session = mock(Session.class, withSettings().lenient());
+        Session session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
         given(model.getSession()).willReturn(session);
-        SiteMap siteMap = mock(SiteMap.class, withSettings().lenient());
+        SiteMap siteMap = mock(SiteMap.class, withSettings().strictness(Strictness.LENIENT));
         given(session.getSiteTree()).willReturn(siteMap);
-        SiteNode siteNode = mock(SiteNode.class, withSettings().lenient());
+        SiteNode siteNode = mock(SiteNode.class, withSettings().strictness(Strictness.LENIENT));
         given(siteMap.findNode(any(URI.class))).willReturn(siteNode);
         HistoryReference historyReference = mock(HistoryReference.class);
         given(siteNode.getHistoryReference()).willReturn(historyReference);
@@ -473,13 +474,13 @@ class UrlPresenceTestUnitTest extends TestUtils {
     void shouldPassForPassiveScanJobIfConditionsAreSatisfied() throws Exception {
         AutomationProgress progress = new AutomationProgress();
         setUpZap();
-        Model model = mock(Model.class, withSettings().lenient());
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
         Model.setSingletonForTesting(model);
-        Session session = mock(Session.class, withSettings().lenient());
+        Session session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
         given(model.getSession()).willReturn(session);
-        SiteMap siteMap = mock(SiteMap.class, withSettings().lenient());
+        SiteMap siteMap = mock(SiteMap.class, withSettings().strictness(Strictness.LENIENT));
         given(session.getSiteTree()).willReturn(siteMap);
-        SiteNode siteNode = mock(SiteNode.class, withSettings().lenient());
+        SiteNode siteNode = mock(SiteNode.class, withSettings().strictness(Strictness.LENIENT));
         given(siteMap.findNode(any(URI.class))).willReturn(siteNode);
         HistoryReference historyReference = mock(HistoryReference.class);
         given(siteNode.getHistoryReference()).willReturn(historyReference);

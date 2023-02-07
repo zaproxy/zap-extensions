@@ -104,7 +104,7 @@ class JsonPayloadGeneratorUnitTest {
 
     private static Matcher<List<String>> hasAtLeastOneDifferentThan(String value) {
         JsonElement jsonElement = toGson(value);
-        return new BaseMatcher<List<String>>() {
+        return new BaseMatcher<>() {
 
             @Override
             public boolean matches(Object actualValue) {

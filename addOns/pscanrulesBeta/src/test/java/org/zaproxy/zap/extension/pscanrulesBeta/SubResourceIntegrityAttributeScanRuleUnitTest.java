@@ -32,6 +32,7 @@ import static org.mockito.Mockito.withSettings;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
@@ -59,16 +60,16 @@ class SubResourceIntegrityAttributeScanRuleUnitTest
     void setupMocks(boolean nodeFound) throws Exception {
         setUpZap();
 
-        Model model = mock(Model.class, withSettings().lenient());
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
         Model.setSingletonForTesting(model);
 
-        Session session = mock(Session.class, withSettings().lenient());
+        Session session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
         given(model.getSession()).willReturn(session);
 
-        SiteMap siteMap = mock(SiteMap.class, withSettings().lenient());
+        SiteMap siteMap = mock(SiteMap.class, withSettings().strictness(Strictness.LENIENT));
         given(session.getSiteTree()).willReturn(siteMap);
 
-        SiteNode node = mock(SiteNode.class, withSettings().lenient());
+        SiteNode node = mock(SiteNode.class, withSettings().strictness(Strictness.LENIENT));
         if (nodeFound) {
             given(siteMap.findNode(any(URI.class))).willReturn(node);
         } else {
@@ -79,10 +80,15 @@ class SubResourceIntegrityAttributeScanRuleUnitTest
             HistoryReference historyRef = mock(HistoryReference.class);
             given(node.getHistoryReference()).willReturn(historyRef);
             message =
-                    mock(HttpMessage.class, withSettings().lenient().defaultAnswer(RETURNS_MOCKS));
+                    mock(
+                            HttpMessage.class,
+                            withSettings()
+                                    .strictness(Strictness.LENIENT)
+                                    .defaultAnswer(RETURNS_MOCKS));
             given(message.isResponseFromTargetHost()).willReturn(true);
             given(historyRef.getHttpMessage()).willReturn(message);
-            HttpResponseBody hrb = mock(HttpResponseBody.class, withSettings().lenient());
+            HttpResponseBody hrb =
+                    mock(HttpResponseBody.class, withSettings().strictness(Strictness.LENIENT));
             given(message.getResponseBody()).willReturn(hrb);
             given(hrb.toString()).willReturn("foobar");
             // "foobar" SHA-384:

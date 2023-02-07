@@ -48,7 +48,7 @@ tasks.withType<Test>().configureEach {
         mapOf(
             "wdm.chromeDriverVersion" to "108.0.5359.71",
             "wdm.geckoDriverVersion" to "0.32.0",
-            "wdm.forceCache" to "true"
-        )
+            "wdm.forceCache" to "true",
+        ),
     )
 }

@@ -51,6 +51,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.platform.commons.support.HierarchyTraversalMode;
 import org.junit.platform.commons.support.ReflectionSupport;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.db.TableAlert;
@@ -81,19 +82,20 @@ class HistoryPersisterUnitTest extends TestUtils {
     void setUp() throws Exception {
         setUpZap();
 
-        Control control = mock(Control.class, withSettings().lenient());
+        Control control = mock(Control.class, withSettings().strictness(Strictness.LENIENT));
         setControlSingleton(control);
 
-        extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
+        extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         when(control.getExtensionLoader()).thenReturn(extensionLoader);
 
-        Model model = mock(Model.class, withSettings().lenient());
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
         setModelSingleton(model);
 
-        Session session = mock(Session.class, withSettings().lenient());
+        Session session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
         given(session.getSessionId()).willReturn(1234L);
 
-        siteMap = mock(SiteMap.class, withSettings().lenient());
+        siteMap = mock(SiteMap.class, withSettings().strictness(Strictness.LENIENT));
         given(session.getSiteTree()).willReturn(siteMap);
 
         given(model.getSession()).willReturn(session);
@@ -101,10 +103,16 @@ class HistoryPersisterUnitTest extends TestUtils {
         message = mock(HttpMessage.class, withSettings().defaultAnswer(RETURNS_MOCKS));
 
         tableHistory =
-                mock(TableHistory.class, withSettings().defaultAnswer(RETURNS_MOCKS).lenient());
+                mock(
+                        TableHistory.class,
+                        withSettings().defaultAnswer(RETURNS_MOCKS).strictness(Strictness.LENIENT));
         HistoryReference.setTableHistory(tableHistory);
         HistoryReference.setTableAlert(
-                mock(TableAlert.class, withSettings().defaultAnswer(RETURNS_MOCKS).lenient()));
+                mock(
+                        TableAlert.class,
+                        withSettings()
+                                .defaultAnswer(RETURNS_MOCKS)
+                                .strictness(Strictness.LENIENT)));
 
         sessionId = Model.getSingleton().getSession().getSessionId();
 

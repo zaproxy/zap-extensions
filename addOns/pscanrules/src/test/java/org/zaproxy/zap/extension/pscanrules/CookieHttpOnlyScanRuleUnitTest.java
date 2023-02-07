@@ -32,6 +32,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -49,7 +50,7 @@ class CookieHttpOnlyScanRuleUnitTest extends PassiveScannerTest<CookieHttpOnlySc
     protected CookieHttpOnlyScanRule createScanner() {
         rule = new CookieHttpOnlyScanRule();
         // Mock the model and options
-        model = mock(Model.class, withSettings().lenient());
+        model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
         OptionsParam options = new OptionsParam();
         ZapXmlConfiguration conf = new ZapXmlConfiguration();
         options.load(conf);

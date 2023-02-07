@@ -69,7 +69,7 @@ spotless {
                 include("src/**/*.html")
                 exclude("src/main/zapHomeFiles/reports/risk-confidence-html/report.html")
                 exclude("src/test/**/*.html")
-            }
+            },
         )
     })
     format("xml", {
@@ -78,7 +78,7 @@ spotless {
             fileTree(projectDir) {
                 include("src/**/*.xml")
                 exclude("src/test/**/*.xml")
-            }
+            },
         )
     })
 }

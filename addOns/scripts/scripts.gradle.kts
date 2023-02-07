@@ -34,7 +34,7 @@ spotless {
                 include("src/**/*.java")
                 // 3rd-party code.
                 exclude("src/**/JScrollPopupMenu.java")
-            }
+            },
         )
     }
 }
