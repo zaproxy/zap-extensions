@@ -23,7 +23,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
@@ -67,9 +66,6 @@ class TlsConfigUnitTest {
         assertThat(
                 tlsConfig.getApplicationProtocols(),
                 is(equalTo(getSupportedApplicationProtocols())));
-        assertThat(
-                tlsConfig.getFallbackApplicationProtocol(),
-                is(equalTo(APPLICATION_PROTOCOL_HTTP_1_1)));
     }
 
     @Test
@@ -137,7 +133,6 @@ class TlsConfigUnitTest {
         TlsConfig tlsConfig = new TlsConfig(getSupportedTlsProtocols(), false, protocols);
         // Then
         assertThat(tlsConfig.getApplicationProtocols(), is(equalTo(protocols)));
-        assertThat(tlsConfig.getFallbackApplicationProtocol(), is(nullValue()));
     }
 
     @Test
