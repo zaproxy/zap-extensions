@@ -303,4 +303,27 @@ class TechnologyUtilsUnitTest {
         assertThat(set.includes(Lang_C), is(equalTo(false)));
         assertThat(set.includes(Tech.Lang), is(equalTo(false)));
     }
+
+    @Test
+    void shouldReturnAllTechIfNullExcludes() {
+        // Given
+        TechSet set = TechnologyUtils.getTechSet(null);
+        Set<Tech> allTech = Tech.getAll();
+
+        // When / Then
+        assertThat(set.getIncludeTech().size(), is(equalTo(allTech.size())));
+        assertThat(set.getExcludeTech().size(), is(equalTo(0)));
+    }
+
+    @Test
+    void shouldRemoveTechIfExcludes() {
+        // Given
+        TechSet set = TechnologyUtils.getTechSet(Arrays.asList(Tech.ASP.getName()));
+        Set<Tech> allTech = Tech.getAll();
+
+        // When / Then
+        assertThat(set.getIncludeTech().size(), is(equalTo(allTech.size() - 1)));
+        assertThat(set.getIncludeTech().contains(Tech.ASP), is(equalTo(false)));
+        assertThat(set.getExcludeTech().size(), is(equalTo(1)));
+    }
 }
