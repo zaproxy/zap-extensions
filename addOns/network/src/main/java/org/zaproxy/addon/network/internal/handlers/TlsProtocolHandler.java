@@ -37,6 +37,7 @@ import javax.net.ssl.SSLException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zaproxy.addon.network.internal.ChannelAttributes;
+import org.zaproxy.addon.network.internal.TlsUtils;
 import org.zaproxy.addon.network.internal.cert.SniX509KeyManager;
 
 /**
@@ -119,11 +120,7 @@ public class TlsProtocolHandler extends ByteToMessageDecoder {
                         .build();
         ctx.pipeline().addAfter(ctx.name(), TLS_HANDLER_NAME, sslCtx.newHandler(ctx.alloc()));
         if (config.isAlpnEnabled()) {
-            ctx.pipeline()
-                    .addAfter(
-                            TLS_HANDLER_NAME,
-                            "tls.alpn",
-                            new AlpnHandlerImpl(config.getFallbackApplicationProtocol()));
+            ctx.pipeline().addAfter(TLS_HANDLER_NAME, "tls.alpn", new AlpnHandlerImpl());
         }
 
         return true;
@@ -147,12 +144,8 @@ public class TlsProtocolHandler extends ByteToMessageDecoder {
 
         private static final String NO_PROTOCOL_NEGOTIATED = "zap.no-protocol";
 
-        private final String fallbackProtocol;
-
-        protected AlpnHandlerImpl(String fallbackProtocol) {
+        protected AlpnHandlerImpl() {
             super(NO_PROTOCOL_NEGOTIATED);
-
-            this.fallbackProtocol = fallbackProtocol;
         }
 
         @Override
@@ -160,12 +153,7 @@ public class TlsProtocolHandler extends ByteToMessageDecoder {
                 throws Exception {
             String protocol = negotiatedProtocol;
             if (NO_PROTOCOL_NEGOTIATED.equals(protocol)) {
-                protocol = fallbackProtocol;
-                if (protocol == null) {
-                    LOGGER.warn("ALPN enabled and no protocol negotiated, closing connection.");
-                    ctx.close();
-                    return;
-                }
+                protocol = TlsUtils.APPLICATION_PROTOCOL_HTTP_1_1;
                 LOGGER.debug("Using fallback protocol: {}", protocol);
             } else {
                 LOGGER.debug("Negotiated protocol: {}", protocol);
