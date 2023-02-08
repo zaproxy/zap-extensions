@@ -43,6 +43,7 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.mockito.ArgumentMatcher;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -88,8 +89,8 @@ class AjaxSpiderJobUnitTest {
 
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
-        extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
-        // extAjax = mock(ExtensionAjax.class, withSettings().lenient());
+        extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         extAjax = new ExtensionAjax();
         given(extensionLoader.getExtension(ExtensionAjax.class)).willReturn(extAjax);
         ajaxSpiderParam = new AjaxSpiderParam();

@@ -77,6 +77,7 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.common.AbstractParam;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.CommandLineArgument;
@@ -107,7 +108,6 @@ import org.zaproxy.addon.network.testutils.TextTestClient;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiElement;
-import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.CoreAPI;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -126,12 +126,13 @@ class ExtensionNetworkUnitTest extends TestUtils {
     void setUp() {
         Security.addProvider(new BouncyCastleProvider());
 
-        extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
+        extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         Control.initSingletonForTesting(model, extensionLoader);
 
-        model = mock(Model.class, withSettings().lenient());
+        model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
         Model.setSingletonForTesting(model);
-        optionsParam = mock(OptionsParam.class, withSettings().lenient());
+        optionsParam = mock(OptionsParam.class, withSettings().strictness(Strictness.LENIENT));
         given(optionsParam.getConnectionParam())
                 .willReturn(new org.parosproxy.paros.network.ConnectionParam());
         given(optionsParam.getProxyParam())
@@ -217,9 +218,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
         // When
         extension.hook(extensionHook);
         // Then
-        ArgumentCaptor<ApiImplementor> argument = ArgumentCaptor.forClass(ApiImplementor.class);
-        verify(extensionHook, times(2)).addApiImplementor(argument.capture());
-        assertThat(argument.getAllValues(), hasItem(instanceOf(NetworkApi.class)));
+        verify(extensionHook).addApiImplementor(any(NetworkApi.class));
     }
 
     @Test
@@ -261,9 +260,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
         // When
         extension.hook(extensionHook);
         // Then
-        ArgumentCaptor<LegacyProxiesApi> argument = ArgumentCaptor.forClass(LegacyProxiesApi.class);
-        verify(extensionHook, times(2)).addApiImplementor(argument.capture());
-        assertThat(argument.getAllValues(), hasItem(instanceOf(LegacyProxiesApi.class)));
+        verify(extensionHook).addApiImplementor(any((LegacyProxiesApi.class)));
     }
 
     @Test
@@ -1079,7 +1076,8 @@ class ExtensionNetworkUnitTest extends TestUtils {
     private static CommandLineArgument[] mockedCmdLineArgs(int size) {
         CommandLineArgument[] args = new CommandLineArgument[size];
         for (int i = 0; i < size; i++) {
-            args[i] = mock(CommandLineArgument.class, withSettings().lenient());
+            args[i] =
+                    mock(CommandLineArgument.class, withSettings().strictness(Strictness.LENIENT));
         }
         return args;
     }

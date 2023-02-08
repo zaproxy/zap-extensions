@@ -33,6 +33,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
@@ -51,8 +52,10 @@ public abstract class ProcessorTests<T extends EncodeDecodeProcessor> {
     public void setUp() throws Exception {
         processor = createProcessor();
 
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
-        ExtensionEncoder extEnc = mock(ExtensionEncoder.class, withSettings().lenient());
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionEncoder extEnc =
+                mock(ExtensionEncoder.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionEncoder.class)).willReturn(extEnc);
         Control.initSingletonForTesting(mock(Model.class), extensionLoader);
         options = mock(EncodeDecodeOptions.class);

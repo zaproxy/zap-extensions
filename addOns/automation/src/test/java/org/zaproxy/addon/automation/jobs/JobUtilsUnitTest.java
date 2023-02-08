@@ -38,6 +38,7 @@ import java.util.Locale;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
@@ -296,8 +297,9 @@ class JobUtilsUnitTest {
     }
 
     private static ExtensionScript mockExtensionLoader(ExtensionScript extensionScript) {
-        Model model = mock(Model.class, withSettings().lenient());
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         Control.initSingletonForTesting(model, extensionLoader);
         given(extensionLoader.getExtension(ExtensionScript.class)).willReturn(extensionScript);
         return extensionScript;

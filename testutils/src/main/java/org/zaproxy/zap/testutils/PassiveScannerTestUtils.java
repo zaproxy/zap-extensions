@@ -40,6 +40,7 @@ import net.htmlparser.jericho.Source;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMessage;
@@ -66,9 +67,10 @@ public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends 
     public void setUp() throws Exception {
         setUpZap();
 
-        passiveScanData = mock(PassiveScanData.class, withSettings().lenient());
+        passiveScanData =
+                mock(PassiveScanData.class, withSettings().strictness(Strictness.LENIENT));
         alertsRaised = new ArrayList<>();
-        helper = mock(PassiveScanTaskHelper.class, withSettings().lenient());
+        helper = mock(PassiveScanTaskHelper.class, withSettings().strictness(Strictness.LENIENT));
         doAnswer(
                         invocation -> {
                             Alert alert = invocation.getArgument(1);

@@ -33,6 +33,7 @@ import java.util.Locale;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
@@ -53,8 +54,9 @@ class ImportJobUnitTest {
 
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
-        extExim = mock(ExtensionExim.class, withSettings().lenient());
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        extExim = mock(ExtensionExim.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionExim.class)).willReturn(extExim);
 
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);

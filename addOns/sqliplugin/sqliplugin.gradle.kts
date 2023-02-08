@@ -50,7 +50,7 @@ spotless {
             "src/**/SQLiTestDetails.java",
             "src/**/SQLiTestRequest.java",
             "src/**/SQLiTestResponse.java",
-            "src/**/SQLiUnionEngine.java"
-        )
+            "src/**/SQLiUnionEngine.java",
+        ),
     )
 }

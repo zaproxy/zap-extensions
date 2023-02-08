@@ -51,6 +51,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -102,8 +103,9 @@ class SpiderJobUnitTest extends TestUtils {
 
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
-        extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
-        extSpider = mock(ExtensionSpider2.class, withSettings().lenient());
+        extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        extSpider = mock(ExtensionSpider2.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionSpider2.class)).willReturn(extSpider);
 
         ExtensionStats extStats = mock(ExtensionStats.class);
@@ -414,7 +416,8 @@ class SpiderJobUnitTest extends TestUtils {
 
     @Test
     void shouldRequestContextUrl() throws Exception {
-        ExtensionHistory extHistory = mock(ExtensionHistory.class, withSettings().lenient());
+        ExtensionHistory extHistory =
+                mock(ExtensionHistory.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionHistory.class)).willReturn(extHistory);
 
         startServer();
@@ -454,7 +457,8 @@ class SpiderJobUnitTest extends TestUtils {
 
     @Test
     void shouldRequestContextUrls() throws Exception {
-        ExtensionHistory extHistory = mock(ExtensionHistory.class, withSettings().lenient());
+        ExtensionHistory extHistory =
+                mock(ExtensionHistory.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionHistory.class)).willReturn(extHistory);
 
         startServer();
@@ -506,7 +510,8 @@ class SpiderJobUnitTest extends TestUtils {
 
     @Test
     void shouldFailIfInvalidHost() throws Exception {
-        ExtensionHistory extHistory = mock(ExtensionHistory.class, withSettings().lenient());
+        ExtensionHistory extHistory =
+                mock(ExtensionHistory.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionHistory.class)).willReturn(extHistory);
 
         Context context = mock(Context.class);
@@ -545,7 +550,8 @@ class SpiderJobUnitTest extends TestUtils {
 
     @Test
     void shouldFailIfInvalidProxyHost() throws Exception {
-        ExtensionHistory extHistory = mock(ExtensionHistory.class, withSettings().lenient());
+        ExtensionHistory extHistory =
+                mock(ExtensionHistory.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionHistory.class)).willReturn(extHistory);
 
         Context context = mock(Context.class);
@@ -587,7 +593,8 @@ class SpiderJobUnitTest extends TestUtils {
 
     @Test
     void shouldWarnIfNotOkResponse() throws Exception {
-        ExtensionHistory extHistory = mock(ExtensionHistory.class, withSettings().lenient());
+        ExtensionHistory extHistory =
+                mock(ExtensionHistory.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionHistory.class)).willReturn(extHistory);
 
         startServer();

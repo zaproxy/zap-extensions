@@ -37,6 +37,7 @@ import javax.script.ScriptException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
@@ -57,8 +58,10 @@ public class EncodeDecodeScriptUnitTest {
     void setup() throws ScriptException, IOException {
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
-        ExtensionScript extScript = mock(ExtensionScript.class, withSettings().lenient());
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionScript extScript =
+                mock(ExtensionScript.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionScript.class)).willReturn(extScript);
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
         ScriptWrapper scriptWrapper = mock(ScriptWrapper.class);

@@ -24,7 +24,7 @@ spotless {
                 include("src/**/*.java")
                 // 3rd-party code.
                 exclude("src/**/com/fasteasytrade/**/*.java")
-            }
+            },
         )
     }
 }

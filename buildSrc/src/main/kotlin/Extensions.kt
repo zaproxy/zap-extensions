@@ -15,7 +15,7 @@ fun SpotlessExtension.javaWith3rdPartyFormatted(project: Project, files: List<St
                 include("src/**/*.java")
                 exclude(files)
                 exclude(excluded)
-            }
+            },
         )
     }
 
@@ -23,7 +23,7 @@ fun SpotlessExtension.javaWith3rdPartyFormatted(project: Project, files: List<St
         target(
             project.fileTree(project.projectDir) {
                 include(files)
-            }
+            },
         )
 
         googleJavaFormatAosp()

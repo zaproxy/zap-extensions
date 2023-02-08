@@ -33,6 +33,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
@@ -53,7 +54,7 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
     protected CookieSameSiteScanRule createScanner() {
         rule = new CookieSameSiteScanRule();
         // Mock the model and options
-        model = mock(Model.class, withSettings().lenient());
+        model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
         OptionsParam options = new OptionsParam();
         ZapXmlConfiguration conf = new ZapXmlConfiguration();
         options.load(conf);

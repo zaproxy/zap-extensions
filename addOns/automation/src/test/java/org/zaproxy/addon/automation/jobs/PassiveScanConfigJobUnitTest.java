@@ -38,6 +38,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -85,7 +86,8 @@ class PassiveScanConfigJobUnitTest {
         pscanParam = mock(PassiveScanParam.class);
         given(optionsParam.getParamSet(PassiveScanParam.class)).willReturn(pscanParam);
 
-        extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
+        extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         extPscan = new ExtensionPassiveScan();
         given(extensionLoader.getExtension(ExtensionPassiveScan.class)).willReturn(extPscan);
 

@@ -59,6 +59,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -171,7 +172,7 @@ public abstract class TestUtils {
         createHomeDirectory();
         Constant.setZapHome(zapHomeDir);
 
-        Control control = mock(Control.class, withSettings().lenient());
+        Control control = mock(Control.class, withSettings().strictness(Strictness.LENIENT));
         when(control.getExtensionLoader()).thenReturn(mock(ExtensionLoader.class));
 
         // Init all the things
@@ -542,7 +543,7 @@ public abstract class TestUtils {
      * @param prefix the prefix for the resource bundle.
      */
     protected static void mockMessages(String baseName, String prefix) {
-        I18N i18n = mock(I18N.class, withSettings().lenient());
+        I18N i18n = mock(I18N.class, withSettings().strictness(Strictness.LENIENT));
         Constant.messages = i18n;
 
         given(i18n.getLocal()).willReturn(Locale.getDefault());
@@ -560,7 +561,7 @@ public abstract class TestUtils {
                             return "";
                         });
 
-        when(i18n.getString(anyString(), any()))
+        when(i18n.getString(anyString(), any(Object[].class)))
                 .thenAnswer(
                         invocation -> {
                             Object[] args = invocation.getArguments();
@@ -611,7 +612,7 @@ public abstract class TestUtils {
      */
     protected static Matcher<Alert> hasNameLoadedWithKey(final String key) {
         assertKeyExists(key);
-        return new BaseMatcher<Alert>() {
+        return new BaseMatcher<>() {
 
             @Override
             public boolean matches(Object actualValue) {
@@ -639,7 +640,7 @@ public abstract class TestUtils {
      */
     protected static Matcher<Alert> containsNameLoadedWithKey(final String key) {
         assertKeyExists(key);
-        return new BaseMatcher<Alert>() {
+        return new BaseMatcher<>() {
 
             @Override
             public boolean matches(Object actualValue) {
@@ -671,7 +672,7 @@ public abstract class TestUtils {
     protected static Matcher<Alert> containsOtherInfoLoadedWithKey(
             final String key, final Object... params) {
         assertKeyExists(key);
-        return new BaseMatcher<Alert>() {
+        return new BaseMatcher<>() {
 
             @Override
             public boolean matches(Object actualValue) {

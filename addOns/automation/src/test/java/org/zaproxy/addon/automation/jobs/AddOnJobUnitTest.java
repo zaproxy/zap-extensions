@@ -34,6 +34,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
@@ -126,8 +127,10 @@ class AddOnJobUnitTest {
         // Given
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
-        ExtensionAutoUpdate extAuto = mock(ExtensionAutoUpdate.class, withSettings().lenient());
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionAutoUpdate extAuto =
+                mock(ExtensionAutoUpdate.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionAutoUpdate.class)).willReturn(extAuto);
 
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);

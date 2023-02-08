@@ -43,7 +43,7 @@ zapAddOn {
 
     val apiGenClasspath = configurations.detachedConfiguration(
         dependencies.create("org.zaproxy:zap:$minimumZapVersion"),
-        dependencies.create(parent!!.childProjects.get("selenium")!!)
+        dependencies.create(parent!!.childProjects.get("selenium")!!),
     )
 
     apiClientGen {

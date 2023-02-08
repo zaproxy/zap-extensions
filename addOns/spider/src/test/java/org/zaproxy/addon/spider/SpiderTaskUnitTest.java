@@ -41,6 +41,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.db.RecordHistory;
 import org.parosproxy.paros.db.TableAlert;
 import org.parosproxy.paros.db.TableHistory;
@@ -72,20 +73,20 @@ class SpiderTaskUnitTest extends TestUtils {
 
     @BeforeEach
     void setUp() throws Exception {
-        tableHistory = mock(TableHistory.class, withSettings().lenient());
+        tableHistory = mock(TableHistory.class, withSettings().strictness(Strictness.LENIENT));
         given(tableHistory.write(anyLong(), anyInt(), any())).willReturn(mock(RecordHistory.class));
         HistoryReference.setTableHistory(tableHistory);
         HistoryReference.setTableAlert(mock(TableAlert.class));
 
-        parent = mock(Spider.class, withSettings().lenient());
+        parent = mock(Spider.class, withSettings().strictness(Strictness.LENIENT));
 
         options = mock(SpiderParam.class);
         given(parent.getSpiderParam()).willReturn(options);
 
-        Model model = mock(Model.class, withSettings().lenient());
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
         given(parent.getModel()).willReturn(model);
 
-        session = mock(Session.class, withSettings().lenient());
+        session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
         given(model.getSession()).willReturn(session);
         sessionId = 1234;
         given(session.getSessionId()).willReturn(sessionId);
@@ -93,7 +94,8 @@ class SpiderTaskUnitTest extends TestUtils {
         controller = mock(SpiderController.class);
         given(parent.getController()).willReturn(controller);
 
-        extensionSpider = mock(ExtensionSpider2.class, withSettings().lenient());
+        extensionSpider =
+                mock(ExtensionSpider2.class, withSettings().strictness(Strictness.LENIENT));
         given(parent.getExtensionSpider()).willReturn(extensionSpider);
         valueGenerator = mock(ValueGenerator.class);
         given(extensionSpider.getValueGenerator()).willReturn(valueGenerator);

@@ -54,7 +54,7 @@ spotless {
         project,
         listOf(
             "src/**/InfoPrivateAddressDisclosureScanRule.java",
-            "src/**/InfoSessionIdUrlScanRule.java"
-        )
+            "src/**/InfoSessionIdUrlScanRule.java",
+        ),
     )
 }

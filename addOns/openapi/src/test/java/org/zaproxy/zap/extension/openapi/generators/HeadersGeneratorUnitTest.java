@@ -478,7 +478,7 @@ class HeadersGeneratorUnitTest {
     }
 
     private static Matcher<HttpHeaderField> header(String name) {
-        return new BaseMatcher<HttpHeaderField>() {
+        return new BaseMatcher<>() {
 
             @Override
             public boolean matches(Object actualValue) {
@@ -502,7 +502,7 @@ class HeadersGeneratorUnitTest {
     }
 
     private static Matcher<HttpHeaderField> header(String name, String value) {
-        return new BaseMatcher<HttpHeaderField>() {
+        return new BaseMatcher<>() {
 
             @Override
             public boolean matches(Object actualValue) {

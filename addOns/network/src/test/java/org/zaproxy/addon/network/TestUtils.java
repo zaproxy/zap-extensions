@@ -43,6 +43,7 @@ import java.util.ResourceBundle;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
@@ -78,7 +79,7 @@ public abstract class TestUtils {
         createHomeDirectory();
         Constant.setZapHome(zapHomeDir);
 
-        Control control = mock(Control.class, withSettings().lenient());
+        Control control = mock(Control.class, withSettings().strictness(Strictness.LENIENT));
         when(control.getExtensionLoader()).thenReturn(mock(ExtensionLoader.class));
 
         // Init all the things
@@ -132,7 +133,7 @@ public abstract class TestUtils {
                         + ".resources."
                         + Constant.MESSAGES_PREFIX;
         String prefix = extension.getI18nPrefix();
-        I18N i18n = mock(I18N.class, withSettings().lenient());
+        I18N i18n = mock(I18N.class, withSettings().strictness(Strictness.LENIENT));
         Constant.messages = i18n;
 
         given(i18n.getLocal()).willReturn(Locale.getDefault());
@@ -150,7 +151,7 @@ public abstract class TestUtils {
                             return "";
                         });
 
-        when(i18n.getString(anyString(), any()))
+        when(i18n.getString(anyString(), any(Object[].class)))
                 .thenAnswer(
                         invocation -> {
                             Object[] args = invocation.getArguments();

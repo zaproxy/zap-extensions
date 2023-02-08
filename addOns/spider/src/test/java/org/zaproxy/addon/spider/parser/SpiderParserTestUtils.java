@@ -35,6 +35,7 @@ import java.util.function.Function;
 import net.htmlparser.jericho.Source;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.quality.Strictness;
 import org.mockito.stubbing.Answer;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
@@ -60,9 +61,9 @@ abstract class SpiderParserTestUtils<T extends SpiderParser> extends TestUtils {
 
     @BeforeEach
     void setup() {
-        ctx = mock(ParseContext.class, withSettings().lenient());
+        ctx = mock(ParseContext.class, withSettings().strictness(Strictness.LENIENT));
 
-        spiderOptions = mock(SpiderParam.class, withSettings().lenient());
+        spiderOptions = mock(SpiderParam.class, withSettings().strictness(Strictness.LENIENT));
         given(ctx.getSpiderParam()).willReturn(spiderOptions);
 
         ValueGenerator valueGenerator = new DefaultValueGenerator();
