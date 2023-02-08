@@ -6,7 +6,10 @@
 <toc version="2.0">
 	<tocitem text="ZAP User Guide" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Authentication Helper" image="authhelper-icon" target="authhelper"/>
+			<tocitem text="Authentication Helper" image="authhelper-icon" target="authhelper">
+				<tocitem text="Authentication Request Identification" target="authhelper.auth-req-id"/>
+				<tocitem text="Header Based Session Management" target="authhelper.session-header"/>
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>
