@@ -75,8 +75,10 @@ public class ContextDialog extends StandardFieldsDialog {
 
         this.setCustomTabPanel(3, getTechnologyPanel());
 
-        getTechnologyPanel()
-                .setTechSet(TechnologyUtils.getTechSet(context.getTechnology().getExclude()));
+        if (context.getTechnology() != null) {
+            getTechnologyPanel()
+                    .setTechSet(TechnologyUtils.getTechSet(context.getTechnology().getExclude()));
+        }
     }
 
     private String listToString(List<String> list) {
