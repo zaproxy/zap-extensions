@@ -19,6 +19,8 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
@@ -62,41 +64,15 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
         }
 
         if (!hasCspHeader(msg) && !CspUtils.hasMetaCsp(source)) {
-            newAlert()
-                    .setRisk(Alert.RISK_MEDIUM)
-                    .setConfidence(Alert.CONFIDENCE_HIGH)
-                    .setDescription(getAlertAttribute("desc"))
-                    .setSolution(getAlertAttribute("soln"))
-                    .setReference(getAlertAttribute("refs"))
-                    .setCweId(693) // CWE-693: Protection Mechanism Failure
-                    .setWascId(15) // WASC-15: Application Misconfiguration
-                    .raise();
+            alertMissingCspHeader().raise();
         }
 
         if (hasObsoleteCspHeader(msg)) {
-            newAlert()
-                    .setName(getAlertAttribute("obs.name"))
-                    .setRisk(Alert.RISK_INFO)
-                    .setConfidence(Alert.CONFIDENCE_HIGH)
-                    .setDescription(getAlertAttribute("obs.desc"))
-                    .setSolution(getAlertAttribute("soln"))
-                    .setReference(getAlertAttribute("refs"))
-                    .setCweId(693) // CWE-693: Protection Mechanism Failure
-                    .setWascId(15) // WASC-15: Application Misconfiguration
-                    .raise();
+            alertObsoleteCspHeader().raise();
         }
 
         if (hasCspReportOnlyHeader(msg)) {
-            newAlert()
-                    .setName(getAlertAttribute("ro.name"))
-                    .setRisk(Alert.RISK_INFO)
-                    .setConfidence(Alert.CONFIDENCE_HIGH)
-                    .setDescription(getAlertAttribute("ro.desc"))
-                    .setSolution(getAlertAttribute("soln"))
-                    .setReference(getAlertAttribute("ro.refs"))
-                    .setCweId(693) // CWE-693: Protection Mechanism Failure
-                    .setWascId(15) // WASC-15: Application Misconfiguration
-                    .raise();
+            alertCspReportOnlyHeader().raise();
         }
 
         LOGGER.debug("\tScan of record {} took {}ms", id, System.currentTimeMillis() - start);
@@ -121,6 +97,14 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
         return ALERT_TAGS;
     }
 
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return Arrays.asList(
+                alertMissingCspHeader().build(),
+                alertObsoleteCspHeader().build(),
+                alertObsoleteCspHeader().build());
+    }
+
     private static boolean hasCspHeader(HttpMessage msg) {
         return !msg.getResponseHeader()
                 .getHeaderValues(HttpFieldsNames.CONTENT_SECURITY_POLICY)
@@ -136,5 +120,37 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
         return !msg.getResponseHeader()
                 .getHeaderValues("Content-Security-Policy-Report-Only")
                 .isEmpty();
+    }
+
+    private AlertBuilder buildAlert(int risk) {
+        return newAlert()
+                .setRisk(risk)
+                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setCweId(693) // CWE-693: Protection Mechanism Failure
+                .setWascId(15); // WASC-15: Application Misconfiguration
+    }
+
+    private AlertBuilder alertMissingCspHeader() {
+        return buildAlert(Alert.RISK_MEDIUM)
+                .setName(getAlertAttribute("name"))
+                .setDescription(getAlertAttribute("desc"))
+                .setSolution(getAlertAttribute("soln"))
+                .setReference(getAlertAttribute("refs"));
+    }
+
+    private AlertBuilder alertObsoleteCspHeader() {
+        return buildAlert(Alert.RISK_INFO)
+                .setName(getAlertAttribute("obs.name"))
+                .setDescription(getAlertAttribute("obs.desc"))
+                .setSolution(getAlertAttribute("soln"))
+                .setReference(getAlertAttribute("refs"));
+    }
+
+    private AlertBuilder alertCspReportOnlyHeader() {
+        return buildAlert(Alert.RISK_INFO)
+                .setName(getAlertAttribute("ro.name"))
+                .setDescription(getAlertAttribute("ro.desc"))
+                .setSolution(getAlertAttribute("soln"))
+                .setReference(getAlertAttribute("ro.refs"));
     }
 }

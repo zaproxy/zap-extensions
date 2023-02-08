@@ -23,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
@@ -293,6 +294,24 @@ class ContentSecurityPolicyMissingScanRuleUnitTest
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getValue())));
+    }
+
+    @Test
+    void shouldReturnExampleAlerts() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        long countMediums =
+                rule.getExampleAlerts().stream()
+                        .filter(alert -> Alert.RISK_MEDIUM == alert.getRisk())
+                        .count();
+        long countInfos =
+                rule.getExampleAlerts().stream()
+                        .filter(alert -> Alert.RISK_INFO == alert.getRisk())
+                        .count();
+        // Then
+        assertThat(alerts.size(), is(equalTo(3)));
+        assertThat(countMediums, is(equalTo(1L)));
+        assertThat(countInfos, is(equalTo(2L)));
     }
 
     private void assertContentSecurityPolicyAlertRaised() {
