@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.19.0] - 2023-02-09
 
 ### Added
 - A description of riskdesc fields in the relevant report templates' help (Issue 7445).
@@ -182,6 +182,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.19.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.19.0
 [0.18.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.18.0
 [0.17.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.17.0
 [0.16.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.16.0

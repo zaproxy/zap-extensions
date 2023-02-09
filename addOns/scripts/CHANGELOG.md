@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [35] - 2023-02-09
 ### Added
 - Help explaining how to interact with Automation Framework plans.
 - Support for relative file paths and ones including vars in the Automation Framework job.
@@ -221,6 +221,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[35]: https://github.com/zaproxy/zap-extensions/releases/scripts-v35
 [34]: https://github.com/zaproxy/zap-extensions/releases/scripts-v34
 [33]: https://github.com/zaproxy/zap-extensions/releases/scripts-v33
 [32]: https://github.com/zaproxy/zap-extensions/releases/scripts-v32
