@@ -380,7 +380,7 @@ public class LocalServersOptions extends VersionedAbstractParam {
     }
 
     private void readMainProxyAndServers() {
-        if (getConfig().containsKey(MAIN_PROXY_BASE_KEY + "." + SERVER_ADDRESS)) {
+        if (getConfig().getKeys(MAIN_PROXY_BASE_KEY).hasNext()) {
             mainProxy =
                     readServerConfig(
                             ((HierarchicalConfiguration) getConfig())
