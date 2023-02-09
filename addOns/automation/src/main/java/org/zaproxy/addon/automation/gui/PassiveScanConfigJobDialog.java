@@ -50,6 +50,8 @@ public class PassiveScanConfigJobDialog extends StandardFieldsDialog {
             "automation.dialog.pscanconfig.scanonlyinscope";
     private static final String MAX_BODY_SIZE_PARAM = "automation.dialog.pscanconfig.maxbodysize";
     private static final String ENABLE_TAGS_PARAM = "automation.dialog.pscanconfig.enabletags";
+    private static final String DISABLE_ALL_RULES_PARAM =
+            "automation.dialog.pscanconfig.disableallrules";
 
     private PassiveScanConfigJob job;
 
@@ -87,6 +89,10 @@ public class PassiveScanConfigJobDialog extends StandardFieldsDialog {
                 JobUtils.unBox(this.job.getParameters().getScanOnlyInScope()));
         this.addCheckBoxField(
                 0, ENABLE_TAGS_PARAM, JobUtils.unBox(this.job.getParameters().getEnableTags()));
+        this.addCheckBoxField(
+                0,
+                DISABLE_ALL_RULES_PARAM,
+                JobUtils.unBox(this.job.getParameters().getDisableAllRules()));
         this.addPadding(0);
 
         List<JButton> buttons = new ArrayList<>();
@@ -104,6 +110,7 @@ public class PassiveScanConfigJobDialog extends StandardFieldsDialog {
         this.job.getParameters().setScanOnlyInScope(this.getBoolValue(SCAN_ONLY_IN_SCOPE_PARAM));
         this.job.getParameters().setMaxBodySizeInBytesToScan(this.getIntValue(MAX_BODY_SIZE_PARAM));
         this.job.getParameters().setEnableTags(this.getBoolValue(ENABLE_TAGS_PARAM));
+        this.job.getParameters().setDisableAllRules(this.getBoolValue(DISABLE_ALL_RULES_PARAM));
         this.job.getData().setRules(this.getRulesModel().getRules());
         this.job.resetAndSetChanged();
     }
