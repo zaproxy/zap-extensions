@@ -38,6 +38,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.Constant;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationEnvironment;
+import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.utils.I18N;
 
@@ -186,6 +187,7 @@ class DelayJobUnitTest {
         job.getParameters().setTime("1:0");
         job.getParameters().setFileName(file.getAbsolutePath());
         job.applyParameters(progress);
+        job.setPlan(new AutomationPlan());
 
         long startTime = System.currentTimeMillis();
         job.runJob(env, progress);
@@ -209,9 +211,51 @@ class DelayJobUnitTest {
         File file1 = path.toFile();
         File file2 = new File(file1.getAbsoluteFile() + "2");
         file1.renameTo(file2);
+        job.setPlan(new AutomationPlan());
 
         job.getParameters().setTime("1:0");
         job.getParameters().setFileName(file1.getAbsolutePath());
+        job.applyParameters(progress);
+
+        new Thread(
+                        () -> {
+                            try {
+                                TimeUnit.SECONDS.sleep(2);
+                            } catch (InterruptedException e) {
+                            }
+                            file2.renameTo(file1);
+                        })
+                .start();
+
+        long startTime = System.currentTimeMillis();
+        job.runJob(env, progress);
+        long endTime = System.currentTimeMillis();
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertTrue(TimeUnit.MILLISECONDS.toSeconds(endTime - startTime) < 4);
+    }
+
+    @Test
+    void shouldInterruptWhenRelativeFileCreated() throws IOException {
+        // Given
+        DelayJob job = new DelayJob();
+        AutomationPlan plan = new AutomationPlan();
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(progress);
+
+        // When
+        plan.setFile(Files.createTempFile("plan1", ".yaml").toFile());
+        Path path = Files.createTempFile("delay-test3", ".txt");
+        File file1 = path.toFile();
+        File file2 = new File(file1.getAbsoluteFile() + "2");
+        file1.renameTo(file2);
+        job.setPlan(plan);
+
+        job.getParameters().setTime("1:0");
+        // Use the relative file name here
+        job.getParameters().setFileName(file1.getName());
         job.applyParameters(progress);
 
         new Thread(

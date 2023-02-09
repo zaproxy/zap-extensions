@@ -98,7 +98,7 @@ public class SoapJob extends AutomationJob {
 
         String wsdlFile = this.getParameters().getWsdlFile();
         if (!StringUtils.isEmpty(wsdlFile)) {
-            File file = new File(wsdlFile);
+            File file = JobUtils.getFile(wsdlFile, getPlan());
             if (!file.exists() || !file.canRead()) {
                 progress.error(Constant.messages.getString("soap.automation.error.file", wsdlFile));
             } else {

@@ -21,7 +21,7 @@
 	<li>type: mandatory, can be any of the script types supported by ZAP
 	<li>engine: optional, can be used to override the default engine for the file extension
 	<li>name: optional, defaults to the file name, can be used to specify the script in another job
-	<li>file: mandatory, the full file path, must be a readable text file
+	<li>file: mandatory, the path to the file (absolute or relative to the plan), must be a readable text file
 	</ul>
 	
 	<H2>Action: remove</H2>
@@ -69,7 +69,7 @@
       type:                      # String: The type of the script
       engine:                    # String: The script engine to use - can be used to override the default engine for the file extension
       name:                      # String: The name of the script, defaults to the file name
-      file:                      # String: The full file path, must be readable
+      file:                      # String: The full or relative file path, must be readable
       target:                    # String: The URL to be invoked for "targeted" script type
 	</pre>
 

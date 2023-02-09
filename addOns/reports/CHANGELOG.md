@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Added
 - A description of riskdesc fields in the relevant report templates' help (Issue 7445).
+- Support for relative report file and directory names in the Automation Framework job.
 
 ### Changed
 - Maintenance changes.

@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,6 +46,7 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
+import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
@@ -624,5 +626,39 @@ public class JobUtils {
             }
         }
         return wrapper;
+    }
+
+    public static File getFile(String name, AutomationPlan plan) {
+        File planFile = plan.getFile();
+        String nameWithVars = plan.getEnv().replaceVars(name);
+        File f;
+
+        if (planFile != null && !Paths.get(name).isAbsolute()) {
+            f = new File(planFile.getParentFile(), nameWithVars);
+        } else {
+            f = new File(nameWithVars);
+        }
+
+        return f;
+    }
+
+    /**
+     * Returns true if the given path is an absolute on (not relative) without an variables in it.
+     *
+     * @param path the path of a file
+     * @return true if the given path is an absolute on (not relative) without an variables in it
+     */
+    public static boolean isAbsoluteLiteralPath(String path) {
+        return Paths.get(path).isAbsolute() && !containsVars(path);
+    }
+
+    /**
+     * Returns true if the string contains any variables in it.
+     *
+     * @param str the string to test
+     * @return true if the string contains any variables in it
+     */
+    public static boolean containsVars(String str) {
+        return str.contains("${");
     }
 }

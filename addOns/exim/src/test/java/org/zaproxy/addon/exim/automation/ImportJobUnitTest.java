@@ -41,6 +41,7 @@ import org.parosproxy.paros.model.Model;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
+import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.exim.ExtensionExim;
 import org.zaproxy.zap.utils.I18N;
@@ -118,14 +119,16 @@ class ImportJobUnitTest {
     void shouldFailIfInvalidFile() {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
-        AutomationProgress progress = new AutomationProgress();
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        AutomationPlan plan = new AutomationPlan();
+        AutomationProgress progress = plan.getProgress();
+        AutomationEnvironment env = plan.getEnv();
         String yamlStr = "parameters:\n" + "  fileName: 'Invalid file path'";
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
 
         ImportJob job = new ImportJob();
         job.setJobData(((LinkedHashMap<?, ?>) data));
+        job.setPlan(plan);
 
         // When
         job.verifyParameters(progress);

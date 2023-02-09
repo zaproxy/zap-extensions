@@ -243,7 +243,10 @@ public class AuthenticationData extends AutomationData {
                     context.setAuthenticationMethod(jsonAuthMethod);
                     break;
                 case AuthenticationData.METHOD_SCRIPT:
-                    File f = new File(parameters.getOrDefault(PARAM_SCRIPT, "").toString());
+                    File f =
+                            JobUtils.getFile(
+                                    parameters.getOrDefault(PARAM_SCRIPT, "").toString(),
+                                    env.getPlan());
                     if (!f.exists() || !f.canRead()) {
                         progress.error(
                                 Constant.messages.getString(
