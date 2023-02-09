@@ -41,6 +41,7 @@ import org.parosproxy.paros.model.Model;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
+import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.openapi.ExtensionOpenApi;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -160,14 +161,16 @@ class OpenApiJobUnitTest extends TestUtils {
     void shouldFailIfInvalidFile() {
         // Given
         mockMessages(new ExtensionOpenApi());
-        AutomationProgress progress = new AutomationProgress();
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        AutomationPlan plan = new AutomationPlan();
+        AutomationProgress progress = plan.getProgress();
+        AutomationEnvironment env = plan.getEnv();
         String yamlStr = "parameters:\n" + "  apiFile: 'Invalid file path'";
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
 
         OpenApiJob job = new OpenApiJob();
         job.setJobData(((LinkedHashMap<?, ?>) data));
+        job.setPlan(plan);
 
         // When
         job.verifyParameters(progress);

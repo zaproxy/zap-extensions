@@ -29,7 +29,9 @@ import java.util.Locale;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.automation.AutomationEnvironment;
+import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.automation.ScriptJobParameters;
@@ -92,29 +94,31 @@ public class AddScriptAction extends ScriptAction {
             if (progress != null) {
                 progress.error(issue);
             }
-        } else {
+        } else if (JobUtils.isAbsoluteLiteralPath(filename)) {
+            // Cannot check relative paths or ones that contain vars at this point
             File f = new File(filename);
-            if (!f.canRead()) {
-                issue =
-                        Constant.messages.getString(
-                                "scripts.automation.error.file.cannotRead",
-                                jobName,
-                                f.getAbsolutePath());
-                list.add(issue);
-                if (progress != null) {
-                    progress.error(issue);
+            if (JobUtils.isAbsoluteLiteralPath(filename))
+                if (!f.canRead()) {
+                    issue =
+                            Constant.messages.getString(
+                                    "scripts.automation.error.file.cannotRead",
+                                    jobName,
+                                    f.getAbsolutePath());
+                    list.add(issue);
+                    if (progress != null) {
+                        progress.error(issue);
+                    }
+                } else if (!f.isFile()) {
+                    issue =
+                            Constant.messages.getString(
+                                    "scripts.automation.error.file.notFile",
+                                    jobName,
+                                    f.getAbsolutePath());
+                    list.add(issue);
+                    if (progress != null) {
+                        progress.error(issue);
+                    }
                 }
-            } else if (!f.isFile()) {
-                issue =
-                        Constant.messages.getString(
-                                "scripts.automation.error.file.notFile",
-                                jobName,
-                                f.getAbsolutePath());
-                list.add(issue);
-                if (progress != null) {
-                    progress.error(issue);
-                }
-            }
         }
 
         if (getEngineWrapper(params) == null) {
@@ -163,11 +167,11 @@ public class AddScriptAction extends ScriptAction {
         return se;
     }
 
-    private ScriptWrapper getScriptWrapper() {
+    private ScriptWrapper getScriptWrapper(AutomationPlan plan) {
         ScriptWrapper sw = new ScriptWrapper();
         sw.setName(this.parameters.getName());
         if (this.parameters.getFile() != null) {
-            File f = new File(this.parameters.getFile());
+            File f = JobUtils.getFile(this.parameters.getFile(), plan);
             sw.setFile(f);
             if (StringUtils.isEmpty(sw.getName())) {
                 sw.setName(f.getName());
@@ -181,7 +185,7 @@ public class AddScriptAction extends ScriptAction {
 
     @Override
     public void runJob(String jobName, AutomationEnvironment env, AutomationProgress progress) {
-        ScriptWrapper sw = this.getScriptWrapper();
+        ScriptWrapper sw = this.getScriptWrapper(env.getPlan());
         try {
             extScript.loadScript(sw);
             ScriptWrapper existingScript = extScript.getScript(sw.getName());

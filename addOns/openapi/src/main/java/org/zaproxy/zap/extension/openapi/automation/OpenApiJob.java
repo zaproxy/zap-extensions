@@ -116,7 +116,7 @@ public class OpenApiJob extends AutomationJob {
                         : -1;
 
         if (!StringUtils.isEmpty(apiFile)) {
-            File file = new File(apiFile);
+            File file = JobUtils.getFile(apiFile, getPlan());
             if (file.exists() && file.canRead()) {
                 OpenApiResults results =
                         getExtOpenApi()

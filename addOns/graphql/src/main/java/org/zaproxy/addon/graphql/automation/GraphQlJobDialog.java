@@ -67,8 +67,6 @@ public class GraphQlJobDialog extends StandardFieldsDialog {
     private static final String QUERY_SPLIT_TYPE_PARAM = "graphql.automation.dialog.querysplittype";
     private static final String REQUEST_METHOD_PARAM = "graphql.automation.dialog.requestmethod";
 
-    private static final String VARIABLE_TOKEN = "${";
-
     private GraphQlJob job;
 
     private DefaultComboBoxModel<GraphQlParam.ArgsTypeOption> argsTypeModel;
@@ -102,7 +100,7 @@ public class GraphQlJobDialog extends StandardFieldsDialog {
             f = new File(fileName);
         }
         this.addFileSelectField(0, SCHEMA_FILE_PARAM, f, JFileChooser.FILES_AND_DIRECTORIES, null);
-        if (fileName != null && fileName.contains(VARIABLE_TOKEN)) {
+        if (fileName != null && JobUtils.containsVars(fileName)) {
             setFieldValue(SCHEMA_FILE_PARAM, fileName);
         }
 

@@ -144,7 +144,7 @@ public class SessionManagementData extends AutomationData {
                                     "automation.error.env.sessionmgmt.script.missing"));
                     break;
                 }
-                File f = new File(getParameters().get(PARAM_SCRIPT));
+                File f = JobUtils.getFile(getParameters().get(PARAM_SCRIPT), env.getPlan());
                 if (!f.exists() || !f.canRead()) {
                     progress.error(
                             Constant.messages.getString(

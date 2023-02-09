@@ -63,15 +63,16 @@ public class ImportFromFileDialog extends ImportFromAbstractDialog {
                                         Model.getSingleton().getOptionsParam().getUserDirectory());
                         int state = filechooser.showOpenDialog(View.getSingleton().getMainFrame());
                         if (state == JFileChooser.APPROVE_OPTION) {
+                            String filename = filechooser.getSelectedFile().getAbsolutePath();
                             try {
-                                getSchemaField()
-                                        .setText(filechooser.getSelectedFile().getCanonicalPath());
+                                getSchemaField().setText(filename);
                                 Model.getSingleton()
                                         .getOptionsParam()
                                         .setUserDirectory(filechooser.getCurrentDirectory());
                             } catch (Exception e1) {
                                 showWarningDialog(
-                                        Constant.messages.getString("graphql.error.filenotfound"));
+                                        Constant.messages.getString(
+                                                "graphql.error.filenotfound", filename));
                             }
                         }
                     });

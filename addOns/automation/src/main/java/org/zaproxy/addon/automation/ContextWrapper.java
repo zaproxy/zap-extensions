@@ -227,7 +227,7 @@ public class ContextWrapper {
 
     private void validateUrl(String url, AutomationProgress progress) {
         try {
-            if (!url.contains("${")) {
+            if (!JobUtils.containsVars(url)) {
                 // Cannot validate urls containing envvars
                 new URI(url, true);
             }
@@ -246,7 +246,7 @@ public class ContextWrapper {
             String regexStr = regex.toString();
             regexes.add(regexStr);
             try {
-                if (!regexStr.contains("${")) {
+                if (!JobUtils.containsVars(regexStr)) {
                     // Only validate the regex if it doesnt contain vars
                     Pattern.compile(regexStr);
                 }

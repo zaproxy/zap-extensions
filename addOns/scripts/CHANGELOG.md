@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Help explaining how to interact with Automation Framework plans.
+- Support for relative file paths and ones including vars in the Automation Framework job.
 
 ### Changed
 - Maintenance changes.

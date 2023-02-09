@@ -173,11 +173,12 @@ public class ReportJob extends AutomationJob {
         }
 
         File file;
-        String reportDir = env.replaceVars(getParameters().getReportDir());
+        String reportDir = getParameters().getReportDir();
         if (reportDir != null && reportDir.length() > 0) {
-            file = new File(reportDir, fileName);
+            File dir = JobUtils.getFile(reportDir, getPlan());
+            file = new File(dir, fileName);
         } else {
-            file = new File(fileName);
+            file = JobUtils.getFile(fileName, getPlan());
         }
         reportData.setTitle(this.getParameters().getReportTitle());
         reportData.setDescription(this.getParameters().getReportDescription());

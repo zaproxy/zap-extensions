@@ -129,7 +129,7 @@ public class GraphQlParser {
         File file = new File(filePath);
         if (!file.exists()) {
             throw new FileNotFoundException(
-                    Constant.messages.getString("graphql.error.filenotfound"));
+                    Constant.messages.getString("graphql.error.filenotfound", filePath));
         }
         if (!file.canRead() || !file.isFile()) {
             throw new IOException(Constant.messages.getString("graphql.error.importfile"));
