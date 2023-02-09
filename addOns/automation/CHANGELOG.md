@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Support for relative file paths and ones including vars.
+- Option to disable all of the passive scan rules.
+
 ### Fixed
 - NPE when adding a context to an existing plan.
 
