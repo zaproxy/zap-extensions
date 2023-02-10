@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Add default Allowed Resources if none present in existing home directory when updating the add-on (Issue 7719).
 
 ## [23.11.0] - 2023-02-06
 ### Changed

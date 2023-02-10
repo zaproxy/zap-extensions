@@ -46,7 +46,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
      * @see #CONFIG_VERSION_KEY
      * @see #updateConfigsImpl(int)
      */
-    private static final int CURRENT_CONFIG_VERSION = 5;
+    private static final int CURRENT_CONFIG_VERSION = 6;
 
     private static final String AJAX_SPIDER_BASE_KEY = "ajaxSpider";
 
@@ -310,6 +310,10 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
                 if (getInt(NUMBER_OF_BROWSERS_KEY, 1) == 1) {
                     // the old default
                     this.setNumberOfBrowsers(Constants.getDefaultThreadCount());
+                }
+            case 5:
+                if (!getConfig().getKeys(ALL_ALLOWED_RESOURCES_KEY).hasNext()) {
+                    setAllowedResources(DEFAULT_ALLOWED_RESOURCES);
                 }
         }
     }
