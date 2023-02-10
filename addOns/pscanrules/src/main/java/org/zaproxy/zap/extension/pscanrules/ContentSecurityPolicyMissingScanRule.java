@@ -122,35 +122,31 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
                 .isEmpty();
     }
 
-    private AlertBuilder buildAlert(int risk) {
+    private AlertBuilder buildAlert(int risk, int alertnum) {
         return newAlert()
                 .setRisk(risk)
                 .setConfidence(Alert.CONFIDENCE_HIGH)
                 .setCweId(693) // CWE-693: Protection Mechanism Failure
-                .setWascId(15); // WASC-15: Application Misconfiguration
+                .setWascId(15) // WASC-15: Application Misconfiguration
+                .setSolution(getAlertAttribute("soln"))
+                .setReference(getAlertAttribute("refs"))
+                .setAlertRef(PLUGIN_ID + "-" + alertnum);
     }
 
     private AlertBuilder alertMissingCspHeader() {
-        return buildAlert(Alert.RISK_MEDIUM)
-                .setName(getAlertAttribute("name"))
-                .setDescription(getAlertAttribute("desc"))
-                .setSolution(getAlertAttribute("soln"))
-                .setReference(getAlertAttribute("refs"));
+        return buildAlert(Alert.RISK_MEDIUM, 1).setDescription(getAlertAttribute("desc"));
     }
 
     private AlertBuilder alertObsoleteCspHeader() {
-        return buildAlert(Alert.RISK_INFO)
+        return buildAlert(Alert.RISK_INFO, 2)
                 .setName(getAlertAttribute("obs.name"))
-                .setDescription(getAlertAttribute("obs.desc"))
-                .setSolution(getAlertAttribute("soln"))
-                .setReference(getAlertAttribute("refs"));
+                .setDescription(getAlertAttribute("obs.desc"));
     }
 
     private AlertBuilder alertCspReportOnlyHeader() {
-        return buildAlert(Alert.RISK_INFO)
+        return buildAlert(Alert.RISK_INFO, 3)
                 .setName(getAlertAttribute("ro.name"))
                 .setDescription(getAlertAttribute("ro.desc"))
-                .setSolution(getAlertAttribute("soln"))
                 .setReference(getAlertAttribute("ro.refs"));
     }
 }

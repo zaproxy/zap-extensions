@@ -131,8 +131,8 @@ class ContentSecurityPolicyMissingScanRuleUnitTest
 
         // Then
         assertThat(alertsRaised.size(), is(2));
-        assertCSPAlertAttributes(alertsRaised.get(0), "", Alert.RISK_MEDIUM);
-        assertCSPAlertAttributes(alertsRaised.get(1), "obs.", Alert.RISK_INFO);
+        assertCSPAlertAttributes(alertsRaised.get(0), "", Alert.RISK_MEDIUM, "10038-1");
+        assertCSPAlertAttributes(alertsRaised.get(1), "obs.", Alert.RISK_INFO, "10038-2");
     }
 
     @Test
@@ -145,8 +145,8 @@ class ContentSecurityPolicyMissingScanRuleUnitTest
 
         // Then
         assertThat(alertsRaised.size(), is(2));
-        assertCSPAlertAttributes(alertsRaised.get(0), "", Alert.RISK_MEDIUM);
-        assertCSPAlertAttributes(alertsRaised.get(1), "obs.", Alert.RISK_INFO);
+        assertCSPAlertAttributes(alertsRaised.get(0), "", Alert.RISK_MEDIUM, "10038-1");
+        assertCSPAlertAttributes(alertsRaised.get(1), "obs.", Alert.RISK_INFO, "10038-2");
     }
 
     @Test
@@ -256,8 +256,8 @@ class ContentSecurityPolicyMissingScanRuleUnitTest
 
         // Then
         assertThat(alertsRaised.size(), is(2));
-        assertCSPAlertAttributes(alertsRaised.get(0), "", Alert.RISK_MEDIUM);
-        assertCSPAlertAttributes(alertsRaised.get(1), "ro.", Alert.RISK_INFO);
+        assertCSPAlertAttributes(alertsRaised.get(0), "", Alert.RISK_MEDIUM, "10038-1");
+        assertCSPAlertAttributes(alertsRaised.get(1), "ro.", Alert.RISK_INFO, "10038-3");
         assertThat(alertsRaised.get(1).getReference(), is(getLocalisedString("ro.refs")));
     }
 
@@ -272,7 +272,7 @@ class ContentSecurityPolicyMissingScanRuleUnitTest
 
         // Then
         assertThat(alertsRaised.size(), is(1));
-        assertCSPAlertAttributes(alertsRaised.get(0), "ro.", Alert.RISK_INFO);
+        assertCSPAlertAttributes(alertsRaised.get(0), "ro.", Alert.RISK_INFO, "10038-3");
         assertThat(alertsRaised.get(0).getReference(), is(getLocalisedString("ro.refs")));
     }
 
@@ -316,15 +316,16 @@ class ContentSecurityPolicyMissingScanRuleUnitTest
 
     private void assertContentSecurityPolicyAlertRaised() {
         assertThat(alertsRaised.size(), is(1));
-        assertCSPAlertAttributes(alertsRaised.get(0), "", Alert.RISK_MEDIUM);
+        assertCSPAlertAttributes(alertsRaised.get(0), "", Alert.RISK_MEDIUM, "10038-1");
     }
 
     private void assertObsoleteSecurityPolicyAlertRaised() {
         assertThat(alertsRaised.size(), is(1));
-        assertCSPAlertAttributes(alertsRaised.get(0), "obs.", Alert.RISK_INFO);
+        assertCSPAlertAttributes(alertsRaised.get(0), "obs.", Alert.RISK_INFO, "10038-2");
     }
 
-    private static void assertCSPAlertAttributes(Alert alert, String key, int expectedRisk) {
+    private static void assertCSPAlertAttributes(
+            Alert alert, String key, int expectedRisk, String alertRef) {
         assertThat(alert.getRisk(), is(expectedRisk));
         assertThat(alert.getName(), is(getLocalisedString(key + "name")));
         assertThat(alert.getDescription(), is(getLocalisedString(key + "desc")));
@@ -333,6 +334,7 @@ class ContentSecurityPolicyMissingScanRuleUnitTest
         assertThat(alert.getCweId(), is(693));
         assertThat(alert.getWascId(), is(15));
         assertThat(alert.getUri(), is(URI));
+        assertThat(alert.getAlertRef(), is(alertRef));
     }
 
     private static String getLocalisedString(String key) {
