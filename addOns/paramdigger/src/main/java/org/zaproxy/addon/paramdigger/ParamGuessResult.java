@@ -45,6 +45,7 @@ public class ParamGuessResult {
                             Model.getSingleton().getSession(),
                             HistoryReference.TYPE_PARAM_DIGGER,
                             httpMessage);
+            this.historyReference.setNote(this.toString());
         } catch (HttpMalformedHeaderException | DatabaseException e) {
             LOGGER.warn(
                     "Error creating history reference. Exception raised: {}", e.getMessage(), e);
@@ -55,6 +56,7 @@ public class ParamGuessResult {
         this.paramName = paramName;
         this.reasons = reasons;
         this.historyReference = ref;
+        this.historyReference.setNote(this.toString());
     }
 
     public String getParamName() {
@@ -66,7 +68,6 @@ public class ParamGuessResult {
     }
 
     public HistoryReference getHistoryReference() {
-        this.historyReference.setNote(this.toString());
         return this.historyReference;
     }
 

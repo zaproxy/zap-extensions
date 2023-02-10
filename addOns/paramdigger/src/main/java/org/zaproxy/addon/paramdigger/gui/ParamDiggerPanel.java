@@ -37,6 +37,8 @@ import org.zaproxy.addon.paramdigger.GuesserScan;
 import org.zaproxy.addon.paramdigger.ParamDiggerOptions;
 import org.zaproxy.addon.paramdigger.ParamGuesserScanController;
 import org.zaproxy.zap.view.ScanPanel2;
+import org.zaproxy.zap.view.ZapTable;
+import org.zaproxy.zap.view.table.HistoryReferencesTable;
 
 @SuppressWarnings("serial")
 public class ParamDiggerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanController> {
@@ -47,8 +49,8 @@ public class ParamDiggerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanCo
 
     private JTabbedPane tabbedPane;
     private ParamDiggerHistoryTableModel emptyTableModel;
-    private JTable historyTable;
-    private JTable outputTable;
+    private ParamDiggerHistoryTable historyTable;
+    private ParamDiggerOutputTable outputTable;
 
     private JButton startScanButton;
 
@@ -79,7 +81,7 @@ public class ParamDiggerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanCo
             emptyTableModel = new ParamDiggerHistoryTableModel();
             emptyOutputTableModel = new ParamDiggerOutputTableModel();
 
-            historyTable = new ParamDiggerResultsTable(emptyTableModel);
+            historyTable = new ParamDiggerHistoryTable(emptyTableModel);
             outputTable = new ParamDiggerOutputTable(emptyOutputTableModel);
 
             tabbedPane = new JTabbedPane();
