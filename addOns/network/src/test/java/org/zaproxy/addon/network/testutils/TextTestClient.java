@@ -94,7 +94,22 @@ public class TextTestClient extends TestClient {
      * @throws Exception if an error occurred while waiting for the response.
      */
     public static Object waitForResponse(Channel channel) throws Exception {
-        Object response = getCompletableFuture(channel).get(5, TimeUnit.SECONDS);
+        return waitForResponse(channel, 5, TimeUnit.SECONDS);
+    }
+
+    /**
+     * Waits for a response in the given channel.
+     *
+     * @param channel the channel where it's expected a response.
+     * @param timeout the maximum time to wait.
+     * @param unit the time unit of the timeout argument.
+     * @return the response.
+     * @throws Exception if an error occurred while waiting for the response.
+     */
+    public static <T> T waitForResponse(Channel channel, long timeout, TimeUnit unit)
+            throws Exception {
+        @SuppressWarnings("unchecked")
+        T response = (T) getCompletableFuture(channel).get(timeout, unit);
         channel.attr(RESPONSE_ATTRIBUTE).set(new CompletableFuture<>());
         return response;
     }

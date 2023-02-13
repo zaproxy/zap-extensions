@@ -29,8 +29,10 @@ import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
+import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPipeline;
 import io.netty.util.Attribute;
@@ -50,6 +52,7 @@ class MainProxyHandlerUnitTest {
 
     private Executor executor;
     private ChannelHandlerContext ctx;
+    private ChannelFuture channelFutureClose;
     private HttpResponseHeader responseHeader;
     private HttpMessage msg;
     private LegacyProxyListenerHandler legacyHandler;
@@ -59,7 +62,10 @@ class MainProxyHandlerUnitTest {
     @SuppressWarnings("unchecked")
     void setUp() {
         ctx = mock(ChannelHandlerContext.class);
-        given(ctx.close()).willReturn(mock(ChannelFuture.class));
+        channelFutureClose = mock(ChannelFuture.class);
+        given(ctx.writeAndFlush(Unpooled.EMPTY_BUFFER)).willReturn(channelFutureClose);
+        given(channelFutureClose.addListener(ChannelFutureListener.CLOSE))
+                .willReturn(mock(ChannelFuture.class));
         Channel channel = mock(Channel.class);
         Attribute<Boolean> att = mock(Attribute.class);
         given(att.get()).willReturn(Boolean.FALSE);
@@ -159,7 +165,7 @@ class MainProxyHandlerUnitTest {
         boolean skip = handler.postWriteResponse(ctx, msg);
         // Then
         assertThat(skip, is(equalTo(true)));
-        verify(ctx).close();
+        verify(channelFutureClose).addListener(ChannelFutureListener.CLOSE);
     }
 
     @Test
@@ -172,7 +178,7 @@ class MainProxyHandlerUnitTest {
         boolean skip = handler.postWriteResponse(ctx, msg);
         // Then
         assertThat(skip, is(equalTo(true)));
-        verify(ctx).close();
+        verify(channelFutureClose).addListener(ChannelFutureListener.CLOSE);
     }
 
     @Test
