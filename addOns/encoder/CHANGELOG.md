@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Maintenance changes.
 
+### Added
+- A context menu active on the output text areas facilitating the replacement of input text.
+
 ## [1.0.0] - 2022-12-15
 
 ### BREAKING CHANGE
