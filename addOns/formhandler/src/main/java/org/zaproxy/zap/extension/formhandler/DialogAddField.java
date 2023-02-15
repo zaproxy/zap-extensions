@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.formhandler;
 
 import java.awt.Dialog;
 import java.util.List;
+import java.util.Locale;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -135,7 +136,7 @@ class DialogAddField extends AbstractFormDialog {
      */
     @Override
     protected boolean validateFields() {
-        String fieldName = getNameTextField().getText().toLowerCase();
+        String fieldName = getNameTextField().getText().toLowerCase(Locale.ROOT);
         for (FormHandlerParamField t : fields) {
             if (fieldName.equals(t.getName())) {
                 showNameRepeatedDialog();
@@ -163,7 +164,7 @@ class DialogAddField extends AbstractFormDialog {
     protected void performAction() {
         field =
                 new FormHandlerParamField(
-                        getNameTextField().getText().toLowerCase(),
+                        getNameTextField().getText(),
                         getValueTextField().getText(),
                         getEnabledCheckBox().isSelected());
     }
