@@ -100,9 +100,9 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
     @Override
     public List<Alert> getExampleAlerts() {
         return Arrays.asList(
-                alertMissingCspHeader().build(),
-                alertObsoleteCspHeader().build(),
-                alertObsoleteCspHeader().build());
+                alertMissingCspHeader().setUri("https://www.example.com").build(),
+                alertObsoleteCspHeader().setUri("https://www.example.com").build(),
+                alertCspReportOnlyHeader().setUri("https://www.example.com").build());
     }
 
     private static boolean hasCspHeader(HttpMessage msg) {
@@ -122,7 +122,7 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
                 .isEmpty();
     }
 
-    private AlertBuilder buildAlert(int risk, int alertnum) {
+    private AlertBuilder buildAlert(int risk, int alertNum) {
         return newAlert()
                 .setRisk(risk)
                 .setConfidence(Alert.CONFIDENCE_HIGH)
@@ -130,7 +130,7 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
                 .setWascId(15) // WASC-15: Application Misconfiguration
                 .setSolution(getAlertAttribute("soln"))
                 .setReference(getAlertAttribute("refs"))
-                .setAlertRef(PLUGIN_ID + "-" + alertnum);
+                .setAlertRef(PLUGIN_ID + "-" + alertNum);
     }
 
     private AlertBuilder alertMissingCspHeader() {

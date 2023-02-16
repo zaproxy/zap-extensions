@@ -300,28 +300,24 @@ class ContentSecurityPolicyMissingScanRuleUnitTest
     void shouldReturnExampleAlerts() {
         // Given / When
         List<Alert> alerts = rule.getExampleAlerts();
-        long countMediums =
-                rule.getExampleAlerts().stream()
-                        .filter(alert -> Alert.RISK_MEDIUM == alert.getRisk())
-                        .count();
-        long countInfos =
-                rule.getExampleAlerts().stream()
-                        .filter(alert -> Alert.RISK_INFO == alert.getRisk())
-                        .count();
+
         // Then
         assertThat(alerts.size(), is(equalTo(3)));
-        assertThat(countMediums, is(equalTo(1L)));
-        assertThat(countInfos, is(equalTo(2L)));
+        assertCSPAlertAttributes(alerts.get(0), "", Alert.RISK_MEDIUM, "10038-1");
+        assertCSPAlertAttributes(alerts.get(1), "obs.", Alert.RISK_INFO, "10038-2");
+        assertCSPAlertAttributes(alerts.get(2), "ro.", Alert.RISK_INFO, "10038-3");
     }
 
     private void assertContentSecurityPolicyAlertRaised() {
         assertThat(alertsRaised.size(), is(1));
         assertCSPAlertAttributes(alertsRaised.get(0), "", Alert.RISK_MEDIUM, "10038-1");
+        assertThat(alertsRaised.get(0).getReference(), is(getLocalisedString("refs")));
     }
 
     private void assertObsoleteSecurityPolicyAlertRaised() {
         assertThat(alertsRaised.size(), is(1));
         assertCSPAlertAttributes(alertsRaised.get(0), "obs.", Alert.RISK_INFO, "10038-2");
+        assertThat(alertsRaised.get(0).getReference(), is(getLocalisedString("refs")));
     }
 
     private static void assertCSPAlertAttributes(
