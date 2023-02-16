@@ -34,8 +34,11 @@ import java.util.regex.Pattern;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.Source;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
@@ -49,6 +52,8 @@ import org.parosproxy.paros.network.HttpMessage;
  * @since 1.8.0
  */
 public class ComparableResponse {
+
+    private static final Logger LOGGER = LogManager.getLogger(ComparableResponse.class);
 
     private static final float STATUS_CODE_WEIGHT = 1;
     private static final float HEADERS_WEIGHT = 0.15f;
@@ -468,10 +473,18 @@ public class ComparableResponse {
                     }
                 }
                 if (contentType.contains(CONTENT_TYPE_JSON)) {
-                    JSONObject jsonBody = JSONObject.fromObject(body);
-                    for (String childPath : getJsonElementPaths(jsonBody)) {
-                        allPaths.merge(childPath, 1, Integer::sum);
-                        numPaths++;
+                    try {
+                        Object jsonBody = JSONObject.fromObject(body);
+                        countJsonPaths(allPaths, jsonBody);
+                    } catch (JSONException je) {
+                        LOGGER.debug(je, je);
+                        try {
+                            Object json = JSONArray.fromObject(body);
+                            countJsonPaths(allPaths, json);
+                        } catch (JSONException je2) {
+                            LOGGER.debug(je2, je2);
+                            countJsonPaths(allPaths, body);
+                        }
                     }
                 }
             }
@@ -479,12 +492,19 @@ public class ComparableResponse {
         return allPaths;
     }
 
+    private void countJsonPaths(Map<String, Integer> allPaths, Object element) {
+        for (String childPath : getJsonElementPaths(element)) {
+            allPaths.merge(childPath, 1, Integer::sum);
+            numPaths++;
+        }
+    }
+
     /**
      * Get all possible paths of HTML tags.
      *
      * @param node to extract paths
      */
-    private List<String> getHtmlElementPaths(Element node) {
+    private static List<String> getHtmlElementPaths(Element node) {
         List<String> listOfPaths = new ArrayList<>();
         for (Element child : node.getChildElements()) {
             for (String childPath : getHtmlElementPaths(child)) {
@@ -503,7 +523,7 @@ public class ComparableResponse {
      *
      * @param elementObject to extract paths
      */
-    private List<String> getJsonElementPaths(Object elementObject) {
+    private static List<String> getJsonElementPaths(Object elementObject) {
         List<String> listOfPaths = new ArrayList<>();
         if (elementObject instanceof JSONObject) {
 
@@ -530,6 +550,7 @@ public class ComparableResponse {
         }
 
         if (listOfPaths.isEmpty()) {
+            // Primitive - Add empty path
             listOfPaths.add("");
         }
 
