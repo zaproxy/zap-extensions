@@ -63,6 +63,21 @@ zapAddOn {
                     }
                 }
             }
+            register("org.zaproxy.zap.extension.quickstart.apiexplore.ExtensionApiExplore") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.quickstart.apiexplore"))
+                }
+                dependencies {
+                    addOns {
+                        register("graphql") {
+                            version.set(">= 0.14.0")
+                        }
+                    }
+                    extensions {
+                        register("org.zaproxy.zap.extension.quickstart.launch.ExtensionQuickStartLaunch")
+                    }
+                }
+            }
         }
         dependencies {
             addOns {
@@ -82,6 +97,7 @@ zapAddOn {
 
 dependencies {
     compileOnly(parent!!.childProjects.get("callhome")!!)
+    compileOnly(parent!!.childProjects.get("graphql")!!)
     compileOnly(parent!!.childProjects.get("network")!!)
     compileOnly(parent!!.childProjects.get("reports")!!)
     compileOnly(parent!!.childProjects.get("selenium")!!)
