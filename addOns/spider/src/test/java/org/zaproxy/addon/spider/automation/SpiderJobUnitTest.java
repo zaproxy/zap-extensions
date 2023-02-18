@@ -155,7 +155,7 @@ class SpiderJobUnitTest extends TestUtils {
                 job.getConfigParameters(new SpiderParamWrapper(), job.getParamMethodName());
 
         // Then
-        assertThat(params.size(), is(equalTo(18)));
+        assertThat(params.size(), is(equalTo(19)));
         assertThat(params.containsKey("maxDuration"), is(equalTo(true)));
         assertThat(params.containsKey("maxDepth"), is(equalTo(true)));
         assertThat(params.containsKey("maxChildren"), is(equalTo(true)));
@@ -165,6 +165,7 @@ class SpiderJobUnitTest extends TestUtils {
         assertThat(params.containsKey("maxParseSizeBytes"), is(equalTo(true)));
         assertThat(params.containsKey("parseComments"), is(equalTo(true)));
         assertThat(params.containsKey("parseGit"), is(equalTo(true)));
+        assertThat(params.containsKey("parseDsStore"), is(equalTo(true)));
         assertThat(params.containsKey("parseRobotsTxt"), is(equalTo(true)));
         assertThat(params.containsKey("parseSitemapXml"), is(equalTo(true)));
         assertThat(params.containsKey("parseSVNEntries"), is(equalTo(true)));
@@ -652,6 +653,7 @@ class SpiderJobUnitTest extends TestUtils {
                         + "  maxParseSizeBytes: 2\n"
                         + "  parseComments: true\n"
                         + "  parseGit: true\n"
+                        + "  parseDsStore: true\n"
                         + "  parseRobotsTxt: true\n"
                         + "  parseSitemapXml: true\n"
                         + "  parseSVNEntries: true\n"
@@ -686,6 +688,7 @@ class SpiderJobUnitTest extends TestUtils {
         assertThat(job.getParameters().getMaxParseSizeBytes(), is(equalTo(2)));
         assertThat(job.getParameters().getParseComments(), is(equalTo(true)));
         assertThat(job.getParameters().getParseGit(), is(equalTo(true)));
+        assertThat(job.getParameters().getParseDsStore(), is(equalTo(true)));
         assertThat(job.getParameters().getParseRobotsTxt(), is(equalTo(true)));
         assertThat(job.getParameters().getParseSitemapXml(), is(equalTo(true)));
         assertThat(job.getParameters().getParseSVNEntries(), is(equalTo(true)));
@@ -695,6 +698,21 @@ class SpiderJobUnitTest extends TestUtils {
         assertThat(job.getParameters().getSendRefererHeader(), is(equalTo(true)));
         assertThat(job.getParameters().getThreadCount(), is(equalTo(2)));
         assertThat(job.getParameters().getUserAgent(), is(equalTo("ua2")));
+    }
+
+    @Test
+    void shouldVerifyDsStoreParameterWhenFalse() {
+        // Given
+        String yamlStr = "parameters:\n  parseDsStore: false\n";
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+        SpiderJob job = new SpiderJob();
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+        // When
+        job.verifyParameters(progress);
+        // Then
+        assertThat(job.getParameters().getParseDsStore(), is(equalTo(false)));
     }
 
     @Test
