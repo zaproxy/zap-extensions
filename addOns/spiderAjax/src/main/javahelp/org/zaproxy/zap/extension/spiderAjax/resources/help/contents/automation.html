@@ -25,6 +25,7 @@ This job supports monitor tests.
       maxCrawlDepth:                   # Int: The max depth that the crawler can reach, default: 10, 0 is unlimited
       numberOfBrowsers:                # Int: The number of browsers the spider will use, more will be faster but will use up more memory, default: 1
       runOnlyIfModern:                 # Boolean: If true then the spider will only run if a "modern app" alert is raised, default: false
+      inScopeOnly:                     # Boolean: If true then any URLs requested which are out of scope will be ignored, default: true
       browserId:                       # String: Browser Id to use, default: firefox-headless
       clickDefaultElems:               # Bool: When enabled only click the default element: 'a', 'button' and input, default: true
       clickElemsOnce:                  # Bool: When enabled only click each element once, default: true
