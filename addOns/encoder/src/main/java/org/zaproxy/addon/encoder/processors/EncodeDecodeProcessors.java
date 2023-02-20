@@ -45,6 +45,7 @@ import org.zaproxy.addon.encoder.processors.predefined.IllegalUTF8With4ByteEncod
 import org.zaproxy.addon.encoder.processors.predefined.JavaScriptStringDecoder;
 import org.zaproxy.addon.encoder.processors.predefined.JavaScriptStringEncoder;
 import org.zaproxy.addon.encoder.processors.predefined.Md5Hasher;
+import org.zaproxy.addon.encoder.processors.predefined.PowerShellEncoder;
 import org.zaproxy.addon.encoder.processors.predefined.Sha1Hasher;
 import org.zaproxy.addon.encoder.processors.predefined.Sha256Hasher;
 import org.zaproxy.addon.encoder.processors.predefined.UnicodeDecoder;
@@ -101,6 +102,7 @@ public class EncodeDecodeProcessors {
         addPredefined("reverse", Reverse.getSingleton());
         addPredefined("lowercase", LowerCase.getSingleton());
         addPredefined("uppercase", UpperCase.getSingleton());
+        addPredefined("powershellencode", PowerShellEncoder.getSingleton());
     }
 
     private Map<String, EncodeDecodeProcessorItem> scriptProcessors = new HashMap<>();

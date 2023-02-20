@@ -206,6 +206,27 @@ Reverses the order of the input.
 <H4>To Upper Case</H4>
 Converts the input to all upper case characters.
 
+<H3>Miscellaneous</H3>
+
+<H4>PowerShell Encode</H4>
+Converted to UTF-16LE and base64 encoded. Equivalent to one of the following examples (encoding "dir"):
+<p>
+<code> printf "dir"| iconv -t UTF-16LE | base64 -w 0 -</code>
+<br>
+<pre>
+<code>
+$command = 'dir'
+$bytes = [System.Text.Encoding]::Unicode.GetBytes($command)
+$encodedCommand = [Convert]::ToBase64String($bytes)
+echo $encodedCommand
+</code>
+</pre>
+<br>
+Resulting in: <code>ZABpAHIA</code>.
+<p>
+Which can be leveraged via something like the following (where <code>$encodedCommand</code> is set to the encoded value <code>ZABpAHIA</code>):<br>
+<code>powershell -exec bypass -enc $encodedCommand</code>
+
 <H2>Accessed via</H2>
 <table>
 <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>
