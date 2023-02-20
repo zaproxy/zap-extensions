@@ -191,7 +191,7 @@ class AjaxSpiderJobUnitTest {
         given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
 
         AjaxSpiderJob job = new AjaxSpiderJob();
-        job.setInScopeOnly(false);
+        job.getParameters().setInScopeOnly(false);
 
         // When
         job.runJob(env, progress);
@@ -362,7 +362,7 @@ class AjaxSpiderJobUnitTest {
         given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
 
         AjaxSpiderJob job = new AjaxSpiderJob();
-        job.setInScopeOnly(false);
+        job.getParameters().setInScopeOnly(false);
 
         // When
         job.applyCustomParameter("maxDuration", "1");
@@ -386,7 +386,7 @@ class AjaxSpiderJobUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         AjaxSpiderJob job = new AjaxSpiderJob();
-        job.setInScopeOnly(false);
+        job.getParameters().setInScopeOnly(false);
 
         // When
         job.addTest(

@@ -54,6 +54,8 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
             "spiderajax.automation.dialog.ajaxspider.maxcrawldepth";
     private static final String NUM_BROWSERS_PARAM =
             "spiderajax.automation.dialog.ajaxspider.numbrowsers";
+    private static final String IN_SCOPE_ONLY =
+            "spiderajax.automation.dialog.ajaxspider.inScopeOnly";
     private static final String ONLY_IF_MODERN =
             "spiderajax.automation.dialog.ajaxspider.runOnlyIfModern";
     private static final String FIELD_ADVANCED = "spiderajax.automation.dialog.ajaxspider.advanced";
@@ -118,6 +120,8 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
                 1,
                 Integer.MAX_VALUE,
                 JobUtils.unBox(this.job.getParameters().getNumberOfBrowsers()));
+        this.addCheckBoxField(
+                0, IN_SCOPE_ONLY, JobUtils.unBox(this.job.getParameters().getInScopeOnly()));
         this.addCheckBoxField(
                 0, ONLY_IF_MODERN, JobUtils.unBox(this.job.getParameters().getRunOnlyIfModern()));
         this.addCheckBoxField(0, FIELD_ADVANCED, advOptionsSet());
@@ -215,6 +219,7 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
         this.job.getParameters().setMaxDuration(this.getIntValue(MAX_DURATION_PARAM));
         this.job.getParameters().setMaxCrawlDepth(this.getIntValue(MAX_CRAWL_DEPTH_PARAM));
         this.job.getParameters().setNumberOfBrowsers(this.getIntValue(NUM_BROWSERS_PARAM));
+        this.job.getParameters().setInScopeOnly(this.getBoolValue(IN_SCOPE_ONLY));
         this.job.getParameters().setRunOnlyIfModern(this.getBoolValue(ONLY_IF_MODERN));
 
         if (this.getBoolValue(FIELD_ADVANCED)) {
