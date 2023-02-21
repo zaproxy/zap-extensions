@@ -65,6 +65,7 @@ public class SpiderJob extends AutomationJob {
 
     private static final String PARAM_CONTEXT = "context";
     private static final String PARAM_URL = "url";
+    private static final String PARAM_USER = "user";
     private static final String PARAM_FAIL_IF_LESS_URLS = "failIfFoundUrlsLessThan";
     private static final String PARAM_WARN_IF_LESS_URLS = "warnIfFoundUrlsLessThan";
 
@@ -145,7 +146,11 @@ public class SpiderJob extends AutomationJob {
                 JobUtils.getJobOptions(this, progress),
                 this.getName(),
                 new String[] {
-                    PARAM_CONTEXT, PARAM_URL, PARAM_FAIL_IF_LESS_URLS, PARAM_WARN_IF_LESS_URLS
+                    PARAM_CONTEXT,
+                    PARAM_URL,
+                    PARAM_USER,
+                    PARAM_FAIL_IF_LESS_URLS,
+                    PARAM_WARN_IF_LESS_URLS
                 },
                 progress,
                 this.getPlan().getEnv());
