@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Support for parsing .DS_Store files to find paths to try (Issue 30).
 
+### Fixed
+- Spurious error message on setting user in AF job.
+
 ## [0.2.0] - 2023-01-03
 ### Changed
 - Maintenance changes.
