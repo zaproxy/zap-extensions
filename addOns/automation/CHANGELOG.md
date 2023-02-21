@@ -3,6 +3,10 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+### Fixed
+- Added fix for resolving fileName in import job when fileName is provided in an environment variable
+
 ## [0.24.0] - 2023-02-09
 ### Added
 - Support for relative file paths and ones including vars.
