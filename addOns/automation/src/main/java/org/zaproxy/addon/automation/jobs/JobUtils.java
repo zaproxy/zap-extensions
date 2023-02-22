@@ -633,7 +633,7 @@ public class JobUtils {
         String nameWithVars = plan.getEnv().replaceVars(name);
         File f;
 
-        if (planFile != null && !Paths.get(name).isAbsolute()) {
+        if (planFile != null && !Paths.get(nameWithVars).isAbsolute()) {
             f = new File(planFile.getParentFile(), nameWithVars);
         } else {
             f = new File(nameWithVars);
