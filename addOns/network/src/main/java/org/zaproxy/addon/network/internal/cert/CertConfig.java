@@ -21,11 +21,13 @@ package org.zaproxy.addon.network.internal.cert;
 
 import java.time.Duration;
 import java.util.Objects;
+import org.apache.commons.lang3.StringUtils;
 
 /** Configuration to generate certificates. */
 public class CertConfig {
 
     private Duration validity;
+    private String crlDistributionPoint;
 
     /**
      * Constructs a {@code CertConfig} with the given validity.
@@ -34,7 +36,20 @@ public class CertConfig {
      * @throws NullPointerException if the given validity is {@code null}.
      */
     public CertConfig(Duration validity) {
+        this(validity, null);
+    }
+
+    /**
+     * Constructs a {@code CertConfig} with the given validity and CRL distribution point.
+     *
+     * @param validity the validity duration.
+     * @param crlDistributionPoint the URL for the CRL.
+     * @throws NullPointerException if the given validity is {@code null}.
+     */
+    public CertConfig(Duration validity, String crlDistributionPoint) {
         this.validity = Objects.requireNonNull(validity);
+        this.crlDistributionPoint =
+                StringUtils.isBlank(crlDistributionPoint) ? null : crlDistributionPoint;
     }
 
     /**
@@ -44,5 +59,14 @@ public class CertConfig {
      */
     public Duration getValidity() {
         return validity;
+    }
+
+    /**
+     * The URL for the Certificate Revocation List Distribution Point.
+     *
+     * @return the URL, or {@code null} if none.
+     */
+    public String getCrlDistributionPoint() {
+        return crlDistributionPoint;
     }
 }
