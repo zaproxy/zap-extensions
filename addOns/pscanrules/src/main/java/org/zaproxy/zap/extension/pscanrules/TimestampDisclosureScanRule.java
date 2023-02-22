@@ -107,7 +107,10 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
         "Strict-Transport-Security",
         "Report-To",
         "NEL",
-        "Expect-CT"
+        "Expect-CT",
+        "RateLimit-Reset",
+        "X-RateLimit-Reset",
+        "X-Rate-Limit-Reset"
     };
 
     /**

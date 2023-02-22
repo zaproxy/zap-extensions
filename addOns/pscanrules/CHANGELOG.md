@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - Will now only consider PDFs at Low threshold.
 - Maintenance changes.
 - The HeartBleed scan rule alert now includes a CVE tag.
+- Timestamp Disclosure scan rule now excludes values in "RateLimit-Reset", "X-RateLimit-Reset", and "X-Rate-Limit-Reset" headers (Issue 7747).
 
 ## [45] - 2023-01-03
 ### Changed
