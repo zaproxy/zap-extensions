@@ -2,12 +2,10 @@ import org.zaproxy.gradle.addon.AddOnStatus
 
 description = "Allows you to spider sites that make heavy use of JavaScript using Crawljax"
 
-val minimumZapVersion = "2.11.1"
-
 zapAddOn {
     addOnName.set("Ajax Spider")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set(minimumZapVersion)
+    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -42,7 +40,7 @@ zapAddOn {
     }
 
     val apiGenClasspath = configurations.detachedConfiguration(
-        dependencies.create("org.zaproxy:zap:$minimumZapVersion"),
+        dependencies.create("org.zaproxy:zap:${zapVersion.get()}"),
         dependencies.create(parent!!.childProjects.get("selenium")!!),
     )
 
