@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
+import static org.apache.commons.text.StringEscapeUtils.escapeXml10;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
@@ -37,6 +38,7 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
+import org.zaproxy.zap.testutils.UrlParamValueHandler;
 
 /** Unit test for {@link SqlInjectionScanRule}. */
 class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRule> {
@@ -342,6 +344,36 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
         // Then
         assertThat(httpMessagesSent, hasSize(greaterThan(1)));
         assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    void shouldAlertByBodyComparisonIgnoringXmlEscapedPayload() throws Exception {
+        // Given
+        String param = "topic";
+        String normalPayload = "cats";
+        String attackPayload = "cats' AND '1'='1' -- ";
+        String verificationPayload = "cats' AND '1'='2' -- ";
+        UrlParamValueHandler handler =
+                UrlParamValueHandler.builder()
+                        .targetParam(param)
+                        .whenParamValueIs(normalPayload)
+                        .thenReturnHtml(normalPayload + ": A")
+                        .whenParamValueIs(attackPayload)
+                        .thenReturnHtml(escapeXml10(attackPayload + ": A"))
+                        .whenParamValueIs(verificationPayload)
+                        .thenReturnHtml(escapeXml10(verificationPayload + ": "))
+                        .build();
+        nano.addHandler(handler);
+        rule.init(getHttpMessage("/?topic=" + normalPayload), parent);
+
+        // When
+        rule.scan();
+
+        // Then
+        assertThat(alertsRaised, hasSize(1));
+        Alert actual = alertsRaised.get(0);
+        assertThat(actual.getParam(), is(equalTo(param)));
+        assertThat(actual.getAttack(), is(equalTo(attackPayload)));
     }
 
     private static class ExpressionBasedHandler extends NanoServerHandler {

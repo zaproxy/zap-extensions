@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -1968,12 +1969,16 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
         String urlEncodePattern = getURLEncode(pattern);
         String htmlEncodePattern1 = getHTMLEncode(pattern);
         String htmlEncodePattern2 = getHTMLEncode(urlEncodePattern);
+        // escapeXml10 is favored over escapeXml11, since the relevant characters are already
+        // addressed there
+        String xhtmlEncodePattern = StringEscapeUtils.escapeXml10(pattern);
         String result =
                 body.replaceAll("\\Q" + pattern + "\\E", "")
                         .replaceAll("\\Q" + urlEncodePattern + "\\E", "");
         result =
                 result.replaceAll("\\Q" + htmlEncodePattern1 + "\\E", "")
-                        .replaceAll("\\Q" + htmlEncodePattern2 + "\\E", "");
+                        .replaceAll("\\Q" + htmlEncodePattern2 + "\\E", "")
+                        .replaceAll("\\Q" + xhtmlEncodePattern + "\\E", "");
         return result;
     }
 
