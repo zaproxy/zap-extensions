@@ -19,23 +19,46 @@
  */
 package org.zaproxy.addon.paramdigger.gui;
 
-import org.zaproxy.zap.view.table.DefaultHistoryReferencesTableModel;
+import java.util.ArrayList;
+import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.paramdigger.ParamGuessResult;
 
-public class ParamDiggerOutputTableModel extends DefaultHistoryReferencesTableModel {
+public class ParamDiggerOutputTableModel
+        extends DefaultCustomColumnHistoryReferencesTableModel<ParamGuessResult> {
+
     private static final long serialVersionUID = 1l;
 
+    public static final Column[] COLUMNS = {
+        Column.HREF_ID,
+        Column.METHOD,
+        Column.URL,
+        Column.STATUS_CODE,
+        Column.STATUS_REASON,
+        Column.RTT,
+        Column.SIZE_MESSAGE,
+        Column.CUSTOM,
+    };
+
+    private static final ArrayList<CustomColumn<ParamGuessResult>> CUSTOM_COLUMNS;
+
+    static {
+        CUSTOM_COLUMNS = new ArrayList<>();
+        CUSTOM_COLUMNS.add(createResultColumn());
+    }
+
     public ParamDiggerOutputTableModel() {
-        super(
-                new Column[] {
-                    Column.HREF_ID,
-                    Column.REQUEST_TIMESTAMP,
-                    Column.RESPONSE_TIMESTAMP,
-                    Column.METHOD,
-                    Column.URL,
-                    Column.STATUS_CODE,
-                    Column.STATUS_REASON,
-                    Column.RTT,
-                    Column.NOTE,
-                });
+        super(COLUMNS, CUSTOM_COLUMNS, ParamGuessResult.class);
+    }
+
+    private static CustomColumn<ParamGuessResult> createResultColumn() {
+        return new CustomColumn<ParamGuessResult>(
+                String.class,
+                Constant.messages.getString("paramdigger.output.table.result.column.name")) {
+
+            @Override
+            public Object getValue(ParamGuessResult result) {
+                return result.toString();
+            }
+        };
     }
 }

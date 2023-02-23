@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.paramdigger.gui;
 
+import javax.swing.table.TableModel;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
@@ -33,9 +34,20 @@ public class ParamDiggerOutputTable extends HistoryReferencesTable {
 
     public ParamDiggerOutputTable(ParamDiggerOutputTableModel model) {
         super(model);
+        setAutoCreateColumnsFromModel(false);
         setName(OUTPUT_TABLE_NAME);
         extensionHistory =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionHistory.class);
+    }
+
+    @Override
+    public void setModel(TableModel tableModel) {
+        if (!(tableModel instanceof ParamDiggerOutputTableModel)) {
+            throw new IllegalArgumentException(
+                    "Parameter tableModel must be an ParamDiggerTableModel.");
+        }
+
+        super.setModel(tableModel);
     }
 
     @Override

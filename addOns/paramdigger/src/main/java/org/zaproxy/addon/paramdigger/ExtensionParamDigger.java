@@ -22,17 +22,14 @@ package org.zaproxy.addon.paramdigger;
 import java.awt.EventQueue;
 import javax.swing.ImageIcon;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
-import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.HistoryReferenceEventPublisher;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.paramdigger.gui.ParamDiggerDialog;
 import org.zaproxy.addon.paramdigger.gui.ParamDiggerPanel;
-import org.zaproxy.addon.paramdigger.gui.ParamDiggerPopUpMenuNote;
 import org.zaproxy.addon.paramdigger.gui.PopupMenuParamDigger;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
@@ -55,7 +52,6 @@ public class ExtensionParamDigger extends ExtensionAdaptor {
     private ParamDiggerDialog paramDiggerDialog;
 
     private ParamGuesserScanController scanController;
-    private ParamDiggerPopUpMenuNote popUpMenuNote;
 
     public ExtensionParamDigger() {
         super(NAME);
@@ -98,19 +94,7 @@ public class ExtensionParamDigger extends ExtensionAdaptor {
             extensionHook.getHookMenu().addToolsMenuItem(getMenu());
             extensionHook.getHookView().addStatusPanel(getParamDiggerPanel());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMsg());
-            extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuNote());
         }
-    }
-
-    private ParamDiggerPopUpMenuNote getPopupMenuNote() {
-        if (popUpMenuNote == null) {
-            popUpMenuNote =
-                    new ParamDiggerPopUpMenuNote(
-                            Control.getSingleton()
-                                    .getExtensionLoader()
-                                    .getExtension(ExtensionHistory.class));
-        }
-        return popUpMenuNote;
     }
 
     private ExtensionPopupMenuItem getPopupMsg() {

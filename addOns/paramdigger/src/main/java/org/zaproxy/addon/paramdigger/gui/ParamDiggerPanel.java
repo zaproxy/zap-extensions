@@ -28,7 +28,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.paramdigger.ExtensionParamDigger;
@@ -37,8 +36,6 @@ import org.zaproxy.addon.paramdigger.GuesserScan;
 import org.zaproxy.addon.paramdigger.ParamDiggerOptions;
 import org.zaproxy.addon.paramdigger.ParamGuesserScanController;
 import org.zaproxy.zap.view.ScanPanel2;
-import org.zaproxy.zap.view.ZapTable;
-import org.zaproxy.zap.view.table.HistoryReferencesTable;
 
 @SuppressWarnings("serial")
 public class ParamDiggerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanController> {
