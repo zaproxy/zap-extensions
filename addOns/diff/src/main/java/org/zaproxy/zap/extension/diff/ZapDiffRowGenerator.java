@@ -433,7 +433,7 @@ public class ZapDiffRowGenerator {
      if (!iter.hasNext()) {
          return "";
      }
-     StringBuffer buffer = new StringBuffer(String.valueOf(iter.next()));
+     StringBuilder buffer = new StringBuilder(String.valueOf(iter.next()));
      while (iter.hasNext()) {
          buffer.append(delimiter).append(String.valueOf(iter.next()));
      }

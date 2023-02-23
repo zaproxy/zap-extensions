@@ -138,7 +138,7 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
         LOGGER.debug("Checking message {} for timestamps", msg.getRequestHeader().getURI());
 
         List<HttpHeaderField> responseheaders = msg.getResponseHeader().getHeaders();
-        StringBuffer filteredResponseheaders = new StringBuffer();
+        StringBuilder filteredResponseheaders = new StringBuilder();
         for (HttpHeaderField responseheader : responseheaders) {
             boolean ignoreHeader = false;
             for (String headerToIgnore : RESPONSE_HEADERS_TO_IGNORE) {
@@ -149,9 +149,11 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
                 }
             }
             if (!ignoreHeader) {
-                filteredResponseheaders.append("\n");
-                filteredResponseheaders.append(
-                        responseheader.getName() + ": " + responseheader.getValue());
+                filteredResponseheaders
+                        .append('\n')
+                        .append(responseheader.getName())
+                        .append(": ")
+                        .append(responseheader.getValue());
             }
         }
 

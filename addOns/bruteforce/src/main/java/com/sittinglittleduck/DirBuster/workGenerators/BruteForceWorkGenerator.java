@@ -209,7 +209,7 @@ public class BruteForceWorkGenerator implements Runnable {
         int chrx, endchr;
         String temp = "";
         /* print the current index */
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (int x = 0; x < len; x++) {
             chrx = listindex[x];
             // printf("%c", charlist[chrx]);

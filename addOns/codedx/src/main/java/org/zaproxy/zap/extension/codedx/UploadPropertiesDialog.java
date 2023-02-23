@@ -204,7 +204,7 @@ public class UploadPropertiesDialog {
 				HttpResponse response = client.execute(get);
 				rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
 		
-				StringBuffer result = new StringBuffer();
+				StringBuilder result = new StringBuilder();
 				String line = "";
 				while ((line = rd.readLine()) != null) {
 					result.append(line);
