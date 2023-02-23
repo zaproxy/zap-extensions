@@ -14,6 +14,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The HeartBleed scan rule alert now includes a CVE tag.
 - Timestamp Disclosure scan rule now excludes values in "RateLimit-Reset", "X-RateLimit-Reset", and "X-Rate-Limit-Reset" headers (Issue 7747).
 
+### Fixed
+- The CSP Missing scan rule now alerts when the Content-Security-Policy header is missing, and when the obsolete X-Content-Security-Policy or X-WebKit-CSP are found (Issue 7653).
+
 ## [45] - 2023-01-03
 ### Changed
 - The Private Address Disclosure and Session ID in URL Rewrite scan rules now include example alert functionality for documentation generation purposes (Issue 6119 and 7100).

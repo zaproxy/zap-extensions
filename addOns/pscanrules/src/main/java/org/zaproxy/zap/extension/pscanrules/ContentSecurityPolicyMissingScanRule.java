@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import net.htmlparser.jericho.Source;
@@ -62,67 +63,16 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
             return;
         }
 
-        // Get the various CSP headers
-        boolean cspHeaderFound = false,
-                cspROHeaderFound = false,
-                xCspHeaderFound = false,
-                xWebKitHeaderFound = false;
-
-        // Content-Security-Policy is supported by Chrome 25+, Firefox 23+, Safari 7+, but not but
-        // Internet Exploder
-        List<String> cspOptions =
-                msg.getResponseHeader().getHeaderValues(HttpFieldsNames.CONTENT_SECURITY_POLICY);
-        if (!cspOptions.isEmpty()) {
-            cspHeaderFound = true;
+        if (!hasCspHeader(msg) && !CspUtils.hasMetaCsp(source)) {
+            alertMissingCspHeader().raise();
         }
 
-        List<String> cspROOptions =
-                msg.getResponseHeader().getHeaderValues("Content-Security-Policy-Report-Only");
-        if (!cspROOptions.isEmpty()) {
-            cspROHeaderFound = true;
+        if (hasObsoleteCspHeader(msg)) {
+            alertObsoleteCspHeader().raise();
         }
 
-        // X-Content-Security-Policy is an older header, supported by Firefox 4.0+, and IE 10+ (in a
-        // limited fashion)
-        List<String> xcspOptions =
-                msg.getResponseHeader().getHeaderValues("X-Content-Security-Policy");
-        if (!xcspOptions.isEmpty()) {
-            xCspHeaderFound = true;
-        }
-
-        // X-WebKit-CSP is supported by Chrome 14+, and Safari 6+
-        List<String> xwkcspOptions = msg.getResponseHeader().getHeaderValues("X-WebKit-CSP");
-        if (!xwkcspOptions.isEmpty()) {
-            xWebKitHeaderFound = true;
-        }
-
-        if (!cspHeaderFound && !CspUtils.hasMetaCsp(source)
-                || (AlertThreshold.LOW.equals(this.getAlertThreshold())
-                        && (!xCspHeaderFound || !xWebKitHeaderFound))) {
-            // Always report if the latest header isnt found,
-            // but only report if the older ones arent present at Low threshold
-            newAlert()
-                    .setRisk(Alert.RISK_MEDIUM)
-                    .setConfidence(Alert.CONFIDENCE_HIGH)
-                    .setDescription(getAlertAttribute("desc"))
-                    .setSolution(getAlertAttribute("soln"))
-                    .setReference(getAlertAttribute("refs"))
-                    .setCweId(693) // CWE-693: Protection Mechanism Failure
-                    .setWascId(15) // WASC-15: Application Misconfiguration
-                    .raise();
-        }
-
-        if (cspROHeaderFound) {
-            newAlert()
-                    .setName(getAlertAttribute("ro.name"))
-                    .setRisk(Alert.RISK_INFO)
-                    .setConfidence(Alert.CONFIDENCE_HIGH)
-                    .setDescription(getAlertAttribute("ro.desc"))
-                    .setSolution(getAlertAttribute("soln"))
-                    .setReference(getAlertAttribute("ro.refs"))
-                    .setCweId(693) // CWE-693: Protection Mechanism Failure
-                    .setWascId(15) // WASC-15: Application Misconfiguration
-                    .raise();
+        if (hasCspReportOnlyHeader(msg)) {
+            alertCspReportOnlyHeader().raise();
         }
 
         LOGGER.debug("\tScan of record {} took {}ms", id, System.currentTimeMillis() - start);
@@ -145,5 +95,58 @@ public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return Arrays.asList(
+                alertMissingCspHeader().setUri("https://www.example.com").build(),
+                alertObsoleteCspHeader().setUri("https://www.example.com").build(),
+                alertCspReportOnlyHeader().setUri("https://www.example.com").build());
+    }
+
+    private static boolean hasCspHeader(HttpMessage msg) {
+        return !msg.getResponseHeader()
+                .getHeaderValues(HttpFieldsNames.CONTENT_SECURITY_POLICY)
+                .isEmpty();
+    }
+
+    private static boolean hasObsoleteCspHeader(HttpMessage msg) {
+        return !msg.getResponseHeader().getHeaderValues("X-Content-Security-Policy").isEmpty()
+                || !msg.getResponseHeader().getHeaderValues("X-WebKit-CSP").isEmpty();
+    }
+
+    private static boolean hasCspReportOnlyHeader(HttpMessage msg) {
+        return !msg.getResponseHeader()
+                .getHeaderValues("Content-Security-Policy-Report-Only")
+                .isEmpty();
+    }
+
+    private AlertBuilder buildAlert(int risk, int alertNum) {
+        return newAlert()
+                .setRisk(risk)
+                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setCweId(693) // CWE-693: Protection Mechanism Failure
+                .setWascId(15) // WASC-15: Application Misconfiguration
+                .setSolution(getAlertAttribute("soln"))
+                .setReference(getAlertAttribute("refs"))
+                .setAlertRef(PLUGIN_ID + "-" + alertNum);
+    }
+
+    private AlertBuilder alertMissingCspHeader() {
+        return buildAlert(Alert.RISK_MEDIUM, 1).setDescription(getAlertAttribute("desc"));
+    }
+
+    private AlertBuilder alertObsoleteCspHeader() {
+        return buildAlert(Alert.RISK_INFO, 2)
+                .setName(getAlertAttribute("obs.name"))
+                .setDescription(getAlertAttribute("obs.desc"));
+    }
+
+    private AlertBuilder alertCspReportOnlyHeader() {
+        return buildAlert(Alert.RISK_INFO, 3)
+                .setName(getAlertAttribute("ro.name"))
+                .setDescription(getAlertAttribute("ro.desc"))
+                .setReference(getAlertAttribute("ro.refs"));
     }
 }
