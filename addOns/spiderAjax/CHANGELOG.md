@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [23.12.0] - 2023-02-23
 ### Added
 - Automation Framework - inScopeOnly option
 
@@ -251,6 +251,7 @@ By default it allows files with extension `.js` and `.css`.
 
 
 
+[23.12.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.12.0
 [23.11.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.11.0
 [23.10.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.10.0
 [23.9.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.9.0
