@@ -153,7 +153,7 @@ public class AutomationEnvironment {
         }
         String text = value.toString();
         Matcher matcher = varPattern.matcher(text);
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         while (matcher.find()) {
             String val = this.combinedVars.get(matcher.group(1));

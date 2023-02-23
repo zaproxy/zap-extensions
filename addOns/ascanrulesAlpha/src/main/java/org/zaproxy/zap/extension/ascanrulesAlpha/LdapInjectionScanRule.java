@@ -344,7 +344,7 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
                 // )(objectClass=*
                 // ))((objectClass=*
                 // )))(((objectClass=*
-                StringBuffer temp = new StringBuffer().append(paramvalue);
+                StringBuilder temp = new StringBuilder().append(paramvalue);
                 for (int i = 0; i < andAttackNumber; i++) temp.append(')');
                 for (int i = 0; i < andAttackNumber; i++) temp.append('(');
                 temp.append("objectClass=*");
@@ -432,8 +432,8 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
             int paramLength = paramvalue.length();
             if (paramLength > 1) {
 
-                StringBuffer temp =
-                        new StringBuffer()
+                StringBuilder temp =
+                        new StringBuilder()
                                 .append(
                                         paramvalue.substring(
                                                 0,
