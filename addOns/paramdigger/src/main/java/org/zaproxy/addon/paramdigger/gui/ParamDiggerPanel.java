@@ -35,7 +35,9 @@ import org.zaproxy.addon.paramdigger.GuesserProgressListener;
 import org.zaproxy.addon.paramdigger.GuesserScan;
 import org.zaproxy.addon.paramdigger.ParamDiggerOptions;
 import org.zaproxy.addon.paramdigger.ParamGuesserScanController;
+import org.zaproxy.zap.utils.TableExportButton;
 import org.zaproxy.zap.view.ScanPanel2;
+import org.zaproxy.zap.view.ZapTable;
 
 @SuppressWarnings("serial")
 public class ParamDiggerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanController> {
@@ -48,14 +50,11 @@ public class ParamDiggerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanCo
     private ParamDiggerHistoryTableModel emptyTableModel;
     private ParamDiggerHistoryTable historyTable;
     private ParamDiggerOutputTable outputTable;
-
     private JButton startScanButton;
-
     private JPanel mainPanel;
-
     private ProgressListener progressListener;
-
     private ParamDiggerOutputTableModel emptyOutputTableModel;
+    private TableExportButton<ZapTable> exportButton;
 
     public ParamDiggerPanel(
             ParamGuesserScanController scanController,
@@ -82,6 +81,17 @@ public class ParamDiggerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanCo
             outputTable = new ParamDiggerOutputTable(emptyOutputTableModel);
 
             tabbedPane = new JTabbedPane();
+            tabbedPane.addChangeListener(
+                    (e) -> {
+                        switch (tabbedPane.getSelectedIndex()) {
+                            case 0:
+                                getExportButton().setTable(historyTable);
+                                break;
+                            case 1:
+                                getExportButton().setTable(outputTable);
+                                break;
+                        }
+                    });
             tabbedPane.addTab(
                     Constant.messages.getString("paramdigger.panel.tab.history"),
                     new JScrollPane(historyTable));
@@ -169,6 +179,13 @@ public class ParamDiggerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanCo
     @Override
     public boolean hasOptionsButton() {
         return false;
+    }
+
+    private TableExportButton<ZapTable> getExportButton() {
+        if (exportButton == null) {
+            exportButton = new TableExportButton<>(historyTable);
+        }
+        return exportButton;
     }
 
     private class ProgressListener implements GuesserProgressListener {
