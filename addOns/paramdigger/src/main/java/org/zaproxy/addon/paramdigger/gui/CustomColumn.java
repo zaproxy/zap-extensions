@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.paramdigger.gui;
 
+@SuppressWarnings("serial")
 public abstract class CustomColumn<T> {
     Class<?> columnClass;
     String name;

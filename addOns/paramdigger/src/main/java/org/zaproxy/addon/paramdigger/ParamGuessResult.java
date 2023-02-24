@@ -31,6 +31,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.paramdigger.gui.ParamDiggerOutputTableModel;
 import org.zaproxy.zap.view.table.DefaultHistoryReferencesTableEntry;
 
+@SuppressWarnings("serial")
 public class ParamGuessResult extends DefaultHistoryReferencesTableEntry {
 
     private String paramName;

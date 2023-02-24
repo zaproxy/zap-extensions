@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.paramdigger.ParamGuessResult;
 
+@SuppressWarnings("serial")
 public class ParamDiggerOutputTableModel
         extends DefaultCustomColumnHistoryReferencesTableModel<ParamGuessResult> {
 
