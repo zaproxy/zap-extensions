@@ -19,21 +19,15 @@
  */
 package org.zaproxy.addon.paramdigger;
 
-import java.awt.EventQueue;
 import javax.swing.ImageIcon;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
-import org.parosproxy.paros.model.HistoryReference;
-import org.parosproxy.paros.model.HistoryReferenceEventPublisher;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.paramdigger.gui.ParamDiggerDialog;
 import org.zaproxy.addon.paramdigger.gui.ParamDiggerPanel;
 import org.zaproxy.addon.paramdigger.gui.PopupMenuParamDigger;
-import org.zaproxy.zap.ZAP;
-import org.zaproxy.zap.eventBus.Event;
-import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.ZapMenuItem;
 
@@ -64,11 +58,6 @@ public class ExtensionParamDigger extends ExtensionAdaptor {
 
         options = new ParamDiggerOptions();
         scanController = new ParamGuesserScanController();
-        EventConsumerImpl eventConsumerImpl = new EventConsumerImpl();
-        ZAP.getEventBus()
-                .registerConsumer(
-                        eventConsumerImpl,
-                        HistoryReferenceEventPublisher.getPublisher().getPublisherName());
     }
 
     public static ImageIcon getIcon() {
@@ -163,47 +152,5 @@ public class ExtensionParamDigger extends ExtensionAdaptor {
     @Override
     public String getDescription() {
         return Constant.messages.getString(PREFIX + ".desc");
-    }
-
-    public void notifyHistoryItemChanged(HistoryReference href) {
-        notifyHistoryItemChanged(href.getHistoryId());
-    }
-
-    private void notifyHistoryItemChanged(final int historyId) {
-        if (!hasView() || EventQueue.isDispatchThread()) {
-            for (GuesserScan scan : scanController.getAllScans()) {
-                scan.getOutputTableModel().refreshEntryRow(historyId);
-            }
-        } else {
-            EventQueue.invokeLater(
-                    new Runnable() {
-                        @Override
-                        public void run() {
-                            notifyHistoryItemChanged(historyId);
-                        }
-                    });
-        }
-    }
-
-    private class EventConsumerImpl implements EventConsumer {
-        @Override
-        public void eventReceived(Event event) {
-            switch (event.getEventType()) {
-                case HistoryReferenceEventPublisher.EVENT_NOTE_SET:
-                case HistoryReferenceEventPublisher.EVENT_TAG_ADDED:
-                case HistoryReferenceEventPublisher.EVENT_TAG_REMOVED:
-                case HistoryReferenceEventPublisher.EVENT_TAGS_SET:
-                    notifyHistoryItemChanged(
-                            Integer.valueOf(
-                                    event.getParameters()
-                                            .get(
-                                                    HistoryReferenceEventPublisher
-                                                            .FIELD_HISTORY_REFERENCE_ID)));
-                    break;
-                default:
-                    // Ignore
-                    break;
-            }
-        }
     }
 }
