@@ -35,6 +35,7 @@ public class ParamDiggerHistoryTableModel extends DefaultHistoryReferencesTableM
                     Column.URL,
                     Column.STATUS_CODE,
                     Column.STATUS_REASON,
+                    Column.SIZE_MESSAGE,
                     Column.RTT,
                 });
     }
