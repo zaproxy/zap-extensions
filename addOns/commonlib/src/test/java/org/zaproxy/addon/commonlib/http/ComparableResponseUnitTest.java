@@ -55,6 +55,21 @@ class ComparableResponseUnitTest extends TestUtils {
                     + " </body>\n"
                     + "</html>";
     private static final String JSON_HELLO_WORLD = "{\"message\": \"Hello World\"}";
+    private static final String JSON_SIMPLE_ARRAY =
+            "[\n"
+                    + "          {\n"
+                    + "            \"name\": \"limit\",\n"
+                    + "            \"in\": \"query\",\n"
+                    + "            \"description\": \"How many items to return at one time (max 100)\",\n"
+                    + "            \"required\": false,\n"
+                    + "            \"type\": \"integer\",\n"
+                    + "            \"format\": \"int32\"\n"
+                    + "          },\n"
+                    + "          true,\n"
+                    + "          1,\n"
+                    + "          \"foo\",\n"
+                    + "          null"
+                    + "        ]";
 
     private static HttpMessage createBasicMessage() {
         return createBasicMessage("", true);
@@ -73,6 +88,11 @@ class ComparableResponseUnitTest extends TestUtils {
         }
         HttpMessage msg = new HttpMessage();
         msg = new HttpMessage();
+        try {
+            msg.getResponseHeader().setMessage("HTTP/1.1 200 OK");
+        } catch (HttpMalformedHeaderException e) {
+            // Ignore
+        }
         msg.setRequestHeader(requestHeader);
         if (setContentType) {
             msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, DEFAULT_CONTENT_TYPE);
@@ -600,5 +620,57 @@ class ComparableResponseUnitTest extends TestUtils {
         float result = ComparableResponse.bodyTreesStructureHeuristic(response1, response2);
         // Then
         assertEquals(1.0f, result);
+    }
+
+    @Test
+    void shouldHandlePathsInJsonArray() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.getResponseHeader().setMessage("HTTP/1.1 200 OK");
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "application/json");
+        msg.setResponseBody(JSON_SIMPLE_ARRAY);
+        ComparableResponse resp = new ComparableResponse(msg, null);
+        ComparableResponse resp2 = new ComparableResponse(msg, null);
+        // When
+        float result = ComparableResponse.bodyTreesStructureHeuristic(resp, resp2);
+        // Then
+        assertEquals(1.0f, result);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"[]", "{}"})
+    void shouldHandlePathsInVastlyDifferentJson(String emptyJson)
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.getResponseHeader().setMessage("HTTP/1.1 200 OK");
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "application/json");
+        HttpMessage msg2 = msg.cloneAll();
+        msg.setResponseBody(JSON_SIMPLE_ARRAY);
+        ComparableResponse resp = new ComparableResponse(msg, null);
+        msg2.setResponseBody(emptyJson);
+        ComparableResponse resp2 = new ComparableResponse(msg2, null);
+        // When
+        float result = ComparableResponse.bodyTreesStructureHeuristic(resp, resp2);
+        // Then
+        assertEquals(0.0f, result);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"1", "\"foo\"", "true", "null"})
+    void shouldHandlePathsForPrimitivesJson(String primitive) throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.getResponseHeader().setMessage("HTTP/1.1 200 OK");
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "application/json");
+        HttpMessage msg2 = msg.cloneAll();
+        msg.setResponseBody(JSON_SIMPLE_ARRAY);
+        ComparableResponse resp = new ComparableResponse(msg, null);
+        msg2.setResponseBody(primitive);
+        ComparableResponse resp2 = new ComparableResponse(msg2, null);
+        // When
+        float result = ComparableResponse.bodyTreesStructureHeuristic(resp, resp2);
+        // Then
+        assertEquals(0.0f, result);
     }
 }
