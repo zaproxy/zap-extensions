@@ -56,7 +56,8 @@ class PopupDialogAddField extends DialogAddField {
      */
     @Override
     protected boolean validateFields() {
-        String fieldName = getNameTextField().getText().toLowerCase(Locale.ROOT);
+        String name = getNameTextField().getText();
+        String fieldName = getRegexCheckBox().isSelected() ? name : name.toLowerCase(Locale.ROOT);
         for (String field :
                 Control.getSingleton()
                         .getExtensionLoader()
