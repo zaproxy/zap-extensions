@@ -36,6 +36,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob;
 import org.zaproxy.addon.automation.jobs.ActiveScanJob.Parameters;
 import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -170,7 +171,7 @@ public class ActiveScanJobDialog extends StandardFieldsDialog {
         this.addNumberField(
                 3,
                 THREADS_PER_HOST_PARAM,
-                0,
+                Constants.getDefaultThreadCount(),
                 Integer.MAX_VALUE,
                 JobUtils.unBox(JobUtils.unBox(job.getParameters().getThreadPerHost())));
         this.addCheckBoxField(

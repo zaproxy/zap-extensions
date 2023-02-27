@@ -23,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
@@ -201,6 +202,22 @@ class ActiveScanJobUnitTest {
         assertThat(params.containsKey("scanHeadersAllRequests"), is(equalTo(true)));
         assertThat(params.containsKey("threadPerHost"), is(equalTo(true)));
         assertThat(params.containsKey("scanNullJsonValues"), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldNotReturnZeroThreads() throws MalformedURLException {
+        // Given
+        ActiveScanJob job = new ActiveScanJob();
+        job.getParameters().setThreadPerHost(0);
+
+        // When
+        Map<String, String> params =
+                job.getConfigParameters(new ScannerParamWrapper(), job.getParamMethodName());
+
+        // Then
+        assertThat(params.size(), is(equalTo(10)));
+        assertThat(params.containsKey("threadPerHost"), is(equalTo(true)));
+        assertTrue(Integer.parseInt(params.get("threadPerHost")) > 0);
     }
 
     private static class ScannerParamWrapper {

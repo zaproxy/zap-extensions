@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support for dynamically added header based session management method.
 
+### Fixed
+- Active scan would fail if threadsPerHost set to zero.
+
 ### Changed
 - Maintenance changes.
 
