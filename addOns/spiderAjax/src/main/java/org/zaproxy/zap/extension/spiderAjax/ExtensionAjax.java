@@ -139,6 +139,10 @@ public class ExtensionAjax extends ExtensionAdaptor {
                     .getMainFooterPanel()
                     .removeFooterToolbarRightLabel(
                             getSpiderPanel().getScanStatus().getCountLabel());
+
+            if (spiderDialog != null) {
+                spiderDialog.dispose();
+            }
         }
 
         super.unload();
