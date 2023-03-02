@@ -4,7 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-
+### Added
+- The [GraphiQL IDE](https://github.com/graphql/graphiql) is now included with the add-on.
+  It can be accessed at `http://zap/graphiql?apikey=<your-api-key>` from a proxied browser.
 
 ## [0.13.0] - 2023-02-09
 ### Added

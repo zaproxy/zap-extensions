@@ -97,7 +97,7 @@ public class QuickStartPanel extends AbstractPanel {
                 javax.swing.JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         jScrollPane.setHorizontalScrollBarPolicy(
                 javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        jScrollPane.setViewportView(panelContent);
+        showSubPanel(panelContent);
 
         this.add(jScrollPane, BorderLayout.CENTER);
 
@@ -164,8 +164,16 @@ public class QuickStartPanel extends AbstractPanel {
         }
     }
 
+    public void showSubPanel(JPanel subPanel) {
+        jScrollPane.setViewportView(subPanel);
+    }
+
     public void backToMainPanel() {
-        jScrollPane.setViewportView(panelContent);
+        showSubPanel(panelContent);
+    }
+
+    public JPanel getButtonPanel() {
+        return buttonPanel;
     }
 
     public AttackPanel getAttackPanel() {
@@ -186,7 +194,7 @@ public class QuickStartPanel extends AbstractPanel {
                     Constant.messages.getString("quickstart.top.button.tooltip.attack"));
             attackButton.setPreferredSize(DisplayUtils.getScaledDimension(150, 120));
 
-            attackButton.addActionListener(e -> jScrollPane.setViewportView(getAttackPanel()));
+            attackButton.addActionListener(e -> showSubPanel(getAttackPanel()));
         }
         return attackButton;
     }
@@ -210,8 +218,7 @@ public class QuickStartPanel extends AbstractPanel {
                     Constant.messages.getString("quickstart.top.button.tooltip.moreinfo"));
             learnMoreButton.setPreferredSize(DisplayUtils.getScaledDimension(150, 120));
 
-            learnMoreButton.addActionListener(
-                    e -> jScrollPane.setViewportView(getLearnMorePanel()));
+            learnMoreButton.addActionListener(e -> showSubPanel(getLearnMorePanel()));
         }
         return learnMoreButton;
     }
@@ -238,9 +245,9 @@ public class QuickStartPanel extends AbstractPanel {
             exploreButton.addActionListener(
                     e -> {
                         if (explorePanel != null) {
-                            jScrollPane.setViewportView(explorePanel);
+                            showSubPanel(explorePanel);
                         } else {
-                            jScrollPane.setViewportView(getDefaultExplorePanel());
+                            showSubPanel(getDefaultExplorePanel());
                         }
                     });
         }

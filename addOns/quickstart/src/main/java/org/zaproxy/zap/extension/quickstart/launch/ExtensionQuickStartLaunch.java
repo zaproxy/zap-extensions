@@ -210,6 +210,10 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
         return Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
     }
 
+    public void launchBrowser(String url) {
+        launchBrowser(launchPanel.getSelectedBrowser(), url);
+    }
+
     protected void launchBrowser(String browserName, String url) {
         new Thread(
                         () -> {
