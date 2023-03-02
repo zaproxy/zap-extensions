@@ -10,18 +10,23 @@ Automation Framework - Environment
 
 Этот раздел файла конфигурации YAML определяет приложения, с которыми могут работать остальные задания. 
 <p>
-Automation Framework поддерживает все механизмы <a href="authentication.html">аутентификации</a>, поддерживаемые ZAP. 
+The Automation Framework supports all of the <a href="authentication.html">authentication</a> mechanisms supported by ZAP.
+<p>
+<strong>Note</strong> When testing targets that operate on default ports (80 for http, 443 for https), the colon port portion of the URL should not be included.
+Including that portion (for example: http://example.com:80) may result in an inability to crawl or test the target. If a 'default' port is specified both 
+browsers and ZAP treat it without the default port being included then it doesn't match the expectation within the Context and there's nothing to interact with 
+as part of the Context.
 
 <pre>
-env:                                   # Окружающая среда, обязательно 
-  contexts :                           # Список из 1 или более контекстов, обязательный
-    - name: context 1                  # Имя, которое будет использоваться для ссылки на этот контекст в других заданиях, обязательно 
-      urls:                            # Обязательный список URL-адресов верхнего уровня, все, что находится под каждым URL-адресом, будет включено 
-      includePaths:                    # Необязательный список регулярных выражений для включения 
-      excludePaths:                    # Необязательный список регулярных выражений для исключения 
+env:                                   # The environment, mandatory
+  contexts :                           # List of 1 or more contexts, mandatory
+    - name: context 1                  # Name to be used to refer to this context in other jobs, mandatory
+      urls:                            # A mandatory list of top level urls, everything under each url will be included
+      includePaths:                    # An optional list of regexes to include
+      excludePaths:                    # An optional list of regexes to exclude
       authentication:
-        method:                        # Строка, одна из «вручную», «http», «form», «json» или «script» 
-        parameters:                    # Может включать все необходимое для скриптов.  All of the parameters support vars except for the port 
+        method:                        # String, one of 'manual', 'http', 'form', 'json' or 'script'
+        parameters:                    # May include any required for scripts. All of the parameters support vars except for the port 
           hostname:                    # String, only for 'http' authentication
           port:                        # Int, only for 'http' authentication
           realm:                       # String, only for 'http' authentication
@@ -62,16 +67,16 @@ env:                                   # Окружающая среда, обя
     progressToStdout: true             # If set will write job progress to stdout
 </pre>
 
-Переменные системной среды также можно использовать в конфигурации таким же образом, как указано выше.  Если есть две переменные
-с тем же именем предпочтительнее использовать значение системной переменной.  
+System environment variables can also be used in the config in the same manner as above. In case there are two variables
+with the same name, the value of the system variable would be preferred. 
   
-<h3>Изменения формата </h3>
+<h3>Format Changes</h3>
 
-Первоначально поля «engine» и «scriptEngine» находились непосредственно под элементом «sessionManagement» — это все еще поддерживается при чтении планов, но они
-теперь всегда будет выводиться под элементом «параметры». 
+Originally the 'engine' and 'scriptEngine' fields were directly under the 'sessionManagement' element - this is still supported when reading plans but they
+will now always be output under the 'parameters' element.
 <p>
-Первоначально поля «имя пользователя» и «пароль» находились непосредственно под пользовательским элементом — это все еще поддерживается при чтении планов, но они
-теперь всегда будет выводиться под элементом «credentials». 
+Originally the 'username' and 'password' fields were directly under the user element - this is still supported when reading plans but they
+will now always be output under the 'credentials' element.
 <p>
 When specifying technology the tech names are given on https://www.zaproxy.org/techtags/ - only specify the last name, e.g. "C".
 
