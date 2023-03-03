@@ -23,6 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -218,6 +219,15 @@ class ActiveScanJobUnitTest {
         assertThat(params.size(), is(equalTo(10)));
         assertThat(params.containsKey("threadPerHost"), is(equalTo(true)));
         assertTrue(Integer.parseInt(params.get("threadPerHost")) > 0);
+    }
+
+    @Test
+    void shouldNotNpeOnNullThreads() throws MalformedURLException {
+        // Given / When
+        ActiveScanJob.Parameters params = new ActiveScanJob.Parameters();
+
+        // Then
+        assertThat(params.getThreadPerHost(), is(nullValue()));
     }
 
     private static class ScannerParamWrapper {
