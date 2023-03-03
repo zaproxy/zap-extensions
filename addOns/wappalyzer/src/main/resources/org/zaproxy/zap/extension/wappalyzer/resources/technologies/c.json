@@ -1245,7 +1245,6 @@
     ],
     "description": "Checkly is the API and E2E monitoring platform for the modern stack: programmable, flexible and loving JavaScript.",
     "icon": "Checkly.svg",
-    "requires": "Nuxt.js",
     "js": {
       "__NUXT__.config.public.apiUrl": "api\\.checklyhq\\.com"
     },
@@ -1254,9 +1253,10 @@
       "recurring",
       "mid"
     ],
+    "requires": "Nuxt.js",
     "saas": true,
-    "xhr": "api\\.checklyhq\\.com/",
-    "website": "https://www.checklyhq.com"
+    "website": "https://www.checklyhq.com",
+    "xhr": "api\\.checklyhq\\.com/"
   },
   "Checkout.com": {
     "cats": [
@@ -2011,6 +2011,7 @@
       "NS": "\\.cloudflare\\.com",
       "SOA": "\\.cloudflare\\.com"
     },
+    "dom": "img[src*='//cdn.cloudflare']",
     "headers": {
       "Server": "^cloudflare$",
       "cf-cache-status": "",
@@ -2019,6 +2020,9 @@
     "icon": "CloudFlare.svg",
     "js": {
       "CloudFlare": ""
+    },
+    "meta": {
+      "image": "//cdn\\.cloudflare"
     },
     "website": "http://www.cloudflare.com"
   },
@@ -2095,7 +2099,6 @@
       62
     ],
     "description": "Cloudflare Workers is a serverless execution environment that allows you to create entirely new applications or augment existing ones without configuring or maintaining infrastructure.",
-    "xhr": "\\.workers\\.dev",
     "icon": "Cloudflare Workers.svg",
     "implies": [
       "Cloudflare"
@@ -2105,7 +2108,8 @@
       "payg"
     ],
     "saas": true,
-    "website": "https://workers.cloudflare.com"
+    "website": "https://workers.cloudflare.com",
+    "xhr": "\\.workers\\.dev"
   },
   "Cloudflare Zaraz": {
     "cats": [
@@ -2346,7 +2350,7 @@
   },
   "CodeMirror": {
     "cats": [
-      19
+      20
     ],
     "description": "CodeMirror is a JavaScript component that provides a code editor in the browser.",
     "icon": "CodeMirror.png",
@@ -2614,6 +2618,22 @@
     "saas": true,
     "website": "https://www.combeenation.com"
   },
+  "Comeet": {
+    "cats": [
+      5,
+      101
+    ],
+    "description": "Comeet is an Collaborative Recruiting, and Applicant Tracking System.",
+    "icon": "comeet.svg",
+    "js": {
+      "COMEET": "",
+      "comeetInit": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.comeet.com"
+  },
   "Comm100": {
     "cats": [
       52
@@ -2714,8 +2734,8 @@
       111
     ],
     "description": "Community Funded is a digital fundraising and engagement platform.",
-    "icon": "Community Funded.png",
     "dom": "a[href*='//give.communityfunded.com/']",
+    "icon": "Community Funded.png",
     "pricing": [
       "poa"
     ],
@@ -2983,7 +3003,7 @@
     ],
     "saas": true,
     "website": "http://www.contentful.com",
-    "xhr": "cdn\\.contentful\\.com"
+    "xhr": "(?:cdn|graphql)\\.contentful\\.com"
   },
   "Contently": {
     "cats": [
@@ -4200,14 +4220,14 @@
     "description": "commercetools is a headless commerce platform.",
     "dom": "link[href*='.commercetools.com/'], body[data-commerce-tools-host*='.commercetools.com']",
     "icon": "commercetools.svg",
-    "pricing": [
-      "poa",
-      "recurring"
-    ],
     "js": {
       "COMMERCE_TOOLS_HOST_ATT": "",
       "COMMERCE_TOOLS_PROJECT_KEY_ATT": ""
     },
+    "pricing": [
+      "poa",
+      "recurring"
+    ],
     "saas": true,
     "website": "https://commercetools.com"
   },

@@ -217,11 +217,24 @@
     "oss": true,
     "website": "http://www.spip.net"
   },
+  "Splide": {
+    "cats": [
+      59
+    ],
+    "description": "Splide.js is a lightweight, responsive, and customizable slider and carousel library for JavaScript.",
+    "icon": "Splide.svg",
+    "js": {
+      "Splide.name": "i",
+      "Splide.STATES": ""
+    },
+    "oss": true,
+    "website": "https://splidejs.com"
+  },
   "SPNEGO": {
     "cats": [
       16
     ],
-    "description": "SPNEGO is an authentication method commonly used in Windows servers to allow NTLM or Kerberos authentication",
+    "description": "SPNEGO is an authentication method commonly used in Windows servers to allow NTLM or Kerberos authentication.",
     "headers": {
       "WWW-Authenticate": "^Negotiate"
     },
@@ -316,7 +329,6 @@
     ],
     "description": "SWC is an extensible Rust-based platform for the next generation of fast developer tools.",
     "icon": "swc.svg",
-    "implies": "Rust",
     "oss": true,
     "website": "https://swc.rs"
   },
@@ -2414,6 +2426,23 @@
     },
     "website": "https://shopfa.com"
   },
+  "ShopiMind": {
+    "cats": [
+      32
+    ],
+    "description": "ShopiMind is a multi-channel marketing automation solution for all ecommerce activities.",
+    "icon": "ShopiMind.svg",
+    "js": {
+      "_spmq.id_cart": "",
+      "_spmq.spm_ident": ""
+    },
+    "pricing": [
+      "payg",
+      "freemium"
+    ],
+    "saas": true,
+    "website": "https://www.shopimind.com"
+  },
   "Shopify": {
     "cats": [
       6
@@ -3781,6 +3810,20 @@
     "scriptSrc": "sv-wc-payment-gateway-payment-form\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1",
     "website": "https://www.skyverge.com"
   },
+  "Slate": {
+    "cats": [
+      53
+    ],
+    "description": "Slate is a CRM system designed specifically for higher education institutions, which helps them to manage student interactions, track admissions, and analyze student data in a flexible and user-friendly way.",
+    "icon": "Slate.svg",
+    "dom": "link[href*='slate-technolutions-net.cdn.technolutions.net/']",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "slate-technolutions-net\\.cdn\\.technolutions\\.net/",
+    "website": "https://technolutions.com"
+  },
   "Sleeknote": {
     "cats": [
       32
@@ -4777,6 +4820,22 @@
     "icon": "SparkPost.svg",
     "website": "https://www.sparkpost.com/"
   },
+  "Spatie Media Library Pro": {
+    "cats": [
+      66
+    ],
+    "description": "Spatie Media Library Pro is a set of customizable UI components for Spatie Media Library.",
+    "icon": "Spatie Media Library Pro.svg",
+    "implies": [
+      "Laravel"
+    ],
+    "pricing": [
+      "onetime",
+      "low"
+    ],
+    "scripts": "media\\-library\\-pro\\-core",
+    "website": "https://medialibrary.pro"
+  },
   "Spatie Support Bubble": {
     "cats": [
       52
@@ -4790,6 +4849,19 @@
     ],
     "oss": true,
     "website": "https://github.com/spatie/laravel-support-bubble"
+  },
+  "Spatie Laravel Cookie Consent": {
+    "cats": [
+      67
+    ],
+    "description": "Spatie Laravel Cookie Consent is a banner that is displayed on websites to ask visitors for consent for the use of cookies.",
+    "icon": "Spatie.png",
+    "implies": "Laravel",
+    "js": {
+      "laravelCookieConsent": ""
+    },
+    "oss": true,
+    "website": "https://github.com/spatie/laravel-cookie-consent"
   },
   "Speed Kit": {
     "cats": [
@@ -5285,11 +5357,11 @@
       "X-Protected-By": "^Sqreen$"
     },
     "icon": "Sqreen.svg",
-    "saas": true,
     "pricing": [
       "mid",
       "recurring"
     ],
+    "saas": true,
     "website": "https://sqreen.io"
   },
   "Squadata": {
@@ -5298,11 +5370,11 @@
     ],
     "description": "Squadata provides data based marketing and advertising solutions including email retargeting, CRM onboarding, data monetisation, data management platform.",
     "icon": "Squadata.png",
-    "scriptSrc": "//asset\\.easydmp\\.net/",
-    "saas": true,
     "pricing": [
       "poa"
     ],
+    "saas": true,
+    "scriptSrc": "//asset\\.easydmp\\.net/",
     "website": "https://www.squadata.net"
   },
   "Squadded": {
@@ -5441,6 +5513,34 @@
     ],
     "website": "https://www.squiz.net/matrix"
   },
+  "Stackable": {
+    "cats": [
+      87,
+      51
+    ],
+    "description": "Stackable is a plugin for WordPress that offers a collection of blocks, templates, and other design tools to help users create custom, professional-looking websites.",
+    "icon": "Stackable.svg",
+    "implies": "Gutenberg",
+    "requires": "WordPress",
+    "dom": {
+      "link[href*='/wp-content/plugins/stackable-ultimate-gutenberg-blocks/']": {
+        "attributes": {
+          "href": "/wp-content/plugins/stackable-ultimate-gutenberg-blocks/.+\\.css(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+        }
+      }
+    },
+    "js": {
+      "stackable.restUrl": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "saas": true,
+    "website": "https://wpstackable.com"
+  },
   "Stack Analytix": {
     "cats": [
       10
@@ -5480,6 +5580,30 @@
     },
     "icon": "StackPath.svg",
     "website": "https://www.stackpath.com"
+  },
+  "Stackbit": {
+    "cats": [
+      51
+    ],
+    "description": "Stackbit is a visual experience platform for building decoupled websites.",
+    "dom": {
+      "script#__NEXT_DATA__": {
+        "text": "stackbit"
+      }
+    },
+    "icon": "stackbit.svg",
+    "js": {
+      "__NEXT_DATA__.props.pageProps.withStackbit": ""
+    },
+    "scriptSrc": [
+      "\\.stackbit\\.com"
+    ],
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.stackbit.com"
   },
   "StackerHQ": {
     "cats": [
@@ -5628,6 +5752,25 @@
     "oss": true,
     "scriptSrc": "cdn\\.statically\\.io/",
     "website": "https://statically.io"
+  },
+  "Statsig": {
+    "cats": [
+      10,
+      85
+    ],
+    "description": "Statsig is a modern product experimentation platform that helps product teams continuously measure impact of every single feature they launch.",
+    "headers": {
+      "x-statsig-region": ""
+    },
+    "icon": "Statsig.svg",
+    "js": {
+      "statsig": "",
+      "statsigInitialized": "",
+      "statsigWWW": ""
+    },
+    "saas": true,
+    "website": "https://statsig.com/",
+    "xhr": "\\.statsigapi\\.net"
   },
   "Status.io": {
     "cats": [
@@ -5859,6 +6002,7 @@
       1
     ],
     "description": "Storyblok is a headless CMS with a visual editor for developers, marketers and content editors. Storyblok helps your team to manage content and digital experiences for every use-case from corporate websites, ecommerce, helpdesks, mobile apps, screen displays, and more.",
+    "dom": "img[src*='//a.storyblok.com/']",
     "headers": {
       "content-security-policy": "app\\.storyblok\\.com",
       "x-frame-options": "app\\.storyblok\\.com"
@@ -6815,5 +6959,24 @@
       "styled": ""
     },
     "website": "https://styled-components.com"
+  },
+  "SuperPWA": {
+    "cats": [
+      87
+    ],
+    "description": "SuperPWA helps to easily convert your WordPress website into Progressive Web Apps instantly through our widely used PWA software without in coding.",
+    "icon": "superpwa.png",
+    "implies": [
+      "WordPress",
+      "PWA"
+    ],
+    "js": {
+      "superpwa_sw": ""
+    },
+    "pricing": [
+      "onetime",
+      "recurring"
+    ],
+    "website": "https://superpwa.com"
   }
 }

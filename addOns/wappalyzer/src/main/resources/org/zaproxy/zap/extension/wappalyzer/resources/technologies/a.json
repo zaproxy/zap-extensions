@@ -1544,11 +1544,11 @@
     "meta": {
       "twitter:site": "@AdobePortfolio"
     },
-    "saas": true,
     "pricing": [
       "low",
       "recurring"
     ],
+    "saas": true,
     "website": "https://portfolio.adobe.com"
   },
   "Adobe RoboHelp": {
@@ -1787,7 +1787,7 @@
       6
     ],
     "headers": {
-      "X-Powered-By": "Afosto SaaS BV"
+      "X-Powered-By": "Afosto SaaS BV\\;version:2.0"
     },
     "icon": "Afosto.svg",
     "website": "http://afosto.com"
@@ -2147,6 +2147,24 @@
     "icon": "akka-http.png",
     "website": "http://akka.io"
   },
+  "Aklamio": {
+    "cats": [
+      94
+    ],
+    "description": "Aklamio is a solution for enterprise level referral marketing and customer incentivisation.",
+    "dom": "a[href*='.aklamio.com/']",
+    "headers": {
+      "content-security-policy": "\\.aklamio\\.com"
+    },
+    "icon": "Aklamio.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.aklamio\\.com/",
+    "website": "https://www.aklamio.com"
+  },
   "Aksara CMS": {
     "cats": [
       1
@@ -2367,6 +2385,21 @@
     "scriptSrc": "js/alternc\\.js",
     "website": "https://alternc.com"
   },
+  "AlumnIQ": {
+    "cats": [
+      111
+    ],
+    "cookies": {
+      "alumniq-online-giving": ""
+    },
+    "description": "AlumnIQ is a set of services to manage events, giving, email, volunteers, class agents, and more, all designed to work with your database of record.",
+    "dom": "a[href*='.alumniq.com/giving/to/']",
+    "icon": "AlumnIQ.svg",
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.alumniq.com/platform/"
+  },
   "Amaya": {
     "cats": [
       20
@@ -2376,6 +2409,7 @@
     "meta": {
       "generator": "Amaya(?: V?([\\d.]+[a-z]))?\\;version:\\1"
     },
+    "oss": true,
     "website": "http://www.w3.org/Amaya"
   },
   "Amazon ALB": {
@@ -2741,8 +2775,8 @@
     "icon": "Amplitude.svg",
     "js": {
       "AMPLITUDE_KEY": "",
-      "amplitudeClient": "",
-      "__AMPLITUDE__": ""
+      "__AMPLITUDE__": "",
+      "amplitudeClient": ""
     },
     "pricing": [
       "freemium",
@@ -2767,6 +2801,23 @@
     },
     "scriptSrc": "AnalysysFangzhou_JS_SDK\\.min\\.js\\?v=([\\d.]+)\\;version:\\1",
     "website": "https://ark.analysys.cn"
+  },
+  "Analyzee": {
+    "cats": [
+      10
+    ],
+    "description": "Analyzee is an analytics tool that allows you to gain insights into visitor behavior and optimise your website's user experience using heatmaps and other analytics features.",
+    "icon": "Analyzee.svg",
+    "js": {
+      "Analyzee._sessionExtend": "",
+      "analyzee._session": ""
+    },
+    "saas": true,
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "website": "https://analyzee.io"
   },
   "AndersNoren Baskerville": {
     "cats": [
@@ -2890,6 +2941,7 @@
     "description": "Angular Material is a UI component library for Angular JS developers. Angular Material components assist in constructing attractive, consistent, and functional web pages and web applications.",
     "icon": "AngularJS.svg",
     "implies": "AngularJS",
+    "excludes": "Material Design Lite",
     "js": {
       "ngMaterial": ""
     },
@@ -3053,8 +3105,8 @@
       53
     ],
     "description": "Anthology Encompass is a constituent engagement management provider or educational institutions that provides modules to help you manage events, websites and content, data, and more.",
-    "icon": "Anthology.svg",
     "dom": "a[href*='.imodules.com/s/']",
+    "icon": "Anthology.svg",
     "pricing": [
       "poa"
     ],
@@ -3398,11 +3450,11 @@
     "js": {
       "mapkit._tileProvider": ""
     },
-    "scriptSrc": "//cdn\\.apple-mapkit\\.com/mk/([\\d\\.\\w]+)\\;version:\\1",
     "pricing": [
       "freemium",
       "payg"
     ],
+    "scriptSrc": "//cdn\\.apple-mapkit\\.com/mk/([\\d\\.\\w]+)\\;version:\\1",
     "website": "https://developer.apple.com/maps/web/"
   },
   "Apple Pay": {
@@ -3735,7 +3787,7 @@
       31
     ],
     "description": "ArvanCloud is a cloud services provider, offering a wide range of incorporated cloud services including CDN, DDoS mitigation, Cloud Managed DNS, Cloud Security, VoD/AoD Streaming, Live Streaming, Cloud Compute, Cloud Object Storage, and PaaS.",
-    "dom":"img[src*='.arvanstorage.com/']",
+    "dom": "img[src*='.arvanstorage.com/']",
     "headers": {
       "server": "ArvanCloud"
     },
@@ -3891,7 +3943,7 @@
       },
       "link[href*='/_astro/']": {
         "attributes": {
-          "href": "/_astro/(?:common|index)-[\\d\\w]+\\.css"
+          "href": "/_astro/(?:common|index)(?:-|\\.)[\\d\\w]+\\.css"
         }
       }
     },
@@ -4309,8 +4361,8 @@
       87,
       92
     ],
-    "description": "Autoptimize is a popular performance plugin for WordPress.",
-    "dom": "link[href*='/wp-content/plugins/autoptimize/']",
+    "description": "Autoptimize is a WordPress plugin that optimises website performance by aggregating, minifying, and compressing HTML, CSS, and JavaScript files.",
+    "dom": "link[href*='/wp-content/plugins/autoptimize/'], link[href*='/wp-content/cache/autoptimize/']",
     "icon": "Autoptimize.png",
     "pricing": [
       "freemium",
@@ -4527,6 +4579,23 @@
     ],
     "saas": true,
     "website": "https://www.azion.com/"
+  },
+  "Azko CMS": {
+    "cats": [
+      1
+    ],
+    "description": "Azko CMS is a content management system developed by Azko (Septeo Group) specifically launched for lawyers in France.",
+    "icon": "Azko CMS.svg",
+    "requires": [
+      "Bootstrap",
+      "Slick"
+    ],
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "//js\\.fw\\.azko\\.fr/",
+    "website": "https://www.azko.fr"
   },
   "Azoya": {
     "cats": [

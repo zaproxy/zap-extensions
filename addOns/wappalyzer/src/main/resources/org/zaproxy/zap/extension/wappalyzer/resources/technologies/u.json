@@ -226,22 +226,6 @@
     "scriptSrc": "umami\\.js",
     "website": "https://umami.is/"
   },
-  "uMarketingSuite": {
-    "cats": [
-      10,
-      76
-    ],
-    "description": "uMarketingSuite is a set of diverse features that together form a full marketing suite for the Umbraco platform.",
-    "icon": "uMarketingSuite.svg",
-    "implies": "Umbraco",
-    "js": {
-      "uMarketingSuite": ""
-    },
-    "pricing": [
-      "poa"
-    ],
-    "website": "https://www.umarketingsuite.com"
-  },
   "Umbraco": {
     "cats": [
       1
@@ -284,8 +268,8 @@
     "js": {
       "g_umi.version": "([\\d\\.]+)\\;version:\\1"
     },
-    "scriptSrc": "/umi\\.js",
     "oss": true,
+    "scriptSrc": "/umi\\.js",
     "website": "https://umijs.org"
   },
   "Umso": {
@@ -367,6 +351,18 @@
     "requires": "WordPress",
     "scriptSrc": "wp-content/themes/understrap(?:[masterchild-]+)?(?:[masterchild-]+)?/",
     "website": "https://understrap.com"
+  },
+  "UniFi OS": {
+    "cats": [
+      28
+    ],
+    "description": "UniFi OS is the operating system for UniFi products, which provides a user interface.",
+    "icon": "UniFi_OS.png",
+    "js": {
+      "unifiConstant.VERSION": "^([\\d+\\.]+)$\\;version:\\1"
+    },
+    "requires": "AngularJS",
+    "website": "https://www.ui.com/"
   },
   "Uniconsent": {
     "cats": [
@@ -848,6 +844,22 @@
     ],
     "saas": true,
     "website": "https://ulogin.ru"
+  },
+  "uMarketingSuite": {
+    "cats": [
+      10,
+      76
+    ],
+    "description": "uMarketingSuite is a set of diverse features that together form a full marketing suite for the Umbraco platform.",
+    "icon": "uMarketingSuite.svg",
+    "implies": "Umbraco",
+    "js": {
+      "uMarketingSuite": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.umarketingsuite.com"
   },
   "uPlot": {
     "cats": [

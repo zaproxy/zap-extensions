@@ -977,7 +977,7 @@
       "DIVI": ""
     },
     "meta": {
-      "generator": "Divi"
+      "generator": "Divi(?:\\sv\\.([\\d\\.]+))?\\;version:\\1"
     },
     "pricing": [
       "low",
@@ -1103,14 +1103,14 @@
       "Webpack"
     ],
     "js": {
-      "search.indexName": "",
+      "__DOCUSAURUS_INSERT_BASEURL_BANNER": "",
       "docusaurus": "",
-      "__DOCUSAURUS_INSERT_BASEURL_BANNER": ""
+      "search.indexName": ""
     },
     "meta": {
-      "generator": "^Docusaurus(?: v(.+))?$\\;version:\\1",
       "docusaurus_locale": "",
-      "docusaurus_tag": ""
+      "docusaurus_tag": "",
+      "generator": "^Docusaurus(?: v(.+))?$\\;version:\\1"
     },
     "website": "https://docusaurus.io/"
   },

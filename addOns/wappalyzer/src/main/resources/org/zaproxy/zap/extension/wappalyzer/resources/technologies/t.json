@@ -401,17 +401,17 @@
       5
     ],
     "description": "Tagembed is a social media aggregator that collects and displays engaging user-generated content from any social media network such as Instagram, Facebook, Twitter, Youtube, Tiktok, Google Reviews, Airbnb, and 18+ networks.",
-    "icon": "Tagembed.svg",
     "dom": "script[data-src*='widget.tagembed.com/']",
+    "icon": "Tagembed.svg",
     "js": {
       "TagembedWidget": ""
     },
-    "saas": true,
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
+    "saas": true,
     "scriptSrc": "//widget\\.tagembed\\.com/",
     "website": "https://tagembed.com"
   },
@@ -1587,6 +1587,67 @@
     "scriptSrc": "thix\\.ttsep\\.com/",
     "website": "https://www.thesistesting.com"
   },
+  "ThimPress Course Review": {
+    "cats": [
+      87
+    ],
+    "description": "Course Review is a WordPress plugin by ThimPress. Course Review gives students the opportunity to evaluate and provide feedback in order to improve the course.",
+    "dom": "link[href*='/wp-content/plugins/learnpress-course-review/']",
+    "icon": "ThimPress.svg",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "website": "https://wordpress.org/plugins/learnpress-course-review"
+  },
+  "ThimPress Course Wishlist": {
+    "cats": [
+      87
+    ],
+    "description": "Course Wishlist is a WordPress plugin by ThimPress. Course Wishlist bring wishlist feature for LearnPress.",
+    "dom": "link[href*='/wp-content/plugins/learnpress-wishlist/']",
+    "icon": "ThimPress.svg",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": [
+      "WordPress",
+      "ThimPress LearnPress"
+    ],
+    "website": "https://wordpress.org/plugins/learnpress-wishlist"
+  },
+  "ThimPress Gradebook": {
+    "cats": [
+      87
+    ],
+    "description": "Gradebook is a WordPress plugin by ThimPress. Gradebook add-on for LearnPress makes it easier to track the students learning progress and result.",
+    "dom": "link[href*='/wp-content/plugins/learnpress-gradebook/']",
+    "icon": "ThimPress.svg",
+    "pricing": [
+      "onetime"
+    ],
+    "requires": [
+      "WordPress",
+      "ThimPress LearnPress"
+    ],
+    "website": "https://thimpress.com/product/gradebook-add-on-for-learnpress"
+  },
+  "ThimPress LearnPress": {
+    "cats": [
+      87,
+      21
+    ],
+    "description": "LearnPress is a WordPress LMS plugin by ThimPress.",
+    "dom": "link[href*='/wp-content/plugins/learnpress/']",
+    "icon": "ThimPress.svg",
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/learnpress/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/learnpress"
+  },
   "Thimatic": {
     "cats": [
       90,
@@ -1683,6 +1744,21 @@
     "saas": true,
     "scriptSrc": "\\.online-metrix\\.net",
     "website": "https://risk.lexisnexis.com/products/threatmetrix"
+  },
+  "Three.js": {
+    "cats": [
+      25
+    ],
+    "description": "Three.js is a cross-browser JavaScript library and application programming interface used to create and display animated 3D computer graphics in a web browser using WebGL.",
+    "dom": "canvas[data-engine*='three.js']",
+    "icon": "Three.js.svg",
+    "js": {
+      "THREE.REVISION": "^(.+)$\\;version:\\1",
+      "__THREE__": "^(.+)$\\;version:\\1"
+    },
+    "oss": true,
+    "scriptSrc": "three(?:\\.min)?\\.js",
+    "website": "https://threejs.org"
   },
   "Threekit": {
     "cats": [
@@ -3359,21 +3435,6 @@
     "scriptSrc": "\\.adsrvr\\.org/",
     "website": "https://www.thetradedesk.com",
     "xhr": "adsvr\\.org"
-  },
-  "Three.js": {
-    "cats": [
-      25
-    ],
-    "description": "Three.js is a cross-browser JavaScript library and application programming interface used to create and display animated 3D computer graphics in a web browser using WebGL.",
-    "dom": "canvas[data-engine*='three.js']",
-    "icon": "Three.js.svg",
-    "js": {
-      "THREE.REVISION": "^(.+)$\\;version:\\1",
-      "__THREE__": "^(.+)$\\;version:\\1"
-    },
-    "oss": true,
-    "scriptSrc": "three(?:\\.min)?\\.js",
-    "website": "https://threejs.org"
   },
   "thttpd": {
     "cats": [

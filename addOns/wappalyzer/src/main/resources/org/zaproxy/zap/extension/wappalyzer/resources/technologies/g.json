@@ -323,22 +323,6 @@
     "scriptSrc": "/files/gempagev\\d+\\.js",
     "website": "https://gempages.net"
   },
-  "GenerateBlocks": {
-    "cats": [
-      87,
-      51
-    ],
-    "description": "GenerateBlocks is a WordPress plugin that has the trappings of a page builder.",
-    "icon": "GenerateBlocks.svg",
-    "dom": "link#generateblocks-css",
-    "pricing": [
-      "freemium",
-      "low",
-      "recurring"
-    ],
-    "requires": "WordPress",
-    "website": "https://generateblocks.com"
-  },
   "Gemius": {
     "cats": [
       10
@@ -374,6 +358,22 @@
       "/static/gxtimezone\\.js"
     ],
     "website": "https://www.genexus.com/"
+  },
+  "GenerateBlocks": {
+    "cats": [
+      87,
+      51
+    ],
+    "description": "GenerateBlocks is a WordPress plugin that has the trappings of a page builder.",
+    "dom": "link#generateblocks-css",
+    "icon": "GenerateBlocks.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "website": "https://generateblocks.com"
   },
   "GeneratePress": {
     "cats": [
@@ -2085,7 +2085,8 @@
       "store-config": "graphqlMethod"
     },
     "oss": true,
-    "website": "https://graphql.org"
+    "website": "https://graphql.org",
+    "xhr": "graphql\\.[\\w]+\\.(?:com|net)/"
   },
   "Graphene": {
     "cats": [

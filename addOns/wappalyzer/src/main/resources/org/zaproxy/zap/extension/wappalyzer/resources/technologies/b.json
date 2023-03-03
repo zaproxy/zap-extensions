@@ -2555,6 +2555,9 @@
     ],
     "description": "bdok is a cloud-based platform which provides the capability to create and manage online stores with no technical knowledge.",
     "icon": "bdok.svg",
+    "meta": {
+      "bdok": ""
+    },
     "pricing": [
       "low",
       "recurring"
