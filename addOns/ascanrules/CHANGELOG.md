@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [53] - 2023-03-03
 ### Changed
 - Maintenance changes.
 - The SQL Injection Scan Rule filters reflected payload containing escaped characters like '&amp;' and '&quot;' before response content comparison to reduce false negatives.
@@ -397,6 +397,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[53]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v53
 [52]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v52
 [51]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v51
 [50]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v50
