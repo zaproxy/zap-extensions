@@ -927,6 +927,25 @@
     ],
     "website": "https://woocommerce.com/flexslider/"
   },
+  "FlippingBook": {
+    "cats": [
+      5
+    ],
+    "description": "FlippingBook is a web-based software platform that enables users to create, publish, and share digital publications such as magazines, brochures, catalogs, and presentations.",
+    "icon": "FlippingBook.svg",
+    "dom": "a[href*='flippingbook.com/'][target='_blank']",
+    "scriptSrc": "online\\.flippingbook\\.com/",
+    "js": {
+      "__flippingbook_csrf__": ""
+    },
+    "saas": true,
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "website": "https://flippingbook.com"
+  },
   "Flickity": {
     "cats": [
       59
@@ -1070,6 +1089,44 @@
       "payg"
     ],
     "website": "https://fly.io"
+  },
+  "Flying Analytics": {
+    "cats": [
+      87
+    ],
+    "description": "Flying Analytics is a performance optimisation plugin for WordPress websites designed to reduce page load times and improve the user experience.",
+    "dom": "link[href*='/wp-content/plugins/flying-analytics/']",
+    "icon": "default.svg",
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/flying-analytics/",
+    "website": "https://wordpress.org/plugins/flying-analytics/"
+  },
+  "Flying Pages": {
+    "cats": [
+      87,
+      92
+    ],
+    "description": "Flying Pages is a performance optimisation plugin for WordPress websites designed to reduce page load times and improve the user experience.",
+    "dom": "link[href*='/wp-content/plugins/flying-pages/']",
+    "icon": "Flying Pages.svg",
+    "requires": "WordPress",
+    "js": {
+      "flyingPages": ""
+    },
+    "scriptSrc": "/wp-content/plugins/flying-pages/.+\\.js(?:\\?ver=([\\d\\.]+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/flying-pages/"
+  },
+  "Flying Images": {
+    "cats": [
+      87
+    ],
+    "description": "Flying Images is a performance optimisation plugin for WordPress websites designed to reduce page load times and improve the user experience.",
+    "icon": "default.svg",
+    "requires": "WordPress",
+    "js": {
+      "flyingImages": ""
+    },
+    "website": "https://wordpress.org/plugins/nazy-load/"
   },
   "Flyspray": {
     "cats": [
@@ -1289,8 +1346,8 @@
     "cats": [
       1
     ],
-    "description": "Fork CMS is an open-source content management system.",
     "cpe": "cpe:2.3:a:fork-cms:fork_cms:*:*:*:*:*:*:*:*",
+    "description": "Fork CMS is an open-source content management system.",
     "icon": "ForkCMS.png",
     "implies": "Symfony",
     "meta": {
@@ -1298,22 +1355,6 @@
     },
     "oss": true,
     "website": "http://www.fork-cms.com"
-  },
-  "Formaloo": {
-    "cats": [
-      110
-    ],
-    "description": "Formaloo is a no-code collaboration platform that helps businesses create custom data-driven business applications and internal tools, automate their processes and engage their audience.",
-    "icon": "Formaloo.svg",
-    "dom": "iframe[src*='//formaloo.net/']",
-    "pricing": [
-      "freemium",
-      "low",
-      "recurring"
-    ],
-    "saas": true,
-    "scriptSrc": "//formaloo\\.net/",
-    "website": "https://www.formaloo.com"
   },
   "FormAssembly": {
     "cats": [
@@ -1330,6 +1371,37 @@
       "low"
     ],
     "website": "https://www.formassembly.com"
+  },
+  "FormBold": {
+    "cats": [
+      110
+    ],
+    "description": "FormBold is a complete web forms solution for static websites that allows you to create forms, collect data, and send notifications.",
+    "dom": "form[action*='//formbold.com/']",
+    "icon": "FormBold.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://formbold.com"
+  },
+  "Formaloo": {
+    "cats": [
+      110
+    ],
+    "description": "Formaloo is a no-code collaboration platform that helps businesses create custom data-driven business applications and internal tools, automate their processes and engage their audience.",
+    "dom": "iframe[src*='//formaloo.net/']",
+    "icon": "Formaloo.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "//formaloo\\.net/",
+    "website": "https://www.formaloo.com"
   },
   "Formidable Form": {
     "cats": [

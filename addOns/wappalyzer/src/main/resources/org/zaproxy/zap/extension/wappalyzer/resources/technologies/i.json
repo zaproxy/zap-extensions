@@ -406,6 +406,23 @@
     },
     "website": "http://impresspages.org"
   },
+  "Imunify360": {
+    "cats": [
+      16
+    ],
+    "description": "Imunify360 is a comprehensive security platform for Linux web servers which utilises machine learning technology and other advanced techniques to provide protection against various types of cyber threats, such as malware, viruses, and other attacks.",
+    "icon": "Imunify360.svg",
+    "headers": {
+      "Server": "imunify360-webshield/([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://www.imunify360.com"
+  },
   "Imweb": {
     "cats": [
       6
@@ -662,6 +679,22 @@
     "saas": true,
     "scriptSrc": "api\\.useinsider\\.\\w+/",
     "website": "https://useinsider.com"
+  },
+  "Insightly CRM": {
+    "cats": [
+      53
+    ],
+    "description": "Insightly CRM is a cloud-based customer relationship management software, helps businesses manage leads, contacts, and opportunities, track customer interactions, create custom reports, automate workflows, and integrate with third-party applications, improving customer engagement and streamlining business processes.",
+    "icon": "Insightly.svg",
+    "dom": "form[action*='.insightly.com/']",
+    "pricing": [
+      "recurring",
+      "low",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.insightly\\.services/",
+    "website": "https://www.insightly.com/crm/"
   },
   "Inspectlet": {
     "cats": [
@@ -1063,6 +1096,16 @@
     "html": "<a[^>]*href=\"https://www\\.irroba\\.com\\.br",
     "icon": "irroba.svg",
     "website": "https://www.irroba.com.br/"
+  },
+  "ISAY": {
+    "cats": [
+      1
+    ],
+    "description": "ISAY (Internet Pages Management) is a CMS service provided by the Turkish Ministry of Interior for governorships, district governorships and various official websites.",
+    "dom": "div.topbar-img img[src*='/Areas/WebPart/Contents/FHeader/img/ataturk.svg']",
+    "icon": "ISAY.png",
+    "requires": "Microsoft ASP.NET",
+    "website": "https://www.icisleri.gov.tr/internet-sayfalari-yonetimi-isay"
   },
   "Isotope": {
     "cats": [
@@ -1520,5 +1563,21 @@
     "saas": true,
     "scriptSrc": "iubenda\\.com/",
     "website": "https://www.iubenda.com"
+  },
+  "iyzico": {
+    "cats": [
+      41
+    ],
+    "description": "iyzico is a payment receipt system management platform that offers ePayment solutions.",
+    "icon": "iyzico.svg",
+    "js": {
+      "iyz.ideaSoft": "",
+      "iyz.position": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://www.iyzico.com"
   }
 }

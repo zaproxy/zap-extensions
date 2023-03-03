@@ -131,15 +131,15 @@
     "cats": [
       6
     ],
-    "description": "Zeald is a full-service website design and digital marketing company.",
-    "icon": "Zeald.png",
-    "requires": "Cart Functionality",
     "cookies": {
       "ZES_BACKEND": "zeald"
     },
+    "description": "Zeald is a full-service website design and digital marketing company.",
+    "icon": "Zeald.png",
     "pricing": [
       "poa"
     ],
+    "requires": "Cart Functionality",
     "website": "https://www.zeald.com"
   },
   "Zeleris": {
@@ -325,6 +325,22 @@
     ],
     "saas": true,
     "website": "https://zid.sa"
+  },
+  "Ziggy": {
+    "cats": [
+      59
+    ],
+    "description": "Ziggy is a library that allows using Laravel named routes in JavaScript.",
+    "icon": "Ziggy.png",
+    "implies": [
+      "Laravel",
+      "Inertia.js"
+    ],
+    "js": {
+      "Ziggy": ""
+    },
+    "oss": true,
+    "website": "https://github.com/tighten/ziggy"
   },
   "Zimbra": {
     "cats": [

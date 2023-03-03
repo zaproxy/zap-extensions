@@ -259,6 +259,24 @@
     "scriptSrc": "^https?://(?:ads-by|pixel)\\.madadsmedia\\.com/",
     "website": "http://madadsmedia.com"
   },
+  "MadCap Software": {
+    "cats": [
+      96
+    ],
+    "description": "MadCap Software is a company that specialises in creating software tools for technical writers to author and publish various types of content, including user manuals, online help systems, and knowledge bases.",
+    "icon": "MadCap Software.svg",
+    "js": {
+      "MadCap.Accessibility": "",
+      "MadCap.DEBUG": ""
+    },
+    "saas": true,
+    "pricing": [
+      "poa",
+      "mid",
+      "recurring"
+    ],
+    "website": "https://www.madcapsoftware.com"
+  },
   "Magazord": {
     "cats": [
       6
@@ -1029,10 +1047,11 @@
     "cats": [
       66
     ],
-    "description": "Materialize CSS is a css framework which is used to create responsive websites.",
-    "html": "<link[^>]* href=\"[^\"]*materialize(?:\\.min)?\\.css",
-    "icon": "Materialize CSS.png",
-    "scriptSrc": "materialize(?:\\.min)?\\.js",
+    "description": "Materialize CSS is a front-end framework that helps developers create responsive and mobile-first web applications. It is based on Google's Material Design guidelines.",
+    "icon": "Materialize CSS.svg",
+    "dom": "link[href*='/materialize.min.css']",
+    "scriptSrc": "([\\d\\.]+)/.*/materialize\\.min\\.js\\;version:\\1",
+    "oss": true,
     "website": "http://materializecss.com"
   },
   "MathJax": {
@@ -1559,7 +1578,6 @@
       66
     ],
     "description": "MetroUI is an open-source frontend toolkit inspired by Microsoft Fluent (former Metro) design principles.",
-    "icon": "default.svg",
     "dom": {
       "link[href*='//cdn.metroui.org.ua/']": {
         "attributes": {
@@ -1567,6 +1585,7 @@
         }
       }
     },
+    "icon": "default.svg",
     "js": {
       "Metro.version": "^([\\d\\.]+)$\\;version:\\1"
     },
@@ -2879,7 +2898,6 @@
       51
     ],
     "description": "MyWebsite Creator is website builder designed for easy editing and fast results.",
-    "dom": "body#dmRoot",
     "icon": "MyWebsite.svg",
     "implies": "Duda",
     "pricing": [
@@ -3027,10 +3045,6 @@
     ],
     "description": "mdBook is a utility to create modern online books from Markdown files.",
     "icon": "mdBook.svg",
-    "implies": [
-      "Rust",
-      "Handlebars"
-    ],
     "oss": true,
     "scripts": "localStorage\\.getItem\\('mdbook-(?:sidebar|theme)'\\)",
     "website": "https://github.com/rust-lang/mdBook"

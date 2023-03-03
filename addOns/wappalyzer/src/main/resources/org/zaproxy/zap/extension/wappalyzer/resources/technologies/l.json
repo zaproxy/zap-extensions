@@ -11,6 +11,20 @@
     },
     "website": "http://www.lepton-cms.org"
   },
+  "LGC": {
+    "cats": [
+      1
+    ],
+    "description": "LGC is a modern CMS designed to improve the management of your website.",
+    "icon": "LGC.png",
+    "meta": {
+      "generator": "^LGC$"
+    },
+    "pricing": [
+      "onetime"
+    ],
+    "website": "https://luigigabrieleconti.com"
+  },
   "LINE Login": {
     "cats": [
       69
@@ -117,6 +131,19 @@
       "Laravel": ""
     },
     "website": "https://laravel.com"
+  },
+  "Laravel Echo": {
+    "cats": [
+      59
+    ],
+    "description": "Laravel Echo is a JavaScript library that makes it painless to subscribe to channels and listen for events broadcast by Laravel.",
+    "icon": "Laravel Echo.svg",
+    "implies": "Laravel",
+    "js": {
+      "Echo.connector": "",
+      "echo.connector": ""
+    },
+    "website": "https://laravel.com/docs/broadcasting#client-side-installation"
   },
   "Laterpay": {
     "cats": [
@@ -235,6 +262,18 @@
     "saas": true,
     "scriptSrc": "app\\.layouthub\\.com/shopify/layouthub\\.js",
     "website": "https://layouthub.com"
+  },
+  "Layui": {
+    "cats": [
+      66
+    ],
+    "description": "Layui is an open-source modular front-end UI component library.",
+    "icon": "Layui.png",
+    "js": {
+      "layui.v": "([\\d\\.]+)\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://layui.gitee.io"
   },
   "Lazada": {
     "cats": [
@@ -556,20 +595,6 @@
     "icon": "Lexity.png",
     "scriptSrc": "\\.lexity\\.com/",
     "website": "http://lexity.com"
-  },
-  "LGC": {
-    "cats": [
-      1
-    ],
-    "description": "LGC is a modern CMS designed to improve the management of your website.",
-    "icon": "LGC.png",
-    "meta": {
-      "generator": "^LGC$"
-    },
-    "pricing": [
-      "onetime"
-    ],
-    "website": "https://luigigabrieleconti.com"
   },
   "Liberapay": {
     "cats": [
@@ -1512,17 +1537,17 @@
       "TXT": "loom-verification"
     },
     "icon": "Loom.svg",
-    "saas": true,
     "pricing": [
       "freemium",
       "recurring",
       "payg"
     ],
+    "saas": true,
+    "website": "https://www.loom.com",
     "xhr": [
       "loom\\.com/api",
       "luna\\.loom\\.com"
-    ],
-    "website": "https://www.loom.com"
+    ]
   },
   "Loop Returns": {
     "cats": [
