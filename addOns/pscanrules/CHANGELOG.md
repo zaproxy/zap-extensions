@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [46] - 2023-03-03
 ### Changed
 - The PII Disclosure scan rule:
     - Now includes a solution statement.
@@ -374,6 +374,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[46]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v46
 [45]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v45
 [44]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v43
