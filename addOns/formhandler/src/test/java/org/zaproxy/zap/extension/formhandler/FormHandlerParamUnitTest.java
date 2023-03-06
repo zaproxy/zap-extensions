@@ -22,12 +22,14 @@ package org.zaproxy.zap.extension.formhandler;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -40,7 +42,7 @@ class FormHandlerParamUnitTest {
     private static final String TOKEN_ENABLED_KEY = "enabled";
     private static final String TOKEN_REGEX_KEY = "regex";
 
-    private static final List<FormHandlerParamField> TEST_FIELDS =
+    private List<FormHandlerParamField> testFields =
             List.of(
                     new FormHandlerParamField("alice|bob", "example1", true, true),
                     new FormHandlerParamField("\\d{3}", "example2", true, true),
@@ -59,6 +61,11 @@ class FormHandlerParamUnitTest {
     @Test
     void shouldHaveConfigVersionKey() {
         assertThat(param.getConfigVersionKey(), is(equalTo("formhandler[@version]")));
+    }
+
+    @Test
+    void shouldHaveExpectedNumberOfDefaultFieldDefinitions() {
+        assertThat(param.getFields().size(), is(equalTo(13)));
     }
 
     @ParameterizedTest
@@ -133,7 +140,7 @@ class FormHandlerParamUnitTest {
     void shouldReturnSimpleMatchBeforeRegexMatchWhenMatchAmongstMany() {
         // Given
         List<FormHandlerParamField> fields = new ArrayList<>();
-        fields.addAll(TEST_FIELDS);
+        fields.addAll(testFields);
         fields.add(new FormHandlerParamField("foo", "example4", true, false));
         param.setFields(fields);
         // When
@@ -173,7 +180,7 @@ class FormHandlerParamUnitTest {
     void shouldNotReturnRegexMatchAmongstManyIfDisabled() {
         // Given
         List<FormHandlerParamField> fields = new ArrayList<>();
-        fields.addAll(TEST_FIELDS);
+        fields.addAll(testFields);
         fields.get(2).setEnabled(false);
         param.setFields(fields);
         // When
@@ -186,21 +193,64 @@ class FormHandlerParamUnitTest {
     void shouldNotSetInvalidRegex() {
         // Given
         List<FormHandlerParamField> fields = new ArrayList<>();
-        fields.addAll(TEST_FIELDS);
+        fields.addAll(FormHandlerParam.DEFAULT_FIELDS_ORIGINAL);
+        fields.addAll(FormHandlerParam.DEFAULT_FIELDS_V1);
+        fields.addAll(testFields);
         fields.add(new FormHandlerParamField("\\d{9", "example4", true, true));
+        configuration = buildConfig(configuration, fields);
+        // When
+        param.load(configuration);
+        int fieldsCount = param.getFields().size();
+        int enabledFieldsCount = param.getEnabledFieldsNames().size();
+        // Then
+        assertThat(fieldsCount, is(equalTo(16)));
+        assertThat(enabledFieldsCount, is(equalTo(16)));
+    }
+
+    @Test
+    void shouldSetOnlyV1WhenSingleOriginalExists() {
+        // Given
+        List<FormHandlerParamField> fields = new ArrayList<>();
+        fields.add(FormHandlerParam.DEFAULT_FIELDS_ORIGINAL.get(0));
+        configuration = buildConfig(new ZapXmlConfiguration(), fields);
+        // When
+        param.load(configuration);
+        List<FormHandlerParamField> loadedFields = param.getFields();
+        FormHandlerParamField first = loadedFields.get(0);
+        int fieldsCount = loadedFields.size();
+        int enabledFieldsCount = param.getEnabledFieldsNames().size();
+        // Then
+        assertThat(first, is(equalTo(FormHandlerParam.DEFAULT_FIELDS_ORIGINAL.get(0))));
+        assertThat(fieldsCount, is(equalTo(FormHandlerParam.DEFAULT_FIELDS_V1.size() + 1)));
+        assertThat(enabledFieldsCount, is(equalTo(FormHandlerParam.DEFAULT_FIELDS_V1.size() + 1)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"color"})
+    @NullAndEmptySource
+    void shouldTNothrowExceptionWhenRemovingField(String name) {
+        // Given
+        List<FormHandlerParamField> fields = new ArrayList<>();
+        fields.add(FormHandlerParam.DEFAULT_FIELDS_ORIGINAL.get(0)); // color
+        fields.add(FormHandlerParam.DEFAULT_FIELDS_ORIGINAL.get(1)); // email
+        configuration = buildConfig(new ZapXmlConfiguration(), fields);
+        // Given / When
+        param.load(configuration);
+        // Then
+        assertDoesNotThrow(() -> param.removeField(name));
+    }
+
+    private ZapXmlConfiguration buildConfig(
+            ZapXmlConfiguration config, List<FormHandlerParamField> fields) {
         for (int i = 0, size = fields.size(); i < size; ++i) {
             String elementBaseKey = ALL_TOKENS_KEY + "(" + i + ").";
             FormHandlerParamField field = fields.get(i);
-            configuration.setProperty(elementBaseKey + TOKEN_NAME_KEY, field.getName());
-            configuration.setProperty(elementBaseKey + TOKEN_VALUE_KEY, field.getValue());
-            configuration.setProperty(
+            config.setProperty(elementBaseKey + TOKEN_NAME_KEY, field.getName());
+            config.setProperty(elementBaseKey + TOKEN_VALUE_KEY, field.getValue());
+            config.setProperty(
                     elementBaseKey + TOKEN_ENABLED_KEY, Boolean.valueOf(field.isEnabled()));
-            configuration.setProperty(
-                    elementBaseKey + TOKEN_REGEX_KEY, Boolean.valueOf(field.isRegex()));
+            config.setProperty(elementBaseKey + TOKEN_REGEX_KEY, Boolean.valueOf(field.isRegex()));
         }
-        // When
-        param.load(configuration);
-        // Then
-        assertThat(param.getFields().size(), is(equalTo(3)));
+        return config;
     }
 }

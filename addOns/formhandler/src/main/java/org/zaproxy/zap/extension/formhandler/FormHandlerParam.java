@@ -20,16 +20,15 @@
 package org.zaproxy.zap.extension.formhandler;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
 
@@ -56,16 +55,36 @@ public class FormHandlerParam extends VersionedAbstractParam {
     private static final String CONFIRM_REMOVE_TOKEN_KEY =
             FORM_HANDLER_BASE_KEY + ".confirmRemoveField";
 
-    private static final Map<String, String> DEFAULT_KEY_VALUE_PAIRS = new HashMap<>();
-
-    static {
-        DEFAULT_KEY_VALUE_PAIRS.put("color", "#ffffff");
-        DEFAULT_KEY_VALUE_PAIRS.put("email", "foo-bar@example.com");
-        DEFAULT_KEY_VALUE_PAIRS.put("name", "ZAP");
-        DEFAULT_KEY_VALUE_PAIRS.put("password", "ZAP");
-        DEFAULT_KEY_VALUE_PAIRS.put("phone", "9999999999");
-        DEFAULT_KEY_VALUE_PAIRS.put("url", "https://www.example.com");
-    }
+    protected static final List<FormHandlerParamField> DEFAULT_FIELDS_ORIGINAL =
+            List.of(
+                    new FormHandlerParamField("color", "#ffffff"),
+                    new FormHandlerParamField("email", "zaproxy@example.com"),
+                    new FormHandlerParamField("name", "ZAP"),
+                    new FormHandlerParamField("password", "ZAP"),
+                    new FormHandlerParamField("phone", "9999999999"),
+                    new FormHandlerParamField("url", "https://zap.example.com"));
+    protected static final List<FormHandlerParamField> DEFAULT_FIELDS_V1 =
+            List.of(
+                    new FormHandlerParamField(
+                            "(?i)_?back[-_]?(?:link|uri|url)?",
+                            "https://zap.example.com",
+                            true,
+                            true),
+                    new FormHandlerParamField("(?i)_?bg[-_]?colou?r", "#FFFFFF", true, true),
+                    new FormHandlerParamField("(?i)_?query|find|keyword", "ZAP", true, true),
+                    new FormHandlerParamField(
+                            "(?i)_?search[-_]?(?:term|word|param|parameter|string|text|value|keyword|query)?",
+                            "ZAP",
+                            true,
+                            true),
+                    new FormHandlerParamField(
+                            "(?i)_?amount|amt|count|qty|quantity", "3", true, true),
+                    new FormHandlerParamField("(?i)_?lang|language", "en", true, true),
+                    new FormHandlerParamField(
+                            "(?i)_?locale[-_]?(?:code)?",
+                            Constant.getSystemsLocale().toLanguageTag(),
+                            true,
+                            true));
 
     private List<FormHandlerParamField> fields;
     private List<String> enabledFieldsNames;
@@ -98,19 +117,10 @@ public class FormHandlerParam extends VersionedAbstractParam {
             }
         } catch (ConversionException e) {
             LOGGER.error("Error while loading key-value pair fields: {}", e.getMessage(), e);
-            this.fields = new ArrayList<>(DEFAULT_KEY_VALUE_PAIRS.size());
-            this.enabledFieldsNames = new ArrayList<>(DEFAULT_KEY_VALUE_PAIRS.size());
-        }
-
-        if (this.fields.isEmpty()) {
-            // Grab the entry for every set in the map
-            for (Map.Entry<String, String> entry : DEFAULT_KEY_VALUE_PAIRS.entrySet()) {
-                // Store the key and value of that entry in variables
-                String name = entry.getKey();
-                String value = entry.getValue();
-                this.fields.add(new FormHandlerParamField(name, value));
-                this.enabledFieldsNames.add(name);
-            }
+            List<FormHandlerParamField> fieldsToAdd = new ArrayList<>();
+            fieldsToAdd.addAll(DEFAULT_FIELDS_ORIGINAL);
+            fieldsToAdd.addAll(DEFAULT_FIELDS_V1);
+            setFields(fieldsToAdd);
         }
 
         this.confirmRemoveField = getBoolean(CONFIRM_REMOVE_TOKEN_KEY, true);
@@ -135,13 +145,15 @@ public class FormHandlerParam extends VersionedAbstractParam {
     @ZapApiIgnore
     public void setFields(List<FormHandlerParamField> fields) {
         this.fields = new ArrayList<>(fields);
-
         ((HierarchicalConfiguration) getConfig()).clearTree(ALL_TOKENS_KEY);
+        this.enabledFieldsNames = addFields(fields, 0);
+    }
 
-        ArrayList<String> enabledFields = new ArrayList<>(fields.size());
-        for (int i = 0, size = fields.size(); i < size; ++i) {
+    private List<String> addFields(List<FormHandlerParamField> collection, int offset) {
+        ArrayList<String> enabledFields = new ArrayList<>();
+        for (int i = offset, j = 0, size = collection.size(); j < size; ++i, j++) {
             String elementBaseKey = ALL_TOKENS_KEY + "(" + i + ").";
-            FormHandlerParamField field = fields.get(i);
+            FormHandlerParamField field = collection.get(j);
 
             getConfig().setProperty(elementBaseKey + TOKEN_NAME_KEY, field.getName());
             getConfig().setProperty(elementBaseKey + TOKEN_VALUE_KEY, field.getValue());
@@ -158,7 +170,7 @@ public class FormHandlerParam extends VersionedAbstractParam {
         }
 
         enabledFields.trimToSize();
-        this.enabledFieldsNames = enabledFields;
+        return enabledFields;
     }
 
     /**
@@ -202,7 +214,7 @@ public class FormHandlerParam extends VersionedAbstractParam {
 
         for (Iterator<FormHandlerParamField> it = fields.iterator(); it.hasNext(); ) {
             FormHandlerParamField field = it.next();
-            if (name.equalsIgnoreCase(field.getName())) {
+            if (field.hasName(name)) {
                 it.remove();
                 if (field.isEnabled()) {
                     this.enabledFieldsNames.remove(name);
@@ -275,6 +287,24 @@ public class FormHandlerParam extends VersionedAbstractParam {
 
     @Override
     protected void updateConfigsImpl(int fileVersion) {
-        // Nothing to do yet
+        switch (fileVersion) {
+            case NO_CONFIG_VERSION:
+                List<FormHandlerParamField> fieldsToAdd = new ArrayList<>();
+                Iterator<?> allTokenKeys = getConfig().getKeys(ALL_TOKENS_KEY);
+                if (!allTokenKeys.hasNext()) {
+                    fieldsToAdd.addAll(DEFAULT_FIELDS_ORIGINAL);
+                }
+                fieldsToAdd.addAll(DEFAULT_FIELDS_V1);
+                addFields(fieldsToAdd, getIteratorSize(allTokenKeys));
+        }
+    }
+
+    private static int getIteratorSize(Iterator<?> iter) {
+        int size = 0;
+        while (iter.hasNext()) {
+            iter.next();
+            size++;
+        }
+        return size;
     }
 }
