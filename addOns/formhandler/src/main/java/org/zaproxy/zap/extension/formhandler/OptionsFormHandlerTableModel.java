@@ -33,6 +33,7 @@ public class OptionsFormHandlerTableModel
     private static final String[] COLUMN_NAMES = {
         Constant.messages.getString("formhandler.options.table.column.enabled"),
         Constant.messages.getString("formhandler.options.table.column.field"),
+        Constant.messages.getString("formhandler.options.table.column.regex"),
         Constant.messages.getString("formhandler.options.table.column.value")
     };
 
@@ -72,7 +73,7 @@ public class OptionsFormHandlerTableModel
 
     @Override
     public Class<?> getColumnClass(int c) {
-        if (c == 0) {
+        if (c == 0 || c == 2) {
             return Boolean.class;
         }
         return String.class;
@@ -96,6 +97,8 @@ public class OptionsFormHandlerTableModel
             case 1:
                 return getElement(rowIndex).getName();
             case 2:
+                return Boolean.valueOf(getElement(rowIndex).isRegex());
+            case 3:
                 return getElement(rowIndex).getValue();
         }
         return null;

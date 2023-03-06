@@ -22,6 +22,8 @@ package org.zaproxy.zap.extension.formhandler;
 import java.awt.Dialog;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import javax.swing.GroupLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -30,6 +32,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.AbstractFormDialog;
@@ -38,6 +42,7 @@ import org.zaproxy.zap.view.AbstractFormDialog;
 class DialogAddField extends AbstractFormDialog {
 
     private static final long serialVersionUID = 4460797449668634319L;
+    private static final Logger LOGGER = LogManager.getLogger(DialogAddField.class);
 
     private static final String DIALOG_TITLE =
             Constant.messages.getString("formhandler.options.dialog.field.add.title");
@@ -51,6 +56,8 @@ class DialogAddField extends AbstractFormDialog {
             Constant.messages.getString("formhandler.options.dialog.field.field.label.value");
     private static final String ENABLED_FIELD_LABEL =
             Constant.messages.getString("formhandler.options.dialog.field.field.label.enabled");
+    private static final String REGEX_FIELD_LABEL =
+            Constant.messages.getString("formhandler.options.dialog.field.field.label.regex");
 
     private static final String TITLE_NAME_REPEATED_DIALOG =
             Constant.messages.getString(
@@ -59,9 +66,15 @@ class DialogAddField extends AbstractFormDialog {
             Constant.messages.getString(
                     "formhandler.options.dialog.field.warning.name.repeated.text");
 
+    private static final String TITLE_BAD_REGEX_DIALOG =
+            Constant.messages.getString("formhandler.options.dialog.field.warning.bad.regex.title");
+    private static final String TEXT_BAD_REGEX_DIALOG =
+            Constant.messages.getString("formhandler.options.dialog.field.warning.bad.regex.text");
+
     private ZapTextField nameTextField;
     private ZapTextField valueField;
     private JCheckBox enabledCheckBox;
+    private JCheckBox regexCheckBox;
 
     protected FormHandlerParamField field;
     private List<FormHandlerParamField> fields;
@@ -86,6 +99,7 @@ class DialogAddField extends AbstractFormDialog {
         JLabel nameLabel = new JLabel(NAME_FIELD_LABEL);
         JLabel valueLabel = new JLabel(VALUE_FIELD_LABEL);
         JLabel enabledLabel = new JLabel(ENABLED_FIELD_LABEL);
+        JLabel regexLabel = new JLabel(REGEX_FIELD_LABEL);
 
         layout.setHorizontalGroup(
                 layout.createSequentialGroup()
@@ -93,12 +107,14 @@ class DialogAddField extends AbstractFormDialog {
                                 layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
                                         .addComponent(nameLabel)
                                         .addComponent(valueLabel)
-                                        .addComponent(enabledLabel))
+                                        .addComponent(enabledLabel)
+                                        .addComponent(regexLabel))
                         .addGroup(
                                 layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                         .addComponent(getNameTextField())
                                         .addComponent(getValueField())
-                                        .addComponent(getEnabledCheckBox())));
+                                        .addComponent(getEnabledCheckBox())
+                                        .addComponent(getRegexCheckBox())));
 
         layout.setVerticalGroup(
                 layout.createSequentialGroup()
@@ -113,7 +129,11 @@ class DialogAddField extends AbstractFormDialog {
                         .addGroup(
                                 layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(enabledLabel)
-                                        .addComponent(getEnabledCheckBox())));
+                                        .addComponent(getEnabledCheckBox()))
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(regexLabel)
+                                        .addComponent(getRegexCheckBox())));
 
         return fieldsPanel;
     }
@@ -128,6 +148,7 @@ class DialogAddField extends AbstractFormDialog {
         getNameTextField().setText("");
         getValueTextField().setText("");
         getEnabledCheckBox().setSelected(true);
+        getRegexCheckBox().setSelected(false);
         field = null;
     }
 
@@ -136,7 +157,17 @@ class DialogAddField extends AbstractFormDialog {
      */
     @Override
     protected boolean validateFields() {
-        String fieldName = getNameTextField().getText().toLowerCase(Locale.ROOT);
+        String name = getNameTextField().getText();
+        String fieldName = getRegexCheckBox().isSelected() ? name : name.toLowerCase(Locale.ROOT);
+        if (getRegexCheckBox().isSelected()) {
+            try {
+                Pattern.compile(fieldName);
+            } catch (PatternSyntaxException pse) {
+                LOGGER.debug("Invalid regex.", pse);
+                showBadRegexDialog();
+                return false;
+            }
+        }
         for (FormHandlerParamField t : fields) {
             if (fieldName.equals(t.getName())) {
                 showNameRepeatedDialog();
@@ -156,6 +187,11 @@ class DialogAddField extends AbstractFormDialog {
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
+    protected void showBadRegexDialog() {
+        JOptionPane.showMessageDialog(
+                this, TEXT_BAD_REGEX_DIALOG, TITLE_BAD_REGEX_DIALOG, JOptionPane.WARNING_MESSAGE);
+    }
+
     /**
      * When the Add button is clicked, create a new field. This field will be created with the name,
      * value and enabled input by the user. The name will always be lower case.
@@ -166,7 +202,8 @@ class DialogAddField extends AbstractFormDialog {
                 new FormHandlerParamField(
                         getNameTextField().getText(),
                         getValueTextField().getText(),
-                        getEnabledCheckBox().isSelected());
+                        getEnabledCheckBox().isSelected(),
+                        getRegexCheckBox().isSelected());
     }
 
     @Override
@@ -230,6 +267,14 @@ class DialogAddField extends AbstractFormDialog {
         }
 
         return enabledCheckBox;
+    }
+
+    protected JCheckBox getRegexCheckBox() {
+        if (regexCheckBox == null) {
+            regexCheckBox = new JCheckBox();
+        }
+
+        return regexCheckBox;
     }
 
     public void setFields(List<FormHandlerParamField> fields) {
