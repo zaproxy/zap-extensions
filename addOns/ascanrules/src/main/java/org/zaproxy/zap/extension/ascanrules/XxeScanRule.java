@@ -203,8 +203,7 @@ public class XxeScanRule extends AbstractAppPlugin {
             remoteFileInclusionAttack();
 
             // Check #2 : Out-of-band XXE Attack
-            outOfBandFileInclusionExternalEntityAttack();
-            outOfBandFileInclusionParameterEntityAttack();
+            outOfBandFileInclusionAttack();
 
             // Check if we've to do only basic analysis (only remote should be done)...
             if (this.getAttackStrength() == AttackStrength.LOW) {
@@ -261,7 +260,7 @@ public class XxeScanRule extends AbstractAppPlugin {
         }
     }
 
-    private void outOfBandFileInclusionExternalEntityAttack() {
+    private void outOfBandFileInclusionAttack() {
         try {
             ExtensionOast extOast =
                     Control.getSingleton().getExtensionLoader().getExtension(ExtensionOast.class);
@@ -283,41 +282,21 @@ public class XxeScanRule extends AbstractAppPlugin {
                 payload = MessageFormat.format(ATTACK_MESSAGE, "https://" + oastPayload);
                 msg.setRequestBody(payload);
                 sendAndReceive(msg);
+
+                // Try again with parameter entity and http
+                msg = getNewMsg();
+                payload = MessageFormat.format(PARAMETER_ENTITY_ATTACK_MESSAGE, "http://" + oastPayload);
+                msg.setRequestBody(payload);
+                sendAndReceive(msg);
+
+                // Try again with parameter entity and https
+                msg = getNewMsg();
+                payload = MessageFormat.format(PARAMETER_ENTITY_ATTACK_MESSAGE, "https://" + oastPayload);
+                msg.setRequestBody(payload);
+                sendAndReceive(msg);
             }
         } catch (Exception e) {
             LOGGER.warn("Could not perform OOB XXE File Inclusion Attack.", e);
-        }
-    }
-
-    private void outOfBandFileInclusionParameterEntityAttack() {
-        try {
-            ExtensionOast extOast =
-                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionOast.class);
-            if (extOast != null && extOast.getActiveScanOastService() != null) {
-                HttpMessage msg = getNewMsg();
-                Alert alert =
-                        newAlert()
-                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                .setMessage(msg)
-                                .setSource(Alert.Source.ACTIVE)
-                                .build();
-                String oastPayload = extOast.registerAlertAndGetPayload(alert);
-                String payload =
-                        MessageFormat.format(
-                                PARAMETER_ENTITY_ATTACK_MESSAGE, "http://" + oastPayload);
-                alert.setAttack(payload);
-                msg.setRequestBody(payload);
-                sendAndReceive(msg);
-                // Try again with https
-                msg = getNewMsg();
-                payload =
-                        MessageFormat.format(
-                                PARAMETER_ENTITY_ATTACK_MESSAGE, "https://" + oastPayload);
-                msg.setRequestBody(payload);
-                sendAndReceive(msg);
-            }
-        } catch (Exception e) {
-            LOGGER.warn("Could not perform OOB XXE File Inclusion Parameter Entity Attack.", e);
         }
     }
 

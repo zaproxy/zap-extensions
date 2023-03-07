@@ -15,6 +15,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Maintenance changes.
 - CVE-2012-1823 Remote Execution and Source Code Disclosure, and Heart Bleed scan rules now include Alert Tags for the applicable CVEs.
 
+### Added
+- ParameterEntity attack added in OOB-XXE Scan Rule.
+
 ## [51] - 2023-01-03
 ### Changed
 - Command Injection Scan Rule: Time-based blind detection heuristic has been replaced with linear regression.
