@@ -55,6 +55,9 @@ public class DefaultParseFilter extends ParseFilter {
     private static final Pattern SITEMAP_FILENAME_PATTERN =
             Pattern.compile(".*/sitemap.xml$", Pattern.CASE_INSENSITIVE);
 
+    /** a pattern to match the .DS_Store files. */
+    private static final Pattern DS_STORE_FILENAME_PATTERN = Pattern.compile(".*/\\.DS_Store$");
+
     /** The configurations of the spider, never {@code null}. */
     private final SpiderParam params;
 
@@ -108,7 +111,8 @@ public class DefaultParseFilter extends ParseFilter {
                         || SVN_XML_FILENAME_PATTERN.matcher(fullfilename).find()
                         || GIT_FILENAME_PATTERN.matcher(fullfilename).find()
                         || ROBOTS_FILENAME_PATTERN.matcher(fullfilename).find()
-                        || SITEMAP_FILENAME_PATTERN.matcher(fullfilename).find())) {
+                        || SITEMAP_FILENAME_PATTERN.matcher(fullfilename).find()
+                        || DS_STORE_FILENAME_PATTERN.matcher(fullfilename).find())) {
             return FilterResult.NOT_FILTERED;
         }
 

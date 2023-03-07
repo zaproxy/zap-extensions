@@ -53,7 +53,7 @@ datanucleus {
         closureOf<EnhanceExtension> {
             api(DataNucleusApi.JDO)
             persistenceUnitName(zapAddOn.addOnId.get())
-        }
+        },
     )
 }
 

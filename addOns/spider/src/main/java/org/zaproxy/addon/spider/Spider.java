@@ -132,6 +132,8 @@ public class Spider {
      */
     private static final Pattern GIT_URL_PATTERN = Pattern.compile("\\.git/"); // case sensitive
 
+    private static final Pattern DS_STORE_URL_PATTERN = Pattern.compile("\\.DS_Store/");
+
     private final String id;
 
     /**
@@ -248,6 +250,10 @@ public class Spider {
         // And add '.git/index' as a seed, for Git based spidering
         if (getSpiderParam().isParseGit()) {
             addFileSeed(uri, ".git/index", GIT_URL_PATTERN, httpVersion);
+        }
+
+        if (getSpiderParam().isParseDsStore()) {
+            addFileSeed(uri, ".DS_Store", DS_STORE_URL_PATTERN, httpVersion);
         }
     }
 

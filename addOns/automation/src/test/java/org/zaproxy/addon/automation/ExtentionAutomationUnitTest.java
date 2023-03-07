@@ -43,6 +43,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -81,7 +82,8 @@ class ExtentionAutomationUnitTest extends TestUtils {
         Constant.messages = new I18N(Locale.ENGLISH);
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
     }
 
@@ -195,9 +197,11 @@ class ExtentionAutomationUnitTest extends TestUtils {
         // Given
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
 
-        ExtensionPassiveScan extPscan = mock(ExtensionPassiveScan.class, withSettings().lenient());
+        ExtensionPassiveScan extPscan =
+                mock(ExtensionPassiveScan.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionPassiveScan.class)).willReturn(extPscan);
 
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);

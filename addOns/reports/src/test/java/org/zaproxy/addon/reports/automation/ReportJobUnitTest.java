@@ -27,10 +27,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyBoolean;
-import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
@@ -38,6 +38,7 @@ import static org.mockito.Mockito.withSettings;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Locale;
@@ -46,6 +47,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
@@ -53,6 +55,7 @@ import org.parosproxy.paros.model.Model;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
+import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.reports.ExtensionReports;
@@ -68,8 +71,10 @@ class ReportJobUnitTest {
     @BeforeEach
     void setUp() {
         Constant.messages = new I18N(Locale.ENGLISH);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
-        extensionReports = mock(ExtensionReports.class, withSettings().lenient());
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        extensionReports =
+                mock(ExtensionReports.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionReports.getReportParam()).willReturn(new ReportParam());
         given(extensionLoader.getExtension(ExtensionReports.class)).willReturn(extensionReports);
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
@@ -204,8 +209,9 @@ class ReportJobUnitTest {
                                 + "\n"
                                 + "  reportFile: "
                                 + reportFile);
-        AutomationProgress progress = new AutomationProgress();
-        AutomationEnvironment env = new AutomationEnvironment(progress);
+        AutomationPlan plan = new AutomationPlan();
+        AutomationProgress progress = plan.getProgress();
+        AutomationEnvironment env = plan.getEnv();
         env.getData().getVars().put("reportFile", "report-file");
         ContextWrapper contextWrapper = mock(ContextWrapper.class);
         given(contextWrapper.getUrls()).willReturn(Collections.singletonList(""));
@@ -216,6 +222,7 @@ class ReportJobUnitTest {
         given(extensionReports.generateReport(any(), any(), anyString(), anyBoolean()))
                 .willReturn(mock(File.class));
         job.verifyParameters(progress);
+        job.setPlan(plan);
 
         // When
         job.runJob(env, progress);
@@ -246,8 +253,9 @@ class ReportJobUnitTest {
                                 + "\n"
                                 + "  reportDir: "
                                 + reportDir);
-        AutomationProgress progress = new AutomationProgress();
-        AutomationEnvironment env = new AutomationEnvironment(progress);
+        AutomationPlan plan = new AutomationPlan();
+        AutomationProgress progress = plan.getProgress();
+        AutomationEnvironment env = plan.getEnv();
         env.getData().getVars().put("reportDir", "report-dir");
         ContextWrapper contextWrapper = mock(ContextWrapper.class);
         given(contextWrapper.getUrls()).willReturn(Collections.singletonList(""));
@@ -258,6 +266,7 @@ class ReportJobUnitTest {
         given(extensionReports.generateReport(any(), any(), anyString(), anyBoolean()))
                 .willReturn(mock(File.class));
         job.verifyParameters(progress);
+        job.setPlan(plan);
 
         // When
         job.runJob(env, progress);
@@ -268,6 +277,51 @@ class ReportJobUnitTest {
                 .generateReport(any(), any(), captorReportFileName.capture(), anyBoolean());
         assertThat(
                 captorReportFileName.getValue(), endsWith(fsPath("report-dir", "report-file.ext")));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldSupportRelativeDirName() throws IOException {
+        // Given
+        String templateName = "template";
+        String reportFile = "report-file";
+        File planFile = Files.createTempFile("plan", ".yaml").toFile();
+        ReportJob job =
+                createReportJob(
+                        "parameters:\n"
+                                + "  template: "
+                                + templateName
+                                + "\n"
+                                + "  reportFile: "
+                                + reportFile
+                                + "\n"
+                                + "  reportDir: test");
+        AutomationPlan plan = new AutomationPlan();
+        AutomationProgress progress = plan.getProgress();
+        AutomationEnvironment env = plan.getEnv();
+        ContextWrapper contextWrapper = mock(ContextWrapper.class);
+        given(contextWrapper.getUrls()).willReturn(Collections.singletonList(""));
+        env.setContexts(Arrays.asList(contextWrapper));
+        Template template = mock(Template.class);
+        given(template.getExtension()).willReturn("ext");
+        given(extensionReports.getTemplateByConfigName(templateName)).willReturn(template);
+        given(extensionReports.generateReport(any(), any(), anyString(), anyBoolean()))
+                .willReturn(mock(File.class));
+        plan.setFile(planFile);
+        job.verifyParameters(progress);
+        job.setPlan(plan);
+
+        // When
+        job.runJob(env, progress);
+
+        // Then
+        ArgumentCaptor<String> captorReportFileName = ArgumentCaptor.forClass(String.class);
+        verify(extensionReports)
+                .generateReport(any(), any(), captorReportFileName.capture(), anyBoolean());
+        assertThat(
+                captorReportFileName.getValue().startsWith(planFile.getParent()),
+                is(equalTo(true)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
     }

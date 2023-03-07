@@ -4,6 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [17] - 2023-02-09
+### Added
+- Support for relative file paths and ones including vars in the Automation Framework job.
+
 ### Changed
 - Maintenance changes.
 
@@ -125,6 +131,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[17]: https://github.com/zaproxy/zap-extensions/releases/soap-v17
 [16]: https://github.com/zaproxy/zap-extensions/releases/soap-v16
 [15]: https://github.com/zaproxy/zap-extensions/releases/soap-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/soap-v14

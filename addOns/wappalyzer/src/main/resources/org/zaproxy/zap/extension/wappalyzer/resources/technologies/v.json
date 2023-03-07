@@ -100,7 +100,6 @@
       "payg"
     ],
     "saas": true,
-    "scriptSrc": "io\\.vtex\\.com\\.br",
     "website": "https://vtex.com/"
   },
   "VWO": {
@@ -178,6 +177,23 @@
     "scriptSrc": "\\.valuecommerce\\.com",
     "website": "https://www.valuecommerce.co.jp"
   },
+  "Vanco Payment Solutions": {
+    "cats": [
+      111,
+      41
+    ],
+    "description": "Vanco Payment Solutions provides credit card processing to nonprofits.",
+    "dom": "a[href*='.eservicepayments.com/']",
+    "icon": "Vanco.svg",
+    "pricing": [
+      "payg",
+      "recurring",
+      "low"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.eservicepayments\\.com/",
+    "website": "https://www.vancopayments.com"
+  },
   "Vanilla": {
     "cats": [
       2
@@ -247,6 +263,23 @@
     },
     "website": "https://ve.com"
   },
+  "Vendre": {
+    "cats": [
+      6
+    ],
+    "description": "Vendre is a module-based ecommerce system where you choose which functions your organisation needs.",
+    "icon": "Vendre.png",
+    "js": {
+      "VendreMap.maps_loaded": "",
+      "vendre_config": ""
+    },
+    "pricing": [
+      "poa",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://vendre.io"
+  },
   "Venmo": {
     "cats": [
       41
@@ -271,6 +304,21 @@
       "payg"
     ],
     "website": "https://ventraip.com.au"
+  },
+  "VentryShield": {
+    "cats": [
+      16
+    ],
+    "cookies": {
+      "ventryshield_pre": ""
+    },
+    "description": "VentryShield offers DDoS Protected VPS and Web Hosting.",
+    "headers": {
+      "x-ventryshield-cache-status": "no-cache",
+      "x-ventryshield-sid": ""
+    },
+    "icon": "ventry_shield.png",
+    "website": "https://ventryshield.net"
   },
   "Veoxa": {
     "cats": [
@@ -318,7 +366,10 @@
     "requires": [
       "Vercel"
     ],
-    "scriptSrc": "/va/script\\.js",
+    "scriptSrc": [
+      "/va/script\\.js",
+      "/_vercel/insights/script\\.js"
+    ],
     "website": "https://vercel.com/analytics"
   },
   "Verifone 2Checkout": {
@@ -395,6 +446,25 @@
     },
     "saas": true,
     "website": "https://verloop.io/"
+  },
+  "Vev": {
+    "cats": [
+      51
+    ],
+    "description": "Vev is a cloud-based design and publishing platform that enables users to create interactive digital content without coding, using a drag-and-drop interface and built-in templates and integrations.",
+    "icon": "Vev.svg",
+    "js": {
+      "vev.DEFAULT_APP_STATE": "",
+      "vev.App.compare": ""
+    },
+    "saas": true,
+    "scriptSrc": "\\.vev\\.design/",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "website": "https://www.vev.design"
   },
   "ViaBill": {
     "cats": [
@@ -556,6 +626,23 @@
     "website": "https://vimeo.com/ott",
     "xhr": "api\\.vhx\\.tv"
   },
+  "Viqeo": {
+    "cats": [
+      14
+    ],
+    "description": "Viqeo is a short video platform to make media and ecommerce more visual and interesting.",
+    "icon": "Viqeo.svg",
+    "js": {
+      "VIQEO": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://viqeo.tv"
+  },
   "Viral Loops": {
     "cats": [
       94
@@ -667,6 +754,19 @@
     "url": "/sparql",
     "website": "https://virtuoso.openlinksw.com/"
   },
+  "Virtuous": {
+    "cats": [
+      111
+    ],
+    "description": "Virtuous is the responsive fundraising software platform.",
+    "icon": "Virtuous.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.virtuoussoftware\\.com/",
+    "website": "https://virtuous.org"
+  },
   "Virtusize": {
     "cats": [
       76
@@ -698,7 +798,7 @@
       41
     ],
     "description": "Visa facilitates electronic funds transfers throughout the world, most commonly through Visa-branded credit cards, debit cards and prepaid cards.",
-    "icon": "visa.png",
+    "icon": "Visa.svg",
     "scriptSrc": "secure\\.checkout\\.visa\\.com",
     "website": "https://checkout.visa.com"
   },
@@ -820,9 +920,29 @@
       19
     ],
     "description": "Vite is a rapid development tool for modern web projects.",
+    "dom": "script#vite-legacy-polyfill, script#vite-legacy-entry",
     "icon": "vite.svg",
+    "js": {
+      "__vite_is_modern_browser": ""
+    },
     "oss": true,
     "website": "https://vitejs.dev"
+  },
+  "VitePress": {
+    "cats": [
+      57
+    ],
+    "description": "VitePress is a Vite & Vue Powered Static Site Generator.",
+    "icon": "vite.svg",
+    "implies": [
+      "Vue.js",
+      "Vite"
+    ],
+    "js": {
+      "__VP_HASH_MAP__": ""
+    },
+    "oss": true,
+    "website": "https://vitepress.vuejs.org/"
   },
   "Vitrin.me": {
     "cats": [
@@ -860,6 +980,30 @@
     "saas": true,
     "scriptSrc": "\\.vizury\\.com",
     "website": "https://www.vizury.com"
+  },
+  "Vnda": {
+    "cats": [
+      6
+    ],
+    "description": "Vnda is a omnichannel ecommerce platform.",
+    "icon": "Vnda.svg",
+    "implies": [
+      "Node.js",
+      "Amazon Web Services"
+    ],
+    "js": {
+      "Vnda.loadCartPopup": "",
+      "vnda.checkout": ""
+    },
+    "meta": {
+      "image": "cdn\\.vnda\\.com\\.br/"
+    },
+    "pricing": [
+      "poa",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.vnda.com.br"
   },
   "Vntana": {
     "cats": [
@@ -1070,6 +1214,17 @@
     "implies": "Vue.js",
     "oss": true,
     "website": "https://vuetifyjs.com"
+  },
+  "Vultr": {
+    "cats": [
+      62
+    ],
+    "description": "Vultr is a cloud computing service provider.",
+    "dns": {
+      "NS": "\\.vultr\\.com"
+    },
+    "icon": "Vultr.svg",
+    "website": "https://www.vultr.com"
   },
   "Vuukle": {
     "cats": [

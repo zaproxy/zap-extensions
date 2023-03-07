@@ -82,7 +82,7 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
         List<String> ignoreList =
                 Arrays.asList(TimestampDisclosureScanRule.RESPONSE_HEADERS_TO_IGNORE);
         // Then
-        assertEquals(8, ignoreList.size());
+        assertEquals(11, ignoreList.size());
     }
 
     private static Stream<Arguments> headersToIgnoreSource() {

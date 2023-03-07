@@ -76,13 +76,13 @@ public class ViewStateDecoder {
      * @return a String (not including the NULL byte)
      */
     private static String readNullTerminatedString(ByteBuffer bb) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         byte b = bb.get();
         while (b != 0x00) {
             sb.append((char) b);
             b = bb.get();
         }
-        return new String(sb);
+        return sb.toString();
     }
 
     /**
@@ -114,13 +114,13 @@ public class ViewStateDecoder {
     }
 
     /**
-     * gets a StringBuffer containing the specified amount of indentation
+     * Gets a {@code StringBuilder} containing the specified amount of indentation.
      *
      * @param n the depth for the indentation
-     * @return a StringBuffer containing the specified amount of indentation
+     * @return a {@code StringBuilder} containing the specified amount of indentation.
      */
-    private StringBuffer getIndentation(int n) {
-        StringBuffer sb = new StringBuffer();
+    private StringBuilder getIndentation(int n) {
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < this.indentationlevel; i++) sb.append("   ");
         return sb;
     }
@@ -129,14 +129,14 @@ public class ViewStateDecoder {
      * decodes a single (ViewState-specific) object from the ByteBuffer.
      *
      * @param bb the ByteBuffer from which to read the next ViewState object
-     * @return a StringBuffer containing the human-readable and machine parseable representation
-     *     (XML based)
+     * @return a {@code StringBuilder} containing the human-readable and machine parseable
+     *     representation (XML based).
      * @throws NoMoreDataException
      * @throws Exception
      */
-    public StringBuffer decodeObjectAsXML(ByteBuffer bb) throws NoMoreDataException, Exception {
+    public StringBuilder decodeObjectAsXML(ByteBuffer bb) throws NoMoreDataException, Exception {
         int b = (int) bb.get();
-        StringBuffer representation = new StringBuffer();
+        StringBuilder representation = new StringBuilder();
         Matcher matcher = null;
         boolean malicious = false;
         switch (b) {
@@ -357,7 +357,7 @@ public class ViewStateDecoder {
             throw new Exception("Invalid Viewstate preamble");
         }
 
-        StringBuffer representation = new StringBuffer("<?xml version=\"1.0\" ?>\n");
+        StringBuilder representation = new StringBuilder("<?xml version=\"1.0\" ?>\n");
         representation.append("<viewstate>\n");
         this.indentationlevel++;
 

@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update minimum ZAP version to 2.12.0.
 - Maintenance changes.
 - Make missing JavaFX logging less verbose in regular use.
+- Update help with the requirements to use the add-on.
 
 ## 5 - 2017-07-21
 

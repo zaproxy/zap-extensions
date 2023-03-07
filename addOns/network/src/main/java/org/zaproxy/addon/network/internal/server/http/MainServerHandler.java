@@ -19,7 +19,9 @@
  */
 package org.zaproxy.addon.network.internal.server.http;
 
+import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.ssl.SslClosedEngineException;
@@ -192,7 +194,8 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
     }
 
     protected static void close(ChannelHandlerContext ctx) {
-        ctx.close()
+        ctx.writeAndFlush(Unpooled.EMPTY_BUFFER)
+                .addListener(ChannelFutureListener.CLOSE)
                 .addListener(
                         e -> {
                             if (!e.isSuccess()) {

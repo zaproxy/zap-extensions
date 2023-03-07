@@ -32,18 +32,21 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.withSettings;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
+import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
@@ -295,9 +298,60 @@ class JobUtilsUnitTest {
         assertThat(obtainedScriptWrapper, is(nullValue()));
     }
 
+    @Test
+    void shouldReturnFileFromFullPath() throws IOException {
+        // Given
+        String path = "/full/path/to/file";
+        AutomationPlan plan = new AutomationPlan();
+        // When
+        File f = JobUtils.getFile(path, plan);
+        // Then
+        assertThat(f.getCanonicalPath(), is(path));
+    }
+
+    @Test
+    void shouldReturnFileFromFullPathWithVars() throws IOException {
+        // Given
+        String path = "/full/${var1}/to/${var2}";
+        AutomationPlan plan = new AutomationPlan();
+        plan.getEnv().getData().getVars().put("var1", "path");
+        plan.getEnv().getData().getVars().put("var2", "file");
+        // When
+        File f = JobUtils.getFile(path, plan);
+        // Then
+        assertThat(f.getCanonicalPath(), is("/full/path/to/file"));
+    }
+
+    @Test
+    void shouldReturnFileFromRelativePath() throws IOException {
+        // Given
+        String path = "../relative/path/to/file";
+        AutomationPlan plan = new AutomationPlan();
+        plan.setFile(new File("/full/path/dir/plan"));
+        // When
+        File f = JobUtils.getFile(path, plan);
+        // Then
+        assertThat(f.getCanonicalPath(), is("/full/path/relative/path/to/file"));
+    }
+
+    @Test
+    void shouldReturnFileFromRelativePathWithVars() throws IOException {
+        // Given
+        String path = "${var2}/path/${var1}/file";
+        AutomationPlan plan = new AutomationPlan();
+        plan.setFile(new File("/full/path/dir/plan"));
+        plan.getEnv().getData().getVars().put("var1", "to");
+        plan.getEnv().getData().getVars().put("var2", "relative");
+        // When
+        File f = JobUtils.getFile(path, plan);
+        // Then
+        assertThat(f.getCanonicalPath(), is("/full/path/dir/relative/path/to/file"));
+    }
+
     private static ExtensionScript mockExtensionLoader(ExtensionScript extensionScript) {
-        Model model = mock(Model.class, withSettings().lenient());
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         Control.initSingletonForTesting(model, extensionLoader);
         given(extensionLoader.getExtension(ExtensionScript.class)).willReturn(extensionScript);
         return extensionScript;

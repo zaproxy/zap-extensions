@@ -32,7 +32,7 @@ spotless {
         target(
             fileTree(projectDir) {
                 include("src/**/help/**/*.html")
-            }
+            },
         )
     })
 }

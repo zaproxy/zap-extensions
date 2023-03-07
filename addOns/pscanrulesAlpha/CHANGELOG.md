@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [38] - 2023-03-03
 ### Fixed
 - Use case insensitive HTTP field name check in Insufficient Site Isolation Against Spectre Vulnerability scan rule.
 
@@ -327,6 +330,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Updated User Controlled Open Redirect, Cookie and Charset rules after testing with
 - http://www.testcases.org/watcher/ test pages.
 
+[38]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v38
 [37]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v37
 [36]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v36
 [35]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v35

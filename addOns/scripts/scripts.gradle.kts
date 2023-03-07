@@ -18,7 +18,7 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("automation") {
-                            version.set(">=0.18.0")
+                            version.set(">=0.24.0")
                         }
                     }
                 }
@@ -34,7 +34,7 @@ spotless {
                 include("src/**/*.java")
                 // 3rd-party code.
                 exclude("src/**/JScrollPopupMenu.java")
-            }
+            },
         )
     }
 }

@@ -54,6 +54,22 @@
     "scriptSrc": "(?:/mdbootstrap/([\\d\\.]+)/)?js/mdb\\.min\\.js\\;version:\\1",
     "website": "https://mdbootstrap.com"
   },
+  "MDS Brand": {
+    "cats": [
+      53
+    ],
+    "description": "MDS Brand is a provider of website, CRM, vrtual BDC, SEO, PPC, and live chat solutions for Marine, RV, Powersports, and automotive industries.",
+    "dom": "a[href*='mdsbrand.com/']",
+    "icon": "MDS Brand.png",
+    "pricing": [
+      "poa"
+    ],
+    "requires": [
+      "Nginx",
+      "UserWay"
+    ],
+    "website": "https://mdsbrand.com"
+  },
   "MDUI": {
     "cats": [
       66
@@ -136,7 +152,6 @@
       "MODX": "",
       "MODX_MEDIA_PATH": ""
     },
-    "scriptSrc": "/assets/components/templates/\\;confidence:50",
     "meta": {
       "generator": "MODX[^\\d.]*([\\d.]+)?\\;version:\\1"
     },
@@ -145,6 +160,7 @@
       "low"
     ],
     "saas": true,
+    "scriptSrc": "/assets/components/templates/\\;confidence:50",
     "website": "https://modx.com/content-management-framework"
   },
   "MRW": {
@@ -242,6 +258,24 @@
     },
     "scriptSrc": "^https?://(?:ads-by|pixel)\\.madadsmedia\\.com/",
     "website": "http://madadsmedia.com"
+  },
+  "MadCap Software": {
+    "cats": [
+      96
+    ],
+    "description": "MadCap Software is a company that specialises in creating software tools for technical writers to author and publish various types of content, including user manuals, online help systems, and knowledge bases.",
+    "icon": "MadCap Software.svg",
+    "js": {
+      "MadCap.Accessibility": "",
+      "MadCap.DEBUG": ""
+    },
+    "saas": true,
+    "pricing": [
+      "poa",
+      "mid",
+      "recurring"
+    ],
+    "website": "https://www.madcapsoftware.com"
   },
   "Magazord": {
     "cats": [
@@ -859,7 +893,8 @@
   },
   "Marketo Forms": {
     "cats": [
-      5
+      5,
+      110
     ],
     "description": "Marketo Forms help create web forms without programming knowledge. Forms can reside on Marketo landing pages and also be embedded on any page of website.",
     "icon": "Marketo.svg",
@@ -914,6 +949,35 @@
     "oss": true,
     "scripts": "\\.marko(\\.js)?",
     "website": "https://markojs.com"
+  },
+  "Master Slider": {
+    "cats": [
+      7
+    ],
+    "description": "Master Slider is an SEO friendly, responsive image and video slider.",
+    "icon": "master_slider.png",
+    "js": {
+      "MasterSlider": "",
+      "MasterSlider.version": "^([0-9\\.]+)$\\;version:\\1"
+    },
+    "website": "https://www.masterslider.com"
+  },
+  "Master Slider Plugin": {
+    "cats": [
+      87
+    ],
+    "description": "Master Slider Plugin is an SEO friendly, responsive image and video slider plugin for WordPress.",
+    "dom": {
+      "link#ms-main-css": {
+        "attributes": {
+          "href": "/wp-content/plugins/masterslider/.+\\.css(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+        }
+      }
+    },
+    "icon": "master_slider.png",
+    "implies": "Master Slider",
+    "requires": "WordPress",
+    "website": "https://wordpress.org/plugins/master-slider"
   },
   "Mastercard": {
     "cats": [
@@ -983,10 +1047,11 @@
     "cats": [
       66
     ],
-    "description": "Materialize CSS is a css framework which is used to create responsive websites.",
-    "html": "<link[^>]* href=\"[^\"]*materialize(?:\\.min)?\\.css",
-    "icon": "Materialize CSS.png",
-    "scriptSrc": "materialize(?:\\.min)?\\.js",
+    "description": "Materialize CSS is a front-end framework that helps developers create responsive and mobile-first web applications. It is based on Google's Material Design guidelines.",
+    "icon": "Materialize CSS.svg",
+    "dom": "link[href*='/materialize.min.css']",
+    "scriptSrc": "([\\d\\.]+)/.*/materialize\\.min\\.js\\;version:\\1",
+    "oss": true,
     "website": "http://materializecss.com"
   },
   "MathJax": {
@@ -1508,6 +1573,30 @@
     "scriptSrc": "\\.metrilo\\.com/",
     "website": "https://www.metrilo.com"
   },
+  "MetroUI": {
+    "cats": [
+      66
+    ],
+    "description": "MetroUI is an open-source frontend toolkit inspired by Microsoft Fluent (former Metro) design principles.",
+    "dom": {
+      "link[href*='//cdn.metroui.org.ua/']": {
+        "attributes": {
+          "href": "//cdn\\.metroui\\.org\\.ua/v([\\d\\.]+)/\\;version:\\1"
+        }
+      }
+    },
+    "icon": "default.svg",
+    "js": {
+      "Metro.version": "^([\\d\\.]+)$\\;version:\\1"
+    },
+    "oss": true,
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "website": "https://github.com/olton/Metro-UI-CSS"
+  },
   "Mews": {
     "cats": [
       72
@@ -1734,6 +1823,22 @@
     ],
     "saas": true,
     "website": "https://sharepoint.microsoft.com"
+  },
+  "Microsoft Visual Studio": {
+    "cats": [
+      47
+    ],
+    "description": "Microsoft Visual Studio is an integrated development environment from Microsoft.",
+    "icon": "Microsoft Visual Studio.svg",
+    "meta": {
+      "generator": "^Microsoft\\sVisual\\sStudio"
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "website": "https://visualstudio.microsoft.com"
   },
   "Microsoft Word": {
     "cats": [
@@ -2160,8 +2265,7 @@
     ],
     "scripts": [
       "data-webpack\\;confidence:50",
-      "Container missing\\;confidence:50",
-      "Initialization of sharing external failed\\;confidence:50"
+      "Container initialization failed as it has already been initialized with a different share scope"
     ],
     "website": "https://webpack.js.org/concepts/module-federation/"
   },
@@ -2794,7 +2898,6 @@
       51
     ],
     "description": "MyWebsite Creator is website builder designed for easy editing and fast results.",
-    "dom": "body#dmRoot",
     "icon": "MyWebsite.svg",
     "implies": "Duda",
     "pricing": [
@@ -2942,10 +3045,6 @@
     ],
     "description": "mdBook is a utility to create modern online books from Markdown files.",
     "icon": "mdBook.svg",
-    "implies": [
-      "Rust",
-      "Handlebars"
-    ],
     "oss": true,
     "scripts": "localStorage\\.getItem\\('mdbook-(?:sidebar|theme)'\\)",
     "website": "https://github.com/rust-lang/mdBook"

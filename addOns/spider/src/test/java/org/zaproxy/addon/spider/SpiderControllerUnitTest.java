@@ -42,6 +42,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.db.RecordHistory;
 import org.parosproxy.paros.db.TableAlert;
 import org.parosproxy.paros.db.TableHistory;
@@ -67,7 +68,7 @@ class SpiderControllerUnitTest extends TestUtils {
 
     @BeforeEach
     void setUp() throws Exception {
-        tableHistory = mock(TableHistory.class, withSettings().lenient());
+        tableHistory = mock(TableHistory.class, withSettings().strictness(Strictness.LENIENT));
         given(tableHistory.write(anyLong(), anyInt(), any())).willReturn(mock(RecordHistory.class));
         HistoryReference.setTableHistory(tableHistory);
         HistoryReference.setTableAlert(mock(TableAlert.class));
@@ -75,10 +76,10 @@ class SpiderControllerUnitTest extends TestUtils {
         spider = mock(Spider.class);
 
         given(spider.getSpiderParam()).willReturn(new SpiderParam());
-        Model model = mock(Model.class, withSettings().lenient());
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
         given(spider.getModel()).willReturn(model);
 
-        session = mock(Session.class, withSettings().lenient());
+        session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
         given(model.getSession()).willReturn(session);
         sessionId = 1234;
         given(session.getSessionId()).willReturn(sessionId);

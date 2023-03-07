@@ -32,6 +32,7 @@ import static org.mockito.Mockito.withSettings;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
@@ -56,10 +57,11 @@ class ExtensionSpiderFormHandlerUnitTest extends TestUtils {
         extension = new ExtensionSpiderFormHandler();
         mockMessages("org.zaproxy.addon.spider.resources." + Constant.MESSAGES_PREFIX, "spider");
 
-        Model model = mock(Model.class, withSettings().lenient());
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
         Model.setSingletonForTesting(model);
 
-        extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
+        extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         Control.initSingletonForTesting(model, extensionLoader);
 
         extensionSpider = mockLoadedExtension(ExtensionSpider2.class);

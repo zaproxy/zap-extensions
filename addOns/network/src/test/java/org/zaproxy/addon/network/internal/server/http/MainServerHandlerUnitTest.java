@@ -19,20 +19,27 @@
  */
 package org.zaproxy.addon.network.internal.server.http;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.mock;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.embedded.EmbeddedChannel;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.util.NettyRuntime;
+import io.netty.util.concurrent.DefaultEventExecutorGroup;
+import io.netty.util.concurrent.DefaultThreadFactory;
+import io.netty.util.concurrent.EventExecutorGroup;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -41,16 +48,26 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.network.internal.ChannelAttributes;
+import org.zaproxy.addon.network.internal.cert.ServerCertificateService;
+import org.zaproxy.addon.network.internal.codec.HttpClientCodec;
 import org.zaproxy.addon.network.internal.codec.HttpRequestDecoder;
 import org.zaproxy.addon.network.internal.codec.HttpResponseEncoder;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
+import org.zaproxy.addon.network.server.Server;
+import org.zaproxy.addon.network.testutils.TestClient;
+import org.zaproxy.addon.network.testutils.TextTestClient;
 
 /** Unit test for {@link MainServerHandler}. */
 class MainServerHandlerUnitTest {
@@ -457,6 +474,83 @@ class MainServerHandlerUnitTest {
         handler2.assertCalled(2);
         handler2.assertRecursive(0, true);
         handler2.assertRecursive(1, true);
+    }
+
+    static class HttpServerTest {
+
+        private static NioEventLoopGroup group;
+        private static EventExecutorGroup mainHandlerExecutor;
+        private static TestClient client;
+
+        @BeforeAll
+        static void setupAll() throws Exception {
+            group =
+                    new NioEventLoopGroup(
+                            NettyRuntime.availableProcessors(),
+                            new DefaultThreadFactory("ZAP-HttpServerUnitTest"));
+            mainHandlerExecutor =
+                    new DefaultEventExecutorGroup(
+                            NettyRuntime.availableProcessors(),
+                            new DefaultThreadFactory("ZAP-HttpServerUnitTest-Events"));
+
+            client =
+                    new TextTestClient(
+                            "127.0.0.1", ch -> ch.pipeline().addFirst(new HttpClientCodec()));
+        }
+
+        @AfterAll
+        static void tearDownAll() throws Exception {
+            if (group != null) {
+                group.shutdownGracefully();
+                group = null;
+            }
+
+            if (mainHandlerExecutor != null) {
+                mainHandlerExecutor.shutdownGracefully();
+                mainHandlerExecutor = null;
+            }
+
+            if (client != null) {
+                client.close();
+            }
+        }
+
+        @Test
+        void shouldCloseChannelOnlyAfterWritingWholeResponse() throws Exception {
+            // Given
+            try (HttpServer server =
+                    new HttpServer(
+                            group, mainHandlerExecutor, mock(ServerCertificateService.class))) {
+                int bodySize = 5_000_000;
+                HttpMessageHandler handler1 =
+                        (ctx, msg) -> {
+                            try {
+                                msg.setResponseHeader("HTTP/1.1 200 OK\r\nConnection: close");
+                            } catch (HttpMalformedHeaderException ignore) {
+                            }
+                            msg.getResponseBody().setLength(bodySize);
+                        };
+                server.setMainServerHandler(
+                        () -> new MainServerHandler(mainHandlerExecutor, List.of(handler1)));
+                int port = server.start(Server.ANY_PORT);
+                HttpMessage request =
+                        createHttpRequest("GET http://127.0.0.1:" + port + "/data HTTP/1.1", port);
+                // When
+                Channel clientChannel = client.connect(port, null);
+                clientChannel.writeAndFlush(request).sync();
+                // Then
+                HttpMessage response =
+                        TextTestClient.waitForResponse(clientChannel, 10, TimeUnit.SECONDS);
+                assertThat(response.getResponseBody().length(), is(equalTo(bodySize)));
+            }
+        }
+
+        private static HttpMessage createHttpRequest(String requestLine, int port)
+                throws Exception {
+            return new HttpMessage(
+                    new HttpRequestHeader(
+                            requestLine + "\r\nHost: 127.0.0.1:" + port + "\r\n\r\n"));
+        }
     }
 
     private void assertChannelActive(boolean state) {

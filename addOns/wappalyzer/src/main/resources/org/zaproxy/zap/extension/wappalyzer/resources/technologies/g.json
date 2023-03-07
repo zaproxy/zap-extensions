@@ -359,6 +359,22 @@
     ],
     "website": "https://www.genexus.com/"
   },
+  "GenerateBlocks": {
+    "cats": [
+      87,
+      51
+    ],
+    "description": "GenerateBlocks is a WordPress plugin that has the trappings of a page builder.",
+    "dom": "link#generateblocks-css",
+    "icon": "GenerateBlocks.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "website": "https://generateblocks.com"
+  },
   "GeneratePress": {
     "cats": [
       80
@@ -380,18 +396,18 @@
       }
     },
     "icon": "generatepress.png",
-    "requires": "WordPress",
     "js": {
       "generatepressMenu": "",
       "generatepressNavSearch": ""
     },
-    "scriptSrc": [
-      "themes/generatepress\\S*\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1"
-    ],
     "pricing": [
       "low",
       "recurring",
       "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": [
+      "themes/generatepress\\S*\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1"
     ],
     "website": "https://generatepress.com"
   },
@@ -791,9 +807,40 @@
     ],
     "website": "http://gerrit.googlesource.com/gitiles/"
   },
+  "GiveCampus": {
+    "cats": [
+      111
+    ],
+    "description": "GiveCampus is a fundraising platform for nonprofit educational institutions.",
+    "dom": "a[href*='.givecampus.com/']",
+    "icon": "GiveCampus.png",
+    "meta": {
+      "author": "^GiveCampus$"
+    },
+    "pricing": [
+      "poa",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://go.givecampus.com"
+  },
+  "GiveSmart": {
+    "cats": [
+      111
+    ],
+    "description": "GiveSmart is an event fund gathering technology that offers customisable event size, mobile bidding, text-to-donate, enhanced dashboard and reporting, seating arrangement, and more.",
+    "dom": "a[href*='.givesmart.com/']",
+    "icon": "GiveSmart.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.givesmart\\.com/",
+    "website": "https://www.givesmart.com"
+  },
   "GiveWP": {
     "cats": [
-      41,
+      111,
       87
     ],
     "description": "GiveWP is a donation plugin for WordPress.",
@@ -809,6 +856,21 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/give/.+give\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://givewp.com"
+  },
+  "GivingFuel": {
+    "cats": [
+      111
+    ],
+    "description": "GivingFuel is a fundraising software solution.",
+    "dom": "a[href*='.givingfuel.com/']",
+    "icon": "GivingFuel.png",
+    "pricing": [
+      "freemium",
+      "low"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.givingfuel\\.com/",
+    "website": "https://www.givingfuel.com"
   },
   "Gladly": {
     "cats": [
@@ -852,6 +914,20 @@
     "saas": true,
     "scriptSrc": "cdn\\.glassboxcdn\\.com/",
     "website": "https://www.glassbox.com"
+  },
+  "Glide.js": {
+    "cats": [
+      59
+    ],
+    "description": "Glide.js is a dependency-free JavaScript ES6 slider and carousel.",
+    "dom": "div[data-glide-el]",
+    "icon": "Glide.js.svg",
+    "js": {
+      "Glide": ""
+    },
+    "oss": true,
+    "scriptSrc": "/@glidejs/glide(?:@([\\d\\.]+))?\\;version:\\1",
+    "website": "https://glidejs.com"
   },
   "Glider.js": {
     "cats": [
@@ -948,7 +1024,8 @@
   },
   "Globo Form Builder": {
     "cats": [
-      100
+      100,
+      110
     ],
     "description": "Form Builder is a Shopify form builder app for contact form built by Globo.",
     "icon": "Globo apps.png",
@@ -1084,7 +1161,7 @@
       71
     ],
     "description": "Goaffpro is an affiliate marketing solution for ecommerce stores.",
-    "icon": "goaffpro.svg",
+    "icon": "GoAffPro.svg",
     "js": {
       "gfp_api_server": ""
     },
@@ -2008,7 +2085,8 @@
       "store-config": "graphqlMethod"
     },
     "oss": true,
-    "website": "https://graphql.org"
+    "website": "https://graphql.org",
+    "xhr": "graphql\\.[\\w]+\\.(?:com|net)/"
   },
   "Graphene": {
     "cats": [
@@ -2072,8 +2150,8 @@
   },
   "Gravity Forms": {
     "cats": [
-      19,
-      87
+      87,
+      110
     ],
     "html": [
       "<div class=(?:\"|')[^>]*gform_wrapper",
@@ -2228,6 +2306,21 @@
     "saas": true,
     "scriptSrc": "ib\\.guestonline\\.\\w+",
     "website": "https://www.guestonline.io"
+  },
+  "GuideIT": {
+    "cats": [
+      88
+    ],
+    "description": "GuideIT is a cloud hosting provider.",
+    "headers": {
+      "platform": "^GuideIT$"
+    },
+    "icon": "GuideIT.png",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "website": "https://guideit.uk"
   },
   "GumGum": {
     "cats": [

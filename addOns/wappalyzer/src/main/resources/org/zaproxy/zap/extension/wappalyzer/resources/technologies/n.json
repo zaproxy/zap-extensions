@@ -307,6 +307,26 @@
     "scriptSrc": "cdn\\.neatab\\.com/",
     "website": "https://neatab.com"
   },
+  "Neon CRM": {
+    "cats": [
+      53,
+      111
+    ],
+    "description": "Neon CRM, a Neon One company, is a cloud-based customer relationship management (CRM) software suite for nonprofits of all sizes. Applications include fundraising management, donor management, membership management, event registration and management, customised reporting, and more.",
+    "dom": "a[href*='.app.neoncrm.com/']",
+    "icon": "Neon One.svg",
+    "js": {
+      "_neoncrm_ga": "",
+      "neonPayCard": "",
+      "neoncrm_email_ajax_object": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://neonone.com"
+  },
   "Neos CMS": {
     "cats": [
       1
@@ -431,6 +451,20 @@
       "Nette.version": "^(.+)$\\;version:\\1"
     },
     "website": "https://nette.org"
+  },
+  "Network for Good": {
+    "cats": [
+      111
+    ],
+    "description": "Network for Good is an American certified B Corporation software company that offers fundraising software and coaching for charities and non-profit organisations.",
+    "dom": "a[href*='.networkforgood.com/']",
+    "icon": "Network for Good.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.networkforgood\\.com/",
+    "website": "https://www.networkforgood.com"
   },
   "Neve": {
     "cats": [
@@ -558,8 +592,10 @@
   },
   "Next.js": {
     "cats": [
+      12,
       18,
-      22
+      22,
+      57
     ],
     "cpe": "cpe:2.3:a:zeit:next.js:*:*:*:*:*:*:*:*",
     "description": "Next.js is a React framework for developing single page Javascript applications.",
@@ -691,6 +727,24 @@
     "scriptSrc": "(?:api|sdk)\\.nextsale\\.io/",
     "website": "https://nextsale.io"
   },
+  "NexusPHP": {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:nexusphp:nexusphp:*:*:*:*:*:*:*:*",
+    "description": "NexusPHP is an open-sourced private tracker script written in PHP.",
+    "icon": "NexusPHP.png",
+    "implies": [
+      "PHP",
+      "MySQL",
+      "Redis"
+    ],
+    "meta": {
+      "generator": "^NexusPHP$"
+    },
+    "oss": true,
+    "website": "https://nexusphp.org"
+  },
   "NexusPIPE": {
     "cats": [
       16
@@ -771,7 +825,8 @@
   },
   "Ninja Forms": {
     "cats": [
-      87
+      87,
+      110
     ],
     "description": "Ninja Forms is the WordPress form builder.",
     "dom": "link[href*='/wp-content/plugins/ninja-forms/']",
@@ -870,6 +925,21 @@
     ],
     "saas": true,
     "website": "https://nodeping.com"
+  },
+  "Noibu": {
+    "cats": [
+      13
+    ],
+    "description": "Noibu helps ecommerce websites detect revenue-impacting errors on their websites and provides them with the information needed to resolve them.",
+    "icon": "noibu.svg",
+    "js": {
+      "NOIBUJS_CONFIG": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://noibu.com"
   },
   "Norton Shopping Guarantee": {
     "cats": [

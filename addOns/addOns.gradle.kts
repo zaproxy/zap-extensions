@@ -21,19 +21,19 @@ plugins {
     jacoco
     id("org.rm3l.datanucleus-gradle-plugin") version "1.7.0" apply false
     id("org.zaproxy.add-on") version "0.8.0" apply false
-    id("org.zaproxy.crowdin") version "0.2.1" apply false
-    id("me.champeau.gradle.japicmp") version "0.3.0" apply false
+    id("org.zaproxy.crowdin") version "0.3.1" apply false
+    id("me.champeau.gradle.japicmp") version "0.4.1" apply false
 }
 
 description = "Common configuration of the add-ons."
 
 val mandatoryAddOns = listOf(
     "callhome",
-    "network"
+    "network",
 )
 
 val parentProjects = listOf(
-    "webdrivers"
+    "webdrivers",
 )
 
 val jacocoToolVersion = "0.8.8"
@@ -67,7 +67,7 @@ val createPullRequestNextDevIter by tasks.registering(CreatePullRequest::class) 
             "Update version and changelog for:\n" + releasedProjects.map {
                 " - ${it.zapAddOn.addOnName.get()}"
             }.sorted().joinToString("\n")
-        }
+        },
     )
 
     dependsOn(prepareNextDevIter)
@@ -156,6 +156,7 @@ subprojects {
         apiClientGen {
             classpath.run {
                 setFrom(apiGenClasspath)
+                from(configurations.named(JavaPlugin.COMPILE_CLASSPATH_CONFIGURATION_NAME))
                 from(tasks.named(JavaPlugin.JAR_TASK_NAME))
             }
         }
@@ -175,8 +176,8 @@ subprojects {
                     mutableMapOf(
                         "%addOnId%" to addOnId,
                         "%messagesPath%" to resourcesPath,
-                        "%helpPath%" to resourcesPath
-                    )
+                        "%helpPath%" to resourcesPath,
+                    ),
                 )
             }
         }
@@ -207,8 +208,12 @@ subprojects {
             dependsOn(createPullRequestNextDevIter)
 
             if (useCrowdin) {
-                // XXX Depend again once the Crowdin upload task is fixed.
-                // dependsOn(crowdinUploadSourceFiles)
+                dependsOn(crowdinUploadSourceFiles)
+                if (crowdinUploadSourceFiles!!.isPresent) {
+                    crowdinUploadSourceFiles {
+                        mustRunAfter(createPullRequestNextDevIter)
+                    }
+                }
             }
         }
 
@@ -216,7 +221,7 @@ subprojects {
         addOnRelease.downloadUrl.set(
             addOnRelease.addOn.map { it.asFile.name }.map {
                 "https://github.com/${ghReleaseDataProvider.get().repo.get()}/releases/download/${tagProvider.get()}/$it"
-            }
+            },
         )
         handleRelease {
             addOns.add(addOnRelease)
@@ -330,14 +335,14 @@ subprojects {
             group = LifecycleBasePlugin.VERIFICATION_GROUP
             description = "Checks ${project.name}.jar binary compatibility with latest version ($versionBC)."
 
-            oldClasspath = files(addOnJar(versionBC))
-            newClasspath = files(tasks.named<Jar>(JavaPlugin.JAR_TASK_NAME).map { it.archivePath })
-            setIgnoreMissingClasses(true)
+            oldClasspath.from(addOnJar(versionBC))
+            newClasspath.from(tasks.named<Jar>(JavaPlugin.JAR_TASK_NAME))
+            ignoreMissingClasses.set(true)
 
             richReport {
-                destinationDir = file("$buildDir/reports/japicmp/")
-                reportName = "japi.html"
-                isAddDefaultRules = true
+                destinationDir.set(file("$buildDir/reports/japicmp/"))
+                reportName.set("japi.html")
+                addDefaultRules.set(true)
             }
         }
 
@@ -387,7 +392,7 @@ val createPullRequestRelease by tasks.registering(CreatePullRequest::class) {
                 "Release the following add-ons:\n" + projects.map {
                     " - ${it.zapAddOn.addOnName.get()} version ${it.zapAddOn.addOnVersion.get()}"
                 }.sorted().joinToString("\n")
-            }
+            },
         )
     }
 }

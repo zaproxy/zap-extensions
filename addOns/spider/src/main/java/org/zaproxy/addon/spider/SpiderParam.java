@@ -97,6 +97,8 @@ public class SpiderParam extends VersionedAbstractParam {
     /** The Constant SPIDER_PARSE_GIT. */
     private static final String SPIDER_PARSE_GIT = "spider.parseGit";
 
+    private static final String SPIDER_PARSE_DS_STORE = "spider.parseDsStore";
+
     /** The Constant SPIDER_HANDLE_PARAMETERS. */
     private static final String SPIDER_HANDLE_PARAMETERS = "spider.handleParameters";
 
@@ -193,6 +195,8 @@ public class SpiderParam extends VersionedAbstractParam {
     private boolean parseSVNentries;
     /** Whether Git files should be parsed for URIs. */
     private boolean parseGit;
+    /** Whether .DS_Store files should be parsed for URIs. */
+    private boolean parseDsStore;
     /** Whether the forms are processed and submitted at all. */
     private boolean processForm = true;
     /**
@@ -325,6 +329,8 @@ public class SpiderParam extends VersionedAbstractParam {
         this.parseSVNentries = getBoolean(SPIDER_PARSE_SVN_ENTRIES, false);
 
         this.parseGit = getBoolean(SPIDER_PARSE_GIT, false);
+
+        this.parseDsStore = getBoolean(SPIDER_PARSE_DS_STORE, false);
 
         this.skipURL = getString(SPIDER_SKIP_URL, "");
         parseSkipURL(this.skipURL);
@@ -647,6 +653,15 @@ public class SpiderParam extends VersionedAbstractParam {
     }
 
     /**
+     * Checks if the spider should parse the .DS_Store files for URIs.
+     *
+     * @return true, if it parses the files
+     */
+    public boolean isParseDsStore() {
+        return parseDsStore;
+    }
+
+    /**
      * Sets the whether the spider parses the robots.txt for uris (not related to following the
      * directions).
      *
@@ -686,6 +701,16 @@ public class SpiderParam extends VersionedAbstractParam {
     public void setParseGit(boolean parseGit) {
         this.parseGit = parseGit;
         getConfig().setProperty(SPIDER_PARSE_GIT, Boolean.toString(parseGit));
+    }
+
+    /**
+     * Sets the whether the spider parses .DS_Store files for URIs
+     *
+     * @param parseDsStore the new value for parseDsStore
+     */
+    public void setParseDsStore(boolean parseDsStore) {
+        this.parseDsStore = parseDsStore;
+        getConfig().setProperty(SPIDER_PARSE_DS_STORE, Boolean.toString(parseDsStore));
     }
 
     /**

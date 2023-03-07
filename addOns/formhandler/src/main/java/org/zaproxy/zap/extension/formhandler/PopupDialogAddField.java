@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.formhandler;
 
 import java.awt.Dialog;
+import java.util.Locale;
 import java.util.Set;
 import javax.swing.JComboBox;
 import org.parosproxy.paros.control.Control;
@@ -55,7 +56,8 @@ class PopupDialogAddField extends DialogAddField {
      */
     @Override
     protected boolean validateFields() {
-        String fieldName = getNameTextField().getText().toLowerCase();
+        String name = getNameTextField().getText();
+        String fieldName = getRegexCheckBox().isSelected() ? name : name.toLowerCase(Locale.ROOT);
         for (String field :
                 Control.getSingleton()
                         .getExtensionLoader()
@@ -78,8 +80,7 @@ class PopupDialogAddField extends DialogAddField {
     @Override
     protected void performAction() {
         extFormHandler.addFormHandlerFieldName(
-                getNameTextField().getText().toLowerCase(),
-                getValueField().getSelectedItem().toString());
+                getNameTextField().getText(), getValueField().getSelectedItem().toString());
     }
 
     @Override

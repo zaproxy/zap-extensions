@@ -44,6 +44,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.TableAlert;
 import org.parosproxy.paros.db.TableHistory;
@@ -81,13 +82,19 @@ class HeaderGuessUnitTest extends TestUtils {
                         ParamDiggerHistoryTableModel.class,
                         withSettings().defaultAnswer(RETURNS_MOCKS));
         tableHistory =
-                mock(TableHistory.class, withSettings().defaultAnswer(RETURNS_MOCKS).lenient());
+                mock(
+                        TableHistory.class,
+                        withSettings().defaultAnswer(RETURNS_MOCKS).strictness(Strictness.LENIENT));
         HistoryReference.setTableHistory(tableHistory);
         HistoryReference.setTableAlert(
-                mock(TableAlert.class, withSettings().defaultAnswer(RETURNS_MOCKS).lenient()));
+                mock(
+                        TableAlert.class,
+                        withSettings()
+                                .defaultAnswer(RETURNS_MOCKS)
+                                .strictness(Strictness.LENIENT)));
 
         startServer();
-        scan = mock(GuesserScan.class, withSettings().lenient());
+        scan = mock(GuesserScan.class, withSettings().strictness(Strictness.LENIENT));
         given(scan.getTableModel()).willReturn(tableModel);
         executor = Executors.newFixedThreadPool(1);
 

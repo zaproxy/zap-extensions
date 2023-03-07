@@ -38,6 +38,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -76,7 +77,8 @@ class ParamsJobResultDataUnitTest {
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
 
-        extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
+        extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         extParams = mock(ExtensionParams.class);
         given(extensionLoader.getExtension(ExtensionParams.class)).willReturn(extParams);
 

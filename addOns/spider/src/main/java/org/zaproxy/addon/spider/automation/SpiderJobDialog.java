@@ -62,6 +62,7 @@ public class SpiderJobDialog extends StandardFieldsDialog {
     private static final String MAX_PARSE_PARAM = "spider.automation.dialog.maxparse";
     private static final String PARSE_COMMENTS_PARAM = "spider.automation.dialog.parsecomments";
     private static final String PARSE_GIT_PARAM = "spider.automation.dialog.parsegit";
+    private static final String PARSE_DS_STORE_PARAM = "spider.automation.dialog.parsedsstore";
     private static final String PARSE_ROBOTS_PARAM = "spider.automation.dialog.parserobots";
     private static final String PARSE_SITEMAP_PARAM = "spider.automation.dialog.parsesitemap";
     private static final String PARSE_SVN_PARAM = "spider.automation.dialog.parsessvn";
@@ -130,6 +131,10 @@ public class SpiderJobDialog extends StandardFieldsDialog {
                 JobUtils.unBox(this.job.getParameters().getParseComments()));
         this.addCheckBoxField(
                 1, PARSE_GIT_PARAM, JobUtils.unBox(this.job.getParameters().getParseGit()));
+        this.addCheckBoxField(
+                1,
+                PARSE_DS_STORE_PARAM,
+                JobUtils.unBox(this.job.getParameters().getParseDsStore()));
         this.addCheckBoxField(
                 1,
                 PARSE_ROBOTS_PARAM,
@@ -232,6 +237,7 @@ public class SpiderJobDialog extends StandardFieldsDialog {
                 || params.getMaxParseSizeBytes() != null
                 || params.getParseComments() != null
                 || params.getParseGit() != null
+                || params.getParseDsStore() != null
                 || params.getParseRobotsTxt() != null
                 || params.getParseSitemapXml() != null
                 || params.getParseSVNEntries() != null
@@ -270,6 +276,7 @@ public class SpiderJobDialog extends StandardFieldsDialog {
             this.job.getParameters().setMaxParseSizeBytes(this.getIntValue(MAX_PARSE_PARAM));
             this.job.getParameters().setParseComments(this.getBoolValue(PARSE_COMMENTS_PARAM));
             this.job.getParameters().setParseGit(this.getBoolValue(PARSE_GIT_PARAM));
+            this.job.getParameters().setParseDsStore(null);
             this.job.getParameters().setParseRobotsTxt(this.getBoolValue(PARSE_ROBOTS_PARAM));
             this.job.getParameters().setParseSitemapXml(this.getBoolValue(PARSE_SITEMAP_PARAM));
             this.job.getParameters().setParseSVNEntries(this.getBoolValue(PARSE_SVN_PARAM));
@@ -292,6 +299,7 @@ public class SpiderJobDialog extends StandardFieldsDialog {
             this.job.getParameters().setMaxParseSizeBytes(null);
             this.job.getParameters().setParseComments(null);
             this.job.getParameters().setParseGit(null);
+            this.job.getParameters().setParseDsStore(null);
             this.job.getParameters().setParseRobotsTxt(null);
             this.job.getParameters().setParseSitemapXml(null);
             this.job.getParameters().setParseSVNEntries(null);

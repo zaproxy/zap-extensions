@@ -41,6 +41,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.quality.Strictness;
 import org.mockito.stubbing.Answer;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
@@ -78,8 +79,10 @@ class PassiveScanWaitJobUnitTest {
         // Given
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
-        ExtensionPassiveScan extPscan = mock(ExtensionPassiveScan.class, withSettings().lenient());
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionPassiveScan extPscan =
+                mock(ExtensionPassiveScan.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionPassiveScan.class)).willReturn(extPscan);
 
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
@@ -164,8 +167,10 @@ class PassiveScanWaitJobUnitTest {
         // Given
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
-        ExtensionPassiveScan extAuto = mock(ExtensionPassiveScan.class, withSettings().lenient());
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionPassiveScan extAuto =
+                mock(ExtensionPassiveScan.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionPassiveScan.class)).willReturn(extAuto);
 
         when(extAuto.getRecordsToScan())
@@ -203,8 +208,10 @@ class PassiveScanWaitJobUnitTest {
         // Given
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
-        ExtensionPassiveScan extAuto = mock(ExtensionPassiveScan.class, withSettings().lenient());
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionPassiveScan extAuto =
+                mock(ExtensionPassiveScan.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionPassiveScan.class)).willReturn(extAuto);
         given(extAuto.getRecordsToScan()).willReturn(1);
 

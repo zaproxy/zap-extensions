@@ -62,5 +62,7 @@ class DialogModifyField extends DialogAddField {
         getValueTextField().discardAllEdits();
 
         getEnabledCheckBox().setSelected(field.isEnabled());
+
+        getRegexCheckBox().setSelected(field.isRegex());
     }
 }

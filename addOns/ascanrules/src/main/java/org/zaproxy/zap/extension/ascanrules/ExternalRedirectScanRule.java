@@ -29,6 +29,8 @@ import java.util.regex.Pattern;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
+import org.apache.commons.httpclient.URI;
+import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -81,17 +83,17 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
     /** The various (prioritized) payload to try */
     private static final String[] REDIRECT_TARGETS = {
         REDIRECT_SITE,
-        HttpHeader.HTTP + "://" + REDIRECT_SITE,
-        HttpHeader.HTTPS + "://" + REDIRECT_SITE,
-        HttpHeader.HTTPS + "://" + REDIRECT_SITE.replace(".", "%2e"), // Double encode the dots
+        HttpHeader.SCHEME_HTTP + REDIRECT_SITE,
+        HttpHeader.SCHEME_HTTPS + REDIRECT_SITE,
+        HttpHeader.SCHEME_HTTPS + REDIRECT_SITE.replace(".", "%2e"), // Double encode the dots
         "5;URL='https://" + REDIRECT_SITE + "'",
-        HttpHeader.HTTP + ":\\\\" + REDIRECT_SITE,
-        HttpHeader.HTTPS + ":\\\\" + REDIRECT_SITE,
+        "URL='http://" + REDIRECT_SITE + "'",
+        HttpHeader.SCHEME_HTTP + "\\" + REDIRECT_SITE,
+        HttpHeader.SCHEME_HTTPS + "\\" + REDIRECT_SITE,
         "//" + REDIRECT_SITE,
         "\\\\" + REDIRECT_SITE,
         "HtTp://" + REDIRECT_SITE,
         "HtTpS://" + REDIRECT_SITE,
-        "URL='http://" + REDIRECT_SITE + "'",
 
         // http://kotowicz.net/absolute/
         // I never met real cases for these
@@ -313,7 +315,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
     }
 
     private static final Pattern LOCATION_PATTERN =
-            Pattern.compile("(?i)\\s*url\\s*=\\s*[\"']?([^'\"]*)[\"']?");
+            Pattern.compile("(?i)^\\s*url\\s*=\\s*[\"']?([^'\"]*)[\"']?");
 
     static String getLocationUrl(String value) {
         Matcher matcher = LOCATION_PATTERN.matcher(value);
@@ -324,14 +326,29 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
      * Check if the payload is a redirect
      *
      * @param value the value retrieved
-     * @param payload the url that should perform external redirect
      * @return true if it's a valid open redirect
      */
-    private boolean checkPayload(String value, String payload) {
-        // Check both the payload and the standard url format
-        return (value != null
-                && StringUtils.containsIgnoreCase(value, payload)
-                && StringUtils.startsWithIgnoreCase(value, HttpHeader.HTTP));
+    private static boolean checkPayload(String value) {
+        if (value == null || !StringUtils.startsWithIgnoreCase(value, HttpHeader.HTTP)) {
+            return false;
+        }
+
+        try {
+            return isRedirectHost(value, true);
+        } catch (URIException e) {
+            LOGGER.debug(e.getMessage(), e);
+            try {
+                return isRedirectHost(value, false);
+            } catch (URIException ex) {
+                LOGGER.debug(ex.getMessage(), ex);
+                return false;
+            }
+        }
+    }
+
+    private static boolean isRedirectHost(String value, boolean escaped) throws URIException {
+        URI locUri = new URI(value, escaped);
+        return REDIRECT_SITE.equalsIgnoreCase(locUri.getHost());
     }
 
     /**
@@ -350,7 +367,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
         // HTTP/1.1 302 Found
         // Location: http://www.example.org/index.php
         String value = msg.getResponseHeader().getHeader(HttpFieldsNames.LOCATION);
-        if (checkPayload(value, payload)) {
+        if (checkPayload(value)) {
             return REDIRECT_LOCATION_HEADER;
         }
 
@@ -364,7 +381,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
             // so extract the url component
             value = getRefreshUrl(value);
 
-            if (checkPayload(value, payload)) {
+            if (checkPayload(value)) {
                 return REDIRECT_REFRESH_HEADER;
             }
         }
@@ -386,7 +403,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
                     value = getLocationUrl(el.getAttributeValue("content"));
 
                     // Check if the payload is inside the location attribute
-                    if (checkPayload(value, payload)) {
+                    if (checkPayload(value)) {
                         return REDIRECT_LOCATION_META;
                     }
 
@@ -401,7 +418,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
                         value = getRefreshUrl(value);
 
                         // Check if the payload is inside the location attribute
-                        if (checkPayload(value, payload)) {
+                        if (checkPayload(value)) {
                             return REDIRECT_REFRESH_META;
                         }
                     }

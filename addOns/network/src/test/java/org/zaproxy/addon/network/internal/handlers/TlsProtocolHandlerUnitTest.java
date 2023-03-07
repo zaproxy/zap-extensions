@@ -520,20 +520,6 @@ class TlsProtocolHandlerUnitTest {
     }
 
     @Test
-    void shouldCloseConnectionIfClientHasNoAlpnAndAlpnIsEnabledWithoutFallback() throws Exception {
-        // Given
-        int port = server.start(Server.ANY_PORT);
-        createClientTls(port);
-        given(tlsConfig.isAlpnEnabled()).willReturn(true);
-        given(tlsConfig.getApplicationProtocols()).willReturn(List.of("h0"));
-        given(tlsConfig.getFallbackApplicationProtocol()).willReturn(null);
-        // When
-        Channel ch = clientTls.connect(port, "");
-        // Then
-        assertThat(ch.isOpen(), is(equalTo(false)));
-    }
-
-    @Test
     void shouldCallPipelineConfiguratorAfterProtocolNegotiation() throws Exception {
         // Given
         int port = server.start(Server.ANY_PORT);
@@ -556,13 +542,11 @@ class TlsProtocolHandlerUnitTest {
         createClientTls(port);
         given(tlsConfig.isAlpnEnabled()).willReturn(true);
         given(tlsConfig.getApplicationProtocols()).willReturn(List.of("some-protocol"));
-        String fallbackProtocol = "fallback";
-        given(tlsConfig.getFallbackApplicationProtocol()).willReturn(fallbackProtocol);
         pipelineConfigurator = mock(PipelineConfigurator.class);
         // When
         clientTls.connect(port, "");
         // Then
-        verify(pipelineConfigurator).configure(any(), eq(fallbackProtocol));
+        verify(pipelineConfigurator).configure(any(), eq(TlsUtils.APPLICATION_PROTOCOL_HTTP_1_1));
     }
 
     @Test

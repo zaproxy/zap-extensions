@@ -32,6 +32,7 @@ import static org.mockito.Mockito.withSettings;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 import fi.iki.elonen.NanoHTTPD.Response.Status;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -47,6 +48,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
@@ -54,6 +56,7 @@ import org.parosproxy.paros.model.Model;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
+import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.graphql.ExtensionGraphQl;
 import org.zaproxy.addon.graphql.GraphQlParam;
@@ -71,8 +74,9 @@ class GraphQlJobUnitTest extends TestUtils {
         Constant.messages = new I18N(Locale.ENGLISH);
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
-        extGraphQl = mock(ExtensionGraphQl.class, withSettings().lenient());
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        extGraphQl = mock(ExtensionGraphQl.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionGraphQl.class)).willReturn(extGraphQl);
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
 
@@ -187,11 +191,14 @@ class GraphQlJobUnitTest extends TestUtils {
                                 + "  schemaFile: "
                                 + schemaFile);
 
-        AutomationProgress progress = new AutomationProgress();
-        AutomationEnvironment env = new AutomationEnvironment(progress);
+        AutomationPlan plan = new AutomationPlan();
+        AutomationProgress progress = plan.getProgress();
+        AutomationEnvironment env = plan.getEnv();
         Path file = dir.resolve("schema");
         Files.write(file, "type Query { name: String }".getBytes(StandardCharsets.UTF_8));
         env.getData().getVars().put("schemaFile", file.toString());
+        job.setPlan(plan);
+        env.setPlan(plan);
         job.verifyParameters(progress);
 
         // When
@@ -247,6 +254,37 @@ class GraphQlJobUnitTest extends TestUtils {
         assertThat(params.containsKey("optionalArgsEnabled"), is(equalTo(true)));
         assertThat(params.containsKey("querySplitType"), is(equalTo(true)));
         assertThat(params.containsKey("requestMethod"), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldSupportRelativeFilename(@TempDir Path dir) throws IOException {
+        // Given
+        String server = serverWithGraphQl();
+        String endpoint = server + "endpoint";
+        Path file = dir.resolve("schema-rel");
+        Files.write(file, "type Query { name: String }".getBytes(StandardCharsets.UTF_8));
+        GraphQlJob job =
+                createGraphQlJob(
+                        "parameters:\n"
+                                + "  endpoint: "
+                                + endpoint
+                                + "\n"
+                                + "  schemaFile: "
+                                + file.toFile().getName());
+
+        AutomationPlan plan = new AutomationPlan();
+        AutomationProgress progress = plan.getProgress();
+        AutomationEnvironment env = plan.getEnv();
+        plan.setFile(new File(dir.toFile(), "plan.yaml"));
+        job.verifyParameters(progress);
+        job.setPlan(plan);
+        env.setPlan(plan);
+
+        // When
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(graphQlServer.getAccessedUrls(), contains("/endpoint"));
     }
 
     private static class GraphQlParamWrapper {
@@ -336,6 +374,7 @@ class GraphQlJobUnitTest extends TestUtils {
         Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
         AutomationEnvironment env = new AutomationEnvironment(progress);
+        AutomationPlan plan = new AutomationPlan();
         String yamlStr =
                 "parameters:\n"
                         + "  endpoint: 'http://example.com/graphql'\n"
@@ -345,6 +384,8 @@ class GraphQlJobUnitTest extends TestUtils {
 
         GraphQlJob job = new GraphQlJob();
         job.setJobData(((LinkedHashMap<?, ?>) data));
+        job.setPlan(plan);
+        env.setPlan(plan);
 
         // When
         job.verifyParameters(progress);

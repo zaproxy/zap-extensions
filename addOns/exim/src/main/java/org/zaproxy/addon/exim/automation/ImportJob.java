@@ -28,14 +28,12 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.jobs.JobData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
-import org.zaproxy.addon.exim.ExtensionExim;
 import org.zaproxy.addon.exim.har.HarImporter;
 import org.zaproxy.addon.exim.log.LogsImporter;
 import org.zaproxy.addon.exim.urls.UrlsImporter;
@@ -48,20 +46,11 @@ public class ImportJob extends AutomationJob {
     private static final String PARAM_TYPE = "type";
     private static final String PARAM_FILE_NAME = "fileName";
 
-    private ExtensionExim extExim;
-
     private Parameters parameters = new Parameters();
     private Data data;
 
     public ImportJob() {
         this.data = new Data(this, parameters);
-    }
-
-    private ExtensionExim getExtExim() {
-        if (extExim == null) {
-            extExim = Control.getSingleton().getExtensionLoader().getExtension(ExtensionExim.class);
-        }
-        return extExim;
     }
 
     @Override
@@ -98,7 +87,7 @@ public class ImportJob extends AutomationJob {
         String fileName = this.getParameters().getFileName();
 
         if (!StringUtils.isEmpty(fileName)) {
-            File file = new File(fileName);
+            File file = JobUtils.getFile(fileName, getPlan());
             if (file.exists() && file.canRead()) {
                 if (type.equalsIgnoreCase(TypeOption.HAR.name())) {
                     HarImporter harImporter = new HarImporter(file);

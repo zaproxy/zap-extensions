@@ -136,6 +136,16 @@
     "scriptSrc": "/wp-content/cache/wpfc-minified/",
     "website": "https://www.wpfastestcache.com"
   },
+  "WP Featherlight": {
+    "cats": [
+      87
+    ],
+    "description": "WP Featherlight is a WordPress lightbox plugin for adding a minimal, high-performance, responsive jQuery lightbox to your WordPress website.",
+    "icon": "WP_Featherlight.png",
+    "requires": "WordPress",
+    "scriptSrc": "/wpFeatherlight\\.pkgd\\.min\\.js",
+    "website": "https://wordpress.org/plugins/wp-featherlight"
+  },
   "WP Google Map Plugin": {
     "cats": [
       87,
@@ -229,6 +239,17 @@
     "saas": true,
     "scriptSrc": "/wp-content/plugins/wp-rocket/",
     "website": "https://wp-rocket.me"
+  },
+  "WP Live Visitor Counter": {
+    "cats": [
+      87,
+      5
+    ],
+    "description": "WP Live Visitor Counter is a WordPress plugin that displays the number of online visitors on a website in real-time.",
+    "dom": "link[href*='/wp-content/plugins/wp-visitors-widget/']",
+    "icon": "default.svg",
+    "requires": "WordPress",
+    "website": "https://wordpress.org/plugins/wp-visitors-widget/"
   },
   "WP-Optimize": {
     "cats": [
@@ -327,7 +348,8 @@
   },
   "WPForms": {
     "cats": [
-      87
+      87,
+      110
     ],
     "description": "WPForms is a drag and drop WordPress form builder.",
     "icon": "WPForms.svg",
@@ -344,6 +366,28 @@
     "scriptSrc": "/wp-content/plugins/wpforms(?:-lite)?/.+(?:frontend\\.min|wpforms)\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://wpforms.com"
   },
+  "WPML": {
+    "cats": [
+      87,
+      89
+    ],
+    "cookies": {
+      "wp-wpml_current_language": ""
+    },
+    "description": "WPML plugin makes it possible to build and run fully multilingual WordPress sites.",
+    "icon": "WPML.svg",
+    "meta": {
+      "generator": "^WPML\\sver\\:([\\d\\.]+)\\;version:\\1"
+    },
+    "oss": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/sitepress-multilingual-cms/",
+    "website": "https://wpml.org/"
+  },
   "WPMU DEV Smush": {
     "cats": [
       87
@@ -358,6 +402,18 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/wp-smushit(?:-pro)?/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://wpmudev.com/project/wp-smush-pro"
+  },
+  "WPS Visitor Counter": {
+    "cats": [
+      87
+    ],
+    "description": "WPS Visitor Counter is a plugin for WordPress that counts the number of visitors to a website.",
+    "icon": "WPS Visitor Counter.png",
+    "js": {
+      "wpspagevisit": ""
+    },
+    "requires": "WordPress",
+    "website": "https://wordpress.org/plugins/wps-visitor-counter/"
   },
   "Wagtail": {
     "cats": [
@@ -674,6 +730,23 @@
     "scriptSrc": "cdn\\.webmetric\\.ir",
     "website": "https://webmetric.ir/"
   },
+  "Webolytics": {
+    "cats": [
+      10,
+      71
+    ],
+    "description": "Webolytics is an open API platform designed to track return on advertising spend.",
+    "icon": "Webolytics.svg",
+    "js": {
+      "webolytics_site_tag": "",
+      "webolytics_webhook_call": ""
+    },
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.webolytics.com"
+  },
   "WebNode": {
     "cats": [
       1,
@@ -738,6 +811,27 @@
     "scriptSrc": "//webzi\\.ir/",
     "website": "https://webzi.ir"
   },
+  "Webasyst Shop-Script": {
+    "cats": [
+      6
+    ],
+    "description": "Webasyst Shop-Script is a feature-rich PHP ecommerce framework and shopping cart solution.",
+    "icon": "Webasyst Shop-Script.svg",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "js": {
+      "shopOrdercallConfigStaticUrl": "/wa-apps/",
+      "shop_cityselect.lib": "/wa-apps/"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.shop-script.com"
+  },
   "Webflow": {
     "cats": [
       51
@@ -751,12 +845,12 @@
     "meta": {
       "generator": "Webflow"
     },
-    "saas": true,
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
+    "saas": true,
     "website": "https://webflow.com"
   },
   "Webflow Ecommerce": {
@@ -768,12 +862,12 @@
     "js": {
       "__WEBFLOW_CURRENCY_SETTINGS": ""
     },
-    "requires": "Webflow",
-    "saas": true,
     "pricing": [
       "low",
       "recurring"
     ],
+    "requires": "Webflow",
+    "saas": true,
     "website": "https://webflow.com/ecommerce"
   },
   "Webgains": {
@@ -958,6 +1052,22 @@
       "generator": "WebsiteBaker"
     },
     "website": "http://websitebaker2.org/en/home.php"
+  },
+  "WebsiteBuilder": {
+    "cats": [
+      51
+    ],
+    "description": "WebsiteBuilder is a page-builder for creating web pages without knowledge of programming languages.",
+    "icon": "WebsiteBuilder.svg",
+    "js": {
+      "_site.urls.dataproxy": "\\.mywebsitebuilder\\.com"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.websitebuilder.com"
   },
   "Websocket": {
     "cats": [

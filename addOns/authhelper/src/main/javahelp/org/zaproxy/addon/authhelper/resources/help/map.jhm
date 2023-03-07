@@ -6,4 +6,6 @@
 <map version="1.0">
 	<mapID target="authhelper-icon" url="contents/images/hand-padlock.png" />
     <mapID target="authhelper" url="contents/authhelper.html" />
+    <mapID target="authhelper.auth-req-id" url="contents/auth-req-id.html" />
+    <mapID target="authhelper.session-header" url="contents/session-header.html" />
 </map>

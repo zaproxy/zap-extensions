@@ -162,7 +162,7 @@ public class AddAlertFilterDialog extends StandardFieldsDialog {
             return true;
         }
         String str = this.getStringValue(strParam);
-        if (canContainEnvVars && str.contains("${")) {
+        if (canContainEnvVars && JobUtils.containsVars(str)) {
             // Can't do any more checking as the env var will break the regex checking
             return true;
         }

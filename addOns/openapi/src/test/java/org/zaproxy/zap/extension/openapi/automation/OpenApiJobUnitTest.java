@@ -33,6 +33,7 @@ import java.util.Locale;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
@@ -40,6 +41,7 @@ import org.parosproxy.paros.model.Model;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
+import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.openapi.ExtensionOpenApi;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -55,8 +57,9 @@ class OpenApiJobUnitTest extends TestUtils {
 
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
-        extOpenApi = mock(ExtensionOpenApi.class, withSettings().lenient());
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        extOpenApi = mock(ExtensionOpenApi.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionOpenApi.class)).willReturn(extOpenApi);
 
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
@@ -158,14 +161,16 @@ class OpenApiJobUnitTest extends TestUtils {
     void shouldFailIfInvalidFile() {
         // Given
         mockMessages(new ExtensionOpenApi());
-        AutomationProgress progress = new AutomationProgress();
-        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        AutomationPlan plan = new AutomationPlan();
+        AutomationProgress progress = plan.getProgress();
+        AutomationEnvironment env = plan.getEnv();
         String yamlStr = "parameters:\n" + "  apiFile: 'Invalid file path'";
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
 
         OpenApiJob job = new OpenApiJob();
         job.setJobData(((LinkedHashMap<?, ?>) data));
+        job.setPlan(plan);
 
         // When
         job.verifyParameters(progress);

@@ -51,6 +51,19 @@
     },
     "website": "http://www.apachefriends.org/en/xampp.html"
   },
+  "XGen Ai": {
+    "cats": [
+      76
+    ],
+    "description": "XGen Ai is a cloud-based customer journey mapping tool that helps businesses manage product recommendations via artificial intelligence (AI).",
+    "icon": "XGen Ai.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "//assets\\.xgen\\.dev/",
+    "website": "https://xgen.ai"
+  },
   "XMB": {
     "cats": [
       2

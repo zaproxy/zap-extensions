@@ -56,6 +56,19 @@
     "icon": "ELOG.png",
     "website": "http://midas.psi.ch/elog"
   },
+  "Eloomi": {
+    "cats": [
+      21
+    ],
+    "description": "Eloomi is a cloud-based learning management system (LMS) and performance management platform.",
+    "icon": "Eloomi.png",
+    "saas": true,
+    "scriptSrc": "//cdn\\.eloomi\\.com/",
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://eloomi.com"
+  },
   "ELOG HTTP": {
     "cats": [
       22
@@ -524,6 +537,21 @@
     },
     "website": "http://eleanor-cms.ru"
   },
+  "Element": {
+    "cats": [
+      52
+    ],
+    "description": "Element is a Matrix-based end-to-end encrypted messenger and secure collaboration app.",
+    "icon": "elementio.svg",
+    "meta": {
+      "application-name": "^Element$"
+    },
+    "pricing": [
+      "payg",
+      "low"
+    ],
+    "website": "https://element.io"
+  },
   "Element UI": {
     "cats": [
       12
@@ -593,6 +621,24 @@
     ],
     "website": "https://github.com/brainstormforce/header-footer-elementor"
   },
+  "ElementsKit": {
+    "cats": [
+      87
+    ],
+    "description": "ElementsKit is an addon for Elementor that adds additional customisation options to the page builder.",
+    "icon": "elementskit.svg",
+    "js": {
+      "ElementsKit_Helper": "",
+      "elementskit": ""
+    },
+    "pricing": [
+      "onetime",
+      "mid",
+      "recurring"
+    ],
+    "requires": "Elementor",
+    "website": "https://wpmet.com/plugin/elementskit"
+  },
   "Elevar": {
     "cats": [
       10
@@ -638,6 +684,33 @@
     "saas": true,
     "scriptSrc": "\\.elfsight\\.com/",
     "website": "https://elfsight.com"
+  },
+  "Elixir": {
+    "cats": [
+      27
+    ],
+    "description": "Elixir is a dynamic, functional language designed for building scalable and maintainable applications.",
+    "icon": "Elixir.svg",
+    "implies": "Erlang",
+    "oss": true,
+    "website": "https://elixir-lang.org"
+  },
+  "Ellucian CRM Recruit": {
+    "cats": [
+      53,
+      101
+    ],
+    "description": "Ellucian CRM Recruit is a comprehensive solution that supports your entire recruiting and admissions lifecycle.",
+    "dom": " a[href*='.elluciancrmrecruit.com/']",
+    "icon": "Ellucian CRM Recruit.svg",
+    "js": {
+      "Ellucian.Recruit": "",
+      "ellucianAddressChooseLabel": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.ellucian.com/solutions/ellucian-crm-recruit"
   },
   "Elm": {
     "cats": [
@@ -1353,6 +1426,21 @@
     "scriptSrc": "everflow\\.js",
     "website": "https://www.everflow.io"
   },
+  "EveryAction": {
+    "cats": [
+      111
+    ],
+    "description": "EveryAction provides fundraising software, donor management software, and CRM software to nonprofit organisations.",
+    "dom": "a[href*='secure.everyaction.com/'], div[data-form-url*='secure.everyaction.com/']",
+    "icon": "EveryAction.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.everyaction\\.com/",
+    "website": "https://www.everyaction.com"
+  },
   "Eveve": {
     "cats": [
       5,
@@ -1491,6 +1579,25 @@
     "saas": true,
     "scriptSrc": "expertrec\\.com/api/js/ci_common\\.js\\?id=.*",
     "website": "https://www.expertrec.com/"
+  },
+  "Expivi": {
+    "cats": [
+      105
+    ],
+    "description": "Expivi specialises in 3D visualisation technology for ecommerce stores.",
+    "dom": "iframe[src*='.expivi.net/']",
+    "icon": "Expivi.svg",
+    "js": {
+      "ExpiviComponent": "",
+      "expivi": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.expivi\\.(?:com|net)/",
+    "website": "https://www.expivi.com"
   },
   "Exponea": {
     "cats": [
@@ -1700,6 +1807,28 @@
     "saas": true,
     "scriptSrc": "\\.ezo(?:js|ic|dn)\\.(?:com|net)",
     "website": "https://www.ezoic.com"
+  },
+  "EZproxy": {
+    "cats": [
+      22,
+      64
+    ],
+    "description": "EZproxy is a web server and a reverse proxy that is usually used by libraries as a reverse proxy in front of electronic educational resources databases (e.g.: Scopus, PubMed, or Web of Science) in order to provide authentication and protect privacy.",
+    "excludes": [
+      "Apache HTTP Server",
+      "Nginx"
+    ],
+    "headers": {
+      "server": "^EZproxy$"
+    },
+    "icon": "default.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.oclc.org/en/ezproxy.html"
   },
   "e-Shop Commerce": {
     "cats": [

@@ -36,6 +36,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionLoader;
@@ -83,7 +84,7 @@ class CallbackServiceUnitTest extends TestUtils {
 
         oastRequest = mock(OastRequest.class);
         OastRequestFactory oastRequestFactory =
-                mock(OastRequestFactory.class, withSettings().lenient());
+                mock(OastRequestFactory.class, withSettings().strictness(Strictness.LENIENT));
         given(oastRequestFactory.create(any(), anyString(), anyString())).willReturn(oastRequest);
         oastRequestHandler = mock(OastRequestHandler.class);
 

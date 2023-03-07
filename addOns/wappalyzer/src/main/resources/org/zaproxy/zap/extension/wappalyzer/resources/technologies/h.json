@@ -887,6 +887,27 @@
     "url": "sites\\.hireology\\.com/",
     "website": "https://hireology.com"
   },
+  "Hirschmann HiOS": {
+    "cats": [
+      28
+    ],
+    "cpe": "cpe:2.3:o:belden:hirschmann_hios:*:*:*:*:*:*:*:*",
+    "description": "Hirschmann HiOS is an operating system for industrial network equipment.",
+    "dom": {
+      "div": {
+        "text": "(HiSecOS-|HiOS-.+-)(\\d+\\.\\d+\\.\\d+)\\;version:\\2"
+      },
+      "h2": {
+        "text": "(HiSecOS-|HiOS-.+-)(\\d+\\.\\d+\\.\\d+)\\;version:\\2"
+      }
+    },
+    "icon": "hirschmann_OS.png",
+    "requires": [
+      "Java",
+      "Google Web Toolkit"
+    ],
+    "website": "https://hirschmann.com/"
+  },
   "Histats": {
     "cats": [
       10
@@ -1055,8 +1076,22 @@
       "SOA": "\\.(?:dns-parking|hostinger)\\.com"
     },
     "headers": {
-      "Platform": "hostinger",
-      "Server": "hcdn"
+      "platform": "hostinger"
+    },
+    "icon": "Hostinger.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://www.hostinger.com"
+  },
+  "Hostinger CDN": {
+    "cats": [
+      31
+    ],
+    "description": "Hostinger Content Delivery Network (CDN).",
+    "headers": {
+      "server": "hcdn"
     },
     "icon": "Hostinger.svg",
     "pricing": [
@@ -1366,7 +1401,8 @@
   "HulkApps Form Builder": {
     "cats": [
       73,
-      100
+      100,
+      110
     ],
     "description": "HulkApps Form Builder is an application that creates customizable, job-specific forms for unit needs.",
     "icon": "HulkApps.svg",

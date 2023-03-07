@@ -44,8 +44,10 @@ public class PassiveScanConfigJob extends AutomationJob {
     private static final String PARAM_ID = "id";
 
     private static final String PARAM_ENABLE_TAGS = "enableTags";
+    private static final String PARAM_DISABLE_ALL_RULES = "disableAllRules";
 
-    private static final String[] IGNORE_PARAMS = new String[] {PARAM_ENABLE_TAGS};
+    private static final String[] IGNORE_PARAMS =
+            new String[] {PARAM_ENABLE_TAGS, PARAM_DISABLE_ALL_RULES};
 
     private ExtensionPassiveScan extPScan;
 
@@ -178,6 +180,11 @@ public class PassiveScanConfigJob extends AutomationJob {
     @Override
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
         // Configure any rules
+        if (Boolean.TRUE.equals(this.getData().getParameters().getDisableAllRules())) {
+            getExtPScan().getPluginPassiveScanners().stream()
+                    .forEach(pscan -> pscan.setEnabled(false));
+        }
+
         for (Rule rule : this.getData().getRules()) {
             PluginPassiveScanner plugin = getExtPScan().getPluginPassiveScanner(rule.getId());
             AlertThreshold pluginTh =
@@ -333,6 +340,7 @@ public class PassiveScanConfigJob extends AutomationJob {
         private Boolean scanOnlyInScope = true;
         private Integer maxBodySizeInBytesToScan;
         private Boolean enableTags = false;
+        private Boolean disableAllRules = false;
 
         public Parameters() {}
 
@@ -366,6 +374,14 @@ public class PassiveScanConfigJob extends AutomationJob {
 
         public void setEnableTags(Boolean enableTags) {
             this.enableTags = enableTags;
+        }
+
+        public Boolean getDisableAllRules() {
+            return disableAllRules;
+        }
+
+        public void setDisableAllRules(Boolean disableAllRules) {
+            this.disableAllRules = disableAllRules;
         }
     }
 }

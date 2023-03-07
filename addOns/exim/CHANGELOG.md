@@ -4,6 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [0.4.0] - 2023-02-09
+### Added
+- Support for relative file paths and ones including vars in the Automation Framework job.
+
 ### Changed
 - Maintenance changes.
 
@@ -45,6 +51,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release.
 
+[0.4.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.4.0
 [0.3.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.3.0
 [0.2.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.2.0
 [0.1.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.1.0

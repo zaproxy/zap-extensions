@@ -23,6 +23,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
@@ -50,6 +52,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.mockito.ArgumentMatcher;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -98,8 +101,9 @@ class ActiveScanJobUnitTest {
 
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
-        extAScan = mock(ExtensionActiveScan.class, withSettings().lenient());
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        extAScan = mock(ExtensionActiveScan.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionActiveScan.class)).willReturn(extAScan);
 
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
@@ -199,6 +203,31 @@ class ActiveScanJobUnitTest {
         assertThat(params.containsKey("scanHeadersAllRequests"), is(equalTo(true)));
         assertThat(params.containsKey("threadPerHost"), is(equalTo(true)));
         assertThat(params.containsKey("scanNullJsonValues"), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldNotReturnZeroThreads() throws MalformedURLException {
+        // Given
+        ActiveScanJob job = new ActiveScanJob();
+        job.getParameters().setThreadPerHost(0);
+
+        // When
+        Map<String, String> params =
+                job.getConfigParameters(new ScannerParamWrapper(), job.getParamMethodName());
+
+        // Then
+        assertThat(params.size(), is(equalTo(10)));
+        assertThat(params.containsKey("threadPerHost"), is(equalTo(true)));
+        assertTrue(Integer.parseInt(params.get("threadPerHost")) > 0);
+    }
+
+    @Test
+    void shouldNotNpeOnNullThreads() throws MalformedURLException {
+        // Given / When
+        ActiveScanJob.Parameters params = new ActiveScanJob.Parameters();
+
+        // Then
+        assertThat(params.getThreadPerHost(), is(nullValue()));
     }
 
     private static class ScannerParamWrapper {

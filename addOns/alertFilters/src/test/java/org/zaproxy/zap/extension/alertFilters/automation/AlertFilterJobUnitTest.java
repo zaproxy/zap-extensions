@@ -37,6 +37,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
@@ -311,8 +312,10 @@ class AlertFilterJobUnitTest {
         // Given
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
-        ExtensionAlertFilters extAF = mock(ExtensionAlertFilters.class, withSettings().lenient());
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionAlertFilters extAF =
+                mock(ExtensionAlertFilters.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionAlertFilters.class)).willReturn(extAF);
 
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
@@ -344,8 +347,10 @@ class AlertFilterJobUnitTest {
         // Given
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
-        ExtensionAlertFilters extAF = mock(ExtensionAlertFilters.class, withSettings().lenient());
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
+        ExtensionAlertFilters extAF =
+                mock(ExtensionAlertFilters.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionLoader.getExtension(ExtensionAlertFilters.class)).willReturn(extAF);
 
         ContextAlertFilterManager cafm = new ContextAlertFilterManager(0);

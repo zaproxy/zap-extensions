@@ -24,16 +24,26 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.parosproxy.paros.common.AbstractParam;
+import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
 
-public class FormHandlerParam extends AbstractParam {
+public class FormHandlerParam extends VersionedAbstractParam {
 
     private static final Logger LOGGER = LogManager.getLogger(FormHandlerParam.class);
+
+    /**
+     * The version of the configurations. Used to keep track of configurations changes between
+     * releases, if updates are needed.
+     *
+     * <p>It only needs to be updated for configurations changes (not releases of the add-on).
+     */
+    private static final int PARAM_CURRENT_VERSION = 1;
 
     private static final String FORM_HANDLER_BASE_KEY = "formhandler";
 
@@ -42,13 +52,9 @@ public class FormHandlerParam extends AbstractParam {
     private static final String TOKEN_NAME_KEY = "fieldId";
     private static final String TOKEN_VALUE_KEY = "value";
     private static final String TOKEN_ENABLED_KEY = "enabled";
+    private static final String TOKEN_REGEX_KEY = "regex";
     private static final String CONFIRM_REMOVE_TOKEN_KEY =
             FORM_HANDLER_BASE_KEY + ".confirmRemoveField";
-
-    private List<FormHandlerParamField> fields = null;
-    private List<String> enabledFieldsNames = null;
-
-    private boolean confirmRemoveField = true;
 
     private static final Map<String, String> DEFAULT_KEY_VALUE_PAIRS = new HashMap<>();
 
@@ -61,20 +67,29 @@ public class FormHandlerParam extends AbstractParam {
         DEFAULT_KEY_VALUE_PAIRS.put("url", "https://www.example.com");
     }
 
+    private List<FormHandlerParamField> fields;
+    private List<String> enabledFieldsNames;
+
+    private boolean confirmRemoveField = true;
+
     @Override
-    protected void parse() {
+    protected void parseImpl() {
         try {
-            List<HierarchicalConfiguration> fields =
+            List<HierarchicalConfiguration> configFields =
                     ((HierarchicalConfiguration) getConfig()).configurationsAt(ALL_TOKENS_KEY);
-            this.fields = new ArrayList<>(fields.size());
-            enabledFieldsNames = new ArrayList<>(fields.size());
-            List<String> tempFieldsNames = new ArrayList<>(fields.size());
-            for (HierarchicalConfiguration sub : fields) {
+            this.fields = new ArrayList<>(configFields.size());
+            enabledFieldsNames = new ArrayList<>(configFields.size());
+            List<String> tempFieldsNames = new ArrayList<>(configFields.size());
+            for (HierarchicalConfiguration sub : configFields) {
                 String value = sub.getString(TOKEN_VALUE_KEY, "");
                 String name = sub.getString(TOKEN_NAME_KEY, "");
+                boolean regex = sub.getBoolean(TOKEN_REGEX_KEY, false);
                 if (!"".equals(name) && !tempFieldsNames.contains(name)) {
                     boolean enabled = sub.getBoolean(TOKEN_ENABLED_KEY, true);
-                    this.fields.add(new FormHandlerParamField(name, value, enabled));
+                    if (regex && !validateRegex(name)) {
+                        continue;
+                    }
+                    this.fields.add(new FormHandlerParamField(name, value, enabled, regex));
                     tempFieldsNames.add(name);
                     if (enabled) {
                         enabledFieldsNames.add(name);
@@ -101,6 +116,17 @@ public class FormHandlerParam extends AbstractParam {
         this.confirmRemoveField = getBoolean(CONFIRM_REMOVE_TOKEN_KEY, true);
     }
 
+    private static boolean validateRegex(String regex) {
+        try {
+            Pattern.compile(regex);
+        } catch (PatternSyntaxException pse) {
+            LOGGER.warn("Invalid Form Handler regex: {}", regex);
+            LOGGER.debug(pse, pse);
+            return false;
+        }
+        return true;
+    }
+
     @ZapApiIgnore
     public List<FormHandlerParamField> getFields() {
         return fields;
@@ -117,14 +143,17 @@ public class FormHandlerParam extends AbstractParam {
             String elementBaseKey = ALL_TOKENS_KEY + "(" + i + ").";
             FormHandlerParamField field = fields.get(i);
 
-            getConfig().setProperty(elementBaseKey + TOKEN_NAME_KEY, field.getName().toLowerCase());
+            getConfig().setProperty(elementBaseKey + TOKEN_NAME_KEY, field.getName());
             getConfig().setProperty(elementBaseKey + TOKEN_VALUE_KEY, field.getValue());
             getConfig()
                     .setProperty(
                             elementBaseKey + TOKEN_ENABLED_KEY, Boolean.valueOf(field.isEnabled()));
+            getConfig()
+                    .setProperty(
+                            elementBaseKey + TOKEN_REGEX_KEY, Boolean.valueOf(field.isRegex()));
 
             if (field.isEnabled()) {
-                enabledFields.add(field.getName().toLowerCase());
+                enabledFields.add(field.getName());
             }
         }
 
@@ -152,9 +181,10 @@ public class FormHandlerParam extends AbstractParam {
             }
         }
 
-        this.fields.add(new FormHandlerParamField(name, value));
+        FormHandlerParamField field = new FormHandlerParamField(name, value);
+        this.fields.add(field);
 
-        this.enabledFieldsNames.add(name);
+        this.enabledFieldsNames.add(field.getName());
     }
 
     /**
@@ -182,21 +212,6 @@ public class FormHandlerParam extends AbstractParam {
         }
     }
 
-    /**
-     * Gets the value for the field {@code name} by searching through all existing fields
-     *
-     * @param name the name of the field being queried.
-     * @return the value of the field
-     */
-    public String getField(String name) {
-        for (FormHandlerParamField field : fields) {
-            if (field.getName().equalsIgnoreCase(name)) {
-                return field.getValue();
-            }
-        }
-        return null;
-    }
-
     public List<String> getEnabledFieldsNames() {
         return enabledFieldsNames;
     }
@@ -206,13 +221,32 @@ public class FormHandlerParam extends AbstractParam {
      * the current list then it will return its value
      *
      * @param name the name of the field that is being checked
-     * @return string of the enabled field's value
+     * @return string of the enabled field's value, or null if no match
      */
     public String getEnabledFieldValue(String name) {
+        String value = checkSimpleMatches(name);
+        return value == null ? checkRegexMatches(name) : value;
+    }
+
+    private String checkSimpleMatches(String name) {
         for (FormHandlerParamField field : fields) {
-            if (field.getName().equalsIgnoreCase(name) && field.isEnabled()) {
-                String value = field.getValue();
-                return value;
+            if (!field.isEnabled() || field.isRegex()) {
+                continue;
+            }
+            if (field.getName().equalsIgnoreCase(name)) {
+                return field.getValue();
+            }
+        }
+        return null;
+    }
+
+    private String checkRegexMatches(String name) {
+        for (FormHandlerParamField field : fields) {
+            if (!field.isEnabled() || !field.isRegex()) {
+                continue;
+            }
+            if (name.matches(field.getName())) {
+                return field.getValue();
             }
         }
         return null;
@@ -227,5 +261,20 @@ public class FormHandlerParam extends AbstractParam {
     public void setConfirmRemoveField(boolean confirmRemove) {
         this.confirmRemoveField = confirmRemove;
         getConfig().setProperty(CONFIRM_REMOVE_TOKEN_KEY, Boolean.valueOf(confirmRemoveField));
+    }
+
+    @Override
+    protected String getConfigVersionKey() {
+        return FORM_HANDLER_BASE_KEY + VERSION_ATTRIBUTE;
+    }
+
+    @Override
+    protected int getCurrentVersion() {
+        return PARAM_CURRENT_VERSION;
+    }
+
+    @Override
+    protected void updateConfigsImpl(int fileVersion) {
+        // Nothing to do yet
     }
 }

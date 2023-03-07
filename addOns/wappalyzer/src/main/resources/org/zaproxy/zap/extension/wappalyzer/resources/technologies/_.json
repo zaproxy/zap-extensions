@@ -118,6 +118,23 @@
     "saas": true,
     "website": "https://www.51.la"
   },
+  "5centsCDN": {
+    "cats": [
+      31
+    ],
+    "description": "5centsCDN is a content delivery networks service provider.",
+    "dom": "link[href*='.5centscdn.com/']",
+    "headers": {
+      "x-cdn": "^5centsCDN$"
+    },
+    "icon": "5centsCDN.svg",
+    "pricing": [
+      "recurring",
+      "low"
+    ],
+    "scriptSrc": "\\.5centscdn\\.com/",
+    "website": "https://www.5centscdn.net"
+  },
   "6sense": {
     "cats": [
       32,

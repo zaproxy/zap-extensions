@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Dependency updates.
+
+## [32] - 2023-02-09
+### Added
+- Support for relative file paths and ones including vars in the Automation Framework job.
+
+### Changed
 - Maintenance changes.
 
 ## [31] - 2023-01-03
@@ -249,6 +256,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[32]: https://github.com/zaproxy/zap-extensions/releases/openapi-v32
 [31]: https://github.com/zaproxy/zap-extensions/releases/openapi-v31
 [30]: https://github.com/zaproxy/zap-extensions/releases/openapi-v30
 [29]: https://github.com/zaproxy/zap-extensions/releases/openapi-v29

@@ -644,6 +644,20 @@
     "scriptSrc": "api\\.oneall\\.com/socialize",
     "website": "https://www.oneall.com"
   },
+  "OneCause": {
+    "cats": [
+      111
+    ],
+    "description": "OneCause is a fundraising platform designed for nonprofits to manage all types of fundraising campaigns.",
+    "dom": "a[href*='.onecause.com/'][target='_blank']",
+    "icon": "OneCause.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.onecause\\.com/",
+    "website": "https://www.onecause.com"
+  },
   "OnePage Express": {
     "cats": [
       80
@@ -723,7 +737,7 @@
     "dns": {
       "TXT": "onetrust-domain-verification="
     },
-    "icon": "OneTrust.png",
+    "icon": "OneTrust.svg",
     "scriptSrc": [
       "cdn\\.cookielaw\\.org",
       "optanon\\.blob\\.core\\.windows\\.net",
@@ -915,6 +929,19 @@
     "icon": "OpenBSD httpd.svg",
     "oss": true,
     "website": "https://man.openbsd.org/httpd.8"
+  },
+  "OpenCV": {
+    "cats": [
+      59
+    ],
+    "description": "OpenCV (Open Source Computer Vision Library) is an open source computer vision and machine learning software library.",
+    "icon": "OpenCV.svg",
+    "implies": "WebAssembly",
+    "js": {
+      "opencvIsReady": ""
+    },
+    "oss": true,
+    "website": "https://opencv.org"
   },
   "OpenCart": {
     "cats": [
@@ -1139,6 +1166,18 @@
       "https?://[^/]*\\.servedbyopenx\\.com"
     ],
     "website": "http://openx.com"
+  },
+  "OperateBeyond": {
+    "cats": [
+      53
+    ],
+    "description": "OperateBeyond is a software development company that offers website design, automated inventory management, CRM, dealer websites, and DMS.",
+    "icon": "OperateBeyond.png",
+    "pricing": [
+      "poa"
+    ],
+    "scriptSrc": "//dealer-cdn\\.com/",
+    "website": "https://operatebeyond.com/dealer-websites-marketing"
   },
   "OpinionLab": {
     "cats": [
@@ -1376,10 +1415,12 @@
     "cats": [
       19
     ],
+    "description": "Oracle Dynamic Monitoring Service is a feature of Oracle WebLogic Server that provides real-time monitoring and diagnostic capabilities for Java applications running on the WebLogic Server.",
     "headers": {
       "x-oracle-dms-ecid": ""
     },
     "icon": "Oracle.svg",
+    "implies": "Oracle WebLogic Server",
     "website": "http://oracle.com"
   },
   "Oracle HTTP Server": {
@@ -1443,6 +1484,19 @@
     },
     "icon": "Oracle.svg",
     "website": "http://oracle.com"
+  },
+  "Oracle WebLogic Server": {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:bea:weblogic_server:*:*:*:*:*:*:*:*",
+    "description": "Oracle WebLogic Server is a Java-based application server that provides a platform for developing, deploying, and running enterprise-level Java applications.",
+    "icon": "Oracle.svg",
+    "implies": "Java",
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.oracle.com/java/weblogic/"
   },
   "Orankl": {
     "cats": [

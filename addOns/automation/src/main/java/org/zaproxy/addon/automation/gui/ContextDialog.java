@@ -27,6 +27,7 @@ import org.apache.commons.httpclient.URI;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.automation.TechnologyUtils;
+import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -75,8 +76,10 @@ public class ContextDialog extends StandardFieldsDialog {
 
         this.setCustomTabPanel(3, getTechnologyPanel());
 
-        getTechnologyPanel()
-                .setTechSet(TechnologyUtils.getTechSet(context.getTechnology().getExclude()));
+        if (context.getTechnology() != null) {
+            getTechnologyPanel()
+                    .setTechSet(TechnologyUtils.getTechSet(context.getTechnology().getExclude()));
+        }
     }
 
     private String listToString(List<String> list) {
@@ -127,7 +130,7 @@ public class ContextDialog extends StandardFieldsDialog {
             return Constant.messages.getString("automation.dialog.context.error.nourls");
         }
         for (String str : urls) {
-            if (!str.contains("${")) {
+            if (!JobUtils.containsVars(str)) {
                 // Can only validate strings that dont contain env vars
                 try {
                     new URI(str, true);
@@ -138,7 +141,7 @@ public class ContextDialog extends StandardFieldsDialog {
             }
         }
         for (String str : stringParamToList(INCLUDE_PARAM)) {
-            if (!str.contains("${")) {
+            if (!JobUtils.containsVars(str)) {
                 // Can only validate strings that dont contain env vars
                 try {
                     Pattern.compile(str);
@@ -149,7 +152,7 @@ public class ContextDialog extends StandardFieldsDialog {
             }
         }
         for (String str : stringParamToList(EXCLUDE_PARAM)) {
-            if (!str.contains("${")) {
+            if (!JobUtils.containsVars(str)) {
                 // Can only validate strings that dont contain env vars
                 try {
                     Pattern.compile(str);

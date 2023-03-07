@@ -65,7 +65,7 @@ public class TextWebSocketMessageLocation implements WebSocketMessageLocation {
 
     @Override
     public String getDescription() {
-        StringBuffer description = new StringBuffer(25);
+        StringBuilder description = new StringBuilder(25);
         description.append(Constant.messages.getString("websocket.messagelocation.text.location"));
 
         description.append(" [").append(start);

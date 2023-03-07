@@ -648,6 +648,10 @@ public class ActiveScanJob extends AutomationJob {
         }
 
         public Integer getThreadPerHost() {
+            if (JobUtils.unBox(threadPerHost) <= 0) {
+                // Dont return zero or less - this will cause problems
+                return null;
+            }
             return threadPerHost;
         }
 

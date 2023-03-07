@@ -4,9 +4,23 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Fixed
+- Close the AJAX Spider dialogue when uninstalling the add-on.
+
+## [23.12.0] - 2023-02-23
+### Added
+- Automation Framework - inScopeOnly option
+
+### Changed
+- Add default Allowed Resources if none present in existing home directory when updating the add-on (Issue 7719).
+
+## [23.11.0] - 2023-02-06
 ### Changed
 - Maintenance changes.
 - Default number of threads to 2 * processor count.
+
+### Fixed
+- Ensure default Allowed Resources are present with a new home directory (Issue 7719).
 
 ## [23.10.0] - 2022-10-27
 ### Changed
@@ -241,6 +255,8 @@ By default it allows files with extension `.js` and `.css`.
 
 
 
+[23.12.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.12.0
+[23.11.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.11.0
 [23.10.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.10.0
 [23.9.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.9.0
 [23.8.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.8.0

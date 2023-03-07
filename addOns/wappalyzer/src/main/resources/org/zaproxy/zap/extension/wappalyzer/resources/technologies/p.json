@@ -437,6 +437,21 @@
     "scripts": "var\\slink\\s=\\s'www\\.parkingcrew\\.net'",
     "website": "https://www.parkingcrew.com"
   },
+  "Parmin Cloud": {
+    "cats": [
+      63
+    ],
+    "description": "Parmin Cloud operates in the field of cloud services.",
+    "headers": {
+      "x-powered-by": "^ParminCloud$"
+    },
+    "icon": "Parmin Cloud.svg",
+    "pricing": [
+      "poa",
+      "payg"
+    ],
+    "website": "https://parmin.cloud"
+  },
   "Pars Elecom Portal": {
     "cats": [
       1
@@ -520,9 +535,10 @@
       92
     ],
     "description": "Partytown is a lazy-loaded library to help relocate resource intensive scripts into a web worker, and off of the main thread.",
+    "dom": "script[type*='text/partytown']",
     "icon": "Partytown.svg",
     "js": {
-      "partytown.lib": ""
+      "partytown": ""
     },
     "oss": true,
     "website": "https://partytown.builder.io/"
@@ -952,9 +968,26 @@
     "scriptSrc": "/assets/themes/perfex/js/global\\.min\\.js(?:\\?v=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.perfexcrm.com"
   },
+  "Perfmatters": {
+    "cats": [
+      87,
+      92
+    ],
+    "description": "Perfmatters is a performance optimisation plugin for WordPress websites.",
+    "icon": "Perfmatters.svg",
+    "requires": "WordPress",
+    "saas": true,
+    "scriptSrc": "/wp-content/(?:plugins|cache|uploads)/perfmatters/",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://perfmatters.io"
+  },
   "Performance Lab": {
     "cats": [
-      87
+      87,
+      92
     ],
     "description": "Performance plugin from the WordPress Performance Group, which is a collection of standalone performance modules.",
     "icon": "Performance Lab.svg",
@@ -1164,6 +1197,30 @@
     },
     "website": "https://github.com/Sazito/phoenix/"
   },
+  "Phoenix Framework": {
+    "cats": [
+      18
+    ],
+    "description": "Phoenix Framework is an open-source web application framework built using the Elixir programming language.",
+    "icon": "Phoenix Framework.svg",
+    "implies": "Elixir",
+    "oss": true,
+    "website": "https://www.phoenixframework.org"
+  },
+  "Phoenix LiveView": {
+    "cats": [
+      18
+    ],
+    "description": "Phoenix LiveView is a library that brings live, interactive, real-time user experiences to your Phoenix applications.",
+    "dom": "div[data-phx-session]",
+    "icon": "Phoenix Framework.svg",
+    "implies": "Phoenix Framework",
+    "js": {
+      "liveSocket.socket": ""
+    },
+    "oss": true,
+    "website": "https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.html"
+  },
   "Phoenix Site": {
     "cats": [
       1
@@ -1349,6 +1406,16 @@
       "widget\\.pico\\.tools"
     ],
     "website": "https://trypico.com"
+  },
+  "Pico CSS": {
+    "cats": [
+      66
+    ],
+    "description": "Pico CSS is a minimal CSS framework for semantic HTML, without using classes.",
+    "dom": "link[href*='/pico.min.css']",
+    "icon": "Pico CSS.svg",
+    "oss": true,
+    "website": "https://picocss.com"
   },
   "Picreel": {
     "cats": [
@@ -1848,6 +1915,24 @@
     },
     "website": "http://www.po.st/"
   },
+  "Pocket": {
+    "cats": [
+      5
+    ],
+    "description": "Pocket is a social bookmarking service that can be integrated into a website with the use of a web widget.",
+    "dom": "iframe[src*='widgets.getpocket.com/']",
+    "icon": "pocket.svg",
+    "meta": {
+      "pocket-site-verification'": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "scriptSrc": "widgets\\.getpocket\\.com/",
+    "website": "https://getpocket.com"
+  },
   "Podia": {
     "cats": [
       21,
@@ -2082,6 +2167,24 @@
     ],
     "website": "https://www.postaffiliatepro.com"
   },
+  "PostHog": {
+    "cats": [
+      10
+    ],
+    "description": "PostHog is the open-source, all-in-one product analytics platform.",
+    "icon": "PostHog.svg",
+    "js": {
+      "posthog": ""
+    },
+    "oss": true,
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "app\\.posthog\\.com/",
+    "website": "https://posthog.com"
+  },
   "PostNL": {
     "cats": [
       99
@@ -2162,6 +2265,23 @@
     "saas": true,
     "scriptSrc": "sdk\\.postscript\\.io/",
     "website": "https://www.postscript.io"
+  },
+  "Potions": {
+    "cats": [
+      76
+    ],
+    "description": "Potions is a personalisation technology for customising the ecommerce experience for site visitors without the use of cookies.",
+    "icon": "Potions.svg",
+    "js": {
+      "potions.version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.get-potions\\.com/",
+    "website": "https://get-potions.com"
   },
   "PowerReviews": {
     "cats": [
@@ -3043,6 +3163,20 @@
     "scriptSrc": "api\\.pushnami\\.com",
     "website": "https://pushnami.com"
   },
+  "Pushpay": {
+    "cats": [
+      111
+    ],
+    "description": "Pushpay is a digital giving and engagement platform designed to help churches manage processes related to donations and fundraising.",
+    "dom": "a[href*='//ppay.co/'][target='_blank']",
+    "icon": "Pushpay.svg",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "//pushpay\\.com/",
+    "website": "https://pushpay.com"
+  },
   "PyScript": {
     "cats": [
       19
@@ -3229,6 +3363,9 @@
     ],
     "js": {
       "pma_absolute_uri": ""
+    },
+    "headers": { 
+      "Set-Cookie": "phpMyAdmin_https" 
     },
     "website": "https://www.phpmyadmin.net"
   },

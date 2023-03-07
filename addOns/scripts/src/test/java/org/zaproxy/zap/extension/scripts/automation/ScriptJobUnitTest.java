@@ -51,6 +51,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -58,6 +59,7 @@ import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationEnvironment;
+import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.zap.extension.script.ExtensionScript;
@@ -83,7 +85,8 @@ class ScriptJobUnitTest extends TestUtils {
         mockedCmdLine = mockStatic(CommandLine.class);
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
-        extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
+        extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
     }
 
@@ -667,8 +670,9 @@ class ScriptJobUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldAddScriptWithGivenName() throws IOException {
+    void shouldAddScriptWithGivenAbsoluteName() throws IOException {
         // Given
+        AutomationPlan plan = new AutomationPlan();
         given(extScript.getEngineWrapper(TEST_JS_ENGINE)).willReturn(engineWrapper);
         Collection<ScriptType> types =
                 new ArrayList<>(Arrays.asList(new ScriptType("standalone", null, null, false)));
@@ -687,6 +691,45 @@ class ScriptJobUnitTest extends TestUtils {
                         "  file: " + f.getAbsolutePath());
         setJobData(job, yamlStr);
         ArgumentCaptor<ScriptWrapper> argument = ArgumentCaptor.forClass(ScriptWrapper.class);
+        job.setPlan(plan);
+        env.setPlan(plan);
+
+        // When
+        job.verifyParameters(progress);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        verify(extScript).addScript(argument.capture());
+        assertEquals("NotExisting", argument.getValue().getName());
+    }
+
+    @Test
+    void shouldAddScriptWithGivenRelativeName() throws IOException {
+        // Given
+        AutomationPlan plan = new AutomationPlan();
+        plan.setFile(File.createTempFile("planRelative", ".yaml"));
+        given(extScript.getEngineWrapper(TEST_JS_ENGINE)).willReturn(engineWrapper);
+        Collection<ScriptType> types =
+                new ArrayList<>(Arrays.asList(new ScriptType("standalone", null, null, false)));
+        given(extScript.getScriptTypes()).willReturn(types);
+
+        ScriptJob job = new ScriptJob();
+        File f = File.createTempFile("scriptExtOk", ".js");
+        String yamlStr =
+                String.join(
+                        "\n",
+                        "parameters:",
+                        "  action: add",
+                        "  type: \"standalone\"",
+                        "  engine: " + TEST_JS_ENGINE,
+                        "  name: NotExisting",
+                        "  file: " + f.getName());
+        setJobData(job, yamlStr);
+        ArgumentCaptor<ScriptWrapper> argument = ArgumentCaptor.forClass(ScriptWrapper.class);
+        job.setPlan(plan);
+        env.setPlan(plan);
 
         // When
         job.verifyParameters(progress);
@@ -702,6 +745,7 @@ class ScriptJobUnitTest extends TestUtils {
     @Test
     void shouldAddScriptWithFileName() throws IOException {
         // Given
+        AutomationPlan plan = new AutomationPlan();
         given(extScript.getEngineWrapper(TEST_JS_ENGINE)).willReturn(engineWrapper);
         Collection<ScriptType> types =
                 new ArrayList<>(Arrays.asList(new ScriptType("standalone", null, null, false)));
@@ -719,6 +763,8 @@ class ScriptJobUnitTest extends TestUtils {
                         "  file: " + f.getAbsolutePath());
         setJobData(job, yamlStr);
         ArgumentCaptor<ScriptWrapper> argument = ArgumentCaptor.forClass(ScriptWrapper.class);
+        job.setPlan(plan);
+        env.setPlan(plan);
 
         // When
         job.verifyParameters(progress);

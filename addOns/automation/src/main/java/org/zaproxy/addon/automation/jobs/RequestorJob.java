@@ -107,7 +107,7 @@ public class RequestorJob extends AutomationJob {
                                     req.getUrl(),
                                     request));
                     continue;
-                } else if (!req.getUrl().contains("${")) {
+                } else if (!JobUtils.containsVars(req.getUrl())) {
                     try {
                         new URI(req.getUrl(), true);
                     } catch (URIException e) {

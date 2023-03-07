@@ -30,6 +30,7 @@ import static org.mockito.Mockito.withSettings;
 
 import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import org.junit.jupiter.api.AfterAll;
@@ -38,6 +39,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -85,7 +87,8 @@ class PassiveScanConfigJobUnitTest {
         pscanParam = mock(PassiveScanParam.class);
         given(optionsParam.getParamSet(PassiveScanParam.class)).willReturn(pscanParam);
 
-        extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
+        extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         extPscan = new ExtensionPassiveScan();
         given(extensionLoader.getExtension(ExtensionPassiveScan.class)).willReturn(extPscan);
 
@@ -336,6 +339,90 @@ class PassiveScanConfigJobUnitTest {
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.getInfos().size(), is(equalTo(1)));
         assertThat(progress.getInfos().get(0), is(equalTo("!automation.info.pscan.rule.noid!")));
+    }
+
+    @Test
+    void shouldDisableAllRules() {
+        // Given
+        String yamlStr = "parameters:\n" + "  disableAllRules: true";
+
+        // Need to mock the extension for this test
+        extPscan = mock(ExtensionPassiveScan.class);
+        given(extensionLoader.getExtension(ExtensionPassiveScan.class)).willReturn(extPscan);
+        TestPluginScanner rule1 = new TestPluginScanner(1);
+        TestPluginScanner rule2 = new TestPluginScanner(2);
+        TestPluginScanner rule3 = new TestPluginScanner(3);
+        List<PluginPassiveScanner> allRules = Arrays.asList(rule1, rule2, rule3);
+        given(extPscan.getPluginPassiveScanner(1)).willReturn(rule1);
+        given(extPscan.getPluginPassiveScanner(2)).willReturn(rule2);
+        given(extPscan.getPluginPassiveScanner(3)).willReturn(rule3);
+        given(extPscan.getPluginPassiveScanners()).willReturn(allRules);
+
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = (LinkedHashMap<?, ?>) yaml.load(yamlStr);
+
+        PassiveScanConfigJob job = new PassiveScanConfigJob();
+
+        // When
+        job.setJobData(data);
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
+        job.runJob(null, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(rule1.isEnabled(), is(equalTo(false)));
+        assertThat(rule2.isEnabled(), is(equalTo(false)));
+        assertThat(rule3.isEnabled(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldDisableAllRulesExceptSpecifiedOnes() {
+        // Given
+        String yamlStr =
+                "parameters:\n"
+                        + "  disableAllRules: true\n"
+                        + "rules:\n"
+                        + "- id: 1\n"
+                        + "  threshold: Low\n"
+                        + "- id: 3\n"
+                        + "  threshold: High";
+
+        // Need to mock the extension for this test
+        extPscan = mock(ExtensionPassiveScan.class);
+        given(extensionLoader.getExtension(ExtensionPassiveScan.class)).willReturn(extPscan);
+        TestPluginScanner rule1 = new TestPluginScanner(1);
+        TestPluginScanner rule2 = new TestPluginScanner(2);
+        TestPluginScanner rule3 = new TestPluginScanner(3);
+        List<PluginPassiveScanner> allRules = Arrays.asList(rule1, rule2, rule3);
+        given(extPscan.getPluginPassiveScanner(1)).willReturn(rule1);
+        given(extPscan.getPluginPassiveScanner(2)).willReturn(rule2);
+        given(extPscan.getPluginPassiveScanner(3)).willReturn(rule3);
+        given(extPscan.getPluginPassiveScanners()).willReturn(allRules);
+
+        AutomationProgress progress = new AutomationProgress();
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = (LinkedHashMap<?, ?>) yaml.load(yamlStr);
+
+        PassiveScanConfigJob job = new PassiveScanConfigJob();
+
+        // When
+        job.setJobData(data);
+        job.verifyParameters(progress);
+        job.applyParameters(progress);
+        job.runJob(null, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(rule1.isEnabled(), is(equalTo(true)));
+        assertThat(rule2.isEnabled(), is(equalTo(false)));
+        assertThat(rule3.isEnabled(), is(equalTo(true)));
+        assertThat(rule1.getAlertThreshold(), is(equalTo(AlertThreshold.LOW)));
+        assertThat(rule2.getAlertThreshold(), is(equalTo(AlertThreshold.MEDIUM)));
+        assertThat(rule3.getAlertThreshold(), is(equalTo(AlertThreshold.HIGH)));
     }
 
     @Test

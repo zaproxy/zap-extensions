@@ -46,7 +46,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
      * @see #CONFIG_VERSION_KEY
      * @see #updateConfigsImpl(int)
      */
-    private static final int CURRENT_CONFIG_VERSION = 5;
+    private static final int CURRENT_CONFIG_VERSION = 6;
 
     private static final String AJAX_SPIDER_BASE_KEY = "ajaxSpider";
 
@@ -292,8 +292,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
     protected void updateConfigsImpl(int fileVersion) {
         switch (fileVersion) {
             case NO_CONFIG_VERSION:
-                // No updates/changes needed, the configurations were not previously persisted
-                // and the current version is already written after this method.
+                setAllowedResources(DEFAULT_ALLOWED_RESOURCES);
                 break;
             case 1:
                 String crawlInDepthKey = AJAX_SPIDER_BASE_KEY + ".crawlInDepth";
@@ -311,6 +310,10 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
                 if (getInt(NUMBER_OF_BROWSERS_KEY, 1) == 1) {
                     // the old default
                     this.setNumberOfBrowsers(Constants.getDefaultThreadCount());
+                }
+            case 5:
+                if (!getConfig().getKeys(ALL_ALLOWED_RESOURCES_KEY).hasNext()) {
+                    setAllowedResources(DEFAULT_ALLOWED_RESOURCES);
                 }
         }
     }

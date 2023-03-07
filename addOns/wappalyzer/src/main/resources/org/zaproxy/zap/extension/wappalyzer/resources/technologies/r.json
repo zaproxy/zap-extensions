@@ -167,10 +167,25 @@
     "scriptSrc": "^rainloop/v/([0-9.]+)/\\;version:\\1",
     "website": "https://www.rainloop.net/"
   },
+  "RaiseDonors": {
+    "cats": [
+      111
+    ],
+    "description": "RaiseDonors is for anyone raising money and cultivating donor relationships online.",
+    "dom": "a[href*='//raisedonors.com/'][target='_blank']",
+    "icon": "RaiseDonors.png",
+    "meta": {
+      "author": "^RaiseDonors$"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://explore.raisedonors.com"
+  },
   "Raisely": {
     "cats": [
-      51,
-      41
+      111
     ],
     "description": "Raisely is a cloud-based fundraising platform that helps non-profits and charities drive fundraising campaigns and collect donations.",
     "icon": "Raisely.svg",
@@ -240,7 +255,6 @@
     "description": "RankMath SEO is a search engine optimisation plugin for WordPress.",
     "dom": "link[href*='/wp-content/plugins/seo-by-rank-math/'], script.rank-math-schema-pro, script.rank-math-schema",
     "icon": "RankMath SEO.svg",
-    "implies": "Google Analytics\\;version:4",
     "pricing": [
       "freemium",
       "low",
@@ -345,6 +359,26 @@
     "saas": true,
     "scriptSrc": "code\\.rateparity\\.com/",
     "website": "https://www.rateparity.com"
+  },
+  "Rawabit": {
+    "cats": [
+      51
+    ],
+    "cookies": {
+      "rawabit_session": ""
+    },
+    "description": "Rawabit is a website builder that lets small businesses design landing pages, modify sections, and embed content links using a drag and drop editor.",
+    "icon": "Rawabit.svg",
+    "meta": {
+      "powered-by": "^Rawabit$"
+    },
+    "pricing": [
+      "freemium",
+      "recurring",
+      "low"
+    ],
+    "saas": true,
+    "website": "https://www.rawabit.me"
   },
   "Raychat": {
     "cats": [
@@ -531,8 +565,8 @@
     "cats": [
       12
     ],
-    "description": "Official React bindings for Redux",
-    "icon": "Redux.png",
+    "description": "React Redux is the official React binding for Redux.",
+    "icon": "Redux.svg",
     "implies": [
       "React",
       "Redux"
@@ -976,16 +1010,37 @@
     "scriptSrc": "\\.redonner\\.fr/",
     "website": "https://www.redonner.fr"
   },
+  "RedShop": {
+    "cats": [
+      6
+    ],
+    "description": "RedShop provides a platform for SMEs to manage their ecommerce business.",
+    "icon": "RedShop.png",
+    "implies": [
+      "Amazon S3",
+      "TypeScript",
+      "Next.js",
+      "React"
+    ],
+    "dom": "link[href*='//redshop.s3.amazonaws.com/']",
+    "saas": true,
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "website": "https://www.redshop.io"
+  },
   "Redux": {
     "cats": [
       12
     ],
     "description": "Redux is a predictable state container for JavaScript applications.",
-    "icon": "Redux.png",
+    "icon": "Redux.svg",
     "scriptSrc": [
       "/redux(@|/)([\\d.]+)(?:/[a-z]+)?/redux(?:.min)?\\.js\\;version:\\2"
     ],
-    "website": "https://redux.js.org/"
+    "website": "https://redux.js.org"
   },
   "RedwoodJS": {
     "cats": [
@@ -1184,6 +1239,57 @@
     },
     "oss": true,
     "website": "https://remix.run/"
+  },
+  "Render Better": {
+    "cats": [
+      92,
+      100
+    ],
+    "description": "Render Better is automated site speed and core web vital optimisation platform for Shopify.",
+    "dns": {
+      "CNAME": "\\.renderbetter\\.app"
+    },
+    "icon": "renderbetter.svg",
+    "js": {
+      "renderbetter": ""
+    },
+    "requires": "Shopify",
+    "website": "https://www.renderbetter.com"
+  },
+  "Replicache": {
+    "cats": [
+      12,
+      23
+    ],
+    "description": "Replicache is a JavaScript framework for building high-performance, offline-capable, collaborative web apps.",
+    "headers": {
+      "x-replicache-requestid": ""
+    },
+    "icon": "Replicache.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://replicache.dev/"
+  },
+  "Replit": {
+    "cats": [
+      47
+    ],
+    "description": "Replit is a platform for creating and sharing software.",
+    "headers": {
+      "expect-ct": "\\.repl\\.it/",
+      "replit-cluster": ""
+    },
+    "icon": "Replit.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "website": "https://replit.com"
   },
   "Reputon": {
     "cats": [
@@ -1603,6 +1709,23 @@
     "icon": "RevolverMaps.svg",
     "scriptSrc": "\\.revolvermaps\\.com",
     "website": "https://www.revolvermaps.com"
+  },
+  "Revv": {
+    "cats": [
+      111
+    ],
+    "description": "Revv is a lead optimisation and donation platform.",
+    "icon": "Revv.png",
+    "meta": {
+      "revv-api-domain": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://revv.com"
   },
   "Revy": {
     "cats": [

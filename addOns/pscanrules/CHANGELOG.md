@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [46] - 2023-03-03
 ### Changed
 - The PII Disclosure scan rule:
     - Now includes a solution statement.
@@ -12,6 +15,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - Will now only consider PDFs at Low threshold.
 - Maintenance changes.
 - The HeartBleed scan rule alert now includes a CVE tag.
+- Timestamp Disclosure scan rule now excludes values in "RateLimit-Reset", "X-RateLimit-Reset", and "X-Rate-Limit-Reset" headers (Issue 7747).
+
+### Fixed
+- The CSP Missing scan rule now alerts when the Content-Security-Policy header is missing, and when the obsolete X-Content-Security-Policy or X-WebKit-CSP are found (Issue 7653).
 
 ## [45] - 2023-01-03
 ### Changed
@@ -370,6 +377,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[46]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v46
 [45]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v45
 [44]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v43

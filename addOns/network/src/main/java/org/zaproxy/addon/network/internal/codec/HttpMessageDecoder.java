@@ -53,7 +53,7 @@ public abstract class HttpMessageDecoder extends ByteToMessageDecoder {
     private static final byte LF = 10;
     private static final byte CR = 13;
 
-    static final int MAX_CHUNK_SIZE = 80;
+    static final int MAX_CHUNK_SIZE = 4096;
 
     private final HeaderParser headerParser;
     private final LineParser lineParser;

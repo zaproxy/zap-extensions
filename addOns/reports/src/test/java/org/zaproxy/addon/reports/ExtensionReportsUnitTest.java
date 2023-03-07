@@ -50,6 +50,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -91,7 +92,8 @@ class ExtensionReportsUnitTest {
 
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
         Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
 
@@ -1043,7 +1045,8 @@ class ExtensionReportsUnitTest {
 
             Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
             Model.setSingletonForTesting(model);
-            ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
+            ExtensionLoader extensionLoader =
+                    mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
             Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
             Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
 

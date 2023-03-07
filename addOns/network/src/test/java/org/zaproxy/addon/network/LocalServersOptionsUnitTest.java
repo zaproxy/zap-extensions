@@ -519,7 +519,6 @@ class LocalServersOptionsUnitTest {
                         "<network>\n"
                                 + "  <localServers version=\"1\">\n"
                                 + "    <mainProxy>\n"
-                                + "      <address>192.168.0.1</address>\n"
                                 + "      <tlsProtocols>\n"
                                 + "           <protocol>not something supported</protocol>\n"
                                 + "      </tlsProtocols>\n"
@@ -541,7 +540,6 @@ class LocalServersOptionsUnitTest {
                         "<network>\n"
                                 + "  <localServers version=\"1\">\n"
                                 + "    <mainProxy>\n"
-                                + "      <address>192.168.0.1</address>\n"
                                 + "      <alpn>\n"
                                 + "        <protocols>\n"
                                 + "          <protocol>not something supported</protocol>\n"
@@ -590,7 +588,7 @@ class LocalServersOptionsUnitTest {
     }
 
     @Test
-    void shouldUseDefaultsIfMainProxyHasNoAddress() {
+    void shouldUseDefaultsIfMainProxyHasNoData() {
         // Given
         ZapXmlConfiguration config =
                 configWith(
@@ -614,6 +612,53 @@ class LocalServersOptionsUnitTest {
                 true,
                 true,
                 true,
+                DEFAULT_APPLICATION_PROTOCOLS);
+    }
+
+    @Test
+    void shouldUseProvidedDataEvenIfMainProxyHasNoAddress() {
+        // Given
+        ZapXmlConfiguration config =
+                configWith(
+                        "<network>\n"
+                                + "  <localServers version=\"1\">\n"
+                                + "    <mainProxy>\n"
+                                + "      <proxy>true</proxy>\n"
+                                + "      <api>false</api>\n"
+                                + "      <port>8765</port>\n"
+                                + "      <tlsProtocols>\n"
+                                + "        <protocol>TLSv1.3</protocol>\n"
+                                + "        <protocol>TLSv1.2</protocol>\n"
+                                + "        <protocol>TLSv1.1</protocol>\n"
+                                + "      </tlsProtocols>"
+                                + "      <alpn>\n"
+                                + "        <enabled>false</enabled>\n"
+                                + "        <protocols>\n"
+                                + "          <protocol>http/1.1</protocol>\n"
+                                + "          <protocol>h2</protocol>\n"
+                                + "        </protocols>\n"
+                                + "      </alpn>\n"
+                                + "      <behindNat>true</behindNat>\n"
+                                + "      <removeAcceptEncoding>false</removeAcceptEncoding>\n"
+                                + "      <decodeResponse>false</decodeResponse>\n"
+                                + "      <enabled>false</enabled>\n"
+                                + "    </mainProxy>\n"
+                                + "  </localServers>\n"
+                                + "</network>");
+        // When
+        options.load(config);
+        // Then
+        assertThat(options.getServers(), hasSize(0));
+        assertServerFields(
+                options.getMainProxy(),
+                "localhost",
+                8765,
+                ServerMode.PROXY,
+                true,
+                false,
+                false,
+                true,
+                false,
                 DEFAULT_APPLICATION_PROTOCOLS);
     }
 

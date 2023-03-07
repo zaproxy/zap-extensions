@@ -46,10 +46,7 @@ public class HeartBleedScanRule extends PluginPassiveScanner {
     private static Pattern openSSLversionPattern =
             Pattern.compile("Server:.*?(OpenSSL/([0-9.]+[a-z-0-9]+))", Pattern.CASE_INSENSITIVE);
 
-    /**
-     * vulnerable versions, courtesy of
-     * http://cvedetails.com/cve-details.php?t=1&cve_id=CVE-2014-0160
-     */
+    /** vulnerable versions, courtesy of https://nvd.nist.gov/vuln/detail/CVE-2014-0160 */
     static String[] openSSLvulnerableVersions = {
         "1.0.1-Beta1",
         "1.0.1-Beta2",

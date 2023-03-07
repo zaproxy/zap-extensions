@@ -61,6 +61,7 @@ public class AjaxSpiderJob extends AutomationJob {
     private static final String PARAM_CONTEXT = "context";
     private static final String PARAM_URL = "url";
     private static final String PARAM_USER = "user";
+    private static final String PARAM_IN_SCOPE_ONLY = "inScopeOnly";
     private static final String PARAM_ONLY_RUN_IF_MODERN = "runOnlyIfModern";
     private static final String PARAM_FAIL_IF_LESS_URLS = "failIfFoundUrlsLessThan";
     private static final String PARAM_WARN_IF_LESS_URLS = "warnIfFoundUrlsLessThan";
@@ -68,8 +69,6 @@ public class AjaxSpiderJob extends AutomationJob {
     private static final int MODERN_WEB_DETECTION_RULE_ID = 10109;
 
     private ExtensionAjax extSpider;
-
-    private boolean inScopeOnly = true;
 
     private Data data;
     private Parameters parameters = new Parameters();
@@ -118,6 +117,7 @@ public class AjaxSpiderJob extends AutomationJob {
                     PARAM_CONTEXT,
                     PARAM_URL,
                     PARAM_USER,
+                    PARAM_IN_SCOPE_ONLY,
                     PARAM_ONLY_RUN_IF_MODERN,
                     PARAM_FAIL_IF_LESS_URLS,
                     PARAM_WARN_IF_LESS_URLS
@@ -211,7 +211,7 @@ public class AjaxSpiderJob extends AutomationJob {
                 AjaxSpiderTarget.newBuilder(Model.getSingleton().getSession())
                         .setContext(context.getContext())
                         .setUser(user)
-                        .setInScopeOnly(inScopeOnly)
+                        .setInScopeOnly(JobUtils.unBox(this.getParameters().getInScopeOnly()))
                         .setOptions(getExtSpider().getAjaxSpiderParam())
                         .setStartUri(uri)
                         .setSubtreeOnly(false);
@@ -277,16 +277,6 @@ public class AjaxSpiderJob extends AutomationJob {
             default:
                 return false;
         }
-    }
-
-    /**
-     * Sets whether the ajax spider should only load URLs that are in scope - only intended to use
-     * for testing
-     *
-     * @param inScopeOnly whether the ajax spider should only load URLs that are in scope
-     */
-    protected void setInScopeOnly(boolean inScopeOnly) {
-        this.inScopeOnly = inScopeOnly;
     }
 
     @Override
@@ -410,6 +400,7 @@ public class AjaxSpiderJob extends AutomationJob {
         private Boolean clickDefaultElems;
         private Boolean clickElemsOnce;
         private Boolean randomInputs;
+        private Boolean inScopeOnly = Boolean.TRUE;
 
         private Boolean runOnlyIfModern;
 
@@ -511,6 +502,14 @@ public class AjaxSpiderJob extends AutomationJob {
 
         public void setRandomInputs(Boolean randomInputs) {
             this.randomInputs = randomInputs;
+        }
+
+        public Boolean getInScopeOnly() {
+            return inScopeOnly;
+        }
+
+        public void setInScopeOnly(Boolean inScopeOnly) {
+            this.inScopeOnly = inScopeOnly;
         }
 
         public Integer getReloadWait() {

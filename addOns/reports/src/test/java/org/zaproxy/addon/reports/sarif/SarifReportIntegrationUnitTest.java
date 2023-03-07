@@ -47,6 +47,7 @@ import java.util.TreeMap;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -96,7 +97,8 @@ class SarifReportIntegrationUnitTest {
 
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
-        ExtensionLoader extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
+        ExtensionLoader extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
         Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
 
@@ -823,6 +825,6 @@ class SarifReportIntegrationUnitTest {
 
     private class InspectionContext {
 
-        private Map<Integer, String> cweIdToGuidMap = new TreeMap<Integer, String>();
+        private Map<Integer, String> cweIdToGuidMap = new TreeMap<>();
     }
 }

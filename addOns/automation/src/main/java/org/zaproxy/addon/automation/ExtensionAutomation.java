@@ -40,11 +40,15 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.network.HttpHeader;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.gui.AutomationPanel;
 import org.zaproxy.addon.automation.gui.OptionsPanel;
@@ -57,6 +61,7 @@ import org.zaproxy.addon.automation.jobs.RequestorJob;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.ZAP.ProcessType;
 import org.zaproxy.zap.eventBus.Event;
+import org.zaproxy.zap.extension.script.ScriptVars;
 import org.zaproxy.zap.utils.Stats;
 
 public class ExtensionAutomation extends ExtensionAdaptor implements CommandLineListener {
@@ -75,6 +80,10 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
     protected static final String JOBS_RUN_STATS_POSTFIX = ".run";
     protected static final String ERROR_COUNT_STATS = "stats.auto.errors";
     protected static final String WARNING_COUNT_STATS = "stats.auto.warnings";
+
+    private static final String ZAP_AUTH_HEADER_VALUE = "ZAP_AUTH_HEADER_VALUE";
+    private static final String ZAP_AUTH_HEADER = "ZAP_AUTH_HEADER";
+    private static final String ZAP_AUTH_HEADER_SITE = "ZAP_AUTH_HEADER_SITE";
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionAutomation.class);
 
@@ -129,6 +138,47 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
             extensionHook.getHookView().addStatusPanel(getAutomationPanel());
             extensionHook.getHookView().addOptionPanel(getOptionsPanel());
         }
+
+        extensionHook.addSessionListener(
+                new SessionChangedListener() {
+
+                    @Override
+                    public void sessionChanged(Session session) {
+                        // Work around for core bug - can be removed once the core is fixed and
+                        // released
+                        String authHeaderValueVar = System.getenv(ZAP_AUTH_HEADER_VALUE);
+                        if (authHeaderValueVar != null && !authHeaderValueVar.isEmpty()) {
+                            ScriptVars.setGlobalVar(ZAP_AUTH_HEADER_VALUE, authHeaderValueVar);
+                        }
+
+                        String authHeaderVar = System.getenv(ZAP_AUTH_HEADER);
+                        if (authHeaderVar != null && !authHeaderVar.isEmpty()) {
+                            ScriptVars.setGlobalVar(ZAP_AUTH_HEADER, authHeaderVar);
+                        } else {
+                            ScriptVars.setGlobalVar(ZAP_AUTH_HEADER, HttpHeader.AUTHORIZATION);
+                        }
+
+                        String authHeaderSiteVar = System.getenv(ZAP_AUTH_HEADER_SITE);
+                        if (authHeaderSiteVar != null && !authHeaderSiteVar.isEmpty()) {
+                            ScriptVars.setGlobalVar(ZAP_AUTH_HEADER_SITE, authHeaderSiteVar);
+                        }
+                    }
+
+                    @Override
+                    public void sessionAboutToChange(Session session) {
+                        // Ignore
+                    }
+
+                    @Override
+                    public void sessionScopeChanged(Session session) {
+                        // Ignore
+                    }
+
+                    @Override
+                    public void sessionModeChanged(Mode mode) {
+                        // Ignore
+                    }
+                });
     }
 
     private OptionsPanel getOptionsPanel() {

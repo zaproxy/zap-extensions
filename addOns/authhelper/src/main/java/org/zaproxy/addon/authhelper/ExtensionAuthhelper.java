@@ -30,6 +30,7 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -41,6 +42,7 @@ import org.zaproxy.zap.authentication.JsonBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.ManualAuthenticationMethodType;
 import org.zaproxy.zap.authentication.PostBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.PostBasedAuthenticationMethodType.PostBasedAuthenticationMethod;
+import org.zaproxy.zap.extension.sessions.ExtensionSessionManagement;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -51,9 +53,34 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionAuthhelper.class);
 
+    private static final HeaderBasedSessionManagementMethodType HEADER_BASED_TYPE =
+            new HeaderBasedSessionManagementMethodType();
+
     public ExtensionAuthhelper() {
         super();
         this.setI18nPrefix("authhelper");
+    }
+
+    @Override
+    public void optionsLoaded() {
+        ExtensionSessionManagement extSm = getExtensionSessionManagement();
+        if (extSm != null) {
+            extSm.getSessionManagementMethodTypes().add(HEADER_BASED_TYPE);
+        }
+    }
+
+    @Override
+    public void unload() {
+        ExtensionSessionManagement extSm = getExtensionSessionManagement();
+        if (extSm != null) {
+            extSm.getSessionManagementMethodTypes().remove(HEADER_BASED_TYPE);
+        }
+    }
+
+    private static ExtensionSessionManagement getExtensionSessionManagement() {
+        return Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionSessionManagement.class);
     }
 
     @Override

@@ -73,6 +73,8 @@ dependencies {
     compileOnly(parent!!.childProjects.get("formhandler")!!)
     compileOnly(parent!!.childProjects.get("network")!!)
 
+    implementation("io.kaitai:kaitai-struct-runtime:0.10")
+
     testImplementation(parent!!.childProjects.get("automation")!!)
     testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(parent!!.childProjects.get("database")!!)
@@ -86,7 +88,8 @@ spotless {
         project,
         listOf(
             "src/**/UrlCanonicalizer.java",
-            "src/**/UrlResolver.java"
-        )
+            "src/**/UrlResolver.java",
+        ),
+        listOf("src/**/DsStore.java"),
     )
 }

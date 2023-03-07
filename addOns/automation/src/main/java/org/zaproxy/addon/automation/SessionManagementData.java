@@ -21,6 +21,7 @@ package org.zaproxy.addon.automation;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -42,6 +43,7 @@ import org.zaproxy.zap.session.ScriptBasedSessionManagementMethodType;
 import org.zaproxy.zap.session.ScriptBasedSessionManagementMethodType.ScriptBasedSessionManagementMethod;
 import org.zaproxy.zap.session.SessionManagementMethod;
 import org.zaproxy.zap.session.SessionManagementMethodType;
+import org.zaproxy.zap.utils.Pair;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public class SessionManagementData extends AutomationData {
@@ -49,12 +51,14 @@ public class SessionManagementData extends AutomationData {
     public static final String METHOD_COOKIE = "cookie";
     public static final String METHOD_HTTP = "http";
     public static final String METHOD_SCRIPT = "script";
+    // This should be loaded dynamically, but this requires core changes
+    public static final String METHOD_HEADERS = "headers";
 
     public static final String PARAM_SCRIPT = "script";
     public static final String PARAM_SCRIPT_ENGINE = "scriptEngine";
 
     private static List<String> validMethods =
-            Arrays.asList(METHOD_COOKIE, METHOD_HTTP, METHOD_SCRIPT);
+            Arrays.asList(METHOD_COOKIE, METHOD_HTTP, METHOD_SCRIPT, METHOD_HEADERS);
 
     private static final String SCRIPT_SESSION_MANAGEMENT_SCRIPT_FIELD = "script";
     private static final String SCRIPT_SESSION_MANAGEMENT_PARAM_VALUES_FIELD = "paramValues";
@@ -90,6 +94,25 @@ public class SessionManagementData extends AutomationData {
                     getParameters().put(METHOD_SCRIPT, wrapper.getFile().getAbsolutePath());
                     getParameters().put(PARAM_SCRIPT_ENGINE, wrapper.getEngineName());
                 }
+            } else if (contextMethod
+                    .getClass()
+                    .getCanonicalName()
+                    .equals(
+                            "org.zaproxy.addon.authhelper.HeaderBasedSessionManagementMethodType.HeaderBasedSessionManagementMethod")) {
+                // Plan to change once the core supports dynamic methods better
+                setMethod(METHOD_HEADERS);
+
+                Object headerConfigsObj = JobUtils.getPrivateField(contextMethod, "headerConfigs");
+                if (headerConfigsObj instanceof List<?>) {
+                    List<Pair<String, String>> headerConfigs =
+                            (List<Pair<String, String>>) headerConfigsObj;
+                    Map<String, String> hcMap = new HashMap<>();
+                    headerConfigs.forEach(hc -> hcMap.put(hc.first, hc.second));
+                    setParameters(hcMap);
+                }
+            } else {
+                LOGGER.error(
+                        "Unrecognised method: {}", contextMethod.getClass().getCanonicalName());
             }
         }
     }
@@ -144,7 +167,7 @@ public class SessionManagementData extends AutomationData {
                                     "automation.error.env.sessionmgmt.script.missing"));
                     break;
                 }
-                File f = new File(getParameters().get(PARAM_SCRIPT));
+                File f = JobUtils.getFile(getParameters().get(PARAM_SCRIPT), env.getPlan());
                 if (!f.exists() || !f.canRead()) {
                     progress.error(
                             Constant.messages.getString(
@@ -189,29 +212,63 @@ public class SessionManagementData extends AutomationData {
                         JobUtils.setPrivateField(
                                 smm, SCRIPT_SESSION_MANAGEMENT_PARAM_VALUES_FIELD, paramValues);
                         context.setSessionManagementMethod(smm);
-
-                        try {
-                            // OK, this does look weird, but it is the easiest way to actually get
-                            // the script data loaded :/
-                            SessionManagementMethodType type = smm.getType();
-                            Configuration config = new ZapXmlConfiguration();
-                            type.exportData(config, smm);
-                            type.importData(config, smm);
-                        } catch (ConfigurationException e) {
-                            LOGGER.error("Error setting script session management", e);
-                            progress.error(
-                                    Constant.messages.getString(
-                                            "automation.error.unexpected.internal",
-                                            e.getMessage()));
-                        }
+                        reloadSessionManagementMethod(smm, progress);
                     }
                 }
                 break;
+            case SessionManagementData.METHOD_HEADERS:
+                // This should be handled dynamically, but that required core changes
+                ExtensionSessionManagement extSessMgmt =
+                        Control.getSingleton()
+                                .getExtensionLoader()
+                                .getExtension(ExtensionSessionManagement.class);
+
+                SessionManagementMethodType smType =
+                        extSessMgmt.getSessionManagementMethodTypeForIdentifier(3);
+
+                if (smType != null) {
+                    SessionManagementMethod smm =
+                            smType.createSessionManagementMethod(context.getId());
+                    Object headerConfigsObj = JobUtils.getPrivateField(smm, "headerConfigs");
+                    if (headerConfigsObj instanceof List<?>) {
+                        List<Pair<String, String>> headerConfigs =
+                                (List<Pair<String, String>>) headerConfigsObj;
+
+                        getParameters().forEach((k, v) -> headerConfigs.add(new Pair<>(k, v)));
+                    }
+                    JobUtils.setPrivateField(smm, "headerConfigs", headerConfigsObj);
+                    context.setSessionManagementMethod(smm);
+                    reloadSessionManagementMethod(smm, progress);
+
+                } else {
+                    progress.error(
+                            Constant.messages.getString(
+                                    "automation.error.env.sessionmgmt.type.bad", getMethod()));
+                }
+                break;
+
             default:
                 progress.error(
                         Constant.messages.getString(
                                 "automation.error.env.sessionmgmt.type.bad", getMethod()));
                 break;
+        }
+    }
+
+    private void reloadSessionManagementMethod(
+            SessionManagementMethod smm, AutomationProgress progress) {
+        try {
+            // OK, this does look weird, but it is the easiest way to actually get
+            // the session management data loaded :/
+            SessionManagementMethodType type = smm.getType();
+            Configuration config = new ZapXmlConfiguration();
+            type.exportData(config, smm);
+            type.importData(config, smm);
+        } catch (ConfigurationException e) {
+            LOGGER.error("Error setting script session management", e);
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.error.unexpected.internal", e.getMessage()));
         }
     }
 

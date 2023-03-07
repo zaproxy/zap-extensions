@@ -48,7 +48,7 @@ dependencies {
     compileOnly(parent!!.childProjects.get("network")!!)
     compileOnly(parent!!.childProjects.get("oast")!!)
     implementation("com.googlecode.java-diff-utils:diffutils:1.3.0")
-    implementation("org.bitbucket.mstrobel:procyon-compilertools:0.5.36")
+    implementation("org.bitbucket.mstrobel:procyon-compilertools:0.6.0")
 
     testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
@@ -67,7 +67,7 @@ spotless {
             "src/**/DirectoryBrowsingScanRule.java",
             "src/**/FormatStringScanRule.java",
             "src/**/ParameterTamperScanRule.java",
-            "src/**/ServerSideIncludeScanRule.java"
-        )
+            "src/**/ServerSideIncludeScanRule.java",
+        ),
     )
 }

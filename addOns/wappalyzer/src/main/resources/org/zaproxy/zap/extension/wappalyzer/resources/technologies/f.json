@@ -927,6 +927,25 @@
     ],
     "website": "https://woocommerce.com/flexslider/"
   },
+  "FlippingBook": {
+    "cats": [
+      5
+    ],
+    "description": "FlippingBook is a web-based software platform that enables users to create, publish, and share digital publications such as magazines, brochures, catalogs, and presentations.",
+    "icon": "FlippingBook.svg",
+    "dom": "a[href*='flippingbook.com/'][target='_blank']",
+    "scriptSrc": "online\\.flippingbook\\.com/",
+    "js": {
+      "__flippingbook_csrf__": ""
+    },
+    "saas": true,
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "website": "https://flippingbook.com"
+  },
   "Flickity": {
     "cats": [
       59
@@ -1070,6 +1089,44 @@
       "payg"
     ],
     "website": "https://fly.io"
+  },
+  "Flying Analytics": {
+    "cats": [
+      87
+    ],
+    "description": "Flying Analytics is a performance optimisation plugin for WordPress websites designed to reduce page load times and improve the user experience.",
+    "dom": "link[href*='/wp-content/plugins/flying-analytics/']",
+    "icon": "default.svg",
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/flying-analytics/",
+    "website": "https://wordpress.org/plugins/flying-analytics/"
+  },
+  "Flying Pages": {
+    "cats": [
+      87,
+      92
+    ],
+    "description": "Flying Pages is a performance optimisation plugin for WordPress websites designed to reduce page load times and improve the user experience.",
+    "dom": "link[href*='/wp-content/plugins/flying-pages/']",
+    "icon": "Flying Pages.svg",
+    "requires": "WordPress",
+    "js": {
+      "flyingPages": ""
+    },
+    "scriptSrc": "/wp-content/plugins/flying-pages/.+\\.js(?:\\?ver=([\\d\\.]+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/flying-pages/"
+  },
+  "Flying Images": {
+    "cats": [
+      87
+    ],
+    "description": "Flying Images is a performance optimisation plugin for WordPress websites designed to reduce page load times and improve the user experience.",
+    "icon": "default.svg",
+    "requires": "WordPress",
+    "js": {
+      "flyingImages": ""
+    },
+    "website": "https://wordpress.org/plugins/nazy-load/"
   },
   "Flyspray": {
     "cats": [
@@ -1290,17 +1347,67 @@
       1
     ],
     "cpe": "cpe:2.3:a:fork-cms:fork_cms:*:*:*:*:*:*:*:*",
+    "description": "Fork CMS is an open-source content management system.",
     "icon": "ForkCMS.png",
     "implies": "Symfony",
     "meta": {
       "generator": "^Fork CMS$"
     },
-    "website": "http://www.fork-cms.com/"
+    "oss": true,
+    "website": "http://www.fork-cms.com"
+  },
+  "FormAssembly": {
+    "cats": [
+      110
+    ],
+    "description": "FormAssembly is a platform that enables to collection of data and processing via workflow.",
+    "dom": "form[action*='tfaforms.net'], iframe[src*='tfaforms.net']",
+    "icon": "FormAssembly.svg",
+    "js": {
+      "wFORMS.VERSION": "^(.+)$\\;version:\\1"
+    },
+    "pricing": [
+      "recurring",
+      "low"
+    ],
+    "website": "https://www.formassembly.com"
+  },
+  "FormBold": {
+    "cats": [
+      110
+    ],
+    "description": "FormBold is a complete web forms solution for static websites that allows you to create forms, collect data, and send notifications.",
+    "dom": "form[action*='//formbold.com/']",
+    "icon": "FormBold.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://formbold.com"
+  },
+  "Formaloo": {
+    "cats": [
+      110
+    ],
+    "description": "Formaloo is a no-code collaboration platform that helps businesses create custom data-driven business applications and internal tools, automate their processes and engage their audience.",
+    "dom": "iframe[src*='//formaloo.net/']",
+    "icon": "Formaloo.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "//formaloo\\.net/",
+    "website": "https://www.formaloo.com"
   },
   "Formidable Form": {
     "cats": [
       87,
-      73
+      73,
+      110
     ],
     "description": "Formidable Forms is a WordPress plugin that enables you to create quizzes, surveys, calculators, timesheets, multi-page application forms.",
     "dom": "link[href*='/wp-content/plugins/formidable/']",
@@ -1981,10 +2088,10 @@
   },
   "Fundraise Up": {
     "cats": [
-      41
+      111
     ],
     "description": "Fundraise Up is a platform for online donations.",
-    "icon": "fundraise_up.png",
+    "icon": "Fundraise Up.svg",
     "js": {
       "FundraiseUp": ""
     },
@@ -1992,6 +2099,7 @@
       "payg",
       "recurring"
     ],
+    "scriptSrc": "\\.fundraiseup\\.com/",
     "website": "https://fundraiseup.com"
   },
   "FunnelCockpit": {
@@ -2008,6 +2116,24 @@
     "saas": true,
     "scriptSrc": "\\.funnelcockpit\\.com/",
     "website": "https://funnelcockpit.com"
+  },
+  "Funraise": {
+    "cats": [
+      111
+    ],
+    "description": "Funraise is a nonprofit fundraising platform that enables organisations to build fundraising websites as well as manage donations and campaigns.",
+    "dom": "a[href*='.funraise.org/']",
+    "icon": "Funraise.svg",
+    "js": {
+      "FR.IMAGE_BASE_URL": "\\.funraise\\.io"
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://funraise.org"
   },
   "FurnitureDealer": {
     "cats": [

@@ -66,6 +66,7 @@ public class SpiderDialog extends StandardFieldsDialog {
     private static final String FIELD_PARSE_SITEMAP = "spider.custom.label.sitemap";
     private static final String FIELD_PARSE_SVN = "spider.custom.label.parseSvn";
     private static final String FIELD_PARSE_GIT = "spider.custom.label.parseGit";
+    private static final String FIELD_PARSE_DS_STORE = "spider.custom.label.parseDsStore";
     private static final String FIELD_HANDLE_ODATA = "spider.custom.label.handleOdata";
 
     private static final Logger LOGGER = LogManager.getLogger(SpiderDialog.class);
@@ -143,6 +144,7 @@ public class SpiderDialog extends StandardFieldsDialog {
         this.addCheckBoxField(1, FIELD_PARSE_SITEMAP, getSpiderParam().isParseSitemapXml());
         this.addCheckBoxField(1, FIELD_PARSE_SVN, getSpiderParam().isParseSVNEntries());
         this.addCheckBoxField(1, FIELD_PARSE_GIT, getSpiderParam().isParseGit());
+        this.addCheckBoxField(1, FIELD_PARSE_DS_STORE, getSpiderParam().isParseDsStore());
         this.addCheckBoxField(
                 1, FIELD_HANDLE_ODATA, getSpiderParam().isHandleODataParametersVisited());
         this.addPadding(1);
@@ -336,6 +338,7 @@ public class SpiderDialog extends StandardFieldsDialog {
             spiderParam.setParseSitemapXml(this.getBoolValue(FIELD_PARSE_SITEMAP));
             spiderParam.setParseSVNEntries(this.getBoolValue(FIELD_PARSE_SVN));
             spiderParam.setParseGit(this.getBoolValue(FIELD_PARSE_GIT));
+            spiderParam.setParseDsStore(this.getBoolValue(FIELD_PARSE_DS_STORE));
             spiderParam.setHandleODataParametersVisited(this.getBoolValue(FIELD_HANDLE_ODATA));
             spiderParam.setThreadCount(extension.getSpiderParam().getThreadCount());
 

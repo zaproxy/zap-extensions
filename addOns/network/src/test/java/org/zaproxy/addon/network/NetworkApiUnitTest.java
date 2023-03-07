@@ -62,6 +62,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
@@ -96,17 +97,24 @@ class NetworkApiUnitTest extends TestUtils {
     @BeforeEach
     void setUp() {
         mockMessages(new ExtensionNetwork());
-        Model model = mock(Model.class, withSettings().lenient());
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
         Model.setSingletonForTesting(model);
-        OptionsParam optionsParam = mock(OptionsParam.class, withSettings().lenient());
+        OptionsParam optionsParam =
+                mock(OptionsParam.class, withSettings().strictness(Strictness.LENIENT));
         given(model.getOptionsParam()).willReturn(optionsParam);
-        extensionNetwork = mock(ExtensionNetwork.class, withSettings().lenient());
-        serverCertificatesOptions = mock(ServerCertificatesOptions.class, withSettings().lenient());
+        extensionNetwork =
+                mock(ExtensionNetwork.class, withSettings().strictness(Strictness.LENIENT));
+        serverCertificatesOptions =
+                mock(
+                        ServerCertificatesOptions.class,
+                        withSettings().strictness(Strictness.LENIENT));
         given(extensionNetwork.getServerCertificatesOptions())
                 .willReturn(serverCertificatesOptions);
-        localServersOptions = mock(LocalServersOptions.class, withSettings().lenient());
+        localServersOptions =
+                mock(LocalServersOptions.class, withSettings().strictness(Strictness.LENIENT));
         given(extensionNetwork.getLocalServersOptions()).willReturn(localServersOptions);
-        connectionOptions = mock(ConnectionOptions.class, withSettings().lenient());
+        connectionOptions =
+                mock(ConnectionOptions.class, withSettings().strictness(Strictness.LENIENT));
         given(connectionOptions.getHttpProxy()).willReturn(ConnectionOptions.DEFAULT_HTTP_PROXY);
         given(extensionNetwork.getConnectionOptions()).willReturn(connectionOptions);
         clientCertificatesOptions = mock(ClientCertificatesOptions.class);

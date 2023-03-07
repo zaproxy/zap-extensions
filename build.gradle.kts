@@ -2,9 +2,9 @@ import net.ltgt.gradle.errorprone.errorprone
 
 plugins {
     id("com.diffplug.spotless")
-    id("com.github.ben-manes.versions") version "0.39.0"
-    id("org.sonarqube") version "3.3"
-    id("net.ltgt.errorprone") version "2.0.2"
+    id("com.github.ben-manes.versions") version "0.45.0"
+    id("org.sonarqube") version "3.5.0.2730"
+    id("net.ltgt.errorprone") version "3.0.1"
 }
 
 apply(from = "$rootDir/gradle/ci.gradle.kts")
@@ -33,7 +33,7 @@ allprojects {
 
     project.plugins.withType(JavaPlugin::class) {
         dependencies {
-            "errorprone"("com.google.errorprone:error_prone_core:2.9.0")
+            "errorprone"("com.google.errorprone:error_prone_core:2.18.0")
         }
 
         configure<JavaPluginConvention> {
@@ -50,7 +50,7 @@ allprojects {
             disableAllChecks.set(true)
             error(
                 "MissingOverride",
-                "WildcardImport"
+                "WildcardImport",
             )
         }
     }

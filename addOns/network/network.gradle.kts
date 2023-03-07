@@ -49,7 +49,7 @@ spotless {
                 exclude("src/main/java/org/apache/hc/client5/**/Zap*.java")
                 exclude("src/main/java/org/apache/hc/core5/**/*.java")
                 exclude("src/main/java/org/zaproxy/addon/network/internal/codec/netty/*.java")
-            }
+            },
         )
     }
 }
@@ -78,10 +78,10 @@ dependencies {
     }
 
     testImplementation("org.hamcrest:hamcrest-library:2.2")
-    val jupiterVersion = "5.8.1"
+    val jupiterVersion = "5.9.2"
     testImplementation("org.junit.jupiter:junit-jupiter-api:$jupiterVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$jupiterVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$jupiterVersion")
-    testImplementation("org.mockito:mockito-junit-jupiter:4.0.0")
+    testImplementation("org.mockito:mockito-junit-jupiter:5.1.1")
     testImplementation("org.apache.logging.log4j:log4j-core:2.19.0")
 }

@@ -11,6 +11,20 @@
     },
     "website": "http://www.lepton-cms.org"
   },
+  "LGC": {
+    "cats": [
+      1
+    ],
+    "description": "LGC is a modern CMS designed to improve the management of your website.",
+    "icon": "LGC.png",
+    "meta": {
+      "generator": "^LGC$"
+    },
+    "pricing": [
+      "onetime"
+    ],
+    "website": "https://luigigabrieleconti.com"
+  },
   "LINE Login": {
     "cats": [
       69
@@ -62,6 +76,24 @@
     "oss": true,
     "website": "https://lagoon.sh/"
   },
+  "Landbot": {
+    "cats": [
+      52
+    ],
+    "description": "Landbot is a no code conversational chatbots, conversational landing pages and website, interactive survey and lead generation bot.",
+    "icon": "landbot.svg",
+    "js": {
+      "LandbotLivechat": "",
+      "initLandbot": ""
+    },
+    "pricing": [
+      "recurring",
+      "freemium",
+      "mid"
+    ],
+    "scriptSrc": "\\.landbot\\.io/.*-([\\d\\.]+)\\.js",
+    "website": "https://landbot.io"
+  },
   "LangShop": {
     "cats": [
       100,
@@ -99,6 +131,19 @@
       "Laravel": ""
     },
     "website": "https://laravel.com"
+  },
+  "Laravel Echo": {
+    "cats": [
+      59
+    ],
+    "description": "Laravel Echo is a JavaScript library that makes it painless to subscribe to channels and listen for events broadcast by Laravel.",
+    "icon": "Laravel Echo.svg",
+    "implies": "Laravel",
+    "js": {
+      "Echo.connector": "",
+      "echo.connector": ""
+    },
+    "website": "https://laravel.com/docs/broadcasting#client-side-installation"
   },
   "Laterpay": {
     "cats": [
@@ -217,6 +262,18 @@
     "saas": true,
     "scriptSrc": "app\\.layouthub\\.com/shopify/layouthub\\.js",
     "website": "https://layouthub.com"
+  },
+  "Layui": {
+    "cats": [
+      66
+    ],
+    "description": "Layui is an open-source modular front-end UI component library.",
+    "icon": "Layui.png",
+    "js": {
+      "layui.v": "([\\d\\.]+)\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://layui.gitee.io"
   },
   "Lazada": {
     "cats": [
@@ -972,6 +1029,23 @@
     "saas": true,
     "website": "https://www.liveagent.com"
   },
+  "LiveCanvas": {
+    "cats": [
+      87,
+      51
+    ],
+    "description": "LiveCanvas is a Bootstrap 5 WordPress page builder.",
+    "icon": "LiveCanvas.svg",
+    "implies": "Bootstrap",
+    "pricing": [
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/livecanvas/",
+    "website": "https://livecanvas.com"
+  },
   "LiveChat": {
     "cats": [
       52
@@ -1454,6 +1528,26 @@
     "saas": true,
     "scriptSrc": "loja2\\.com\\.br",
     "website": "https://www.loja2.com.br"
+  },
+  "Loom": {
+    "cats": [
+      103
+    ],
+    "dns": {
+      "TXT": "loom-verification"
+    },
+    "icon": "Loom.svg",
+    "pricing": [
+      "freemium",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://www.loom.com",
+    "xhr": [
+      "loom\\.com/api",
+      "luna\\.loom\\.com"
+    ]
   },
   "Loop Returns": {
     "cats": [

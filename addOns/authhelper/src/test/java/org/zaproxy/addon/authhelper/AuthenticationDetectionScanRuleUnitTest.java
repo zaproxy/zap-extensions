@@ -33,6 +33,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
@@ -65,7 +66,8 @@ class AuthenticationDetectionScanRuleUnitTest
         super.setUp();
 
         given(model.getSession()).willReturn(session);
-        extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
+        extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         extAuth = new ExtensionAuthhelper();
         extAuth.initModel(model);
         given(extensionLoader.getExtension(ExtensionAuthhelper.class)).willReturn(extAuth);
@@ -220,7 +222,8 @@ class AuthenticationDetectionScanRuleUnitTest
     @Test
     void shouldAlertWithCsrfTokensOnPostWithFormAuthParams() throws HttpMalformedHeaderException {
         // Given
-        ExtensionAntiCSRF extAcsrf = mock(ExtensionAntiCSRF.class, withSettings().lenient());
+        ExtensionAntiCSRF extAcsrf =
+                mock(ExtensionAntiCSRF.class, withSettings().strictness(Strictness.LENIENT));
         List<AntiCsrfToken> tokenList = new ArrayList<>();
         tokenList.add(new AntiCsrfToken(null, "acsrf1", null, 0));
         tokenList.add(new AntiCsrfToken(null, "acsrf2", null, 0));

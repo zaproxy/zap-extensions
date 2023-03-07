@@ -62,8 +62,11 @@ public class TechnologyUtils {
 
     public static TechSet getTechSet(List<String> exclude) {
         TechSet ts = new TechSet(Tech.getAll());
-        exclude.stream()
-                .forEach(name -> TechnologyUtils.removeTechAndChildren(ts, getTech(name, null)));
+        if (exclude != null) {
+            exclude.stream()
+                    .forEach(
+                            name -> TechnologyUtils.removeTechAndChildren(ts, getTech(name, null)));
+        }
         return ts;
     }
 

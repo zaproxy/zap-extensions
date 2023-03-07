@@ -32,6 +32,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
@@ -52,7 +53,8 @@ class FrontEndScannerProxyListenerUnitTest extends TestUtils {
         FrontEndScannerAPI api = mock(FrontEndScannerAPI.class);
         options = mock(FrontEndScannerOptions.class);
 
-        HistoryReference ref = mock(HistoryReference.class, withSettings().lenient());
+        HistoryReference ref =
+                mock(HistoryReference.class, withSettings().strictness(Strictness.LENIENT));
         when(ref.getHistoryId()).thenReturn(42);
 
         frontEndScannerProxyListener = new FrontEndScannerProxyListener(api, options);

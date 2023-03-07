@@ -23,7 +23,7 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("automation") {
-                            version.set(">=0.12.0")
+                            version.set(">=0.24.0")
                         }
                     }
                 }
@@ -69,7 +69,7 @@ spotless {
                 include("src/**/*.html")
                 exclude("src/main/zapHomeFiles/reports/risk-confidence-html/report.html")
                 exclude("src/test/**/*.html")
-            }
+            },
         )
     })
     format("xml", {
@@ -78,7 +78,7 @@ spotless {
             fileTree(projectDir) {
                 include("src/**/*.xml")
                 exclude("src/test/**/*.xml")
-            }
+            },
         )
     })
 }

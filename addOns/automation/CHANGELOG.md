@@ -4,8 +4,35 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [0.25.1] - 2023-03-03
+### Fixed
+- NPE when accessing active scan job.
+
+## [0.25.0] - 2023-02-28
+### Added
+- Support for dynamically added header based session management method.
+
+### Fixed
+- Active scan would fail if threadsPerHost set to zero.
+
 ### Changed
 - Maintenance changes.
+
+## [0.24.0] - 2023-02-09
+### Added
+- Support for relative file paths and ones including vars.
+- Option to disable all of the passive scan rules.
+
+### Fixed
+- NPE when adding a context to an existing plan.
+
+## [0.23.0] - 2023-02-06
+### Changed
+- Maintenance changes.
+### Fixed
+- Added workaround for core bug which meant auth header env vars were not being applied.
 
 ## [0.22.0] - 2023-01-06
 ### Added
@@ -227,6 +254,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.25.1]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.25.1
+[0.25.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.25.0
+[0.24.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.24.0
+[0.23.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.23.0
 [0.22.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.22.0
 [0.21.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.21.0
 [0.20.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.20.0

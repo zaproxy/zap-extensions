@@ -29,6 +29,7 @@ import static org.mockito.Mockito.withSettings;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
@@ -44,7 +45,8 @@ class ExtensionOpenApiSpiderUnitTest extends TestUtils {
     @BeforeEach
     void setUp() {
         extension = new ExtensionOpenApiSpider();
-        extensionLoader = mock(ExtensionLoader.class, withSettings().lenient());
+        extensionLoader =
+                mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
     }
 

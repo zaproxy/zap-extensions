@@ -79,7 +79,7 @@ public class DelayJob extends AutomationJob {
             return;
         }
         if (!StringUtils.isEmpty(this.getParameters().getFileName())) {
-            file = new File(this.getParameters().getFileName());
+            file = JobUtils.getFile(this.getParameters().getFileName(), getPlan());
         }
         long end = System.currentTimeMillis() + hhmmss.getTimeInMs();
         try {

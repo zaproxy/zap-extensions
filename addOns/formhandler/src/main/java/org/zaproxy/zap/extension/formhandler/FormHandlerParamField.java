@@ -19,42 +19,49 @@
  */
 package org.zaproxy.zap.extension.formhandler;
 
+import java.util.Locale;
 import org.zaproxy.zap.utils.Enableable;
 
 class FormHandlerParamField extends Enableable {
 
     private String name;
     private String value;
+    private boolean regex;
 
     public FormHandlerParamField() {
-        this("", "", false);
+        this("", "", false, false);
     }
 
     public FormHandlerParamField(String name) {
-        this(name, "", true);
+        this(name, "", true, false);
     }
 
     public FormHandlerParamField(String name, String value) {
-        this(name, value, true);
+        this(name, value, true, false);
     }
 
-    public FormHandlerParamField(String name, String value, boolean enabled) {
+    public FormHandlerParamField(String name, String value, boolean enabled, boolean regex) {
         super(enabled);
 
-        this.name = name.toLowerCase();
+        this.regex = regex; // Set regex prior to handling name
+        this.name = handleName(name);
         this.value = value;
     }
 
     public FormHandlerParamField(FormHandlerParamField field) {
-        this(field.name, field.value, field.isEnabled());
+        this(field.name, field.value, field.isEnabled(), field.isRegex());
     }
 
     public String getName() {
         return name;
     }
 
+    private String handleName(String name) {
+        return regex ? name : name.toLowerCase(Locale.ROOT);
+    }
+
     public void setName(String name) {
-        this.name = name;
+        this.name = handleName(name);
     }
 
     public String getValue() {
@@ -63,6 +70,14 @@ class FormHandlerParamField extends Enableable {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public boolean isRegex() {
+        return regex;
+    }
+
+    public void setRegex(boolean regex) {
+        this.regex = regex;
     }
 
     @Override

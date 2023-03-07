@@ -395,6 +395,26 @@
     "scriptSrc": "\\.tagboard\\.com/",
     "website": "https://tagboard.com"
   },
+  "Tagembed": {
+    "cats": [
+      96,
+      5
+    ],
+    "description": "Tagembed is a social media aggregator that collects and displays engaging user-generated content from any social media network such as Instagram, Facebook, Twitter, Youtube, Tiktok, Google Reviews, Airbnb, and 18+ networks.",
+    "dom": "script[data-src*='widget.tagembed.com/']",
+    "icon": "Tagembed.svg",
+    "js": {
+      "TagembedWidget": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "//widget\\.tagembed\\.com/",
+    "website": "https://tagembed.com"
+  },
   "Taggbox": {
     "cats": [
       5
@@ -1567,6 +1587,67 @@
     "scriptSrc": "thix\\.ttsep\\.com/",
     "website": "https://www.thesistesting.com"
   },
+  "ThimPress Course Review": {
+    "cats": [
+      87
+    ],
+    "description": "Course Review is a WordPress plugin by ThimPress. Course Review gives students the opportunity to evaluate and provide feedback in order to improve the course.",
+    "dom": "link[href*='/wp-content/plugins/learnpress-course-review/']",
+    "icon": "ThimPress.svg",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "website": "https://wordpress.org/plugins/learnpress-course-review"
+  },
+  "ThimPress Course Wishlist": {
+    "cats": [
+      87
+    ],
+    "description": "Course Wishlist is a WordPress plugin by ThimPress. Course Wishlist bring wishlist feature for LearnPress.",
+    "dom": "link[href*='/wp-content/plugins/learnpress-wishlist/']",
+    "icon": "ThimPress.svg",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": [
+      "WordPress",
+      "ThimPress LearnPress"
+    ],
+    "website": "https://wordpress.org/plugins/learnpress-wishlist"
+  },
+  "ThimPress Gradebook": {
+    "cats": [
+      87
+    ],
+    "description": "Gradebook is a WordPress plugin by ThimPress. Gradebook add-on for LearnPress makes it easier to track the students learning progress and result.",
+    "dom": "link[href*='/wp-content/plugins/learnpress-gradebook/']",
+    "icon": "ThimPress.svg",
+    "pricing": [
+      "onetime"
+    ],
+    "requires": [
+      "WordPress",
+      "ThimPress LearnPress"
+    ],
+    "website": "https://thimpress.com/product/gradebook-add-on-for-learnpress"
+  },
+  "ThimPress LearnPress": {
+    "cats": [
+      87,
+      21
+    ],
+    "description": "LearnPress is a WordPress LMS plugin by ThimPress.",
+    "dom": "link[href*='/wp-content/plugins/learnpress/']",
+    "icon": "ThimPress.svg",
+    "pricing": [
+      "freemium",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/learnpress/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/learnpress"
+  },
   "Thimatic": {
     "cats": [
       90,
@@ -1663,6 +1744,21 @@
     "saas": true,
     "scriptSrc": "\\.online-metrix\\.net",
     "website": "https://risk.lexisnexis.com/products/threatmetrix"
+  },
+  "Three.js": {
+    "cats": [
+      25
+    ],
+    "description": "Three.js is a cross-browser JavaScript library and application programming interface used to create and display animated 3D computer graphics in a web browser using WebGL.",
+    "dom": "canvas[data-engine*='three.js']",
+    "icon": "Three.js.svg",
+    "js": {
+      "THREE.REVISION": "^(.+)$\\;version:\\1",
+      "__THREE__": "^(.+)$\\;version:\\1"
+    },
+    "oss": true,
+    "scriptSrc": "three(?:\\.min)?\\.js",
+    "website": "https://threejs.org"
   },
   "Threekit": {
     "cats": [
@@ -1985,12 +2081,13 @@
     ],
     "cpe": "cpe:2.3:a:tiny:tinymce:*:*:*:*:*:*:*:*",
     "description": "TinyMCE is an online rich-text editor released as open-source software. TinyMCE is designed to integrate with JavaScript libraries, Vue.js, and AngularJS as well as content management systems such as Joomla!, and WordPress.",
-    "icon": "TinyMCE.png",
+    "icon": "TinyMCE.svg",
     "js": {
-      "tinyMCE.majorVersion": "([\\d.]+)\\;version:\\1"
+      "tinyMCE.majorVersion": "([\\d.]+)\\;version:\\1",
+      "tinymce": ""
     },
     "scriptSrc": "/tiny_?mce(?:\\.min)?\\.js",
-    "website": "http://tinymce.com"
+    "website": "https://www.tiny.cloud/tinymce/"
   },
   "Tippy.js": {
     "cats": [
@@ -2213,6 +2310,20 @@
     "icon": "Tradedoubler.svg",
     "scriptSrc": "swrap\\.tradedoubler\\.com",
     "website": "https://www.tradedoubler.com/"
+  },
+  "TradingView": {
+    "cats": [
+      25
+    ],
+    "description": "TradingView is used to show world chart, chats and trades markets.",
+    "dom": "iframe[src*='.tradingview.com/']",
+    "icon": "trading_view.svg",
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
+    ],
+    "website": "https://www.tradingview.com"
   },
   "Traek": {
     "cats": [
@@ -2559,6 +2670,18 @@
     "icon": "Truecommerce.svg",
     "scriptSrc": "cdn\\.nexternal\\.com/",
     "website": "https://www.truecommerce.com"
+  },
+  "Truepush": {
+    "cats": [
+      32
+    ],
+    "description": "Truepush is web-based push notification service available for PWA, AMP, WordPress, and Shopify.",
+    "icon": "truepush.svg",
+    "js": {
+      "truepush": "",
+      "truepushVersionInfo.key": "v([\\d\\.]+)\\;version:\\1"
+    },
+    "website": "https://www.truepush.com"
   },
   "Trumba": {
     "cats": [
@@ -2928,6 +3051,47 @@
     "scriptSrc": "/wp-content/themes/twentytwentyone/",
     "website": "https://wordpress.org/themes/twentytwentyone"
   },
+  "Twenty Twenty-Three": {
+    "cats": [
+      80
+    ],
+    "description": "Twenty Twenty-Three is the default WordPress theme for 2023.",
+    "dom": {
+      "style#webfonts-inline-css": {
+        "text": "/wp-content/themes/twentytwentythree/assets/fonts/"
+      },
+      "style#wp-webfonts-inline-css": {
+        "text": "/wp-content/themes/twentytwentythree/assets/fonts/"
+      }
+    },
+    "icon": "WordPress.svg",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "website": "https://wordpress.org/themes/twentytwentythree"
+  },
+  "Twenty Twenty-Two": {
+    "cats": [
+      80
+    ],
+    "description": "Twenty Twenty-Two is the default WordPress theme for 2022.",
+    "dom": {
+      "link#twentytwentytwo-style-css": {},
+      "style#webfonts-inline-css": {
+        "text": "/wp-content/themes/twentytwentytwo/assets/fonts/"
+      },
+      "style#wp-webfonts-inline-css": {
+        "text": "/wp-content/themes/twentytwentytwo/assets/fonts/"
+      }
+    },
+    "icon": "WordPress.svg",
+    "pricing": [
+      "freemium"
+    ],
+    "requires": "WordPress",
+    "website": "https://wordpress.org/themes/twentytwentytwo"
+  },
   "TwicPics": {
     "cats": [
       31,
@@ -3004,6 +3168,17 @@
     },
     "icon": "Twilight CMS.png",
     "website": "http://www.twilightcms.com"
+  },
+  "Twilio Authy": {
+    "cats": [
+      69
+    ],
+    "description": "Twilio Authy provides Two-factor authentication (2FA) adds an additional layer of protection beyond passwords.",
+    "icon": "twilio_authy.svg",
+    "js": {
+      "Authy": ""
+    },
+    "website": "https://authy.com"
   },
   "TwistPHP": {
     "cats": [
@@ -3260,20 +3435,6 @@
     "scriptSrc": "\\.adsrvr\\.org/",
     "website": "https://www.thetradedesk.com",
     "xhr": "adsvr\\.org"
-  },
-  "three.js": {
-    "cats": [
-      25
-    ],
-    "description": "Three.js is a cross-browser JavaScript library and application programming interface used to create and display animated 3D computer graphics in a web browser using WebGL.",
-    "icon": "three.js.png",
-    "js": {
-      "THREE.REVISION": "^(.+)$\\;version:\\1",
-      "__THREE__": "^(.+)$\\;version:\\1"
-    },
-    "oss": true,
-    "scriptSrc": "three(?:\\.min)?\\.js",
-    "website": "https://threejs.org"
   },
   "thttpd": {
     "cats": [

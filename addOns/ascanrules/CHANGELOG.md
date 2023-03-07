@@ -4,6 +4,14 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [53] - 2023-03-03
+### Changed
+- Maintenance changes.
+- The SQL Injection Scan Rule filters reflected payload containing escaped characters like '&amp;' and '&quot;' before response content comparison to reduce false negatives.
+
+## [52] - 2023-02-03
 ### Changed
 - The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119 & 7100).
     - Buffer Overflow
@@ -13,10 +21,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - Remote File Include
 - The Path Traversal scan rule no longer populates the Other Info field with check information, as the Alert Reference now provides that detail.
 - Maintenance changes.
+- Update dependency.
 - CVE-2012-1823 Remote Execution and Source Code Disclosure, and Heart Bleed scan rules now include Alert Tags for the applicable CVEs.
 
 ### Added
 - ParameterEntity attack added in OOB-XXE Scan Rule.
+### Fixed
+- A false positive that could occur in the External Redirect scan rule if the payload was included in the redirect as a param or portion of the value.
 
 ## [51] - 2023-01-03
 ### Changed
@@ -391,6 +402,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[53]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v53
+[52]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v52
 [51]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v51
 [50]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v50
 [49]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v49
