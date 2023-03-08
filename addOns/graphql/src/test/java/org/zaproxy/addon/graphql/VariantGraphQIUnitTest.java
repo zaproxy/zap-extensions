@@ -24,18 +24,54 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.StringLayout;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.apache.logging.log4j.core.config.Property;
+import org.apache.logging.log4j.core.filter.BurstFilter;
+import org.apache.logging.log4j.core.layout.PatternLayout;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
 class VariantGraphQlUnitTest {
     private VariantGraphQl variant;
+    private static List<String> logMessages;
+
+    private static final String APPENDER_NAME = "ZAP-TestAppender";
+    private static Level originalLevel;
+
+    @BeforeAll
+    static void initAppender() {
+        LoggerConfig rootLogger = LoggerContext.getContext().getConfiguration().getRootLogger();
+        rootLogger.addAppender(new TestAppender(VariantGraphQlUnitTest::handleError), null, null);
+        originalLevel = rootLogger.getLevel();
+        Configurator.setRootLevel(Level.ALL);
+    }
+
+    @AfterAll
+    static void removeAppender() {
+        LoggerContext.getContext().getConfiguration().getRootLogger().removeAppender(APPENDER_NAME);
+        Configurator.setRootLevel(originalLevel);
+    }
 
     @BeforeEach
     void setup() {
         variant = new VariantGraphQl();
+        logMessages = new ArrayList<>();
     }
 
     @Test
@@ -57,5 +93,68 @@ class VariantGraphQlUnitTest {
         variant.setMessage(msg);
         // Then
         assertThat(variant.getParamList(), is(empty()));
+    }
+
+    @Test
+    void shouldNotLogErrorsOnJsonArray() throws HttpMalformedHeaderException {
+        // Given
+        HttpRequestHeader httpReqHeader = new HttpRequestHeader();
+        httpReqHeader.setMessage("POST /abc/xyz HTTP/1.1");
+        httpReqHeader.setHeader(HttpHeader.CONTENT_TYPE, "application/json");
+        HttpMessage msg = new HttpMessage(httpReqHeader);
+        msg.getRequestBody().setBody("[]");
+        msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
+
+        // When
+        variant.setMessage(msg);
+        // Then
+        assertThat(logMessages, is(empty()));
+    }
+
+    @Test
+    void shouldLogWarnOnInvalidJson() throws HttpMalformedHeaderException {
+        // Given
+        HttpRequestHeader httpReqHeader = new HttpRequestHeader();
+        httpReqHeader.setMessage("POST /abc/xyz HTTP/1.1");
+        httpReqHeader.setHeader(HttpHeader.CONTENT_TYPE, "application/json");
+        HttpMessage msg = new HttpMessage(httpReqHeader);
+        msg.getRequestBody().setBody("{[");
+        msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
+
+        // When
+        variant.setMessage(msg);
+        // Then
+        assertThat(logMessages.size(), is(1));
+    }
+
+    private static void handleError(String message) {
+        logMessages.add(message);
+    }
+
+    static class TestAppender extends AbstractAppender {
+
+        private static final Property[] NO_PROPERTIES = {};
+
+        private final Consumer<String> logConsumer;
+
+        TestAppender(Consumer<String> logConsumer) {
+            super(
+                    APPENDER_NAME,
+                    BurstFilter.newBuilder().setMaxBurst(100).setLevel(Level.WARN).build(),
+                    PatternLayout.newBuilder()
+                            .withDisableAnsi(true)
+                            .withCharset(StandardCharsets.UTF_8)
+                            .withPattern("%m%n")
+                            .build(),
+                    true,
+                    NO_PROPERTIES);
+            this.logConsumer = logConsumer;
+            start();
+        }
+
+        @Override
+        public void append(LogEvent event) {
+            logConsumer.accept(((StringLayout) getLayout()).toSerializable(event));
+        }
     }
 }

@@ -22,6 +22,7 @@ package org.zaproxy.addon.graphql;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -40,6 +41,8 @@ public class VariantGraphQl implements Variant {
     private static final Logger LOGGER = LogManager.getLogger(VariantGraphQl.class);
     private final InlineInjector injector = new InlineInjector();
     private final List<NameValuePair> params = new ArrayList<>();
+
+    private static final String QUERY_KEY = "query";
 
     @Override
     public void setMessage(HttpMessage msg) {
@@ -84,10 +87,18 @@ public class VariantGraphQl implements Variant {
                     || contentTypeHeader.contains(HttpHeader.JSON_CONTENT_TYPE)) {
                 try {
                     JSONObject json = JSONObject.fromObject(body);
-                    query = json.get("query").toString();
+                    if (json.has(QUERY_KEY)) {
+                        query = json.get(QUERY_KEY).toString();
+                    }
                 } catch (Exception e) {
                     if (contentTypeHeader != null) {
-                        LOGGER.info("Parsing message body failed: {}", e.getMessage());
+                        try {
+                            // If its a valid JSON array then its not a GraphQl query, so no need to
+                            // report a potential issue
+                            JSONArray.fromObject(body);
+                        } catch (Exception e1) {
+                            LOGGER.debug("Parsing message body failed: {}", e.getMessage());
+                        }
                     }
                     return null;
                 }
@@ -96,7 +107,7 @@ public class VariantGraphQl implements Variant {
             }
         } else if (HttpRequestHeader.GET.equals(header.getMethod())) {
             for (HtmlParameter param : msg.getUrlParams()) {
-                if ("query".equals(param.getName())) {
+                if (QUERY_KEY.equals(param.getName())) {
                     query = param.getValue();
                     break;
                 }
@@ -115,12 +126,12 @@ public class VariantGraphQl implements Variant {
                     || contentTypeHeader.contains(HttpHeader.JSON_CONTENT_TYPE)) {
                 try {
                     JSONObject json = JSONObject.fromObject(body);
-                    json.put("query", query);
+                    json.put(QUERY_KEY, query);
                     msg.setRequestBody(json.toString());
                     msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
                 } catch (Exception e) {
                     if (contentTypeHeader != null) {
-                        LOGGER.info("Parsing message body failed: {}", e.getMessage());
+                        LOGGER.warn("Parsing message body failed: {}", e.getMessage());
                     }
                 }
             } else if (contentTypeHeader.contains("application/graphql")) {
@@ -129,7 +140,7 @@ public class VariantGraphQl implements Variant {
             }
         } else if (HttpRequestHeader.GET.equals(header.getMethod())) {
             for (HtmlParameter param : msg.getUrlParams()) {
-                if ("query".equals(param.getName())) {
+                if (QUERY_KEY.equals(param.getName())) {
                     param.setValue(query);
                     break;
                 }
@@ -148,7 +159,7 @@ public class VariantGraphQl implements Variant {
             setQuery(msg, injector.inject(query, param, value));
             return value;
         } catch (Exception e) {
-            LOGGER.info("Failed to set parameter in GraphQL message: {}", e.getMessage());
+            LOGGER.warn("Failed to set parameter in GraphQL message: {}", e.getMessage());
             return null;
         }
     }
