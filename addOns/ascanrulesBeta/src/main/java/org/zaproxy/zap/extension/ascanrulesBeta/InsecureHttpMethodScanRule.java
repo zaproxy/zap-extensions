@@ -65,14 +65,6 @@ import org.zaproxy.zap.model.Vulnerability;
  */
 public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
 
-    /* These are the 'default' HTTP methods which are considered as insecure */
-    private static final List<String> INSECURE_DEFAULT_METHODS =
-            Arrays.asList(
-                    /* Request for a change in a resource identified by the URI */
-                    HttpRequestHeader.PATCH,
-                    /* For putting or updating a resource on the server */
-                    HttpRequestHeader.PUT);
-
     /* These are the WEBDAV methods bundled */
     private static final List<String> WEBDAV_METHODS =
             Arrays.asList("COPY", "LOCK", "MKCOL", "MOVE", "PROPFIND", "PROPPATCH", "UNLOCK");
@@ -88,7 +80,6 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
 
     static {
         INSECURE_METHODS = new ArrayList<>();
-        INSECURE_METHODS.addAll(INSECURE_DEFAULT_METHODS);
         INSECURE_METHODS.addAll(WEBDAV_METHODS);
     }
 
@@ -538,24 +529,6 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
         final HttpMessage msg = getNewMsg();
         msg.getRequestHeader().setMethod(httpMethod);
         msg.getRequestHeader().setVersion(HttpRequestHeader.HTTP11);
-
-        if (httpMethod.equals(HttpRequestHeader.PUT)
-                || httpMethod.equals(HttpRequestHeader.PATCH)) {
-            String randomKey = RandomStringUtils.randomAlphanumeric(15);
-            String randomValue = RandomStringUtils.randomAlphanumeric(15);
-            String randomResource =
-                    RandomStringUtils.random(10, "abcdefghijklmnopqrstuvwxyz0123456789");
-            String requestBody = '"' + randomKey + "\":\"" + randomValue + '"';
-            String newURI = msg.getRequestHeader().getURI().toString();
-            if (newURI.endsWith("/")) {
-                newURI += randomResource;
-            } else {
-                newURI += '/' + randomResource;
-            }
-
-            msg.getRequestHeader().setURI(new URI(newURI, true));
-            msg.setRequestBody(requestBody);
-        }
 
         try {
             // do not follow redirects. That might ruin our day.
