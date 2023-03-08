@@ -32,6 +32,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import javax.swing.ComboBoxModel;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.tree.ConfigurationNode;
@@ -90,6 +92,8 @@ public class ExtensionQuickStart extends ExtensionAdaptor
     private static final List<Class<? extends Extension>> DEPENDENCIES =
             Collections.unmodifiableList(
                     Arrays.asList(ExtensionReports.class, ExtensionNetwork.class));
+
+    private CompletableFuture<Void> newsFetcherFuture;
 
     public ExtensionQuickStart() {
         super(NAME);
@@ -150,40 +154,58 @@ public class ExtensionQuickStart extends ExtensionAdaptor
             return;
         }
 
-        new Thread("ZAP-NewsFetcher") {
-            @Override
-            public void run() {
-                // Try to read the news page
-                try {
-                    ZapXmlConfiguration xmlNews = getNews();
-                    String zapLocale = Constant.getLocale().toString();
+        newsFetcherFuture = CompletableFuture.runAsync(this::fetchNews);
+    }
 
-                    ConfigurationNode newsNode = getFirstChildNode(xmlNews.getRoot(), "news");
-                    if (newsNode != null) {
-                        String id = getFirstChildNodeString(newsNode, "id");
-                        ConfigurationNode localeNode = getFirstChildNode(newsNode, zapLocale);
-                        if (localeNode == null) {
-                            localeNode = getFirstChildNode(newsNode, "default");
-                        }
-                        if (localeNode != null) {
-                            String itemText = getFirstChildNodeString(localeNode, "item");
+    private void fetchNews() {
+        try {
+            ZapXmlConfiguration xmlNews = getNews();
+            if (!hasView()) {
+                return;
+            }
 
-                            if (itemText != null && itemText.length() > 0) {
-                                announceNews(
-                                        new NewsItem(
-                                                id,
-                                                itemText,
-                                                new URI(
-                                                        getFirstChildNodeString(localeNode, "link"),
-                                                        true)));
-                            }
-                        }
+            String zapLocale = Constant.getLocale().toString();
+
+            ConfigurationNode newsNode = getFirstChildNode(xmlNews.getRoot(), "news");
+            if (newsNode != null) {
+                String id = getFirstChildNodeString(newsNode, "id");
+                ConfigurationNode localeNode = getFirstChildNode(newsNode, zapLocale);
+                if (localeNode == null) {
+                    localeNode = getFirstChildNode(newsNode, "default");
+                }
+                if (localeNode != null) {
+                    String itemText = getFirstChildNodeString(localeNode, "item");
+
+                    if (itemText != null && itemText.length() > 0) {
+                        announceNews(
+                                new NewsItem(
+                                        id,
+                                        itemText,
+                                        new URI(
+                                                getFirstChildNodeString(localeNode, "link"),
+                                                true)));
                     }
-                } catch (Exception e) {
-                    LOGGER.debug("Failed to read news : {}", e.getMessage(), e);
                 }
             }
-        }.start();
+        } catch (Exception e) {
+            LOGGER.debug("Failed to read news : {}", e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void unload() {
+        if (newsFetcherFuture == null) {
+            return;
+        }
+
+        try {
+            newsFetcherFuture.get();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            LOGGER.warn("Interrupted while waiting for the news fetcher, exceptions might occur.");
+        } catch (ExecutionException e) {
+            LOGGER.warn("An error occurred while waiting for the news fetcher:", e);
+        }
     }
 
     private ConfigurationNode getFirstChildNode(ConfigurationNode node, String childName) {
@@ -203,10 +225,8 @@ public class ExtensionQuickStart extends ExtensionAdaptor
     }
 
     private void announceNews(NewsItem newsItem) {
-        if (View.isInitialised()) {
-            if (!this.getQuickStartParam().getClearedNewsItem().equals(newsItem.getId())) {
-                getQuickStartPanel().announceNews(newsItem);
-            }
+        if (!this.getQuickStartParam().getClearedNewsItem().equals(newsItem.getId())) {
+            getQuickStartPanel().announceNews(newsItem);
         }
     }
 
