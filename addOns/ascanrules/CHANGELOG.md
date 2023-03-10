@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Added
+- ParameterEntity attack added in OOB-XXE Scan Rule.
+
 
 ## [53] - 2023-03-03
 ### Changed
@@ -24,8 +27,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update dependency.
 - CVE-2012-1823 Remote Execution and Source Code Disclosure, and Heart Bleed scan rules now include Alert Tags for the applicable CVEs.
 
-### Added
-- ParameterEntity attack added in OOB-XXE Scan Rule.
 ### Fixed
 - A false positive that could occur in the External Redirect scan rule if the payload was included in the redirect as a param or portion of the value.
 

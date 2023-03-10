@@ -274,30 +274,27 @@ public class XxeScanRule extends AbstractAppPlugin {
                                 .build();
                 String oastPayload = extOast.registerAlertAndGetPayload(alert);
                 String payload = MessageFormat.format(ATTACK_MESSAGE, "http://" + oastPayload);
-                alert.setAttack(payload);
-                msg.setRequestBody(payload);
-                sendAndReceive(msg);
+
+                sendOutOfBandAttack(false, ATTACK_MESSAGE, payload, oastPayload);
                 // Try again with https
-                msg = getNewMsg();
-                payload = MessageFormat.format(ATTACK_MESSAGE, "https://" + oastPayload);
-                msg.setRequestBody(payload);
-                sendAndReceive(msg);
+                sendOutOfBandAttack(true, ATTACK_MESSAGE, payload, oastPayload);
 
                 // Try again with parameter entity and http
-                msg = getNewMsg();
-                payload = MessageFormat.format(PARAMETER_ENTITY_ATTACK_MESSAGE, "http://" + oastPayload);
-                msg.setRequestBody(payload);
-                sendAndReceive(msg);
-
+                sendOutOfBandAttack(false, PARAMETER_ENTITY_ATTACK_MESSAGE, payload, oastPayload);
                 // Try again with parameter entity and https
-                msg = getNewMsg();
-                payload = MessageFormat.format(PARAMETER_ENTITY_ATTACK_MESSAGE, "https://" + oastPayload);
-                msg.setRequestBody(payload);
-                sendAndReceive(msg);
+                sendOutOfBandAttack(true, PARAMETER_ENTITY_ATTACK_MESSAGE, payload, oastPayload);
             }
         } catch (Exception e) {
             LOGGER.warn("Could not perform OOB XXE File Inclusion Attack.", e);
         }
+    }
+
+    private void sendOutOfBandAttack(boolean is_https, String ATTACK_MESSAGE, String payload, String oastPayload){
+        msg = getNewMsg();
+        payload = MessageFormat.format(ATTACK_MESSAGE, (is_https ? "https://":"http://") + oastPayload);
+        msg.setRequestBody(payload);
+        sendAndReceive(msg);
+
     }
 
     /**
