@@ -33,8 +33,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
+import org.zaproxy.zap.authentication.AuthenticationMethodType;
 import org.zaproxy.zap.authentication.FormBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.FormBasedAuthenticationMethodType.FormBasedAuthenticationMethod;
 import org.zaproxy.zap.authentication.HttpAuthenticationMethodType.HttpAuthenticationMethod;
@@ -42,6 +44,7 @@ import org.zaproxy.zap.authentication.JsonBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.JsonBasedAuthenticationMethodType.JsonBasedAuthenticationMethod;
 import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.ScriptBasedAuthenticationMethodType.ScriptBasedAuthenticationMethod;
+import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -52,15 +55,21 @@ public class AuthenticationData extends AutomationData {
     public static final String METHOD_JSON = "json";
     public static final String METHOD_MANUAL = "manual";
     public static final String METHOD_SCRIPT = "script";
+    public static final String METHOD_BROWSER = "browser";
 
     public static final String PARAM_HOSTNAME = "hostname";
     public static final String PARAM_REALM = "realm";
     public static final String PARAM_PORT = "port";
+    public static final String PARAM_BROWSER_ID = "browserId";
     public static final String PARAM_LOGIN_PAGE_URL = "loginPageUrl";
+    public static final String PARAM_LOGIN_PAGE_WAIT = "loginPageWait";
     public static final String PARAM_LOGIN_REQUEST_URL = "loginRequestUrl";
     public static final String PARAM_LOGIN_REQUEST_BODY = "loginRequestBody";
     public static final String PARAM_SCRIPT = "script";
     public static final String PARAM_SCRIPT_ENGINE = "scriptEngine";
+
+    protected static final String BROWSER_BASED_AUTH_METHOD_CLASSNAME =
+            "org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod";
 
     /** Field name in the underlying PostBasedAuthenticationMethod class * */
     protected static final String FIELD_LOGIN_REQUEST_URL = "loginRequestURL";
@@ -70,7 +79,13 @@ public class AuthenticationData extends AutomationData {
     public static final String VERIFICATION_ELEMENT = "verification";
 
     private static List<String> validMethods =
-            Arrays.asList(METHOD_MANUAL, METHOD_HTTP, METHOD_FORM, METHOD_JSON, METHOD_SCRIPT);
+            Arrays.asList(
+                    METHOD_MANUAL,
+                    METHOD_HTTP,
+                    METHOD_FORM,
+                    METHOD_JSON,
+                    METHOD_SCRIPT,
+                    METHOD_BROWSER);
 
     private String method;
     private Map<String, Object> parameters = new LinkedHashMap<>();
@@ -120,6 +135,16 @@ public class AuthenticationData extends AutomationData {
                     parameters.put(entry.getKey(), entry.getValue());
                 }
             }
+        } else if (authMethod != null
+                && authMethod
+                        .getClass()
+                        .getCanonicalName()
+                        .equals(BROWSER_BASED_AUTH_METHOD_CLASSNAME)) {
+            // Plan to change once the core supports dynamic methods better
+            setMethod(METHOD_BROWSER);
+            JobUtils.addPrivateField(parameters, PARAM_LOGIN_PAGE_URL, authMethod);
+            JobUtils.addPrivateField(parameters, PARAM_LOGIN_PAGE_WAIT, authMethod);
+            JobUtils.addPrivateField(parameters, PARAM_BROWSER_ID, authMethod);
         }
         if (authMethod != null) {
             setVerification(new VerificationData(context));
@@ -142,6 +167,7 @@ public class AuthenticationData extends AutomationData {
             for (Entry<String, Object> entry : parameters.entrySet()) {
                 switch (entry.getKey()) {
                     case PARAM_PORT:
+                    case PARAM_LOGIN_PAGE_WAIT:
                         try {
                             Integer.parseInt(entry.getValue().toString());
                         } catch (NumberFormatException e) {
@@ -276,22 +302,57 @@ public class AuthenticationData extends AutomationData {
                             JobUtils.setPrivateField(
                                     scriptMethod, "paramValues", getScriptParameters(env));
 
-                            try {
-                                // OK, this does look weird, but it is the easiest way to actually
-                                // get the script data loaded :/
-                                Configuration config = new ZapXmlConfiguration();
-                                scriptType.exportData(config, scriptMethod);
-                                scriptType.importData(config, scriptMethod);
-                            } catch (ConfigurationException e) {
-                                LOGGER.error("Error setting script authentication", e);
-                                progress.error(
-                                        Constant.messages.getString(
-                                                "automation.error.unexpected.internal",
-                                                e.getMessage()));
-                            }
-
+                            reloadAuthenticationMethod(scriptMethod, progress);
                             context.setAuthenticationMethod(scriptMethod);
                         }
+                    }
+                    break;
+                case AuthenticationData.METHOD_BROWSER:
+                    // This should be handled dynamically, but that required core changes
+                    ExtensionAuthentication extAuth =
+                            Control.getSingleton()
+                                    .getExtensionLoader()
+                                    .getExtension(ExtensionAuthentication.class);
+
+                    AuthenticationMethodType authType =
+                            extAuth.getAuthenticationMethodTypeForIdentifier(6);
+
+                    if (authType != null) {
+                        AuthenticationMethod am =
+                                authType.createAuthenticationMethod(context.getId());
+
+                        JobUtils.setPrivateField(
+                                am,
+                                AuthenticationData.PARAM_LOGIN_PAGE_URL,
+                                env.replaceVars(
+                                        getParameters()
+                                                .get(AuthenticationData.PARAM_LOGIN_PAGE_URL)));
+
+                        Object browserIdObj =
+                                getParameters().get(AuthenticationData.PARAM_BROWSER_ID);
+                        if (browserIdObj != null && browserIdObj instanceof String) {
+                            JobUtils.setPrivateField(
+                                    am, AuthenticationData.PARAM_BROWSER_ID, (String) browserIdObj);
+                        }
+                        Object loginPageWaitObj =
+                                getParameters().get(AuthenticationData.PARAM_LOGIN_PAGE_WAIT);
+                        if (loginPageWaitObj instanceof Integer) {
+                            int loginPageWait = JobUtils.unBox((Integer) loginPageWaitObj);
+                            if (loginPageWait > 0) {
+                                JobUtils.setPrivateField(
+                                        am,
+                                        AuthenticationData.PARAM_LOGIN_PAGE_WAIT,
+                                        loginPageWait);
+                            }
+                        }
+
+                        reloadAuthenticationMethod(am, progress);
+                        context.setAuthenticationMethod(am);
+
+                    } else {
+                        progress.error(
+                                Constant.messages.getString(
+                                        "automation.error.env.auth.type.bad", getMethod()));
                     }
                     break;
 
@@ -304,6 +365,22 @@ public class AuthenticationData extends AutomationData {
         }
         if (this.verification != null) {
             this.verification.initAuthenticationVerification(context, progress);
+        }
+    }
+
+    private void reloadAuthenticationMethod(AuthenticationMethod am, AutomationProgress progress) {
+        try {
+            // OK, this does look weird, but it is the easiest way to actually get
+            // the session management data loaded :/
+            AuthenticationMethodType type = am.getType();
+            Configuration config = new ZapXmlConfiguration();
+            type.exportData(config, am);
+            type.importData(config, am);
+        } catch (ConfigurationException e) {
+            LOGGER.error("Error setting authentication", e);
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.error.unexpected.internal", e.getMessage()));
         }
     }
 

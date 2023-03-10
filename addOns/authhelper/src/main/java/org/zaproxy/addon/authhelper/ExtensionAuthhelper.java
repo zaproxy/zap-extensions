@@ -30,7 +30,6 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -42,12 +41,13 @@ import org.zaproxy.zap.authentication.JsonBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.ManualAuthenticationMethodType;
 import org.zaproxy.zap.authentication.PostBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.PostBasedAuthenticationMethodType.PostBasedAuthenticationMethod;
+import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.extension.sessions.ExtensionSessionManagement;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-public class ExtensionAuthhelper extends ExtensionAdaptor {
+public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChangedListener {
 
     private Map<Integer, AuthenticationRequestDetails> contextIdToLoginDetails = new HashMap<>();
 
@@ -56,6 +56,9 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
     private static final HeaderBasedSessionManagementMethodType HEADER_BASED_TYPE =
             new HeaderBasedSessionManagementMethodType();
 
+    private static final BrowserBasedAuthenticationMethodType BROWSER_BASED_AUTH_TYPE =
+            new BrowserBasedAuthenticationMethodType();
+
     public ExtensionAuthhelper() {
         super();
         this.setI18nPrefix("authhelper");
@@ -63,24 +66,28 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
 
     @Override
     public void optionsLoaded() {
-        ExtensionSessionManagement extSm = getExtensionSessionManagement();
+        ExtensionSessionManagement extSm = AuthUtils.getExtension(ExtensionSessionManagement.class);
         if (extSm != null) {
             extSm.getSessionManagementMethodTypes().add(HEADER_BASED_TYPE);
+        }
+        ExtensionAuthentication extAuth = AuthUtils.getExtension(ExtensionAuthentication.class);
+        if (extAuth != null) {
+            extAuth.getAuthenticationMethodTypes().add(BROWSER_BASED_AUTH_TYPE);
         }
     }
 
     @Override
     public void unload() {
-        ExtensionSessionManagement extSm = getExtensionSessionManagement();
+        ExtensionSessionManagement extSm = AuthUtils.getExtension(ExtensionSessionManagement.class);
         if (extSm != null) {
             extSm.getSessionManagementMethodTypes().remove(HEADER_BASED_TYPE);
         }
-    }
-
-    private static ExtensionSessionManagement getExtensionSessionManagement() {
-        return Control.getSingleton()
-                .getExtensionLoader()
-                .getExtension(ExtensionSessionManagement.class);
+        ExtensionAuthentication extAuth = AuthUtils.getExtension(ExtensionAuthentication.class);
+        if (extAuth != null) {
+            extAuth.getAuthenticationMethodTypes().remove(BROWSER_BASED_AUTH_TYPE);
+        }
+        AuthUtils.disableBrowserAuthentication();
+        BrowserBasedAuthenticationMethodType.stopProxies();
     }
 
     @Override
@@ -204,5 +211,25 @@ public class ExtensionAuthhelper extends ExtensionAdaptor {
 
         @Override
         public void sessionModeChanged(Mode mode) {}
+    }
+
+    @Override
+    public void sessionChanged(Session session) {
+        // Ignore
+    }
+
+    @Override
+    public void sessionAboutToChange(Session session) {
+        BrowserBasedAuthenticationMethodType.stopProxies();
+    }
+
+    @Override
+    public void sessionScopeChanged(Session session) {
+        // Ignore
+    }
+
+    @Override
+    public void sessionModeChanged(Mode mode) {
+        // Ignore
     }
 }

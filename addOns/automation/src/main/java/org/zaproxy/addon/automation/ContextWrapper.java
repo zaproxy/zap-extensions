@@ -335,7 +335,11 @@ public class ContextWrapper {
                 AuthenticationMethod authMethod = context.getAuthenticationMethod();
                 if (authMethod instanceof HttpAuthenticationMethod
                         || authMethod instanceof FormBasedAuthenticationMethod
-                        || authMethod instanceof JsonBasedAuthenticationMethod) {
+                        || authMethod instanceof JsonBasedAuthenticationMethod
+                        || authMethod
+                                .getClass()
+                                .getCanonicalName()
+                                .equals(AuthenticationData.BROWSER_BASED_AUTH_METHOD_CLASSNAME)) {
                     UsernamePasswordAuthenticationCredentials upCreds =
                             new UsernamePasswordAuthenticationCredentials(
                                     env.replaceVars(ud.getCredential(UserData.USERNAME_CREDENTIAL)),

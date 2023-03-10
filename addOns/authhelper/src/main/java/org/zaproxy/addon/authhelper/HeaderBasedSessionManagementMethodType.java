@@ -26,22 +26,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.httpclient.HttpState;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.db.RecordContext;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.api.ApiDynamicActionImplementor;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiResponse;
@@ -71,9 +66,6 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
     private static final int METHOD_IDENTIFIER = 3;
 
     private static final String API_METHOD_NAME = "headerBasedSessionManagement";
-
-    private static final Logger LOGGER =
-            LogManager.getLogger(HeaderBasedSessionManagementMethodType.class);
 
     public static class HeaderBasedSessionManagementMethod implements SessionManagementMethod {
 
@@ -115,80 +107,20 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
             envVars = vars;
         }
 
-        protected static Map<String, String> getAllTokens(HttpMessage msg) {
-            Map<String, String> tokens = new HashMap<>();
-            if (msg.getResponseHeader().isJson()) {
-                // Extract json response data
-                String responseData = msg.getResponseBody().toString();
-                try {
-                    extractJsonTokens(JSONObject.fromObject(responseData), "", tokens);
-                } catch (JSONException e) {
-                    String url = msg.getRequestHeader().getURI().toString();
-                    LOGGER.error(
-                            "Unable to parse authentication response body from {} as JSON: {} ",
-                            url,
-                            responseData,
-                            e);
-                    if (View.isInitialised()) {
-                        View.getSingleton()
-                                .getOutputPanel()
-                                .append(
-                                        Constant.messages.getString(
-                                                "authhelper.session.method.header.error.json.parse",
-                                                url,
-                                                responseData));
-                    }
-                }
-            }
-            // Add response headers
-            msg.getResponseHeader()
-                    .getHeaders()
-                    .forEach(h -> tokens.put("header:" + h.getName(), h.getValue()));
+        @Override
+        public HttpHeaderBasedSession extractWebSession(HttpMessage msg) {
+            Map<String, String> tokens = AuthUtils.getAllTokens(msg);
+
             // Add env vars
             envVars.forEach((k, v) -> tokens.put("env:" + k, v));
             // Add Global script vars
             ScriptVars.getGlobalVars().forEach((k, v) -> tokens.put("script:" + k, v));
-            // Add URL params
-            msg.getUrlParams().forEach(p -> tokens.put("url:" + p.getName(), p.getValue()));
-
-            return tokens;
-        }
-
-        private static void extractJsonTokens(
-                JSONObject jsonObject, String parent, Map<String, String> tokens) {
-            for (Object key : jsonObject.keySet()) {
-                Object obj = jsonObject.get(key);
-                extractJsonTokens(obj, normalisedKey(parent, (String) key), tokens);
-            }
-        }
-
-        private static void extractJsonTokens(
-                Object obj, String parent, Map<String, String> tokens) {
-            if (obj instanceof JSONObject) {
-                extractJsonTokens((JSONObject) obj, parent, tokens);
-            } else if (obj instanceof JSONArray) {
-                JSONArray ja = (JSONArray) obj;
-                Object[] oa = ja.toArray();
-                for (int i = 0; i < oa.length; i++) {
-                    extractJsonTokens(oa[i], parent + "[" + i + "]", tokens);
-                }
-            } else if (obj instanceof String) {
-                tokens.put("json:" + parent, (String) obj);
-            }
-        }
-
-        private static String normalisedKey(String parent, String key) {
-            return parent.isEmpty() ? key : parent + "." + key;
-        }
-
-        @Override
-        public HttpHeaderBasedSession extractWebSession(HttpMessage msg) {
-            Map<String, String> tokens = getAllTokens(msg);
 
             List<Pair<String, String>> headers = new ArrayList<>();
             for (Pair<String, String> hc : this.headerConfigs) {
                 headers.add(new Pair<>(hc.first, replaceTokens(hc.second, tokens)));
             }
+
             return new HttpHeaderBasedSession(headers);
         }
 

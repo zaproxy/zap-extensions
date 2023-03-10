@@ -7,5 +7,6 @@
     <!-- index entries are merged (sorted) into core index -->
 	<indexitem text="Authentication Helper" target="authhelper" />
 	<indexitem text="Authentication Request Identification" target="authhelper.auth-req-id" />
+	<indexitem text="Browser Based Authentication" target="authhelper.browser-auth" />
 	<indexitem text="Header Based Session Management" target="authhelper.session-header" />
 </index>
