@@ -273,25 +273,24 @@ public class XxeScanRule extends AbstractAppPlugin {
                                 .setSource(Alert.Source.ACTIVE)
                                 .build();
                 String oastPayload = extOast.registerAlertAndGetPayload(alert);
-                String payload = MessageFormat.format(ATTACK_MESSAGE, "http://" + oastPayload);
 
-                sendOutOfBandAttack(false, ATTACK_MESSAGE, payload, oastPayload);
+                sendOutOfBandAttack(false, ATTACK_MESSAGE, oastPayload);
                 // Try again with https
-                sendOutOfBandAttack(true, ATTACK_MESSAGE, payload, oastPayload);
+                sendOutOfBandAttack(true, ATTACK_MESSAGE, oastPayload);
 
                 // Try again with parameter entity and http
-                sendOutOfBandAttack(false, PARAMETER_ENTITY_ATTACK_MESSAGE, payload, oastPayload);
+                sendOutOfBandAttack(false, PARAMETER_ENTITY_ATTACK_MESSAGE, oastPayload);
                 // Try again with parameter entity and https
-                sendOutOfBandAttack(true, PARAMETER_ENTITY_ATTACK_MESSAGE, payload, oastPayload);
+                sendOutOfBandAttack(true, PARAMETER_ENTITY_ATTACK_MESSAGE, oastPayload);
             }
         } catch (Exception e) {
             LOGGER.warn("Could not perform OOB XXE File Inclusion Attack.", e);
         }
     }
 
-    private void sendOutOfBandAttack(boolean is_https, String ATTACK_MESSAGE, String payload, String oastPayload){
-        msg = getNewMsg();
-        payload = MessageFormat.format(ATTACK_MESSAGE, (is_https ? "https://":"http://") + oastPayload);
+    private void sendOutOfBandAttack(boolean is_https, String ATTACK_MESSAGE, String oastPayload) throws IOException {
+        HttpMessage msg = getNewMsg();
+        String payload = MessageFormat.format(ATTACK_MESSAGE, (is_https ? "https://":"http://") + oastPayload);
         msg.setRequestBody(payload);
         sendAndReceive(msg);
 
