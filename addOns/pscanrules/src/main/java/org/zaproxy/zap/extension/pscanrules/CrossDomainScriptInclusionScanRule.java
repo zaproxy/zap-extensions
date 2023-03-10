@@ -34,7 +34,9 @@ import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.domains.TrustedDomains;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
+import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Context;
 
 public class CrossDomainScriptInclusionScanRule extends PluginPassiveScanner {
@@ -51,8 +53,12 @@ public class CrossDomainScriptInclusionScanRule extends PluginPassiveScanner {
             LogManager.getLogger(CrossDomainScriptInclusionScanRule.class);
     private Model model = null;
 
+    private final TrustedDomains trustedDomains = new TrustedDomains();
+
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        trustedDomains.update(getConfig().getString(RuleConfigParam.RULE_DOMAINS_TRUSTED, ""));
+
         if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isHtml()) {
             List<Element> sourceElements = source.getAllElements(HTMLElementName.SCRIPT);
             if (sourceElements != null) {
@@ -60,7 +66,8 @@ public class CrossDomainScriptInclusionScanRule extends PluginPassiveScanner {
                     String src = sourceElement.getAttributeValue("src");
                     if (src != null
                             && isScriptFromOtherDomain(
-                                    msg.getRequestHeader().getHostName(), src, msg)) {
+                                    msg.getRequestHeader().getHostName(), src, msg)
+                            && !trustedDomains.isIncluded(src)) {
                         String integrity = sourceElement.getAttributeValue("integrity");
                         if (integrity == null || integrity.trim().length() == 0) {
                             /*

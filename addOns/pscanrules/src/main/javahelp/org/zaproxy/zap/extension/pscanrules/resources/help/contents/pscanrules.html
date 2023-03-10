@@ -16,6 +16,7 @@ You can specify a comma separated list of URL regex patterns using the <code>rul
 Any link URL that matches one of these patterns will be considered to be in a trusted domain and will therefore not be reported.
 Following rules supports <b>Trusted Domains</b> :
 <ul>
+ <li>Cross Domain Script Inclusion</li>
  <li>Reverse Tabnabbing</li>
 </ul>
 
@@ -149,6 +150,7 @@ Allowed Cross-Domain scripts:
 <ul>
 <li>Any script with a non-empty "integrity" attribute is ignored - the integrity value is not checked as this will be checked by the browser</li>
 <li>At MEDIUM and HIGH thresholds if a script URL falls within a context that also includes the URL of the base message no alerts will be raised.</li>
+<li>This rule supports <b>Trusted Domains</b>, check "General Configuration" for more information.</li>
 </ul> 
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CrossDomainScriptInclusionScanRule.java">CrossDomainScriptInclusionScanRule.java</a>

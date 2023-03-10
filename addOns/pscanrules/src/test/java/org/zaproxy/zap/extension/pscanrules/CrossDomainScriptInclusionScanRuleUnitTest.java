@@ -37,7 +37,9 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link CrossDomainScriptInclusionScanRule}. */
 class CrossDomainScriptInclusionScanRuleUnitTest
@@ -58,7 +60,9 @@ class CrossDomainScriptInclusionScanRuleUnitTest
 
     @Override
     protected CrossDomainScriptInclusionScanRule createScanner() {
-        return new CrossDomainScriptInclusionScanRule();
+        CrossDomainScriptInclusionScanRule rule = new CrossDomainScriptInclusionScanRule();
+        rule.setConfig(new ZapXmlConfiguration());
+        return rule;
     }
 
     @Test
@@ -109,7 +113,7 @@ class CrossDomainScriptInclusionScanRuleUnitTest
                         + "<head>"
                         + "<script src=\"https://www.example.com/script1\"/>"
                         + "<script src=\"https://www.example.com/script2\"/>"
-                        + "<head>"
+                        + "</head>"
                         + "</html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -128,13 +132,12 @@ class CrossDomainScriptInclusionScanRuleUnitTest
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody(
                 "<html>"
                         + "<head>"
                         + "<script src=\"https://www.example.com/script1\"/>"
                         + "<script src=\"https://www.otherDomain.com/script2\"/>"
-                        + "<head>"
+                        + "</head>"
                         + "</html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -157,13 +160,12 @@ class CrossDomainScriptInclusionScanRuleUnitTest
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody(
                 "<html>"
                         + "<head>"
                         + "<script src=\"https://www.example.com/script1\"/>"
                         + "<script src=\"https://www.otherDomain.com/script2\" integrity=\"12345678\"/>"
-                        + "<head>"
+                        + "</head>"
                         + "</html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -182,13 +184,12 @@ class CrossDomainScriptInclusionScanRuleUnitTest
 
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-
         msg.setResponseBody(
                 "<html>"
                         + "<head>"
                         + "<script src=\"https://www.example.com/script1\"/>"
                         + "<script src=\"https://www.otherDomain.com/script2\" integrity=\"\"/>"
-                        + "<head>"
+                        + "</head>"
                         + "</html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -221,7 +222,7 @@ class CrossDomainScriptInclusionScanRuleUnitTest
                         + "<head>"
                         + "<script src=\"https://www.example.com/script1\"/>"
                         + "<script src=\"https://www.otherDomain.com/script2\"/>"
-                        + "<head>"
+                        + "</head>"
                         + "</html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -286,7 +287,7 @@ class CrossDomainScriptInclusionScanRuleUnitTest
                         + "<head>"
                         + "<script src=\"https://www.example.com/script1\"/>"
                         + "<script src=\"https://www.otherDomain.com/script2\"/>"
-                        + "<head>"
+                        + "</head>"
                         + "</html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -318,7 +319,7 @@ class CrossDomainScriptInclusionScanRuleUnitTest
                         + "<head>"
                         + "<script src=\"https://www.example.com/script1\"/>"
                         + "<script src=\"https://www.otherDomain.com/script2\"/>"
-                        + "<head>"
+                        + "</head>"
                         + "</html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -345,7 +346,7 @@ class CrossDomainScriptInclusionScanRuleUnitTest
                         + "<head>"
                         + "<script src=\"https://www.example.com/script1\"/>"
                         + "<script src=\"https://www.otherDomain.com/script2\"/>"
-                        + "<head>"
+                        + "</head>"
                         + "</html>");
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n"
@@ -358,6 +359,60 @@ class CrossDomainScriptInclusionScanRuleUnitTest
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("https://www.otherDomain.com/script2"));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo("<script src=\"https://www.otherDomain.com/script2\"/>"));
+    }
+
+    @Test
+    void dontRaiseIssueWhenLinkIsTrustedDomain() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        rule.getConfig()
+                .setProperty(RuleConfigParam.RULE_DOMAINS_TRUSTED, "https://www.example2.com/.*");
+
+        msg.setResponseBody(
+                "<html>"
+                        + "<head>"
+                        + "<script src=\"https://www.example2.com/script1\"/>"
+                        + "</head>"
+                        + "</html>");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
+        scanHttpResponseReceive(msg);
+
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void raiseIssueWhenLinkIsNotTrustedDomain() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
+        rule.getConfig()
+                .setProperty(RuleConfigParam.RULE_DOMAINS_TRUSTED, "https://www.example2.com/.*");
+        msg.setResponseBody(
+                "<html>"
+                        + "<head>"
+                        + "<script src=\"https://www.example.com/script1\"/>"
+                        + "<script src=\"https://www.otherDomain.com/script2\"/>"
+                        + "</head>"
+                        + "</html>");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Type: text/html;charset=ISO-8859-1\r\n"
+                        + "Content-Length: "
+                        + msg.getResponseBody().length()
+                        + "\r\n");
+        scanHttpResponseReceive(msg);
+        assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
                 alertsRaised.get(0).getEvidence(),
                 equalTo("<script src=\"https://www.otherDomain.com/script2\"/>"));
