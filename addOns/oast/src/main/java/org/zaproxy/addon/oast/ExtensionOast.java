@@ -54,6 +54,7 @@ import org.zaproxy.addon.oast.services.callback.CallbackService;
 import org.zaproxy.addon.oast.services.interactsh.InteractshOptionsPanelTab;
 import org.zaproxy.addon.oast.services.interactsh.InteractshService;
 import org.zaproxy.addon.oast.ui.GeneralOastOptionsPanelTab;
+import org.zaproxy.addon.oast.ui.OastInsertPayloadMenu;
 import org.zaproxy.addon.oast.ui.OastOptionsPanel;
 import org.zaproxy.addon.oast.ui.OastPanel;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
@@ -136,6 +137,7 @@ public class ExtensionOast extends ExtensionAdaptor {
             getOastOptionsPanel().addServicePanel(new BoastOptionsPanelTab(boastService));
             getOastOptionsPanel().addServicePanel(new CallbackOptionsPanelTab(callbackService));
             getOastOptionsPanel().addServicePanel(new InteractshOptionsPanelTab(interactshService));
+            extensionHook.getHookMenu().addPopupMenuItem(new OastInsertPayloadMenu(this));
             extensionHook.getHookView().addStatusPanel(getOastPanel());
             ExtensionHelp.enableHelpKey(getOastPanel(), "oast.tab");
         }
