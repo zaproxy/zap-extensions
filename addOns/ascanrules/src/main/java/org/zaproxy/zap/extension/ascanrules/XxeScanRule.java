@@ -291,6 +291,7 @@ public class XxeScanRule extends AbstractAppPlugin {
         sendAndReceive(msg);
 
         // Try again with https
+        msg = getNewMsg();
         payload = MessageFormat.format(ATTACK_MESSAGE, "https://" + oastPayload);
         msg.setRequestBody(payload);
         sendAndReceive(msg);
