@@ -35,7 +35,6 @@ import org.zaproxy.zap.view.StandardFieldsDialog;
 @SuppressWarnings("serial")
 public class LoadScriptDialog extends StandardFieldsDialog {
 
-    private static final String FIELD_FILE = "scripts.dialog.script.label.file";
     private static final String FIELD_NAME = "scripts.dialog.script.label.name";
     private static final String FIELD_ENGINE = "scripts.dialog.script.label.engine";
     private static final String FIELD_DESC = "scripts.dialog.script.label.desc";
@@ -161,7 +160,6 @@ public class LoadScriptDialog extends StandardFieldsDialog {
 
     public void reset(ScriptWrapper script) {
         this.script = script;
-        this.setFieldValue(FIELD_FILE, script.getFile().getAbsolutePath());
         this.setFieldValue(FIELD_NAME, script.getFile().getName());
         int dotIndex = script.getFile().getName().lastIndexOf(".");
         if (dotIndex > 0) {
