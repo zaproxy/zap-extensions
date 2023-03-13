@@ -111,7 +111,7 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
 
     @Override
     public String getDescription() {
-        return Constant.messages.getString("ascanrules.sqlinjection.mssql.desc");
+        return Constant.messages.getString("ascanrules.sqlinjection.desc");
     }
 
     @Override
@@ -121,12 +121,12 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
 
     @Override
     public String getSolution() {
-        return Constant.messages.getString("ascanrules.sqlinjection.mssql.soln");
+        return Constant.messages.getString("ascanrules.sqlinjection.soln");
     }
 
     @Override
     public String getReference() {
-        return Constant.messages.getString("ascanrules.sqlinjection.mssql.refs");
+        return Constant.messages.getString("ascanrules.sqlinjection.refs");
     }
 
     @Override
