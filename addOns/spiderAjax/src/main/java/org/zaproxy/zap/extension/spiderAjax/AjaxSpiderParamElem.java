@@ -21,7 +21,7 @@ package org.zaproxy.zap.extension.spiderAjax;
 
 import org.zaproxy.zap.utils.Enableable;
 
-class AjaxSpiderParamElem extends Enableable {
+public class AjaxSpiderParamElem extends Enableable {
 
     private String name;
 

@@ -23,13 +23,21 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
 import javax.swing.JTextField;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.jobs.JobUtils;
+import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowserUI;
+import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderMultipleOptionsPanel;
+import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam;
+import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParamElem;
+import org.zaproxy.zap.extension.spiderAjax.OptionsAjaxSpiderTableModel;
 import org.zaproxy.zap.extension.spiderAjax.automation.AjaxSpiderJob.Parameters;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
@@ -74,6 +82,12 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
             "spiderajax.automation.dialog.ajaxspider.clickelemsonce";
     private static final String RANDOM_INPUTS_PARAM =
             "spiderajax.automation.dialog.ajaxspider.randominputs";
+    private static final String CLICK_ELEMS_HEADER =
+            "spiderajax.automation.dialog.ajaxspider.clickelems";
+
+    private AjaxSpiderMultipleOptionsPanel elemsOptionsPanel;
+
+    private OptionsAjaxSpiderTableModel ajaxSpiderClickModel;
 
     private AjaxSpiderJob job;
     private ExtensionSelenium extSel = null;
@@ -82,7 +96,7 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
         super(
                 View.getSingleton().getMainFrame(),
                 TITLE,
-                DisplayUtils.getScaledDimension(450, 400),
+                DisplayUtils.getScaledDimension(450, 500),
                 TAB_LABELS);
         this.job = job;
         this.addTextField(0, NAME_PARAM, this.job.getName());
@@ -105,21 +119,27 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
         this.addNumberField(
                 0,
                 MAX_DURATION_PARAM,
-                0,
+                1,
                 Integer.MAX_VALUE,
-                JobUtils.unBox(this.job.getParameters().getMaxDuration()));
+                getInt(
+                        this.job.getParameters().getMaxDuration(),
+                        AjaxSpiderParam.DEFAULT_MAX_DURATION));
         this.addNumberField(
                 0,
                 MAX_CRAWL_DEPTH_PARAM,
-                0,
+                1,
                 Integer.MAX_VALUE,
-                JobUtils.unBox(this.job.getParameters().getMaxCrawlDepth()));
+                getInt(
+                        this.job.getParameters().getMaxCrawlDepth(),
+                        AjaxSpiderParam.DEFAULT_MAX_CRAWL_DEPTH));
         this.addNumberField(
                 0,
                 NUM_BROWSERS_PARAM,
                 1,
                 Integer.MAX_VALUE,
-                JobUtils.unBox(this.job.getParameters().getNumberOfBrowsers()));
+                getInt(
+                        this.job.getParameters().getNumberOfBrowsers(),
+                        Constants.getDefaultThreadCount()));
         this.addCheckBoxField(
                 0, IN_SCOPE_ONLY, JobUtils.unBox(this.job.getParameters().getInScopeOnly()));
         this.addCheckBoxField(
@@ -149,38 +169,121 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
         }
         this.addComboField(1, BROWSER_ID_PARAM, browserNames, defaultBrowser);
 
+        boolean clickDefaultElements =
+                JobUtils.unBox(this.job.getParameters().getClickDefaultElems())
+                        || this.job.getParameters().getElements() == null;
+
         this.addNumberField(
                 1,
                 MAX_CRAWL_STATES_PARAM,
                 0,
                 Integer.MAX_VALUE,
-                JobUtils.unBox(this.job.getParameters().getMaxCrawlStates()));
+                getInt(
+                        this.job.getParameters().getMaxCrawlStates(),
+                        AjaxSpiderParam.DEFAULT_CRAWL_STATES));
         this.addNumberField(
                 1,
                 EVENT_WAIT_PARAM,
-                0,
+                1,
                 Integer.MAX_VALUE,
-                JobUtils.unBox(this.job.getParameters().getEventWait()));
+                getInt(
+                        this.job.getParameters().getEventWait(),
+                        AjaxSpiderParam.DEFAULT_EVENT_WAIT_TIME));
         this.addNumberField(
                 1,
                 RELOAD_WAIT_PARAM,
-                0,
-                Integer.MAX_VALUE,
-                JobUtils.unBox(this.job.getParameters().getReloadWait()));
-        this.addCheckBoxField(
                 1,
-                CLICK_DEFAULT_ELEMS_PARAM,
-                JobUtils.unBox(this.job.getParameters().getClickDefaultElems()));
+                Integer.MAX_VALUE,
+                getInt(
+                        this.job.getParameters().getReloadWait(),
+                        AjaxSpiderParam.DEFAULT_RELOAD_WAIT_TIME));
         this.addCheckBoxField(
                 1,
                 CLICK_ELEMS_ONCE_PARAM,
-                JobUtils.unBox(this.job.getParameters().getClickElemsOnce()));
+                getBool(
+                        this.job.getParameters().getClickElemsOnce(),
+                        AjaxSpiderParam.DEFAULT_CLICK_ELEMS_ONCE));
         this.addCheckBoxField(
-                1, RANDOM_INPUTS_PARAM, JobUtils.unBox(this.job.getParameters().getRandomInputs()));
+                1,
+                RANDOM_INPUTS_PARAM,
+                getBool(
+                        this.job.getParameters().getRandomInputs(),
+                        AjaxSpiderParam.DEFAULT_RANDOM_INPUTS));
+        this.addCheckBoxField(1, CLICK_DEFAULT_ELEMS_PARAM, clickDefaultElements);
+
+        this.addReadOnlyField(1, CLICK_ELEMS_HEADER, "", true);
+
+        this.addFieldListener(
+                CLICK_DEFAULT_ELEMS_PARAM,
+                e -> setClickElemsEnabled(!this.getBoolValue(CLICK_DEFAULT_ELEMS_PARAM)));
+
+        this.getAjaxSpiderClickModel().setElems(this.getElems());
+        this.addCustomComponent(1, getAjaxSpiderClickPanel());
 
         this.addPadding(1);
 
+        setClickElemsEnabled(!clickDefaultElements);
         setAdvancedTabs(getBoolValue(FIELD_ADVANCED));
+    }
+
+    private int getInt(Integer i, int defaultValue) {
+        if (i == null) {
+            return defaultValue;
+        }
+        return i.intValue();
+    }
+
+    private boolean getBool(Boolean b, boolean defaultValue) {
+        if (b == null) {
+            return defaultValue;
+        }
+        return b.booleanValue();
+    }
+
+    private List<AjaxSpiderParamElem> getElems() {
+
+        List<AjaxSpiderParamElem> elems = new ArrayList<AjaxSpiderParamElem>();
+        List<String> enabledElems;
+        if (this.job.getParameters().getElements() != null) {
+            enabledElems =
+                    this.job.getParameters().getElements().stream()
+                            .map(e -> e.toLowerCase(Locale.ROOT))
+                            .collect(Collectors.toList());
+        } else {
+            enabledElems = new ArrayList<>();
+        }
+
+        List<String> defaultElementList = Arrays.asList(AjaxSpiderParam.DEFAULT_ELEMS_NAMES);
+
+        defaultElementList.forEach(
+                e -> {
+                    elems.add(new AjaxSpiderParamElem(e, enabledElems.contains(e)));
+                });
+        for (String elem : enabledElems) {
+            if (!defaultElementList.contains(elem)) {
+                elems.add(new AjaxSpiderParamElem(elem, true));
+            }
+        }
+
+        return elems;
+    }
+
+    private OptionsAjaxSpiderTableModel getAjaxSpiderClickModel() {
+        if (ajaxSpiderClickModel == null) {
+            ajaxSpiderClickModel = new OptionsAjaxSpiderTableModel();
+        }
+        return ajaxSpiderClickModel;
+    }
+
+    private AjaxSpiderMultipleOptionsPanel getAjaxSpiderClickPanel() {
+        if (elemsOptionsPanel == null) {
+            elemsOptionsPanel = new AjaxSpiderMultipleOptionsPanel(getAjaxSpiderClickModel());
+        }
+        return elemsOptionsPanel;
+    }
+
+    private void setClickElemsEnabled(boolean isEnabled) {
+        getAjaxSpiderClickPanel().setComponentEnabled(isEnabled);
     }
 
     private boolean advOptionsSet() {
@@ -243,6 +346,16 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
                     .setClickDefaultElems(this.getBoolValue(CLICK_DEFAULT_ELEMS_PARAM));
             this.job.getParameters().setClickElemsOnce(this.getBoolValue(CLICK_ELEMS_ONCE_PARAM));
             this.job.getParameters().setRandomInputs(this.getBoolValue(RANDOM_INPUTS_PARAM));
+
+            if (!this.getBoolValue(CLICK_DEFAULT_ELEMS_PARAM)) {
+                this.job
+                        .getParameters()
+                        .setElements(
+                                this.getAjaxSpiderClickModel().getElements().stream()
+                                        .filter(e -> e.isEnabled())
+                                        .map(e -> e.getName())
+                                        .collect(Collectors.toList()));
+            }
         } else {
             this.job.getParameters().setBrowserId(null);
             this.job.getParameters().setMaxCrawlStates(null);
@@ -251,7 +364,9 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
             this.job.getParameters().setClickDefaultElems(null);
             this.job.getParameters().setClickElemsOnce(null);
             this.job.getParameters().setRandomInputs(null);
+            this.job.getParameters().setElements(null);
         }
+        this.job.setChanged();
     }
 
     @Override

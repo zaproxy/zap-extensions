@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.spiderAjax.automation;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,7 @@ import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 import org.zaproxy.addon.automation.tests.AutomationStatisticTest;
 import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam;
+import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParamElem;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderTarget;
 import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
 import org.zaproxy.zap.extension.spiderAjax.SpiderListener;
@@ -63,6 +65,7 @@ public class AjaxSpiderJob extends AutomationJob {
     private static final String PARAM_USER = "user";
     private static final String PARAM_IN_SCOPE_ONLY = "inScopeOnly";
     private static final String PARAM_ONLY_RUN_IF_MODERN = "runOnlyIfModern";
+    private static final String PARAM_ELEMENTS = "elements";
     private static final String PARAM_FAIL_IF_LESS_URLS = "failIfFoundUrlsLessThan";
     private static final String PARAM_WARN_IF_LESS_URLS = "warnIfFoundUrlsLessThan";
 
@@ -118,12 +121,21 @@ public class AjaxSpiderJob extends AutomationJob {
                     PARAM_URL,
                     PARAM_USER,
                     PARAM_IN_SCOPE_ONLY,
+                    PARAM_ELEMENTS,
                     PARAM_ONLY_RUN_IF_MODERN,
                     PARAM_FAIL_IF_LESS_URLS,
                     PARAM_WARN_IF_LESS_URLS
                 },
                 progress,
                 this.getPlan().getEnv());
+
+        if (!JobUtils.unBox(this.parameters.clickDefaultElems)
+                && this.parameters.getElements() != null) {
+            List<AjaxSpiderParamElem> elems =
+                    new ArrayList<AjaxSpiderParamElem>(this.parameters.getElements().size());
+            this.parameters.getElements().forEach(e -> elems.add(new AjaxSpiderParamElem(e)));
+            this.getExtSpider().getAjaxSpiderParam().setElems(elems);
+        }
     }
 
     @Override
@@ -404,9 +416,13 @@ public class AjaxSpiderJob extends AutomationJob {
 
         private Boolean runOnlyIfModern;
 
+        private List<String> elements;
+
         // These 2 fields are deprecated
         private Boolean failIfFoundUrlsLessThan;
         private Boolean warnIfFoundUrlsLessThan;
+
+        public Parameters() {}
 
         public String getContext() {
             return context;
@@ -530,6 +546,17 @@ public class AjaxSpiderJob extends AutomationJob {
 
         public Boolean getFailIfFoundUrlsLessThan() {
             return failIfFoundUrlsLessThan;
+        }
+
+        public List<String> getElements() {
+            if (JobUtils.unBox(this.clickDefaultElems)) {
+                return null;
+            }
+            return elements;
+        }
+
+        public void setElements(List<String> elements) {
+            this.elements = elements;
         }
 
         public void setFailIfFoundUrlsLessThan(Boolean failIfFoundUrlsLessThan) {

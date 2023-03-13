@@ -91,7 +91,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
     private static final String CONFIRM_REMOVE_ELEM_KEY =
             AJAX_SPIDER_BASE_KEY + ".confirmRemoveElem";
 
-    private static final String[] DEFAULT_ELEMS_NAMES = {
+    public static final String[] DEFAULT_ELEMS_NAMES = {
         "a",
         "button",
         "td",
@@ -130,21 +130,21 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
 
     public static final int DEFAULT_MAX_CRAWL_DEPTH = 10;
 
-    private static final int DEFAULT_CRAWL_STATES = 0;
+    public static final int DEFAULT_CRAWL_STATES = 0;
 
     public static final int DEFAULT_MAX_DURATION = 60;
 
-    private static final int DEFAULT_EVENT_WAIT_TIME = 1000;
+    public static final int DEFAULT_EVENT_WAIT_TIME = 1000;
 
-    private static final int DEFAULT_RELOAD_WAIT_TIME = 1000;
+    public static final int DEFAULT_RELOAD_WAIT_TIME = 1000;
 
     private static final String DEFAULT_BROWSER_ID = Browser.FIREFOX_HEADLESS.getId();
 
-    private static final boolean DEFAULT_CLICK_DEFAULT_ELEMS = true;
+    public static final boolean DEFAULT_CLICK_DEFAULT_ELEMS = true;
 
-    private static final boolean DEFAULT_CLICK_ELEMS_ONCE = true;
+    public static final boolean DEFAULT_CLICK_ELEMS_ONCE = true;
 
-    private static final boolean DEFAULT_RANDOM_INPUTS = true;
+    public static final boolean DEFAULT_RANDOM_INPUTS = true;
 
     private static final String ALL_ALLOWED_RESOURCES_KEY =
             AJAX_SPIDER_BASE_KEY + ".allowedResources.allowedResource";
@@ -419,7 +419,7 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
         return elems;
     }
 
-    protected void setElems(List<AjaxSpiderParamElem> elems) {
+    public void setElems(List<AjaxSpiderParamElem> elems) {
         this.elems = new ArrayList<>(elems);
 
         ((HierarchicalConfiguration) getConfig()).clearTree(ALL_ELEMS_KEY);
