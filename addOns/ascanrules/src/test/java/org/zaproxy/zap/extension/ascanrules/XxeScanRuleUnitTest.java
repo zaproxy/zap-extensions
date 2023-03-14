@@ -23,9 +23,6 @@ import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
@@ -42,13 +39,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.db.paros.ParosTableHistory;
-import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.HistoryReference;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -164,16 +158,6 @@ class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
     @Test
     void outOfBandFileInclusionAttackTest() throws HttpMalformedHeaderException, Exception {
         HttpMessage httpMessageToTest = getHttpMessage("/abc?test=123");
-
-        extensionOast = mock(ExtensionOast.class);
-        Control.initSingletonForTesting(Model.getSingleton(), mock(ExtensionLoader.class));
-        when(Control.getSingleton().getExtensionLoader().getExtension(ExtensionOast.class))
-                .thenReturn(extensionOast);
-
-        when(extensionOast.registerAlertAndGetPayload(any())).thenReturn("PAYLOAD1");
-
-        // when(getNewMsg()).thenReturn(httpMessageToTest);
-
         rule.init(httpMessageToTest, parent);
         rule.setAttackStrength(Plugin.AttackStrength.LOW);
         rule.scan();
