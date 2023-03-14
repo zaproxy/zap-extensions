@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - ParameterEntity attack added in OOB-XXE Scan Rule.
 
+### Changed
+- Maintenance changes.
 
 ## [53] - 2023-03-03
 ### Changed

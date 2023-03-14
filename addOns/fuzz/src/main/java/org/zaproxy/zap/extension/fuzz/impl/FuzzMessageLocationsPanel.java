@@ -68,7 +68,7 @@ public class FuzzMessageLocationsPanel
                                 "fuzz.fuzzer.dialog.messagelocations.button.payloads.label"));
         payloadsButton.setToolTipText(
                 Constant.messages.getString(
-                        "fuzz.fuzzer.dialog.messagelocations.button.processors.tooltip"));
+                        "fuzz.fuzzer.dialog.messagelocations.button.payloads.tooltip"));
         payloadsButton.addActionListener(
                 e -> {
                     int row = getSelectedRow();

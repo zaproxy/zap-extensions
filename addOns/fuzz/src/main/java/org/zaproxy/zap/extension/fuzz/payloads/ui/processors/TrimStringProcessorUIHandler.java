@@ -106,7 +106,7 @@ public class TrimStringProcessorUIHandler
                     DefaultPayload, TrimStringProcessor, TrimStringProcessorUI> {
 
         private static final String LENGTH_FIELD_LABEL =
-                Constant.messages.getString("fuzz.payload.processor.expand.length.label");
+                Constant.messages.getString("fuzz.payload.processor.trim.length.label");
 
         private JPanel fieldsPanel;
 

@@ -44,6 +44,16 @@ The header values can include the following tokens:
 When adding Header Based Session Management via the API the <code>headers</code> parameter is a string of 
 <code>header:value</code> pairs separated by newline characters: <code>\n</code>.
 
+<H2>Automation Framework</H2>
+
+Header Based Session Management can be configured in the environment section of an Automation Framework plan using:
+<pre>
+      sessionManagement:
+        method: "headers"
+        parameters:                    #  list of header: value pairs which can include any of the tokens defined above, e.g.
+          Authorization: "Bearer: {%json:AuthenticationResult.AccessToken%}"
+</pre>
+
 <p>
 
 Note that due to restrictions in the core:

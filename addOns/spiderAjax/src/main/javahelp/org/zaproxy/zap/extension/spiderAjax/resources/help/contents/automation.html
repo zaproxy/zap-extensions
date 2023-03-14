@@ -27,12 +27,16 @@ This job supports monitor tests.
       runOnlyIfModern:                 # Boolean: If true then the spider will only run if a "modern app" alert is raised, default: false
       inScopeOnly:                     # Boolean: If true then any URLs requested which are out of scope will be ignored, default: true
       browserId:                       # String: Browser Id to use, default: firefox-headless
-      clickDefaultElems:               # Bool: When enabled only click the default element: 'a', 'button' and input, default: true
+      clickDefaultElems:               # Bool: When enabled only click the default element: 'a', 'button' and 'input', default: true
       clickElemsOnce:                  # Bool: When enabled only click each element once, default: true
       eventWait:                       # Int: The time in milliseconds to wait after a client side event is fired, default: 1000
       maxCrawlStates:                  # Int: The maximum number of crawl states the crawler should crawl, default: 0 unlimited
       randomInputs:                    # Bool: When enabled random values will be entered into input element, default: true
       reloadWait:                      # Int: The time in milliseconds to wait after the URL is loaded, default: 1000
+      elements:                        # A list of HTML elements to click - will be ignored unless clickDefaultElems is false
+      - "a"
+      - "button"
+      - "input"
     tests:
       - name: 'At least 100 URLs found'      # String: Name of the test, default: statistic + operator + value
         type: 'stats'                        # String: Type of test, only 'stats' is supported for now
