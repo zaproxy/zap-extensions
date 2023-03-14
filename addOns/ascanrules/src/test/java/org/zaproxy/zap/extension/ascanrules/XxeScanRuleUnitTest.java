@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
@@ -159,19 +160,19 @@ class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
     }
 
     @Test
-    void outOfBandFileInclusionAttackTest() {
+    void outOfBandFileInclusionAttackTest() throws HttpMalformedHeaderException,Exception {
         HttpMessage httpMessageToTest = getHttpMessage("/abc?test=123");
 
-        extensionOast = mock(ExtensionOast.class);
+        ExtensionOast extensionOast = mock(ExtensionOast.class);
         Control.initSingletonForTesting(Model.getSingleton(), mock(ExtensionLoader.class));
         when(Control.getSingleton().getExtensionLoader().getExtension(ExtensionOast.class))
                 .thenReturn(extensionOast);
 
         when(extensionOast.registerAlertAndGetPayload(any())).thenReturn("PAYLOAD1");
 
-        when(getNewMsg()).thenReturn(httpMessageToTest);
+        // when(getNewMsg()).thenReturn(httpMessageToTest);
 
-        rule.init(msg, parent);
+        rule.init(httpMessageToTest, parent);
         rule.setAttackStrength(Plugin.AttackStrength.LOW);
         rule.scan();
     }
