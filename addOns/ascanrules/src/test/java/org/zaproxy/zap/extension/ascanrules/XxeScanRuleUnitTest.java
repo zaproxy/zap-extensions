@@ -23,9 +23,9 @@ import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.any;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
@@ -57,6 +57,8 @@ import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
+
+    private ExtensionOast extensionOast;
 
     @BeforeAll
     static void setUpCallbacks() {
@@ -160,10 +162,10 @@ class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
     }
 
     @Test
-    void outOfBandFileInclusionAttackTest() throws HttpMalformedHeaderException,Exception {
+    void outOfBandFileInclusionAttackTest() throws HttpMalformedHeaderException, Exception {
         HttpMessage httpMessageToTest = getHttpMessage("/abc?test=123");
 
-        ExtensionOast extensionOast = mock(ExtensionOast.class);
+        extensionOast = mock(ExtensionOast.class);
         Control.initSingletonForTesting(Model.getSingleton(), mock(ExtensionLoader.class));
         when(Control.getSingleton().getExtensionLoader().getExtension(ExtensionOast.class))
                 .thenReturn(extensionOast);
