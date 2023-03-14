@@ -22,10 +22,13 @@ package org.zaproxy.zap.extension.scripts.automation.ui;
 import java.awt.Component;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import javax.swing.JFileChooser;
 import javax.swing.JTextField;
+import javax.swing.text.JTextComponent;
 import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ExtensionScript;
@@ -35,6 +38,7 @@ import org.zaproxy.zap.extension.scripts.automation.ScriptJobParameters;
 import org.zaproxy.zap.extension.scripts.automation.actions.RunScriptAction;
 import org.zaproxy.zap.extension.scripts.automation.actions.ScriptAction;
 import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.utils.ZapTextArea;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
 @SuppressWarnings("serial")
@@ -50,31 +54,47 @@ public class ScriptJobDialog extends StandardFieldsDialog {
     public static final String SCRIPT_NAME_PARAM = "scripts.automation.dialog.scriptName";
     public static final String SCRIPT_FILE_PARAM = "scripts.automation.dialog.scriptFile";
     public static final String SCRIPT_TARGET_PARAM = "scripts.automation.dialog.target";
+    public static final String SCRIPT_IS_INLINE_PARAM = "scripts.automation.dialog.isinline";
+    public static final String SCRIPT_INLINE_PARAM = "scripts.automation.dialog.inline";
 
     private static final String[] ALL_FIELDS = {
         NAME_PARAM,
         SCRIPT_ACTION_PARAM,
         SCRIPT_TYPE_PARAM,
         SCRIPT_ENGINE_PARAM,
+        SCRIPT_IS_INLINE_PARAM,
+        SCRIPT_INLINE_PARAM,
         SCRIPT_NAME_PARAM,
         SCRIPT_FILE_PARAM,
         SCRIPT_TARGET_PARAM
     };
 
+    private static final String[] TAB_LABELS = {
+        "scripts.automation.dialog.tab.script", "scripts.automation.dialog.tab.inline"
+    };
+
     private ScriptJob job;
 
+    private Map<String, String> lastValues = new HashMap<>();
+
     public ScriptJobDialog(ScriptJob job) {
-        super(View.getSingleton().getMainFrame(), TITLE, DisplayUtils.getScaledDimension(400, 325));
+        super(
+                View.getSingleton().getMainFrame(),
+                TITLE,
+                DisplayUtils.getScaledDimension(400, 375),
+                TAB_LABELS);
         this.job = job;
 
-        this.addTextField(NAME_PARAM, this.job.getData().getName());
+        this.addTextField(0, NAME_PARAM, this.job.getData().getName());
         this.addComboField(
+                0,
                 SCRIPT_ACTION_PARAM,
                 ScriptJob.validActions(),
                 this.job.getData().getParameters().getAction(),
                 false);
         this.addFieldListener(SCRIPT_ACTION_PARAM, e -> onScriptActionChanged());
         this.addComboField(
+                0,
                 SCRIPT_TYPE_PARAM,
                 new ArrayList<>(),
                 this.job.getData().getParameters().getType(),
@@ -83,16 +103,23 @@ public class ScriptJobDialog extends StandardFieldsDialog {
         List<String> engineList = new ArrayList<>(ScriptAction.getScriptingEngines());
         engineList.add(0, "");
         this.addComboField(
+                0,
                 SCRIPT_ENGINE_PARAM,
                 engineList,
                 this.job.getData().getParameters().getEngine(),
                 false);
         this.addComboField(
+                0,
                 SCRIPT_NAME_PARAM,
                 new ArrayList<>(),
                 this.job.getData().getParameters().getName(),
                 true);
         this.addFieldListener(SCRIPT_NAME_PARAM, e -> onScriptNameChanged());
+
+        boolean isInline = StringUtils.isNotEmpty(this.job.getData().getParameters().getInline());
+        this.addCheckBoxField(0, SCRIPT_IS_INLINE_PARAM, isInline);
+        this.addFieldListener(SCRIPT_IS_INLINE_PARAM, e -> onIsInlineChanged());
+
         String fileName = this.job.getData().getParameters().getFile();
         File f;
         if (StringUtils.isEmpty(fileName)) {
@@ -100,16 +127,22 @@ public class ScriptJobDialog extends StandardFieldsDialog {
         } else {
             f = new File(fileName);
         }
-        this.addFileSelectField(SCRIPT_FILE_PARAM, f, JFileChooser.FILES_ONLY, null);
+        this.addFileSelectField(0, SCRIPT_FILE_PARAM, f, JFileChooser.FILES_ONLY, null);
+        if (isInline) {
+            this.setFieldValue(SCRIPT_FILE_PARAM, "");
+        }
         // Cannot select the node as it might not be present in the Sites tree
-        this.addNodeSelectField(SCRIPT_TARGET_PARAM, null, true, false);
+        this.addNodeSelectField(0, SCRIPT_TARGET_PARAM, null, true, false);
         Component scriptTargetField = this.getField(SCRIPT_TARGET_PARAM);
         if (scriptTargetField instanceof JTextField) {
             ((JTextField) scriptTargetField)
                     .setText(this.job.getData().getParameters().getTarget());
         }
 
-        this.addPadding();
+        this.addPadding(0);
+
+        this.addMultilineField(
+                1, SCRIPT_INLINE_PARAM, this.job.getData().getParameters().getInline());
 
         onScriptActionChanged();
         onScriptTypeChanged();
@@ -134,9 +167,10 @@ public class ScriptJobDialog extends StandardFieldsDialog {
         for (String fieldName : ALL_FIELDS) {
             if (disabledFields.contains(fieldName)) {
                 this.getField(fieldName).setEnabled(false);
-                this.setFieldValue(fieldName, "");
+                saveTextField(fieldName);
             } else {
                 this.getField(fieldName).setEnabled(true);
+                restoreTextField(fieldName);
             }
         }
 
@@ -157,12 +191,43 @@ public class ScriptJobDialog extends StandardFieldsDialog {
 
     private void onScriptNameChanged() {
         ScriptAction sa = getScriptAction();
-        if (sa.getDisabledFields().contains(SCRIPT_FILE_PARAM)) {
+        if (!sa.getDisabledFields().contains(SCRIPT_FILE_PARAM)
+                && !this.getBoolValue(SCRIPT_IS_INLINE_PARAM)) {
             String scriptName = this.getStringValue(SCRIPT_NAME_PARAM);
             ScriptWrapper sw = ScriptAction.getExtScript().getScript(scriptName);
-            if (sw != null) {
+            if (sw != null && sw.getFile() != null) {
                 this.setFieldValue(SCRIPT_FILE_PARAM, sw.getFile().getAbsolutePath());
             }
+        }
+    }
+
+    private void saveTextField(String label) {
+        Component c = this.getField(label);
+        if (c instanceof JTextComponent || c instanceof ZapTextArea) {
+            this.lastValues.put(label, this.getStringValue(label));
+        }
+    }
+
+    private void restoreTextField(String label) {
+        String value = this.lastValues.get(label);
+        if (value != null) {
+            this.setFieldValue(label, value);
+        }
+    }
+
+    private void onIsInlineChanged() {
+        if (this.getBoolValue(SCRIPT_IS_INLINE_PARAM)) {
+            // Save in case this was a test/mistake
+            saveTextField(SCRIPT_FILE_PARAM);
+            this.setFieldValue(SCRIPT_FILE_PARAM, "");
+            this.getField(SCRIPT_INLINE_PARAM).setEnabled(true);
+            restoreTextField(SCRIPT_INLINE_PARAM);
+        } else {
+            // Save in case this was a test/mistake
+            saveTextField(SCRIPT_INLINE_PARAM);
+            this.setFieldValue(SCRIPT_INLINE_PARAM, "");
+            this.getField(SCRIPT_INLINE_PARAM).setEnabled(false);
+            restoreTextField(SCRIPT_FILE_PARAM);
         }
     }
 
@@ -174,6 +239,7 @@ public class ScriptJobDialog extends StandardFieldsDialog {
         this.job.getData().getParameters().setEngine(this.getStringValue(SCRIPT_ENGINE_PARAM));
         this.job.getData().getParameters().setName(this.getStringValue(SCRIPT_NAME_PARAM));
         this.job.getData().getParameters().setTarget(this.getStringValue(SCRIPT_TARGET_PARAM));
+        this.job.getData().getParameters().setInline(this.getStringValue(SCRIPT_INLINE_PARAM));
 
         ScriptAction sa = getScriptAction();
         if (sa.getDisabledFields().contains(SCRIPT_FILE_PARAM)) {
@@ -201,7 +267,8 @@ public class ScriptJobDialog extends StandardFieldsDialog {
                         this.getStringValue(SCRIPT_ENGINE_PARAM),
                         this.getStringValue(SCRIPT_NAME_PARAM),
                         this.getStringValue(SCRIPT_FILE_PARAM),
-                        this.getStringValue(SCRIPT_TARGET_PARAM));
+                        this.getStringValue(SCRIPT_TARGET_PARAM),
+                        this.getStringValue(SCRIPT_INLINE_PARAM));
         sa = ScriptJob.createScriptAction(params, null);
         List<String> issues = sa.verifyParameters(this.getStringValue(NAME_PARAM), params, null);
         if (issues.isEmpty()) {

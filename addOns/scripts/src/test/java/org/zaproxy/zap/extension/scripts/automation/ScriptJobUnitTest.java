@@ -549,6 +549,73 @@ class ScriptJobUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldFailToAddIfNoName() throws IOException {
+        // Given
+        AutomationPlan plan = new AutomationPlan();
+        given(extScript.getEngineWrapper(TEST_JS_ENGINE)).willReturn(engineWrapper);
+        Collection<ScriptType> types =
+                new ArrayList<>(Arrays.asList(new ScriptType("standalone", null, null, false)));
+        given(extScript.getScriptTypes()).willReturn(types);
+
+        ScriptJob job = new ScriptJob();
+        File f = File.createTempFile("scriptExtFileOk", ".js");
+        String yamlStr =
+                String.join(
+                        "\n",
+                        "parameters:",
+                        "  action: add",
+                        "  type: \"standalone\"",
+                        "  engine: " + TEST_JS_ENGINE,
+                        "  file: " + f.getAbsolutePath());
+        setJobData(job, yamlStr);
+        job.setPlan(plan);
+        env.setPlan(plan);
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), equalTo(1));
+        assertThat(progress.getErrors(), contains("!scripts.automation.error.name.missing!"));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldFailToAddIfFileAndInline() throws IOException {
+        // Given
+        AutomationPlan plan = new AutomationPlan();
+        given(extScript.getEngineWrapper(TEST_JS_ENGINE)).willReturn(engineWrapper);
+        Collection<ScriptType> types =
+                new ArrayList<>(Arrays.asList(new ScriptType("standalone", null, null, false)));
+        given(extScript.getScriptTypes()).willReturn(types);
+
+        ScriptJob job = new ScriptJob();
+        String yamlStr =
+                String.join(
+                        "\n",
+                        "parameters:",
+                        "  action: add",
+                        "  type: \"standalone\"",
+                        "  engine: " + TEST_JS_ENGINE,
+                        "  name: test",
+                        "  inline: test",
+                        "  file: test");
+        setJobData(job, yamlStr);
+        job.setPlan(plan);
+        env.setPlan(plan);
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(progress.getErrors().size(), equalTo(1));
+        assertThat(progress.getErrors(), contains("!scripts.automation.error.inline.file!"));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+    }
+
+    @Test
     void shouldFailToAddIfFileNotReadable() throws IOException {
         // Given
         given(extScript.getEngineWrapper(TEST_JS_ENGINE)).willReturn(engineWrapper);
@@ -759,6 +826,7 @@ class ScriptJobUnitTest extends TestUtils {
                         "parameters:",
                         "  action: add",
                         "  type: \"standalone\"",
+                        "  name: " + f.getName(),
                         "  engine: " + TEST_JS_ENGINE,
                         "  file: " + f.getAbsolutePath());
         setJobData(job, yamlStr);
@@ -775,6 +843,41 @@ class ScriptJobUnitTest extends TestUtils {
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         verify(extScript).addScript(argument.capture());
         assertEquals(f.getName(), argument.getValue().getName());
+    }
+
+    @Test
+    void shouldAddScriptWithInline() throws IOException {
+        // Given
+        AutomationPlan plan = new AutomationPlan();
+        given(extScript.getEngineWrapper(TEST_JS_ENGINE)).willReturn(engineWrapper);
+        Collection<ScriptType> types =
+                new ArrayList<>(Arrays.asList(new ScriptType("standalone", null, null, false)));
+        given(extScript.getScriptTypes()).willReturn(types);
+
+        ScriptJob job = new ScriptJob();
+        String yamlStr =
+                String.join(
+                        "\n",
+                        "parameters:",
+                        "  action: add",
+                        "  type: \"standalone\"",
+                        "  name: test",
+                        "  engine: " + TEST_JS_ENGINE,
+                        "  inline: test");
+        setJobData(job, yamlStr);
+        ArgumentCaptor<ScriptWrapper> argument = ArgumentCaptor.forClass(ScriptWrapper.class);
+        job.setPlan(plan);
+        env.setPlan(plan);
+
+        // When
+        job.verifyParameters(progress);
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        verify(extScript).addScript(argument.capture());
+        assertEquals("test", argument.getValue().getName());
     }
 
     @Test
