@@ -24,7 +24,8 @@
 							"method": "[(${helper.legacyEscapeText(instance.method, true)})]",
 							"param": "[(${helper.legacyEscapeText(instance.param, true)})]",
 							"attack": "[(${helper.legacyEscapeText(instance.attack, true)})]",
-							"evidence": "[(${helper.legacyEscapeText(instance.evidence, true)})]"
+							"evidence": "[(${helper.legacyEscapeText(instance.evidence, true)})]",
+							"otherinfo": "[(${helper.legacyEscapeText(instance.otherinfo, true)})]"
 						}[/th:block]
 					],
 					"count": "[(${instances.size})]",

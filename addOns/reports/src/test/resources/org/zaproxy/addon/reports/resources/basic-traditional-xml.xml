@@ -22,10 +22,20 @@
 									<param>Test Param</param>
 									<attack>Test &quot;Attack\&quot;</attack>
 									<evidence>Test &lt;p&gt;Evidence</evidence>
+									<otherinfo>Test &apos;Other\</otherinfo>
+								</instance>
+								
+								<instance>
+									<uri>http://example.com/example_3</uri>
+									<method>GET</method>
+									<param>Test Param</param>
+									<attack>Test &quot;Attack\&quot;</attack>
+									<evidence>Test &lt;p&gt;Evidence</evidence>
+									<otherinfo>Test Another &apos;Other\</otherinfo>
 								</instance>
 							
 						</instances>
-						<count>1</count>
+						<count>2</count>
 						<solution>&lt;p&gt;Test Solution&lt;/p&gt;</solution>
 						<otherinfo>&lt;p&gt;Test &apos;Other\&lt;/p&gt;</otherinfo>
 						<reference>&lt;p&gt;Test Reference&lt;/p&gt;</reference>

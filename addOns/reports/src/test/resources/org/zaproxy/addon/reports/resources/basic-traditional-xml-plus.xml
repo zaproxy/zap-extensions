@@ -22,6 +22,28 @@
 									<param>Test Param</param>
 									<attack>Test &quot;Attack\&quot;</attack>
 									<evidence>Test &lt;p&gt;Evidence</evidence>
+									<otherinfo>Test &apos;Other\</otherinfo>
+									<requestheader>GET http://example.com/example_3 HTTP/1.1
+Host: example.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0
+Pragma: no-cache
+Cache-Control: no-cache
+
+</requestheader>
+									<requestbody>Test Request Body</requestbody>
+									<responseheader>HTTP/1.0 0
+
+</responseheader>
+									<responsebody>Test Response Body</responsebody>
+								</instance>
+								
+								<instance>
+									<uri>http://example.com/example_3</uri>
+									<method>GET</method>
+									<param>Test Param</param>
+									<attack>Test &quot;Attack\&quot;</attack>
+									<evidence>Test &lt;p&gt;Evidence</evidence>
+									<otherinfo>Test Another &apos;Other\</otherinfo>
 									<requestheader>GET http://example.com/example_3 HTTP/1.1
 Host: example.com
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0
@@ -37,7 +59,7 @@ Cache-Control: no-cache
 								</instance>
 							
 						</instances>
-						<count>1</count>
+						<count>2</count>
 						<solution>Test Solution</solution>
 						<otherinfo>Test &apos;Other\</otherinfo>
 						<reference>Test Reference</reference>
