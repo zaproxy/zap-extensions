@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Added
+- The Traditional JSON report, Traditional JSON Report with requests and responses, Traditional XML Report and Traditional XML Report with requests and responses now has "otherinfo" field per alert instance (Issue 7260).
+
+### Deprecated
+- The "otherinfo" field in the alert will be removed and replaced by the "otherinfo" field in the alert instances.
 
 ## [0.19.0] - 2023-02-09
 

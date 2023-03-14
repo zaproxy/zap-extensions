@@ -25,6 +25,7 @@
                             "param": "[(${helper.legacyEscapeText(instance.param, true)})]",
                             "attack": "[(${helper.legacyEscapeText(instance.attack, true)})]",
                             "evidence": "[(${helper.legacyEscapeText(instance.evidence, true)})]",
+                            "otherinfo": "[(${helper.legacyEscapeText(instance.otherinfo, true)})]",
                             "request-header": "[(${helper.legacyEscapeText(instance.message.requestHeader, true)})]",
                             "request-body": "[(${helper.legacyEscapeText(instance.message.requestBody, true)})]",
                             "response-header": "[(${helper.legacyEscapeText(instance.message.responseHeader, true)})]",

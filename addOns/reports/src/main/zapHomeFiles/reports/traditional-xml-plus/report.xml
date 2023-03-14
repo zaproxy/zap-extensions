@@ -28,6 +28,7 @@
 									<param th:text="${instance.param}"></param>
 									<attack th:text="${instance.attack}"></attack>
 									<evidence th:text="${instance.evidence}"></evidence>
+									<otherinfo th:text="${instance.otherinfo}"></otherinfo>
 									<requestheader
 										th:text="${instance.message.requestHeader}"></requestheader>
 									<requestbody
