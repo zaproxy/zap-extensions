@@ -295,7 +295,6 @@ public class XxeScanRule extends AbstractAppPlugin {
         payload = MessageFormat.format(ATTACK_MESSAGE, "https://" + oastPayload);
         msg.setRequestBody(payload);
         sendAndReceive(msg);
-
     }
 
     /**

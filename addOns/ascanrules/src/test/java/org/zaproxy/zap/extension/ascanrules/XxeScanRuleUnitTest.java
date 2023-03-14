@@ -41,20 +41,19 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.db.paros.ParosTableHistory;
+import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
-import org.zaproxy.zap.testutils.NanoServerHandler;
-import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.extension.ExtensionLoader;
-import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.oast.ExtensionOast;
+import org.zaproxy.zap.testutils.NanoServerHandler;
 
 class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
 
@@ -160,7 +159,7 @@ class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
     }
 
     @Test
-    void outOfBandFileInclusionAttackTest(){
+    void outOfBandFileInclusionAttackTest() {
         HttpMessage httpMessageToTest = getHttpMessage("/abc?test=123");
 
         extensionOast = mock(ExtensionOast.class);
@@ -175,7 +174,6 @@ class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
         rule.init(msg, parent);
         rule.setAttackStrength(Plugin.AttackStrength.LOW);
         rule.scan();
-
     }
 
     @Test
