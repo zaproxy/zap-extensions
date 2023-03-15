@@ -8,8 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - The Traditional JSON report, Traditional JSON Report with requests and responses, Traditional XML Report and Traditional XML Report with requests and responses now has "otherinfo" field per alert instance (Issue 7260).
 
+### Changed
+- Include templates available when reporting invalid template in the automation job.
+
 ### Deprecated
 - The "otherinfo" field in the alert will be removed and replaced by the "otherinfo" field in the alert instances.
+
+### Fixed
+- Correct ID of Markdown template listed in the help page.
 
 ## [0.19.0] - 2023-02-09
 

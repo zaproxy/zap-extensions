@@ -103,7 +103,8 @@ public class ReportJob extends AutomationJob {
                     Constant.messages.getString(
                             "reports.automation.error.badtemplate",
                             this.getName(),
-                            this.getParameters().getTemplate()));
+                            getParameters().getTemplate(),
+                            getExtReport().getTemplateConfigNames()));
         }
         if (StringUtils.isEmpty(this.getParameters().getReportDir())) {
             this.getParameters().setReportDir(System.getProperty("user.home"));
