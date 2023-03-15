@@ -33,11 +33,13 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -603,9 +605,23 @@ public class ExtensionReports extends ExtensionAdaptor {
     }
 
     public List<String> getTemplateNames() {
-        return this.getTemplateMap().values().stream()
-                .map(Template::getDisplayName)
-                .collect(Collectors.toList());
+        return mapTemplates(Template::getDisplayName);
+    }
+
+    private List<String> mapTemplates(Function<Template, String> mapper) {
+        return getTemplateMap().values().stream().map(mapper).collect(Collectors.toList());
+    }
+
+    /**
+     * Gets the config names of the templates, in alphabetic order.
+     *
+     * @return the config names.
+     * @since 0.20.0
+     */
+    public List<String> getTemplateConfigNames() {
+        List<String> names = mapTemplates(Template::getConfigName);
+        Collections.sort(names);
+        return names;
     }
 
     public Template getTemplateByDisplayName(String name) {

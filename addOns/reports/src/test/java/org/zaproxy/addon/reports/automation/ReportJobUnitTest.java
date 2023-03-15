@@ -22,6 +22,7 @@ package org.zaproxy.addon.reports.automation;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasKey;
@@ -41,7 +42,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Locale;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,16 +62,15 @@ import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.reports.ExtensionReports;
 import org.zaproxy.addon.reports.ReportParam;
 import org.zaproxy.addon.reports.Template;
-import org.zaproxy.zap.utils.I18N;
+import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link ReportJob}. */
-class ReportJobUnitTest {
+class ReportJobUnitTest extends TestUtils {
 
     private ExtensionReports extensionReports;
 
     @BeforeEach
     void setUp() {
-        Constant.messages = new I18N(Locale.ENGLISH);
         ExtensionLoader extensionLoader =
                 mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         extensionReports =
@@ -78,6 +78,8 @@ class ReportJobUnitTest {
         given(extensionReports.getReportParam()).willReturn(new ReportParam());
         given(extensionLoader.getExtension(ExtensionReports.class)).willReturn(extensionReports);
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
+
+        mockMessages(new ExtensionReports());
     }
 
     @AfterEach
@@ -324,6 +326,41 @@ class ReportJobUnitTest {
                 is(equalTo(true)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldErrorOnInvalidTemplate() throws Exception {
+        // Given
+        String templateName = "template-a";
+        ReportJob job =
+                createReportJob(
+                        "parameters:\n"
+                                + "  template: "
+                                + templateName
+                                + "\n"
+                                + "  reportFile: report-file"
+                                + "\n"
+                                + "  reportDir: test");
+        AutomationPlan plan = new AutomationPlan();
+        AutomationProgress progress = plan.getProgress();
+        AutomationEnvironment env = plan.getEnv();
+        var templates = List.of("template-b", "template-c");
+        given(extensionReports.getTemplateConfigNames()).willReturn(templates);
+        job.verifyParameters(progress);
+        job.setPlan(plan);
+
+        // When
+        job.runJob(env, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(
+                progress.getErrors().get(0),
+                allOf(
+                        containsString("invalid"),
+                        containsString(templateName),
+                        containsString(templates.toString())));
     }
 
     private static ReportJob createReportJob(String data) {
