@@ -10,99 +10,82 @@
 <h1>Access Control Testing</h1>
 
 <p>
-    This add-on enables users to compare which parts of a web-application are available to some users, do access control
-    testing and identify potential access control issues. It allows configuration of access rules and conducts a full
-    attack aimed to help identify sections of a web application which are accessible by unauthorized clients.
+    Mit diesem Add-on können Benutzer vergleichen, welche Teile einer Webanwendung für bestimmte Benutzer zugänglich sind, Zugangskontrolltests durchführen und potenzielle Probleme bei der Zugangskontrolle erkennen. Es ermöglicht die Konfiguration von Zugriffsregeln und führt einen vollständigen Angriff durch, um die Bereiche einer Webanwendung zu identifizieren, die für nicht autorisierte Clients zugänglich sind.
 </p>
 
 <p>
-    There are two main concepts related to this add-on that should be explained: the <b>Access Rules</b> and the <b>testing
-    procedure</b>.
+    Es gibt zwei Hauptkonzepte im Zusammenhang mit diesem Add-on, die erklärt werden sollten: die <b>Zugangsregeln</b> und das <b>Testverfahren</b>.
 </p>
 
-<h3>Access Rules</h3>
+<h3>Zugangsregeln</h3>
 
 <p>
-    In order to identify potential access control issues, ZAP needs to know which parts of the web application are
-    supposed to be accessed by which user. In ZAP, the name for these rules is: <i>Access Rules</i> and generally have
-    the meaning: "<i>PageA should/shouldn't be accessed by UserX</i>".
+    Um mögliche Probleme bei der Zugriffskontrolle zu erkennen, muss ZAP wissen, welche Teile der Webanwendung welcher Benutzer auf welche Teile der Webanwendung zugreifen darf. In ZAP heißen diese Regeln: Zugriffsregeln haben im Allgemeinen die Bedeutung: "<i>SeiteA soll/kann nicht von BenutzerX aufgerufen werden</i>".
 </p>
 
-<p>The rules are configured for a Context and, for each User of that Context, each Site Node (web page) will be
-    associated to one of the following values:</p>
+<p>Die Regeln werden für einen Kontext konfiguriert, und für jeden Benutzer dieses Kontexts wird jeder Site-Knoten (Webseite) mit einem der folgenden Werte verknüpft:</p>
 <ul>
-    <li><b>Allowed</b> - the resource <b>can</b> be accessed by the User to which the rule refers</li>
-    <li><b>Denied</b> - the resource <b>should not</b> be accessed by the User to which the rule refers</li>
-    <li><b>Unknown</b> - there is <b>no information</b> regarding whether the resource should or shouldn't be accessible
-        to the User to which the rule refers
+    <li><b>Allowed</b> - der Benutzer, auf den sich die Regel bezieht, <b>kann</b> auf die Ressource zugreifen</li>
+    <li><b>Denied</b> - der Benutzer, auf den sich die Regel bezieht, <b>darf nicht</b> auf die Ressource zugreifen</li>
+    <li><b>Unknown</b> - es gibt <b>keine Informationen</b> darüber, ob die Ressource für den Benutzer, auf den sich die Regel bezieht, zugänglich sein soll oder nicht
     </li>
 </ul>
 
 <p>
-    In order to simplify the access rules definition process, ZAP is making use of the tree-based structure of URLs.
-    When analyzing the rules, an inference algorithm is used to detect the matching rules for each node based on its
-    parent in the URL if no particular rules are defined. This means that, when configuring the access rules, only 1
-    rule needs to be set explicitly for an entire subtree, while for the other nodes rules are inferred. More details
-    about this can be found on the Access Control <a href="contextOptions.html">Context options</a> help page.</td>
+    Um den Prozess der Definition von Zugriffsregeln zu vereinfachen, nutzt das ZAP die Baumstruktur von URLs.
+    Bei der Analyse der Regeln wird ein Inferenz-Algorithmus verwendet, um die übereinstimmenden Regeln für jeden Knoten auf der Grundlage seiner Vorgänger in der URL zu ermitteln, wenn keine besonderen Regeln definiert sind. Dies bedeutet, dass bei der Konfiguration der Zugriffsregeln nur eine Regel explizit für einen gesamten Teilbaum festgelegt werden muss, während die anderen Knoten Regeln daraus abgeleitet werden. Mehr Details dazu finden Sie auf der Hilfeseite Access Control <a href="contextOptions.html">Context options</a>.</td>
 </p>
 
-<h3>Testing procedure</h3>
+<h3>Testverfahren</h3>
 
-<p> As a whole, in order to fully perform access control testing for a web application, the next steps should be
-    followed:</p>
+<p> Um die Zugriffskontrolle für eine Webanwendung vollständig zu testen, sollten die folgenden Schritte befolgt werden:</p>
 <ul>
-    <li>the tester defines set of Users and how they authenticate;
+    <li>der Tester definiert eine Reihe von Benutzern und wie sie sich authentifizieren;
     </li>
-    <li>the tester defines how ZAP can identify un-authorized requests (via the Authorization panel in the Session
-        Properties);
+    <li>der Tester definiert, wie ZAP nicht autorisierte Anfragen identifizieren kann (über das "Authorization panel" in den Session Properties);
     </li>
-    <li>the web-application is explored either manually or via the Spider;</li>
-    <li>the tester define the Access Rules for each of the Users associated to the Context, basically letting ZAP know
-        which parts of the web application are supposed to be accessed by which users;
+    <li>die Webanwendung wird entweder manuell oder über den Spider durchsucht;</li>
+    <li>der Tester definiert die Zugriffsregeln für jeden dem Kontext zugeordneten Benutzer, so dass ZAP im Grunde weiß welche Teile der Webanwendung von welchen Benutzern genutzt werden dürfen;
     </li>
-    <li>an ‘attack’ is performed by ZAP by trying to access every URL of the web-app from the perspective of every
-        user;
+    <li>ein "Angriff" wird von ZAP durchgeführt, indem versucht wird, auf jede URL der Webanwendung aus der Sicht eines jeden Benutzers zuzugreifen;
     </li>
-    <li>in the corresponding Status Tab, the results are displayed, showing which pages were accessed successfully by
-        which users and marking the cases where the access rules where not followed.
+    <li>in der entsprechenden Tab "Status" werden die Ergebnisse angezeigt, die zeigen, welche Seiten von welchen Benutzern erfolgreich aufgerufen wurden, welche Benutzer erfolgreich auf die Seiten zugegriffen haben, und markiert die Fälle, in denen die Zugriffsregeln nicht eingehalten wurden.
     </li>
 </ul>
-<strong>Note:</strong> Access control testing is not allowed in <code>Safe</code> mode nor <code>Protected</code> if the context is not in scope.
+<strong>Hinweis:</strong> Zugriffskontrolltests sind weder im <code>Abgesicherten</code> Modus, noch im <code>Geschützten</code> Modus zulässig, wenn sich der Kontext nicht im Geltungsbereich befindet.
 
 <h2>API</h2>
 
-The Addon exposes the following API endpoints:
+Das Addon bietet die folgenden API-Endpunkte:
 
-<h3>Actions</h3>
+<h3>Aktionen</h3>
 	<h4>scan</h4>
-	Starts an Access Control scan with the given context ID and user ID (can be comma separated list of IDs). 
-	(Optional parameters: boolean identifying if an unauthenticated user should be included (default false), boolean 
-	identifying whether or not Alerts are raised (default true), and the Risk level for the Alerts (default High).) 
-	[<strong>Note:</strong>This assumes the Access Control rules were previously established via ZAP gui and the necessary Context exported/imported.]
+	Startet eine Zugriffskontrollprüfung mit der angegebenen Kontext-ID und Benutzer-ID (kann eine durch Kommata getrennte Liste von IDs sein). 
+	Startet eine Zugriffskontrollprüfung mit der angegebenen Kontext-ID und Benutzer-ID (kann eine durch Kommata getrennte Liste von IDs sein). <strong>Hinweis:</strong> Dies setzt voraus, dass die Zugriffskontrollregeln zuvor über die ZAP-GUI erstellt und der erforderliche Kontext exportiert/importiert wurde.
 
 	<h4>writeHTMLreport</h4>
-	Generates an Access Control report for the given context ID and saves it based on the provided filename (path).
+	Erzeugt einen Zugriffskontrollbericht für die angegebene Kontext-ID und speichert ihn unter dem angegebenen Dateinamen (Pfad).
 
-<h3>Views</h3>
+<h3>Ansichten</h3>
 	<h4>getScanProgress</h4>
-	Gets the Access Control scan progress (percentage integer) for the given context ID.
+	Ermittelt den Fortschritt der Zugriffskontrollprüfung (ganzzahliger Prozentsatz) für die angegebene Kontext-ID.
 
 	<h4>getScanStatus</h4>
-	Gets the Access Control scan status (description string) for the given context ID.
+	Ruft den Status der Zugriffskontrollprüfung (Beschreibungs-String) für die angegebene Kontext-ID ab.
 
-<h2>See also</h2>
+<h2>Siehe auch:</h2>
 <table>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
             <a href="tab.html">Access Control Testing Tab</a></td>
-        <td>for a description of the status tab used by the add-on</td>
+        <td>für eine Beschreibung der vom Add-on verwendeten Status-Tab</td>
     </tr>
     <tr>
         <td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
         <td>
             <a href="contextOptions.html">Access Control Context options</a></td>
-        <td>to learn about the related context options</td>
+        <td>um mehr über die entsprechenden Kontextoptionen zu erfahren</td>
     </tr>
 </table>
 
