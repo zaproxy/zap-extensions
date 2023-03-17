@@ -127,6 +127,7 @@ public class HarImporter {
             LOGGER.warn(
                     Constant.messages.getString(
                             ExtensionExim.EXIM_OUTPUT_ERROR, file.getAbsolutePath()));
+            LOGGER.warn(e);
             Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_HAR_FILE_ERROR);
             success = false;
         }
