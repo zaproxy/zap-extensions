@@ -93,4 +93,53 @@ class FormHandlerParamPatternsUnitTest {
         // Then
         assertThat(value, is(equalTo("ZAP")));
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"comment", "_Comment", "subject", "summary"})
+    void shouldMatchShortSentenceFieldParameters(String paramName) {
+        // Given / When
+        String value = param.getEnabledFieldValue(paramName);
+        // Then
+        assertThat(value, is(equalTo("Zaproxy dolore alias impedit expedita quisquam.")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "description",
+                "message",
+                "content",
+                "_content",
+                "emailContent",
+                "_email_content",
+                "post-Content"
+            })
+    void shouldMatchParagraphFieldParameters(String paramName) {
+        // Given / When
+        String value = param.getEnabledFieldValue(paramName);
+        // Then
+        assertThat(
+                value,
+                is(
+                        equalTo(
+                                "Zaproxy alias impedit expedita quisquam pariatur exercitationem. Nemo rerum eveniet dolores rem quia dignissimos.")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"address", "_address", "Address_1", "address-1", "_address-1"})
+    void shouldMatchAddressFieldParameters(String paramName) {
+        // Given / When
+        String value = param.getEnabledFieldValue(paramName);
+        // Then
+        assertThat(value, is(equalTo("688 Zaproxy Ridge")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"address2", "_address2", "Address_2", "address-2", "_address-2"})
+    void shouldMatchAddress2FieldParameters(String paramName) {
+        // Given / When
+        String value = param.getEnabledFieldValue(paramName);
+        // Then
+        assertThat(value, is(equalTo("Suite 473")));
+    }
 }

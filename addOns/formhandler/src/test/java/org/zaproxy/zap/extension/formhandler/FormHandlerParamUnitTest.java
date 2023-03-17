@@ -65,7 +65,7 @@ class FormHandlerParamUnitTest {
 
     @Test
     void shouldHaveExpectedNumberOfDefaultFieldDefinitions() {
-        assertThat(param.getFields().size(), is(equalTo(13)));
+        assertThat(param.getFields().size(), is(equalTo(19)));
     }
 
     @ParameterizedTest
@@ -203,8 +203,8 @@ class FormHandlerParamUnitTest {
         int fieldsCount = param.getFields().size();
         int enabledFieldsCount = param.getEnabledFieldsNames().size();
         // Then
-        assertThat(fieldsCount, is(equalTo(16)));
-        assertThat(enabledFieldsCount, is(equalTo(16)));
+        assertThat(fieldsCount, is(equalTo(22)));
+        assertThat(enabledFieldsCount, is(equalTo(22)));
     }
 
     @Test

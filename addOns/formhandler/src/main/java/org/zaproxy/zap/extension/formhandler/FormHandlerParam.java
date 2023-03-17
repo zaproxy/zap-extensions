@@ -84,7 +84,22 @@ public class FormHandlerParam extends VersionedAbstractParam {
                             "(?i)_?locale[-_]?(?:code)?",
                             Constant.getSystemsLocale().toLanguageTag(),
                             true,
-                            true));
+                            true),
+                    new FormHandlerParamField(
+                            "(?i)_?(?:comment|subject|summary)?",
+                            "Zaproxy dolore alias impedit expedita quisquam.",
+                            true,
+                            true),
+                    new FormHandlerParamField(
+                            "(?i)_?(?:description|message|(?:email|post)?[-_]?content)?",
+                            "Zaproxy alias impedit expedita quisquam pariatur exercitationem. Nemo rerum eveniet dolores rem quia dignissimos.",
+                            true,
+                            true),
+                    new FormHandlerParamField("(?i)_?state", "Oklahoma", true, true),
+                    new FormHandlerParamField("(?i)_?city", "East Romaineburgh", true, true),
+                    new FormHandlerParamField(
+                            "(?i)_?address[_-]?1?", "688 Zaproxy Ridge", true, true),
+                    new FormHandlerParamField("(?i)_?address[_-]?2", "Suite 473", true, true));
 
     private List<FormHandlerParamField> fields;
     private List<String> enabledFieldsNames;
