@@ -65,6 +65,7 @@ public class AddScriptAction extends ScriptAction {
         String issue;
         String scriptType = parameters.getType();
         String filename = params.getFile();
+        String inline = params.getInline();
 
         if (scriptType == null) {
             issue =
@@ -87,8 +88,25 @@ public class AddScriptAction extends ScriptAction {
                 progress.error(issue);
             }
         }
+        if (StringUtils.isEmpty(params.getName())) {
+            issue = Constant.messages.getString("scripts.automation.error.name.missing", jobName);
+            list.add(issue);
+            if (progress != null) {
+                progress.error(issue);
+            }
+        }
 
-        if (StringUtils.isEmpty(filename)) {
+        if (!StringUtils.isEmpty(inline)) {
+            if (!StringUtils.isEmpty(filename)) {
+                issue =
+                        Constant.messages.getString(
+                                "scripts.automation.error.inline.file", jobName);
+                list.add(issue);
+                if (progress != null) {
+                    progress.error(issue);
+                }
+            }
+        } else if (StringUtils.isEmpty(filename)) {
             issue = Constant.messages.getString("scripts.automation.error.file.missing", jobName);
             list.add(issue);
             if (progress != null) {
@@ -176,6 +194,8 @@ public class AddScriptAction extends ScriptAction {
             if (StringUtils.isEmpty(sw.getName())) {
                 sw.setName(f.getName());
             }
+        } else {
+            sw.setContents(this.parameters.getInline());
         }
         sw.setType(extScript.getScriptType(this.parameters.getType()));
         sw.setEngine(getEngineWrapper(this.parameters));
@@ -187,7 +207,10 @@ public class AddScriptAction extends ScriptAction {
     public void runJob(String jobName, AutomationEnvironment env, AutomationProgress progress) {
         ScriptWrapper sw = this.getScriptWrapper(env.getPlan());
         try {
-            extScript.loadScript(sw);
+            if (sw.getFile() != null) {
+                // Not inline
+                extScript.loadScript(sw);
+            }
             ScriptWrapper existingScript = extScript.getScript(sw.getName());
             if (existingScript != null) {
                 // Always replace an existing script with the same name

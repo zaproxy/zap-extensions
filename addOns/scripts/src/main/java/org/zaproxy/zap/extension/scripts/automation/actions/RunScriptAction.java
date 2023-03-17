@@ -47,6 +47,8 @@ public class RunScriptAction extends ScriptAction {
     private static final List<String> DISABLED_FIELDS =
             Arrays.asList(
                     ScriptJobDialog.SCRIPT_ENGINE_PARAM,
+                    ScriptJobDialog.SCRIPT_INLINE_PARAM,
+                    ScriptJobDialog.SCRIPT_IS_INLINE_PARAM,
                     ScriptJobDialog.SCRIPT_FILE_PARAM,
                     ScriptJobDialog.SCRIPT_TARGET_PARAM);
 
