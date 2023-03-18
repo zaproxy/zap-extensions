@@ -549,7 +549,7 @@ class ScriptJobUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldFailToAddIfNoName() throws IOException {
+    void shouldNotFailToAddIfScriptFileAndNoName() throws IOException {
         // Given
         AutomationPlan plan = new AutomationPlan();
         given(extScript.getEngineWrapper(TEST_JS_ENGINE)).willReturn(engineWrapper);
@@ -567,6 +567,36 @@ class ScriptJobUnitTest extends TestUtils {
                         "  type: \"standalone\"",
                         "  engine: " + TEST_JS_ENGINE,
                         "  file: " + f.getAbsolutePath());
+        setJobData(job, yamlStr);
+        job.setPlan(plan);
+        env.setPlan(plan);
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldFailToAddIfInlineAndNoName() {
+        // Given
+        AutomationPlan plan = new AutomationPlan();
+        given(extScript.getEngineWrapper(TEST_JS_ENGINE)).willReturn(engineWrapper);
+        Collection<ScriptType> types =
+                new ArrayList<>(Arrays.asList(new ScriptType("standalone", null, null, false)));
+        given(extScript.getScriptTypes()).willReturn(types);
+
+        ScriptJob job = new ScriptJob();
+        String yamlStr =
+                String.join(
+                        "\n",
+                        "parameters:",
+                        "  action: add",
+                        "  type: \"standalone\"",
+                        "  engine: " + TEST_JS_ENGINE,
+                        "  inline: print(\"A\")");
         setJobData(job, yamlStr);
         job.setPlan(plan);
         env.setPlan(plan);

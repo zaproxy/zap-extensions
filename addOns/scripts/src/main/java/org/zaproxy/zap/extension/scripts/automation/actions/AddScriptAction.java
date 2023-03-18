@@ -88,7 +88,9 @@ public class AddScriptAction extends ScriptAction {
                 progress.error(issue);
             }
         }
-        if (StringUtils.isEmpty(params.getName())) {
+
+        boolean inlined = !StringUtils.isEmpty(inline);
+        if (inlined && StringUtils.isEmpty(params.getName())) {
             issue = Constant.messages.getString("scripts.automation.error.name.missing", jobName);
             list.add(issue);
             if (progress != null) {
@@ -96,7 +98,7 @@ public class AddScriptAction extends ScriptAction {
             }
         }
 
-        if (!StringUtils.isEmpty(inline)) {
+        if (inlined) {
             if (!StringUtils.isEmpty(filename)) {
                 issue =
                         Constant.messages.getString(
