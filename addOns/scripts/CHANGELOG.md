@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [37] - 2023-03-18
 ### Fixed
 - Do not require a name if file provided when adding script with automation job.
 
@@ -232,6 +232,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[37]: https://github.com/zaproxy/zap-extensions/releases/scripts-v37
 [36]: https://github.com/zaproxy/zap-extensions/releases/scripts-v36
 [35]: https://github.com/zaproxy/zap-extensions/releases/scripts-v35
 [34]: https://github.com/zaproxy/zap-extensions/releases/scripts-v34
