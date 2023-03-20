@@ -23,7 +23,8 @@ import java.awt.EventQueue;
 import java.awt.event.ItemEvent;
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import javax.net.ssl.SSLException;
 import javax.swing.JToggleButton;
 import org.apache.commons.httpclient.URI;
@@ -93,8 +94,9 @@ public class HttpPanelSender {
         // Reset the user before sending (e.g. Forced User mode sets the user, if needed).
         httpMessage.setRequestingUser(null);
 
-        httpMessage.setUserObject(
-                Collections.singletonMap("connection.manual.persistent", Boolean.TRUE));
+        Map<String, Object> properties = new HashMap<>();
+        properties.put("connection.manual.persistent", Boolean.TRUE);
+        httpMessage.setUserObject(properties);
 
         if (getButtonFixContentLength().isSelected()) {
             HttpPanelViewModelUtils.updateRequestContentLength(httpMessage);
