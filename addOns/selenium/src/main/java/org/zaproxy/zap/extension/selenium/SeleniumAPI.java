@@ -19,15 +19,24 @@
  */
 package org.zaproxy.zap.extension.selenium;
 
+import java.util.List;
+import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.network.HtmlParameter.Type;
+import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiImplementor;
+import org.zaproxy.zap.model.NameValuePair;
+import org.zaproxy.zap.model.StandardParameterParser;
 
 /** The Selenium API. */
 public class SeleniumAPI extends ApiImplementor {
 
     private static final String API_PREFIX = "selenium";
+    private StandardParameterParser parser;
 
     /** Provided only for API client generator usage. */
     public SeleniumAPI() {
+        parser = new StandardParameterParser();
         // Nothing to do.
     }
 
@@ -38,6 +47,27 @@ public class SeleniumAPI extends ApiImplementor {
      */
     public SeleniumAPI(SeleniumOptions options) {
         addApiOptions(options);
+        parser = new StandardParameterParser();
+    }
+
+    @Override
+    public String handleCallBack(HttpMessage msg) throws ApiException {
+        try {
+            int id;
+            List<NameValuePair> params = parser.getParameters(msg, Type.url);
+            for (NameValuePair pair : params) {
+                if (pair.getName().equalsIgnoreCase("hist")) {
+                    id = Integer.parseInt(pair.getValue());
+                    HttpMessage req = new HistoryReference(id, true).getHttpMessage();
+                    msg.setResponseBody(req.getResponseBody());
+                    msg.setResponseHeader(req.getResponseHeader());
+                    return req.getResponseBody().toString();
+                }
+            }
+            return null;
+        } catch (Exception e) {
+            throw new ApiException(ApiException.Type.URL_NOT_FOUND, e);
+        }
     }
 
     @Override
