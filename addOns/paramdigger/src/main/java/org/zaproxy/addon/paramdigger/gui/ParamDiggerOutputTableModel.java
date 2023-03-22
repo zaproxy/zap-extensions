@@ -27,7 +27,7 @@ import org.zaproxy.addon.paramdigger.ParamGuessResult;
 public class ParamDiggerOutputTableModel
         extends DefaultCustomColumnHistoryReferencesTableModel<ParamGuessResult> {
 
-    private static final long serialVersionUID = 1l;
+    private static final long serialVersionUID = 1L;
 
     public static final Column[] COLUMNS = {
         Column.HREF_ID,

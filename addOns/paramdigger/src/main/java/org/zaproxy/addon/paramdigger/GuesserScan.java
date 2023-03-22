@@ -285,14 +285,7 @@ public class GuesserScan implements GenericScanner2 {
 
     public void addParamGuessResult(ParamGuessResult paramGuessResult) {
         this.results.add(paramGuessResult);
-        ThreadUtils.invokeAndWaitHandled(
-                () -> {
-                    try {
-                        this.outputTableModel.addEntry(paramGuessResult);
-                    } catch (Exception e) {
-                        // LOGGER.error(e, e);
-                    }
-                });
+        ThreadUtils.invokeAndWaitHandled(() -> this.outputTableModel.addEntry(paramGuessResult));
     }
 
     public List<ParamGuessResult> getResults() {

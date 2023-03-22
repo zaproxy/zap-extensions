@@ -81,17 +81,7 @@ public class ParamDiggerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanCo
             outputTable = new ParamDiggerOutputTable(emptyOutputTableModel);
 
             tabbedPane = new JTabbedPane();
-            tabbedPane.addChangeListener(
-                    (e) -> {
-                        switch (tabbedPane.getSelectedIndex()) {
-                            case 0:
-                                getExportButton().setTable(historyTable);
-                                break;
-                            case 1:
-                                getExportButton().setTable(outputTable);
-                                break;
-                        }
-                    });
+            tabbedPane.addChangeListener(e -> setTable());
             tabbedPane.addTab(
                     Constant.messages.getString("paramdigger.panel.tab.history"),
                     new JScrollPane(historyTable));
@@ -101,6 +91,19 @@ public class ParamDiggerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanCo
             mainPanel.add(tabbedPane);
         }
         return mainPanel;
+    }
+
+    private void setTable() {
+        switch (tabbedPane.getSelectedIndex()) {
+            case 0:
+                getExportButton().setTable(historyTable);
+                break;
+            case 1:
+                getExportButton().setTable(outputTable);
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
