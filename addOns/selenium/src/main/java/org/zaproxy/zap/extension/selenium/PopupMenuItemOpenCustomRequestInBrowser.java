@@ -22,7 +22,9 @@ package org.zaproxy.zap.extension.selenium;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.api.API;
 
@@ -57,11 +59,19 @@ public class PopupMenuItemOpenCustomRequestInBrowser extends PopupMenuItemOpenIn
     void openInBrowser(HttpMessage msg) {
         try {
             int id = msg.getHistoryRef().getHistoryId();
-            String url =
+            String url;
+            // if (msg.getResponseHeader().getStatusCode() < 300) {
+                url =
                     API.getInstance()
                             .getCallBackUrl(this.ext.getApiImplementor(), this.getSite(msg));
+            // } else {
+            //     url = msg.getRequestHeader().getURI().toString();
+            // }
             url = url + "?hist=" + id;
-            url = url + '&' + msg.getRequestHeader().getURI().getQuery();
+            String queryString = msg.getRequestHeader().getURI().getQuery();
+            if (queryString != null && !queryString.isEmpty()) {
+                url = url + "&" + queryString;
+            }
             ext.getProxiedBrowser(browser.getId(), url);
         } catch (Exception e) {
             View.getSingleton().showWarningDialog(e.getMessage());
