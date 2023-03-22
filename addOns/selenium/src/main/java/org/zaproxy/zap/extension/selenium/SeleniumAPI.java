@@ -59,9 +59,12 @@ public class SeleniumAPI extends ApiImplementor {
                 if (pair.getName().equalsIgnoreCase("hist")) {
                     id = Integer.parseInt(pair.getValue());
                     HttpMessage req = new HistoryReference(id, true).getHttpMessage();
-                    System.out.println("[**********] Within SeleniumAPI handleCallBack: " + req.getRequestHeader().getURI());
                     msg.setResponseBody(req.getResponseBody());
                     msg.setResponseHeader(req.getResponseHeader());
+                    if (msg.getResponseHeader().getStatusCode() >= 300 
+                    && msg.getResponseHeader().getStatusCode() < 400) {
+                        msg.getResponseHeader().setStatusCode(200);
+                    }
                     return req.getResponseBody().toString();
                 }
             }

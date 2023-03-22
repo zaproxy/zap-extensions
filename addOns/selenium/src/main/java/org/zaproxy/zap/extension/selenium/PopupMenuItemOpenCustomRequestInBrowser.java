@@ -59,14 +59,10 @@ public class PopupMenuItemOpenCustomRequestInBrowser extends PopupMenuItemOpenIn
     void openInBrowser(HttpMessage msg) {
         try {
             int id = msg.getHistoryRef().getHistoryId();
-            String url;
-            // if (msg.getResponseHeader().getStatusCode() < 300) {
-                url =
+            
+            String url =
                     API.getInstance()
                             .getCallBackUrl(this.ext.getApiImplementor(), this.getSite(msg));
-            // } else {
-            //     url = msg.getRequestHeader().getURI().toString();
-            // }
             url = url + "?hist=" + id;
             String queryString = msg.getRequestHeader().getURI().getQuery();
             if (queryString != null && !queryString.isEmpty()) {
