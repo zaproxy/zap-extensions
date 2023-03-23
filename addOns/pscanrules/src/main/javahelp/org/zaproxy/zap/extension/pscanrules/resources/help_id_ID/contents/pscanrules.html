@@ -90,9 +90,12 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 
 <h2>Content Security Policy (CSP) Header Not Set</h2>
 This checks HTML response headers for the presence of a Content Security Policy header, or the response body for CSP specified via META tag.<br>
-By default this rule checks for the presence of the "Content-Security-Policy" header, 
-and at the Low threshold also checks for the "X-Content-Security-Policy" and "X-WebKit-CSP" headers.<br>
-Redirects and non-HTML responses are ignored except at the Low threshold.
+By default this rule checks for the presence of the "Content-Security-Policy", "X-Content-Security-Policy",
+and "X-WebKit-CSP" headers. Redirects and non-HTML responses are ignored except at the Low threshold.
+<p>
+If a "Content-Security-Policy" header is not found, an alert is raised.
+<p>
+If an "X-Content-Security-Policy" or "X-WebKit-CSP" header is found, an INFO alert is raised. This may represent an outdated enforcement implementation.
 <p>
 If a "Content-Security-Policy-Report-Only" header is found on a response an INFO alert is raised. This may represent an enforcement effort 
 that is actively being refined or developed, or one which is only partially implemented.
@@ -158,7 +161,7 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 
 <h2>CSP (Content Security Policy)</h2>
 
-The Content Security Policy (CSP) passive scan rule parses and analyzes CSP headers for potential misconfiguration
+The Content Security Policy (CSP) passive scan rule parses and analyzes CSP headers and META definitions for potential misconfiguration
 or weakness. This rule leverages Shape Security's <a href="https://github.com/shapesecurity/salvation">Salvation</a> 
 library to perform it's parsing and assessment of CSPs.
 <p>
@@ -273,8 +276,10 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 <h2>PII Disclosure</h2>
 PII is information like credit card number, SSN etc. This check currently reports only numbers which match credit card numbers and pass Luhn checksum, which gives high confidence, that this is a credit card number (images and CSS are ignored).
 <br>
-At MEDIUM and HIGH threshold it attempts to use three characters of context on each side of potential matches to exclude matches within deicmal like content.
+At MEDIUM and HIGH threshold it attempts to use three characters of context on each side of potential matches to exclude matches within decimal like content.
 At LOW threshold, alerts will be raised for such matches.
+<p>
+PDFs are only evaluated at LOW threshold.
 <p>
 Note: In the case of suspected credit card values, the potential credit card numbers are looked up against a Bank Identification Number List 
 (BINList). If a match is found the alert is raised at High confidence and additional details are added to the 'Other Information' field in the 

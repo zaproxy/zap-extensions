@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Browser Based Authentication
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Browser Based Authentication</H1>
+
+This <a href="authhelper.html">add-on</a> adds a new authentication type which uses a browser to login to the target website.
+<p>
+It uses the first field with a type of "text" or "email" for the user name and the first field with a type
+of "password" for the password.
+It does not currently support login pages where the password field is only made visible when the username has been entered.
+It also does not support login pages which do not submit when <code>Return</code> is used in the password field.
+Support for all such login pages will be added in a future release.
+<p>
+The response containing the session token is identified by choosing the first response following a login which contains any of:
+<ul>
+<li>An <code>Authorization</code> header
+<li>JSON data with an element called <code>AccessToken</code> or <code>token</code> - case is ignored
+</ul>
+
+The plan is to keep enhancing this authentication method to handle all of the most commonly used login page formats.
+If it does not work with you application's login page then please inform the ZAP team via the 
+<a href="https://groups.google.com/group/zaproxy-users">ZAP User Group</a> giving as many details as possible.
+
+<H2>Automation Framework</H2>
+
+Browser Based Authentication can be configured in the environment section of an Automation Framework plan using:
+<pre>
+      authentication:
+        method: "browser"
+        parameters:
+          loginPageUrl:                # String, the URL of the login page, mandatory
+          loginPageWait:               # Int, the time in seconds to wait after the login form has been submitted, default: 5
+          browserId:                   # String, Browser Id to use, default: firefox-headless
+</pre>
+
+<H2>Selenium Integration</H2>
+
+Any browsers launched by ZAP can be configured to always first login using the details configured in a context.
+This is disabled by default.
+<p>
+This feature can be controlled by the following static methods, which can be called from scripts.
+A cleaner integration will be added in a future release.
+
+<pre>
+org.zaproxy.addon.authhelper.AuthUtils.enableBrowserAuthentication(Context context, String userName)
+</pre>
+This method will enable browser authentication whenever a browser is launched, for the given context and user.
+An exception will be thrown if the context is not configured for browser based authentication or if the user is not found.
+
+<pre>
+org.zaproxy.addon.authhelper.AuthUtils.enableBrowserAuthentication()
+</pre>
+This method will enable browser authentication whenever a browser is launched.
+The context is configured for browser based authentication with a valid user will be chosen.
+
+<pre>
+org.zaproxy.addon.authhelper.AuthUtils.disableBrowserAuthentication()
+</pre>
+This method will disable browser authentication when browser is launched.
+
+<p>
+
+Note that due to restrictions in the core:
+<ul>
+<li>Existing contexts are not updated in the GUI if you add or remove this add-on
+<li>Browser Based Authentication cannot be added to a context via the API
+</ul>
+These restrictions will be addressed in a future release. 
+
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/authhelper/src/main/java/org/zaproxy/addon/authhelper/BrowserBasedAuthenticationMethodType.java">BrowserBasedAuthenticationMethodType.java</a>
+
+</BODY>
+</HTML>
