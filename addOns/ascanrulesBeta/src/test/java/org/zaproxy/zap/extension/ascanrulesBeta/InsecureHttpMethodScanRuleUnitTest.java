@@ -19,19 +19,91 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import fi.iki.elonen.NanoHTTPD.IHTTPSession;
+import fi.iki.elonen.NanoHTTPD.Method;
+import fi.iki.elonen.NanoHTTPD.Response;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.zap.testutils.NanoServerHandler;
 
 class InsecureHttpMethodScanRuleUnitTest extends ActiveScannerTest<InsecureHttpMethodScanRule> {
 
     @Override
     protected InsecureHttpMethodScanRule createScanner() {
         return new InsecureHttpMethodScanRule();
+    }
+
+    private static class AllowedPutPatchNanoServerHandler extends NanoServerHandler {
+
+        String contentType;
+        String method;
+
+        AllowedPutPatchNanoServerHandler(String method, String contentType, String path) {
+            super(path);
+            this.method = method;
+            this.contentType = contentType;
+        }
+
+        @Override
+        protected Response serve(IHTTPSession session) {
+            Response response = newFixedLengthResponse("");
+
+            if (session.getMethod().equals(Method.OPTIONS)) {
+                response.addHeader("Allow", method);
+                return response;
+            }
+
+            if (session.getMethod().equals(Method.PUT)
+                    || session.getMethod().equals(Method.PATCH)) {
+                response.setMimeType(contentType);
+                return response;
+            }
+            consumeBody(session);
+            return response;
+        }
+    }
+
+    @ParameterizedTest
+    @CsvSource({"PUT, json", "PUT, xml", "PATCH, json", "PATCH, xml"})
+    void shouldRaiseNoAlertsForPutOrPatchMethodsIfReturnJsonOrXml(String method, String contentType)
+            throws Exception {
+        // Given
+        String path = "/shouldRaiseNoAlertsForPutOrPatchMethodsIfReturnJsonOrXml/";
+        HttpMessage message = getHttpMessage(path);
+        nano.addHandler(new AllowedPutPatchNanoServerHandler(method, contentType, path));
+
+        rule.init(message, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"PUT", "PATCH"})
+    void shouldRaiseAlertForPutOrPatchMethodsIfNotReturnJsonOrXml(String method) throws Exception {
+        // Given
+        String path = "/shouldRaiseAlertForPutOrPatchMethodsIfNotReturnJsonOrXml/";
+        String contentType = "html";
+        HttpMessage message = getHttpMessage(path);
+        nano.addHandler(new AllowedPutPatchNanoServerHandler(method, contentType, path));
+
+        rule.init(message, parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getName(), equalTo("Insecure HTTP Method - " + method));
     }
 
     @Test
