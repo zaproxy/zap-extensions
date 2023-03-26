@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
@@ -218,6 +219,16 @@ class SourceCodeDisclosureScanRuleUnitTest
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExamples() {
+        // Given / When
+        List<Alert> examples = rule.getExampleAlerts();
+        // Then
+        assertThat(examples.size(), is(equalTo(1)));
+        Alert example = examples.get(0);
+        assertThat(example.getName(), is(equalTo("Source Code Disclosure - PHP")));
     }
 
     private String wrapWithHTML(String code) {

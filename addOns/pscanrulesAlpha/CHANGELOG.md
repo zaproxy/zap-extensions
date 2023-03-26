@@ -4,7 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Added
+- Base64, Example, Site Isolation, and Source Code Disclosure scan rules now all provide example alerts for documentation purposes. 
+As well as Alert Refs where applicable (Issues 6119 & 7100).
 
 ## [38] - 2023-03-03
 ### Fixed

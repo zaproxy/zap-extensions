@@ -23,11 +23,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 
@@ -89,6 +91,26 @@ class Base64DisclosureUnitTest extends PassiveScannerTest<Base64Disclosure> {
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlerts() {
+        // Given / When
+        List<Alert> examples = rule.getExampleAlerts();
+        // Then
+        assertThat(examples.size(), is(equalTo(3)));
+        Alert vsAlert = examples.get(0);
+        Alert maclessAlert = examples.get(1);
+        Alert base64Alert = examples.get(2);
+        assertThat(vsAlert.getName(), is(equalTo("ASP.NET ViewState Disclosure")));
+        assertThat(vsAlert.getRisk(), is(equalTo(Alert.RISK_INFO)));
+        assertThat(vsAlert.getAlertRef(), is(equalTo("10094-1")));
+        assertThat(maclessAlert.getName(), is(equalTo("ASP.NET ViewState Integrity")));
+        assertThat(maclessAlert.getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(maclessAlert.getAlertRef(), is(equalTo("10094-2")));
+        assertThat(base64Alert.getName(), is(equalTo("Base64 Disclosure")));
+        assertThat(base64Alert.getRisk(), is(equalTo(Alert.RISK_INFO)));
+        assertThat(base64Alert.getAlertRef(), is(equalTo("10094-3")));
     }
 
     private static HttpMessage createMessage() throws Exception {
