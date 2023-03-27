@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Fixed
 - Correct required version of Common Library add-on.
+- Prevent error with the CSP scan rule when scanning `meta` elements with missing `http-equiv` attribute.
 
 ## [46] - 2023-03-03
 ### Changed
