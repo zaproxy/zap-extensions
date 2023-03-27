@@ -495,7 +495,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
 
     private static List<Element> getMetaPolicies(Source source) {
         return source.getAllElements(HTMLElementName.META).stream()
-                .filter(element -> !element.getAttributeValue("http-equiv").isEmpty())
+                .filter(element -> !StringUtils.isBlank(element.getAttributeValue("http-equiv")))
                 .collect(Collectors.toList());
     }
 

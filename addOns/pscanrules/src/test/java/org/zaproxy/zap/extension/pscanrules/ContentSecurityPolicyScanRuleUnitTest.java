@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -287,6 +288,22 @@ class ContentSecurityPolicyScanRuleUnitTest
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldNotFailToScanMetaWithMissingAttributes() {
+        // Given
+        HttpMessage msg =
+                createHttpMessageWithReasonableCsp(HttpFieldsNames.CONTENT_SECURITY_POLICY);
+        msg.setResponseBody(
+                "<html><head><meta http-equiv=\""
+                        + HttpFieldsNames.CONTENT_SECURITY_POLICY
+                        + "\" content=\""
+                        + REASONABLE_META_POLICY
+                        + "\"><meta /></head></html>");
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
+        // When / Then
+        assertDoesNotThrow(() -> scanHttpResponseReceive(msg));
     }
 
     @Test
