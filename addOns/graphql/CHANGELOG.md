@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ### Fixed
 - Do not report errors parsing valid JSON arrays.
 
+### Changed
+- Dependency updates.
+
 ## [0.13.0] - 2023-02-09
 ### Added
 - Support for relative file paths in the Automation Framework job.
