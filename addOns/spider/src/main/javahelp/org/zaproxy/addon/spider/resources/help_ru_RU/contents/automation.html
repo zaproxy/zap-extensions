@@ -34,6 +34,7 @@ This job supports monitor tests.
       maxParseSizeBytes:               # Int: The max size of a response that will be parsed, default: 2621440 - 2.5 Mb
       parseComments:                   # Bool: Whether the spider will parse HTML comments in order to find URLs, default: true
       parseGit:                        # Bool: Whether the spider will parse Git metadata in order to find URLs, default: false
+      parseDsStore:                    # Bool: Whether the spider will parse .DS_Store files in order to find URLs, default: false
       parseRobotsTxt:                  # Bool: Whether the spider will parse 'robots.txt' files in order to find URLs, default: true
       parseSitemapXml:                 # Bool: Whether the spider will parse 'sitemap.xml' files in order to find URLs, default: true
       parseSVNEntries:                 # Bool: Whether the spider will parse SVN metadata in order to find URLs, default: false
