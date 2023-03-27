@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support for dynamically added browser based authentication.
 
+### Changed
+- Environment help page to clarify use of variables.
+
 ## [0.25.1] - 2023-03-03
 ### Fixed
 - NPE when accessing active scan job.
