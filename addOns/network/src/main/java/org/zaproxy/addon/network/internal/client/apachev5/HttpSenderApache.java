@@ -780,7 +780,7 @@ public class HttpSenderApache
             host = hostValue.toString();
         }
 
-        addHostHeader(msg, host);
+        addHostHeaderIfNull(msg, host);
 
         BasicClassicHttpRequest copy =
                 new BasicClassicHttpRequest(
@@ -836,15 +836,13 @@ public class HttpSenderApache
         return new HttpVersion(major, minor);
     }
 
-    private static void addHostHeader(HttpMessage msg, String host) {
+    private static void addHostHeaderIfNull(HttpMessage msg, String host) {
         HttpRequestHeader header = msg.getRequestHeader();
         String expectedHost = host != null ? host : createExpectedHost(header);
         String currentHost = header.getHeader(HttpRequestHeader.HOST);
         if (currentHost == null) {
             header.addHeader(HttpRequestHeader.HOST, expectedHost);
-            return;
         }
-        header.setHeader(HttpRequestHeader.HOST, expectedHost);
     }
 
     private static String createExpectedHost(HttpRequestHeader header) {
