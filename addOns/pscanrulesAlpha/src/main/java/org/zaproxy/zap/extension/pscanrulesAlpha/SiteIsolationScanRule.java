@@ -117,9 +117,11 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
 
     abstract static class SiteIsolationHeaderScanRule {
         private final Supplier<AlertBuilder> newAlert;
+        private final String alertRef;
 
-        SiteIsolationHeaderScanRule(Supplier<AlertBuilder> newAlert) {
+        SiteIsolationHeaderScanRule(Supplier<AlertBuilder> newAlert, String alertReference) {
             this.newAlert = newAlert;
+            this.alertRef = PLUGIN_ID + alertReference;
         }
 
         protected abstract String getHeader();
@@ -146,7 +148,8 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
                     .setReference(getString("refs"))
                     .setCweId(693) // CWE-693: Protection Mechanism Failure
                     .setWascId(14) // WASC-14: Server Misconfiguration
-                    .setEvidence(evidence);
+                    .setEvidence(evidence)
+                    .setAlertRef(alertRef);
         }
 
         protected Stream<String> filterReportHeader(String coopHeader) {
@@ -162,7 +165,7 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
         public static final String CORS_PREFIX = "access-control-allow-";
 
         CorpHeaderScanRule(Supplier<AlertBuilder> newAlert) {
-            super(newAlert);
+            super(newAlert, "-1");
         }
 
         @Override
@@ -214,7 +217,7 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
         private static final String COEP_MESSAGE_PREFIX = SITE_ISOLATION_MESSAGE_PREFIX + "coep.";
 
         CoepHeaderScanRule(Supplier<AlertBuilder> newAlert) {
-            super(newAlert);
+            super(newAlert, "-2");
         }
 
         @Override
@@ -256,7 +259,7 @@ public class SiteIsolationScanRule extends PluginPassiveScanner {
         private static final String COOP_MESSAGE_PREFIX = SITE_ISOLATION_MESSAGE_PREFIX + "coop.";
 
         CoopHeaderScanRule(Supplier<AlertBuilder> newAlert) {
-            super(newAlert);
+            super(newAlert, "-3");
         }
 
         @Override

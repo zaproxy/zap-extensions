@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrulesAlpha;
 
+import java.util.List;
 import java.util.Random;
 import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
@@ -74,16 +75,24 @@ public class ExampleSimplePassiveScanRule extends PluginPassiveScanner {
         // For this example we're just going to raise the alert at random!
 
         if (rnd.nextInt(10) == 0) {
-            newAlert()
-                    .setRisk(Alert.RISK_MEDIUM)
-                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                    .setDescription(getDescription())
-                    .setSolution(getSolution())
-                    .setReference(getReference())
-                    .raise();
+            createAlert().raise();
         }
 
         LOGGER.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(createAlert().build());
+    }
+
+    private AlertBuilder createAlert() {
+        return newAlert()
+                .setRisk(Alert.RISK_MEDIUM)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription())
+                .setSolution(getSolution())
+                .setReference(getReference());
     }
 
     @Override

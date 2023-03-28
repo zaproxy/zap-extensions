@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.pscanrulesAlpha;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -680,19 +681,27 @@ public class SourceCodeDisclosureScanRule extends PluginPassiveScanner {
         }
         if (evidence != null && evidence.length() > 0) {
             // we found something
-            newAlert()
-                    .setName(getName() + " - " + programminglanguage)
-                    .setRisk(Alert.RISK_MEDIUM)
-                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                    .setDescription(getDescription() + " - " + programminglanguage)
-                    .setOtherInfo(getExtraInfo(evidence))
-                    .setSolution(getSolution())
-                    .setReference(getReference())
-                    .setEvidence(evidence)
-                    .setCweId(540) // Information Exposure Through Source Code
-                    .setWascId(13) // WASC-13: Information Leakage
-                    .raise();
+            createAlert(programminglanguage, evidence).raise();
         }
+    }
+
+    private AlertBuilder createAlert(String programmingLanguage, String evidence) {
+        return newAlert()
+                .setName(getName() + " - " + programmingLanguage)
+                .setRisk(Alert.RISK_MEDIUM)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription() + " - " + programmingLanguage)
+                .setOtherInfo(getExtraInfo(evidence))
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(evidence)
+                .setCweId(540) // Information Exposure Through Source Code
+                .setWascId(13); // WASC-13: Information Leakage
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(createAlert("PHP", "<?php echo 'evils'; ?>").build());
     }
 
     @Override

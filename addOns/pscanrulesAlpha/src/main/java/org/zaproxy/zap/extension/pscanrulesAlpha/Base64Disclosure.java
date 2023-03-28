@@ -284,33 +284,11 @@ public class Base64Disclosure extends PluginPassiveScanner {
                         }
                     }
 
-                    if (validviewstate == true) {
+                    if (validviewstate) {
                         LOGGER.debug("Raising a ViewState informational alert");
 
                         // raise an (informational) Alert with the human readable ViewState data
-                        newAlert()
-                                .setName(
-                                        Constant.messages.getString(
-                                                "pscanalpha.base64disclosure.viewstate.name"))
-                                .setRisk(Alert.RISK_INFO)
-                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                .setDescription(
-                                        Constant.messages.getString(
-                                                "pscanalpha.base64disclosure.viewstate.desc"))
-                                .setOtherInfo(
-                                        Constant.messages.getString(
-                                                "pscanalpha.base64disclosure.viewstate.extrainfo",
-                                                viewstatexml))
-                                .setSolution(
-                                        Constant.messages.getString(
-                                                "pscanalpha.base64disclosure.viewstate.soln"))
-                                .setReference(
-                                        Constant.messages.getString(
-                                                "pscanalpha.base64disclosure.viewstate.refs"))
-                                .setEvidence(viewstatexml)
-                                .setCweId(200) // Information Exposure,
-                                .setWascId(13) // Information Leakage
-                                .raise();
+                        createViewStateAlert(viewstatexml).raise();
                         if (!macless && !AlertThreshold.LOW.equals(getAlertThreshold())) {
                             return;
                         }
@@ -318,30 +296,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
                         // if the ViewState is not protected by a MAC, alert it as a High, cos we
                         // can mess with the parameters for sure..
                         if (macless) {
-                            newAlert()
-                                    .setName(
-                                            Constant.messages.getString(
-                                                    "pscanalpha.base64disclosure.viewstatewithoutmac.name"))
-                                    .setRisk(Alert.RISK_HIGH)
-                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                    .setDescription(
-                                            Constant.messages.getString(
-                                                    "pscanalpha.base64disclosure.viewstatewithoutmac.desc"))
-                                    .setOtherInfo(
-                                            Constant.messages.getString(
-                                                    "pscanalpha.base64disclosure.viewstatewithoutmac.extrainfo",
-                                                    viewstatexml))
-                                    .setSolution(
-                                            Constant.messages.getString(
-                                                    "pscanalpha.base64disclosure.viewstatewithoutmac.soln"))
-                                    .setReference(
-                                            Constant.messages.getString(
-                                                    "pscanalpha.base64disclosure.viewstatewithoutmac.refs"))
-                                    .setEvidence(viewstatexml)
-                                    .setCweId(642) // CWE-642 = External Control of Critical State
-                                    // Data
-                                    .setWascId(13) // Information Leakage
-                                    .raise();
+                            createMaclessAlert(viewstatexml).raise();
                             if (!AlertThreshold.LOW.equals(getAlertThreshold())) {
                                 return;
                             }
@@ -355,17 +310,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
                         // a valid ViewState pre-amble)
                         // so treat it as normal Base64 data, and raise an informational alert.
                         if (base64evidence.length() > 0) {
-                            newAlert()
-                                    .setRisk(Alert.RISK_INFO)
-                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                    .setDescription(getDescription())
-                                    .setOtherInfo(getExtraInfo(msg, base64evidence, decodeddata))
-                                    .setSolution(getSolution())
-                                    .setReference(getReference())
-                                    .setEvidence(base64evidence)
-                                    .setCweId(200) // CWE-200 = Information Exposure
-                                    .setWascId(13) // Information Leakage
-                                    .raise();
+                            createBase64Alert(base64evidence, decodeddata).raise();
                             if (!AlertThreshold.LOW.equals(getAlertThreshold())) {
                                 return;
                             }
@@ -374,6 +319,71 @@ public class Base64Disclosure extends PluginPassiveScanner {
                 }
             }
         }
+    }
+
+    private AlertBuilder createBasicAlert(String alertRef) {
+        return newAlert()
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setCweId(200) // Information Exposure,
+                .setWascId(13) // Information Leakage
+                .setAlertRef(getPluginId() + alertRef);
+    }
+
+    private AlertBuilder createViewStateAlert(String viewstatexml) {
+        return createBasicAlert("-1")
+                .setName(Constant.messages.getString("pscanalpha.base64disclosure.viewstate.name"))
+                .setDescription(
+                        Constant.messages.getString("pscanalpha.base64disclosure.viewstate.desc"))
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                "pscanalpha.base64disclosure.viewstate.extrainfo", viewstatexml))
+                .setSolution(
+                        Constant.messages.getString("pscanalpha.base64disclosure.viewstate.soln"))
+                .setReference(
+                        Constant.messages.getString("pscanalpha.base64disclosure.viewstate.refs"))
+                .setEvidence(viewstatexml);
+    }
+
+    private AlertBuilder createMaclessAlert(String viewstatexml) {
+        return createBasicAlert("-2")
+                .setName(
+                        Constant.messages.getString(
+                                "pscanalpha.base64disclosure.viewstatewithoutmac.name"))
+                .setRisk(Alert.RISK_HIGH)
+                .setDescription(
+                        Constant.messages.getString(
+                                "pscanalpha.base64disclosure.viewstatewithoutmac.desc"))
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                "pscanalpha.base64disclosure.viewstatewithoutmac.extrainfo",
+                                viewstatexml))
+                .setSolution(
+                        Constant.messages.getString(
+                                "pscanalpha.base64disclosure.viewstatewithoutmac.soln"))
+                .setReference(
+                        Constant.messages.getString(
+                                "pscanalpha.base64disclosure.viewstatewithoutmac.refs"))
+                .setEvidence(viewstatexml)
+                .setCweId(642); // CWE-642 = External Control of Critical State
+        // Data
+    }
+
+    private AlertBuilder createBase64Alert(String evidence, byte[] data) {
+        return createBasicAlert("-3")
+                .setDescription(getDescription())
+                .setOtherInfo(getExtraInfo(evidence, data))
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(evidence);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                createViewStateAlert("").build(),
+                createMaclessAlert("").build(),
+                createBase64Alert("", new byte[] {}).build());
     }
 
     @Override
@@ -386,19 +396,19 @@ public class Base64Disclosure extends PluginPassiveScanner {
         return ALERT_TAGS;
     }
 
-    private String getDescription() {
+    private static String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    private String getSolution() {
+    private static String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    private String getReference() {
+    private static String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
-    private String getExtraInfo(HttpMessage msg, String evidence, byte[] decodeddata) {
+    private static String getExtraInfo(String evidence, byte[] decodeddata) {
         return Constant.messages.getString(
                 MESSAGE_PREFIX + "extrainfo", evidence, new String(decodeddata));
     }

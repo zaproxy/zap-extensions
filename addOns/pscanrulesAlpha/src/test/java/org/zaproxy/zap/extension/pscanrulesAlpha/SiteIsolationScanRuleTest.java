@@ -26,10 +26,12 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 
@@ -409,6 +411,20 @@ class SiteIsolationScanRuleTest extends PassiveScannerTest<SiteIsolationScanRule
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlerts() {
+        // Given / When
+        List<Alert> examples = rule.getExampleAlerts();
+        // Then
+        assertThat(examples.size(), is(equalTo(3)));
+        Alert corp = examples.get(0);
+        Alert coep = examples.get(1);
+        Alert coop = examples.get(2);
+        assertThat(corp.getAlertRef(), is(equalTo("90004-1")));
+        assertThat(coep.getAlertRef(), is(equalTo("90004-2")));
+        assertThat(coop.getAlertRef(), is(equalTo("90004-3")));
     }
 
     @Override

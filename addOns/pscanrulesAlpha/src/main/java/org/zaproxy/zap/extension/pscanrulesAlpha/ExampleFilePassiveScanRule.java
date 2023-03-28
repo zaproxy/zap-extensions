@@ -65,13 +65,13 @@ public class ExampleFilePassiveScanRule extends PluginPassiveScanner {
         if (msg.getResponseBody().length() > 0 && msg.getResponseHeader().isText()) {
             String parameter;
             if ((parameter = doesResponseContainString(msg.getResponseBody())) != null) {
-                this.raiseAlert(msg, id, parameter);
+                this.createAlert(parameter).raise();
             }
         }
     }
 
-    private void raiseAlert(HttpMessage msg, int id, String evidence) {
-        newAlert()
+    private AlertBuilder createAlert(String evidence) {
+        return newAlert()
                 .setRisk(Alert.RISK_LOW)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(getDescription())
@@ -79,8 +79,12 @@ public class ExampleFilePassiveScanRule extends PluginPassiveScanner {
                 .setSolution(getSolution())
                 .setReference(getReference())
                 .setEvidence(evidence)
-                .setWascId(13)
-                .raise();
+                .setWascId(13);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(createAlert("").build());
     }
 
     private String doesResponseContainString(HttpBody body) {
