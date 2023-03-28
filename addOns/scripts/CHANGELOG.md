@@ -4,7 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Fixed
+- extender/Copy as curl command menu.js - prevent and warn on local file inclusion when generating the command.
+  Thanks to James Kettle (@albinowax) for reporting.
 
 ## [37] - 2023-03-18
 ### Fixed
