@@ -34,10 +34,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -341,6 +345,73 @@ class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<ApplicationErr
         msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "application/wasm");
         msg.setResponseBody(expectedEvidence);
         ApplicationErrorScanRule.setPayloadProvider(() -> Arrays.asList(expectedEvidence));
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    static Stream<HttpMessage> cssAndJavaScriptByUrlAndContentTypeWithEvidenceInContent()
+            throws Exception {
+        String errorString = "Error";
+        ApplicationErrorScanRule.setPayloadProvider(() -> Arrays.asList(errorString));
+
+        HttpMessage baseMsg = new HttpMessage();
+        baseMsg.setRequestHeader(REQUEST_HEADER);
+        baseMsg.setResponseHeader(createResponseHeader(OK));
+        baseMsg.setResponseBody(errorString);
+
+        List<HttpMessage> msgs = new ArrayList<>();
+        for (var contentType : List.of("javascript", "css")) {
+            var msg = baseMsg.cloneAll();
+            msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/" + contentType);
+            msgs.add(msg);
+        }
+
+        for (var path : List.of("/test.js", "/test.css")) {
+            var msg = baseMsg.cloneAll();
+            msg.getRequestHeader().getURI().setEscapedPath(path);
+            msgs.add(msg);
+        }
+
+        return msgs.stream();
+    }
+
+    @ParameterizedTest
+    @MethodSource("cssAndJavaScriptByUrlAndContentTypeWithEvidenceInContent")
+    void
+            shouldNotRaiseAlertForResponseCodeOkAndContentTypeJavaScriptOrCssWithFilePayloadPresentWhenThresholdNotLow(
+                    HttpMessage msg) {
+        // Given
+        rule.setAlertThreshold(AlertThreshold.DEFAULT);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @ParameterizedTest
+    @MethodSource("cssAndJavaScriptByUrlAndContentTypeWithEvidenceInContent")
+    void
+            shouldRaiseAlertForResponseCodeOkAndContentTypeJavaScriptOrCssWithFilePayloadPresentWhenThresholdLow(
+                    HttpMessage msg) {
+        // Given
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getWascId(), equalTo(13));
+    }
+
+    @ParameterizedTest
+    @MethodSource("cssAndJavaScriptByUrlAndContentTypeWithEvidenceInContent")
+    void
+            shouldNotRaiseAlertForResponseCodeOkAndContentTypeJavaScriptOrCssWithFilePayloadAbsentWhenThresholdLow(
+                    HttpMessage msg) {
+        // Given
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        ApplicationErrorScanRule.setPayloadProvider(() -> Arrays.asList("Not an error in msg."));
         // When
         scanHttpResponseReceive(msg);
         // Then

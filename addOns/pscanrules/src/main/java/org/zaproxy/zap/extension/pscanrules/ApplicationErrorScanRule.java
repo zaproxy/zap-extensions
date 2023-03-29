@@ -38,6 +38,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.utils.ContentMatcher;
 
@@ -170,6 +171,12 @@ public class ApplicationErrorScanRule extends PluginPassiveScanner {
 
         } else if (!getHelper().isPage404(msg)
                 && !msg.getResponseHeader().hasContentType("application/wasm")) {
+
+            if (!AlertThreshold.LOW.equals(this.getAlertThreshold())
+                    && (ResourceIdentificationUtils.isJavaScript(msg)
+                            || ResourceIdentificationUtils.isCss(msg))) {
+                return;
+            }
             String body = msg.getResponseBody().toString();
             for (String payload : getCustomPayloads().get()) {
                 if (body.contains(payload)) {
