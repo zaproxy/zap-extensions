@@ -31,6 +31,17 @@ The other fields will be updated dynamically if you change the text<br/>
   <li>Help - Will open the User Guide, with the content pane preset to the Encode/Decode/Hash add-on's help page.</li>
 </ul>
 
+<H2>Output Panel(s) Context Menu</H2>
+
+<ul>
+  <li>Find - Brings up a standard input dialog to allow searching within a text area.</li>
+  <li>Copy - Standard copy functionality.</li>
+  <li>Paste - Standard paste functionality.</li>
+  <li>Delete Output Panel - Removes the relevant output text area.</li>
+  <li>Replace Input Text - Replaces the input text content, based on the selection or full content of
+  the relevant output text area. (Only active if the text area has content.)</li>
+</ul>
+
 <H2>Default Dialog Tabs & Panels</H2>
 In its default state the Encode/Decode/Hash dialog displays tabs and output panels with the following setup:
 
@@ -194,6 +205,27 @@ Reverses the order of the input.
 
 <H4>To Upper Case</H4>
 Converts the input to all upper case characters.
+
+<H3>Miscellaneous</H3>
+
+<H4>PowerShell Encode</H4>
+Converted to UTF-16LE and base64 encoded. Equivalent to one of the following examples (encoding "dir"):
+<p>
+<code> printf "dir"| iconv -t UTF-16LE | base64 -w 0 -</code>
+<br>
+<pre>
+<code>
+$command = 'dir'
+$bytes = [System.Text.Encoding]::Unicode.GetBytes($command)
+$encodedCommand = [Convert]::ToBase64String($bytes)
+echo $encodedCommand
+</code>
+</pre>
+<br>
+Resulting in: <code>ZABpAHIA</code>.
+<p>
+Which can be leveraged via something like the following (where <code>$encodedCommand</code> is set to the encoded value <code>ZABpAHIA</code>):<br>
+<code>powershell -exec bypass -enc $encodedCommand</code>
 
 <H2>Accessed via</H2>
 <table>
