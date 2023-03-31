@@ -21,18 +21,75 @@ package org.zaproxy.addon.exim.log;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.zaproxy.addon.commonlib.ui.ProgressPaneListener;
 import org.zaproxy.addon.exim.log.LogsImporter.LogType;
+import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link LogImporter}. */
-class LogImporterUnitTest {
+class LogImporterUnitTest extends TestUtils {
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "threeEqualsNoSpace.txt",
+                "fourEqualsNoSpace.txt",
+                "threeEqualsSpace.txt",
+                "fourEqualsSpace.txt"
+            })
+    void shouldReadZapMessagesFileWithVariousDelimiters(String fileName) throws IOException {
+        // Given
+        File file = getResourcePath(fileName).toFile();
+        // When
+        List<String> parsed = LogsImporter.readFile(file);
+        // Then
+        assertThat(parsed.size(), is(equalTo(2)));
+    }
+
+    private Path generateTestFile(int countSamples) throws IOException {
+        String template =
+                "==== @@@ ==========\n"
+                        + "GET http://example.org/@@@ HTTP/1.1\n"
+                        + "Host: example.org\n"
+                        + "\n"
+                        + "\n"
+                        + "HTTP/1.1 200 OK\n"
+                        + "Content-Type: text/html\n"
+                        + "content-length: 40\n"
+                        + "\n"
+                        + "<!DOCTYPE html>\n"
+                        + "<html lang=\"en\">\n"
+                        + "</html>\n";
+        StringBuilder builder = new StringBuilder(template.length() * countSamples);
+        Path path = Files.createTempFile("samples", "txt");
+        for (int i = 0; i < countSamples; i++) {
+            builder.append(template.replace("@@@", String.valueOf(i)));
+        }
+        Files.writeString(path, builder.subSequence(0, builder.length()));
+        return path;
+    }
+
+    @Test
+    void shouldReadLotsOfMessages() throws IOException {
+        // Given
+        File file = generateTestFile(110).toFile();
+        // When
+        List<String> parsed = LogsImporter.readFile(file);
+        // Then
+        assertThat(parsed.size(), is(equalTo(110)));
+    }
 
     @Test
     void shouldBeFailureIfFileNotFound(@TempDir Path dir) throws Exception {

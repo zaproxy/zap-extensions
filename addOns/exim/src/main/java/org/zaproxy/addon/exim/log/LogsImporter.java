@@ -173,12 +173,12 @@ public class LogsImporter {
         return true;
     }
 
-    private static List<String> readFile(File file) throws IOException {
+    static List<String> readFile(File file) throws IOException {
         List<String> parsed = new ArrayList<>();
         Charset charset = StandardCharsets.US_ASCII;
         BufferedReader reader = Files.newBufferedReader(file.toPath(), charset);
         Scanner sc = new Scanner(reader);
-        sc.useDelimiter(Pattern.compile("====\\s[0-9]*\\s=========="));
+        sc.useDelimiter(Pattern.compile("====?\\s?[0-9]*\\s=========="));
         while (sc.hasNext()) {
             parsed.add(sc.next());
         }

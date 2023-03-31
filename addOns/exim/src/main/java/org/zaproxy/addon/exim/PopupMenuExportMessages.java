@@ -22,6 +22,7 @@ package org.zaproxy.addon.exim;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
@@ -116,18 +117,11 @@ public class PopupMenuExportMessages extends JMenuItem {
             if (responsesOnly) {
                 if (!msg.getResponseHeader().isEmpty()) {
                     bos.write(NEWLINE.getBytes());
-                    bos.write("===".getBytes());
-                    bos.write(String.valueOf(msg.getHistoryRef().getHistoryId()).getBytes());
-                    bos.write(" ==========".getBytes());
-                    bos.write(NEWLINE.getBytes());
-
+                    writeDelimiter(bos, String.valueOf(msg.getHistoryRef().getHistoryId()));
                     bos.write(msg.getResponseBody().getBytes());
                 }
             } else {
-                bos.write("===".getBytes());
-                bos.write(String.valueOf(msg.getHistoryRef().getHistoryId()).getBytes());
-                bos.write(" ==========".getBytes());
-                bos.write(NEWLINE.getBytes());
+                writeDelimiter(bos, String.valueOf(msg.getHistoryRef().getHistoryId()));
                 bos.write(msg.getRequestHeader().toString().getBytes());
                 String body = msg.getRequestBody().toString();
                 bos.write(body.getBytes());
@@ -150,6 +144,13 @@ public class PopupMenuExportMessages extends JMenuItem {
             LOGGER.warn(e.getMessage(), e);
             Stats.incCounter(STATS_EXPORT_MESSAGES_ERROR);
         }
+    }
+
+    private void writeDelimiter(BufferedOutputStream bos, String id) throws IOException {
+        bos.write("==== ".getBytes());
+        bos.write(id.getBytes());
+        bos.write(" ==========".getBytes());
+        bos.write(NEWLINE.getBytes());
     }
 
     private File getOutputFile() {
