@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Statistics.
+
 ### Changed
 - Maintenance changes.
 - The value generator can now match fields based on regex.
