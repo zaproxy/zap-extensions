@@ -217,19 +217,6 @@
     "oss": true,
     "website": "http://www.spip.net"
   },
-  "Splide": {
-    "cats": [
-      59
-    ],
-    "description": "Splide.js is a lightweight, responsive, and customizable slider and carousel library for JavaScript.",
-    "icon": "Splide.svg",
-    "js": {
-      "Splide.name": "i",
-      "Splide.STATES": ""
-    },
-    "oss": true,
-    "website": "https://splidejs.com"
-  },
   "SPNEGO": {
     "cats": [
       16
@@ -3815,8 +3802,8 @@
       53
     ],
     "description": "Slate is a CRM system designed specifically for higher education institutions, which helps them to manage student interactions, track admissions, and analyze student data in a flexible and user-friendly way.",
-    "icon": "Slate.svg",
     "dom": "link[href*='slate-technolutions-net.cdn.technolutions.net/']",
+    "icon": "Slate.svg",
     "pricing": [
       "poa"
     ],
@@ -4820,6 +4807,19 @@
     "icon": "SparkPost.svg",
     "website": "https://www.sparkpost.com/"
   },
+  "Spatie Laravel Cookie Consent": {
+    "cats": [
+      67
+    ],
+    "description": "Spatie Laravel Cookie Consent is a banner that is displayed on websites to ask visitors for consent for the use of cookies.",
+    "icon": "Spatie.png",
+    "implies": "Laravel",
+    "js": {
+      "laravelCookieConsent": ""
+    },
+    "oss": true,
+    "website": "https://github.com/spatie/laravel-cookie-consent"
+  },
   "Spatie Media Library Pro": {
     "cats": [
       66
@@ -4850,18 +4850,22 @@
     "oss": true,
     "website": "https://github.com/spatie/laravel-support-bubble"
   },
-  "Spatie Laravel Cookie Consent": {
+  "Spectra": {
     "cats": [
-      67
+      87
     ],
-    "description": "Spatie Laravel Cookie Consent is a banner that is displayed on websites to ask visitors for consent for the use of cookies.",
-    "icon": "Spatie.png",
-    "implies": "Laravel",
-    "js": {
-      "laravelCookieConsent": ""
-    },
-    "oss": true,
-    "website": "https://github.com/spatie/laravel-cookie-consent"
+    "description": "Spectra is a WordPress plugin that provides a collection of new and enhanced blocks for the Gutenberg editor.",
+    "dom": "link[href*='/wp-content/plugins/ultimate-addons-for-gutenberg/']",
+    "icon": "Spectra.svg",
+    "implies": "Gutenberg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/ultimate-addons-for-gutenberg/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://wpspectra.com"
   },
   "Speed Kit": {
     "cats": [
@@ -4984,6 +4988,39 @@
     ],
     "saas": true,
     "website": "https://www.spinnakr.com"
+  },
+  "SpiritShop": {
+    "cats": [
+      6
+    ],
+    "cookies": {
+      "SPIRITSHOP_ID": ""
+    },
+    "description": "SpiritShop is an ecommerce plataform.",
+    "icon": "SpiritShop.png",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "pricing": [
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://spiritshop.com.br"
+  },
+  "Splide": {
+    "cats": [
+      59
+    ],
+    "description": "Splide.js is a lightweight, responsive, and customizable slider and carousel library for JavaScript.",
+    "icon": "Splide.svg",
+    "js": {
+      "Splide.STATES": "",
+      "Splide.name": "i"
+    },
+    "oss": true,
+    "website": "https://splidejs.com"
   },
   "Split": {
     "cats": [
@@ -5233,6 +5270,18 @@
     "saas": true,
     "scriptSrc": "\\.sprinthub\\.io/",
     "website": "https://lp.sprinthub.com"
+  },
+  "SpriteSpin": {
+    "cats": [
+      59
+    ],
+    "description": "SpriteSpin is a JavaScript plugin that enables users to create 360-degree image spin animations on their websites.",
+    "icon": "SprintHub.svg",
+    "js": {
+      "SpriteSpin": ""
+    },
+    "oss": true,
+    "website": "https://github.com/giniedp/spritespin"
   },
   "Spryker": {
     "cats": [
@@ -5513,34 +5562,6 @@
     ],
     "website": "https://www.squiz.net/matrix"
   },
-  "Stackable": {
-    "cats": [
-      87,
-      51
-    ],
-    "description": "Stackable is a plugin for WordPress that offers a collection of blocks, templates, and other design tools to help users create custom, professional-looking websites.",
-    "icon": "Stackable.svg",
-    "implies": "Gutenberg",
-    "requires": "WordPress",
-    "dom": {
-      "link[href*='/wp-content/plugins/stackable-ultimate-gutenberg-blocks/']": {
-        "attributes": {
-          "href": "/wp-content/plugins/stackable-ultimate-gutenberg-blocks/.+\\.css(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
-        }
-      }
-    },
-    "js": {
-      "stackable.restUrl": ""
-    },
-    "pricing": [
-      "freemium",
-      "low",
-      "recurring",
-      "onetime"
-    ],
-    "saas": true,
-    "website": "https://wpstackable.com"
-  },
   "Stack Analytix": {
     "cats": [
       10
@@ -5581,6 +5602,35 @@
     "icon": "StackPath.svg",
     "website": "https://www.stackpath.com"
   },
+  "Stackable": {
+    "cats": [
+      87,
+      51
+    ],
+    "description": "Stackable is a plugin for WordPress that offers a collection of blocks, templates, and other design tools to help users create custom, professional-looking websites.",
+    "dom": {
+      "link[href*='/wp-content/plugins/stackable-ultimate-gutenberg-blocks']": {
+        "attributes": {
+          "href": "/wp-content/plugins/stackable-ultimate-gutenberg-blocks(?:-premium)?/.+\\.css(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+        }
+      }
+    },
+    "icon": "Stackable.svg",
+    "implies": "Gutenberg",
+    "js": {
+      "stackable.restUrl": "",
+      "stackableAnimations": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "saas": true,
+    "website": "https://wpstackable.com"
+  },
   "Stackbit": {
     "cats": [
       51
@@ -5595,14 +5645,14 @@
     "js": {
       "__NEXT_DATA__.props.pageProps.withStackbit": ""
     },
-    "scriptSrc": [
-      "\\.stackbit\\.com"
-    ],
     "pricing": [
       "mid",
       "recurring"
     ],
     "saas": true,
+    "scriptSrc": [
+      "\\.stackbit\\.com"
+    ],
     "website": "https://www.stackbit.com"
   },
   "StackerHQ": {
@@ -5752,6 +5802,24 @@
     "oss": true,
     "scriptSrc": "cdn\\.statically\\.io/",
     "website": "https://statically.io"
+  },
+  "Statping": {
+    "cats": [
+      13
+    ],
+    "description": "Statping is an open-source status monitoring tool that helps you to monitor and analyse the performance of your websites, applications, and services. It can monitor multiple endpoints such as HTTP, HTTPS, TCP, DNS, and more.",
+    "dom": {
+      "noscript": {
+        "text": "We're\\ssorry\\sbut\\sStatping"
+      }
+    },
+    "icon": "Statping.png",
+    "oss": true,
+    "requires": [
+      "Vue.js",
+      "core-js"
+    ],
+    "website": "https://github.com/statping/statping"
   },
   "Statsig": {
     "cats": [
@@ -6432,6 +6500,25 @@
     "scriptSrc": "/files/superlemon_.+\\.js",
     "website": "https://apps.shopify.com/whatsapp-chat-button"
   },
+  "SuperPWA": {
+    "cats": [
+      87
+    ],
+    "description": "SuperPWA helps to easily convert your WordPress website into Progressive Web Apps instantly through our widely used PWA software without in coding.",
+    "icon": "superpwa.png",
+    "implies": [
+      "WordPress",
+      "PWA"
+    ],
+    "js": {
+      "superpwa_sw": ""
+    },
+    "pricing": [
+      "onetime",
+      "recurring"
+    ],
+    "website": "https://superpwa.com"
+  },
   "Supersized": {
     "cats": [
       25
@@ -6848,9 +6935,6 @@
     ],
     "html": "<[^>]+data-sr(?:-id)",
     "icon": "scrollreveal.svg",
-    "js": {
-      "ScrollReveal().version": "^(.+)$\\;version:\\1"
-    },
     "scriptSrc": "scrollreveal(?:\\.min)(?:\\.js)",
     "website": "https://scrollrevealjs.org"
   },
@@ -6959,24 +7043,5 @@
       "styled": ""
     },
     "website": "https://styled-components.com"
-  },
-  "SuperPWA": {
-    "cats": [
-      87
-    ],
-    "description": "SuperPWA helps to easily convert your WordPress website into Progressive Web Apps instantly through our widely used PWA software without in coding.",
-    "icon": "superpwa.png",
-    "implies": [
-      "WordPress",
-      "PWA"
-    ],
-    "js": {
-      "superpwa_sw": ""
-    },
-    "pricing": [
-      "onetime",
-      "recurring"
-    ],
-    "website": "https://superpwa.com"
   }
 }

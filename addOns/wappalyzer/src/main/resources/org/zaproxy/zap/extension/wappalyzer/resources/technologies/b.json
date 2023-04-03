@@ -94,7 +94,7 @@
       "poa"
     ],
     "saas": true,
-    "website": "https://www.bsmart.co.il"
+    "website": "https://www.bsmart.co.il/?utm_source=wappalyzer&utm_medium=referral"
   },
   "Babel": {
     "cats": [
@@ -425,6 +425,23 @@
     "scriptSrc": "//outsellapp\\.com/",
     "website": "https://apps.shopify.com/outsell"
   },
+  "Beamer": {
+    "cats": [
+      85
+    ],
+    "description": "Beamer is a feature management platform that allows businesses to manage and share new product releases, feature updates, and bug fixes with their customers.",
+    "icon": "Beamer.svg",
+    "js": {
+      "Beamer.enabled": "true",
+      "_BEAMER_URL": "//app\\.getbeamer\\.com/"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.getbeamer.com"
+  },
   "Beans": {
     "cats": [
       84
@@ -647,9 +664,9 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "bigdatacloud\\.net/",
+    "scriptSrc": "bigdatacloud\\.net",
     "website": "https://www.bigdatacloud.com/packages/ip-geolocation",
-    "xhr": "bigdatacloud\\.net/"
+    "xhr": "api\\.bigdatacloud\\.net"
   },
   "BigTree CMS": {
     "cats": [
@@ -907,7 +924,7 @@
     "cats": [
       80
     ],
-    "description": "Blocksy is a blazing fast and lightweight WordPress theme.",
+    "description": "Blocksy is a modern and lightweight WordPress theme designed for a variety of websites, including blogs, portfolios, ecommerce stores, and business websites.",
     "dom": "link[href*='/wp-content/themes/blocksy/']",
     "icon": "Blocksy.svg",
     "js": {
@@ -923,6 +940,29 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/themes/blocksy/(?:.+main\\.js(?:\\?ver=([\\d\\.]+)))?\\;version:\\1",
     "website": "https://creativethemes.com/blocksy"
+  },
+  "Blocksy Companion": {
+    "cats": [
+      87
+    ],
+    "description": "Blocksy Companion is a WordPress plugin that provides additional functionality and features for the Blocksy theme.",
+    "dom": {
+      "link[href*='/wp-content/plugins/blocksy-companion']": {
+        "attributes": {
+          "href": "/wp-content/plugins/blocksy-companion(?:-pro)?/.+\\.css(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+        }
+      }
+    },
+    "icon": "Blocksy.svg",
+    "implies": "Blocksy",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/blocksy-companion(?:-pro)?/",
+    "website": "https://creativethemes.com/blocksy/companion/"
   },
   "Blogger": {
     "cats": [

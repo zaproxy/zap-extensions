@@ -411,6 +411,22 @@
     ],
     "website": "https://generatepress.com"
   },
+  "GeneratePress GP Premium": {
+    "cats": [
+      87
+    ],
+    "description": "GP Premium is a premium add-on plugin for the GeneratePress WordPress theme.",
+    "icon": "generatepress.png",
+    "implies": "GeneratePress",
+    "pricing": [
+      "onetime",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "saas": true,
+    "scriptSrc": "/wp-content/plugins/gp-premium/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://docs.generatepress.com/article/installing-gp-premium/"
+  },
   "Genesis theme": {
     "cats": [
       80
@@ -1712,6 +1728,15 @@
     "scriptSrc": "googleapis\\.com/.+webfont",
     "website": "http://google.com/fonts"
   },
+  "Google Forms": {
+    "cats": [
+      110
+    ],
+    "description": "Google Forms is a free online form builder that allows you to create and publish online forms, surveys, quizzes, order forms, and more.",
+    "dom": "form[action*='docs.google.com/forms/']",
+    "icon": "Google Forms.svg",
+    "website": "https://www.google.com/forms/about/"
+  },
   "Google Hosted Libraries": {
     "cats": [
       31
@@ -2106,6 +2131,24 @@
     "scriptSrc": "/wp-content/themes/graphene(?:-plus)?/.+graphene\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.graphene-theme.com/graphene-theme"
   },
+  "Grasp": {
+    "cats": [
+      52
+    ],
+    "description": "Grasp is a customer support software company that offers a cloud-based helpdesk and live chat solution for businesses of all sizes.",
+    "icon": "Grasp.svg",
+    "js": {
+      "CASENGO.widget": "",
+      "CASENGO_INLINE_COOKIE": "",
+      "casengoUpdateWidget": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.getgrasp.com"
+  },
   "Grav": {
     "cats": [
       1
@@ -2412,17 +2455,6 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/gutenberg/",
     "website": "https://github.com/WordPress/gutenberg"
-  },
-  "Gutenberg Blocks": {
-    "cats": [
-      87
-    ],
-    "description": "Gutenberg Blocks are the editor blocks that are used to create content layouts in the new WordPress block editor aka Gutenberg by Brainstorm Force.",
-    "dom": "link[href*='/wp-content/plugins/ultimate-addons-for-gutenberg/']",
-    "icon": "Gutenberg Blocks.png",
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/plugins/ultimate-addons-for-gutenberg/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
-    "website": "https://ultimategutenberg.com"
   },
   "git": {
     "cats": [

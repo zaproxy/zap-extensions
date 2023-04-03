@@ -1669,13 +1669,14 @@
   },
   "Classy": {
     "cats": [
-      51
+      111
     ],
-    "description": "Classy is a class library for JavaScript applications.",
+    "description": "Classy is an online fundraising platform.",
     "icon": "classy.png",
     "js": {
-      "Classy": ""
+      "Classy.clientId": ""
     },
+    "scripts": "classy\\.org",
     "website": "https://www.classy.org/"
   },
   "ClearSale": {
@@ -2605,6 +2606,26 @@
     "scriptSrc": "/wp-content/themes/travelify/",
     "website": "https://colorlib.com/wp/themes/travelify"
   },
+  "Combahton FlowShield": {
+    "cats": [
+      16
+    ],
+    "cookies": {
+      "FLOWPROXY-ORIGIN": ""
+    },
+    "description": "Combahton FlowShield is a network security solution designed to protect networks and servers from various cyber threats, including DDoS attacks, malware, and other types of malicious traffic.",
+    "headers": {
+      "Server": "antiddos/flowproxy",
+      "X-Flowproxy-Author": ""
+    },
+    "icon": "Combahton.svg",
+    "pricing": [
+      "recurring",
+      "mid"
+    ],
+    "saas": true,
+    "website": "https://combahton.net"
+  },
   "Combeenation": {
     "cats": [
       76
@@ -3042,8 +3063,14 @@
       1
     ],
     "description": "Contentstack is a headless CMS software designed to help businesses deliver personalised content experiences to audiences via multiple channels.",
-    "dom": "img[src*='images.contentstack.io']",
-    "icon": "Contentstack.png",
+    "dom": {
+      "img[src*='contentstack']": {
+        "attributes": {
+          "src": "\\.contentstack\\.(?:io|com)/"
+        }
+      }
+    },
+    "icon": "Contentstack.svg",
     "pricing": [
       "high",
       "recurring"
@@ -3951,6 +3978,24 @@
       "/crlt\\.js\\;confidence:75"
     ],
     "website": "https://crypto-loot.com/"
+  },
+  "Crystallize": {
+    "cats": [
+      6
+    ],
+    "description": "Crystallize is an ecommerce platform that offers a headless ecommerce solution for businesses.",
+    "dom": "link[href*='.crystallize.com']",
+    "icon": "Crystallize.svg",
+    "js": {
+      "__crystallizeConfig.API_URL": "\\.crystallize\\.com"
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://crystallize.com"
   },
   "CubeCart": {
     "cats": [

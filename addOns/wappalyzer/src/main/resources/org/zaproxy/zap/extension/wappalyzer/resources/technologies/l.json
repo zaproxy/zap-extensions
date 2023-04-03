@@ -130,6 +130,7 @@
     "js": {
       "Laravel": ""
     },
+    "oss": true,
     "website": "https://laravel.com"
   },
   "Laravel Echo": {
