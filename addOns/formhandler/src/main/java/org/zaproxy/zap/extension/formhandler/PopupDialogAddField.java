@@ -79,8 +79,9 @@ class PopupDialogAddField extends DialogAddField {
      */
     @Override
     protected void performAction() {
-        extFormHandler.addFormHandlerFieldName(
-                getNameTextField().getText(), getValueField().getSelectedItem().toString());
+        String name = getNameTextField().getText();
+        extFormHandler.addFormHandlerFieldName(name, getValueField().getSelectedItem().toString());
+        ExtensionFormHandler.incStat(ExtensionFormHandler.STATS_ADD, name);
     }
 
     @Override

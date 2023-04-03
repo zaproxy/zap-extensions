@@ -27,10 +27,16 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.zaproxy.zap.extension.params.ExtensionParams;
 import org.zaproxy.zap.model.ValueGenerator;
+import org.zaproxy.zap.utils.Stats;
 
 public class ExtensionFormHandler extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionFormHandler";
+
+    private static final String STATS_PREFIX = "stats.formhandler.";
+    public static final String STATS_ADD = ExtensionFormHandler.STATS_PREFIX + "add";
+    public static final String STATS_MODIFY = ExtensionFormHandler.STATS_PREFIX + "modify";
+    public static final String STATS_REMOVE = ExtensionFormHandler.STATS_PREFIX + "remove";
 
     protected static final String PREFIX = "formhandler";
 
@@ -116,5 +122,14 @@ public class ExtensionFormHandler extends ExtensionAdaptor {
     @Override
     public String getDescription() {
         return Constant.messages.getString(PREFIX + ".options.desc");
+    }
+
+    static void incStat(String stat, String name) {
+        Stats.incCounter(stat);
+        Stats.incCounter(stat + "." + name);
+    }
+
+    static void incStat(String stat, FormHandlerParamField field) {
+        incStat(stat, field.getName());
     }
 }

@@ -139,6 +139,9 @@ public class OptionsFormHandlerPanel extends AbstractParamPanel {
             addDialog.setVisible(true);
 
             FormHandlerParamField field = addDialog.getField();
+            if (field != null) {
+                ExtensionFormHandler.incStat(ExtensionFormHandler.STATS_ADD, field);
+            }
             addDialog.clear();
 
             return field;
@@ -158,6 +161,7 @@ public class OptionsFormHandlerPanel extends AbstractParamPanel {
             modifyDialog.clear();
 
             if (!field.equals(e)) {
+                ExtensionFormHandler.incStat(ExtensionFormHandler.STATS_MODIFY, field);
                 return field;
             }
 
@@ -165,7 +169,7 @@ public class OptionsFormHandlerPanel extends AbstractParamPanel {
         }
 
         @Override
-        public boolean showRemoveDialogue(FormHandlerParamField e) {
+        public boolean showRemoveDialogue(FormHandlerParamField field) {
             JCheckBox removeWithoutConfirmationCheckBox =
                     new JCheckBox(REMOVE_DIALOG_CHECKBOX_LABEL);
             Object[] messages = {REMOVE_DIALOG_TEXT, " ", removeWithoutConfirmationCheckBox};
@@ -185,7 +189,7 @@ public class OptionsFormHandlerPanel extends AbstractParamPanel {
 
             if (option == JOptionPane.OK_OPTION) {
                 setRemoveWithoutConfirmation(removeWithoutConfirmationCheckBox.isSelected());
-
+                ExtensionFormHandler.incStat(ExtensionFormHandler.STATS_REMOVE, field);
                 return true;
             }
 
