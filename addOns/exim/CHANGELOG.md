@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Log cause of error when failed to import the HAR file.
 
+### Fixed
+- Ensure the 'ZAP messages' Export delimiters are consistent with the Import expectation.
+
 ## [0.4.0] - 2023-02-09
 ### Added
 - Support for relative file paths and ones including vars in the Automation Framework job.
