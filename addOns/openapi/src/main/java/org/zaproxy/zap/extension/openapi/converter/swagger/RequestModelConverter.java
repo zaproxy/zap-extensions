@@ -63,7 +63,7 @@ public class RequestModelConverter {
     private String generateBody() {
         Operation operation = operationModel.getOperation();
         RequestBody requestBody = operation.getRequestBody();
-        if (requestBody != null) {
+        if (requestBody != null && requestBody.getContent() != null) {
             Content content = requestBody.getContent();
             Schema<?> schema;
 
