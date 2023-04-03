@@ -254,6 +254,28 @@
     "scriptSrc": "cdn\\.mykamva\\.ir",
     "website": "https://kamva.ir"
   },
+  "Kapix Studio": {
+    "cats": [
+      51
+    ],
+    "description": "Kapix Studio is a no-code platform that lets anyone build web apps without writing any code.",
+    "icon": "Kapix.svg",
+    "implies": [
+      "Vite",
+      "TypeScript"
+    ],
+    "js": {
+      "__INITIAL_STATE__": "KapixNoCode",
+      "kapixVersion": "([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://studio.kapix.fr"
+  },
   "Kapture CRM": {
     "cats": [
       52,
@@ -333,6 +355,19 @@
       "\\bKeen Delivery\\b"
     ],
     "website": "https://www.keendelivery.com"
+  },
+  "Keen-Slider": {
+    "cats": [
+      59
+    ],
+    "description": "Keen-Slider is a free library agnostic touch slider with native touch/swipe behavior.",
+    "dom": "div.keen-slider, div.keen-slider__slide",
+    "icon": "keen-slider.svg",
+    "js": {
+      "KeenSlider": ""
+    },
+    "oss": true,
+    "website": "https://keen-slider.io"
   },
   "Kemal": {
     "cats": [
@@ -792,7 +827,7 @@
   "Ko-fi": {
     "cats": [
       5,
-      41
+      111
     ],
     "description": "Ko-fi is an online platform that helps content creators get the financial support.",
     "dom": "a[href*='ko-fi.com/'][target='_blank']",

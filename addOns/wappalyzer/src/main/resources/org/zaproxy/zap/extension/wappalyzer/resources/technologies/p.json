@@ -27,7 +27,6 @@
       "PDFJS": "",
       "PDFJS.version": "^(.+)$\\;version:\\1",
       "_pdfjsCompatibilityChecked": "",
-      "pdfjs-dist/build/pdf.version": "^(.+)$\\;version:\\1",
       "pdfjsDistBuildPdf.version": "^(.+)$\\;version:\\1",
       "pdfjsLib.version": "^(.+)$\\;version:\\1"
     },
@@ -781,6 +780,24 @@
     "saas": true,
     "website": "https://www.paylocity.com"
   },
+  "Paymenter": {
+    "cats": [
+      1,
+      6
+    ],
+    "cookies": {
+      "paymenter_session": ""
+    },
+    "description": "Paymenter is an open-source webshop solution for hosting companies.",
+    "icon": "Paymenter.png",
+    "implies": [
+      "PHP",
+      "MySQL",
+      "Tailwind CSS"
+    ],
+    "oss": true,
+    "website": "https://paymenter.org"
+  },
   "Paysafe": {
     "cats": [
       41
@@ -975,13 +992,13 @@
     ],
     "description": "Perfmatters is a performance optimisation plugin for WordPress websites.",
     "icon": "Perfmatters.svg",
-    "requires": "WordPress",
-    "saas": true,
-    "scriptSrc": "/wp-content/(?:plugins|cache|uploads)/perfmatters/",
     "pricing": [
       "low",
       "recurring"
     ],
+    "requires": "WordPress",
+    "saas": true,
+    "scriptSrc": "/wp-content/(?:plugins|cache|uploads)/perfmatters/",
     "website": "https://perfmatters.io"
   },
   "Performance Lab": {
@@ -1189,9 +1206,6 @@
       "Webpack",
       "Node.js"
     ],
-    "js": {
-      "Phoenix": ""
-    },
     "meta": {
       "generator": "^phoenix"
     },
@@ -1204,6 +1218,9 @@
     "description": "Phoenix Framework is an open-source web application framework built using the Elixir programming language.",
     "icon": "Phoenix Framework.svg",
     "implies": "Elixir",
+    "js": {
+      "Phoenix.Channel": ""
+    },
     "oss": true,
     "website": "https://www.phoenixframework.org"
   },
@@ -1579,6 +1596,25 @@
     "saas": true,
     "website": "https://www.pipedrive.com/"
   },
+  "Piwigo": {
+    "cats": [
+      7
+    ],
+    "description": "Piwigo is an open-source photo management software designed for creating and managing online photo galleries.",
+    "icon": "Piwigo.svg",
+    "implies": "MySQL",
+    "meta": {
+      "generator": "^Piwigo\\s"
+    },
+    "oss": true,
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://piwigo.com"
+  },
   "Piwik PRO Core": {
     "cats": [
       10
@@ -1780,6 +1816,20 @@
     "icon": "PlatformOS.svg",
     "website": "https://www.platform-os.com"
   },
+  "Platforma LP": {
+    "cats": [
+      51
+    ],
+    "description": "Platforma LP is a web design and development platform that provides ready-to-use website templates for various industries and purposes. It is a collection of over 500 website templates that can be customised and edited according to user needs.",
+    "icon": "Platforma LP.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.lpcdn\\.site/",
+    "website": "https://platformalp.ru"
+  },
   "Plausible": {
     "cats": [
       10
@@ -1890,6 +1940,26 @@
     },
     "scriptSrc": "https?://cdn\\.plot\\.ly/plotly",
     "website": "https://plot.ly/javascript/"
+  },
+  "Plug&Pay": {
+    "cats": [
+      6,
+      41
+    ],
+    "cookies": {
+      "plug_pay_session": ""
+    },
+    "description": "Plug&Pay is a payment processor that provides payment solutions for ecommerce businesses.",
+    "icon": "Plug and Pay.png",
+    "implies": [
+      "Laravel"
+    ],
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://plugandpay.nl"
   },
   "Plyr": {
     "cats": [
@@ -3352,6 +3422,9 @@
     ],
     "cpe": "cpe:2.3:a:phpmyadmin:phpmyadmin:*:*:*:*:*:*:*:*",
     "description": "PhpMyAdmin is a free and open-source administration tool for MySQL and MariaDB.",
+    "headers": {
+      "Set-Cookie": "phpMyAdmin_https"
+    },
     "html": [
       "!\\[CDATA\\[[^<]*PMA_VERSION:\\\"([\\d.]+)\\;version:\\1",
       "(?: \\| phpMyAdmin ([\\d.]+)<\\/title>|PMA_sendHeaderLocation\\(|<link [^>]*href=\"[^\"]*phpmyadmin\\.css\\.php)\\;version:\\1"
@@ -3363,9 +3436,6 @@
     ],
     "js": {
       "pma_absolute_uri": ""
-    },
-    "headers": { 
-      "Set-Cookie": "phpMyAdmin_https" 
     },
     "website": "https://www.phpmyadmin.net"
   },

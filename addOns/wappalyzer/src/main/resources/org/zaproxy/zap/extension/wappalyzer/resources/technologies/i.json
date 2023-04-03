@@ -137,6 +137,16 @@
     "website": "https://ipinfo.io",
     "xhr": "ipinfo\\.io/"
   },
+  "ISAY": {
+    "cats": [
+      1
+    ],
+    "description": "ISAY (Internet Pages Management) is a CMS service provided by the Turkish Ministry of Interior for governorships, district governorships and various official websites.",
+    "dom": "div.topbar-img img[src*='/Areas/WebPart/Contents/FHeader/img/ataturk.svg']",
+    "icon": "ISAY.png",
+    "requires": "Microsoft ASP.NET",
+    "website": "https://www.icisleri.gov.tr/internet-sayfalari-yonetimi-isay"
+  },
   "Iamport": {
     "cats": [
       41
@@ -411,10 +421,10 @@
       16
     ],
     "description": "Imunify360 is a comprehensive security platform for Linux web servers which utilises machine learning technology and other advanced techniques to provide protection against various types of cyber threats, such as malware, viruses, and other attacks.",
-    "icon": "Imunify360.svg",
     "headers": {
       "Server": "imunify360-webshield/([\\d\\.]+)\\;version:\\1"
     },
+    "icon": "Imunify360.svg",
     "pricing": [
       "low",
       "recurring",
@@ -579,6 +589,7 @@
       }
     },
     "headers": {
+      "Vary": "X-Inertia",
       "X-Inertia": ""
     },
     "icon": "Inertia.svg",
@@ -685,8 +696,8 @@
       53
     ],
     "description": "Insightly CRM is a cloud-based customer relationship management software, helps businesses manage leads, contacts, and opportunities, track customer interactions, create custom reports, automate workflows, and integrate with third-party applications, improving customer engagement and streamlining business processes.",
-    "icon": "Insightly.svg",
     "dom": "form[action*='.insightly.com/']",
+    "icon": "Insightly.svg",
     "pricing": [
       "recurring",
       "low",
@@ -964,6 +975,24 @@
     "icon": "Intercom.svg",
     "website": "https://www.intercom.com/articles"
   },
+  "Internet Brands": {
+    "cats": [
+      36
+    ],
+    "description": "Internet Brands is a technology company that operates a variety of web portals and online communities, providing information and services to consumers and businesses across a range of industries.",
+    "dom": {
+      "footer > div > form": {
+        "text": "Internet Brands"
+      }
+    },
+    "icon": "Internet Brands.png",
+    "pricing": [
+      "poa",
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://www.internetbrands.com"
+  },
   "Intersection Observer": {
     "cats": [
       92,
@@ -1096,16 +1125,6 @@
     "html": "<a[^>]*href=\"https://www\\.irroba\\.com\\.br",
     "icon": "irroba.svg",
     "website": "https://www.irroba.com.br/"
-  },
-  "ISAY": {
-    "cats": [
-      1
-    ],
-    "description": "ISAY (Internet Pages Management) is a CMS service provided by the Turkish Ministry of Interior for governorships, district governorships and various official websites.",
-    "dom": "div.topbar-img img[src*='/Areas/WebPart/Contents/FHeader/img/ataturk.svg']",
-    "icon": "ISAY.png",
-    "requires": "Microsoft ASP.NET",
-    "website": "https://www.icisleri.gov.tr/internet-sayfalari-yonetimi-isay"
   },
   "Isotope": {
     "cats": [

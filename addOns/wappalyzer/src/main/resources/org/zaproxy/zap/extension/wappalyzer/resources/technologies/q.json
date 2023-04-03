@@ -25,6 +25,23 @@
     "scriptSrc": "widgets\\.q4app\\.com/widgets/q4\\.cookiemonster\\.([\\d\\.]+)\\.min\\.js\\;version:\\1",
     "website": "https://q4mobile.github.io/q4widgets-jquery-ui/doc_html/q4.cookieMonster.html"
   },
+  "QUIC.cloud": {
+    "cats": [
+      92,
+      23,
+      31
+    ],
+    "description": "QUIC.cloud is a content delivery network (CDN) and optimisation service that uses the QUIC protocol, a next-generation internet transport protocol developed by Google, to deliver content faster and more securely over the internet.",
+    "dns": {
+      "SOA": "\\.quicns\\.(?:net|com)"
+    },
+    "icon": "QUIC.cloud.svg",
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "website": "https://www.quic.cloud"
+  },
   "Qgiv": {
     "cats": [
       111
@@ -334,6 +351,25 @@
       "Quill": ""
     },
     "website": "http://quilljs.com"
+  },
+  "Quintype": {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "qtype-session": ""
+    },
+    "description": "Quintype is a digital publishing platform that provides content management, audience engagement, and monetisation solutions for digital media organisations.",
+    "headers": {
+      "link": "fea\\.assettype\\.com/quintype-ace"
+    },
+    "icon": "Quintype.svg",
+    "pricing": [
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.quintype.com"
   },
   "Quora Pixel": {
     "cats": [

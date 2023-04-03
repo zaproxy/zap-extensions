@@ -447,6 +447,22 @@
     "saas": true,
     "website": "https://verloop.io/"
   },
+  "VerticalScope": {
+    "cats": [
+      36
+    ],
+    "description": "VerticalScope is a Canadian-based technology company that owns and operates a network of online communities and discussion forums focused on a variety of interests and hobbies, such as cars, pets, sports, and technology. VerticalScope generates revenue primarily through advertising, including banner ads, sponsored content, and affiliate marketing.",
+    "dom": {
+      "footer > div": {
+        "text": "VerticalScope Inc\\."
+      }
+    },
+    "icon": "VerticalScope.svg",
+    "pricing": [
+      "payg"
+    ],
+    "website": "https://www.verticalscope.com"
+  },
   "Vev": {
     "cats": [
       51
@@ -454,16 +470,16 @@
     "description": "Vev is a cloud-based design and publishing platform that enables users to create interactive digital content without coding, using a drag-and-drop interface and built-in templates and integrations.",
     "icon": "Vev.svg",
     "js": {
-      "vev.DEFAULT_APP_STATE": "",
-      "vev.App.compare": ""
+      "vev.App.compare": "",
+      "vev.DEFAULT_APP_STATE": ""
     },
-    "saas": true,
-    "scriptSrc": "\\.vev\\.design/",
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
+    "saas": true,
+    "scriptSrc": "\\.vev\\.design/",
     "website": "https://www.vev.design"
   },
   "ViaBill": {

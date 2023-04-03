@@ -670,7 +670,7 @@
     "icon": "zotabox.png",
     "js": {
       "Zotabox": "",
-      "Zotabox_Init ": ""
+      "Zotabox_Init": ""
     },
     "pricing": [
       "low",

@@ -170,6 +170,31 @@
     "saas": true,
     "website": "https://www.ueeshop.com"
   },
+  "Ultimate Addons for Elementor": {
+    "cats": [
+      87
+    ],
+    "description": "Ultimate Addons for Elementor is a plugin that adds new widgets and modules to the Elementor page builder for WordPress, providing additional design options and functionality.",
+    "dom": {
+      "link[href*='/wp-content/plugins/ultimate-elementor/']": {
+        "attributes": {
+          "href": "/wp-content/plugins/ultimate-elementor/.+\\.css(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+        }
+      }
+    },
+    "icon": "Ultimate Addons for Elementor.svg",
+    "implies": "Elementor",
+    "js": {
+      "uael_particles_script.particles_url": "/wp-content/plugins/ultimate-elementor/"
+    },
+    "pricing": [
+      "onetime",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "website": "https://ultimateelementor.com"
+  },
   "Ultimate GDPR & CCPA": {
     "cats": [
       67,
@@ -238,7 +263,8 @@
     "icon": "Umbraco.png",
     "implies": "Microsoft ASP.NET",
     "js": {
-      "UC_IMAGE_SERVICE|ITEM_INFO_SERVICE": "",
+      "UC_IMAGE_SERVICE": "",
+      "ITEM_INFO_SERVICE": "",
       "UC_ITEM_INFO_SERVICE": "",
       "UC_SETTINGS": "",
       "Umbraco": ""
@@ -612,6 +638,19 @@
     ],
     "saas": true,
     "website": "https://uscreen.tv/"
+  },
+  "User Accessibility": {
+    "cats": [
+      68
+    ],
+    "description": "User Accessibility is a solution incorporating automated site scanning and machine learning for future updates, while utilising JS to conform to WECAG standards for improved website and application accessibility.",
+    "icon": "User Accessibility.svg",
+    "pricing": [
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "//system\\.user-a\\.co\\.il/",
+    "website": "https://user-a.co.il"
   },
   "UserLike": {
     "cats": [

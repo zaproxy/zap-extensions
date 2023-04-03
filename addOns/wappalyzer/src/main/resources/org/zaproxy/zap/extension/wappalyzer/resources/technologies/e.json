@@ -56,19 +56,6 @@
     "icon": "ELOG.png",
     "website": "http://midas.psi.ch/elog"
   },
-  "Eloomi": {
-    "cats": [
-      21
-    ],
-    "description": "Eloomi is a cloud-based learning management system (LMS) and performance management platform.",
-    "icon": "Eloomi.png",
-    "saas": true,
-    "scriptSrc": "//cdn\\.eloomi\\.com/",
-    "pricing": [
-      "poa"
-    ],
-    "website": "https://eloomi.com"
-  },
   "ELOG HTTP": {
     "cats": [
       22
@@ -162,6 +149,28 @@
     ],
     "website": "https://ex.co",
     "xhr": "prd-collector-anon\\.ex\\.co"
+  },
+  "EZproxy": {
+    "cats": [
+      22,
+      64
+    ],
+    "description": "EZproxy is a web server and a reverse proxy that is usually used by libraries as a reverse proxy in front of electronic educational resources databases (e.g.: Scopus, PubMed, or Web of Science) in order to provide authentication and protect privacy.",
+    "excludes": [
+      "Apache HTTP Server",
+      "Nginx"
+    ],
+    "headers": {
+      "server": "^EZproxy$"
+    },
+    "icon": "default.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.oclc.org/en/ezproxy.html"
   },
   "Easy Hide PayPal": {
     "cats": [
@@ -733,6 +742,19 @@
     "implies": "Elm",
     "website": "https://github.com/mdgriffith/elm-ui"
   },
+  "Eloomi": {
+    "cats": [
+      21
+    ],
+    "description": "Eloomi is a cloud-based learning management system (LMS) and performance management platform.",
+    "icon": "Eloomi.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "//cdn\\.eloomi\\.com/",
+    "website": "https://eloomi.com"
+  },
   "Eloqua": {
     "cats": [
       32
@@ -755,6 +777,24 @@
     },
     "scriptSrc": "elqCfg\\.js",
     "website": "http://eloqua.com"
+  },
+  "EmailJS": {
+    "cats": [
+      75
+    ],
+    "description": "EmailJS is a cloud-based email delivery service that allows you to send emails directly from your client-side JavaScript code without the need for a server-side implementation.",
+    "icon": "EmailJS.svg",
+    "js": {
+      "emailjs.sendForm": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "([\\d\\.]+)?(?:/dist)?/email\\.min\\.js\\;version:\\1",
+    "website": "https://www.emailjs.com"
   },
   "Emarsys": {
     "cats": [
@@ -1807,28 +1847,6 @@
     "saas": true,
     "scriptSrc": "\\.ezo(?:js|ic|dn)\\.(?:com|net)",
     "website": "https://www.ezoic.com"
-  },
-  "EZproxy": {
-    "cats": [
-      22,
-      64
-    ],
-    "description": "EZproxy is a web server and a reverse proxy that is usually used by libraries as a reverse proxy in front of electronic educational resources databases (e.g.: Scopus, PubMed, or Web of Science) in order to provide authentication and protect privacy.",
-    "excludes": [
-      "Apache HTTP Server",
-      "Nginx"
-    ],
-    "headers": {
-      "server": "^EZproxy$"
-    },
-    "icon": "default.svg",
-    "pricing": [
-      "low",
-      "recurring",
-      "poa"
-    ],
-    "saas": true,
-    "website": "https://www.oclc.org/en/ezproxy.html"
   },
   "e-Shop Commerce": {
     "cats": [

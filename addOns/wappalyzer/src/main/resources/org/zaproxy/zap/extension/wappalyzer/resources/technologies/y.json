@@ -246,15 +246,38 @@
     ],
     "website": "http://metrika.yandex.com"
   },
+  "Yapla": {
+    "cats": [
+      111
+    ],
+    "description": "Yapla is a web-based software platform that provides event management and fundraising solutions for non-profit organisations, associations, and event planners.",
+    "dom": "a[href*='\\.yapla\\.com/'][target='_blank']",
+    "icon": "Yapla.png",
+    "js": {
+      "yaplaConsent.cookieName": "yapla-consent"
+    },
+    "meta": {
+      "generator": "^Yapla\\sv([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.yapla.com"
+  },
   "Yaws": {
     "cats": [
       22
     ],
+    "description": "Yaws (Yet Another Web Server) is an open-source web server designed to deliver dynamic content efficiently. It was developed by Claes (klacke) Wikström and is written in Erlang, a functional programming language.",
     "headers": {
       "Server": "Yaws(?: ([\\d.]+))?\\;version:\\1"
     },
     "icon": "Yaws.png",
-    "website": "http://yaws.hyber.org"
+    "oss": true,
+    "website": "https://github.com/erlyaws/yaws"
   },
   "Yektanet": {
     "cats": [

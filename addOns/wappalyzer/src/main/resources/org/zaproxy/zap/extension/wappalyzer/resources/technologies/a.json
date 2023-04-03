@@ -1751,6 +1751,18 @@
     "scriptSrc": "static\\.affiliatly\\.com/",
     "website": "https://www.affiliatly.com"
   },
+  "Affilio": {
+    "cats": [
+      71
+    ],
+    "description": "Affilio is an Iranian affiliate marketing platform.",
+    "dom": "a[href*='.affilio.ir/'][target='_blank']",
+    "icon": "Affilio.png",
+    "js": {
+      "Affilio.widget": ""
+    },
+    "website": "https://affilio.ir"
+  },
   "Affilo": {
     "cats": [
       71,
@@ -2272,6 +2284,25 @@
     },
     "saas": true,
     "website": "https://apps.shopify.com/ali-reviews"
+  },
+  "Alibaba Cloud CDN": {
+    "cats": [
+      31
+    ],
+    "description": "Alibaba Cloud CDN is a global network of servers designed to deliver high-performance, low-latency content to users around the world. It is a cloud-based service provided by Alibaba Cloud, a subsidiary of the Alibaba Group, that enables businesses to accelerate the delivery of their web content, including images, videos, and static files, to end-users.",
+    "dom": "img[src*='.alicdn.com/']",
+    "icon": "Alibaba Cloud.svg",
+    "scriptSrc": "\\.alicdn\\.com/",
+    "website": "https://www.alibabacloud.com/product/content-delivery-network"
+  },
+  "Alibaba Cloud Verification Code": {
+    "cats": [
+      16
+    ],
+    "description": "Alibaba Cloud Verification Code is a security feature provided by Alibaba Cloud to help protect user accounts from unauthorised access.",
+    "icon": "Alibaba Cloud.svg",
+    "scriptSrc": "cf\\.aliyun\\.com/",
+    "website": "https://help.aliyun.com/document_detail/193141.html"
   },
   "All in One SEO Pack": {
     "cats": [
@@ -2812,11 +2843,11 @@
       "Analyzee._sessionExtend": "",
       "analyzee._session": ""
     },
-    "saas": true,
     "pricing": [
       "mid",
       "recurring"
     ],
+    "saas": true,
     "website": "https://analyzee.io"
   },
   "AndersNoren Baskerville": {
@@ -2939,9 +2970,9 @@
       66
     ],
     "description": "Angular Material is a UI component library for Angular JS developers. Angular Material components assist in constructing attractive, consistent, and functional web pages and web applications.",
+    "excludes": "Material Design Lite",
     "icon": "AngularJS.svg",
     "implies": "AngularJS",
-    "excludes": "Material Design Lite",
     "js": {
       "ngMaterial": ""
     },
@@ -3239,6 +3270,18 @@
     ],
     "oss": true,
     "website": "https://www.apereo.org/projects/cas"
+  },
+  "ApexCharts.js": {
+    "cats": [
+      25
+    ],
+    "description": "ApexCharts is a modern JavaScript charting library that empowers developers to build interactive data visualizations for commercial and non-commercial projects.",
+    "icon": "apexcharts.svg",
+    "js": {
+      "ApexCharts": ""
+    },
+    "oss": true,
+    "website": "https://apexcharts.com"
   },
   "ApexPages": {
     "cats": [
@@ -4586,12 +4629,12 @@
     ],
     "description": "Azko CMS is a content management system developed by Azko (Septeo Group) specifically launched for lawyers in France.",
     "icon": "Azko CMS.svg",
+    "pricing": [
+      "poa"
+    ],
     "requires": [
       "Bootstrap",
       "Slick"
-    ],
-    "pricing": [
-      "poa"
     ],
     "saas": true,
     "scriptSrc": "//js\\.fw\\.azko\\.fr/",

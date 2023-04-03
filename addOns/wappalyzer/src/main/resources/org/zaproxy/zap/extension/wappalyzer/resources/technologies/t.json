@@ -2089,6 +2089,25 @@
     "scriptSrc": "/tiny_?mce(?:\\.min)?\\.js",
     "website": "https://www.tiny.cloud/tinymce/"
   },
+  "Tinybird": {
+    "cats": [
+      10
+    ],
+    "description": "Tinybird is a cloud-native data processing platform that allows developers and data teams to build real-time data pipelines and perform complex data transformations and analysis at scale.",
+    "icon": "Tinybird.svg",
+    "js": {
+      "Tinybird": ""
+    },
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": [
+      "\\.tinybird.co/js/index\\.js"
+    ],
+    "website": "https://www.tinybird.co/"
+  },
   "Tippy.js": {
     "cats": [
       59
