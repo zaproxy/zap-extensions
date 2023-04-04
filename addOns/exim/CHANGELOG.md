@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.5.0] - 2023-04-04
 ### Changed
 - Log cause of error when failed to import the HAR file.
 
@@ -55,6 +55,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release.
 
+[0.5.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.5.0
 [0.4.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.4.0
 [0.3.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.3.0
 [0.2.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.2.0

@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [6.2.0] - 2023-04-04
 ### Added
 - Statistics.
 
@@ -53,6 +53,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[6.2.0]: https://github.com/zaproxy/zap-extensions/releases/formhandler-v6.2.0
 [6.1.0]: https://github.com/zaproxy/zap-extensions/releases/formhandler-v6.1.0
 [6.0.0]: https://github.com/zaproxy/zap-extensions/releases/formhandler-v6.0.0
 [5]: https://github.com/zaproxy/zap-extensions/releases/formhandler-v5
