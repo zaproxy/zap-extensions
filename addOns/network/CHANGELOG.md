@@ -4,7 +4,7 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [0.7.0] - 2023-04-04
 ### Changed
 - Maintenance changes.
 - Fallback to HTTP/1.1 in the main proxy if the client does not negotiate a protocol (ALPN) (Issue 7699).
@@ -84,6 +84,7 @@ would not be cleared when reusing the same message.
   - Options panel to manage the root CA certificate and issued certificates.
   - API endpoints to configure the validity of the root CA certificate and issued certificates ([Issue 4673](https://github.com/zaproxy/zaproxy/issues/4673)).
 
+[0.7.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.7.0
 [0.6.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.6.0
 [0.5.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.5.0
 [0.4.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.4.0

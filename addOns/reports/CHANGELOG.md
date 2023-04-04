@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.20.0] - 2023-04-04
 
 ### Added
 - The Traditional JSON report, Traditional JSON Report with requests and responses, Traditional XML Report and Traditional XML Report with requests and responses now has "otherinfo" field per alert instance (Issue 7260).
@@ -196,6 +196,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.20.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.20.0
 [0.19.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.19.0
 [0.18.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.18.0
 [0.17.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.17.0

@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [47] - 2023-04-04
 ### Fixed
 - Correct required version of Common Library add-on.
 - Prevent error with the CSP scan rule when scanning `meta` elements with missing `http-equiv` attribute.
@@ -379,6 +379,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[47]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v47
 [46]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v46
 [45]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v45
 [44]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v44
