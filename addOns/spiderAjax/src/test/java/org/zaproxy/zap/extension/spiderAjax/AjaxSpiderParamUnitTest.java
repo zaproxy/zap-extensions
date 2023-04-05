@@ -86,14 +86,47 @@ class AjaxSpiderParamUnitTest {
     }
 
     @Test
+    void shouldUseOverridesWhenApplyingDefaultAllowedResources() {
+        // Given
+        configuration = new ZapXmlConfiguration();
+        persistAllowedResource(0, "OverrideResource", null);
+        persistAllowedResource(1, null, false);
+        persistAllowedResource(2, "NewResource 1", null);
+        persistAllowedResource(3, "NewResource 2", false);
+        // When
+        param.load(configuration);
+        // Then
+        assertThat(
+                param.getAllowedResources(),
+                contains(
+                        allowedResource("OverrideResource"),
+                        allowedResource("^http.*\\.css(?:\\?.*)?$", false),
+                        allowedResource("NewResource 1"),
+                        allowedResource("NewResource 2", false)));
+    }
+
+    @Test
+    void shouldUseOverridesAndAddMissingDefaultsWhenApplyingDefaultAllowedResources() {
+        // Given
+        configuration = new ZapXmlConfiguration();
+        persistAllowedResource(0, null, false);
+        // When
+        param.load(configuration);
+        // Then
+        assertThat(
+                param.getAllowedResources(),
+                contains(
+                        allowedResource("^http.*\\.js(?:\\?.*)?$", false),
+                        allowedResource("^http.*\\.css(?:\\?.*)?$")));
+    }
+
+    @Test
     void shouldNotAddDefaultAllowedResourcesForVersion5WithExistingResources() {
         // Given
         configuration = new ZapXmlConfiguration();
         configuration.setProperty(param.getConfigVersionKey(), 5);
-        String allowedResourceKey = "ajaxSpider.allowedResources.allowedResource(0).";
         String regex = "^https?://example\\.com/.*";
-        configuration.setProperty(allowedResourceKey + "regex", regex);
-        configuration.setProperty(allowedResourceKey + "enabled", "true");
+        persistAllowedResource(0, regex, true);
         // When
         param.load(configuration);
         // Then
@@ -165,7 +198,22 @@ class AjaxSpiderParamUnitTest {
         }
     }
 
+    private void persistAllowedResource(int idx, String regex, Boolean enabled) {
+        var baseKey = "ajaxSpider.allowedResources.allowedResource(" + idx + ").";
+        if (regex != null) {
+            configuration.setProperty(baseKey + "regex", regex);
+        }
+
+        if (enabled != null) {
+            configuration.setProperty(baseKey + "enabled", enabled);
+        }
+    }
+
     private static AllowedResource allowedResource(String regex) {
-        return new AllowedResource(AllowedResource.createDefaultPattern(regex), true);
+        return allowedResource(regex, true);
+    }
+
+    private static AllowedResource allowedResource(String regex, boolean enabled) {
+        return new AllowedResource(AllowedResource.createDefaultPattern(regex), enabled);
     }
 }
