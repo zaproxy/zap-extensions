@@ -215,12 +215,14 @@ class FormHandlerParamUnitTest {
         configuration = buildConfig(new ZapXmlConfiguration(), fields);
         // When
         param.load(configuration);
+        // Then
         List<FormHandlerParamField> loadedFields = param.getFields();
-        FormHandlerParamField first = loadedFields.get(0);
         int fieldsCount = loadedFields.size();
         int enabledFieldsCount = param.getEnabledFieldsNames().size();
-        // Then
-        assertThat(first, is(equalTo(FormHandlerParam.DEFAULT_FIELDS_ORIGINAL.get(0))));
+        assertThat(
+                loadedFields.get(0), is(equalTo(FormHandlerParam.DEFAULT_FIELDS_ORIGINAL.get(0))));
+        assertThat(loadedFields.get(1), is(equalTo(FormHandlerParam.DEFAULT_FIELDS_V1.get(0))));
+        assertThat(loadedFields.get(2), is(equalTo(FormHandlerParam.DEFAULT_FIELDS_V1.get(1))));
         assertThat(fieldsCount, is(equalTo(FormHandlerParam.DEFAULT_FIELDS_V1.size() + 1)));
         assertThat(enabledFieldsCount, is(equalTo(FormHandlerParam.DEFAULT_FIELDS_V1.size() + 1)));
     }
