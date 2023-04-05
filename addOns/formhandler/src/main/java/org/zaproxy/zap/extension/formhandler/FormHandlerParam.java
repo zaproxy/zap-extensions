@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.apache.commons.configuration.ConversionException;
+import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -305,21 +306,16 @@ public class FormHandlerParam extends VersionedAbstractParam {
         switch (fileVersion) {
             case NO_CONFIG_VERSION:
                 List<FormHandlerParamField> fieldsToAdd = new ArrayList<>();
-                Iterator<?> allTokenKeys = getConfig().getKeys(ALL_TOKENS_KEY);
-                if (!allTokenKeys.hasNext()) {
+                int count = countFields(getConfig());
+                if (count == 0) {
                     fieldsToAdd.addAll(DEFAULT_FIELDS_ORIGINAL);
                 }
                 fieldsToAdd.addAll(DEFAULT_FIELDS_V1);
-                addFields(fieldsToAdd, getIteratorSize(allTokenKeys));
+                addFields(fieldsToAdd, count);
         }
     }
 
-    private static int getIteratorSize(Iterator<?> iter) {
-        int size = 0;
-        while (iter.hasNext()) {
-            iter.next();
-            size++;
-        }
-        return size;
+    private static int countFields(FileConfiguration c) {
+        return ((HierarchicalConfiguration) c).configurationsAt(ALL_TOKENS_KEY).size();
     }
 }
