@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Added Trusted Domains in Cross-Domain JavaScript Source File Inclusion (Issue 7775).
 
+### Changed
+- Application Error Scan Rule no longer checks JavaScript or CSS responses unless threshold is Low (Issue 7724).
+
 ## [47] - 2023-04-04
 ### Fixed
 - Correct required version of Common Library add-on.
