@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [23.13.1] - 2023-04-05
 ### Fixed
 - Honour `-config` arguments when applying the default allowed resources (Issue 7809).
 
@@ -262,6 +262,7 @@ By default it allows files with extension `.js` and `.css`.
 
 
 
+[23.13.1]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.13.1
 [23.13.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.13.0
 [23.12.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.12.0
 [23.11.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.11.0
