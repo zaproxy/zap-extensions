@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.logging.log4j.LogManager;
@@ -292,7 +293,23 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
     protected void updateConfigsImpl(int fileVersion) {
         switch (fileVersion) {
             case NO_CONFIG_VERSION:
-                setAllowedResources(DEFAULT_ALLOWED_RESOURCES);
+                List<HierarchicalConfiguration> fields =
+                        ((HierarchicalConfiguration) getConfig())
+                                .configurationsAt(ALL_ALLOWED_RESOURCES_KEY);
+                if (fields.isEmpty()) {
+                    setAllowedResources(DEFAULT_ALLOWED_RESOURCES);
+                    break;
+                }
+
+                int i = 0;
+                for (; i < fields.size() && i < DEFAULT_ALLOWED_RESOURCES.size(); i++) {
+                    var field = fields.get(i);
+                    setDefaultAllowedResourceProperty(
+                            field, ALLOWED_RESOURCE_ENABLED_KEY, i, AllowedResource::isEnabled);
+                    setDefaultAllowedResourceProperty(
+                            field, ALLOWED_RESOURCE_REGEX_KEY, i, r -> r.getPattern().pattern());
+                }
+                persistAllowedResources(DEFAULT_ALLOWED_RESOURCES, i);
                 break;
             case 1:
                 String crawlInDepthKey = AJAX_SPIDER_BASE_KEY + ".crawlInDepth";
@@ -315,6 +332,16 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
                 if (!getConfig().getKeys(ALL_ALLOWED_RESOURCES_KEY).hasNext()) {
                     setAllowedResources(DEFAULT_ALLOWED_RESOURCES);
                 }
+        }
+    }
+
+    private static void setDefaultAllowedResourceProperty(
+            HierarchicalConfiguration field,
+            String name,
+            int i,
+            Function<AllowedResource, Object> value) {
+        if (field.getProperty(name) == null) {
+            field.setProperty(name, value.apply(DEFAULT_ALLOWED_RESOURCES.get(i)));
         }
     }
 
@@ -488,8 +515,11 @@ public class AjaxSpiderParam extends VersionedAbstractParam {
         this.allowedResources = new ArrayList<>(Objects.requireNonNull(allowedResources));
 
         ((HierarchicalConfiguration) getConfig()).clearTree(ALL_ALLOWED_RESOURCES_KEY);
+        persistAllowedResources(allowedResources, 0);
+    }
 
-        for (int i = 0, size = allowedResources.size(); i < size; ++i) {
+    private void persistAllowedResources(List<AllowedResource> allowedResources, int start) {
+        for (int i = start, size = allowedResources.size(); i < size; ++i) {
             String allowedResourceBaseKey = ALL_ALLOWED_RESOURCES_KEY + "(" + i + ").";
             AllowedResource allowedResource = allowedResources.get(i);
 
