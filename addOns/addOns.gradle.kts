@@ -14,7 +14,6 @@ import org.zaproxy.gradle.addon.manifest.ManifestExtension
 import org.zaproxy.gradle.addon.misc.ConvertMarkdownToHtml
 import org.zaproxy.gradle.crowdin.CrowdinExtension
 import java.util.Locale
-import java.util.regex.Pattern
 
 plugins {
     eclipse
@@ -354,7 +353,7 @@ subprojects {
 
 val crowdinUploadSourceFiles by tasks.registering {
     System.getenv("ADD_ON_IDS")?.let {
-        val projects = it.split(Pattern.compile(" *, *")).map { name ->
+        val projects = splitAddOnIds(it).map { name ->
             val project = subprojects.find { it.name == name }
             require(project != null) { "Add-on with project name $name not found." }
             require(!crowdinExcludedProjects.contains(project)) {
@@ -372,7 +371,7 @@ val crowdinUploadSourceFiles by tasks.registering {
 
 val createPullRequestRelease by tasks.registering(CreatePullRequest::class) {
     System.getenv("ADD_ON_IDS")?.let {
-        val projects = it.split(Pattern.compile(" *, *")).map { name ->
+        val projects = splitAddOnIds(it).map { name ->
             val project = subprojects.find { it.name == name }
             require(project != null) { "Add-on with project name $name not found." }
             project
@@ -522,3 +521,5 @@ fun Project.addOnJar(version: String): File {
         group = oldGroup
     }
 }
+
+fun splitAddOnIds(ids: String) = ids.split(",").map(String::trim)
