@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -69,10 +68,6 @@ public class DirectoryBrowsingScanRule extends PluginPassiveScanner {
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
                     CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
-
-    private static String server;
-    private static String evidence;
-    private static HttpMessage msg;
     /**
      * gets the name of the scanner
      *
@@ -96,8 +91,8 @@ public class DirectoryBrowsingScanRule extends PluginPassiveScanner {
         String responsebody = msg.getResponseBody().toString();
 
         // try each of the patterns in turn against the response.
-        evidence = null;
-        server = null;
+        String evidence = null;
+        String server = null;
         Iterator<Pattern> patternIterator = serverPatterns.keySet().iterator();
         while (patternIterator.hasNext()) {
             Pattern serverPattern = patternIterator.next();
@@ -114,7 +109,7 @@ public class DirectoryBrowsingScanRule extends PluginPassiveScanner {
         }
     }
 
-    private AlertBuilder buildAlert(String server, String evidence, HttpMessage msg){
+    private AlertBuilder buildAlert(String server, String evidence, HttpMessage msg) {
         return newAlert()
                 .setName(getName() + " - " + server)
                 .setRisk(Alert.RISK_MEDIUM)
@@ -130,9 +125,7 @@ public class DirectoryBrowsingScanRule extends PluginPassiveScanner {
 
     @Override
     public List<Alert> getExampleAlerts() {
-        List<Alert> alerts = new ArrayList<>();
-        alerts.add(buildAlert(server,evidence,msg).build());
-        return alerts;
+        return List.of(buildAlert("Apache 2", "Microsoft IIS", new HttpMessage()).build());
     }
 
     /**

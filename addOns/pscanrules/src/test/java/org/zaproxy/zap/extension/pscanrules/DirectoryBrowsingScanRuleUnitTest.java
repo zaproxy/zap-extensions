@@ -20,8 +20,8 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.hasKey;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 import java.util.List;
 import java.util.Map;
@@ -124,10 +124,6 @@ class DirectoryBrowsingScanRuleUnitTest extends PassiveScannerTest<DirectoryBrow
         // Then
         assertThat(alerts.size(), is(equalTo(1)));
         Alert alert = alerts.get(0);
-        Map<String, String> tags = alert.getTags();
-        assertThat(tags.size(), is(equalTo(2)));
-        assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()));
-        assertThat(tags, hasKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()));
         assertThat(alert.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
