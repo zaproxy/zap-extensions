@@ -19,8 +19,10 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -68,6 +70,9 @@ public class DirectoryBrowsingScanRule extends PluginPassiveScanner {
                     CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
                     CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
 
+    private static String server;
+    private static String evidence;
+    private static HttpMessage msg;
     /**
      * gets the name of the scanner
      *
@@ -91,8 +96,8 @@ public class DirectoryBrowsingScanRule extends PluginPassiveScanner {
         String responsebody = msg.getResponseBody().toString();
 
         // try each of the patterns in turn against the response.
-        String evidence = null;
-        String server = null;
+        evidence = null;
+        server = null;
         Iterator<Pattern> patternIterator = serverPatterns.keySet().iterator();
         while (patternIterator.hasNext()) {
             Pattern serverPattern = patternIterator.next();
@@ -105,19 +110,29 @@ public class DirectoryBrowsingScanRule extends PluginPassiveScanner {
         }
         if (evidence != null && evidence.length() > 0) {
             // we found something
-            newAlert()
-                    .setName(getName() + " - " + server)
-                    .setRisk(Alert.RISK_MEDIUM)
-                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                    .setDescription(getDescription() + " - " + server)
-                    .setOtherInfo(getExtraInfo(msg, evidence))
-                    .setSolution(getSolution())
-                    .setReference(getReference())
-                    .setEvidence(evidence)
-                    .setCweId(548) // Information Exposure Through Directory Listing
-                    .setWascId(16) // Directory Indexing
-                    .raise();
+            this.buildAlert(server, evidence, msg).raise();
         }
+    }
+
+    private AlertBuilder buildAlert(String server, String evidence, HttpMessage msg){
+        return newAlert()
+                .setName(getName() + " - " + server)
+                .setRisk(Alert.RISK_MEDIUM)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription() + " - " + server)
+                .setOtherInfo(getExtraInfo(msg, evidence))
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(evidence)
+                .setCweId(548) // Information Exposure Through Directory Listing
+                .setWascId(16); // Directory Indexing
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        List<Alert> alerts = new ArrayList<>();
+        alerts.add(buildAlert(server,evidence,msg).build());
+        return alerts;
     }
 
     /**
