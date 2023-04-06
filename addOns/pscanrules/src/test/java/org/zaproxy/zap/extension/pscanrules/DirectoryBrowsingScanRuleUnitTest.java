@@ -127,11 +127,15 @@ class DirectoryBrowsingScanRuleUnitTest extends PassiveScannerTest<DirectoryBrow
         assertThat(alertApache.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
         assertThat(alertApache.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
         assertThat(alertApache.getName(), is(equalTo("Directory Browsing - Apache 2")));
-        assertThat(alertApache.getEvidence(), is(equalTo("<html><title>Index of /htdocs</title></html>")));
+        assertThat(
+                alertApache.getEvidence(),
+                is(equalTo("<html><title>Index of /htdocs</title></html>")));
         Alert alertMicrosoft = alerts.get(1);
         assertThat(alertMicrosoft.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
         assertThat(alertMicrosoft.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
-        assertThat(alertMicrosoft.getEvidence(), is(equalTo("<pre><A HREF=\"/\">[To Parent Directory]</A><br><br>")));
+        assertThat(
+                alertMicrosoft.getEvidence(),
+                is(equalTo("<pre><A HREF=\"/\">[To Parent Directory]</A><br><br>")));
         assertThat(alertMicrosoft.getName(), is(equalTo("Directory Browsing - Microsoft IIS")));
     }
 }
