@@ -122,9 +122,12 @@ class DirectoryBrowsingScanRuleUnitTest extends PassiveScannerTest<DirectoryBrow
         // Given / When
         List<Alert> alerts = rule.getExampleAlerts();
         // Then
-        assertThat(alerts.size(), is(equalTo(1)));
-        Alert alert = alerts.get(0);
-        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
-        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alerts.size(), is(equalTo(2)));
+        Alert alertOne = alerts.get(0);
+        assertThat(alertOne.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        assertThat(alertOne.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        Alert alertTwo = alerts.get(1);
+        assertThat(alertTwo.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        assertThat(alertTwo.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 }

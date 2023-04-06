@@ -105,17 +105,17 @@ public class DirectoryBrowsingScanRule extends PluginPassiveScanner {
         }
         if (evidence != null && evidence.length() > 0) {
             // we found something
-            this.buildAlert(server, evidence, msg).raise();
+            this.buildAlert(server, evidence).raise();
         }
     }
 
-    private AlertBuilder buildAlert(String server, String evidence, HttpMessage msg) {
+    private AlertBuilder buildAlert(String server, String evidence) {
         return newAlert()
                 .setName(getName() + " - " + server)
                 .setRisk(Alert.RISK_MEDIUM)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(getDescription() + " - " + server)
-                .setOtherInfo(getExtraInfo(msg, evidence))
+                .setOtherInfo(getExtraInfo(evidence))
                 .setSolution(getSolution())
                 .setReference(getReference())
                 .setEvidence(evidence)
@@ -125,7 +125,10 @@ public class DirectoryBrowsingScanRule extends PluginPassiveScanner {
 
     @Override
     public List<Alert> getExampleAlerts() {
-        return List.of(buildAlert("Apache 2", "Microsoft IIS", new HttpMessage()).build());
+        return List.of(
+                buildAlert("Apache 2", "<html><title>Index of /htdocs</title></html>").build(),
+                buildAlert("Microsoft IIS", "<pre><A HREF=\"/\">[To Parent Directory]</A><br><br>")
+                        .build());
     }
 
     /**
@@ -168,11 +171,10 @@ public class DirectoryBrowsingScanRule extends PluginPassiveScanner {
     /**
      * gets extra information associated with the alert
      *
-     * @param msg
      * @param arg0
      * @return
      */
-    private String getExtraInfo(HttpMessage msg, String arg0) {
+    private String getExtraInfo(String arg0) {
         return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", arg0);
     }
 
