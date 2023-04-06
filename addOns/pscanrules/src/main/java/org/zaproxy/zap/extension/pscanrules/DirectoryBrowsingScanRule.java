@@ -68,6 +68,7 @@ public class DirectoryBrowsingScanRule extends PluginPassiveScanner {
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
                     CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG);
+
     /**
      * gets the name of the scanner
      *
@@ -105,7 +106,7 @@ public class DirectoryBrowsingScanRule extends PluginPassiveScanner {
         }
         if (evidence != null && evidence.length() > 0) {
             // we found something
-            this.buildAlert(server, evidence).raise();
+            buildAlert(server, evidence).raise();
         }
     }
 
