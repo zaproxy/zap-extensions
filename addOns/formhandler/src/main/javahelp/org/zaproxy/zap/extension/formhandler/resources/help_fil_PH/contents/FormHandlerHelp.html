@@ -12,10 +12,11 @@
 
 		<h2>Deskripsyon</h2>
 			<p>
-				Gamit ang add-on na ito ang tagagamit ay maaring makalikha ng bagong mga field para sa bawat indibiduwal na field na gusto nilang matalaga na
-balyu. Bukod dito, ang tagagamit ay maaring makabago ng kahit anong umiiral na pangalan ng field at balyu na akma sa field 
-na sinusubukan nilang i-set. Ang kahit anong mga field ay maaring hindi mapagana o maalis ng tagagamit upang ang mga kustom na balyu 
-ay hindi magamit. Ang mga pangalan ng field, mga balyu at pinaganang mga estado ay matatago kahit matapos ang sesyon ng ZAP.
+				With this add-on the user can create new fields for fields that they wish to set the 
+				value of. Additionally, the user can modify any existing field's name and value to fit the fields that 
+				they are trying to set. Ang kahit anong mga field ay maaring hindi mapagana o maalis ng tagagamit upang ang mga kustom na balyu 
+ay hindi magamit. Field names, values, enabled, and regex status will be stored even after a ZAP session has 
+				concluded.
 			</p>
 			<p>
 				Ang add-on na ito ay nagbibigay ng mga pangkat na default na mga pangalan ng field na maaring mahanap sa isang form at ng kaukulan 
@@ -41,13 +42,14 @@ ay hindi magamit. Ang mga pangalan ng field, mga balyu at pinaganang mga estado 
 			<p>
 				Mangyari lamang na tandaan ang mga sumusunod kapag magdadagdag ng isang bagong field:
 				<ul>
-					<li>Ang pangalan ng field ay kinakailangang malagyan.</li>
-					<li>Ang pangalan ng field ay hindi maaring umiral sa loob ng talaan o ang babalang error ay magpapakita.</li>
+					<li>A field name or regex pattern must be provided.</li>
+					<li>The field name cannot already exist in the table or a warning will occur.</li>
 					<li>Ang pangalan ng field na inilagay sa Tagapamahala ng Form ay kinakailangan magtugma sa ID ng field sa form na gusto mong 
 						bigyan ng kahulugan.</li>
-					<li>Ang pangalan ng field ay hindi sensitibo sa laki ng letra.</li>
-					<li>Ang balyu ay hindi kinakailangang malagay. Ito ay magreresulta ng isang string na walang laman na magagamit.</li>
-					<li>Ang balyu ng field ay sensitibo sa laki ng letra, at makikita sa POST.</li>
+					<li>The field name is not case sensitive, unless using regex.</li>
+					<li>Simple name matches will be attempted before regex matches.</li>
+					<li>A value does not have to be provided. This will result in an empty string being used.</li>
+					<li>The value field is case sensitive, and will be seen in the POST.</li>
 				</ul>
 			</p>
 
@@ -79,6 +81,20 @@ ay hindi magamit. Ang mga pangalan ng field, mga balyu at pinaganang mga estado 
 			<p>
 				Ang kahit anong field na hindi nabigyan ng kahulugan sa loob ng tagapamahala ng form na add-on ay gagamit ng default na balyu ng ZAP na nalikha upang matugma 
 				ang bawat uri ng field.(Halimbawa: Ang tekstong field ay magkakaroon ng balyu "ZAP")
+			</p>
+
+		<h2>Statistics</h2>
+			<p>
+				A number of statistics are exposed via the add-on for add, modify, and remove operations.<br>
+				In the following examples <code>{name}</code> will be the actual name of the Form Handler field.
+				<ul>
+					<li>stats.formhandler.add</li>
+					<li>stats.formhandler.add.{name}</li>
+					<li>stats.formhandler.modify</li>
+					<li>stats.formhandler.modify.{name}</li>
+					<li>stats.formhandler.remove</li>
+					<li>stats.formhandler.remove.{name}</li>
+				</ul>
 			</p>
 
 	</body>

@@ -37,7 +37,7 @@
 	<H4>ALPN</H4>
 	Allows to enable and select the application protocols negotiated during a TLS handshake (ALPN extension).
 	<br>
-	<strong>Note:</strong> The connection is closed if the client establishing the connection does not support ALPN or any of the selected protocols.
+	<strong>Note:</strong> The protocol falls back to HTTP/1.1 if the client establishing the connection does not support ALPN or any of the selected protocols.
 
 	<H4>Mode</H4>
 	Allows to specify if the API should be exposed or if it should be allowed to proxy requests. For example, one can configure a
