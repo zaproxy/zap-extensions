@@ -12,7 +12,9 @@
 
 		<h2>说明</h2>
 			<p>
-				使用此附件，用户可以为每个想要设置 其值的单独字段创建新字段 另外，用户可以修改任何现有字段名称和值，以适应他们试图设置的字段。 用户还可以禁用或删除任何字段，以便不使用自定义值 。 Field names, values and enabled status will be stored even after a ZAP session has 
+				With this add-on the user can create new fields for fields that they wish to set the 
+				value of. Additionally, the user can modify any existing field's name and value to fit the fields that 
+				they are trying to set. 用户还可以禁用或删除任何字段，以便不使用自定义值 。 Field names, values, enabled, and regex status will be stored even after a ZAP session has 
 				concluded.
 			</p>
 			<p>
@@ -35,12 +37,13 @@
 			<p>
 				当添加一个新的字段时，请注意以下内容:
 				<ul>
-					<li>必须提供字段名称。</li>
-					<li>字段名不能存在于表中，否则将出现警报错误。</li>
+					<li>A field name or regex pattern must be provided.</li>
+					<li>The field name cannot already exist in the table or a warning will occur.</li>
 					<li>提供给表单处理器的字段名称必须与您想要定义的窗体上的字段ID匹配。</li>
-					<li>字段名称不区分大小写。</li>
+					<li>The field name is not case sensitive, unless using regex.</li>
+					<li>Simple name matches will be attempted before regex matches.</li>
 					<li>A value does not have to be provided. This will result in an empty string being used.</li>
-					<li>值字段不区分大小写，并且将在POST上看到。</li>
+					<li>The value field is case sensitive, and will be seen in the POST.</li>
 				</ul>
 			</p>
 
@@ -68,6 +71,20 @@
 			</p>
 			<p>
 				在表单处理程序加载项中未定义的任何字段都将使用生成的ZAP默认值来匹配每个字段类型。(例如: 文本字段将具有值"ZAP")
+			</p>
+
+		<h2>Statistics</h2>
+			<p>
+				A number of statistics are exposed via the add-on for add, modify, and remove operations.<br>
+				In the following examples <code>{name}</code> will be the actual name of the Form Handler field.
+				<ul>
+					<li>stats.formhandler.add</li>
+					<li>stats.formhandler.add.{name}</li>
+					<li>stats.formhandler.modify</li>
+					<li>stats.formhandler.modify.{name}</li>
+					<li>stats.formhandler.remove</li>
+					<li>stats.formhandler.remove.{name}</li>
+				</ul>
 			</p>
 
 	</body>
