@@ -46,4 +46,9 @@ public class ExtensionTodoList extends ExtensionAdaptor {
             extensionHook.getHookView().addWorkPanel(getTodoList());
         }
     }
+
+    @Override
+    public boolean canUnload() {
+        return true;
+    }
 }
