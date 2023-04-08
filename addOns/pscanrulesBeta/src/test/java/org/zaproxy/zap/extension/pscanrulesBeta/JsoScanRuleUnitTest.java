@@ -32,8 +32,10 @@ import java.io.Serializable;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 
@@ -290,6 +292,14 @@ class JsoScanRuleUnitTest extends PassiveScannerTest<JsoScanRule> {
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A08_INSECURE_DESERIAL.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A08_INSECURE_DESERIAL.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlerts() {
+        // Given / WHen
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
     }
 
     private static byte[] createJso() throws IOException {

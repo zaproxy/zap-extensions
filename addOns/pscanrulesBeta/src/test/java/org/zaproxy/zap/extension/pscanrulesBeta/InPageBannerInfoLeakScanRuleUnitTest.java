@@ -25,10 +25,12 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -155,5 +157,13 @@ class InPageBannerInfoLeakScanRuleUnitTest
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_INFO_02_FINGERPRINT_WEB_SERVER.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_INFO_02_FINGERPRINT_WEB_SERVER.getValue())));
+    }
+
+    @Test
+    void shouldReturnExmpectedNumberOfExmapleAlerts() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
     }
 }

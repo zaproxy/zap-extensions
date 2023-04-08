@@ -29,10 +29,12 @@ import static org.mockito.Mockito.RETURNS_MOCKS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
 
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
 import org.mockito.quality.Strictness;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
@@ -399,5 +401,13 @@ class SubResourceIntegrityAttributeScanRuleUnitTest
         msg.setRequestHeader("GET http://example.com/ HTTP/1.1");
         msg.setResponseBody(body);
         return msg;
+    }
+
+    @Test
+    void shouldHaveExpectedNumberOfExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
     }
 }

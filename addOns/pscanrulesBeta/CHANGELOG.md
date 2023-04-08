@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Changed
+- The following scan rules now have functionality to generate example alerts for documentation purposes (Issue 6119).
+    - In Page Banner Information Leak
+    - Java Serialization Object
+    - HTTP Parameter Override
+    - Sub Resource Integrity Attribute Missing
 
 ## [32] - 2023-03-03
 ### Changed
