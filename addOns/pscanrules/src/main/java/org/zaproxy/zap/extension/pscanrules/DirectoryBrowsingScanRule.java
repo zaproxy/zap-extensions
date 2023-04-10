@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -105,19 +106,30 @@ public class DirectoryBrowsingScanRule extends PluginPassiveScanner {
         }
         if (evidence != null && evidence.length() > 0) {
             // we found something
-            newAlert()
-                    .setName(getName() + " - " + server)
-                    .setRisk(Alert.RISK_MEDIUM)
-                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                    .setDescription(getDescription() + " - " + server)
-                    .setOtherInfo(getExtraInfo(msg, evidence))
-                    .setSolution(getSolution())
-                    .setReference(getReference())
-                    .setEvidence(evidence)
-                    .setCweId(548) // Information Exposure Through Directory Listing
-                    .setWascId(16) // Directory Indexing
-                    .raise();
+            buildAlert(server, evidence).raise();
         }
+    }
+
+    private AlertBuilder buildAlert(String server, String evidence) {
+        return newAlert()
+                .setName(getName() + " - " + server)
+                .setRisk(Alert.RISK_MEDIUM)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription() + " - " + server)
+                .setOtherInfo(getExtraInfo(evidence))
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(evidence)
+                .setCweId(548) // Information Exposure Through Directory Listing
+                .setWascId(16); // Directory Indexing
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert("Apache 2", "<html><title>Index of /htdocs</title></html>").build(),
+                buildAlert("Microsoft IIS", "<pre><A HREF=\"/\">[To Parent Directory]</A><br><br>")
+                        .build());
     }
 
     /**
@@ -160,11 +172,10 @@ public class DirectoryBrowsingScanRule extends PluginPassiveScanner {
     /**
      * gets extra information associated with the alert
      *
-     * @param msg
      * @param arg0
      * @return
      */
-    private String getExtraInfo(HttpMessage msg, String arg0) {
+    private String getExtraInfo(String arg0) {
         return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", arg0);
     }
 

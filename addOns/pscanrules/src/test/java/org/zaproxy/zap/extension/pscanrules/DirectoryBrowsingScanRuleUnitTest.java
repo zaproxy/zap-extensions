@@ -23,10 +23,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
@@ -113,5 +115,27 @@ class DirectoryBrowsingScanRuleUnitTest extends PassiveScannerTest<DirectoryBrow
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getValue())));
+    }
+
+    @Test
+    void shouldReturnExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(2)));
+        Alert alertApache = alerts.get(0);
+        assertThat(alertApache.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        assertThat(alertApache.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alertApache.getName(), is(equalTo("Directory Browsing - Apache 2")));
+        assertThat(
+                alertApache.getEvidence(),
+                is(equalTo("<html><title>Index of /htdocs</title></html>")));
+        Alert alertMicrosoft = alerts.get(1);
+        assertThat(alertMicrosoft.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        assertThat(alertMicrosoft.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(
+                alertMicrosoft.getEvidence(),
+                is(equalTo("<pre><A HREF=\"/\">[To Parent Directory]</A><br><br>")));
+        assertThat(alertMicrosoft.getName(), is(equalTo("Directory Browsing - Microsoft IIS")));
     }
 }
