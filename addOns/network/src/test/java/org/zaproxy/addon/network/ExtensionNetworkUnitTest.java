@@ -62,6 +62,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.logging.log4j.Level;
@@ -99,6 +100,7 @@ import org.zaproxy.addon.network.internal.cert.ServerCertificateService;
 import org.zaproxy.addon.network.internal.codec.HttpClientCodec;
 import org.zaproxy.addon.network.internal.server.AliasChecker;
 import org.zaproxy.addon.network.internal.server.http.Alias;
+import org.zaproxy.addon.network.internal.server.http.PassThrough;
 import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.Server;
@@ -388,6 +390,74 @@ class ExtensionNetworkUnitTest extends TestUtils {
         extension.hook(extensionHook);
         // Then
         assertThat(extension.getPassThroughHandler(), is(notNullValue()));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"example.com", "example.org", "subdomain.example.org"})
+    void shouldNotPassThroughByDefault(String domain) throws Exception {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension.hook(extensionHook);
+        HttpRequestHeader requestHeader =
+                new HttpRequestHeader("GET / HTTP/1.1\r\nHost: " + domain);
+        // When
+        boolean passThrough = extension.shouldPassThrough(requestHeader);
+        // Then
+        assertThat(passThrough, is(equalTo(false)));
+    }
+
+    @Test
+    void shouldNotPassThroughIfZapDomain() throws Exception {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension.hook(extensionHook);
+        String domain = "zap";
+        HttpRequestHeader requestHeader =
+                new HttpRequestHeader("GET / HTTP/1.1\r\nHost: " + domain);
+        addPassThrough(domain, true);
+        // When
+        boolean passThrough = extension.shouldPassThrough(requestHeader);
+        // Then
+        assertThat(passThrough, is(equalTo(false)));
+    }
+
+    private void addPassThrough(String domain, boolean enabled) {
+        extension.getLocalServersOptions().load(new ZapXmlConfiguration());
+        extension
+                .getLocalServersOptions()
+                .addPassThrough(new PassThrough(Pattern.compile(Pattern.quote(domain)), enabled));
+    }
+
+    @Test
+    void shouldNotPassThroughIfAlias() throws Exception {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension.hook(extensionHook);
+        String domain = "alias.example.com";
+        HttpRequestHeader requestHeader =
+                new HttpRequestHeader("GET / HTTP/1.1\r\nHost: " + domain);
+        addPassThrough(domain, true);
+        extension.getLocalServersOptions().addAlias(new Alias(domain, true));
+        // When
+        boolean passThrough = extension.shouldPassThrough(requestHeader);
+        // Then
+        assertThat(passThrough, is(equalTo(false)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldPassThroughBasedOnPassThroughEnabledState(boolean enabled) throws Exception {
+        // Given
+        ExtensionHook extensionHook = mock(ExtensionHook.class);
+        extension.hook(extensionHook);
+        String domain = "alias.example.com";
+        addPassThrough(domain, enabled);
+        HttpRequestHeader requestHeader =
+                new HttpRequestHeader("GET / HTTP/1.1\r\nHost: " + domain);
+        // When
+        boolean passThrough = extension.shouldPassThrough(requestHeader);
+        // Then
+        assertThat(passThrough, is(equalTo(enabled)));
     }
 
     @Test

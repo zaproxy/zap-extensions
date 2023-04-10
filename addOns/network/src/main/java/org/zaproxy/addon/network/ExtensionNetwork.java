@@ -81,6 +81,7 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.OptionsDialog;
 import org.parosproxy.paros.view.View;
@@ -486,12 +487,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         localServersOptions.addServersChangedListener(new ServersChangedListenerImpl());
         extensionHook.addOptionsParamSet(localServersOptions);
 
-        passThroughHandler =
-                new PassThroughHandler(
-                        requestHeader ->
-                                localServersOptions.getPassThroughs().stream()
-                                        .anyMatch(e -> e.test(requestHeader)));
-
         aliasChecker =
                 requestHeader -> {
                     if (API.API_DOMAIN.equals(requestHeader.getHostName())) {
@@ -501,6 +496,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                     return localServersOptions.getAliases().stream()
                             .anyMatch(e -> e.test(requestHeader));
                 };
+
+        passThroughHandler = new PassThroughHandler(this::shouldPassThrough);
 
         extensionHook.addApiImplementor(new LegacyProxiesApi(this));
 
@@ -542,6 +539,14 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             hookView.addOptionPanel(
                     new LegacyOptionsPanel("clientcerts", clientCertificatesOptionsPanel));
         }
+    }
+
+    boolean shouldPassThrough(HttpRequestHeader requestHeader) {
+        if (aliasChecker.isAlias(requestHeader)) {
+            return false;
+        }
+
+        return localServersOptions.getPassThroughs().stream().anyMatch(e -> e.test(requestHeader));
     }
 
     private static void updateOldCoreApiEndpoints(
