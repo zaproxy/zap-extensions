@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ### Changed
 - Dependency updates.
 
+### Fixed
+- Display the whole operation name in the Sites tree (could be missing a character).
+
 ## [0.14.0] - 2023-04-04
 ### Fixed
 - Do not report errors parsing valid JSON arrays.

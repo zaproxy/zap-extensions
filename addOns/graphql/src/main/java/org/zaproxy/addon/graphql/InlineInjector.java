@@ -277,8 +277,7 @@ public final class InlineInjector {
                     // Add '1' if it has variables.
                     queryPrefix.insert(0, 1);
 
-                    // -1 for offset, -1 for parenthesis, -1 for whitespace.
-                    int startPos = vars.get(0).getSourceLocation().getColumn() - 3;
+                    int startPos = getVarStartPos(operation, vars.get(0));
                     VariableDefinition endVar = vars.get(vars.size() - 1);
                     int endPos =
                             endVar.getSourceLocation().getColumn()
@@ -299,6 +298,16 @@ public final class InlineInjector {
 
         queryBuilder.insert(0, queryPrefix.insert(0, '(').append(") "));
         return queryBuilder.toString();
+    }
+
+    private static int getVarStartPos(OperationDefinition operation, VariableDefinition variable) {
+        // -1 for offset, -1 for parenthesis.
+        int startPos = variable.getSourceLocation().getColumn() - 2;
+        if (operation.getName() != null) {
+            return startPos;
+        }
+        // -1 for whitespace when not named.
+        return startPos - 1;
     }
 
     @SuppressWarnings("rawtypes")
