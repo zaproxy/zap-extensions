@@ -258,4 +258,12 @@ class InlineInjectorUnitTest extends TestUtils {
                 "(110) query{name} mutation{change_name} subscription{newMessage{sender}}";
         assertEquals(expectedQuery, injector.getNodeName(query));
     }
+
+    @Test
+    void nodeNameNamedOperationVariables() {
+        String query =
+                "query HeroNameAndFriends($episode: Episode) { hero(episode: $episode) { name friends { name } } }";
+        String expectedQuery = "(1) query HeroNameAndFriends{hero{name friends{name}}}";
+        assertEquals(expectedQuery, injector.getNodeName(query));
+    }
 }
