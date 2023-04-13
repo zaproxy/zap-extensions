@@ -3,8 +3,7 @@
 // Standalone scripts have no template.
 // They are only evaluated when you run them. 
 
-extHist = org.parosproxy.paros.control.Control.getSingleton().
-    getExtensionLoader().getExtension(
+extHist = control.getExtensionLoader().getExtension(
         org.parosproxy.paros.extension.history.ExtensionHistory.NAME) 
 if (extHist != null) {
     i=1

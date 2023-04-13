@@ -5,8 +5,6 @@ Standalone scripts have no template.
 They are only evaluated when you run them.
 """ 
 
-from org.parosproxy.paros.model import Model
-
 def listChildren(node, level):
   indent = ""
   for i in range (0, level):
@@ -15,7 +13,7 @@ def listChildren(node, level):
     print(indent + node.getChildAt(j).getNodeName())
     listChildren(node.getChildAt(j), level+1)
 
-root = Model.getSingleton().getSession().getSiteTree().getRoot();
+root = model.getSession().getSiteTree().getRoot();
 
 listChildren(root, 0);
 

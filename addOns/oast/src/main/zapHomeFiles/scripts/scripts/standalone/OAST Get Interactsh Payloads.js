@@ -1,7 +1,6 @@
 // This script demonstrates how to get Interactsh payloads in scripts.
 
-var Control = Java.type("org.parosproxy.paros.control.Control")
-var extOast = Control.getSingleton().getExtensionLoader().getExtension("ExtensionOast")
+var extOast = control.getExtensionLoader().getExtension("ExtensionOast")
 var interactsh = extOast.getInteractshService()
 
 if (!interactsh.isRegistered()) {

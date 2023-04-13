@@ -1,8 +1,7 @@
 // This script handles out-of-band interactions.
 // Change it to do whatever you want to do :)
 
-var Control = Java.type("org.parosproxy.paros.control.Control")
-var extOast = Control.getSingleton().getExtensionLoader().getExtension("ExtensionOast")
+var extOast = control.getExtensionLoader().getExtension("ExtensionOast")
 var boast = extOast.getBoastService()
 var interactsh = extOast.getInteractshService()
 

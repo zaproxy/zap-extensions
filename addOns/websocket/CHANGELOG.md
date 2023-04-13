@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- Replace usage of singletons with injected variables (e.g. `model`, `control`) in scripts.
 
 ## [28] - 2023-01-03
 ### Changed
