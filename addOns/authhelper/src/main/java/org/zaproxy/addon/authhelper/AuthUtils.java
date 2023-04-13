@@ -248,6 +248,7 @@ public class AuthUtils {
     public static void disableBrowserAuthentication() {
         if (browserHook != null) {
             getExtension(ExtensionSelenium.class).deregisterBrowserHook(browserHook);
+            browserHook = null;
         }
     }
 
