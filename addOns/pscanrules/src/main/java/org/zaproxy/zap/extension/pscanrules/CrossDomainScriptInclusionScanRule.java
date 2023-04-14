@@ -104,8 +104,8 @@ public class CrossDomainScriptInclusionScanRule extends PluginPassiveScanner {
     public List<Alert> getExampleAlerts() {
         return List.of(
                 createAlert(
-                                "externalDomain.example.com/weatherwidget.js",
-                                "<script type=\"text/javascript\" src=\"externalDomain.example.com/weatherwidget.js\"></script>")
+                                "http://externalDomain.example.com/weatherwidget.js",
+                                "<script type=\"text/javascript\" src=\"http://externalDomain.example.com/weatherwidget.js\"></script>")
                         .build());
     }
 

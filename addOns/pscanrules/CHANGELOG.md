@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Application Error Scan Rule no longer checks JavaScript or CSS responses unless threshold is Low (Issue 7724).
-- The Cross-Domain Javascript Source File Inclusion scan rule now includes example alert functionality for documentation generation purposes (Issue 6119).
+- The Cross-Domain JavaScript Source File Inclusion scan rule now includes example alert functionality for documentation generation purposes (Issue 6119).
 
 ## [47] - 2023-04-04
 ### Fixed
