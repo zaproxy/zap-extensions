@@ -84,8 +84,8 @@ public class CrossDomainScriptInclusionScanRule extends PluginPassiveScanner {
         }
     }
 
-    private void raiseAlert(HttpMessage msg, int id, String crossDomainScript, String evidence) {
-        newAlert()
+    private AlertBuilder createAlert(String crossDomainScript, String evidence) {
+        return newAlert()
                 .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(getDescription())
@@ -93,8 +93,20 @@ public class CrossDomainScriptInclusionScanRule extends PluginPassiveScanner {
                 .setSolution(getSolution())
                 .setEvidence(evidence)
                 .setCweId(getCweId())
-                .setWascId(getWascId())
-                .raise();
+                .setWascId(getWascId());
+    }
+
+    private void raiseAlert(HttpMessage msg, int id, String crossDomainScript, String evidence) {
+        createAlert(crossDomainScript, evidence).raise();
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                createAlert(
+                                "externalDomain.example.com/weatherwidget.js",
+                                "<script type=\"text/javascript\" src=\"externalDomain.example.com/weatherwidget.js\"></script>")
+                        .build());
     }
 
     @Override
