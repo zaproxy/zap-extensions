@@ -68,7 +68,7 @@ class CloudMetadataScanRuleUnitTest extends ActiveScannerTest<CloudMetadataScanR
     @ParameterizedTest
     @ValueSource(
             strings = {
-                "169.154.169.254",
+                "169.254.169.254",
                 "aws.zaproxy.org",
                 "100.100.100.200",
                 "alibaba.zaproxy.org"
