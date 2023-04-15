@@ -27,10 +27,12 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
@@ -416,5 +418,18 @@ class CrossDomainScriptInclusionScanRuleUnitTest
         assertThat(
                 alertsRaised.get(0).getEvidence(),
                 equalTo("<script src=\"https://www.otherDomain.com/script2\"/>"));
+    }
+
+    @Test
+    void shouldReturnExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+        Alert alert = alerts.get(0);
+        Map<String, String> tags = alert.getTags();
+        assertThat(tags.size(), is(equalTo(1)));
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_LOW)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 }
