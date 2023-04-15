@@ -6,10 +6,9 @@ They are only evaluated when you run them.
 */
 
 
-import org.parosproxy.paros.control.Control
 import org.parosproxy.paros.extension.history.ExtensionHistory
 
-def extHist = Control.getSingleton().getExtensionLoader().getExtension(ExtensionHistory.class)
+def extHist = control.getExtensionLoader().getExtension(ExtensionHistory.class)
 if (extHist != null){
   def lastHist = extHist.getLastHistoryId()
   // Loop through the history table, printing out the history id and the URL

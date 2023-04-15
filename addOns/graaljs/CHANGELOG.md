@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Add info URL.
 
+### Changed
+- Replace usage of singletons with injected variables (e.g. `model`, `control`) in scripts.
+
 ## [0.3.0] - 2022-10-27
 ### Changed
 - Update minimum ZAP version to 2.12.0.

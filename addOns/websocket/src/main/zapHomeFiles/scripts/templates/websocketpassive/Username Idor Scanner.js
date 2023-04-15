@@ -6,8 +6,6 @@
 
 // Author: Manos Kirtas (manolis.kirt@gmail.com)
 
-var Model = Java.type("org.parosproxy.paros.model.Model");
-var Control = Java.type("org.parosproxy.paros.control.Control");
 var ExtensionUserManagement = Java.type("org.zaproxy.zap.extension.users.ExtensionUserManagement");
 var DigestUtils = Java.type("org.apache.commons.codec.digest.DigestUtils");
 var WebSocketPassiveScript = Java.type('org.zaproxy.zap.extension.websocket.pscan.scripts.WebSocketPassiveScript');
@@ -34,7 +32,7 @@ function scan(helper,msg) {
 
         Object.keys(usernameHashes).forEach(function(hashType){
             if((matches = message.match(usernameHashes[hashType]))!= null) {
-                var contextname = Model.getSingleton().getSession().getContext(parseInt(user.getContextId())).getName();
+                var contextname = model.getSession().getContext(parseInt(user.getContextId())).getName();
                 matches.forEach(function(evidence){
                 	raiseAlert(helper, evidence, username, contextname, hashType);
                 });
@@ -89,7 +87,7 @@ function getHashes(username){
 function getUsers(){
     if(( extUserManagement = getExtensionUserManagement()) != null){
         usersList  = [];
-        var contexts = Model.getSingleton().getSession().getContexts();
+        var contexts = model.getSession().getContexts();
         var context;
 
         for(var i = 0; i < contexts.size(); i++){
@@ -107,9 +105,7 @@ function getUsers(){
 
 function getExtensionUserManagement(){
     if(extUserManagement == null){
-        extUserManagement = Control.getSingleton()
-            .getExtensionLoader()
-            .getExtension(ExtensionUserManagement.class);
+        extUserManagement = control.getExtensionLoader().getExtension(ExtensionUserManagement.class);
     }
     return extUserManagement;
 }
