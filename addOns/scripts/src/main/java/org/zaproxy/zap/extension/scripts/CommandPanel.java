@@ -98,6 +98,10 @@ public class CommandPanel extends AbstractPanel {
         return this.syntaxTxtArea;
     }
 
+    boolean canUndo() {
+        return getTxtOutput().canUndo();
+    }
+
     @Override
     public synchronized void addKeyListener(KeyListener l) {
         // Don't do anything, the (only) listener is specified through the constructor.

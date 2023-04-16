@@ -359,8 +359,9 @@ public class ConsolePanel extends AbstractPanel {
                     new KeyListener() {
                         @Override
                         public void keyTyped(KeyEvent e) {
-                            if (script != null && !script.isChanged()) {
-                                extension.getExtScript().setChanged(script, true);
+                            boolean canUndo = getCommandPanel().canUndo();
+                            if (script != null && script.isChanged() != canUndo) {
+                                extension.getExtScript().setChanged(script, canUndo);
                             }
                         }
 
