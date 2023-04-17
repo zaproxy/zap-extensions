@@ -44,6 +44,9 @@ import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -115,10 +118,12 @@ class OutputSummaryJobUnitTest {
                         "!reports.automation.error.noparent!"));
     }
 
-    @Test
-    void shouldReportBadSummaryFile() throws Exception {
+    @ParameterizedTest
+    @EmptySource
+    @ValueSource(strings = {"/", "/bad/path"})
+    void shouldReportBadSummaryFile(String path) throws Exception {
         // Given
-        String yamlStr = "parameters:\n  summaryFile: /bad/path";
+        String yamlStr = "parameters:\n  summaryFile: " + path;
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
         AutomationProgress realProgress = new AutomationProgress();

@@ -95,18 +95,14 @@ public class OutputSummaryJob extends AutomationJob {
                 progress);
 
         if (this.getParameters().getSummaryFile() == null) {
-            progress.error(
-                    Constant.messages.getString(
-                            "reports.automation.error.noparent", this.getName(), ""));
+            reportNoParent(progress, "");
 
         } else {
             File parent = new File(this.getParameters().getSummaryFile()).getParentFile();
-            if (!parent.exists()) {
-                progress.error(
-                        Constant.messages.getString(
-                                "reports.automation.error.noparent",
-                                this.getName(),
-                                parent.getAbsolutePath()));
+            if (parent == null) {
+                reportNoParent(progress, "");
+            } else if (!parent.exists()) {
+                reportNoParent(progress, parent.getAbsolutePath());
             } else if (!parent.canWrite()) {
                 progress.error(
                         Constant.messages.getString(
@@ -133,6 +129,11 @@ public class OutputSummaryJob extends AutomationJob {
                 }
             }
         }
+    }
+
+    private void reportNoParent(AutomationProgress progress, String path) {
+        progress.error(
+                Constant.messages.getString("reports.automation.error.noparent", getName(), path));
     }
 
     @Override
