@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Correct IP used for AWS/GCP in the Cloud Metadata Potentially Exposed scan rule (Issue 7829).
+
 ## [53] - 2023-03-03
 ### Changed
 - Maintenance changes.
