@@ -66,7 +66,7 @@ public class ServletParameterPollutionScanRule extends PluginPassiveScanner {
 
         List<Element> formElements = source.getAllElements(HTMLElementName.FORM);
 
-        if (formElements != null && formElements.size() > 0) {
+        if (formElements != null && !formElements.isEmpty()) {
             // Loop through all of the FORM tags
             LOGGER.debug("Found {} forms", formElements.size());
 
@@ -77,26 +77,25 @@ public class ServletParameterPollutionScanRule extends PluginPassiveScanner {
                         StringUtils.isEmpty(formElement.getAttributeValue("action"));
 
                 if (actionMissingOrEmpty) {
-                    newAlert()
-                            .setRisk(Alert.RISK_MEDIUM)
-                            .setConfidence(Alert.CONFIDENCE_LOW)
-                            .setDescription(getDescription())
-                            .setSolution(getSolution())
-                            .setReference(getReference())
-                            .setEvidence(
-                                    formElement
-                                            .getFirstStartTag()
-                                            .toString()) // evidence - just include the first <form
-                            // ..>
-                            // element
-                            .setCweId(20) // CWE Id 20 - Improper Input Validation
-                            .setWascId(20) // WASC Id 20 - Improper Input Handling
-                            .raise();
+                    // evidence - just include the first <form ..> element
+                    createAlert(formElement.getFirstStartTag().toString()).raise();
                     // Only raise one alert per page
                     return;
                 }
             }
         }
+    }
+
+    private AlertBuilder createAlert(String evidence) {
+        return newAlert()
+                .setRisk(Alert.RISK_MEDIUM)
+                .setConfidence(Alert.CONFIDENCE_LOW)
+                .setDescription(getDescription())
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(evidence)
+                .setCweId(20) // CWE Id 20 - Improper Input Validation
+                .setWascId(20); // WASC Id 20 - Improper Input Handling
     }
 
     @Override
@@ -119,5 +118,10 @@ public class ServletParameterPollutionScanRule extends PluginPassiveScanner {
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(createAlert("<form />").build());
     }
 }

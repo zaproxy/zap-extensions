@@ -57,18 +57,17 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner 
         // From
         // https://w3c.github.io/webappsec-subresource-integrity/#verification-of-html-document-subresources
         // To support integrity metadata for some of these elements, a new integrity attribute is
-        // added
-        // to the list of content attributes for the link and script elements.
+        // added to the list of content attributes for the link and script elements.
         // Note: A future revision of this specification is likely to include integrity support for
-        // all
-        // possible subresources, i.e., a, audio, embed, iframe, img, link, object, script, source,
+        // all possible subresources, i.e., a, audio, embed, iframe, img, link, object, script,
+        // source,
         // track, and video elements.
 
         SCRIPT(HTMLElementName.SCRIPT, "src"),
         LINK(HTMLElementName.LINK, "href");
 
-        final String tag;
-        final String attribute;
+        private final String tag;
+        private final String attribute;
 
         SupportedElements(String tag, String attribute) {
             this.tag = tag;
@@ -124,20 +123,7 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner 
                         .filter(isNotTrusted(trustedDomains, msg.getRequestHeader().getHostName()))
                         .collect(Collectors.toList());
         if (!impactedElements.isEmpty()) {
-            impactedElements.forEach(
-                    element ->
-                            newAlert()
-                                    .setRisk(Alert.RISK_MEDIUM)
-                                    .setConfidence(Alert.CONFIDENCE_HIGH)
-                                    .setDescription(getString("desc"))
-                                    .setSolution(getString("soln"))
-                                    .setReference(getString("refs"))
-                                    .setEvidence(element.toString())
-                                    .setCweId(345) // CWE-345: Insufficient Verification of Data
-                                    // Authenticity
-                                    .setWascId(15) // Application Misconfiguration
-                                    .setOtherInfo(getOtherInfo(msg, element, tree))
-                                    .raise());
+            impactedElements.forEach(element -> createAlert(msg, element, tree).raise());
         }
     }
 
@@ -185,6 +171,20 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner 
         };
     }
 
+    private AlertBuilder createAlert(HttpMessage msg, Element element, SiteMap tree) {
+        return newAlert()
+                .setRisk(Alert.RISK_MEDIUM)
+                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setDescription(getString("desc"))
+                .setSolution(getString("soln"))
+                .setReference(getString("refs"))
+                .setEvidence(element.toString())
+                .setCweId(345) // CWE-345: Insufficient Verification of Data
+                // Authenticity
+                .setWascId(15) // Application Misconfiguration
+                .setOtherInfo(getOtherInfo(msg, element, tree));
+    }
+
     @Override
     public String getName() {
         return getString("name");
@@ -202,5 +202,26 @@ public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner 
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        String body =
+                "<html><head>"
+                        + "<script id=\"example\" src=\"https://subdomain.example.com/v1.0/include.js\"></script>"
+                        + "</head><body></body></html>";
+        Source src = new Source(body);
+        Element element = src.getElementById("example");
+        String otherInfo =
+                "The following hash was calculated (using base64 encoding of the output of the hash "
+                        + "algorithm: SHA-384) for the script in question "
+                        + "sha384-PJww2fZl501RXIQpYNSkUcg6ASX9Pec5LXs3IxrxDHLqWK7fzfiaV2W/kCr5Ps8G";
+        String evidence =
+                "<script id =\"example\" src=\"https://subdomain.example.com/v1.0/include.js\"></script>";
+        return List.of(
+                createAlert(null, element, null)
+                        .setEvidence(evidence)
+                        .setOtherInfo(otherInfo)
+                        .build());
     }
 }

@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.pscanrulesBeta;
 
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -62,8 +63,7 @@ public class InPageBannerInfoLeakScanRule extends PluginPassiveScanner {
                 Matcher bannerMatcher = patt.getPattern().matcher(msg.getResponseBody().toString());
                 boolean found = bannerMatcher.find();
                 if (found) {
-                    raiseAlert(
-                            Alert.RISK_LOW, Alert.CONFIDENCE_HIGH, bannerMatcher.group(), msg, id);
+                    createAlert(bannerMatcher.group()).raise();
                     break;
                 }
             }
@@ -86,18 +86,22 @@ public class InPageBannerInfoLeakScanRule extends PluginPassiveScanner {
         return ALERT_TAGS;
     }
 
-    private void raiseAlert(int risk, int confidence, String evidence, HttpMessage msg, int id) {
-        newAlert()
-                .setRisk(risk)
-                .setConfidence(confidence)
+    private AlertBuilder createAlert(String evidence) {
+        return newAlert()
+                .setRisk(Alert.RISK_LOW)
+                .setConfidence(Alert.CONFIDENCE_HIGH)
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
                 .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "other"))
                 .setSolution(Constant.messages.getString(MESSAGE_PREFIX + "soln"))
                 .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(evidence) // Evidence - Return the in page banner
                 .setCweId(200) // CWE Id: 200 - Information Exposure
-                .setWascId(13) // WASC Id: 13 - Information Leakage
-                .raise();
+                .setWascId(13); // WASC Id: 13 - Information Leakage
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(createAlert("Squid/2.5").build());
     }
 
     public enum BannerPattern {

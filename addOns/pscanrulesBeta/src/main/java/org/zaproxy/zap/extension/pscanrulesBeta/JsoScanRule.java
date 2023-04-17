@@ -50,20 +50,20 @@ public class JsoScanRule extends PluginPassiveScanner {
     public void scanHttpRequestSend(HttpMessage msg, int id) {
         checkJsoInQueryParameters(msg);
 
-        checkJsoInHeaders(msg, msg.getRequestHeader().getHeaders());
+        checkJsoInHeaders(msg.getRequestHeader().getHeaders());
 
-        checkJsoInCookies(msg, msg.getRequestHeader().getHttpCookies());
+        checkJsoInCookies(msg.getRequestHeader().getHttpCookies());
 
-        checkJsoInBody(msg, msg.getRequestBody());
+        checkJsoInBody(msg.getRequestBody());
     }
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        checkJsoInHeaders(msg, msg.getResponseHeader().getHeaders());
+        checkJsoInHeaders(msg.getResponseHeader().getHeaders());
 
-        checkJsoInCookies(msg, msg.getResponseHeader().getHttpCookies(null));
+        checkJsoInCookies(msg.getResponseHeader().getHttpCookies(null));
 
-        checkJsoInBody(msg, msg.getResponseBody());
+        checkJsoInBody(msg.getResponseBody());
     }
 
     private void checkJsoInQueryParameters(HttpMessage msg) {
@@ -79,66 +79,65 @@ public class JsoScanRule extends PluginPassiveScanner {
             }
             String value = strings[1];
             if (hasUriEncodedMagicSequence(value) || hasJsoBase64MagicSequence(value)) {
-                raiseAlert(msg, "");
+                createAlert("").raise();
             }
         }
     }
 
-    private void checkJsoInBody(HttpMessage msg, HttpBody body) {
+    private void checkJsoInBody(HttpBody body) {
         byte[] startOfBody = Arrays.copyOfRange(body.getBytes(), 0, JSO_BYTE_MAGIC_SEQUENCE.length);
         if (Arrays.equals(JSO_BYTE_MAGIC_SEQUENCE, startOfBody)
                 || hasJsoBase64MagicSequence(body.toString())) {
-            raiseAlert(msg, "");
+            createAlert("").raise();
         }
     }
 
-    private void checkJsoInCookies(HttpMessage msg, List<HttpCookie> cookies) {
+    private void checkJsoInCookies(List<HttpCookie> cookies) {
         for (HttpCookie cookie : cookies) {
             String value = cookie.getValue();
             if (!hasJsoMagicSequence(value)) {
                 continue;
             }
 
-            raiseAlert(msg, cookie.toString());
+            createAlert(cookie.toString()).raise();
         }
     }
 
-    private void checkJsoInHeaders(HttpMessage msg, List<HttpHeaderField> headers) {
+    private void checkJsoInHeaders(List<HttpHeaderField> headers) {
         for (HttpHeaderField header : headers) {
             String value = header.getValue();
             if (!hasJsoMagicSequence(value)) {
                 continue;
             }
 
-            raiseAlert(msg, header.toString());
+            createAlert(header.toString()).raise();
         }
     }
 
-    private void raiseAlert(HttpMessage msg, String evidence) {
-        newAlert()
+    private AlertBuilder createAlert(String evidence) {
+        return newAlert()
                 .setRisk(Alert.RISK_MEDIUM)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(getString("desc"))
                 .setSolution(getString("soln"))
                 .setReference(getString("refs"))
                 .setEvidence(evidence)
-                .setCweId(502) // CWE-502: Deserialization of Untrusted Data
-                .raise();
+                .setCweId(502); // CWE-502: Deserialization of Untrusted Data
     }
 
     private boolean hasJsoMagicSequence(String value) {
         return hasJsoBase64MagicSequence(value) || hasUriEncodedMagicSequence(value);
     }
 
-    private boolean hasUriEncodedMagicSequence(String value) {
+    private static boolean hasUriEncodedMagicSequence(String value) {
         return value.startsWith(JSO_URI_ENCODED_MAGIC_SEQUENCE);
     }
 
-    private boolean hasJsoBase64MagicSequence(String value) {
+    private static boolean hasJsoBase64MagicSequence(String value) {
         return value.startsWith(JSO_BASE_64_MAGIC_SEQUENCE);
     }
 
-    private String getString(String param) {
+    private static String getString(String param) {
         return Constant.messages.getString(MESSAGE_PREFIX + param);
     }
 
@@ -155,5 +154,13 @@ public class JsoScanRule extends PluginPassiveScanner {
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                createAlert(
+                                "[Name=X-Custom-Info, Value=rO0ABXNyAEVvcmcuemFwcm94eS56YXAuZXh0ZW5zaW9uLnBzY2FucnVsZXNCZXRhLkpzb1NjYW5SdWxlVW5pdFRlc3QkQW5PYmplY3QAAAAAAAAAAQIAAHhw]")
+                        .build());
     }
 }
