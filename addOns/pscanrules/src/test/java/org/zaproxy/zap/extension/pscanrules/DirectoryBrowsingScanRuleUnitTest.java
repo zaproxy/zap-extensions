@@ -78,23 +78,37 @@ class DirectoryBrowsingScanRuleUnitTest extends PassiveScannerTest<DirectoryBrow
     void shouldRaiseAlertIfResponseContainsApacheStyleIndex() throws URIException {
         // Given
         HttpMessage msg = createMessage();
-        msg.setResponseBody("<html><title>Index of /htdocs</title></html>");
+        String evidence = "<title>Index of /htdocs</title>";
+        msg.setResponseBody("<html>" + evidence + "</html>");
         // When
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
+        assertAlertDetails(alertsRaised.get(0), evidence, "Apache 2");
+    }
+
+    private static void assertAlertDetails(Alert alert, String evidence, String server) {
+        assertThat(alert.getName(), is(equalTo("Directory Browsing")));
+        assertThat(alert.getEvidence(), is(equalTo(evidence)));
+        assertThat(alert.getOtherInfo(), is(equalTo("Web server identified: " + server)));
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 
     @Test
     void shouldRaiseAlertIfResponseContainsIisStyleIndex() throws URIException {
         // Given
         HttpMessage msg = createMessage();
+        String evidence = "<pre><A HREF=\"/\">[To Parent Directory]</A><br><br>";
         msg.setResponseBody(
-                "<html><head><title>somesite.net - /site/</title></head><body><H1>somesite.net - /site/</H1><hr><pre><A HREF=\"/\">[To Parent Directory]</A><br><br> 6/12/2014  3:25 AM        &lt;dir&gt; <A HREF=\"/site/file.ext/\">file.ext</A><br></pre><hr></body></html>");
+                "<html><head><title>somesite.net - /site/</title> </head><body><H1>somesite.net - /site/</H1><hr>"
+                        + evidence
+                        + " 6/12/2014  3:25 AM        &lt;dir&gt; <A HREF=\"/site/file.ext/\">file.ext</A><br></pre><hr></body></html>");
         // When
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
+        assertAlertDetails(alertsRaised.get(0), evidence, "Microsoft IIS");
     }
 
     @Test
@@ -122,20 +136,7 @@ class DirectoryBrowsingScanRuleUnitTest extends PassiveScannerTest<DirectoryBrow
         // Given / When
         List<Alert> alerts = rule.getExampleAlerts();
         // Then
-        assertThat(alerts.size(), is(equalTo(2)));
-        Alert alertApache = alerts.get(0);
-        assertThat(alertApache.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
-        assertThat(alertApache.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
-        assertThat(alertApache.getName(), is(equalTo("Directory Browsing - Apache 2")));
-        assertThat(
-                alertApache.getEvidence(),
-                is(equalTo("<html><title>Index of /htdocs</title></html>")));
-        Alert alertMicrosoft = alerts.get(1);
-        assertThat(alertMicrosoft.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
-        assertThat(alertMicrosoft.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
-        assertThat(
-                alertMicrosoft.getEvidence(),
-                is(equalTo("<pre><A HREF=\"/\">[To Parent Directory]</A><br><br>")));
-        assertThat(alertMicrosoft.getName(), is(equalTo("Directory Browsing - Microsoft IIS")));
+        assertThat(alerts.size(), is(equalTo(1)));
+        assertAlertDetails(alerts.get(0), "<title>Index of /htdocs</title>", "Apache 2");
     }
 }
