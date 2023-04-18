@@ -17,22 +17,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.dev.auth.simpleJson;
+package org.zaproxy.addon.dev.auth.simpleJsonBearerCookie;
 
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.dev.TestPage;
 import org.zaproxy.addon.dev.TestProxyServer;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 
-public class SimpleJsonLoginPage extends TestPage {
+public class SimpleJsonBearerCookieLoginPage extends TestPage {
 
-    private static final Logger LOGGER = LogManager.getLogger(SimpleJsonLoginPage.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(SimpleJsonBearerCookieLoginPage.class);
 
-    public SimpleJsonLoginPage(TestProxyServer server) {
+    public SimpleJsonBearerCookieLoginPage(TestProxyServer server) {
         super(server, "login");
     }
 
@@ -54,17 +56,23 @@ public class SimpleJsonLoginPage extends TestPage {
         }
 
         JSONObject response = new JSONObject();
+        String token = null;
         if (getParent().isValid(username, password)) {
+            token = getParent().getToken(username);
             response.put("result", "OK");
-            response.put("accesstoken", getParent().getToken(username));
+            response.put("accesstoken", token);
         } else {
             response.put("result", "FAIL");
         }
         this.getServer().setJsonResponse(response, msg);
+        if (token != null) {
+            msg.getResponseHeader()
+                    .setHeader(HttpHeader.SET_COOKIE, "token=" + token + "; SameSite=Strict");
+        }
     }
 
     @Override
-    public SimpleJsonDir getParent() {
-        return (SimpleJsonDir) super.getParent();
+    public SimpleJsonBearerCookieDir getParent() {
+        return (SimpleJsonBearerCookieDir) super.getParent();
     }
 }

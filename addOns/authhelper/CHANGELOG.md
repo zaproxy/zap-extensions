@@ -4,6 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Support for session management identification.
+- Support for auto-detect authentication.
+- Support for auto-detect session management.
+
 ### Fixed
 - Clear launched browser authentication when disabled, otherwise it would prevent enabling it again.
 

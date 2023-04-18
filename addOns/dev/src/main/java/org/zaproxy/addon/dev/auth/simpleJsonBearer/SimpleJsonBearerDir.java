@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.dev.auth.simpleJson;
+package org.zaproxy.addon.dev.auth.simpleJsonBearer;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,19 +28,19 @@ import org.zaproxy.addon.dev.TestProxyServer;
 
 /**
  * A login page which uses one JSON request to login endpoint. The token is returned in a standard
- * field.
+ * field but is submitted with the "Bearer" prefix.
  */
-public class SimpleJsonDir extends TestDirectory {
+public class SimpleJsonBearerDir extends TestDirectory {
 
     // These are test credentials, so hardcoding them is fine ;)
     private static final String[][] USERS = {{"test@test.com", "password123"}};
 
     private Map<String, String> sessions = new HashMap<>();
 
-    public SimpleJsonDir(TestProxyServer server, String name) {
+    public SimpleJsonBearerDir(TestProxyServer server, String name) {
         super(server, name);
-        this.addPage(new SimpleJsonLoginPage(server));
-        this.addPage(new SimpleJsonVerificationPage(server));
+        this.addPage(new SimpleJsonBearerLoginPage(server));
+        this.addPage(new SimpleJsonBearerVerificationPage(server));
     }
 
     public boolean isValid(String username, String password) {

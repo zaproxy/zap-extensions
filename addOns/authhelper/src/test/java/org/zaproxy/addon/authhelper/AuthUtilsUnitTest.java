@@ -45,12 +45,14 @@ import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.network.HttpResponseBody;
 import org.zaproxy.zap.testutils.TestUtils;
+import org.zaproxy.zap.utils.Pair;
 
 class AuthUtilsUnitTest extends TestUtils {
 
     @BeforeEach
     void setUp() throws Exception {
         mockMessages(new ExtensionAuthhelper());
+        AuthUtils.clearSessionTokens();
     }
 
     @Test
@@ -137,10 +139,10 @@ class AuthUtilsUnitTest extends TestUtils {
         HttpMessage msg = new HttpMessage(new URI("https://example.com/test", true));
 
         // When
-        List<String> tokenLabels = AuthUtils.getSessionTokenLabels(msg);
+        Map<String, SessionToken> tokens = AuthUtils.getResponseSessionTokens(msg);
 
         // Then
-        assertThat(tokenLabels.size(), is(equalTo(0)));
+        assertThat(tokens.size(), is(equalTo(0)));
     }
 
     @Test
@@ -151,12 +153,17 @@ class AuthUtilsUnitTest extends TestUtils {
         msg.getResponseHeader().addHeader(HttpHeader.AUTHORIZATION, "example-session-token");
 
         // When
-        List<String> tokenLabels = AuthUtils.getSessionTokenLabels(msg);
+        Map<String, SessionToken> tokens = AuthUtils.getResponseSessionTokens(msg);
 
         // Then
-        assertThat(tokenLabels.size(), is(equalTo(1)));
+        assertThat(tokens.size(), is(equalTo(1)));
+
+        assertThat(tokens.get("header:Authorization"), is(notNullValue()));
         assertThat(
-                tokenLabels.get(0), is(equalTo(AuthUtils.HEADER_TOKEN + HttpHeader.AUTHORIZATION)));
+                tokens.get("header:Authorization").getType(),
+                is(equalTo(SessionToken.HEADER_TYPE)));
+        assertThat(
+                tokens.get("header:Authorization").getKey(), is(equalTo(HttpHeader.AUTHORIZATION)));
     }
 
     @Test
@@ -168,11 +175,16 @@ class AuthUtilsUnitTest extends TestUtils {
                 .setBody("{'auth': {'test': '123', accessToken: 'example-session-token'}}");
 
         // When
-        List<String> tokenLabels = AuthUtils.getSessionTokenLabels(msg);
+        Map<String, SessionToken> tokens = AuthUtils.getResponseSessionTokens(msg);
 
         // Then
-        assertThat(tokenLabels.size(), is(equalTo(1)));
-        assertThat(tokenLabels.get(0), is(equalTo("json:auth.accessToken")));
+        assertThat(tokens.size(), is(equalTo(1)));
+        assertThat(
+                tokens.get("json:auth.accessToken").getType(), is(equalTo(SessionToken.JSON_TYPE)));
+        assertThat(tokens.get("json:auth.accessToken").getKey(), is(equalTo("auth.accessToken")));
+        assertThat(
+                tokens.get("json:auth.accessToken").getValue(),
+                is(equalTo("example-session-token")));
     }
 
     @Test
@@ -189,7 +201,8 @@ class AuthUtilsUnitTest extends TestUtils {
                         new HttpResponseHeader("HTTP/1.1 200 OK\r\n"),
                         new HttpResponseBody("Response Body"));
         // When
-        Map<String, String> tokens = AuthUtils.getAllTokens(msg);
+        Map<String, SessionToken> tokens = AuthUtils.getResponseSessionTokens(msg);
+
         // Then
         assertThat(tokens.size(), is(equalTo(0)));
     }
@@ -207,11 +220,12 @@ class AuthUtilsUnitTest extends TestUtils {
                                         + "Header2: Value2\r\n"),
                         new HttpResponseBody("Response Body"));
         // When
-        Map<String, String> tokens = AuthUtils.getAllTokens(msg);
+        Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg);
+
         // Then
         assertThat(tokens.size(), is(equalTo(2)));
-        assertThat(tokens.get("header:Header1"), is(equalTo("Value1")));
-        assertThat(tokens.get("header:Header2"), is(equalTo("Value2")));
+        assertThat(tokens.get("header:Header1").getValue(), is(equalTo("Value1")));
+        assertThat(tokens.get("header:Header2").getValue(), is(equalTo("Value2")));
     }
 
     @Test
@@ -225,11 +239,12 @@ class AuthUtilsUnitTest extends TestUtils {
                         new HttpResponseHeader("HTTP/1.1 200 OK\r\n"),
                         new HttpResponseBody("Response Body"));
         // When
-        Map<String, String> tokens = AuthUtils.getAllTokens(msg);
+        Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg);
+
         // Then
         assertThat(tokens.size(), is(equalTo(2)));
-        assertThat(tokens.get("url:att1"), is(equalTo("val1")));
-        assertThat(tokens.get("url:att2"), is(equalTo("val2")));
+        assertThat(tokens.get("url:att1").getValue(), is(equalTo("val1")));
+        assertThat(tokens.get("url:att2").getValue(), is(equalTo("val2")));
     }
 
     @Test
@@ -254,17 +269,164 @@ class AuthUtilsUnitTest extends TestUtils {
                                         + "  }\n"
                                         + "}}"));
         // When
-        Map<String, String> tokens = AuthUtils.getAllTokens(msg);
+        Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg);
+
         // Then
         assertThat(tokens.size(), is(equalTo(8)));
-        assertThat(tokens.get("json:wrapper1.att1"), is(equalTo("val1")));
-        assertThat(tokens.get("json:wrapper1.att2"), is(equalTo("val2")));
-        assertThat(tokens.get("json:wrapper1.wrapper2.att1"), is(equalTo("val3")));
-        assertThat(tokens.get("json:wrapper1.wrapper2.array[0].att1"), is(equalTo("val4")));
-        assertThat(tokens.get("json:wrapper1.wrapper2.array[0].att2"), is(equalTo("val5")));
-        assertThat(tokens.get("json:wrapper1.wrapper2.array[1].att3"), is(equalTo("val6")));
-        assertThat(tokens.get("json:wrapper1.wrapper2.array[1].att4"), is(equalTo("val7")));
-        assertThat(tokens.get("header:Content-Type"), is(equalTo("application/json")));
+        assertThat(tokens.get("json:wrapper1.att1").getValue(), is(equalTo("val1")));
+        assertThat(tokens.get("json:wrapper1.att2").getValue(), is(equalTo("val2")));
+        assertThat(tokens.get("json:wrapper1.wrapper2.att1").getValue(), is(equalTo("val3")));
+        assertThat(
+                tokens.get("json:wrapper1.wrapper2.array[0].att1").getValue(), is(equalTo("val4")));
+        assertThat(
+                tokens.get("json:wrapper1.wrapper2.array[0].att2").getValue(), is(equalTo("val5")));
+        assertThat(
+                tokens.get("json:wrapper1.wrapper2.array[1].att3").getValue(), is(equalTo("val6")));
+        assertThat(
+                tokens.get("json:wrapper1.wrapper2.array[1].att4").getValue(), is(equalTo("val7")));
+        assertThat(tokens.get("header:Content-Type").getValue(), is(equalTo("application/json")));
+    }
+
+    @Test
+    void shouldGetEmptyHeaderTokens() throws Exception {
+        // Given
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader(
+                                "GET https://example.com/?att1=val1&att2=val2 HTTP/1.1\r\nHost: example.com\r\n\r\n"),
+                        new HttpRequestBody("Request Body"),
+                        new HttpResponseHeader("HTTP/1.1 200 OK\r\n"),
+                        new HttpResponseBody("Response Body"));
+
+        // When
+        List<Pair<String, String>> headerTokens = AuthUtils.getHeaderTokens(msg, new ArrayList<>());
+
+        // Then
+        assertThat(headerTokens.size(), is(equalTo(0)));
+    }
+
+    @Test
+    void shouldGetHeaderTokens() throws Exception {
+        // Given
+        String token1 = "96438673498764398";
+        String token2 = "bndkdfsojhgkdshgk";
+        String token3 = "89jdhf9834herg03s";
+
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader(
+                                "GET https://example.com/?att1=val1&att2=val2 HTTP/1.1\r\nHost: example.com\r\n\r\n"),
+                        new HttpRequestBody("Request Body"),
+                        new HttpResponseHeader("HTTP/1.1 200 OK\r\n"),
+                        new HttpResponseBody("Response Body"));
+        msg.getRequestHeader().addHeader(HttpHeader.AUTHORIZATION, "Bearer " + token1);
+        msg.getRequestHeader().addHeader(HttpHeader.SET_COOKIE, token2 + "; SameSite=Strict");
+        msg.getRequestHeader().addHeader(HttpHeader.AUTHORIZATION, token3);
+        List<SessionToken> tokens = new ArrayList<>();
+        tokens.add(new SessionToken(SessionToken.HEADER_TYPE, HttpHeader.AUTHORIZATION, token1));
+        tokens.add(new SessionToken(SessionToken.JSON_TYPE, "set.cookie", token2));
+
+        // When
+        List<Pair<String, String>> headerTokens = AuthUtils.getHeaderTokens(msg, tokens);
+
+        // Then
+        assertThat(headerTokens.size(), is(equalTo(2)));
+        assertThat(headerTokens.get(0).first, is(equalTo(HttpHeader.AUTHORIZATION)));
+        assertThat(headerTokens.get(0).second, is(equalTo("Bearer {%header:Authorization%}")));
+        assertThat(headerTokens.get(1).first, is(equalTo(HttpHeader.SET_COOKIE)));
+        assertThat(headerTokens.get(1).second, is(equalTo("{%json:set.cookie%}; SameSite=Strict")));
+    }
+
+    @Test
+    void shouldGetNoRequestSessionTokens() throws Exception {
+        // Given
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader(
+                                "GET https://example.com/?att1=val1&att2=val2 HTTP/1.1\r\nHost: example.com\r\n\r\n"),
+                        new HttpRequestBody("Request Body"),
+                        new HttpResponseHeader("HTTP/1.1 200 OK\r\n"),
+                        new HttpResponseBody("Response Body"));
+
+        // When
+        Map<String, SessionToken> tokens = AuthUtils.getRequestSessionTokens(msg);
+
+        // Then
+        assertThat(tokens.size(), is(equalTo(0)));
+    }
+
+    @Test
+    void shouldGetRequestSessionTokens() throws Exception {
+        // Given
+        String token1 = "96438673498764398";
+        String token2 = "bndkdfsojhgkdshgk";
+        String token3 = "89jdhf9834herg03s";
+
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader(
+                                "GET https://example.com/?att1=val1&att2=val2 HTTP/1.1\r\nHost: example.com\r\n\r\n"),
+                        new HttpRequestBody("Request Body"),
+                        new HttpResponseHeader("HTTP/1.1 200 OK\r\n"),
+                        new HttpResponseBody("Response Body"));
+        msg.getRequestHeader().addHeader(HttpHeader.AUTHORIZATION, "Bearer " + token1);
+        msg.getRequestHeader().addHeader(HttpHeader.SET_COOKIE, token2 + "; SameSite=Strict");
+        msg.getRequestHeader().addHeader(HttpHeader.AUTHORIZATION, token3);
+
+        // When
+        Map<String, SessionToken> tokens = AuthUtils.getRequestSessionTokens(msg);
+
+        // Then
+        assertThat(tokens.size(), is(equalTo(2)));
+        assertThat(tokens.containsKey("Bearer " + token1), is(equalTo(true)));
+        assertThat(tokens.get("Bearer " + token1).getType(), is(equalTo(SessionToken.HEADER_TYPE)));
+        assertThat(tokens.get("Bearer " + token1).getValue(), is(equalTo("Bearer " + token1)));
+        assertThat(tokens.get("Bearer " + token1).getToken(), is(equalTo("header:Authorization")));
+        assertThat(tokens.get(token3).getType(), is(equalTo(SessionToken.HEADER_TYPE)));
+        assertThat(tokens.get(token3).getValue(), is(equalTo(token3)));
+        assertThat(tokens.get(token3).getToken(), is(equalTo("header:Authorization")));
+        assertThat(tokens.containsKey(token3), is(equalTo(true)));
+    }
+
+    @Test
+    void shouldReturnNoSessionToken() throws Exception {
+        // Given
+        AuthUtils.recordSessionToken(
+                new SessionToken(SessionToken.HEADER_TYPE, HttpHeader.AUTHORIZATION, "456"));
+        // When
+        SessionToken st = AuthUtils.getSessionToken("123");
+        // Then
+        assertThat(st, is(nullValue()));
+    }
+
+    @Test
+    void shouldReturnSessionToken() throws Exception {
+        // Given
+        AuthUtils.recordSessionToken(new SessionToken(SessionToken.HEADER_TYPE, "Header1", "123"));
+        AuthUtils.recordSessionToken(new SessionToken(SessionToken.HEADER_TYPE, "Header2", "456"));
+        AuthUtils.recordSessionToken(new SessionToken(SessionToken.HEADER_TYPE, "Header3", "789"));
+        // When
+        SessionToken st = AuthUtils.getSessionToken("789");
+        // Then
+        assertThat(st, is(notNullValue()));
+        assertThat(st.getKey(), is("Header3"));
+        assertThat(st.getValue(), is("789"));
+        assertThat(st.getToken(), is("header:Header3"));
+    }
+
+    @Test
+    void shouldRemoveSessionToken() throws Exception {
+        // Given
+        AuthUtils.recordSessionToken(new SessionToken(SessionToken.HEADER_TYPE, "Header1", "123"));
+        AuthUtils.recordSessionToken(new SessionToken(SessionToken.HEADER_TYPE, "Header2", "456"));
+        AuthUtils.recordSessionToken(new SessionToken(SessionToken.HEADER_TYPE, "Header3", "789"));
+        // When
+        SessionToken st1 = AuthUtils.getSessionToken("789");
+        AuthUtils.removeSessionToken(st1);
+        SessionToken st2 = AuthUtils.getSessionToken("789");
+        // Then
+        assertThat(st1, is(notNullValue()));
+        assertThat(st2, is(nullValue()));
     }
 
     class TestWebElement implements WebElement {

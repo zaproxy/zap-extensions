@@ -53,12 +53,13 @@ public class SessionManagementData extends AutomationData {
     public static final String METHOD_SCRIPT = "script";
     // This should be loaded dynamically, but this requires core changes
     public static final String METHOD_HEADERS = "headers";
+    public static final String METHOD_AUTO = "autodetect";
 
     public static final String PARAM_SCRIPT = "script";
     public static final String PARAM_SCRIPT_ENGINE = "scriptEngine";
 
     private static List<String> validMethods =
-            Arrays.asList(METHOD_COOKIE, METHOD_HTTP, METHOD_SCRIPT, METHOD_HEADERS);
+            Arrays.asList(METHOD_COOKIE, METHOD_HTTP, METHOD_SCRIPT, METHOD_HEADERS, METHOD_AUTO);
 
     private static final String SCRIPT_SESSION_MANAGEMENT_SCRIPT_FIELD = "script";
     private static final String SCRIPT_SESSION_MANAGEMENT_PARAM_VALUES_FIELD = "paramValues";
@@ -110,6 +111,13 @@ public class SessionManagementData extends AutomationData {
                     headerConfigs.forEach(hc -> hcMap.put(hc.first, hc.second));
                     setParameters(hcMap);
                 }
+            } else if (contextMethod
+                    .getClass()
+                    .getCanonicalName()
+                    .equals(
+                            "org.zaproxy.addon.authhelper.AutoDetectSessionManagementMethodType.AutoDetectSessionManagementMethod")) {
+                // Plan to change once the core supports dynamic methods better
+                setMethod(METHOD_AUTO);
             } else {
                 LOGGER.error(
                         "Unrecognised method: {}", contextMethod.getClass().getCanonicalName());
@@ -151,6 +159,12 @@ public class SessionManagementData extends AutomationData {
     @SuppressWarnings("unchecked")
     public void initContextSessionManagement(
             Context context, AutomationProgress progress, AutomationEnvironment env) {
+
+        ExtensionSessionManagement extSessMgmt =
+                Control.getSingleton()
+                        .getExtensionLoader()
+                        .getExtension(ExtensionSessionManagement.class);
+
         switch (getMethod().toLowerCase(Locale.ROOT)) {
             case SessionManagementData.METHOD_COOKIE:
                 context.setSessionManagementMethod(
@@ -218,17 +232,12 @@ public class SessionManagementData extends AutomationData {
                 break;
             case SessionManagementData.METHOD_HEADERS:
                 // This should be handled dynamically, but that required core changes
-                ExtensionSessionManagement extSessMgmt =
-                        Control.getSingleton()
-                                .getExtensionLoader()
-                                .getExtension(ExtensionSessionManagement.class);
-
-                SessionManagementMethodType smType =
+                SessionManagementMethodType headersSmType =
                         extSessMgmt.getSessionManagementMethodTypeForIdentifier(3);
 
-                if (smType != null) {
+                if (headersSmType != null) {
                     SessionManagementMethod smm =
-                            smType.createSessionManagementMethod(context.getId());
+                            headersSmType.createSessionManagementMethod(context.getId());
                     Object headerConfigsObj = JobUtils.getPrivateField(smm, "headerConfigs");
                     if (headerConfigsObj instanceof List<?>) {
                         List<Pair<String, String>> headerConfigs =
@@ -237,6 +246,24 @@ public class SessionManagementData extends AutomationData {
                         getParameters().forEach((k, v) -> headerConfigs.add(new Pair<>(k, v)));
                     }
                     JobUtils.setPrivateField(smm, "headerConfigs", headerConfigsObj);
+                    context.setSessionManagementMethod(smm);
+                    reloadSessionManagementMethod(smm, progress);
+
+                } else {
+                    progress.error(
+                            Constant.messages.getString(
+                                    "automation.error.env.sessionmgmt.type.bad", getMethod()));
+                }
+                break;
+
+            case SessionManagementData.METHOD_AUTO:
+                // This should be handled dynamically, but that required core changes
+                SessionManagementMethodType autoSmType =
+                        extSessMgmt.getSessionManagementMethodTypeForIdentifier(4);
+
+                if (autoSmType != null) {
+                    SessionManagementMethod smm =
+                            autoSmType.createSessionManagementMethod(context.getId());
                     context.setSessionManagementMethod(smm);
                     reloadSessionManagementMethod(smm, progress);
 

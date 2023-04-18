@@ -78,10 +78,10 @@ class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
     void shouldReplaceSimpleTokens() throws Exception {
         // Given
         String baseString = "Prefix{%token1%}middle{%token2%}Postfix";
-        Map<String, String> map = new HashMap<>();
-        map.put("token1", "-value1-");
-        map.put("token2", "-value2-");
-        map.put("token3", "-value3-");
+        Map<String, SessionToken> map = new HashMap<>();
+        map.put("token1", new SessionToken(SessionToken.ENV_TYPE, "token1", "-value1-"));
+        map.put("token2", new SessionToken(SessionToken.ENV_TYPE, "token2", "-value2-"));
+        map.put("token3", new SessionToken(SessionToken.ENV_TYPE, "token3", "-value3-"));
         // When
         String res = HeaderBasedSessionManagementMethod.replaceTokens(baseString, map);
         // Then
@@ -92,9 +92,9 @@ class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
     void shouldLeaveMissingTokens() throws Exception {
         // Given
         String baseString = "Prefix{%token1%}middle{%token2%}Postfix";
-        Map<String, String> map = new HashMap<>();
-        map.put("token1", "-value1-");
-        map.put("token3", "-value3-");
+        Map<String, SessionToken> map = new HashMap<>();
+        map.put("token1", new SessionToken(SessionToken.ENV_TYPE, "token1", "-value1-"));
+        map.put("token3", new SessionToken(SessionToken.ENV_TYPE, "token3", "-value3-"));
         // When
         String res = HeaderBasedSessionManagementMethod.replaceTokens(baseString, map);
         // Then

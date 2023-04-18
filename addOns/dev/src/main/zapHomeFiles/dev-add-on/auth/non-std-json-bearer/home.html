@@ -15,7 +15,7 @@ function getuser() {
 	var xhr = new XMLHttpRequest();
 	var url = "user";
 	xhr.open("GET", url, true);
-	xhr.setRequestHeader("Authorization", sessionStorage.getItem("accesstoken"));
+	xhr.setRequestHeader("Authorization", "Bearer: " + sessionStorage.getItem("accesstoken"));
 	xhr.onreadystatechange = function () {
 	    if (xhr.readyState === 4 && xhr.status === 200) {
 	        var json = JSON.parse(xhr.responseText);
