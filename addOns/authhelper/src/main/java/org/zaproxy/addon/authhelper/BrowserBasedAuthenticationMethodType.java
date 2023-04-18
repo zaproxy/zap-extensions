@@ -26,10 +26,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -52,11 +49,10 @@ import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.db.RecordContext;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.extension.history.ExtensionHistory;
-import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
@@ -111,8 +107,6 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
     private static final String CONTEXT_CONFIG_AUTH_BROWSER_BROWSERID =
             CONTEXT_CONFIG_AUTH_BROWSER + ".browserid";
 
-    private static final String BEARER_PREFIX = "bearer";
-
     /* API related constants and methods. */
     private static final String PARAM_BROWSER_ID = "browserId";
     private static final String PARAM_LOGIN_PAGE_URL = "loginPageUrl";
@@ -160,17 +154,33 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                             }
 
                             if (authMsg == null) {
-                                if (!AuthUtils.getSessionTokenLabels(msg).isEmpty()) {
+                                SessionManagementRequestDetails smReqDetails = null;
+                                Map<String, SessionToken> sessionTokens =
+                                        AuthUtils.getResponseSessionTokens(msg);
+                                if (!sessionTokens.isEmpty()) {
                                     authMsg = msg;
+                                    smReqDetails =
+                                            new SessionManagementRequestDetails(
+                                                    authMsg,
+                                                    new ArrayList<>(sessionTokens.values()),
+                                                    Alert.CONFIDENCE_HIGH);
                                 } else {
-                                    String reqSessionToken = AuthUtils.getRequestSessionToken(msg);
-                                    if (reqSessionToken != null) {
-                                        // The request has an auth token we missed - try to find it
-                                        authMsg = findSessionTokenSource(reqSessionToken);
-                                        if (authMsg != null) {
-                                            LOGGER.debug(
-                                                    "Session token found in href {}",
-                                                    authMsg.getHistoryRef().getHistoryId());
+                                    Map<String, SessionToken> reqSessionTokens =
+                                            AuthUtils.getRequestSessionTokens(msg);
+                                    if (!reqSessionTokens.isEmpty()) {
+                                        // The request has at least one auth token we missed - try
+                                        // to find one of them
+                                        for (String key : reqSessionTokens.keySet()) {
+                                            smReqDetails =
+                                                    AuthUtils.findSessionTokenSource(
+                                                            key, firstHrefId);
+                                            if (smReqDetails != null) {
+                                                authMsg = smReqDetails.getMsg();
+                                                LOGGER.debug(
+                                                        "Session token found in href {}",
+                                                        authMsg.getHistoryRef().getHistoryId());
+                                                break;
+                                            }
                                         }
                                     }
                                 }
@@ -208,44 +218,6 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                     }
                 });
         proxies.clear();
-    }
-
-    HttpMessage findSessionTokenSource(String token) {
-        ExtensionHistory extHist = AuthUtils.getExtension(ExtensionHistory.class);
-
-        int spaceIndex = token.indexOf(" ");
-        if (spaceIndex > 0 && token.toLowerCase(Locale.ROOT).startsWith(BEARER_PREFIX)) {
-            // Cope with "bearer " and "bearer: "
-            token = token.substring(spaceIndex + 1);
-        }
-        String tokenf = token;
-        int last = extHist.getLastHistoryId();
-
-        LOGGER.debug("Searching for session token from {} to {} ", firstHrefId, last);
-
-        for (int i = firstHrefId; i < last; i++) {
-            HistoryReference hr = extHist.getHistoryReference(i);
-            if (hr != null) {
-                try {
-                    HttpMessage msg = hr.getHttpMessage();
-                    if (msg.getResponseHeader().isJson()) {
-                        Optional<Entry<String, String>> es =
-                                AuthUtils.getAllTokens(msg).entrySet().stream()
-                                        .filter(v -> v.getValue().equals(tokenf))
-                                        .findFirst();
-                        if (es.isPresent()) {
-                            AuthUtils.incStatsCounter(
-                                    msg.getRequestHeader().getURI(),
-                                    AuthUtils.AUTH_SESSION_TOKEN_STATS_PREFIX + es.get().getKey());
-                            return msg;
-                        }
-                    }
-                } catch (Exception e) {
-                    LOGGER.debug(e.getMessage(), e);
-                }
-            }
-        }
-        return null;
     }
 
     public class BrowserBasedAuthenticationMethod extends AuthenticationMethod {

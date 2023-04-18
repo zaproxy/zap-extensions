@@ -17,46 +17,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.dev.auth.simpleJson;
+package org.zaproxy.addon.dev.auth.simpleJsonBearer;
 
-import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.dev.TestPage;
 import org.zaproxy.addon.dev.TestProxyServer;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 
-public class SimpleJsonLoginPage extends TestPage {
+public class SimpleJsonBearerVerificationPage extends TestPage {
 
-    private static final Logger LOGGER = LogManager.getLogger(SimpleJsonLoginPage.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(SimpleJsonBearerVerificationPage.class);
 
-    public SimpleJsonLoginPage(TestProxyServer server) {
-        super(server, "login");
+    private static final String BEARER_PREFIX = "Bearer ";
+
+    public SimpleJsonBearerVerificationPage(TestProxyServer server) {
+        super(server, "user");
     }
 
     @Override
     public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) {
-        String username = null;
-        String password = null;
-
-        if (msg.getRequestHeader().hasContentType("json")) {
-            String postData = msg.getRequestBody().toString();
-            JSONObject jsonObject;
-            try {
-                jsonObject = JSONObject.fromObject(postData);
-                username = jsonObject.getString("user");
-                password = jsonObject.getString("password");
-            } catch (JSONException e) {
-                LOGGER.debug("Unable to parse as JSON: {}", postData, e);
-            }
+        String token = msg.getRequestHeader().getHeader(HttpHeader.AUTHORIZATION);
+        if (token != null && token.startsWith(BEARER_PREFIX)) {
+            token = token.substring(BEARER_PREFIX.length());
+        } else {
+            token = null;
         }
+        String user = getParent().getUser(token);
+        LOGGER.debug("Token: {} user: {}", token, user);
 
         JSONObject response = new JSONObject();
-        if (getParent().isValid(username, password)) {
+        if (user != null) {
             response.put("result", "OK");
-            response.put("accesstoken", getParent().getToken(username));
+            response.put("user", user);
         } else {
             response.put("result", "FAIL");
         }
@@ -64,7 +61,7 @@ public class SimpleJsonLoginPage extends TestPage {
     }
 
     @Override
-    public SimpleJsonDir getParent() {
-        return (SimpleJsonDir) super.getParent();
+    public SimpleJsonBearerDir getParent() {
+        return (SimpleJsonBearerDir) super.getParent();
     }
 }

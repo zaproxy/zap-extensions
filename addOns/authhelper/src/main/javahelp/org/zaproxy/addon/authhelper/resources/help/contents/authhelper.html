@@ -23,12 +23,13 @@ The add-on can be used in 2 ways:
 The features currently supported are:
 <ul>
 <li><a href="auth-req-id.html">Authentication Request Identification</a>
+<li><a href="autodetect-auth.html">Auto-Detect Authentication</a>
+<li><a href="browser-auth.html">Browser Based Authentication</a>
+<li><a href="session-mgmt-id.html">Session Management Identification</a>
+<li><a href="autodetect-session.html">Auto-Detect Session Management</a>
 <li><a href="session-header.html">Header Based Session Management</a>
 </ul>
 
-<p>
-By default the add-on will raise informational alerts detailing any authentication features identified.
-<br>
 However if any of the authentication features are part of a ZAP Context which uses the "Manual" authentication method (the default),
 then the add-on will update that context to handle the authentication features if possible.
 <p>
@@ -41,13 +42,9 @@ To automatically configure authentication handling in ZAP:
 <li>Launch your preferred browser (Firefox or Chrome) from ZAP
 <li>Open your app in the browser
 <li>Add all of the sites your app uses to a ZAP Context
+<li>Change the contect to use "Auto-Detect" Authentication and Session Management
 <li>Authenticate to your app via the browser using valid credentials
 </ol>
-
-If the add-on identifies an authentication request that is part of the context you have defined then an informational alert will be raised and the 
-authentication method should be correctly set in the context you have created.<br>
-If an authentication request is not identified then check to make sure it is made to a site which is included in the context.<br>
-If it is not then add the site to the context and authenticate again via your browser.
 
 <H3>Links</H3>
 <table>

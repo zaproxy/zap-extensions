@@ -6,7 +6,7 @@
 </head>
 <body>
 <div class="roundContainer">
-	<h1>Simple Login Page with JSON Response</H1>
+	<h1>Simple Login Page with JSON Response, uses "Bearer"</H1>
 	<h2>Login</h2>
 	
 	<div id="result"></div>
@@ -53,7 +53,7 @@ function submitform() {
 	        var json = JSON.parse(xhr.responseText);
 	        
 	        if (json.result === "OK") {
-	        	sessionStorage.setItem("accesstoken", json.accesstoken);
+	        	sessionStorage.setItem("accesstoken", json.nonstd);
 	        	window.location.replace("home.html");
 	        } else {
 	        	const h3 = document.createElement("h3");

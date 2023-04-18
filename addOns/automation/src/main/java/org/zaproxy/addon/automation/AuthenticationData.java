@@ -56,6 +56,7 @@ public class AuthenticationData extends AutomationData {
     public static final String METHOD_MANUAL = "manual";
     public static final String METHOD_SCRIPT = "script";
     public static final String METHOD_BROWSER = "browser";
+    public static final String METHOD_AUTO = "autodetect";
 
     public static final String PARAM_HOSTNAME = "hostname";
     public static final String PARAM_REALM = "realm";
@@ -85,7 +86,8 @@ public class AuthenticationData extends AutomationData {
                     METHOD_FORM,
                     METHOD_JSON,
                     METHOD_SCRIPT,
-                    METHOD_BROWSER);
+                    METHOD_BROWSER,
+                    METHOD_AUTO);
 
     private String method;
     private Map<String, Object> parameters = new LinkedHashMap<>();
@@ -145,6 +147,14 @@ public class AuthenticationData extends AutomationData {
             JobUtils.addPrivateField(parameters, PARAM_LOGIN_PAGE_URL, authMethod);
             JobUtils.addPrivateField(parameters, PARAM_LOGIN_PAGE_WAIT, authMethod);
             JobUtils.addPrivateField(parameters, PARAM_BROWSER_ID, authMethod);
+        } else if (authMethod != null
+                && authMethod
+                        .getClass()
+                        .getCanonicalName()
+                        .equals(
+                                "org.zaproxy.addon.authhelper.AutoDetectAuthenticationMethodType.AutoDetectAuthenticationMethod")) {
+            // Plan to change once the core supports dynamic methods better
+            setMethod(METHOD_AUTO);
         }
         if (authMethod != null) {
             setVerification(new VerificationData(context));
@@ -195,6 +205,15 @@ public class AuthenticationData extends AutomationData {
     public void initContextAuthentication(
             Context context, AutomationProgress progress, AutomationEnvironment env) {
         if (getMethod() != null) {
+            ExtensionAuthentication extAuth = null;
+            if (Control.getSingleton() != null) {
+                // Will only be null in the unit tests
+                extAuth =
+                        Control.getSingleton()
+                                .getExtensionLoader()
+                                .getExtension(ExtensionAuthentication.class);
+            }
+
             switch (getMethod().toLowerCase(Locale.ROOT)) {
                 case AuthenticationData.METHOD_MANUAL:
                     // Nothing to do
@@ -309,17 +328,12 @@ public class AuthenticationData extends AutomationData {
                     break;
                 case AuthenticationData.METHOD_BROWSER:
                     // This should be handled dynamically, but that required core changes
-                    ExtensionAuthentication extAuth =
-                            Control.getSingleton()
-                                    .getExtensionLoader()
-                                    .getExtension(ExtensionAuthentication.class);
-
-                    AuthenticationMethodType authType =
+                    AuthenticationMethodType authBrowserType =
                             extAuth.getAuthenticationMethodTypeForIdentifier(6);
 
-                    if (authType != null) {
+                    if (authBrowserType != null) {
                         AuthenticationMethod am =
-                                authType.createAuthenticationMethod(context.getId());
+                                authBrowserType.createAuthenticationMethod(context.getId());
 
                         JobUtils.setPrivateField(
                                 am,
@@ -356,6 +370,24 @@ public class AuthenticationData extends AutomationData {
                     }
                     break;
 
+                case AuthenticationData.METHOD_AUTO:
+                    // This should be handled dynamically, but that required core changes
+                    AuthenticationMethodType authAutoType =
+                            extAuth.getAuthenticationMethodTypeForIdentifier(7);
+
+                    if (authAutoType != null) {
+                        AuthenticationMethod am =
+                                authAutoType.createAuthenticationMethod(context.getId());
+
+                        reloadAuthenticationMethod(am, progress);
+                        context.setAuthenticationMethod(am);
+
+                    } else {
+                        progress.error(
+                                Constant.messages.getString(
+                                        "automation.error.env.auth.type.bad", getMethod()));
+                    }
+                    break;
                 default:
                     progress.error(
                             Constant.messages.getString(

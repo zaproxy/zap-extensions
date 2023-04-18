@@ -90,6 +90,11 @@ public class AuthenticationDetectionScanRule extends PluginPassiveScanner {
     }
 
     @Override
+    public boolean appliesToHistoryType(int historyType) {
+        return ExtensionAuthhelper.HISTORY_TYPES_SET.contains(historyType);
+    }
+
+    @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         TreeSet<HtmlParameter> params;
         AuthenticationRequestDetails.AuthDataType type =

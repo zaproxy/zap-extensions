@@ -24,6 +24,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -34,11 +35,11 @@ import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.authentication.FormBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.JsonBasedAuthenticationMethodType;
-import org.zaproxy.zap.authentication.ManualAuthenticationMethodType;
 import org.zaproxy.zap.authentication.PostBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.PostBasedAuthenticationMethodType.PostBasedAuthenticationMethod;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
@@ -53,11 +54,26 @@ public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChan
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionAuthhelper.class);
 
-    private static final HeaderBasedSessionManagementMethodType HEADER_BASED_TYPE =
+    private static final HeaderBasedSessionManagementMethodType HEADER_BASED_SESSION_TYPE =
             new HeaderBasedSessionManagementMethodType();
+
+    private static final AutoDetectSessionManagementMethodType AUTO_DETECT_SESSION_TYPE =
+            new AutoDetectSessionManagementMethodType();
 
     private static final BrowserBasedAuthenticationMethodType BROWSER_BASED_AUTH_TYPE =
             new BrowserBasedAuthenticationMethodType();
+
+    private static final AutoDetectAuthenticationMethodType AUTO_DETECT_AUTH_TYPE =
+            new AutoDetectAuthenticationMethodType();
+
+    private static final Integer[] HISTORY_TYPES =
+            new Integer[] {
+                HistoryReference.TYPE_PROXIED, HistoryReference.TYPE_ZAP_USER,
+                HistoryReference.TYPE_SPIDER, HistoryReference.TYPE_SPIDER_AJAX,
+                HistoryReference.TYPE_AUTHENTICATION
+            };
+
+    public static final Set<Integer> HISTORY_TYPES_SET = Set.of(HISTORY_TYPES);
 
     public ExtensionAuthhelper() {
         super();
@@ -68,11 +84,13 @@ public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChan
     public void optionsLoaded() {
         ExtensionSessionManagement extSm = AuthUtils.getExtension(ExtensionSessionManagement.class);
         if (extSm != null) {
-            extSm.getSessionManagementMethodTypes().add(HEADER_BASED_TYPE);
+            extSm.getSessionManagementMethodTypes().add(HEADER_BASED_SESSION_TYPE);
+            extSm.getSessionManagementMethodTypes().add(AUTO_DETECT_SESSION_TYPE);
         }
         ExtensionAuthentication extAuth = AuthUtils.getExtension(ExtensionAuthentication.class);
         if (extAuth != null) {
             extAuth.getAuthenticationMethodTypes().add(BROWSER_BASED_AUTH_TYPE);
+            extAuth.getAuthenticationMethodTypes().add(AUTO_DETECT_AUTH_TYPE);
         }
     }
 
@@ -80,11 +98,13 @@ public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChan
     public void unload() {
         ExtensionSessionManagement extSm = AuthUtils.getExtension(ExtensionSessionManagement.class);
         if (extSm != null) {
-            extSm.getSessionManagementMethodTypes().remove(HEADER_BASED_TYPE);
+            extSm.getSessionManagementMethodTypes().remove(HEADER_BASED_SESSION_TYPE);
+            extSm.getSessionManagementMethodTypes().remove(AUTO_DETECT_SESSION_TYPE);
         }
         ExtensionAuthentication extAuth = AuthUtils.getExtension(ExtensionAuthentication.class);
         if (extAuth != null) {
             extAuth.getAuthenticationMethodTypes().remove(BROWSER_BASED_AUTH_TYPE);
+            extAuth.getAuthenticationMethodTypes().remove(AUTO_DETECT_AUTH_TYPE);
         }
         AuthUtils.disableBrowserAuthentication();
         BrowserBasedAuthenticationMethodType.stopProxies();
@@ -188,8 +208,7 @@ public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChan
                     updateContextAuth(context, lrd, msg);
                 }
             } else if (context.getAuthenticationMethod().getType()
-                    instanceof ManualAuthenticationMethodType) {
-                // Initially manual, but we've found the first login request
+                    instanceof AutoDetectAuthenticationMethodType) {
                 contextIdToLoginDetails.put(context.getId(), lrd);
                 updateContextAuth(context, lrd, msg);
             }
@@ -215,7 +234,7 @@ public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChan
 
     @Override
     public void sessionChanged(Session session) {
-        // Ignore
+        AuthUtils.clearSessionTokens();
     }
 
     @Override

@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.dev.auth.simpleJson;
+package org.zaproxy.addon.dev.auth.simpleJsonBearer;
 
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
@@ -28,11 +28,11 @@ import org.zaproxy.addon.dev.TestPage;
 import org.zaproxy.addon.dev.TestProxyServer;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 
-public class SimpleJsonLoginPage extends TestPage {
+public class SimpleJsonBearerLoginPage extends TestPage {
 
-    private static final Logger LOGGER = LogManager.getLogger(SimpleJsonLoginPage.class);
+    private static final Logger LOGGER = LogManager.getLogger(SimpleJsonBearerLoginPage.class);
 
-    public SimpleJsonLoginPage(TestProxyServer server) {
+    public SimpleJsonBearerLoginPage(TestProxyServer server) {
         super(server, "login");
     }
 
@@ -64,7 +64,7 @@ public class SimpleJsonLoginPage extends TestPage {
     }
 
     @Override
-    public SimpleJsonDir getParent() {
-        return (SimpleJsonDir) super.getParent();
+    public SimpleJsonBearerDir getParent() {
+        return (SimpleJsonBearerDir) super.getParent();
     }
 }

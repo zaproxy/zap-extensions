@@ -8,7 +8,10 @@
 		<tocitem text="Add Ons" tocid="addons">
 			<tocitem text="Authentication Helper" image="authhelper-icon" target="authhelper">
 				<tocitem text="Authentication Request Identification" target="authhelper.auth-req-id"/>
+				<tocitem text="Auto-Detect Authentication" target="authhelper.autodetect-auth"/>
 				<tocitem text="Browser Based Authentication" target="authhelper.browser-auth"/>
+				<tocitem text="Session Management Identification" target="authhelper.session-mgmt-id"/>
+				<tocitem text="Auto-Detect Session Management" target="authhelper.autodetect-session"/>
 				<tocitem text="Header Based Session Management" target="authhelper.session-header"/>
 			</tocitem>
 		</tocitem>

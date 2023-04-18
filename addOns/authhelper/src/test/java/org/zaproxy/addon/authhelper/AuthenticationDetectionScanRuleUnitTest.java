@@ -369,6 +369,8 @@ class AuthenticationDetectionScanRuleUnitTest
         // Given
         List<Context> clist = new ArrayList<>();
         Context context = new Context(session, 1);
+        AutoDetectAuthenticationMethodType autoAuthType = new AutoDetectAuthenticationMethodType();
+        context.setAuthenticationMethod(autoAuthType.createAuthenticationMethod(context.getId()));
         clist.add(context);
         when(session.getContextsForUrl(anyString())).thenReturn(clist);
 
@@ -415,6 +417,8 @@ class AuthenticationDetectionScanRuleUnitTest
         // Given
         List<Context> clist = new ArrayList<>();
         Context context = new Context(session, 1);
+        AutoDetectAuthenticationMethodType autoAuthType = new AutoDetectAuthenticationMethodType();
+        context.setAuthenticationMethod(autoAuthType.createAuthenticationMethod(context.getId()));
         clist.add(context);
         when(session.getContextsForUrl(anyString())).thenReturn(clist);
 

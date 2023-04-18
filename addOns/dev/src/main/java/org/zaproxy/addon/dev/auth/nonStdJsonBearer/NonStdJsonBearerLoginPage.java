@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.dev.auth.simpleJson;
+package org.zaproxy.addon.dev.auth.nonStdJsonBearer;
 
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
@@ -28,11 +28,11 @@ import org.zaproxy.addon.dev.TestPage;
 import org.zaproxy.addon.dev.TestProxyServer;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 
-public class SimpleJsonLoginPage extends TestPage {
+public class NonStdJsonBearerLoginPage extends TestPage {
 
-    private static final Logger LOGGER = LogManager.getLogger(SimpleJsonLoginPage.class);
+    private static final Logger LOGGER = LogManager.getLogger(NonStdJsonBearerLoginPage.class);
 
-    public SimpleJsonLoginPage(TestProxyServer server) {
+    public NonStdJsonBearerLoginPage(TestProxyServer server) {
         super(server, "login");
     }
 
@@ -56,7 +56,7 @@ public class SimpleJsonLoginPage extends TestPage {
         JSONObject response = new JSONObject();
         if (getParent().isValid(username, password)) {
             response.put("result", "OK");
-            response.put("accesstoken", getParent().getToken(username));
+            response.put("nonstd", getParent().getToken(username));
         } else {
             response.put("result", "FAIL");
         }
@@ -64,7 +64,7 @@ public class SimpleJsonLoginPage extends TestPage {
     }
 
     @Override
-    public SimpleJsonDir getParent() {
-        return (SimpleJsonDir) super.getParent();
+    public NonStdJsonBearerDir getParent() {
+        return (NonStdJsonBearerDir) super.getParent();
     }
 }
