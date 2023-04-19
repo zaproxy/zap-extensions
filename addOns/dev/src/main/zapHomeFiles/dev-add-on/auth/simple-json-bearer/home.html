@@ -22,7 +22,7 @@ function getuser() {
 	        
 	        if (json.result === "OK") {
 	        	const h2 = document.createElement("h2");
-	        	const textNode = document.createTextNode("Hello " + json.user);
+	        	const textNode = document.createTextNode("Hello whoever you are!");
 	        	h2.appendChild(textNode);
 	        	document.getElementById("message").appendChild(h2);
 	        } else {

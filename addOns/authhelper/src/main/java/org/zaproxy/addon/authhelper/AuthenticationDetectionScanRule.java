@@ -26,6 +26,8 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.TreeSet;
 import net.htmlparser.jericho.Source;
+import net.sf.json.JSON;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.commons.lang.StringUtils;
@@ -103,12 +105,15 @@ public class AuthenticationDetectionScanRule extends PluginPassiveScanner {
         if (HttpRequestHeader.POST.equals(msg.getRequestHeader().getMethod())) {
             params = msg.getFormParams();
             if (params.isEmpty()) {
-                if (msg.getRequestHeader().hasContentType("json")) {
-                    String postData = msg.getRequestBody().toString();
-                    JSONObject jsonObject;
+                String postData = msg.getRequestBody().toString();
+                if (msg.getRequestHeader().hasContentType("json")
+                        && StringUtils.isNotEmpty(postData)) {
                     try {
-                        jsonObject = JSONObject.fromObject(postData);
-                        extractJsonStrings(jsonObject, "", params);
+                        try {
+                            extractJsonStrings(JSONObject.fromObject(postData), "", params);
+                        } catch (JSONException e) {
+                            extractJsonStrings(JSONArray.fromObject(postData), "", params);
+                        }
                         type = AuthenticationRequestDetails.AuthDataType.JSON;
                     } catch (JSONException e) {
                         LOGGER.debug("Unable to parse as JSON: {}", postData, e);
@@ -186,7 +191,8 @@ public class AuthenticationDetectionScanRule extends PluginPassiveScanner {
                 .setEvidence(authDetails.getPasswordParam().getName())
                 .setDescription(Constant.messages.getString("authhelper.auth-detect.desc"))
                 .setSolution(Constant.messages.getString("authhelper.auth-detect.soln"))
-                .setReference("https://www.zaproxy.org/docs/desktop/addons/authentication-helper/")
+                .setReference(
+                        "https://www.zaproxy.org/docs/desktop/addons/authentication-helper/auth-req-id/")
                 .setOtherInfo(sb.toString());
     }
 
@@ -237,18 +243,26 @@ public class AuthenticationDetectionScanRule extends PluginPassiveScanner {
         return null;
     }
 
-    private void extractJsonStrings(
-            JSONObject jsonObject, String parent, TreeSet<HtmlParameter> params) {
-        for (Object key : jsonObject.keySet()) {
-            Object obj = jsonObject.get(key);
-            if (obj instanceof JSONObject) {
-                extractJsonStrings((JSONObject) obj, normalisedKey(parent, (String) key), params);
-            } else if (obj instanceof String) {
-                params.add(
-                        new HtmlParameter(
-                                HtmlParameter.Type.form,
-                                normalisedKey(parent, (String) key),
-                                (String) obj));
+    void extractJsonStrings(JSON json, String parent, TreeSet<HtmlParameter> params) {
+        if (json instanceof JSONObject) {
+            JSONObject jsonObject = (JSONObject) json;
+            for (Object key : jsonObject.keySet()) {
+                Object obj = jsonObject.get(key);
+                if (obj instanceof JSONObject) {
+                    extractJsonStrings(
+                            (JSONObject) obj, normalisedKey(parent, (String) key), params);
+                } else if (obj instanceof String) {
+                    params.add(
+                            new HtmlParameter(
+                                    HtmlParameter.Type.form,
+                                    normalisedKey(parent, (String) key),
+                                    (String) obj));
+                }
+            }
+        } else if (json instanceof JSONArray) {
+            Object[] oa = ((JSONArray) json).toArray();
+            for (int i = 0; i < oa.length; i++) {
+                extractJsonStrings((JSONArray) json, parent + "[" + i + "]", params);
             }
         }
     }

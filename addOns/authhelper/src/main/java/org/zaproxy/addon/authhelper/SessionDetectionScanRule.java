@@ -22,16 +22,17 @@ package org.zaproxy.addon.authhelper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 import net.htmlparser.jericho.Source;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.authhelper.HeaderBasedSessionManagementMethodType.HeaderBasedSessionManagementMethod;
+import org.zaproxy.zap.authentication.AuthenticationMethod.AuthCheckingStrategy;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.Stats;
@@ -63,14 +64,20 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                     new SessionManagementRequestDetails(
                             msg, new ArrayList<>(responseTokens.values()), Alert.CONFIDENCE_MEDIUM);
             getAlert(smDetails).raise();
-            smDetails.getTokens().forEach(t -> AuthUtils.recordSessionToken(t));
+            smDetails
+                    .getTokens()
+                    .forEach(
+                            t -> {
+                                AuthUtils.recordSessionToken(t);
+                                Stats.incCounter("stats.auth.detect.session." + t.getKey());
+                            });
         }
-        Map<String, SessionToken> requestTokens = AuthUtils.getRequestSessionTokens(msg);
+        Set<SessionToken> requestTokens = AuthUtils.getRequestSessionTokens(msg);
         if (!requestTokens.isEmpty()) {
             // The request is using at least one session token, do we know where they come from?
             List<SessionToken> foundTokens = new ArrayList<>();
-            for (Entry<String, SessionToken> entry : requestTokens.entrySet()) {
-                SessionToken sourceToken = AuthUtils.containsSessionToken(entry.getKey());
+            for (SessionToken st : requestTokens) {
+                SessionToken sourceToken = AuthUtils.containsSessionToken(st.getToken());
                 if (sourceToken != null) {
                     foundTokens.add(sourceToken);
                 }
@@ -78,13 +85,14 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
 
             if (foundTokens.isEmpty()) {
                 // These are not 'known' session tokens, see if we can find any of them
-                for (Entry<String, SessionToken> entry : requestTokens.entrySet()) {
+                for (SessionToken st : requestTokens) {
                     SessionManagementRequestDetails smrd =
-                            AuthUtils.findSessionTokenSource(entry.getKey());
+                            AuthUtils.findSessionTokenSource(st.getValue());
                     if (smrd != null) {
                         // Yes, found the token in a 'non standard' place
                         this.getTaskHelper()
                                 .raiseAlert(smrd.getMsg().getHistoryRef(), getAlert(smrd).build());
+                        Stats.incCounter("stats.auth.detect.session." + st.getKey());
                         foundTokens = smrd.getTokens();
                         break;
                     }
@@ -97,10 +105,7 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                             msg.getRequestHeader().getURI());
                     foundTokens.forEach(t -> LOGGER.debug("Found tokens {}", t.getToken()));
                 }
-                List<Context> contextList =
-                        Model.getSingleton()
-                                .getSession()
-                                .getContextsForUrl(msg.getRequestHeader().getURI().toString());
+                List<Context> contextList = AuthUtils.getRelatedContexts(msg);
                 for (Context context : contextList) {
                     if (context.getSessionManagementMethod().getType()
                             instanceof AutoDetectSessionManagementMethodType) {
@@ -115,6 +120,15 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                         method.setHeaderConfigs(AuthUtils.getHeaderTokens(msg, foundTokens));
                         context.setSessionManagementMethod(method);
                         Stats.incCounter("stats.auth.configure.session.header");
+
+                        if (AuthCheckingStrategy.POLL_URL.equals(
+                                        context.getAuthenticationMethod().getAuthCheckingStrategy())
+                                && StringUtils.isEmpty(
+                                        context.getAuthenticationMethod().getPollUrl())) {
+                            // Set to poll but no URL - need to detect this too
+                            AuthUtils.setVerificationDetailsForContext(
+                                    context.getId(), new VerificationRequestDetails());
+                        }
                     }
                 }
                 foundTokens.forEach(t -> AuthUtils.removeSessionToken(t));
@@ -122,7 +136,7 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                 LOGGER.debug(
                         "Failed to find source of session management tokens in {}:",
                         msg.getRequestHeader().getURI());
-                requestTokens.forEach((t, st) -> LOGGER.debug("Missed token {}", st.getToken()));
+                requestTokens.forEach((st) -> LOGGER.debug("Missed token {}", st.getToken()));
             }
         }
     }
@@ -142,17 +156,20 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                 .setEvidence(token.getValue())
                 .setDescription(Constant.messages.getString("authhelper.session-detect.desc"))
                 .setSolution(Constant.messages.getString("authhelper.session-detect.soln"))
-                .setReference("https://www.zaproxy.org/docs/desktop/addons/authentication-helper/")
+                .setReference(
+                        "https://www.zaproxy.org/docs/desktop/addons/authentication-helper/session-mgmt-id")
                 .setOtherInfo(sb.toString());
     }
 
     @Override
     public List<Alert> getExampleAlerts() {
+        List<Alert> alerts = new ArrayList<>();
         List<SessionToken> tokens = new ArrayList<>();
-        tokens.add(new SessionToken(SessionToken.HEADER_TYPE, HttpHeader.AUTHORIZATION, ""));
+        tokens.add(new SessionToken(SessionToken.HEADER_SOURCE, HttpHeader.AUTHORIZATION, ""));
         SessionManagementRequestDetails smDetails =
                 new SessionManagementRequestDetails(null, null, Alert.CONFIDENCE_MEDIUM);
-        return List.of(this.getAlert(smDetails).build());
+        alerts.add(this.getAlert(smDetails).build());
+        return alerts;
     }
 
     @Override
