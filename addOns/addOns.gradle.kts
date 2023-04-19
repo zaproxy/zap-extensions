@@ -74,7 +74,9 @@ val createPullRequestNextDevIter by tasks.registering(CreatePullRequest::class) 
 
 val releaseAddOn by tasks.registering
 
-val crowdinExcludedProjects = emptySet<Project>()
+val crowdinExcludedProjects = setOf(
+    childProjects.get("dev"),
+)
 
 subprojects {
     if (parentProjects.contains(project.name)) {
@@ -356,12 +358,9 @@ val crowdinUploadSourceFiles by tasks.registering {
         val projects = splitAddOnIds(it).map { name ->
             val project = subprojects.find { it.name == name }
             require(project != null) { "Add-on with project name $name not found." }
-            require(!crowdinExcludedProjects.contains(project)) {
-                "Add-on with project name $name is excluded from Crowdin."
-            }
 
             project
-        }
+        }.filter { !crowdinExcludedProjects.contains(it) }
 
         projects.forEach {
             dependsOn(it.tasks.named("crowdinUploadSourceFiles"))
