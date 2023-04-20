@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## Unreleased
 ### Changed
 - Dependency updates.
+- Improved detection of GraphQl endpoints while spidering.
+- It is no longer a requirement for schema URLs to end with `.graphql` or `.graphqls` when importing from the UI.
 
 ### Fixed
 - Display the whole operation name in the Sites tree (could be missing a character).

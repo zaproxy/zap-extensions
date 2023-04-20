@@ -39,24 +39,34 @@ public final class MessageValidator {
         if (message.getResponseHeader().getHeader(HttpHeader.CONTENT_TYPE) == null) {
             return Result.INVALID;
         }
-        String contentType =
-                message.getResponseHeader()
-                        .getHeader(HttpHeader.CONTENT_TYPE)
-                        .toLowerCase(Locale.ROOT);
-
-        if (uri.endsWith(".graphql")
-                || uri.endsWith(".graphqls")
-                || contentType.startsWith("application/graphql")) {
+        if (uri.endsWith(".graphql") || uri.endsWith(".graphqls")) {
             return Result.VALID_SCHEMA;
         }
-
-        String responseBodyStart =
-                StringUtils.left(message.getResponseBody().toString(), 250)
-                        .toLowerCase(Locale.ROOT);
-        if (responseBodyStart.contains("__schema") || responseBodyStart.contains("graphql")) {
+        if (isGraphQlEndpointResponse(
+                message.getResponseBody().toString(),
+                message.getResponseHeader().getHeader(HttpHeader.CONTENT_TYPE))) {
             return Result.VALID_ENDPOINT;
         }
-
         return Result.INVALID;
+    }
+
+    static boolean isGraphQlEndpointResponse(String responseBody, String contentType) {
+        // The GraphQL Spec does not mandate the usage of JSON, but most popular implementations
+        // only support JSON as the response format. So, it may be reasonable to assume that if
+        // the response body is not JSON, then it is not from a GraphQL endpoint.
+        if (contentType == null) {
+            return false;
+        }
+        if (contentType.toLowerCase(Locale.ROOT).startsWith("application/json")) {
+            String responseBodyStart =
+                    StringUtils.left(responseBody, 50)
+                            .toLowerCase(Locale.ROOT)
+                            .replaceAll("\\s+", "");
+            // Ref: https://spec.graphql.org/October2021/#sec-Response-Format
+            return responseBodyStart.startsWith("{\"errors\":")
+                    || responseBodyStart.startsWith("{\"data\":")
+                    || responseBodyStart.startsWith("{\"extensions\":");
+        }
+        return false;
     }
 }
