@@ -44,7 +44,7 @@ public class ParamDiggerOutputTable extends HistoryReferencesTable {
     public void setModel(TableModel tableModel) {
         if (!(tableModel instanceof ParamDiggerOutputTableModel)) {
             throw new IllegalArgumentException(
-                    "Parameter tableModel must be an ParamDiggerTableModel.");
+                    "Parameter tableModel must be an ParamDiggerOutputTableModel.");
         }
 
         super.setModel(tableModel);
