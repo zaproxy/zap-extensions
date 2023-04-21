@@ -28,18 +28,16 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTable;
-import javax.swing.JTextArea;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.paramdigger.ExtensionParamDigger;
 import org.zaproxy.addon.paramdigger.GuesserProgressListener;
 import org.zaproxy.addon.paramdigger.GuesserScan;
 import org.zaproxy.addon.paramdigger.ParamDiggerOptions;
-import org.zaproxy.addon.paramdigger.ParamDiggerResultEventListener;
-import org.zaproxy.addon.paramdigger.ParamGuessResultEvent;
 import org.zaproxy.addon.paramdigger.ParamGuesserScanController;
+import org.zaproxy.zap.utils.TableExportButton;
 import org.zaproxy.zap.view.ScanPanel2;
+import org.zaproxy.zap.view.ZapTable;
 
 @SuppressWarnings("serial")
 public class ParamDiggerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanController> {
@@ -49,17 +47,14 @@ public class ParamDiggerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanCo
     private final ParamDiggerOptions options;
 
     private JTabbedPane tabbedPane;
-    private JTextArea outputArea;
     private ParamDiggerHistoryTableModel emptyTableModel;
-    private JTable historyTable;
-
+    private ParamDiggerHistoryTable historyTable;
+    private ParamDiggerOutputTable outputTable;
     private JButton startScanButton;
-
     private JPanel mainPanel;
-
     private ProgressListener progressListener;
-    private ResultListener resultListener;
-    private GuesserScan previousScan;
+    private ParamDiggerOutputTableModel emptyOutputTableModel;
+    private TableExportButton<ZapTable> exportButton;
 
     public ParamDiggerPanel(
             ParamGuesserScanController scanController,
@@ -80,20 +75,35 @@ public class ParamDiggerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanCo
             mainPanel = new JPanel(new BorderLayout());
 
             emptyTableModel = new ParamDiggerHistoryTableModel();
-            historyTable = new ParamDiggerResultsTable(emptyTableModel);
-            outputArea = new JTextArea();
-            outputArea.setEditable(false);
+            emptyOutputTableModel = new ParamDiggerOutputTableModel();
+
+            historyTable = new ParamDiggerHistoryTable(emptyTableModel);
+            outputTable = new ParamDiggerOutputTable(emptyOutputTableModel);
 
             tabbedPane = new JTabbedPane();
+            tabbedPane.addChangeListener(e -> setTable());
             tabbedPane.addTab(
                     Constant.messages.getString("paramdigger.panel.tab.history"),
                     new JScrollPane(historyTable));
             tabbedPane.addTab(
                     Constant.messages.getString("paramdigger.panel.tab.output"),
-                    new JScrollPane(outputArea));
+                    new JScrollPane(outputTable));
             mainPanel.add(tabbedPane);
         }
         return mainPanel;
+    }
+
+    private void setTable() {
+        switch (tabbedPane.getSelectedIndex()) {
+            case 0:
+                getExportButton().setTable(historyTable);
+                break;
+            case 1:
+                getExportButton().setTable(outputTable);
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
@@ -104,17 +114,12 @@ public class ParamDiggerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanCo
 
     @Override
     protected void switchView(GuesserScan scan) {
-        if (previousScan != null) {
-            previousScan.getOutputModel().removeResultListener(getResultListener());
-        }
-        previousScan = scan;
         if (scan != null) {
             historyTable.setModel(scan.getTableModel());
-            outputArea.setText(scan.getOutputModel().getOutput());
-            scan.getOutputModel().addResultListener(getResultListener());
+            outputTable.setModel(scan.getOutputTableModel());
         } else {
             historyTable.setModel(emptyTableModel);
-            outputArea.setText("");
+            outputTable.setModel(emptyOutputTableModel);
         }
         mainPanel.revalidate();
         mainPanel.repaint();
@@ -169,13 +174,6 @@ public class ParamDiggerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanCo
         return progressListener;
     }
 
-    private ParamDiggerResultEventListener getResultListener() {
-        if (resultListener == null) {
-            resultListener = new ResultListener();
-        }
-        return resultListener;
-    }
-
     @Override
     public void unload() {
         super.unload();
@@ -186,12 +184,11 @@ public class ParamDiggerPanel extends ScanPanel2<GuesserScan, ParamGuesserScanCo
         return false;
     }
 
-    private class ResultListener implements ParamDiggerResultEventListener {
-
-        @Override
-        public void notifyResult(ParamGuessResultEvent event) {
-            EventQueue.invokeLater(() -> outputArea.append(event.getResult().toString()));
+    private TableExportButton<ZapTable> getExportButton() {
+        if (exportButton == null) {
+            exportButton = new TableExportButton<>(historyTable);
         }
+        return exportButton;
     }
 
     private class ProgressListener implements GuesserProgressListener {

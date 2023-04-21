@@ -28,33 +28,36 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.paramdigger.gui.ParamDiggerOutputTableModel;
+import org.zaproxy.zap.view.table.DefaultHistoryReferencesTableEntry;
 
-public class ParamGuessResult {
+@SuppressWarnings("serial")
+public class ParamGuessResult extends DefaultHistoryReferencesTableEntry {
 
     private String paramName;
-    private HistoryReference historyReference;
     private List<Reason> reasons;
     private static final Logger LOGGER = LogManager.getLogger(ParamGuessResult.class);
 
-    public ParamGuessResult(String paramName, List<Reason> reasons, HttpMessage httpMessage) {
+    public ParamGuessResult(HistoryReference ref) {
+        super(ref, ParamDiggerOutputTableModel.COLUMNS);
+    }
+
+    public ParamGuessResult(String paramName, List<Reason> reasons, HttpMessage httpMessage)
+            throws HttpMalformedHeaderException, DatabaseException {
+        super(
+                new HistoryReference(
+                        Model.getSingleton().getSession(),
+                        HistoryReference.TYPE_PARAM_DIGGER,
+                        httpMessage),
+                ParamDiggerOutputTableModel.COLUMNS);
         this.paramName = paramName;
         this.reasons = reasons;
-        try {
-            this.historyReference =
-                    new HistoryReference(
-                            Model.getSingleton().getSession(),
-                            HistoryReference.TYPE_PARAM_DIGGER,
-                            httpMessage);
-        } catch (HttpMalformedHeaderException | DatabaseException e) {
-            LOGGER.warn(
-                    "Error creating history reference. Exception raised: {}", e.getMessage(), e);
-        }
     }
 
     public ParamGuessResult(String paramName, List<Reason> reasons, HistoryReference ref) {
+        super(ref, ParamDiggerOutputTableModel.COLUMNS);
         this.paramName = paramName;
         this.reasons = reasons;
-        this.historyReference = ref;
     }
 
     public String getParamName() {
@@ -67,7 +70,7 @@ public class ParamGuessResult {
 
     public HttpMessage getHttpMessage() {
         try {
-            return this.historyReference.getHttpMessage();
+            return super.getHistoryReference().getHttpMessage();
         } catch (HttpMalformedHeaderException | DatabaseException e) {
             LOGGER.warn("Error getting HTTP message. Exception raised: {}", e.getMessage(), e);
         }
@@ -86,7 +89,6 @@ public class ParamGuessResult {
             }
         }
         sb.setLength(sb.length() - 2);
-        return Constant.messages.getString(
-                "paramdigger.results.maintext", this.historyReference.getURI(), getParamName(), sb);
+        return Constant.messages.getString("paramdigger.results.maintext", getParamName(), sb);
     }
 }

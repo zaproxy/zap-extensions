@@ -25,14 +25,14 @@ import org.parosproxy.paros.model.HistoryReference;
 import org.zaproxy.zap.view.table.HistoryReferencesTable;
 
 @SuppressWarnings("serial")
-public class ParamDiggerResultsTable extends HistoryReferencesTable {
+public class ParamDiggerHistoryTable extends HistoryReferencesTable {
 
     private static final long serialVersionUID = 1L;
     private static final String RESULTS_TABLE_NAME = "ParamDiggerResultsTable";
 
     private final ExtensionHistory extensionHistory;
 
-    public ParamDiggerResultsTable(ParamDiggerHistoryTableModel model) {
+    public ParamDiggerHistoryTable(ParamDiggerHistoryTableModel model) {
         super(model);
         setName(RESULTS_TABLE_NAME);
         extensionHistory =
