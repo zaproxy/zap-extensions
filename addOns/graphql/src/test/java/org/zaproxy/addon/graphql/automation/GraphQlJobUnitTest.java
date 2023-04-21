@@ -427,7 +427,7 @@ class GraphQlJobUnitTest extends TestUtils {
         protected Response serve(IHTTPSession session) {
             accessedUrls.add(session.getUri());
             return newFixedLengthResponse(
-                    Status.OK, "application/graphql", "type Query { name: String }");
+                    Status.OK, "application/octet-stream", "type Query { name: String }");
         }
     }
 }

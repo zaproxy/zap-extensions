@@ -118,11 +118,7 @@ public class GraphQlParser {
     public void importUrl(URI schemaUrl) throws IOException {
         HttpMessage importMessage = new HttpMessage(schemaUrl);
         requestor.send(importMessage);
-        if (MessageValidator.validate(importMessage) == MessageValidator.Result.VALID_SCHEMA) {
-            parse(importMessage.getResponseBody().toString());
-        } else {
-            throw new IOException("Invalid Schema at " + schemaUrl);
-        }
+        parse(importMessage.getResponseBody().toString());
     }
 
     public void importFile(String filePath) throws IOException {
