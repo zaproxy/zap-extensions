@@ -31,6 +31,7 @@ import static org.mockito.Mockito.withSettings;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -150,6 +151,29 @@ class ExtentionAutomationUnitTest extends TestUtils {
         Map<String, AutomationJob> jobs = extAuto.getAutomationJobs();
         assertThat(jobs.size(), is(equalTo(0)));
         assertThat(jobs.containsKey(job.getType()), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldRemoveExistingJobFromAllRegisteredPlansAfterUnregisteringJob() {
+        // Given
+        ExtensionAutomation extAuto = new ExtensionAutomation();
+        AutomationJob job = new AutomationJobImpl("testjob");
+        extAuto.registerAutomationJob(job);
+        List<AutomationPlan> plans = new ArrayList<AutomationPlan>();
+        plans.add(new AutomationPlan());
+        plans.add(new AutomationPlan());
+        plans.forEach(
+                plan -> {
+                    plan.addJob(job);
+                    extAuto.registerPlan(plan);
+                });
+
+        // When
+        extAuto.unregisterAutomationJob(job);
+
+        // Then
+        assertThat(plans.get(0).getJobIndex(job), equalTo(-1));
+        assertThat(plans.get(1).getJobIndex(job), equalTo(-1));
     }
 
     @Test

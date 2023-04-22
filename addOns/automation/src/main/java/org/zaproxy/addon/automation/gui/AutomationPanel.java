@@ -818,6 +818,10 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
                 updateJob(event);
                 break;
             case AutomationEventPublisher.JOB_ADDED:
+            case AutomationEventPublisher.JOB_REMOVED:
+                getTreeModel().setPlan(currentPlan);
+                updateSaveButton(event, true);
+                break;
             case AutomationEventPublisher.TEST_ADDED:
                 plan = this.getPlan(event);
                 getTreeModel().setPlan(plan);
