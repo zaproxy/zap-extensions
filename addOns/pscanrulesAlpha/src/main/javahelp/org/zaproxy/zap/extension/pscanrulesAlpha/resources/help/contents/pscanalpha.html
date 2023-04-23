@@ -79,5 +79,51 @@ NOTE: Ignores CSS, JavaScript, images, and font files.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SourceCodeDisclosureScanRule.java">SourceCodeDisclosureScanRule.java</a>
 
+<H2>Fetch Metadata Request Headers Scan Rule</H2>
+Fetch Metadata Request headers are HTTP request headers that provide additional information about a request's origin.
+This additional information helps the server to implement resource isolation policy, allowing external sites to request only
+those resources that are intended for sharing, and that are used appropriately. This approach can help mitigate common
+cross-site web vulnerabilities such as CSRF, Cross-site Script Inclusion, timing attacks, and cross-origin information leaks.
+The Fetch Metadata Request headers are:
+<ul>
+ <li>Sec-Fetch-Site</li>
+ <li>Sec-Fetch-Mode</li>
+ <li>Sec-Fetch-Dest</li>
+ <li>Sec-Fetch-User</li>
+</ul>
+(from <a href="https://developer.mozilla.org/en-US/docs/Glossary/Fetch_metadata_request_header">Fetch Metadata Headers</a>)
+
+<p>
+Sec-Fetch-Site indicates the relationship between a request initiator's origin and the origin of requested resource.
+(from <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-Site">Sec-Fetch-Site</a>)
+
+<p>
+Sec-Fetch-Mode allows the server to distinguish between requests originating from a user navigating between HTML
+pages and requests to load images and other resources.
+(from <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-Mode">Sec-Fetch-Mode</a>)
+
+<p>
+Sec-Fetch-Dest indicates where and how the requested resource will be used.
+(from <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-Dest">Sec-Fetch-Dest</a>)
+
+<p>
+Sec-Fetch-User is only sent for requests initiated by user activation.
+(from <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-User">Sec-Fetch-User</a>)
+
+<p>
+ Alerts generated:
+<ul>
+ <li><b>Sec-Fetch-Site Header is Missing</b></li>
+ <li><b>Sec-Fetch-Site Header Has an Invalid Value</b></li>
+ <li><b>Sec-Fetch-Mode Header is Missing</b></li>
+ <li><b>Sec-Fetch-Mode Header Has an Invalid Value</b></li>
+ <li><b>Sec-Fetch-Dest Header is Missing</b></li>
+ <li><b>Sec-Fetch-Dest Header Has an Invalid Value</b></li>
+ <li><b>Sec-Fetch-User Header is Missing</b></li>
+ <li><b>Sec-Fetch-User Header Has an Invalid Value</b></li>
+</ul>
+<p>
+ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/FetchMetadataRequestHeadersScanRule.java">FetchMetadataRequestHeadersScanRule.java</a>
+
 </BODY>
 </HTML>
