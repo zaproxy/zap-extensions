@@ -58,6 +58,15 @@ public class CacheController {
 
     private static final Logger LOGGER = LogManager.getLogger(CacheController.class);
 
+    private static void sleeper(int time) {
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            LOGGER.debug(e.getMessage(), e);
+            Thread.currentThread().interrupt();
+        }
+    }
+
     public CacheController(HttpSender httpSender, ParamDiggerConfig config) {
         this.httpSender = httpSender;
         this.config = config;
@@ -124,7 +133,6 @@ public class CacheController {
             List<HttpHeaderField> responseHeaders = responseHeader.getHeaders();
             for (HttpHeaderField header : responseHeaders) {
                 String headerName = header.getName().toLowerCase();
-                String headerValue = header.getValue();
                 switch (headerName) {
                     case "cache-control":
                     case "pragma":
@@ -242,11 +250,32 @@ public class CacheController {
                 if (msg.getResponseHeader().getStatusCode()
                         == base.getResponseHeader().getStatusCode()) {
                     String indicValue = msg.getResponseHeader().getHeader(cache.getIndicator());
+                    if (indicValue == null) {
+                        switch (method) {
+                            case GET:
+                                headers.setMethod(HttpRequestHeader.GET);
+                                break;
+                            case POST:
+                                headers.setMethod(HttpRequestHeader.POST);
+                                break;
+                            default:
+                                throw new IllegalArgumentException(
+                                        "Method " + method + " not supported.");
+                        }
+                        msg.setRequestHeader(headers);
+                        httpSender.sendAndReceive(msg);
+                        addCacheMessage(msg);
+                        sleeper(2000);
+                        httpSender.sendAndReceive(msg);
+                        addCacheMessage(msg);
+                        indicValue = msg.getResponseHeader().getHeader(cache.getIndicator());
+                    }
                     if (this.checkCacheHit(indicValue, cache)) {
                         // TODO show output that Method purging didn't work.
                     } else {
                         /* Now check If we have a hit to determine that the response is from cache. */
                         httpSender.sendAndReceive(msg);
+                        addCacheMessage(msg);
                         if (msg.getResponseHeader().getStatusCode()
                                 == base.getResponseHeader().getStatusCode()) {
                             indicValue = msg.getResponseHeader().getHeader(cache.getIndicator());
@@ -266,7 +295,7 @@ public class CacheController {
                 /* Decide threshold */
                 if (config.getCacheBustingThreshold() == -1) {
                     HttpRequestHeader headers2 = new HttpRequestHeader();
-                    List<Integer> times = new ArrayList<Integer>();
+                    List<Integer> times = new ArrayList<>();
                     for (int j = 0; j < 2; j++) {
                         headers2.setURI(new URI(url, true));
                         headers2.setVersion(HttpHeader.HTTP11);
@@ -407,6 +436,7 @@ public class CacheController {
                     } else {
                         /* Now we try for a hit to determine the cachebuster works. */
                         httpSender.sendAndReceive(msg);
+                        addCacheMessage(msg);
                         if (msg.getResponseHeader().getStatusCode()
                                 == base.getResponseHeader().getStatusCode()) {
                             indicValue = msg.getResponseHeader().getHeader(cache.getIndicator());
@@ -702,7 +732,7 @@ public class CacheController {
                     // TODO show output that identifier defined in config.getCacheBusterName() was
                     // not successful
                 } else {
-                    /* Now we try to hit the cache to verify that the cachebuster works and the response is from the cache. */
+                    sleeper(2000);
                     httpSender.sendAndReceive(msg);
                     addCacheMessage(msg);
                     if (msg.getResponseHeader().getStatusCode()
@@ -829,9 +859,22 @@ public class CacheController {
                 // faced.
             }
             String indicValue = msg.getResponseHeader().getHeader(cache.getIndicator());
-            return (indicValue == null
-                    || indicValue.isEmpty()
-                    || !this.checkCacheHit(indicValue, cache));
+            if (indicValue == null || indicValue.isEmpty()) {
+                return true;
+            } else {
+                if (!this.checkCacheHit(indicValue, cache) && cache.getIndicator() != null) {
+                    sleeper(2000);
+                    httpSender.sendAndReceive(msg);
+                    addCacheMessage(msg);
+                    indicValue = msg.getResponseHeader().getHeader(cache.getIndicator());
+                    if (this.checkCacheHit(indicValue, cache)) {
+                        return false;
+                    } else {
+                        return true;
+                    }
+                }
+                return false;
+            }
 
         } catch (Exception e) {
             return false;
