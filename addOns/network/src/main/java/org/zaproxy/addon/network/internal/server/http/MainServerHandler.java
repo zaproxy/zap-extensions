@@ -56,7 +56,6 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
 
     protected final Executor executor;
     protected final List<HttpMessageHandler> pipeline;
-    protected final DefaultHttpMessageHandlerContext handlerContext;
 
     /**
      * Constructs a {@code MainServerHandler} with the given handlers.
@@ -68,7 +67,6 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
     public MainServerHandler(Executor executor, List<HttpMessageHandler> handlers) {
         this.executor = executor;
         this.pipeline = Objects.requireNonNull(handlers);
-        this.handlerContext = new DefaultHttpMessageHandlerContext();
     }
 
     @Override
@@ -89,11 +87,11 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
     }
 
     private void process(ChannelHandlerContext ctx, HttpMessage msg) {
-        handlerContext.reset();
         Channel channel = ctx.channel();
+        DefaultHttpMessageHandlerContext handlerContext = new DefaultHttpMessageHandlerContext();
         handlerContext.setRecursive(channel.attr(ChannelAttributes.RECURSIVE_MESSAGE).get());
 
-        if (processMessage(msg) == HandlerResult.CLOSE) {
+        if (processMessage(handlerContext, msg) == HandlerResult.CLOSE) {
             close(ctx);
             return;
         }
@@ -127,15 +125,16 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
         return (Map<String, Object>) userObject;
     }
 
-    protected HandlerResult processMessage(HttpMessage msg) {
-        HandlerResult result = notifyMessageHandlers(msg);
+    protected HandlerResult processMessage(
+            DefaultHttpMessageHandlerContext handlerContext, HttpMessage msg) {
+        HandlerResult result = notifyMessageHandlers(handlerContext, msg);
         if (result != HandlerResult.CONTINUE) {
             return result;
         }
 
         handlerContext.handlingResponse();
 
-        result = notifyMessageHandlers(msg);
+        result = notifyMessageHandlers(handlerContext, msg);
         if (result != HandlerResult.CONTINUE) {
             return result;
         }
@@ -143,7 +142,8 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
         return HandlerResult.CONTINUE;
     }
 
-    private HandlerResult notifyMessageHandlers(HttpMessage msg) {
+    private HandlerResult notifyMessageHandlers(
+            DefaultHttpMessageHandlerContext handlerContext, HttpMessage msg) {
         for (HttpMessageHandler handler : pipeline) {
             try {
                 handler.handleMessage(handlerContext, msg);

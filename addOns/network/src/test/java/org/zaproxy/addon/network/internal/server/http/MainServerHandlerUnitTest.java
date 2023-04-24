@@ -21,6 +21,8 @@ package org.zaproxy.addon.network.internal.server.http;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -48,7 +50,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -135,11 +139,43 @@ class MainServerHandlerUnitTest {
     @Test
     void shouldNotBeProcessingAfterHandling() {
         // Given
-        String request = "GET / HTTP/1.1\\r\\n\\r\\n";
+        String request = "GET / HTTP/1.1\r\n\r\n";
         // When
         written(request);
         // Then
         assertProcessing(false);
+        assertThat(exceptionsThrown, hasSize(0));
+        handler1.assertCalled(2);
+    }
+
+    @Test
+    void shouldProcessEachRequestWithItsOwnContext() throws Exception {
+        // Given
+        CountDownLatch cdl = new CountDownLatch(2);
+        AtomicReference<HttpMessageHandlerContext> ctx1Ref = new AtomicReference<>();
+        handler1.addAction(
+                0,
+                (ctx, msg) -> {
+                    ctx1Ref.set(ctx);
+                    ctx.overridden();
+                    msg.setResponseHeader("HTTP/1.1 200");
+                    cdl.countDown();
+                });
+        AtomicReference<HttpMessageHandlerContext> ctx2Ref = new AtomicReference<>();
+        handler1.addAction(
+                1,
+                (ctx, msg) -> {
+                    ctx2Ref.set(ctx);
+                    ctx.overridden();
+                    msg.setResponseHeader("HTTP/1.1 200");
+                    cdl.countDown();
+                });
+        // When
+        written("GET / HTTP/1.1\r\n\r\n");
+        written("GET / HTTP/1.1\r\n\r\n");
+        // Then
+        assertTrue(cdl.await(5, TimeUnit.SECONDS));
+        assertThat(ctx1Ref.get(), is(not(sameInstance(ctx2Ref.get()))));
     }
 
     @Test

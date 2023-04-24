@@ -57,13 +57,14 @@ public class LocalServerHandler extends MainProxyHandler {
     }
 
     @Override
-    protected HandlerResult processMessage(HttpMessage msg) {
+    protected HandlerResult processMessage(
+            DefaultHttpMessageHandlerContext handlerContext, HttpMessage msg) {
         boolean excluded = isExcluded(msg);
         handlerContext.setExcluded(excluded);
 
         Object semaphore = !excluded && serialiseState.isSerialise() ? SEMAPHORE_SINGLETON : this;
         synchronized (semaphore) {
-            return super.processMessage(msg);
+            return super.processMessage(handlerContext, msg);
         }
     }
 
