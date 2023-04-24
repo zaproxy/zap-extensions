@@ -48,6 +48,7 @@ public class ExtensionGraphQl extends ExtensionAdaptor
         implements CommandLineListener, SessionChangedListener {
 
     public static final String NAME = "ExtensionGraphQl";
+    static final int TOOL_ALERT_ID = 50007;
     private static final Logger LOGGER = LogManager.getLogger(ExtensionGraphQl.class);
 
     private ZapMenuItem menuImportLocalGraphQl = null;

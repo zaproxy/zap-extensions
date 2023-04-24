@@ -7,6 +7,13 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/graphql-support/")
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">= 1.14.0 & < 2.0.0")
+                }
+            }
+        }
         extensions {
             register("org.zaproxy.addon.graphql.automation.ExtensionGraphQlAutomation") {
                 classnames {
@@ -66,12 +73,14 @@ crowdin {
 
 dependencies {
     compileOnly(parent!!.childProjects.get("automation")!!)
+    compileOnly(parent!!.childProjects.get("commonlib")!!)
     compileOnly(parent!!.childProjects.get("formhandler")!!)
     compileOnly(parent!!.childProjects.get("spider")!!)
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.graphql-java:graphql-java:20.2")
 
     testImplementation(parent!!.childProjects.get("automation")!!)
+    testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(parent!!.childProjects.get("formhandler")!!)
     testImplementation(parent!!.childProjects.get("spider")!!)
     testImplementation(project(":testutils"))

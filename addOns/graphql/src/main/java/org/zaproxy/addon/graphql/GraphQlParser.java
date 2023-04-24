@@ -39,8 +39,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.zap.extension.alert.ExtensionAlert;
 
 public class GraphQlParser {
 
@@ -53,6 +56,11 @@ public class GraphQlParser {
                             .directiveIsRepeatable(false)
                             .inputValueDeprecation(false));
     private static AtomicInteger threadId = new AtomicInteger();
+    private static final String INTROSPECTION_ALERT_REF = ExtensionGraphQl.TOOL_ALERT_ID + "-1";
+    private static final Map<String, String> INTROSPECTION_ALERT_TAGS =
+            CommonAlertTag.toMap(
+                    CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
+                    CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG);
 
     private final Requestor requestor;
     private final ExtensionGraphQl extensionGraphQl;
@@ -82,6 +90,10 @@ public class GraphQlParser {
     }
 
     public void introspect() throws IOException {
+        introspect(false);
+    }
+
+    public void introspect(boolean raiseAlert) throws IOException {
         HttpMessage importMessage =
                 requestor.sendQuery(
                         INTROSPECTION_QUERY, GraphQlParam.RequestMethodOption.POST_JSON);
@@ -104,6 +116,9 @@ public class GraphQlParser {
                         "The \"data\" object in the introspection response was null.");
             }
             Document schema = new IntrospectionResultToSchema().createSchemaDefinition(data);
+            if (raiseAlert) {
+                raiseIntrospectionAlert(importMessage);
+            }
             String schemaSdl = new SchemaPrinter().print(schema);
             parse(schemaSdl);
         } catch (JsonSyntaxException e) {
@@ -160,6 +175,35 @@ public class GraphQlParser {
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+    }
+
+    private void raiseIntrospectionAlert(HttpMessage msg) {
+        var extAlert =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class);
+        if (extAlert == null) {
+            return;
+        }
+        Alert alert =
+                Alert.builder()
+                        .setPluginId(ExtensionGraphQl.TOOL_ALERT_ID)
+                        .setAlertRef(INTROSPECTION_ALERT_REF)
+                        .setName(Constant.messages.getString("graphql.introspection.alert.name"))
+                        .setDescription(
+                                Constant.messages.getString("graphql.introspection.alert.desc"))
+                        .setReference(
+                                Constant.messages.getString("graphql.introspection.alert.ref"))
+                        .setSolution(
+                                Constant.messages.getString("graphql.introspection.alert.soln"))
+                        .setConfidence(Alert.CONFIDENCE_HIGH)
+                        .setRisk(Alert.RISK_INFO)
+                        .setCweId(16)
+                        .setWascId(15)
+                        .setSource(Alert.Source.TOOL)
+                        .setTags(INTROSPECTION_ALERT_TAGS)
+                        .setHistoryRef(msg.getHistoryRef())
+                        .setMessage(msg)
+                        .build();
+        extAlert.alertFound(alert, msg.getHistoryRef());
     }
 
     public void addRequesterListener(RequesterListener listener) {

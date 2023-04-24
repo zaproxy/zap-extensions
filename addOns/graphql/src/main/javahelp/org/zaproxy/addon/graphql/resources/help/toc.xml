@@ -10,6 +10,7 @@
 				<tocitem text="Options" image="graphql-icon" target="graphql.options"/>
 				<tocitem text="Variant" image="graphql-icon" target="graphql.variant"/>
 				<tocitem text="Automation" image="graphql-icon" target="graphql.automation"/>
+				<tocitem text="Alerts" image="graphql-icon" target="graphql.alerts"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>
