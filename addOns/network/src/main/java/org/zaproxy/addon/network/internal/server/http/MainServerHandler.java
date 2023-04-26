@@ -20,7 +20,6 @@
 package org.zaproxy.addon.network.internal.server.http;
 
 import io.netty.buffer.Unpooled;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -87,9 +86,9 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
     }
 
     private void process(ChannelHandlerContext ctx, HttpMessage msg) {
-        Channel channel = ctx.channel();
-        DefaultHttpMessageHandlerContext handlerContext = new DefaultHttpMessageHandlerContext();
-        handlerContext.setRecursive(channel.attr(ChannelAttributes.RECURSIVE_MESSAGE).get());
+        DefaultHttpMessageHandlerContext handlerContext =
+                new DefaultHttpMessageHandlerContext(
+                        ctx.channel(), RecursiveRequestChecker.getInstance());
 
         if (processMessage(handlerContext, msg) == HandlerResult.CLOSE) {
             close(ctx);
@@ -132,7 +131,7 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
             return result;
         }
 
-        handlerContext.handlingResponse();
+        handlerContext.handlingResponse(msg);
 
         result = notifyMessageHandlers(handlerContext, msg);
         if (result != HandlerResult.CONTINUE) {
@@ -145,6 +144,7 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
     private HandlerResult notifyMessageHandlers(
             DefaultHttpMessageHandlerContext handlerContext, HttpMessage msg) {
         for (HttpMessageHandler handler : pipeline) {
+            handlerContext.updateRecursiveState(msg);
             try {
                 handler.handleMessage(handlerContext, msg);
             } catch (Throwable e) {

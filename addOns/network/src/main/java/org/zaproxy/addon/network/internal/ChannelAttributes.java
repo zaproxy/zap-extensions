@@ -63,13 +63,6 @@ public final class ChannelAttributes {
     public static final AttributeKey<Boolean> PROCESSING_MESSAGE =
             AttributeKey.newInstance("zap.processing-message");
 
-    /**
-     * The attribute that indicates if a message is for the server itself, thus recursive if
-     * forwarded.
-     */
-    public static final AttributeKey<Boolean> RECURSIVE_MESSAGE =
-            AttributeKey.newInstance("zap.recursive-message");
-
     /** The attribute that contains the server configuration that the channel belongs to. */
     public static final AttributeKey<ServerConfig> SERVER_CONFIG =
             AttributeKey.newInstance("zap.server-config");

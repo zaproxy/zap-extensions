@@ -19,49 +19,67 @@
  */
 package org.zaproxy.addon.network.internal.server.http;
 
+import io.netty.channel.Channel;
+import java.util.Objects;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 
 /** Default implementation of {@link HttpMessageHandlerContext}. */
 class DefaultHttpMessageHandlerContext implements HttpMessageHandlerContext {
 
+    private final Channel channel;
+    private final RecursiveRequestChecker recursiveRequestChecker;
     private boolean recursive;
     private boolean fromClient;
     private boolean excluded;
     private boolean overridden;
     private boolean close;
 
-    /** Constructs a {@code DefaultHttpMessageHandlerContext} with default state. */
-    DefaultHttpMessageHandlerContext() {
-        reset();
+    /**
+     * Constructs a {@code DefaultHttpMessageHandlerContext} with default state.
+     *
+     * @param channel the channel.
+     * @param recursiveRequestChecker
+     */
+    DefaultHttpMessageHandlerContext(
+            Channel channel, RecursiveRequestChecker recursiveRequestChecker) {
+        this.channel = Objects.requireNonNull(channel);
+        this.recursiveRequestChecker = Objects.requireNonNull(recursiveRequestChecker);
+        fromClient = true;
     }
 
     /**
-     * Resets the context to default state, ready for the handling of a request.
+     * Changes the state for the handling of a response.
      *
-     * @see #handlingResponse()
+     * <p>It also updates the recursive state, the last time.
+     *
+     * @see #updateRecursiveState(HttpMessage)
      */
-    void reset() {
-        recursive = false;
-        excluded = false;
-        fromClient = true;
-        overridden = false;
-        close = false;
-    }
+    void handlingResponse(HttpMessage msg) {
+        updateRecursiveState(msg);
 
-    /** Changes the state for the handling of a response. */
-    void handlingResponse() {
         fromClient = false;
         overridden = false;
         close = false;
     }
 
+    /**
+     * Updates the recursive state for the given message.
+     *
+     * <p>The recursive state is not updated if already handling the response.
+     *
+     * @param msg the message to check.
+     * @see #handlingResponse(HttpMessage)
+     */
+    void updateRecursiveState(HttpMessage msg) {
+        if (fromClient) {
+            recursive = recursiveRequestChecker.isRecursive(channel, msg);
+        }
+    }
+
     @Override
     public boolean isRecursive() {
         return recursive;
-    }
-
-    void setRecursive(boolean recursive) {
-        this.recursive = recursive;
     }
 
     @Override

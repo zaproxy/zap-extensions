@@ -44,7 +44,6 @@ import org.zaproxy.addon.network.internal.handlers.CommonMessagePropertiesHandle
 import org.zaproxy.addon.network.internal.handlers.ConnectRequestHandler;
 import org.zaproxy.addon.network.internal.handlers.Http2UpgradeHandler;
 import org.zaproxy.addon.network.internal.handlers.ReadTimeoutHandler;
-import org.zaproxy.addon.network.internal.handlers.RecursiveRequestHandler;
 import org.zaproxy.addon.network.internal.handlers.ServerExceptionHandler;
 import org.zaproxy.addon.network.internal.handlers.TlsConfig;
 import org.zaproxy.addon.network.internal.handlers.TlsProtocolHandler;
@@ -59,7 +58,6 @@ import org.zaproxy.addon.network.internal.server.BaseServer;
  *   <li>Read timeout;
  *   <li>Handling of HTTP/1.x CONNECT requests and TLS upgrade;
  *   <li>Handling of TLS ALPN, with support for HTTP/1.1 and HTTP/2;
- *   <li>Recursive check;
  *   <li>Exception handling;
  * </ul>
  */
@@ -145,7 +143,6 @@ public class HttpServer extends BaseServer {
                 .addLast(CommonMessagePropertiesHandler.getInstance())
                 .addLast(Http2UpgradeHandler.getInstance())
                 .addLast("http.connect", ConnectRequestHandler.getInstance())
-                .addLast("http.recursive", RecursiveRequestHandler.getInstance())
                 .addLast(mainHandlerExecutor, "http.main-handler", handler.get())
                 .addLast("exception", new ServerExceptionHandler());
     }
