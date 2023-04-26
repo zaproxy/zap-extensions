@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support for dynamically added auto-detect authentication.
 - Support for dynamically added auto-detect session management.
+- Show job time taken in panel and output.
 
 ### Fixed
 - Correct file path resolution with environment variables.
