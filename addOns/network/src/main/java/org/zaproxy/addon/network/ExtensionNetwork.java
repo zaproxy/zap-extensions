@@ -447,10 +447,10 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         List<HttpMessageHandler> handlers =
                 Arrays.asList(
                         ConnectReceivedHandler.getSetAndOverrideInstance(),
-                        CloseOnRecursiveRequestHandler.getInstance(),
                         RemoveAcceptEncodingHandler.getEnabledInstance(),
                         DecodeResponseHandler.getEnabledInstance(),
                         handler,
+                        CloseOnRecursiveRequestHandler.getInstance(),
                         new HttpSenderHandler(httpSender));
         return createHttpServer(
                 () ->

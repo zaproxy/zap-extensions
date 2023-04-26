@@ -187,7 +187,6 @@ public class BaseServer implements Server {
             ch.attr(ChannelAttributes.REMOTE_ADDRESS).set(ch.remoteAddress());
             ch.attr(ChannelAttributes.TLS_UPGRADED).set(Boolean.FALSE);
             ch.attr(ChannelAttributes.PROCESSING_MESSAGE).set(Boolean.FALSE);
-            ch.attr(ChannelAttributes.RECURSIVE_MESSAGE).set(Boolean.FALSE);
 
             ch.pipeline().addLast(new ChannelGroupHandler(allChannels));
 

@@ -109,8 +109,8 @@ public class TestHttpServer extends HttpServer {
 
         if (rawHandler != null) {
             ch.pipeline()
-                    .addAfter(
-                            "http.recursive",
+                    .addBefore(
+                            "http.main-handler",
                             "raw.handler",
                             new SimpleChannelInboundHandler<HttpMessage>() {
 

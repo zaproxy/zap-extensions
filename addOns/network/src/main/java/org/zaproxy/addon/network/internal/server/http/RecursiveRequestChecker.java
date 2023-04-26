@@ -17,16 +17,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.network.internal.handlers;
+package org.zaproxy.addon.network.internal.server.http;
 
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelHandler.Sharable;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.Arrays;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,26 +36,23 @@ import org.zaproxy.addon.network.internal.ChannelAttributes;
 import org.zaproxy.addon.network.internal.server.ServerConfig;
 
 /**
- * A handler that checks if an HTTP request is a request to the server itself, thus recursive if
+ * Allows to check if an HTTP request is a request to the server itself, thus recursive if
  * forwarded.
- *
- * <p>Sets the attribute {@link ChannelAttributes#RECURSIVE_MESSAGE} accordingly.
  *
  * @see #getInstance()
  */
-@Sharable
-public class RecursiveRequestHandler extends SimpleChannelInboundHandler<HttpMessage> {
+public class RecursiveRequestChecker {
 
-    private static final Logger LOGGER = LogManager.getLogger(RecursiveRequestHandler.class);
+    private static final Logger LOGGER = LogManager.getLogger(RecursiveRequestChecker.class);
 
-    private static final RecursiveRequestHandler INSTANCE = new RecursiveRequestHandler();
+    private static final RecursiveRequestChecker INSTANCE = new RecursiveRequestChecker();
 
     /**
-     * Gets the instance of this handler.
+     * Gets the instance of this checker.
      *
      * @return the instance, never {@code null}.
      */
-    public static RecursiveRequestHandler getInstance() {
+    public static RecursiveRequestChecker getInstance() {
         return INSTANCE;
     }
 
@@ -71,28 +66,22 @@ public class RecursiveRequestHandler extends SimpleChannelInboundHandler<HttpMes
      */
     private static AwsCandidateHarvester awsCandidateHarvester;
 
-    @Override
-    public boolean isSharable() {
-        return true;
-    }
-
-    @Override
-    public void channelRead0(ChannelHandlerContext ctx, HttpMessage msg) throws Exception {
-        if (msg.getUserObject() instanceof Exception) {
-            throw (Exception) msg.getUserObject();
+    /**
+     * Tells whether or not the given {@code msg} served through the given {@given channel} is a
+     * recursive request.
+     *
+     * @param channel the channel where the message is being transmitted.
+     * @param msg the message to check
+     * @return {@code true} if it is a request to the server itself, {@code false} otherwise.
+     */
+    public boolean isRecursive(Channel channel, HttpMessage msg) {
+        if (HttpRequestHeader.CONNECT.equals(msg.getRequestHeader().getMethod())) {
+            return false;
         }
 
-        Channel channel = ctx.channel();
-        boolean recursive = false;
-        if (!HttpRequestHeader.CONNECT.equals(msg.getRequestHeader().getMethod())) {
-            ServerConfig serverConfig = channel.attr(ChannelAttributes.SERVER_CONFIG).get();
-            InetSocketAddress localInetAddress =
-                    channel.attr(ChannelAttributes.LOCAL_ADDRESS).get();
-            recursive = isRecursive(serverConfig, localInetAddress, msg.getRequestHeader());
-        }
-        channel.attr(ChannelAttributes.RECURSIVE_MESSAGE).set(recursive);
-
-        ctx.fireChannelRead(msg);
+        ServerConfig serverConfig = channel.attr(ChannelAttributes.SERVER_CONFIG).get();
+        InetSocketAddress localInetAddress = channel.attr(ChannelAttributes.LOCAL_ADDRESS).get();
+        return isRecursive(serverConfig, localInetAddress, msg.getRequestHeader());
     }
 
     /**
@@ -127,8 +116,10 @@ public class RecursiveRequestHandler extends SimpleChannelInboundHandler<HttpMes
                             localInetAddress.getAddress())) {
                 return true;
             }
+        } catch (UnknownHostException e) {
+            LOGGER.debug("Failed to resolve the domain: {}", header.getHostName(), e);
         } catch (Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            LOGGER.error("An error occurred while checking if recursive request.", e);
         }
         return false;
     }

@@ -22,54 +22,84 @@ package org.zaproxy.addon.network.internal.server.http;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
+import io.netty.channel.Channel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.parosproxy.paros.network.HttpMessage;
 
 /** Unit test for {@link DefaultHttpMessageHandlerContext}. */
 class DefaultHttpMessageHandlerContextUnitTest {
 
     private DefaultHttpMessageHandlerContext ctx;
 
+    private Channel channel;
+    private RecursiveRequestChecker recursiveRequestChecker;
+
     @BeforeEach
     void setUp() {
-        ctx = new DefaultHttpMessageHandlerContext();
+        channel = mock(Channel.class);
+        recursiveRequestChecker = mock(RecursiveRequestChecker.class);
+
+        ctx = new DefaultHttpMessageHandlerContext(channel, recursiveRequestChecker);
     }
 
     @Test
-    void shouldHaveExceptedStatByDefault() {
-        assertThat(ctx.isRecursive(), is(equalTo(false)));
-        assertThat(ctx.isExcluded(), is(equalTo(false)));
-        assertThat(ctx.isFromClient(), is(equalTo(true)));
-        assertThat(ctx.isOverridden(), is(equalTo(false)));
-        assertThat(ctx.isClose(), is(equalTo(false)));
-    }
-
-    @Test
-    void shouldReset() {
+    void shouldThrowOnNullChannel() {
         // Given
-        ctx.setExcluded(true);
-        ctx.setRecursive(true);
-        ctx.handlingResponse();
-        ctx.overridden();
-        ctx.close();
-        // When
-        ctx.reset();
-        // Then
+        channel = null;
+        // When / Then
+        assertThrows(
+                NullPointerException.class,
+                () -> new DefaultHttpMessageHandlerContext(channel, recursiveRequestChecker));
+    }
+
+    @Test
+    void shouldThrowOnNullRecursiveRequestChecker() {
+        // Given
+        recursiveRequestChecker = null;
+        // When / Then
+        assertThrows(
+                NullPointerException.class,
+                () -> new DefaultHttpMessageHandlerContext(channel, recursiveRequestChecker));
+    }
+
+    @Test
+    void shouldHaveExceptedStateByDefault() {
         assertThat(ctx.isRecursive(), is(equalTo(false)));
         assertThat(ctx.isExcluded(), is(equalTo(false)));
         assertThat(ctx.isFromClient(), is(equalTo(true)));
         assertThat(ctx.isOverridden(), is(equalTo(false)));
         assertThat(ctx.isClose(), is(equalTo(false)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldUpdateRecursiveStateUsingProvidedData(boolean recursive) {
+        // Given
+        HttpMessage msg = mock(HttpMessage.class);
+        given(recursiveRequestChecker.isRecursive(channel, msg)).willReturn(recursive);
+        // When
+        ctx.updateRecursiveState(msg);
+        // Then
+        verify(recursiveRequestChecker).isRecursive(channel, msg);
+        assertThat(ctx.isRecursive(), is(equalTo(recursive)));
     }
 
     @Test
     void shouldHandleResponse() {
         // Given
+        HttpMessage msg = mock(HttpMessage.class);
         ctx.overridden();
         ctx.close();
         // When
-        ctx.handlingResponse();
+        ctx.handlingResponse(msg);
         // Then
         assertThat(ctx.isRecursive(), is(equalTo(false)));
         assertThat(ctx.isExcluded(), is(equalTo(false)));
@@ -78,19 +108,35 @@ class DefaultHttpMessageHandlerContextUnitTest {
         assertThat(ctx.isClose(), is(equalTo(false)));
     }
 
-    @Test
-    void shouldPreserveRecursiveAndExcludedStateOnHandleResponse() {
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldPreserveRecursiveAndExcludedStateOnHandleResponse(boolean recursive) {
         // Given
+        HttpMessage msg = mock(HttpMessage.class);
         ctx.setExcluded(true);
-        ctx.setRecursive(true);
+        given(recursiveRequestChecker.isRecursive(channel, msg)).willReturn(recursive);
         // When
-        ctx.handlingResponse();
+        ctx.handlingResponse(msg);
         // Then
-        assertThat(ctx.isRecursive(), is(equalTo(true)));
+        assertThat(ctx.isRecursive(), is(equalTo(recursive)));
         assertThat(ctx.isExcluded(), is(equalTo(true)));
         assertThat(ctx.isFromClient(), is(equalTo(false)));
         assertThat(ctx.isOverridden(), is(equalTo(false)));
         assertThat(ctx.isClose(), is(equalTo(false)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldIgnoreRecursiveStateUpdateAfterHandlingResponse(boolean recursive) {
+        // Given
+        HttpMessage msg = mock(HttpMessage.class);
+        ctx.setExcluded(true);
+        given(recursiveRequestChecker.isRecursive(channel, msg)).willReturn(recursive, !recursive);
+        ctx.handlingResponse(msg);
+        // When
+        ctx.updateRecursiveState(msg);
+        // Then
+        assertThat(ctx.isRecursive(), is(equalTo(recursive)));
     }
 
     @Test

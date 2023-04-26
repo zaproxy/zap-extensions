@@ -67,6 +67,7 @@ import org.zaproxy.addon.network.internal.cert.ServerCertificateService;
 import org.zaproxy.addon.network.internal.codec.HttpClientCodec;
 import org.zaproxy.addon.network.internal.codec.HttpRequestDecoder;
 import org.zaproxy.addon.network.internal.codec.HttpResponseEncoder;
+import org.zaproxy.addon.network.internal.server.ServerConfig;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.addon.network.server.Server;
@@ -79,6 +80,11 @@ class MainServerHandlerUnitTest {
     private static final InetSocketAddress SENDER_ADDRESS =
             new InetSocketAddress("127.0.0.1", 1234);
 
+    private static final int LOCAL_PORT = 8080;
+    private static final InetSocketAddress LOCAL_ADDRESS =
+            new InetSocketAddress("127.0.0.1", LOCAL_PORT);
+
+    private ServerConfig serverConfig;
     private List<Throwable> exceptionsThrown;
 
     private TestHttpMessageHandler handler1;
@@ -87,6 +93,7 @@ class MainServerHandlerUnitTest {
 
     @BeforeEach
     void setUp() {
+        serverConfig = mock(ServerConfig.class);
         exceptionsThrown = new ArrayList<>();
 
         handler1 = new TestHttpMessageHandler();
@@ -112,8 +119,9 @@ class MainServerHandlerUnitTest {
                         });
         channel.attr(ChannelAttributes.TLS_UPGRADED).set(Boolean.FALSE);
         channel.attr(ChannelAttributes.REMOTE_ADDRESS).set(SENDER_ADDRESS);
-        channel.attr(ChannelAttributes.RECURSIVE_MESSAGE).set(Boolean.FALSE);
         channel.attr(ChannelAttributes.PROCESSING_MESSAGE).set(Boolean.FALSE);
+        channel.attr(ChannelAttributes.SERVER_CONFIG).set(serverConfig);
+        channel.attr(ChannelAttributes.LOCAL_ADDRESS).set(LOCAL_ADDRESS);
     }
 
     @Test
@@ -479,10 +487,9 @@ class MainServerHandlerUnitTest {
     }
 
     @Test
-    void shouldNotBeRecursiveIfNotSet() {
+    void shouldNotBeRecursiveIfRequestNotRecursive() {
         // Given
         String request = "GET / HTTP/1.1\r\n\r\n";
-        channel.attr(ChannelAttributes.RECURSIVE_MESSAGE).set(Boolean.FALSE);
         // When
         written(request);
         // Then
@@ -496,10 +503,9 @@ class MainServerHandlerUnitTest {
     }
 
     @Test
-    void shouldBeRecursiveIfSet() {
+    void shouldBeRecursiveIfRequestRecursive() {
         // Given
-        String request = "GET / HTTP/1.1\r\n\r\n";
-        channel.attr(ChannelAttributes.RECURSIVE_MESSAGE).set(Boolean.TRUE);
+        String request = "GET / HTTP/1.1\r\nHost: 127.0.0.1:" + LOCAL_PORT + "\r\n\r\n";
         // When
         written(request);
         // Then
@@ -509,6 +515,53 @@ class MainServerHandlerUnitTest {
         handler1.assertRecursive(1, true);
         handler2.assertCalled(2);
         handler2.assertRecursive(0, true);
+        handler2.assertRecursive(1, true);
+    }
+
+    @Test
+    void shouldNotBeRecursiveAfterRequestRewrittenToNotRecursiveByHandler() {
+        // Given
+        String request = "GET / HTTP/1.1\r\nHost: 127.0.0.1:" + LOCAL_PORT + "\r\n\r\n";
+        handler1.addAction(
+                0,
+                (ctx, msg) -> {
+                    msg.setRequestHeader("GET / HTTP/1.1\r\n\r\n");
+                });
+        // When
+        written(request);
+        // Then
+        assertThat(exceptionsThrown, hasSize(0));
+        handler1.assertCalled(2);
+        handler1.assertRecursive(0, true);
+        handler1.assertRecursive(1, false);
+        handler2.assertCalled(2);
+        handler2.assertRecursive(0, false);
+        handler2.assertRecursive(1, false);
+    }
+
+    @Test
+    void shouldBeRecursiveAfterRequestRewrittenToRecursiveByHandler() {
+        // Given
+        String request = "GET / HTTP/1.1\r\nHost: 127.0.0.1:" + LOCAL_PORT + "\r\n\r\n";
+        handler1.addAction(
+                0,
+                (ctx, msg) -> {
+                    msg.setRequestHeader("GET / HTTP/1.1\r\n\r\n");
+                });
+        handler2.addAction(
+                0,
+                (ctx, msg) -> {
+                    msg.setRequestHeader(request);
+                });
+        // When
+        written(request);
+        // Then
+        assertThat(exceptionsThrown, hasSize(0));
+        handler1.assertCalled(2);
+        handler1.assertRecursive(0, true);
+        handler1.assertRecursive(1, true);
+        handler2.assertCalled(2);
+        handler2.assertRecursive(0, false);
         handler2.assertRecursive(1, true);
     }
 
