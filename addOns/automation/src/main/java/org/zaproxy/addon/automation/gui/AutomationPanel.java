@@ -763,6 +763,10 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
         return plan.getJob(jobId);
     }
 
+    public void updateJob(AutomationJob job) {
+        getTreeModel().jobChanged(job);
+    }
+
     private void updateJob(Event event) {
         AutomationJob job = this.getJob(event);
         if (job != null) {

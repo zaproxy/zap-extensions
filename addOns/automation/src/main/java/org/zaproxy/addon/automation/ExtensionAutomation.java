@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+import javax.swing.Timer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
@@ -49,6 +50,7 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpHeader;
+import org.parosproxy.paros.view.View;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.gui.AutomationPanel;
 import org.zaproxy.addon.automation.gui.OptionsPanel;
@@ -355,7 +357,17 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
             progress.info(Constant.messages.getString("automation.info.jobstart", job.getType()));
             job.setStatus(AutomationJob.Status.RUNNING);
             AutomationEventPublisher.publishEvent(AutomationEventPublisher.JOB_STARTED, job, null);
+            job.setTimeStarted();
+            Timer timer = null;
+            if (View.isInitialised()) {
+                timer = new Timer(1000, e -> getAutomationPanel().updateJob(job));
+                timer.start();
+            }
             job.runJob(env, progress);
+            job.setTimeFinished();
+            if (timer != null) {
+                timer.stop();
+            }
             Stats.incCounter(TOTAL_JOBS_RUN_STATS);
             Stats.incCounter(JOBS_RUN_STATS_PREFIX + job.getType() + JOBS_RUN_STATS_POSTFIX);
             job.logTestsToProgress(progress);
@@ -364,7 +376,9 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                     AutomationEventPublisher.JOB_FINISHED,
                     job,
                     job.getPlan().getProgress().getJobResults(job).toMap());
-            progress.info(Constant.messages.getString("automation.info.jobend", job.getType()));
+            progress.info(
+                    Constant.messages.getString(
+                            "automation.info.jobend", job.getType(), job.getFormattedTimeTaken()));
             progress.addRunJob(job);
             if (env.isTimeToQuit()) {
                 break;

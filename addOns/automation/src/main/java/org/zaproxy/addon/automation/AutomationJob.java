@@ -29,6 +29,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -59,6 +60,8 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
     private final List<AbstractAutomationTest> tests = new ArrayList<>();
     private Map<?, ?> jobData;
     private AutomationPlan plan;
+    private long timeStarted;
+    private long timeFinished;
 
     public enum Order {
         RUN_FIRST,
@@ -727,6 +730,41 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
             }
         }
         return user;
+    }
+
+    public long getTimeStarted() {
+        return timeStarted;
+    }
+
+    public void setTimeStarted() {
+        this.timeStarted = System.currentTimeMillis();
+        this.timeFinished = 0;
+    }
+
+    public long getTimeFinished() {
+        return timeFinished;
+    }
+
+    public void setTimeFinished() {
+        this.timeFinished = System.currentTimeMillis();
+    }
+
+    public long getTimeTaken() {
+        if (timeStarted > 0) {
+            if (timeFinished > 0) {
+                return timeFinished - timeStarted;
+            }
+            return System.currentTimeMillis() - timeStarted;
+        }
+        return -1;
+    }
+
+    public String getFormattedTimeTaken() {
+        long t = getTimeTaken();
+        if (t < 0) {
+            return "";
+        }
+        return DurationFormatUtils.formatDuration(t, "HH:mm:ss");
     }
 
     protected void sleep(long millis) {

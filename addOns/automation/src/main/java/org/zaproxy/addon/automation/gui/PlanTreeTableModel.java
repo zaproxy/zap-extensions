@@ -47,15 +47,17 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
 
     protected static final int HIERARCHY_INDEX = 0;
     protected static final int STATUS_INDEX = 1;
-    protected static final int TYPE_INDEX = 2;
-    protected static final int NAME_INDEX = 3;
-    protected static final int INFO_INDEX = 4;
+    protected static final int TIME_INDEX = 2;
+    protected static final int TYPE_INDEX = 3;
+    protected static final int NAME_INDEX = 4;
+    protected static final int INFO_INDEX = 5;
 
     private static final String INDENT = "    ";
 
     private static final String[] COLUMN_NAMES = {
         "", // The tree control
         Constant.messages.getString("automation.panel.table.header.status"),
+        Constant.messages.getString("automation.panel.table.header.time"),
         Constant.messages.getString("automation.panel.table.header.type"),
         Constant.messages.getString("automation.panel.table.header.name"),
         Constant.messages.getString("automation.panel.table.header.info")
@@ -124,6 +126,8 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
                     }
                 case NAME_INDEX:
                     return Constant.messages.getString("automation.panel.table.env.name");
+                case TIME_INDEX:
+                    return "";
                 case TYPE_INDEX:
                     return "env";
                 case INFO_INDEX:
@@ -173,6 +177,8 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
                     return null;
                 case NAME_INDEX:
                     return job.getName();
+                case TIME_INDEX:
+                    return job.getFormattedTimeTaken();
                 case TYPE_INDEX:
                     return job.getType();
                 case INFO_INDEX:
@@ -211,6 +217,8 @@ public class PlanTreeTableModel extends DefaultTreeModel implements TreeTableMod
                     }
                 case NAME_INDEX:
                     return INDENT + test.getName();
+                case TIME_INDEX:
+                    return "";
                 case TYPE_INDEX:
                     return INDENT
                             + Constant.messages.getString(
