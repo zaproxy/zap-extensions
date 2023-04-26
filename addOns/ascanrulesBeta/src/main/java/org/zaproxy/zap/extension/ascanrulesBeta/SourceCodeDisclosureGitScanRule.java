@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -398,13 +399,7 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
                     // we cannot meaningfully raise an alert on any one file, except perhaps the
                     // file on which the attack was launched.
                     // it's the least worst way of doing it, IMHO.
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setUri(getBaseMsg().getRequestHeader().getURI().toString())
-                            .setOtherInfo(new String(disclosedData))
-                            .setEvidence(getEvidence(filename, gitURIs))
-                            .setMessage(originalMessage)
-                            .raise();
+                    createAlert(disclosedData, filename, gitURIs, originalMessage).raise();
                     return true;
                 }
                 // does not match the extension
@@ -424,5 +419,26 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
                     e);
             return false;
         }
+    }
+
+    private AlertBuilder createAlert(byte[] disclosedData, String filename, String gitURIs, HttpMessage originalMessage) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setUri(getBaseMsg().getRequestHeader().getURI().toString())
+                .setOtherInfo(new String(disclosedData))
+                .setEvidence(getEvidence(filename, gitURIs))
+                .setMessage(originalMessage)
+                .setRisk(getRisk());
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                createAlert(
+                    "disclosedData example".getBytes(),
+                    "exampleFile",
+                    "",
+                    new HttpMessage()
+                            ).build());
     }
 }
