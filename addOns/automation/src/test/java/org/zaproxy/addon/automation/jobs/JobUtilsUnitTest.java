@@ -323,6 +323,20 @@ class JobUtilsUnitTest {
     }
 
     @Test
+    void shouldReturnFileFromFullPathWithVarsAndFilePlan() throws IOException {
+        // Given
+        String path = "${var1}/to/${var2}";
+        AutomationPlan plan = new AutomationPlan();
+        plan.setFile(new File("/full/path/dir/plan"));
+        plan.getEnv().getData().getVars().put("var1", "/full/path");
+        plan.getEnv().getData().getVars().put("var2", "file");
+        // When
+        File f = JobUtils.getFile(path, plan);
+        // Then
+        assertThat(f.getCanonicalPath(), is("/full/path/to/file"));
+    }
+
+    @Test
     void shouldReturnFileFromRelativePath() throws IOException {
         // Given
         String path = "../relative/path/to/file";
