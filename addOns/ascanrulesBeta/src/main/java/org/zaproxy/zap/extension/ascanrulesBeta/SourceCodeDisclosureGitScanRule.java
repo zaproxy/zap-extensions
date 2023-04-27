@@ -399,7 +399,13 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
                     // we cannot meaningfully raise an alert on any one file, except perhaps the
                     // file on which the attack was launched.
                     // it's the least worst way of doing it, IMHO.
-                    createAlert(disclosedData, filename, gitURIs, originalMessage).raise();
+                    createAlert(
+                                    disclosedData,
+                                    filename,
+                                    gitURIs,
+                                    originalMessage,
+                                    getBaseMsg().getRequestHeader().getURI().toString())
+                            .raise();
                     return true;
                 }
                 // does not match the extension
@@ -421,10 +427,15 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
         }
     }
 
-    private AlertBuilder createAlert(byte[] disclosedData, String filename, String gitURIs, HttpMessage originalMessage) {
+    private AlertBuilder createAlert(
+            byte[] disclosedData,
+            String filename,
+            String gitURIs,
+            HttpMessage originalMessage,
+            String uri) {
         return newAlert()
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setUri(getBaseMsg().getRequestHeader().getURI().toString())
+                .setUri(uri)
                 .setOtherInfo(new String(disclosedData))
                 .setEvidence(getEvidence(filename, gitURIs))
                 .setMessage(originalMessage)
@@ -435,10 +446,11 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
     public List<Alert> getExampleAlerts() {
         return List.of(
                 createAlert(
-                    "disclosedData example".getBytes(),
-                    "exampleFile",
-                    "",
-                    new HttpMessage()
-                            ).build());
+                                "disclosedData example".getBytes(),
+                                "exampleFile",
+                                "",
+                                new HttpMessage(),
+                                "")
+                        .build());
     }
 }
