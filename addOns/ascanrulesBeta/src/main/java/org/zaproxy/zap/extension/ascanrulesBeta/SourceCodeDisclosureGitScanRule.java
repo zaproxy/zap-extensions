@@ -400,7 +400,7 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
                     // file on which the attack was launched.
                     // it's the least worst way of doing it, IMHO.
                     createAlert(
-                                    disclosedData,
+                                    disclosedData.toString(),
                                     filename,
                                     gitURIs,
                                     originalMessage,
@@ -428,7 +428,7 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
     }
 
     private AlertBuilder createAlert(
-            byte[] disclosedData,
+            String disclosedData,
             String filename,
             String gitURIs,
             HttpMessage originalMessage,
@@ -436,21 +436,20 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
         return newAlert()
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setUri(uri)
-                .setOtherInfo(new String(disclosedData))
+                .setOtherInfo(disclosedData)
                 .setEvidence(getEvidence(filename, gitURIs))
-                .setMessage(originalMessage)
-                .setRisk(getRisk());
+                .setMessage(originalMessage);
     }
 
     @Override
     public List<Alert> getExampleAlerts() {
         return List.of(
                 createAlert(
-                                "disclosedData example".getBytes(),
+                                "Example disclosed data.",
                                 "exampleFile",
                                 "",
                                 new HttpMessage(),
-                                "")
+                                "/parentFolder/exampleFile")
                         .build());
     }
 }
