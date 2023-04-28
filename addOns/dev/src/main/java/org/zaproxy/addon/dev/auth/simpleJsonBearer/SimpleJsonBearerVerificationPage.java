@@ -51,13 +51,15 @@ public class SimpleJsonBearerVerificationPage extends TestPage {
         LOGGER.debug("Token: {} user: {}", token, user);
 
         JSONObject response = new JSONObject();
+        String status;
         if (user != null) {
             response.put("result", "OK");
-            response.put("user", user);
+            status = TestProxyServer.STATUS_OK;
         } else {
             response.put("result", "FAIL");
+            status = TestProxyServer.STATUS_FORBIDDEN;
         }
-        this.getServer().setJsonResponse(response, msg);
+        this.getServer().setJsonResponse(status, response, msg);
     }
 
     @Override

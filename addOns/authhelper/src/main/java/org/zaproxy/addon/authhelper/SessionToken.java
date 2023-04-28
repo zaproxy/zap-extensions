@@ -19,27 +19,41 @@
  */
 package org.zaproxy.addon.authhelper;
 
+import java.util.Locale;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
+
 public class SessionToken {
 
-    public static final String ENV_TYPE = "env";
-    public static final String HEADER_TYPE = "header";
-    public static final String JSON_TYPE = "json";
-    public static final String SCRIPT_TYPE = "script";
-    public static final String URL_TYPE = "url";
+    public static final String ENV_SOURCE = "env";
+    public static final String HEADER_SOURCE = "header";
+    public static final String JSON_SOURCE = "json";
+    public static final String SCRIPT_SOURCE = "script";
+    public static final String URL_SOURCE = "url";
 
-    private final String type;
+    private static final String BEARER_PREFIX = "bearer";
+
+    private final String source;
     private final String key;
-    private final String value;
+    private String value;
+    private String fullValue;
 
-    public SessionToken(String type, String key, String value) {
+    public SessionToken(String source, String key, String value) {
         super();
-        this.type = type;
+        this.source = source;
         this.key = key;
         this.value = value;
+        this.fullValue = value;
+        if (HEADER_SOURCE.equals(source) && HttpFieldsNames.AUTHORIZATION.equalsIgnoreCase(key)) {
+            int spaceIndex = fullValue.indexOf(" ");
+            if (spaceIndex > 0 && fullValue.toLowerCase(Locale.ROOT).startsWith(BEARER_PREFIX)) {
+                // Cope with "bearer " and "bearer: "
+                this.value = fullValue.substring(spaceIndex + 1);
+            }
+        }
     }
 
-    public String getType() {
-        return type;
+    public String getSource() {
+        return source;
     }
 
     public String getKey() {
@@ -50,7 +64,11 @@ public class SessionToken {
         return value;
     }
 
+    public String getFullValue() {
+        return fullValue;
+    }
+
     public String getToken() {
-        return type + ":" + key;
+        return source + ":" + key;
     }
 }

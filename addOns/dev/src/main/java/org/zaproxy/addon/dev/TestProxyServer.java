@@ -41,6 +41,7 @@ import org.zaproxy.addon.network.server.Server;
 public class TestProxyServer {
 
     public static final String STATUS_OK = "200 OK";
+    public static final String STATUS_FORBIDDEN = "403 Forbidden";
     public static final String STATUS_NOT_FOUND = "404 Not Found";
     public static final String STATUS_REDIRECT = "302 Found";
 
@@ -183,12 +184,17 @@ public class TestProxyServer {
     }
 
     public void setJsonResponse(JSON json, HttpMessage msg) {
+        this.setJsonResponse(STATUS_OK, json, msg);
+    }
+
+    public void setJsonResponse(String responseStatus, JSON json, HttpMessage msg) {
         try {
             String body = json.toString();
             LOGGER.debug("{} returning {}", msg.getRequestHeader().getURI(), body);
             msg.setResponseBody(body);
             msg.setResponseHeader(
-                    getDefaultResponseHeader("application/json", msg.getResponseBody().length()));
+                    getDefaultResponseHeader(
+                            responseStatus, "application/json", msg.getResponseBody().length()));
         } catch (HttpMalformedHeaderException e) {
             LOGGER.error(e.getMessage(), e);
         }

@@ -12,4 +12,5 @@
     <mapID target="authhelper.session-mgmt-id" url="contents/session-mgmt-id.html" />
     <mapID target="authhelper.autodetect-session" url="contents/autodetect-session.html" />
     <mapID target="authhelper.session-header" url="contents/session-header.html" />
+    <mapID target="authhelper.verification-id" url="contents/verification-id.html" />
 </map>

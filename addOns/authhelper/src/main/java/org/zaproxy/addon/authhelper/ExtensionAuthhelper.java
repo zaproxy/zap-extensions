@@ -108,6 +108,7 @@ public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChan
         }
         AuthUtils.disableBrowserAuthentication();
         BrowserBasedAuthenticationMethodType.stopProxies();
+        AuthUtils.clean();
     }
 
     @Override
@@ -234,7 +235,7 @@ public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChan
 
     @Override
     public void sessionChanged(Session session) {
-        AuthUtils.clearSessionTokens();
+        AuthUtils.clean();
     }
 
     @Override

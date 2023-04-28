@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -165,15 +166,15 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                                                     new ArrayList<>(sessionTokens.values()),
                                                     Alert.CONFIDENCE_HIGH);
                                 } else {
-                                    Map<String, SessionToken> reqSessionTokens =
+                                    Set<SessionToken> reqSessionTokens =
                                             AuthUtils.getRequestSessionTokens(msg);
                                     if (!reqSessionTokens.isEmpty()) {
                                         // The request has at least one auth token we missed - try
                                         // to find one of them
-                                        for (String key : reqSessionTokens.keySet()) {
+                                        for (SessionToken st : reqSessionTokens) {
                                             smReqDetails =
                                                     AuthUtils.findSessionTokenSource(
-                                                            key, firstHrefId);
+                                                            st.getValue(), firstHrefId);
                                             if (smReqDetails != null) {
                                                 authMsg = smReqDetails.getMsg();
                                                 LOGGER.debug(
@@ -330,7 +331,9 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                         }
                     }
                 } finally {
-                    wd.quit();
+                    if (wd != null) {
+                        wd.quit();
+                    }
                 }
 
                 if (authMsg != null) {

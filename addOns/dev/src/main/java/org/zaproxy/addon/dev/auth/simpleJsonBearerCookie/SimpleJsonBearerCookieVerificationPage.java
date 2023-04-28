@@ -60,6 +60,7 @@ public class SimpleJsonBearerCookieVerificationPage extends TestPage {
         LOGGER.debug("Token: {} user: {}", token, user);
 
         JSONObject response = new JSONObject();
+        String status = TestProxyServer.STATUS_FORBIDDEN;
         if (cookie == null) {
             response.put("result", "FAIL (no cookie)");
         } else if (!cookie.equals(token)) {
@@ -67,10 +68,11 @@ public class SimpleJsonBearerCookieVerificationPage extends TestPage {
         } else if (user != null) {
             response.put("result", "OK");
             response.put("user", user);
+            status = TestProxyServer.STATUS_OK;
         } else {
             response.put("result", "FAIL");
         }
-        this.getServer().setJsonResponse(response, msg);
+        this.getServer().setJsonResponse(status, response, msg);
     }
 
     @Override

@@ -79,9 +79,9 @@ class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
         // Given
         String baseString = "Prefix{%token1%}middle{%token2%}Postfix";
         Map<String, SessionToken> map = new HashMap<>();
-        map.put("token1", new SessionToken(SessionToken.ENV_TYPE, "token1", "-value1-"));
-        map.put("token2", new SessionToken(SessionToken.ENV_TYPE, "token2", "-value2-"));
-        map.put("token3", new SessionToken(SessionToken.ENV_TYPE, "token3", "-value3-"));
+        map.put("token1", new SessionToken(SessionToken.ENV_SOURCE, "token1", "-value1-"));
+        map.put("token2", new SessionToken(SessionToken.ENV_SOURCE, "token2", "-value2-"));
+        map.put("token3", new SessionToken(SessionToken.ENV_SOURCE, "token3", "-value3-"));
         // When
         String res = HeaderBasedSessionManagementMethod.replaceTokens(baseString, map);
         // Then
@@ -93,8 +93,8 @@ class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
         // Given
         String baseString = "Prefix{%token1%}middle{%token2%}Postfix";
         Map<String, SessionToken> map = new HashMap<>();
-        map.put("token1", new SessionToken(SessionToken.ENV_TYPE, "token1", "-value1-"));
-        map.put("token3", new SessionToken(SessionToken.ENV_TYPE, "token3", "-value3-"));
+        map.put("token1", new SessionToken(SessionToken.ENV_SOURCE, "token1", "-value1-"));
+        map.put("token3", new SessionToken(SessionToken.ENV_SOURCE, "token3", "-value3-"));
         // When
         String res = HeaderBasedSessionManagementMethod.replaceTokens(baseString, map);
         // Then

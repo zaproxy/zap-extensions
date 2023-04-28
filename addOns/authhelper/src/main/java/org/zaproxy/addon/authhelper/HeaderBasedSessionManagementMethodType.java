@@ -52,6 +52,7 @@ import org.zaproxy.zap.session.WebSession;
 import org.zaproxy.zap.utils.ApiUtils;
 import org.zaproxy.zap.utils.EncodingUtils;
 import org.zaproxy.zap.utils.Pair;
+import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.view.LayoutHelper;
 
 /**
@@ -118,14 +119,14 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
             envVars.forEach(
                     (k, v) ->
                             AuthUtils.addToMap(
-                                    tokens, new SessionToken(SessionToken.ENV_TYPE, k, v)));
+                                    tokens, new SessionToken(SessionToken.ENV_SOURCE, k, v)));
             // Add Global script vars
             ScriptVars.getGlobalVars()
                     .forEach(
                             (k, v) ->
                                     AuthUtils.addToMap(
                                             tokens,
-                                            new SessionToken(SessionToken.SCRIPT_TYPE, k, v)));
+                                            new SessionToken(SessionToken.SCRIPT_SOURCE, k, v)));
 
             List<Pair<String, String>> headers = new ArrayList<>();
             for (Pair<String, String> hc : this.headerConfigs) {
@@ -164,6 +165,7 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
             if (session instanceof HttpHeaderBasedSession) {
                 HttpHeaderBasedSession hbSession = (HttpHeaderBasedSession) session;
                 for (Pair<String, String> header : hbSession.getHeaders()) {
+                    Stats.incCounter("stats.auth.session.set.header");
                     message.getRequestHeader().setHeader(header.first, header.second);
                 }
             }

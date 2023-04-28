@@ -28,6 +28,7 @@ import static org.hamcrest.Matchers.nullValue;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.network.HttpResponseBody;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -52,7 +54,7 @@ class AuthUtilsUnitTest extends TestUtils {
     @BeforeEach
     void setUp() throws Exception {
         mockMessages(new ExtensionAuthhelper());
-        AuthUtils.clearSessionTokens();
+        AuthUtils.clean();
     }
 
     @Test
@@ -160,8 +162,8 @@ class AuthUtilsUnitTest extends TestUtils {
 
         assertThat(tokens.get("header:Authorization"), is(notNullValue()));
         assertThat(
-                tokens.get("header:Authorization").getType(),
-                is(equalTo(SessionToken.HEADER_TYPE)));
+                tokens.get("header:Authorization").getSource(),
+                is(equalTo(SessionToken.HEADER_SOURCE)));
         assertThat(
                 tokens.get("header:Authorization").getKey(), is(equalTo(HttpHeader.AUTHORIZATION)));
     }
@@ -180,7 +182,8 @@ class AuthUtilsUnitTest extends TestUtils {
         // Then
         assertThat(tokens.size(), is(equalTo(1)));
         assertThat(
-                tokens.get("json:auth.accessToken").getType(), is(equalTo(SessionToken.JSON_TYPE)));
+                tokens.get("json:auth.accessToken").getSource(),
+                is(equalTo(SessionToken.JSON_SOURCE)));
         assertThat(tokens.get("json:auth.accessToken").getKey(), is(equalTo("auth.accessToken")));
         assertThat(
                 tokens.get("json:auth.accessToken").getValue(),
@@ -323,8 +326,8 @@ class AuthUtilsUnitTest extends TestUtils {
         msg.getRequestHeader().addHeader(HttpHeader.SET_COOKIE, token2 + "; SameSite=Strict");
         msg.getRequestHeader().addHeader(HttpHeader.AUTHORIZATION, token3);
         List<SessionToken> tokens = new ArrayList<>();
-        tokens.add(new SessionToken(SessionToken.HEADER_TYPE, HttpHeader.AUTHORIZATION, token1));
-        tokens.add(new SessionToken(SessionToken.JSON_TYPE, "set.cookie", token2));
+        tokens.add(new SessionToken(SessionToken.HEADER_SOURCE, HttpHeader.AUTHORIZATION, token1));
+        tokens.add(new SessionToken(SessionToken.JSON_SOURCE, "set.cookie", token2));
 
         // When
         List<Pair<String, String>> headerTokens = AuthUtils.getHeaderTokens(msg, tokens);
@@ -349,7 +352,7 @@ class AuthUtilsUnitTest extends TestUtils {
                         new HttpResponseBody("Response Body"));
 
         // When
-        Map<String, SessionToken> tokens = AuthUtils.getRequestSessionTokens(msg);
+        Set<SessionToken> tokens = AuthUtils.getRequestSessionTokens(msg);
 
         // Then
         assertThat(tokens.size(), is(equalTo(0)));
@@ -369,30 +372,40 @@ class AuthUtilsUnitTest extends TestUtils {
                         new HttpRequestBody("Request Body"),
                         new HttpResponseHeader("HTTP/1.1 200 OK\r\n"),
                         new HttpResponseBody("Response Body"));
-        msg.getRequestHeader().addHeader(HttpHeader.AUTHORIZATION, "Bearer " + token1);
-        msg.getRequestHeader().addHeader(HttpHeader.SET_COOKIE, token2 + "; SameSite=Strict");
-        msg.getRequestHeader().addHeader(HttpHeader.AUTHORIZATION, token3);
+        msg.getRequestHeader().addHeader(HttpFieldsNames.AUTHORIZATION, "Bearer " + token1);
+        msg.getRequestHeader().addHeader(HttpFieldsNames.SET_COOKIE, token2 + "; SameSite=Strict");
+        msg.getRequestHeader().addHeader(HttpFieldsNames.AUTHORIZATION, token3);
 
         // When
-        Map<String, SessionToken> tokens = AuthUtils.getRequestSessionTokens(msg);
+        Set<SessionToken> tokens = AuthUtils.getRequestSessionTokens(msg);
+        SessionToken[] stArray = new SessionToken[tokens.size()];
+        stArray = tokens.toArray(stArray);
 
         // Then
         assertThat(tokens.size(), is(equalTo(2)));
-        assertThat(tokens.containsKey("Bearer " + token1), is(equalTo(true)));
-        assertThat(tokens.get("Bearer " + token1).getType(), is(equalTo(SessionToken.HEADER_TYPE)));
-        assertThat(tokens.get("Bearer " + token1).getValue(), is(equalTo("Bearer " + token1)));
-        assertThat(tokens.get("Bearer " + token1).getToken(), is(equalTo("header:Authorization")));
-        assertThat(tokens.get(token3).getType(), is(equalTo(SessionToken.HEADER_TYPE)));
-        assertThat(tokens.get(token3).getValue(), is(equalTo(token3)));
-        assertThat(tokens.get(token3).getToken(), is(equalTo("header:Authorization")));
-        assertThat(tokens.containsKey(token3), is(equalTo(true)));
+        assertThat(stArray[0].getSource(), is(equalTo(SessionToken.HEADER_SOURCE)));
+        assertThat(stArray[1].getSource(), is(equalTo(SessionToken.HEADER_SOURCE)));
+        assertThat(stArray[0].getToken(), is(equalTo("header:Authorization")));
+        assertThat(stArray[1].getToken(), is(equalTo("header:Authorization")));
+        // Can't guarantee the order of a set
+        if (stArray[0].getValue().equals(token1)) {
+            assertThat(stArray[1].getValue(), is(equalTo(token3)));
+            assertThat(stArray[0].getFullValue(), is(equalTo("Bearer " + token1)));
+            assertThat(stArray[1].getFullValue(), is(equalTo(token3)));
+
+        } else {
+            assertThat(stArray[0].getValue(), is(equalTo(token3)));
+            assertThat(stArray[1].getValue(), is(equalTo(token1)));
+            assertThat(stArray[0].getFullValue(), is(equalTo(token3)));
+            assertThat(stArray[1].getFullValue(), is(equalTo("Bearer " + token1)));
+        }
     }
 
     @Test
     void shouldReturnNoSessionToken() throws Exception {
         // Given
         AuthUtils.recordSessionToken(
-                new SessionToken(SessionToken.HEADER_TYPE, HttpHeader.AUTHORIZATION, "456"));
+                new SessionToken(SessionToken.HEADER_SOURCE, HttpHeader.AUTHORIZATION, "456"));
         // When
         SessionToken st = AuthUtils.getSessionToken("123");
         // Then
@@ -402,9 +415,12 @@ class AuthUtilsUnitTest extends TestUtils {
     @Test
     void shouldReturnSessionToken() throws Exception {
         // Given
-        AuthUtils.recordSessionToken(new SessionToken(SessionToken.HEADER_TYPE, "Header1", "123"));
-        AuthUtils.recordSessionToken(new SessionToken(SessionToken.HEADER_TYPE, "Header2", "456"));
-        AuthUtils.recordSessionToken(new SessionToken(SessionToken.HEADER_TYPE, "Header3", "789"));
+        AuthUtils.recordSessionToken(
+                new SessionToken(SessionToken.HEADER_SOURCE, "Header1", "123"));
+        AuthUtils.recordSessionToken(
+                new SessionToken(SessionToken.HEADER_SOURCE, "Header2", "456"));
+        AuthUtils.recordSessionToken(
+                new SessionToken(SessionToken.HEADER_SOURCE, "Header3", "789"));
         // When
         SessionToken st = AuthUtils.getSessionToken("789");
         // Then
@@ -417,9 +433,12 @@ class AuthUtilsUnitTest extends TestUtils {
     @Test
     void shouldRemoveSessionToken() throws Exception {
         // Given
-        AuthUtils.recordSessionToken(new SessionToken(SessionToken.HEADER_TYPE, "Header1", "123"));
-        AuthUtils.recordSessionToken(new SessionToken(SessionToken.HEADER_TYPE, "Header2", "456"));
-        AuthUtils.recordSessionToken(new SessionToken(SessionToken.HEADER_TYPE, "Header3", "789"));
+        AuthUtils.recordSessionToken(
+                new SessionToken(SessionToken.HEADER_SOURCE, "Header1", "123"));
+        AuthUtils.recordSessionToken(
+                new SessionToken(SessionToken.HEADER_SOURCE, "Header2", "456"));
+        AuthUtils.recordSessionToken(
+                new SessionToken(SessionToken.HEADER_SOURCE, "Header3", "789"));
         // When
         SessionToken st1 = AuthUtils.getSessionToken("789");
         AuthUtils.removeSessionToken(st1);

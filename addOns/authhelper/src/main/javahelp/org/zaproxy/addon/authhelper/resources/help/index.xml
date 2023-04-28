@@ -12,4 +12,5 @@
 	<indexitem text="Session Management Identification" target="authhelper.session-mgmt-id" />
 	<indexitem text="Auto-Detect Session Management" target="authhelper.autodetect-session" />
 	<indexitem text="Header Based Session Management" target="authhelper.session-header" />
+	<indexitem text="Verification Identification" target="authhelper.verification-id" />
 </index>

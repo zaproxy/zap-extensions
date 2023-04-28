@@ -22,11 +22,15 @@ package org.zaproxy.addon.authhelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import net.sf.json.JSONArray;
@@ -34,6 +38,7 @@ import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,7 +46,6 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.Extension;
@@ -75,7 +79,6 @@ public class AuthUtils {
     public static final String[] HEADERS = {HttpHeader.AUTHORIZATION};
     public static final String[] JSON_IDS = {"accesstoken", "token"};
 
-    private static final String BEARER_PREFIX = "bearer";
     private static int MAX_NUM_RECORDS_TO_CHECK = 200;
 
     public static final int TIME_TO_SLEEP_IN_MSECS = 100;
@@ -84,9 +87,23 @@ public class AuthUtils {
 
     private static AuthenticationBrowserHook browserHook;
 
+    private static ExecutorService executorService;
+
     private static long timeToWaitMs = TimeUnit.SECONDS.toMillis(5);
 
+    /**
+     * These are session tokens that have been seen in responses but not yet seen in use. When they
+     * are seen in use then they are removed.
+     */
     private static Map<String, SessionToken> knownTokenMap = new HashMap<>();
+
+    /**
+     * The best verification request we have found for a context. There will only be a verification
+     * request recorded if the user has indicated that they want ZAP to auto-detect one by: setting
+     * session management to auto-detect, setting the checking strategy to "poll" but not specified
+     * a URL.
+     */
+    private static Map<Integer, VerificationRequestDetails> contextVerifMap = new HashMap<>();
 
     public static long getTimeToWaitMs() {
         return timeToWaitMs;
@@ -273,13 +290,13 @@ public class AuthUtils {
                 .forEach(
                         h -> {
                             for (String v : msg.getResponseHeader().getHeaderValues(h)) {
-                                addToMap(map, new SessionToken(SessionToken.HEADER_TYPE, h, v));
+                                addToMap(map, new SessionToken(SessionToken.HEADER_SOURCE, h, v));
                             }
                         });
 
-        if (msg.getResponseHeader().isJson()) {
+        String responseData = msg.getResponseBody().toString();
+        if (msg.getResponseHeader().isJson() && StringUtils.isNotBlank(responseData)) {
             Map<String, SessionToken> tokens = new HashMap<>();
-            String responseData = msg.getResponseBody().toString();
             try {
                 try {
                     AuthUtils.extractJsonTokens(JSONObject.fromObject(responseData), "", tokens);
@@ -296,7 +313,7 @@ public class AuthUtils {
                     }
                 }
             } catch (JSONException e) {
-                LOGGER.warn(
+                LOGGER.debug(
                         "Unable to parse authentication response body from {} as JSON: {} ",
                         msg.getRequestHeader().getURI().toString(),
                         responseData,
@@ -344,19 +361,20 @@ public class AuthUtils {
 
     protected static Map<String, SessionToken> getAllTokens(HttpMessage msg) {
         Map<String, SessionToken> tokens = new HashMap<>();
-        if (msg.getResponseHeader().isJson()) {
+        String responseData = msg.getResponseBody().toString();
+        if (msg.getResponseHeader().isJson() && StringUtils.isNotBlank(responseData)) {
             // Extract json response data
-            String responseData = msg.getResponseBody().toString();
             try {
-                AuthUtils.extractJsonTokens(JSONObject.fromObject(responseData), "", tokens);
+                try {
+                    AuthUtils.extractJsonTokens(JSONObject.fromObject(responseData), "", tokens);
+                } catch (JSONException e) {
+                    AuthUtils.extractJsonTokens(JSONArray.fromObject(responseData), "", tokens);
+                }
             } catch (JSONException e) {
-                String url = msg.getRequestHeader().getURI().toString();
-                logUserMessage(
-                        Level.ERROR,
-                        Constant.messages.getString(
-                                "authhelper.session.method.header.error.json.parse",
-                                url,
-                                responseData));
+                LOGGER.debug(
+                        "Unable to parse authentication response body from {} as JSON: {}",
+                        msg.getRequestHeader().getURI().toString(),
+                        responseData);
             }
         }
         // Add response headers
@@ -367,7 +385,7 @@ public class AuthUtils {
                                 addToMap(
                                         tokens,
                                         new SessionToken(
-                                                SessionToken.HEADER_TYPE,
+                                                SessionToken.HEADER_SOURCE,
                                                 h.getName(),
                                                 h.getValue())));
 
@@ -378,7 +396,9 @@ public class AuthUtils {
                                 addToMap(
                                         tokens,
                                         new SessionToken(
-                                                SessionToken.URL_TYPE, p.getName(), p.getValue())));
+                                                SessionToken.URL_SOURCE,
+                                                p.getName(),
+                                                p.getValue())));
 
         return tokens;
     }
@@ -392,13 +412,11 @@ public class AuthUtils {
      * @param msg the message containing the request to check
      * @return all of the identified session tokens in the request.
      */
-    public static Map<String, SessionToken> getRequestSessionTokens(HttpMessage msg) {
-        Map<String, SessionToken> map = new HashMap<>();
+    public static Set<SessionToken> getRequestSessionTokens(HttpMessage msg) {
+        Set<SessionToken> map = new HashSet<>();
         List<String> authHeaders = msg.getRequestHeader().getHeaderValues(HttpHeader.AUTHORIZATION);
         for (String header : authHeaders) {
-            map.put(
-                    header,
-                    new SessionToken(SessionToken.HEADER_TYPE, HttpHeader.AUTHORIZATION, header));
+            map.add(new SessionToken(SessionToken.HEADER_SOURCE, HttpHeader.AUTHORIZATION, header));
         }
         return map;
     }
@@ -409,12 +427,6 @@ public class AuthUtils {
 
     static SessionManagementRequestDetails findSessionTokenSource(String token, int firstId) {
         ExtensionHistory extHist = AuthUtils.getExtension(ExtensionHistory.class);
-
-        int spaceIndex = token.indexOf(" ");
-        if (spaceIndex > 0 && token.toLowerCase(Locale.ROOT).startsWith(BEARER_PREFIX)) {
-            // Cope with "bearer " and "bearer: "
-            token = token.substring(spaceIndex + 1);
-        }
         String tokenf = token;
         int lastId = extHist.getLastHistoryId();
         if (firstId == -1) {
@@ -440,7 +452,7 @@ public class AuthUtils {
                             List<SessionToken> tokens = new ArrayList<>();
                             tokens.add(
                                     new SessionToken(
-                                            SessionToken.JSON_TYPE,
+                                            SessionToken.JSON_SOURCE,
                                             es.get().getKey(),
                                             es.get().getValue()));
                             return new SessionManagementRequestDetails(
@@ -473,7 +485,7 @@ public class AuthUtils {
                 extractJsonTokens(oa[i], parent + "[" + i + "]", tokens);
             }
         } else if (obj instanceof String) {
-            addToMap(tokens, new SessionToken(SessionToken.JSON_TYPE, parent, (String) obj));
+            addToMap(tokens, new SessionToken(SessionToken.JSON_SOURCE, parent, (String) obj));
         }
     }
 
@@ -514,8 +526,25 @@ public class AuthUtils {
         }
     }
 
-    public static void clearSessionTokens() {
+    public static void clean() {
         knownTokenMap.clear();
+        contextVerifMap.clear();
+        if (executorService != null) {
+            executorService.shutdown();
+        }
+    }
+
+    public static List<Context> getRelatedContexts(HttpMessage msg) {
+        List<Context> contextList =
+                Model.getSingleton()
+                        .getSession()
+                        .getContextsForUrl(msg.getRequestHeader().getURI().toString());
+        String referer = msg.getRequestHeader().getHeader(HttpHeader.REFERER);
+        if (StringUtils.isNotBlank(referer)) {
+            contextList.addAll(Model.getSingleton().getSession().getContextsForUrl(referer));
+        }
+
+        return contextList;
     }
 
     static User getUser(Context context, String userName) {
@@ -531,6 +560,29 @@ public class AuthUtils {
             throw new IllegalStateException("Failed to find user " + userName);
         }
         return oUser.get();
+    }
+
+    public static VerificationRequestDetails getVerificationDetailsForContext(int contextId) {
+        return contextVerifMap.get(contextId);
+    }
+
+    public static void setVerificationDetailsForContext(
+            int contextId, VerificationRequestDetails details) {
+        contextVerifMap.put(contextId, details);
+    }
+
+    private static synchronized ExecutorService getExecutorService() {
+        if (executorService == null) {
+            executorService = Executors.newSingleThreadExecutor();
+        }
+        return executorService;
+    }
+
+    public static void processVerificationDetails(
+            Context context,
+            VerificationRequestDetails details,
+            VerificationDetectionScanRule rule) {
+        getExecutorService().submit(new VerificationDetectionProcessor(context, details, rule));
     }
 
     static class AuthenticationBrowserHook implements BrowserHook {
