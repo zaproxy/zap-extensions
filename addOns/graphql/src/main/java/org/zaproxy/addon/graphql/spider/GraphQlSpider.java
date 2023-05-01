@@ -43,7 +43,7 @@ public class GraphQlSpider extends SpiderParser {
                             HttpSender.SPIDER_INITIATOR,
                             false);
             parser.addRequesterListener(new HistoryPersister());
-            parser.introspect();
+            parser.introspect(true);
         } catch (Exception e) {
             LOGGER.debug(e.getMessage(), e);
             return false;

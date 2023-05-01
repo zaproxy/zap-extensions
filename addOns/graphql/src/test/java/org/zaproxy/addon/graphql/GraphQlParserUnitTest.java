@@ -19,12 +19,21 @@
  */
 package org.zaproxy.addon.graphql;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.Alert;
+import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.testutils.StaticContentServerHandler;
 import org.zaproxy.zap.testutils.TestUtils;
 
@@ -69,5 +78,24 @@ class GraphQlParserUnitTest extends TestUtils {
         GraphQlParser gqp = new GraphQlParser(endpointUrl);
         // When/Then
         assertThrows(IOException.class, gqp::introspect);
+    }
+
+    @Test
+    void shouldRaiseAlertWhenSpecified() throws Exception {
+        // Given
+        String introspectionResponse =
+                "{\"data\":{\"__schema\":{\"queryType\":{\"name\":\"Root\"},\"types\":[{\"kind\":\"OBJECT\",\"name\":\"Root\",\"fields\":[{\"name\":\"zap\",\"args\":[],\"type\":{\"kind\":\"SCALAR\",\"name\":\"String\"}}]}]}}}";
+        nano.addHandler(new StaticContentServerHandler("/", introspectionResponse));
+        GraphQlParser gqp = new GraphQlParser(endpointUrl);
+        var extAlert = mock(ExtensionAlert.class);
+        Control.getSingleton().getExtensionLoader().addExtension(extAlert);
+        // When
+        gqp.introspect(true);
+        // Then
+        var alert = ArgumentCaptor.forClass(Alert.class);
+        verify(extAlert).alertFound(alert.capture(), any());
+        assertThat(alert.getValue().getPluginId(), is(ExtensionGraphQl.TOOL_ALERT_ID));
+        assertThat(alert.getValue().getAlertRef(), is(ExtensionGraphQl.TOOL_ALERT_ID + "-1"));
+        assertThat(alert.getValue().getName(), is("!graphql.introspection.alert.name!"));
     }
 }
