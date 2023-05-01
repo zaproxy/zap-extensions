@@ -14,10 +14,11 @@ It also uses commonly used URL segments to identify more likely authentication r
 and uses commonly used registration URL segments to ignore registration requests.
 <p>
 The rule will not attempt to identify very unusual authentication requests - automation is one of the end goals so false negatives
-(missing unusual authentication requests) is more desirable than false positives (incorrectly identifying an authentication request). 
+(missing unusual authentication requests) are more desirable than false positives (incorrectly identifying an authentication request). 
 <p>
-If this rule identifies an authentication request that is part of the context you have defined then an informational alert will be raised and the 
-authentication method should be correctly set in the context you have created.<br>
+If this rule identifies an authentication request that is part of the context that you have set to use the
+<a href="autodetect-auth.html">Auto-Detect Authentication Method</a> then this rule will update the context to use the authentication method identified.
+<br>
 If an authentication request is not identified then check to make sure it is made to a site which is included in the context.<br>
 If it is not then add the site to the context and authenticate again via your browser.
 <p>
