@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -398,12 +399,12 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
                     // we cannot meaningfully raise an alert on any one file, except perhaps the
                     // file on which the attack was launched.
                     // it's the least worst way of doing it, IMHO.
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setUri(getBaseMsg().getRequestHeader().getURI().toString())
-                            .setOtherInfo(new String(disclosedData))
-                            .setEvidence(getEvidence(filename, gitURIs))
-                            .setMessage(originalMessage)
+                    createAlert(
+                                    new String(disclosedData),
+                                    filename,
+                                    gitURIs,
+                                    originalMessage,
+                                    getBaseMsg().getRequestHeader().getURI().toString())
                             .raise();
                     return true;
                 }
@@ -424,5 +425,31 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
                     e);
             return false;
         }
+    }
+
+    private AlertBuilder createAlert(
+            String disclosedData,
+            String filename,
+            String gitURIs,
+            HttpMessage originalMessage,
+            String uri) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setUri(uri)
+                .setOtherInfo(disclosedData)
+                .setEvidence(getEvidence(filename, gitURIs))
+                .setMessage(originalMessage);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                createAlert(
+                                "Example disclosed data.",
+                                "exampleFile",
+                                "Example git URIs.",
+                                new HttpMessage(),
+                                "/parentFolder/exampleFile")
+                        .build());
     }
 }

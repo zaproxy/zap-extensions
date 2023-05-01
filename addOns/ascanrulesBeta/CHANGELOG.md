@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 - The Insecure HTTP Method Scan rule now allows PUT/PATCH methods, if they return JSON or XML data in response (Issue 7772).
+- The Source Code Disclosure - Git scan rule now includes example alert functionality for documentation generation purposes (Issue 6119).
 
 ## [45] - 2023-03-03
 ### Changed
