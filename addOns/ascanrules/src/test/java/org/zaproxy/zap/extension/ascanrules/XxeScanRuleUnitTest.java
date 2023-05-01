@@ -47,9 +47,12 @@ import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
+import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
 class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
+
+    private ExtensionOast extensionOast;
 
     @BeforeAll
     static void setUpCallbacks() {
@@ -150,6 +153,14 @@ class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
                         + "    </comment>\n"
                         + "</comments>";
         assertThat(payload, is(expectedPayload));
+    }
+
+    @Test
+    void outOfBandFileInclusionAttackTest() throws HttpMalformedHeaderException, Exception {
+        HttpMessage httpMessageToTest = getHttpMessage("/abc?test=123");
+        rule.init(httpMessageToTest, parent);
+        rule.setAttackStrength(Plugin.AttackStrength.LOW);
+        rule.scan();
     }
 
     @Test
