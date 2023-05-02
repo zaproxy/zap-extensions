@@ -212,6 +212,7 @@ class HttpServerUnitTest {
         // Then
         inOrder.verify(pipeline).remove("timeout");
         inOrder.verify(pipeline).remove("http.decoder");
+        inOrder.verify(pipeline).remove("logging");
         ArgumentCaptor<HttpToHttp2ConnectionHandler> connectionHandlerCaptor =
                 ArgumentCaptor.forClass(HttpToHttp2ConnectionHandler.class);
         inOrder.verify(pipeline)

@@ -24,6 +24,9 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http2.DefaultHttp2Connection;
+import io.netty.handler.codec.http2.Http2FrameLogger;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.EventExecutorGroup;
 import java.io.IOException;
 import java.util.Objects;
@@ -62,6 +65,10 @@ import org.zaproxy.addon.network.internal.server.BaseServer;
  * </ul>
  */
 public class HttpServer extends BaseServer {
+
+    private static final String LOGGER_NAME = "org.zaproxy.addon.network.http";
+
+    private static final String LOGGING_HANDLER_NAME = "logging";
 
     private static final String TIMEOUT_HANDLER_NAME = "timeout";
 
@@ -138,6 +145,7 @@ public class HttpServer extends BaseServer {
                         TIMEOUT_HANDLER_NAME,
                         new ReadTimeoutHandler(ConnectionOptions.DEFAULT_TIMEOUT, TimeUnit.SECONDS))
                 .addLast("tls.upgrade", new TlsProtocolHandler())
+                .addLast(LOGGING_HANDLER_NAME, new LoggingHandler(LOGGER_NAME))
                 .addLast(HTTP_DECODER_HANDLER_NAME, new HttpRequestDecoder())
                 .addLast(HTTP_ENCODER_HANDLER_NAME, HttpResponseEncoder.getInstance())
                 .addLast(CommonMessagePropertiesHandler.getInstance())
@@ -162,12 +170,13 @@ public class HttpServer extends BaseServer {
                 ChannelPipeline pipeline = ctx.pipeline();
                 pipeline.remove(TIMEOUT_HANDLER_NAME);
                 pipeline.remove(HTTP_DECODER_HANDLER_NAME);
+                pipeline.remove(LOGGING_HANDLER_NAME);
                 pipeline.replace(
                         HTTP_ENCODER_HANDLER_NAME,
                         "http2.codec",
                         HttpToHttp2ConnectionHandler.create(
                                 new InboundHttp2ToHttpAdapter(connection),
-                                null,
+                                new Http2FrameLogger(LogLevel.DEBUG, LOGGER_NAME),
                                 connection,
                                 tlsUpgraded ? HttpHeader.HTTPS : HttpHeader.HTTP));
                 break;
