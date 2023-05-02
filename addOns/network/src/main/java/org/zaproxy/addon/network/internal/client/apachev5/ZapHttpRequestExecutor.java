@@ -22,6 +22,7 @@ package org.zaproxy.addon.network.internal.client.apachev5;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Locale;
+import org.apache.hc.client5.http.classic.ExecRuntime;
 import org.apache.hc.client5.http.io.ManagedHttpClientConnection;
 import org.apache.hc.client5.http.protocol.HttpClientContext;
 import org.apache.hc.core5.http.ClassicHttpRequest;
@@ -50,6 +51,9 @@ public class ZapHttpRequestExecutor extends HttpRequestExecutor {
     public static final String CONNECTION = "zap.connection";
     public static final String CONNECTION_SOCKET = "zap.connection.socket";
     public static final String CONNECTION_INPUT_STREAM = "zap.connection.inputstream";
+
+    public static final String EXEC_RUNTIME = "zap.exec.runtime";
+    public static final String CONNECTION_STREAM = "zap.connection.stream";
 
     public ZapHttpRequestExecutor() {
         super(DEFAULT_WAIT_FOR_CONTINUE, null, null);
@@ -89,10 +93,15 @@ public class ZapHttpRequestExecutor extends HttpRequestExecutor {
                     || isEventStream(response)) {
                 if (conn instanceof ManagedHttpClientConnection) {
                     HttpClientContext clientContext = HttpClientContext.adapt(context);
-                    clientContext.setUserToken("zap.connection.stream");
+                    clientContext.setUserToken(CONNECTION_STREAM);
 
                     Socket socket = ((ManagedHttpClientConnection) conn).getSocket();
-                    context.setAttribute(CONNECTION_SOCKET, socket);
+                    context.setAttribute(
+                            CONNECTION_SOCKET,
+                            new SocketDelegate(
+                                    socket,
+                                    ((ExecRuntime) context.getAttribute(EXEC_RUNTIME))
+                                            ::discardEndpoint));
 
                     ClassicHttpResponse r =
                             DefaultClassicHttpResponseFactory.INSTANCE.newHttpResponse(200);

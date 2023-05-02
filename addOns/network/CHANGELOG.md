@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Do not pass-through requests to the local proxies themselves (e.g. ZAP domain, aliases).
 - Correctly handle concurrent requests (Issue 7838).
 - Close connection on recursive request after notifying all handlers to still allow custom local proxies to serve or rewrite the request.
+- Ensure WebSocket and SSE connections are not incorrectly reused (Issue 7730).
 
 ## [0.7.0] - 2023-04-04
 ### Changed
