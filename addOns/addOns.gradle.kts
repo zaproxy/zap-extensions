@@ -20,6 +20,7 @@ plugins {
     jacoco
     id("org.rm3l.datanucleus-gradle-plugin") version "1.7.0" apply false
     id("org.zaproxy.add-on") version "0.8.0" apply false
+    id("org.zaproxy.common") version "0.1.0" apply false
     id("org.zaproxy.crowdin") version "0.3.1" apply false
     id("me.champeau.gradle.japicmp") version "0.4.1" apply false
 }
@@ -92,6 +93,7 @@ subprojects {
     apply(plugin = "jacoco")
     apply(plugin = "org.rm3l.datanucleus-gradle-plugin")
     apply(plugin = "org.zaproxy.add-on")
+    apply(plugin = "org.zaproxy.common")
     if (useCrowdin) {
         apply(plugin = "org.zaproxy.crowdin")
     }
