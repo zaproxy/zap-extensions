@@ -51,7 +51,7 @@ public class ZapPoolingHttpClientConnectionManager extends PoolingHttpClientConn
                 null,
                 connectionFactory);
 
-        setDefaultMaxPerRoute(100);
+        setDefaultMaxPerRoute(1000);
         setMaxTotal(getDefaultMaxPerRoute() * 100);
     }
 }

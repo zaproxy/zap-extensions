@@ -60,9 +60,14 @@ import org.apache.hc.core5.io.ModalCloseable;
 import org.apache.hc.core5.util.Args;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.zaproxy.addon.network.internal.client.apachev5.ZapHttpRequestExecutor;
 
 /**
- * Implementation from {@link InternalHttpClient} but with custom request copy.
+ * Implementation from {@link InternalHttpClient} with the following differences:
+ * <ul>
+ * <li>Custom request copy.
+ * <li>Release of connection back to the pool only if not WebSocket/SSE.
+ * </ul>
  */
 public class ZapInternalHttpClient extends CloseableHttpClient
         implements Configurable {
@@ -153,7 +158,17 @@ public class ZapInternalHttpClient extends CloseableHttpClient
             }
 
             final ExecRuntime execRuntime = new InternalExecRuntime(LOG, connManager, requestExecutor,
-                    request instanceof CancellableDependency ? (CancellableDependency) request : null);
+                    request instanceof CancellableDependency ? (CancellableDependency) request : null) {
+
+                @Override
+                public void releaseEndpoint() {
+                    if (!ZapHttpRequestExecutor.CONNECTION_STREAM.equals(localcontext.getUserToken())) {
+                        super.releaseEndpoint();
+                    }
+                }
+            };
+            localcontext.setAttribute(ZapHttpRequestExecutor.EXEC_RUNTIME, execRuntime);
+
             final ExecChain.Scope scope = new ExecChain.Scope(exchangeId, route, request, execRuntime, localcontext);
             final ClassicHttpResponse response = this.execChain.execute(copy(request), scope);
             return CloseableHttpResponse.adapt(response);
