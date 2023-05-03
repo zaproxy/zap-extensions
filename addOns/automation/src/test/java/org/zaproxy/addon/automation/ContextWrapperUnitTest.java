@@ -1062,7 +1062,7 @@ class ContextWrapperUnitTest {
     }
 
     @Test
-    void shouldLoadVerificationData() {
+    void shouldLoadPollVerificationData() {
         // Given
         String contextStr =
                 "env:\n"
@@ -1192,6 +1192,44 @@ class ContextWrapperUnitTest {
                         .get(0)
                         .getValue(),
                 is("application/json"));
+    }
+
+    @Test
+    void shouldLoadAutoDetectVerificationData() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      authentication:\n"
+                        + "        verification:\n"
+                        + "          method: 'autodetect'\n"
+                        + "";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(env.getContextWrappers().size(), is(equalTo(1)));
+        assertNotNull(env.getContextWrappers().get(0).getData().getAuthentication());
+        assertNotNull(
+                env.getContextWrappers().get(0).getData().getAuthentication().getVerification());
+        assertThat(
+                env.getContextWrappers()
+                        .get(0)
+                        .getData()
+                        .getAuthentication()
+                        .getVerification()
+                        .getMethod(),
+                is(VerificationData.METHOD_AUTO_DETECT));
     }
 
     @Test

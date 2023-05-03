@@ -39,12 +39,14 @@ public class VerificationData extends AutomationData {
     public static final String METHOD_RESPONSE = "response";
     public static final String METHOD_REQUEST = "request";
     public static final String METHOD_POLL = "poll";
+    public static final String METHOD_AUTO_DETECT = "autodetect";
 
     public static final String POLL_UNIT_REQUESTS = "requests";
     public static final String POLL_UNIT_SECONDS = "seconds";
 
     private static List<String> validMethods =
-            Arrays.asList(METHOD_BOTH, METHOD_RESPONSE, METHOD_REQUEST, METHOD_POLL);
+            Arrays.asList(
+                    METHOD_BOTH, METHOD_RESPONSE, METHOD_REQUEST, METHOD_POLL, METHOD_AUTO_DETECT);
 
     private static List<String> validPollUnits =
             Arrays.asList(POLL_UNIT_REQUESTS, POLL_UNIT_SECONDS);
@@ -79,6 +81,11 @@ public class VerificationData extends AutomationData {
                 this.setMethod(METHOD_POLL);
                 break;
         }
+        if ("AUTO_DETECT".equals(authMethod.getAuthCheckingStrategy().name())) {
+            // Available in the latest weeklies and 2.13+
+            this.setMethod(METHOD_AUTO_DETECT);
+        }
+
         if (authMethod.getLoggedInIndicatorPattern() != null) {
             this.setLoggedInRegex(authMethod.getLoggedInIndicatorPattern().pattern());
         }
@@ -183,7 +190,8 @@ public class VerificationData extends AutomationData {
 
     public void initAuthenticationVerification(Context context, AutomationProgress progress) {
         AuthenticationMethod authMethod = context.getAuthenticationMethod();
-        switch (this.getMethod().toLowerCase(Locale.ROOT)) {
+        String planMethod = this.getMethod().toLowerCase(Locale.ROOT);
+        switch (planMethod) {
             case METHOD_BOTH:
                 authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.EACH_REQ_RESP);
                 break;
@@ -198,6 +206,15 @@ public class VerificationData extends AutomationData {
                 authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.POLL_URL);
                 break;
         }
+        if ("autodetect".equals(planMethod)) {
+            // Available in the latest weeklies and 2.13+
+            try {
+                authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.valueOf("AUTO_DETECT"));
+            } catch (Exception e) {
+                // Ignore - not yet supported so will default to "poll"
+            }
+        }
+
         if (POLL_UNIT_REQUESTS.equalsIgnoreCase(this.getPollUnits())) {
             authMethod.setPollFrequencyUnits(AuthPollFrequencyUnits.REQUESTS);
         } else {

@@ -32,6 +32,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.authhelper.HeaderBasedSessionManagementMethodType.HeaderBasedSessionManagementMethod;
+import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.authentication.AuthenticationMethod.AuthCheckingStrategy;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.model.Context;
@@ -121,11 +122,7 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                         context.setSessionManagementMethod(method);
                         Stats.incCounter("stats.auth.configure.session.header");
 
-                        if (AuthCheckingStrategy.POLL_URL.equals(
-                                        context.getAuthenticationMethod().getAuthCheckingStrategy())
-                                && StringUtils.isEmpty(
-                                        context.getAuthenticationMethod().getPollUrl())) {
-                            // Set to poll but no URL - need to detect this too
+                        if (isAutoDetectCheckingStrategy(context.getAuthenticationMethod())) {
                             AuthUtils.setVerificationDetailsForContext(
                                     context.getId(), new VerificationRequestDetails());
                         }
@@ -139,6 +136,18 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                 requestTokens.forEach((st) -> LOGGER.debug("Missed token {}", st.getToken()));
             }
         }
+    }
+
+    /**
+     * Returns true if the authentication strategy is set to "auto detect". Prior to ZAP 2.13 this
+     * was indicated by setting the strategy to "POLL" but with no pollUrl. From 2.13 a new
+     * AUTO_DETECT enum will be available.
+     */
+    protected boolean isAutoDetectCheckingStrategy(AuthenticationMethod authMethod) {
+        String authStrategyName = authMethod.getAuthCheckingStrategy().name();
+        return "AUTO_DETECT".equals(authStrategyName)
+                || (AuthCheckingStrategy.POLL_URL.name().equals(authStrategyName)
+                        && StringUtils.isEmpty(authMethod.getPollUrl()));
     }
 
     protected AlertBuilder getAlert(SessionManagementRequestDetails smDetails) {
