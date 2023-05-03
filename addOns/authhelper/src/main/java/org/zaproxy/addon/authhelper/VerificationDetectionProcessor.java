@@ -28,6 +28,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.authhelper.VerificationRequestDetails.VerificationComparator;
 import org.zaproxy.zap.authentication.AuthenticationMethod;
+import org.zaproxy.zap.authentication.AuthenticationMethod.AuthCheckingStrategy;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.Stats;
 
@@ -114,6 +115,7 @@ public class VerificationDetectionProcessor implements Runnable {
 
                 // Update the context
                 AuthenticationMethod authMethod = context.getAuthenticationMethod();
+                authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.POLL_URL);
                 authMethod.setPollUrl(details.getMsg().getRequestHeader().getURI().toString());
                 authMethod.setLoggedInIndicatorPattern(loggedInIndicator);
                 authMethod.setLoggedOutIndicatorPattern(loggedOutIndicator);
