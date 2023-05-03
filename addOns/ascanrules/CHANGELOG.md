@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [54] - 2023-05-03
 ### Changed
 - Maintenance changes.
 
@@ -404,6 +404,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[54]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v54
 [53]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v53
 [52]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v52
 [51]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v51

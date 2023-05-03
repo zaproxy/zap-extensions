@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [0.15.0] - 2023-05-03
 ### Added
 - An informational alert is raised if a GraphQL endpoint that supports introspection is discovered during spidering.
 
@@ -119,6 +119,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
   - Import a GraphQL Schema
   - Generate Queries from an imported Schema
 
+[0.15.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.15.0
 [0.14.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.14.0
 [0.13.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.13.0
 [0.12.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.12.0
