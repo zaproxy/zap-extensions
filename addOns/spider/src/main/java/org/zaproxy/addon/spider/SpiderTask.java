@@ -52,6 +52,14 @@ import org.zaproxy.addon.spider.parser.SpiderResourceFound;
 /** The SpiderTask representing a spidering task performed during the Spidering process. */
 public class SpiderTask implements Runnable {
 
+    private static final List<String> METHODS_WITHOUT_CONTENT_LENGTH =
+            List.of(
+                    HttpRequestHeader.GET,
+                    HttpRequestHeader.CONNECT,
+                    HttpRequestHeader.DELETE,
+                    HttpRequestHeader.HEAD,
+                    HttpRequestHeader.TRACE);
+
     /** The parent spider. */
     private Spider parent;
 
@@ -113,8 +121,14 @@ public class SpiderTask implements Runnable {
                         resourceFound.getMessage().getRequestHeader().getURI().toString());
             }
             HttpMessage msg = new HttpMessage(requestHeader);
-            if (!resourceFound.getBody().isEmpty()) {
-                msg.getRequestHeader().setContentLength(resourceFound.getBody().length());
+            int bodyLength = resourceFound.getBody().length();
+            String method = resourceFound.getMethod();
+            if (bodyLength == 0
+                    && METHODS_WITHOUT_CONTENT_LENGTH.stream()
+                            .anyMatch(aMethod -> aMethod.equalsIgnoreCase(method))) {
+                msg.getRequestHeader().setHeader(HttpHeader.CONTENT_LENGTH, null);
+            } else {
+                msg.getRequestHeader().setContentLength(bodyLength);
                 msg.setRequestBody(resourceFound.getBody());
             }
             this.reference =
