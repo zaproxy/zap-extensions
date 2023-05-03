@@ -23,6 +23,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.sameInstance;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -149,6 +151,47 @@ class SpiderTaskUnitTest extends TestUtils {
         // Then
         HttpMessage msg = messageWrittenToSession();
         assertThat(msg.getRequestHeader().getVersion(), is(equalTo(httpVersion)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", "foo=bar", "foo=bar&bar=foo"})
+    void shouldAlwaysSetContentLengthResourceFound(String body) throws Exception {
+        // Given
+        URI uri = new URI("http://example.org/foo", true);
+        SpiderResourceFound resourceFound =
+                SpiderResourceFound.builder()
+                        .setMethod(HttpRequestHeader.POST)
+                        .setBody(body)
+                        .setUri(uri.toString())
+                        .build();
+        // When
+        new SpiderTask(parent, resourceFound, uri);
+        // Then
+        HttpMessage msg = messageWrittenToSession();
+        String cl = msg.getRequestHeader().getHeader(HttpHeader.CONTENT_LENGTH);
+        assertNotNull(cl);
+        assertThat(cl, is(equalTo(String.valueOf(body.length()))));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                HttpRequestHeader.GET,
+                // CONNECT isn't written to session
+                HttpRequestHeader.DELETE,
+                HttpRequestHeader.HEAD,
+                HttpRequestHeader.TRACE
+            })
+    void shouldNotSetContentLengthForCertainRequestMethods(String method) throws Exception {
+        // Given
+        URI uri = new URI("http://example.org/ex?foo=bar", true);
+        SpiderResourceFound resourceFound =
+                SpiderResourceFound.builder().setMethod(method).setUri(uri.toString()).build();
+        // When
+        new SpiderTask(parent, resourceFound, uri);
+        // Then
+        HttpMessage msg = messageWrittenToSession();
+        assertNull(msg.getRequestHeader().getHeader(HttpHeader.CONTENT_LENGTH));
     }
 
     private HttpMessage messageWrittenToSession() throws Exception {
