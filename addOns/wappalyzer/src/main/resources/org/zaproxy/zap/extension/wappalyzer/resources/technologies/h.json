@@ -714,6 +714,7 @@
       "SOA": "\\.hetzner\\.com"
     },
     "headers": {
+      "Server": "HeRay",
       "X-Powered-By": "Hetzner"
     },
     "icon": "Hetzner.svg",
@@ -820,7 +821,7 @@
     "cats": [
       25
     ],
-    "description": "Highcharts is a charting library written in pure JavaScript, for adding interactive charts to a website or web application.",
+    "description": "Highcharts is a charting library written in pure JavaScript, for adding interactive charts to a website or web application. Highcharts meets accessibility standards and works with Python, Angular, React, iOS, Android, and more.",
     "html": "<svg[^>]*><desc>Created with Highcharts ([\\d.]*)\\;version:\\1",
     "icon": "Highcharts.svg",
     "js": {
@@ -1007,6 +1008,18 @@
     ],
     "website": "https://www.honeybadger.io"
   },
+  "Hono": {
+    "cats": [
+      18
+    ],
+    "description": "Hono is a small, simple, and ultrafast web framework for the Edge.",
+    "headers": {
+      "X-Powered-By": "Hono"
+    },
+    "icon": "Hono.png",
+    "oss": true,
+    "website": "https://hono.dev"
+  },
   "HostEurope": {
     "cats": [
       88
@@ -1098,6 +1111,24 @@
       "low",
       "recurring"
     ],
+    "website": "https://www.hostinger.com"
+  },
+  "Hostinger Website Builder": {
+    "cats": [
+      51
+    ],
+    "description": "Hostinger Website Builder is a web-based platform that allows users to create and design websites without needing to write code or have extensive technical knowledge.",
+    "icon": "Hostinger.svg",
+    "implies": "Vue.js",
+    "meta": {
+      "generator": "Hostinger Website Builder"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "userapp\\.zyrosite\\.com/",
     "website": "https://www.hostinger.com"
   },
   "Hostiq": {
@@ -1362,6 +1393,24 @@
     "saas": true,
     "scriptSrc": "analytics\\.huberway\\.com/pixel/",
     "website": "https://www.huberway.com/analytics-software"
+  },
+  "Huddle": {
+    "cats": [
+      21
+    ],
+    "description": "Huddle is a digital product agency based in Amsterdam, Netherlands, specialising in developing and designing custom software solutions for startups and enterprises, including e-learning products, community platforms, and mobile applications.",
+    "dom": "link[href*='.thehuddle.nl/']",
+    "icon": "Huddle.svg",
+    "js": {
+      "HuddleEvent": "",
+      "HuddleUser": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.thehuddle.nl"
   },
   "Hugo": {
     "cats": [

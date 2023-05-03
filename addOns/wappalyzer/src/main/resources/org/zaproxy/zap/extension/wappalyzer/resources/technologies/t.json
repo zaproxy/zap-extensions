@@ -643,6 +643,23 @@
     "scriptSrc": "cdn\\.tapcart\\.com/",
     "website": "https://tapcart.com"
   },
+  "Tapfiliate": {
+    "cats": [
+      71
+    ],
+    "description": "Tapfiliate is a cloud-based affiliate marketing software that helps businesses to create, track, and optimise their own affiliate marketing programs.",
+    "icon": "Tapfiliate.svg",
+    "js": {
+      "TapfiliateObject": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.tapfiliate\\.com/",
+    "website": "https://tapfiliate.com"
+  },
   "Target2Sell": {
     "cats": [
       76

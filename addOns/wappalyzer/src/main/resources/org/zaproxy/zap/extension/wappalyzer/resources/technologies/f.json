@@ -415,6 +415,20 @@
     "implies": "PHP",
     "website": "http://fatfreeframework.com"
   },
+  "FatherShops": {
+    "cats": [
+      6
+    ],
+    "description": "FatherShops is an ecommerce platform.",
+    "excludes": "OpenCart",
+    "icon": "FatherShops.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "fathershop/view/theme/fs/",
+    "website": "https://fathershops.com"
+  },
   "Fathom": {
     "cats": [
       10
@@ -723,6 +737,7 @@
       "/(?:([\\d.]+)/)?firebase(?:\\.min)?\\.js\\;version:\\1",
       "/firebasejs/([\\d.]+)/firebase\\;version:\\1"
     ],
+    "scripts": "\\.gstatic\\.com/firebasejs/([\\d\\.]+)/\\;version:\\1",
     "website": "https://firebase.google.com"
   },
   "Fireblade": {
@@ -1091,7 +1106,7 @@
   },
   "Fly.io": {
     "cats": [
-      22
+      62
     ],
     "cookies": {
       "_fly": ""
@@ -1147,6 +1162,22 @@
     "scriptSrc": "/wp-content/plugins/flying-pages/.+\\.js(?:\\?ver=([\\d\\.]+))?\\;version:\\1",
     "website": "https://wordpress.org/plugins/flying-pages/"
   },
+  "FlyingPress": {
+    "cats": [
+      87,
+      92
+    ],
+    "description": "FlyingPress is a WordPress plugin that helps to improve website performance by optimising various aspects of a WordPress site. The plugin offers a range of features, including caching, image optimisation, lazy loading, database optimisation, and more.",
+    "dom": "link[href*='/wp-content/plugins/flying-press/']",
+    "icon": "FlyingPress.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/flying-press/",
+    "website": "https://flying-press.com"
+  },
   "Flyspray": {
     "cats": [
       13
@@ -1198,16 +1229,27 @@
     ],
     "description": "Font Awesome is a font and icon toolkit based on CSS and Less.",
     "dom": {
+      "link[href*='awesome']": {
+        "attributes": {
+          "href": "(?:([\\d\\.]+)/)?(?:css/)?font-awesome(?:\\.min)?\\.css\\;version:\\1"
+        }
+      },
       "link[href*='font-awesome']": {
         "attributes": {
           "href": "/font-awesome/([\\d\\.]+)/css/\\;version:\\1"
         }
+      },
+      "link[href*='fontawesome-free']": {
+        "attributes": {
+          "href": "/fontawesome-free(?:/|-)([\\d\\.]+)?\\;version:\\1"
+        }
+      },
+      "link[href*='kit-pro.fontawesome.com']": {
+        "attributes": {
+          "href": "/kit-pro\\.fontawesome\\.com/releases/v([\\d\\.]+)/\\;version:\\1"
+        }
       }
     },
-    "html": [
-      "<link[^>]* href=[^>]+(?:([\\d.]+)/)?(?:css/)?font-awesome(?:\\.min)?\\.css\\;version:\\1",
-      "<link[^>]* href=[^>]*kit\\-pro\\.fontawesome\\.com/releases/v([0-9.]+)/\\;version:\\1"
-    ],
     "icon": "Font Awesome.svg",
     "js": {
       "FontAwesomeCdnConfig": "",
@@ -1455,6 +1497,21 @@
       "cdn\\.formitable\\.com"
     ],
     "website": "https://formitable.com"
+  },
+  "Formli": {
+    "cats": [
+      110
+    ],
+    "description": "Formli is a web-based form builder service that permits users to produce and personalise online forms for different purposes, including surveys, feedback forms, event registrations, and others.",
+    "icon": "Formli.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "(?:app|cdn)\\.(?:formli|humanagency)\\.(?:com|org)/",
+    "website": "https://formli.com"
   },
   "ForoshGostar": {
     "cats": [
@@ -2160,6 +2217,22 @@
     "saas": true,
     "scriptSrc": "\\.funnelcockpit\\.com/",
     "website": "https://funnelcockpit.com"
+  },
+  "Funnelish": {
+    "cats": [
+      51
+    ],
+    "description": "Funnelish is a software tool that helps businesses create and optimise sales funnels for their websites to increase their conversion rates and revenue. Funnelish page builder is a funnel builder focused on building ecommerce funnels.",
+    "icon": "Funnelish.svg",
+    "js": {
+      "funnelish": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://funnelish.com"
   },
   "Funraise": {
     "cats": [

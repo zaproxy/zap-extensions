@@ -47,12 +47,30 @@
     ],
     "description": "MDBootstrap (Material Design for Bootstrap) is a complete UI package that can be integrated with other frameworks such as Angular, React, Vue, etc. It is used to design a fully responsive and mobile-friendly layout using various components, plugins, animation.",
     "icon": "MDBootstrap.png",
+    "implies": "Bootstrap",
     "js": {
       "mdb.ScrollSpy": ""
     },
     "oss": true,
     "scriptSrc": "(?:/mdbootstrap/([\\d\\.]+)/)?js/mdb\\.min\\.js\\;version:\\1",
     "website": "https://mdbootstrap.com"
+  },
+  "MDBootstrap WP theme": {
+    "cats": [
+      80
+    ],
+    "description": "MDBootstrap WP theme is a WordPress theme built on top of the MDBootstrap front-end UI library. It provides a set of pre-designed layouts, widgets, and components that can be easily customised and integrated into WordPress websites.",
+    "dom": {
+      "link[href*='/wp-content/themes/mdbootstrap']": {
+        "attributes": {
+          "href": "/wp-content/themes/mdbootstrap(?:\\d+)?/.+\\.css(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+        }
+      }
+    },
+    "icon": "MDBootstrap.png",
+    "implies": "MDBootstrap",
+    "requires": "WordPress",
+    "website": "https://mdbgo.com/docs/projects/wordpress/"
   },
   "MDS Brand": {
     "cats": [
@@ -1996,6 +2014,24 @@
     "scriptSrc": "mint/\\?js",
     "website": "https://haveamint.com"
   },
+  "Mintlify": {
+    "cats": [
+      57,
+      4
+    ],
+    "description": "Mintlify is a platform that enables developers to create and maintain documentation for their projects using Markdown format and automatically generate and deploy static websites via a continuous integration and deployment system.",
+    "icon": "Mintlify.svg",
+    "js": {
+      "__NEXT_DATA__.props.pageProps.favicons.browserconfig": "mintlify\\..+\\.amazonaws\\.com"
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://mintlify.com"
+  },
   "Miso": {
     "cats": [
       29,
@@ -2627,6 +2663,20 @@
     "icon": "Moshimo.png",
     "scriptSrc": "\\.moshimo\\.com/af/",
     "website": "https://af.moshimo.com"
+  },
+  "Motherhost": {
+    "cats": [
+      88
+    ],
+    "description": "Motherhost is a web hosting company based in India that offers a range of hosting services, including shared hosting, VPS hosting, dedicated servers, and cloud hosting.",
+    "headers": {
+      "platform": "^motherhost$"
+    },
+    "icon": "Motherhost.svg",
+    "pricing": [
+      "recurring"
+    ],
+    "website": "https://www.motherhost.com"
   },
   "MotoCMS": {
     "cats": [

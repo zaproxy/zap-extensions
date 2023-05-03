@@ -263,8 +263,8 @@
     "icon": "Umbraco.png",
     "implies": "Microsoft ASP.NET",
     "js": {
-      "UC_IMAGE_SERVICE": "",
       "ITEM_INFO_SERVICE": "",
+      "UC_IMAGE_SERVICE": "",
       "UC_ITEM_INFO_SERVICE": "",
       "UC_SETTINGS": "",
       "Umbraco": ""
@@ -479,6 +479,19 @@
     "saas": true,
     "scriptSrc": "www\\.upsellit\\.com/",
     "website": "https://us.upsellit.com"
+  },
+  "UpSolution Zephyr": {
+    "cats": [
+      80
+    ],
+    "description": "Zephyr is a WordPress theme developed by UpSolution, a software development company based in Ukraine that specialises in creating themes and plugins for WordPress.",
+    "icon": "UpSolution.png",
+    "pricing": [
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/Zephyr/.+us\\.theme\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://zephyr.us-themes.com"
   },
   "Upfluence": {
     "cats": [

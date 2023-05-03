@@ -13,6 +13,16 @@
     "requires": "WordPress",
     "website": "http://www.w3-edge.com/wordpress-plugins/w3-total-cache"
   },
+  "W3.CSS": {
+    "cats": [
+      66
+    ],
+    "description": "W3.CSS is a CSS framework developed by the World Wide Web Consortium (W3C), the main international standards organisation for the World Wide Web.",
+    "dom": "link[href*='/w3.css']",
+    "icon": "W3.CSS.svg",
+    "oss": true,
+    "website": "https://www.w3schools.com/w3css/"
+  },
   "W3Counter": {
     "cats": [
       10
@@ -100,6 +110,19 @@
       "recurring"
     ],
     "website": "http://www.whmcs.com"
+  },
+  "WP Automatic": {
+    "cats": [
+      87
+    ],
+    "description": "WP Automatic is a WordPress plugin that automates the process of creating posts on your WordPress site by automatically fetching content from various sources like RSS feeds, Amazon, eBay, ClickBank, and more.",
+    "icon": "WP Automatic.png",
+    "pricing": [
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/wp-automatic/",
+    "website": "https://wpautomatic.com"
   },
   "WP Engine": {
     "cats": [
@@ -482,6 +505,24 @@
     "saas": true,
     "scriptSrc": "getwair\\.com",
     "website": "https://getwair.com"
+  },
+  "Waitlist": {
+    "cats": [
+      5
+    ],
+    "description": "Waitlist is a web-based tool that helps businesses to create a waitlist for their product or service.",
+    "icon": "Waitlist.svg",
+    "js": {
+      "gw_backend_url": "//api\\.getwaitlist\\.com/",
+      "gw_waitlist_name": ""
+    },
+    "pricing": [
+      "freemium",
+      "recurring",
+      "low"
+    ],
+    "saas": true,
+    "website": "https://www.getwaitlist.com"
   },
   "Wakav Performance Monitoring": {
     "cats": [

@@ -687,6 +687,27 @@
     "oss": true,
     "website": "https://www.bigtreecms.org"
   },
+  "Bigin": {
+    "cats": [
+      53
+    ],
+    "description": "Bigin is a cloud-based customer relationship management (CRM) software.",
+    "icon": "Bigin.png",
+    "js": {
+      "BIGIN_SDK_API": "",
+      "bigin._checkDataSize": "",
+      "biginCafe24DisableOptions": "",
+      "bigin_search": ""
+    },
+    "pricing": [
+      "freemium",
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "sdk\\.bigin\\.io/",
+    "website": "https://en.bigin.io"
+  },
   "Bigware": {
     "cats": [
       6
@@ -1156,6 +1177,19 @@
     "icon": "Blueshift.png",
     "scriptSrc": "cdn.getblueshift.com/",
     "website": "https://blueshift.com/"
+  },
+  "Bluestone PIM": {
+    "cats": [
+      95
+    ],
+    "description": "Bluestone PIM is primarily a product information management (PIM) solution, which is focused on managing and distributing product data across multiple channels. However, it also includes some features that are typically associated with digital asset management (DAM), such as the ability to manage and store product images, videos, and other digital assets.",
+    "dom": "img[src*='media.bluestonepim.com/'], img[data-srcset*='media.bluestonepim.com/']",
+    "icon": "Bluestone PIM.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.bluestonepim.com"
   },
   "Boats Group": {
     "cats": [
@@ -2024,6 +2058,25 @@
     "requires": "WordPress",
     "website": "https://github.com/mtekk/Breadcrumb-NavXT"
   },
+  "Breakdance": {
+    "cats": [
+      51
+    ],
+    "description": "Breakdance is a page builder that features a drag-and-drop interface for users to create pages using full site editing functionality.",
+    "icon": "Breakdance.svg",
+    "js": {
+      "BreakdanceFrontend": "",
+      "BreakdanceHeaderBuilder": "",
+      "BreakdanceSwiper": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://breakdance.com"
+  },
   "Breinify": {
     "cats": [
       76
@@ -2318,17 +2371,24 @@
   },
   "BugSnag": {
     "cats": [
-      10
+      10,
+      13
     ],
     "description": "Bugsnag is a cross-platform error monitoring, reporting, and resolution software.",
-    "icon": "BugSnag.png",
+    "icon": "BugSnag.svg",
+    "pricing": [
+      "payg",
+      "freemium",
+      "recurring"
+    ],
+    "saas": true,
     "js": {
       "Bugsnag": "",
       "bugsnag": "",
       "bugsnagClient": ""
     },
     "scriptSrc": "/bugsnag.*\\.js",
-    "website": "http://bugsnag.com"
+    "website": "https://bugsnag.com"
   },
   "Bugcrowd": {
     "cats": [
@@ -2402,9 +2462,9 @@
     ],
     "description": "Bulma is a free class-based framework for CSS.",
     "dom": {
-      "link[href*='bulma.min.css']": {
+      "link[href*='bulma']": {
         "attributes": {
-          "href": "(?:([\\d\\.]+)/css/)?bulma\\.min\\.css\\;version:\\1"
+          "href": "(?:([\\d\\.]+)/css/)?bulma(?:-docs)?\\.min\\.css\\;version:\\1"
         }
       }
     },
@@ -2442,8 +2502,19 @@
     "headers": {
       "Server": "^BunnyCDN"
     },
-    "icon": "Bunny.png",
+    "icon": "Bunny.svg",
     "website": "https://bunny.net"
+  },
+  "Bunny Fonts": {
+    "cats": [
+      17
+    ],
+    "description": "Bunny Fonts is an open-source, privacy-first web font platform designed to put privacy back into the internet.",
+    "dom": "link[href*='fonts.bunny.net']",
+    "icon": "Bunny.svg",
+    "implies": "Bunny",
+    "oss": true,
+    "website": "https://fonts.bunny.net"
   },
   "Business Catalyst": {
     "cats": [

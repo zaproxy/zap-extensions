@@ -2272,6 +2272,24 @@
     "saas": true,
     "website": "http://www.algolia.com"
   },
+  "Algolia DocSearch": {
+    "cats": [
+      5
+    ],
+    "description": "Algolia DocSearch is a search widget specifically designed for documentation websites.",
+    "icon": "DocSearch.svg",
+    "implies": "Algolia",
+    "js": {
+      "docsearch.version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://docsearch.algolia.com"
+  },
   "Ali Reviews": {
     "cats": [
       90,
@@ -2294,6 +2312,23 @@
     "icon": "Alibaba Cloud.svg",
     "scriptSrc": "\\.alicdn\\.com/",
     "website": "https://www.alibabacloud.com/product/content-delivery-network"
+  },
+  "Alibaba Cloud Object Storage Service": {
+    "cats": [
+      63
+    ],
+    "description": "Alibaba Cloud Object Storage Service (OSS) is a cloud-based object storage service provided by Alibaba Cloud, which allows users to store and access large amounts of data in the cloud.",
+    "headers": {
+      "x-oss-object-type": "",
+      "x-oss-request-id": "",
+      "x-oss-storage-class": ""
+    },
+    "icon": "Alibaba Cloud.svg",
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "website": "https://www.alibabacloud.com/product/object-storage-service"
   },
   "Alibaba Cloud Verification Code": {
     "cats": [
@@ -2502,6 +2537,23 @@
     "implies": "Amazon Web Services",
     "website": "https://aws.amazon.com/rds/aurora"
   },
+  "Amazon CloudFront": {
+    "cats": [
+      31
+    ],
+    "description": "Amazon CloudFront is a fast content delivery network (CDN) service that securely delivers data, videos, applications, and APIs to customers globally with low latency, high transfer speeds.",
+    "dns": {
+      "CNAME": "^[a-z0-9]+\\.cloudfront.net\\.?$"
+    },
+    "headers": {
+      "Via": "\\(CloudFront\\)$",
+      "X-Amz-Cf-Id": ""
+    },
+    "icon": "Amazon Cloudfront.svg",
+    "implies": "Amazon Web Services",
+    "saas": true,
+    "website": "http://aws.amazon.com/cloudfront/"
+  },
   "Amazon CloudWatch RUM": {
     "cats": [
       78
@@ -2519,23 +2571,6 @@
     ],
     "saas": true,
     "website": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM.html"
-  },
-  "Amazon Cloudfront": {
-    "cats": [
-      31
-    ],
-    "description": "Amazon CloudFront is a fast content delivery network (CDN) service that securely delivers data, videos, applications, and APIs to customers globally with low latency, high transfer speeds.",
-    "dns": {
-      "CNAME": "^[a-z0-9]+\\.cloudfront.net\\.?$"
-    },
-    "headers": {
-      "Via": "\\(CloudFront\\)$",
-      "X-Amz-Cf-Id": ""
-    },
-    "icon": "Amazon Cloudfront.svg",
-    "implies": "Amazon Web Services",
-    "saas": true,
-    "website": "http://aws.amazon.com/cloudfront/"
   },
   "Amazon Cognito": {
     "cats": [
@@ -2596,6 +2631,10 @@
     ],
     "cookies": {
       "AWSELB": ""
+    },
+    "description": "AWS ELB is a network load balancer service provided by Amazon Web Services for distributing traffic across multiple targets, such as Amazon EC2 instances, containers, IP addresses, and Lambda functions.",
+    "headers": {
+      "Server": "awselb"
     },
     "icon": "Amazon ELB.svg",
     "implies": "Amazon Web Services",
@@ -2848,6 +2887,7 @@
       "recurring"
     ],
     "saas": true,
+    "scriptSrc": "cdn\\.analyzee\\.io/sdk/(.*)\\.js",
     "website": "https://analyzee.io"
   },
   "AndersNoren Baskerville": {
@@ -3753,6 +3793,26 @@
     ],
     "website": "https://developers.arcgis.com/javascript/"
   },
+  "Arena": {
+    "cats": [
+      5
+    ],
+    "description": "Arena widget is an embeddable widget provided by the Arena platform, which allows users to embed live blogs directly on their website.",
+    "dom": "iframe[scr*='//go.arena.im/']",
+    "icon": "Arena.svg",
+    "js": {
+      "arenaHub.arenaIdentify": "",
+      "arenaLiveblog": "",
+      "arenaim.initializeLiveblog": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://arena.im"
+  },
   "Arreva": {
     "cats": [
       111
@@ -3830,7 +3890,7 @@
       31
     ],
     "description": "ArvanCloud is a cloud services provider, offering a wide range of incorporated cloud services including CDN, DDoS mitigation, Cloud Managed DNS, Cloud Security, VoD/AoD Streaming, Live Streaming, Cloud Compute, Cloud Object Storage, and PaaS.",
-    "dom": "img[src*='.arvanstorage.com/']",
+    "dom": "img[src*='.arvanstorage.com/'], img[src*='.arvanstorage.ir/']",
     "headers": {
       "server": "ArvanCloud"
     },
@@ -3838,7 +3898,21 @@
     "js": {
       "ArvanCloud": ""
     },
-    "website": "http://www.arvancloud.com"
+    "website": "http://www.arvancloud.ir"
+  },
+  "Arya CMS": {
+    "cats": [
+      1
+    ],
+    "description": "Arya CMS is a lesser-known content management system that may not have a significant user base or active development community.",
+    "js": {
+      "AryaCMS": "([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://sndigitalhub.com"
   },
   "Asana": {
     "cats": [
@@ -4922,6 +4996,41 @@
     },
     "oss": true,
     "website": "https://animejs.com/"
+  },
+  "Aniview Ad Server": {
+    "cats": [
+      36
+    ],
+    "description": "Aniview Ad Server is a technology developed by Aniview, a company that specialises in providing video advertising solutions. The Aniview Ad Server is a platform designed to manage and serve video ads to publishers, advertisers, and agencies.",
+    "icon": "Aniview.png",
+    "dom": {
+      "link[href*='aniview.com']": {
+        "attributes": {
+          "href": "^(?!.*player).*aniview\\.com/"
+        }
+      }
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "^(?!.*player).*aniview\\.com/",
+    "website": "https://aniview.com/video-ad-servers/"
+  },
+  "Aniview Video Ad Player": {
+    "cats": [
+      14
+    ],
+    "description": "Aniview Video Ad Player is a video player technology developed by Aniview, a company that specialises in providing video advertising solutions.",
+    "icon": "Aniview.png",
+    "implies": "Aniview Ad Server",
+    "dom": "link[href*='player.aniview.com']",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "player\\.aniview\\.com/script/([\\d\\.]+)/\\;version:\\1",
+    "website": "https://aniview.com/video-ad-player/"
   },
   "augmented-ui": {
     "cats": [

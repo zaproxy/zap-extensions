@@ -1,4 +1,25 @@
 {
+  "E-monsite": {
+    "cats": [
+      1
+    ],
+    "description": "E-monsite is a web-based platform that allows users to create and customise their own websites using a range of templates and features, without requiring coding or technical skills.",
+    "icon": "E-monsite.svg",
+    "implies": [
+      "Symfony",
+      "MySQL"
+    ],
+    "meta": {
+      "generator": "^e-monsite\\s\\(e-monsite\\.com\\)$"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.e-monsite.com"
+  },
   "EC-CUBE": {
     "cats": [
       6
@@ -186,6 +207,26 @@
     "saas": true,
     "scriptSrc": "easyhide\\.herculesapps\\.com/",
     "website": "https://apps.shopify.com/easyhide"
+  },
+  "Easy Orders": {
+    "cats": [
+      6
+    ],
+    "description": "Easy Orders is an ecommerce platform that offers a pricing plan where users can create their online store and pay a fee of 0.5 EGP per order.",
+    "dom": "img[src*='easyorders.fra1.digitaloceanspaces.com/'], link[href*='easyorders.fra1.digitaloceanspaces.com/']",
+    "icon": "Easy Orders.png",
+    "implies": [
+      "PostgreSQL",
+      "Go",
+      "Node.js"
+    ],
+    "pricing": [
+      "payg"
+    ],
+    "requires": "Next.js",
+    "saas": true,
+    "website": "https://www.easy-orders.net",
+    "xhr": "api\\.easy-orders\\.net/"
   },
   "Easy Redirects": {
     "cats": [
@@ -394,6 +435,24 @@
     "oss": true,
     "website": "https://editorjs.io"
   },
+  "Efilli": {
+    "cats": [
+      67
+    ],
+    "description": "Efilli is a tool used to manage cookies on websites, providing users with data privacy control through GDPR compliance.",
+    "icon": "Efilli.svg",
+    "js": {
+      "EFILLI_GLOBAL_OPTIONS": "",
+      "Efilli": "",
+      "efilli.__cookieBlocker": ""
+    },
+    "pricing": [
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://efilli.com"
+  },
   "Eggplant": {
     "cats": [
       78
@@ -584,6 +643,9 @@
       "elementorFrontend.getElements": "",
       "elementorFrontendConfig.version": "([\\d\\.]+)\\;version:\\1"
     },
+    "meta": {
+      "generator": "^Elementor\\s([\\d\\.]+)\\;version:\\1"
+    },
     "pricing": [
       "freemium",
       "onetime",
@@ -726,17 +788,20 @@
       27,
       12
     ],
+    "description": "Elm is a statically typed functional programming language created by Evan Czaplicki in 2012 for building web applications.",
     "icon": "elm.svg",
     "js": {
       "Elm.Main.embed": "\\;version:0.18",
       "Elm.Main.init": "\\;version:0.19"
     },
+    "oss": true,
     "website": "https://elm-lang.org/"
   },
   "Elm-ui": {
     "cats": [
       66
     ],
+    "description": "Elm-UI is a library for creating user interfaces in Elm programming language. It provides a set of functions and abstractions for building responsive and reusable UI components, such as buttons, forms, and layouts, in a declarative and type-safe way.",
     "html": "<style>[\\s\\S]*\\.explain > \\.s[\\s\\S]*\\.explain > \\.ctr > \\.s",
     "icon": "elm.svg",
     "implies": "Elm",
@@ -1790,23 +1855,6 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/themes/mesmerize(?:-pro)?/",
     "website": "https://extendthemes.com/mesmerize"
-  },
-  "Extendify": {
-    "cats": [
-      87
-    ],
-    "description": "Extendify (formerly Redux framework) is one of the most popular, advanced, and free to use option panel frameworks for WordPress themes and plugins.",
-    "icon": "Extendify.svg",
-    "meta": {
-      "framework": "^Redux ([\\d\\.]+)\\;version:\\1"
-    },
-    "pricing": [
-      "freemium",
-      "low",
-      "recurring"
-    ],
-    "requires": "WordPress",
-    "website": "https://extendify.com"
   },
   "Extole": {
     "cats": [
