@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [46] - 2023-05-03
 ### Changed
 - Maintenance changes.
 - The Insecure HTTP Method Scan rule now allows PUT/PATCH methods, if they return JSON or XML data in response (Issue 7772).
@@ -433,6 +433,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[46]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v46
 [45]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v45
 [44]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v43

@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [33] - 2023-05-03
 
 ### Changed
 - The following scan rules now have functionality to generate example alerts for documentation purposes (Issue 6119).
@@ -285,6 +285,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[33]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v33
 [32]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v32
 [31]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v31
 [30]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v30

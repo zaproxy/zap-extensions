@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [48] - 2023-05-03
 ### Added
 - Added alert examples to Directory Browsing (Issue 6119).
 - Added Trusted Domains in Cross-Domain JavaScript Source File Inclusion (Issue 7775).
@@ -389,6 +389,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[48]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v48
 [47]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v47
 [46]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v46
 [45]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v45
