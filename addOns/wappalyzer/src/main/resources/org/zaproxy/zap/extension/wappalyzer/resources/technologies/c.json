@@ -553,6 +553,23 @@
     "scriptSrc": "^https?://api\\.captchme\\.net/",
     "website": "http://captchme.com"
   },
+  "Captivate.fm": {
+    "cats": [
+      5
+    ],
+    "description": "Captivate.fm is a podcast hosting and analytics platform that provides tools for creating, hosting, and distributing podcasts.",
+    "dom": "iframe[src*='player.captivate.fm/']",
+    "icon": "Captivate.fm.svg",
+    "js": {
+      "CAPTIVATE_PLAYER_APP_URL": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.captivate.fm"
+  },
   "Carbon Ads": {
     "cats": [
       36
@@ -1331,6 +1348,19 @@
     "scriptSrc": "/chevereto\\.js",
     "website": "https://chevereto.com"
   },
+  "Chicago Boss": {
+    "cats": [
+      18
+    ],
+    "cookies": {
+      "_boss_session": ""
+    },
+    "description": "Chicago Boss is a web framework for Erlang.",
+    "icon": "Chicago Boss.svg",
+    "implies": "Erlang",
+    "oss": true,
+    "website": "https://github.com/ChicagoBoss/ChicagoBoss"
+  },
   "Chili Piper": {
     "cats": [
       72
@@ -1920,6 +1950,22 @@
     ],
     "website": "http://clientjs.org"
   },
+  "ClientXCMS": {
+    "cats": [
+      1
+    ],
+    "description": "ClientXCMS is a content management system that provides a drag-and-drop interface, customisable templates, user and media management, and website analytics to help businesses manage their website content.",
+    "icon": "ClientXCMS.png",
+    "js": {
+      "CLIENTXCMSCurrency": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://clientxcms.com"
+  },
   "Clinch": {
     "cats": [
       76
@@ -2190,6 +2236,26 @@
       "poa"
     ],
     "website": "https://cloudinary.com"
+  },
+  "Cloudrexx": {
+    "cats": [
+      1
+    ],
+    "description": "Cloudrexx is a proprietary content management system that provides customisable templates and built-in modules for managing content, ecommerce, events, newsletters, and more, along with tools for SEO, social media integration, and multilingual support.",
+    "icon": "Cloudrexx.svg",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "meta": {
+      "generator": "^cloudrexx$"
+    },
+    "pricing": [
+      "poa",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.cloudrexx.com"
   },
   "Cloudways": {
     "cats": [
@@ -2639,6 +2705,27 @@
     "saas": true,
     "website": "https://www.combeenation.com"
   },
+  "Combodo iTop": {
+    "cats": [
+      13,
+      19
+    ],
+    "description": "Combodo iTop is an open-source IT service management (ITSM) and IT operations management (ITOM) platform developed by Combodo, a software company based in France.",
+    "dom": {
+      "a[href*='combodo.com/itop'] > img": {
+        "attributes": {
+          "title": "iTop\\sVersion\\s([\\d\\.]+)\\;version:\\1"
+        }
+      }
+    },
+    "icon": "Combodo iTop.svg",
+    "oss": true,
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.combodo.com/itop-193"
+  },
   "Comeet": {
     "cats": [
       5,
@@ -2749,6 +2836,20 @@
     "scriptSrc": "cdn\\.commerce7\\.com",
     "website": "https://commerce7.com",
     "xhr": "api\\.commerce7\\.com"
+  },
+  "Commercelayer": {
+    "cats": [
+      6
+    ],
+    "description": "Commercelayer is a headless ecommerce platform that permits businesses to create customisable and scalable online shopping experiences via an API-first architecture that allows developers to use any programming language or framework for building ecommerce sites and applications.",
+    "icon": "commercelayer.svg",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://commercelayer.io",
+    "xhr": "\\.commercelayer\\.io"
   },
   "Community Funded": {
     "cats": [
@@ -4244,19 +4345,6 @@
     "saas": true,
     "scriptSrc": "\\.scorecardresearch\\.com/beacon\\.js|COMSCORE\\.beacon",
     "website": "http://comscore.com"
-  },
-  "commercelayer": {
-    "cats": [
-      6
-    ],
-    "icon": "commercelayer.svg",
-    "pricing": [
-      "mid",
-      "recurring"
-    ],
-    "saas": true,
-    "website": "https://commercelayer.io",
-    "xhr": "\\.commercelayer\\.io"
   },
   "commercetools": {
     "cats": [

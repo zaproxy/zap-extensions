@@ -71,7 +71,9 @@
       }
     },
     "icon": "Nacelle.svg",
+    "implies": "GraphQL",
     "js": {
+      "__NEXT_DATA__.props.pageProps.page.nacelleEntryId": "",
       "nacelleEventData": ""
     },
     "pricing": [
@@ -79,7 +81,8 @@
       "recurring"
     ],
     "saas": true,
-    "website": "https://nacelle.com"
+    "website": "https://nacelle.com",
+    "xhr": "storefront\\.api\\.nacelle\\.com"
   },
   "NagaCommerce": {
     "cats": [
@@ -402,6 +405,23 @@
     "scriptSrc": "\\.netcoresmartech\\.com/",
     "website": "https://netcorecloud.com"
   },
+  "Netdeal": {
+    "cats": [
+      32
+    ],
+    "description": "Netdeal is a marketing automation platform.",
+    "icon": "Netdeal.svg",
+    "js": {
+      "NetdealBuildNumber": "",
+      "NetdealJs.paywall": "",
+      "netdealStartSession": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.netdeal.com.br"
+  },
   "Netlify": {
     "cats": [
       62,
@@ -416,6 +436,16 @@
     "url": "^https?://[^/]+\\.netlify\\.(?:com|app)/",
     "website": "https://www.netlify.com/",
     "xhr": "cdn\\.netlify\\.com"
+  },
+  "Netlify Forms": {
+    "cats": [
+      110
+    ],
+    "description": "Netlify Forms is a serverless form handling solution for static websites.",
+    "dom": "form[data-netlify]",
+    "icon": "Netlify.svg",
+    "implies": "Netlify",
+    "website": "https://www.netlify.com/products/forms"
   },
   "Neto": {
     "cats": [
@@ -639,6 +669,9 @@
       "<!-- <meta name=\"NextGEN\" version=\"([\\d.]+)\" /> -->\\;version:\\1"
     ],
     "icon": "NextGEN Gallery.png",
+    "js": {
+      "nextgen_lightbox_settings.static_path": "/wp-content/plugins/nextgen-gallery/"
+    },
     "requires": "WordPress",
     "scriptSrc": "/nextgen-gallery/js/",
     "website": "https://www.imagely.com/wordpress-gallery-plugin"
@@ -761,7 +794,7 @@
       22,
       64
     ],
-    "cpe": "cpe:2.3:a:nginx:nginx:*:*:*:*:*:*:*:*",
+    "cpe": "cpe:2.3:a:f5:nginx:*:*:*:*:*:*:*:*",
     "description": "Nginx is a web server that can also be used as a reverse proxy, load balancer, mail proxy and HTTP cache.",
     "headers": {
       "Server": "nginx(?:/([\\d.]+))?\\;version:\\1",

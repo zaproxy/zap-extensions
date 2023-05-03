@@ -132,6 +132,21 @@
     },
     "website": "https://github.com/alphagov/govuk_frontend_toolkit"
   },
+  "GPT AI Power": {
+    "cats": [
+      87
+    ],
+    "description": "GPT AI Power is a WordPress plugin that offers a comprehensive AI package.",
+    "icon": "GPT AI Power.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/gpt3-ai-content-generator/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://gptaipower.com"
+  },
   "GSAP": {
     "cats": [
       12

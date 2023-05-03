@@ -239,7 +239,7 @@
     "cats": [
       23
     ],
-    "cpe": "cpe:2.3:a:varnish-software:varnich_cache:*:*:*:*:*:*:*:*",
+    "cpe": "cpe:2.3:a:varnish-software:varnish_cache:*:*:*:*:*:*:*:*",
     "description": "Varnish is a reverse caching proxy.",
     "headers": {
       "Via": "varnish(?: \\(Varnish/([\\d.]+)\\))?\\;version:\\1",

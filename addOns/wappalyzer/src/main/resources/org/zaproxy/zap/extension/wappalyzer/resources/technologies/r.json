@@ -1052,6 +1052,20 @@
     ],
     "website": "https://redux.js.org"
   },
+  "Redux Framework": {
+    "cats": [
+      87
+    ],
+    "description": "Redux Framework is a modular PHP library that allows developers to create customisable settings panels and controls for WordPress projects, providing a consistent user interface for managing options and settings.",
+    "icon": "Redux Framework.svg",
+    "meta": {
+      "framework": "Redux\\s([\\d\\.]+)\\;version:\\1",
+      "generator": "Redux\\s([\\d\\.]+)\\;version:\\1"
+    },
+    "oss": true,
+    "requires": "WordPress",
+    "website": "https://redux.io"
+  },
   "RedwoodJS": {
     "cats": [
       12,
@@ -1219,6 +1233,23 @@
     ],
     "website": "https://www.relaiscolis.com"
   },
+  "Relewise": {
+    "cats": [
+      76
+    ],
+    "description": "Relewise is a platform that uses personalisation technology to provide customised online experiences through personalised search and recommendations.",
+    "dom": "link[href*='api.relewise.com/']",
+    "icon": "Relewise.svg",
+    "js": {
+      "relewiseConfig": "",
+      "relewiseTracking": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://relewise.com"
+  },
   "Remarkable Commerce": {
     "cats": [
       6
@@ -1249,6 +1280,32 @@
     },
     "oss": true,
     "website": "https://remix.run/"
+  },
+  "Remixd": {
+    "cats": [
+      5
+    ],
+    "description": "Remixd is a platform that enables podcast creators to efficiently produce and share their podcasts with a worldwide audience. The platform provides various tools and features to support podcast creation, hosting, and distribution, such as podcast hosting, analytics, monetisation, and social media integration.",
+    "icon": "remixd.svg",
+    "scriptSrc": "tags\\.remixd\\.com/player",
+    "website": "https://www.remixd.com"
+  },
+  "Render": {
+    "cats": [
+      62
+    ],
+    "description": "Render is a cloud computing platform that provides a wide range of services, including web hosting, cloud computing, and application development. Render offers several hosting options, including static site hosting, web application hosting, and managed databases.",
+    "headers": {
+      "x-render-origin-server": "Render"
+    },
+    "icon": "Render.svg",
+    "pricing": [
+      "low",
+      "freemium",
+      "payg",
+      "recurring"
+    ],
+    "website": "https://render.com"
   },
   "Render Better": {
     "cats": [
@@ -1594,6 +1651,25 @@
     ],
     "saas": true,
     "website": "https://returnly.com"
+  },
+  "Retype": {
+    "cats": [
+      57
+    ],
+    "description": "Retype is an open-source static site generator built with Node.js that allows users to create and manage websites with ease using Markdown as the primary content format.",
+    "icon": "retype.svg",
+    "implies": "Node.js",
+    "meta": {
+      "generator": "Retype\\s([\\d\\.]+)?\\;version:\\1"
+    },
+    "oss": true,
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "onetime"
+    ],
+    "website": "https://retype.com"
   },
   "RevJet": {
     "cats": [
@@ -1972,6 +2048,19 @@
     ],
     "saas": true,
     "website": "https://rive.app"
+  },
+  "RoadRunner": {
+    "cats": [
+      22
+    ],
+    "description": "RoadRunner is a high-performance PHP application server, load balancer, and process manager written in Golang.",
+    "headers": {
+      "Server": "RoadRunner"
+    },
+    "icon": "RoadRunner.svg",
+    "implies": "PHP",
+    "oss": true,
+    "website": "https://roadrunner.dev"
   },
   "Roadiz CMS": {
     "cats": [

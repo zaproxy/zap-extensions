@@ -804,6 +804,20 @@
     "saas": true,
     "website": "https://digitalshowroom.in"
   },
+  "DigitalOcean Spaces": {
+    "cats": [
+      31,
+      63
+    ],
+    "description": "DigitalOcean Spaces is a cloud-based object storage service provided by DigitalOcean, a cloud infrastructure provider. It allows users to store and retrieve large amounts of data, such as images, videos, audio files, backups, and logs, using a simple RESTful API or a web-based graphical user interface (GUI).",
+    "dom": "img[data-src*='.digitaloceanspaces.com'], img[src*='.digitaloceanspaces.com']",
+    "icon": "DigitalOcean.svg",
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "website": "https://www.digitalocean.com/products/spaces"
+  },
   "DigitalRiver": {
     "cats": [
       6,
@@ -1355,6 +1369,35 @@
     ],
     "saas": true,
     "website": "https://dotdigital.com"
+  },
+  "Doteasy": {
+    "cats": [
+      88
+    ],
+    "description": "Doteasy is a web hosting company that provides web hosting services, domain registration, and other related services for businesses and individuals. The company was founded in 2000 and is based in Vancouver, Canada.",
+    "icon": "Doteasy.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://www.doteasy.com"
+  },
+  "Doteasy Website Builder": {
+    "cats": [
+      51
+    ],
+    "description": "Doteasy Website Builder is a tool provided by Doteasy, a web hosting company that enables users to create and personalise their own websites without necessitating any technical knowledge or expertise in website design.",
+    "icon": "Doteasy.svg",
+    "implies": "Doteasy",
+    "js": {
+      "fsData.fs": "\\.dotezcdn\\.com"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.doteasy.com/website-builder/"
   },
   "DoubleClick Ad Exchange (AdX)": {
     "cats": [

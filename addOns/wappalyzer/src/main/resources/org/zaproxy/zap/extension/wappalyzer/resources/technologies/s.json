@@ -1227,6 +1227,24 @@
     "scriptSrc": "searchanise(?:-.+\\.kxcdn)?\\.com/",
     "website": "https://start.searchanise.com"
   },
+  "SearchiQ": {
+    "cats": [
+      29
+    ],
+    "description": "SearchiQ is a cloud-based search engine solution that can be integrated into a website.",
+    "icon": "SearchiQ.svg",
+    "js": {
+      "siqConfig.version": "([\\d\\.]+)\\;version:\\1",
+      "siq_version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.searchiq.co"
+  },
   "Searchspring": {
     "cats": [
       29
@@ -2109,6 +2127,21 @@
     },
     "scriptSrc": "^https?://codice(?:business|ssl|pro|isp)?\\.shinystat\\.com/cgi-bin/getcod\\.cgi",
     "website": "http://shinystat.com"
+  },
+  "ShipStation": {
+    "cats": [
+      99
+    ],
+    "description": "ShipStation is a web-based shipping software designed to help ecommerce businesses streamline their shipping processes. It allows businesses to import, manage, and ship their orders from multiple sales channels, including marketplaces, shopping carts, and ecommerce platforms.",
+    "dom": "a[href*='//track.shipstation.com/']",
+    "icon": "ShipStation.svg",
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "url": "track\\.shipstation\\.com",
+    "website": "https://www.shipstation.com"
   },
   "ShipTection": {
     "cats": [
@@ -3505,6 +3538,9 @@
     ],
     "icon": "Sitecore.svg",
     "implies": "Microsoft ASP.NET",
+    "js": {
+      "SitecoreUtilities": ""
+    },
     "pricing": [
       "poa",
       "recurring",
@@ -3869,6 +3905,19 @@
     ],
     "saas": true,
     "website": "https://slickstack.io"
+  },
+  "Slider Captcha": {
+    "cats": [
+      16
+    ],
+    "description": "Slider Captcha is a free service that helps protect websites from spam and abuse.",
+    "icon": "default.svg",
+    "implies": "jQuery",
+    "js": {
+      "sliderCaptcha": ""
+    },
+    "oss": true,
+    "website": "https://github.com/ArgoZhang/SliderCaptcha"
   },
   "Slider Revolution": {
     "cats": [
@@ -4416,6 +4465,22 @@
     "saas": true,
     "scriptSrc": "socialladder\\.rkiapps\\.com/",
     "website": "https://socialladderapp.com"
+  },
+  "Societe des Avis Garantis": {
+    "cats": [
+      87,
+      90
+    ],
+    "description": "Societe des Avis Garantis is a French company that provides customer review and rating services for businesses through its online platform.",
+    "icon": "Societe des Avis Garantis.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "saas": true,
+    "scriptSrc": "/wp-content/plugins/ag-core/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://www.societe-des-avis-garantis.fr"
   },
   "Socket.io": {
     "cats": [
@@ -5914,9 +5979,12 @@
     "cats": [
       18
     ],
-    "description": "Stencil is a compiler that generates Web Components developed by the Ionic team.",
+    "description": "Stenciljs is an open-source web component compiler that enables developers to create reusable, interoperable UI components that can work across different frameworks and platforms.",
     "dom": "html[data-stencil-build][class*='hydrated'], stencil-router, stencil-route-link",
     "icon": "Stencil.svg",
+    "js": {
+      "stencil.inspect": ""
+    },
     "oss": true,
     "website": "https://stenciljs.com"
   },
@@ -6457,7 +6525,7 @@
       51
     ],
     "description": "Super Builder is a new tool for creating sleek landing pages right in Notion.",
-    "dom": "link[href*='super-static-assets.'], img[srcset*='super-static-assets.']",
+    "dom": "link[href*='super-static-assets.'], link[href*='super.so'], img[srcset*='super-static-assets.']",
     "icon": "Super Builder.svg",
     "implies": [
       "Notion",
@@ -6760,7 +6828,7 @@
     "cats": [
       6
     ],
-    "description": "Sylius is an open source ecommerce framework based on Symfony full stack.",
+    "description": "Sylius is an open-source ecommerce framework based on Symfony full stack.",
     "dom": {
       "body.sylius_homepage": {
         "attributes": {
@@ -6770,6 +6838,11 @@
       "div#sylius-cart-button": {
         "attributes": {
           "id": ""
+        }
+      },
+      "img[src*='sylius_shop_product_tiny_thumbnail']": {
+        "attributes": {
+          "src": "/sylius_shop_product_tiny_thumbnail/"
         }
       }
     },

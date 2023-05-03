@@ -279,6 +279,21 @@
     "oss": true,
     "website": "https://github.com/erlyaws/yaws"
   },
+  "Ycode": {
+    "cats": [
+      51
+    ],
+    "description": "Ycode is a no-code development platform that allows users to create web and mobile applications without any coding skills.",
+    "dom": "link[href*='.ycodeapp.com/']",
+    "icon": "Ycode.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.ycode.com"
+  },
   "Yektanet": {
     "cats": [
       36
@@ -696,6 +711,18 @@
     "icon": "YouTube.png",
     "scriptSrc": "\\.youtube\\.com/",
     "website": "http://www.youtube.com"
+  },
+  "YunoHost": {
+    "cats": [
+      28
+    ],
+    "cpe": "cpe:2.3:o:yunohost:yunohost:*:*:*:*:*:*:*:*",
+    "description": "YunoHost is a server operating system that is free and open-source, allowing users to host their own web applications, email services, and other online tools. It is based on Debian GNU/Linux.",
+    "icon": "YunoHost.svg",
+    "implies": "Debian",
+    "oss": true,
+    "scriptSrc": "/ynh_portal\\.js",
+    "website": "https://yunohost.org"
   },
   "yellow.ai": {
     "cats": [

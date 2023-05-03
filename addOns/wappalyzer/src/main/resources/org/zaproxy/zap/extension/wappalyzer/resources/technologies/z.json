@@ -712,23 +712,5 @@
     ],
     "saas": true,
     "website": "https://www.zuppler.com"
-  },
-  "Zyro": {
-    "cats": [
-      51
-    ],
-    "description": "Zyro is a website builder service by the Hostinger group.",
-    "icon": "Zyro.svg",
-    "implies": "Vue.js",
-    "meta": {
-      "generator": "^Zyro\\.com Website Builder$"
-    },
-    "pricing": [
-      "low",
-      "recurring"
-    ],
-    "saas": true,
-    "scriptSrc": "userapp\\.zyrosite\\.com/",
-    "website": "https://zyro.com"
   }
 }

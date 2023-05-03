@@ -94,6 +94,21 @@
     "scriptSrc": "\\.landbot\\.io/.*-([\\d\\.]+)\\.js",
     "website": "https://landbot.io"
   },
+  "LandingPress": {
+    "cats": [
+      80
+    ],
+    "description": "LandingPress is a WordPress theme.",
+    "icon": "LandingPress.png",
+    "pricing": [
+      "onetime",
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/themes/landingpress-wp/.+script\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://landingpress.net"
+  },
   "LangShop": {
     "cats": [
       100,
