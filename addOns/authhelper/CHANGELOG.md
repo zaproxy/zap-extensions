@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support for verification type of "autodetect" (post 2.12).
 
+### Fixed
+- Ensure verification processor shut down on exit, otherwise the AF hangs.
+
 ## [0.4.0] - 2023-04-28
 ### Added
 - Support for session management identification.
