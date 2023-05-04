@@ -112,6 +112,12 @@ public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChan
     }
 
     @Override
+    public void stop() {
+        BrowserBasedAuthenticationMethodType.stopProxies();
+        AuthUtils.clean();
+    }
+
+    @Override
     public void hook(ExtensionHook extensionHook) {
         extensionHook.addSessionListener(new AuthSessionChangedListener());
     }

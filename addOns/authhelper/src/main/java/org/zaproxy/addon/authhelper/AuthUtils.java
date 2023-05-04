@@ -31,7 +31,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
@@ -573,7 +575,9 @@ public class AuthUtils {
 
     private static synchronized ExecutorService getExecutorService() {
         if (executorService == null) {
-            executorService = Executors.newSingleThreadExecutor();
+            executorService =
+                    Executors.newSingleThreadExecutor(
+                            new AuthThreadFactory("ZAP-Auth-Verif-Server"));
         }
         return executorService;
     }
@@ -617,6 +621,31 @@ public class AuthUtils {
                     userCreds.getUsername(),
                     userCreds.getPassword(),
                     bbaMethod.getLoginPageWait());
+        }
+    }
+
+    protected static class AuthThreadFactory implements ThreadFactory {
+
+        private final AtomicInteger threadNumber;
+        private final String namePrefix;
+        private final ThreadGroup group;
+
+        public AuthThreadFactory(String namePrefix) {
+            threadNumber = new AtomicInteger(1);
+            this.namePrefix = namePrefix;
+            group = Thread.currentThread().getThreadGroup();
+        }
+
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
+            if (t.isDaemon()) {
+                t.setDaemon(false);
+            }
+            if (t.getPriority() != Thread.NORM_PRIORITY) {
+                t.setPriority(Thread.NORM_PRIORITY);
+            }
+            return t;
         }
     }
 }
