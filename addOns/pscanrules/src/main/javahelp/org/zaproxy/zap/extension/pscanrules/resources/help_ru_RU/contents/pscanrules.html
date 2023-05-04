@@ -16,6 +16,7 @@ You can specify a comma separated list of URL regex patterns using the <code>rul
 Any link URL that matches one of these patterns will be considered to be in a trusted domain and will therefore not be reported.
 Following rules supports <b>Trusted Domains</b> :
 <ul>
+ <li>Cross Domain Script Inclusion</li>
  <li>Reverse Tabnabbing</li>
 </ul>
 
@@ -41,9 +42,9 @@ However at LOW threshold the above issues will still be reported but at a LOW ri
 
 <h2>Ошибки приложения</h2>
 Проверьте ответы сервера на наличие ответов типа HTTP 500 — Internal Server Error или тех, которые содержат известную строку ошибки.  <br>
-<strong>Примечание.</strong> Совпадения, сделанные в блоках сценария или файлах, относятся ко всему содержимому, а не только к комментариям.<br>
-При ВЫСОКОМ пороге не выдавать оповещения по HTTP 500 (но делать это для других шаблонов ошибок).<br>
-Для внутренней ошибки сервера (HTTP 500) для предупреждения устанавливается низкий риск, а в других случаях — средний риск. 
+<strong>Note:</strong> Matches made within script blocks or files are against the entire content not only comments.<br>
+At HIGH Threshold don’t alert on HTTP 500 (but do for other error patterns). Also, such known error strings are much less likely to be relevant in static pages like JS / CSS so these files are only scanned at LOW threshold.<br>
+For Internal Server Error (HTTP 500) the Alert is set to Low risk and in other case it is set to Medium risk.
 
 <p><strong>Примечание.</strong> Если установлен дополнительный модуль Custom Payloads, вы можете добавить свои собственные строки ошибок приложения (полезные данные) на панели параметров Custom Payloads.  
 Их также будут искать в ответах, поскольку они пассивно сканируются.  Имейте в виду, что чем больше количество полезных нагрузок, тем больше
@@ -149,6 +150,7 @@ Allowed Cross-Domain scripts:
 <ul>
 <li>Any script with a non-empty "integrity" attribute is ignored - the integrity value is not checked as this will be checked by the browser</li>
 <li>At MEDIUM and HIGH thresholds if a script URL falls within a context that also includes the URL of the base message no alerts will be raised.</li>
+<li>This rule supports <b>Trusted Domains</b>, check "General Configuration" for more information.</li>
 </ul> 
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CrossDomainScriptInclusionScanRule.java">CrossDomainScriptInclusionScanRule.java</a>
