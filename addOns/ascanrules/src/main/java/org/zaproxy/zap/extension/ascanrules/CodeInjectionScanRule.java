@@ -75,7 +75,7 @@ public class CodeInjectionScanRule extends AbstractAppParamPlugin {
     // we evaluate the content value inside the response
     // multiplying two random 7-digit numbers
     private static final String[] ASP_PAYLOADS = {
-        "\"+response.write([{0}*{1})+\"", "'+response.write({0}*{1})+'", "response.write({0}*{1})"
+        "\"+response.write({0}*{1})+\"", "'+response.write({0}*{1})+'", "response.write({0}*{1})"
     };
 
     // Logger instance
