@@ -85,7 +85,7 @@ There are difference in treatment of duplicate parameters impacting both clients
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/HttpParameterPollutionScanRule.java">HttpParameterPollutionScanRule.java</a> 
 
 <h2>Insecure HTTP Method</h2>
-Detects (and exploits, depending on the scan settings) known insecure HTTP methods enabled for the URL.
+Detects (and exploits, depending on the scan settings) known insecure HTTP methods enabled for the URL. It considers PUT/PATCH as insecure methods by default, but allows them if they return structured data like JSON or XML in response.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/InsecureHttpMethodScanRule.java">InsecureHttpMethodScanRule.java</a>
 

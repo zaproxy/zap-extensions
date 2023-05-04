@@ -16,6 +16,7 @@ You can specify a comma separated list of URL regex patterns using the <code>rul
 Any link URL that matches one of these patterns will be considered to be in a trusted domain and will therefore not be reported.
 Following rules supports <b>Trusted Domains</b> :
 <ul>
+ <li>Cross Domain Script Inclusion</li>
  <li>Reverse Tabnabbing</li>
 </ul>
 
@@ -42,7 +43,7 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 <h2>Application Errors</h2>
 Check server responses for HTTP 500 - Internal Server Error type responses or those that contain a known error string. <br>
 <strong>Note:</strong> Matches made within script blocks or files are against the entire content not only comments.<br>
-At HIGH Threshold don’t alert on HTTP 500 (but do for other error patterns).<br>
+At HIGH Threshold don’t alert on HTTP 500 (but do for other error patterns). Also, such known error strings are much less likely to be relevant in static pages like JS / CSS so these files are only scanned at LOW threshold.<br>
 For Internal Server Error (HTTP 500) the Alert is set to Low risk and in other case it is set to Medium risk.
 
 <p><strong>Note:</strong> If the Custom Payloads addon is installed you can add your own Application Error strings (payloads) in the Custom Payloads options panel. 
@@ -149,6 +150,7 @@ Allowed Cross-Domain scripts:
 <ul>
 <li>Any script with a non-empty "integrity" attribute is ignored - the integrity value is not checked as this will be checked by the browser</li>
 <li>At MEDIUM and HIGH thresholds if a script URL falls within a context that also includes the URL of the base message no alerts will be raised.</li>
+<li>This rule supports <b>Trusted Domains</b>, check "General Configuration" for more information.</li>
 </ul> 
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/CrossDomainScriptInclusionScanRule.java">CrossDomainScriptInclusionScanRule.java</a>

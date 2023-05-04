@@ -9,4 +9,5 @@
     <mapID target="graphql.options" url="contents/options.html" />
     <mapID target="graphql.variant" url="contents/variant.html" />
     <mapID target="graphql.automation" url="contents/automation.html" />
+    <mapID target="graphql.alerts" url="contents/alerts.html" />
 </map>
