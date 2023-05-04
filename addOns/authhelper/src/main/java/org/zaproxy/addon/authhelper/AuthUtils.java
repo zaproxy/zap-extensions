@@ -167,20 +167,42 @@ public class AuthUtils {
 
         WebElement userField = null;
         WebElement pwdField = null;
+        boolean userAdded = false;
 
         for (int i = 0; i < getWaitLoopCount(); i++) {
             List<WebElement> inputElements = wd.findElements(By.xpath("//input"));
             userField = getUserField(inputElements);
             pwdField = getPasswordField(inputElements);
-            if (userField != null && pwdField != null) {
+
+            if ((userField != null || userAdded) && pwdField != null) {
                 break;
+            }
+            if (i > 1 && userField != null && pwdField == null) {
+                // Handle pages which require you to submit the username first
+                LOGGER.debug("Submitting just user field on {}", loginPageUrl);
+                userField.sendKeys(username);
+                userField.sendKeys(Keys.RETURN);
+                userAdded = true;
             }
             sleep(TIME_TO_SLEEP_IN_MSECS);
         }
         if (userField != null && pwdField != null) {
-            userField.sendKeys(username);
-            pwdField.sendKeys(password);
-            pwdField.sendKeys(Keys.RETURN);
+            if (!userAdded) {
+                LOGGER.debug("Entering user field on {}", wd.getCurrentUrl());
+                userField.sendKeys(username);
+            }
+            try {
+                LOGGER.debug("Submitting password field on {}", wd.getCurrentUrl());
+                pwdField.sendKeys(password);
+                pwdField.sendKeys(Keys.RETURN);
+            } catch (Exception e) {
+                // Handle the case where the password field was present but hidden / disabled
+                LOGGER.debug("Handling hidden password field on {}", wd.getCurrentUrl());
+                userField.sendKeys(Keys.RETURN);
+                sleep(TIME_TO_SLEEP_IN_MSECS);
+                pwdField.sendKeys(password);
+                pwdField.sendKeys(Keys.RETURN);
+            }
 
             AuthUtils.sleep(TimeUnit.SECONDS.toMillis(waitInSecs));
 
@@ -442,24 +464,22 @@ public class AuthUtils {
             if (hr != null) {
                 try {
                     HttpMessage msg = hr.getHttpMessage();
-                    if (msg.getResponseHeader().isJson()) {
-                        Optional<SessionToken> es =
-                                AuthUtils.getAllTokens(msg).values().stream()
-                                        .filter(v -> v.getValue().equals(tokenf))
-                                        .findFirst();
-                        if (es.isPresent()) {
-                            AuthUtils.incStatsCounter(
-                                    msg.getRequestHeader().getURI(),
-                                    AuthUtils.AUTH_SESSION_TOKEN_STATS_PREFIX + es.get().getKey());
-                            List<SessionToken> tokens = new ArrayList<>();
-                            tokens.add(
-                                    new SessionToken(
-                                            SessionToken.JSON_SOURCE,
-                                            es.get().getKey(),
-                                            es.get().getValue()));
-                            return new SessionManagementRequestDetails(
-                                    msg, tokens, Alert.CONFIDENCE_HIGH);
-                        }
+                    Optional<SessionToken> es =
+                            AuthUtils.getAllTokens(msg).values().stream()
+                                    .filter(v -> v.getValue().equals(tokenf))
+                                    .findFirst();
+                    if (es.isPresent()) {
+                        AuthUtils.incStatsCounter(
+                                msg.getRequestHeader().getURI(),
+                                AuthUtils.AUTH_SESSION_TOKEN_STATS_PREFIX + es.get().getKey());
+                        List<SessionToken> tokens = new ArrayList<>();
+                        tokens.add(
+                                new SessionToken(
+                                        es.get().getSource(),
+                                        es.get().getKey(),
+                                        es.get().getValue()));
+                        return new SessionManagementRequestDetails(
+                                msg, tokens, Alert.CONFIDENCE_HIGH);
                     }
                 } catch (Exception e) {
                     LOGGER.debug(e.getMessage(), e);
@@ -524,7 +544,7 @@ public class AuthUtils {
                         .filter(m -> m.getValue().equals(token))
                         .findFirst();
         if (entry.isPresent()) {
-            knownTokenMap.remove(entry.get().getKey());
+            knownTokenMap.remove(token.getValue());
         }
     }
 

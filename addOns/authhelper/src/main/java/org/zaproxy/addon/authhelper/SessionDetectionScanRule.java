@@ -65,6 +65,10 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                     new SessionManagementRequestDetails(
                             msg, new ArrayList<>(responseTokens.values()), Alert.CONFIDENCE_MEDIUM);
             getAlert(smDetails).raise();
+            LOGGER.debug(
+                    "Found {} response session token(s) in {}",
+                    responseTokens.size(),
+                    msg.getRequestHeader().getURI());
             smDetails
                     .getTokens()
                     .forEach(
@@ -74,6 +78,10 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                             });
         }
         Set<SessionToken> requestTokens = AuthUtils.getRequestSessionTokens(msg);
+        LOGGER.debug(
+                "Identified {} request token(s) in {}",
+                requestTokens.size(),
+                msg.getRequestHeader().getURI());
         if (!requestTokens.isEmpty()) {
             // The request is using at least one session token, do we know where they come from?
             List<SessionToken> foundTokens = new ArrayList<>();
@@ -81,8 +89,15 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                 SessionToken sourceToken = AuthUtils.containsSessionToken(st.getToken());
                 if (sourceToken != null) {
                     foundTokens.add(sourceToken);
+                    LOGGER.debug("Found source of {}", st.getKey());
+                } else {
+                    LOGGER.debug("Failed to find source of {}", st.getKey());
                 }
             }
+            LOGGER.debug(
+                    "Found a total of {} request token(s) in {}",
+                    foundTokens.size(),
+                    msg.getRequestHeader().getURI());
 
             if (foundTokens.isEmpty()) {
                 // These are not 'known' session tokens, see if we can find any of them

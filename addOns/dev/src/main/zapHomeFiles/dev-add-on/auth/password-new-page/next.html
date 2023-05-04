@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer">
+	<h1>Simple Login with User and Password Fields on Different Pages</H1>
+	<h2>Login</h2>
+	
+	<div id="result"></div>
+
+	<form id="loginform" action="login" method="post">
+	<table style="border: none;">
+	<tr>
+		<td>Username:
+		<td><input id="user" name="user" type="text" value="<!-- USER -->" readonly></td>
+	</tr>
+	<tr>
+		<td>Password:
+		<td><input id="password" name="password" type="password"></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><button id="login" type="button" value="submit" onclick="submitform();">Login</button></td>
+	</tr>
+	</table>
+	</form>
+	<p>
+	Test credentials:
+	<ul>
+		<li>username = test@test.com
+		<li>password = password123
+	</ul>
+	
+</div>
+<script>
+function submitform() {
+	document.getElementById("loginform").submit();
+}
+
+document.getElementById('password').onkeydown = function(e){
+	if (e.keyCode == 13) {
+		// Handle return key
+		submitform();
+	}
+};
+
+document.getElementById("password").focus();
+
+</script>
+</body>
+</html>

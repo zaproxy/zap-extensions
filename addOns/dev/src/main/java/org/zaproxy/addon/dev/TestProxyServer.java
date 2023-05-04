@@ -26,10 +26,13 @@ import java.nio.file.Files;
 import net.sf.json.JSON;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.dev.auth.nonStdJsonBearer.NonStdJsonBearerDir;
+import org.zaproxy.addon.dev.auth.passwordAddedJson.PasswordAddedJsonDir;
+import org.zaproxy.addon.dev.auth.passwordHiddenJson.PasswordHiddenJsonDir;
+import org.zaproxy.addon.dev.auth.passwordNewPage.PasswordNewPageDir;
 import org.zaproxy.addon.dev.auth.simpleJson.SimpleJsonDir;
 import org.zaproxy.addon.dev.auth.simpleJsonBearer.SimpleJsonBearerDir;
 import org.zaproxy.addon.dev.auth.simpleJsonBearerCookie.SimpleJsonBearerCookieDir;
@@ -65,6 +68,9 @@ public class TestProxyServer {
         authDir.addDirectory(new SimpleJsonBearerDir(this, "simple-json-bearer"));
         authDir.addDirectory(new NonStdJsonBearerDir(this, "non-std-json-bearer"));
         authDir.addDirectory(new SimpleJsonBearerCookieDir(this, "simple-json-bearer-cookie"));
+        authDir.addDirectory(new PasswordAddedJsonDir(this, "password-added-json"));
+        authDir.addDirectory(new PasswordHiddenJsonDir(this, "password-hidden-json"));
+        authDir.addDirectory(new PasswordNewPageDir(this, "password-new-page"));
 
         root.addDirectory(authDir);
     }
@@ -106,9 +112,10 @@ public class TestProxyServer {
 
     public String getTextFile(TestDirectory dir, String name) {
         StringBuilder sb = new StringBuilder();
-        sb.append(Constant.getZapHome());
-        sb.append("/");
-        sb.append(ExtensionDev.DIRECTORY_NAME);
+        sb.append(extension.getDevParam().getBaseDirectory());
+        if (!sb.toString().endsWith("/")) {
+            sb.append("/");
+        }
         if (dir != null) {
             sb.append(dir.getHierarchicName());
         }
@@ -195,6 +202,15 @@ public class TestProxyServer {
             msg.setResponseHeader(
                     getDefaultResponseHeader(
                             responseStatus, "application/json", msg.getResponseBody().length()));
+        } catch (HttpMalformedHeaderException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+    }
+
+    public void redirect(String url, HttpMessage msg) {
+        try {
+            msg.setResponseHeader(getDefaultResponseHeader(STATUS_REDIRECT, "text/html", 0));
+            msg.getResponseHeader().setHeader(HttpHeader.LOCATION, url);
         } catch (HttpMalformedHeaderException e) {
             LOGGER.error(e.getMessage(), e);
         }
