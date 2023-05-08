@@ -13,13 +13,15 @@ Verification requests are the requests that ZAP uses to tell if a session is sti
 <p>
 Unlike the other identification scan rules in this add-on, this rule will only raise alerts if you have indicated that you want to use 
 verification auto-detection for a specific context.
-Due to the way the ZAP core works it is not currently possible to add a new Verification Method Type dynamically.
+Due to the way the ZAP 2.12 core works it is not currently possible to add a new Verification Method Type dynamically.
 Instead you will need to:
 <ul>
 <li>Set the Session Management Method to <a href="autodetect-session.html">Auto-Detect Session Management Method</a>
 <li>Set the Verification Strategy to "Poll every Request or Response"
 <li>Not specify a URL to poll
 </ul>
+In 2.13+ (and the latest weeklies) it will be possible to set the verification strategy to "Auto-Detect".
+<p>
 The rule works by identifying requests that behave differently when a valid session management token is supplied, 
 but also behave consistently when a token is supplied and when one is not supplied.
 <p>
