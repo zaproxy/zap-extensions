@@ -100,6 +100,11 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
         }
     }
 
+    @Override
+    public String getDefaultName() {
+        return super.getDefaultName() + "/" + this.data.getStatistic();
+    }
+
     private static LinkedHashMap<?, ?> paramsToData(
             String key, String name, String site, String operator, long value, String onFail) {
         LinkedHashMap<String, Object> map = new LinkedHashMap<>();

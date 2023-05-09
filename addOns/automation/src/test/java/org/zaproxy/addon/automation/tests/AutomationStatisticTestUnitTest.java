@@ -94,6 +94,7 @@ class AutomationStatisticTestUnitTest extends TestUtils {
         // Then
         assertThat(hasRunFirst, is(false));
         assertThat(test.getName(), is(name));
+        assertThat(test.getDefaultName(), is("activeScan/stats/" + key));
         assertThat(test.getTestType(), is(AutomationStatisticTest.TEST_TYPE));
         assertThat(test.getJobType(), is("activeScan"));
         assertThat(progress.hasWarnings(), is(false));
@@ -164,6 +165,26 @@ class AutomationStatisticTestUnitTest extends TestUtils {
         assertThat(passed, is(true));
         assertThat(test.hasRun(), is(false));
         assertThat(test.hasPassed(), is(false));
+    }
+
+    @Test
+    void shouldReturnDefaultName() {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        String key = "stats.job.something";
+        long value = 5;
+        AutomationStatisticTest test =
+                new AutomationStatisticTest(
+                        key, null, "==", value, "warn", new ActiveScanJob(), progress);
+        test.getJob().setEnv(new AutomationEnvironment(progress));
+
+        // When
+        when(extStats.getInMemoryStats().getStat(key)).thenReturn(value);
+        test.logToProgress(progress);
+
+        // Then
+        assertThat(test.getName(), is("activeScan/stats/" + key));
+        assertThat(test.getDefaultName(), is("activeScan/stats/" + key));
     }
 
     @Test
