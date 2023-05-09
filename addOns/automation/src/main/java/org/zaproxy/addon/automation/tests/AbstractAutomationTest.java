@@ -137,11 +137,19 @@ public abstract class AbstractAutomationTest {
         return null;
     }
 
+    /** @return the default name, which will be used if the user does not specify one */
+    public String getDefaultName() {
+        return this.getJob().getName() + "/" + this.getTestType();
+    }
+
+    /**
+     * @return the name given in the plan or the default name if one has not been been specified.
+     */
     public String getName() {
         if (!StringUtils.isEmpty(this.name)) {
             return this.name;
         }
-        return this.getJob().getName() + "/" + this.getTestType();
+        return this.getDefaultName();
     }
 
     public void setName(String name) {
