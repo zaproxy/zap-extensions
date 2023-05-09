@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Fixed
 - Fix typo in ASP payload of Server Side Code Injection scan rule.
+- Include complete solution of Server Side Include scan rule.
 
 ## [54] - 2023-05-03
 ### Changed
