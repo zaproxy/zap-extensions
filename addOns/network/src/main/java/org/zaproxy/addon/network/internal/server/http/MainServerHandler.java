@@ -32,6 +32,7 @@ import java.util.Objects;
 import java.util.concurrent.Executor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.network.internal.ChannelAttributes;
@@ -97,7 +98,7 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
 
         writeResponse(ctx, msg);
 
-        if (isClosed(msg)) {
+        if (isCloseRequired(msg)) {
             close(ctx);
             return;
         }
@@ -111,8 +112,9 @@ public class MainServerHandler extends SimpleChannelInboundHandler<HttpMessage> 
         }
     }
 
-    private static boolean isClosed(HttpMessage msg) {
-        return Boolean.TRUE.equals(getProperties(msg).get("connection.closed"));
+    private static boolean isCloseRequired(HttpMessage msg) {
+        return Boolean.TRUE.equals(getProperties(msg).get("connection.closed"))
+                && msg.getResponseHeader().getHeader(HttpHeader.CONTENT_LENGTH) == null;
     }
 
     @SuppressWarnings("unchecked")
