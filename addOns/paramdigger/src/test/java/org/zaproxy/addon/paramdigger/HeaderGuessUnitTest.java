@@ -126,11 +126,9 @@ class HeaderGuessUnitTest extends TestUtils {
                         String header = "x-cache";
                         String value = "miss";
                         for (Map.Entry<String, List<String>> entry : ps.entrySet()) {
-                            if (!params.containsKey(entry.getKey())) {
-                                params.put(entry.getKey(), entry.getValue().get(0));
-                                value = "miss";
-                            } else if (params.get(entry.getKey())
-                                    .equalsIgnoreCase(entry.getValue().get(0))) {
+                            if (params.containsKey(entry.getKey())
+                                    && params.get(entry.getKey())
+                                            .equalsIgnoreCase(entry.getValue().get(0))) {
                                 value = "hit";
                             } else {
                                 value = "miss";
@@ -138,16 +136,14 @@ class HeaderGuessUnitTest extends TestUtils {
                             }
                         }
 
+                        /* This logic mimics caching in case no "URL parameter cache buster" is used. */
                         if (value.equals("miss") && count == 0 && ps.isEmpty()) {
                             count++;
                         } else if (ps.isEmpty()) {
                             value = "hit";
                         }
 
-                        String retVal = session.getHeaders().get("host");
-                        if (retVal.contains(":31337")) {
-                            poisoning.put("host", session.getHeaders().get("host"));
-                        }
+                        poisoning.put("host", session.getHeaders().get("host"));
 
                         Response response =
                                 newFixedLengthResponse(
@@ -157,14 +153,16 @@ class HeaderGuessUnitTest extends TestUtils {
                                                     {
                                                         "q",
                                                         ((poisoning.get("host")) != null
-                                                                        && value == "hit")
+                                                                        && value.equalsIgnoreCase(
+                                                                                "hit"))
                                                                 ? poisoning.get("host")
                                                                 : ""
                                                     },
                                                     {
                                                         "p",
                                                         ((poisoning.get("host")) != null
-                                                                        && value == "hit")
+                                                                        && value.equalsIgnoreCase(
+                                                                                "hit"))
                                                                 ? poisoning.get("host")
                                                                 : ""
                                                     }
@@ -186,10 +184,10 @@ class HeaderGuessUnitTest extends TestUtils {
 
         // Then
         ArgumentCaptor<ParamGuessResult> result = ArgumentCaptor.forClass(ParamGuessResult.class);
-        verify(scan, times(6)).addParamGuessResult(result.capture());
+        verify(scan, times(14)).addParamGuessResult(result.capture());
         assertThat(
                 result.getAllValues().get(0).getReasons(),
-                contains(Reason.POISON_REFLECTION_IN_BODY));
+                contains(Reason.BODY_HEURISTIC_MISMATCH));
         assertThat(
                 result.getAllValues().get(1).getReasons(),
                 contains(Reason.BODY_HEURISTIC_MISMATCH));
@@ -198,7 +196,7 @@ class HeaderGuessUnitTest extends TestUtils {
                 contains(Reason.BODY_HEURISTIC_MISMATCH));
         assertThat(
                 result.getAllValues().get(3).getReasons(),
-                contains(Reason.POISON_REFLECTION_IN_BODY));
+                contains(Reason.BODY_HEURISTIC_MISMATCH));
     }
 
     @Test
@@ -217,11 +215,9 @@ class HeaderGuessUnitTest extends TestUtils {
                         String header = "x-cache";
                         String value = "miss";
                         for (Map.Entry<String, List<String>> entry : ps.entrySet()) {
-                            if (!params.containsKey(entry.getKey())) {
-                                params.put(entry.getKey(), entry.getValue().get(0));
-                                value = "miss";
-                            } else if (params.get(entry.getKey())
-                                    .equalsIgnoreCase(entry.getValue().get(0))) {
+                            if (params.containsKey(entry.getKey())
+                                    && params.get(entry.getKey())
+                                            .equalsIgnoreCase(entry.getValue().get(0))) {
                                 value = "hit";
                             } else {
                                 value = "miss";
@@ -229,6 +225,7 @@ class HeaderGuessUnitTest extends TestUtils {
                             }
                         }
 
+                        /* This logic mimics caching in case no "URL parameter cache buster" is used. */
                         if (value.equals("miss") && count == 0 && ps.isEmpty()) {
                             count++;
                         } else if (ps.isEmpty()) {
@@ -242,11 +239,11 @@ class HeaderGuessUnitTest extends TestUtils {
 
                         Response response = newFixedLengthResponse("OK");
                         response.addHeader(header, value);
-                        response.addHeader(
-                                "host",
-                                ((poisoning.get("host")) != null && value == "hit")
-                                        ? poisoning.get("host")
-                                        : "localhost");
+                        if ((poisoning.get("host")) != null && value.equalsIgnoreCase("hit")) {
+                            response.addHeader("Origin", poisoning.get("host"));
+                        } else {
+                            response.addHeader("Origin", session.getHeaders().get("host"));
+                        }
                         return response;
                     }
                 });
@@ -263,7 +260,7 @@ class HeaderGuessUnitTest extends TestUtils {
 
         // Then
         ArgumentCaptor<ParamGuessResult> result = ArgumentCaptor.forClass(ParamGuessResult.class);
-        verify(scan, times(3)).addParamGuessResult(result.capture());
+        verify(scan, times(9)).addParamGuessResult(result.capture());
         assertThat(
                 result.getAllValues().get(0).getReasons(),
                 contains(Reason.POISON_REFLECTION_IN_HEADER));
@@ -290,11 +287,9 @@ class HeaderGuessUnitTest extends TestUtils {
                         String header = "x-cache";
                         String value = "miss";
                         for (Map.Entry<String, List<String>> entry : ps.entrySet()) {
-                            if (!params.containsKey(entry.getKey())) {
-                                params.put(entry.getKey(), entry.getValue().get(0));
-                                value = "miss";
-                            } else if (params.get(entry.getKey())
-                                    .equalsIgnoreCase(entry.getValue().get(0))) {
+                            if (params.containsKey(entry.getKey())
+                                    && params.get(entry.getKey())
+                                            .equalsIgnoreCase(entry.getValue().get(0))) {
                                 value = "hit";
                             } else {
                                 value = "miss";
@@ -347,7 +342,7 @@ class HeaderGuessUnitTest extends TestUtils {
 
         // Then
         ArgumentCaptor<ParamGuessResult> result = ArgumentCaptor.forClass(ParamGuessResult.class);
-        verify(scan, times(4)).addParamGuessResult(result.capture());
+        verify(scan, times(2)).addParamGuessResult(result.capture());
         assertThat(
                 result.getAllValues().get(0).getReasons(),
                 contains(Reason.POISON_REFLECTION_IN_BODY));
@@ -371,11 +366,9 @@ class HeaderGuessUnitTest extends TestUtils {
                         String header = "x-cache";
                         String value = "miss";
                         for (Map.Entry<String, List<String>> entry : ps.entrySet()) {
-                            if (!params.containsKey(entry.getKey())) {
-                                params.put(entry.getKey(), entry.getValue().get(0));
-                                value = "miss";
-                            } else if (params.get(entry.getKey())
-                                    .equalsIgnoreCase(entry.getValue().get(0))) {
+                            if (params.containsKey(entry.getKey())
+                                    && params.get(entry.getKey())
+                                            .equalsIgnoreCase(entry.getValue().get(0))) {
                                 value = "hit";
                             } else {
                                 value = "miss";

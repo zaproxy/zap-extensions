@@ -74,6 +74,7 @@ public class HeaderGuesser implements Runnable {
     private static final String POISON_DEFINITION = "paramdigger.results.poison.definition";
     private static final String POISON_DEFINITION_FIRST =
             "paramdigger.results.poison.definition.first";
+    private static List<Integer> ERROR_CODES = List.of(400, 413, 418, 429, 503);
 
     private static final int PORT = 31337;
     private static final String[] PORTS = {":" + PORT, ":@" + PORT, " " + PORT};
@@ -190,6 +191,17 @@ public class HeaderGuesser implements Runnable {
 
         // Try X-Forwarded Headers
         String poison = "" + random.nextInt(RANDOM_SEED);
+        // Try X-Forwarded-Host
+        forwardTemplate(
+                new String[] {X_FORWARDED_HEADERS[0]},
+                new String[] {poison},
+                X_FORWARDED_HEADERS[0],
+                poison,
+                method);
+        this.scan.notifyListenersProgress();
+
+        // Try X-Forwarded-Scheme along with X-Forwarded-Host
+        poison = "" + random.nextInt(RANDOM_SEED);
         String[] values = {poison, "nothttps"};
         forwardTemplate(
                 X_FORWARDED_HEADERS, values, X_FORWARDED_HEADERS_IDENTIFIER, poison, method);
@@ -224,26 +236,45 @@ public class HeaderGuesser implements Runnable {
     }
 
     private void checkPoisoning(
-            HttpMessage msg1, HttpMessage msg2, String identifier, String poison) {
+            HttpMessage msg1, HttpMessage msg2, String identifier, String poison)
+            throws IOException {
+        ComparableResponse response1 = new ComparableResponse(msg1, poison);
+        ComparableResponse response = new ComparableResponse(baseBusted, null);
+        ComparableResponse response2 = new ComparableResponse(msg2, poison);
+
+        if (isFalsePositive(response, response2)
+                || isFalsePositive(response1, response2)
+                || isFalsePositive(response, response1)) {
+            return;
+        }
+
         if (poison != null && !poison.isEmpty() && identifier != null && !identifier.isEmpty()) {
             Map<String, String> params = new HashMap<>();
             params.put(identifier, poison);
+            List<HttpHeaderField> headers1 = msg1.getResponseHeader().getHeaders();
             List<HttpHeaderField> headers2 = msg2.getResponseHeader().getHeaders();
 
             List<String> headerNames = new ArrayList<>();
 
             for (HttpHeaderField header : headers2) {
-                if (header.getValue().contains(poison)) {
-                    headerNames.add(header.getName());
+                if (header.getValue().contains(poison) && headers1.contains(header)) {
+                    for (HttpHeaderField header1 : headers1) {
+                        if (header1.getValue().equals(header.getValue())) {
+                            headerNames.add(header.getName());
+                        }
+                    }
                 }
             }
+
             boolean bodyReflection = false;
-            if (msg2.getResponseBody().toString().contains(poison)) {
+
+            if ((ComparableResponse.inputReflectionHeuristic(response1, response2) < 1)
+                    && (ComparableResponse.inputReflectionHeuristic(response1, response) <= 1.0)) {
                 List<Reason> reasons = new ArrayList<>();
                 reasons.add(Reason.POISON_REFLECTION_IN_BODY);
                 ParamReasons paramReasons = new ParamReasons(reasons, params, msg2.getHistoryRef());
-                bodyReflection = true;
                 allReasons.add(paramReasons);
+                bodyReflection = true;
             }
 
             if (!headerNames.isEmpty()) {
@@ -268,8 +299,7 @@ public class HeaderGuesser implements Runnable {
                  */
                 HttpMessage temp;
                 for (int i = 0; i < 2; i++) {
-                    HttpRequestHeader header =
-                            cacheController.getBustedResponse().getRequestHeader();
+                    HttpRequestHeader header = this.baseBusted.getRequestHeader();
                     temp = new HttpMessage(header);
                     try {
                         httpSender.sendAndReceive(temp);
@@ -291,9 +321,6 @@ public class HeaderGuesser implements Runnable {
                 }
             }
 
-            ComparableResponse response1 = new ComparableResponse(msg1, poison);
-            ComparableResponse response = new ComparableResponse(baseBusted, null);
-            ComparableResponse response2 = new ComparableResponse(msg2, poison);
             if (ComparableResponse.lineCountHeuristic(response1, response) < 1
                     && ComparableResponse.lineCountHeuristic(response2, response1) <= 1.0) {
                 List<Reason> reasons = new ArrayList<>();
@@ -315,15 +342,24 @@ public class HeaderGuesser implements Runnable {
     private void checkFirstRequestPoisoning(HttpMessage msg1, String identifier, String poison) {
         Map<String, String> params = new HashMap<>();
         params.put(identifier, poison);
+        ComparableResponse baseBustedCompRes = new ComparableResponse(this.baseBusted, null);
+        ComparableResponse suspect = new ComparableResponse(msg1, poison);
+
+        if (isFalsePositive(baseBustedCompRes, suspect)) {
+            return;
+        }
+
         if (poison != null && !poison.isEmpty()) {
             boolean bodyReflection = false;
-            if (msg1.getResponseBody().toString().contains(poison)) {
+            if (ComparableResponse.inputReflectionHeuristic(baseBustedCompRes, suspect) < 1) {
                 List<Reason> reasons = new ArrayList<>();
                 reasons.add(Reason.POISON_REFLECTION_IN_BODY);
-                ParamReasons paramReason = new ParamReasons(reasons, params, msg1.getHistoryRef());
+                ParamReasons paramReasons = new ParamReasons(reasons, params, msg1.getHistoryRef());
+                this.allPrimaryReasons.add(paramReasons);
                 bodyReflection = true;
-                this.allPrimaryReasons.add(paramReason);
             }
+
+            /* This just checks for a reflection of poison. Should somehow check with baseBusted Headers for difference. */
             List<HttpHeaderField> headers = msg1.getResponseHeader().getHeaders();
             for (HttpHeaderField header : headers) {
                 if (header.getValue().contains(poison)) {
@@ -335,9 +371,6 @@ public class HeaderGuesser implements Runnable {
                 }
             }
 
-            ComparableResponse baseBustedCompRes =
-                    new ComparableResponse(cacheController.getBustedResponse(), null);
-            ComparableResponse suspect = new ComparableResponse(msg1, null);
             if (ComparableResponse.lineCountHeuristic(baseBustedCompRes, suspect) < 1) {
                 List<Reason> reasons = new ArrayList<>();
                 reasons.add(Reason.LINE_COUNT);
@@ -368,23 +401,13 @@ public class HeaderGuesser implements Runnable {
             if (this.baseBusted == null) {
                 this.baseBusted = cacheController.getBustedResponse();
             }
-            /* Try setting method cache buster if found. */
+
             if (cacheController.getCache().isCacheBusterIsHttpMethod() && !secondRequest) {
                 reqHeaders.setMethod(cacheController.getCache().getCacheBusterName());
             } else {
-                switch (method) {
-                    case GET:
-                        reqHeaders.setMethod(HttpRequestHeader.GET);
-                        break;
-                    case POST:
-                        reqHeaders.setMethod(HttpRequestHeader.POST);
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Method not supported!");
-                }
+                setMethod(reqHeaders, method);
             }
 
-            /* Try setting parameter cache buster if found. */
             if (cacheController.getCache().isCacheBusterIsParameter()) {
                 String newUrl =
                         Utils.addCacheBusterParameter(
@@ -411,42 +434,103 @@ public class HeaderGuesser implements Runnable {
                 cookies.add(cookie);
                 reqHeaders.setCookies(cookies);
             }
-
-            reqHeaders.setVersion(HttpHeader.HTTP11);
-
-            for (int i = 0; i < headers.length; i++) {
-                if (!headers[i].equalsIgnoreCase(cacheController.getCache().getCacheBusterName())
-                        && (!headers[i].equalsIgnoreCase(HttpRequestHeader.HOST))) {
-                    reqHeaders.setHeader(headers[i], values[i]);
-                }
-            }
-
-            HttpMessage msg = new HttpMessage();
-            msg.setRequestHeader(reqHeaders);
-
-            /* Set host headers */
-            for (int i = 0; i < headers.length; i++) {
-                if (headers[i].equalsIgnoreCase(HttpRequestHeader.HOST)) {
-                    String host = new URI(url, true).getHost();
-                    msg.setUserObject(Collections.singletonMap("host", host + values[i]));
-                    httpSender.sendAndReceive(msg);
-                }
-            }
-            httpSender.sendAndReceive(msg);
-            ThreadUtils.invokeAndWaitHandled(
-                    () -> {
-                        try {
-                            table.addHistoryReference(
-                                    new HistoryReference(
-                                            Model.getSingleton().getSession(),
-                                            HistoryReference.TYPE_PARAM_DIGGER,
-                                            msg));
-                        } catch (Exception e) {
-                            LOGGER.error(e, e);
-                        }
-                    });
-            return msg;
+        } else {
+            /**
+             * No caching detected by our cache controller. But that doesn't mean there aren't any
+             * caching mechanisms working on the site.
+             */
+            setMethod(reqHeaders, method);
+            reqHeaders.setURI(new URI(url, true));
+            getBase(method);
         }
-        return null;
+        reqHeaders.setVersion(HttpHeader.HTTP11);
+
+        for (int i = 0; i < headers.length; i++) {
+            if (!headers[i].equalsIgnoreCase(HttpRequestHeader.HOST)) {
+                reqHeaders.setHeader(headers[i], values[i]);
+            }
+        }
+
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader(reqHeaders);
+
+        for (int i = 0; i < headers.length; i++) {
+            if (headers[i].equalsIgnoreCase(HttpRequestHeader.HOST)) {
+                String host = new URI(url, true).getHost();
+                msg.setUserObject(Collections.singletonMap("host", host + values[i]));
+            }
+        }
+
+        httpSender.sendAndReceive(msg);
+
+        ThreadUtils.invokeAndWaitHandled(
+                () -> {
+                    try {
+                        table.addHistoryReference(
+                                new HistoryReference(
+                                        Model.getSingleton().getSession(),
+                                        HistoryReference.TYPE_PARAM_DIGGER,
+                                        msg));
+                    } catch (Exception e) {
+                        LOGGER.error(e, e);
+                    }
+                });
+
+        return msg;
+    }
+
+    /**
+     * This method is used to skip out the comparisons which are not useful for us (generally false
+     * positives). For example, if the response is empty or the status code is within the error
+     * codes, we skip out the comparison.
+     *
+     * @param base a ComparableResponse object of the base HttpMessage.
+     * @param suspect a ComparableResponse object of the suspect HttpMessage.
+     * @return true if the comparison should be skipped, false otherwise.
+     */
+    private boolean isFalsePositive(ComparableResponse base, ComparableResponse suspect) {
+        int baseStatus = base.getStatusCode();
+        int suspectStatus = suspect.getStatusCode();
+        if (ERROR_CODES.contains(baseStatus) || ERROR_CODES.contains(suspectStatus)) {
+            return true;
+        }
+        if (suspect.getHeaders().isEmpty() || suspect.getBody().isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+
+    private void setMethod(HttpRequestHeader reqHeaders, Method method) {
+        switch (method) {
+            case GET:
+                reqHeaders.setMethod(HttpRequestHeader.GET);
+                break;
+            case POST:
+                reqHeaders.setMethod(HttpRequestHeader.POST);
+                break;
+            default:
+                throw new IllegalArgumentException("Method not supported!");
+        }
+    }
+
+    /**
+     * This method is used to set the base busted response, when the CacheController hasn't detected
+     * any caching, but there is a possible caching mechanism working on the site.
+     *
+     * @param method the HTTP method to be used for the request.
+     * @throws NullPointerException
+     * @throws IOException
+     */
+    private void getBase(Method method) throws NullPointerException, IOException {
+        if (this.baseBusted == null) {
+            HttpRequestHeader baseReqHeaders = new HttpRequestHeader();
+            setMethod(baseReqHeaders, method);
+            baseReqHeaders.setURI(new URI(config.getUrl(), true));
+            baseReqHeaders.setVersion(HttpHeader.HTTP11);
+            HttpMessage baseMsg = new HttpMessage();
+            baseMsg.setRequestHeader(baseReqHeaders);
+            httpSender.sendAndReceive(baseMsg);
+            this.baseBusted = baseMsg;
+        }
     }
 }
