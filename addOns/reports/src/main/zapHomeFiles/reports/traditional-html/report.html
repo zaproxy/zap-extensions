@@ -138,7 +138,7 @@ td {
 	</h3>
 	<h3>
 		<th:block
-				th:text="#{report.owaspZapVersion(${owaspZapVersion})}">OWASP ZAP Version</th:block>
+				th:text="#{report.owaspZapVersion(${zapVersion})}">OWASP ZAP Version</th:block>
 	</h3>
 	<th:block th:if="${reportData.isIncludeSection('alertcount')}">
 		<h3 th:text="#{report.alerts.summary}" class="left-header">Summary

@@ -371,7 +371,6 @@ public class ExtensionReports extends ExtensionAdaptor {
             context.setVariable("alertTree", reportData.getAlertTreeRootNode());
             context.setVariable("reportTitle", reportData.getTitle());
             context.setVariable("description", reportData.getDescription());
-            context.setVariable("owaspZapVersion", "2.12.0");
             context.setVariable("helper", new ReportHelper());
             context.setVariable(
                     "alertCounts", getAlertCountsByRisk(reportData.getAlertTreeRootNode()));
