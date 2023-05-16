@@ -61,6 +61,10 @@
 					<th:block
 						th:text="#{report.generated(${#dates.format(new java.util.Date(), 'EEE, d MMM yyyy HH:mm:ss')})}">Date, time</th:block>
 				</h3>
+				<h3>
+					<th:block
+							th:text="#{report.owaspZapVersion(${zapVersion})}">OWASP ZAP Version</th:block>
+				</h3>
 
 				<th:block th:if="${reportData.isIncludeSection('chart')}">
 					<!--  Hidden divs just to allow us to get hold of the right CSS colors -->
