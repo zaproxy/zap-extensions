@@ -30,6 +30,7 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.zap.extension.custompayloads.ExtensionCustomPayloads;
 import org.zaproxy.zap.extension.custompayloads.PayloadCategory;
 import org.zaproxy.zap.extension.pscanrules.ApplicationErrorScanRule;
+import org.zaproxy.zap.extension.pscanrules.InformationDisclosureSuspiciousCommentsScanRule;
 import org.zaproxy.zap.extension.pscanrules.UsernameIdorScanRule;
 
 public class ExtensionPayloader extends ExtensionAdaptor {
@@ -39,6 +40,7 @@ public class ExtensionPayloader extends ExtensionAdaptor {
     private static ExtensionCustomPayloads ecp;
     private PayloadCategory idorCategory;
     private PayloadCategory errorCategory;
+    private PayloadCategory suspiciousCommentsCategory;
 
     static {
         List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
@@ -71,6 +73,14 @@ public class ExtensionPayloader extends ExtensionAdaptor {
                         ApplicationErrorScanRule.DEFAULT_ERRORS);
         ecp.addPayloadCategory(errorCategory);
         ApplicationErrorScanRule.setPayloadProvider(errorCategory::getPayloadsIterator);
+
+        suspiciousCommentsCategory =
+                new PayloadCategory(
+                        InformationDisclosureSuspiciousCommentsScanRule.CUSTOM_PAYLOAD_CATEGORY,
+                        InformationDisclosureSuspiciousCommentsScanRule.DEFAULT_PAYLOADS);
+        ecp.addPayloadCategory(suspiciousCommentsCategory);
+        InformationDisclosureSuspiciousCommentsScanRule.setPayloadProvider(
+                suspiciousCommentsCategory::getPayloadsIterator);
     }
 
     @Override
@@ -82,6 +92,8 @@ public class ExtensionPayloader extends ExtensionAdaptor {
     public void unload() {
         UsernameIdorScanRule.setPayloadProvider(null);
         ecp.removePayloadCategory(idorCategory);
+        InformationDisclosureSuspiciousCommentsScanRule.setPayloadProvider(null);
+        ecp.removePayloadCategory(suspiciousCommentsCategory);
     }
 
     @Override

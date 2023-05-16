@@ -19,15 +19,12 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.htmlparser.jericho.Element;
@@ -35,8 +32,6 @@ import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
 import net.htmlparser.jericho.StartTagType;
 import net.htmlparser.jericho.Tag;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -57,12 +52,32 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
 
     private static final int MAX_ELEMENT_CHRS_TO_REPORT = 128;
 
-    public static final String suspiciousCommentsListDir = "xml";
-    public static final String suspiciousCommentsListFile = "suspicious-comments.txt";
-    private static final Logger LOGGER =
-            LogManager.getLogger(InformationDisclosureSuspiciousCommentsScanRule.class);
+    public static final String CUSTOM_PAYLOAD_CATEGORY = "Suspicious-Comments";
+    public static final List<String> DEFAULT_PAYLOADS =
+            List.of(
+                    "TODO",
+                    "FIXME",
+                    "BUG",
+                    "BUGS",
+                    "XXX",
+                    "QUERY",
+                    "DB",
+                    "ADMIN",
+                    "ADMINISTRATOR",
+                    "USER",
+                    "USERNAME",
+                    "SELECT",
+                    "WHERE",
+                    "FROM",
+                    "LATER",
+                    "DEBUG");
 
-    private static List<Pattern> patterns = null;
+    private static final Supplier<Iterable<String>> DEFAULT_PAYLOAD_PROVIDER =
+            () -> DEFAULT_PAYLOADS;
+
+    private static Supplier<Iterable<String>> payloadProvider = DEFAULT_PAYLOAD_PROVIDER;
+
+    private List<Pattern> patterns = null;
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
@@ -183,43 +198,27 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
                 .raise();
     }
 
-    private static List<Pattern> getPatterns() {
+    private List<Pattern> getPatterns() {
         if (patterns == null) {
-            patterns = new ArrayList<>();
-
-            try {
-                File f =
-                        new File(
-                                Constant.getZapHome()
-                                        + File.separator
-                                        + suspiciousCommentsListDir
-                                        + File.separator
-                                        + suspiciousCommentsListFile);
-                if (!f.exists()) {
-                    throw new IOException("Couldn't find resource: " + f.getAbsolutePath());
-                }
-                try (BufferedReader reader = new BufferedReader(new FileReader(f))) {
-                    String line = null;
-                    while ((line = reader.readLine()) != null) {
-                        line = line.trim();
-                        if (!line.startsWith("#") && line.length() > 0) {
-                            patterns.add(
-                                    Pattern.compile(
-                                            "\\b" + line + "\\b", Pattern.CASE_INSENSITIVE));
-                        }
-                    }
-                }
-            } catch (IOException e) {
-                LOGGER.error(
-                        "Error on opening/reading suspicious comments file: {}{}{}{} Error: {}",
-                        File.separator,
-                        suspiciousCommentsListDir,
-                        File.separator,
-                        suspiciousCommentsListFile,
-                        e.getMessage());
-            }
+            patterns = initPatterns();
         }
         return patterns;
+    }
+
+    private List<Pattern> initPatterns() {
+        List<Pattern> targetPatterns = new ArrayList<>();
+        for (String payload : payloadProvider.get()) {
+            targetPatterns.add(compilePayload(payload));
+        }
+        return targetPatterns;
+    }
+
+    private Pattern compilePayload(String payload) {
+        return Pattern.compile("\\b" + payload + "\\b", Pattern.CASE_INSENSITIVE);
+    }
+
+    public static void setPayloadProvider(Supplier<Iterable<String>> provider) {
+        payloadProvider = provider == null ? DEFAULT_PAYLOAD_PROVIDER : provider;
     }
 
     public int getRisk() {
