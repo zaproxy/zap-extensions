@@ -76,6 +76,7 @@ public class AuthUtils {
 
     public static final String AUTH_NO_USER_FIELD_STATS = "stats.auth.browser.nouserfield";
     public static final String AUTH_NO_PASSWORD_FIELD_STATS = "stats.auth.browser.nopasswordfield";
+    public static final String AUTH_FOUND_FIELDS_STATS = "stats.auth.browser.foundfields";
     public static final String AUTH_SESSION_TOKEN_STATS_PREFIX = "stats.auth.sessiontoken.";
 
     public static final String[] HEADERS = {HttpHeader.AUTHORIZATION};
@@ -92,6 +93,8 @@ public class AuthUtils {
     private static ExecutorService executorService;
 
     private static long timeToWaitMs = TimeUnit.SECONDS.toMillis(5);
+
+    private static boolean demoMode;
 
     /**
      * These are session tokens that have been seen in responses but not yet seen in use. When they
@@ -164,6 +167,9 @@ public class AuthUtils {
             WebDriver wd, String loginPageUrl, String username, String password, int waitInSecs) {
         wd.get(loginPageUrl);
         sleep(50);
+        if (demoMode) {
+            sleep(2000);
+        }
 
         WebElement userField = null;
         WebElement pwdField = null;
@@ -177,11 +183,17 @@ public class AuthUtils {
             if ((userField != null || userAdded) && pwdField != null) {
                 break;
             }
-            if (i > 1 && userField != null && pwdField == null) {
+            if (i > 1 && userField != null && pwdField == null && !userAdded) {
                 // Handle pages which require you to submit the username first
                 LOGGER.debug("Submitting just user field on {}", loginPageUrl);
                 userField.sendKeys(username);
+                if (demoMode) {
+                    sleep(2000);
+                }
                 userField.sendKeys(Keys.RETURN);
+                if (demoMode) {
+                    sleep(2000);
+                }
                 userAdded = true;
             }
             sleep(TIME_TO_SLEEP_IN_MSECS);
@@ -190,20 +202,33 @@ public class AuthUtils {
             if (!userAdded) {
                 LOGGER.debug("Entering user field on {}", wd.getCurrentUrl());
                 userField.sendKeys(username);
+                if (demoMode) {
+                    sleep(2000);
+                }
             }
             try {
                 LOGGER.debug("Submitting password field on {}", wd.getCurrentUrl());
                 pwdField.sendKeys(password);
+                if (demoMode) {
+                    sleep(2000);
+                }
                 pwdField.sendKeys(Keys.RETURN);
             } catch (Exception e) {
                 // Handle the case where the password field was present but hidden / disabled
                 LOGGER.debug("Handling hidden password field on {}", wd.getCurrentUrl());
                 userField.sendKeys(Keys.RETURN);
+                if (demoMode) {
+                    sleep(2000);
+                }
                 sleep(TIME_TO_SLEEP_IN_MSECS);
                 pwdField.sendKeys(password);
+                if (demoMode) {
+                    sleep(2000);
+                }
                 pwdField.sendKeys(Keys.RETURN);
             }
 
+            incStatsCounter(loginPageUrl, AUTH_FOUND_FIELDS_STATS);
             AuthUtils.sleep(TimeUnit.SECONDS.toMillis(waitInSecs));
 
             return true;
@@ -299,6 +324,10 @@ public class AuthUtils {
             getExtension(ExtensionSelenium.class).deregisterBrowserHook(browserHook);
             browserHook = null;
         }
+    }
+
+    public static void setDemoMode(boolean demo) {
+        demoMode = demo;
     }
 
     /**

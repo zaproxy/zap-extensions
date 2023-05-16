@@ -13,4 +13,5 @@
 	<indexitem text="Auto-Detect Session Management" target="authhelper.autodetect-session" />
 	<indexitem text="Header Based Session Management" target="authhelper.session-header" />
 	<indexitem text="Verification Identification" target="authhelper.verification-id" />
+	<indexitem text="Authentication Tester Dialog" target="authhelper.auth-tester" />
 </index>
