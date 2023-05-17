@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Added
-- Add Zap version to html and pdf exports
+- Add ZAP version to HTML and PDF reports.
 
 ### Fixed
 - Validate that `outputSummary`'s job field `summaryFile` has a parent directory.
