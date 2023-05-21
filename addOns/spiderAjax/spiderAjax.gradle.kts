@@ -60,6 +60,8 @@ dependencies {
     compileOnly(parent!!.childProjects.get("automation")!!)
     compileOnly(parent!!.childProjects.get("commonlib")!!)
     compileOnly(parent!!.childProjects.get("network")!!)
+    compileOnly("org.apache.logging.log4j:log4j-core:2.19.0")
+
     implementation(files("lib/crawljax-core-3.7.jar"))
     implementation("commons-math:commons-math:1.2")
     implementation("com.codahale.metrics:metrics-core:3.0.2")
@@ -80,9 +82,11 @@ dependencies {
         exclude(group = "log4j", module = "log4j")
     }
     implementation("xmlunit:xmlunit:1.6")
+
     testImplementation(parent!!.childProjects.get("automation")!!)
     testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(parent!!.childProjects.get("network")!!)
     testImplementation(parent!!.childProjects.get("selenium")!!)
+    testImplementation("org.apache.logging.log4j:log4j-core:2.19.0")
     testImplementation(project(":testutils"))
 }

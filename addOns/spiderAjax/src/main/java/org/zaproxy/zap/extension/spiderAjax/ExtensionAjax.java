@@ -29,6 +29,11 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.tree.TreeNode;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -91,8 +96,39 @@ public class ExtensionAjax extends ExtensionAdaptor {
     public void init() {
         super.init();
 
+        // Prevent Crawljax from logging too many, not so useful, INFO messages.
+        setLogLevel(
+                List.of(
+                        "com.crawljax.core.Crawler",
+                        "com.crawljax.core.UnfiredCandidateActions",
+                        "com.crawljax.core.state.StateMachine"),
+                Level.WARN);
+
         ajaxSpiderApi = new AjaxSpiderAPI(this);
         this.ajaxSpiderApi.addApiOptions(getAjaxSpiderParam());
+    }
+
+    private static void setLogLevel(List<String> classnames, Level level) {
+        boolean updateLoggers = false;
+        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        Configuration configuration = ctx.getConfiguration();
+        for (String classname : classnames) {
+            LoggerConfig loggerConfig = configuration.getLoggerConfig(classname);
+            if (!classname.equals(loggerConfig.getName())) {
+                configuration.addLogger(
+                        classname,
+                        LoggerConfig.newBuilder()
+                                .withLoggerName(classname)
+                                .withLevel(level)
+                                .withConfig(configuration)
+                                .build());
+                updateLoggers = true;
+            }
+        }
+
+        if (updateLoggers) {
+            ctx.updateLoggers();
+        }
     }
 
     /**
