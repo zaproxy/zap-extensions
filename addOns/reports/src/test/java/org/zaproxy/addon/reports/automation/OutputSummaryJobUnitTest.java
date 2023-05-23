@@ -156,12 +156,10 @@ class OutputSummaryJobUnitTest {
         job.runJob(env, progress);
 
         // Then
-        assertThat(
-                os.toString(),
-                is(
-                        "Total of 3 URLs\n"
-                                + "WARN-NEW: rule1 [1] x 3 \n"
-                                + "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 1\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: 0\n"));
+        assertOutput(
+                "Total of 3 URLs\n"
+                        + "WARN-NEW: rule1 [1] x 3 \n"
+                        + "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 1\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: 0\n");
     }
 
     @Test
@@ -194,12 +192,10 @@ class OutputSummaryJobUnitTest {
         job.runJob(env, progress);
 
         // Then
-        assertThat(
-                os.toString(),
-                is(
-                        "Total of 3 URLs\n"
-                                + "FAIL-NEW: rule1 [1] x 3 \n"
-                                + "FAIL-NEW: 1\tFAIL-INPROG: 0\tWARN-NEW: 0\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: 0\n"));
+        assertOutput(
+                "Total of 3 URLs\n"
+                        + "FAIL-NEW: rule1 [1] x 3 \n"
+                        + "FAIL-NEW: 1\tFAIL-INPROG: 0\tWARN-NEW: 0\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: 0\n");
     }
 
     @Test
@@ -232,12 +228,10 @@ class OutputSummaryJobUnitTest {
         job.runJob(env, progress);
 
         // Then
-        assertThat(
-                os.toString(),
-                is(
-                        "Total of 3 URLs\n"
-                                + "INFO: rule1 [1] x 3 \n"
-                                + "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 0\tWARN-INPROG: 0\tINFO: 1\tIGNORE: 0\tPASS: 0\n"));
+        assertOutput(
+                "Total of 3 URLs\n"
+                        + "INFO: rule1 [1] x 3 \n"
+                        + "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 0\tWARN-INPROG: 0\tINFO: 1\tIGNORE: 0\tPASS: 0\n");
     }
 
     @Test
@@ -270,12 +264,10 @@ class OutputSummaryJobUnitTest {
         job.runJob(env, progress);
 
         // Then
-        assertThat(
-                os.toString(),
-                is(
-                        "Total of 3 URLs\n"
-                                + "IGNORE: rule1 [1] x 3 \n"
-                                + "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 0\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 1\tPASS: 0\n"));
+        assertOutput(
+                "Total of 3 URLs\n"
+                        + "IGNORE: rule1 [1] x 3 \n"
+                        + "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 0\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 1\tPASS: 0\n");
     }
 
     @Test
@@ -326,15 +318,13 @@ class OutputSummaryJobUnitTest {
         job.runJob(env, progress);
 
         // Then
-        assertThat(
-                os.toString(),
-                is(
-                        "Total of 3 URLs\n"
-                                + "IGNORE: rule2 [2] x 3 \n"
-                                + "INFO: rule4 [4] x 3 \n"
-                                + "WARN-NEW: rule3 [3] x 3 \n"
-                                + "FAIL-NEW: rule1 [1] x 3 \n"
-                                + "FAIL-NEW: 1\tFAIL-INPROG: 0\tWARN-NEW: 1\tWARN-INPROG: 0\tINFO: 1\tIGNORE: 1\tPASS: 0\n"));
+        assertOutput(
+                "Total of 3 URLs\n"
+                        + "IGNORE: rule2 [2] x 3 \n"
+                        + "INFO: rule4 [4] x 3 \n"
+                        + "WARN-NEW: rule3 [3] x 3 \n"
+                        + "FAIL-NEW: rule1 [1] x 3 \n"
+                        + "FAIL-NEW: 1\tFAIL-INPROG: 0\tWARN-NEW: 1\tWARN-INPROG: 0\tINFO: 1\tIGNORE: 1\tPASS: 0\n");
     }
 
     @Test
@@ -347,10 +337,8 @@ class OutputSummaryJobUnitTest {
         job.runJob(env, progress);
 
         // Then
-        assertThat(
-                os.toString(),
-                is(
-                        "No URLs found - is the target URL accessible? Local services may not be accessible from a Docker container\n"));
+        assertOutput(
+                "No URLs found - is the target URL accessible? Local services may not be accessible from a Docker container\n");
     }
 
     @Test
@@ -379,15 +367,13 @@ class OutputSummaryJobUnitTest {
         job.runJob(env, progress);
 
         // Then
-        assertThat(
-                os.toString(),
-                is(
-                        "Total of 8 URLs\n"
-                                + "WARN-NEW: rule1 [1] x 3 \n"
-                                + "\thttps://www.example.com (0 )\n"
-                                + "\thttps://www.example.com/a (0 )\n"
-                                + "\thttps://www.example.com/b (0 )\n"
-                                + "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 1\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: 0\n"));
+        assertOutput(
+                "Total of 8 URLs\n"
+                        + "WARN-NEW: rule1 [1] x 3 \n"
+                        + "\thttps://www.example.com (0 )\n"
+                        + "\thttps://www.example.com/a (0 )\n"
+                        + "\thttps://www.example.com/b (0 )\n"
+                        + "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 1\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: 0\n");
     }
 
     @Test
@@ -411,14 +397,12 @@ class OutputSummaryJobUnitTest {
         job.runJob(env, progress);
 
         // Then
-        assertThat(
-                os.toString(),
-                is(
-                        "Total of 10 URLs\n"
-                                + "PASS: rule1 [1]\n"
-                                + "PASS: rule2 [2]\n"
-                                + "PASS: rule3 [3]\n"
-                                + "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 0\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: 3\n"));
+        assertOutput(
+                "Total of 10 URLs\n"
+                        + "PASS: rule1 [1]\n"
+                        + "PASS: rule2 [2]\n"
+                        + "PASS: rule3 [3]\n"
+                        + "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 0\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: 3\n");
     }
 
     @Test
@@ -442,14 +426,12 @@ class OutputSummaryJobUnitTest {
         job.runJob(env, progress);
 
         // Then
-        assertThat(
-                os.toString(),
-                is(
-                        "Total of 10 URLs\n"
-                                + "PASS: rule1001 [1001]\n"
-                                + "PASS: rule20 [20]\n"
-                                + "PASS: rule9 [9]\n"
-                                + "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 0\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: 3\n"));
+        assertOutput(
+                "Total of 10 URLs\n"
+                        + "PASS: rule1001 [1001]\n"
+                        + "PASS: rule20 [20]\n"
+                        + "PASS: rule9 [9]\n"
+                        + "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 0\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: 3\n");
     }
 
     @Test
@@ -482,17 +464,15 @@ class OutputSummaryJobUnitTest {
         job.runJob(env, progress);
 
         // Then
-        assertThat(
-                os.toString(),
-                is(
-                        "Total of 20 URLs\n"
-                                + "PASS: rule2 [2]\n"
-                                + "PASS: rule3 [3]\n"
-                                + "WARN-NEW: rule1 [1] x 3 \n"
-                                + "\thttps://www.example.com (0 )\n"
-                                + "\thttps://www.example.com/a (0 )\n"
-                                + "\thttps://www.example.com/b (0 )\n"
-                                + "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 1\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: 2\n"));
+        assertOutput(
+                "Total of 20 URLs\n"
+                        + "PASS: rule2 [2]\n"
+                        + "PASS: rule3 [3]\n"
+                        + "WARN-NEW: rule1 [1] x 3 \n"
+                        + "\thttps://www.example.com (0 )\n"
+                        + "\thttps://www.example.com/a (0 )\n"
+                        + "\thttps://www.example.com/b (0 )\n"
+                        + "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 1\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: 2\n");
     }
 
     @Test
@@ -525,11 +505,9 @@ class OutputSummaryJobUnitTest {
         job.runJob(env, progress);
 
         // Then
-        assertThat(
-                os.toString(),
-                is(
-                        "WARN-NEW: rule1 [1] x 3 \n"
-                                + "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 1\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: 2\n"));
+        assertOutput(
+                "WARN-NEW: rule1 [1] x 3 \n"
+                        + "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 1\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: 2\n");
     }
 
     @Test
@@ -658,12 +636,14 @@ class OutputSummaryJobUnitTest {
         job.runJob(env, progress);
 
         // Then
-        assertThat(
-                os.toString(),
-                is(
-                        "Total of 3 URLs\n"
-                                + "WARN-NEW: rule1 [1] x 3 A custom message\n"
-                                + "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 1\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: 0\n"));
+        assertOutput(
+                "Total of 3 URLs\n"
+                        + "WARN-NEW: rule1 [1] x 3 A custom message\n"
+                        + "FAIL-NEW: 0\tFAIL-INPROG: 0\tWARN-NEW: 1\tWARN-INPROG: 0\tINFO: 0\tIGNORE: 0\tPASS: 0\n");
+    }
+
+    private void assertOutput(String output) {
+        assertThat(os.toString(), is(output.replace("\n", System.lineSeparator())));
     }
 
     class TestPluginPassiveScanner extends PluginPassiveScanner {
