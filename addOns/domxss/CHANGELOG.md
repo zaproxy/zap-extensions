@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [15] - 2023-05-23
 ### Changed
 - Maintenance changes.
 
@@ -96,6 +96,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## 1 - 2015-08-24
 
 
+[15]: https://github.com/zaproxy/zap-extensions/releases/domxss-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/domxss-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/domxss-v13
 [12]: https://github.com/zaproxy/zap-extensions/releases/domxss-v12
