@@ -905,8 +905,6 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             String proxyAddress,
             int proxyPort,
             Consumer<MutableCapabilities> consumer) {
-        validateProxyAddressPort(proxyAddress, proxyPort);
-
         return getWebDriver(browser, proxyAddress, proxyPort, consumer, false);
     }
 
@@ -918,8 +916,21 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             boolean enableExtensions) {
         validateProxyAddressPort(proxyAddress, proxyPort);
 
+        return getWebDriver(-1, browser, proxyAddress, proxyPort, consumer, enableExtensions);
+    }
+
+    public static WebDriver getWebDriver(
+            int requester,
+            Browser browser,
+            String proxyAddress,
+            int proxyPort,
+            Consumer<MutableCapabilities> consumer,
+            boolean enableExtensions) {
+        validateProxyAddressPort(proxyAddress, proxyPort);
+
         WebDriver wd =
-                getWebDriverImpl(-1, browser, proxyAddress, proxyPort, consumer, enableExtensions);
+                getWebDriverImpl(
+                        requester, browser, proxyAddress, proxyPort, consumer, enableExtensions);
         webDrivers.add(wd);
         updateStats(browser);
         return wd;
@@ -1022,8 +1033,11 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                 // also useful for other launched browsers.
                 firefoxOptions.addPreference("network.captive-portal-service.enabled", false);
 
-                if (requester == HttpSender.AJAX_SPIDER_INITIATOR) {
-                    // Disable JSON viewer, otherwise AJAX Spider will crawl it.
+                if (requester == HttpSender.AJAX_SPIDER_INITIATOR
+                        || requester == HttpSender.ACTIVE_SCANNER_INITIATOR) {
+                    // Disable JSON viewer, otherwise AJAX Spider or scan rules will use it,
+                    // potentially invoking the "Save As" dialog which will hang waiting for the
+                    // user to click on a button.
                     // https://developer.mozilla.org/en-US/docs/Tools/JSON_viewer
                     firefoxOptions.addPreference("devtools.jsonview.enabled", false);
                 }
