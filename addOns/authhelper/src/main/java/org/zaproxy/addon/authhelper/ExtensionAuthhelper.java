@@ -19,12 +19,15 @@
  */
 package org.zaproxy.addon.authhelper;
 
+import java.awt.EventQueue;
+import java.awt.event.KeyEvent;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.swing.ImageIcon;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -32,21 +35,28 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.authentication.FormBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.JsonBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.PostBasedAuthenticationMethodType;
 import org.zaproxy.zap.authentication.PostBasedAuthenticationMethodType.PostBasedAuthenticationMethod;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
+import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
+import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.sessions.ExtensionSessionManagement;
+import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.Stats;
+import org.zaproxy.zap.utils.ZapTextArea;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
+import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChangedListener {
 
@@ -54,13 +64,21 @@ public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChan
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionAuthhelper.class);
 
+    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
+            List.of(
+                    ExtensionPassiveScan.class,
+                    ExtensionSelenium.class,
+                    ExtensionUserManagement.class);
+
+    public static final String RESOURCES_DIR = "/org/zaproxy/addon/authhelper/resources/";
+
     private static final HeaderBasedSessionManagementMethodType HEADER_BASED_SESSION_TYPE =
             new HeaderBasedSessionManagementMethodType();
 
-    private static final AutoDetectSessionManagementMethodType AUTO_DETECT_SESSION_TYPE =
+    protected static final AutoDetectSessionManagementMethodType AUTO_DETECT_SESSION_TYPE =
             new AutoDetectSessionManagementMethodType();
 
-    private static final BrowserBasedAuthenticationMethodType BROWSER_BASED_AUTH_TYPE =
+    protected static final BrowserBasedAuthenticationMethodType BROWSER_BASED_AUTH_TYPE =
             new BrowserBasedAuthenticationMethodType();
 
     private static final AutoDetectAuthenticationMethodType AUTO_DETECT_AUTH_TYPE =
@@ -75,9 +93,27 @@ public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChan
 
     public static final Set<Integer> HISTORY_TYPES_SET = Set.of(HISTORY_TYPES);
 
+    private ZapMenuItem authTesterMenu;
+    private AuthTestDialog authTestDialog;
+
+    private AuthDiagnosticCollector authDiagCollector;
+    private AuthhelperParam param;
+
     public ExtensionAuthhelper() {
         super();
         this.setI18nPrefix("authhelper");
+    }
+
+    @Override
+    public List<Class<? extends Extension>> getDependencies() {
+        return EXTENSION_DEPENDENCIES;
+    }
+
+    public AuthhelperParam getParam() {
+        if (param == null) {
+            param = new AuthhelperParam();
+        }
+        return param;
     }
 
     @Override
@@ -120,6 +156,13 @@ public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChan
     @Override
     public void hook(ExtensionHook extensionHook) {
         extensionHook.addSessionListener(new AuthSessionChangedListener());
+        extensionHook.addOptionsParamSet(getParam());
+        if (hasView()) {
+            extensionHook.getHookMenu().addToolsMenuItem(getAuthTesterMenu());
+
+            authDiagCollector = new AuthDiagnosticCollector();
+            extensionHook.addHttpSenderListener(authDiagCollector);
+        }
     }
 
     @Override
@@ -140,6 +183,42 @@ public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChan
     @Override
     public boolean canUnload() {
         return true;
+    }
+
+    public void enableAuthDiagCollector(boolean enable) {
+        if (this.authDiagCollector != null) {
+            this.authDiagCollector.setEnabled(enable);
+        }
+    }
+
+    public void setAuthDiagCollectorOutput(ZapTextArea output) {
+        if (this.authDiagCollector != null) {
+            this.authDiagCollector.setCollector(
+                    str -> EventQueue.invokeLater(() -> output.append(str)));
+        }
+    }
+
+    private ZapMenuItem getAuthTesterMenu() {
+        if (authTesterMenu == null) {
+            authTesterMenu =
+                    new ZapMenuItem(
+                            "authhelper.topmenu.tools.authtester",
+                            View.getSingleton().getMenuShortcutKeyStroke(KeyEvent.VK_T, 0, false));
+            authTesterMenu.setIcon(
+                    new ImageIcon(
+                            this.getClass()
+                                    .getResource(RESOURCES_DIR + "images/hand-padlock.png")));
+
+            authTesterMenu.addActionListener(
+                    e -> {
+                        if (authTestDialog == null) {
+                            authTestDialog =
+                                    new AuthTestDialog(this, View.getSingleton().getMainFrame());
+                        }
+                        authTestDialog.setVisible(true);
+                    });
+        }
+        return authTesterMenu;
     }
 
     private static String urlEncode(String parameter) {
@@ -247,6 +326,9 @@ public class ExtensionAuthhelper extends ExtensionAdaptor implements SessionChan
     @Override
     public void sessionAboutToChange(Session session) {
         BrowserBasedAuthenticationMethodType.stopProxies();
+        if (this.authDiagCollector != null) {
+            this.authDiagCollector.reset();
+        }
     }
 
     @Override
