@@ -59,7 +59,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
                     CommonAlertTag.OWASP_2017_A05_BROKEN_AC,
                     CommonAlertTag.WSTG_V42_ATHZ_01_DIR_TRAVERSAL);
 
-    private static final String NON_EXISTANT_FILENAME = "thishouldnotexistandhopefullyitwillnot";
+    private static final String NON_EXISTANT_FILENAME = "thisshouldnotexistandhopefullyitwillnot";
 
     /*
      * Windows local file targets and detection pattern
