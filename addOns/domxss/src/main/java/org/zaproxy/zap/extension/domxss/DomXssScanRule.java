@@ -53,6 +53,7 @@ import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
@@ -259,13 +260,15 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
     private WebDriver createWebDriver() {
         WebDriver webDriver =
                 ExtensionSelenium.getWebDriver(
+                        HttpSender.ACTIVE_SCANNER_INITIATOR,
                         browser,
                         "127.0.0.1",
                         proxyPort,
                         capabilities ->
                                 capabilities.setCapability(
                                         CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR,
-                                        UnexpectedAlertBehaviour.IGNORE));
+                                        UnexpectedAlertBehaviour.IGNORE),
+                        false);
 
         webDriver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
         webDriver.manage().timeouts().setScriptTimeout(10, TimeUnit.SECONDS);

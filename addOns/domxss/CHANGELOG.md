@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Disable JSON view in Firefox to prevent hangs when the "Save As" option is invoked.
+
 ## [14] - 2022-10-27
 ### Changed
 - Update minimum ZAP version to 2.12.0.
