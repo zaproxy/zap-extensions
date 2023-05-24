@@ -90,6 +90,40 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldReturnUserEmailFieldById() throws Exception {
+        // Given
+        List<WebElement> inputElements = new ArrayList<>();
+        inputElements.add(new TestWebElement("input", "password"));
+        inputElements.add(new TestWebElement("input", "text", "search", "s"));
+        inputElements.add(new TestWebElement("input", "text", "email", "e"));
+        inputElements.add(new TestWebElement("input", "checkbox"));
+
+        // When
+        WebElement field = AuthUtils.getUserField(inputElements);
+
+        // Then
+        assertThat(field, is(notNullValue()));
+        assertThat(field.getAttribute("id"), is(equalTo("email")));
+    }
+
+    @Test
+    void shouldReturnUserEmailFieldByName() throws Exception {
+        // Given
+        List<WebElement> inputElements = new ArrayList<>();
+        inputElements.add(new TestWebElement("input", "password"));
+        inputElements.add(new TestWebElement("input", "text", "search", "s"));
+        inputElements.add(new TestWebElement("input", "text", "x", "username"));
+        inputElements.add(new TestWebElement("input", "checkbox"));
+
+        // When
+        WebElement field = AuthUtils.getUserField(inputElements);
+
+        // Then
+        assertThat(field, is(notNullValue()));
+        assertThat(field.getAttribute("name"), is(equalTo("username")));
+    }
+
+    @Test
     void shouldReturnNoUserField() throws Exception {
         // Given
         List<WebElement> inputElements = new ArrayList<>();
@@ -452,10 +486,18 @@ class AuthUtilsUnitTest extends TestUtils {
 
         private String tag;
         private String type;
+        private String id;
+        private String name;
 
         TestWebElement(String tag, String type) {
             this.tag = tag;
             this.type = type;
+        }
+
+        TestWebElement(String tag, String type, String id, String name) {
+            this(tag, type);
+            this.id = id;
+            this.name = name;
         }
 
         @Override
@@ -482,10 +524,16 @@ class AuthUtilsUnitTest extends TestUtils {
 
         @Override
         public String getAttribute(String name) {
-            if ("type".equalsIgnoreCase(name)) {
-                return type;
+            switch (name) {
+                case "id":
+                    return id;
+                case "name":
+                    return this.name;
+                case "type":
+                    return type;
+                default:
+                    return null;
             }
-            return null;
         }
 
         @Override

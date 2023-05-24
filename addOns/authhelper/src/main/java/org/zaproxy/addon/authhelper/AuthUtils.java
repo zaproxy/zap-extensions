@@ -81,6 +81,9 @@ public class AuthUtils {
 
     public static final String[] HEADERS = {HttpHeader.AUTHORIZATION};
     public static final String[] JSON_IDS = {"accesstoken", "token"};
+    private static final String[] USERNAME_FIELD_INDICATORS = {
+        "email", "signinname", "uname", "user"
+    };
 
     private static int MAX_NUM_RECORDS_TO_CHECK = 200;
 
@@ -135,14 +138,44 @@ public class AuthUtils {
 
         if (!filteredList.isEmpty()) {
             if (filteredList.size() > 1) {
-                LOGGER.warn(
-                        "Found more than one potential user field : {} , using {}",
-                        filteredList,
-                        filteredList.get(0));
+                LOGGER.warn("Found more than one potential user field : {}", filteredList);
+                // Try to identify the best one
+                for (WebElement we : filteredList) {
+                    if (attributeContains(we, "id", USERNAME_FIELD_INDICATORS)
+                            || attributeContains(we, "name", USERNAME_FIELD_INDICATORS)) {
+                        LOGGER.debug(
+                                "Choosing 'best' user field: name={} id={}",
+                                we.getAttribute("name"),
+                                we.getAttribute("id"));
+                        return we;
+                    }
+                    LOGGER.debug(
+                            "Not yet choosing user field: name={} id={}",
+                            we.getAttribute("name"),
+                            we.getAttribute("id"));
+                }
             }
+            LOGGER.debug(
+                    "Choosing first user field: name={} id={}",
+                    filteredList.get(0).getAttribute("name"),
+                    filteredList.get(0).getAttribute("id"));
             return filteredList.get(0);
         }
         return null;
+    }
+
+    static boolean attributeContains(WebElement we, String attribute, String[] strings) {
+        String att = we.getAttribute(attribute);
+        if (att == null) {
+            return false;
+        }
+        att = att.toLowerCase(Locale.ROOT);
+        for (String str : strings) {
+            if (att.contains(str)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     static WebElement getPasswordField(List<WebElement> inputElements) {
