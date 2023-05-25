@@ -24,32 +24,30 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import org.apache.commons.configuration.FileConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
-import org.mockito.ArgumentMatcher;
-import org.mockito.MockedStatic;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.quality.Strictness;
-import org.parosproxy.paros.CommandLine;
+import org.mockito.stubbing.Answer;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.model.Session;
+import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob.Order;
 import org.zaproxy.addon.automation.AutomationProgress;
@@ -58,6 +56,7 @@ import org.zaproxy.addon.automation.tests.AutomationStatisticTest;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderTarget;
 import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
+import org.zaproxy.zap.extension.spiderAjax.SpiderThread;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.model.Context;
@@ -66,32 +65,22 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 class AjaxSpiderJobUnitTest {
 
-    private static MockedStatic<CommandLine> mockedCmdLine;
-    // Disabled due to build issues
     private ExtensionLoader extensionLoader;
     private ExtensionAjax extAjax;
     private AjaxSpiderParam ajaxSpiderParam;
 
-    // TODO Tests disabled due to build issues
-    // @BeforeAll
-    static void init() {
-        mockedCmdLine = Mockito.mockStatic(CommandLine.class);
+    @AfterAll
+    static void afterAll() {
+        Constant.messages = null;
     }
 
-    // @AfterAll
-    static void close() {
-        mockedCmdLine.close();
-    }
-
-    // @BeforeEach
+    @BeforeEach
     void setUp() throws Exception {
         Constant.messages = new I18N(Locale.ENGLISH);
 
-        Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
-        Model.setSingletonForTesting(model);
         extensionLoader =
                 mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
-        extAjax = new ExtensionAjax();
+        extAjax = mock(ExtensionAjax.class);
         given(extensionLoader.getExtension(ExtensionAjax.class)).willReturn(extAjax);
         ajaxSpiderParam = new AjaxSpiderParam();
         given(extAjax.getAjaxSpiderParam()).willReturn(ajaxSpiderParam);
@@ -104,7 +93,7 @@ class AjaxSpiderJobUnitTest {
         Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
     }
 
-    // @Test
+    @Test
     void shouldReturnDefaultFields() {
         // Given / When
         AjaxSpiderJob job = new AjaxSpiderJob();
@@ -117,7 +106,7 @@ class AjaxSpiderJobUnitTest {
         assertThat(job.getParamMethodName(), is("getAjaxSpiderParam"));
     }
 
-    // @Test
+    @Test
     void shouldReturnCustomConfigParams() {
         // Given
         AjaxSpiderJob job = new AjaxSpiderJob();
@@ -129,24 +118,37 @@ class AjaxSpiderJobUnitTest {
         assertThat(params.size(), is(equalTo(4)));
         assertThat(params.get("context"), is(equalTo("")));
         assertThat(params.get("url"), is(equalTo("")));
-        assertThat(params.get("failIfFoundUrlsLessThan"), is(equalTo("0")));
-        assertThat(params.get("warnIfFoundUrlsLessThan"), is(equalTo("0")));
+        assertThat(params.get("user"), is(equalTo("")));
+        assertThat(params.get("runOnlyIfModern"), is(equalTo("false")));
     }
 
-    // @Test
+    @Test
     void shouldApplyCustomConfigParams() {
         // Given
+        AutomationProgress progress = new AutomationProgress();
+        String yamlStr =
+                "parameters:\n"
+                        + "  context: context\n  url: url\n  user: user\n  runOnlyIfModern: true";
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
         AjaxSpiderJob job = new AjaxSpiderJob();
+        job.setJobData(((LinkedHashMap<?, ?>) data));
 
         // When
-        job.applyCustomParameter("maxDuration", "12");
+        job.verifyParameters(progress);
 
         // Then
-        assertThat(job.getParameters().getMaxDuration(), is(equalTo(12)));
+        assertThat(job.getParameters().getContext(), is(equalTo("context")));
+        assertThat(job.getParameters().getUrl(), is(equalTo("url")));
+        assertThat(job.getParameters().getUser(), is(equalTo("user")));
+        assertThat(job.getParameters().getRunOnlyIfModern(), is(equalTo(Boolean.TRUE)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
     }
 
-    // @Test
-    void shouldReturnConfigParams() throws MalformedURLException {
+    @Test
+    void shouldReturnConfigParams() {
         // Given
         AjaxSpiderJob job = new AjaxSpiderJob();
 
@@ -176,18 +178,25 @@ class AjaxSpiderJobUnitTest {
         }
     }
 
-    // @Test
-    void shouldRunValidJob() throws MalformedURLException {
+    @Test
+    void shouldRunValidJob() {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
         Context context = mock(Context.class);
-        ContextWrapper contextWrapper = new ContextWrapper(context);
-
+        ContextWrapper contextWrapper = mock(ContextWrapper.class);
+        given(contextWrapper.getContext()).willReturn(context);
+        String url = "http://example.com";
+        given(contextWrapper.getUrls()).willReturn(List.of(url));
+        given(context.isInContext(url)).willReturn(true);
         given(extAjax.isSpiderRunning()).willReturn(false);
+
+        given(extAjax.createSpiderThread(anyString(), any(), any()))
+                .willReturn(mock(SpiderThread.class));
 
         AutomationProgress progress = new AutomationProgress();
 
         AutomationEnvironment env = mock(AutomationEnvironment.class);
+        given(env.replaceVars(url)).willReturn(url);
         given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
 
         AjaxSpiderJob job = new AjaxSpiderJob();
@@ -206,8 +215,8 @@ class AjaxSpiderJobUnitTest {
         assertThat(progress.hasErrors(), is(equalTo(false)));
     }
 
-    // @Test
-    void shouldFailIfInvalidUrl() throws MalformedURLException {
+    @Test
+    void shouldFailIfInvalidUrl() {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
@@ -216,7 +225,7 @@ class AjaxSpiderJobUnitTest {
 
         // When
         AjaxSpiderJob job = new AjaxSpiderJob();
-        job.applyCustomParameter("url", "Not a url");
+        job.getParameters().setUrl("Not a url");
         job.runJob(env, progress);
 
         // Then
@@ -225,8 +234,8 @@ class AjaxSpiderJobUnitTest {
         assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.context.badurl!")));
     }
 
-    // @Test
-    void shouldFailIfUnknownContext() throws MalformedURLException {
+    @Test
+    void shouldFailIfUnknownContext() {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
         AutomationProgress progress = new AutomationProgress();
@@ -235,7 +244,7 @@ class AjaxSpiderJobUnitTest {
 
         // When
         AjaxSpiderJob job = new AjaxSpiderJob();
-        job.applyCustomParameter("context", "Unknown");
+        job.getParameters().setContext("Unknown");
         job.runJob(env, progress);
 
         // Then
@@ -244,16 +253,12 @@ class AjaxSpiderJobUnitTest {
         assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.context.unknown!")));
     }
 
-    // @Test
-    void shouldUseSpecifiedContext() throws MalformedURLException, URISyntaxException {
+    @Test
+    void shouldUseSpecifiedContext() {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);
-        Session session = mock(Session.class);
         Context context1 = mock(Context.class);
         Context context2 = mock(Context.class);
-        given(session.getNewContext("context1")).willReturn(context1);
-        given(session.getNewContext("context2")).willReturn(context2);
-        given(context1.isInContext(anyString())).willReturn(true);
         given(context2.isInContext(anyString())).willReturn(true);
         ContextWrapper contextWrapper1 = new ContextWrapper(context1);
         ContextWrapper contextWrapper2 = new ContextWrapper(context2);
@@ -262,110 +267,95 @@ class AjaxSpiderJobUnitTest {
         FileConfiguration tempConfig = new XMLConfiguration();
         options.load(tempConfig);
 
-        AjaxSpiderTarget.Builder targetBuilder1 =
-                AjaxSpiderTarget.newBuilder(Model.getSingleton().getSession())
-                        .setContext(context1)
-                        .setInScopeOnly(false)
-                        .setOptions(options)
-                        .setStartUri(new URI("https://www.example.com"));
-        AjaxSpiderTarget target1 = targetBuilder1.build();
-
-        AjaxSpiderTarget.Builder targetBuilder2 =
-                AjaxSpiderTarget.newBuilder(Model.getSingleton().getSession())
-                        .setContext(context2)
-                        .setInScopeOnly(false)
-                        .setOptions(options)
-                        .setStartUri(new URI("https://www.example.com"));
-        AjaxSpiderTarget target2 = targetBuilder2.build();
-
-        given(extAjax.isSpiderRunning()).willReturn(false);
+        given(extAjax.createSpiderThread(anyString(), any(), any()))
+                .willReturn(mock(SpiderThread.class));
 
         AutomationProgress progress = new AutomationProgress();
 
+        String url = "https://www.example.com";
         AutomationEnvironment env = mock(AutomationEnvironment.class);
+        given(env.replaceVars(url)).willReturn(url);
         given(env.getContextWrapper("context1")).willReturn(contextWrapper1);
         given(env.getContextWrapper("context2")).willReturn(contextWrapper2);
         given(env.getDefaultContext()).willReturn(context1);
 
         // When
         AjaxSpiderJob job = new AjaxSpiderJob();
-        job.applyCustomParameter("context", "context2");
+        job.getParameters().setUrl(url);
+        job.getParameters().setContext("context2");
         job.runJob(env, progress);
 
         // Then
-        verify(extAjax, times(0))
-                .startScan(any(), argThat(new TargetContextMatcher(target1)), any());
-        verify(extAjax, times(1))
-                .startScan(any(), argThat(new TargetContextMatcher(target2)), any());
-
+        ArgumentCaptor<AjaxSpiderTarget> targetCaptor =
+                ArgumentCaptor.forClass(AjaxSpiderTarget.class);
+        verify(extAjax).createSpiderThread(any(), targetCaptor.capture(), any());
+        assertThat(targetCaptor.getValue().getContext(), is(equalTo(context2)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
     }
 
-    private static class TargetContextMatcher implements ArgumentMatcher<AjaxSpiderTarget> {
-
-        private AjaxSpiderTarget left;
-
-        public TargetContextMatcher(AjaxSpiderTarget target) {
-            left = target;
-        }
-
-        @Override
-        public boolean matches(AjaxSpiderTarget right) {
-            return (Objects.equals(left.getContext(), right.getContext()));
-        }
-    }
-
-    /* TODO
-    //@Test
-    void shouldUseSpecifiedUrl() throws MalformedURLException {
+    @Test
+    void shouldUseSpecifiedUrl() {
         Constant.messages = new I18N(Locale.ENGLISH);
-        Session session = mock(Session.class);
         Context context = mock(Context.class);
-        given(session.getNewContext(any())).willReturn(context);
-
+        given(context.isInContext(anyString())).willReturn(true);
         String defaultUrl = "https://www.example.com";
         String specifiedUrl = "https://www.example.com/url";
 
         AutomationProgress progress = new AutomationProgress();
 
         AutomationEnvironment env = mock(AutomationEnvironment.class);
-        given(env.getUrlStringForContext(any())).willReturn(defaultUrl);
-        given(env.getContext(any())).willReturn(context);
+        given(env.replaceVars(specifiedUrl)).willReturn(specifiedUrl);
+        ContextWrapper contextWrapper = mock(ContextWrapper.class);
+        given(contextWrapper.getContext()).willReturn(context);
+        given(contextWrapper.getUrls()).willReturn(List.of(defaultUrl));
+        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
+
+        given(extAjax.createSpiderThread(anyString(), any(), any()))
+                .willReturn(mock(SpiderThread.class));
 
         // When
         AjaxSpiderJob job = new AjaxSpiderJob();
-        job.applyCustomParameter("url", specifiedUrl);
+        job.getParameters().setUrl(specifiedUrl);
         job.runJob(env, progress);
 
         // Then
-        // TODO Note that this isnt actually testing that specifiedUrl is used - couldnt get that to
-        // work using aryEq or matchers :(
-        verify(extAjax, times(1)).startScan(any(), any(), refEq(new Object[] {specifiedUrl}));
+        ArgumentCaptor<AjaxSpiderTarget> targetCaptor =
+                ArgumentCaptor.forClass(AjaxSpiderTarget.class);
+        verify(extAjax).createSpiderThread(any(), targetCaptor.capture(), any());
+        assertThat(targetCaptor.getValue().getStartUri().toString(), is(equalTo(specifiedUrl)));
 
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.hasErrors(), is(equalTo(false)));
     }
-    */
 
-    // @Test
-    void shouldExitIfSpiderTakesTooLong() throws MalformedURLException {
+    @Test
+    void shouldExitIfSpiderTakesTooLong() {
         // Given
         Context context = mock(Context.class);
-        ContextWrapper contextWrapper = new ContextWrapper(context);
+        given(context.isInContext(anyString())).willReturn(true);
+        ContextWrapper contextWrapper = mock(ContextWrapper.class);
+        given(contextWrapper.getContext()).willReturn(context);
+        String url = "https://example.com";
+        given(contextWrapper.getUrls()).willReturn(List.of(url));
 
         given(extAjax.isSpiderRunning()).willReturn(false);
 
         AutomationProgress progress = new AutomationProgress();
 
         AutomationEnvironment env = mock(AutomationEnvironment.class);
+        given(env.replaceVars(url)).willReturn(url);
         given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
 
         AjaxSpiderJob job = new AjaxSpiderJob();
         job.getParameters().setInScopeOnly(false);
 
+        SpiderThread spiderThread = mock(SpiderThread.class);
+        given(spiderThread.isRunning()).willReturn(true);
+        given(extAjax.createSpiderThread(anyString(), any(), any())).willReturn(spiderThread);
+
         // When
-        job.applyCustomParameter("maxDuration", "1");
+        job.getParameters().setMaxDuration(1);
         job.runJob(env, progress);
 
         // Then
@@ -378,15 +368,25 @@ class AjaxSpiderJobUnitTest {
         assertThat(progress.hasErrors(), is(equalTo(false)));
     }
 
-    // @Test
-    void shouldTestAddedUrlsStatistic() throws MalformedURLException {
+    @Test
+    void shouldTestAddedUrlsStatistic() {
         // Given
-        given(extAjax.isSpiderRunning()).willReturn(false);
 
         AutomationProgress progress = new AutomationProgress();
 
         AjaxSpiderJob job = new AjaxSpiderJob();
         job.getParameters().setInScopeOnly(false);
+
+        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        given(env.replaceVars(any()))
+                .willAnswer(
+                        new Answer<>() {
+                            @Override
+                            public String answer(InvocationOnMock invocation) throws Throwable {
+                                return invocation.getArgument(0);
+                            }
+                        });
+        job.setEnv(env);
 
         // When
         job.addTest(
@@ -403,6 +403,6 @@ class AjaxSpiderJobUnitTest {
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(true)));
         assertThat(progress.getWarnings().size(), is(1));
-        assertThat(progress.getWarnings().get(0), is("!automation.tests.stats.fail!"));
+        assertThat(progress.getWarnings().get(0), is("!automation.tests.fail!"));
     }
 }
