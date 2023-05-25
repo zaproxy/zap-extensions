@@ -41,7 +41,6 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URIException;
@@ -298,11 +297,13 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
                 .setOtherInfo(getError(errorChar));
     }
 
+    @Override
     public List<Alert> getExampleAlerts() {
-        List<Alert> alerts = new ArrayList<>();
-        alerts.add(createAlert("example1%n%s...%n%s\n", "Example param", null, '1').build());
-        alerts.add(createAlert("example2%n%s...%n%s\n", "Example param", null, '2').build());
-        alerts.add(createAlert("example3%n%s...%n%s\n", "Example param", null, '3').build());
+        List<Alert> alerts =
+                List.of(
+                        createAlert("example1%n%s...%n%s\n", "Example param", null, '1').build(),
+                        createAlert("example2%n%s...%n%s\n", "Example param", null, '2').build(),
+                        createAlert("example3%n%s...%n%s\n", "Example param", null, '3').build());
 
         return alerts;
     }
