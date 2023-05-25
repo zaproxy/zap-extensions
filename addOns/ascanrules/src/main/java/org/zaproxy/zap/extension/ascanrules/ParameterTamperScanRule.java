@@ -34,8 +34,11 @@ package org.zaproxy.zap.extension.ascanrules;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URIException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -209,13 +212,7 @@ public class ParameterTamperScanRule extends AbstractAppParamPlugin {
         }
 
         if (issueFound) {
-            newAlert()
-                    .setConfidence(confidence)
-                    .setParam(param)
-                    .setAttack(attack)
-                    .setEvidence(sb.toString())
-                    .setMessage(msg)
-                    .raise();
+            createAlert(confidence, param, attack, sb.toString(), msg).raise();
         }
 
         return issueFound;
@@ -239,5 +236,40 @@ public class ParameterTamperScanRule extends AbstractAppParamPlugin {
     @Override
     public int getWascId() {
         return 20;
+    }
+
+    private AlertBuilder createAlert(int confidence, String param, String attack, String sb, HttpMessage msg) {
+        return newAlert()
+                .setConfidence(confidence)
+                .setParam(param)
+                .setAttack(attack)
+                .setEvidence(sb)
+                .setMessage(msg);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        List<Alert> alerts = new ArrayList<>();
+       alerts.add(
+            createAlert(
+                Alert.CONFIDENCE_MEDIUM,
+                "Example param",
+                "Example Attack",
+                "Example sb",
+               null
+            ).build()
+        );
+
+        alerts.add(
+            createAlert(
+                Alert.CONFIDENCE_LOW,
+                "Example param 1",
+                "Example Attack 1",
+                "Example sb 1",
+                null
+            ).build()
+        );
+
+        return alerts;
     }
 }
