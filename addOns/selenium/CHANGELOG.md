@@ -4,7 +4,7 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [15.12.1] - 2023-05-26
 ### Fixed
 - Install Firefox extensions without using a profile (Issue 7878).
 
@@ -165,6 +165,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated to Selenium 2.45 and moved to release
 
+[15.12.1]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.12.1
 [15.12.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.12.0
 [15.11.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.11.0
 [15.10.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.10.0
