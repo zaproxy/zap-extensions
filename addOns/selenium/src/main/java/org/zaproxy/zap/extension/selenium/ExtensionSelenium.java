@@ -50,7 +50,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
-import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
@@ -959,15 +958,13 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         return Model.getSingleton().getOptionsParam().getParamSet(SeleniumOptions.class);
     }
 
-    private static void addFirefoxExtensions(FirefoxOptions options) {
+    private static void addFirefoxExtensions(FirefoxDriver driver) {
         List<Path> exts =
                 getSeleniumOptions().getEnabledBrowserExtensions(Browser.FIREFOX).stream()
                         .map(BrowserExtension::getPath)
                         .collect(Collectors.toList());
         if (!exts.isEmpty()) {
-            FirefoxProfile profile = new FirefoxProfile();
-            exts.stream().map(Path::toFile).forEach(profile::addExtension);
-            options.setProfile(profile);
+            exts.stream().forEach(driver::installExtension);
         }
     }
 
@@ -1007,9 +1004,6 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             case FIREFOX:
             case FIREFOX_HEADLESS:
                 FirefoxOptions firefoxOptions = new FirefoxOptions();
-                if (enableExtensions) {
-                    addFirefoxExtensions(firefoxOptions);
-                }
                 setCommonOptions(firefoxOptions, proxyAddress, proxyPort);
 
                 String geckoDriver =
@@ -1063,7 +1057,11 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                 firefoxOptions.setHeadless(browser == Browser.FIREFOX_HEADLESS);
 
                 consumer.accept(firefoxOptions);
-                return new FirefoxDriver(firefoxOptions);
+                FirefoxDriver driver = new FirefoxDriver(firefoxOptions);
+                if (enableExtensions) {
+                    addFirefoxExtensions(driver);
+                }
+                return driver;
             case HTML_UNIT:
                 DesiredCapabilities htmlunitCapabilities = new DesiredCapabilities();
                 setCommonOptions(htmlunitCapabilities, proxyAddress, proxyPort);
