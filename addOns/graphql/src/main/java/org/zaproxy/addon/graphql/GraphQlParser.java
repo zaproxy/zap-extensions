@@ -151,6 +151,7 @@ public class GraphQlParser {
 
     public void parse(String schema) {
         if (syncParse) {
+            fingerprint();
             generate(schema);
             return;
         }
@@ -158,11 +159,17 @@ public class GraphQlParser {
                 new ParserThread(THREAD_PREFIX + threadId.incrementAndGet()) {
                     @Override
                     public void run() {
+                        fingerprint();
                         generate(schema);
                     }
                 };
         extensionGraphQl.addParserThread(t);
         t.startParser();
+    }
+
+    private void fingerprint() {
+        var fingerprinter = new GraphQlFingerprinter(requestor.getEndpointUrl());
+        fingerprinter.fingerprint();
     }
 
     private void generate(String schema) {
