@@ -20,15 +20,21 @@
 package org.zaproxy.zap.extension.spiderAjax.automation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -38,6 +44,9 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
@@ -47,9 +56,11 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.parosproxy.paros.model.Session;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob.Order;
+import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.automation.tests.AutomationStatisticTest;
@@ -57,6 +68,8 @@ import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderTarget;
 import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
 import org.zaproxy.zap.extension.spiderAjax.SpiderThread;
+import org.zaproxy.zap.extension.spiderAjax.internal.ContextDataManager;
+import org.zaproxy.zap.extension.spiderAjax.internal.ExcludedElement;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
 import org.zaproxy.zap.model.Context;
@@ -66,6 +79,7 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 class AjaxSpiderJobUnitTest {
 
     private ExtensionLoader extensionLoader;
+    private ContextDataManager contextDataManager;
     private ExtensionAjax extAjax;
     private AjaxSpiderParam ajaxSpiderParam;
 
@@ -82,8 +96,13 @@ class AjaxSpiderJobUnitTest {
                 mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         extAjax = mock(ExtensionAjax.class);
         given(extensionLoader.getExtension(ExtensionAjax.class)).willReturn(extAjax);
-        ajaxSpiderParam = new AjaxSpiderParam();
+        ajaxSpiderParam = mock(AjaxSpiderParam.class);
         given(extAjax.getAjaxSpiderParam()).willReturn(ajaxSpiderParam);
+        contextDataManager = mock(ContextDataManager.class);
+        given(extAjax.getContextDataManager()).willReturn(contextDataManager);
+        Model model = mock(Model.class);
+        given(model.getSession()).willReturn(mock(Session.class));
+        given(extAjax.getModel()).willReturn(model);
 
         ExtensionStats extStats = mock(ExtensionStats.class);
         given(extensionLoader.getExtension(ExtensionStats.class)).willReturn(extStats);
@@ -222,6 +241,8 @@ class AjaxSpiderJobUnitTest {
         AutomationProgress progress = new AutomationProgress();
 
         AutomationEnvironment env = mock(AutomationEnvironment.class);
+        ContextWrapper contextWrapper = mock(ContextWrapper.class);
+        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
 
         // When
         AjaxSpiderJob job = new AjaxSpiderJob();
@@ -404,5 +425,150 @@ class AjaxSpiderJobUnitTest {
         assertThat(progress.hasWarnings(), is(equalTo(true)));
         assertThat(progress.getWarnings().size(), is(1));
         assertThat(progress.getWarnings().get(0), is("!automation.tests.fail!"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"{}", "''", "\n  - A"})
+    void shouldHandleInvalidExcludedElementsFormat(String dataExcludedElements) {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        String yamlStr = "parameters:\n" + "  excludedElements: " + dataExcludedElements + "\n";
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        AjaxSpiderJob job = new AjaxSpiderJob();
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(job.getParameters().getExcludedElements(), hasSize(0));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(
+                progress.getErrors(),
+                contains("!spiderajax.automation.error.excludedelements.format!"));
+    }
+
+    @Test
+    void shouldVerifyExcludedElements() {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        String yamlStr =
+                "parameters:\n"
+                        + "  excludedElements:\n"
+                        + "  - element: \"a\"\n"
+                        + "    xpath: \"//a[@id='logout' and @class='logout']\"\n"
+                        + "  - description: \"E2\"\n"
+                        + "    text: \"Click Y\"\n"
+                        + "  - description: \"E2a\"\n"
+                        + "    element: \"a\"\n"
+                        + "  - description: \"X0\"\n"
+                        + "    element: \"X0\"\n"
+                        + "    attributeValue: \"B\"\n"
+                        + "  - description: \"X1\"\n"
+                        + "    element: \"X1\"\n"
+                        + "    attributeName: \"B\"\n"
+                        + "  - description: \"X2\"\n"
+                        + "    element: \"X\"\n"
+                        + "    text: \"B\"\n"
+                        + "  - description: \"X2\"\n"
+                        + "    element: \"X\"\n"
+                        + "    text: \"B\"";
+        Yaml yaml = new Yaml();
+        Object data = yaml.load(yamlStr);
+
+        AjaxSpiderJob job = new AjaxSpiderJob();
+        job.setJobData(((LinkedHashMap<?, ?>) data));
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(job.getParameters().getExcludedElements(), hasSize(1));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(
+                progress.getErrors(),
+                contains(
+                        "!spiderajax.automation.error.excludedelements.description!",
+                        "!spiderajax.automation.error.excludedelements.element!",
+                        "!spiderajax.automation.error.excludedelements.data!",
+                        "!spiderajax.automation.error.excludedelements.attribute!",
+                        "!spiderajax.automation.error.excludedelements.attribute!",
+                        "!spiderajax.automation.error.excludedelements.duplicated!"));
+    }
+
+    @Test
+    void shouldApplyExcludedElements() {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        AjaxSpiderJob job = new AjaxSpiderJob();
+        ExcludedElementAuto excludedElement = new ExcludedElementAuto();
+        excludedElement.setDescription("Description");
+        excludedElement.setElement("Element");
+        excludedElement.setText("Text");
+        job.getParameters().setExcludedElements(List.of(excludedElement));
+
+        AutomationEnvironment env = mock(AutomationEnvironment.class);
+        AutomationPlan plan = mock(AutomationPlan.class);
+        given(plan.getEnv()).willReturn(env);
+        job.setPlan(plan);
+
+        Context context = mock(Context.class);
+        ContextWrapper contextWrapper = mock(ContextWrapper.class);
+        given(env.getDefaultContextWrapper()).willReturn(contextWrapper);
+        given(contextWrapper.getContext()).willReturn(context);
+
+        // When
+        job.applyParameters(progress);
+
+        // Then
+        assertThat(job.getParameters().getExcludedElements(), hasSize(1));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<List<ExcludedElement>> captorExcludedElements =
+                ArgumentCaptor.forClass(List.class);
+        verify(contextDataManager)
+                .setExcludedElements(eq(context), captorExcludedElements.capture());
+        ExcludedElement excludedElementApplied = captorExcludedElements.getValue().get(0);
+        assertThat(excludedElementApplied.getDescription(), is(equalTo("Description")));
+        assertThat(excludedElementApplied.getElement(), is(equalTo("Element")));
+        assertThat(excludedElementApplied.getText(), is(equalTo("Text")));
+    }
+
+    @Test
+    void shouldSavePlanWithExcludedElements(@TempDir Path tempDir) throws Exception {
+        // Given
+        Path planFile = tempDir.resolve("plan.yaml");
+        AutomationPlan plan = new AutomationPlan();
+        plan.setFile(planFile.toFile());
+        AjaxSpiderJob job = new AjaxSpiderJob();
+        plan.addJob(job);
+        ExcludedElementAuto excludedElement = new ExcludedElementAuto();
+        excludedElement.setDescription("Description");
+        excludedElement.setElement("Element");
+        excludedElement.setXpath("XPath");
+        excludedElement.setText("Text");
+        excludedElement.setAttributeName("Attribute Name");
+        excludedElement.setAttributeValue("Attribute Value");
+        job.getParameters().setExcludedElements(List.of(excludedElement));
+
+        // When
+        plan.save();
+
+        // Then
+        assertThat(
+                Files.readString(planFile),
+                containsString(
+                        "    excludedElements:\n"
+                                + "    - description: \"Description\"\n"
+                                + "      element: \"Element\"\n"
+                                + "      xpath: \"XPath\"\n"
+                                + "      text: \"Text\"\n"
+                                + "      attributeName: \"Attribute Name\"\n"
+                                + "      attributeValue: \"Attribute Value\""));
     }
 }
