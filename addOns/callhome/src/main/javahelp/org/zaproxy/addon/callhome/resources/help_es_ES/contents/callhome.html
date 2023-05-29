@@ -6,32 +6,32 @@ Call Home
 </TITLE>
 </HEAD>
 <BODY>
-<H1>Call Home</H1>
-This add-on will be used for all "calls home". 
+<H1>Llamadas a Casa</H1>
+Este complemento se utilizará para todas las "llamadas a casa". 
 <p>
-It currently supports:
+Actualmente admite:
 
-<H2>Check For Updates</H2>
-The Check for Updates call is used to find out the latest information about ZAP and the published add-ons. 
-It is a mandatory add-on from ZAP 2.12.0 as this feature is used by the ZAP core.
+<H2>Verificar Actualizaciones</H2>
+La llamada "Verificar actualizaciones" se utiliza para obtener la información más reciente sobre ZAP y los complementos publicados. 
+Es un complemento obligatorio desde ZAP 2.12.0, ya que esta función es utilizada por el núcleo de ZAP.
 
-<H2>News</H2>
-The News call is used to find out the latest news item about ZAP - this is displayed in the ZAP desktop Quick Start panel. 
+<H2>Novedades</H2>
+La llamada de "Novedades" se utiliza para obtener la última información sobre ZAP, la cual se muestra en el panel de inicio rápido de ZAP en el escritorio. 
 
-<H2>Telemetry</H2>
-The Telemetry call reports the add-ons being used and some of the ZAP internal statistics.
-It will never collect details of the sites ZAP is being used on, details of the vulnerabilities or any personal identifiable information (PII).
+<H2>Telemetría</H2>
+La llamada de telemetría informa sobre los complementos que se están utilizando y algunas estadísticas internas de ZAP.
+Nunca recopilará detalles de los sitios en los que se utiliza ZAP, detalles de las vulnerabilidades o información personal identificable (PII).
 <p>
-For more background see the blog post <a href="https://www.zaproxy.org/blog/2021-10-25-zap-telemetry-plans/">ZAP Telemetry Plans</a>.
+Para obtener más información, consulta la publicación del blog sobre  <a href="https://www.zaproxy.org/blog/2021-10-25-zap-telemetry-plans/">Planes de telemetría de ZAP</a>.
 
-<H2>Command Line option: -notel</H2>
-If <code>-notel</code> is specified on the command line then no telemetry calls will be made. The other calls will not be affected.
-Telemetry calls will also not be made if the standard <code>-silent</code> ZAP command line option is used.
+<H2>Opción de línea de comandos: -notel</H2>
+Si se especifica <code>-notel</code> en la línea de comandos, no se realizarán llamadas de telemetría. Las otras llamadas no se verán afectadas.
+Tampoco se realizarán llamadas de telemetría si se utiliza la opción de línea de comandos estándar <code> -silent</code> ZAP.
 
-<H2>Call Home Options Panel</H2>
-This panel allows you to turn telemetry support on and off.
+<H2>Panel de opciones de llamada a casa</H2>
+Este panel te permite activar y desactivar el soporte de telemetría.
 <p>
-It also displays the last set of telemetry data transmitted. 
-The telemetry data is also logged at DEBUG level in the ZAP log file.
+También muestra el último conjunto de datos de telemetría transmitidos. 
+Los datos de telemetría también se registran en el archivo de registro de ZAP con el nivel DEBUG.
 </BODY>
 </HTML>
