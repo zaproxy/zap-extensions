@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ### Added
 - An informational alert is raised when the GraphQL server implementation is identified using fingerprinting techniques.
 
+### Changed
+- Dependency updates.
+
 ## [0.15.0] - 2023-05-03
 ### Added
 - An informational alert is raised if a GraphQL endpoint that supports introspection is discovered during spidering.
