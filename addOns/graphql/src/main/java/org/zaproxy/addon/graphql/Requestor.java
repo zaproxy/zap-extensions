@@ -154,6 +154,10 @@ public class Requestor {
         this.listeners.remove(listener);
     }
 
+    URI getEndpointUrl() {
+        return endpointUrl;
+    }
+
     /** Notifies the {@link #listeners} of the messages sent. */
     private class MessageHandler implements HttpRedirectionValidator {
 
