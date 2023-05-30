@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Renamed to "Value Generator" to more clearly identify to users what the add-on does.
 
 ## [6.2.1] - 2023-04-05
 ### Fixed
