@@ -82,6 +82,8 @@ public class ExtensionPayloader extends ExtensionAdaptor {
     public void unload() {
         UserAgentScanRule.setPayloadProvider(null);
         ecp.removePayloadCategory(uaCategory);
+        HiddenFilesScanRule.setPayloadProvider(null);
+        ecp.removePayloadCategory(hfCategory);
     }
 
     @Override
