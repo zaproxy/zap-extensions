@@ -92,6 +92,8 @@ public class ExtensionPayloader extends ExtensionAdaptor {
     public void unload() {
         UsernameIdorScanRule.setPayloadProvider(null);
         ecp.removePayloadCategory(idorCategory);
+        ApplicationErrorScanRule.setPayloadProvider(null);
+        ecp.removePayloadCategory(errorCategory);
         InformationDisclosureSuspiciousCommentsScanRule.setPayloadProvider(null);
         ecp.removePayloadCategory(suspiciousCommentsCategory);
     }

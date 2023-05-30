@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Added custom payload support (via Custom Payloads add-on) to 'Information Disclosure Suspicious Comments' scan rule.
 - Removed suspicious-comments.txt file in favor of payload editing via Custom Payloads add-on.
 
+### Fixed
+- Ensure Custom Payloads support can be properly unloaded.
+
 ## [48] - 2023-05-03
 ### Added
 - Added alert examples to Directory Browsing (Issue 6119).
