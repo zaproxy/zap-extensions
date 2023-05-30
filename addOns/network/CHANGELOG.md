@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Use `TRACE` level (instead of `DEBUG`) to log client side HTTP traffic to avoid accidentally enabling it when debugging other add-ons.
+
 ### Fixed
 - Do not close the client connection when the server closes it, if not required, to keep the client connection in good state and be used longer.
 
