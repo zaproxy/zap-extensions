@@ -143,6 +143,28 @@ class AutomationStatisticTestUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldTestTakingIntoAccountPreviousStatValue() {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        String key = "stats.job.something";
+        AutomationStatisticTest test =
+                new AutomationStatisticTest(
+                        key, "name", "==", 2, "warn", new ActiveScanJob(), progress);
+        test.getJob().setEnv(new AutomationEnvironment(progress));
+        when(extStats.getInMemoryStats().getStat(key)).thenReturn(16L, 18L);
+
+        // When
+        test.reset();
+        test.logToProgress(progress);
+
+        // Then
+        assertThat(progress.getInfos().size(), is(7));
+        assertThat(progress.getInfos().get(6), is("!automation.tests.pass!"));
+        assertThat(test.hasRun(), is(true));
+        assertThat(test.hasPassed(), is(true));
+    }
+
+    @Test
     void shouldResetTestStatus() {
         // Given
         AutomationProgress progress = new AutomationProgress();
