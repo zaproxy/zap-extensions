@@ -5,9 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
-- Added 'DEBUG' to list of suspicious comments.
-- Added custom payload support (via Custom Payloads add-on) to 'Information Disclosure Suspicious Comments' scan rule.
-- Removed suspicious-comments.txt file in favor of payload editing via Custom Payloads add-on.
+- The Information Disclosure Suspicious Comments scan rule:
+    - Now includes example alert functionality for documentation generation purposes (Issue 6119).
+    - Now has a Alert Tag with a OWASP WSTG reference.
+    - Added 'DEBUG' to list of suspicious comments.
+    - Added custom payload support (via Custom Payloads add-on).
+    - Removed suspicious-comments.txt file in favor of payload editing via Custom Payloads add-on.
 
 ### Fixed
 - Ensure Custom Payloads support can be properly unloaded.
