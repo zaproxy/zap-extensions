@@ -145,7 +145,7 @@ public class HttpServer extends BaseServer {
                         TIMEOUT_HANDLER_NAME,
                         new ReadTimeoutHandler(ConnectionOptions.DEFAULT_TIMEOUT, TimeUnit.SECONDS))
                 .addLast("tls.upgrade", new TlsProtocolHandler())
-                .addLast(LOGGING_HANDLER_NAME, new LoggingHandler(LOGGER_NAME))
+                .addLast(LOGGING_HANDLER_NAME, new LoggingHandler(LOGGER_NAME, LogLevel.TRACE))
                 .addLast(HTTP_DECODER_HANDLER_NAME, new HttpRequestDecoder())
                 .addLast(HTTP_ENCODER_HANDLER_NAME, HttpResponseEncoder.getInstance())
                 .addLast(CommonMessagePropertiesHandler.getInstance())
@@ -176,7 +176,7 @@ public class HttpServer extends BaseServer {
                         "http2.codec",
                         HttpToHttp2ConnectionHandler.create(
                                 new InboundHttp2ToHttpAdapter(connection),
-                                new Http2FrameLogger(LogLevel.DEBUG, LOGGER_NAME),
+                                new Http2FrameLogger(LogLevel.TRACE, LOGGER_NAME),
                                 connection,
                                 tlsUpgraded ? HttpHeader.HTTPS : HttpHeader.HTTP));
                 break;
