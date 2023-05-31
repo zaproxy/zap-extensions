@@ -388,7 +388,7 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
         }
 
         AjaxSpiderTarget.Builder targetBuilder =
-                AjaxSpiderTarget.newBuilder(extension.getModel().getSession())
+                AjaxSpiderTarget.newBuilder(extension)
                         .setInScopeOnly(getBoolValue(FIELD_IN_SCOPE))
                         .setOptions(params)
                         .setStartUri(startUri)
