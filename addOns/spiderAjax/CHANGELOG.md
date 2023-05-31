@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [23.14.0] - 2023-05-31
 ### Added
 - Allow to exclude elements from crawl (Issue 5875).
 - Configure logging of dependencies directly, instead of relying on core.
@@ -267,6 +267,7 @@ By default it allows files with extension `.js` and `.css`.
 
 
 
+[23.14.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.14.0
 [23.13.1]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.13.1
 [23.13.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.13.0
 [23.12.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.12.0
