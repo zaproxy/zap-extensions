@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
@@ -323,6 +325,7 @@ public class AlertFilterJob extends AutomationJob {
                 JobUtils.unBox(data.getAttackRegex()),
                 data.getEvidence(),
                 JobUtils.unBox(data.getEvidenceRegex()),
+                new TreeSet<>(data.getMethods()),
                 true);
     }
 
@@ -451,6 +454,11 @@ public class AlertFilterJob extends AutomationJob {
         private Boolean attackRegex;
         private String evidence;
         private Boolean evidenceRegex;
+        private List<String> methods;
+
+        public AlertFilterData() {
+            methods = List.of();
+        }
 
         public int getRuleId() {
             return ruleId;
@@ -546,6 +554,14 @@ public class AlertFilterJob extends AutomationJob {
 
         public void setEvidenceRegex(Boolean isEvidenceRegex) {
             this.evidenceRegex = isEvidenceRegex;
+        }
+
+        public List<String> getMethods() {
+            return methods;
+        }
+
+        public void setMethods(List<String> methods) {
+            this.methods = Objects.requireNonNullElse(methods, List.of());
         }
     }
 }

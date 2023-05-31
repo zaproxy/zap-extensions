@@ -37,6 +37,7 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.extension.alertFilters.internal.ScanRulesInfo;
+import org.zaproxy.zap.extension.alertFilters.internal.ui.MethodSelectionPanel;
 import org.zaproxy.zap.extension.alertFilters.internal.ui.ScanRulesInfoComboBoxModel;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.ZapTextField;
@@ -69,6 +70,7 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
     private JComboBox<String> newLevelCombo;
     private ZapTextField urlTextField;
     private JCheckBox urlRegexCheckBox;
+    private MethodSelectionPanel methodSelectionPanel;
     private ZapTextField paramTextField;
     private JCheckBox paramRegexCheckBox;
     private ZapTextField attackTextField;
@@ -146,6 +148,7 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
                     .setSelectedItem(AlertFilter.getNameForRisk(oldAlertFilter.getNewRisk()));
             getUrlTextField().setText(oldAlertFilter.getUrl());
             getUrlRegexCheckBox().setSelected(oldAlertFilter.isUrlRegex());
+            getMethodSelectionPanel().setMethods(oldAlertFilter.getMethods());
             getParamTextField().setText(oldAlertFilter.getParameter());
             getParamRegexCheckBox().setSelected(oldAlertFilter.isParameterRegex());
             getAttackTextField().setText(oldAlertFilter.getAttack());
@@ -240,6 +243,7 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
                 getAttackRegexCheckBox().isSelected(),
                 getEvidenceTextField().getText(),
                 getEvidenceRegexCheckBox().isSelected(),
+                getMethodSelectionPanel().getMethods(),
                 this.getEnabledCheckBox().isSelected());
     }
 
@@ -252,6 +256,7 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
         this.urlTextField.setText("");
         this.urlTextField.discardAllEdits();
         this.urlRegexCheckBox.setSelected(false);
+        methodSelectionPanel.reset();
         this.paramTextField.setText("");
         this.paramTextField.discardAllEdits();
         this.paramRegexCheckBox.setSelected(false);
@@ -333,6 +338,13 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
             urlRegexLabel.setLabelFor(getUrlRegexCheckBox());
             fieldsPanel.add(urlRegexLabel, LayoutHelper.getGBC(0, ++y, 1, 0.5D, insets));
             fieldsPanel.add(getUrlRegexCheckBox(), LayoutHelper.getGBC(1, y, 2, 0.5D, insets));
+
+            fieldsPanel.add(
+                    getMethodSelectionPanel().getLabel(),
+                    LayoutHelper.getGBC(0, ++y, 1, 0.5D, insets));
+            fieldsPanel.add(
+                    getMethodSelectionPanel().getFieldComponent(),
+                    LayoutHelper.getGBC(1, y, 2, 0.5D, insets));
 
             JLabel paramLabel =
                     new JLabel(
@@ -476,6 +488,13 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
             urlRegexCheckBox = new JCheckBox();
         }
         return urlRegexCheckBox;
+    }
+
+    private MethodSelectionPanel getMethodSelectionPanel() {
+        if (methodSelectionPanel == null) {
+            methodSelectionPanel = new MethodSelectionPanel(this);
+        }
+        return methodSelectionPanel;
     }
 
     protected ZapTextField getParamTextField() {

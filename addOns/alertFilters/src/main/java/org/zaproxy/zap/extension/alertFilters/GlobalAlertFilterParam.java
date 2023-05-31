@@ -55,6 +55,7 @@ public class GlobalAlertFilterParam extends VersionedAbstractParam {
     private static final String FILTER_ATTACK_IS_REGEX_KEY = "attackregex";
     private static final String FILTER_EVIDENCE_KEY = "evidence";
     private static final String FILTER_EVIDENCE_IS_REGEX_KEY = "evidenceregex";
+    private static final String FILTER_METHOD_KEY = "methods.method";
     private static final String FILTER_ENABLED_KEY = "enabled";
 
     private static final String CONFIRM_REMOVE_FILTER_KEY =
@@ -105,6 +106,12 @@ public class GlobalAlertFilterParam extends VersionedAbstractParam {
                     .setProperty(
                             elementBaseKey + FILTER_EVIDENCE_IS_REGEX_KEY,
                             filter.isEvidenceRegex());
+            int j = 0;
+            for (String method : filter.getMethods()) {
+                String methodKey = elementBaseKey + FILTER_METHOD_KEY + "(" + j + ")";
+                getConfig().setProperty(methodKey, method);
+                j++;
+            }
             getConfig().setProperty(elementBaseKey + FILTER_ENABLED_KEY, filter.isEnabled());
             i++;
         }
@@ -150,6 +157,10 @@ public class GlobalAlertFilterParam extends VersionedAbstractParam {
                             .configurationsAt(ALL_ALERT_FILTERS_KEY);
             this.alertFilters = new HashSet<>();
             for (HierarchicalConfiguration sub : fields) {
+                Set<String> methods = new HashSet<>();
+                for (HierarchicalConfiguration method : sub.configurationsAt(FILTER_METHOD_KEY)) {
+                    methods.add(method.getString(""));
+                }
                 alertFilters.add(
                         new AlertFilter(
                                 -1,
@@ -163,6 +174,7 @@ public class GlobalAlertFilterParam extends VersionedAbstractParam {
                                 sub.getBoolean(FILTER_ATTACK_IS_REGEX_KEY, false),
                                 sub.getString(FILTER_EVIDENCE_KEY, null),
                                 sub.getBoolean(FILTER_EVIDENCE_IS_REGEX_KEY, false),
+                                methods,
                                 sub.getBoolean(FILTER_ENABLED_KEY, false)));
             }
         } catch (ConversionException e) {

@@ -19,25 +19,39 @@
  */
 package org.zaproxy.zap.extension.alertFilters;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 
 /** Unit test for {@link AlertFilter}. */
 class AlertFilterTest {
 
+    private static final String ALERT_METHOD = "PATCH";
     private Alert alert;
 
     @BeforeEach
     void before() throws Exception {
         alert = new Alert(1, Alert.RISK_INFO, Alert.CONFIDENCE_LOW, "Test alert");
-        alert.setUri("https://www.example.com");
+        String uri = "https://www.example.com";
+        alert.setUri(uri);
         alert.setParam("param");
         alert.setAttack("attack");
         alert.setEvidence("evidence");
+        alert.setMessage(
+                new HttpMessage(new HttpRequestHeader(ALERT_METHOD + " " + uri + " HTTP/1.1")));
     }
 
     @Test
@@ -242,5 +256,64 @@ class AlertFilterTest {
         af.setEvidenceRegex(true);
         // Then
         assertFalse(af.appliesToAlert(alert));
+    }
+
+    @Test
+    void shouldNormaliseCaseMethodsSet() {
+        // Given
+        AlertFilter af = new AlertFilter(-1, alert);
+        Set<String> methods = set("Get", "post");
+        // When
+        af.setMethods(methods);
+        // Then
+        assertThat(af.getMethods(), containsInAnyOrder("GET", "POST"));
+    }
+
+    @Test
+    void shouldIgnoreNullAndEmpyMethodsSet() {
+        // Given
+        AlertFilter af = new AlertFilter(-1, alert);
+        Set<String> methods = set(null, "GET", "");
+        // When
+        af.setMethods(methods);
+        // Then
+        assertThat(af.getMethods(), contains("GET"));
+    }
+
+    @Test
+    void shouldApplyWithNoMethods() {
+        // Given
+        AlertFilter af = new AlertFilter(-1, alert);
+        af.setMethods(set());
+        // When
+        boolean applies = af.appliesToAlert(alert);
+        // Then
+        assertThat(applies, is(equalTo(true)));
+    }
+
+    @Test
+    void shouldApplyWithEqualMethod() {
+        // Given
+        AlertFilter af = new AlertFilter(-1, alert);
+        af.setMethods(set(ALERT_METHOD, "OTHER_METHOD"));
+        // When
+        boolean applies = af.appliesToAlert(alert);
+        // Then
+        assertThat(applies, is(equalTo(true)));
+    }
+
+    @Test
+    void shouldNotApplyWithDifferentMethod() {
+        // Given
+        AlertFilter af = new AlertFilter(-1, alert);
+        af.setMethods(set("NOT_" + ALERT_METHOD, "OTHER_METHOD"));
+        // When
+        boolean applies = af.appliesToAlert(alert);
+        // Then
+        assertThat(applies, is(equalTo(false)));
+    }
+
+    private static Set<String> set(String... strings) {
+        return new HashSet<>(Arrays.asList(strings));
     }
 }
