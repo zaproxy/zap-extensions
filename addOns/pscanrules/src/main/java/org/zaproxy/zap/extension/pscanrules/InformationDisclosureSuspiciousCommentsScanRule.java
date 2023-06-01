@@ -48,7 +48,8 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
-                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED);
+                    CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED,
+                    CommonAlertTag.WSTG_V42_INFO_05_CONTENT_LEAK);
 
     private static final int MAX_ELEMENT_CHRS_TO_REPORT = 128;
 
@@ -167,8 +168,8 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
                                 truncateString(firstSummary.getDetail()),
                                 entry.getValue().size());
             }
-            this.raiseAlert(
-                    msg, id, other, firstSummary.getConfidence(), firstSummary.getEvidence());
+            this.createAlert(other, firstSummary.getConfidence(), firstSummary.getEvidence())
+                    .raise();
         }
     }
 
@@ -184,9 +185,8 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
         return str;
     }
 
-    private void raiseAlert(
-            HttpMessage msg, int id, String detail, int confidence, String evidence) {
-        newAlert()
+    private AlertBuilder createAlert(String detail, int confidence, String evidence) {
+        return newAlert()
                 .setRisk(getRisk())
                 .setConfidence(confidence)
                 .setDescription(getDescription())
@@ -194,8 +194,7 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
                 .setSolution(getSolution())
                 .setCweId(getCweId())
                 .setWascId(getWascId())
-                .setEvidence(evidence)
-                .raise();
+                .setEvidence(evidence);
     }
 
     private List<Pattern> getPatterns() {
@@ -254,6 +253,22 @@ public class InformationDisclosureSuspiciousCommentsScanRule extends PluginPassi
     @Override
     public int getPluginId() {
         return PLUGIN_ID;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        Alert example =
+                createAlert(
+                                Constant.messages.getString(
+                                        MESSAGE_PREFIX + "otherinfo",
+                                        "\\bFIXME\\b",
+                                        "<!-- FixMe: cookie: root=true; Secure -->"),
+                                Alert.CONFIDENCE_MEDIUM,
+                                "FixMe")
+                        .build();
+        example.setTags(
+                CommonAlertTag.mergeTags(example.getTags(), CommonAlertTag.CUSTOM_PAYLOADS));
+        return List.of(example);
     }
 
     private static class AlertSummary {
