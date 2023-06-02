@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.spiderAjax.automation;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -195,6 +196,22 @@ class AjaxSpiderJobUnitTest {
         public AjaxSpiderParam getAjaxSpiderParam() {
             return new AjaxSpiderParam();
         }
+    }
+
+    @Test
+    void shouldVerifyWithoutParameters() {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        AjaxSpiderJob job = new AjaxSpiderJob();
+        job.setJobData(null);
+
+        // When
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.getErrors(), is(empty()));
     }
 
     @Test
