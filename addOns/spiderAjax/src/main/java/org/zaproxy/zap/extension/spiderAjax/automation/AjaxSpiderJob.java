@@ -91,7 +91,6 @@ public class AjaxSpiderJob extends AutomationJob {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void verifyParameters(AutomationProgress progress) {
         Map<?, ?> jobData = this.getJobData();
         if (jobData == null) {
@@ -104,6 +103,24 @@ public class AjaxSpiderJob extends AutomationJob {
                 this.getName(),
                 new String[] {PARAM_EXCLUDED_ELEMENTS},
                 progress);
+
+        readExcludedElements(progress, parametersData);
+
+        if (this.getParameters().getWarnIfFoundUrlsLessThan() != null
+                || this.getParameters().getFailIfFoundUrlsLessThan() != null) {
+            progress.warn(
+                    Constant.messages.getString(
+                            "automation.error.spider.failIfUrlsLessThan.deprecated",
+                            getName(),
+                            "automation.spiderAjax.urls.added"));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void readExcludedElements(AutomationProgress progress, Map<?, ?> parametersData) {
+        if (parametersData == null) {
+            return;
+        }
 
         try {
             var eeData = (List<Map<String, ?>>) parametersData.get(PARAM_EXCLUDED_ELEMENTS);
@@ -123,15 +140,6 @@ public class AjaxSpiderJob extends AutomationJob {
             progress.error(
                     Constant.messages.getString(
                             "spiderajax.automation.error.excludedelements.format", getName(), e));
-        }
-
-        if (this.getParameters().getWarnIfFoundUrlsLessThan() != null
-                || this.getParameters().getFailIfFoundUrlsLessThan() != null) {
-            progress.warn(
-                    Constant.messages.getString(
-                            "automation.error.spider.failIfUrlsLessThan.deprecated",
-                            getName(),
-                            "automation.spiderAjax.urls.added"));
         }
     }
 
