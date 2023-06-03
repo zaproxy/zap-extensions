@@ -1933,7 +1933,7 @@
     ],
     "description": "THRON is a digital asset management platform that provides a centralised hub for storing, organising, and distributing digital assets like images, videos, and documents.",
     "icon": "THRON.png",
-    "dom": "link[href*='.thron.com/'], img[src*='.thron.com/'],",
+    "dom": "link[href*='.thron.com/'], img[src*='.thron.com/']",
     "js": {
       "thronHlsJs": "",
       "THRONPlayer": ""
