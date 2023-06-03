@@ -410,10 +410,8 @@
         "spf\\.mandrillapp\\.com"
       ]
     },
+    "dom": "form#mc-embedded-subscribe-form, form[name*='mc-embedded-subscribe-form']",
     "html": [
-      "<form [^>]*data-mailchimp-url",
-      "<form [^>]*id=\"mc-embedded-subscribe-form\"",
-      "<form [^>]*name=\"mc-embedded-subscribe-form\"",
       "<input [^>]*id=\"mc-email\"\\;confidence:20",
       "<!-- Begin MailChimp Signup Form -->"
     ],
@@ -429,6 +427,7 @@
       "cdn-images\\.mailchimp\\.com/[^>]*\\.css",
       "chimpstatic\\.com/mcjs-connected"
     ],
+    "url": "^https?://(?:www\\.)?mailchi\\.mp",
     "website": "http://mailchimp.com"
   },
   "MailChimp for WooCommerce": {
@@ -729,6 +728,19 @@
     "oss": true,
     "scriptSrc": "maplibre-gl@([\\d\\.]+)/dist/maplibre-gl\\.js\\;version:\\1",
     "website": "https://github.com/maplibre/maplibre-gl-js"
+  },
+  "Mapbox.js": {
+    "cats": [
+      35
+    ],
+    "description": "Mapbox.js is a JavaScript library provided by Mapbox for working with interactive maps and geospatial data.",
+    "icon": "Mapbox.svg",
+    "implies": "Leaflet",
+    "dom": "link[href*='api.mapbox.com/']",
+    "oss": true,
+    "scripts": "api\\.mapbox\\.com/mapbox\\.js/v([\\d\\.]+)/\\;version:\\1",
+    "scriptSrc": "api\\.mapbox\\.com/mapbox\\.js/v([\\d\\.]+)/\\;version:\\1",
+    "website": "https://github.com/mapbox/mapbox.js"
   },
   "Mapbox GL JS": {
     "cats": [

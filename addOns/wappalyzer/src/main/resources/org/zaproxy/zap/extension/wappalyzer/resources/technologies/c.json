@@ -2935,6 +2935,21 @@
     "scriptSrc": "\\.conferwith\\.io/",
     "website": "https://conferwith.io"
   },
+  "Confiant": {
+    "cats": [
+      16
+    ],
+    "description": "Confiant is a cybersecurity company specialising in ad security and ad quality assurance for digital publishers, programmatic platforms, and advertisers.",
+    "icon": "Confiant.svg",
+    "js": {
+      "confiant": ""
+    },
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "website": "https://www.confiant.com"
+  },
   "Congressus": {
     "cats": [
       1
@@ -3497,6 +3512,9 @@
     ],
     "description": "Cookiebot is a cloud-driven solution that automatically controls cookies and trackers, enabling full GDPR/ePrivacy and CCPA compliance for websites.",
     "icon": "Cookiebot.svg",
+    "js": {
+      "Cookiebot.version": "^(.+)$\\;version:\\1"
+    },
     "scriptSrc": "consent\\.cookiebot\\.com",
     "website": "http://www.cookiebot.com"
   },
@@ -3612,6 +3630,16 @@
     "saas": true,
     "scriptSrc": "\\.mycorreosecommerce\\.com/",
     "website": "https://www.correosecommerce.com"
+  },
+  "Cosmic": {
+    "cats": [
+      1
+    ],
+    "description": "Cosmic is a cloud-based CMS that provides developers with an API and web interface for content management, enabling the creation of custom content types, relationship definitions, and webhooks for actions based on content changes.",
+    "dom": "link[href*='.cosmicjs.com/'], img[src*='.cosmicjs.com/'], img[data-src*='.cosmicjs.com/']",
+    "icon": "cosmicjs.svg",
+    "oss": true,
+    "website": "https://www.cosmicjs.com"
   },
   "Cosmoshop": {
     "cats": [
@@ -3976,14 +4004,16 @@
   },
   "CrownPeak": {
     "cats": [
+      1,
       19
     ],
-    "description": "CrownPeak is a cloud-based Digital Experience Management (DEM) platform that is designed to in the management of digital experiences across multiple touch-points, especially for marketing and a freer IT architecture.",
+    "description": "CrownPeak is a cloud-based Digital Experience Platform (DXP).",
     "icon": "CrownPeak.png",
     "js": {
       "CrownPeakAutocomplete": "",
       "CrownPeakSearch": ""
     },
+    "scripts": "crownpeak\\.net",
     "pricing": [
       "poa"
     ],

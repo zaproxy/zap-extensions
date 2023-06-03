@@ -1231,6 +1231,19 @@
     "oss": true,
     "website": "https://vuetifyjs.com"
   },
+  "Vuex": {
+    "cats": [
+      59
+    ],
+    "description": "Vuex is a state management pattern + library for Vue.js applications.",
+    "icon": "vue.svg",
+    "implies": "Vue.js",
+    "js": {
+      "Vuex.version": "(.*)\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://vuex.vuejs.org/"
+  },
   "Vultr": {
     "cats": [
       62

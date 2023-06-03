@@ -3790,6 +3790,30 @@
     "scriptSrc": "cdn\\.skio\\.com/",
     "website": "https://skio.com"
   },
+  "Skolengo": {
+    "cats": [
+      1,
+      21
+    ],
+    "description": "Skolengo is an Education Management Software developed by Kosmos Education.",
+    "icon": "Skolengo.svg",
+    "implies": [
+      "Java",
+      "MariaDB",
+      "Apache Tomcat"
+    ],
+    "meta": {
+      "generator": "Skolengo",
+      "version": "^([\\d\\.]+)$\\;version:\\1\\;confidence:0"
+    },
+    "oss": false,
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.skolengo.com"
+  },
   "Sky-Shop": {
     "cats": [
       6
@@ -5291,6 +5315,16 @@
     "scriptSrc": "cdn\\.userleap\\.com/",
     "website": "https://sprig.com"
   },
+  "Sprig plugin": {
+    "cats": [
+      19
+    ],
+    "description": "Sprig is a free plugin for Craft CMS that allows you to create reactive components from Twig templates ​or PHP classes.",
+    "icon": "Sprig plugin.svg",
+    "requires": "Craft CMS",
+    "dom": "form[sprig], button[sprig], input[sprig], div.sprig-component",
+    "website": "https://putyourlightson.com/plugins/sprig"
+  },
   "Spring": {
     "cats": [
       18
@@ -6407,15 +6441,14 @@
   "Sucuri": {
     "cats": [
       31,
-      87
+      16
     ],
-    "description": "Sucuri is a WordPress security plugin used to protect websites from malware and hacks.",
+    "description": "Sucuri is a cybersecurity company that provides website security solutions and services.",
     "headers": {
       "x-sucuri-cache:": "",
       "x-sucuri-id": ""
     },
-    "icon": "sucuri.png",
-    "requires": "WordPress",
+    "icon": "sucuri.svg",
     "website": "https://sucuri.net/"
   },
   "Suiteshare": {
@@ -6697,6 +6730,10 @@
     ],
     "description": "Swagger UI is a collection of HTML, JavaScript, and CSS assets that dynamically generate documentation from a Swagger-compliant API.",
     "icon": "Swagger UI.svg",
+    "js": {
+      "SwaggerUIBundle": "",
+      "SwaggerUIStandalonePreset": ""
+    },
     "oss": true,
     "scriptSrc": "(?:/([\\d.]+))?/swagger-ui-bundle\\.js\\;version:\\1",
     "website": "https://swagger.io/tools/swagger-ui"

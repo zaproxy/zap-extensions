@@ -1676,6 +1676,20 @@
     "oss": true,
     "website": "https://www.hypestylecss.xyz"
   },
+  "Hyros": {
+    "cats": [
+      10
+    ],
+    "description": "Hyros is a marketing analytics and optimisation platform.",
+    "icon": "Hyros.svg",
+    "scriptSrc": "/v1/lst/universal-script\\?ph\\=",
+    "saas": true,
+    "pricing": [
+      "recurring",
+      "low"
+    ],
+    "website": "https://hyros.com"
+  },
   "Hyva Themes": {
     "cats": [
       108
