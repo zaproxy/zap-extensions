@@ -295,7 +295,7 @@
       "g_umi.version": "([\\d\\.]+)\\;version:\\1"
     },
     "oss": true,
-    "scriptSrc": "/umi\\.js",
+    "scriptSrc": "/umi(\\.[\\w\\d]{8})?\\.js",
     "website": "https://umijs.org"
   },
   "Umso": {
