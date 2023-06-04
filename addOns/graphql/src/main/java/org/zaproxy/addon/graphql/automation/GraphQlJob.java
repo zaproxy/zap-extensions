@@ -22,6 +22,7 @@ package org.zaproxy.addon.graphql.automation;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import org.apache.commons.io.IOUtils;
 import org.parosproxy.paros.CommandLine;
@@ -35,6 +36,7 @@ import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.jobs.JobData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.graphql.ExtensionGraphQl;
+import org.zaproxy.addon.graphql.GraphQlParam;
 import org.zaproxy.addon.graphql.GraphQlParser;
 import org.zaproxy.addon.graphql.HistoryPersister;
 
@@ -214,14 +216,18 @@ public class GraphQlJob extends AutomationJob {
         private String endpoint;
         private String schemaUrl;
         private String schemaFile;
-        private Integer maxQueryDepth;
-        private Boolean lenientMaxQueryDepthEnabled;
-        private Integer maxAdditionalQueryDepth;
-        private Integer maxArgsDepth;
-        private Boolean optionalArgsEnabled;
-        private String argsType;
-        private String querySplitType;
-        private String requestMethod;
+        private Boolean queryGenEnabled = GraphQlParam.DEFAULT_QUERY_GEN_ENABLED;
+        private Integer maxQueryDepth = GraphQlParam.DEFAULT_MAX_QUERY_DEPTH;
+        private Boolean lenientMaxQueryDepthEnabled = GraphQlParam.DEFAULT_LENIENT_MAX_QUERY_DEPTH;
+        private Integer maxAdditionalQueryDepth = GraphQlParam.DEFAULT_MAX_ADDITIONAL_QUERY_DEPTH;
+        private Integer maxArgsDepth = GraphQlParam.DEFAULT_MAX_ARGS_DEPTH;
+        private Boolean optionalArgsEnabled = GraphQlParam.DEFAULT_OPTIONAL_ARGS;
+        private String argsType =
+                GraphQlParam.DEFAULT_ARGS_TYPE.toString().toLowerCase(Locale.ROOT);
+        private String querySplitType =
+                GraphQlParam.DEFAULT_QUERY_SPLIT_TYPE.toString().toLowerCase(Locale.ROOT);
+        private String requestMethod =
+                GraphQlParam.DEFAULT_REQUEST_METHOD.toString().toLowerCase(Locale.ROOT);
 
         public String getEndpoint() {
             return endpoint;
@@ -245,6 +251,14 @@ public class GraphQlJob extends AutomationJob {
 
         public void setSchemaFile(String schemaFile) {
             this.schemaFile = schemaFile;
+        }
+
+        public Boolean getQueryGenEnabled() {
+            return queryGenEnabled;
+        }
+
+        public void setQueryGenEnabled(Boolean queryGenEnabled) {
+            this.queryGenEnabled = queryGenEnabled;
         }
 
         public Integer getMaxQueryDepth() {

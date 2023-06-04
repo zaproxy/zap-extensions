@@ -20,10 +20,10 @@
 package org.zaproxy.addon.graphql;
 
 import java.awt.Component;
-import java.awt.FlowLayout;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ItemEvent;
+import javax.swing.Box;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -31,6 +31,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
@@ -49,6 +50,8 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
     /** The name of the options panel. */
     private static final String NAME = Constant.messages.getString("graphql.options.panelName");
 
+    private JCheckBox queryGenEnabled;
+    private JPanel queryGenConfigPanel;
     private ZapNumberSpinner maxQueryDepthNumberSpinner;
     private JCheckBox lenientMaxQueryDepthEnabled = null;
     private ZapNumberSpinner maxAdditionalQueryDepthNumberSpinner;
@@ -62,55 +65,11 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
     public GraphQlOptionsPanel() {
         super();
         setName(NAME);
+        setLayout(new GridBagLayout());
 
-        setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
-
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(new EmptyBorder(2, 2, 2, 2));
-
-        JLabel maxQueryDepthLabel =
-                new JLabel(Constant.messages.getString("graphql.options.label.queryDepth"));
-        JLabel maxArgsDepthLabel =
-                new JLabel(Constant.messages.getString("graphql.options.label.argsDepth"));
-        JLabel argsTypeLabel =
-                new JLabel(Constant.messages.getString("graphql.options.label.argsType"));
-        JLabel splitQueryLabel =
-                new JLabel(Constant.messages.getString("graphql.options.label.split"));
-        JLabel requestMethodLabel =
-                new JLabel(Constant.messages.getString("graphql.options.label.requestMethod"));
-
-        int i = 0;
-        panel.add(maxQueryDepthLabel, LayoutHelper.getGBC(0, ++i, 1, 1.0, new Insets(2, 2, 2, 2)));
-        panel.add(
-                getMaxQueryDepthNumberSpinner(),
-                LayoutHelper.getGBC(1, i, 1, 1.0, new Insets(2, 2, 2, 2)));
-        panel.add(
-                getLenientMaxQueryDepthEnabled(),
-                LayoutHelper.getGBC(0, ++i, 2, 1.0, new Insets(2, 2, 2, 2)));
-        panel.add(
-                getMaxAdditionalQueryDepthLabel(),
-                LayoutHelper.getGBC(0, ++i, 1, 1.0, new Insets(2, 2, 2, 2)));
-        panel.add(
-                getMaxAdditionalQueryDepthNumberSpinner(),
-                LayoutHelper.getGBC(1, i, 1, 1.0, new Insets(2, 2, 2, 2)));
-        panel.add(maxArgsDepthLabel, LayoutHelper.getGBC(0, ++i, 1, 1.0, new Insets(2, 2, 2, 2)));
-        panel.add(
-                getMaxArgsDepthNumberSpinner(),
-                LayoutHelper.getGBC(1, i, 1, 1.0, new Insets(2, 2, 2, 2)));
-        panel.add(
-                getOptionalArgsEnabled(),
-                LayoutHelper.getGBC(0, ++i, 2, 1.0, new Insets(2, 2, 2, 2)));
-        panel.add(argsTypeLabel, LayoutHelper.getGBC(0, ++i, 1, 1.0, new Insets(2, 2, 2, 2)));
-        panel.add(getArgsTypeOptions(), LayoutHelper.getGBC(1, i, 1, 1.0, new Insets(2, 2, 2, 2)));
-        panel.add(splitQueryLabel, LayoutHelper.getGBC(0, ++i, 1, 1.0, new Insets(2, 2, 2, 2)));
-        panel.add(
-                getQuerySplitOptions(), LayoutHelper.getGBC(1, i, 1, 1.0, new Insets(2, 2, 2, 2)));
-        panel.add(requestMethodLabel, LayoutHelper.getGBC(0, ++i, 1, 1.0, new Insets(2, 2, 2, 2)));
-        panel.add(
-                getRequestMethodOptions(),
-                LayoutHelper.getGBC(1, i, 1, 1.0, new Insets(2, 2, 2, 2)));
-
-        add(panel);
+        int y = 0;
+        add(getQueryGenConfigPanel(), LayoutHelper.getGBC(0, y, 1, 1.0, new Insets(10, 2, 2, 2)));
+        add(Box.createGlue(), LayoutHelper.getGBC(0, ++y, 1, 1.0, 1.0));
     }
 
     @Override
@@ -118,6 +77,7 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
         final OptionsParam options = (OptionsParam) obj;
         final GraphQlParam param = options.getParamSet(GraphQlParam.class);
 
+        getQueryGenEnabled().setSelected(param.getQueryGenEnabled());
         getMaxQueryDepthNumberSpinner().setValue(param.getMaxQueryDepth());
         getLenientMaxQueryDepthEnabled().setSelected(param.getLenientMaxQueryDepthEnabled());
         getMaxAdditionalQueryDepthNumberSpinner().setValue(param.getMaxAdditionalQueryDepth());
@@ -133,6 +93,7 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
         final OptionsParam options = (OptionsParam) obj;
         final GraphQlParam param = options.getParamSet(GraphQlParam.class);
 
+        param.setQueryGenEnabled(getQueryGenEnabled().isSelected());
         param.setMaxQueryDepth(getMaxQueryDepthNumberSpinner().getValue());
         param.setLenientMaxQueryDepthEnabled(getLenientMaxQueryDepthEnabled().isSelected());
         param.setMaxAdditionalQueryDepth(getMaxAdditionalQueryDepthNumberSpinner().getValue());
@@ -141,6 +102,94 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
         param.setArgsType((ArgsTypeOption) getArgsTypeOptions().getSelectedItem());
         param.setQuerySplitType((QuerySplitOption) getQuerySplitOptions().getSelectedItem());
         param.setRequestMethod((RequestMethodOption) getRequestMethodOptions().getSelectedItem());
+    }
+
+    private JCheckBox getQueryGenEnabled() {
+        if (queryGenEnabled == null) {
+            queryGenEnabled =
+                    new JCheckBox(
+                            Constant.messages.getString("graphql.options.label.queryGenEnabled"),
+                            true);
+            queryGenEnabled.addItemListener(
+                    e -> {
+                        boolean selected = e.getStateChange() == ItemEvent.SELECTED;
+                        for (var c : getQueryGenConfigPanel().getComponents()) {
+                            if (c == queryGenEnabled) {
+                                continue;
+                            }
+                            c.setEnabled(selected);
+                        }
+                        validate();
+                        repaint();
+                    });
+        }
+        return queryGenEnabled;
+    }
+
+    private JPanel getQueryGenConfigPanel() {
+        if (queryGenConfigPanel == null) {
+            queryGenConfigPanel = new JPanel(new GridBagLayout());
+            queryGenConfigPanel.setBorder(
+                    new TitledBorder(
+                            Constant.messages.getString(
+                                    "graphql.options.queryGenConfigPanel.title")));
+
+            JLabel maxQueryDepthLabel =
+                    new JLabel(Constant.messages.getString("graphql.options.label.queryDepth"));
+            JLabel maxArgsDepthLabel =
+                    new JLabel(Constant.messages.getString("graphql.options.label.argsDepth"));
+            JLabel argsTypeLabel =
+                    new JLabel(Constant.messages.getString("graphql.options.label.argsType"));
+            JLabel splitQueryLabel =
+                    new JLabel(Constant.messages.getString("graphql.options.label.split"));
+            JLabel requestMethodLabel =
+                    new JLabel(Constant.messages.getString("graphql.options.label.requestMethod"));
+
+            int i = 0;
+            queryGenConfigPanel.add(
+                    getQueryGenEnabled(),
+                    LayoutHelper.getGBC(0, i, 2, 1.0, new Insets(2, 2, 2, 2)));
+            queryGenConfigPanel.add(
+                    maxQueryDepthLabel,
+                    LayoutHelper.getGBC(0, ++i, 1, 1.0, new Insets(2, 2, 2, 2)));
+            queryGenConfigPanel.add(
+                    getMaxQueryDepthNumberSpinner(),
+                    LayoutHelper.getGBC(1, i, 1, 1.0, new Insets(2, 2, 2, 2)));
+            queryGenConfigPanel.add(
+                    getLenientMaxQueryDepthEnabled(),
+                    LayoutHelper.getGBC(0, ++i, 2, 1.0, new Insets(2, 2, 2, 2)));
+            queryGenConfigPanel.add(
+                    getMaxAdditionalQueryDepthLabel(),
+                    LayoutHelper.getGBC(0, ++i, 1, 1.0, new Insets(2, 2, 2, 2)));
+            queryGenConfigPanel.add(
+                    getMaxAdditionalQueryDepthNumberSpinner(),
+                    LayoutHelper.getGBC(1, i, 1, 1.0, new Insets(2, 2, 2, 2)));
+            queryGenConfigPanel.add(
+                    maxArgsDepthLabel, LayoutHelper.getGBC(0, ++i, 1, 1.0, new Insets(2, 2, 2, 2)));
+            queryGenConfigPanel.add(
+                    getMaxArgsDepthNumberSpinner(),
+                    LayoutHelper.getGBC(1, i, 1, 1.0, new Insets(2, 2, 2, 2)));
+            queryGenConfigPanel.add(
+                    getOptionalArgsEnabled(),
+                    LayoutHelper.getGBC(0, ++i, 2, 1.0, new Insets(2, 2, 2, 2)));
+            queryGenConfigPanel.add(
+                    argsTypeLabel, LayoutHelper.getGBC(0, ++i, 1, 1.0, new Insets(2, 2, 2, 2)));
+            queryGenConfigPanel.add(
+                    getArgsTypeOptions(),
+                    LayoutHelper.getGBC(1, i, 1, 1.0, new Insets(2, 2, 2, 2)));
+            queryGenConfigPanel.add(
+                    splitQueryLabel, LayoutHelper.getGBC(0, ++i, 1, 1.0, new Insets(2, 2, 2, 2)));
+            queryGenConfigPanel.add(
+                    getQuerySplitOptions(),
+                    LayoutHelper.getGBC(1, i, 1, 1.0, new Insets(2, 2, 2, 2)));
+            queryGenConfigPanel.add(
+                    requestMethodLabel,
+                    LayoutHelper.getGBC(0, ++i, 1, 1.0, new Insets(2, 2, 2, 2)));
+            queryGenConfigPanel.add(
+                    getRequestMethodOptions(),
+                    LayoutHelper.getGBC(1, i, 1, 1.0, new Insets(2, 2, 2, 2)));
+        }
+        return queryGenConfigPanel;
     }
 
     private ZapNumberSpinner getMaxQueryDepthNumberSpinner() {
@@ -159,20 +208,7 @@ public class GraphQlOptionsPanel extends AbstractParamPanel {
             lenientMaxQueryDepthEnabled.setToolTipText(
                     Constant.messages.getString(
                             "graphql.options.label.lenientMaxQueryDepthEnabled.tooltip"));
-            lenientMaxQueryDepthEnabled.addItemListener(
-                    e -> {
-                        if (e.getStateChange() == ItemEvent.SELECTED) {
-                            getMaxAdditionalQueryDepthLabel().setEnabled(true);
-                            getMaxAdditionalQueryDepthNumberSpinner().setEditable(true);
-                        } else if (e.getStateChange() == ItemEvent.DESELECTED) {
-                            getMaxAdditionalQueryDepthLabel().setEnabled(false);
-                            getMaxAdditionalQueryDepthNumberSpinner().setEditable(false);
-                        }
-                        validate();
-                        repaint();
-                    });
         }
-
         return lenientMaxQueryDepthEnabled;
     }
 

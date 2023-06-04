@@ -137,7 +137,7 @@ public class ExtensionGraphQl extends ExtensionAdaptor
         return graphQlOptionsPanel;
     }
 
-    protected GraphQlParam getParam() {
+    public GraphQlParam getParam() {
         if (param == null) {
             param = new GraphQlParam();
         }

@@ -20,8 +20,6 @@
 package org.zaproxy.addon.graphql.automation;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.Arrays;
 import javax.swing.DefaultComboBoxModel;
@@ -31,11 +29,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JTextField;
-import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.graphql.GraphQlParam;
-import org.zaproxy.addon.graphql.automation.GraphQlJob.Parameters;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -44,8 +40,10 @@ public class GraphQlJobDialog extends StandardFieldsDialog {
 
     private static final long serialVersionUID = 1L;
 
+    private static final String QUERY_GEN_CONFIG_TAB_LABEL =
+            "graphql.automation.dialog.tab.queryGenConfig";
     private static final String[] TAB_LABELS = {
-        "graphql.automation.dialog.tab.params", "graphql.automation.dialog.tab.adv"
+        "graphql.automation.dialog.tab.params", QUERY_GEN_CONFIG_TAB_LABEL
     };
 
     private static final String TITLE = "graphql.automation.dialog.title";
@@ -53,8 +51,8 @@ public class GraphQlJobDialog extends StandardFieldsDialog {
     private static final String ENDPOINT_PARAM = "graphql.automation.dialog.endpoint";
     private static final String SCHEMA_URL_PARAM = "graphql.automation.dialog.schemaurl";
     private static final String SCHEMA_FILE_PARAM = "graphql.automation.dialog.schemafile";
-    private static final String FIELD_ADVANCED = "graphql.automation.dialog.advanced";
 
+    private static final String QUERY_GEN_ENABLED_PARAM = "graphql.automation.dialog.querygen";
     private static final String MAX_QUERY_DEPTH_PARAM = "graphql.automation.dialog.maxquerydepth";
     private static final String LENIENT_MAX_QUERY_DEPTH_PARAM =
             "graphql.automation.dialog.lenientmaxquery";
@@ -104,16 +102,14 @@ public class GraphQlJobDialog extends StandardFieldsDialog {
             setFieldValue(SCHEMA_FILE_PARAM, fileName);
         }
 
-        this.addCheckBoxField(0, FIELD_ADVANCED, advOptionsSet());
+        this.addCheckBoxField(
+                0,
+                QUERY_GEN_ENABLED_PARAM,
+                JobUtils.unBox(this.job.getParameters().getQueryGenEnabled()));
 
         this.addFieldListener(
-                FIELD_ADVANCED,
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        setAdvancedTabs(getBoolValue(FIELD_ADVANCED));
-                    }
-                });
+                QUERY_GEN_ENABLED_PARAM,
+                e -> showQueryGenConfigTab(getBoolValue(QUERY_GEN_ENABLED_PARAM)));
 
         this.addPadding(0);
 
@@ -268,23 +264,11 @@ public class GraphQlJobDialog extends StandardFieldsDialog {
         }
         this.addPadding(1);
 
-        setAdvancedTabs(getBoolValue(FIELD_ADVANCED));
+        showQueryGenConfigTab(getBoolValue(QUERY_GEN_ENABLED_PARAM));
     }
 
-    private boolean advOptionsSet() {
-        Parameters params = this.job.getParameters();
-        return params.getMaxAdditionalQueryDepth() != null
-                || params.getLenientMaxQueryDepthEnabled() != null
-                || params.getMaxAdditionalQueryDepth() != null
-                || params.getMaxArgsDepth() != null
-                || params.getOptionalArgsEnabled() != null
-                || !StringUtils.isEmpty(params.getQuerySplitType())
-                || !StringUtils.isEmpty(params.getRequestMethod());
-    }
-
-    private void setAdvancedTabs(boolean visible) {
-        // Show/hide all except from the first tab
-        this.setTabsVisible(new String[] {"graphql.automation.dialog.tab.adv"}, visible);
+    private void showQueryGenConfigTab(boolean visible) {
+        this.setTabsVisible(new String[] {QUERY_GEN_CONFIG_TAB_LABEL}, visible);
     }
 
     @Override
@@ -294,7 +278,9 @@ public class GraphQlJobDialog extends StandardFieldsDialog {
         this.job.getParameters().setSchemaUrl(this.getStringValue(SCHEMA_URL_PARAM));
         this.job.getParameters().setSchemaFile(this.getStringValue(SCHEMA_FILE_PARAM));
 
-        if (this.getBoolValue(FIELD_ADVANCED)) {
+        boolean queryGenEnabled = getBoolValue(QUERY_GEN_ENABLED_PARAM);
+        this.job.getParameters().setQueryGenEnabled(queryGenEnabled);
+        if (queryGenEnabled) {
             this.job.getParameters().setMaxQueryDepth(this.getIntValue(MAX_QUERY_DEPTH_PARAM));
             this.job
                     .getParameters()
