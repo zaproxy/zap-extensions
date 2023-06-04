@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix typo in ASP payload of Server Side Code Injection scan rule.
 - Include complete solution of Server Side Include scan rule.
 
+### Added
+- The Hidden File Finder scan rule now check for Blazor WASM config files.
+
 ## [54] - 2023-05-03
 ### Changed
 - Maintenance changes.

@@ -284,6 +284,14 @@
       "links":["https://www.acunetix.com/vulnerabilities/web/wpengine-_wpeprivate-config-json-information-disclosure/","https://twitter.com/nav1n0x/status/1575171517893079043"],
       "type":"wordpress/WPEngine",
       "source":"nav1n0x"
+    },
+    {
+      "path":"/_framework/blazor.boot.json",
+      "content":["Blazor"],
+      "links":["https://twitter.com/_Freakyclown_/status/1660737687178072064", "https://learn.microsoft.com/en-us/aspnet/core/blazor/host-and-deploy/webassembly"],
+      "type":"Blazor",
+      "source":"freakyclown",
+      "extra": "This Blazor config file often lists DLLs which in turn may contain credentials or other sensitive details."
     }
   ]
 } 
