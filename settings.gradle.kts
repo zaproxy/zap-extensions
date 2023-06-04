@@ -67,6 +67,7 @@ var addOns = listOf(
     "paramdigger",
     "plugnhack",
     "portscan",
+    "postman",
     "pscanrules",
     "pscanrulesAlpha",
     "pscanrulesBeta",
