@@ -6,6 +6,7 @@
 <index version="2.0">
     <indexitem text="Laba-laba AJAX" target="addon.spiderajax.concepts" />
     <indexitem text="AJAX Spider automation" target="addon.spiderajax.automate"/>
+    <indexitem text="AJAX Spider context" target="addon.spiderajax.context"/>
     <indexitem text="AJAX Spider dialog" target="addon.spiderajax.dialog"/>
     <indexitem text="AJAX Spider tab" target="addon.spiderajax.tab"/>
 </index>
