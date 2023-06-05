@@ -1,80 +1,95 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html>
 	<head>
-		<title> Controlador de Forma </title>
+		<title> Value Generator </title>
 	</head>
 	<body>
 
-		<h1>Manejador de Formas</h1>
+		<h1>Value Generator</h1>
 			<p>
-				Esta extensión del Controlador de Formas permite la configuración personalizada de valores usados en formas basadas en nombres de campo.
+				This Value Generator extension allows for the custom configuration of values used in sites/apps based on field/input names.
+			</p>
+			<p>
+				<strong>Note: </strong>The word "Field" is used throughout this help documentation interchangeably with parameter or input.
 			</p>
 
 		<h2>Descripción</h2>
 			<p>
-				With this add-on the user can create new fields for fields that they wish to set the 
+				With this add-on the user can create new fields for inputs that they wish to control the 
 				value of. Additionally, the user can modify any existing field's name and value to fit the fields that 
-				they are trying to set. Cualquier campo también puede ser desactivado o removido por el usuario para que los valores personalizados no sean usados. Field names, values, enabled, and regex status will be stored even after a ZAP session has 
+				they are trying to customize/control. Any field can also be disabled or removed by the user so that the custom values 
+				are not used. Field names, values, enabled state, and regex status will be stored even after a ZAP session has 
 				concluded.
 			</p>
 			<p>
-				Los complementos proporcionan un arreglo de nombres de campo predeterminados que pueden ser encontrados en una forma, y un valor correspondiente para cada campo predeterminado. Estos valores predeterminados pueden ser desactivados, modificados o eliminados si el usuario así lo desea.
+				The add-on provides a set of default field names and patterns that may be found in an app/system and a corresponding 
+				value for each default field. These default values can be disabled, modified, and deleted if the 
+				user desires.
 			</p>
 
-		<h2>Usando el Controlador de Formas</h2>
+		<h2>Using the Value Generator</h2>
 			<p>
-				El Controlador de Formas puede ser encontrado en las Opciones. Seleccionando la pestaña de Controlador de Forma se mostrará una tabla con todos los valores existentes que se encuentran actualmente definidos. Se muestra un ejemplo a continuación.
+				The Value Generator can be configured thought ZAP's Options. Selecting the Value Generator tab will display a table 
+				with all existing inputs that are currently defined. An example is shown below.
 			</p>
 			<img src="../contents/images/formHandlerTable.PNG" alt="Imágen no disponible"/>
 
-		<h3>Añadiendo un campo nuevo</h3>
+		<h3>Adding a New Field</h3>
 			<p>
-				Para definir valores de campo adicionales puede hacer clic en el botón <b>Añadir</b>. Esto generará un cuadro de diálogo para que el usuario pueda proporcionar información sobre el campo.
+				To define additional input values the <b>Add</b> button can be clicked. This will bring up a dialog 
+				for the user to provide field information.
 			</p>
 
 			<img src="../contents/images/formHandlerAddDialog.PNG" alt="Imágen no disponible"/>
 
 			<p>
-				Favor tomar nota de lo siguiente al añadir un nuevo campo:
+				Please take note of the following when adding a new field:
 				<ul>
 					<li>A field name or regex pattern must be provided.</li>
 					<li>The field name cannot already exist in the table or a warning will occur.</li>
-					<li>El nombre de campo suministrado al Controlador de Forma debe coincidir con la identificación del campo en la forma que usted desee definir.</li>
+					<li>The field name supplied to the Value Generator must match the field ID in the input that you wish 
+						to define/control.</li>
 					<li>The field name is not case sensitive, unless using regex.</li>
 					<li>Simple name matches will be attempted before regex matches.</li>
 					<li>A value does not have to be provided. This will result in an empty string being used.</li>
-					<li>The value field is case sensitive, and will be seen in the POST.</li>
+					<li>The value field is case sensitive, and will be seen in subsequent traffic.</li>
 				</ul>
 			</p>
 
-		<h3>Modificando un Campo Existente</h3>
+		<h3>Modifying an Existing Field</h3>
 			<p>
-				La extensión le permite al usuario modificar valores de campos existentes. Esto se puede hacer al seleccionar el campo que usted desea modificar y haciendo clic en el botón de <b>Modificar</b>.
+				The add-on allows the user to modify the values and names of existing fields. This can be done 
+				by selecting the field that you wish to modify and clicking on the <b>Modify</b> button.
 			</p>
 			<img src="../contents/images/formHandlerModDialog.PNG" alt="Imágen no disponible"/>
 
 			<p>
-				Al modificar un campo, el usuario se encuentra limitado por las mismas reglas que al crear uno nuevo. La más común de las restricciones al modificar un campo es que el nombre no puede ser el mismo que el de un campo previamente existente.
-				(es decir, no se permiten campos duplicados)
+				When modifying a field the user is constrained by the same rules as creating a new one. The most
+				common constraint when modifying a field is that the name cannot be the same as an existing field.
+				(i.e. No duplicate fields)
 			<p>
  
-		<h3>Removiendo campos</h3>
+		<h3>Removing Fields</h3>
 			<p>
-				El usuario puede remover campos en cualquier momento. Para hacerlo, simplemente seleccione el campo que se desea remover y haga clic en el botón <b>Remover</b>. <i> Tome en consideración que se le pedirá confirmar la eliminación del campo antes de proceder, a menos que la casilla <b>Remover sin confirmación</b> se encuentre seleccionada.</i> 
+				The user can remove fields at any time. To do so simply select the field that you wish to remove and 
+				click on the <b>Remove</b> button. <i> Please note that you will be prompted to confirm removal before 
+				proceeding unless the <b>Remove without Confirmation</b> box is checked.</i> 
 			</p>
 
-		<h2>Campos de Forma que no se encuentran definidos</h2>
+		<h2>Fields/Parameters That Are Not Defined</h2>
 			<p>
-				Un usuario podría encontrarse con que no desea definir cada campo en una forma, sino más bien querer definir unos pocos dentro de la forma.
+				A user may find that they do not want to define everything, but rather define a select few within 
+				the expected input.
 			</p>
 			<p>
-				Cualquier campo que no se encuentre definido en el complemento del Controlador de Forma usará un valor ZAP predeterminado que será generado para cada tipo de campo. (Por ejemplo: un campo de texto tendrá como valor "ZAP")
+				Any field that is not defined in the Value Generator add-on will use a ZAP default value that is generated to match 
+				each field type.(For example: A text field will have the value "ZAP".)
 			</p>
 
 		<h2>Statistics</h2>
 			<p>
 				A number of statistics are exposed via the add-on for add, modify, and remove operations.<br>
-				In the following examples <code>{name}</code> will be the actual name of the Form Handler field.
+				In the following examples <code>{name}</code> will be the actual name of the Value Generator field.
 				<ul>
 					<li>stats.formhandler.add</li>
 					<li>stats.formhandler.add.{name}</li>
