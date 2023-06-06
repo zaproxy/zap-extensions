@@ -33,7 +33,7 @@ import org.zaproxy.zap.extension.pscanrulesBeta.JsFunctionScanRule;
 
 public class ExtensionPayloader extends ExtensionAdaptor {
 
-    public static final String NAME = "ExtensionPayloaderPscanRulesBetaRelease";
+    public static final String NAME = "ExtensionPayloaderPscanRulesBeta";
     private static final List<Class<? extends Extension>> DEPENDENCIES;
     private static ExtensionCustomPayloads ecp;
     private PayloadCategory jsFuncCategory;
