@@ -33,6 +33,7 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URIException;
@@ -209,13 +210,7 @@ public class ParameterTamperScanRule extends AbstractAppParamPlugin {
         }
 
         if (issueFound) {
-            newAlert()
-                    .setConfidence(confidence)
-                    .setParam(param)
-                    .setAttack(attack)
-                    .setEvidence(sb.toString())
-                    .setMessage(msg)
-                    .raise();
+            createAlert(confidence, param, attack, sb.toString(), msg).raise();
         }
 
         return issueFound;
@@ -239,5 +234,22 @@ public class ParameterTamperScanRule extends AbstractAppParamPlugin {
     @Override
     public int getWascId() {
         return 20;
+    }
+
+    private AlertBuilder createAlert(
+            int confidence, String param, String attack, String evidence, HttpMessage msg) {
+        return newAlert()
+                .setConfidence(confidence)
+                .setParam(param)
+                .setAttack(attack)
+                .setEvidence(evidence)
+                .setMessage(msg);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                createAlert(Alert.CONFIDENCE_MEDIUM, "p", "@", "javax.servlet.Class", null)
+                        .build());
     }
 }
