@@ -23,8 +23,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -97,6 +100,25 @@ class XAspNetVersionScanRuleUnitTest extends PassiveScannerTest<XAspNetVersionSc
         scanHttpResponseReceive(msg);
 
         assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldReturnExpectedExampleAlert() {
+        String MESSAGE_PREFIX = "pscanrules.xaspnetversion.";
+
+        List<Alert> alerts = rule.getExampleAlerts();
+
+        Alert alert = alerts.get(0);
+        assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
+        assertThat(
+                alert.getReference(),
+                equalTo(Constant.messages.getString(MESSAGE_PREFIX + "refs")));
+        assertThat(alert.getEvidence(), equalTo("1/1.1"));
+        assertThat(
+                alert.getSolution(), equalTo(Constant.messages.getString(MESSAGE_PREFIX + "soln")));
+        assertThat(
+                alert.getDescription(),
+                equalTo(Constant.messages.getString(MESSAGE_PREFIX + "desc")));
     }
 
     private HttpMessage createMessage(String header) throws HttpMalformedHeaderException {

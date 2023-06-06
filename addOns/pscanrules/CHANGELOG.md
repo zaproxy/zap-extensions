@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- The X-AspNet-Version Response Header Scan Rule now includes example alert functionality for documentation generation purposes (Issue 6119).
 - The Information Disclosure Suspicious Comments scan rule:
     - Now includes example alert functionality for documentation generation purposes (Issue 6119).
     - Now has a Alert Tag with a OWASP WSTG reference.
