@@ -57,13 +57,13 @@ public class XAspNetVersionScanRule extends PluginPassiveScanner {
             List<String> found = msg.getResponseHeader().getHeaderValues(header);
 
             if (!found.isEmpty()) {
-                this.raiseAlert(msg, id, found.get(0));
+                createAlert(found.get(0)).raise();
             }
         }
     }
 
-    private void raiseAlert(HttpMessage msg, int id, String evidence) {
-        newAlert()
+    private AlertBuilder createAlert(String evidence) {
+        return newAlert()
                 .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_HIGH)
                 .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
@@ -72,8 +72,7 @@ public class XAspNetVersionScanRule extends PluginPassiveScanner {
                 .setReference(Constant.messages.getString(MESSAGE_PREFIX + "refs"))
                 .setEvidence(evidence)
                 .setCweId(getCweId())
-                .setWascId(getWascId())
-                .raise();
+                .setWascId(getWascId());
     }
 
     @Override
@@ -101,5 +100,10 @@ public class XAspNetVersionScanRule extends PluginPassiveScanner {
 
     public int getWascId() {
         return 14; //  WASC-14: Server Misconfiguration
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(createAlert("1/1.1").build());
     }
 }
