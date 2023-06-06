@@ -203,7 +203,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
                 .setRisk(risk)
                 .setConfidence(confidence)
                 .setName(getAlertName())
-                .setOtherInfo(getOtherInfo(file.getType()))
+                .setOtherInfo(getOtherInfo(file))
                 .setEvidence(msg.getResponseHeader().getPrimeHeader())
                 .setReference(getReferences(file))
                 .setMessage(msg);
@@ -291,8 +291,14 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
         return Constant.messages.getString(MESSAGE_PREFIX + "alert.name");
     }
 
-    private static String getOtherInfo(String type) {
-        return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo", type);
+    private static String getOtherInfo(HiddenFile file) {
+        String otherInfo =
+                Constant.messages.getString(MESSAGE_PREFIX + "otherinfo", file.getType());
+        String extra = file.getExtra();
+        if (!extra.isBlank()) {
+            otherInfo += "\n\n" + extra;
+        }
+        return otherInfo;
     }
 
     private List<HiddenFile> readFromJsonFile() {
@@ -315,6 +321,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
                                 getOptionalString(hiddenFileObject, "binary"),
                                 getOptionalList(hiddenFileObject, "links"),
                                 getOptionalString(hiddenFileObject, "type"),
+                                getOptionalString(hiddenFileObject, "extra"),
                                 false);
                 hiddenFiles.add(hiddenFile);
 
@@ -435,6 +442,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
         private final String binary;
         private final List<String> links;
         private final String type;
+        private final String extra;
         private final boolean custom;
 
         public HiddenFile(
@@ -445,6 +453,18 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
                 List<String> links,
                 String type,
                 boolean custom) {
+            this(path, content, not_content, binary, links, type, "", custom);
+        }
+
+        public HiddenFile(
+                String path,
+                List<String> content,
+                List<String> not_content,
+                String binary,
+                List<String> links,
+                String type,
+                String extra,
+                boolean custom) {
             super();
             this.path = path;
             this.content = content;
@@ -452,6 +472,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
             this.binary = binary;
             this.links = links;
             this.type = type;
+            this.extra = extra;
             this.custom = custom;
         }
 
@@ -481,6 +502,10 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
 
         public boolean isCustom() {
             return custom;
+        }
+
+        public String getExtra() {
+            return extra;
         }
     }
 }

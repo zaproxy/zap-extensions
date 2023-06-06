@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Include complete solution of Server Side Include scan rule.
 - Ensure Custom Payloads support can be properly unloaded.
 
+### Added
+- The Hidden File Finder scan rule now check for Blazor WASM config files.
+
 ## [54] - 2023-05-03
 ### Changed
 - Maintenance changes.

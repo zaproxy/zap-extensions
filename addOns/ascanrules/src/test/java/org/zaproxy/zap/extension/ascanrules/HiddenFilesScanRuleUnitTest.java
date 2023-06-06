@@ -145,7 +145,14 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
         List<String> links = Arrays.asList("https://example.org");
         HiddenFile hiddenFile =
                 new HiddenFile(
-                        testPath, contents, Collections.emptyList(), "", links, "test_php", false);
+                        testPath,
+                        contents,
+                        Collections.emptyList(),
+                        "",
+                        links,
+                        "test_php",
+                        "This file leaks info",
+                        false);
 
         this.nano.addHandler(new OkResponse(servePath));
         this.nano.addHandler(
@@ -166,7 +173,7 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
         assertThat(httpMessagesSent, hasSize(greaterThanOrEqualTo(1)));
         assertEquals(Alert.RISK_MEDIUM, alertsRaised.get(0).getRisk());
         assertEquals(Alert.CONFIDENCE_HIGH, alertsRaised.get(0).getConfidence());
-        assertEquals(hiddenFile.getType(), alert.getOtherInfo());
+        assertEquals(hiddenFile.getType() + "\n\n" + hiddenFile.getExtra(), alert.getOtherInfo());
         assertEquals(
                 rule.getReference() + '\n' + hiddenFile.getLinks().get(0), alert.getReference());
     }
