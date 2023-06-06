@@ -237,12 +237,12 @@ public class ParameterTamperScanRule extends AbstractAppParamPlugin {
     }
 
     private AlertBuilder createAlert(
-            int confidence, String param, String attack, String sb, HttpMessage msg) {
+            int confidence, String param, String attack, String evidence, HttpMessage msg) {
         return newAlert()
                 .setConfidence(confidence)
                 .setParam(param)
                 .setAttack(attack)
-                .setEvidence(sb)
+                .setEvidence(evidence)
                 .setMessage(msg);
     }
 
