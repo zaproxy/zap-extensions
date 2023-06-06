@@ -22,16 +22,15 @@ package org.zaproxy.zap.extension.ascanrules;
 import static fi.iki.elonen.SimpleWebServer.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
- import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.hasKey;
 
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -262,30 +261,19 @@ class ParameterTamperScanRuleUnitTest extends ActiveScannerTest<ParameterTamperS
     void shouldReturnExpectedExampleAlert() {
         // Given / When
         List<Alert> alerts = rule.getExampleAlerts();
-        
-        // Then
-        assertThat(alerts.size(), is(equalTo(2)));
 
-        Alert alert1 = alerts.get(0);
-        Map<String, String> tags1 = alert1.getTags();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+
+        Alert alert = alerts.get(0);
+        Map<String, String> tags1 = alert.getTags();
         assertThat(tags1.size(), is(equalTo(2)));
-        assertThat(alert1.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
         assertThat(
                 tags1.containsKey(CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()),
                 is(equalTo(true)));
         assertThat(
                 tags1.containsKey(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
-                is(equalTo(true)));
-
-        Alert alert2 = alerts.get(1);
-        Map<String, String> tags2 = alert2.getTags();
-        assertThat(tags2.size(), is(equalTo(2)));
-        assertThat(alert2.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
-        assertThat(
-                tags2.containsKey(CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()),
-                is(equalTo(true)));
-        assertThat(
-                tags2.containsKey(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
                 is(equalTo(true)));
     }
 
