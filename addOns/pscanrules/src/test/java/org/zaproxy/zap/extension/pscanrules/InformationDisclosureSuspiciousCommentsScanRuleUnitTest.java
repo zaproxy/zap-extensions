@@ -21,15 +21,13 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -47,23 +45,8 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
 
     @Override
     protected InformationDisclosureSuspiciousCommentsScanRule createScanner() {
+        InformationDisclosureSuspiciousCommentsScanRule.setPayloadProvider(null);
         return new InformationDisclosureSuspiciousCommentsScanRule();
-    }
-
-    @Override
-    public void setUpZap() throws Exception {
-        super.setUpZap();
-
-        Path xmlDir =
-                Files.createDirectories(
-                        Paths.get(
-                                Constant.getZapHome(),
-                                InformationDisclosureSuspiciousCommentsScanRule
-                                        .suspiciousCommentsListDir));
-        Path testFile =
-                xmlDir.resolve(
-                        InformationDisclosureSuspiciousCommentsScanRule.suspiciousCommentsListFile);
-        Files.write(testFile, Arrays.asList("# FixMeNot", "  FixMe  ", "TODO", "\t "));
     }
 
     protected HttpMessage createHttpMessageWithRespBody(String responseBody, String contentType)
@@ -96,7 +79,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         // Then
         assertThat(cwe, is(equalTo(200)));
         assertThat(wasc, is(equalTo(13)));
-        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags.size(), is(equalTo(3)));
         assertThat(
                 tags.containsKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(true)));
@@ -104,11 +87,17 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
                 tags.containsKey(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag()),
                 is(equalTo(true)));
         assertThat(
+                tags.containsKey(CommonAlertTag.WSTG_V42_INFO_05_CONTENT_LEAK.getTag()),
+                is(equalTo(true)));
+        assertThat(
                 tags.get(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getValue())));
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getValue())));
+        assertThat(
+                tags.get(CommonAlertTag.WSTG_V42_INFO_05_CONTENT_LEAK.getTag()),
+                is(equalTo(CommonAlertTag.WSTG_V42_INFO_05_CONTENT_LEAK.getValue())));
     }
 
     @Test
@@ -131,7 +120,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         assertEquals(Alert.CONFIDENCE_LOW, alertsRaised.get(0).getConfidence());
         assertEquals("FIXME", alertsRaised.get(0).getEvidence());
         assertEquals(
-                wrapEvidenceOtherInfo("\\bFixMe\\b", line1, 1), alertsRaised.get(0).getOtherInfo());
+                wrapEvidenceOtherInfo("\\bFIXME\\b", line1, 1), alertsRaised.get(0).getOtherInfo());
     }
 
     @Test
@@ -175,7 +164,7 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
         assertEquals("FIXME", alertsRaised.get(0).getEvidence());
         // detected 2 times, the first in the element
         assertEquals(
-                wrapEvidenceOtherInfo("\\bFixMe\\b", line1, 2), alertsRaised.get(0).getOtherInfo());
+                wrapEvidenceOtherInfo("\\bFIXME\\b", line1, 2), alertsRaised.get(0).getOtherInfo());
     }
 
     @Test
@@ -279,6 +268,47 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
     }
 
     @Test
+    void shouldAlertOnSuspiciousCommentProvidedByCustomPayload()
+            throws HttpMalformedHeaderException, URIException {
+
+        // Given
+        Iterable<String> customPayloads = List.of("zap_internal", "my_insights");
+        String body =
+                "<h1>Some text <!--MY_INSIGHTS: This is a test --></h1>\n"
+                        + "<b>Welcome to Zaproxy</b>\n";
+        HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
+
+        // When
+        InformationDisclosureSuspiciousCommentsScanRule.setPayloadProvider(() -> customPayloads);
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertEquals(1, alertsRaised.size());
+    }
+
+    @Test
+    void shouldNotAlertIfNeitherCustomNorStandardPayloadsFound()
+            throws HttpMalformedHeaderException, URIException {
+
+        // Given
+        Iterable<String> customPayloads = List.of("zap_internal", "my_insights");
+        String body =
+                "<h1>Some text <!-- Nothing special here --></h1>\n"
+                        + "<b>Welcome to Zaproxy</b>\n";
+        HttpMessage msg = createHttpMessageWithRespBody(body, "text/html;charset=ISO-8859-1");
+
+        assertTrue(msg.getResponseHeader().isText());
+        assertFalse(ResourceIdentificationUtils.isJavaScript(msg));
+
+        // When
+        InformationDisclosureSuspiciousCommentsScanRule.setPayloadProvider(() -> customPayloads);
+        scanHttpResponseReceive(msg);
+
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
+    @Test
     void shouldNotAlertIfResponseIsEmpty() throws HttpMalformedHeaderException, URIException {
 
         // Given
@@ -305,6 +335,31 @@ class InformationDisclosureSuspiciousCommentsScanRuleUnitTest
 
         // Then
         assertEquals(0, alertsRaised.size());
+    }
+
+    @Test
+    void shouldHaveExpectedExample() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+        Alert alert = alerts.get(0);
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(
+                alert.getOtherInfo(),
+                is(
+                        equalTo(
+                                Constant.messages.getString(
+                                        "pscanrules.informationdisclosuresuspiciouscomments.otherinfo",
+                                        "\\bFIXME\\b",
+                                        "<!-- FixMe: cookie: root=true; Secure -->"))));
+        assertThat(alert.getEvidence(), is(equalTo("FixMe")));
+        Map<String, String> tags = alert.getTags();
+        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()));
+        assertThat(tags, hasKey(CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED.getTag()));
+        assertThat(tags, hasKey(CommonAlertTag.WSTG_V42_INFO_05_CONTENT_LEAK.getTag()));
+        assertThat(tags, hasKey(CommonAlertTag.CUSTOM_PAYLOADS.getTag()));
     }
 
     private static String wrapEvidenceOtherInfo(String evidence, String info, int count) {

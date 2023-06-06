@@ -150,6 +150,13 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
     }
 
     @Override
+    public void reset() {
+        super.reset();
+
+        stat = getStatistic();
+    }
+
+    @Override
     public boolean runTest(AutomationProgress progress) throws RuntimeException {
         if (this.getData().getValue() == null) {
             progress.error(
@@ -158,10 +165,7 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
             return false;
         }
 
-        stat =
-                getStatistic(
-                        this.getData().getStatistic(),
-                        this.getJob().getEnv().replaceVars(this.getData().getSite()));
+        stat = getStatistic() - stat;
 
         switch (getOperator(this.getData().getOperator())) {
             case LESS:
@@ -188,7 +192,10 @@ public class AutomationStatisticTest extends AbstractAutomationTest {
                 .get();
     }
 
-    private long getStatistic(String stat, String site) {
+    private long getStatistic() {
+        String stat = getData().getStatistic();
+        String site = getJob().getEnv().replaceVars(getData().getSite());
+
         InMemoryStats inMemoryStats =
                 Control.getSingleton()
                         .getExtensionLoader()

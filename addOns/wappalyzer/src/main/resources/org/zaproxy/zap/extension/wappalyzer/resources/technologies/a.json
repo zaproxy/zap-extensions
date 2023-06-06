@@ -922,6 +922,7 @@
     ],
     "description": "AdOpt is a consent tool that prioritises privacy and usability towards the LGPD.",
     "icon": "AdOpt.svg",
+    "implies": "Svelte",
     "js": {
       "adoptApp.domain": "",
       "adopt_website_code": ""
@@ -932,6 +933,7 @@
       "recurring"
     ],
     "saas": true,
+    "scriptSrc": "tag\\.goadopt\\.io/",
     "website": "https://goadopt.io"
   },
   "AdRecover": {
@@ -1887,6 +1889,8 @@
     "cats": [
       10
     ],
+    "description": "Ahoy is a Ruby gem that provides simple and powerful analytics for Ruby on Rails applications.",
+    "implies": "Ruby on Rails",
     "cookies": {
       "ahoy_track": "",
       "ahoy_visit": "",
@@ -1895,6 +1899,7 @@
     "js": {
       "ahoy": ""
     },
+    "oss": true,
     "website": "https://github.com/ankane/ahoy"
   },
   "AiSpeed": {
@@ -3081,6 +3086,41 @@
     "oss": true,
     "website": "https://animate.style"
   },
+  "Aniview Ad Server": {
+    "cats": [
+      36
+    ],
+    "description": "Aniview Ad Server is a technology developed by Aniview, a company that specialises in providing video advertising solutions. The Aniview Ad Server is a platform designed to manage and serve video ads to publishers, advertisers, and agencies.",
+    "dom": {
+      "link[href*='aniview.com']": {
+        "attributes": {
+          "href": "^(?!.*player).*aniview\\.com/"
+        }
+      }
+    },
+    "icon": "Aniview.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "^(?!.*player).*aniview\\.com/",
+    "website": "https://aniview.com/video-ad-servers/"
+  },
+  "Aniview Video Ad Player": {
+    "cats": [
+      14
+    ],
+    "description": "Aniview Video Ad Player is a video player technology developed by Aniview, a company that specialises in providing video advertising solutions.",
+    "dom": "link[href*='player.aniview.com']",
+    "icon": "Aniview.png",
+    "implies": "Aniview Ad Server",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "player\\.aniview\\.com/script/([\\d\\.]+)/\\;version:\\1",
+    "website": "https://aniview.com/video-ad-player/"
+  },
   "AnswerDash": {
     "cats": [
       5
@@ -3330,7 +3370,7 @@
     "headers": {
       "X-Powered-By": "Salesforce\\.com ApexPages"
     },
-    "icon": "CloudFlare.svg",
+    "icon": "Salesforce.svg",
     "implies": "Salesforce",
     "website": "https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/apex_intro.htm"
   },
@@ -4855,6 +4895,22 @@
     "scriptSrc": "/wp-content/plugins/a3-lazy-load/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://a3rev.com/shop/a3-lazy-load/"
   },
+  "Ahrefs": {
+    "cats": [
+      54,
+      10
+    ],
+    "description": "Ahrefs is an online toolset utilised for search engine optimisation (SEO) and competitor analysis, which permits users to analyse their website's performance, track keyword rankings, identify backlink opportunities, and research competitors' websites, among other features.",
+    "icon": "ahrefs.svg",
+    "meta": {
+      "ahrefs-site-verification": ""
+    },
+    "pricing": [
+      "low",
+      "mid"
+    ],
+    "website": "https://ahrefs.com"
+  },
   "aThemes Airi": {
     "cats": [
       80
@@ -4996,41 +5052,6 @@
     },
     "oss": true,
     "website": "https://animejs.com/"
-  },
-  "Aniview Ad Server": {
-    "cats": [
-      36
-    ],
-    "description": "Aniview Ad Server is a technology developed by Aniview, a company that specialises in providing video advertising solutions. The Aniview Ad Server is a platform designed to manage and serve video ads to publishers, advertisers, and agencies.",
-    "icon": "Aniview.png",
-    "dom": {
-      "link[href*='aniview.com']": {
-        "attributes": {
-          "href": "^(?!.*player).*aniview\\.com/"
-        }
-      }
-    },
-    "pricing": [
-      "poa"
-    ],
-    "saas": true,
-    "scriptSrc": "^(?!.*player).*aniview\\.com/",
-    "website": "https://aniview.com/video-ad-servers/"
-  },
-  "Aniview Video Ad Player": {
-    "cats": [
-      14
-    ],
-    "description": "Aniview Video Ad Player is a video player technology developed by Aniview, a company that specialises in providing video advertising solutions.",
-    "icon": "Aniview.png",
-    "implies": "Aniview Ad Server",
-    "dom": "link[href*='player.aniview.com']",
-    "pricing": [
-      "poa"
-    ],
-    "saas": true,
-    "scriptSrc": "player\\.aniview\\.com/script/([\\d\\.]+)/\\;version:\\1",
-    "website": "https://aniview.com/video-ad-player/"
   },
   "augmented-ui": {
     "cats": [

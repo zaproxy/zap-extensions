@@ -37,6 +37,14 @@ This job supports monitor tests.
       - "a"
       - "button"
       - "input"
+      excludedElements:                 # A list of HTML elements to exclude from click.
+        - description: "Logout Button"  # String: Description of the exclusion.
+          element: "button"             # String: Name of the element.
+          xpath:                        # String: XPath of the element, optional.
+          text:                         # String: Text of the element (exact match and case sensitive), optional.
+          attributeName: "aria-label"   # String: Name of the attribute, optional unless the value is provided.
+          attributeValue: "Logout"      # String: Value of the attribute, optional unless the name is provided.
+      
     tests:
       - name: 'At least 100 URLs found'      # String: Name of the test, default: statistic + operator + value
         type: 'stats'                        # String: Type of test, only 'stats' is supported for now

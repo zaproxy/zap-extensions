@@ -39,6 +39,7 @@ import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParam;
 import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderParamElem;
 import org.zaproxy.zap.extension.spiderAjax.OptionsAjaxSpiderTableModel;
 import org.zaproxy.zap.extension.spiderAjax.automation.AjaxSpiderJob.Parameters;
+import org.zaproxy.zap.extension.spiderAjax.internal.ExcludedElementsPanel;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -88,6 +89,8 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
     private AjaxSpiderMultipleOptionsPanel elemsOptionsPanel;
 
     private OptionsAjaxSpiderTableModel ajaxSpiderClickModel;
+
+    private ExcludedElementsPanel excludedElementsPanel;
 
     private AjaxSpiderJob job;
     private ExtensionSelenium extSel = null;
@@ -220,6 +223,11 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
         this.getAjaxSpiderClickModel().setElems(this.getElems());
         this.addCustomComponent(1, getAjaxSpiderClickPanel());
 
+        getExcludedElementsPanel()
+                .setElements(JobMapper.INSTANCE.toModel(job.getParameters().getExcludedElements()));
+
+        addCustomComponent(1, getExcludedElementsPanel().getPanel());
+
         this.addPadding(1);
 
         setClickElemsEnabled(!clickDefaultElements);
@@ -242,7 +250,7 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
 
     private List<AjaxSpiderParamElem> getElems() {
 
-        List<AjaxSpiderParamElem> elems = new ArrayList<AjaxSpiderParamElem>();
+        List<AjaxSpiderParamElem> elems = new ArrayList<>();
         List<String> enabledElems;
         if (this.job.getParameters().getElements() != null) {
             enabledElems =
@@ -280,6 +288,13 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
             elemsOptionsPanel = new AjaxSpiderMultipleOptionsPanel(getAjaxSpiderClickModel());
         }
         return elemsOptionsPanel;
+    }
+
+    private ExcludedElementsPanel getExcludedElementsPanel() {
+        if (excludedElementsPanel == null) {
+            excludedElementsPanel = new ExcludedElementsPanel(this, false);
+        }
+        return excludedElementsPanel;
     }
 
     private void setClickElemsEnabled(boolean isEnabled) {
@@ -356,6 +371,11 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
                                         .map(e -> e.getName())
                                         .collect(Collectors.toList()));
             }
+
+            job.getParameters()
+                    .setExcludedElements(
+                            JobMapper.INSTANCE.toDto(getExcludedElementsPanel().getElements()));
+
         } else {
             this.job.getParameters().setBrowserId(null);
             this.job.getParameters().setMaxCrawlStates(null);
@@ -365,6 +385,7 @@ public class AjaxSpiderJobDialog extends StandardFieldsDialog {
             this.job.getParameters().setClickElemsOnce(null);
             this.job.getParameters().setRandomInputs(null);
             this.job.getParameters().setElements(null);
+            this.job.getParameters().setExcludedElements(null);
         }
         this.job.setChanged();
     }

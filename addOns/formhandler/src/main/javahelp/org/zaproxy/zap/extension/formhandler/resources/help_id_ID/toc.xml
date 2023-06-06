@@ -6,7 +6,7 @@
 <toc version="2.0">
 	<tocitem text="Panduan Pengguna ZAP" tocid="toplevelitem">
 		<tocitem text="Add Ons" tocid="addons">
-			<tocitem text="Form Handler" image="fhandler-icon" target="fhandler"/>
+			<tocitem text="Value Generator" image="fhandler-icon" target="fhandler"/>
 		</tocitem>
 	</tocitem>
 </toc>

@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [0.23.0] - 2023-06-02
+### Changed
+- Updated with upstream retire.js pattern changes.
+
+
+
 ## [0.22.0] - 2023-05-03
 ### Changed
 - Updated with upstream retire.js pattern changes.
@@ -131,6 +137,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - First release.
 
+[0.23.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.23.0
 [0.22.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.22.0
 [0.21.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.21.0
 [0.20.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.20.0

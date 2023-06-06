@@ -50,6 +50,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
+import org.zaproxy.zap.extension.spiderAjax.internal.ContextDataManager;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.utils.DisplayUtils;
@@ -80,6 +81,8 @@ public class ExtensionAjax extends ExtensionAdaptor {
     private AjaxSpiderAPI ajaxSpiderApi;
     private AjaxSpiderParam ajaxSpiderParam;
     private ExtensionNetwork extensionNetwork;
+
+    private ContextDataManager contextDataManager;
 
     /**
      * initializes the extension
@@ -140,6 +143,8 @@ public class ExtensionAjax extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
 
+        contextDataManager = new ContextDataManager(getModel(), getView(), extensionHook);
+
         extensionHook.addApiImplementor(ajaxSpiderApi);
         extensionHook.addOptionsParamSet(getAjaxSpiderParam());
 
@@ -156,6 +161,10 @@ public class ExtensionAjax extends ExtensionAdaptor {
 
         extensionNetwork =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionNetwork.class);
+    }
+
+    public ContextDataManager getContextDataManager() {
+        return contextDataManager;
     }
 
     @Override
@@ -180,6 +189,8 @@ public class ExtensionAjax extends ExtensionAdaptor {
                 spiderDialog.dispose();
             }
         }
+
+        contextDataManager.unload();
 
         super.unload();
     }

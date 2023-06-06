@@ -1209,6 +1209,22 @@
     "scriptSrc": "/phenomic\\.browser\\.[a-f0-9]+\\.js",
     "website": "https://phenomic.io/"
   },
+  "Philomena": {
+    "cats": [
+      2
+    ],
+    "description": "Philomena is an imageboard software.",
+    "icon": "Philomena.svg",
+    "meta": {
+      "generator": "^philomena$"
+    },
+    "implies": [
+      "Elixir",
+      "Erlang"
+    ],
+    "oss": true,
+    "website": "https://github.com/derpibooru/philomena"
+  },
   "Phlox": {
     "cats": [
       80
@@ -2514,6 +2530,17 @@
     },
     "scriptSrc": "prefixfree\\.js",
     "website": "https://leaverou.github.io/prefixfree/"
+  },
+  "Preline UI": {
+    "cats": [
+      66
+    ],
+    "description": "Preline UI is an open-source set of prebuilt UI components based on the utility-first Tailwind CSS framework.",
+    "icon": "Preline UI.svg",
+    "implies": "Tailwind CSS",
+    "scriptSrc": "/preline\\.js",
+    "oss": true,
+    "website": "https://preline.co"
   },
   "Premio Chaty": {
     "cats": [

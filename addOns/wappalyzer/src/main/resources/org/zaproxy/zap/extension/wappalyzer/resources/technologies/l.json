@@ -536,6 +536,23 @@
     "oss": true,
     "website": "https://lenis.studiofreight.com"
   },
+  "Leptos": {
+    "cats": [
+      18
+    ],
+    "description": "Leptos is a full-stack, isomorphic Rust web framework leveraging fine-grained reactivity to build declarative user interfaces.",
+    "html": "<!--hk=_.*",
+    "icon": "Leptos.svg",
+    "implies": "Rust",
+    "js": {
+      "__LEPTOS_PENDING_RESOURCES": "",
+      "__LEPTOS_RESOLVED_RESOURCES": "",
+      "__LEPTOS_RESOURCE_RESOLVERS": ""
+    },
+    "oss": true,
+    "scripts": "export function microtask\\(f\\)\\;confidence:75",
+    "website": "https://leptos.dev"
+  },
   "Less": {
     "cats": [
       19
@@ -1666,6 +1683,9 @@
     "description": "LottieFiles is an open-source animation file format that's tiny, high quality, interactive, and can be manipulated at runtime.",
     "dom": "lottie-player, div[data-animation-type='lottie'], div[data-testid='lottie-player'], clipPath[id*='__lottie_element_']",
     "icon": "LottieFiles.svg",
+    "js": {
+      "lottie.version": "^(.+)$\\;version:\\1"
+    },
     "oss": true,
     "scriptSrc": [
       "/dist/lottie-player\\.js",

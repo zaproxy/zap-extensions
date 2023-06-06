@@ -191,7 +191,7 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
         List<SessionToken> tokens = new ArrayList<>();
         tokens.add(new SessionToken(SessionToken.HEADER_SOURCE, HttpHeader.AUTHORIZATION, ""));
         SessionManagementRequestDetails smDetails =
-                new SessionManagementRequestDetails(null, null, Alert.CONFIDENCE_MEDIUM);
+                new SessionManagementRequestDetails(null, tokens, Alert.CONFIDENCE_MEDIUM);
         alerts.add(this.getAlert(smDetails).build());
         return alerts;
     }

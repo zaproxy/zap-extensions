@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Statistic name to test summary.
 
+### Fixed
+- Test taking into account previous statistic values.
+- Clear Output tab on new plan.
+
 ## [0.28.0] - 2023-05-04
 ### Added
 - Support for verification type of "autodetect" (post 2.12).

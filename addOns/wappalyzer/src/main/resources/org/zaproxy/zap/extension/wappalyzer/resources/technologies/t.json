@@ -776,6 +776,23 @@
     "icon": "Tealium.png",
     "website": "https://docs.tealium.com/platforms/getting-started/consent-management"
   },
+  "TeamBrain": {
+    "cats": [
+      5
+    ],
+    "description": "TeamBrain is a knowledge management solution which allows to use a self-learning dynamic FAQ on a website or widget on the bottom right of any page.",
+    "icon": "TeamBrain.png",
+    "dom": "link[href*='//teambrain.app/']",
+    "js": {
+      "TeamBrainExternalApp": ""
+    },
+    "saas": true,
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "website": "https://www.teambrain.io"
+  },
   "TeamCity": {
     "cats": [
       44
@@ -1910,6 +1927,23 @@
     "scriptSrc": "thrivecart\\.js",
     "website": "https://thrivecart.com"
   },
+  "THRON": {
+    "cats": [
+      95
+    ],
+    "description": "THRON is a digital asset management platform that provides a centralised hub for storing, organising, and distributing digital assets like images, videos, and documents.",
+    "icon": "THRON.png",
+    "dom": "link[href*='.thron.com/'], img[src*='.thron.com/']",
+    "js": {
+      "thronHlsJs": "",
+      "THRONPlayer": ""
+    },
+    "saas": true,
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://www.thron.com"
+  },
   "Ticimax": {
     "cats": [
       6
@@ -2546,10 +2580,11 @@
   },
   "Triggerbee": {
     "cats": [
-      76
+      76,
+      10
     ],
     "description": "Triggerbee is an onsite personalisation platform that lets you use customer and behavioral data to build and launch personalised campaigns.",
-    "icon": "Triggerbee.png",
+    "icon": "Triggerbee.svg",
     "js": {
       "triggerbee": ""
     },
@@ -2558,6 +2593,7 @@
       "recurring"
     ],
     "saas": true,
+    "scriptSrc": "t\\.myvisitors\\.se",
     "website": "https://triggerbee.com"
   },
   "Trinity Audio": {

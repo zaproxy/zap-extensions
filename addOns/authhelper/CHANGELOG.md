@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Prefer username fields with known id/name strings.
 
+### Fixed
+- Correct example alert of Session Management Response Identified scan rule.
+
 ## [0.7.0] - 2023-05-23
 ### Added
 - Authentication tester dialog.

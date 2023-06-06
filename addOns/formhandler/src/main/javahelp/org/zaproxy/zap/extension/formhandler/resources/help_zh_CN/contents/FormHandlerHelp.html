@@ -1,82 +1,95 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <html>
 	<head>
-		<title> 表单处理器 </title>
+		<title> Value Generator </title>
 	</head>
 	<body>
 
-		<h1>表单处理器</h1>
+		<h1>Value Generator</h1>
 			<p>
-				此表单处理器扩展允许根据字段名自定义表中使用的值的配置。
+				This Value Generator extension allows for the custom configuration of values used in sites/apps based on field/input names.
+			</p>
+			<p>
+				<strong>Note: </strong>The word "Field" is used throughout this help documentation interchangeably with parameter or input.
 			</p>
 
 		<h2>说明</h2>
 			<p>
-				With this add-on the user can create new fields for fields that they wish to set the 
+				With this add-on the user can create new fields for inputs that they wish to control the 
 				value of. Additionally, the user can modify any existing field's name and value to fit the fields that 
-				they are trying to set. 用户还可以禁用或删除任何字段，以便不使用自定义值 。 Field names, values, enabled, and regex status will be stored even after a ZAP session has 
+				they are trying to customize/control. Any field can also be disabled or removed by the user so that the custom values 
+				are not used. Field names, values, enabled state, and regex status will be stored even after a ZAP session has 
 				concluded.
 			</p>
 			<p>
-				加载项提供了一组默认字段名，这些名称可以在窗体上找到，并且每个默认字段对应 一个值。 如果 用户想要，可以禁止，修改和删除这些默认值。
+				The add-on provides a set of default field names and patterns that may be found in an app/system and a corresponding 
+				value for each default field. These default values can be disabled, modified, and deleted if the 
+				user desires.
 			</p>
 
-		<h2>使用表单处理器</h2>
+		<h2>Using the Value Generator</h2>
 			<p>
-				表单处理器可以在选项中找到。选择表单处理器选项卡将显示一个具有当前定义的所有现有值的表格 。下面展示了一个示例。
+				The Value Generator can be configured thought ZAP's Options. Selecting the Value Generator tab will display a table 
+				with all existing inputs that are currently defined. An example is shown below.
 			</p>
 			<img src="../contents/images/formHandlerTable.PNG" alt="图像不可用"/>
 
-		<h3>添加新字段</h3>
+		<h3>Adding a New Field</h3>
 			<p>
-				为了定义其他字段值，可以单击<b>添加</b>按钮。这将带来一个对话框，给用户提供字段信息。
+				To define additional input values the <b>Add</b> button can be clicked. This will bring up a dialog 
+				for the user to provide field information.
 			</p>
 
 			<img src="../contents/images/formHandlerAddDialog.PNG" alt="图像不可用"/>
 
 			<p>
-				当添加一个新的字段时，请注意以下内容:
+				Please take note of the following when adding a new field:
 				<ul>
 					<li>A field name or regex pattern must be provided.</li>
 					<li>The field name cannot already exist in the table or a warning will occur.</li>
-					<li>提供给表单处理器的字段名称必须与您想要定义的窗体上的字段ID匹配。</li>
+					<li>The field name supplied to the Value Generator must match the field ID in the input that you wish 
+						to define/control.</li>
 					<li>The field name is not case sensitive, unless using regex.</li>
 					<li>Simple name matches will be attempted before regex matches.</li>
 					<li>A value does not have to be provided. This will result in an empty string being used.</li>
-					<li>The value field is case sensitive, and will be seen in the POST.</li>
+					<li>The value field is case sensitive, and will be seen in subsequent traffic.</li>
 				</ul>
 			</p>
 
-		<h3>修改现有字段</h3>
+		<h3>Modifying an Existing Field</h3>
 			<p>
-				该扩展允许用户修改现有字段的值和名称。可以 通过选择要修改的字段并单击<b>修改</b>按钮来完成此操作。
+				The add-on allows the user to modify the values and names of existing fields. This can be done 
+				by selecting the field that you wish to modify and clicking on the <b>Modify</b> button.
 			</p>
 			<img src="../contents/images/formHandlerModDialog.PNG" alt="图像不可用"/>
 
 			<p>
-				修改字段时，用户受到与创建新用户相同规则的限制。 The most
+				When modifying a field the user is constrained by the same rules as creating a new one. The most
 				common constraint when modifying a field is that the name cannot be the same as an existing field.
-				(即没有重复字段)
+				(i.e. No duplicate fields)
 			<p>
  
-		<h3>删除字段</h3>
+		<h3>Removing Fields</h3>
 			<p>
-				用户可以随时删除字段。 To do so simply select the field that you wish to remove and 
-				click on the <b>Remove</b> button. <i>请注意，在继续操作之前将提示您确认删除，除非选中了<b>删除而不确认</b>复选框。</i> 
+				The user can remove fields at any time. To do so simply select the field that you wish to remove and 
+				click on the <b>Remove</b> button. <i> Please note that you will be prompted to confirm removal before 
+				proceeding unless the <b>Remove without Confirmation</b> box is checked.</i> 
 			</p>
 
-		<h2>未定义的表单字段</h2>
+		<h2>Fields/Parameters That Are Not Defined</h2>
 			<p>
-				用户可能发现他们不想定义表单中的每个字段，而是在其中定义一个选定的字段表格。
+				A user may find that they do not want to define everything, but rather define a select few within 
+				the expected input.
 			</p>
 			<p>
-				在表单处理程序加载项中未定义的任何字段都将使用生成的ZAP默认值来匹配每个字段类型。(例如: 文本字段将具有值"ZAP")
+				Any field that is not defined in the Value Generator add-on will use a ZAP default value that is generated to match 
+				each field type.(For example: A text field will have the value "ZAP".)
 			</p>
 
 		<h2>Statistics</h2>
 			<p>
 				A number of statistics are exposed via the add-on for add, modify, and remove operations.<br>
-				In the following examples <code>{name}</code> will be the actual name of the Form Handler field.
+				In the following examples <code>{name}</code> will be the actual name of the Value Generator field.
 				<ul>
 					<li>stats.formhandler.add</li>
 					<li>stats.formhandler.add.{name}</li>

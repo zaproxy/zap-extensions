@@ -1731,6 +1731,24 @@
     "oss": true,
     "website": "https://frappeframework.com"
   },
+  "FraudLabs Pro": {
+    "cats": [
+      16
+    ],
+    "description": "FraudLabs Pro is a fraud prevention service offered by the company FraudLabs Pro, which specialises in online fraud detection and risk management for businesses.",
+    "icon": "FraudLabs Pro.png",
+    "js": {
+      "FraudLabsProAgent": ""
+    },
+    "saas": true,
+    "scriptSrc": "\\.fraudlabspro\\.com/",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "website": "https://www.fraudlabspro.com"
+  },
   "FreakOut": {
     "cats": [
       36
