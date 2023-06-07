@@ -18,6 +18,17 @@ paths:
         '200':
           description: OK
 
+  /without-schema:
+    get:
+      parameters:
+        - name: param
+          in: query
+          content:
+            text/xyz: {}
+      responses:
+        '200':
+          description: OK
+
 components:
   schemas:
     Tag:
