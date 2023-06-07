@@ -152,7 +152,9 @@ public class GraphQlParser {
     public void parse(String schema) {
         if (syncParse) {
             fingerprint();
-            generate(schema);
+            if (param.getQueryGenEnabled()) {
+                generate(schema);
+            }
             return;
         }
         ParserThread t =
@@ -160,7 +162,9 @@ public class GraphQlParser {
                     @Override
                     public void run() {
                         fingerprint();
-                        generate(schema);
+                        if (param.getQueryGenEnabled()) {
+                            generate(schema);
+                        }
                     }
                 };
         extensionGraphQl.addParserThread(t);

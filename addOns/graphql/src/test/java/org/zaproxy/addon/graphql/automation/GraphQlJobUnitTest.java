@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
@@ -77,6 +78,7 @@ class GraphQlJobUnitTest extends TestUtils {
         ExtensionLoader extensionLoader =
                 mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         extGraphQl = mock(ExtensionGraphQl.class, withSettings().strictness(Strictness.LENIENT));
+        when(extGraphQl.getParam()).thenReturn(new GraphQlParam());
         given(extensionLoader.getExtension(ExtensionGraphQl.class)).willReturn(extGraphQl);
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
 
@@ -245,7 +247,8 @@ class GraphQlJobUnitTest extends TestUtils {
                 job.getConfigParameters(new GraphQlParamWrapper(), job.getParamMethodName());
 
         // Then
-        assertThat(params.size(), is(equalTo(8)));
+        assertThat(params.size(), is(equalTo(9)));
+        assertThat(params.containsKey("queryGenEnabled"), is(equalTo(true)));
         assertThat(params.containsKey("argsType"), is(equalTo(true)));
         assertThat(params.containsKey("lenientMaxQueryDepthEnabled"), is(equalTo(true)));
         assertThat(params.containsKey("maxAdditionalQueryDepth"), is(equalTo(true)));
