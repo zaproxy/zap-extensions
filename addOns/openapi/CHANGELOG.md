@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Dependency updates.
 
+### Fixed
+- Fix exception when generating data for parameters without schema.
+
 ## [33] - 2023-04-04
 ### Changed
 - Dependency updates.

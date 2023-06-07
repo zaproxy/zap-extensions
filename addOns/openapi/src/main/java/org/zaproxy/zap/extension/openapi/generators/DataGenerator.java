@@ -132,7 +132,7 @@ public class DataGenerator {
             return getExampleValue(parameter);
         }
 
-        if (isArray(parameter.getSchema().getType())) {
+        if (isArray(getType(parameter.getSchema()))) {
             return generateArrayValue(name, parameter);
         }
 
@@ -144,6 +144,10 @@ public class DataGenerator {
         }
 
         return getExampleValue(parameter);
+    }
+
+    private static String getType(Schema<?> schema) {
+        return schema == null ? null : schema.getType();
     }
 
     private String generateArrayValue(String name, Parameter parameter) {
@@ -211,7 +215,7 @@ public class DataGenerator {
 
     private String getExampleValue(Parameter parameter) {
         String in = parameter.getIn();
-        String type = parameter.getSchema().getType();
+        String type = getType(parameter.getSchema());
         if ("cookie".equals(in) && "string".equals(type)) {
             return "JohnDoe";
         }
