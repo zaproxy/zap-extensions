@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.httpclient.URI;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.addon.automation.ContextWrapper;
+import org.zaproxy.addon.automation.TechnologyData;
 import org.zaproxy.addon.automation.TechnologyUtils;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.utils.DisplayUtils;
@@ -63,6 +64,7 @@ public class ContextDialog extends StandardFieldsDialog {
         this.envDialog = owner;
         if (context == null) {
             context = new ContextWrapper.Data();
+            context.setTechnology(new TechnologyData());
             this.isNew = true;
         }
         this.context = context;
