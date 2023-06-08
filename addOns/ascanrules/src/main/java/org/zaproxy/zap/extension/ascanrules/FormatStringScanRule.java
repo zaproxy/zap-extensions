@@ -299,12 +299,9 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
 
     @Override
     public List<Alert> getExampleAlerts() {
-        List<Alert> alerts =
-                List.of(
-                        createAlert("example1%n%s...%n%s\n", "Example param", null, '1').build(),
-                        createAlert("example2%n%s...%n%s\n", "Example param", null, '2').build(),
-                        createAlert("example3%n%s...%n%s\n", "Example param", null, '3').build());
-
-        return alerts;
+        return List.of(
+                createAlert("%n%s%n%s%n%s%n%s\n", "name", null, '1').build(),
+                createAlert("%s%s%s%s%s%s%s", "query", null, '2').build(),
+                createAlert("%p %p %p %p %p %p", "q", null, '3').build());
     }
 }
