@@ -31,6 +31,7 @@ public class GraphQlParam extends VersionedAbstractParam {
     /** The base configuration key for all GraphQL configurations. */
     private static final String PARAM_BASE_KEY = "graphql";
 
+    private static final String PARAM_QUERY_GENERATOR_ENABLED = PARAM_BASE_KEY + ".queryGenEnabled";
     private static final String PARAM_MAX_QUERY_DEPTH = PARAM_BASE_KEY + ".maxQueryDepth";
     private static final String PARAM_LENIENT_MAX_QUERY_DEPTH =
             PARAM_BASE_KEY + ".lenientMaxQueryDepth";
@@ -41,6 +42,16 @@ public class GraphQlParam extends VersionedAbstractParam {
     private static final String PARAM_ARGS_TYPE = PARAM_BASE_KEY + ".argsType";
     private static final String PARAM_QUERY_SPLIT_TYPE = PARAM_BASE_KEY + ".querySplitType";
     private static final String PARAM_REQUEST_METHOD = PARAM_BASE_KEY + ".requestMethod";
+
+    public static final boolean DEFAULT_QUERY_GEN_ENABLED = true;
+    public static final int DEFAULT_MAX_QUERY_DEPTH = 5;
+    public static final boolean DEFAULT_LENIENT_MAX_QUERY_DEPTH = true;
+    public static final int DEFAULT_MAX_ADDITIONAL_QUERY_DEPTH = 5;
+    public static final int DEFAULT_MAX_ARGS_DEPTH = 5;
+    public static final boolean DEFAULT_OPTIONAL_ARGS = true;
+    public static final ArgsTypeOption DEFAULT_ARGS_TYPE = ArgsTypeOption.BOTH;
+    public static final QuerySplitOption DEFAULT_QUERY_SPLIT_TYPE = QuerySplitOption.LEAF;
+    public static final RequestMethodOption DEFAULT_REQUEST_METHOD = RequestMethodOption.POST_JSON;
 
     /**
      * The version of the configurations. Used to keep track of configurations changes between
@@ -54,6 +65,7 @@ public class GraphQlParam extends VersionedAbstractParam {
 
     /** For unit tests. */
     public GraphQlParam(
+            boolean queryGenEnabled,
             int maxQueryDepth,
             boolean lenientMaxQueryDepthEnabled,
             int maxAdditionalQueryDepth,
@@ -62,6 +74,7 @@ public class GraphQlParam extends VersionedAbstractParam {
             ArgsTypeOption argsType,
             QuerySplitOption querySplitType,
             RequestMethodOption requestMethod) {
+        this.queryGenEnabled = queryGenEnabled;
         this.maxQueryDepth = maxQueryDepth;
         this.lenientMaxQueryDepthEnabled = lenientMaxQueryDepthEnabled;
         this.maxAdditionalQueryDepth = maxAdditionalQueryDepth;
@@ -141,6 +154,7 @@ public class GraphQlParam extends VersionedAbstractParam {
         }
     };
 
+    private boolean queryGenEnabled;
     private int maxQueryDepth;
     private boolean lenientMaxQueryDepthEnabled;
     private int maxAdditionalQueryDepth;
@@ -252,6 +266,15 @@ public class GraphQlParam extends VersionedAbstractParam {
         getConfig().setProperty(PARAM_REQUEST_METHOD, requestMethod.toString());
     }
 
+    public boolean getQueryGenEnabled() {
+        return queryGenEnabled;
+    }
+
+    public void setQueryGenEnabled(boolean queryGenEnabled) {
+        this.queryGenEnabled = queryGenEnabled;
+        getConfig().setProperty(PARAM_QUERY_GENERATOR_ENABLED, queryGenEnabled);
+    }
+
     @Override
     protected String getConfigVersionKey() {
         return PARAM_BASE_KEY + VERSION_ATTRIBUTE;
@@ -264,19 +287,21 @@ public class GraphQlParam extends VersionedAbstractParam {
 
     @Override
     protected void parseImpl() {
-        maxQueryDepth = getInt(PARAM_MAX_QUERY_DEPTH, 5);
-        lenientMaxQueryDepthEnabled = getBoolean(PARAM_LENIENT_MAX_QUERY_DEPTH, true);
-        maxAdditionalQueryDepth = getInt(PARAM_MAX_ADDITIONAL_QUERY_DEPTH, 5);
-        maxArgsDepth = getInt(PARAM_MAX_ARGS_DEPTH, 5);
-        optionalArgsEnabled = getBoolean(PARAM_OPTIONAL_ARGS, true);
-        argsType =
-                ArgsTypeOption.valueOf(getString(PARAM_ARGS_TYPE, ArgsTypeOption.BOTH.toString()));
+        queryGenEnabled = getBoolean(PARAM_QUERY_GENERATOR_ENABLED, DEFAULT_QUERY_GEN_ENABLED);
+        maxQueryDepth = getInt(PARAM_MAX_QUERY_DEPTH, DEFAULT_MAX_QUERY_DEPTH);
+        lenientMaxQueryDepthEnabled =
+                getBoolean(PARAM_LENIENT_MAX_QUERY_DEPTH, DEFAULT_LENIENT_MAX_QUERY_DEPTH);
+        maxAdditionalQueryDepth =
+                getInt(PARAM_MAX_ADDITIONAL_QUERY_DEPTH, DEFAULT_MAX_ADDITIONAL_QUERY_DEPTH);
+        maxArgsDepth = getInt(PARAM_MAX_ARGS_DEPTH, DEFAULT_MAX_ARGS_DEPTH);
+        optionalArgsEnabled = getBoolean(PARAM_OPTIONAL_ARGS, DEFAULT_OPTIONAL_ARGS);
+        argsType = ArgsTypeOption.valueOf(getString(PARAM_ARGS_TYPE, DEFAULT_ARGS_TYPE.toString()));
         querySplitType =
                 QuerySplitOption.valueOf(
-                        getString(PARAM_QUERY_SPLIT_TYPE, QuerySplitOption.LEAF.toString()));
+                        getString(PARAM_QUERY_SPLIT_TYPE, DEFAULT_QUERY_SPLIT_TYPE.toString()));
         requestMethod =
                 RequestMethodOption.valueOf(
-                        getString(PARAM_REQUEST_METHOD, RequestMethodOption.POST_JSON.toString()));
+                        getString(PARAM_REQUEST_METHOD, DEFAULT_REQUEST_METHOD.toString()));
     }
 
     @Override

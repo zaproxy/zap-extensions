@@ -42,6 +42,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
@@ -190,6 +191,22 @@ public class SpiderThread implements Runnable {
         } else {
             for (String elem : target.getOptions().getElemsNames()) {
                 configurationBuilder.crawlRules().click(elem);
+            }
+        }
+
+        for (var excludedElement : target.getExcludedElements()) {
+            var crawlElement =
+                    configurationBuilder.crawlRules().dontClick(excludedElement.getElement());
+            if (StringUtils.isNotBlank(excludedElement.getXpath())) {
+                crawlElement.underXPath(excludedElement.getXpath());
+            }
+            if (StringUtils.isNotBlank(excludedElement.getText())) {
+                crawlElement.withText(excludedElement.getText());
+            }
+            if (StringUtils.isNotBlank(excludedElement.getAttributeName())
+                    && StringUtils.isNotBlank(excludedElement.getAttributeValue())) {
+                crawlElement.withAttribute(
+                        excludedElement.getAttributeName(), excludedElement.getAttributeValue());
             }
         }
 

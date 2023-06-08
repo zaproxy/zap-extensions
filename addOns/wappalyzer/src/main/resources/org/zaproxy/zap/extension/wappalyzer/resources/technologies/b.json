@@ -941,6 +941,23 @@
     ],
     "website": "https://putyourlightson.com/plugins/blitz"
   },
+  "Blitz.js": {
+    "cats": [
+      18
+    ],
+    "description": "Blitz.js is a web development framework that uses Next.js and React and includes features for authentication, authorization, and database integration to simplify the creation of high-performance and scalable web applications.",
+    "headers": {
+      "X-Powered-By": "^Blitz\\.js?([0-9.]+)?\\;version:\\1"
+    },
+    "icon": "blitzjs.svg",
+    "implies": "Next.js",
+    "js": {
+      "__BLITZ_MIDDLEWARE_HOOKS": "",
+      "__BLITZ_SUSPENSE_ENABLED": ""
+    },
+    "oss": true,
+    "website": "https://blitzjs.com"
+  },
   "Blocksy": {
     "cats": [
       80
@@ -2191,6 +2208,17 @@
     "implies": "Java",
     "website": "https://www.brightspot.com"
   },
+  "Brilliant Web-to-Lead": {
+    "cats": [
+      87
+    ],
+    "description": "Brilliant Web-to-Lead plugin facilitates the technical integration between WordPress installations and Salesforce CRM accounts, enabling the exchange and synchronization of data.",
+    "icon": "Brilliant Web-to-Lead.png",
+    "implies": "Salesforce",
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/salesforce-wordpress-to-lead/",
+    "website": "https://brilliantplugins.com/downloads/salesforce/"
+  },
   "Broadstreet": {
     "cats": [
       36
@@ -2376,17 +2404,17 @@
     ],
     "description": "Bugsnag is a cross-platform error monitoring, reporting, and resolution software.",
     "icon": "BugSnag.svg",
+    "js": {
+      "Bugsnag": "",
+      "bugsnag": "",
+      "bugsnagClient": ""
+    },
     "pricing": [
       "payg",
       "freemium",
       "recurring"
     ],
     "saas": true,
-    "js": {
-      "Bugsnag": "",
-      "bugsnag": "",
-      "bugsnagClient": ""
-    },
     "scriptSrc": "/bugsnag.*\\.js",
     "website": "https://bugsnag.com"
   },
@@ -2546,6 +2574,26 @@
       "poa"
     ],
     "website": "https://buttercms.com"
+  },
+  "Buttonizer": {
+    "cats": [
+      5
+    ],
+    "description": "Buttonizer is a widget that enables website owners to incorporate custom and attention-grabbing call-to-action (CTA) buttons into their website design.",
+    "icon": "Buttonizer.svg",
+    "js": {
+      "Buttonizer": ""
+    },
+    "pricing": [
+      "freemium",
+      "recurring",
+      "low"
+    ],
+    "scriptSrc": [
+      "wp-content/plugins/buttonizer-multifunctional-button/",
+      "cdn\\.buttonizer\\.io/"
+    ],
+    "website": "https://buttonizer.pro"
   },
   "Buy me a coffee": {
     "cats": [

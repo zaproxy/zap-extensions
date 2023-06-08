@@ -1,5 +1,19 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
+plugins {
+    id("eclipse")
+}
+
+eclipse {
+    classpath {
+        minusConfigurations.plusAssign(
+            configurations.detachedConfiguration(
+                dependencies.create("net.bytebuddy:byte-buddy:1.8.15"),
+            ),
+        )
+    }
+}
+
 description = "Allows you to spider sites that make heavy use of JavaScript using Crawljax"
 
 zapAddOn {

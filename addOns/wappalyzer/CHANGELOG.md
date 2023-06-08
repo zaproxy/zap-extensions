@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [21.22.0] - 2023-06-06
+### Changed
+- Updated with upstream Wappalyzer icon and pattern changes.
+
+
+
 ## [21.21.0] - 2023-05-03
 ### Changed
 - Updated with upstream Wappalyzer icon and pattern changes.
@@ -289,6 +295,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - First version
 
 
+[21.22.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.22.0
 [21.21.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.21.0
 [21.20.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.20.0
 [21.19.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.19.0

@@ -35,7 +35,7 @@ class GraphQlGeneratorUnitTest extends TestUtils {
     @BeforeEach
     void setup() throws Exception {
         setUpZap();
-        param = new GraphQlParam(5, true, 5, 5, true, null, null, null);
+        param = new GraphQlParam(true, 5, true, 5, 5, true, null, null, null);
         valueGenerator = mock(ValueGenerator.class);
     }
 
@@ -305,7 +305,7 @@ class GraphQlGeneratorUnitTest extends TestUtils {
 
     @Test
     void lenientDepthDeepNestedLeaf() {
-        param = new GraphQlParam(0, true, 5, 5, true, null, null, null);
+        param = new GraphQlParam(true, 0, true, 5, 5, true, null, null, null);
         generator = createGraphQlGenerator(getHtml("deepNestedLeaf.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
@@ -315,7 +315,7 @@ class GraphQlGeneratorUnitTest extends TestUtils {
 
     @Test
     void strictDepthScalarArguments() {
-        param = new GraphQlParam(1, false, 5, 5, true, null, null, null);
+        param = new GraphQlParam(true, 1, false, 5, 5, true, null, null, null);
         generator = createGraphQlGenerator(getHtml("scalarArguments.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery = "query { polygon (sides: 1, regular: true) } ";
@@ -324,7 +324,7 @@ class GraphQlGeneratorUnitTest extends TestUtils {
 
     @Test
     void lenientDepthScalarArguments() {
-        param = new GraphQlParam(0, true, 5, 5, true, null, null, null);
+        param = new GraphQlParam(true, 0, true, 5, 5, true, null, null, null);
         generator = createGraphQlGenerator(getHtml("scalarArguments.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery = "query { polygon (sides: 1, regular: true) { perimeter } } ";
@@ -333,7 +333,7 @@ class GraphQlGeneratorUnitTest extends TestUtils {
 
     @Test
     void lenientDepthObjectsImplementInterface() {
-        param = new GraphQlParam(0, true, 5, 5, true, null, null, null);
+        param = new GraphQlParam(true, 0, true, 5, 5, true, null, null, null);
         generator = createGraphQlGenerator(getHtml("objectsImplementInterface.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery = "query { character { ... on Hero { id } } } ";
@@ -342,7 +342,7 @@ class GraphQlGeneratorUnitTest extends TestUtils {
 
     @Test
     void lenientDepthUnionType() {
-        param = new GraphQlParam(0, true, 5, 5, true, null, null, null);
+        param = new GraphQlParam(true, 0, true, 5, 5, true, null, null, null);
         generator = createGraphQlGenerator(getHtml("unionType.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery = "query { firstSearchResult { ... on Photo { height } } } ";
@@ -351,7 +351,7 @@ class GraphQlGeneratorUnitTest extends TestUtils {
 
     @Test
     void lenientDepthEnumType() {
-        param = new GraphQlParam(0, true, 5, 5, true, null, null, null);
+        param = new GraphQlParam(true, 0, true, 5, 5, true, null, null, null);
         generator = createGraphQlGenerator(getHtml("enumType.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery = "query { direction } ";
@@ -360,7 +360,7 @@ class GraphQlGeneratorUnitTest extends TestUtils {
 
     @Test
     void lenientDepthScalarArgumentsVariables() {
-        param = new GraphQlParam(0, true, 5, 5, true, null, null, null);
+        param = new GraphQlParam(true, 0, true, 5, 5, true, null, null, null);
         generator = createGraphQlGenerator(getHtml("scalarArguments.graphql"));
         String[] request = generator.generateWithVariables(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery =
@@ -373,7 +373,7 @@ class GraphQlGeneratorUnitTest extends TestUtils {
 
     @Test
     void lenientDepthExceeded() {
-        param = new GraphQlParam(0, true, 3, 5, true, null, null, null);
+        param = new GraphQlParam(true, 0, true, 3, 5, true, null, null, null);
         generator = createGraphQlGenerator(getHtml("deepNestedLeaf.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery = "query ";

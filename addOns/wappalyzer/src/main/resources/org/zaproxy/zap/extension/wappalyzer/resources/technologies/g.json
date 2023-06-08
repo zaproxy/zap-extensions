@@ -1829,7 +1829,8 @@
     "icon": "Google Developers.svg",
     "scriptSrc": [
       "googletagservices\\.com/tag/js/gpt\\.js",
-      "securepubads\\.g\\.doubleclick\\.net/gpt"
+      "securepubads\\.g\\.doubleclick.net/tag/js/gpt\\.js",
+      "pagead2\\.googlesyndication\\.com/tag/js/gpt\\.js"
     ],
     "website": "https://developers.google.com/publisher-tag/guides/get-started"
   },

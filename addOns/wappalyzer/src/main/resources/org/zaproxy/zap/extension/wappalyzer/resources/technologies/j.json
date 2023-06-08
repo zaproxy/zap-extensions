@@ -292,6 +292,17 @@
     },
     "website": "https://jenkins.io/"
   },
+  "Jetpack Boost": {
+    "cats": [
+      87
+    ],
+    "description": "Jetpack Boost – Website Speed, Performance and Critical CSS.",
+    "dom": "style[id='jetpack-boost-critical-css']",
+    "icon": "Jetpack.svg",
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/jetpack-boost/",
+    "website": "https://jetpack.com"
+  },
   "Jetpack": {
     "cats": [
       87

@@ -4,8 +4,20 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [49] - 2023-06-06
 ### Changed
-- Added 'DEBUG' to list of suspicious comments.
+- The X-AspNet-Version Response Header Scan Rule now includes example alert functionality for documentation generation purposes (Issue 6119).
+- The Information Disclosure Suspicious Comments scan rule:
+    - Now includes example alert functionality for documentation generation purposes (Issue 6119).
+    - Now has a Alert Tag with a OWASP WSTG reference.
+    - Added 'DEBUG' to list of suspicious comments.
+    - Added custom payload support (via Custom Payloads add-on).
+    - Removed suspicious-comments.txt file in favor of payload editing via Custom Payloads add-on.
+
+### Fixed
+- Ensure Custom Payloads support can be properly unloaded.
 
 ## [48] - 2023-05-03
 ### Added
@@ -393,6 +405,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[49]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v49
 [48]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v48
 [47]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v47
 [46]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v46

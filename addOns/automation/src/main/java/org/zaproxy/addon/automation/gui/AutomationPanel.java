@@ -600,6 +600,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
 
     public void setCurrentPlan(AutomationPlan plan) {
         currentPlan = plan;
+        getOutputArea().setText("");
         getTreeModel().setPlan(currentPlan);
         getRunPlanButton().setEnabled(currentPlan != null);
         getAddJobButton().setEnabled(currentPlan != null);

@@ -19,11 +19,12 @@
  */
 package org.zaproxy.zap.extension.spiderAjax.automation;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +32,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.HistoryReference;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
@@ -52,6 +52,7 @@ import org.zaproxy.zap.extension.spiderAjax.AjaxSpiderTarget;
 import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
 import org.zaproxy.zap.extension.spiderAjax.SpiderListener;
 import org.zaproxy.zap.extension.spiderAjax.SpiderThread;
+import org.zaproxy.zap.extension.spiderAjax.internal.ExcludedElement;
 import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.Stats;
 
@@ -68,6 +69,7 @@ public class AjaxSpiderJob extends AutomationJob {
     private static final String PARAM_ELEMENTS = "elements";
     private static final String PARAM_FAIL_IF_LESS_URLS = "failIfFoundUrlsLessThan";
     private static final String PARAM_WARN_IF_LESS_URLS = "warnIfFoundUrlsLessThan";
+    private static final String PARAM_EXCLUDED_ELEMENTS = "excludedElements";
 
     private static final int MODERN_WEB_DETECTION_RULE_ID = 10109;
 
@@ -94,12 +96,16 @@ public class AjaxSpiderJob extends AutomationJob {
         if (jobData == null) {
             return;
         }
+        Map<?, ?> parametersData = (Map<?, ?>) jobData.get("parameters");
         JobUtils.applyParamsToObject(
-                (LinkedHashMap<?, ?>) jobData.get("parameters"),
+                parametersData,
                 this.parameters,
                 this.getName(),
-                null,
+                new String[] {PARAM_EXCLUDED_ELEMENTS},
                 progress);
+
+        readExcludedElements(progress, parametersData);
+
         if (this.getParameters().getWarnIfFoundUrlsLessThan() != null
                 || this.getParameters().getFailIfFoundUrlsLessThan() != null) {
             progress.warn(
@@ -108,6 +114,87 @@ public class AjaxSpiderJob extends AutomationJob {
                             getName(),
                             "automation.spiderAjax.urls.added"));
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void readExcludedElements(AutomationProgress progress, Map<?, ?> parametersData) {
+        if (parametersData == null) {
+            return;
+        }
+
+        try {
+            var eeData = (List<Map<String, ?>>) parametersData.get(PARAM_EXCLUDED_ELEMENTS);
+            if (eeData != null && !eeData.isEmpty()) {
+                var excludedElements = JobMapper.INSTANCE.toDtoFromPlan(eeData);
+                var validatedElements = new ArrayList<ExcludedElementAuto>();
+                excludedElements.forEach(
+                        e -> {
+                            if (validate(progress, e, validatedElements)) {
+                                validatedElements.add(e);
+                            }
+                        });
+
+                getParameters().setExcludedElements(validatedElements);
+            }
+        } catch (Exception e) {
+            progress.error(
+                    Constant.messages.getString(
+                            "spiderajax.automation.error.excludedelements.format", getName(), e));
+        }
+    }
+
+    private boolean validate(
+            AutomationProgress progress,
+            ExcludedElement element,
+            List<ExcludedElementAuto> elements) {
+        ExcludedElement.ValidationResult result = ExcludedElement.validate(null, element, elements);
+
+        switch (result) {
+            case EMPTY_DESCRIPTION:
+                progress.error(
+                        Constant.messages.getString(
+                                "spiderajax.automation.error.excludedelements.description",
+                                getName()));
+                break;
+
+            case EMPTY_ELEMENT:
+                progress.error(
+                        Constant.messages.getString(
+                                "spiderajax.automation.error.excludedelements.element",
+                                getName(),
+                                element.getDescription()));
+                break;
+
+            case MISSING_DATA:
+                progress.error(
+                        Constant.messages.getString(
+                                "spiderajax.automation.error.excludedelements.data",
+                                getName(),
+                                element.getDescription()));
+                break;
+
+            case MISSING_ATTRIBUTE_FIELD:
+                progress.error(
+                        Constant.messages.getString(
+                                "spiderajax.automation.error.excludedelements.attribute",
+                                getName(),
+                                element.getDescription()));
+                break;
+
+            case DUPLICATED:
+                progress.error(
+                        Constant.messages.getString(
+                                "spiderajax.automation.error.excludedelements.duplicated",
+                                getName(),
+                                element.getDescription()));
+                break;
+
+            case VALID:
+            default:
+                break;
+        }
+
+        return result == ExcludedElement.ValidationResult.VALID;
     }
 
     @Override
@@ -124,17 +211,26 @@ public class AjaxSpiderJob extends AutomationJob {
                     PARAM_ELEMENTS,
                     PARAM_ONLY_RUN_IF_MODERN,
                     PARAM_FAIL_IF_LESS_URLS,
-                    PARAM_WARN_IF_LESS_URLS
+                    PARAM_WARN_IF_LESS_URLS,
+                    PARAM_EXCLUDED_ELEMENTS
                 },
                 progress,
                 this.getPlan().getEnv());
 
         if (!JobUtils.unBox(this.parameters.clickDefaultElems)
                 && this.parameters.getElements() != null) {
-            List<AjaxSpiderParamElem> elems =
-                    new ArrayList<AjaxSpiderParamElem>(this.parameters.getElements().size());
+            List<AjaxSpiderParamElem> elems = new ArrayList<>(this.parameters.getElements().size());
             this.parameters.getElements().forEach(e -> elems.add(new AjaxSpiderParamElem(e)));
             this.getExtSpider().getAjaxSpiderParam().setElems(elems);
+        }
+
+        ContextWrapper context = getContextWrapper(getPlan().getEnv(), progress);
+        if (context != null) {
+            getExtSpider()
+                    .getContextDataManager()
+                    .setExcludedElements(
+                            context.getContext(),
+                            JobMapper.INSTANCE.toModel(getParameters().getExcludedElements()));
         }
     }
 
@@ -156,19 +252,11 @@ public class AjaxSpiderJob extends AutomationJob {
     @Override
     public void runJob(AutomationEnvironment env, AutomationProgress progress) {
 
-        ContextWrapper context;
-        String contextName = this.getParameters().getContext();
-        if (contextName != null) {
-            context = env.getContextWrapper(contextName);
-            if (context == null) {
-                progress.error(
-                        Constant.messages.getString(
-                                "automation.error.context.unknown", contextName));
-                return;
-            }
-        } else {
-            context = env.getDefaultContextWrapper();
+        ContextWrapper context = getContextWrapper(env, progress);
+        if (context == null) {
+            return;
         }
+
         User user = this.getUser(this.getParameters().getUser(), progress);
 
         String uriStr = this.getParameters().getUrl();
@@ -220,7 +308,7 @@ public class AjaxSpiderJob extends AutomationJob {
         }
 
         AjaxSpiderTarget.Builder targetBuilder =
-                AjaxSpiderTarget.newBuilder(Model.getSingleton().getSession())
+                AjaxSpiderTarget.newBuilder(getExtSpider())
                         .setContext(context.getContext())
                         .setUser(user)
                         .setInScopeOnly(JobUtils.unBox(this.getParameters().getInScopeOnly()))
@@ -276,6 +364,23 @@ public class AjaxSpiderJob extends AutomationJob {
         progress.info(
                 Constant.messages.getString(
                         "automation.info.urlsfound", this.getType(), numUrlsFound));
+    }
+
+    private ContextWrapper getContextWrapper(
+            AutomationEnvironment env, AutomationProgress progress) {
+        String contextName = this.getParameters().getContext();
+        if (contextName == null) {
+            return env.getDefaultContextWrapper();
+        }
+
+        ContextWrapper wrapper = env.getContextWrapper(contextName);
+        if (wrapper != null) {
+            return wrapper;
+        }
+
+        progress.error(
+                Constant.messages.getString("automation.error.context.unknown", contextName));
+        return null;
     }
 
     @Override
@@ -348,6 +453,16 @@ public class AjaxSpiderJob extends AutomationJob {
 
     @Override
     public int addDefaultTests(AutomationProgress progress) {
+        ContextWrapper context = getContextWrapper(getEnv(), progress);
+        if (context != null) {
+            getParameters()
+                    .setExcludedElements(
+                            JobMapper.INSTANCE.toDto(
+                                    getExtSpider()
+                                            .getContextDataManager()
+                                            .getExcludedElements(context.getContext())));
+        }
+
         AutomationStatisticTest test =
                 new AutomationStatisticTest(
                         "spiderAjax.urls.added",
@@ -417,6 +532,9 @@ public class AjaxSpiderJob extends AutomationJob {
         private Boolean runOnlyIfModern;
 
         private List<String> elements;
+
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
+        private List<ExcludedElementAuto> excludedElements = List.of();
 
         // These 2 fields are deprecated
         private Boolean failIfFoundUrlsLessThan;
@@ -553,6 +671,14 @@ public class AjaxSpiderJob extends AutomationJob {
                 return null;
             }
             return elements;
+        }
+
+        public void setExcludedElements(List<ExcludedElementAuto> excludedElements) {
+            this.excludedElements = Objects.requireNonNullElse(excludedElements, List.of());
+        }
+
+        public List<ExcludedElementAuto> getExcludedElements() {
+            return excludedElements;
         }
 
         public void setElements(List<String> elements) {

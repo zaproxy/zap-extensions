@@ -1500,6 +1500,21 @@
     "website": "https://ipapi.co",
     "xhr": "ipapi\\.co/"
   },
+  "ipbase": {
+    "cats": [
+      79
+    ],
+    "description": "ipbase offers an API that supports both IPv4 and IPv6 and provides precise location data from IP addresses.",
+    "icon": "ipbase.svg",
+    "pricing": [
+      "freemium",
+      "recurring",
+      "low"
+    ],
+    "saas": true,
+    "website": "https://ipbase.com",
+    "xhr": "api\\.ipbase\\.com"
+  },
   "ipdata": {
     "cats": [
       79

@@ -8,6 +8,7 @@
 
     <mapID target="addon.spiderajax.concepts" url="contents/concepts.html" />
     <mapID target="addon.spiderajax.automate" url="contents/automation.html" />
+    <mapID target="addon.spiderajax.context" url="contents/context.html"/>
     <mapID target="addon.spiderajax.dialog" url="contents/scandialog.html" />
     <mapID target="addon.spiderajax.tab" url="contents/tab.html" />
     <mapID target="addon.spiderajax.options" url="contents/options.html"/>

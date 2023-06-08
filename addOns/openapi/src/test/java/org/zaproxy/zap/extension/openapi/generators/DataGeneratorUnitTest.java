@@ -59,6 +59,18 @@ class DataGeneratorUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldGenerateEmptyValueForParameterWithoutSchema() throws IOException {
+        // Given
+        OpenAPI openAPI = parseResource("defn-with-query-params.yml");
+        Parameter parameter =
+                openAPI.getPaths().get("/without-schema").getGet().getParameters().get(0);
+        // When
+        String data = generator.generate(parameter.getName(), parameter);
+        // Then
+        assertEquals("", data);
+    }
+
+    @Test
     void shouldUseContentInParameter() throws IOException {
         // Given
         OpenAPI openAPI = parseResource("defn-with-query-params.yml");

@@ -151,18 +151,29 @@ public class GraphQlParser {
 
     public void parse(String schema) {
         if (syncParse) {
-            generate(schema);
+            fingerprint();
+            if (param.getQueryGenEnabled()) {
+                generate(schema);
+            }
             return;
         }
         ParserThread t =
                 new ParserThread(THREAD_PREFIX + threadId.incrementAndGet()) {
                     @Override
                     public void run() {
-                        generate(schema);
+                        fingerprint();
+                        if (param.getQueryGenEnabled()) {
+                            generate(schema);
+                        }
                     }
                 };
         extensionGraphQl.addParserThread(t);
         t.startParser();
+    }
+
+    private void fingerprint() {
+        var fingerprinter = new GraphQlFingerprinter(requestor.getEndpointUrl());
+        fingerprinter.fingerprint();
     }
 
     private void generate(String schema) {

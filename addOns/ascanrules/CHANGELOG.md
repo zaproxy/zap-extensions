@@ -5,11 +5,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Added
-
 - The Format String Error scan rule now includes example alert functionality for documentation generation purposes (Issue 6119).
+
+## [55] - 2023-06-06
+### Changed
+- The Parameter Tamper Scan rule now includes example alert functionality for documentation generation purposes (Issue 6119)
+
 ### Fixed
 - Fix typo in ASP payload of Server Side Code Injection scan rule.
 - Include complete solution of Server Side Include scan rule.
+- Ensure Custom Payloads support can be properly unloaded.
+
+### Added
+- The Hidden File Finder scan rule now check for Blazor WASM config files.
 
 ## [54] - 2023-05-03
 ### Changed
@@ -412,6 +420,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[55]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v55
 [54]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v54
 [53]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v53
 [52]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v52

@@ -15,6 +15,7 @@
       randomInputs:                    # Bool: When enabled random values will be entered into input element, default: true
       reloadWait:                      # Int: The time in milliseconds to wait after the URL is loaded, default: 1000
       elements:                        # A list of HTML elements to click - will be ignored unless clickDefaultElems is false
+      excludedElements:                # A list of HTML elements to exclude from click.
       
     tests:
       - name: 'At least X URLs found'        # String: Name of the test, default: statistic + operator + value
