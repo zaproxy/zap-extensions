@@ -21,6 +21,8 @@ package org.zaproxy.addon.reports.sarif;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,14 +53,15 @@ class SarifBase64EncoderUnitTest {
     @Test
     void emojThinkingFaceCanBeEncodedToBase64() {
         /* prepare */
+        Charset charset = StandardCharsets.UTF_8;
         String content = "🤔 Thinking Face";
 
         /* execute */
-        String encoded = toTest.encodeBytesToBase64(content.getBytes());
+        String encoded = toTest.encodeBytesToBase64(content.getBytes(charset));
 
         /* test */
         byte[] backwardCheck = Base64.getDecoder().decode(encoded);
-        assertEquals(content, new String(backwardCheck));
+        assertEquals(content, new String(backwardCheck, charset));
         assertEquals("8J+klCBUaGlua2luZyBGYWNl", encoded);
     }
 
