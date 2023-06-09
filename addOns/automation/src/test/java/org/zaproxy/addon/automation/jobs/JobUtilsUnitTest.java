@@ -32,7 +32,7 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.withSettings;
 
 import java.io.File;
-import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Locale;
@@ -299,18 +299,18 @@ class JobUtilsUnitTest {
     }
 
     @Test
-    void shouldReturnFileFromFullPath() throws IOException {
+    void shouldReturnFileFromFullPath() {
         // Given
         String path = "/full/path/to/file";
         AutomationPlan plan = new AutomationPlan();
         // When
         File f = JobUtils.getFile(path, plan);
         // Then
-        assertThat(f.getCanonicalPath(), is(path));
+        assertFilePath(f, path);
     }
 
     @Test
-    void shouldReturnFileFromFullPathWithVars() throws IOException {
+    void shouldReturnFileFromFullPathWithVars() {
         // Given
         String path = "/full/${var1}/to/${var2}";
         AutomationPlan plan = new AutomationPlan();
@@ -319,25 +319,28 @@ class JobUtilsUnitTest {
         // When
         File f = JobUtils.getFile(path, plan);
         // Then
-        assertThat(f.getCanonicalPath(), is("/full/path/to/file"));
+        assertFilePath(f, "/full/path/to/file");
     }
 
     @Test
-    void shouldReturnFileFromFullPathWithVarsAndFilePlan() throws IOException {
+    void shouldReturnFileFromFullPathWithVarsAndFilePlan() {
         // Given
         String path = "${var1}/to/${var2}";
         AutomationPlan plan = new AutomationPlan();
         plan.setFile(new File("/full/path/dir/plan"));
-        plan.getEnv().getData().getVars().put("var1", "/full/path");
+        plan.getEnv()
+                .getData()
+                .getVars()
+                .put("var1", Paths.get("/full/path").toAbsolutePath().toString());
         plan.getEnv().getData().getVars().put("var2", "file");
         // When
         File f = JobUtils.getFile(path, plan);
         // Then
-        assertThat(f.getCanonicalPath(), is("/full/path/to/file"));
+        assertFilePath(f, "/full/path/to/file");
     }
 
     @Test
-    void shouldReturnFileFromRelativePath() throws IOException {
+    void shouldReturnFileFromRelativePath() {
         // Given
         String path = "../relative/path/to/file";
         AutomationPlan plan = new AutomationPlan();
@@ -345,11 +348,11 @@ class JobUtilsUnitTest {
         // When
         File f = JobUtils.getFile(path, plan);
         // Then
-        assertThat(f.getCanonicalPath(), is("/full/path/relative/path/to/file"));
+        assertFilePath(f, "/full/path/relative/path/to/file");
     }
 
     @Test
-    void shouldReturnFileFromRelativePathWithVars() throws IOException {
+    void shouldReturnFileFromRelativePathWithVars() {
         // Given
         String path = "${var2}/path/${var1}/file";
         AutomationPlan plan = new AutomationPlan();
@@ -359,7 +362,12 @@ class JobUtilsUnitTest {
         // When
         File f = JobUtils.getFile(path, plan);
         // Then
-        assertThat(f.getCanonicalPath(), is("/full/path/dir/relative/path/to/file"));
+        assertFilePath(f, "/full/path/dir/relative/path/to/file");
+    }
+
+    private static void assertFilePath(File file, String path) {
+        assertThat(
+                file.toPath().normalize().toAbsolutePath(), is(Paths.get(path).toAbsolutePath()));
     }
 
     private static ExtensionScript mockExtensionLoader(ExtensionScript extensionScript) {

@@ -30,6 +30,7 @@ import static org.mockito.Mockito.mock;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import org.junit.jupiter.api.AfterAll;
@@ -40,6 +41,9 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.extension.ExtensionLoader;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.yaml.snakeyaml.Yaml;
 import org.zaproxy.addon.automation.ContextWrapper.UserData;
@@ -55,6 +59,9 @@ class ContextWrapperUnitTest {
     @BeforeAll
     static void init() throws Exception {
         mockedCmdLine = Mockito.mockStatic(CommandLine.class);
+
+        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
+        Control.initSingletonForTesting(mock(Model.class), extensionLoader);
     }
 
     @AfterAll
@@ -269,15 +276,14 @@ class ContextWrapperUnitTest {
         assertThat(
                 env.getContextWrappers().get(0).getData().getSessionManagement().getMethod(),
                 is(SessionManagementData.METHOD_SCRIPT));
-        assertThat(
+        assertFile(
                 env.getContextWrappers()
                         .get(0)
                         .getData()
                         .getSessionManagement()
                         .getParameters()
-                        .get(SessionManagementData.PARAM_SCRIPT)
-                        .contains("/sessmgmt-oldformat"),
-                is(true));
+                        .get(SessionManagementData.PARAM_SCRIPT),
+                f);
         assertThat(
                 env.getContextWrappers()
                         .get(0)
@@ -322,15 +328,14 @@ class ContextWrapperUnitTest {
         assertThat(
                 env.getContextWrappers().get(0).getData().getSessionManagement().getMethod(),
                 is(SessionManagementData.METHOD_SCRIPT));
-        assertThat(
+        assertFile(
                 env.getContextWrappers()
                         .get(0)
                         .getData()
                         .getSessionManagement()
                         .getParameters()
-                        .get(SessionManagementData.PARAM_SCRIPT)
-                        .contains("/sessmgmt-newformat"),
-                is(true));
+                        .get(SessionManagementData.PARAM_SCRIPT),
+                f);
         assertThat(
                 env.getContextWrappers()
                         .get(0)
@@ -1301,5 +1306,9 @@ class ContextWrapperUnitTest {
         assertThat(
                 progress.getErrors().get(4),
                 is(equalTo("!automation.error.env.verification.logoutregex.bad!")));
+    }
+
+    private static void assertFile(String path, File file) {
+        assertThat(Paths.get(path), is(file.toPath()));
     }
 }
