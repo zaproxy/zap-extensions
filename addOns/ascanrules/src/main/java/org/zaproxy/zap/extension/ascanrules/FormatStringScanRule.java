@@ -41,6 +41,7 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
@@ -211,21 +212,9 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
                 HttpResponseBody secondAttackResponseBody = verificationMsg.getResponseBody();
                 if (secondAttackResponseBody.length() > initialResponseLength + 20
                         && isPage200(verificationMsg)) {
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setParam(param)
-                            .setAttack(secondAttackPayload)
-                            .setOtherInfo(getError('2'))
-                            .setMessage(verificationMsg)
-                            .raise();
+                    createAlert(secondAttackPayload, param, verificationMsg, '2').raise();
                 } else {
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setParam(param)
-                            .setAttack(initialAttackPayload)
-                            .setOtherInfo(getError('1'))
-                            .setMessage(initialAttackMsg)
-                            .raise();
+                    createAlert(initialAttackPayload, param, initialAttackMsg, '1').raise();
                 }
                 return;
             }
@@ -264,13 +253,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
                 return; // Something went wrong, no point continuing
             }
             if (isPage500(microsoftTestMsg)) {
-                newAlert()
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setParam(param)
-                        .setAttack(microsoftAttackMessage)
-                        .setOtherInfo(getError('3'))
-                        .setMessage(microsoftTestMsg)
-                        .raise();
+                createAlert(microsoftAttackMessage, param, microsoftTestMsg, '3').raise();
             }
             return;
 
@@ -301,5 +284,24 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
     public int getWascId() {
         // The WASC ID
         return 6;
+    }
+
+    private AlertBuilder createAlert(
+            String attack, String param, HttpMessage msg, Character errorChar) {
+
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setAttack(attack)
+                .setParam(param)
+                .setMessage(msg)
+                .setOtherInfo(getError(errorChar));
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                createAlert("%n%s%n%s%n%s%n%s\n", "name", null, '1').build(),
+                createAlert("%s%s%s%s%s%s%s", "query", null, '2').build(),
+                createAlert("%p %p %p %p %p %p", "q", null, '3').build());
     }
 }
