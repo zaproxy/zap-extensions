@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.stringContainsInOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
@@ -37,11 +38,16 @@ import static org.mockito.Mockito.withSettings;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.PosixFileAttributeView;
+import java.nio.file.attribute.PosixFileAttributes;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Set;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -653,7 +659,7 @@ class ScriptJobUnitTest extends TestUtils {
                 new ArrayList<>(Arrays.asList(new ScriptType("standalone", null, null, false)));
         given(extScript.getScriptTypes()).willReturn(types);
         File f = File.createTempFile("scriptFileNoType", ".js");
-        f.setReadable(false);
+        setNotReadable(f.toPath());
 
         ScriptJob job = new ScriptJob();
         String yamlStr =
@@ -674,6 +680,16 @@ class ScriptJobUnitTest extends TestUtils {
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.getErrors().size(), equalTo(1));
         assertThat(progress.getErrors(), contains("!scripts.automation.error.file.cannotRead!"));
+    }
+
+    private static void setNotReadable(Path file) throws IOException {
+        assumeTrue(
+                Files.getFileStore(file).supportsFileAttributeView(PosixFileAttributeView.class),
+                "Test requires support for POSIX file attributes.");
+        Set<PosixFilePermission> perms =
+                Files.readAttributes(file, PosixFileAttributes.class).permissions();
+        perms.remove(PosixFilePermission.OWNER_READ);
+        Files.setPosixFilePermissions(file, perms);
     }
 
     @Test
