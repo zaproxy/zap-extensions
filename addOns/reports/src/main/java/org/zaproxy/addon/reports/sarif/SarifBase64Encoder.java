@@ -29,7 +29,6 @@ public class SarifBase64Encoder {
         if (bytes == null) {
             return null;
         }
-        byte[] encoded = Base64.getEncoder().encode(bytes);
-        return new String(encoded);
+        return Base64.getEncoder().encodeToString(bytes);
     }
 }
