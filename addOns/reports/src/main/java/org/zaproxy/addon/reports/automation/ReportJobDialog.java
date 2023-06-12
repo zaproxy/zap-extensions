@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -72,6 +73,7 @@ public class ReportJobDialog extends StandardFieldsDialog {
     private static final String FIELD_RISK_2 = "reports.dialog.field.risk.2";
     private static final String FIELD_RISK_3 = "reports.dialog.field.risk.3";
     private static final String FIELD_SECTIONS = "reports.dialog.field.sections";
+    private static final String FIELD_SITES = "reports.dialog.field.sites";
     private static final String FIELD_THEME = "reports.dialog.field.theme";
 
     private static final String[] TAB_LABELS = {
@@ -117,6 +119,8 @@ public class ReportJobDialog extends StandardFieldsDialog {
             setFieldValue(FIELD_REPORT_DIR, dir);
         }
         this.addMultilineField(TAB_SCOPE, FIELD_DESCRIPTION, params.getReportDescription());
+        this.addMultilineField(TAB_SCOPE, FIELD_SITES, listToString(job.getData().getSites()));
+
         this.addCheckBoxField(
                 TAB_SCOPE, FIELD_DISPLAY_REPORT, JobUtils.unBox(params.getDisplayReport()));
 
@@ -197,6 +201,21 @@ public class ReportJobDialog extends StandardFieldsDialog {
         return sectionsPane;
     }
 
+    private String listToString(List<String> list) {
+        if (list != null) {
+            return String.join("\n", list);
+        }
+        return "";
+    }
+
+    private List<String> stringParamToList(String param) {
+        // Return a list of the trimmed and non empty strings
+        return Stream.of(getStringValue(param).split("\n"))
+                .map(String::trim)
+                .filter(item -> !item.isEmpty())
+                .collect(Collectors.toList());
+    }
+
     @SuppressWarnings("unchecked")
     private void resetTemplateFields() {
         JPanel sectionPanel = new JPanel();
@@ -265,6 +284,8 @@ public class ReportJobDialog extends StandardFieldsDialog {
         job.getData()
                 .getParameters()
                 .setTheme(template.getThemeForName(this.getStringValue(FIELD_THEME)));
+
+        job.getData().setSites(stringParamToList(FIELD_SITES));
 
         List<String> sections = new ArrayList<>();
         for (Entry<String, JCheckBox> entry : sectionsMap.entrySet()) {

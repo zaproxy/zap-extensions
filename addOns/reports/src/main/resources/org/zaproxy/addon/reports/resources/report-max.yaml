@@ -18,3 +18,4 @@
       - low
       - falsepositive
     sections:                          # List: The template sections to include in this report - see the relevant template, default all
+    sites:                             # List: The sites to include in this report, default all

@@ -48,6 +48,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -60,6 +62,7 @@ import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.reports.ExtensionReports;
+import org.zaproxy.addon.reports.ReportData;
 import org.zaproxy.addon.reports.ReportParam;
 import org.zaproxy.addon.reports.Template;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -99,6 +102,7 @@ class ReportJobUnitTest extends TestUtils {
         assertThat(job.getData().getRisks(), is(nullValue()));
         assertThat(job.getData().getConfidences(), is(nullValue()));
         assertThat(job.getData().getSections(), is(nullValue()));
+        assertThat(job.getData().getSites(), is(nullValue()));
         assertThat(job.getParamMethodObject(), is(nullValue()));
         assertThat(job.getParamMethodName(), is(nullValue()));
     }
@@ -116,7 +120,11 @@ class ReportJobUnitTest extends TestUtils {
                                 + "- confirmed\n"
                                 + "sections:\n"
                                 + "- siteRiskCounts\n"
-                                + "- summaries");
+                                + "- summaries\n"
+                                + "sites:\n"
+                                + "- example.com\n"
+                                + "- test.com");
+
         AutomationProgress progress = new AutomationProgress();
 
         // When
@@ -126,6 +134,7 @@ class ReportJobUnitTest extends TestUtils {
         assertThat(job.getData().getRisks(), contains("low", "high"));
         assertThat(job.getData().getConfidences(), contains("medium", "confirmed"));
         assertThat(job.getData().getSections(), contains("siteRiskCounts", "summaries"));
+        assertThat(job.getData().getSites(), contains("example.com", "test.com"));
     }
 
     @Test
@@ -361,6 +370,181 @@ class ReportJobUnitTest extends TestUtils {
                         containsString("invalid"),
                         containsString(templateName),
                         containsString(templates.toString())));
+    }
+
+    @Test
+    void shouldIncludeAllSitesByDefault() throws IOException {
+        // Given
+        String templateName = "template";
+        File planFile = Files.createTempFile("plan", ".yaml").toFile();
+        ReportJob job =
+                createReportJob(
+                        "parameters:\n"
+                                + "  template: "
+                                + templateName
+                                + "\n"
+                                + "  reportFile: report-file\n  reportDir: repord-dir");
+
+        AutomationPlan plan = new AutomationPlan();
+        AutomationProgress progress = plan.getProgress();
+        AutomationEnvironment env = plan.getEnv();
+        ContextWrapper contextWrapper = mock(ContextWrapper.class);
+        given(contextWrapper.getUrls()).willReturn(Collections.singletonList(""));
+        env.setContexts(Arrays.asList(contextWrapper));
+        Template template = mock(Template.class);
+        given(template.getExtension()).willReturn("ext");
+        given(extensionReports.getTemplateByConfigName(templateName)).willReturn(template);
+        plan.setFile(planFile);
+
+        try (MockedStatic<ExtensionReports> extReport =
+                Mockito.mockStatic(ExtensionReports.class)) {
+            extReport
+                    .when(ExtensionReports::getSites)
+                    .thenReturn(Arrays.asList("https://example1.com", "https://example2.org"));
+            extReport
+                    .when(() -> ExtensionReports.getNameFromPattern(anyString(), anyString()))
+                    .thenReturn("filename");
+
+            ArgumentCaptor<ReportData> reportDataCapture =
+                    ArgumentCaptor.forClass(ReportData.class);
+            given(
+                            extensionReports.generateReport(
+                                    reportDataCapture.capture(), any(), anyString(), anyBoolean()))
+                    .willReturn(mock(File.class));
+
+            job.verifyParameters(progress);
+            job.setPlan(plan);
+
+            // When
+            job.runJob(env, progress);
+
+            // Then
+            List<String> sites = reportDataCapture.getValue().getSites();
+            assertThat(sites.size(), is(equalTo(2)));
+            assertThat(sites.get(0), is(equalTo("https://example1.com")));
+            assertThat(sites.get(1), is(equalTo("https://example2.org")));
+            assertThat(progress.hasWarnings(), is(equalTo(false)));
+            assertThat(progress.hasErrors(), is(equalTo(false)));
+        }
+    }
+
+    @Test
+    void shouldIncludeOnlySpecifiedSites() throws IOException {
+        // Given
+        String templateName = "template";
+        File planFile = Files.createTempFile("plan", ".yaml").toFile();
+        ReportJob job =
+                createReportJob(
+                        "parameters:\n"
+                                + "  template: "
+                                + templateName
+                                + "\n"
+                                + "  reportFile: report-file\n"
+                                + "  reportDir: report-dir\n"
+                                + "sites:\n - example2");
+
+        AutomationPlan plan = new AutomationPlan();
+        AutomationProgress progress = plan.getProgress();
+        AutomationEnvironment env = plan.getEnv();
+        ContextWrapper contextWrapper = mock(ContextWrapper.class);
+        given(contextWrapper.getUrls()).willReturn(Collections.singletonList(""));
+        env.setContexts(Arrays.asList(contextWrapper));
+        Template template = mock(Template.class);
+        given(template.getExtension()).willReturn("ext");
+        given(extensionReports.getTemplateByConfigName(templateName)).willReturn(template);
+        plan.setFile(planFile);
+
+        try (MockedStatic<ExtensionReports> extReport =
+                Mockito.mockStatic(ExtensionReports.class)) {
+            extReport
+                    .when(ExtensionReports::getSites)
+                    .thenReturn(Arrays.asList("https://example1.com", "https://example2.org"));
+            extReport
+                    .when(() -> ExtensionReports.getNameFromPattern(anyString(), anyString()))
+                    .thenReturn("filename");
+
+            ArgumentCaptor<ReportData> reportDataCapture =
+                    ArgumentCaptor.forClass(ReportData.class);
+            given(
+                            extensionReports.generateReport(
+                                    reportDataCapture.capture(), any(), anyString(), anyBoolean()))
+                    .willReturn(mock(File.class));
+
+            job.verifyParameters(progress);
+            job.setPlan(plan);
+
+            // When
+            job.runJob(env, progress);
+
+            // Then
+            List<String> sites = reportDataCapture.getValue().getSites();
+            assertThat(sites.size(), is(equalTo(1)));
+            assertThat(sites.get(0), is(equalTo("https://example2.org")));
+            assertThat(progress.hasWarnings(), is(equalTo(false)));
+            assertThat(progress.hasErrors(), is(equalTo(false)));
+        }
+    }
+
+    @Test
+    void shouldWarnIfUnknownSiteString() throws IOException {
+        // Given
+        String templateName = "template";
+        File planFile = Files.createTempFile("plan", ".yaml").toFile();
+        ReportJob job =
+                createReportJob(
+                        "parameters:\n"
+                                + "  template: "
+                                + templateName
+                                + "\n"
+                                + "  reportFile: report-file\n"
+                                + "  reportDir: report-dir\n"
+                                + "sites:\n - example3");
+
+        AutomationPlan plan = new AutomationPlan();
+        AutomationProgress progress = plan.getProgress();
+        AutomationEnvironment env = plan.getEnv();
+        ContextWrapper contextWrapper = mock(ContextWrapper.class);
+        given(contextWrapper.getUrls()).willReturn(Collections.singletonList(""));
+        env.setContexts(Arrays.asList(contextWrapper));
+        Template template = mock(Template.class);
+        given(template.getExtension()).willReturn("ext");
+        given(extensionReports.getTemplateByConfigName(templateName)).willReturn(template);
+        plan.setFile(planFile);
+
+        try (MockedStatic<ExtensionReports> extReport =
+                Mockito.mockStatic(ExtensionReports.class)) {
+            extReport
+                    .when(ExtensionReports::getSites)
+                    .thenReturn(Arrays.asList("https://example1.com", "https://example2.org"));
+            extReport
+                    .when(() -> ExtensionReports.getNameFromPattern(anyString(), anyString()))
+                    .thenReturn("filename");
+
+            ArgumentCaptor<ReportData> reportDataCapture =
+                    ArgumentCaptor.forClass(ReportData.class);
+            given(
+                            extensionReports.generateReport(
+                                    reportDataCapture.capture(), any(), anyString(), anyBoolean()))
+                    .willReturn(mock(File.class));
+
+            job.verifyParameters(progress);
+            job.setPlan(plan);
+
+            // When
+            job.runJob(env, progress);
+
+            // Then
+            List<String> sites = reportDataCapture.getValue().getSites();
+            assertThat(sites.size(), is(equalTo(0)));
+            assertThat(progress.hasWarnings(), is(equalTo(true)));
+            assertThat(progress.getWarnings().size(), is(equalTo(1)));
+            assertThat(
+                    progress.getWarnings().get(0),
+                    is(
+                            equalTo(
+                                    "Job report invalid site example3, valid sites: [https://example1.com, https://example2.org]")));
+            assertThat(progress.hasErrors(), is(equalTo(false)));
+        }
     }
 
     private static ReportJob createReportJob(String data) {

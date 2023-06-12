@@ -129,6 +129,11 @@ public class ReportJob extends AutomationJob {
             }
             this.getData().setSections(list);
         }
+
+        list = getJobDataList(jobData, "sites", progress);
+        if (!list.isEmpty()) {
+            this.getData().setSites(list);
+        }
     }
 
     @Override
@@ -184,7 +189,6 @@ public class ReportJob extends AutomationJob {
         reportData.setTitle(this.getParameters().getReportTitle());
         reportData.setDescription(this.getParameters().getReportDescription());
         reportData.setContexts(env.getContexts());
-        reportData.setSites(ExtensionReports.getSites());
 
         if (this.getData().getRisks() == null) {
             reportData.setIncludeAllRisks(true);
@@ -217,6 +221,32 @@ public class ReportJob extends AutomationJob {
                                     section,
                                     template.getConfigName(),
                                     validSections));
+                }
+            }
+        }
+
+        if (this.getData().getSites() == null) {
+            reportData.setSites(ExtensionReports.getSites());
+        } else {
+            List<String> validSites = ExtensionReports.getSites();
+
+            for (String str : this.getData().getSites()) {
+                boolean siteAdded = false;
+                String siteSubstr = env.replaceVars(str);
+                for (String site : validSites) {
+                    if (site.contains(siteSubstr)) {
+                        reportData.addSite(site);
+                        siteAdded = true;
+                        break;
+                    }
+                }
+                if (!siteAdded) {
+                    progress.warn(
+                            Constant.messages.getString(
+                                    "reports.automation.error.badsite",
+                                    this.getName(),
+                                    siteSubstr,
+                                    validSites));
                 }
             }
         }
@@ -416,6 +446,7 @@ public class ReportJob extends AutomationJob {
         private List<String> risks;
         private List<String> confidences;
         private List<String> sections;
+        private List<String> sites;
 
         public Data(AutomationJob job, Parameters parameters) {
             super(job);
@@ -448,6 +479,14 @@ public class ReportJob extends AutomationJob {
 
         public void setSections(List<String> sections) {
             this.sections = sections;
+        }
+
+        public List<String> getSites() {
+            return sites;
+        }
+
+        public void setSites(List<String> sites) {
+            this.sites = sites;
         }
 
         public void setParameters(Parameters parameters) {
