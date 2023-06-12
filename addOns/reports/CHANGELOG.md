@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.22.0] - 2023-06-12
 ### Added
 - Automation job: support for sites (Issue 7858).
 
@@ -210,6 +210,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.22.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.22.0
 [0.21.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.21.0
 [0.20.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.20.0
 [0.19.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.19.0
