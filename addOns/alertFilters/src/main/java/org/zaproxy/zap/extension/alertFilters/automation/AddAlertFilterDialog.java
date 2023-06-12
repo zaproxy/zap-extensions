@@ -20,16 +20,21 @@
 package org.zaproxy.zap.extension.alertFilters.automation;
 
 import java.awt.Component;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 import javax.swing.JTextField;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.extension.alertFilters.ExtensionAlertFilters;
 import org.zaproxy.zap.extension.alertFilters.automation.AlertFilterJob.Risk;
 import org.zaproxy.zap.extension.alertFilters.internal.ScanRulesInfo;
+import org.zaproxy.zap.extension.alertFilters.internal.ui.MethodSelectionPanel;
 import org.zaproxy.zap.extension.alertFilters.internal.ui.ScanRulesInfoComboBoxModel;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
@@ -49,6 +54,7 @@ public class AddAlertFilterDialog extends StandardFieldsDialog {
     private static final String URL_PARAM = "alertFilters.automation.dialog.addfilter.url";
     private static final String URL_REGEX_PARAM =
             "alertFilters.automation.dialog.addfilter.urlregex";
+    private static final String METHOD_PARAM = "alertFilters.dialog.methods.label.method";
     private static final String ATTACK_PARAM = "alertFilters.automation.dialog.addfilter.attack";
     private static final String ATTACK_REGEX_PARAM =
             "alertFilters.automation.dialog.addfilter.attackregex";
@@ -63,6 +69,7 @@ public class AddAlertFilterDialog extends StandardFieldsDialog {
     private AlertFilterJob job;
     private AlertFilterTableModel model;
     private ScanRulesInfoComboBoxModel scanRulesInfoComboBoxModel;
+    private MethodSelectionPanel methodSelectionPanel;
 
     public AddAlertFilterDialog(AlertFilterJob job, AlertFilterTableModel model) {
         this(job, model, null, -1);
@@ -106,6 +113,10 @@ public class AddAlertFilterDialog extends StandardFieldsDialog {
         }
         this.addCheckBoxField(URL_REGEX_PARAM, JobUtils.unBox(rule.getUrlRegex()));
 
+        methodSelectionPanel = new MethodSelectionPanel(this);
+        methodSelectionPanel.setMethods(new TreeSet<>(rule.getMethods()));
+        addCustomComponent(METHOD_PARAM, methodSelectionPanel.getFieldComponent());
+
         this.addTextField(PARAM_PARAM, rule.getParameter());
         this.addCheckBoxField(PARAM_REGEX_PARAM, JobUtils.unBox(rule.getParameterRegex()));
 
@@ -114,6 +125,13 @@ public class AddAlertFilterDialog extends StandardFieldsDialog {
 
         this.addTextField(EVIDENCE_PARAM, rule.getEvidence());
         this.addCheckBoxField(EVIDENCE_REGEX_PARAM, JobUtils.unBox(rule.getEvidenceRegex()));
+    }
+
+    @Override
+    public void siteNodeSelected(String field, SiteNode node) {
+        super.siteNodeSelected(field, node);
+
+        methodSelectionPanel.setMethods(Set.of(node.getHistoryReference().getMethod()));
     }
 
     @Override
@@ -127,6 +145,7 @@ public class AddAlertFilterDialog extends StandardFieldsDialog {
         rule.setParameterRegex(this.getBoolValue(PARAM_REGEX_PARAM));
         rule.setUrl(this.getStringValue(URL_PARAM));
         rule.setUrlRegex(this.getBoolValue(URL_REGEX_PARAM));
+        rule.setMethods(new ArrayList<>(methodSelectionPanel.getMethods()));
         rule.setAttack(this.getStringValue(ATTACK_PARAM));
         rule.setAttackRegex(this.getBoolValue(ATTACK_REGEX_PARAM));
         rule.setEvidence(this.getStringValue(EVIDENCE_PARAM));

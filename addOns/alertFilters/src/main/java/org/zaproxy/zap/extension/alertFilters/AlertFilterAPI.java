@@ -29,6 +29,9 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.model.Model;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiException.Type;
@@ -40,6 +43,7 @@ import org.zaproxy.zap.extension.api.ApiResponseSet;
 import org.zaproxy.zap.extension.api.ApiView;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.ApiUtils;
+import org.zaproxy.zap.utils.XMLStringUtil;
 
 /** The API for manipulating {@link AlertFilter alert filters}. */
 public class AlertFilterAPI extends ApiImplementor {
@@ -73,6 +77,7 @@ public class AlertFilterAPI extends ApiImplementor {
     private static final String PARAM_ATTACK_IS_REGEX = "attackIsRegex";
     private static final String PARAM_EVIDENCE = "evidence";
     private static final String PARAM_EVIDENCE_IS_REGEX = "evidenceIsRegex";
+    private static final String PARAM_METHODS = "methods";
     private static final String PARAM_ENABLED = "enabled";
 
     private ExtensionAlertFilters extension;
@@ -109,6 +114,7 @@ public class AlertFilterAPI extends ApiImplementor {
                             PARAM_ATTACK_IS_REGEX,
                             PARAM_EVIDENCE,
                             PARAM_EVIDENCE_IS_REGEX,
+                            PARAM_METHODS,
                         });
         addAlertFilter.setDescriptionTag("alertFilters.api.action.addAlertFilter");
         this.addApiAction(addAlertFilter);
@@ -127,6 +133,7 @@ public class AlertFilterAPI extends ApiImplementor {
                             PARAM_ATTACK_IS_REGEX,
                             PARAM_EVIDENCE,
                             PARAM_EVIDENCE_IS_REGEX,
+                            PARAM_METHODS,
                         });
         removeAlertFilter.setDescriptionTag("alertFilters.api.action.removeAlertFilter");
         this.addApiAction(removeAlertFilter);
@@ -145,6 +152,7 @@ public class AlertFilterAPI extends ApiImplementor {
                             PARAM_ATTACK_IS_REGEX,
                             PARAM_EVIDENCE,
                             PARAM_EVIDENCE_IS_REGEX,
+                            PARAM_METHODS,
                         });
         addGlobalAlertFilter.setDescriptionTag("alertFilters.api.action.addGlobalAlertFilter");
         this.addApiAction(addGlobalAlertFilter);
@@ -163,6 +171,7 @@ public class AlertFilterAPI extends ApiImplementor {
                             PARAM_ATTACK_IS_REGEX,
                             PARAM_EVIDENCE,
                             PARAM_EVIDENCE_IS_REGEX,
+                            PARAM_METHODS,
                         });
         removeGlobalAlertFilter.setDescriptionTag(
                 "alertFilters.api.action.removeGlobalAlertFilter");
@@ -251,6 +260,7 @@ public class AlertFilterAPI extends ApiImplementor {
                                 getParam(params, PARAM_ATTACK_IS_REGEX, false),
                                 ApiUtils.getOptionalStringParam(params, PARAM_EVIDENCE),
                                 getParam(params, PARAM_EVIDENCE_IS_REGEX, false),
+                                getMethods(params),
                                 getParam(params, PARAM_ENABLED, true));
 
                 // TODO more validation, esp url!
@@ -271,6 +281,7 @@ public class AlertFilterAPI extends ApiImplementor {
                                 getParam(params, PARAM_ATTACK_IS_REGEX, false),
                                 ApiUtils.getOptionalStringParam(params, PARAM_EVIDENCE),
                                 getParam(params, PARAM_EVIDENCE_IS_REGEX, false),
+                                getMethods(params),
                                 getParam(params, PARAM_ENABLED, true));
                 if (extension.getContextAlertFilterManager(context.getId()).removeAlertFilter(af)) {
                     return ApiResponseElement.OK;
@@ -292,6 +303,7 @@ public class AlertFilterAPI extends ApiImplementor {
                                 getParam(params, PARAM_ATTACK_IS_REGEX, false),
                                 ApiUtils.getOptionalStringParam(params, PARAM_EVIDENCE),
                                 getParam(params, PARAM_EVIDENCE_IS_REGEX, false),
+                                getMethods(params),
                                 getParam(params, PARAM_ENABLED, true));
 
                 // TODO more validation, esp url!
@@ -319,6 +331,7 @@ public class AlertFilterAPI extends ApiImplementor {
                                 getParam(params, PARAM_ATTACK_IS_REGEX, false),
                                 ApiUtils.getOptionalStringParam(params, PARAM_EVIDENCE),
                                 getParam(params, PARAM_EVIDENCE_IS_REGEX, false),
+                                getMethods(params),
                                 getParam(params, PARAM_ENABLED, true));
                 if (extension.getParam().removeFilter(af)) {
                     try {
@@ -360,6 +373,14 @@ public class AlertFilterAPI extends ApiImplementor {
         }
     }
 
+    private static Set<String> getMethods(JSONObject params) {
+        String value = ApiUtils.getOptionalStringParam(params, PARAM_METHODS);
+        if (value == null) {
+            return Set.of();
+        }
+        return Set.of(value.split(",", -1));
+    }
+
     private int applyContextAlertFilters(boolean testOnly) {
         return Model.getSingleton().getSession().getContexts().stream()
                 .map(
@@ -386,7 +407,7 @@ public class AlertFilterAPI extends ApiImplementor {
      * @return the api response
      */
     private ApiResponse buildResponseFromAlertFilter(AlertFilter af, boolean includeContext) {
-        Map<String, String> fields = new HashMap<>();
+        Map<String, Object> fields = new HashMap<>();
         if (includeContext) {
             fields.put(PARAM_CONTEXT_ID, Integer.toString(af.getContextId()));
         }
@@ -400,8 +421,40 @@ public class AlertFilterAPI extends ApiImplementor {
         fields.put(PARAM_ATTACK_IS_REGEX, Boolean.toString(af.isAttackRegex()));
         fields.put(PARAM_EVIDENCE, af.getEvidence());
         fields.put(PARAM_EVIDENCE_IS_REGEX, Boolean.toString(af.isEvidenceRegex()));
+        fields.put(PARAM_METHODS, af.getMethods());
         fields.put(PARAM_ENABLED, Boolean.toString(af.isEnabled()));
-        ApiResponseSet<String> response = new ApiResponseSet<>("alertFilter", fields);
-        return response;
+        return new AlertFilterResponseSet<>("alertFilter", fields);
+    }
+
+    private static class AlertFilterResponseSet<T> extends ApiResponseSet<T> {
+
+        AlertFilterResponseSet(String name, Map<String, T> values) {
+            super(name, values);
+        }
+
+        @Override
+        public void toXML(Document doc, Element parent) {
+            parent.setAttribute("type", "set");
+            for (Map.Entry<String, T> val : getValues().entrySet()) {
+                Element el = doc.createElement(val.getKey());
+                if ("methods".equals(val.getKey())) {
+                    el.setAttribute("type", "list");
+                    @SuppressWarnings("unchecked")
+                    Set<String> methods = (Set<String>) val.getValue();
+                    for (String method : methods) {
+                        Element element = doc.createElement("method");
+                        element.appendChild(
+                                doc.createTextNode(XMLStringUtil.escapeControlChrs(method)));
+
+                        el.appendChild(element);
+                    }
+                } else {
+                    String textValue = val.getValue() == null ? "" : val.getValue().toString();
+                    Text text = doc.createTextNode(XMLStringUtil.escapeControlChrs(textValue));
+                    el.appendChild(text);
+                }
+                parent.appendChild(el);
+            }
+        }
     }
 }

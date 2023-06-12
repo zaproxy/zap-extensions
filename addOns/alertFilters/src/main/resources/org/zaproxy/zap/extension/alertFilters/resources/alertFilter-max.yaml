@@ -13,3 +13,4 @@
         attackRegex:                   # Boolean: Optional, if true then the attack is a regex
         evidence:                      # String: Optional string to match against the alert evidence field
         evidenceRegex:                 # Boolean: Optional, if true then the evidence is a regex
+        methods:                       # List: Optional, the HTTP methods
