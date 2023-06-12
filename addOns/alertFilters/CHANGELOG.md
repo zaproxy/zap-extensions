@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [16] - 2023-06-12
 ### Added
 - Allow to specify the HTTP method when filtering the alerts (Issue 5967).
 
@@ -100,6 +100,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[16]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v16
 [15]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v13
