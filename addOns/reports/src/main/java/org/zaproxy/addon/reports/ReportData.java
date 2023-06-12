@@ -34,7 +34,7 @@ public class ReportData {
     private String title;
     private String description;
     private List<Context> contexts;
-    private List<String> sites;
+    private List<String> sites = new ArrayList<>();
     private Map<String, Object> reportObjects = new HashMap<>();
     private boolean[] confidences = new boolean[Alert.MSG_CONFIDENCE.length];
     private boolean[] risks = new boolean[Alert.MSG_RISK.length];
@@ -86,6 +86,10 @@ public class ReportData {
 
     public void setSites(List<String> sites) {
         this.sites = sites;
+    }
+
+    public void addSite(String site) {
+        this.sites.add(site);
     }
 
     public Map<String, Object> getReportObjects() {

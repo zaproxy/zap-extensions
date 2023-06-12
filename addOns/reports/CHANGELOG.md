@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Automation job: support for sites (Issue 7858).
+
 ### Fixed
 - Change SARIF's Base64 encoder to not rely on the default character encoding.
 
