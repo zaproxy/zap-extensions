@@ -58,19 +58,22 @@ public class XBackendServerInformationLeakScanRule extends PluginPassiveScanner 
             // It is set so lets check it. Should only be one but it's a vector so iterate to be
             // sure.
             for (String xbsDirective : xbsOption) {
-                newAlert()
-                        .setRisk(Alert.RISK_LOW)
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setDescription(getDescription())
-                        .setSolution(getSolution())
-                        .setReference(getReference())
-                        .setEvidence(xbsDirective)
-                        .setCweId(200)
-                        .setWascId(13)
-                        .raise();
+                createAlert(xbsDirective).raise();
             }
         }
         LOGGER.debug("\tScan of record {} took {}ms", id, System.currentTimeMillis() - start);
+    }
+
+    private AlertBuilder createAlert(String evidence) {
+        return newAlert()
+                .setRisk(Alert.RISK_LOW)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription())
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(evidence)
+                .setCweId(200)
+                .setWascId(13);
     }
 
     @Override
@@ -98,5 +101,10 @@ public class XBackendServerInformationLeakScanRule extends PluginPassiveScanner 
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(createAlert("developer1.webapp.scl3.mozilla.com").build());
     }
 }

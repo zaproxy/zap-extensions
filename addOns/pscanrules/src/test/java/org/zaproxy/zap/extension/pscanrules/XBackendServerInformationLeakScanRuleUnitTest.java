@@ -23,10 +23,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -97,5 +100,24 @@ class XBackendServerInformationLeakScanRuleUnitTest
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_INFO_02_FINGERPRINT_WEB_SERVER.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_INFO_02_FINGERPRINT_WEB_SERVER.getValue())));
+    }
+
+    @Test
+    void shouldReturnExpectedExampleAlert() {
+        String MESSAGE_PREFIX = "pscanrules.xbackendserver.";
+
+        List<Alert> alerts = rule.getExampleAlerts();
+
+        Alert alert = alerts.get(0);
+        assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+        assertThat(
+                alert.getReference(),
+                equalTo(Constant.messages.getString(MESSAGE_PREFIX + "refs")));
+        assertThat(alert.getEvidence(), equalTo(HEADER_VALUE));
+        assertThat(
+                alert.getSolution(), equalTo(Constant.messages.getString(MESSAGE_PREFIX + "soln")));
+        assertThat(
+                alert.getDescription(),
+                equalTo(Constant.messages.getString(MESSAGE_PREFIX + "desc")));
     }
 }
