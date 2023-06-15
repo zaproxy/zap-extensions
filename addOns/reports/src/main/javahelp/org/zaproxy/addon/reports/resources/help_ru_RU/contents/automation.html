@@ -12,26 +12,31 @@
 	Задание отчета позволяет создавать отчеты с использованием любого
 	установленного шаблона отчетов.
 	<pre>
-  - type: report                       # Генерация отчета 
+  - type: report                       # Report generation
     parameters:
-      template:                        # Строка: идентификатор шаблона, по умолчанию: традиционный-html 
-      reportDir:                       # Строка: каталог, в который будет записан отчет. 
-      reportFile:                      # Строка: Шаблон имени файла отчета, по умолчанию: {{гггг-ММ-дд}}-ZAP-Report-[[сайт]] 
-      reportTitle:                     # Строка: название отчета 
-      reportDescription:               # Строка: описание отчета 
-      displayReport:                   # Boolean: отображать отчет при создании, по умолчанию: false 
-    risks:                             # Список: риски для включения в этот отчет, по умолчанию все 
+      template:                        # String: The template id, default : traditional-html
+      reportDir:                       # String: The directory into which the report will be written
+      reportFile:                      # String: The report file name pattern, default: {{yyyy-MM-dd}}-ZAP-Report-[[site]]
+      reportTitle:                     # String: The report title
+      reportDescription:               # String: The report description
+      displayReport:                   # Boolean: Display the report when generated, default: false
+    risks:                             # List: The risks to include in this report, default all
       - high
       - medium
       - low
       - info
-    confidences:                       # Список: конфиденциальные данные для включения в этот отчет, по умолчанию все 
+    confidences:                       # List: The confidences to include in this report, default all
       - high
       - medium
       - low
       - falsepositive
-    sections:                          # Список: разделы шаблона для включения в этот отчет — см. соответствующий шаблон, по умолчанию все 
+    sections:                          # List: The template sections to include in this report - see the relevant template, default all
+    sites:                             # List: The sites to include in this report, default all
 </pre>
+
+	The sites do not have to be full URLs - any site that contains one of
+	the strings in the sites list is included. The sites list also supports
+	variables.
 
 </BODY>
 </HTML>

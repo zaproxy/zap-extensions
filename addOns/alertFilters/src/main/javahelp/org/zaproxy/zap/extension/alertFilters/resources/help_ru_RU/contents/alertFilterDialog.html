@@ -56,17 +56,21 @@ Alert Filter Dialog
 Если установлено и указано свидетельство, то свидетельство будет рассматриваться как выражение регулярного выражения при сравнении с свидетельством предупреждения. <br>
 Если он не установлен, то любое указанное свидетельство должно точно соответствовать свидетельству предупреждения. 
 
-<H3>Включено</H3>
-Если установлено, то это правило будет применяться ко всем предупреждениям, возникающим в данном контексте. 
+<H3>Method</H3>
+An optional method.<br>
+If specified then this rule will be applied if the method matches (case insensitive) the method of a raised alert.<br>
 
-<H3>Тест Фильтр: </H3>
-Кнопка «Проверить» покажет количество существующих предупреждений, к которым будет применяться фильтр.  
-Он отключен, если фильтр отключен. 
+<H3>Enabled</H3>
+If set then this rule will be applied to all alerts raise against the given context.
 
-<H3>Применить фильтр</H3>
-Кнопка «Применить» фактически применит фильтр ко всем существующим предупреждениям, к которым он применяется.  
-Затем он покажет количество измененных предупреждений.  
-Он отключен, если фильтр отключен. 
+<H3>Test Filter</H3>
+The 'Test' button will show a count of how many existing alerts the filter will apply to. 
+It is disabled if the filter is disabled.
+
+<H3>Apply Filter</H3>
+The 'Apply' button will actually apply the filter to all of the existing alerts that it applies to. 
+It will then show a count of the number of alerts iit changed. 
+It is disabled if the filter is disabled.
 
 </BODY>
 </HTML>
