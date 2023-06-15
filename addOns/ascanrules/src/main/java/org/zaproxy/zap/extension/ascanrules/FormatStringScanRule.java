@@ -212,9 +212,9 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
                 HttpResponseBody secondAttackResponseBody = verificationMsg.getResponseBody();
                 if (secondAttackResponseBody.length() > initialResponseLength + 20
                         && isPage200(verificationMsg)) {
-                    createAlert(secondAttackPayload, param, verificationMsg, '2').raise();
+                    createSecondaryAttackAlert(secondAttackPayload, param, verificationMsg).raise();
                 } else {
-                    createAlert(initialAttackPayload, param, initialAttackMsg, '1').raise();
+                    createInitialAttackAlert(initialAttackPayload, param, initialAttackMsg).raise();
                 }
                 return;
             }
@@ -253,9 +253,8 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
                 return; // Something went wrong, no point continuing
             }
             if (isPage500(microsoftTestMsg)) {
-                createAlert(microsoftAttackMessage, param, microsoftTestMsg, '3').raise();
+                createMicrosoftAttackAlert(microsoftAttackMessage, param, microsoftTestMsg).raise();
             }
-            return;
 
         } catch (URIException e) {
             LOGGER.debug("Failed to send HTTP message, cause: {}", e.getMessage());
@@ -286,7 +285,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
         return 6;
     }
 
-    private AlertBuilder createAlert(
+    private AlertBuilder createBaseAlert(
             String attack, String param, HttpMessage msg, Character errorChar) {
 
         return newAlert()
@@ -297,11 +296,23 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
                 .setOtherInfo(getError(errorChar));
     }
 
+    private AlertBuilder createInitialAttackAlert(String attack, String param, HttpMessage msg) {
+        return createBaseAlert(attack, param, msg, '1');
+    }
+
+    private AlertBuilder createSecondaryAttackAlert(String attack, String param, HttpMessage msg) {
+        return createBaseAlert(attack, param, msg, '2');
+    }
+
+    private AlertBuilder createMicrosoftAttackAlert(String attack, String param, HttpMessage msg) {
+        return createBaseAlert(attack, param, msg, '3');
+    }
+
     @Override
     public List<Alert> getExampleAlerts() {
         return List.of(
-                createAlert("%n%s%n%s%n%s%n%s\n", "name", null, '1').build(),
-                createAlert("%s%s%s%s%s%s%s", "query", null, '2').build(),
-                createAlert("%p %p %p %p %p %p", "q", null, '3').build());
+                createInitialAttackAlert("%n%s%n%s%n%s%n%s\n", "name", null).build(),
+                createSecondaryAttackAlert("%s%s%s%s%s%s%s", "query", null).build(),
+                createMicrosoftAttackAlert("%p %p %p %p %p %p", "q", null).build());
     }
 }
