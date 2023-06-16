@@ -90,12 +90,13 @@ public class AutomationAlertTest extends AbstractAutomationTest {
                             "automation.tests.error.badonfail", getJobType(), this.getName()));
         }
 
-        if (data.getScanRuleId() <= 0) {
+        if (data.getScanRuleId() < 0) {
             progress.error(
                     Constant.messages.getString(
-                            "automation.tests.alert.error.noscanruleid",
+                            "automation.tests.alert.error.invalidscanruleid",
                             getJobType(),
-                            this.getName()));
+                            this.getName(),
+                            data.getScanRuleId()));
         }
 
         if (isNullOrEmpty(this.getData().getAction())) {
