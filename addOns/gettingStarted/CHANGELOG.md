@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- Update OWASP description in Getting Started Guide.
+
+### Fixed
+- Fix typo in Getting Started Guide.
 
 ## [14] - 2022-10-27
 ### Changed
