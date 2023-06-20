@@ -19,8 +19,13 @@
  */
 package org.zaproxy.addon.postman;
 
+import java.io.File;
+import java.util.List;
+import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
+import org.parosproxy.paros.extension.CommandLineArgument;
+import org.parosproxy.paros.extension.CommandLineListener;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
@@ -28,7 +33,7 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.ZapMenuItem;
 
-public class ExtensionPostman extends ExtensionAdaptor {
+public class ExtensionPostman extends ExtensionAdaptor implements CommandLineListener {
 
     public static final String NAME = "ExtensionPostman";
 
@@ -38,6 +43,10 @@ public class ExtensionPostman extends ExtensionAdaptor {
     private ImportFromUrlDialog currentUrlDialog;
 
     protected static final String MESSAGE_PREFIX = "postman.topmenu.";
+
+    private static final int ARG_IMPORT_FILE_IDX = 0;
+    private static final int ARG_IMPORT_URL_IDX = 1;
+    private static final int ARG_ENDPOINT_URL_IDX = 2;
 
     public ExtensionPostman() {
         super(NAME);
@@ -52,6 +61,7 @@ public class ExtensionPostman extends ExtensionAdaptor {
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportUrlPostman());
             extensionHook.addSessionListener(new SessionChangedListenerImpl());
         }
+        extensionHook.addCommandLine(getCommandLineArguments());
     }
 
     private ZapMenuItem getMenuImportFilePostman() {
@@ -116,6 +126,57 @@ public class ExtensionPostman extends ExtensionAdaptor {
     @Override
     public String getDescription() {
         return Constant.messages.getString("postman.desc");
+    }
+
+    private CommandLineArgument[] getCommandLineArguments() {
+        CommandLineArgument[] args = new CommandLineArgument[3];
+        args[ARG_IMPORT_FILE_IDX] =
+                new CommandLineArgument(
+                        "-postmanfile",
+                        1,
+                        null,
+                        "",
+                        "-postmanfile <path>          "
+                                + Constant.messages.getString("postman.cmdline.file.help"));
+        args[ARG_IMPORT_URL_IDX] =
+                new CommandLineArgument(
+                        "-postmanurl",
+                        1,
+                        null,
+                        "",
+                        "-postmanurl <url>            "
+                                + Constant.messages.getString("postman.cmdline.url.help"));
+        args[ARG_ENDPOINT_URL_IDX] =
+                new CommandLineArgument(
+                        "-postmanendpointurl",
+                        1,
+                        null,
+                        "",
+                        "-postmanendpointurl <url>    "
+                                + Constant.messages.getString("postman.cmdline.endpointurl.help"));
+        return args;
+    }
+
+    @Override
+    public void execute(CommandLineArgument[] args) {
+        // TODO: Implement importing
+        if (args[ARG_IMPORT_FILE_IDX].isEnabled()) {
+            CommandLine.info("This is currently under development and is not yet available.");
+        }
+        if (args[ARG_IMPORT_URL_IDX].isEnabled()) {
+            CommandLine.info("This is currently under development and is not yet available.");
+        }
+    }
+
+    @Override
+    public List<String> getHandledExtensions() {
+        return null;
+    }
+
+    @Override
+    public boolean handleFile(File file) {
+        // Not supported
+        return false;
     }
 
     private class SessionChangedListenerImpl implements SessionChangedListener {
