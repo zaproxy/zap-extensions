@@ -88,15 +88,13 @@ class FormatStringScanRuleUnitTest extends ActiveScannerTest<FormatStringScanRul
     void shouldReturnExpectedExampleAlert() {
         List<Alert> alerts = rule.getExampleAlerts();
 
-        assertThat(alerts.size(), is(equalTo(3)));
-
-        for (Alert alert : alerts) {
-            Map<String, String> tags = alert.getTags();
-            assertThat(tags.size(), is(equalTo(2)));
-            assertThat(tags, hasKey(CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()));
-            assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()));
-            assertThat(alert.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
-            assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
-        }
+        assertThat(alerts.size(), is(equalTo(1)));
+        Alert alert = alerts.get(0);
+        Map<String, String> tags = alert.getTags();
+        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags, hasKey(CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()));
+        assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()));
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 }

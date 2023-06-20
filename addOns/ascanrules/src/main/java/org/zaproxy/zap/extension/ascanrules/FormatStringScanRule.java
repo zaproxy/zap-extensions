@@ -310,9 +310,7 @@ public class FormatStringScanRule extends AbstractAppParamPlugin {
 
     @Override
     public List<Alert> getExampleAlerts() {
-        return List.of(
-                createInitialAttackAlert("%n%s%n%s%n%s%n%s\n", "name", null).build(),
-                createSecondaryAttackAlert("%s%s%s%s%s%s%s", "query", null).build(),
-                createMicrosoftAttackAlert("%p %p %p %p %p %p", "q", null).build());
+        // Although there are different 'tests' there is really only one alert
+        return List.of(createInitialAttackAlert("%n%s%n%s%n%s%n%s\n", "name", null).build());
     }
 }
