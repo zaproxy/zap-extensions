@@ -22,7 +22,7 @@ zapAddOn {
                     version.set(">=0.1.0")
                 }
                 register("selenium") {
-                    version.set(">= 15.12.0")
+                    version.set(">= 15.13.0")
                 }
                 register("commonlib") {
                     version.set(">= 1.6.0 & < 2.0.0")

@@ -34,7 +34,6 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
-import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProvidedBrowserUI;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
@@ -498,16 +497,6 @@ public class AjaxSpiderDialog extends StandardFieldsDialog {
         String selectedBrowser = getSelectedBrowser();
         if (selectedBrowser == null) {
             return Constant.messages.getString("spiderajax.scandialog.nobrowser.error");
-        }
-
-        if (Browser.PHANTOM_JS.getId().equals(selectedBrowser)) {
-            String host = startUri.getHost();
-            if ("localhost".equalsIgnoreCase(host)
-                    || "127.0.0.1".equals(host)
-                    || "[::1]".equals(host)) {
-                return Constant.messages.getString(
-                        "spiderajax.warn.message.phantomjs.bug.invalid.target");
-            }
         }
 
         return null;

@@ -78,7 +78,8 @@ class ExtensionAjaxUnitTest {
         return Stream.of(
                 arguments("com.crawljax.core.Crawler", Level.WARN),
                 arguments("com.crawljax.core.state.StateMachine", Level.WARN),
-                arguments("com.crawljax.core.UnfiredCandidateActions", Level.WARN));
+                arguments("com.crawljax.core.UnfiredCandidateActions", Level.WARN),
+                arguments("com.crawljax.forms.FormHandler", Level.OFF));
     }
 
     @ParameterizedTest

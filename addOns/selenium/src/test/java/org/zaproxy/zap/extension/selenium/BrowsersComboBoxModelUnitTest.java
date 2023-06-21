@@ -41,10 +41,7 @@ class BrowsersComboBoxModelUnitTest {
     static void setUp() throws Exception {
         FIREFOX = new BrowserUI("Firefox", Browser.FIREFOX);
 
-        browsers = new ArrayList<>(3);
-        browsers.add(FIREFOX);
-        browsers.add(new BrowserUI("Opera", Browser.OPERA));
-        browsers.add(new BrowserUI("Safari", Browser.SAFARI));
+        browsers = List.of(FIREFOX, new BrowserUI("Safari", Browser.SAFARI));
     }
 
     @Test

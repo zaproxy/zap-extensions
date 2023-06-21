@@ -27,7 +27,7 @@ zapAddOn {
                     version.set(">=0.2.0")
                 }
                 register("selenium") {
-                    version.set("15.*")
+                    version.set(">= 15.13.0")
                 }
                 register("scripts")
             }
@@ -38,10 +38,9 @@ zapAddOn {
 dependencies {
     compileOnly(parent!!.childProjects.get("network")!!)
     compileOnly(parent!!.childProjects.get("selenium")!!)
-    implementation("org.zaproxy:zest:0.16.0") {
+    implementation("org.zaproxy:zest:0.17.0") {
         // Provided by Selenium add-on.
         exclude(group = "org.seleniumhq.selenium")
-        exclude(group = "com.codeborne", module = "phantomjsdriver")
         // Provided by ZAP.
         exclude(group = "net.htmlparser.jericho", module = "jericho-html")
     }

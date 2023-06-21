@@ -106,6 +106,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
                         "com.crawljax.core.UnfiredCandidateActions",
                         "com.crawljax.core.state.StateMachine"),
                 Level.WARN);
+        setLogLevel(List.of("com.crawljax.forms.FormHandler"), Level.OFF);
 
         ajaxSpiderApi = new AjaxSpiderAPI(this);
         this.ajaxSpiderApi.addApiOptions(getAjaxSpiderParam());

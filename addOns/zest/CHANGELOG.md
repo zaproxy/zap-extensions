@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Update Zest library to 0.17.0:
+  - Update Selenium to version 4.
+  - jBrowserDriver (JBD), Opera, and PhantomJS are no longer supported (no longer being actively maintained).
 - Maintenance changes.
 
 ## [38] - 2023-01-03

@@ -70,7 +70,6 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
 
     private final JTextField chromeBinaryTextField;
     private final JTextField firefoxBinaryTextField;
-    private final JTextField phantomJsBinaryTextField;
     private final OptionsBrowserExtensionsTableModel browserExtModel;
     private static String directory;
 
@@ -142,13 +141,6 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                         infoBundledWebDriverToolTip,
                         firefoxDriverTextField,
                         Browser.FIREFOX);
-
-        phantomJsBinaryTextField = createTextField();
-        JButton phantomJsBinaryButton =
-                createButtonFileChooser(selectFileButtonLabel, phantomJsBinaryTextField);
-        JLabel phantomJsBinaryLabel =
-                new JLabel(resourceBundle.getString("selenium.options.label.phantomjs.binary"));
-        phantomJsBinaryLabel.setLabelFor(phantomJsBinaryButton);
 
         JPanel driversPanel = new JPanel();
         driversPanel.setBorder(
@@ -259,8 +251,7 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                                 binariesLayout
                                         .createParallelGroup(GroupLayout.Alignment.TRAILING)
                                         .addComponent(chromeBinaryLabel)
-                                        .addComponent(firefoxBinaryLabel)
-                                        .addComponent(phantomJsBinaryLabel))
+                                        .addComponent(firefoxBinaryLabel))
                         .addGroup(
                                 binariesLayout
                                         .createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -273,12 +264,7 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                                                 binariesLayout
                                                         .createSequentialGroup()
                                                         .addComponent(firefoxBinaryTextField)
-                                                        .addComponent(firefoxBinaryButton))
-                                        .addGroup(
-                                                binariesLayout
-                                                        .createSequentialGroup()
-                                                        .addComponent(phantomJsBinaryTextField)
-                                                        .addComponent(phantomJsBinaryButton))));
+                                                        .addComponent(firefoxBinaryButton))));
 
         binariesLayout.setVerticalGroup(
                 binariesLayout
@@ -294,13 +280,7 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                                         .createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(firefoxBinaryLabel)
                                         .addComponent(firefoxBinaryTextField)
-                                        .addComponent(firefoxBinaryButton))
-                        .addGroup(
-                                binariesLayout
-                                        .createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(phantomJsBinaryLabel)
-                                        .addComponent(phantomJsBinaryTextField)
-                                        .addComponent(phantomJsBinaryButton)));
+                                        .addComponent(firefoxBinaryButton)));
 
         JPanel browserExtPanel = new JPanel();
         GroupLayout browserExtLayout = new GroupLayout(browserExtPanel);
@@ -399,7 +379,6 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
 
         chromeBinaryTextField.setText(seleniumOptions.getChromeBinaryPath());
         firefoxBinaryTextField.setText(seleniumOptions.getFirefoxBinaryPath());
-        phantomJsBinaryTextField.setText(seleniumOptions.getPhantomJsBinaryPath());
 
         browserExtModel.setExtensions(seleniumOptions.getBrowserExtensions());
         directory = seleniumOptions.getLastDirectory();
@@ -441,7 +420,6 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         seleniumOptions.setChromeDriverPath(chromeDriverTextField.getText());
         seleniumOptions.setFirefoxBinaryPath(firefoxBinaryTextField.getText());
         seleniumOptions.setFirefoxDriverPath(firefoxDriverTextField.getText());
-        seleniumOptions.setPhantomJsBinaryPath(phantomJsBinaryTextField.getText());
         seleniumOptions.setBrowserExtensions(browserExtModel.getElements());
         seleniumOptions.setLastDirectory(directory);
     }

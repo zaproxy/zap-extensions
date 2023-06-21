@@ -20,6 +20,8 @@
 package org.zaproxy.zap.extension.domxss;
 
 import java.io.IOException;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -30,12 +32,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Stack;
 import java.util.TreeSet;
-import java.util.concurrent.TimeUnit;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.By;
-import org.openqa.selenium.ElementNotVisibleException;
+import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.NoSuchSessionException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.UnexpectedAlertBehaviour;
@@ -266,12 +267,12 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                         proxyPort,
                         capabilities ->
                                 capabilities.setCapability(
-                                        CapabilityType.UNEXPECTED_ALERT_BEHAVIOUR,
+                                        CapabilityType.UNHANDLED_PROMPT_BEHAVIOUR,
                                         UnexpectedAlertBehaviour.IGNORE),
                         false);
 
-        webDriver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
-        webDriver.manage().timeouts().setScriptTimeout(10, TimeUnit.SECONDS);
+        webDriver.manage().timeouts().pageLoadTimeout(Duration.of(10, ChronoUnit.SECONDS));
+        webDriver.manage().timeouts().scriptTimeout(Duration.of(10, ChronoUnit.SECONDS));
 
         return webDriver;
     }
@@ -414,7 +415,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
             if (retry >= 0) {
                 this.getHelper(wrapper, url, retry - 1);
             }
-        } catch (ElementNotVisibleException enve) {
+        } catch (ElementNotInteractableException enve) {
             LOGGER.debug(enve);
         } catch (TimeoutException wde) {
             LOGGER.debug(wde);
@@ -454,7 +455,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
             if (retry >= 0) {
                 return this.findHelper(wrapper, by, retry - 1);
             }
-        } catch (ElementNotVisibleException enve) {
+        } catch (ElementNotInteractableException enve) {
             LOGGER.debug(enve);
         } catch (TimeoutException wde) {
             LOGGER.debug(wde);
@@ -591,7 +592,7 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
             } catch (NoSuchSessionException enve) {
                 LOGGER.debug(enve);
                 // replaceDriver(driver);
-            } catch (ElementNotVisibleException enve) {
+            } catch (ElementNotInteractableException enve) {
                 LOGGER.debug(enve);
             } catch (TimeoutException wde) {
                 LOGGER.debug(wde);

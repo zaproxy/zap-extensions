@@ -1,7 +1,7 @@
 /* The browserLaunched function is called whenever a browser is launched from ZAP using selenium.
 	The util parameter has the following methods:
 		getWebDriver() Returns the WebDriver: 
-			https://www.javadoc.io/doc/org.seleniumhq.selenium/selenium-api/3.141.0/org/openqa/selenium/WebDriver.html 
+			https://www.javadoc.io/doc/org.seleniumhq.selenium/selenium-api/latest/org/openqa/selenium/WebDriver.html
 		getRequester() Returns the identifier of the requester:
 		 		1	PROXY_INITIATOR
 		 		2	ACTIVE_SCANNER_INITIATOR
