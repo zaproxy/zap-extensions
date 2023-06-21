@@ -33,7 +33,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.ie.InternetExplorerDriverService;
-import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
@@ -64,9 +63,6 @@ public class SeleniumOptions extends VersionedAbstractParam {
     public static final String IE_DRIVER_SYSTEM_PROPERTY =
             InternetExplorerDriverService.IE_DRIVER_EXE_PROPERTY;
 
-    public static final String PHANTOM_JS_BINARY_SYSTEM_PROPERTY =
-            PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY;
-
     private static final File EXTENSIONS_DIR =
             new File(Constant.getZapHome() + "/selenium/extensions/");
     private static final File[] NO_FILES = {};
@@ -82,7 +78,7 @@ public class SeleniumOptions extends VersionedAbstractParam {
      * @see #CONFIG_VERSION_KEY
      * @see #updateConfigsImpl(int)
      */
-    private static final int CURRENT_CONFIG_VERSION = 2;
+    private static final int CURRENT_CONFIG_VERSION = 3;
 
     /** The base key for all selenium configurations. */
     private static final String SELENIUM_BASE_KEY = "selenium";
@@ -106,9 +102,6 @@ public class SeleniumOptions extends VersionedAbstractParam {
     /** The configuration key to read/write the path Firefox driver (geckodriver). */
     private static final String FIREFOX_DRIVER_KEY = SELENIUM_BASE_KEY + ".firefoxDriver";
 
-    /** The configuration key to read/write the path PhantomJS binary. */
-    private static final String PHANTOM_JS_BINARY_KEY = SELENIUM_BASE_KEY + ".phantomJsBinary";
-
     private static final String DISABLED_EXTENSIONS_KEY = SELENIUM_BASE_KEY + ".disabledExts";
 
     private static final String EXTENSIONS_LAST_DIR_KEY = SELENIUM_BASE_KEY + ".lastDir";
@@ -124,9 +117,6 @@ public class SeleniumOptions extends VersionedAbstractParam {
 
     /** The path to Firefox driver (geckodriver). */
     private String firefoxDriverPath = "";
-
-    /** The path to PhantomJS binary. */
-    private String phantomJsBinaryPath = "";
 
     private List<Object> disabledExtensions;
 
@@ -163,10 +153,6 @@ public class SeleniumOptions extends VersionedAbstractParam {
         firefoxDriverPath =
                 getWebDriverPath(
                         Browser.FIREFOX, FIREFOX_DRIVER_SYSTEM_PROPERTY, FIREFOX_DRIVER_KEY);
-
-        phantomJsBinaryPath =
-                readSystemPropertyWithOptionFallback(
-                        PHANTOM_JS_BINARY_SYSTEM_PROPERTY, PHANTOM_JS_BINARY_KEY);
 
         disabledExtensions = getConfig().getList(DISABLED_EXTENSIONS_KEY);
 
@@ -236,6 +222,10 @@ public class SeleniumOptions extends VersionedAbstractParam {
             case 1:
                 getConfig().clearProperty("selenium.ieDriver");
                 break;
+            case 2:
+                getConfig().clearProperty("selenium.phantomJsBinary");
+                break;
+            default:
         }
     }
 
@@ -383,9 +373,11 @@ public class SeleniumOptions extends VersionedAbstractParam {
      * Gets the path to PhantomJS binary.
      *
      * @return the path to PhantomJS binary, or empty if not set.
+     * @deprecated No longer supported.
      */
+    @Deprecated(since = "15.13.0", forRemoval = true)
     public String getPhantomJsBinaryPath() {
-        return phantomJsBinaryPath;
+        return "";
     }
 
     /**
@@ -393,16 +385,11 @@ public class SeleniumOptions extends VersionedAbstractParam {
      *
      * @param phantomJsBinaryPath the path to PhantomJS binary, or empty if not known.
      * @throws IllegalArgumentException if {@code phantomJsBinaryPath} is {@code null}.
+     * @deprecated No longer supported.
      */
+    @Deprecated(since = "15.13.0", forRemoval = true)
     public void setPhantomJsBinaryPath(String phantomJsBinaryPath) {
-        Validate.notNull(phantomJsBinaryPath, "Parameter phantomJsBinaryPath must not be null.");
-
-        if (!this.phantomJsBinaryPath.equals(phantomJsBinaryPath)) {
-            this.phantomJsBinaryPath = phantomJsBinaryPath;
-
-            saveAndSetSystemProperty(
-                    PHANTOM_JS_BINARY_KEY, PHANTOM_JS_BINARY_SYSTEM_PROPERTY, phantomJsBinaryPath);
-        }
+        // Nothing to do.
     }
 
     public List<BrowserExtension> getEnabledBrowserExtensions(Browser browser) {

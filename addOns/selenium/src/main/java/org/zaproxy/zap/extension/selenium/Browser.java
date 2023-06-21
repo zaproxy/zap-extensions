@@ -51,7 +51,9 @@ public enum Browser {
      */
     @Deprecated
     INTERNET_EXPLORER("ie", false),
+    @Deprecated(since = "15.13.0", forRemoval = true)
     OPERA("opera", false),
+    @Deprecated(since = "15.13.0", forRemoval = true)
     PHANTOM_JS("phantomjs", true),
     SAFARI("safari", false);
 

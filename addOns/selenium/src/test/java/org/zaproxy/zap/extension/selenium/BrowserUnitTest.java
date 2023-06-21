@@ -79,28 +79,6 @@ class BrowserUnitTest {
     }
 
     @Test
-    void shouldReturnOperaWhenGettingBrowserWithOperaId() {
-        // Given
-        String operaId = "opera";
-        // When
-        Browser retrievedBrowser = Browser.getBrowserWithId(operaId);
-        // Then
-        assertThat(retrievedBrowser, is(equalTo(Browser.OPERA)));
-        assertThat(operaId, is(equalTo(Browser.OPERA.getId())));
-    }
-
-    @Test
-    void shouldReturnPhantomJSWhenGettingBrowserWithPhantomJSId() {
-        // Given
-        String phantomJSId = "phantomjs";
-        // When
-        Browser retrievedBrowser = Browser.getBrowserWithId(phantomJSId);
-        // Then
-        assertThat(retrievedBrowser, is(equalTo(Browser.PHANTOM_JS)));
-        assertThat(phantomJSId, is(equalTo(Browser.PHANTOM_JS.getId())));
-    }
-
-    @Test
     void shouldReturnSafariWhenGettingBrowserWithSafariId() {
         // Given
         String safariId = "safari";

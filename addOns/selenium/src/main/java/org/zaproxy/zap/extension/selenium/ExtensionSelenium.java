@@ -51,8 +51,6 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriver;
-import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.safari.SafariDriver;
@@ -86,6 +84,10 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     public static final String SCRIPT_TYPE_SELENIUM = "selenium";
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionSelenium.class);
+
+    static {
+        System.setProperty("webdriver.http.factory", "jdk-http-client");
+    }
 
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
             Collections.unmodifiableList(Arrays.asList(ExtensionNetwork.class));
@@ -183,7 +185,6 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         addBuiltInProvider(Browser.FIREFOX);
         addBuiltInProvider(Browser.FIREFOX_HEADLESS);
         addBuiltInProvider(Browser.HTML_UNIT);
-        addBuiltInProvider(Browser.PHANTOM_JS);
         addBuiltInProvider(Browser.SAFARI);
 
         providedBrowserUIList = new ArrayList<>();
@@ -941,8 +942,6 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
     private static void setCommonOptions(
             MutableCapabilities capabilities, String proxyAddress, int proxyPort) {
-        capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
-        // W3C capability
         capabilities.setCapability(CapabilityType.ACCEPT_INSECURE_CERTS, true);
 
         if (proxyAddress != null) {
@@ -993,7 +992,9 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                 setCommonOptions(chromeOptions, proxyAddress, proxyPort);
                 chromeOptions.addArguments("--proxy-bypass-list=<-loopback>");
                 chromeOptions.addArguments("--ignore-certificate-errors");
-                chromeOptions.setHeadless(browser == Browser.CHROME_HEADLESS);
+                if (browser == Browser.CHROME_HEADLESS) {
+                    chromeOptions.addArguments("--headless=new");
+                }
                 String binary = System.getProperty(SeleniumOptions.CHROME_BINARY_SYSTEM_PROPERTY);
                 if (binary != null && !binary.isEmpty()) {
                     chromeOptions.setBinary(binary);
@@ -1005,10 +1006,6 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             case FIREFOX_HEADLESS:
                 FirefoxOptions firefoxOptions = new FirefoxOptions();
                 setCommonOptions(firefoxOptions, proxyAddress, proxyPort);
-
-                String geckoDriver =
-                        System.getProperty(SeleniumOptions.FIREFOX_DRIVER_SYSTEM_PROPERTY);
-                firefoxOptions.setLegacy(geckoDriver == null || geckoDriver.isEmpty());
 
                 String binaryPath =
                         System.getProperty(SeleniumOptions.FIREFOX_BINARY_SYSTEM_PROPERTY);
@@ -1054,7 +1051,9 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                     firefoxOptions.setCapability(CapabilityType.PROXY, (Object) null);
                 }
 
-                firefoxOptions.setHeadless(browser == Browser.FIREFOX_HEADLESS);
+                if (browser == Browser.FIREFOX_HEADLESS) {
+                    firefoxOptions.addArguments("-headless");
+                }
 
                 consumer.accept(firefoxOptions);
                 FirefoxDriver driver = new FirefoxDriver(firefoxOptions);
@@ -1065,41 +1064,15 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             case HTML_UNIT:
                 DesiredCapabilities htmlunitCapabilities = new DesiredCapabilities();
                 setCommonOptions(htmlunitCapabilities, proxyAddress, proxyPort);
+                htmlunitCapabilities.setBrowserName(
+                        org.openqa.selenium.remote.Browser.HTMLUNIT.browserName());
 
                 consumer.accept(htmlunitCapabilities);
-                return new HtmlUnitDriver(
-                        DesiredCapabilities.htmlUnit().merge(htmlunitCapabilities));
+                return new HtmlUnitDriver(htmlunitCapabilities);
             case INTERNET_EXPLORER:
-                throw new WebDriverException(
-                        "No longer available, does not support the required capabilities.");
-                /* No longer supported in the Selenium standalone jar
-                     * need to decide if we support older Opera versions
-                case OPERA:
-                    OperaDriver driver = new OperaDriver(capabilities);
-                    if (proxyAddress != null) {
-                        driver.proxy().setProxyLocal(true);
-                        // XXX Workaround, in operadriver <= 1.5 the HTTPS proxy settings are not set according to desired capabilities
-                        // For more details see OperaProxy.parse(Proxy)
-                        driver.proxy().setHttpsProxy(proxyAddress + ":" + proxyPort);
-                    }
-
-                    return driver;
-                    */
+            case OPERA:
             case PHANTOM_JS:
-                DesiredCapabilities phantomCapabilities = new DesiredCapabilities();
-                setCommonOptions(phantomCapabilities, proxyAddress, proxyPort);
-                final ArrayList<String> cliArgs = new ArrayList<>(4);
-                cliArgs.add("--ssl-protocol=any");
-                cliArgs.add("--ignore-ssl-errors=yes");
-
-                cliArgs.add("--webdriver-logfile=" + Constant.getZapHome() + "phantomjsdriver.log");
-                cliArgs.add("--webdriver-loglevel=WARN");
-
-                phantomCapabilities.setCapability(
-                        PhantomJSDriverService.PHANTOMJS_CLI_ARGS, cliArgs);
-
-                consumer.accept(phantomCapabilities);
-                return new PhantomJSDriver(phantomCapabilities);
+                throw new WebDriverException("No longer supported.");
             case SAFARI:
                 SafariOptions safariOptions = new SafariOptions();
                 setCommonOptions(safariOptions, proxyAddress, proxyPort);
@@ -1182,15 +1155,11 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         // No configurations, just install the browser or
         // browser plugins to work properly
         browsers.add(Browser.HTML_UNIT);
-        browsers.add(Browser.OPERA);
         browsers.add(Browser.SAFARI);
         // Requires drivers, but hopefully they are already provided.
         browsers.add(Browser.CHROME);
         browsers.add(Browser.FIREFOX);
 
-        if (!getOptions().getPhantomJsBinaryPath().isEmpty()) {
-            browsers.add(Browser.PHANTOM_JS);
-        }
         return browsers;
     }
 
@@ -1250,6 +1219,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     public static boolean isConfigured(Browser browser) {
         switch (browser) {
             case INTERNET_EXPLORER:
+            case OPERA:
+            case PHANTOM_JS:
                 return false;
             case SAFARI:
                 return Constant.isMacOsX();

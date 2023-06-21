@@ -28,9 +28,18 @@ zapAddOn {
 }
 
 dependencies {
-    api("org.seleniumhq.selenium:selenium-server:3.141.59")
-    api("org.seleniumhq.selenium:htmlunit-driver:2.54.0")
-    api("com.codeborne:phantomjsdriver:1.4.4")
+    var seleniumVersion = "4.10.0"
+    api("org.seleniumhq.selenium:selenium-java:$seleniumVersion") {
+        exclude(group = "io.netty")
+    }
+    implementation("org.seleniumhq.selenium:selenium-http-jdk-client:$seleniumVersion")
+    api("org.seleniumhq.selenium:htmlunit-driver:$seleniumVersion") {
+        exclude(group = "io.netty")
+    }
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.19.0") {
+        // Provided by ZAP.
+        exclude(group = "org.apache.logging.log4j")
+    }
 
     compileOnly(parent!!.childProjects.get("network")!!)
 
