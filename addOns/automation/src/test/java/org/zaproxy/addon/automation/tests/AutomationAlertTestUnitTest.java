@@ -20,9 +20,12 @@
 package org.zaproxy.addon.automation.tests;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -34,6 +37,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -63,7 +68,7 @@ public class AutomationAlertTestUnitTest extends TestUtils {
         ExtensionAlert extensionAlert = mock(ExtensionAlert.class);
         Control.initSingletonForTesting(mock(Model.class), extensionLoader);
         given(extensionLoader.getExtension(ExtensionAlert.class)).willReturn(extensionAlert);
-        data = mock(ActiveScanJobResultData.class);
+        data = mock(ActiveScanJobResultData.class, withSettings().strictness(Strictness.LENIENT));
         given(data.getKey()).willReturn("activeScanData");
         alert = new Alert(scanRuleId);
         alert.setAlertId(1);
@@ -83,6 +88,37 @@ public class AutomationAlertTestUnitTest extends TestUtils {
                 Arguments.of(AutomationAlertTest.PARAM_CONFIDENCE, "0"),
                 Arguments.of(AutomationAlertTest.PARAM_RISK, "1"),
                 Arguments.of(AutomationAlertTest.PARAM_OTHER_INFO, "exampleOtherInfo"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1, 2, Integer.MAX_VALUE})
+    void shouldAcceptValidScanRuleId(int scanRuleId) {
+        // Given
+        testData.put("scanRuleId", scanRuleId);
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        new AutomationAlertTest(testData, new ActiveScanJob(), progress);
+
+        // Then
+        assertThat(
+                progress.getErrors(),
+                not(hasItem("!automation.tests.alert.error.invalidscanruleid!")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {-2, -1})
+    void shouldErrorOnInvalidScanRuleId(int scanRuleId) {
+        // Given
+        testData.put("scanRuleId", scanRuleId);
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        new AutomationAlertTest(testData, new ActiveScanJob(), progress);
+
+        // Then
+        assertThat(
+                progress.getErrors(), hasItem("!automation.tests.alert.error.invalidscanruleid!"));
     }
 
     @ParameterizedTest

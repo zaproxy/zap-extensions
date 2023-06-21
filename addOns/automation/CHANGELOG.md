@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Fixed
 - Address exception when creating a new context through the UI.
+- Allow to test alerts of Directory Browsing (ID 0), previously would report as a missing ID.
 
 ## [0.29.0] - 2023-06-06
 ### Added
