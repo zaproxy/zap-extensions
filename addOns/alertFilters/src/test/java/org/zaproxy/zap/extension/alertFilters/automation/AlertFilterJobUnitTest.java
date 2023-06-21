@@ -21,7 +21,9 @@ package org.zaproxy.zap.extension.alertFilters.automation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -37,6 +39,8 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -121,27 +125,42 @@ class AlertFilterJobUnitTest {
                 is(equalTo("!alertFilters.automation.error.badfilters!")));
     }
 
-    @Test
-    void shouldErrorOnMissingRuleId() {
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1, 2, Integer.MAX_VALUE})
+    void shouldAcceptValidRuleId(int scanRuleId) {
         // Given
         AutomationProgress progress = new AutomationProgress();
         AlertFilterJob job = new AlertFilterJob();
-        String contextStr = "parameters: \nalertFilters:\n- newRisk: 'Info'";
+        String contextStr = "parameters: \nalertFilters:\n- ruleId: " + scanRuleId;
         Yaml yaml = new Yaml();
-        LinkedHashMap<?, ?> jobData =
-                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> jobData = yaml.load(contextStr);
 
         // When
         job.setJobData(jobData);
         job.verifyParameters(progress);
 
         // Then
-        assertThat(progress.hasWarnings(), is(equalTo(false)));
-        assertThat(progress.hasErrors(), is(equalTo(true)));
-        assertThat(progress.getErrors().size(), is(equalTo(1)));
         assertThat(
-                progress.getErrors().get(0),
-                is(equalTo("!alertFilters.automation.error.noruleid!")));
+                progress.getErrors(),
+                not(hasItem("!alertFilters.automation.error.invalidruleid!")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {-2, -1})
+    void shouldErrorOnInvalidRuleId(long scanRuleId) {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        AlertFilterJob job = new AlertFilterJob();
+        String contextStr = "parameters: \nalertFilters:\n- ruleId: " + scanRuleId;
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> jobData = yaml.load(contextStr);
+
+        // When
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(progress.getErrors(), hasItem("!alertFilters.automation.error.invalidruleid!"));
     }
 
     @Test

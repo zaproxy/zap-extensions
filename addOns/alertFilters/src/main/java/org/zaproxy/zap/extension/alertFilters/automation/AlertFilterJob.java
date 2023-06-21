@@ -179,10 +179,12 @@ public class AlertFilterJob extends AutomationJob {
 
     private boolean isValid(AlertFilterData afd, AutomationProgress progress) {
         boolean result = true;
-        if (afd.getRuleId() <= 0) {
+        if (afd.getRuleId() < 0) {
             progress.error(
                     Constant.messages.getString(
-                            "alertFilters.automation.error.noruleid", this.getName()));
+                            "alertFilters.automation.error.invalidruleid",
+                            this.getName(),
+                            afd.getRuleId()));
             result = false;
         }
         if (!Risk.isValidRisk(afd.getNewRisk())) {
