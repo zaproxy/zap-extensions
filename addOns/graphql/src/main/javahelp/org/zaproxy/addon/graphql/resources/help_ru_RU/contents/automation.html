@@ -16,21 +16,20 @@
 <H2>Задание: graphql</H2>
 Задание <i>graphql</i> позволяет импортировать схемы GraphQL локально или по URL-адресу.  Он поддерживает следующие параметры: 
 <pre>
-  - type: graphql                      # Импорт определения GraphQL 
+  - type: graphql                      # GraphQL definition import
     parameters:
-      endpoint:                        # String: URL-адрес конечной точки, по умолчанию: null, схема не импортируется. 
-      schemaUrl:                       # String: URL-адрес, указывающий на схему GraphQL, по умолчанию: null, импорт с использованием самоанализа на конечной точке 
-      schemaFile:                      # String: Путь к локальному файлу схемы GraphQL, по умолчанию: null, импорт с использованием schemaUrl 
-      maxQueryDepth:                   # Int: Максимальная глубина генерации запроса, по умолчанию: 5 
-      lenientMaxQueryDepthEnabled:     # Bool: Независимо от того, применяется ли максимальная глубина запроса снисходительно, по умолчанию: true 
-      maxAdditionalQueryDepth:         # Int: Максимальная дополнительная глубина генерации запроса (используется, если применяется снисходительно), по умолчанию: 5 
-      maxArgsDepth:                    # Int: Максимальная глубина генерации аргументов, по умолчанию: 5 
-      optionalArgsEnabled:             # Bool: Должны ли быть указаны необязательные аргументы, по умолчанию: true 
-      argsType:                        # Enum [inline, variables, both]: Как указываются аргументы, по умолчанию: оба 
-      querySplitType:                  # Enum [leaf, root_field, operation]: Уровень, для которого генерируется один запрос, по умолчанию: leaf 
-      requestMethod:                   # Enum [post_json, post_graphql, get]: Метод запроса по умолчанию: post_json 
- 
-Текст 
+      endpoint:                        # String: the endpoint URL, default: null, no schema is imported
+      schemaUrl:                       # String: URL pointing to a GraphQL Schema, default: null, import using introspection on endpoint
+      schemaFile:                      # String: Local file path of a GraphQL Schema, default: null, import using schemaUrl
+      queryGenEnabled:                 # Bool: Whether the Query Generator is enabled, default: true
+      maxQueryDepth:                   # Int: The maximum query generation depth, default: 5
+      lenientMaxQueryDepthEnabled:     # Bool: Whether or not Maximum Query Depth is enforced leniently, default: true
+      maxAdditionalQueryDepth:         # Int: The maximum additional query generation depth (used if enforced leniently), default: 5
+      maxArgsDepth:                    # Int: The maximum arguments generation depth, default: 5
+      optionalArgsEnabled:             # Bool: Whether or not Optional Arguments should be specified, default: true
+      argsType:                        # Enum [inline, variables, both]: How arguments are specified, default: both 
+      querySplitType:                  # Enum [leaf, root_field, operation]: The level for which a single query is generated, default: leaf
+      requestMethod:                   # Enum [post_json, post_graphql, get]: The request method, default: post_json
 </pre>
 
 <H2>Смотрите также </H2>
