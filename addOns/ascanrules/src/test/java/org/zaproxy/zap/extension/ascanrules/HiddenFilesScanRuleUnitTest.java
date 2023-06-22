@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.hasSize;
@@ -65,6 +66,7 @@ import org.zaproxy.zap.testutils.StaticContentServerHandler;
 class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule> {
 
     private static final String NOT_FOUND_PATH = "/404.html";
+    private static final String REPLACE_TOKEN = "{0}";
 
     @Override
     protected HiddenFilesScanRule createScanner() {
@@ -84,6 +86,32 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
         URL url = HiddenFilesScanRule.class.getResource(filePath);
         // Then
         assertThat(url, is(notNullValue()));
+    }
+
+    @Test
+    void checkNoPathsHaveLeadingSlash() {
+        // Given
+        URL url =
+                HiddenFilesScanRule.class.getResource("/" + HiddenFilesScanRule.PAYLOADS_FILE_PATH);
+        // When
+        List<HiddenFile> files = rule.readFromJsonFile(url.getPath());
+        // Then
+        // Check json file entries
+        assertThat(files.size(), is(greaterThan(1)));
+        for (HiddenFile file : files) {
+            assertNoLeadingSlash(
+                    REPLACE_TOKEN + " should not start with slash (/).", file.getPath());
+        }
+        // Check default custom payloads entries
+        for (String filePath : HiddenFilesScanRule.getHiddenFiles()) {
+            assertNoLeadingSlash(
+                    "HIDDEN_FILES entry: " + REPLACE_TOKEN + " should not start with slash (/).",
+                    filePath);
+        }
+    }
+
+    private void assertNoLeadingSlash(String message, String path) {
+        assertThat(message.replace(REPLACE_TOKEN, path), !path.startsWith("/"), is(true));
     }
 
     @Test

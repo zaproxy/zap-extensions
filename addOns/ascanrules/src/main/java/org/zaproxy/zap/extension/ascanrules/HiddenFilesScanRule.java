@@ -72,6 +72,8 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
                     CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
                     CommonAlertTag.WSTG_V42_CONF_05_ENUMERATE_INFRASTRUCTURE);
     static final String PAYLOADS_FILE_PATH = "json/hidden_files.json";
+    static final String DEFAULT_PAYLOAD_PATH =
+            Constant.getZapHome() + File.separator + PAYLOADS_FILE_PATH;
 
     private static final List<String> HIDDEN_FILES =
             Arrays.asList(
@@ -94,7 +96,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
 
     @Override
     public void init() {
-        hfList = readFromJsonFile();
+        hfList = readFromJsonFile(DEFAULT_PAYLOAD_PATH);
         for (String payload : getHiddenFilePayloads().get()) {
             hfList.add(
                     new HiddenFile(
@@ -301,8 +303,8 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
         return otherInfo;
     }
 
-    private List<HiddenFile> readFromJsonFile() {
-        String jsonTxt = readPayloadsFile();
+    List<HiddenFile> readFromJsonFile(String path) {
+        String jsonTxt = readPayloadsFile(path);
         if (jsonTxt.isEmpty()) {
             return new ArrayList<>();
         }
@@ -372,8 +374,8 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
         return newList;
     }
 
-    private String readPayloadsFile() {
-        File f = new File(Constant.getZapHome() + File.separator + PAYLOADS_FILE_PATH);
+    private String readPayloadsFile(String path) {
+        File f = new File(path);
         if (!f.exists()) {
             LOGGER.error("No such file: {}", f.getAbsolutePath());
             return "";

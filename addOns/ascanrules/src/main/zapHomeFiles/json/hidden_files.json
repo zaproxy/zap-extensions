@@ -286,7 +286,7 @@
       "source":"nav1n0x"
     },
     {
-      "path":"/_framework/blazor.boot.json",
+      "path":"_framework/blazor.boot.json",
       "content":["Blazor"],
       "links":["https://twitter.com/_Freakyclown_/status/1660737687178072064", "https://learn.microsoft.com/en-us/aspnet/core/blazor/host-and-deploy/webassembly"],
       "type":"Blazor",
