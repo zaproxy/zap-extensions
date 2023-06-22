@@ -21,6 +21,7 @@ The <i>graphql</i> job allows you to import GraphQL schemas locally or from a UR
       endpoint:                        # String: the endpoint URL, default: null, no schema is imported
       schemaUrl:                       # String: URL pointing to a GraphQL Schema, default: null, import using introspection on endpoint
       schemaFile:                      # String: Local file path of a GraphQL Schema, default: null, import using schemaUrl
+      queryGenEnabled:                 # Bool: Whether the Query Generator is enabled, default: true
       maxQueryDepth:                   # Int: The maximum query generation depth, default: 5
       lenientMaxQueryDepthEnabled:     # Bool: Whether or not Maximum Query Depth is enforced leniently, default: true
       maxAdditionalQueryDepth:         # Int: The maximum additional query generation depth (used if enforced leniently), default: 5

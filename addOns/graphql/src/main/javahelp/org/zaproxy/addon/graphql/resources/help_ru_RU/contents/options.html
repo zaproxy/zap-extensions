@@ -9,50 +9,55 @@
 
 	В этом документе «запрос» может относиться к запросу GraphQL, подписке или мутации. 
 
-	<h2>Максимальная глубина запроса </h2>
+	<h2>Query Generator Configuration</h2>
+
+	The query generator uses the imported schema to generate queries for the target endpoint.
+	If enabled, it may be configured with the following options.
+
+	<h3>Maximum Query Depth</h3>
 	
-	Максимальная глубина генерируемого запроса. 
+	The maximum depth of a generated query.
 
-	<h2> Мягкая максимальная глубина запроса  </h2>
+	<h3> Lenient Maximum Query Depth </h3>
 
-	Если этот параметр включен, он предотвращает неверные запросы, разрешая дополнительную глубину для полей без конечных типов. 
-	Если этот параметр отключен, максимальная глубина запроса применяется строго, даже если это означает создание недопустимого запроса. 
+	If enabled, this option prevents invalid queries by allowing additional depth for fields with no leaf types.
+	If disabled, Maximum Query Depth is enforced strictly, even if it means generating an invalid query.
 
-	<h2> Дополнительная глубина запроса  </h2>
+	<h3> Additional Query Depth </h3>
 
-	Значение этого параметра используется, только если включен параметр «Максимальная глубина запроса». 
-	Максимальная дополнительная глубина, используемая для поиска полей листового типа. 
-	Если конечный тип не найден, сгенерированный запрос может быть недопустимым, и в журнал записывается сообщение. 
+	The value for this option is used only if the "Lenient Maximum Query Depth" option is enabled.
+	The maximum additional depth used to search for leaf-type fields.
+	If a leaf type is not found, the generated query may be invalid and a message is logged.
 
-	<h2>Максимальная глубина аргументов </h2>
+	<h3>Maximum Arguments Depth</h3>
 	
-	Максимальная глубина указанных аргументов.  Это полезно, когда поле имеет входной объект в качестве аргумента. 
+	The maximum depth of specified arguments. This is useful when a field has an input object as an argument.
 
-	<h2>Укажите необязательные аргументы </h2>
+	<h3>Specify Optional Arguments</h3>
 	
-	Если выбран этот параметр, то также будут указаны необязательные (обнуляемые) аргументы. 
+	If this option is selected then optional (nullable) arguments will be specified too.
 
-	<h2>Укажите аргументы </h2>
+	<h3>Specify Arguments</h3>
 
-	Выберите, как аргументы поля должны быть добавлены в сгенерированный запрос, 
+	Choose how the field arguments should be added in the generated query,
 	<ul>
 		<li>В линию</li>
 		<li>Использование переменных </li>
 		<li>Оба (Both) — каждый запрос будет отправлен дважды, один раз со встроенными аргументами и один раз с переменными. </li>
 	</ul>
 
-	<h2>Создать запрос для </h2>
+	<h3>Generate Query For</h3>
 	
-	Отдельный запрос может быть сгенерирован для любого из следующего в предоставленной схеме: 
+	A separate query may be generated for either of the following in the provided schema,
 	<ul>
 		<li>каждый лист, то есть каждый скаляр или перечисление; </li>
 		<li>каждое поле под корневым типом операции (запрос, мутация или подписка); или </li>
 		<li>каждый тип корневой операции. </li>
 	</ul>
 
-	<h2>Метод запроса </h2>
+	<h3>Request Method</h3>
 	
-	Запросы к конечной точке могут быть следующих типов: 
+	The requests made to the endpoint can be of the following types:
 
 	<ul>
 		<li>Запрос POST с телом JSON (тип содержимого: application/json) </li>
@@ -60,7 +65,7 @@
 		<li>Запрос GET с добавленным к нему запросом в строке запроса </li>
 	</ul>
 
-	<h2>Смотрите также </h2>
+	<h2>See also</h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
