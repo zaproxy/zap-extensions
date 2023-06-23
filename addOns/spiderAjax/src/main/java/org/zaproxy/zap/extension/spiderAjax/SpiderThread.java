@@ -62,6 +62,7 @@ import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.spiderAjax.SpiderListener.ResourceState;
 import org.zaproxy.zap.model.ScanEventPublisher;
 import org.zaproxy.zap.network.HttpResponseBody;
+import org.zaproxy.zap.users.User;
 
 public class SpiderThread implements Runnable {
 
@@ -83,6 +84,7 @@ public class SpiderThread implements Runnable {
     private Server proxy;
     private int proxyPort;
     private final ExtensionAjax extension;
+    private AuthenticationHandler authHandler;
 
     /**
      * Constructs a {@code SpiderThread} for the given target.
@@ -250,6 +252,16 @@ public class SpiderThread implements Runnable {
                 this.target.toTarget(),
                 this.target.getUser());
 
+        User user = target.getUser();
+        if (user != null) {
+            for (AuthenticationHandler ah : extension.getAuthenticationHandlers()) {
+                if (ah.enableAuthentication(user)) {
+                    authHandler = ah;
+                    break;
+                }
+            }
+        }
+
         LOGGER.info("Starting proxy...");
         try {
             this.proxyPort = proxy.start(LOCAL_PROXY_IP);
@@ -280,6 +292,10 @@ public class SpiderThread implements Runnable {
             LOGGER.info("Proxy stopped.");
             notifyListenersSpiderStoped();
             SpiderEventPublisher.publishScanEvent(ScanEventPublisher.SCAN_STOPPED_EVENT, 0);
+            if (authHandler != null) {
+                authHandler.disableAuthentication(user);
+            }
+
             LOGGER.info("Finished Crawljax: {}", displayName);
         }
     }

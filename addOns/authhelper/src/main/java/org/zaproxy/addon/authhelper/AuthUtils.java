@@ -78,6 +78,8 @@ public class AuthUtils {
     public static final String AUTH_NO_PASSWORD_FIELD_STATS = "stats.auth.browser.nopasswordfield";
     public static final String AUTH_FOUND_FIELDS_STATS = "stats.auth.browser.foundfields";
     public static final String AUTH_SESSION_TOKEN_STATS_PREFIX = "stats.auth.sessiontoken.";
+    public static final String AUTH_BROWSER_PASSED_STATS = "stats.auth.browser.passed";
+    public static final String AUTH_BROWSER_FAILED_STATS = "stats.auth.browser.failed";
 
     public static final String[] HEADERS = {HttpHeader.AUTHORIZATION};
     public static final String[] JSON_IDS = {"accesstoken", "token"};
@@ -262,6 +264,7 @@ public class AuthUtils {
             }
 
             incStatsCounter(loginPageUrl, AUTH_FOUND_FIELDS_STATS);
+            incStatsCounter(loginPageUrl, AUTH_BROWSER_PASSED_STATS);
             AuthUtils.sleep(TimeUnit.SECONDS.toMillis(waitInSecs));
 
             return true;
@@ -272,6 +275,7 @@ public class AuthUtils {
         if (pwdField == null) {
             incStatsCounter(loginPageUrl, AUTH_NO_PASSWORD_FIELD_STATS);
         }
+        incStatsCounter(loginPageUrl, AUTH_BROWSER_FAILED_STATS);
         return false;
     }
 

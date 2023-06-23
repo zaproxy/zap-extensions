@@ -83,6 +83,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
     private ExtensionNetwork extensionNetwork;
 
     private ContextDataManager contextDataManager;
+    private List<AuthenticationHandler> authHandlers = new ArrayList<>();
 
     /**
      * initializes the extension
@@ -473,6 +474,18 @@ public class ExtensionAjax extends ExtensionAdaptor {
         if (spiderListener == null) {
             spiderListener = new ExtensionAjaxSpiderListener();
         }
+    }
+
+    public void addAuthenticationHandler(AuthenticationHandler handler) {
+        authHandlers.add(handler);
+    }
+
+    public void removeAuthenticationHandler(AuthenticationHandler handler) {
+        authHandlers.remove(handler);
+    }
+
+    protected List<AuthenticationHandler> getAuthenticationHandlers() {
+        return Collections.unmodifiableList(authHandlers);
     }
 
     public boolean isSpiderRunning() {
