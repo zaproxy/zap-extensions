@@ -50,6 +50,7 @@ public class ExtensionAuthhelperAjax extends ExtensionAdaptor {
         super.hook(extensionHook);
         ExtensionAjax extAjax =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionAjax.class);
+        authHandler = new BrowserBasedAuthHandler();
         extAjax.addAuthenticationHandler(authHandler);
     }
 
@@ -62,7 +63,6 @@ public class ExtensionAuthhelperAjax extends ExtensionAdaptor {
     public void unload() {
         ExtensionAjax extAjax =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionAjax.class);
-        authHandler = new BrowserBasedAuthHandler();
         extAjax.removeAuthenticationHandler(authHandler);
     }
 
