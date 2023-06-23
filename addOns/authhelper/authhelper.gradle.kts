@@ -10,6 +10,20 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/authentication-helper/")
+        extensions {
+            register("org.zaproxy.addon.authhelper.spiderajax.ExtensionAuthhelperAjax") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.authhelper.spiderajax"))
+                }
+                dependencies {
+                    addOns {
+                        register("spiderAjax") {
+                            version.set(">=23.15.0")
+                        }
+                    }
+                }
+            }
+        }
         dependencies {
             addOns {
                 register("commonlib") {
@@ -38,6 +52,7 @@ dependencies {
     compileOnly(parent!!.childProjects.get("commonlib")!!)
     compileOnly(parent!!.childProjects.get("network")!!)
     compileOnly(parent!!.childProjects.get("selenium")!!)
+    compileOnly(parent!!.childProjects.get("spiderAjax")!!)
     testImplementation(project(":testutils"))
     testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(parent!!.childProjects.get("network")!!)
