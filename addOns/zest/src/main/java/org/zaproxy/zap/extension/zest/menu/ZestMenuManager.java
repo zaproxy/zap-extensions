@@ -27,6 +27,7 @@ import org.zaproxy.zest.core.v1.ZestClientAssignCookie;
 import org.zaproxy.zest.core.v1.ZestClientElementAssign;
 import org.zaproxy.zest.core.v1.ZestClientElementClear;
 import org.zaproxy.zest.core.v1.ZestClientElementClick;
+import org.zaproxy.zest.core.v1.ZestClientElementMouseOver;
 import org.zaproxy.zest.core.v1.ZestClientElementSendKeys;
 import org.zaproxy.zest.core.v1.ZestClientElementSubmit;
 import org.zaproxy.zest.core.v1.ZestClientLaunch;
@@ -79,6 +80,7 @@ public class ZestMenuManager {
     private ZestAddClientPopupMenu popupAddClientElementAssignMenu = null;
     private ZestAddClientPopupMenu popupAddClientElementClearMenu = null;
     private ZestAddClientPopupMenu popupAddClientElementClickMenu = null;
+    private ZestAddClientPopupMenu popupAddClientElementMouseOverMenu = null;
     private ZestAddClientPopupMenu popupAddClientElementSendKeysMenu = null;
     private ZestAddClientPopupMenu popupAddClientElementSubmitMenu = null;
     private ZestAddClientPopupMenu popupAddClientWindowMenu = null;
@@ -106,6 +108,7 @@ public class ZestMenuManager {
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientElementAssignMenu());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientElementClearMenu());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientElementClickMenu());
+        extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientElementMouseOverMenu());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientElementSendKeysMenu());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientElementSubmitMenu());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientScreenshot());
@@ -458,6 +461,30 @@ public class ZestMenuManager {
                     };
         }
         return popupAddClientElementClickMenu;
+    }
+
+    private ZestAddClientPopupMenu getPopupAddClientElementMouseOverMenu() {
+        if (popupAddClientElementMouseOverMenu == null) {
+            popupAddClientElementMouseOverMenu =
+                    new ZestAddClientPopupMenu(
+                            this.extension, "zest.clientElementMouseOver.popup", true) {
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        public void showDialog(
+                                ScriptNode parent, ScriptNode child, ZestStatement request) {
+                            extension
+                                    .getDialogManager()
+                                    .showZestClientElementMouseOverDialog(
+                                            parent,
+                                            child,
+                                            request,
+                                            new ZestClientElementMouseOver(),
+                                            true);
+                        }
+                    };
+        }
+        return popupAddClientElementMouseOverMenu;
     }
 
     private ZestAddClientPopupMenu getPopupAddClientElementSendKeysMenu() {
