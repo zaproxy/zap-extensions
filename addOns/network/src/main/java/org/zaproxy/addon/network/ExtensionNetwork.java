@@ -1343,8 +1343,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         }
 
         Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
-        // TODO needs https://github.com/bcgit/bc-java/issues/1254
-        // ThreadUtils.findThreadsByName("BC Entropy Daemon").forEach(Thread::interrupt);
 
         if (hasView()) {
             OptionsDialog optionsDialog = View.getSingleton().getOptionsDialog("");
