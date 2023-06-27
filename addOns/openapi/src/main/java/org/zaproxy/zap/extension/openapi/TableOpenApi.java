@@ -48,11 +48,13 @@ public class TableOpenApi extends ParosAbstractTable {
                         conn,
                         "CREATE CACHED TABLE openapi_specs ("
                                 + "id INT NOT NULL IDENTITY, "
-                                + "definition CLOB(16M) NOT NULL, "
+                                + "definition CLOB(64M) NOT NULL, "
                                 + "target NVARCHAR(2048), "
                                 + "session_id BIGINT NOT NULL, "
                                 + "context_id INT NOT NULL, "
                                 + "PRIMARY KEY (id))");
+            } else {
+                updateTable(conn);
             }
             psInsertOpenApiSpec =
                     conn.prepareStatement(
@@ -65,6 +67,28 @@ public class TableOpenApi extends ParosAbstractTable {
                     conn.prepareStatement("DELETE FROM openapi_specs WHERE context_id = ?");
         } catch (SQLException e) {
             throw new DatabaseException(e);
+        }
+    }
+
+    private static void updateTable(Connection conn) {
+        try {
+            int columnSize = DbUtils.getColumnSize(conn, "OPENAPI_SPECS", "DEFINITION");
+            if (columnSize < 17_000_000) {
+                LOGGER.debug("Definition column size was: {}", columnSize);
+                increaseDefinitionColumnSize(conn);
+            }
+        } catch (SQLException e) {
+            LOGGER.debug("Couldn't get definition column size.", e);
+        }
+    }
+
+    private static void increaseDefinitionColumnSize(Connection conn) {
+        try {
+            DbUtils.execute(conn, "ALTER TABLE openapi_specs ALTER COLUMN definition CLOB(64M)");
+            int columnSize = DbUtils.getColumnSize(conn, "OPENAPI_SPECS", "DEFINITION");
+            LOGGER.debug("Definition column size is now: {}", columnSize);
+        } catch (SQLException e) {
+            LOGGER.warn(e);
         }
     }
 
@@ -83,6 +107,14 @@ public class TableOpenApi extends ParosAbstractTable {
             psInsertOpenApiSpec.setInt(4, contextId);
             psInsertOpenApiSpec.execute();
         } catch (SQLException e) {
+            String exceptionMessage = e.getMessage();
+            if (exceptionMessage.contains("right truncation")
+                    && exceptionMessage.contains("DEFINITION")) {
+                LOGGER.warn(
+                        "Could not persist the definition, {} is greater than the DEFINITION column limit.",
+                        definition.length());
+                return;
+            }
             throw new DatabaseException(e);
         }
     }

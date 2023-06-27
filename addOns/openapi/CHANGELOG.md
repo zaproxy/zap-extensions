@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Fix exception when generating data for parameters without schema.
+- An exception which might occur on large definition imports (Issue 7876).
 
 ## [33] - 2023-04-04
 ### Changed
