@@ -122,6 +122,7 @@ import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiElement;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.brk.ExtensionBreak;
+import org.zaproxy.zap.extension.globalexcludeurl.ExtensionGlobalExcludeURL;
 import org.zaproxy.zap.network.HttpSenderImpl;
 import org.zaproxy.zap.utils.ZapPortNumberSpinner;
 
@@ -172,6 +173,11 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     private ConnectionOptions connectionOptions;
     private ConnectionOptionsPanel connectionOptionsPanel;
+
+    private boolean provideGlobalExclusions;
+    private GlobalExclusionsOptions globalExclusionsOptions;
+    private GlobalExclusionsOptionsPanel globalExclusionsOptionsPanel;
+    private Method setGlobalExcludedUrlRegexsSupplier;
 
     private HttpSender proxyHttpSender;
     private HttpSenderHandler httpSenderHandler;
@@ -226,6 +232,26 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         } catch (Exception e) {
             LOGGER.error("An error occurred while creating the sender:", e);
         }
+
+        try {
+            provideGlobalExclusions =
+                    ExtensionGlobalExcludeURL.class.getAnnotation(Deprecated.class) != null;
+
+            if (provideGlobalExclusions) {
+                setGlobalExcludedUrlRegexsSupplier =
+                        Session.class.getDeclaredMethod(
+                                "setGlobalExcludedUrlRegexsSupplier", Supplier.class);
+            }
+        } catch (Exception e) {
+            provideGlobalExclusions = false;
+        }
+    }
+
+    private List<String> getGlobalExcludedUrlRegexs() {
+        if (globalExclusionsOptions != null) {
+            return globalExclusionsOptions.getUrls();
+        }
+        return List.of();
     }
 
     /**
@@ -252,6 +278,10 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     ClientCertificatesOptions getClientCertificatesOptions() {
         return clientCertificatesOptions;
+    }
+
+    GlobalExclusionsOptions getGlobalExclusionsOptions() {
+        return globalExclusionsOptions;
     }
 
     AliasChecker getAliasChecker() {
@@ -487,6 +517,11 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
         localServersOptions.addServersChangedListener(new ServersChangedListenerImpl());
         extensionHook.addOptionsParamSet(localServersOptions);
 
+        if (provideGlobalExclusions) {
+            globalExclusionsOptions = new GlobalExclusionsOptions();
+            extensionHook.addOptionsParamSet(globalExclusionsOptions);
+        }
+
         aliasChecker =
                 requestHeader -> {
                     if (API.API_DOMAIN.equals(requestHeader.getHostName())) {
@@ -538,6 +573,13 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             optionsDialog.addParamPanel(networkNode, clientCertificatesOptionsPanel, true);
             hookView.addOptionPanel(
                     new LegacyOptionsPanel("clientcerts", clientCertificatesOptionsPanel));
+
+            if (provideGlobalExclusions) {
+                globalExclusionsOptionsPanel = new GlobalExclusionsOptionsPanel(optionsDialog);
+                optionsDialog.addParamPanel(networkNode, globalExclusionsOptionsPanel, true);
+                hookView.addOptionPanel(
+                        new LegacyOptionsPanel("globalexcludeurl", globalExclusionsOptionsPanel));
+            }
         }
     }
 
@@ -717,6 +759,16 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
         if (hasView()) {
             localServerInfoLabel.update();
+        }
+
+        if (provideGlobalExclusions) {
+            try {
+                setGlobalExcludedUrlRegexsSupplier.invoke(
+                        getModel().getSession(),
+                        (Supplier<List<String>>) ExtensionNetwork.this::getGlobalExcludedUrlRegexs);
+            } catch (Exception e) {
+                LOGGER.warn("Failed to set global exclusions into the session.", e);
+            }
         }
     }
 
@@ -1354,12 +1406,25 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             optionsDialog.removeParamPanel(connectionOptionsPanel);
             optionsDialog.removeParamPanel(clientCertificatesOptionsPanel);
 
+            if (provideGlobalExclusions) {
+                optionsDialog.removeParamPanel(globalExclusionsOptionsPanel);
+            }
+
             if (removeBreakListenerMethod != null) {
                 try {
                     removeBreakListenerMethod.invoke(extensionBreak, serialiseForBreak);
                 } catch (Exception e) {
                     LOGGER.error("An error occurred while removing the break listener:", e);
                 }
+            }
+        }
+
+        if (provideGlobalExclusions) {
+            try {
+                setGlobalExcludedUrlRegexsSupplier.invoke(
+                        getModel().getSession(), (Supplier<List<String>>) null);
+            } catch (Exception e) {
+                LOGGER.warn("Failed to reset global exclusions into the session.", e);
             }
         }
     }
@@ -1489,6 +1554,17 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             globalCookieStore = new BasicCookieStore();
             globalHttpState = new HttpState();
             getModel().getOptionsParam().getConnectionParam().setHttpState(globalHttpState);
+
+            if (session != null && provideGlobalExclusions) {
+                try {
+                    setGlobalExcludedUrlRegexsSupplier.invoke(
+                            session,
+                            (Supplier<List<String>>)
+                                    ExtensionNetwork.this::getGlobalExcludedUrlRegexs);
+                } catch (Exception e) {
+                    LOGGER.warn("Failed to set global exclusions into the session.", e);
+                }
+            }
         }
 
         @Override
