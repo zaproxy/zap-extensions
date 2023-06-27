@@ -75,6 +75,7 @@ var addOns = listOf(
     "quickstart",
     "regextester",
     "replacer",
+    "report2iriusrisk",
     "reports",
     "requester",
     "retest",
