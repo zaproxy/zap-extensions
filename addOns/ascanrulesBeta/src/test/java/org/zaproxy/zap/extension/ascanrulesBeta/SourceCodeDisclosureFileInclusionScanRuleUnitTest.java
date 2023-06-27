@@ -21,10 +21,13 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.is;
 
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 class SourceCodeDisclosureFileInclusionScanRuleUnitTest
@@ -57,5 +60,21 @@ class SourceCodeDisclosureFileInclusionScanRuleUnitTest
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getValue())));
+    }
+
+    @Test
+    void shouldReturnExpectedExampleAlert() {
+        List<Alert> alerts = rule.getExampleAlerts();
+
+        assertThat(alerts.size(), is(equalTo(2)));
+
+        for (Alert alert : alerts) {
+            Map<String, String> tags = alert.getTags();
+            assertThat(tags.size(), is(equalTo(2)));
+            assertThat(tags, hasKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()));
+            assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()));
+            assertThat(alert.getRisk(), is(equalTo(Alert.RISK_HIGH)));
+            assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        }
     }
 }

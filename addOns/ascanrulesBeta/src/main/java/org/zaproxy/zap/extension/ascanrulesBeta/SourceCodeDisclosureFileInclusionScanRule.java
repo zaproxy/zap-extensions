@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
@@ -332,28 +333,12 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
 
                             // if we get to here, is is very likely that we have source file
                             // inclusion attack. alert it.
-                            newAlert()
-                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                    .setDescription(
-                                            Constant.messages.getString(
-                                                    "ascanbeta.sourcecodedisclosure.desc"))
-                                    .setUri(getBaseMsg().getRequestHeader().getURI().toString())
-                                    .setParam(paramname)
-                                    .setAttack(prefixedUrlfilename)
-                                    .setOtherInfo(
-                                            Constant.messages.getString(
-                                                    "ascanbeta.sourcecodedisclosure.lfibased.extrainfo",
-                                                    prefixedUrlfilename,
-                                                    NON_EXISTANT_FILENAME,
-                                                    randomversussourcefilenamematchpercentage,
-                                                    this.thresholdPercentage))
-                                    .setSolution(
-                                            Constant.messages.getString(
-                                                    "ascanbeta.sourcecodedisclosure.lfibased.soln"))
-                                    .setEvidence(
-                                            Constant.messages.getString(
-                                                    "ascanbeta.sourcecodedisclosure.lfibased.evidence"))
-                                    .setMessage(sourceattackmsg)
+                            createAlert(
+                                            paramname,
+                                            prefixedUrlfilename,
+                                            randomversussourcefilenamematchpercentage,
+                                            sourceattackmsg,
+                                            getBaseMsg().getRequestHeader().getURI().toString())
                                     .raise();
                             // All done on this parameter
                             return;
@@ -429,28 +414,12 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
 
                             // if we get to here, is is very likely that we have source file
                             // inclusion attack. alert it.
-                            newAlert()
-                                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                    .setDescription(
-                                            Constant.messages.getString(
-                                                    "ascanbeta.sourcecodedisclosure.desc"))
-                                    .setUri(getBaseMsg().getRequestHeader().getURI().toString())
-                                    .setParam(paramname)
-                                    .setAttack(prefixedUrlfilename)
-                                    .setOtherInfo(
-                                            Constant.messages.getString(
-                                                    "ascanbeta.sourcecodedisclosure.lfibased.extrainfo",
-                                                    prefixedUrlfilename,
-                                                    NON_EXISTANT_FILENAME,
-                                                    randomversussourcefilenamematchpercentage,
-                                                    this.thresholdPercentage))
-                                    .setSolution(
-                                            Constant.messages.getString(
-                                                    "ascanbeta.sourcecodedisclosure.lfibased.soln"))
-                                    .setEvidence(
-                                            Constant.messages.getString(
-                                                    "ascanbeta.sourcecodedisclosure.lfibased.evidence"))
-                                    .setMessage(sourceattackmsg)
+                            createAlert(
+                                            paramname,
+                                            prefixedUrlfilename,
+                                            randomversussourcefilenamematchpercentage,
+                                            sourceattackmsg,
+                                            getBaseMsg().getRequestHeader().getURI().toString())
                                     .raise();
 
                             // All done. No need to look for vulnerabilities on subsequent
@@ -546,5 +515,40 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
         if (a == 0 || b == 0) return 0;
 
         return (int) ((((double) Math.min(a, b)) / Math.max(a, b)) * 100);
+    }
+
+    private AlertBuilder createAlert(
+            String paramname,
+            String prefixedUrlfilename,
+            Integer randomversussourcefilenamematchpercentage,
+            HttpMessage sourceattackmsg,
+            String uri) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(Constant.messages.getString("ascanbeta.sourcecodedisclosure.desc"))
+                .setUri(uri)
+                .setParam(paramname)
+                .setAttack(prefixedUrlfilename)
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                "ascanbeta.sourcecodedisclosure.lfibased.extrainfo",
+                                prefixedUrlfilename,
+                                NON_EXISTANT_FILENAME,
+                                randomversussourcefilenamematchpercentage,
+                                this.thresholdPercentage))
+                .setSolution(
+                        Constant.messages.getString("ascanbeta.sourcecodedisclosure.lfibased.soln"))
+                .setEvidence(
+                        Constant.messages.getString(
+                                "ascanbeta.sourcecodedisclosure.lfibased.evidence"))
+                .setMessage(sourceattackmsg);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        String exampleUri = "https://example.com";
+        return List.of(
+                createAlert("name", "../config/database.php", 48, getBaseMsg(), exampleUri).build(),
+                createAlert("name", "../secrets/passwords", 31, getBaseMsg(), exampleUri).build());
     }
 }
