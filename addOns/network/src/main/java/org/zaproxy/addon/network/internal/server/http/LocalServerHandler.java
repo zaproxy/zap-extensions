@@ -70,8 +70,7 @@ public class LocalServerHandler extends MainProxyHandler {
 
     private boolean isExcluded(HttpMessage msg) {
         String uriString = msg.getRequestHeader().getURI().toString();
-        for (String excludePattern :
-                model.getOptionsParam().getGlobalExcludeURLParam().getTokensNames()) {
+        for (String excludePattern : model.getSession().getGlobalExcludeURLRegexs()) {
             if (uriString.matches(excludePattern)) {
                 return true;
             }
