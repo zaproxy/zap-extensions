@@ -35,6 +35,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.ZapMenuItem;
 
+
 /**
  * An example ZAP extension which adds a top level menu item, a pop up menu item and a status panel.
  *
@@ -46,7 +47,7 @@ import org.zaproxy.zap.view.ZapMenuItem;
 public class ExtensionSimpleExample extends ExtensionAdaptor {
 
     // The name is public so that other extensions can access it
-    public static final String NAME = "ExtensionSimpleExample";
+    public static final String NAME = "ExtensionReport2IriusRisk";
 
     // The i18n prefix, by default the package name - defined in one place to make it easier
     // to copy and change this example
@@ -68,6 +69,12 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
     private SimpleExampleAPI api;
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionSimpleExample.class);
+
+    private JPanel inputPanel;
+    private JTextField iriusRiskDomainInputField;
+    private JTextField iriusRiskProjectIdInputField;
+    private JTextField apiTokenInputField;
+    private JButton submitButton;
 
     public ExtensionSimpleExample() {
         super(NAME);
@@ -107,19 +114,52 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
         // here (if the extension declares that can be unloaded, see above method).
     }
 
+    private void generateXmlReport() {
+        try {
+            GenerateReportXML.generate();
+            View.getSingleton().showMessageDialog("XML Report generated successfully.");
+        } catch (Exception e) {
+            View.getSingleton().showWarningDialog("Failed to generate XML report: " + e.getMessage());
+        }
+    }
+
     private AbstractPanel getStatusPanel() {
         if (statusPanel == null) {
             statusPanel = new AbstractPanel();
-            statusPanel.setLayout(new CardLayout());
+            statusPanel.setLayout(new GridLayout(4, 2));
             statusPanel.setName(Constant.messages.getString(PREFIX + ".panel.title"));
             statusPanel.setIcon(new ImageIcon(getClass().getResource(RESOURCES + "/cake.png")));
-            JTextPane pane = new JTextPane();
-            pane.setEditable(false);
-            // Obtain (and set) a font with the size defined in the options
-            pane.setFont(FontUtils.getFont("Dialog", Font.PLAIN));
-            pane.setContentType("text/html");
-            pane.setText(Constant.messages.getString(PREFIX + ".panel.msg"));
-            statusPanel.add(pane);
+
+            JLabel iriusRiskDomainLabel = new JLabel("IriusRisk Domain:");
+            iriusRiskDomainInputField = new JTextField();
+            JLabel iriusRiskProjectIdLabel = new JLabel("IriusRisk Project ID:");
+            iriusRiskProjectIdInputField = new JTextField();
+            JLabel apiTokenLabel = new JLabel("Api Token:");
+            apiTokenInputField = new JTextField();
+            submitButton = new JButton("Submit");
+
+            submitButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String input1 = iriusRiskDomainInputField.getText();
+                    String input2 = iriusRiskProjectIdInputField.getText();
+                    String input3 = apiTokenInputField.getText();
+                    
+                    generateXmlReport();
+                    // Process the inputs here as desired
+                    // For this example, we'll just display them in the Output panel
+                    String output = "Input 1: " + input1 + "\nInput 2: " + input2 + "\nInput 3: " + input3;
+                    View.getSingleton().getOutputPanel().append(output);
+                }
+            });
+
+            statusPanel.add(iriusRiskDomainLabel);
+            statusPanel.add(iriusRiskDomainInputField);
+            statusPanel.add(apiTokenLabel);
+            statusPanel.add(apiTokenInputField);
+            statusPanel.add(iriusRiskProjectIdLabel);
+            statusPanel.add(iriusRiskProjectIdInputField);
+            statusPanel.add(submitButton);
         }
         return statusPanel;
     }
