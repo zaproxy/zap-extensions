@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.simpleexample;
+package org.zaproxy.addon.report2iriusrisk;
 
 import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
@@ -29,7 +29,7 @@ import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
 
 public class SimpleExampleAPI extends ApiImplementor {
-    private static final String PREFIX = "simpleExample";
+    private static final String PREFIX = "report2iriusrisk";
 
     private static final String ACTION_HELLO_WORLD = "helloWorld";
 

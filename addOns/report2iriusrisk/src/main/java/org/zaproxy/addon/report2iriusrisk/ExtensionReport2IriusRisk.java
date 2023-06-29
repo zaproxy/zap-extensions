@@ -17,13 +17,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.simpleexample;
+package org.zaproxy.addon.report2iriusrisk;
 
 import java.awt.CardLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URL;
 import java.nio.file.Files;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,6 +50,17 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.ZapMenuItem;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 
 
 /**
@@ -44,7 +71,7 @@ import org.zaproxy.zap.view.ZapMenuItem;
  *
  * @see #hook(ExtensionHook)
  */
-public class ExtensionSimpleExample extends ExtensionAdaptor {
+public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
 
     // The name is public so that other extensions can access it
     public static final String NAME = "ExtensionReport2IriusRisk";
@@ -52,6 +79,9 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
     // The i18n prefix, by default the package name - defined in one place to make it easier
     // to copy and change this example
     protected static final String PREFIX = "report2iriusrisk";
+
+    // Define your desired add-on ID
+    private static final String ADDON_ID = "report2iriusrisk";
 
     /**
      * Relative path (from add-on package) to load add-on resources.
@@ -68,7 +98,7 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
 
     private SimpleExampleAPI api;
 
-    private static final Logger LOGGER = LogManager.getLogger(ExtensionSimpleExample.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionReport2IriusRisk.class);
 
     private JPanel inputPanel;
     private JTextField iriusRiskDomainInputField;
@@ -76,7 +106,7 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
     private JTextField apiTokenInputField;
     private JButton submitButton;
 
-    public ExtensionSimpleExample() {
+    public ExtensionReport2IriusRisk() {
         super(NAME);
         setI18nPrefix(PREFIX);
     }
@@ -114,13 +144,15 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
         // here (if the extension declares that can be unloaded, see above method).
     }
 
-    private void generateXmlReport() {
+    private String generateXmlReport() {
+        String path = null;
         try {
-            GenerateReportXML.generate();
+            path = GenerateReportXML.generate();
             View.getSingleton().showMessageDialog("XML Report generated successfully.");
         } catch (Exception e) {
             View.getSingleton().showWarningDialog("Failed to generate XML report: " + e.getMessage());
         }
+        return path;
     }
 
     private AbstractPanel getStatusPanel() {
@@ -141,15 +173,57 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
             submitButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    String input1 = iriusRiskDomainInputField.getText();
-                    String input2 = iriusRiskProjectIdInputField.getText();
-                    String input3 = apiTokenInputField.getText();
+                    String iriusRiskDomain = iriusRiskDomainInputField.getText();
+                    String iriusRiskProjectId = iriusRiskProjectIdInputField.getText();
+                    String apiToken = apiTokenInputField.getText();
                     
-                    generateXmlReport();
+                    String path = generateXmlReport();
                     // Process the inputs here as desired
                     // For this example, we'll just display them in the Output panel
-                    String output = "Input 1: " + input1 + "\nInput 2: " + input2 + "\nInput 3: " + input3;
-                    View.getSingleton().getOutputPanel().append(output);
+                    String endpoint = iriusRiskDomain + "/api/v1/products/"+iriusRiskProjectId+"/tests/zap/upload";
+                    
+
+                    try {
+                        // URL for the POST request
+                        URI url = new URI(endpoint);
+                        File file = new File(path);
+
+                        HttpClient httpClient = HttpClientBuilder.create().build();
+                        HttpPost httpPost = new HttpPost(endpoint);
+
+                        View.getSingleton().getOutputPanel().append("Connection created\n");
+
+                        // Set headers
+                        httpPost.setHeader("api-token", apiToken);
+                        httpPost.setHeader("Accept", "application/json");
+
+                        View.getSingleton().getOutputPanel().append("Connection configured\n");
+
+                        String output= "Uploading XML to "+endpoint+"\n";
+                        View.getSingleton().getOutputPanel().append(output);
+                        // Build multipart entity
+                        HttpEntity entity = MultipartEntityBuilder.create()
+                                .addPart("fileName", new FileBody(file, ContentType.APPLICATION_XML))
+                                .build();
+
+                        // Set entity to the request
+                        httpPost.setEntity(entity);
+
+                        // Execute the request
+                        HttpResponse response = httpClient.execute(httpPost);
+
+                        // Get the response body
+                        HttpEntity responseEntity = response.getEntity();
+                        String responseBody = EntityUtils.toString(responseEntity);
+
+                        // Print the response body
+                        View.getSingleton().getOutputPanel().append(responseBody);
+                        
+
+                    } catch (Exception exc) {
+                        View.getSingleton().getOutputPanel().append(exc.getMessage());
+                        View.getSingleton().getOutputPanel().append(exc.getStackTrace().toString());
+                    }
                 }
             });
 
@@ -194,7 +268,7 @@ public class ExtensionSimpleExample extends ExtensionAdaptor {
                 View.getSingleton()
                         .showWarningDialog(
                                 Constant.messages.getString(
-                                        ExtensionSimpleExample.PREFIX + ".error.nofile",
+                                        ExtensionReport2IriusRisk.PREFIX + ".error.nofile",
                                         f.getAbsolutePath()));
                 return;
             }

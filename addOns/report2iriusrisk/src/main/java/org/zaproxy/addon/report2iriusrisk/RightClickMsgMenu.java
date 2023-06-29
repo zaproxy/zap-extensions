@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.simpleexample;
+package org.zaproxy.addon.report2iriusrisk;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
@@ -37,9 +37,9 @@ public class RightClickMsgMenu extends PopupMenuItemHttpMessageContainer {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("unused")
-    private ExtensionSimpleExample extension;
+    private ExtensionReport2IriusRisk extension;
 
-    public RightClickMsgMenu(ExtensionSimpleExample ext, String label) {
+    public RightClickMsgMenu(ExtensionReport2IriusRisk ext, String label) {
         super(label);
         /*
          * This is how you can pass in your extension, which you may well need to use
@@ -55,7 +55,7 @@ public class RightClickMsgMenu extends PopupMenuItemHttpMessageContainer {
         View.getSingleton()
                 .showMessageDialog(
                         Constant.messages.getString(
-                                ExtensionSimpleExample.PREFIX + ".popup.msg",
+                                ExtensionReport2IriusRisk.PREFIX + ".popup.msg",
                                 msg.getRequestHeader().getURI().toString()));
     }
 
