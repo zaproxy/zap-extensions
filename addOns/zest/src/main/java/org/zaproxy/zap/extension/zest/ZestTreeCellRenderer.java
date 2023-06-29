@@ -44,6 +44,7 @@ import org.zaproxy.zest.core.v1.ZestClientAssignCookie;
 import org.zaproxy.zest.core.v1.ZestClientElementAssign;
 import org.zaproxy.zest.core.v1.ZestClientElementClear;
 import org.zaproxy.zest.core.v1.ZestClientElementClick;
+import org.zaproxy.zest.core.v1.ZestClientElementMouseOver;
 import org.zaproxy.zest.core.v1.ZestClientElementSendKeys;
 import org.zaproxy.zest.core.v1.ZestClientElementSubmit;
 import org.zaproxy.zest.core.v1.ZestClientLaunch;
@@ -52,6 +53,7 @@ import org.zaproxy.zest.core.v1.ZestClientSwitchToFrame;
 import org.zaproxy.zest.core.v1.ZestClientWindowClose;
 import org.zaproxy.zest.core.v1.ZestClientWindowHandle;
 import org.zaproxy.zest.core.v1.ZestClientWindowOpenUrl;
+import org.zaproxy.zest.core.v1.ZestClientWindowResize;
 import org.zaproxy.zest.core.v1.ZestComment;
 import org.zaproxy.zest.core.v1.ZestConditional;
 import org.zaproxy.zest.core.v1.ZestControlLoopBreak;
@@ -189,6 +191,11 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
                     new ImageIcon(
                             ZestTreeCellRenderer.class.getResource(
                                     "/org/zaproxy/zap/extension/zest/resources/icons/mouse.png")));
+    private static final ImageIcon CLIENT_ELEMENT_MOUSEOVER_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(
+                            ZestTreeCellRenderer.class.getResource(
+                                    "/org/zaproxy/zap/extension/zest/resources/icons/application-cursor.png")));
     private static final ImageIcon CLIENT_ELEMENT_SEND_KEYS_ICON =
             DisplayUtils.getScaledIcon(
                     new ImageIcon(
@@ -225,6 +232,11 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
                     new ImageIcon(
                             ZestTreeCellRenderer.class.getResource(
                                     "/org/zaproxy/zap/extension/zest/resources/icons/application-arrow.png")));
+    private static final ImageIcon CLIENT_WINDOW_RESIZE_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(
+                            ZestTreeCellRenderer.class.getResource(
+                                    "/org/zaproxy/zap/extension/zest/resources/icons/application-resize.png")));
     private static final ImageIcon CLIENT_WINDOW_CLOSE_ICON =
             DisplayUtils.getScaledIcon(
                     new ImageIcon(
@@ -383,6 +395,8 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
                         setIcon(CLIENT_ELEMENT_CLEAR_ICON);
                     } else if (za instanceof ZestClientElementClick) {
                         setIcon(CLIENT_ELEMENT_CLICK_ICON);
+                    } else if (za instanceof ZestClientElementMouseOver) {
+                        setIcon(CLIENT_ELEMENT_MOUSEOVER_ICON);
                     } else if (za instanceof ZestClientElementSendKeys) {
                         setIcon(CLIENT_ELEMENT_SEND_KEYS_ICON);
                     } else if (za instanceof ZestClientElementSubmit) {
@@ -399,6 +413,8 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
                         setIcon(CLIENT_WINDOW_CLOSE_ICON);
                     } else if (za instanceof ZestClientWindowOpenUrl) {
                         setIcon(CLIENT_WINDOW_OPEN_URL_ICON);
+                    } else if (za instanceof ZestClientWindowResize) {
+                        setIcon(CLIENT_WINDOW_RESIZE_ICON);
                     } else {
                         LOGGER.error(
                                 "Unrecognised element class={}",

@@ -36,6 +36,7 @@ import org.zaproxy.zest.core.v1.ZestClientSwitchToFrame;
 import org.zaproxy.zest.core.v1.ZestClientWindowClose;
 import org.zaproxy.zest.core.v1.ZestClientWindowHandle;
 import org.zaproxy.zest.core.v1.ZestClientWindowOpenUrl;
+import org.zaproxy.zest.core.v1.ZestClientWindowResize;
 import org.zaproxy.zest.core.v1.ZestStatement;
 
 public class ZestMenuManager {
@@ -86,6 +87,7 @@ public class ZestMenuManager {
     private ZestAddClientPopupMenu popupAddClientWindowMenu = null;
     private ZestAddClientPopupMenu popupAddClientWindowCloseMenu = null;
     private ZestAddClientPopupMenu popupAddClientWindowOpenUrlMenu = null;
+    private ZestAddClientPopupMenu popupAddClientWindowResizeMenu = null;
     private ZestAddClientPopupMenu popupAddClientScreenshot;
     private ZestAddClientPopupMenu popupAddClientSwitchToFrameMenu = null;
 
@@ -116,6 +118,7 @@ public class ZestMenuManager {
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientWindowMenu());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientWindowCloseMenu());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientWindowOpenUrlMenu());
+        extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientWindowResizeMenu());
 
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddConditionMenu());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddExpressionMenu());
@@ -652,5 +655,29 @@ public class ZestMenuManager {
                     };
         }
         return popupAddClientWindowOpenUrlMenu;
+    }
+
+    private ZestAddClientPopupMenu getPopupAddClientWindowResizeMenu() {
+        if (popupAddClientWindowResizeMenu == null) {
+            popupAddClientWindowResizeMenu =
+                    new ZestAddClientPopupMenu(
+                            this.extension, "zest.clientWindowResize.popup", true) {
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        public void showDialog(
+                                ScriptNode parent, ScriptNode child, ZestStatement request) {
+                            extension
+                                    .getDialogManager()
+                                    .showZestClientWindowResizeDialog(
+                                            parent,
+                                            child,
+                                            request,
+                                            new ZestClientWindowResize(),
+                                            true);
+                        }
+                    };
+        }
+        return popupAddClientWindowResizeMenu;
     }
 }

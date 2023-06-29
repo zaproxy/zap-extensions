@@ -60,6 +60,7 @@ import org.zaproxy.zest.core.v1.ZestClientSwitchToFrame;
 import org.zaproxy.zest.core.v1.ZestClientWindowClose;
 import org.zaproxy.zest.core.v1.ZestClientWindowHandle;
 import org.zaproxy.zest.core.v1.ZestClientWindowOpenUrl;
+import org.zaproxy.zest.core.v1.ZestClientWindowResize;
 import org.zaproxy.zest.core.v1.ZestComment;
 import org.zaproxy.zest.core.v1.ZestControl;
 import org.zaproxy.zest.core.v1.ZestControlReturn;
@@ -106,6 +107,7 @@ public class ZestDialogManager extends AbstractPanel {
     private ZestClientWindowHandleDialog clientWindowDialog = null;
     private ZestClientWindowCloseDialog clientWindowCloseDialog = null;
     private ZestClientWindowOpenUrlDialog clientWindowOpenUrlDialog = null;
+    private ZestClientWindowResizeDialog clientWindowResizeDialog = null;
     private ZestClientSwitchToFrameDialog clientSwitchToFrameDialog = null;
     private ZestClientScreenshotDialog clientScreenshotDialog;
 
@@ -272,6 +274,13 @@ public class ZestDialogManager extends AbstractPanel {
                                                 sn,
                                                 null,
                                                 (ZestClientWindowOpenUrl) obj,
+                                                false);
+                                    } else if (obj instanceof ZestClientWindowResize) {
+                                        showZestClientWindowResizeDialog(
+                                                parent,
+                                                sn,
+                                                null,
+                                                (ZestClientWindowResize) obj,
                                                 false);
                                     } else if (obj instanceof ZestClientSwitchToFrame) {
                                         showZestClientSwitchToFrameDialog(
@@ -790,6 +799,26 @@ public class ZestDialogManager extends AbstractPanel {
         clientWindowOpenUrlDialog.setVisible(true);
     }
 
+    public void showZestClientWindowResizeDialog(
+            ScriptNode parent,
+            ScriptNode child,
+            ZestStatement req,
+            ZestClientWindowResize client,
+            boolean add) {
+        if (clientWindowResizeDialog == null) {
+            clientWindowResizeDialog =
+                    new ZestClientWindowResizeDialog(
+                            extension, View.getSingleton().getMainFrame(), new Dimension(300, 200));
+        } else if (clientWindowResizeDialog.isVisible()) {
+            // Already being displayed, bring to the front but dont overwrite anything
+            bringToFront(clientWindowResizeDialog);
+            return;
+        }
+        ZestScriptWrapper script = extension.getZestTreeModel().getScriptWrapper(parent);
+        clientWindowResizeDialog.init(script, parent, child, req, client, add);
+        clientWindowResizeDialog.setVisible(true);
+    }
+
     public void showZestClientScreenshotDialog(
             ScriptNode parent,
             ScriptNode child,
@@ -911,6 +940,9 @@ public class ZestDialogManager extends AbstractPanel {
         }
         if (clientWindowOpenUrlDialog != null) {
             clientWindowOpenUrlDialog.dispose();
+        }
+        if (clientWindowResizeDialog != null) {
+            clientWindowResizeDialog.dispose();
         }
         if (clientSwitchToFrameDialog != null) {
             clientSwitchToFrameDialog.dispose();

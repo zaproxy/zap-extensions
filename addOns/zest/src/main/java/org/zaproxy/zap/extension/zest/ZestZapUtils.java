@@ -72,6 +72,7 @@ import org.zaproxy.zest.core.v1.ZestClientSwitchToFrame;
 import org.zaproxy.zest.core.v1.ZestClientWindowClose;
 import org.zaproxy.zest.core.v1.ZestClientWindowHandle;
 import org.zaproxy.zest.core.v1.ZestClientWindowOpenUrl;
+import org.zaproxy.zest.core.v1.ZestClientWindowResize;
 import org.zaproxy.zest.core.v1.ZestComment;
 import org.zaproxy.zest.core.v1.ZestConditional;
 import org.zaproxy.zest.core.v1.ZestControlLoopBreak;
@@ -867,6 +868,19 @@ public class ZestZapUtils {
             } else {
                 return indexStr
                         + Constant.messages.getString("zest.element.clientWindowOpenUrl.title");
+            }
+        } else if (za instanceof ZestClientWindowResize) {
+            ZestClientWindowResize zcl = (ZestClientWindowResize) za;
+            if (incParams) {
+                return indexStr
+                        + Constant.messages.getString(
+                                "zest.element.clientWindowResize",
+                                zcl.getWindowHandle(),
+                                zcl.getX(),
+                                zcl.getY());
+            } else {
+                return indexStr
+                        + Constant.messages.getString("zest.element.clientWindowResize.title");
             }
         }
 
