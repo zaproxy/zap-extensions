@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - The following now include example alert functionality for documentation generation purposes (Issue 6119):
+    - Re-examine Cache-control Directives Scan Rule
     - X-Backend-Server Scan Rule
     - X-ChromeLogger-Data Header Information Leak Scan Rule
 

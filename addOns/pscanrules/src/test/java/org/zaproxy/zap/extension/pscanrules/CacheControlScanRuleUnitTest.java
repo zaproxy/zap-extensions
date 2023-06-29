@@ -26,10 +26,12 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -402,5 +404,26 @@ class CacheControlScanRuleUnitTest extends PassiveScannerTest<CacheControlScanRu
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldReturnExpectedExampleAlert() {
+        String MESSAGE_PREFIX = "pscanrules.cachecontrol.";
+
+        List<Alert> alerts = rule.getExampleAlerts();
+
+        Alert alert = alerts.get(0);
+        assertThat(alert.getRisk(), equalTo(Alert.RISK_INFO));
+        assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_LOW));
+        assertThat(
+                alert.getReference(),
+                equalTo(Constant.messages.getString(MESSAGE_PREFIX + "refs")));
+        assertThat(
+                alert.getSolution(), equalTo(Constant.messages.getString(MESSAGE_PREFIX + "soln")));
+        assertThat(
+                alert.getDescription(),
+                equalTo(Constant.messages.getString(MESSAGE_PREFIX + "desc")));
+        assertThat(alert.getEvidence(), equalTo("no-store, must-revalidate"));
+        assertThat(alert.getParam(), equalTo(HttpHeader.CACHE_CONTROL));
     }
 }
