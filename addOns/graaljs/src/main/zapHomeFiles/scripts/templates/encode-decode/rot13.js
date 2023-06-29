@@ -1,8 +1,6 @@
 // This ROT13 example only handles upper and lower case A to Z (no numbers, punctuation, or extended chars)
-var EncodeDecodeResult = Java.type("org.zaproxy.addon.encoder.processors.EncodeDecodeResult");
-
-function process(value){
-  return new EncodeDecodeResult(rot13(value));
+function process(helper, value){
+  return helper.newResult(rot13(value));
 }
 
 function rot(chr, start, val) {

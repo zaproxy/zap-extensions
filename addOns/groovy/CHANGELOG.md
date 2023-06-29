@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Replace usage of singletons with injected variables (e.g. `model`, `control`) in scripts.
 - Dependency updates.
 
+### Fixed
+- Updated encode-decode script template to conform to the latest method signatures.
+
 ## [3.1.0] - 2021-10-07
 ### Added
 - encode-decode default template.
