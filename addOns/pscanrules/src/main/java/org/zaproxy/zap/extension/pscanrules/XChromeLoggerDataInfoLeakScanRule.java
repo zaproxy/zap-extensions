@@ -70,17 +70,7 @@ public class XChromeLoggerDataInfoLeakScanRule extends PluginPassiveScanner {
 
         if (!loggerHeaders.isEmpty()) { // Header(s) Found
             for (String xcldField : loggerHeaders) {
-                newAlert()
-                        .setRisk(Alert.RISK_MEDIUM)
-                        .setConfidence(Alert.CONFIDENCE_HIGH)
-                        .setDescription(getDescription())
-                        .setOtherInfo(getOtherInfo(xcldField))
-                        .setSolution(getSolution())
-                        .setReference(getReference())
-                        .setEvidence(xcldField)
-                        .setCweId(200)
-                        .setWascId(13)
-                        .raise();
+                createAlert(xcldField).raise();
             }
         }
         LOGGER.debug("\tScan of record {} took {}ms", id, System.currentTimeMillis() - start);
@@ -124,5 +114,34 @@ public class XChromeLoggerDataInfoLeakScanRule extends PluginPassiveScanner {
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    private AlertBuilder createAlert(String xcldField) {
+        return newAlert()
+                .setRisk(Alert.RISK_MEDIUM)
+                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setDescription(getDescription())
+                .setOtherInfo(getOtherInfo(xcldField))
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(xcldField)
+                .setCweId(200)
+                .setWascId(13);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                createAlert(
+                                "eyJ2ZXJzaW9uIjoiNC4wIiwiY29sdW"
+                                        + "1ucyI6WyJsYWJlbCIsImxvZyIsImJhY2t0cmFjZSIsInR5cGUiXSwicm93cyI"
+                                        + "6W1sicmVxdWVzdCIsIk1hdGNoZWQgcm91dGUgXCJhcHBfc2VjdXJpdHlfbG9n"
+                                        + "aW5cIiAocGFyYW1ldGVyczogXCJfY29udHJvbGxlclwiOiBcIkJhY2tFbmRcX"
+                                        + "EFwcEJ1bmRsZVxcQ29udHJvbGxlclxcU2VjdXJpdHlDb250cm9sbGVyOjpsb2"
+                                        + "dpbkFjdGlvblwiLCBcIl9yb3V0ZVwiOiBcImFwcF9zZWN1cml0eV9sb2dpblw"
+                                        + "iKSIsInVua25vd24iLCJpbmZvIl0sWyJzZWN1cml0eSIsIlBvcHVsYXRlZCBT"
+                                        + "ZWN1cml0eUNvbnRleHQgd2l0aCBhbiBhbm9ueW1vdXMgVG9rZW4iLCJ1bmtub"
+                                        + "3duIiwiaW5mbyJdXSwicmVxdWVzdF91cmkiOiJcL2xvZ2luIn0=")
+                        .build());
     }
 }
