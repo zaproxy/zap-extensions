@@ -753,7 +753,7 @@
     "cpe": "cpe:2.3:a:lightbox_photo_gallery_project:lightbox_photo_gallery:*:*:*:*:*:*:*:*",
     "description": "Lightbox is small javascript library used to overlay images on top of the current page.",
     "dom": {
-      "link[href*='lightbox]": {
+      "link[href*='lightbox']": {
         "attributes": {
           "href": "/lightbox(?:\\.min)?\\.css"
         }
