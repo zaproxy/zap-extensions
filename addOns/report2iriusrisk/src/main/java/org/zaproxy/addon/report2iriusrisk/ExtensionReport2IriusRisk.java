@@ -102,6 +102,7 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
 
     private JPanel inputPanel;
     private JTextField iriusRiskDomainInputField;
+    private JTextField zapApiKeyInputField;
     private JTextField iriusRiskProjectIdInputField;
     private JTextField apiTokenInputField;
     private JButton submitButton;
@@ -144,10 +145,10 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
         // here (if the extension declares that can be unloaded, see above method).
     }
 
-    private String generateXmlReport() {
+    private String generateXmlReport(String ZAP_API_KEY) {
         String path = null;
         try {
-            path = GenerateReportXML.generate();
+            path = GenerateReportXML.generate(ZAP_API_KEY);
             View.getSingleton().showMessageDialog("XML Report generated successfully.");
         } catch (Exception e) {
             View.getSingleton().showWarningDialog("Failed to generate XML report: " + e.getMessage());
@@ -161,23 +162,26 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
             statusPanel.setLayout(new GridLayout(4, 2));
             statusPanel.setName(Constant.messages.getString(PREFIX + ".panel.title"));
             statusPanel.setIcon(new ImageIcon(getClass().getResource(RESOURCES + "/cake.png")));
-
+            
+            JLabel zapApiKeyLabel = new JLabel("ZAP API Key:");
+            zapApiKeyInputField = new JTextField();
             JLabel iriusRiskDomainLabel = new JLabel("IriusRisk Domain:");
             iriusRiskDomainInputField = new JTextField();
             JLabel iriusRiskProjectIdLabel = new JLabel("IriusRisk Project ID:");
             iriusRiskProjectIdInputField = new JTextField();
-            JLabel apiTokenLabel = new JLabel("Api Token:");
+            JLabel apiTokenLabel = new JLabel("IriusRisk API Token:");
             apiTokenInputField = new JTextField();
             submitButton = new JButton("Submit");
 
             submitButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
+                    String zapApiKey = zapApiKeyInputField.getText();
                     String iriusRiskDomain = iriusRiskDomainInputField.getText();
                     String iriusRiskProjectId = iriusRiskProjectIdInputField.getText();
                     String apiToken = apiTokenInputField.getText();
                     
-                    String path = generateXmlReport();
+                    String path = generateXmlReport(zapApiKey);
                     // Process the inputs here as desired
                     // For this example, we'll just display them in the Output panel
                     String endpoint = iriusRiskDomain + "/api/v1/products/"+iriusRiskProjectId+"/tests/zap/upload";
@@ -211,7 +215,9 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
 
                         // Execute the request
                         HttpResponse response = httpClient.execute(httpPost);
-
+                        
+                        // Get the response code
+                        int statusCode = response.getStatusLine().getStatusCode();
                         // Get the response body
                         HttpEntity responseEntity = response.getEntity();
                         String responseBody = EntityUtils.toString(responseEntity);
@@ -219,14 +225,20 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
                         // Print the response body
                         View.getSingleton().getOutputPanel().append(responseBody);
                         
-
+                        if(statusCode==200 || statusCode==201){
+                            View.getSingleton().showMessageDialog("Report uploaded successfully.");
+                        }else{
+                            View.getSingleton().showWarningDialog("Failed to upload report: " + responseBody);
+                        }
                     } catch (Exception exc) {
                         View.getSingleton().getOutputPanel().append(exc.getMessage());
-                        View.getSingleton().getOutputPanel().append(exc.getStackTrace().toString());
+                        View.getSingleton().showWarningDialog("Failed to upload report");
                     }
                 }
             });
 
+            statusPanel.add(zapApiKeyLabel);
+            statusPanel.add(zapApiKeyInputField);
             statusPanel.add(iriusRiskDomainLabel);
             statusPanel.add(iriusRiskDomainInputField);
             statusPanel.add(apiTokenLabel);

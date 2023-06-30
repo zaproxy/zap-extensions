@@ -13,11 +13,9 @@ public class GenerateReportXML {
     private static final String ZAP_ADDRESS = "localhost";
     private static final int ZAP_PORT = 8080;
     // Change to match the API key set in ZAP, or use NULL if the API key is disabled
-    private static final String ZAP_API_KEY = "veqep5usrrf1vtjk5unp94a7e6";
-    // The URL of the application to be tested
-    private static final String TARGET = "https://public-firing-range.appspot.com";
 
-    public static String generate() {
+
+    public static String generate(String ZAP_API_KEY) {
         View.getSingleton().showMessageDialog("Generating Report");
         String title = "Zap-Report";
         String template = "traditional-xml";
