@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Update dependencies.
+- Update default user-agents.
 
 ## [0.9.0] - 2023-06-06
 ### Changed
