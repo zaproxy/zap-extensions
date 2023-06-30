@@ -23,7 +23,7 @@
     ],
     "saas": true,
     "scriptSrc": "bitrix(?:\\.info/|/js/main/core)",
-    "website": "http://www.1c-bitrix.ru"
+    "website": "https://www.1c-bitrix.ru"
   },
   "2B Advice": {
     "cats": [

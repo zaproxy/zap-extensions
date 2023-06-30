@@ -44,7 +44,7 @@
     "js": {
       "vivvo": ""
     },
-    "website": "http://vivvo.net"
+    "website": "https://vivvo.net"
   },
   "VK Pixel": {
     "cats": [
@@ -74,7 +74,7 @@
     "icon": "VP-ASP.png",
     "implies": "Microsoft ASP.NET",
     "scriptSrc": "vs350\\.js",
-    "website": "http://www.vpasp.com"
+    "website": "https://www.vpasp.com"
   },
   "VTEX": {
     "cats": [
@@ -205,7 +205,28 @@
     "html": "<body id=\"(?:DiscussionsPage|vanilla)",
     "icon": "Vanilla.png",
     "implies": "PHP",
-    "website": "http://vanillaforums.org"
+    "website": "https://vanillaforums.org"
+  },
+  "Vant": {
+    "cats": [
+      66
+    ],
+    "description": "Vant is a lightweight, customisable Vue UI library for mobile web apps.",
+    "dom": {
+      "link[href*='/npm/vant']": {
+        "attributes": {
+          "href": "cdn\\.jsdelivr\\.net/npm/vant@([\\d\\.]+)/\\;version:\\1"
+        }
+      }
+    },
+    "icon": "Vant.png",
+    "implies": "TypeScript",
+    "js": {
+      "vant.version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "oss": true,
+    "requires": "Vue.js",
+    "website": "https://github.com/youzan/vant"
   },
   "Varbase": {
     "cats": [
@@ -250,7 +271,7 @@
       "X-Varnish-Hostname": ""
     },
     "icon": "Varnish.svg",
-    "website": "http://www.varnish-cache.org"
+    "website": "https://www.varnish-cache.org"
   },
   "Ve Global": {
     "cats": [
@@ -330,7 +351,7 @@
       "VuVeoxaContent": ""
     },
     "scriptSrc": "tracking\\.veoxa\\.com",
-    "website": "http://veoxa.com"
+    "website": "https://veoxa.com"
   },
   "Vercel": {
     "cats": [
@@ -463,6 +484,26 @@
     ],
     "website": "https://www.verticalscope.com"
   },
+  "Very Good Security": {
+    "cats": [
+      16
+    ],
+    "description": "Very Good Security (VGS) is a data security and compliance platform that enables developers to securely handle sensitive data by encrypting, tokenising, and transmitting it through an intermediary service.",
+    "headers": {
+      "Content-Security-Policy": "\\.verygoodvault\\.com"
+    },
+    "icon": "Very Good Security.svg",
+    "js": {
+      "VGSCollect": ""
+    },
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "js\\.verygoodvault\\.com/",
+    "website": "https://www.verygoodsecurity.com"
+  },
   "Vev": {
     "cats": [
       51
@@ -487,7 +528,7 @@
       91
     ],
     "description": "ViaBill is a cloud-based payment management solution designed to help small to midsize retailers and webshops.",
-    "icon": "ViaBill.png",
+    "icon": "ViaBill.svg",
     "js": {
       "viabillOptions.state.subscriptions": "",
       "viabillPricetagInternal.conf.productsByLocale": ""
@@ -569,7 +610,7 @@
       "zencdn\\.net/c/video\\.js",
       "cdnjs\\.cloudflare\\.com\\/ajax\\/libs\\/video\\.js\\/([\\d\\.]+)\\/\\;version:\\1"
     ],
-    "website": "http://videojs.com"
+    "website": "https://videojs.com"
   },
   "Vigbo": {
     "cats": [
@@ -607,7 +648,7 @@
     ],
     "html": "<[^>]+=\"vgn-?ext",
     "icon": "Vignette.png",
-    "website": "http://www.vignette.com"
+    "website": "https://www.vignette.com"
   },
   "Vimeo": {
     "cats": [
@@ -621,7 +662,7 @@
       "VimeoPlayer": ""
     },
     "saas": true,
-    "website": "http://vimeo.com"
+    "website": "https://vimeo.com"
   },
   "Vimeo OTT": {
     "cats": [
@@ -754,7 +795,7 @@
     "html": "<div id=\"vmMainPage",
     "icon": "VirtueMart.png",
     "implies": "Joomla",
-    "website": "http://virtuemart.net"
+    "website": "https://virtuemart.net"
   },
   "Virtuoso": {
     "cats": [
@@ -1266,6 +1307,20 @@
     },
     "website": "https://vuukle.com"
   },
+  "v4Guard Checkpoint": {
+    "cats": [
+      16
+    ],
+    "description": "Checkpoint is a product of v4Guard that verifies website users and prevents fraudulent access to sensitive areas, by checking for any use of anonymisation services with a captcha-like widget.",
+    "icon": "v4Guard.svg",
+    "pricing": [
+      "poa",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.v4guard\\.io/checkpoint",
+    "website": "https://v4guard.io"
+  },
   "vBulletin": {
     "cats": [
       2
@@ -1322,7 +1377,7 @@
       "designer": "vibecommerce",
       "generator": "vibecommerce"
     },
-    "website": "http://vibecommerce.com.br"
+    "website": "https://vibecommerce.com.br"
   },
   "vxe-table": {
     "cats": [

@@ -9,7 +9,7 @@
     "meta": {
       "generator": "LEPTON"
     },
-    "website": "http://www.lepton-cms.org"
+    "website": "https://www.lepton-cms.org"
   },
   "LGC": {
     "cats": [
@@ -401,7 +401,7 @@
       "L.version": "^(.+)$\\;version:\\1\\;confidence:0"
     },
     "scriptSrc": "leaflet.{0,32}\\.js(?!.+shopify)",
-    "website": "http://leafletjs.com"
+    "website": "https://leafletjs.com"
   },
   "Leaflet platform": {
     "cats": [
@@ -510,6 +510,22 @@
     "scriptSrc": "\\.legalmonster\\.com/",
     "website": "https://www.legalmonster.com"
   },
+  "Lemon Squeezy": {
+    "cats": [
+      41
+    ],
+    "description": "Lemon Squeezy is a platform designed for SaaS businesses, providing functionalities such as payment processing, subscription management, global tax compliance, fraud prevention, multi-currency support, failed payment recovery, and integration with PayPal, with the aim of facilitating the operational management of software businesses.",
+    "icon": "Lemon Squeezy.svg",
+    "js": {
+      "LemonSqueezy": "",
+      "lemonSqueezyAffiliateConfig": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://www.lemonsqueezy.com"
+  },
   "Lengow": {
     "cats": [
       19
@@ -559,7 +575,7 @@
     ],
     "html": "<link[^>]+ rel=\"stylesheet/less\"",
     "icon": "Less.png",
-    "website": "http://lesscss.org"
+    "website": "https://lesscss.org"
   },
   "Let's Encrypt": {
     "cats": [
@@ -587,6 +603,25 @@
     "saas": true,
     "scriptSrc": "letro\\.jp/tags",
     "website": "https://service.aainc.co.jp/product/letro/"
+  },
+  "Levar": {
+    "cats": [
+      105
+    ],
+    "description": "Levar specialises in 3D visualisation technology for ecommerce stores.",
+    "icon": "Levar.png",
+    "js": {
+      "levARActivationHelper": "",
+      "levar.session_info": "",
+      "levar_onload_variant_id": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://levar.io"
   },
   "Level 5": {
     "cats": [
@@ -627,7 +662,7 @@
     "description": "Lexity is the one-stop-shop of ecommerce services for SMBs.",
     "icon": "Lexity.png",
     "scriptSrc": "\\.lexity\\.com/",
-    "website": "http://lexity.com"
+    "website": "https://lexity.com"
   },
   "Liberapay": {
     "cats": [
@@ -694,7 +729,7 @@
     },
     "icon": "Lift.png",
     "implies": "Scala",
-    "website": "http://liftweb.net"
+    "website": "https://liftweb.net"
   },
   "LightMon Engine": {
     "cats": [
@@ -709,17 +744,29 @@
     "meta": {
       "generator": "LightMon Engine"
     },
-    "website": "http://lightmon.ru"
+    "website": "https://lightmon.ru"
   },
   "Lightbox": {
     "cats": [
       59
     ],
     "cpe": "cpe:2.3:a:lightbox_photo_gallery_project:lightbox_photo_gallery:*:*:*:*:*:*:*:*",
-    "html": "<link [^>]*href=\"[^\"]+lightbox(?:\\.min)?\\.css",
+    "description": "Lightbox is small javascript library used to overlay images on top of the current page.",
+    "dom": {
+      "link[href*='lightbox']": {
+        "attributes": {
+          "href": "/lightbox(?:\\.min)?\\.css"
+        }
+      }
+    },
     "icon": "Lightbox.png",
+    "js": {
+      "Lightbox.activeImage": "",
+      "lightbox.$lightbox": ""
+    },
+    "oss": true,
     "scriptSrc": "lightbox(?:-plus-jquery)?.{0,32}\\.js",
-    "website": "http://lokeshdhakar.com/projects/lightbox2/"
+    "website": "https://lokeshdhakar.com/projects/lightbox2/"
   },
   "Lightning": {
     "cats": [
@@ -752,7 +799,7 @@
     "saas": true,
     "scriptSrc": "http://assets\\.webshopapp\\.com",
     "url": "seoshop.webshopapp.com",
-    "website": "http://www.lightspeedhq.com/products/ecommerce/"
+    "website": "https://www.lightspeedhq.com/products/ecommerce/"
   },
   "LimeChat": {
     "cats": [
@@ -818,18 +865,39 @@
     "requires": "WordPress",
     "website": "https://www.limitloginattempts.com"
   },
-  "LinkSmart": {
+  "Linen": {
     "cats": [
-      36
+      2
     ],
-    "icon": "LinkSmart.png",
+    "description": "Linen is a real-time chat platform built for communities.",
+    "icon": "Linen.svg",
+    "implies": [
+      "TypeScript",
+      "Elixir"
+    ],
     "js": {
-      "LS_JSON": "",
-      "LinkSmart": "",
-      "_mb_site_guid": ""
+      "__NEXT_DATA__.props.pageProps.currentCommunity.logoUrl": "static\\.main\\.linendev\\.com/"
     },
-    "scriptSrc": "^https?://cdn\\.linksmart\\.com/linksmart_([\\d.]+?)(?:\\.min)?\\.js\\;version:\\1",
-    "website": "http://linksmart.com"
+    "oss": true,
+    "website": "https://www.linen.dev"
+  },
+  "LinkMink": {
+    "cats": [
+      10,
+      71
+    ],
+    "description": "LinkMink is an affiliate tracking and management for SaaS companies.",
+    "icon": "LinkMink.svg",
+    "js": {
+      "LinkMink": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "cdn\\.linkmink\\.com/lm-js/([\\d\\.]+)/\\;version:\\1",
+    "website": "https://linkmink.com"
   },
   "Linkedin Ads": {
     "cats": [
@@ -953,7 +1021,7 @@
       "list\\.js/\\;confidence:50",
       "@([\\d.]+)/(?:/dist)?list\\.(?:min\\.)?js\\;version:\\1"
     ],
-    "website": "http://listjs.com"
+    "website": "https://listjs.com"
   },
   "Listrak": {
     "cats": [
@@ -986,7 +1054,7 @@
       "Server": "^LiteSpeed$"
     },
     "icon": "LiteSpeed.svg",
-    "website": "http://litespeedtech.com"
+    "website": "https://litespeedtech.com"
   },
   "Litespeed Cache": {
     "cats": [
@@ -1109,7 +1177,7 @@
       "low"
     ],
     "saas": true,
-    "website": "http://www.livehelp.it"
+    "website": "https://www.livehelp.it"
   },
   "LiveIntent": {
     "cats": [
@@ -1136,7 +1204,7 @@
     "description": "LiveJournal is a social networking service where users can keep a blog, journal or diary.",
     "icon": "LiveJournal.png",
     "url": "\\.livejournal\\.com",
-    "website": "http://www.livejournal.com"
+    "website": "https://www.livejournal.com"
   },
   "LivePerson": {
     "cats": [
@@ -1210,7 +1278,7 @@
     "js": {
       "LIVESTREET_SECURITY_KEY": ""
     },
-    "website": "http://livestreetcms.com"
+    "website": "https://livestreetcms.com"
   },
   "LiveZilla": {
     "cats": [
@@ -1245,7 +1313,7 @@
       "fyre": ""
     },
     "scriptSrc": "livefyre_init\\.js",
-    "website": "http://livefyre.com"
+    "website": "https://livefyre.com"
   },
   "Liveinternet": {
     "cats": [
@@ -1258,7 +1326,7 @@
       "<a href=\"http://www\\.liveinternet\\.ru/click\""
     ],
     "icon": "Liveinternet.png",
-    "website": "http://liveinternet.ru/rating/"
+    "website": "https://liveinternet.ru/rating/"
   },
   "Livescale": {
     "cats": [
@@ -1396,19 +1464,25 @@
       "_.templateSettings.imports._.templateSettings.imports._.VERSION": "^(.+)$\\;version:\\1"
     },
     "scriptSrc": "lodash.*\\.js",
-    "website": "http://www.lodash.com"
+    "website": "https://www.lodash.com"
   },
   "LogRocket": {
     "cats": [
       10
     ],
-    "description": "LogRocket records videos of user sessions with logs and network data.",
+    "description": "LogRocket is a logging and session replay platform that helps developers identify and troubleshoot issues in web applications by recording and replaying user sessions, along with capturing logs and user interactions in real-time.",
     "icon": "LogRocket.svg",
-    "scriptSrc": [
-      "cdn\\.logrocket\\.(com|io)",
-      "cdn\\.lr-ingest\\.io"
+    "js": {
+      "LogRocket._buffer": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
     ],
-    "website": "https://logrocket.com/"
+    "saas": true,
+    "scriptSrc": "cdn\\.(?:lr-ingest|logrocket)\\.(?:com|io)",
+    "website": "https://logrocket.com"
   },
   "Loggly": {
     "cats": [
@@ -1734,7 +1808,7 @@
       "X-Powered-By": "\\bLua(?: ([\\d.]+))?\\;version:\\1"
     },
     "icon": "Lua.png",
-    "website": "http://www.lua.org"
+    "website": "https://www.lua.org"
   },
   "Luana": {
     "cats": [
@@ -1760,7 +1834,7 @@
     "description": "Lucene is a free and open-source search engine software library.",
     "icon": "Lucene.png",
     "implies": "Java",
-    "website": "http://lucene.apache.org/core/"
+    "website": "https://lucene.apache.org/core/"
   },
   "Lucky Orange": {
     "cats": [
@@ -1892,7 +1966,7 @@
     },
     "icon": "libwww-perl-daemon.png",
     "implies": "Perl",
-    "website": "http://metacpan.org/pod/HTTP::Daemon"
+    "website": "https://metacpan.org/pod/HTTP::Daemon"
   },
   "lighttpd": {
     "cats": [
@@ -1904,7 +1978,7 @@
     },
     "icon": "lighttpd.svg",
     "oss": true,
-    "website": "http://www.lighttpd.net"
+    "website": "https://www.lighttpd.net"
   },
   "lit-element": {
     "cats": [

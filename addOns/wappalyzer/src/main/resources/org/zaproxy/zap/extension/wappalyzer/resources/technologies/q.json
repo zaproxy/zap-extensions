@@ -258,7 +258,7 @@
     "icon": "question2answer.png",
     "implies": "PHP",
     "scriptSrc": "\\./qa-content/qa-page\\.js\\?([0-9.]+)\\;version:\\1",
-    "website": "http://www.question2answer.org"
+    "website": "https://www.question2answer.org"
   },
   "Queue-it": {
     "cats": [
@@ -287,7 +287,7 @@
     "meta": {
       "generator": "Quick\\.CMS(?: v([\\d.]+))?\\;version:\\1"
     },
-    "website": "http://opensolution.org"
+    "website": "https://opensolution.org"
   },
   "Quick.Cart": {
     "cats": [
@@ -298,7 +298,7 @@
     "meta": {
       "generator": "Quick\\.Cart(?: v([\\d.]+))?\\;version:\\1"
     },
-    "website": "http://opensolution.org"
+    "website": "https://opensolution.org"
   },
   "QuickSell": {
     "cats": [
@@ -314,12 +314,29 @@
     "scriptSrc": "\\.quicksell\\.co/",
     "website": "https://quicksell.co"
   },
+  "Quickbutik": {
+    "cats": [
+      6
+    ],
+    "description": "Quickbutik is an all-in-one ecommerce platform from Sweden.",
+    "icon": "Quickbutik.svg",
+    "meta": {
+      "author": "^Quickbutik$"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.quickbutik\\.com/",
+    "website": "https://quickbutik.com"
+  },
   "Quicklink": {
     "cats": [
       59,
       92
     ],
-    "description": "Quicklink is a JS library which aims to be a drop-in solution for sites to prefetch links based on what is in the user's viewport",
+    "description": "Quicklink is a JS library which aims to be a drop-in solution for sites to prefetch links based on what is in the user's viewport.",
     "icon": "Quicklink.svg",
     "js": {
       "drupalSettings.quicklink": "",
@@ -360,7 +377,7 @@
     "js": {
       "Quill": ""
     },
-    "website": "http://quilljs.com"
+    "website": "https://quilljs.com"
   },
   "Quintype": {
     "cats": [

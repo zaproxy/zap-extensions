@@ -10,7 +10,7 @@
       "d3.version": "^(.+)$\\;version:\\1"
     },
     "scriptSrc": "/d3(?:\\. v\\d+)?(?:\\.min)?\\.js",
-    "website": "http://d3js.org"
+    "website": "https://d3js.org"
   },
   "DDoS-Guard": {
     "cats": [
@@ -77,7 +77,7 @@
       "onetime"
     ],
     "scriptSrc": "/dhtmlxcommon\\.js",
-    "website": "http://dhtmlx.com"
+    "website": "https://dhtmlx.com"
   },
   "DM Polopoly": {
     "cats": [
@@ -87,7 +87,7 @@
     "dom": "img[data-src*='/polopoly_fs/'], link[href*='/polopoly_fs/'], img[src*='/polopoly_fs/']",
     "icon": "DM Polopoly.png",
     "implies": "Java",
-    "website": "http://www.atex.com/products/dm-polopoly"
+    "website": "https://www.atex.com/products/dm-polopoly"
   },
   "DNN": {
     "cats": [
@@ -266,7 +266,7 @@
       "poa"
     ],
     "saas": true,
-    "website": "http://perldancer.org"
+    "website": "https://perldancer.org"
   },
   "Danneo CMS": {
     "cats": [
@@ -283,7 +283,7 @@
     "meta": {
       "generator": "Danneo CMS ([\\d.]+)\\;version:\\1"
     },
-    "website": "http://danneo.com"
+    "website": "https://danneo.com"
   },
   "Daphne": {
     "cats": [
@@ -389,7 +389,7 @@
     },
     "oss": true,
     "scriptSrc": "dataTables.*\\.js",
-    "website": "http://datatables.net"
+    "website": "https://datatables.net"
   },
   "Datadog": {
     "cats": [
@@ -515,7 +515,7 @@
       "DedeContainer": ""
     },
     "scriptSrc": "dedeajax",
-    "website": "http://dedecms.com"
+    "website": "https://dedecms.com"
   },
   "Delacon": {
     "cats": [
@@ -909,7 +909,7 @@
     "meta": {
       "generator": "Discuz! X([\\d\\.]+)?\\;version:\\1"
     },
-    "website": "http://www.discuz.net"
+    "website": "https://www.discuz.net"
   },
   "Disqus": {
     "cats": [
@@ -1166,8 +1166,7 @@
     "implies": [
       "PHP",
       "Xajax",
-      "jQuery",
-      "CKEditor"
+      "jQuery"
     ],
     "meta": {
       "generator": "Dokeos"
@@ -1333,7 +1332,7 @@
     },
     "icon": "Dotclear.png",
     "implies": "PHP",
-    "website": "http://dotclear.org"
+    "website": "https://dotclear.org"
   },
   "Dotdigital": {
     "cats": [
@@ -1411,7 +1410,7 @@
       "tpc\\.googlesyndication\\.com/safeframe",
       "googlesyndication\\.com.*abg\\.js"
     ],
-    "website": "http://www.doubleclickbygoogle.com/solutions/digital-marketing/ad-exchange/"
+    "website": "https://www.doubleclickbygoogle.com/solutions/digital-marketing/ad-exchange/"
   },
   "DoubleClick Campaign Manager (DCM)": {
     "cats": [
@@ -1419,7 +1418,7 @@
     ],
     "icon": "DoubleClick.svg",
     "scriptSrc": "2mdn\\.net",
-    "website": "http://www.doubleclickbygoogle.com/solutions/digital-marketing/campaign-manager/"
+    "website": "https://www.doubleclickbygoogle.com/solutions/digital-marketing/campaign-manager/"
   },
   "DoubleClick Floodlight": {
     "cats": [
@@ -1427,7 +1426,7 @@
     ],
     "icon": "DoubleClick.svg",
     "scriptSrc": "https?://fls\\.doubleclick\\.net",
-    "website": "http://support.google.com/ds/answer/6029713?hl=en"
+    "website": "https://support.google.com/ds/answer/6029713?hl=en"
   },
   "DoubleClick for Publishers (DFP)": {
     "cats": [
@@ -1440,7 +1439,7 @@
     ],
     "saas": true,
     "scriptSrc": "googletagservices\\.com/tag/js/gpt(?:_mobile)?\\.js",
-    "website": "http://www.google.com/dfp"
+    "website": "https://www.google.com/dfp"
   },
   "DoubleVerify": {
     "cats": [
@@ -1500,7 +1499,7 @@
     "meta": {
       "generator": "Doxygen ([\\d.]+)\\;version:\\1"
     },
-    "website": "http://www.doxygen.nl/"
+    "website": "https://www.doxygen.nl/"
   },
   "Draft.js": {
     "cats": [
@@ -1787,18 +1786,34 @@
       "/profiles/commerce_kickstart/modules/contrib/commerce/modules/checkout/commerce_checkout\\.js\\;confidence:50",
       "/sites/(?:all|default)/modules/(?:contrib/)?commerce/modules/checkout/commerce_checkout\\.js\\;confidence:50"
     ],
-    "website": "http://drupalcommerce.org"
+    "website": "https://drupalcommerce.org"
   },
   "Drupal Multisite": {
     "cats": [
       88
     ],
     "description": "Drupal Multisite enables separate, independent sites to be served from a single codebase.",
+    "dom": {
+      "figure[style*='/sites/']": {
+        "attributes": {
+          "style": "/sites/(?!(?:default|all)/).*/(?:files|themes|modules)/"
+        }
+      },
+      "img[src*='/sites/'], img[srcset*='/sites/'], source[srcset*='/sites/']": {
+        "attributes": {
+          "src": "/sites/(?!(?:default|all)/).*/(?:files|themes|modules)/",
+          "srcset": "/sites/(?!(?:default|all)/).*/(?:files|themes|modules)/"
+        }
+      },
+      "style": {
+        "text": "/sites/(?!(?:default|all)/).*/(?:files|themes|modules)/"
+      }
+    },
     "icon": "Drupal.svg",
-    "implies": "Drupal",
     "oss": true,
+    "requires": "Drupal",
     "scriptSrc": [
-      "/sites/(?!.*(default|all)).*/(?:files|themes|modules)/"
+      "/sites/(?!(?:default|all)/).*/(?:files|themes|modules)/"
     ],
     "website": "https://www.drupal.org/docs/multisite-drupal"
   },
@@ -1914,7 +1929,7 @@
     "meta": {
       "generator": "Dynamicweb ([\\d.]+)\\;version:\\1"
     },
-    "website": "http://www.dynamicweb.dk"
+    "website": "https://www.dynamicweb.dk"
   },
   "Dynatrace": {
     "cats": [

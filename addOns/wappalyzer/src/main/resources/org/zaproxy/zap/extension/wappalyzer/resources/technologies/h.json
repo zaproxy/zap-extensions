@@ -83,7 +83,7 @@
     },
     "icon": "HHVM.png",
     "implies": "PHP\\;confidence:75",
-    "website": "http://hhvm.com"
+    "website": "https://hhvm.com"
   },
   "HP Compact Server": {
     "cats": [
@@ -93,7 +93,7 @@
       "Server": "HP_Compact_Server(?:/([\\d.]+))?\\;version:\\1"
     },
     "icon": "HP.svg",
-    "website": "http://hp.com"
+    "website": "https://hp.com"
   },
   "HP iLO": {
     "cats": [
@@ -106,7 +106,7 @@
       "Server": "HP-iLO-Server(?:/([\\d.]+))?\\;version:\\1"
     },
     "icon": "HP.svg",
-    "website": "http://hp.com"
+    "website": "https://hp.com"
   },
   "HSTS": {
     "cats": [
@@ -152,7 +152,7 @@
     "description": "Haddock is a tool for automatically generating documentation from annotated Haskell source code.",
     "html": "<p>Produced by <a href=\"http://www\\.haskell\\.org/haddock/\">Haddock</a> version ([0-9.]+)</p>\\;version:\\1",
     "scriptSrc": "haddock-util\\.js",
-    "website": "http://www.haskell.org/haddock/"
+    "website": "https://www.haskell.org/haddock/"
   },
   "Halo": {
     "cats": [
@@ -205,7 +205,7 @@
       "Handlebars.VERSION": "^(.+)$\\;version:\\1"
     },
     "scriptSrc": "handlebars(?:\\.runtime)?(?:-v([\\d.]+?))?(?:\\.min)?\\.js\\;version:\\1",
-    "website": "http://handlebarsjs.com"
+    "website": "https://handlebarsjs.com"
   },
   "Handtalk": {
     "cats": [
@@ -354,7 +354,7 @@
       27
     ],
     "icon": "Haskell.png",
-    "website": "http://wiki.haskell.org/Haskell"
+    "website": "https://wiki.haskell.org/Haskell"
   },
   "Hatena Blog": {
     "cats": [
@@ -381,7 +381,7 @@
       "head.browser.name": ""
     },
     "scriptSrc": "head\\.(?:core|load)(?:\\.min)?\\.js",
-    "website": "http://headjs.com"
+    "website": "https://headjs.com"
   },
   "Headless UI": {
     "cats": [
@@ -530,7 +530,7 @@
     ],
     "saas": true,
     "scriptSrc": "\\.?hellobar\\.(?:com|js)",
-    "website": "http://hellobar.com"
+    "website": "https://hellobar.com"
   },
   "Hello Elementor": {
     "cats": [
@@ -799,7 +799,7 @@
       "Server": "Hiawatha v([\\d.]+)\\;version:\\1"
     },
     "icon": "Hiawatha.png",
-    "website": "http://hiawatha-webserver.org"
+    "website": "https://hiawatha-webserver.org"
   },
   "HighStore": {
     "cats": [
@@ -850,7 +850,7 @@
     "html": "<svg[^>]*><desc>Created with Highstock ([\\d.]*)\\;version:\\1",
     "icon": "Highcharts.svg",
     "scriptSrc": "highstock[.-]?([\\d\\.]*\\d).*\\.js\\;version:\\1",
-    "website": "http://highcharts.com/products/highstock"
+    "website": "https://highcharts.com/products/highstock"
   },
   "HikeOrders": {
     "cats": [
@@ -871,7 +871,7 @@
     "meta": {
       "generator": "hinzacms"
     },
-    "website": "http://hinzaco.com"
+    "website": "https://hinzaco.com"
   },
   "Hireology": {
     "cats": [
@@ -934,6 +934,21 @@
       "/history(@|/)([\\d.]+)(?:/[a-z]+)?/history(?:(.production|.development))?(?:.min)?\\.js\\;version:\\2"
     ],
     "website": "https://github.com/ReactTraining/history"
+  },
+  "HockeyStack": {
+    "cats": [
+      10
+    ],
+    "description": "HockeyStack is a San Francisco-based analytics and attribution tool for B2B companies.",
+    "icon": "HockeyStack.svg",
+    "js": {
+      "HockeyStack": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://hockeystack.com"
   },
   "Hoefler&Co": {
     "cats": [
@@ -1188,7 +1203,7 @@
     "meta": {
       "generator": "Hotaru CMS"
     },
-    "website": "http://hotarucms.org"
+    "website": "https://hotarucms.org"
   },
   "Hotjar": {
     "cats": [
@@ -1361,6 +1376,23 @@
     "requires": "WordPress",
     "website": "https://wordpress.org/plugins/leadin/"
   },
+  "Hubalz": {
+    "cats": [
+      10
+    ],
+    "description": "Hubalz is an all-in-one analytics and marketing tool.",
+    "icon": "Hubalz.png",
+    "js": {
+      "Hubalz.getClickDetails": "",
+      "hubalz_script.noInputTracking": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.hubalz.com"
+  },
   "Huberway": {
     "cats": [
       1
@@ -1430,7 +1462,7 @@
       "generator": "Hugo ([\\d.]+)?\\;version:\\1"
     },
     "oss": true,
-    "website": "http://gohugo.io"
+    "website": "https://gohugo.io"
   },
   "HulkApps Age Verification": {
     "cats": [
@@ -1589,6 +1621,22 @@
     "scriptSrc": "\\.hushly\\.com/",
     "website": "https://www.hushly.com"
   },
+  "Hydra-Shield": {
+    "cats": [
+      64
+    ],
+    "description": "Hydra-Shield is an anti-DDoS protection reverse proxy that filters and mitigates malicious traffic to safeguard servers from distributed denial-of-service attacks.",
+    "headers": {
+      "server": "^Hydra-Shield\\sV([\\d\\.]+)$\\;version:\\1"
+    },
+    "icon": "Hydra-Shield.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "website": "https://hydra-shield.fr"
+  },
   "Hydrogen": {
     "cats": [
       12
@@ -1682,12 +1730,12 @@
     ],
     "description": "Hyros is a marketing analytics and optimisation platform.",
     "icon": "Hyros.svg",
-    "scriptSrc": "/v1/lst/universal-script\\?ph\\=",
-    "saas": true,
     "pricing": [
       "recurring",
       "low"
     ],
+    "saas": true,
+    "scriptSrc": "/v1/lst/universal-script\\?ph\\=",
     "website": "https://hyros.com"
   },
   "Hyva Themes": {

@@ -48,7 +48,7 @@
     },
     "icon": "PHP.svg",
     "url": "\\.php(?:$|\\?)",
-    "website": "http://php.net"
+    "website": "https://php.net"
   },
   "PHP-Nuke": {
     "cats": [
@@ -61,7 +61,7 @@
     "meta": {
       "generator": "PHP-Nuke"
     },
-    "website": "http://phpnuke.org"
+    "website": "https://phpnuke.org"
   },
   "PHPDebugBar": {
     "cats": [
@@ -75,7 +75,7 @@
     "scriptSrc": [
       "debugbar.*\\.js"
     ],
-    "website": "http://phpdebugbar.com/"
+    "website": "https://phpdebugbar.com/"
   },
   "PHPFusion": {
     "cats": [
@@ -310,7 +310,7 @@
     "meta": {
       "generator": "Pagekit"
     },
-    "website": "http://pagekit.com"
+    "website": "https://pagekit.com"
   },
   "Pagely": {
     "cats": [
@@ -482,7 +482,7 @@
     "meta": {
       "copyright": "Pars Elecom Portal"
     },
-    "website": "http://parselecom.net"
+    "website": "https://parselecom.net"
   },
   "Parse.ly": {
     "cats": [
@@ -556,6 +556,20 @@
     },
     "oss": true,
     "website": "https://partytown.builder.io/"
+  },
+  "Passage": {
+    "cats": [
+      69
+    ],
+    "description": "Passage, a feature provided by 1Password, enables easy implementation of passwordless authentication methods on websites and apps.",
+    "icon": "Passage.svg",
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.1password\\.com/",
+    "website": "https://passage.1password.com"
   },
   "Paths.js": {
     "cats": [
@@ -964,7 +978,7 @@
     "meta": {
       "generator": "(?:Percussion|Rhythmyx)"
     },
-    "website": "http://percussion.com"
+    "website": "https://percussion.com"
   },
   "PerfectApps Swift": {
     "cats": [
@@ -1092,7 +1106,7 @@
       "Server": "\\bPerl\\b(?: ?/?v?([\\d.]+))?\\;version:\\1"
     },
     "icon": "Perl.png",
-    "website": "http://perl.org"
+    "website": "https://perl.org"
   },
   "Permutive": {
     "cats": [
@@ -1183,7 +1197,7 @@
     "icon": "Phabricator.png",
     "implies": "PHP",
     "scriptSrc": "/phabricator/[a-f0-9]{8}/rsrc/js/phui/[a-z-]+\\.js$",
-    "website": "http://phacility.com"
+    "website": "https://phacility.com"
   },
   "Phaser": {
     "cats": [
@@ -1215,13 +1229,13 @@
     ],
     "description": "Philomena is an imageboard software.",
     "icon": "Philomena.svg",
-    "meta": {
-      "generator": "^philomena$"
-    },
     "implies": [
       "Elixir",
       "Erlang"
     ],
+    "meta": {
+      "generator": "^philomena$"
+    },
     "oss": true,
     "website": "https://github.com/derpibooru/philomena"
   },
@@ -1522,7 +1536,7 @@
     "dom": "button.bpa-btn",
     "icon": "Piman.svg",
     "oss": true,
-    "website": "https://ya-sai.github.io/piman/"
+    "website": "https://piman.cc"
   },
   "Pimcore": {
     "cats": [
@@ -1541,6 +1555,7 @@
     "pricing": [
       "poa"
     ],
+    "scriptSrc": "/pimcorecore/js/targeting\\.js",
     "website": "https://pimcore.com/en/digital-experience-platform"
   },
   "Pin Payments": {
@@ -1552,19 +1567,38 @@
     "scriptSrc": "api\\.pinpayments\\.com",
     "website": "https://www.pinpayments.com/"
   },
-  "Pingdom": {
+  "Pingdom RUM": {
     "cats": [
       78
     ],
-    "description": "Pingdom is a Swedish website monitoring software as a service company.",
+    "description": "Pingdom RUM(Real User Monitoring) is a feature of the Pingdom website monitoring and performance testing service. RUM enables you to collect and analyse data on how real users are experiencing your website.",
     "icon": "Pingdom.svg",
+    "js": {
+      "_prum": ""
+    },
     "pricing": [
       "payg",
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": "\\.pingdom\\.net",
-    "website": "https://www.pingdom.com"
+    "scriptSrc": "rum-static\\.pingdom\\.net",
+    "website": "https://www.pingdom.com/real-user-monitoring/"
+  },
+  "Pingdom Uptime Monitoring": {
+    "cats": [
+      13
+    ],
+    "description": "Pingdom Uptime Monitoring is a feature provided by the Pingdom website monitoring and performance testing service. It allows you to monitor the uptime and availability of your website.",
+    "icon": "Pingdom.svg",
+    "meta": {
+      "title": "^Pingdom Public Reports Overview$"
+    },
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.pingdom.com/product/uptime-monitoring/"
   },
   "Pingoteam": {
     "cats": [
@@ -1602,7 +1636,7 @@
     "description": "Pinterest is an image sharing and social media service designed to enable saving and discovery of information.",
     "icon": "Pinterest.svg",
     "scriptSrc": "//assets\\.pinterest\\.com/js/pinit\\.js",
-    "website": "http://pinterest.com"
+    "website": "https://pinterest.com"
   },
   "Pinterest Ads": {
     "cats": [
@@ -1835,7 +1869,7 @@
     "meta": {
       "generator": "^Planet(?:/([\\d.]+))?\\;version:\\1"
     },
-    "website": "http://planetplanet.org"
+    "website": "https://planetplanet.org"
   },
   "Plasmic": {
     "cats": [
@@ -1893,11 +1927,28 @@
     "scriptSrc": "\\.lpcdn\\.site/",
     "website": "https://platformalp.ru"
   },
+  "PlatinMarket": {
+    "cats": [
+      6
+    ],
+    "description": "PlatinMarket is an ecommerce platform that provides solutions for online businesses to create and manage their online stores.",
+    "icon": "PlatinMarket.png",
+    "js": {
+      "PlatinMarket": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "requires": "Microsoft ASP.NET",
+    "saas": true,
+    "scriptSrc": "//platincdn\\.com/",
+    "website": "https://www.platinmarket.com"
+  },
   "Plausible": {
     "cats": [
       10
     ],
-    "cookies": {},
     "description": "Plausible is an open-source alternative to Google Analytics.",
     "icon": "Plausible.svg",
     "js": {
@@ -1976,7 +2027,7 @@
     "meta": {
       "generator": "Pligg"
     },
-    "website": "http://pligg.com"
+    "website": "https://pligg.com"
   },
   "Plone": {
     "cats": [
@@ -2046,7 +2097,7 @@
     "js": {
       "pwidget_config": ""
     },
-    "website": "http://www.po.st/"
+    "website": "https://www.po.st/"
   },
   "Pocket": {
     "cats": [
@@ -2198,7 +2249,7 @@
       "Polymer.version": "^(.+)$\\;version:\\1"
     },
     "scriptSrc": "polymer\\.js",
-    "website": "http://polymer-project.org"
+    "website": "https://polymer-project.org"
   },
   "Popmenu": {
     "cats": [
@@ -2353,7 +2404,7 @@
     "js": {
       "Posterous": ""
     },
-    "website": "http://posterous.com"
+    "website": "https://posterous.com"
   },
   "PostgreSQL": {
     "cats": [
@@ -2362,7 +2413,7 @@
     "cpe": "cpe:2.3:a:postgresql:postgresql:*:*:*:*:*:*:*:*",
     "description": "PostgreSQL, also known as Postgres, is a free and open-source relational database management system emphasizing extensibility and SQL compliance.",
     "icon": "PostgreSQL.png",
-    "website": "http://www.postgresql.org/"
+    "website": "https://www.postgresql.org/"
   },
   "Postpay": {
     "cats": [
@@ -2466,7 +2517,7 @@
     ],
     "icon": "Powergap.png",
     "saas": true,
-    "website": "http://powergap.de"
+    "website": "https://powergap.de"
   },
   "Preact": {
     "cats": [
@@ -2500,7 +2551,7 @@
       "/prebid\\.js",
       "adnxs\\.com/[^\"]*(?:prebid|/pb\\.js)"
     ],
-    "website": "http://prebid.org"
+    "website": "https://prebid.org"
   },
   "Prediggo": {
     "cats": [
@@ -2538,8 +2589,8 @@
     "description": "Preline UI is an open-source set of prebuilt UI components based on the utility-first Tailwind CSS framework.",
     "icon": "Preline UI.svg",
     "implies": "Tailwind CSS",
-    "scriptSrc": "/preline\\.js",
     "oss": true,
+    "scriptSrc": "/preline\\.js",
     "website": "https://preline.co"
   },
   "Premio Chaty": {
@@ -2560,6 +2611,28 @@
     "saas": true,
     "scriptSrc": "/wp-content/plugins/chaty/",
     "website": "https://premio.io/downloads/chaty"
+  },
+  "Prepr": {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "__prepr_uid": ""
+    },
+    "description": "Prepr is a headless CMS with data-driven capabilities.",
+    "dom": "img[src*='.prepr.io/']",
+    "icon": "Prepr.svg",
+    "meta": {
+      "prepr:id": ""
+    },
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "requiresCategory": 12,
+    "saas": true,
+    "website": "https://prepr.io"
   },
   "Press Customizr": {
     "cats": [
@@ -2660,7 +2733,7 @@
       "generator": "PrestaShop"
     },
     "oss": true,
-    "website": "http://www.prestashop.com"
+    "website": "https://www.prestashop.com"
   },
   "Pretty Links": {
     "cats": [
@@ -2796,7 +2869,7 @@
       "apex.libVersions.prismJs": "^([\\d\\.]+)$\\;version:\\1"
     },
     "scriptSrc": "prism\\.js",
-    "website": "http://prismjs.com"
+    "website": "https://prismjs.com"
   },
   "Prismic": {
     "cats": [
@@ -2946,7 +3019,7 @@
       "pw_adloader": ""
     },
     "scriptSrc": "^https?://(?:www\\.)?projectwonderful\\.com/(?:pwa\\.js|gen\\.php)",
-    "website": "http://projectwonderful.com"
+    "website": "https://projectwonderful.com"
   },
   "Projesoft": {
     "cats": [
@@ -3009,7 +3082,7 @@
       "Prototype.Version": "^(.+)$\\;version:\\1"
     },
     "scriptSrc": "(?:prototype|protoaculous)(?:-([\\d.]*[\\d]))?.*\\.js\\;version:\\1",
-    "website": "http://www.prototypejs.org"
+    "website": "https://www.prototypejs.org"
   },
   "Protovis": {
     "cats": [
@@ -3019,7 +3092,7 @@
       "protovis": ""
     },
     "scriptSrc": "protovis.*\\.js",
-    "website": "http://mbostock.github.io/protovis"
+    "website": "https://mbostock.github.io/protovis"
   },
   "ProvenExpert": {
     "cats": [
@@ -3114,6 +3187,19 @@
     "scriptSrc": "cdn\\.pubguru\\.com/",
     "website": "https://pubguru.com"
   },
+  "PubLive": {
+    "cats": [
+      1
+    ],
+    "description": "PubLive is a headless CMS for online publishers.",
+    "dom": "link[href*='.thepublive.com/'], img[src*='.thepublive.com/']",
+    "icon": "PubLive.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://thepublive.com"
+  },
   "PubMatic": {
     "cats": [
       36
@@ -3126,7 +3212,7 @@
     ],
     "saas": true,
     "scriptSrc": "https?://[^/]*\\.pubmatic\\.com",
-    "website": "http://www.pubmatic.com/",
+    "website": "https://www.pubmatic.com/",
     "xhr": "\\.pubmatic\\.com"
   },
   "PubSubJS": {
@@ -3154,7 +3240,7 @@
     },
     "icon": "Public CMS.png",
     "implies": "Java",
-    "website": "http://www.publiccms.com"
+    "website": "https://www.publiccms.com"
   },
   "Pulse Secure": {
     "cats": [
@@ -3179,7 +3265,7 @@
       "<div[^>]+class=\"[^\"]*pure-u-(?:sm-|md-|lg-|xl-)?\\d-\\d"
     ],
     "icon": "Pure CSS.png",
-    "website": "http://purecss.io"
+    "website": "https://purecss.io"
   },
   "Pure Chat": {
     "cats": [
@@ -3357,7 +3443,7 @@
     "cpe": "cpe:2.3:a:pygments:pygments:*:*:*:*:*:*:*:*",
     "html": "<link[^>]+pygments\\.css[\"']",
     "icon": "pygments.png",
-    "website": "http://pygments.org"
+    "website": "https://pygments.org"
   },
   "PyroCMS": {
     "cats": [
@@ -3371,7 +3457,7 @@
     },
     "icon": "PyroCMS.png",
     "implies": "Laravel",
-    "website": "http://pyrocms.com"
+    "website": "https://pyrocms.com"
   },
   "Python": {
     "cats": [
@@ -3383,7 +3469,7 @@
       "Server": "(?:^|\\s)Python(?:/([\\d.]+))?\\;version:\\1"
     },
     "icon": "Python.png",
-    "website": "http://python.org"
+    "website": "https://python.org"
   },
   "PythonAnywhere": {
     "cats": [
@@ -3458,7 +3544,7 @@
     "html": "<!--phpalbum ([.\\d\\s]+)-->\\;version:\\1",
     "icon": "phpAlbum.png",
     "implies": "PHP",
-    "website": "http://phpalbum.net"
+    "website": "https://phpalbum.net"
   },
   "phpBB": {
     "cats": [
@@ -3497,7 +3583,7 @@
     "js": {
       "phpcms": ""
     },
-    "website": "http://phpcms.de"
+    "website": "https://phpcms.de"
   },
   "phpDocumentor": {
     "cats": [
@@ -3540,7 +3626,7 @@
     "html": "(?:<title>phpPgAdmin</title>|<span class=\"appname\">phpPgAdmin)",
     "icon": "phpPgAdmin.png",
     "implies": "PHP",
-    "website": "http://phppgadmin.sourceforge.net"
+    "website": "https://phppgadmin.sourceforge.net"
   },
   "phpRS": {
     "cats": [
@@ -3574,7 +3660,7 @@
     "meta": {
       "generator": "^phpSQLiteCMS(?: (.+))?$\\;version:\\1"
     },
-    "website": "http://phpsqlitecms.net"
+    "website": "https://phpsqlitecms.net"
   },
   "phpwind": {
     "cats": [
@@ -3658,7 +3744,7 @@
       "pp_titles": ""
     },
     "scriptSrc": "jquery\\.prettyPhoto\\.js",
-    "website": "http://no-margin-for-errors.com/projects/prettyphoto-jquery-lightbox-clone/"
+    "website": "https://no-margin-for-errors.com/projects/prettyphoto-jquery-lightbox-clone/"
   },
   "punBB": {
     "cats": [
@@ -3670,6 +3756,6 @@
     "js": {
       "PUNBB": ""
     },
-    "website": "http://punbb.informer.com"
+    "website": "https://punbb.informer.com"
   }
 }

@@ -49,7 +49,7 @@
     "meta": {
       "author": "Kai Oswald Seidler\\;confidence:10"
     },
-    "website": "http://www.apachefriends.org/en/xampp.html"
+    "website": "https://www.apachefriends.org/en/xampp.html"
   },
   "XGen Ai": {
     "cats": [
@@ -70,7 +70,7 @@
     ],
     "html": "<!-- Powered by XMB",
     "icon": "XMB.png",
-    "website": "http://www.xmbforum.com"
+    "website": "https://www.xmbforum.com"
   },
   "XOOPS": {
     "cats": [
@@ -84,7 +84,7 @@
     "meta": {
       "generator": "XOOPS"
     },
-    "website": "http://xoops.org"
+    "website": "https://xoops.org"
   },
   "XRegExp": {
     "cats": [
@@ -99,7 +99,7 @@
       "/([\\d.]+)/xregexp(?:\\.min)?\\.js\\;version:\\1",
       "xregexp.*\\.js"
     ],
-    "website": "http://xregexp.com"
+    "website": "https://xregexp.com"
   },
   "XSLT": {
     "cats": [
@@ -124,7 +124,7 @@
     "meta": {
       "wiki": "xwiki"
     },
-    "website": "http://www.xwiki.org"
+    "website": "https://www.xwiki.org"
   },
   "Xajax": {
     "cats": [
@@ -132,7 +132,7 @@
     ],
     "icon": "Xajax.png",
     "scriptSrc": "xajax_core.*\\.js",
-    "website": "http://xajax-project.org"
+    "website": "https://xajax-project.org"
   },
   "Xanario": {
     "cats": [
@@ -142,7 +142,7 @@
     "meta": {
       "generator": "xanario shopsoftware"
     },
-    "website": "http://xanario.de"
+    "website": "https://xanario.de"
   },
   "XenForo": {
     "cats": [
@@ -165,7 +165,7 @@
     "js": {
       "XF.GuestUsername": ""
     },
-    "website": "http://xenforo.com"
+    "website": "https://xenforo.com"
   },
   "Xeora": {
     "cats": [
@@ -179,7 +179,7 @@
     "icon": "xeora.png",
     "implies": "Microsoft ASP.NET",
     "scriptSrc": "/_bi_sps_v.+\\.js",
-    "website": "http://www.xeora.org"
+    "website": "https://www.xeora.org"
   },
   "Xitami": {
     "cats": [
@@ -189,7 +189,7 @@
       "Server": "Xitami(?:/([\\d.]+))?\\;version:\\1"
     },
     "icon": "Xitami.png",
-    "website": "http://xitami.com"
+    "website": "https://xitami.com"
   },
   "Xonic": {
     "cats": [
@@ -203,7 +203,7 @@
       "keywords": "xonic-solutions"
     },
     "scriptSrc": "core/jslib/jquery\\.xonic\\.js\\.php",
-    "website": "http://www.xonic-solutions.de"
+    "website": "https://www.xonic-solutions.de"
   },
   "XpressEngine": {
     "cats": [
@@ -213,7 +213,7 @@
     "meta": {
       "generator": "XpressEngine"
     },
-    "website": "http://www.xpressengine.com/"
+    "website": "https://www.xpressengine.com/"
   },
   "Xpresslane": {
     "cats": [

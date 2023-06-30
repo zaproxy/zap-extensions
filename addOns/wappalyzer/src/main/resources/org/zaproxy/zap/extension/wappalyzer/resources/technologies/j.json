@@ -36,7 +36,7 @@
     "meta": {
       "generator": "JAlbum( [\\d.]+)?\\;version:\\1"
     },
-    "website": "http://jalbum.net/en"
+    "website": "https://jalbum.net/en"
   },
   "JBoss Application Server": {
     "cats": [
@@ -47,7 +47,7 @@
       "X-Powered-By": "JBoss(?:-([\\d.]+))?\\;version:\\1"
     },
     "icon": "JBoss Application Server.png",
-    "website": "http://jboss.org/jbossas.html"
+    "website": "https://jboss.org/jbossas.html"
   },
   "JBoss Web": {
     "cats": [
@@ -60,7 +60,7 @@
     },
     "icon": "JBoss Web.png",
     "implies": "JBoss Application Server",
-    "website": "http://jboss.org/jbossweb"
+    "website": "https://jboss.org/jbossweb"
   },
   "JET Enterprise": {
     "cats": [
@@ -70,7 +70,7 @@
       "powered": "jet-enterprise"
     },
     "icon": "JET Enterprise.svg",
-    "website": "http://www.jetecommerce.com.br/"
+    "website": "https://www.jetecommerce.com.br/"
   },
   "JS Charts": {
     "cats": [
@@ -81,7 +81,7 @@
       "JSChart": ""
     },
     "scriptSrc": "jscharts.{0,32}\\.js",
-    "website": "http://www.jscharts.com"
+    "website": "https://www.jscharts.com"
   },
   "JSEcoin": {
     "cats": [
@@ -116,7 +116,7 @@
       "jss_1stepDeliveryType": "",
       "jss_1stepFillShipping": ""
     },
-    "website": "http://www.whorl.co.uk"
+    "website": "https://www.whorl.co.uk"
   },
   "JTL Shop": {
     "cats": [
@@ -177,7 +177,7 @@
     ],
     "html": "<script id=\"staticAssetAggregatedJavascrip",
     "icon": "JahiaDX.svg",
-    "website": "http://www.jahia.com/dx"
+    "website": "https://www.jahia.com/dx"
   },
   "Jalios": {
     "cats": [
@@ -187,7 +187,7 @@
     "meta": {
       "generator": "Jalios"
     },
-    "website": "http://www.jalios.com"
+    "website": "https://www.jalios.com"
   },
   "Java": {
     "cats": [
@@ -199,7 +199,7 @@
     "cpe": "cpe:2.3:a:oracle:jre:*:*:*:*:*:*:*:*",
     "description": "Java is a class-based, object-oriented programming language that is designed to have as few implementation dependencies as possible.",
     "icon": "Java.svg",
-    "website": "http://java.com"
+    "website": "https://java.com"
   },
   "Java Servlet": {
     "cats": [
@@ -210,7 +210,7 @@
     },
     "icon": "Java.svg",
     "implies": "Java",
-    "website": "http://www.oracle.com/technetwork/java/index-jsp-135475.html"
+    "website": "https://www.oracle.com/technetwork/java/index-jsp-135475.html"
   },
   "JavaScript Infovis Toolkit": {
     "cats": [
@@ -234,7 +234,7 @@
     },
     "icon": "JavaServer Faces.png",
     "implies": "Java",
-    "website": "http://javaserverfaces.java.net"
+    "website": "https://javaserverfaces.java.net"
   },
   "JavaServer Pages": {
     "cats": [
@@ -245,7 +245,7 @@
     },
     "icon": "Java.svg",
     "implies": "Java",
-    "website": "http://www.oracle.com/technetwork/java/javaee/jsp/index.html"
+    "website": "https://www.oracle.com/technetwork/java/javaee/jsp/index.html"
   },
   "Javadoc": {
     "cats": [
@@ -272,7 +272,7 @@
     "meta": {
       "generator": "Jekyll\\sv([\\d.]+)?\\;version:\\1"
     },
-    "website": "http://jekyllrb.com"
+    "website": "https://jekyllrb.com"
   },
   "Jenkins": {
     "cats": [
@@ -292,17 +292,6 @@
     },
     "website": "https://jenkins.io/"
   },
-  "Jetpack Boost": {
-    "cats": [
-      87
-    ],
-    "description": "Jetpack Boost – Website Speed, Performance and Critical CSS.",
-    "dom": "style[id='jetpack-boost-critical-css']",
-    "icon": "Jetpack.svg",
-    "requires": "WordPress",
-    "scriptSrc": "/wp-content/plugins/jetpack-boost/",
-    "website": "https://jetpack.com"
-  },
   "Jetpack": {
     "cats": [
       87
@@ -319,6 +308,17 @@
     "scriptSrc": "/wp-content/plugins/jetpack/",
     "website": "https://jetpack.com"
   },
+  "Jetpack Boost": {
+    "cats": [
+      87
+    ],
+    "description": "Jetpack Boost – Website Speed, Performance and Critical CSS.",
+    "dom": "style[id='jetpack-boost-critical-css']",
+    "icon": "Jetpack.svg",
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/jetpack-boost/",
+    "website": "https://jetpack.com"
+  },
   "Jetshop": {
     "cats": [
       6
@@ -328,7 +328,7 @@
     "js": {
       "JetshopData": ""
     },
-    "website": "http://jetshop.se"
+    "website": "https://jetshop.se"
   },
   "Jetty": {
     "cats": [
@@ -339,7 +339,7 @@
     },
     "icon": "Jetty.png",
     "implies": "Java",
-    "website": "http://www.eclipse.org/jetty"
+    "website": "https://www.eclipse.org/jetty"
   },
   "Jibres": {
     "cats": [
@@ -442,7 +442,7 @@
       "x-jive-chrome-wrapped": ""
     },
     "icon": "Jive.png",
-    "website": "http://www.jivesoftware.com"
+    "website": "https://www.jivesoftware.com"
   },
   "JivoChat": {
     "cats": [
@@ -507,7 +507,7 @@
       "generator": "Jobberbase"
     },
     "oss": true,
-    "website": "http://www.jobberbase.com"
+    "website": "https://www.jobberbase.com"
   },
   "Jobvite": {
     "cats": [
@@ -857,7 +857,7 @@
       "jQT": ""
     },
     "scriptSrc": "jqtouch.*\\.js",
-    "website": "http://jqtouch.com"
+    "website": "https://jqtouch.com"
   },
   "jQuery": {
     "cats": [
@@ -951,7 +951,7 @@
     "description": "jQuery Sparklines is a plugin that generates sparklines (small inline charts) directly in the browser using data supplied either inline in the HTML, or via javascript.",
     "implies": "jQuery",
     "scriptSrc": "jquery\\.sparkline.*\\.js",
-    "website": "http://omnipotent.net/jquery.sparkline/"
+    "website": "https://omnipotent.net/jquery.sparkline/"
   },
   "jQuery UI": {
     "cats": [
@@ -969,7 +969,7 @@
       "([\\d.]+)/jquery-ui(?:\\.min)?\\.js\\;version:\\1",
       "jquery-ui.*\\.js"
     ],
-    "website": "http://jqueryui.com"
+    "website": "https://jqueryui.com"
   },
   "jQuery-pjax": {
     "cats": [
@@ -996,7 +996,7 @@
     "icon": "jqPlot.png",
     "implies": "jQuery",
     "scriptSrc": "jqplot.*\\.js",
-    "website": "http://www.jqplot.com"
+    "website": "https://www.jqplot.com"
   },
   "jsDelivr": {
     "cats": [
