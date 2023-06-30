@@ -33,7 +33,7 @@
       "eccube\\.js",
       "win_op\\.js"
     ],
-    "website": "http://www.ec-cube.net"
+    "website": "https://www.ec-cube.net"
   },
   "ECharts": {
     "cats": [
@@ -75,7 +75,7 @@
     ],
     "html": "<title>ELOG Logbook Selection</title>",
     "icon": "ELOG.png",
-    "website": "http://midas.psi.ch/elog"
+    "website": "https://midas.psi.ch/elog"
   },
   "ELOG HTTP": {
     "cats": [
@@ -86,7 +86,7 @@
     },
     "icon": "ELOG.png",
     "implies": "ELOG",
-    "website": "http://midas.psi.ch/elog"
+    "website": "https://midas.psi.ch/elog"
   },
   "EPrints": {
     "cats": [
@@ -101,7 +101,7 @@
     "meta": {
       "generator": "EPrints ([\\d.]+)\\;version:\\1"
     },
-    "website": "http://www.eprints.org"
+    "website": "https://www.eprints.org"
   },
   "ERPNext": {
     "cats": [
@@ -133,7 +133,7 @@
       "eswRetailerDisplayConfiguration": ""
     },
     "scriptSrc": "Eswhooks\\.js",
-    "website": "http://esw.com"
+    "website": "https://esw.com"
   },
   "EWWW Image Optimizer": {
     "cats": [
@@ -275,6 +275,24 @@
     "implies": "Docker",
     "website": "https://easyengine.io"
   },
+  "EasyGift": {
+    "cats": [
+      100
+    ],
+    "description": "EasyGift is a tool that automates the addition of free gifts or products to the cart based on custom rules, allowing for upsells, BOGO (Buy 1 Get 1) offers, and the creation of rules based on cart value or specific products, with the ability to schedule start times for offer activation.",
+    "icon": "EasyGift.png",
+    "js": {
+      "EasyGift.nonTargetingRules": "",
+      "EasyGiftScriptLoaded": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "website": "https://apps.shopify.com/gifter-cart-auto-include"
+  },
   "EasyStore": {
     "cats": [
       6
@@ -302,7 +320,7 @@
     "text": [
       "\\bEasylog\\b"
     ],
-    "website": "http://www.easylog.com.br"
+    "website": "https://www.easylog.com.br"
   },
   "Ebasnet": {
     "cats": [
@@ -392,7 +410,7 @@
     },
     "icon": "EdgeCast.png",
     "url": "https?://(?:[^/]+\\.)?edgecastcdn\\.net/",
-    "website": "http://www.edgecast.com"
+    "website": "https://www.edgecast.com"
   },
   "Edgio": {
     "cats": [
@@ -574,7 +592,7 @@
       "PHP",
       "Symfony"
     ],
-    "website": "http://elcodi.io"
+    "website": "https://elcodi.io"
   },
   "Elcom": {
     "cats": [
@@ -603,7 +621,7 @@
     "meta": {
       "generator": "Eleanor"
     },
-    "website": "http://eleanor-cms.ru"
+    "website": "https://eleanor-cms.ru"
   },
   "Element": {
     "cats": [
@@ -622,13 +640,19 @@
   },
   "Element UI": {
     "cats": [
-      12
+      66
     ],
-    "html": [
-      "<(?:div|button) class=\"el-(?:table-column|table-filter|popper|pagination|pager|select-group|form|form-item|color-predefine|color-hue-slider|color-svpanel|color-alpha-slider|color-dropdown|color-picker|badge|tree|tree-node|select|message|dialog|checkbox|checkbox-button|checkbox-group|container|steps|carousel|menu|menu-item|submenu|menu-item-group|button|button-group|card|table|select-dropdown|row|tabs|notification|radio|progress|progress-bar|tag|popover|tooltip|cascader|cascader-menus|cascader-menu|time-spinner|spinner|spinner-inner|transfer|transfer-panel|rate|slider|dropdown|dropdown-menu|textarea|input|input-group|popup-parent|radio-group|main|breadcrumb|time-range-picker|date-range-picker|year-table|date-editor|range-editor|time-spinner|date-picker|time-panel|date-table|month-table|picker-panel|collapse|collapse-item|alert|select-dropdown|select-dropdown__empty|select-dropdown__wrap|select-dropdown__list|scrollbar|switch|carousel|upload|upload-dragger|upload-list|upload-cover|aside|input-number|header|message-box|footer|radio-button|step|autocomplete|autocomplete-suggestion|loading-parent|loading-mask|loading-spinner|)"
-    ],
+    "description": "Element UI is an open-source component library specifically designed for Vue.js, offering a collection of pre-designed UI components such as buttons, forms, tables, and modals.",
+    "dom": {
+      "[class*='el-']": {
+        "attributes": {
+          "class": "el-(?:table-column|table-filter|popper|pagination|pager|select-group|form|form-item|color-predefine|color-hue-slider|color-svpanel|color-alpha-slider|color-dropdown|color-picker|badge|tree|tree-node|select|message|dialog|checkbox|checkbox-button|checkbox-group|container|steps|carousel|menu|menu-item|submenu|menu-item-group|button|button-group|card|table|select-dropdown|row|tabs|notification|radio|progress|progress-bar|tag|popover|tooltip|cascader|cascader-menus|cascader-menu|time-spinner|spinner|spinner-inner|transfer|transfer-panel|rate|slider|dropdown|dropdown-menu|textarea|input|input-group|popup-parent|radio-group|main|breadcrumb|time-range-picker|date-range-picker|year-table|date-editor|range-editor|time-spinner|date-picker|time-panel|date-table|month-table|picker-panel|collapse|collapse-item|alert|select-dropdown|select-dropdown__empty|select-dropdown__wrap|select-dropdown__list|scrollbar|switch|carousel|upload|upload-dragger|upload-list|upload-cover|aside|input-number|header|message-box|footer|radio-button|step|autocomplete|autocomplete-suggestion|loading-parent|loading-mask|loading-spinner)"
+        }
+      }
+    },
     "icon": "ElementUI.svg",
-    "implies": "Vue.js",
+    "oss": true,
+    "requires": "Vue.js",
     "website": "https://element.eleme.io/"
   },
   "Elementor": {
@@ -841,7 +865,7 @@
       "elq_global": ""
     },
     "scriptSrc": "elqCfg\\.js",
-    "website": "http://eloqua.com"
+    "website": "https://eloqua.com"
   },
   "EmailJS": {
     "cats": [
@@ -934,7 +958,7 @@
       "Server": "Mbedthis-Appweb(?:/([\\d.]+))?\\;version:\\1"
     },
     "icon": "Embedthis.png",
-    "website": "http://embedthis.com/appweb"
+    "website": "https://embedthis.com/appweb"
   },
   "Embedly": {
     "cats": [
@@ -965,7 +989,7 @@
       "EmberENV": ""
     },
     "scripts": "@overview\\s+Ember -[\\s\\S]+@version\\s+(.+)\\;version:\\1",
-    "website": "http://emberjs.com"
+    "website": "https://emberjs.com"
   },
   "Emotion": {
     "cats": [
@@ -975,7 +999,7 @@
     "description": "Emotion is a library designed for writing CSS styles with JavaScript.",
     "dom": "style[data-emotion], style[data-emotion-css]",
     "icon": "Emotion.png",
-    "website": "http://emotion.sh"
+    "website": "https://emotion.sh"
   },
   "Emotive": {
     "cats": [
@@ -1237,7 +1261,7 @@
       "enyo": ""
     },
     "scriptSrc": "enyo\\.js",
-    "website": "http://enyojs.com"
+    "website": "https://enyojs.com"
   },
   "Epoch": {
     "cats": [
@@ -1257,7 +1281,7 @@
       "epomCustomParams": ""
     },
     "url": "^https?://(?:[^/]+\\.)?ad(?:op)?shost1\\.com/",
-    "website": "http://epom.com"
+    "website": "https://epom.com"
   },
   "EqualWeb": {
     "cats": [
@@ -1326,7 +1350,7 @@
       "Server": "Erlang( OTP/(?:[\\d.ABR-]+))?\\;version:\\1"
     },
     "icon": "Erlang.png",
-    "website": "http://www.erlang.org"
+    "website": "https://www.erlang.org"
   },
   "Errorception": {
     "cats": [
@@ -1618,7 +1642,7 @@
     ],
     "saas": true,
     "scriptSrc": "\\.modules4u\\.biz/shopify/exemptify",
-    "website": "http://modules4u.biz/exemptify"
+    "website": "https://modules4u.biz/exemptify"
   },
   "Exhibit": {
     "cats": [
@@ -1630,7 +1654,7 @@
       "Exhibit.version": "^(.+)$\\;version:\\1"
     },
     "scriptSrc": "exhibit.*\\.js",
-    "website": "http://simile-widgets.org/exhibit/"
+    "website": "https://simile-widgets.org/exhibit/"
   },
   "ExitIntel": {
     "cats": [
@@ -1732,7 +1756,7 @@
     },
     "icon": "Express.svg",
     "implies": "Node.js",
-    "website": "http://expressjs.com"
+    "website": "https://expressjs.com"
   },
   "ExpressionEngine": {
     "cats": [
@@ -1943,7 +1967,7 @@
     "icon": "e107.png",
     "implies": "PHP",
     "scriptSrc": "[^a-z\\d]e107\\.js",
-    "website": "http://e107.org"
+    "website": "https://e107.org"
   },
   "eBay Partner Network": {
     "cats": [
@@ -2045,7 +2069,7 @@
       "recurring"
     ],
     "saas": true,
-    "website": "http://www.epages.com/"
+    "website": "https://www.epages.com/"
   },
   "eSSENTIAL Accessibility": {
     "cats": [
@@ -2107,7 +2131,7 @@
     "meta": {
       "generator": "^eSyndiCat "
     },
-    "website": "http://esyndicat.com"
+    "website": "https://esyndicat.com"
   },
   "eWAY Payments": {
     "cats": [
@@ -2179,7 +2203,7 @@
       "efCore": ""
     },
     "scriptSrc": "/ef(?:-core)?(?:\\.min|\\.dev)?\\.js",
-    "website": "http://ef.js.org"
+    "website": "https://ef.js.org"
   },
   "emBlue": {
     "cats": [
@@ -2209,7 +2233,7 @@
     },
     "icon": "enduro.js.svg",
     "implies": "Node.js",
-    "website": "http://endurojs.com"
+    "website": "https://endurojs.com"
   },
   "etika": {
     "cats": [

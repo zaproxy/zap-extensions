@@ -5,7 +5,7 @@
     ],
     "icon": "IBM.svg",
     "scriptSrc": "cmdatatagutils\\.js",
-    "website": "http://ibm.com/software/marketing-solutions/coremetrics"
+    "website": "https://ibm.com/software/marketing-solutions/coremetrics"
   },
   "IBM DataPower": {
     "cats": [
@@ -29,7 +29,7 @@
       "Server": "IBM_HTTP_Server(?:/([\\d.]+))?\\;version:\\1"
     },
     "icon": "IBM.svg",
-    "website": "http://ibm.com/software/webservers/httpservers"
+    "website": "https://ibm.com/software/webservers/httpservers"
   },
   "IIS": {
     "cats": [
@@ -70,6 +70,22 @@
       "recurring"
     ],
     "website": "https://www.ionos.com"
+  },
+  "IP2Location.io": {
+    "cats": [
+      79
+    ],
+    "cookies": {
+      "ip2location_redirection_first_visit": ""
+    },
+    "description": "IP2Location.io is a web service that provides geolocation data based on IP addresses through its API, allowing developers to integrate accurate physical location information into their applications.",
+    "icon": "IP2Location.io.svg",
+    "pricing": [
+      "mid",
+      "freemium",
+      "recurring"
+    ],
+    "website": "https://www.ip2location.io"
   },
   "IPB": {
     "cats": [
@@ -402,7 +418,7 @@
       "generator": "ImpressCMS"
     },
     "scriptSrc": "include/linkexternal\\.js",
-    "website": "http://www.impresscms.org"
+    "website": "https://www.impresscms.org"
   },
   "ImpressPages": {
     "cats": [
@@ -414,7 +430,7 @@
     "meta": {
       "generator": "ImpressPages(?: CMS)?( [\\d.]*)?\\;version:\\1"
     },
-    "website": "http://impresspages.org"
+    "website": "https://impresspages.org"
   },
   "Imunify360": {
     "cats": [
@@ -506,7 +522,7 @@
       "X-CDN": "Incapsula"
     },
     "icon": "Incapsula.png",
-    "website": "http://www.incapsula.com"
+    "website": "https://www.incapsula.com"
   },
   "Includable": {
     "cats": [
@@ -516,7 +532,7 @@
       "X-Includable-Version": ""
     },
     "icon": "Includable.svg",
-    "website": "http://includable.com"
+    "website": "https://includable.com"
   },
   "Index Exchange": {
     "cats": [
@@ -541,7 +557,7 @@
     "meta": {
       "generator": "Indexhibit"
     },
-    "website": "http://www.indexhibit.org"
+    "website": "https://www.indexhibit.org"
   },
   "Indi": {
     "cats": [
@@ -565,7 +581,7 @@
     },
     "html": "Powered by\\s+(?:CERN )?<a href=\"http://(?:cdsware\\.cern\\.ch/indico/|indico-software\\.org|cern\\.ch/indico)\">(?:CDS )?Indico( [\\d\\.]+)?\\;version:\\1",
     "icon": "Indico.png",
-    "website": "http://indico-software.org"
+    "website": "https://indico-software.org"
   },
   "Indy": {
     "cats": [
@@ -574,7 +590,7 @@
     "headers": {
       "Server": "Indy(?:/([\\d.]+))?\\;version:\\1"
     },
-    "website": "http://indyproject.org"
+    "website": "https://indyproject.org"
   },
   "Inertia.js": {
     "cats": [
@@ -811,7 +827,7 @@
     "meta": {
       "generator": "InstantCMS"
     },
-    "website": "http://www.instantcms.ru"
+    "website": "https://www.instantcms.ru"
   },
   "InstantClick": {
     "cats": [
@@ -825,7 +841,7 @@
     },
     "oss": true,
     "scriptSrc": "instantclick\\.min\\.js",
-    "website": "http://instantclick.io/"
+    "website": "https://instantclick.io/"
   },
   "InstantGeo": {
     "cats": [
@@ -878,7 +894,14 @@
       13
     ],
     "description": "Instatus is a status and incident communication tool.",
-    "dom": "a[href*='instatus.com'][target='_blank'], iframe[src*='.instatus.com']",
+    "dom": {
+      "a.footer__link": {
+        "text": "Powered by Instatus"
+      },
+      "a[href*='instatus.com'][target='_blank'], iframe[src*='.instatus.com']": {
+        "exists": ""
+      }
+    },
     "icon": "Instatus.svg",
     "pricing": [
       "freemium",
@@ -913,7 +936,7 @@
       "Server": "Intel\\(R\\) Active Management Technology(?: ([\\d.]+))?\\;version:\\1"
     },
     "icon": "Intel Active Management Technology.png",
-    "website": "http://intel.com"
+    "website": "https://intel.com"
   },
   "IntenseDebate": {
     "cats": [
@@ -922,7 +945,7 @@
     "description": "IntenseDebate is a blog commenting system that supports Typepad, Blogger and Wordpress blogs. The system allows blog owners to track and moderate comments from one place with features like threading, comment analytics, user reputation, and comment aggregation.",
     "icon": "IntenseDebate.png",
     "scriptSrc": "intensedebate\\.com",
-    "website": "http://intensedebate.com"
+    "website": "https://intensedebate.com"
   },
   "Interact": {
     "cats": [
@@ -1019,7 +1042,7 @@
     ],
     "saas": true,
     "scriptSrc": "(?:is-bin|INTERSHOP)",
-    "website": "http://intershop.com"
+    "website": "https://intershop.com"
   },
   "Invenio": {
     "cats": [
@@ -1031,7 +1054,7 @@
     "description": "Invenio is an open-source software framework for large-scale digital repositories that provides the tools for management of digital assets in an institutional repository and research data management systems.",
     "html": "(?:Powered by|System)\\s+(?:CERN )?<a (?:class=\"footer\" )?href=\"http://(?:cdsware\\.cern\\.ch(?:/invenio)?|invenio-software\\.org|cern\\.ch/invenio)(?:/)?\">(?:CDS )?Invenio</a>\\s*v?([\\d\\.]+)?\\;version:\\1",
     "icon": "Invenio.png",
-    "website": "http://invenio-software.org"
+    "website": "https://invenio-software.org"
   },
   "Inventrue": {
     "cats": [
@@ -1103,7 +1126,7 @@
     "description": "Ionicons is an open-source icon set crafted for web, iOS, Android, and desktop apps.",
     "html": "<link[^>]* href=[^>]+ionicons(?:\\.min)?\\.css",
     "icon": "Ionicons.png",
-    "website": "http://ionicons.com"
+    "website": "https://ionicons.com"
   },
   "IrisLMS": {
     "cats": [
@@ -1242,7 +1265,7 @@
     ],
     "saas": true,
     "scriptSrc": "\\.i-mobile\\.co\\.jp/",
-    "website": "http://www2.i-mobile.co.jp"
+    "website": "https://www2.i-mobile.co.jp"
   },
   "i30con": {
     "cats": [
@@ -1292,7 +1315,7 @@
     "description": "iGoDigital provides web-based commerce tools, personalisation, and product recommendations designed to increase customer interaction.",
     "icon": "default.svg",
     "scriptSrc": "\\.igodigital\\.com/",
-    "website": "http://www.igodigital.com"
+    "website": "https://www.igodigital.com"
   },
   "iHomefinder IDX": {
     "cats": [
@@ -1323,7 +1346,7 @@
     "meta": {
       "designer": "iPresta"
     },
-    "website": "http://ipresta.ir"
+    "website": "https://ipresta.ir"
   },
   "iSina Chat": {
     "cats": [
@@ -1364,7 +1387,7 @@
     "meta": {
       "generator": "^iWeb( [\\d.]+)?\\;version:\\1"
     },
-    "website": "http://apple.com/ilife/iweb"
+    "website": "https://apple.com/ilife/iweb"
   },
   "idCloudHost": {
     "cats": [
@@ -1388,7 +1411,7 @@
       "<a href=\"/(?:cgi-bin/)?ikiwiki\\.cgi\\?do="
     ],
     "icon": "ikiwiki.png",
-    "website": "http://ikiwiki.info"
+    "website": "https://ikiwiki.info"
   },
   "imperia CMS": {
     "cats": [
@@ -1468,7 +1491,7 @@
       "clobs": ""
     },
     "scriptSrc": "clobs\\.js",
-    "website": "http://www.ip-label.com"
+    "website": "https://www.ip-label.com"
   },
   "ipapi": {
     "cats": [

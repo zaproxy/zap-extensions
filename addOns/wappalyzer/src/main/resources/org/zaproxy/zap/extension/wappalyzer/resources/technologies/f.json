@@ -43,7 +43,7 @@
     "description": "FAST ESP is a service-oriented architecture development platform which is geared towards production searchable indexes. It provided a flexible framework for creating ETL applications for efficient indexing of searchable content.",
     "html": "<form[^>]+id=\"fastsearch\"",
     "icon": "FAST ESP.png",
-    "website": "http://microsoft.com/enterprisesearch"
+    "website": "https://microsoft.com/enterprisesearch"
   },
   "FAST Search for SharePoint": {
     "cats": [
@@ -57,7 +57,7 @@
       "Microsoft ASP.NET"
     ],
     "url": "Pages/SearchResults\\.aspx\\?k=",
-    "website": "http://sharepoint.microsoft.com/en-us/product/capabilities/search/Pages/Fast-Search.aspx"
+    "website": "https://sharepoint.microsoft.com/en-us/product/capabilities/search/Pages/Fast-Search.aspx"
   },
   "FUDforum": {
     "cats": [
@@ -160,7 +160,7 @@
       "connect\\.facebook.\\w+/signals/config/\\d+\\?v=([\\d\\.]+)\\;version:\\1",
       "connect\\.facebook\\.\\w+/.+/fbevents\\.js"
     ],
-    "website": "http://facebook.com"
+    "website": "https://facebook.com"
   },
   "Facil-iti": {
     "cats": [
@@ -180,7 +180,7 @@
     "icon": "Fact Finder.png",
     "scriptSrc": "Suggest\\.ff",
     "url": "(?:/ViewParametricSearch|ffsuggest\\.[a-z]htm)",
-    "website": "http://fact-finder.com"
+    "website": "https://fact-finder.com"
   },
   "FalguniThemes Nisarg": {
     "cats": [
@@ -242,7 +242,7 @@
       "jQuery.fancybox.version": "^(.+)$\\;version:\\1"
     },
     "scriptSrc": "jquery\\.fancybox(?:\\.pack|\\.min)?\\.js(?:\\?v=([\\d.]+))?$\\;version:\\1",
-    "website": "http://fancyapps.com/fancybox"
+    "website": "https://fancyapps.com/fancybox"
   },
   "Fanplayr": {
     "cats": [
@@ -413,7 +413,7 @@
     },
     "icon": "Fat-Free Framework.png",
     "implies": "PHP",
-    "website": "http://fatfreeframework.com"
+    "website": "https://fatfreeframework.com"
   },
   "FatherShops": {
     "cats": [
@@ -493,7 +493,7 @@
       "Server": "Fedora"
     },
     "icon": "Fedora.png",
-    "website": "http://fedoraproject.org"
+    "website": "https://fedoraproject.org"
   },
   "Feedback Fish": {
     "cats": [
@@ -748,7 +748,7 @@
       "Server": "fbs"
     },
     "icon": "Fireblade.png",
-    "website": "http://fireblade.com"
+    "website": "https://fireblade.com"
   },
   "Firepush": {
     "cats": [
@@ -870,7 +870,7 @@
       "app.cache.discussionList": "",
       "app.forum.freshness": ""
     },
-    "website": "http://flarum.org/"
+    "website": "https://flarum.org/"
   },
   "Flask": {
     "cats": [
@@ -884,7 +884,7 @@
     "icon": "Flask.png",
     "implies": "Python",
     "oss": true,
-    "website": "http://flask.pocoo.org"
+    "website": "https://flask.pocoo.org"
   },
   "Flat UI": {
     "cats": [
@@ -947,7 +947,7 @@
     "meta": {
       "generator": "^FlexCMP"
     },
-    "website": "http://www.flexcmp.com/cms/home"
+    "website": "https://www.flexcmp.com/cms/home"
   },
   "FlexSlider": {
     "cats": [
@@ -1188,7 +1188,7 @@
     "html": "(?:<a[^>]+>Powered by Flyspray|<map id=\"projectsearchform)",
     "icon": "Flyspray.png",
     "implies": "PHP",
-    "website": "http://flyspray.org"
+    "website": "https://flyspray.org"
   },
   "Flywheel": {
     "cats": [
@@ -1415,7 +1415,7 @@
       "generator": "^Fork CMS$"
     },
     "oss": true,
-    "website": "http://www.fork-cms.com"
+    "website": "https://www.fork-cms.com"
   },
   "FormAssembly": {
     "cats": [
@@ -1566,7 +1566,7 @@
     "html": "(?:<link [^>]*href=\"[^\\/]*\\/\\/www\\.fortune3\\.com\\/[^\"]*siterate\\/rate\\.css|Powered by <a [^>]*href=\"[^\"]+fortune3\\.com)",
     "icon": "Fortune3.png",
     "scriptSrc": "cartjs\\.php\\?(?:.*&)?s=[^&]*myfortune3cart\\.com",
-    "website": "http://fortune3.com"
+    "website": "https://fortune3.com"
   },
   "Foswiki": {
     "cats": [
@@ -1594,7 +1594,7 @@
       "foswiki.SERVERTIME": "",
       "foswiki.WIKINAME": ""
     },
-    "website": "http://foswiki.org"
+    "website": "https://foswiki.org"
   },
   "Four": {
     "cats": [
@@ -1740,13 +1740,13 @@
     "js": {
       "FraudLabsProAgent": ""
     },
-    "saas": true,
-    "scriptSrc": "\\.fraudlabspro\\.com/",
     "pricing": [
       "freemium",
       "mid",
       "recurring"
     ],
+    "saas": true,
+    "scriptSrc": "\\.fraudlabspro\\.com/",
     "website": "https://www.fraudlabspro.com"
   },
   "FreakOut": {
@@ -1778,7 +1778,7 @@
       "Server": "FreeBSD(?: ([\\d.]+))?\\;version:\\1"
     },
     "icon": "FreeBSD.png",
-    "website": "http://freebsd.org"
+    "website": "https://freebsd.org"
   },
   "FreeTextBox": {
     "cats": [
@@ -1792,7 +1792,7 @@
       "FTB_API": "",
       "FTB_AddEvent": ""
     },
-    "website": "http://freetextbox.com"
+    "website": "https://freetextbox.com"
   },
   "Freespee": {
     "cats": [
@@ -2021,7 +2021,7 @@
     "js": {
       "FroalaEditor.VERSION": "([\\d\\.]+)\\;version:\\1"
     },
-    "website": "http://froala.com/wysiwyg-editor"
+    "website": "https://froala.com/wysiwyg-editor"
   },
   "Front Chat": {
     "cats": [
@@ -2051,7 +2051,7 @@
       "ProgId": "^FrontPage\\.",
       "generator": "Microsoft FrontPage(?:\\s((?:Express )?[\\d.]+))?\\;version:\\1"
     },
-    "website": "http://office.microsoft.com/frontpage"
+    "website": "https://office.microsoft.com/frontpage"
   },
   "Frontastic": {
     "cats": [
@@ -2291,7 +2291,7 @@
       "_fusion": ""
     },
     "scriptSrc": "^[^\\/]*//[ac]dn\\.fusionads\\.net/(?:api/([\\d.]+)/)?\\;version:\\1",
-    "website": "http://fusionads.net"
+    "website": "https://fusionads.net"
   },
   "FusionCharts": {
     "cats": [

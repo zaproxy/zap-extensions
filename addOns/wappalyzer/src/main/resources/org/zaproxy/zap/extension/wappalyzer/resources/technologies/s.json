@@ -25,7 +25,7 @@
       "Server": "SAP NetWeaver Application Server"
     },
     "icon": "SAP.svg",
-    "website": "http://sap.com"
+    "website": "https://sap.com"
   },
   "SAP Commerce Cloud": {
     "cats": [
@@ -88,7 +88,7 @@
     ],
     "html": "<img[^>]+_tcm\\d{2,3}-\\d{6}\\.",
     "icon": "SDL Tridion.svg",
-    "website": "http://www.sdl.com/products/tridion"
+    "website": "https://www.sdl.com/products/tridion"
   },
   "SEMrush": {
     "cats": [
@@ -176,7 +176,23 @@
       "SIM.medium": ""
     },
     "scriptSrc": "/sim(?:site|core)/js",
-    "website": "http://simgroep.nl/internet/portfolio-contentbeheer_41623/"
+    "website": "https://simgroep.nl/internet/portfolio-contentbeheer_41623/"
+  },
+  "SNO Flex": {
+    "cats": [
+      80
+    ],
+    "description": "SNO Flex is a WordPress theme developed by SNO Sites. SNO Sites is a company that specialises in providing website solutions for schools and educational institutions.",
+    "icon": "SNO.svg",
+    "js": {
+      "sno_infographics_ajax_object": ""
+    },
+    "pricing": [
+      "onetime",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "website": "https://snosites.com"
   },
   "SOBI 2": {
     "cats": [
@@ -185,7 +201,7 @@
     "html": "(?:<!-- start of Sigsiu Online Business Index|<div[^>]* class=\"sobi2)",
     "icon": "SOBI 2.png",
     "implies": "Joomla",
-    "website": "http://www.sigsiu.net/sobi2.html"
+    "website": "https://www.sigsiu.net/sobi2.html"
   },
   "SPDY": {
     "cats": [
@@ -196,7 +212,7 @@
       "X-Firefox-Spdy": "\\d\\.\\d"
     },
     "icon": "SPDY.png",
-    "website": "http://chromium.org/spdy"
+    "website": "https://chromium.org/spdy"
   },
   "SPIP": {
     "cats": [
@@ -215,7 +231,7 @@
       "generator": "(?:^|\\s)SPIP(?:\\s([\\d.]+(?:\\s\\[\\d+\\])?))?\\;version:\\1"
     },
     "oss": true,
-    "website": "http://www.spip.net"
+    "website": "https://www.spip.net"
   },
   "SPNEGO": {
     "cats": [
@@ -235,7 +251,7 @@
     "html": "(?:<title>SQL Buddy</title>|<[^>]+onclick=\"sideMainClick\\(\"home\\.php)",
     "icon": "SQL Buddy.png",
     "implies": "PHP",
-    "website": "http://www.sqlbuddy.com"
+    "website": "https://www.sqlbuddy.com"
   },
   "SQLite": {
     "cats": [
@@ -243,7 +259,7 @@
     ],
     "cpe": "cpe:2.3:a:sqlite:sqlite:*:*:*:*:*:*:*:*",
     "icon": "SQLite.png",
-    "website": "http://www.sqlite.org"
+    "website": "https://www.sqlite.org"
   },
   "STN Video": {
     "cats": [
@@ -296,7 +312,7 @@
       "X-Powered-By": "SUSE(?:/?\\s?-?([\\d.]+))?\\;version:\\1"
     },
     "icon": "SUSE.png",
-    "website": "http://suse.com"
+    "website": "https://suse.com"
   },
   "SVG Support": {
     "cats": [
@@ -410,7 +426,7 @@
     },
     "icon": "Sails.js.svg",
     "implies": "Express",
-    "website": "http://sailsjs.org"
+    "website": "https://sailsjs.org"
   },
   "Sailthru": {
     "cats": [
@@ -643,7 +659,7 @@
     ],
     "saas": true,
     "scriptSrc": "/demandware\\.static/",
-    "website": "http://demandware.com"
+    "website": "https://demandware.com"
   },
   "Salesforce Desk": {
     "cats": [
@@ -922,7 +938,7 @@
     "meta": {
       "generator": "Sarka-SPIP(?:\\s([\\d.]+))?\\;version:\\1"
     },
-    "website": "http://sarka-spip.net"
+    "website": "https://sarka-spip.net"
   },
   "Sass": {
     "cats": [
@@ -974,7 +990,7 @@
     "meta": {
       "generator": "^Sazito"
     },
-    "website": "http://sazito.com"
+    "website": "https://sazito.com"
   },
   "Scala": {
     "cats": [
@@ -982,7 +998,7 @@
     ],
     "description": "Scala is a general-purpose programming language providing support for both object-oriented programming and functional programming.",
     "icon": "Scala.png",
-    "website": "http://www.scala-lang.org"
+    "website": "https://www.scala-lang.org"
   },
   "Scalapay": {
     "cats": [
@@ -1043,7 +1059,7 @@
       "X-Powered-By": "Scientific Linux"
     },
     "icon": "Scientific Linux.png",
-    "website": "http://scientificlinux.org"
+    "website": "https://scientificlinux.org"
   },
   "Scissor Themes Writee": {
     "cats": [
@@ -1189,7 +1205,7 @@
     "meta": {
       "generator": "^Seamless\\.?CMS"
     },
-    "website": "http://www.seamlesscms.com"
+    "website": "https://www.seamlesscms.com"
   },
   "SearchFit": {
     "cats": [
@@ -1342,7 +1358,7 @@
     "scriptSrc": [
       "seersco.com/script/cb\\.js"
     ],
-    "website": "http://www.seersco.com"
+    "website": "https://www.seersco.com"
   },
   "Segmanta": {
     "cats": [
@@ -1654,7 +1670,7 @@
     "description": "Sencha Touch is a user interface (UI) JavaScript library, or web framework, specifically built for the Mobile Web.",
     "icon": "Sencha Touch.png",
     "scriptSrc": "sencha-touch.*\\.js",
-    "website": "http://www.sencha.com/products/touch"
+    "website": "https://www.sencha.com/products/touch"
   },
   "SendPulse": {
     "cats": [
@@ -1772,7 +1788,7 @@
       "Powered-By": "Serendipity v\\.([\\d.]+)\\;version:\\1",
       "generator": "Serendipity(?: v\\.([\\d.]+))?\\;version:\\1"
     },
-    "website": "http://s9y.org"
+    "website": "https://s9y.org"
   },
   "Service Management Group": {
     "cats": [
@@ -1956,7 +1972,7 @@
       "freemium"
     ],
     "scriptSrc": "\\.sharethis\\.com/",
-    "website": "http://sharethis.com"
+    "website": "https://sharethis.com"
   },
   "Shareaholic": {
     "cats": [
@@ -2081,7 +2097,7 @@
     "js": {
       "ShellInABox": ""
     },
-    "website": "http://shellinabox.com"
+    "website": "https://shellinabox.com"
   },
   "Shift4Shop": {
     "cats": [
@@ -2126,7 +2142,7 @@
       "SSsdk": ""
     },
     "scriptSrc": "^https?://codice(?:business|ssl|pro|isp)?\\.shinystat\\.com/cgi-bin/getcod\\.cgi",
-    "website": "http://shinystat.com"
+    "website": "https://shinystat.com"
   },
   "ShipStation": {
     "cats": [
@@ -2371,7 +2387,7 @@
     ],
     "saas": true,
     "scriptSrc": "cdn\\.myshopapps\\.com/",
-    "website": "http://www.shopapps.in"
+    "website": "https://www.shopapps.in"
   },
   "Shopatron": {
     "cats": [
@@ -2389,7 +2405,7 @@
       "keywords": "Shopatron"
     },
     "scriptSrc": "mediacdn\\.shopatron\\.com",
-    "website": "http://ecommerce.shopatron.com"
+    "website": "https://ecommerce.shopatron.com"
   },
   "Shopcada": {
     "cats": [
@@ -2399,7 +2415,7 @@
     "js": {
       "Shopcada": ""
     },
-    "website": "http://shopcada.com"
+    "website": "https://shopcada.com"
   },
   "Shoper": {
     "cats": [
@@ -2428,7 +2444,7 @@
       "Symfony",
       "Elcodi"
     ],
-    "website": "http://shopery.com"
+    "website": "https://shopery.com"
   },
   "Shopfa": {
     "cats": [
@@ -2505,7 +2521,7 @@
     ],
     "scripts": "shopifyTag",
     "url": "^https?//.+\\.myshopify\\.com",
-    "website": "http://shopify.com",
+    "website": "https://shopify.com",
     "xhr": "\\.myshopify\\.com"
   },
   "Shopify Buy Button": {
@@ -2809,7 +2825,7 @@
     "scriptSrc": [
       "^https?://cdn\\.myshoptet\\.com/"
     ],
-    "website": "http://www.shoptet.cz"
+    "website": "https://www.shoptet.cz"
   },
   "Shopware": {
     "cats": [
@@ -3022,7 +3038,7 @@
       "powered": "simbel"
     },
     "icon": "simbel.svg",
-    "website": "http://simbel.com.ar/"
+    "website": "https://simbel.com.ar/"
   },
   "Simon": {
     "cats": [
@@ -3088,7 +3104,7 @@
       "smf_theme_url": ""
     },
     "oss": true,
-    "website": "http://www.simplemachines.org"
+    "website": "https://www.simplemachines.org"
   },
   "SimpleHTTP": {
     "cats": [
@@ -3097,7 +3113,7 @@
     "headers": {
       "Server": "SimpleHTTP(?:/([\\d.]+))?\\;version:\\1"
     },
-    "website": "http://example.com"
+    "website": "https://example.com"
   },
   "SimpleSAMLphp": {
     "cats": [
@@ -3270,6 +3286,22 @@
     ],
     "website": "https://www.sirdata.com"
   },
+  "Sirge": {
+    "cats": [
+      10,
+      100
+    ],
+    "description": "Sirge is an analytics platform that tracks website visits, customer behavior, and provides insights to optimise return on ad spend (ROAS) and conversions.",
+    "icon": "Sirge.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "cdn\\.app\\.sirge\\.com/",
+    "website": "https://www.sirge.com"
+  },
   "Site Kit": {
     "cats": [
       10,
@@ -3289,7 +3321,7 @@
     ],
     "icon": "Site Meter.png",
     "scriptSrc": "sitemeter\\.com/js/counter\\.js\\?site=",
-    "website": "http://www.sitemeter.com"
+    "website": "https://www.sitemeter.com"
   },
   "Site Search 360": {
     "cats": [
@@ -3335,7 +3367,7 @@
     "meta": {
       "generator": "SiteEdit"
     },
-    "website": "http://www.siteedit.ru"
+    "website": "https://www.siteedit.ru"
   },
   "SiteGround": {
     "cats": [
@@ -3570,7 +3602,7 @@
       "poa"
     ],
     "saas": true,
-    "website": "http://www.sitefinity.com"
+    "website": "https://www.sitefinity.com"
   },
   "Siteglide": {
     "cats": [
@@ -3668,7 +3700,7 @@
     "meta": {
       "generator": "Sivuviidakko"
     },
-    "website": "http://sivuviidakko.fi"
+    "website": "https://sivuviidakko.fi"
   },
   "Sizebay": {
     "cats": [
@@ -3693,7 +3725,7 @@
     "html": "(?:<a [^>]*href=\"[^/]*//[^/]*serving-sys\\.com/|<img [^>]*src=\"[^/]*//[^/]*serving-sys\\.com/)",
     "icon": "Sizmek.png",
     "scriptSrc": "serving-sys\\.com/",
-    "website": "http://sizmek.com"
+    "website": "https://sizmek.com"
   },
   "Skai": {
     "cats": [
@@ -3890,6 +3922,22 @@
     "saas": true,
     "website": "https://sleeknote.com"
   },
+  "Sleekplan": {
+    "cats": [
+      13
+    ],
+    "description": "Sleekplan is a customer feedback and product management platform that enables businesses to collect, analyse, and act upon user feedback, prioritise feature requests, track bugs, and collaborate on product development.",
+    "icon": "Sleekplan.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "requires": "Vue.js",
+    "saas": true,
+    "scriptSrc": "\\.sleekplan\\.com/",
+    "website": "https://sleekplan.com"
+  },
   "Slice": {
     "cats": [
       93
@@ -3979,7 +4027,7 @@
     "icon": "Slimbox.png",
     "implies": "MooTools",
     "scriptSrc": "slimbox\\.js",
-    "website": "http://www.digitalia.be/software/slimbox"
+    "website": "https://www.digitalia.be/software/slimbox"
   },
   "Slimbox 2": {
     "cats": [
@@ -3989,7 +4037,7 @@
     "icon": "Slimbox 2.png",
     "implies": "jQuery",
     "scriptSrc": "slimbox2\\.js",
-    "website": "http://www.digitalia.be/software/slimbox2"
+    "website": "https://www.digitalia.be/software/slimbox2"
   },
   "Smart Ad Server": {
     "cats": [
@@ -4006,7 +4054,7 @@
     ],
     "saas": true,
     "scriptSrc": "\\.sascdn\\.com/",
-    "website": "http://smartadserver.com"
+    "website": "https://smartadserver.com"
   },
   "Smart Slider 3": {
     "cats": [
@@ -4046,7 +4094,7 @@
     "meta": {
       "author": "Redacteur SmartInstant"
     },
-    "website": "http://www.seneca.nl/pub/Smartsite/Smartsite-Smartsite-iXperion"
+    "website": "https://www.seneca.nl/pub/Smartsite/Smartsite-Smartsite-iXperion"
   },
   "SmartWeb": {
     "cats": [
@@ -4155,7 +4203,7 @@
     ],
     "icon": "Smartstore.biz.png",
     "scriptSrc": "smjslib\\.js",
-    "website": "http://smartstore.com"
+    "website": "https://smartstore.com"
   },
   "Smartsupp": {
     "cats": [
@@ -4270,7 +4318,7 @@
     },
     "icon": "Snap.png",
     "implies": "Haskell",
-    "website": "http://snapframework.com"
+    "website": "https://snapframework.com"
   },
   "Snap Pixel": {
     "cats": [
@@ -4295,7 +4343,7 @@
       "Snap.version": "^(.+)$\\;version:\\1"
     },
     "scriptSrc": "snap\\.svg(?:-min)?\\.js",
-    "website": "http://snapsvg.io"
+    "website": "https://snapsvg.io"
   },
   "SnapEngage": {
     "cats": [
@@ -4404,7 +4452,7 @@
       "snoobi": ""
     },
     "scriptSrc": "snoobi\\.com/snoop\\.php",
-    "website": "http://www.snoobi.com"
+    "website": "https://www.snoobi.com"
   },
   "Snowplow Analytics": {
     "cats": [
@@ -4445,7 +4493,7 @@
     "js": {
       "SobiProUrl": ""
     },
-    "website": "http://sigsiu.net/sobipro.html"
+    "website": "https://sigsiu.net/sobipro.html"
   },
   "Social9": {
     "cats": [
@@ -4527,7 +4575,7 @@
     "meta": {
       "author": "SoftTr E-Ticaret Sitesi Yazılımı"
     },
-    "website": "http://www.softtr.com"
+    "website": "https://www.softtr.com"
   },
   "Softr": {
     "cats": [
@@ -4618,7 +4666,7 @@
     "html": "<div class=[\"']dynamicDiv[\"'] id=[\"']dd\\.\\d\\.\\d(?:\\.\\d)?[\"']>",
     "icon": "Solodev.png",
     "implies": "PHP",
-    "website": "http://www.solodev.com"
+    "website": "https://www.solodev.com"
   },
   "Solr": {
     "cats": [
@@ -4628,7 +4676,7 @@
     "description": "Solr is an open-source enterprise-search platform, written in Java.",
     "icon": "Solr.png",
     "implies": "Lucene",
-    "website": "http://lucene.apache.org/solr/"
+    "website": "https://lucene.apache.org/solr/"
   },
   "Solusquare OmniCommerce Cloud": {
     "cats": [
@@ -4657,7 +4705,7 @@
       "adcopy-puzzle-image-image": ""
     },
     "scriptSrc": "^https?://api\\.solvemedia\\.com/",
-    "website": "http://solvemedia.com"
+    "website": "https://solvemedia.com"
   },
   "Solvemate": {
     "cats": [
@@ -4828,7 +4876,7 @@
       "SoundManager": "",
       "soundManager.version": "V(.+) \\;version:\\1"
     },
-    "website": "http://www.schillmania.com/projects/soundmanager2"
+    "website": "https://www.schillmania.com/projects/soundmanager2"
   },
   "Sourcepoint": {
     "cats": [
@@ -4861,7 +4909,7 @@
       "sovrn_render": ""
     },
     "saas": true,
-    "scriptSrc": "\\.lijit\\.com",
+    "scriptSrc": "\\.(?:linksmart|lijit)\\.com/",
     "website": "https://www.sovrn.com",
     "xhr": "\\.lijit\\.com"
   },
@@ -5202,7 +5250,7 @@
     "pricing": [
       "poa"
     ],
-    "website": "http://splunk.com"
+    "website": "https://splunk.com"
   },
   "SpotHopper": {
     "cats": [
@@ -5320,9 +5368,9 @@
       19
     ],
     "description": "Sprig is a free plugin for Craft CMS that allows you to create reactive components from Twig templates ​or PHP classes.",
+    "dom": "form[sprig], button[sprig], input[sprig], div.sprig-component",
     "icon": "Sprig plugin.svg",
     "requires": "Craft CMS",
-    "dom": "form[sprig], button[sprig], input[sprig], div.sprig-component",
     "website": "https://putyourlightson.com/plugins/sprig"
   },
   "Spring": {
@@ -5597,7 +5645,7 @@
       "recurring"
     ],
     "saas": true,
-    "website": "http://www.squarespace.com"
+    "website": "https://www.squarespace.com"
   },
   "Squarespace Commerce": {
     "cats": [
@@ -5621,6 +5669,24 @@
     "scriptSrc": "assets\\.squarespace\\.\\w+/universal/scripts-compressed/commerce-\\w+-min\\.[\\w+\\-]+\\.js",
     "website": "https://www.squarespace.com/ecommerce-website"
   },
+  "Squeezely": {
+    "cats": [
+      97
+    ],
+    "description": "Squeezely is a customer data platform (CDP) that provides technical capabilities for data collection, segmentation, audience targeting, campaign orchestration, and analytics, empowering businesses to personalise customer experiences and optimise marketing efforts.",
+    "icon": "Squeezely.svg",
+    "js": {
+      "sqzlCommon.getVariantName": "",
+      "sqzlPersonalization": ""
+    },
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "//squeezely\\.tech/",
+    "website": "https://www.squeezely.tech"
+  },
   "SquirrelMail": {
     "cats": [
       30
@@ -5634,7 +5700,7 @@
       "squirrelmail_loginpage_onload": ""
     },
     "url": "/src/webmail\\.php(?:$|\\?)",
-    "website": "http://squirrelmail.org"
+    "website": "https://squirrelmail.org"
   },
   "Squiz Matrix": {
     "cats": [
@@ -5736,6 +5802,14 @@
     ],
     "description": "Stackbit is a visual experience platform for building decoupled websites.",
     "dom": {
+      "[data-sb-object-id]": {
+        "exists": ""
+      },
+      "header[data-sb-field-path]": {
+        "attributes": {
+          "data-sb-field-path": ""
+        }
+      },
       "script#__NEXT_DATA__": {
         "text": "stackbit"
       }
@@ -5745,6 +5819,7 @@
       "__NEXT_DATA__.props.pageProps.withStackbit": ""
     },
     "pricing": [
+      "freemium",
       "mid",
       "recurring"
     ],
@@ -5847,7 +5922,7 @@
     },
     "icon": "Starlet.png",
     "implies": "Perl",
-    "website": "http://metacpan.org/pod/Starlet"
+    "website": "https://metacpan.org/pod/Starlet"
   },
   "Statamic": {
     "cats": [
@@ -5886,7 +5961,7 @@
       "sc_security": "\\;confidence:50"
     },
     "scriptSrc": "statcounter\\.com/counter/counter",
-    "website": "http://www.statcounter.com"
+    "website": "https://www.statcounter.com"
   },
   "Statically": {
     "cats": [
@@ -6212,7 +6287,7 @@
       "Google Code Prettify"
     ],
     "scriptSrc": "strapdown\\.js",
-    "website": "http://strapdownjs.com"
+    "website": "https://strapdownjs.com"
   },
   "Strapi": {
     "cats": [
@@ -6294,6 +6369,7 @@
     "dns": {
       "TXT": "stripe-verification="
     },
+    "dom": "a[href*='billing.stripe.com'][target='_blank']",
     "html": "<input[^>]+data-stripe",
     "icon": "Stripe.svg",
     "js": {
@@ -6306,7 +6382,7 @@
     ],
     "saas": true,
     "scriptSrc": "js\\.stripe\\.com",
-    "website": "http://stripe.com"
+    "website": "https://stripe.com"
   },
   "StrutFit": {
     "cats": [
@@ -6407,7 +6483,7 @@
       "sublimevideo": ""
     },
     "scriptSrc": "cdn\\.sublimevideo\\.net/js/[a-z\\d]+\\.js",
-    "website": "http://sublimevideo.net"
+    "website": "https://sublimevideo.net"
   },
   "Subrion": {
     "cats": [
@@ -6421,7 +6497,7 @@
     "meta": {
       "generator": "^Subrion "
     },
-    "website": "http://subrion.com"
+    "website": "https://subrion.com"
   },
   "Substack": {
     "cats": [
@@ -6436,7 +6512,7 @@
     "pricing": [
       "payg"
     ],
-    "website": "http://substack.com/"
+    "website": "https://substack.com/"
   },
   "Sucuri": {
     "cats": [
@@ -6475,7 +6551,7 @@
       "SULU_CONFIG.suluVersion": "^([\\d\\.]+)$\\;version:\\1"
     },
     "oss": true,
-    "website": "http://sulu.io"
+    "website": "https://sulu.io"
   },
   "SummerCart": {
     "cats": [
@@ -6499,7 +6575,7 @@
       "recurring"
     ],
     "saas": true,
-    "website": "http://www.summercart.com"
+    "website": "https://www.summercart.com"
   },
   "Sumo": {
     "cats": [
@@ -6519,7 +6595,7 @@
     ],
     "saas": true,
     "scriptSrc": "\\.sumo(?:me)?\\.com/",
-    "website": "http://sumo.com"
+    "website": "https://sumo.com"
   },
   "SunOS": {
     "cats": [
@@ -6532,7 +6608,7 @@
       "Servlet-engine": "SunOS( [\\d\\.]+)?\\;version:\\1"
     },
     "icon": "Oracle.svg",
-    "website": "http://oracle.com/solaris"
+    "website": "https://oracle.com/solaris"
   },
   "Suncel": {
     "cats": [
@@ -6626,7 +6702,7 @@
     ],
     "icon": "Supersized.png",
     "scriptSrc": "supersized(?:\\.([\\d.]*[\\d]))?.*\\.js\\;version:\\1",
-    "website": "http://buildinternet.com/project/supersized"
+    "website": "https://buildinternet.com/project/supersized"
   },
   "Superspeed": {
     "cats": [
@@ -6827,7 +6903,7 @@
       "Swiftype": ""
     },
     "scriptSrc": "swiftype\\.com/embed\\.js$",
-    "website": "http://swiftype.com"
+    "website": "https://swiftype.com"
   },
   "Swiper": {
     "cats": [
@@ -6960,7 +7036,7 @@
       "description": "^DiskStation provides a full-featured network attached storage"
     },
     "scriptSrc": "webapi/entry\\.cgi\\?api=SYNO\\.(?:Core|Filestation)\\.Desktop\\.",
-    "website": "http://synology.com"
+    "website": "https://synology.com"
   },
   "SyntaxHighlighter": {
     "cats": [

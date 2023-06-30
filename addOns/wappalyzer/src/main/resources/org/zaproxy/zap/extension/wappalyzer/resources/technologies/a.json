@@ -89,7 +89,7 @@
     ],
     "saas": true,
     "scriptSrc": "\\.ebis\\.ne\\.jp/",
-    "website": "http://www.ebis.ne.jp"
+    "website": "https://www.ebis.ne.jp"
   },
   "ADAPT": {
     "cats": [
@@ -196,7 +196,7 @@
       "Server": "AOLserver/?([\\d.]+)?\\;version:\\1"
     },
     "icon": "AOLserver.png",
-    "website": "http://aolserver.com"
+    "website": "https://aolserver.com"
   },
   "AOS": {
     "cats": [
@@ -215,7 +215,7 @@
       "unpkg\\.com/aos@([\\d\\.]+)/dist/aos\\.js\\;version:\\1",
       "/typo3conf/ext/udem_vendor/Resources/Public/aos-([\\d\\.]+)\\;version:\\1"
     ],
-    "website": "http://michalsnik.github.io/aos/"
+    "website": "https://michalsnik.github.io/aos/"
   },
   "APC": {
     "cats": [
@@ -263,7 +263,7 @@
       "ATInternet": "",
       "xtsite": ""
     },
-    "website": "http://atinternet.com/en"
+    "website": "https://atinternet.com/en"
   },
   "AT Internet XiTi": {
     "cats": [
@@ -274,7 +274,7 @@
       "xt_click": ""
     },
     "scriptSrc": "xiti\\.com/hit\\.xiti",
-    "website": "http://atinternet.com/en"
+    "website": "https://atinternet.com/en"
   },
   "ATSHOP": {
     "cats": [
@@ -350,7 +350,7 @@
     "meta": {
       "generator": "AWStats ([\\d.]+(?: \\(build [\\d.]+\\))?)\\;version:\\1"
     },
-    "website": "http://awstats.sourceforge.net"
+    "website": "https://awstats.sourceforge.net"
   },
   "Abicart": {
     "cats": [
@@ -495,6 +495,25 @@
     },
     "scriptSrc": "/embed/accesso\\.js",
     "website": "https://accesso.com/"
+  },
+  "Acconsento.click": {
+    "cats": [
+      67
+    ],
+    "description": "Acconsento.click is a software solution designed to assist users in achieving cookie policy compliance for their websites.",
+    "dom": "link[href*='//acconsento.click/']",
+    "icon": "Acconsento.click.png",
+    "js": {
+      "AcconsentoAPI": "",
+      "acconsentoCreateElement": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://shop.acconsento.click"
   },
   "AccuWeather": {
     "cats": [
@@ -770,7 +789,7 @@
     ],
     "saas": true,
     "scriptSrc": "/cdnr/\\d+/acton/bn/tracker/\\d+",
-    "website": "http://act-on.com"
+    "website": "https://act-on.com"
   },
   "Actito": {
     "cats": [
@@ -897,7 +916,7 @@
     ],
     "icon": "AdInfinity.png",
     "scriptSrc": "adinfinity\\.com\\.au",
-    "website": "http://adinfinity.com.au"
+    "website": "https://adinfinity.com.au"
   },
   "AdOcean": {
     "cats": [
@@ -965,7 +984,7 @@
     ],
     "saas": true,
     "scriptSrc": "\\.adriver\\.ru/",
-    "website": "http://adriver.ru"
+    "website": "https://adriver.ru"
   },
   "AdRoll": {
     "cats": [
@@ -986,7 +1005,7 @@
     ],
     "saas": true,
     "scriptSrc": "(?:a|s)\\.adroll\\.com",
-    "website": "http://adroll.com"
+    "website": "https://adroll.com"
   },
   "AdRoll CMP System": {
     "cats": [
@@ -1128,7 +1147,7 @@
     },
     "scriptSrc": "^[^\\/]*//(?:[^\\/]+\\.)?adcash\\.com/(?:script|ad)/",
     "url": "^https?://(?:[^\\/]+\\.)?adcash\\.com/script/pop_",
-    "website": "http://adcash.com"
+    "website": "https://adcash.com"
   },
   "AddEvent": {
     "cats": [
@@ -1156,7 +1175,7 @@
     ],
     "saas": true,
     "scriptSrc": "(?:cdn\\.)?shop\\.pe/widget/",
-    "website": "http://www.addshoppers.com"
+    "website": "https://www.addshoppers.com"
   },
   "AddThis": {
     "cats": [
@@ -1168,7 +1187,7 @@
       "addthis": ""
     },
     "scriptSrc": "addthis\\.com/js/",
-    "website": "http://www.addthis.com"
+    "website": "https://www.addthis.com"
   },
   "AddToAny": {
     "cats": [
@@ -1180,7 +1199,7 @@
       "a2apage_init": ""
     },
     "scriptSrc": "addtoany\\.com/menu/page\\.js",
-    "website": "http://www.addtoany.com"
+    "website": "https://www.addtoany.com"
   },
   "AddToAny Share Buttons": {
     "cats": [
@@ -1276,7 +1295,7 @@
     ],
     "icon": "adminer.png",
     "implies": "PHP",
-    "website": "http://www.adminer.org"
+    "website": "https://www.adminer.org"
   },
   "Admiral": {
     "cats": [
@@ -1433,7 +1452,7 @@
     },
     "scriptSrc": "/cfajax/",
     "url": "\\.cfm(?:$|\\?)",
-    "website": "http://adobe.com/products/coldfusion-family.html"
+    "website": "https://adobe.com/products/coldfusion-family.html"
   },
   "Adobe DTM": {
     "cats": [
@@ -1535,7 +1554,7 @@
     "meta": {
       "generator": "Adobe GoLive(?:\\s([\\d.]+))?\\;version:\\1"
     },
-    "website": "http://www.adobe.com/products/golive"
+    "website": "https://www.adobe.com/products/golive"
   },
   "Adobe Portfolio": {
     "cats": [
@@ -1571,7 +1590,7 @@
       "generator": "^Adobe RoboHelp(?: ([\\d]+))?\\;version:\\1"
     },
     "scriptSrc": "(?:wh(?:utils|ver|proxy|lang|topic|msg)|ehlpdhtm)\\.js",
-    "website": "http://adobe.com/products/robohelp.html"
+    "website": "https://adobe.com/products/robohelp.html"
   },
   "Adobe Target": {
     "cats": [
@@ -1648,7 +1667,7 @@
       "advst_is_above_the_fold": ""
     },
     "scriptSrc": "(?:ad\\.advertstream\\.com|adxcore\\.com)",
-    "website": "http://www.advertstream.com"
+    "website": "https://www.advertstream.com"
   },
   "Adverticum": {
     "cats": [
@@ -1662,7 +1681,7 @@
     ],
     "saas": true,
     "scriptSrc": "\\.adverticum\\.net/",
-    "website": "http://adverticum.net"
+    "website": "https://adverticum.net"
   },
   "Adyen": {
     "cats": [
@@ -1687,7 +1706,7 @@
       "PHP",
       "jQuery"
     ],
-    "website": "http://blogengine.ru"
+    "website": "https://blogengine.ru"
   },
   "Aero Commerce": {
     "cats": [
@@ -1737,7 +1756,7 @@
     "dom": "img[src*='banners.affiliatefuture.com']",
     "icon": "Affiliate Future.png",
     "scriptSrc": "tags\\.affiliatefuture\\.com",
-    "website": "http://affiliatefuture.com"
+    "website": "https://affiliatefuture.com"
   },
   "Affiliatly": {
     "cats": [
@@ -1804,7 +1823,7 @@
       "X-Powered-By": "Afosto SaaS BV\\;version:2.0"
     },
     "icon": "Afosto.svg",
-    "website": "http://afosto.com"
+    "website": "https://afosto.com"
   },
   "AfterBuy": {
     "cats": [
@@ -1823,7 +1842,7 @@
     ],
     "saas": true,
     "scriptSrc": "\\.afterbuy\\.de/",
-    "website": "http://www.afterbuy.de"
+    "website": "https://www.afterbuy.de"
   },
   "AfterShip": {
     "cats": [
@@ -1889,18 +1908,34 @@
     "cats": [
       10
     ],
-    "description": "Ahoy is a Ruby gem that provides simple and powerful analytics for Ruby on Rails applications.",
-    "implies": "Ruby on Rails",
     "cookies": {
       "ahoy_track": "",
       "ahoy_visit": "",
       "ahoy_visitor": ""
     },
+    "description": "Ahoy is a Ruby gem that provides simple and powerful analytics for Ruby on Rails applications.",
+    "implies": "Ruby on Rails",
     "js": {
       "ahoy": ""
     },
     "oss": true,
     "website": "https://github.com/ankane/ahoy"
+  },
+  "Ahrefs": {
+    "cats": [
+      54,
+      10
+    ],
+    "description": "Ahrefs is an online toolset utilised for search engine optimisation (SEO) and competitor analysis, which permits users to analyse their website's performance, track keyword rankings, identify backlink opportunities, and research competitors' websites, among other features.",
+    "icon": "ahrefs.svg",
+    "meta": {
+      "ahrefs-site-verification": ""
+    },
+    "pricing": [
+      "low",
+      "mid"
+    ],
+    "website": "https://ahrefs.com"
   },
   "AiSpeed": {
     "cats": [
@@ -1974,7 +2009,7 @@
     "icon": "aircall.png",
     "saas": true,
     "scriptSrc": "^https?://cdn\\.aircall\\.io/",
-    "website": "http://aircall.io"
+    "website": "https://aircall.io"
   },
   "Airee": {
     "cats": [
@@ -1984,7 +2019,7 @@
       "Server": "^Airee"
     },
     "icon": "Airee.png",
-    "website": "http://xn--80aqc2a.xn--p1ai"
+    "website": "https://xn--80aqc2a.xn--p1ai"
   },
   "Airform": {
     "cats": [
@@ -2040,7 +2075,7 @@
       "poa"
     ],
     "saas": true,
-    "website": "http://akamai.com"
+    "website": "https://akamai.com"
   },
   "Akamai Bot Manager": {
     "cats": [
@@ -2121,6 +2156,24 @@
     "oss": true,
     "website": "https://akaunting.com"
   },
+  "Akilli Ticaret": {
+    "cats": [
+      6
+    ],
+    "description": "Akilli Ticaret is an all-in-one ecommerce platform from Turkey.",
+    "icon": "Akilli Ticaret.svg",
+    "js": {
+      "akillitel": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "requires": "Microsoft ASP.NET",
+    "saas": true,
+    "scriptSrc": "\\.akilliticaret\\.com/",
+    "website": "https://akilliticaret.com"
+  },
   "Akinon": {
     "cats": [
       6
@@ -2162,7 +2215,7 @@
       "Server": "akka-http(?:/([\\d.]+))?\\;version:\\1"
     },
     "icon": "akka-http.png",
-    "website": "http://akka.io"
+    "website": "https://akka.io"
   },
   "Aklamio": {
     "cats": [
@@ -2268,6 +2321,7 @@
       "__GLOBAL__.algolia": "",
       "__NEXT_DATA__.props.pageProps.appSettings.ALGOLIA_APP_ID": "",
       "__algolia": "",
+      "__algolia.algoliasearch.version": "^(.+)$\\;version:\\1",
       "algoliasearch.version": "^(.+)$\\;version:\\1"
     },
     "pricing": [
@@ -2275,7 +2329,7 @@
       "payg"
     ],
     "saas": true,
-    "website": "http://www.algolia.com"
+    "website": "https://www.algolia.com"
   },
   "Algolia DocSearch": {
     "cats": [
@@ -2388,7 +2442,7 @@
       "AUI": ""
     },
     "scriptSrc": "^https?://cdn\\.alloyui\\.com/",
-    "website": "http://www.alloyui.com"
+    "website": "https://www.alloyui.com"
   },
   "Allyable": {
     "cats": [
@@ -2481,7 +2535,7 @@
       "generator": "Amaya(?: V?([\\d.]+[a-z]))?\\;version:\\1"
     },
     "oss": true,
-    "website": "http://www.w3.org/Amaya"
+    "website": "https://www.w3.org/Amaya"
   },
   "Amazon ALB": {
     "cats": [
@@ -2557,7 +2611,7 @@
     "icon": "Amazon Cloudfront.svg",
     "implies": "Amazon Web Services",
     "saas": true,
-    "website": "http://aws.amazon.com/cloudfront/"
+    "website": "https://aws.amazon.com/cloudfront/"
   },
   "Amazon CloudWatch RUM": {
     "cats": [
@@ -2601,7 +2655,7 @@
     "icon": "Amazon EC2.svg",
     "implies": "Amazon Web Services",
     "saas": true,
-    "website": "http://aws.amazon.com/ec2/"
+    "website": "https://aws.amazon.com/ec2/"
   },
   "Amazon ECS": {
     "cats": [
@@ -2687,7 +2741,7 @@
     "implies": "Amazon Web Services",
     "saas": true,
     "scriptSrc": "s3[^ ]*\\.amazonaws\\.com/",
-    "website": "http://aws.amazon.com/s3/"
+    "website": "https://aws.amazon.com/s3/"
   },
   "Amazon SES": {
     "cats": [
@@ -2785,7 +2839,7 @@
       "generator": "(?:Ametys|Anyware Technologies)"
     },
     "scriptSrc": "ametys\\.js",
-    "website": "http://ametys.org"
+    "website": "https://ametys.org"
   },
   "Amex Express Checkout": {
     "cats": [
@@ -3294,7 +3348,7 @@
     "implies": "Apache Tomcat",
     "scriptSrc": "jspwiki",
     "url": "wiki\\.jsp",
-    "website": "http://jspwiki.org"
+    "website": "https://jspwiki.org"
   },
   "Apache Tomcat": {
     "cats": [
@@ -3308,7 +3362,7 @@
     },
     "icon": "Apache Tomcat.svg",
     "implies": "Java",
-    "website": "http://tomcat.apache.org"
+    "website": "https://tomcat.apache.org"
   },
   "Apache Traffic Server": {
     "cats": [
@@ -3319,7 +3373,7 @@
       "Server": "ATS/?([\\d.]+)?\\;version:\\1"
     },
     "icon": "Apache Traffic Server.svg",
-    "website": "http://trafficserver.apache.org/"
+    "website": "https://trafficserver.apache.org/"
   },
   "Apache Wicket": {
     "cats": [
@@ -3331,7 +3385,7 @@
     "js": {
       "Wicket": ""
     },
-    "website": "http://wicket.apache.org"
+    "website": "https://wicket.apache.org"
   },
   "Apereo CAS": {
     "cats": [
@@ -3511,7 +3565,7 @@
     ],
     "saas": true,
     "scriptSrc": "adnxs\\.(?:net|com)",
-    "website": "http://appnexus.com",
+    "website": "https://appnexus.com",
     "xhr": "prebid\\.adnxs\\.com"
   },
   "Appcues": {
@@ -3780,7 +3834,7 @@
     "implies": "PHP",
     "oss": true,
     "scriptSrc": "arastta\\.js",
-    "website": "http://arastta.org"
+    "website": "https://arastta.org"
   },
   "Arc": {
     "cats": [
@@ -3892,7 +3946,7 @@
     "scriptSrc": [
       "wicket/resource/org\\.artifactory\\."
     ],
-    "website": "http://jfrog.com/open-source/#os-arti"
+    "website": "https://jfrog.com/open-source/#os-arti"
   },
   "Artifactory Web Server": {
     "cats": [
@@ -3904,7 +3958,7 @@
     },
     "icon": "Artifactory.svg",
     "implies": "Artifactory",
-    "website": "http://jfrog.com/open-source/#os-arti"
+    "website": "https://jfrog.com/open-source/#os-arti"
   },
   "Aruba.it": {
     "cats": [
@@ -3938,7 +3992,7 @@
     "js": {
       "ArvanCloud": ""
     },
-    "website": "http://www.arvancloud.ir"
+    "website": "https://www.arvancloud.ir"
   },
   "Arya CMS": {
     "cats": [
@@ -3978,7 +4032,7 @@
     "meta": {
       "generator": "^AsciiDoc ([\\d.]+)\\;version:\\1"
     },
-    "website": "http://www.methods.co.nz/asciidoc"
+    "website": "https://www.methods.co.nz/asciidoc"
   },
   "Asciidoctor": {
     "cats": [
@@ -4100,7 +4154,7 @@
       },
       "link[href*='/_astro/']": {
         "attributes": {
-          "href": "/_astro/(?:common|index)(?:-|\\.)[\\d\\w]+\\.css"
+          "href": "/_astro/(?:[\\W\\w]+)(?:-|\\.)[\\d\\w]+\\.css"
         }
       }
     },
@@ -4174,7 +4228,7 @@
     "meta": {
       "application-name": "Bitbucket"
     },
-    "website": "http://www.atlassian.com/software/bitbucket/overview/"
+    "website": "https://www.atlassian.com/software/bitbucket/overview/"
   },
   "Atlassian Confluence": {
     "cats": [
@@ -4195,7 +4249,7 @@
     "meta": {
       "confluence-request-time": ""
     },
-    "website": "http://www.atlassian.com/software/confluence/overview/team-collaboration-software"
+    "website": "https://www.atlassian.com/software/confluence/overview/team-collaboration-software"
   },
   "Atlassian FishEye": {
     "cats": [
@@ -4207,7 +4261,7 @@
     "cpe": "cpe:2.3:a:atlassian:fisheye:*:*:*:*:*:*:*:*",
     "html": "<title>(?:Log in to )?FishEye (?:and Crucible )?([\\d.]+)?</title>\\;version:\\1",
     "icon": "Atlassian FishEye.svg",
-    "website": "http://www.atlassian.com/software/fisheye/overview/"
+    "website": "https://www.atlassian.com/software/fisheye/overview/"
   },
   "Atlassian Jira": {
     "cats": [
@@ -4224,7 +4278,7 @@
       "application-name": "JIRA",
       "data-version": "([\\d.]+)\\;version:\\1\\;confidence:0"
     },
-    "website": "http://www.atlassian.com/software/jira/overview/"
+    "website": "https://www.atlassian.com/software/jira/overview/"
   },
   "Atlassian Jira Issue Collector": {
     "cats": [
@@ -4237,7 +4291,7 @@
       "jira-issue-collector-plugin",
       "atlassian\\.jira\\.collector\\.plugin"
     ],
-    "website": "http://www.atlassian.com/software/jira/overview/"
+    "website": "https://www.atlassian.com/software/jira/overview/"
   },
   "Atlassian Statuspage": {
     "cats": [
@@ -4368,7 +4422,7 @@
     },
     "oss": true,
     "scriptSrc": "/aurelia[\\d\\w\\-\\.]+\\.js",
-    "website": "http://aurelia.io"
+    "website": "https://aurelia.io"
   },
   "Auryc": {
     "cats": [
@@ -4818,7 +4872,8 @@
   },
   "Azure CDN": {
     "cats": [
-      31
+      31,
+      23
     ],
     "description": "Azure Content Delivery Network (CDN) reduces load times, save bandwidth and speed responsiveness.",
     "headers": {
@@ -4828,6 +4883,19 @@
     "icon": "Azure.svg",
     "implies": "Azure",
     "website": "https://azure.microsoft.com/en-us/services/cdn/"
+  },
+  "Azure Edge Network": {
+    "cats": [
+      19
+    ],
+    "description": "Azure Edge Network is a global network infrastructure provided by Microsoft Azure. It is designed to deliver content, applications, and services to end-users with low latency and high performance. The Azure Edge Network consists of a combination of Azure Content Delivery Network (CDN), Azure Front Door, and Azure Traffic Manager.",
+    "dom": "link[href*='.azureedge.net/']",
+    "headers": {
+      "content-security-policy": "\\.azureedge\\.net"
+    },
+    "icon": "Azure.svg",
+    "scriptSrc": "\\.azureedge\\.net/",
+    "website": "https://learn.microsoft.com/en-us/azure/cdn/cdn-overview"
   },
   "Azure Front Door": {
     "cats": [
@@ -4873,7 +4941,7 @@
     "meta": {
       "generator": "a-blog cms"
     },
-    "website": "http://www.a-blogcms.jp"
+    "website": "https://www.a-blogcms.jp"
   },
   "a3 Lazy Load": {
     "cats": [
@@ -4894,22 +4962,6 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/a3-lazy-load/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://a3rev.com/shop/a3-lazy-load/"
-  },
-  "Ahrefs": {
-    "cats": [
-      54,
-      10
-    ],
-    "description": "Ahrefs is an online toolset utilised for search engine optimisation (SEO) and competitor analysis, which permits users to analyse their website's performance, track keyword rankings, identify backlink opportunities, and research competitors' websites, among other features.",
-    "icon": "ahrefs.svg",
-    "meta": {
-      "ahrefs-site-verification": ""
-    },
-    "pricing": [
-      "low",
-      "mid"
-    ],
-    "website": "https://ahrefs.com"
   },
   "aThemes Airi": {
     "cats": [
@@ -5005,7 +5057,7 @@
       "actionheroClient": ""
     },
     "scriptSrc": "actionheroClient\\.js",
-    "website": "http://www.actionherojs.com"
+    "website": "https://www.actionherojs.com"
   },
   "amCharts": {
     "cats": [
@@ -5018,7 +5070,7 @@
       "AmCharts": ""
     },
     "scriptSrc": "amcharts.*\\.js",
-    "website": "http://amcharts.com"
+    "website": "https://amcharts.com"
   },
   "amoCRM": {
     "cats": [
@@ -5061,7 +5113,7 @@
     "dom": "[data-augmented-ui]",
     "icon": "augmented-ui.png",
     "oss": true,
-    "website": "http://augmented-ui.com"
+    "website": "https://augmented-ui.com"
   },
   "autoComplete.js": {
     "cats": [

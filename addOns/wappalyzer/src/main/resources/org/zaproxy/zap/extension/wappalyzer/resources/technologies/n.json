@@ -58,7 +58,7 @@
       "nv.version": "^(.+)$\\;confidence:0\\;version:\\1"
     },
     "scriptSrc": "nv\\.d3(?:\\.min)?\\.js",
-    "website": "http://nvd3.org"
+    "website": "https://nvd3.org"
   },
   "Nacelle": {
     "cats": [
@@ -388,7 +388,7 @@
       "NS_VER": ""
     },
     "icon": "NetSuite.png",
-    "website": "http://netsuite.com"
+    "website": "https://netsuite.com"
   },
   "Netcore Cloud": {
     "cats": [
@@ -801,7 +801,7 @@
       "X-Fastcgi-Cache": ""
     },
     "icon": "Nginx.svg",
-    "website": "http://nginx.org/en"
+    "website": "https://nginx.org/en"
   },
   "Niagahoster": {
     "cats": [
@@ -923,7 +923,7 @@
     "cpe": "cpe:2.3:a:nodejs:node.js:*:*:*:*:*:*:*:*",
     "description": "Node.js is an open-source, cross-platform, JavaScript runtime environment that executes JavaScript code outside a web browser.",
     "icon": "Node.js.svg",
-    "website": "http://nodejs.org"
+    "website": "https://nodejs.org"
   },
   "NodeBB": {
     "cats": [
@@ -1170,7 +1170,7 @@
       "generator": "^nopCommerce$"
     },
     "oss": true,
-    "website": "http://www.nopcommerce.com"
+    "website": "https://www.nopcommerce.com"
   },
   "nopStation": {
     "cats": [
@@ -1183,7 +1183,7 @@
     "requires": [
       "nopCommerce"
     ],
-    "website": "http://www.nop-station.com"
+    "website": "https://www.nop-station.com"
   },
   "novomind iSHOP": {
     "cats": [

@@ -5,7 +5,7 @@
     ],
     "description": "C is a general-purpose, procedural computer programming language supporting structured programming, lexical variable scope, and recursion, with a static type system.",
     "icon": "C.png",
-    "website": "http://www.open-std.org/jtc1/sc22/wg14/"
+    "website": "https://www.open-std.org/jtc1/sc22/wg14/"
   },
   "CCV Shop": {
     "cats": [
@@ -45,7 +45,7 @@
     ],
     "description": "ColdFusion Markup Language (CFML), is a scripting language for web development that runs on the JVM, the .NET framework, and Google App Engine.",
     "icon": "CFML.png",
-    "website": "http://adobe.com/products/coldfusion-family.html"
+    "website": "https://adobe.com/products/coldfusion-family.html"
   },
   "CIVIC": {
     "cats": [
@@ -81,9 +81,10 @@
       "CKEDITOR": "",
       "CKEDITOR.version": "^([\\d\\.])$\\;version:\\1",
       "CKEDITOR_BASEPATH": "",
-      "apex.libVersions.ckeditor5": "^([\\d\\.])$\\;version:\\1"
+      "CKEDITOR_VERSION": "^([\\d\\.])$\\;version:5-\\1",
+      "apex.libVersions.ckeditor5": "^([\\d\\.])$\\;version:5-\\1"
     },
-    "website": "http://ckeditor.com"
+    "website": "https://ckeditor.com"
   },
   "CMS Made Simple": {
     "cats": [
@@ -98,7 +99,7 @@
     "meta": {
       "generator": "CMS Made Simple"
     },
-    "website": "http://cmsmadesimple.org"
+    "website": "https://cmsmadesimple.org"
   },
   "CMSimple": {
     "cats": [
@@ -109,7 +110,7 @@
     "meta": {
       "generator": "CMSimple( [\\d.]+)?\\;version:\\1"
     },
-    "website": "http://www.cmsimple.org/en"
+    "website": "https://www.cmsimple.org/en"
   },
   "CNZZ": {
     "cats": [
@@ -145,7 +146,7 @@
     "meta": {
       "generator": "CPG Dragonfly"
     },
-    "website": "http://dragonflycms.org"
+    "website": "https://dragonflycms.org"
   },
   "CRM+": {
     "cats": [
@@ -194,7 +195,7 @@
       "onetime"
     ],
     "scriptSrc": "var/cache/misc/assets/js/tygh/scripts-(?:[\\d\\w]+)\\.js",
-    "website": "http://www.cs-cart.com"
+    "website": "https://www.cs-cart.com"
   },
   "CSSIgniter Olsen Light": {
     "cats": [
@@ -253,7 +254,7 @@
       "X-CF2": ""
     },
     "icon": "CacheFly.svg",
-    "website": "http://www.cachefly.com"
+    "website": "https://www.cachefly.com"
   },
   "Cachet": {
     "cats": [
@@ -293,7 +294,7 @@
       "Server": "^Caddy$"
     },
     "icon": "caddy.svg",
-    "website": "http://caddyserver.com"
+    "website": "https://caddyserver.com"
   },
   "Cafe24": {
     "cats": [
@@ -327,7 +328,7 @@
       "application-name": "CakePHP"
     },
     "oss": true,
-    "website": "http://cakephp.org"
+    "website": "https://cakephp.org"
   },
   "Caldera Forms": {
     "cats": [
@@ -551,7 +552,7 @@
       "Captchme": ""
     },
     "scriptSrc": "^https?://api\\.captchme\\.net/",
-    "website": "http://captchme.com"
+    "website": "https://captchme.com"
   },
   "Captivate.fm": {
     "cats": [
@@ -586,7 +587,7 @@
     ],
     "saas": true,
     "scriptSrc": "\\.carbonads\\.com/",
-    "website": "http://carbonads.net"
+    "website": "https://carbonads.net"
   },
   "CareCart": {
     "cats": [
@@ -925,7 +926,7 @@
       "X-Powered-By": "CentOS"
     },
     "icon": "CentOS.svg",
-    "website": "http://centos.org"
+    "website": "https://centos.org"
   },
   "Centminmod": {
     "cats": [
@@ -1040,7 +1041,7 @@
     "meta": {
       "generator": "Chamilo ([\\d.]+)\\;version:\\1"
     },
-    "website": "http://www.chamilo.org"
+    "website": "https://www.chamilo.org"
   },
   "Channel.io": {
     "cats": [
@@ -1170,7 +1171,7 @@
       "_sf_endpt": ""
     },
     "scriptSrc": "chartbeat\\.js",
-    "website": "http://chartbeat.com"
+    "website": "https://chartbeat.com"
   },
   "ChatStack": {
     "cats": [
@@ -1313,7 +1314,7 @@
       "Server": "^Cherokee(?:/([\\d.]+))?\\;version:\\1"
     },
     "icon": "Cherokee.png",
-    "website": "http://www.cherokee-project.com"
+    "website": "https://www.cherokee-project.com"
   },
   "CherryPy": {
     "cats": [
@@ -1427,7 +1428,7 @@
       "ch_color_site_link": ""
     },
     "scriptSrc": "scripts\\.chitika\\.net/",
-    "website": "http://chitika.com"
+    "website": "https://chitika.com"
   },
   "Choices": {
     "cats": [
@@ -1881,7 +1882,7 @@
       "clickHeatServer": ""
     },
     "scriptSrc": "clickheat.*\\.js",
-    "website": "http://www.labsmedia.com/clickheat/index.html"
+    "website": "https://www.labsmedia.com/clickheat/index.html"
   },
   "ClickTale": {
     "cats": [
@@ -1901,7 +1902,7 @@
     ],
     "saas": true,
     "scriptSrc": "\\.clicktale\\.net",
-    "website": "http://www.clicktale.com"
+    "website": "https://www.clicktale.com"
   },
   "Clickbank": {
     "cats": [
@@ -1931,7 +1932,7 @@
     ],
     "saas": true,
     "scriptSrc": "static\\.getclicky\\.com",
-    "website": "http://getclicky.com"
+    "website": "https://getclicky.com"
   },
   "ClientJS": {
     "cats": [
@@ -1948,7 +1949,7 @@
       "/clientjs@(\\d.*?)/\\;version:\\1",
       "/ClientJS/(?:(\\d.*?)/)?\\;version:\\1"
     ],
-    "website": "http://clientjs.org"
+    "website": "https://clientjs.org"
   },
   "ClientXCMS": {
     "cats": [
@@ -2005,7 +2006,7 @@
       "author": "^CloudCart LLC$"
     },
     "scriptSrc": "/cloudcart-(?:assets|storage)/",
-    "website": "http://cloudcart.com"
+    "website": "https://cloudcart.com"
   },
   "CloudSuite": {
     "cats": [
@@ -2044,7 +2045,7 @@
       "Server": "cloudera"
     },
     "icon": "Cloudera.png",
-    "website": "http://www.cloudera.com"
+    "website": "https://www.cloudera.com"
   },
   "Cloudflare": {
     "cats": [
@@ -2071,7 +2072,7 @@
     "meta": {
       "image": "//cdn\\.cloudflare"
     },
-    "website": "http://www.cloudflare.com"
+    "website": "https://www.cloudflare.com"
   },
   "Cloudflare Bot Management": {
     "cats": [
@@ -2097,7 +2098,7 @@
       "__cfBeaconCustomTag": ""
     },
     "scriptSrc": "static\\.cloudflareinsights\\.com/beacon(?:\\.min)?\\.js",
-    "website": "http://www.cloudflare.com"
+    "website": "https://www.cloudflare.com"
   },
   "Cloudflare Rocket Loader": {
     "cats": [
@@ -2221,7 +2222,7 @@
       95
     ],
     "description": "Cloudinary is an end-to-end image- and video-management solution for websites and mobile apps, covering everything from image and video uploads, storage, manipulations, optimisations to delivery.",
-    "dom": "img[src*='.cloudinary.com/'], img[data-src*='.cloudinary.com/']",
+    "dom": "img[src*='.cloudinary.com/'], img[data-src*='.cloudinary.com/'], link[href*='.cloudinary.com/']",
     "headers": {
       "Content-Security-Policy": "player\\.cloudinary\\.com"
     },
@@ -2413,7 +2414,7 @@
     "html": "<input[^>]+name=\"ci_csrf_token\"\\;version:2+",
     "icon": "CodeIgniter.png",
     "implies": "PHP",
-    "website": "http://codeigniter.com"
+    "website": "https://codeigniter.com"
   },
   "CodeMirror": {
     "cats": [
@@ -2425,7 +2426,7 @@
       "CodeMirror": "",
       "CodeMirror.version": "^(.+)$\\;version:\\1"
     },
-    "website": "http://codemirror.net"
+    "website": "https://codemirror.net"
   },
   "CodeSandbox": {
     "cats": [
@@ -2799,7 +2800,7 @@
     },
     "icon": "Commerce Server.png",
     "implies": "Microsoft ASP.NET",
-    "website": "http://commerceserver.net"
+    "website": "https://commerceserver.net"
   },
   "Commerce.js": {
     "cats": [
@@ -3056,6 +3057,19 @@
     "scriptSrc": "/wp-content/plugins/contact-form-7/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://contactform7.com"
   },
+  "Container Media Group": {
+    "cats": [
+      36
+    ],
+    "description": "Container Media Group offers technical solutions for agencies and brands to plan, execute, optimise, and report on advertising campaigns. They specialise in creating engaging custom creatives and utilise advanced tracking pixels to monitor user advertising activity across media channels.",
+    "icon": "Container Media Group.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.containermedia\\.net/",
+    "website": "https://containermedia.net"
+  },
   "Contao": {
     "cats": [
       1
@@ -3069,7 +3083,7 @@
       "generator": "^Contao Open Source CMS$"
     },
     "oss": true,
-    "website": "http://contao.org"
+    "website": "https://contao.org"
   },
   "Contenido": {
     "cats": [
@@ -3081,7 +3095,7 @@
     "meta": {
       "generator": "Contenido ([\\d.]+)\\;version:\\1"
     },
-    "website": "http://contenido.org/en"
+    "website": "https://contenido.org/en"
   },
   "Contensis": {
     "cats": [
@@ -3107,7 +3121,7 @@
     "meta": {
       "generator": "ContentBox powered by ColdBox"
     },
-    "website": "http://www.gocontentbox.org"
+    "website": "https://www.gocontentbox.org"
   },
   "ContentStudio": {
     "cats": [
@@ -3139,7 +3153,7 @@
       "recurring"
     ],
     "saas": true,
-    "website": "http://www.contentful.com",
+    "website": "https://www.contentful.com",
     "xhr": "(?:cdn|graphql)\\.contentful\\.com"
   },
   "Contently": {
@@ -3516,7 +3530,7 @@
       "Cookiebot.version": "^(.+)$\\;version:\\1"
     },
     "scriptSrc": "consent\\.cookiebot\\.com",
-    "website": "http://www.cookiebot.com"
+    "website": "https://www.cookiebot.com"
   },
   "Cooladata": {
     "cats": [
@@ -3543,7 +3557,7 @@
     "html": "<!--Coppermine Photo Gallery ([\\d.]+)\\;version:\\1",
     "icon": "Coppermine.png",
     "implies": "PHP",
-    "website": "http://coppermine-gallery.net"
+    "website": "https://coppermine-gallery.net"
   },
   "CopyPoison": {
     "cats": [
@@ -3648,7 +3662,7 @@
     "cpe": "cpe:2.3:a:cosmoshop:cosmoshop:*:*:*:*:*:*:*:*",
     "icon": "Cosmoshop.png",
     "scriptSrc": "cosmoshop_functions\\.js",
-    "website": "http://cosmoshop.de"
+    "website": "https://cosmoshop.de"
   },
   "Cotonti": {
     "cats": [
@@ -3660,7 +3674,7 @@
     "meta": {
       "generator": "Cotonti"
     },
-    "website": "http://www.cotonti.com"
+    "website": "https://www.cotonti.com"
   },
   "CouchDB": {
     "cats": [
@@ -3671,7 +3685,7 @@
       "Server": "CouchDB/([\\d.]+)\\;version:\\1"
     },
     "icon": "CouchDB.png",
-    "website": "http://couchdb.apache.org"
+    "website": "https://couchdb.apache.org"
   },
   "Countly": {
     "cats": [
@@ -3777,7 +3791,7 @@
       "X-Powered-By": "^CppCMS/([\\d.]+)$\\;version:\\1"
     },
     "icon": "CppCMS.png",
-    "website": "http://cppcms.com"
+    "website": "https://cppcms.com"
   },
   "Craft CMS": {
     "cats": [
@@ -3844,7 +3858,7 @@
       "CE2": ""
     },
     "scriptSrc": "script\\.crazyegg\\.com/pages/scripts/\\d+/\\d+\\.js",
-    "website": "http://crazyegg.com"
+    "website": "https://crazyegg.com"
   },
   "CreateJS": {
     "cats": [
@@ -3929,7 +3943,7 @@
       "//(?:cas\\.criteo\\.com|(?:[^/]\\.)?criteo\\.net)/",
       "//static\\.criteo\\.net/js/ld/ld\\.js"
     ],
-    "website": "http://criteo.com"
+    "website": "https://criteo.com"
   },
   "Crobox": {
     "cats": [
@@ -3968,7 +3982,7 @@
       "cp_C4w1ldN2d9PmVrkN": ""
     },
     "scriptSrc": "tag\\.crsspxl\\.com",
-    "website": "http://crosspixel.net"
+    "website": "https://crosspixel.net"
   },
   "Cross Sell": {
     "cats": [
@@ -4013,13 +4027,13 @@
       "CrownPeakAutocomplete": "",
       "CrownPeakSearch": ""
     },
-    "scripts": "crownpeak\\.net",
     "pricing": [
       "poa"
     ],
     "saas": true,
     "scriptSrc": "js/crownpeak\\.",
-    "website": "http://www.crownpeak.com"
+    "scripts": "crownpeak\\.net",
+    "website": "https://www.crownpeak.com"
   },
   "Cryout Creations Bravada": {
     "cats": [
@@ -4141,7 +4155,7 @@
       "generator": "cubecart"
     },
     "oss": true,
-    "website": "http://www.cubecart.com"
+    "website": "https://www.cubecart.com"
   },
   "Cubyn": {
     "cats": [
@@ -4165,7 +4179,7 @@
       "Cufon": ""
     },
     "scriptSrc": "cufon-yui\\.js",
-    "website": "http://cufon.shoqolate.com"
+    "website": "https://cufon.shoqolate.com"
   },
   "Custom Fonts": {
     "cats": [
@@ -4305,7 +4319,7 @@
     },
     "html": "<!-- cPanel",
     "icon": "cPanel.png",
-    "website": "http://www.cpanel.net"
+    "website": "https://www.cpanel.net"
   },
   "cState": {
     "cats": [
@@ -4345,7 +4359,7 @@
       "generator": "^cgit v([\\d.a-z-]+)$\\;version:\\1"
     },
     "oss": true,
-    "website": "http://git.zx2c4.com/cgit"
+    "website": "https://git.zx2c4.com/cgit"
   },
   "clickio": {
     "cats": [
@@ -4354,7 +4368,7 @@
     "description": "Clickio Consent Tool collects and communicates consent both to IAB Framework vendors and to Google Ads products.",
     "icon": "clickio.png",
     "scriptSrc": "clickio\\.mgr\\.consensu\\.org/t/consent_[0-9]+\\.js",
-    "website": "http://www.gdpr.clickio.com/"
+    "website": "https://www.gdpr.clickio.com/"
   },
   "comScore": {
     "cats": [
@@ -4374,7 +4388,7 @@
     ],
     "saas": true,
     "scriptSrc": "\\.scorecardresearch\\.com/beacon\\.js|COMSCORE\\.beacon",
-    "website": "http://comscore.com"
+    "website": "https://comscore.com"
   },
   "commercetools": {
     "cats": [
@@ -4383,16 +4397,19 @@
     "description": "commercetools is a headless commerce platform.",
     "dom": "link[href*='.commercetools.com/'], body[data-commerce-tools-host*='.commercetools.com']",
     "icon": "commercetools.svg",
+    "implies": "GraphQL",
     "js": {
       "COMMERCE_TOOLS_HOST_ATT": "",
-      "COMMERCE_TOOLS_PROJECT_KEY_ATT": ""
+      "COMMERCE_TOOLS_PROJECT_KEY_ATT": "",
+      "__NEXT_DATA__.props.pageProps.commercetoolsEntity": ""
     },
     "pricing": [
       "poa",
       "recurring"
     ],
     "saas": true,
-    "website": "https://commercetools.com"
+    "website": "https://commercetools.com",
+    "xhr": "\\.commercetools\\.com/"
   },
   "core-js": {
     "cats": [

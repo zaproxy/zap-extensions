@@ -7,7 +7,7 @@
     "icon": "ZK.png",
     "implies": "Java",
     "scriptSrc": "zkau/",
-    "website": "http://zkoss.org"
+    "website": "https://zkoss.org"
   },
   "ZURB Foundation": {
     "cats": [
@@ -22,7 +22,7 @@
     "js": {
       "Foundation.version": "([\\d.]+)\\;version:\\1"
     },
-    "website": "http://foundation.zurb.com"
+    "website": "https://foundation.zurb.com"
   },
   "Zabbix": {
     "cats": [
@@ -39,7 +39,7 @@
       "Author": "ZABBIX SIA\\;confidence:70"
     },
     "url": "\\/zabbix\\/\\;confidence:30",
-    "website": "http://zabbix.com"
+    "website": "https://zabbix.com"
   },
   "Zakeke": {
     "cats": [
@@ -125,7 +125,7 @@
       "zanox": ""
     },
     "scriptSrc": "zanox\\.com/scripts/zanox\\.js$",
-    "website": "http://zanox.com"
+    "website": "https://zanox.com"
   },
   "Zeald": {
     "cats": [
@@ -161,7 +161,7 @@
     "meta": {
       "generator": "Zen Cart"
     },
-    "website": "http://www.zen-cart.com"
+    "website": "https://www.zen-cart.com"
   },
   "Zend": {
     "cats": [
@@ -175,7 +175,7 @@
       "X-Powered-By": "Zend(?:Server)?(?:[\\s/]?([0-9.]+))?\\;version:\\1"
     },
     "icon": "Zend.png",
-    "website": "http://zend.com"
+    "website": "https://zend.com"
   },
   "Zendesk": {
     "cats": [
@@ -220,7 +220,7 @@
     ],
     "saas": true,
     "scriptSrc": "v2\\.zopim\\.com",
-    "website": "http://zopim.com"
+    "website": "https://zopim.com"
   },
   "Zendesk Sunshine Conversations": {
     "cats": [
@@ -271,7 +271,7 @@
       "Zepto": ""
     },
     "scriptSrc": "zepto.*\\.js",
-    "website": "http://zeptojs.com"
+    "website": "https://zeptojs.com"
   },
   "ZestMoney": {
     "cats": [
@@ -381,7 +381,7 @@
     "meta": {
       "generator": "Zinnia"
     },
-    "website": "http://django-blog-zinnia.com"
+    "website": "https://django-blog-zinnia.com"
   },
   "Zinrelo": {
     "cats": [
@@ -660,7 +660,7 @@
       "Server": "^Zope/"
     },
     "icon": "Zope.png",
-    "website": "http://zope.org"
+    "website": "https://zope.org"
   },
   "Zotabox": {
     "cats": [

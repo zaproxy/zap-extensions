@@ -114,6 +114,23 @@
     ],
     "website": "https://www.thgingenuity.com"
   },
+  "THRON": {
+    "cats": [
+      95
+    ],
+    "description": "THRON is a digital asset management platform that provides a centralised hub for storing, organising, and distributing digital assets like images, videos, and documents.",
+    "dom": "link[href*='.thron.com/'], img[src*='.thron.com/']",
+    "icon": "THRON.png",
+    "js": {
+      "THRONPlayer": "",
+      "thronHlsJs": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.thron.com"
+  },
   "TN Express Web": {
     "cats": [
       1
@@ -199,7 +216,7 @@
     "icon": "TWiki.png",
     "implies": "Perl",
     "scriptSrc": "(?:TWikiJavascripts|twikilib(?:\\.min)?\\.js)",
-    "website": "http://twiki.org"
+    "website": "https://twiki.org"
   },
   "TYPO3 CMS": {
     "cats": [
@@ -449,7 +466,7 @@
     "js": {
       "taigaConfig": ""
     },
-    "website": "http://taiga.io"
+    "website": "https://taiga.io"
   },
   "Tail": {
     "cats": [
@@ -576,7 +593,7 @@
     ],
     "html": "<link [^>]*href=\"http://tamago\\.temonalab\\.com",
     "icon": "Tamago.png",
-    "website": "http://tamago.temonalab.com"
+    "website": "https://tamago.temonalab.com"
   },
   "Tamara": {
     "cats": [
@@ -695,7 +712,7 @@
     ],
     "saas": true,
     "scriptSrc": "//embed\\.tawk\\.to",
-    "website": "http://tawk.to"
+    "website": "https://tawk.to"
   },
   "Teachable": {
     "cats": [
@@ -751,7 +768,7 @@
       "^(?:https?:)?//tags\\.tiqcdn\\.com/",
       "/tealium/utag\\.js$"
     ],
-    "website": "http://tealium.com"
+    "website": "https://tealium.com"
   },
   "Tealium AudienceStream": {
     "cats": [
@@ -781,16 +798,16 @@
       5
     ],
     "description": "TeamBrain is a knowledge management solution which allows to use a self-learning dynamic FAQ on a website or widget on the bottom right of any page.",
-    "icon": "TeamBrain.png",
     "dom": "link[href*='//teambrain.app/']",
+    "icon": "TeamBrain.png",
     "js": {
       "TeamBrainExternalApp": ""
     },
-    "saas": true,
     "pricing": [
       "mid",
       "recurring"
     ],
+    "saas": true,
     "website": "https://www.teambrain.io"
   },
   "TeamCity": {
@@ -869,7 +886,7 @@
     "js": {
       "Telescope": ""
     },
-    "website": "http://telescopeapp.org"
+    "website": "https://telescopeapp.org"
   },
   "Tencent Analytics (腾讯分析)": {
     "cats": [
@@ -925,7 +942,7 @@
       "Server": "Tengine"
     },
     "icon": "Tengine.png",
-    "website": "http://tengine.taobao.org"
+    "website": "https://tengine.taobao.org"
   },
   "Termly": {
     "cats": [
@@ -1010,7 +1027,7 @@
     "meta": {
       "generator": "Textpattern"
     },
-    "website": "http://textpattern.com"
+    "website": "https://textpattern.com"
   },
   "The Arena Group": {
     "cats": [
@@ -1023,6 +1040,22 @@
     },
     "saas": true,
     "website": "https://thearenagroup.net"
+  },
+  "The Church Co": {
+    "cats": [
+      51
+    ],
+    "description": "The Church Co is a church-focused website development platform that provides tools and features specifically designed to support the growth and online presence of churches and religious organisations.",
+    "icon": "The Church Co.png",
+    "meta": {
+      "generator": "^THECHURCHCO\\s([\\d\\.]+)$\\;version:\\1"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://thechurchco.com"
   },
   "The Events Calendar": {
     "cats": [
@@ -1160,7 +1193,7 @@
       "PHP",
       "Symfony"
     ],
-    "website": "http://thelia.net"
+    "website": "https://thelia.net"
   },
   "Theme Freesia Edge": {
     "cats": [
@@ -1742,7 +1775,7 @@
     "icon": "ThinkPHP.png",
     "implies": "PHP",
     "oss": true,
-    "website": "http://www.thinkphp.cn"
+    "website": "https://www.thinkphp.cn"
   },
   "Thinkific": {
     "cats": [
@@ -1927,23 +1960,6 @@
     "scriptSrc": "thrivecart\\.js",
     "website": "https://thrivecart.com"
   },
-  "THRON": {
-    "cats": [
-      95
-    ],
-    "description": "THRON is a digital asset management platform that provides a centralised hub for storing, organising, and distributing digital assets like images, videos, and documents.",
-    "icon": "THRON.png",
-    "dom": "link[href*='.thron.com/'], img[src*='.thron.com/']",
-    "js": {
-      "thronHlsJs": "",
-      "THRONPlayer": ""
-    },
-    "saas": true,
-    "pricing": [
-      "poa"
-    ],
-    "website": "https://www.thron.com"
-  },
   "Ticimax": {
     "cats": [
       6
@@ -1981,7 +1997,7 @@
       "generator": "^TiddlyWiki$",
       "tiddlywiki-version": "^(.+)$\\;version:\\1"
     },
-    "website": "http://tiddlywiki.com"
+    "website": "https://tiddlywiki.com"
   },
   "Tidio": {
     "cats": [
@@ -2049,7 +2065,23 @@
       "generator": "^Tiki"
     },
     "scriptSrc": "(?:/|_)tiki",
-    "website": "http://tiki.org"
+    "website": "https://tiki.org"
+  },
+  "Tiktak Pro": {
+    "cats": [
+      6
+    ],
+    "description": "Tiktak Pro is an all-in-one ecommerce platform from Tunisia.",
+    "icon": "Tiktak Pro.svg",
+    "meta": {
+      "author": "^tiktak-themes$"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://tiktakpro.tn"
   },
   "Tilda": {
     "cats": [
@@ -2097,7 +2129,7 @@
       "Timeplot": ""
     },
     "scriptSrc": "timeplot.*\\.js",
-    "website": "http://www.simile-widgets.org/timeplot/"
+    "website": "https://www.simile-widgets.org/timeplot/"
   },
   "Timify": {
     "cats": [
@@ -2211,7 +2243,26 @@
       "titan": "",
       "titanEnabled": ""
     },
-    "website": "http://titan360.com"
+    "website": "https://titan360.com"
+  },
+  "Tolt": {
+    "cats": [
+      71
+    ],
+    "description": "Tolt is an affiliate marketing software designed for SaaS startups.",
+    "icon": "Tolt.svg",
+    "js": {
+      "toltAPI": "\\.tolt\\.io/",
+      "tolt_referral": "",
+      "toltio": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.tolt\\.io/",
+    "website": "https://tolt.io"
   },
   "TomTom Maps": {
     "cats": [
@@ -2238,7 +2289,7 @@
     "meta": {
       "generator": "TomatoCart"
     },
-    "website": "http://tomatocart.com"
+    "website": "https://tomatocart.com"
   },
   "TornadoServer": {
     "cats": [
@@ -2248,7 +2299,7 @@
       "Server": "TornadoServer(?:/([\\d.]+))?\\;version:\\1"
     },
     "icon": "TornadoServer.png",
-    "website": "http://tornadoweb.org"
+    "website": "https://tornadoweb.org"
   },
   "TotalCode": {
     "cats": [
@@ -2258,7 +2309,7 @@
       "X-Powered-By": "^TotalCode$"
     },
     "icon": "TotalCode.png",
-    "website": "http://www.totalcode.com"
+    "website": "https://www.totalcode.com"
   },
   "Totango": {
     "cats": [
@@ -2333,7 +2384,7 @@
     ],
     "icon": "Trac.png",
     "implies": "Python",
-    "website": "http://trac.edgewall.org"
+    "website": "https://trac.edgewall.org"
   },
   "TrackJs": {
     "cats": [
@@ -2346,7 +2397,7 @@
       "trackJs": ""
     },
     "scriptSrc": "cdn\\.trackjs\\.com",
-    "website": "http://trackjs.com"
+    "website": "https://trackjs.com"
   },
   "Trackify X": {
     "cats": [
@@ -2438,7 +2489,7 @@
       "poa"
     ],
     "saas": true,
-    "website": "http://www.transcend.io"
+    "website": "https://www.transcend.io"
   },
   "Transcy": {
     "cats": [
@@ -2793,7 +2844,7 @@
     "description": "TrustArc provides software and services to help corporations update their privacy management processes so they comply with government laws and best practices.",
     "icon": "TrustArc.svg",
     "scriptSrc": "consent\\.trustarc\\.com",
-    "website": "http://trustarc.com"
+    "website": "https://trustarc.com"
   },
   "TrustYou": {
     "cats": [
@@ -2825,20 +2876,21 @@
     "scriptSrc": "widgets\\.trustedshops\\.com/",
     "website": "https://www.trustedshops.co.uk"
   },
-  "Trustindex Google Reviews": {
+  "Trustindex": {
     "cats": [
-      87,
       90
     ],
-    "description": "Google Reviews s a premium plugin that can help you to embed reviews on your site by Trustindex.",
-    "dom": "link[href*='/wp-content/plugins/widget-google-reviews/']",
+    "description": "Trustindex is a review management tool that helps businesses effectively manage and monitor customer reviews.",
+    "dom": "link[href*='.trustindex.io/']",
     "icon": "Trustindex.svg",
+    "js": {
+      "Trustindex": ""
+    },
     "pricing": [
-      "onetime"
+      "low",
+      "recurring"
     ],
-    "requires": "WordPress",
     "saas": true,
-    "scriptSrc": "/wp-content/plugins/widget-google-reviews/",
     "website": "https://www.trustindex.io"
   },
   "Trustpilot": {
@@ -2920,7 +2972,7 @@
     "html": "<iframe src=\"[^>]+tumblr\\.com",
     "icon": "Tumblr.png",
     "url": "^https?://(?:www\\.)?[^/]+\\.tumblr\\.com/",
-    "website": "http://www.tumblr.com"
+    "website": "https://www.tumblr.com"
   },
   "Turbo": {
     "cats": [
@@ -3239,7 +3291,7 @@
       "X-Powered-CMS": "Twilight CMS"
     },
     "icon": "Twilight CMS.png",
-    "website": "http://www.twilightcms.com"
+    "website": "https://www.twilightcms.com"
   },
   "Twilio Authy": {
     "cats": [
@@ -3261,7 +3313,7 @@
     },
     "icon": "TwistPHP.png",
     "implies": "PHP",
-    "website": "http://twistphp.com"
+    "website": "https://twistphp.com"
   },
   "TwistedWeb": {
     "cats": [
@@ -3272,7 +3324,7 @@
     },
     "icon": "TwistedWeb.png",
     "oss": true,
-    "website": "http://twistedmatrix.com/trac/wiki/TwistedWeb"
+    "website": "https://twistedmatrix.com/trac/wiki/TwistedWeb"
   },
   "Twitch Player": {
     "cats": [
@@ -3293,7 +3345,7 @@
     "description": "Twitter is a 'microblogging' system that allows you to send and receive short posts called tweets.",
     "icon": "Twitter.svg",
     "scriptSrc": "//platform\\.twitter\\.com/widgets\\.js",
-    "website": "http://twitter.com"
+    "website": "https://twitter.com"
   },
   "Twitter Ads": {
     "cats": [
@@ -3380,7 +3432,7 @@
       "generator": "typepad"
     },
     "url": "typepad\\.com",
-    "website": "http://www.typepad.com"
+    "website": "https://www.typepad.com"
   },
   "TypeScript": {
     "cats": [
@@ -3405,7 +3457,7 @@
       "generator": "Typecho( [\\d.]+)?\\;version:\\1"
     },
     "url": "/admin/login\\.php?referer=http%3A%2F%2F",
-    "website": "http://typecho.org/"
+    "website": "https://typecho.org/"
   },
   "Typeform": {
     "cats": [
@@ -3442,7 +3494,7 @@
       "recurring"
     ],
     "scriptSrc": "use\\.typekit\\.com",
-    "website": "http://typekit.com"
+    "website": "https://typekit.com"
   },
   "Typof": {
     "cats": [

@@ -204,7 +204,7 @@
     "meta": {
       "generator": "GX WebManager(?: ([\\d.]+))?\\;version:\\1"
     },
-    "website": "http://www.gxsoftware.com/en/products/web-content-management.htm"
+    "website": "https://www.gxsoftware.com/en/products/web-content-management.htm"
   },
   "Gallery": {
     "cats": [
@@ -220,7 +220,7 @@
       "$.fn.gallery_valign": "",
       "galleryAuthToken": ""
     },
-    "website": "http://galleryproject.org/"
+    "website": "https://galleryproject.org/"
   },
   "Gambio": {
     "cats": [
@@ -234,7 +234,7 @@
       "gambio": ""
     },
     "scriptSrc": "gm_javascript\\.js\\.php",
-    "website": "http://gambio.de"
+    "website": "https://gambio.de"
   },
   "Gameball": {
     "cats": [
@@ -502,7 +502,7 @@
       "X-Powered-By": "gentoo"
     },
     "icon": "Gentoo.png",
-    "website": "http://www.gentoo.org"
+    "website": "https://www.gentoo.org"
   },
   "Geo Targetly": {
     "cats": [
@@ -538,7 +538,7 @@
       "title": "^Gerrit Code Review$"
     },
     "scriptSrc": "^gerrit_ui/gerrit_ui",
-    "website": "http://www.gerritcodereview.com"
+    "website": "https://www.gerritcodereview.com"
   },
   "Get Satisfaction": {
     "cats": [
@@ -626,7 +626,7 @@
     "meta": {
       "generator": "GetSimple"
     },
-    "website": "http://get-simple.info"
+    "website": "https://get-simple.info"
   },
   "GetSocial": {
     "cats": [
@@ -715,6 +715,20 @@
       "generator": "Ghost(?:\\s([\\d.]+))?\\;version:\\1"
     },
     "website": "https://ghost.org"
+  },
+  "Gigalixir": {
+    "cats": [
+      62
+    ],
+    "description": "Gigalixir is a PaaS focused on deployments of Elixir and Phoenix web apps",
+    "icon": "Gigalixir.svg",
+    "pricing": [
+      "low",
+      "recurring",
+      "freemium"
+    ],
+    "url": "\\.gigalixirapp\\.com",
+    "website": "https://gigalixir.com/"
   },
   "Gist Giftship": {
     "cats": [
@@ -806,7 +820,7 @@
     "meta": {
       "description": "GitLab CI/CD is a tool built into GitLab for software development through continuous methodologies."
     },
-    "website": "http://about.gitlab.com/gitlab-ci"
+    "website": "https://about.gitlab.com/gitlab-ci"
   },
   "Gitea": {
     "cats": [
@@ -836,7 +850,7 @@
       "Java",
       "git"
     ],
-    "website": "http://gerrit.googlesource.com/gitiles/"
+    "website": "https://gerrit.googlesource.com/gitiles/"
   },
   "GiveCampus": {
     "cats": [
@@ -927,7 +941,7 @@
     },
     "icon": "GlassFish.png",
     "implies": "Java",
-    "website": "http://glassfish.java.net"
+    "website": "https://glassfish.java.net"
   },
   "Glassbox": {
     "cats": [
@@ -1021,7 +1035,7 @@
     ],
     "saas": true,
     "scriptSrc": "//globalshopex\\.com/",
-    "website": "http://www.globalshopex.com"
+    "website": "https://www.globalshopex.com"
   },
   "Globo Also Bought": {
     "cats": [
@@ -1126,7 +1140,7 @@
     "description": "Glyphicons are icon fonts which you can use in your web projects.",
     "html": "(?:<link[^>]* href=[^>]+glyphicons(?:\\.min)?\\.css|<img[^>]* src=[^>]+glyphicons)",
     "icon": "Glyphicons.png",
-    "website": "http://glyphicons.com"
+    "website": "https://glyphicons.com"
   },
   "Gnuboard": {
     "cats": [
@@ -1213,7 +1227,7 @@
       "Server": "GoAhead"
     },
     "icon": "GoAhead.png",
-    "website": "http://embedthis.com/products/goahead/index.html"
+    "website": "https://embedthis.com/products/goahead/index.html"
   },
   "GoAnywhere": {
     "cats": [
@@ -1442,7 +1456,7 @@
       "_go_track_src": "",
       "go_msie": ""
     },
-    "website": "http://gostats.com/"
+    "website": "https://gostats.com/"
   },
   "GoatCounter": {
     "cats": [
@@ -1498,7 +1512,7 @@
     },
     "oss": true,
     "scriptSrc": "js/gogs\\.js",
-    "website": "http://gogs.io"
+    "website": "https://gogs.io"
   },
   "Gomag": {
     "cats": [
@@ -1598,7 +1612,7 @@
       "gtag\\([^)]+'(UA-)\\;version:\\1?UA:",
       "gtag\\([^)]+'(G-)\\;version:\\1?GA4:"
     ],
-    "website": "http://google.com/analytics"
+    "website": "https://google.com/analytics"
   },
   "Google Analytics Enhanced eCommerce": {
     "cats": [
@@ -1650,7 +1664,7 @@
       "__googleVisualizationAbstractRendererElementsCount__": "",
       "__gvizguard__": ""
     },
-    "website": "http://developers.google.com/chart/"
+    "website": "https://developers.google.com/chart/"
   },
   "Google Cloud": {
     "cats": [
@@ -1705,7 +1719,7 @@
     "js": {
       "prettyPrint": ""
     },
-    "website": "http://code.google.com/p/google-code-prettify"
+    "website": "https://code.google.com/p/google-code-prettify"
   },
   "Google Customer Reviews": {
     "cats": [
@@ -1741,7 +1755,7 @@
       "WebFonts": ""
     },
     "scriptSrc": "googleapis\\.com/.+webfont",
-    "website": "http://google.com/fonts"
+    "website": "https://google.com/fonts"
   },
   "Google Forms": {
     "cats": [
@@ -1769,11 +1783,15 @@
     "description": "Google Maps is a web mapping service. It offers satellite imagery, aerial photography, street maps, 360° interactive panoramic views of streets, real-time traffic conditions, and route planning for traveling by foot, car, bicycle and air, or public transportation.",
     "dom": "iframe[src*='google.com/maps']",
     "icon": "Google Maps.svg",
+    "js": {
+      "GoogleMap": "",
+      "googleMapsConfig": ""
+    },
     "scriptSrc": [
       "(?:maps\\.google\\.com/maps\\?file=api(?:&v=([\\d.]+))?|maps\\.google\\.com/maps/api/staticmap)\\;version:API v\\1",
       "//maps\\.google(?:apis)?\\.com/maps/api/js"
     ],
-    "website": "http://maps.google.com"
+    "website": "https://maps.google.com"
   },
   "Google My Business": {
     "cats": [
@@ -1807,7 +1825,7 @@
       "X-Page-Speed": "(.+)\\;version:\\1"
     },
     "icon": "Google PageSpeed.svg",
-    "website": "http://developers.google.com/speed/pagespeed/mod"
+    "website": "https://developers.google.com/speed/pagespeed/mod"
   },
   "Google Pay": {
     "cats": [
@@ -1855,7 +1873,7 @@
     "dom": "[data-abuse-proto*='https://sites.google.com/']",
     "icon": "Google Sites.png",
     "url": "^https?://sites\\.google\\.com",
-    "website": "http://sites.google.com"
+    "website": "https://sites.google.com"
   },
   "Google Tag Manager": {
     "cats": [
@@ -1872,7 +1890,7 @@
     },
     "saas": true,
     "scriptSrc": "googletagmanager\\.com/gtm\\.js",
-    "website": "http://www.google.com/tagmanager"
+    "website": "https://www.google.com/tagmanager"
   },
   "Google Tag Manager for WordPress": {
     "cats": [
@@ -1897,7 +1915,7 @@
       "checkout\\.google\\.com",
       "wallet\\.google\\.com"
     ],
-    "website": "http://wallet.google.com"
+    "website": "https://wallet.google.com"
   },
   "Google Web Server": {
     "cats": [
@@ -1908,7 +1926,7 @@
       "Server": "gws"
     },
     "icon": "Google.svg",
-    "website": "http://en.wikipedia.org/wiki/Google_Web_Server"
+    "website": "https://en.wikipedia.org/wiki/Google_Web_Server"
   },
   "Google Web Toolkit": {
     "cats": [
@@ -1929,7 +1947,7 @@
     "meta": {
       "gwt:property": ""
     },
-    "website": "http://developers.google.com/web-toolkit"
+    "website": "https://developers.google.com/web-toolkit"
   },
   "Google Workspace": {
     "cats": [
@@ -2045,7 +2063,7 @@
       "generator": "Graffiti CMS ([^\"]+)\\;version:\\1"
     },
     "scriptSrc": "/graffiti\\.js",
-    "website": "http://graffiticms.codeplex.com"
+    "website": "https://graffiticms.codeplex.com"
   },
   "GrandNode": {
     "cats": [
@@ -2174,7 +2192,7 @@
     "meta": {
       "generator": "GravCMS(?:\\s([\\d.]+))?\\;version:\\1"
     },
-    "website": "http://getgrav.org"
+    "website": "https://getgrav.org"
   },
   "Gravatar": {
     "cats": [
@@ -2186,7 +2204,7 @@
     "js": {
       "Gravatar": ""
     },
-    "website": "http://gravatar.com"
+    "website": "https://gravatar.com"
   },
   "Gravitec": {
     "cats": [
@@ -2221,7 +2239,7 @@
     "icon": "gravityforms.svg",
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/gravityforms/js/[^/]+\\.js\\?ver=([\\d.]+)$\\;version:\\1",
-    "website": "http://gravityforms.com"
+    "website": "https://gravityforms.com"
   },
   "Green Valley CMS": {
     "cats": [
@@ -2233,7 +2251,7 @@
     "meta": {
       "DC.identifier": "/content\\.jsp\\?objectid="
     },
-    "website": "http://www.greenvalley.nl/Public/Producten/Content_Management/CMS"
+    "website": "https://www.greenvalley.nl/Public/Producten/Content_Management/CMS"
   },
   "Greenhouse": {
     "cats": [
@@ -2481,7 +2499,7 @@
     "meta": {
       "generator": "\\bgit/([\\d.]+\\d)\\;version:\\1"
     },
-    "website": "http://git-scm.com"
+    "website": "https://git-scm.com"
   },
   "gitlist": {
     "cats": [
@@ -2493,7 +2511,7 @@
       "PHP",
       "git"
     ],
-    "website": "http://gitlist.org"
+    "website": "https://gitlist.org"
   },
   "gitweb": {
     "cats": [
@@ -2509,7 +2527,7 @@
       "generator": "gitweb(?:/([\\d.]+\\d))?\\;version:\\1"
     },
     "scriptSrc": "static/gitweb\\.js$",
-    "website": "http://git-scm.com"
+    "website": "https://git-scm.com"
   },
   "govCMS": {
     "cats": [
@@ -2531,6 +2549,6 @@
     },
     "icon": "gunicorn.png",
     "implies": "Python",
-    "website": "http://gunicorn.org"
+    "website": "https://gunicorn.org"
   }
 }

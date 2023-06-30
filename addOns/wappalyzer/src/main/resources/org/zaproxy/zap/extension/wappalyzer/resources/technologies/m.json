@@ -39,7 +39,7 @@
       "X-Powered-By": "MATORI.NET"
     },
     "implies": "OpenResty",
-    "website": "http://matori.net"
+    "website": "https://matori.net"
   },
   "MDBootstrap": {
     "cats": [
@@ -275,7 +275,7 @@
       "setMRefURL": ""
     },
     "scriptSrc": "^https?://(?:ads-by|pixel)\\.madadsmedia\\.com/",
-    "website": "http://madadsmedia.com"
+    "website": "https://madadsmedia.com"
   },
   "MadCap Software": {
     "cats": [
@@ -428,7 +428,7 @@
       "chimpstatic\\.com/mcjs-connected"
     ],
     "url": "^https?://(?:www\\.)?mailchi\\.mp",
-    "website": "http://mailchimp.com"
+    "website": "https://mailchimp.com"
   },
   "MailChimp for WooCommerce": {
     "cats": [
@@ -554,7 +554,7 @@
       "/mailman\\d+/static/.+\\.js",
       "/static/(?:hyperkitty|django-mailman3)/.+\\.js"
     ],
-    "website": "http://list.org"
+    "website": "https://list.org"
   },
   "Mailmunch": {
     "cats": [
@@ -651,7 +651,7 @@
     "meta": {
       "generator": "Mambo"
     },
-    "website": "http://mambo-foundation.org"
+    "website": "https://mambo-foundation.org"
   },
   "Mangeznotez": {
     "cats": [
@@ -685,7 +685,7 @@
     "html": "<img[^>]+ alt=\"Powered by Mantis Bugtracker",
     "icon": "MantisBT.png",
     "implies": "PHP",
-    "website": "http://www.mantisbt.org"
+    "website": "https://www.mantisbt.org"
   },
   "ManyChat": {
     "cats": [
@@ -729,19 +729,6 @@
     "scriptSrc": "maplibre-gl@([\\d\\.]+)/dist/maplibre-gl\\.js\\;version:\\1",
     "website": "https://github.com/maplibre/maplibre-gl-js"
   },
-  "Mapbox.js": {
-    "cats": [
-      35
-    ],
-    "description": "Mapbox.js is a JavaScript library provided by Mapbox for working with interactive maps and geospatial data.",
-    "icon": "Mapbox.svg",
-    "implies": "Leaflet",
-    "dom": "link[href*='api.mapbox.com/']",
-    "oss": true,
-    "scripts": "api\\.mapbox\\.com/mapbox\\.js/v([\\d\\.]+)/\\;version:\\1",
-    "scriptSrc": "api\\.mapbox\\.com/mapbox\\.js/v([\\d\\.]+)/\\;version:\\1",
-    "website": "https://github.com/mapbox/mapbox.js"
-  },
   "Mapbox GL JS": {
     "cats": [
       35
@@ -755,6 +742,19 @@
     "oss": true,
     "scriptSrc": "mapbox-gl\\.js",
     "website": "https://github.com/mapbox/mapbox-gl-js"
+  },
+  "Mapbox.js": {
+    "cats": [
+      35
+    ],
+    "description": "Mapbox.js is a JavaScript library provided by Mapbox for working with interactive maps and geospatial data.",
+    "dom": "link[href*='api.mapbox.com/']",
+    "icon": "Mapbox.svg",
+    "implies": "Leaflet",
+    "oss": true,
+    "scriptSrc": "api\\.mapbox\\.com/mapbox\\.js/v([\\d\\.]+)/\\;version:\\1",
+    "scripts": "api\\.mapbox\\.com/mapbox\\.js/v([\\d\\.]+)/\\;version:\\1",
+    "website": "https://github.com/mapbox/mapbox.js"
   },
   "Mapp": {
     "cats": [
@@ -1081,7 +1081,7 @@
     "icon": "Materialize CSS.svg",
     "oss": true,
     "scriptSrc": "([\\d\\.]+)/.*/materialize\\.min\\.js\\;version:\\1",
-    "website": "http://materializecss.com"
+    "website": "https://materializecss.com"
   },
   "MathJax": {
     "cats": [
@@ -1190,7 +1190,7 @@
       "X-CDN-Forward": "^maxcdn$"
     },
     "icon": "MaxCDN.png",
-    "website": "http://www.maxcdn.com"
+    "website": "https://www.maxcdn.com"
   },
   "MaxMind": {
     "cats": [
@@ -1221,7 +1221,7 @@
     "meta": {
       "generator": "MaxSite CMS"
     },
-    "website": "http://max-3000.com"
+    "website": "https://max-3000.com"
   },
   "Maxemail": {
     "cats": [
@@ -1304,7 +1304,7 @@
       "mejs": "",
       "mejs.version": "^(.+)$\\;version:\\1"
     },
-    "website": "http://www.mediaelementjs.com"
+    "website": "https://www.mediaelementjs.com"
   },
   "MediaWiki": {
     "cats": [
@@ -1364,7 +1364,7 @@
     ],
     "html": "(?:<iframe id=\"meebo-iframe\"|Meebo\\('domReady'\\))",
     "icon": "Meebo.png",
-    "website": "http://www.meebo.com"
+    "website": "https://www.meebo.com"
   },
   "Meeting Scheduler": {
     "cats": [
@@ -1754,6 +1754,23 @@
     "oss": true,
     "website": "https://github.com/AzureAD/microsoft-authentication-library-for-js"
   },
+  "Microsoft Azure Maps": {
+    "cats": [
+      35,
+      79
+    ],
+    "description": "Microsoft Azure Maps is a cloud-based mapping and geospatial platform provided by Microsoft.",
+    "icon": "Microsoft.svg",
+    "implies": "Azure",
+    "meta": {
+      "enabled-features": "GEOJSON_AZURE_MAPS"
+    },
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "website": "https://azure.microsoft.com/en-us/products/azure-maps/"
+  },
   "Microsoft Clarity": {
     "cats": [
       10
@@ -1810,7 +1827,7 @@
       "Server": "Microsoft-HTTPAPI(?:/([\\d.]+))?\\;version:\\1"
     },
     "icon": "Microsoft.svg",
-    "website": "http://microsoft.com"
+    "website": "https://microsoft.com"
   },
   "Microsoft PowerPoint": {
     "cats": [
@@ -1913,6 +1930,28 @@
     "scriptSrc": "\\.miestro\\.com",
     "website": "https://miestro.com"
   },
+  "Mighty Network": {
+    "cats": [
+      2,
+      21
+    ],
+    "description": "Mighty Networks is a platform that facilitates the creation and management of online communities, offering customisable websites, discussion forums, member profiles, events, courses, and multimedia content sharing for individuals and organisations.",
+    "icon": "Mighty Network.svg",
+    "implies": [
+      "Ruby on Rails",
+      "Ruby"
+    ],
+    "js": {
+      "Mighty.BroadcastBotApp": ""
+    },
+    "pricing": [
+      "low",
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.mightynetworks.com"
+  },
   "Milestone CMS": {
     "cats": [
       1
@@ -2001,7 +2040,7 @@
     "scriptSrc": [
       "//minero\\.cc/lib/minero(?:-miner|-hidden)?\\.min\\.js"
     ],
-    "website": "http://minero.cc/"
+    "website": "https://minero.cc/"
   },
   "MiniServ": {
     "cats": [
@@ -2107,7 +2146,7 @@
       "mivaJS.Store_Code": ""
     },
     "scriptSrc": "mvga\\.js",
-    "website": "http://www.miva.com"
+    "website": "https://www.miva.com"
   },
   "Mixin": {
     "cats": [
@@ -2169,7 +2208,7 @@
     "meta": {
       "generator": "^mkdocs-([\\d.]+)\\;version:\\1"
     },
-    "website": "http://www.mkdocs.org/"
+    "website": "https://www.mkdocs.org/"
   },
   "MoEngage": {
     "cats": [
@@ -2313,7 +2352,7 @@
     "meta": {
       "generator": "\\(c\\) by modified eCommerce Shopsoftware ------ http://www\\.modified-shop\\.org"
     },
-    "website": "http://www.modified-shop.org/"
+    "website": "https://www.modified-shop.org/"
   },
   "Module Federation": {
     "cats": [
@@ -2368,7 +2407,7 @@
     },
     "icon": "Mojolicious.png",
     "implies": "Perl",
-    "website": "http://mojolicio.us"
+    "website": "https://mojolicio.us"
   },
   "Mokka": {
     "cats": [
@@ -2402,7 +2441,7 @@
     "html": "<img[^>]+\\.mollom\\.com",
     "icon": "Mollom.png",
     "scriptSrc": "mollom(?:\\.min)?\\.js",
-    "website": "http://mollom.com"
+    "website": "https://mollom.com"
   },
   "Moment Timezone": {
     "cats": [
@@ -2411,7 +2450,7 @@
     "icon": "Moment.js.svg",
     "implies": "Moment.js",
     "scriptSrc": "moment-timezone(?:-data)?(?:\\.min)?\\.js",
-    "website": "http://momentjs.com/timezone/"
+    "website": "https://momentjs.com/timezone/"
   },
   "Moment.js": {
     "cats": [
@@ -2460,7 +2499,7 @@
     "meta": {
       "generator": "Mondo Shop"
     },
-    "website": "http://mondo-media.de"
+    "website": "https://mondo-media.de"
   },
   "Moneris": {
     "cats": [
@@ -2504,7 +2543,7 @@
     "cpe": "cpe:2.3:a:mongodb:mongodb:*:*:*:*:*:*:*:*",
     "description": "MongoDB is a document-oriented NoSQL database used for high volume data storage.",
     "icon": "MongoDB.png",
-    "website": "http://www.mongodb.org"
+    "website": "https://www.mongodb.org"
   },
   "Mongrel": {
     "cats": [
@@ -2516,7 +2555,7 @@
     },
     "icon": "Mongrel.png",
     "implies": "Ruby",
-    "website": "http://mongrel2.org"
+    "website": "https://mongrel2.org"
   },
   "Monkey HTTP Server": {
     "cats": [
@@ -2526,7 +2565,7 @@
       "Server": "Monkey/?([\\d.]+)?\\;version:\\1"
     },
     "icon": "Monkey HTTP Server.png",
-    "website": "http://monkey-project.com"
+    "website": "https://monkey-project.com"
   },
   "Mono": {
     "cats": [
@@ -2537,7 +2576,7 @@
       "X-Powered-By": "Mono"
     },
     "icon": "Mono.png",
-    "website": "http://mono-project.com"
+    "website": "https://mono-project.com"
   },
   "Mono.net": {
     "cats": [
@@ -2621,7 +2660,7 @@
     "meta": {
       "keywords": "^moodle"
     },
-    "website": "http://moodle.org"
+    "website": "https://moodle.org"
   },
   "Moon": {
     "cats": [
@@ -2702,7 +2741,7 @@
       "jQuery"
     ],
     "scriptSrc": "/mt-includes/js/website(?:assets)?\\.(?:min)?\\.js",
-    "website": "http://motocms.com"
+    "website": "https://motocms.com"
   },
   "Mouse Flow": {
     "cats": [
@@ -2741,7 +2780,7 @@
     "meta": {
       "generator": "Movable Type"
     },
-    "website": "http://movabletype.org"
+    "website": "https://movabletype.org"
   },
   "Mozard Suite": {
     "cats": [
@@ -2752,7 +2791,7 @@
       "author": "Mozard"
     },
     "url": "/mozard/!suite",
-    "website": "http://mozard.nl"
+    "website": "https://mozard.nl"
   },
   "Mulberry": {
     "cats": [
@@ -2788,7 +2827,7 @@
       "poa"
     ],
     "saas": true,
-    "website": "http://www.getmura.com"
+    "website": "https://www.getmura.com"
   },
   "Mustache": {
     "cats": [
@@ -2865,7 +2904,7 @@
     ],
     "icon": "MyBlogLog.png",
     "scriptSrc": "pub\\.mybloglog\\.com",
-    "website": "http://www.mybloglog.com"
+    "website": "https://www.mybloglog.com"
   },
   "MyCashFlow": {
     "cats": [
@@ -2929,7 +2968,7 @@
     "cpe": "cpe:2.3:a:mysql:mysql:*:*:*:*:*:*:*:*",
     "description": "MySQL is an open-source relational database management system.",
     "icon": "MySQL.svg",
-    "website": "http://mysql.com"
+    "website": "https://mysql.com"
   },
   "MySiteNow": {
     "cats": [
@@ -3028,7 +3067,7 @@
     "meta": {
       "generator": "Mynetcap"
     },
-    "website": "http://www.netcap-creation.fr"
+    "website": "https://www.netcap-creation.fr"
   },
   "Mysitefy": {
     "cats": [
@@ -3107,12 +3146,14 @@
     "cats": [
       59
     ],
+    "description": "Math.js a JavaScript library that provides a comprehensive set of mathematical functions and capabilities for performing complex calculations and operations in web applications.",
     "icon": "math.js.png",
     "js": {
       "mathjs": ""
     },
+    "oss": true,
     "scriptSrc": "math(?:\\.min)?\\.js",
-    "website": "http://mathjs.org"
+    "website": "https://mathjs.org"
   },
   "mdBook": {
     "cats": [
@@ -3163,7 +3204,7 @@
       "Server": "mini_httpd(?:/([\\d.]+))?\\;version:\\1"
     },
     "icon": "mini_httpd.png",
-    "website": "http://acme.com/software/mini_httpd"
+    "website": "https://acme.com/software/mini_httpd"
   },
   "mirrAR": {
     "cats": [
@@ -3201,7 +3242,7 @@
     },
     "icon": "Apache.svg",
     "implies": "Apache HTTP Server",
-    "website": "http://pam.sourceforge.net/mod_auth_pam"
+    "website": "https://pam.sourceforge.net/mod_auth_pam"
   },
   "mod_dav": {
     "cats": [
@@ -3213,7 +3254,7 @@
     },
     "icon": "Apache.svg",
     "implies": "Apache HTTP Server",
-    "website": "http://webdav.org/mod_dav"
+    "website": "https://webdav.org/mod_dav"
   },
   "mod_fastcgi": {
     "cats": [
@@ -3225,7 +3266,7 @@
     },
     "icon": "Apache.svg",
     "implies": "Apache HTTP Server",
-    "website": "http://www.fastcgi.com/mod_fastcgi/docs/mod_fastcgi.html"
+    "website": "https://www.fastcgi.com/mod_fastcgi/docs/mod_fastcgi.html"
   },
   "mod_jk": {
     "cats": [
@@ -3240,7 +3281,7 @@
       "Apache Tomcat",
       "Apache HTTP Server"
     ],
-    "website": "http://tomcat.apache.org/tomcat-3.3-doc/mod_jk-howto.html"
+    "website": "https://tomcat.apache.org/tomcat-3.3-doc/mod_jk-howto.html"
   },
   "mod_perl": {
     "cats": [
@@ -3256,7 +3297,7 @@
       "Perl",
       "Apache HTTP Server"
     ],
-    "website": "http://perl.apache.org"
+    "website": "https://perl.apache.org"
   },
   "mod_python": {
     "cats": [
@@ -3272,7 +3313,7 @@
       "Python",
       "Apache HTTP Server"
     ],
-    "website": "http://www.modpython.org"
+    "website": "https://www.modpython.org"
   },
   "mod_rack": {
     "cats": [
@@ -3288,7 +3329,7 @@
       "Ruby on Rails\\;confidence:50",
       "Apache HTTP Server"
     ],
-    "website": "http://phusionpassenger.com"
+    "website": "https://phusionpassenger.com"
   },
   "mod_rails": {
     "cats": [
@@ -3304,7 +3345,7 @@
       "Ruby on Rails\\;confidence:50",
       "Apache HTTP Server"
     ],
-    "website": "http://phusionpassenger.com"
+    "website": "https://phusionpassenger.com"
   },
   "mod_ssl": {
     "cats": [
@@ -3317,7 +3358,7 @@
     },
     "icon": "mod_ssl.png",
     "implies": "Apache HTTP Server",
-    "website": "http://modssl.org"
+    "website": "https://modssl.org"
   },
   "mod_wsgi": {
     "cats": [
