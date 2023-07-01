@@ -19,10 +19,10 @@
  */
 package org.zaproxy.addon.graphql;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
+import org.parosproxy.paros.network.HttpHeader;
 
 public final class UrlBuilder {
 
@@ -31,14 +31,24 @@ public final class UrlBuilder {
     public static URI build(String urlStr) throws URIException {
         if (urlStr.isEmpty()) {
             throw new URIException("URL cannot be empty.");
-        } else if ("http://".equals(urlStr) || "https://".equals(urlStr)) {
+        } else if (HttpHeader.SCHEME_HTTP.equals(urlStr)
+                || HttpHeader.SCHEME_HTTPS.equals(urlStr)) {
             throw new URIException("URL is incomplete.");
         }
         try {
-            new URL(urlStr);
+            new URL(urlStr).toURI();
             return new URI(urlStr, true);
-        } catch (MalformedURLException | URIException e) {
+        } catch (Exception e) {
             throw new URIException(e.getMessage());
+        }
+    }
+
+    public static boolean isValidUrl(String urlStr) {
+        try {
+            build(urlStr);
+            return true;
+        } catch (URIException e) {
+            return false;
         }
     }
 }
