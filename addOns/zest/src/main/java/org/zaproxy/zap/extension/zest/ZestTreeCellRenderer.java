@@ -203,7 +203,7 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
                     new ImageIcon(
                             ZestTreeCellRenderer.class.getResource(
                                     "/org/zaproxy/zap/extension/zest/resources/icons/ui-scroll-pane.png")));
-    private static final ImageIcon CLIENT_ELEMENT_SCROLLTO_ICON =
+    private static final ImageIcon CLIENT_ELEMENT_SCROLL_TO_ICON =
             DisplayUtils.getScaledIcon(
                     new ImageIcon(
                             ZestTreeCellRenderer.class.getResource(
@@ -412,7 +412,7 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
                     } else if (za instanceof ZestClientElementScroll) {
                         setIcon(CLIENT_ELEMENT_SCROLL_ICON);
                     } else if (za instanceof ZestClientElementScrollTo) {
-                        setIcon(CLIENT_ELEMENT_SCROLLTO_ICON);
+                        setIcon(CLIENT_ELEMENT_SCROLL_TO_ICON);
                     } else if (za instanceof ZestClientElementSendKeys) {
                         setIcon(CLIENT_ELEMENT_SEND_KEYS_ICON);
                     } else if (za instanceof ZestClientElementSubmit) {

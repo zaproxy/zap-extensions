@@ -64,6 +64,7 @@ import org.zaproxy.zest.core.v1.ZestClientElementAssign;
 import org.zaproxy.zest.core.v1.ZestClientElementClear;
 import org.zaproxy.zest.core.v1.ZestClientElementClick;
 import org.zaproxy.zest.core.v1.ZestClientElementMouseOver;
+import org.zaproxy.zest.core.v1.ZestClientElementScroll;
 import org.zaproxy.zest.core.v1.ZestClientElementScrollTo;
 import org.zaproxy.zest.core.v1.ZestClientElementSendKeys;
 import org.zaproxy.zest.core.v1.ZestClientElementSubmit;
@@ -761,6 +762,21 @@ public class ZestZapUtils {
                 return indexStr
                         + Constant.messages.getString("zest.element.clientElementMouseOver.title");
             }
+        } else if (za instanceof ZestClientElementScroll) {
+            ZestClientElementScroll zcl = (ZestClientElementScroll) za;
+            if (incParams) {
+                return indexStr
+                        + Constant.messages.getString(
+                                "zest.element.clientElementScroll",
+                                zcl.getWindowHandle(),
+                                zcl.getType(),
+                                zcl.getElement(),
+                                String.valueOf(zcl.getX()),
+                                String.valueOf(zcl.getY()));
+            } else {
+                return indexStr
+                        + Constant.messages.getString("zest.element.clientElementScroll.title");
+            }
         } else if (za instanceof ZestClientElementScrollTo) {
             ZestClientElementScrollTo zcl = (ZestClientElementScrollTo) za;
             if (incParams) {
@@ -890,8 +906,8 @@ public class ZestZapUtils {
                         + Constant.messages.getString(
                                 "zest.element.clientWindowResize",
                                 zcl.getWindowHandle(),
-                                zcl.getX(),
-                                zcl.getY());
+                                String.valueOf(zcl.getX()),
+                                String.valueOf(zcl.getY()));
             } else {
                 return indexStr
                         + Constant.messages.getString("zest.element.clientWindowResize.title");

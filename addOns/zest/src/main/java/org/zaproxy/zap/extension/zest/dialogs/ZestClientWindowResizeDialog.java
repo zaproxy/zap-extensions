@@ -36,8 +36,8 @@ import org.zaproxy.zest.core.v1.ZestStatement;
 public class ZestClientWindowResizeDialog extends StandardFieldsDialog implements ZestDialog {
 
     private static final String FIELD_WINDOW_HANDLE = "zest.dialog.client.label.windowHandle";
-    private static final String FIELD_X = "zest.dialog.client.label.x";
-    private static final String FIELD_Y = "zest.dialog.client.label.y";
+    private static final String FIELD_WIDTH = "zest.dialog.client.label.width";
+    private static final String FIELD_HEIGHT = "zest.dialog.client.label.height";
 
     private static final long serialVersionUID = 1L;
 
@@ -80,15 +80,15 @@ public class ZestClientWindowResizeDialog extends StandardFieldsDialog implement
         List<String> windowIds = new ArrayList<>(script.getZestScript().getClientWindowHandles());
         Collections.sort(windowIds);
         this.addComboField(FIELD_WINDOW_HANDLE, windowIds, client.getWindowHandle());
-        this.addTextField(FIELD_X, String.valueOf(client.getX()));
-        this.addTextField(FIELD_Y, String.valueOf(client.getY()));
+        this.addNumberField(FIELD_WIDTH, 1, Integer.MAX_VALUE, client.getX());
+        this.addNumberField(FIELD_HEIGHT, 1, Integer.MAX_VALUE, client.getY());
     }
 
     @Override
     public void save() {
         client.setWindowHandle(this.getStringValue(FIELD_WINDOW_HANDLE));
-        client.setX(Integer.valueOf(this.getStringValue(FIELD_X)));
-        client.setY(Integer.valueOf(this.getStringValue(FIELD_Y)));
+        client.setX(this.getIntValue(FIELD_WIDTH));
+        client.setY(this.getIntValue(FIELD_HEIGHT));
 
         if (add) {
             if (request == null) {
