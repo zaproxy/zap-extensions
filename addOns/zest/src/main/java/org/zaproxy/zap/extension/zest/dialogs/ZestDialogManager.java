@@ -52,6 +52,7 @@ import org.zaproxy.zest.core.v1.ZestClientElementAssign;
 import org.zaproxy.zest.core.v1.ZestClientElementClear;
 import org.zaproxy.zest.core.v1.ZestClientElementClick;
 import org.zaproxy.zest.core.v1.ZestClientElementMouseOver;
+import org.zaproxy.zest.core.v1.ZestClientElementScrollTo;
 import org.zaproxy.zest.core.v1.ZestClientElementSendKeys;
 import org.zaproxy.zest.core.v1.ZestClientElementSubmit;
 import org.zaproxy.zest.core.v1.ZestClientLaunch;
@@ -102,6 +103,7 @@ public class ZestDialogManager extends AbstractPanel {
     private ZestClientElementClearDialog clientElementClearDialog = null;
     private ZestClientElementClickDialog clientElementClickDialog = null;
     private ZestClientElementMouseOverDialog clientElementMouseOverDialog = null;
+    private ZestClientElementScrollToDialog clientElementScrollToDialog = null;
     private ZestClientElementSendKeysDialog clientElementSendKeysDialog = null;
     private ZestClientElementSubmitDialog clientElementSubmitDialog = null;
     private ZestClientWindowHandleDialog clientWindowDialog = null;
@@ -239,6 +241,13 @@ public class ZestDialogManager extends AbstractPanel {
                                                 sn,
                                                 null,
                                                 (ZestClientElementMouseOver) obj,
+                                                false);
+                                    } else if (obj instanceof ZestClientElementScrollTo) {
+                                        showZestClientElementScrollToDialog(
+                                                parent,
+                                                sn,
+                                                null,
+                                                (ZestClientElementScrollTo) obj,
                                                 false);
                                     } else if (obj instanceof ZestClientElementSendKeys) {
                                         showZestClientElementSendKeysDialog(
@@ -699,6 +708,26 @@ public class ZestDialogManager extends AbstractPanel {
         clientElementMouseOverDialog.setVisible(true);
     }
 
+    public void showZestClientElementScrollToDialog(
+            ScriptNode parent,
+            ScriptNode child,
+            ZestStatement req,
+            ZestClientElementScrollTo client,
+            boolean add) {
+        if (clientElementScrollToDialog == null) {
+            clientElementScrollToDialog =
+                    new ZestClientElementScrollToDialog(
+                            extension, View.getSingleton().getMainFrame(), new Dimension(300, 200));
+        } else if (clientElementScrollToDialog.isVisible()) {
+            // Already being displayed, bring to the front but dont overwrite anything
+            bringToFront(clientElementScrollToDialog);
+            return;
+        }
+        ZestScriptWrapper script = extension.getZestTreeModel().getScriptWrapper(parent);
+        clientElementScrollToDialog.init(script, parent, child, req, client, add);
+        clientElementScrollToDialog.setVisible(true);
+    }
+
     public void showZestClientElementSendKeysDialog(
             ScriptNode parent,
             ScriptNode child,
@@ -925,6 +954,9 @@ public class ZestDialogManager extends AbstractPanel {
         }
         if (clientElementMouseOverDialog != null) {
             clientElementMouseOverDialog.dispose();
+        }
+        if (clientElementScrollToDialog != null) {
+            clientElementScrollToDialog.dispose();
         }
         if (clientElementSendKeysDialog != null) {
             clientElementSendKeysDialog.dispose();

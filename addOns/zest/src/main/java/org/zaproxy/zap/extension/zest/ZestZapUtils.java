@@ -64,6 +64,7 @@ import org.zaproxy.zest.core.v1.ZestClientElementAssign;
 import org.zaproxy.zest.core.v1.ZestClientElementClear;
 import org.zaproxy.zest.core.v1.ZestClientElementClick;
 import org.zaproxy.zest.core.v1.ZestClientElementMouseOver;
+import org.zaproxy.zest.core.v1.ZestClientElementScrollTo;
 import org.zaproxy.zest.core.v1.ZestClientElementSendKeys;
 import org.zaproxy.zest.core.v1.ZestClientElementSubmit;
 import org.zaproxy.zest.core.v1.ZestClientLaunch;
@@ -759,6 +760,19 @@ public class ZestZapUtils {
             } else {
                 return indexStr
                         + Constant.messages.getString("zest.element.clientElementMouseOver.title");
+            }
+        } else if (za instanceof ZestClientElementScrollTo) {
+            ZestClientElementScrollTo zcl = (ZestClientElementScrollTo) za;
+            if (incParams) {
+                return indexStr
+                        + Constant.messages.getString(
+                                "zest.element.clientElementScrollTo",
+                                zcl.getWindowHandle(),
+                                zcl.getType(),
+                                zcl.getElement());
+            } else {
+                return indexStr
+                        + Constant.messages.getString("zest.element.clientElementScrollTo.title");
             }
         } else if (za instanceof ZestClientElementSendKeys) {
             ZestClientElementSendKeys zcl = (ZestClientElementSendKeys) za;

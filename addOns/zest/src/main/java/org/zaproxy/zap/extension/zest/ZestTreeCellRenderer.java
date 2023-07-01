@@ -45,6 +45,8 @@ import org.zaproxy.zest.core.v1.ZestClientElementAssign;
 import org.zaproxy.zest.core.v1.ZestClientElementClear;
 import org.zaproxy.zest.core.v1.ZestClientElementClick;
 import org.zaproxy.zest.core.v1.ZestClientElementMouseOver;
+import org.zaproxy.zest.core.v1.ZestClientElementScroll;
+import org.zaproxy.zest.core.v1.ZestClientElementScrollTo;
 import org.zaproxy.zest.core.v1.ZestClientElementSendKeys;
 import org.zaproxy.zest.core.v1.ZestClientElementSubmit;
 import org.zaproxy.zest.core.v1.ZestClientLaunch;
@@ -196,6 +198,16 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
                     new ImageIcon(
                             ZestTreeCellRenderer.class.getResource(
                                     "/org/zaproxy/zap/extension/zest/resources/icons/application-cursor.png")));
+    private static final ImageIcon CLIENT_ELEMENT_SCROLL_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(
+                            ZestTreeCellRenderer.class.getResource(
+                                    "/org/zaproxy/zap/extension/zest/resources/icons/ui-scroll-pane.png")));
+    private static final ImageIcon CLIENT_ELEMENT_SCROLLTO_ICON =
+            DisplayUtils.getScaledIcon(
+                    new ImageIcon(
+                            ZestTreeCellRenderer.class.getResource(
+                                    "/org/zaproxy/zap/extension/zest/resources/icons/ui-scroll-pane.png")));
     private static final ImageIcon CLIENT_ELEMENT_SEND_KEYS_ICON =
             DisplayUtils.getScaledIcon(
                     new ImageIcon(
@@ -397,6 +409,10 @@ public class ZestTreeCellRenderer extends DefaultTreeCellRenderer {
                         setIcon(CLIENT_ELEMENT_CLICK_ICON);
                     } else if (za instanceof ZestClientElementMouseOver) {
                         setIcon(CLIENT_ELEMENT_MOUSEOVER_ICON);
+                    } else if (za instanceof ZestClientElementScroll) {
+                        setIcon(CLIENT_ELEMENT_SCROLL_ICON);
+                    } else if (za instanceof ZestClientElementScrollTo) {
+                        setIcon(CLIENT_ELEMENT_SCROLLTO_ICON);
                     } else if (za instanceof ZestClientElementSendKeys) {
                         setIcon(CLIENT_ELEMENT_SEND_KEYS_ICON);
                     } else if (za instanceof ZestClientElementSubmit) {
