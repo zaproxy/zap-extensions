@@ -10,5 +10,7 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/getting-started-guide/")
+
+        notBeforeVersion.set("2.13.0")
     }
 }
