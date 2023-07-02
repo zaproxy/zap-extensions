@@ -547,8 +547,6 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
     @Override
     public List<Alert> getExampleAlerts() {
         String exampleUri = "https://example.com";
-        return List.of(
-                createAlert("name", "../config/database.php", 48, getBaseMsg(), exampleUri).build(),
-                createAlert("name", "../secrets/passwords", 31, getBaseMsg(), exampleUri).build());
+        return List.of(createAlert("name", "../config/database.php", 48, null, exampleUri).build());
     }
 }

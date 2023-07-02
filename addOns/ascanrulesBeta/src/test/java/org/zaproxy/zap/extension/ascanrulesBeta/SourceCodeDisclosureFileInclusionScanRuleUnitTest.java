@@ -66,7 +66,7 @@ class SourceCodeDisclosureFileInclusionScanRuleUnitTest
     void shouldReturnExpectedExampleAlert() {
         List<Alert> alerts = rule.getExampleAlerts();
 
-        assertThat(alerts.size(), is(equalTo(2)));
+        assertThat(alerts.size(), is(equalTo(1)));
 
         for (Alert alert : alerts) {
             Map<String, String> tags = alert.getTags();
