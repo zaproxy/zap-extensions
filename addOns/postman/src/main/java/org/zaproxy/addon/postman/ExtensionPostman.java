@@ -61,6 +61,7 @@ public class ExtensionPostman extends ExtensionAdaptor implements CommandLineLis
             extensionHook.getHookMenu().addImportMenuItem(getMenuImportUrlPostman());
             extensionHook.addSessionListener(new SessionChangedListenerImpl());
         }
+        extensionHook.addApiImplementor(new PostmanApi());
         extensionHook.addCommandLine(getCommandLineArguments());
     }
 
