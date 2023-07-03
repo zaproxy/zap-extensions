@@ -29,13 +29,16 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.dev.auth.jsonMultipleCookies.JsonMultipleCookiesDir;
 import org.zaproxy.addon.dev.auth.nonStdJsonBearer.NonStdJsonBearerDir;
+import org.zaproxy.addon.dev.auth.passswordAddedNoSubmit.PasswordAddedNoSubmitDir;
 import org.zaproxy.addon.dev.auth.passwordAddedJson.PasswordAddedJsonDir;
 import org.zaproxy.addon.dev.auth.passwordHiddenJson.PasswordHiddenJsonDir;
 import org.zaproxy.addon.dev.auth.passwordNewPage.PasswordNewPageDir;
 import org.zaproxy.addon.dev.auth.simpleJson.SimpleJsonDir;
 import org.zaproxy.addon.dev.auth.simpleJsonBearer.SimpleJsonBearerDir;
 import org.zaproxy.addon.dev.auth.simpleJsonBearerCookie.SimpleJsonBearerCookieDir;
+import org.zaproxy.addon.dev.auth.simpleJsonCookie.SimpleJsonCookieDir;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
@@ -68,9 +71,12 @@ public class TestProxyServer {
         authDir.addDirectory(new SimpleJsonBearerDir(this, "simple-json-bearer"));
         authDir.addDirectory(new NonStdJsonBearerDir(this, "non-std-json-bearer"));
         authDir.addDirectory(new SimpleJsonBearerCookieDir(this, "simple-json-bearer-cookie"));
+        authDir.addDirectory(new SimpleJsonCookieDir(this, "simple-json-cookie"));
         authDir.addDirectory(new PasswordAddedJsonDir(this, "password-added-json"));
         authDir.addDirectory(new PasswordHiddenJsonDir(this, "password-hidden-json"));
         authDir.addDirectory(new PasswordNewPageDir(this, "password-new-page"));
+        authDir.addDirectory(new PasswordAddedNoSubmitDir(this, "password-added-json"));
+        authDir.addDirectory(new JsonMultipleCookiesDir(this, "json-multiple-cookies"));
 
         root.addDirectory(authDir);
     }

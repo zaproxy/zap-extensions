@@ -139,6 +139,7 @@ public class VerificationDetectionProcessor implements Runnable {
         HttpMessage msg = vrd.getMsg().cloneRequest();
         if (!auth) {
             msg.getRequestHeader().setHeader(HttpHeader.AUTHORIZATION, null);
+            msg.getRequestHeader().setHeader(HttpHeader.COOKIE, null);
         }
         httpSender.sendAndReceive(msg);
         return new VerificationRequestDetails(msg, vrd.getToken(), context);

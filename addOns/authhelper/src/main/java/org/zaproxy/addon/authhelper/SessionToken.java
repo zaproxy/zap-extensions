@@ -24,6 +24,7 @@ import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 
 public class SessionToken {
 
+    public static final String COOKIE_SOURCE = "cookie";
     public static final String ENV_SOURCE = "env";
     public static final String HEADER_SOURCE = "header";
     public static final String JSON_SOURCE = "json";

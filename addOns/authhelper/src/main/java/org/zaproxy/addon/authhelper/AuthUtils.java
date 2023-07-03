@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.authhelper;
 
+import java.net.HttpCookie;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -86,6 +87,8 @@ public class AuthUtils {
     private static final String[] USERNAME_FIELD_INDICATORS = {
         "email", "signinname", "uname", "user"
     };
+
+    private static final int MIN_SESSION_COOKIE_LENGTH = 10;
 
     private static int MAX_NUM_RECORDS_TO_CHECK = 200;
 
@@ -384,6 +387,16 @@ public class AuthUtils {
                             }
                         });
 
+        List<HttpCookie> cookies = msg.getResponseHeader().getHttpCookies(null);
+        for (HttpCookie cookie : cookies) {
+            if (cookie.getValue().length() >= MIN_SESSION_COOKIE_LENGTH) {
+                addToMap(
+                        map,
+                        new SessionToken(
+                                SessionToken.COOKIE_SOURCE, cookie.getName(), cookie.getValue()));
+            }
+        }
+
         String responseData = msg.getResponseBody().toString();
         if (msg.getResponseHeader().isJson() && StringUtils.isNotBlank(responseData)) {
             Map<String, SessionToken> tokens = new HashMap<>();
@@ -423,10 +436,13 @@ public class AuthUtils {
     }
 
     public static List<Pair<String, String>> getHeaderTokens(
-            HttpMessage msg, List<SessionToken> tokens) {
+            HttpMessage msg, List<SessionToken> tokens, boolean incCookies) {
         List<Pair<String, String>> list = new ArrayList<>();
         for (SessionToken token : tokens) {
             for (HttpHeaderField header : msg.getRequestHeader().getHeaders()) {
+                if (!incCookies && HttpHeader.COOKIE.equalsIgnoreCase(header.getName())) {
+                    continue;
+                }
                 if (header.getValue().contains(token.getValue())) {
                     String hv =
                             header.getValue()
@@ -489,15 +505,24 @@ public class AuthUtils {
                                                 SessionToken.URL_SOURCE,
                                                 p.getName(),
                                                 p.getValue())));
+        // Add Cookies
+        msg.getResponseHeader()
+                .getHttpCookies(null)
+                .forEach(
+                        c ->
+                                addToMap(
+                                        tokens,
+                                        new SessionToken(
+                                                SessionToken.COOKIE_SOURCE,
+                                                c.getName(),
+                                                c.getValue())));
 
         return tokens;
     }
 
     /**
-     * Returns all of the identified session tokens in a request. Currently this method only looks
-     * for Authorization headers - it will need to detect other potential locations including
-     * cookies, but they are less reliable (as cookies are used for many purposes) so more checking
-     * will be required.
+     * Returns all of the identified session tokens in a request. This method looks for
+     * Authorization headers and cookies with a value over a minimum length.
      *
      * @param msg the message containing the request to check
      * @return all of the identified session tokens in the request.
@@ -508,6 +533,15 @@ public class AuthUtils {
         for (String header : authHeaders) {
             map.add(new SessionToken(SessionToken.HEADER_SOURCE, HttpHeader.AUTHORIZATION, header));
         }
+        List<HttpCookie> cookies = msg.getRequestHeader().getHttpCookies();
+        for (HttpCookie cookie : cookies) {
+            if (cookie.getValue().length() >= MIN_SESSION_COOKIE_LENGTH) {
+                map.add(
+                        new SessionToken(
+                                SessionToken.COOKIE_SOURCE, cookie.getName(), cookie.getValue()));
+            }
+        }
+
         return map;
     }
 
@@ -701,6 +735,8 @@ public class AuthUtils {
 
         @Override
         public void browserLaunched(SeleniumScriptUtils ssutils) {
+            LOGGER.debug(
+                    "AuthenticationBrowserHook - authenticating as {}", userCreds.getUsername());
             AuthUtils.authenticateAsUser(
                     ssutils.getWebDriver(),
                     bbaMethod.getLoginPageUrl(),

@@ -1,6 +1,6 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-description = "Authentication Helper"
+description = "Helps identify and set up authentication handling"
 
 zapAddOn {
     addOnName.set("Authentication Helper")

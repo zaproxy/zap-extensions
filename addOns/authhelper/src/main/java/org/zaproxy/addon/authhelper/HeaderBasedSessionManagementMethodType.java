@@ -20,6 +20,7 @@
 package org.zaproxy.addon.authhelper;
 
 import java.awt.GridBagLayout;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,12 +32,18 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.httpclient.HttpState;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.db.RecordContext;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.authhelper.BrowserBasedAuthenticationMethodType.BrowserBasedAuthenticationMethod;
+import org.zaproxy.addon.network.internal.client.LegacyUtils;
+import org.zaproxy.zap.authentication.AuthenticationMethod;
 import org.zaproxy.zap.extension.api.ApiDynamicActionImplementor;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiResponse;
@@ -49,6 +56,7 @@ import org.zaproxy.zap.session.AbstractSessionManagementMethodOptionsPanel;
 import org.zaproxy.zap.session.SessionManagementMethod;
 import org.zaproxy.zap.session.SessionManagementMethodType;
 import org.zaproxy.zap.session.WebSession;
+import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.ApiUtils;
 import org.zaproxy.zap.utils.EncodingUtils;
 import org.zaproxy.zap.utils.Pair;
@@ -68,10 +76,18 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
 
     private static final String API_METHOD_NAME = "headerBasedSessionManagement";
 
+    private static final Logger LOGGER =
+            LogManager.getLogger(HeaderBasedSessionManagementMethodType.class);
+
     public static class HeaderBasedSessionManagementMethod implements SessionManagementMethod {
 
         private List<Pair<String, String>> headerConfigs = new ArrayList<>();
         private static Map<String, String> envVars = System.getenv();
+        private int contextId;
+
+        public HeaderBasedSessionManagementMethod(int contextId) {
+            this.contextId = contextId;
+        }
 
         @Override
         public boolean isConfigured() {
@@ -168,12 +184,37 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
                     Stats.incCounter("stats.auth.session.set.header");
                     message.getRequestHeader().setHeader(header.first, header.second);
                 }
+                Context context = Model.getSingleton().getSession().getContext(contextId);
+                AuthenticationMethod am = context.getAuthenticationMethod();
+                if (am instanceof BrowserBasedAuthenticationMethod) {
+                    BrowserBasedAuthenticationMethod bbam = (BrowserBasedAuthenticationMethod) am;
+                    User user = message.getRequestingUser();
+                    WebSession ws = user.getAuthenticatedSession();
+
+                    try {
+                        Method method =
+                                LegacyUtils.class.getMethod(
+                                        "updateHttpState",
+                                        HttpState.class,
+                                        Class.forName(
+                                                "org.apache.hc.client5.http.cookie.CookieStore"));
+
+                        method.invoke(
+                                null,
+                                ws.getHttpState(),
+                                ((BrowserBasedAuthenticationMethodType) bbam.getType())
+                                        .getCookieStore());
+                    } catch (Exception e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                }
             }
         }
 
         @Override
         public SessionManagementMethod clone() {
-            HeaderBasedSessionManagementMethod method = new HeaderBasedSessionManagementMethod();
+            HeaderBasedSessionManagementMethod method =
+                    new HeaderBasedSessionManagementMethod(this.contextId);
             List<Pair<String, String>> hc = new ArrayList<>(headerConfigs.size());
             headerConfigs.stream().forEach(p -> hc.add(new Pair<>(p.first, p.second)));
             method.setHeaderConfigs(hc);
@@ -215,7 +256,7 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
 
     @Override
     public HeaderBasedSessionManagementMethod createSessionManagementMethod(int contextId) {
-        return new HeaderBasedSessionManagementMethod();
+        return new HeaderBasedSessionManagementMethod(contextId);
     }
 
     @Override
@@ -263,7 +304,8 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
     @Override
     public SessionManagementMethod loadMethodFromSession(Session session, int contextId)
             throws DatabaseException {
-        HeaderBasedSessionManagementMethod method = new HeaderBasedSessionManagementMethod();
+        HeaderBasedSessionManagementMethod method =
+                new HeaderBasedSessionManagementMethod(contextId);
 
         Map<String, String> map =
                 EncodingUtils.stringToMap(

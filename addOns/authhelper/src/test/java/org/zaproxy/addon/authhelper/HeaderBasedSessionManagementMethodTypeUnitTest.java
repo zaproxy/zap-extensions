@@ -23,9 +23,11 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,7 +39,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.ArgumentCaptor;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.db.RecordContext;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -45,6 +49,7 @@ import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.authhelper.HeaderBasedSessionManagementMethodType.HeaderBasedSessionManagementMethod;
 import org.zaproxy.addon.authhelper.HeaderBasedSessionManagementMethodType.HttpHeaderBasedSession;
 import org.zaproxy.zap.extension.script.ScriptVars;
+import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.network.HttpRequestBody;
 import org.zaproxy.zap.network.HttpResponseBody;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -104,7 +109,7 @@ class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
     @Test
     void shouldExtractWebSession() throws Exception {
         // Given
-        HeaderBasedSessionManagementMethod method = new HeaderBasedSessionManagementMethod();
+        HeaderBasedSessionManagementMethod method = new HeaderBasedSessionManagementMethod(0);
         HttpMessage msg =
                 new HttpMessage(
                         new HttpRequestHeader(
@@ -169,6 +174,15 @@ class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
     @Test
     void shouldProcessMessageToMatchSession() throws Exception {
         // Given
+        Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
+        Model.setSingletonForTesting(model);
+
+        Session session = mock(Session.class, withSettings().strictness(Strictness.LENIENT));
+        given(model.getSession()).willReturn(session);
+
+        Context context = mock(Context.class);
+        given(session.getContext(0)).willReturn(context);
+
         HttpMessage msg =
                 new HttpMessage(
                         new HttpRequestHeader(
@@ -179,7 +193,7 @@ class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
                         new HttpRequestBody("Request Body"),
                         new HttpResponseHeader("HTTP/1.1 200 OK\r\n"),
                         new HttpResponseBody("Response Body"));
-        HeaderBasedSessionManagementMethod method = new HeaderBasedSessionManagementMethod();
+        HeaderBasedSessionManagementMethod method = new HeaderBasedSessionManagementMethod(0);
 
         List<Pair<String, String>> headers = new ArrayList<>();
         headers.add(new Pair<>("Header1", "Replace1"));
@@ -208,8 +222,8 @@ class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
     })
     void shouldExportAndImportData(String key, String value) throws Exception {
         // Given
-        HeaderBasedSessionManagementMethod method1 = new HeaderBasedSessionManagementMethod();
-        HeaderBasedSessionManagementMethod method2 = new HeaderBasedSessionManagementMethod();
+        HeaderBasedSessionManagementMethod method1 = new HeaderBasedSessionManagementMethod(0);
+        HeaderBasedSessionManagementMethod method2 = new HeaderBasedSessionManagementMethod(0);
         method1.setHeaderConfigs(new ArrayList<>(Arrays.asList(new Pair<>(key, value))));
         ZapXmlConfiguration config = new ZapXmlConfiguration();
         // When
@@ -229,8 +243,8 @@ class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
     @Test
     void shouldExportAndImportDataWithMultipleHeaders() throws Exception {
         // Given
-        HeaderBasedSessionManagementMethod method1 = new HeaderBasedSessionManagementMethod();
-        HeaderBasedSessionManagementMethod method2 = new HeaderBasedSessionManagementMethod();
+        HeaderBasedSessionManagementMethod method1 = new HeaderBasedSessionManagementMethod(0);
+        HeaderBasedSessionManagementMethod method2 = new HeaderBasedSessionManagementMethod(0);
         method1.setHeaderConfigs(
                 new ArrayList<>(
                         Arrays.asList(
@@ -261,8 +275,8 @@ class HeaderBasedSessionManagementMethodTypeUnitTest extends TestUtils {
     @Test
     void shouldPersistAndLoadFromSession() throws Exception {
         // Given
-        HeaderBasedSessionManagementMethod method1 = new HeaderBasedSessionManagementMethod();
-        HeaderBasedSessionManagementMethod method2 = new HeaderBasedSessionManagementMethod();
+        HeaderBasedSessionManagementMethod method1 = new HeaderBasedSessionManagementMethod(0);
+        HeaderBasedSessionManagementMethod method2 = new HeaderBasedSessionManagementMethod(0);
         method1.setHeaderConfigs(
                 new ArrayList<>(
                         Arrays.asList(
