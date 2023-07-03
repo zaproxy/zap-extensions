@@ -38,7 +38,6 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpSender;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.model.DefaultValueGenerator;
 import org.zaproxy.zap.model.ValueGenerator;
@@ -51,11 +50,11 @@ public class ExtensionGraphQl extends ExtensionAdaptor
     static final int TOOL_ALERT_ID = 50007;
     private static final Logger LOGGER = LogManager.getLogger(ExtensionGraphQl.class);
 
-    private ZapMenuItem menuImportLocalGraphQl = null;
-    private ZapMenuItem menuImportUrlGraphQl = null;
+    private ZapMenuItem menuImportGraphQl;
     private GraphQlOptionsPanel graphQlOptionsPanel;
     private GraphQlParam param;
     private List<ParserThread> parserThreads = Collections.synchronizedList(new ArrayList<>());
+    private ImportDialog importDialog;
 
     private static final int ARG_IMPORT_FILE_IDX = 0;
     private static final int ARG_IMPORT_URL_IDX = 1;
@@ -82,8 +81,7 @@ public class ExtensionGraphQl extends ExtensionAdaptor
         super.hook(extensionHook);
 
         if (hasView()) {
-            extensionHook.getHookMenu().addImportMenuItem(getMenuImportLocalGraphQl());
-            extensionHook.getHookMenu().addImportMenuItem(getMenuImportUrlGraphQl());
+            extensionHook.getHookMenu().addImportMenuItem(getMenuImportGraphQl());
             extensionHook.getHookView().addOptionPanel(getGraphQlOptionsPanel());
         }
 
@@ -104,30 +102,28 @@ public class ExtensionGraphQl extends ExtensionAdaptor
         }
     }
 
-    /* Menu option to import a local GraphQl file. */
-    private ZapMenuItem getMenuImportLocalGraphQl() {
-        if (menuImportLocalGraphQl == null) {
-            menuImportLocalGraphQl = new ZapMenuItem("graphql.topmenu.import.importgraphql");
-            menuImportLocalGraphQl.setToolTipText(
-                    Constant.messages.getString("graphql.topmenu.import.importgraphql.tooltip"));
-            menuImportLocalGraphQl.addActionListener(
-                    e -> new ImportFromFileDialog(View.getSingleton().getMainFrame()));
+    @Override
+    public void unload() {
+        super.unload();
+        if (importDialog != null) {
+            importDialog.dispose();
         }
-        return menuImportLocalGraphQl;
     }
 
-    /* Menu option to import a GraphQl file from a given URL. */
-    private ZapMenuItem getMenuImportUrlGraphQl() {
-        if (menuImportUrlGraphQl == null) {
-            menuImportUrlGraphQl = new ZapMenuItem("graphql.topmenu.import.importremotegraphql");
-            menuImportUrlGraphQl.setToolTipText(
-                    Constant.messages.getString(
-                            "graphql.topmenu.import.importremotegraphql.tooltip"));
-
-            menuImportUrlGraphQl.addActionListener(
-                    e -> new ImportFromUrlDialog(View.getSingleton().getMainFrame()));
+    private ZapMenuItem getMenuImportGraphQl() {
+        if (menuImportGraphQl == null) {
+            menuImportGraphQl = new ZapMenuItem("graphql.topmenu.import.importgraphql");
+            menuImportGraphQl.setToolTipText(
+                    Constant.messages.getString("graphql.topmenu.import.importgraphql.tooltip"));
+            menuImportGraphQl.addActionListener(
+                    e -> {
+                        if (importDialog == null) {
+                            importDialog = new ImportDialog(getView().getMainFrame());
+                        }
+                        importDialog.setVisible(true);
+                    });
         }
-        return menuImportUrlGraphQl;
+        return menuImportGraphQl;
     }
 
     private GraphQlOptionsPanel getGraphQlOptionsPanel() {
@@ -163,6 +159,9 @@ public class ExtensionGraphQl extends ExtensionAdaptor
     @Override
     public void sessionAboutToChange(Session arg0) {
         stopParserThreads();
+        if (importDialog != null) {
+            importDialog.clearFields();
+        }
     }
 
     @Override
