@@ -36,7 +36,7 @@ dependencies {
     api("org.seleniumhq.selenium:htmlunit-driver:$seleniumVersion") {
         exclude(group = "io.netty")
     }
-    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.19.0") {
+    implementation(libs.log4j.slf4j) {
         // Provided by ZAP.
         exclude(group = "org.apache.logging.log4j")
     }
