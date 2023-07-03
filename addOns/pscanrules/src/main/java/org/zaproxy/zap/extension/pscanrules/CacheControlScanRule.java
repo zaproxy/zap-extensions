@@ -37,6 +37,8 @@ public class CacheControlScanRule extends PluginPassiveScanner {
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.cachecontrol.";
 
+    private static final String CACHE_CONTROL_HEADER = HttpHeader.CACHE_CONTROL;
+
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS);
 
@@ -58,7 +60,7 @@ public class CacheControlScanRule extends PluginPassiveScanner {
             }
 
             List<String> cacheControlList =
-                    msg.getResponseHeader().getHeaderValues(HttpHeader.CACHE_CONTROL);
+                    msg.getResponseHeader().getHeaderValues(CACHE_CONTROL_HEADER);
             String cacheControlHeaders =
                     (!cacheControlList.isEmpty()) ? cacheControlList.toString().toLowerCase() : "";
 
@@ -67,28 +69,27 @@ public class CacheControlScanRule extends PluginPassiveScanner {
                     cacheControlHeaders.indexOf("no-store") < 0
                     || cacheControlHeaders.indexOf("no-cache") < 0
                     || cacheControlHeaders.indexOf("must-revalidate") < 0) {
-                this.raiseAlert(HttpHeader.CACHE_CONTROL, cacheControlHeaders);
+                this.createAlert(cacheControlHeaders).raise();
             }
         }
     }
 
-    private void raiseAlert(String header, String evidence) {
+    private AlertBuilder createAlert(String evidence) {
         if (evidence.startsWith("[") && evidence.endsWith("]")) {
             // Due to casting a Vector to a string
             // Strip so that if a single headers used the highlighting will work
             evidence = evidence.substring(1, evidence.length() - 1);
         }
-        newAlert()
+        return newAlert()
                 .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_LOW)
                 .setDescription(getDescription())
-                .setParam(header)
+                .setParam(CACHE_CONTROL_HEADER)
                 .setSolution(getSolution())
                 .setReference(getReference())
                 .setEvidence(evidence)
                 .setCweId(getCweId())
-                .setWascId(getWascId())
-                .raise();
+                .setWascId(getWascId());
     }
 
     @Override
@@ -128,5 +129,10 @@ public class CacheControlScanRule extends PluginPassiveScanner {
 
     public int getWascId() {
         return 13;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(createAlert("no-store, must-revalidate").build());
     }
 }
