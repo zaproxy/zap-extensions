@@ -97,11 +97,9 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
     private RightClickMsgMenu popupMsgMenuExample;
     private AbstractPanel statusPanel;
 
-    private SimpleExampleAPI api;
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionReport2IriusRisk.class);
 
-    private JPanel inputPanel;
     private JTextField iriusRiskDomainInputField;
     private JTextField iriusRiskProjectIdInputField;
     private JTextField apiTokenInputField;
@@ -116,9 +114,6 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
-
-        this.api = new SimpleExampleAPI();
-        extensionHook.addApiImplementor(this.api);
 
         // As long as we're not running as a daemon
         if (hasView()) {
@@ -146,25 +141,15 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
         // here (if the extension declares that can be unloaded, see above method).
     }
 
-    private String generateXmlReport(String ZAP_API_KEY) {
-        String path = null;
-        try {
-            path = GenerateReportXML.generate(ZAP_API_KEY);
-            View.getSingleton().showMessageDialog("XML Report generated successfully.");
-        } catch (Exception e) {
-            View.getSingleton().showWarningDialog("Failed to generate XML report: " + e.getMessage());
-        }
-        return path;
-    }
-
     private AbstractPanel getStatusPanel() {
+        
         if (statusPanel == null) {
             statusPanel = new AbstractPanel();
-            statusPanel.setLayout(new GridLayout(4, 2));
+            statusPanel.setLayout(null);
             statusPanel.setName(Constant.messages.getString(PREFIX + ".panel.title"));
             statusPanel.setIcon(new ImageIcon(getClass().getResource(RESOURCES + "/cake.png")));
-            
 
+            // Create labels and inputs
             JLabel iriusRiskDomainLabel = new JLabel("IriusRisk Domain:");
             iriusRiskDomainInputField = new JTextField();
             JLabel iriusRiskProjectIdLabel = new JLabel("IriusRisk Project ID:");
@@ -173,39 +158,40 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
             apiTokenInputField = new JTextField();
             submitButton = new JButton("Submit");
 
-            submitButton.addActionListener(new ActionListener() {
+            submitButton.addActionListener(new ActionListener() { // Submit button event
                 @Override
                 public void actionPerformed(ActionEvent e) {
                 
                     String iriusRiskDomain = iriusRiskDomainInputField.getText();
                     String iriusRiskProjectId = iriusRiskProjectIdInputField.getText();
                     String apiToken = apiTokenInputField.getText();
-                    //String path = generateXmlReport(zapApiKey);
+
+                    // Check if all fields are filled
+                    if (iriusRiskDomain.isEmpty() || iriusRiskProjectId.isEmpty() || apiToken.isEmpty()) {
+                        View.getSingleton().showWarningDialog("Please fill in all the required fields.");
+                        return;
+                    }
+
                     File file = null;
                     View.getSingleton().showMessageDialog("Generating XML.");
-
 
                     ReportLastScan reportLastScan = new ReportLastScan();
 
                     // Genera el informe
-                    
                     try{
-                        file = reportLastScan.generate(homeUser+"/Zap-Report", ReportType.XML);
+                        file = reportLastScan.generate(homeUser+"/Zap-Report.xml", ReportType.XML);
                     } catch(Exception exception){
                         exception.printStackTrace();
                         View.getSingleton().showWarningDialog("XML could not be generated.");
                     }
                     View.getSingleton().showMessageDialog("XML was generated succesfully.");
                     
-                    // Process the inputs here as desired
-                    // For this example, we'll just display them in the Output panel
-                    String endpoint = iriusRiskDomain + "/api/v1/products/"+iriusRiskProjectId+"/tests/zap/upload";
-                    
+                    // Endpount full path
+                    String endpoint = iriusRiskDomain + "/api/v1/products/"+iriusRiskProjectId+"/tests/zap/upload";                    
 
                     try {
                         // URL for the POST request
                         URI url = new URI(endpoint);
-                        //File file = new File(path);
                         
                         HttpClient httpClient = HttpClientBuilder.create().build();
                         HttpPost httpPost = new HttpPost(endpoint);
@@ -249,8 +235,39 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
                         View.getSingleton().getOutputPanel().append(exc.getMessage());
                         View.getSingleton().showWarningDialog("Failed to upload report");
                     }
+                    // Delete the XML file
+                    File fileReport = new File(homeUser+"/Zap-Report.xml");
+                    LOGGER.info("Trying to delete the report xml file.");
+                    if (fileReport.exists()) {
+                        if (fileReport.delete()) {
+                            LOGGER.info("The file was deleted succesfully.");
+                        } else {
+                            LOGGER.warn("File could not be deleted.");
+                        }
+                    } else {
+                        LOGGER.warn("The file does not exist.");
+                    }
                 }
             });
+
+            // Congifuration of the GUI
+            int x = 350;
+            int y = 20;
+            int labelWidth = 200;
+            int inputWidth = 300;
+            int height = 25;
+            int gap = 10;
+            
+            iriusRiskDomainLabel.setBounds(x, y, labelWidth, height);
+            iriusRiskDomainInputField.setBounds(x + labelWidth + gap, y, inputWidth, height);
+
+            apiTokenLabel.setBounds(x, y + height + gap, labelWidth, height);
+            apiTokenInputField.setBounds(x + labelWidth + gap, y + height + gap, inputWidth, height);
+            
+            iriusRiskProjectIdLabel.setBounds(x, y + (height + gap) * 2, labelWidth, height);
+            iriusRiskProjectIdInputField.setBounds(x + labelWidth + gap, y + (height + gap) * 2, inputWidth, height);
+
+            submitButton.setBounds( x + (gap + inputWidth)/2, y + (height + gap) * 3, labelWidth, height);
 
             statusPanel.add(iriusRiskDomainLabel);
             statusPanel.add(iriusRiskDomainInputField);

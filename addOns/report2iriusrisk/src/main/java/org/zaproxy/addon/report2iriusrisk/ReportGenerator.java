@@ -1,4 +1,3 @@
-package org.zaproxy.addon.report2iriusrisk;
 /*
 Paros and its related class files.
 Paros is an HTTP/HTTPS proxy for assessing web application security.
@@ -34,6 +33,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 // ZAP: 2020/08/06 Issue 6084: Added date time to html report.
 // ZAP: 2020/10/29 Issue 6267: Fix bug to allow writing reports with file path containing '#'.
 // ZAP: 2020/11/26 Use Log4j 2 classes for logging.
+package org.zaproxy.addon.report2iriusrisk;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
