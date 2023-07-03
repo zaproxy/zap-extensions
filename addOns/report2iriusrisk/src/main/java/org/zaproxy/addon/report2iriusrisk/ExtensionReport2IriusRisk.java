@@ -48,6 +48,7 @@ import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.report2iriusrisk.ReportLastScan.ReportType;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.ZapMenuItem;
 import org.apache.http.HttpEntity;
@@ -102,10 +103,10 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
 
     private JPanel inputPanel;
     private JTextField iriusRiskDomainInputField;
-    private JTextField zapApiKeyInputField;
     private JTextField iriusRiskProjectIdInputField;
     private JTextField apiTokenInputField;
     private JButton submitButton;
+    private String homeUser = System.getProperty("user.home");
 
     public ExtensionReport2IriusRisk() {
         super(NAME);
@@ -163,8 +164,7 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
             statusPanel.setName(Constant.messages.getString(PREFIX + ".panel.title"));
             statusPanel.setIcon(new ImageIcon(getClass().getResource(RESOURCES + "/cake.png")));
             
-            JLabel zapApiKeyLabel = new JLabel("ZAP API Key:");
-            zapApiKeyInputField = new JTextField();
+
             JLabel iriusRiskDomainLabel = new JLabel("IriusRisk Domain:");
             iriusRiskDomainInputField = new JTextField();
             JLabel iriusRiskProjectIdLabel = new JLabel("IriusRisk Project ID:");
@@ -176,12 +176,27 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
             submitButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    String zapApiKey = zapApiKeyInputField.getText();
+                
                     String iriusRiskDomain = iriusRiskDomainInputField.getText();
                     String iriusRiskProjectId = iriusRiskProjectIdInputField.getText();
                     String apiToken = apiTokenInputField.getText();
+                    //String path = generateXmlReport(zapApiKey);
+                    File file = null;
+                    View.getSingleton().showMessageDialog("Generating XML.");
+
+
+                    ReportLastScan reportLastScan = new ReportLastScan();
+
+                    // Genera el informe
                     
-                    String path = generateXmlReport(zapApiKey);
+                    try{
+                        file = reportLastScan.generate(homeUser+"/Zap-Report", ReportType.XML);
+                    } catch(Exception exception){
+                        exception.printStackTrace();
+                        View.getSingleton().showWarningDialog("XML could not be generated.");
+                    }
+                    View.getSingleton().showMessageDialog("XML was generated succesfully.");
+                    
                     // Process the inputs here as desired
                     // For this example, we'll just display them in the Output panel
                     String endpoint = iriusRiskDomain + "/api/v1/products/"+iriusRiskProjectId+"/tests/zap/upload";
@@ -190,8 +205,8 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
                     try {
                         // URL for the POST request
                         URI url = new URI(endpoint);
-                        File file = new File(path);
-
+                        //File file = new File(path);
+                        
                         HttpClient httpClient = HttpClientBuilder.create().build();
                         HttpPost httpPost = new HttpPost(endpoint);
 
@@ -237,8 +252,6 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
                 }
             });
 
-            statusPanel.add(zapApiKeyLabel);
-            statusPanel.add(zapApiKeyInputField);
             statusPanel.add(iriusRiskDomainLabel);
             statusPanel.add(iriusRiskDomainInputField);
             statusPanel.add(apiTokenLabel);
