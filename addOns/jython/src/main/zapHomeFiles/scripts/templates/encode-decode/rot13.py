@@ -1,7 +1,7 @@
 import string
 from org.zaproxy.addon.encoder.processors import EncodeDecodeResult
 
-def process(value):
+def process(helper, value):
     try:
         value = value.encode('ascii')
     except UnicodeEncodeError:
@@ -9,4 +9,4 @@ def process(value):
     rot13 = string.maketrans( 
     "ABCDEFGHIJKLMabcdefghijklmNOPQRSTUVWXYZnopqrstuvwxyz", 
     "NOPQRSTUVWXYZnopqrstuvwxyzABCDEFGHIJKLMabcdefghijklm")
-    return EncodeDecodeResult(string.translate(value, rot13))
+    return helper.newResult(string.translate(value, rot13))

@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update minimum ZAP version to 2.12.0.
 - Replace usage of singletons with injected variables (e.g. `model`, `control`) in scripts.
 
+### Fixed
+- Updated encode-decode script templates to conform to the latest method signatures.
+
 ## [12] - 2021-10-07
 ### Added
 - encode-decode default and rot13 templates.
