@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Direct support for handling browser based authentication in the AJAX spider.
+- Support for cookie based session management.
 
 ## [0.8.0] - 2023-06-06
 ### Changed

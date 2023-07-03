@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>ZAP Test Server</title>
+	<link href="/tutorial.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div class="roundContainer">
+	<h1>Simple Login Page with JSON Response, uses one cookie called 'sid'</H1>
+	<h2>Login</h2>
+	
+	<div id="result"></div>
+
+	<form>
+	<table style="border: none;">
+	<tr>
+		<td>Username:
+		<td><input id="user" name="user" type="text"></td>
+	</tr>
+	<tr>
+		<td>Password:
+		<td><input id="password" name="password" type="password"></td>
+	</tr>
+	<tr>
+		<td></td>
+		<td><button id="login" type="button" value="submit" onclick="submitform();">Login</button></td>
+	</tr>
+	</table>
+	</form>
+	<p>
+	Test credentials:
+	<ul>
+		<li>username = test@test.com
+		<li>password = password123
+	</ul>
+	The verification URL returns JSON with the username and a 200 response if valid, otherwise a 403 response.
+	
+</div>
+<script>
+function submitform() {
+	// Remove previous messages
+	let element = document.getElementById("result");
+	while (element.firstChild) {
+		element.removeChild(element.firstChild);
+	}
+
+	// Make the login request
+	var xhr = new XMLHttpRequest();
+	var url = "login";
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Content-Type", "application/json");
+	xhr.onreadystatechange = function () {
+	    if (xhr.readyState === 4 && xhr.status === 200) {
+	        var json = JSON.parse(xhr.responseText);
+	        
+	        if (json.result === "OK") {
+	        	window.location.replace("home.html");
+	        } else {
+	        	const h3 = document.createElement("h3");
+	        	const textNode = document.createTextNode("Username or password incorrect");
+	        	h3.appendChild(textNode);
+	        	document.getElementById("result").appendChild(h3);
+	        }
+	    }
+	};
+	var data = JSON.stringify({
+		"user": document.getElementById("user").value,
+		"password": document.getElementById("password").value});
+	xhr.send(data);
+}
+
+document.getElementById('password').onkeydown = function(e){
+	if (e.keyCode == 13) {
+		// Handle return key
+		submitform();
+	}
+};
+
+</script>
+</body>
+</html>

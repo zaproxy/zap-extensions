@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Added
+- Auth page where the return key does not submit the form
+- Auth page which uses one request and one cookie
+- Auth page which uses multiple requests and multiple cookies
 
 ## [0.2.0] - 2023-05-09
 

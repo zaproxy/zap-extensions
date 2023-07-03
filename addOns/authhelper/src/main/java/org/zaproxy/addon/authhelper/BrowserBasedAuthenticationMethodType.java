@@ -44,6 +44,7 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -62,6 +63,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.addon.network.internal.client.apachev5.HttpSenderContextApache;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 import org.zaproxy.addon.network.server.Server;
@@ -130,7 +132,13 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
 
     private static List<Server> proxies = new ArrayList<>();
 
+    private HttpSender httpSender;
+
     public BrowserBasedAuthenticationMethodType() {}
+
+    public BrowserBasedAuthenticationMethodType(HttpSender httpSender) {
+        this.httpSender = httpSender;
+    }
 
     private Server getProxy(Context context) {
         if (proxy == null) {
@@ -204,9 +212,38 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                         }
                     };
 
-            proxy = extNet.createHttpProxy(HttpSender.AUTHENTICATION_INITIATOR, handler);
+            proxy = extNet.createHttpProxy(getHttpSender(), handler);
         }
         return proxy;
+    }
+
+    public Object getCookieStore() {
+        try {
+            HttpSender temp = getHttpSender();
+            Object obj = MethodUtils.invokeMethod(temp, true, "getContext");
+
+            if (obj instanceof HttpSenderContextApache) {
+                return FieldUtils.readField(
+                        HttpSenderContextApache.class.getDeclaredField("localCookieStore"),
+                        (HttpSenderContextApache) obj,
+                        true);
+            }
+        } catch (Exception e) {
+            LOGGER.error(
+                    "Failed get {} private field: {}",
+                    getHttpSender().getClass().getCanonicalName(),
+                    "ctx",
+                    e);
+        }
+        return null;
+    }
+
+    private synchronized HttpSender getHttpSender() {
+        if (httpSender == null) {
+            httpSender = new HttpSender(HttpSender.AUTHENTICATION_HELPER_INITIATOR);
+            httpSender.setUseGlobalState(false);
+        }
+        return httpSender;
     }
 
     public static void stopProxies() {
@@ -252,7 +289,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
 
         @Override
         public AuthenticationMethodType getType() {
-            return new BrowserBasedAuthenticationMethodType();
+            return new BrowserBasedAuthenticationMethodType(httpSender);
         }
 
         public String getLoginPageUrl() {

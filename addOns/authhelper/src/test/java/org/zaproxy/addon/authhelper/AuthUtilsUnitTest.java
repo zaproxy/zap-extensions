@@ -26,6 +26,7 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -225,6 +226,25 @@ class AuthUtilsUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldExtractCookieSessionTokens() throws Exception {
+        HttpMessage msg = new HttpMessage(new URI("https://example.com/test", true));
+        msg.getResponseHeader().addHeader(HttpHeader.SET_COOKIE, "too_short=123456789");
+        msg.getResponseHeader().addHeader(HttpHeader.SET_COOKIE, "long_enough=12345678901");
+
+        // When
+        Map<String, SessionToken> tokens = AuthUtils.getResponseSessionTokens(msg);
+
+        // Then
+        assertThat(tokens.size(), is(equalTo(1)));
+
+        assertThat(tokens.get("cookie:long_enough"), is(notNullValue()));
+        assertThat(
+                tokens.get("cookie:long_enough").getSource(),
+                is(equalTo(SessionToken.COOKIE_SOURCE)));
+        assertThat(tokens.get("cookie:long_enough").getKey(), is(equalTo("long_enough")));
+    }
+
+    @Test
     void shouldDefaultToNoTokens() throws Exception {
         // Given
         HttpMessage msg =
@@ -336,14 +356,15 @@ class AuthUtilsUnitTest extends TestUtils {
                         new HttpResponseBody("Response Body"));
 
         // When
-        List<Pair<String, String>> headerTokens = AuthUtils.getHeaderTokens(msg, new ArrayList<>());
+        List<Pair<String, String>> headerTokens =
+                AuthUtils.getHeaderTokens(msg, new ArrayList<>(), true);
 
         // Then
         assertThat(headerTokens.size(), is(equalTo(0)));
     }
 
     @Test
-    void shouldGetHeaderTokens() throws Exception {
+    void shouldGetHeaderTokensWithCookies() throws Exception {
         // Given
         String token1 = "96438673498764398";
         String token2 = "bndkdfsojhgkdshgk";
@@ -357,21 +378,51 @@ class AuthUtilsUnitTest extends TestUtils {
                         new HttpResponseHeader("HTTP/1.1 200 OK\r\n"),
                         new HttpResponseBody("Response Body"));
         msg.getRequestHeader().addHeader(HttpHeader.AUTHORIZATION, "Bearer " + token1);
-        msg.getRequestHeader().addHeader(HttpHeader.SET_COOKIE, token2 + "; SameSite=Strict");
+        msg.getRequestHeader().addHeader(HttpHeader.COOKIE, token2 + "; SameSite=Strict");
         msg.getRequestHeader().addHeader(HttpHeader.AUTHORIZATION, token3);
         List<SessionToken> tokens = new ArrayList<>();
         tokens.add(new SessionToken(SessionToken.HEADER_SOURCE, HttpHeader.AUTHORIZATION, token1));
         tokens.add(new SessionToken(SessionToken.JSON_SOURCE, "set.cookie", token2));
 
         // When
-        List<Pair<String, String>> headerTokens = AuthUtils.getHeaderTokens(msg, tokens);
+        List<Pair<String, String>> headerTokens = AuthUtils.getHeaderTokens(msg, tokens, true);
 
         // Then
         assertThat(headerTokens.size(), is(equalTo(2)));
         assertThat(headerTokens.get(0).first, is(equalTo(HttpHeader.AUTHORIZATION)));
         assertThat(headerTokens.get(0).second, is(equalTo("Bearer {%header:Authorization%}")));
-        assertThat(headerTokens.get(1).first, is(equalTo(HttpHeader.SET_COOKIE)));
+        assertThat(headerTokens.get(1).first, is(equalTo(HttpHeader.COOKIE)));
         assertThat(headerTokens.get(1).second, is(equalTo("{%json:set.cookie%}; SameSite=Strict")));
+    }
+
+    @Test
+    void shouldGetHeaderTokensWithoutCookies() throws Exception {
+        // Given
+        String token1 = "96438673498764398";
+        String token2 = "bndkdfsojhgkdshgk";
+        String token3 = "89jdhf9834herg03s";
+
+        HttpMessage msg =
+                new HttpMessage(
+                        new HttpRequestHeader(
+                                "GET https://example.com/?att1=val1&att2=val2 HTTP/1.1\r\nHost: example.com\r\n\r\n"),
+                        new HttpRequestBody("Request Body"),
+                        new HttpResponseHeader("HTTP/1.1 200 OK\r\n"),
+                        new HttpResponseBody("Response Body"));
+        msg.getRequestHeader().addHeader(HttpHeader.AUTHORIZATION, "Bearer " + token1);
+        msg.getRequestHeader().addHeader(HttpHeader.COOKIE, token2 + "; SameSite=Strict");
+        msg.getRequestHeader().addHeader(HttpHeader.AUTHORIZATION, token3);
+        List<SessionToken> tokens = new ArrayList<>();
+        tokens.add(new SessionToken(SessionToken.HEADER_SOURCE, HttpHeader.AUTHORIZATION, token1));
+        tokens.add(new SessionToken(SessionToken.JSON_SOURCE, "set.cookie", token2));
+
+        // When
+        List<Pair<String, String>> headerTokens = AuthUtils.getHeaderTokens(msg, tokens, false);
+
+        // Then
+        assertThat(headerTokens.size(), is(equalTo(1)));
+        assertThat(headerTokens.get(0).first, is(equalTo(HttpHeader.AUTHORIZATION)));
+        assertThat(headerTokens.get(0).second, is(equalTo("Bearer {%header:Authorization%}")));
     }
 
     @Test
@@ -407,32 +458,38 @@ class AuthUtilsUnitTest extends TestUtils {
                         new HttpResponseHeader("HTTP/1.1 200 OK\r\n"),
                         new HttpResponseBody("Response Body"));
         msg.getRequestHeader().addHeader(HttpFieldsNames.AUTHORIZATION, "Bearer " + token1);
-        msg.getRequestHeader().addHeader(HttpFieldsNames.SET_COOKIE, token2 + "; SameSite=Strict");
+        msg.getRequestHeader()
+                .addHeader(HttpFieldsNames.COOKIE, "id=" + token2 + "; SameSite=Strict");
         msg.getRequestHeader().addHeader(HttpFieldsNames.AUTHORIZATION, token3);
 
         // When
         Set<SessionToken> tokens = AuthUtils.getRequestSessionTokens(msg);
         SessionToken[] stArray = new SessionToken[tokens.size()];
         stArray = tokens.toArray(stArray);
+        Arrays.sort(
+                stArray,
+                (SessionToken a, SessionToken b) -> {
+                    return (a.getToken() + ":" + a.getValue())
+                            .compareTo(b.getToken() + ":" + b.getValue());
+                });
 
         // Then
-        assertThat(tokens.size(), is(equalTo(2)));
-        assertThat(stArray[0].getSource(), is(equalTo(SessionToken.HEADER_SOURCE)));
+        assertThat(tokens.size(), is(equalTo(3)));
+        assertThat(stArray[0].getSource(), is(equalTo(SessionToken.COOKIE_SOURCE)));
         assertThat(stArray[1].getSource(), is(equalTo(SessionToken.HEADER_SOURCE)));
-        assertThat(stArray[0].getToken(), is(equalTo("header:Authorization")));
-        assertThat(stArray[1].getToken(), is(equalTo("header:Authorization")));
-        // Can't guarantee the order of a set
-        if (stArray[0].getValue().equals(token1)) {
-            assertThat(stArray[1].getValue(), is(equalTo(token3)));
-            assertThat(stArray[0].getFullValue(), is(equalTo("Bearer " + token1)));
-            assertThat(stArray[1].getFullValue(), is(equalTo(token3)));
+        assertThat(stArray[2].getSource(), is(equalTo(SessionToken.HEADER_SOURCE)));
 
-        } else {
-            assertThat(stArray[0].getValue(), is(equalTo(token3)));
-            assertThat(stArray[1].getValue(), is(equalTo(token1)));
-            assertThat(stArray[0].getFullValue(), is(equalTo(token3)));
-            assertThat(stArray[1].getFullValue(), is(equalTo("Bearer " + token1)));
-        }
+        assertThat(stArray[0].getToken(), is(equalTo("cookie:id")));
+        assertThat(stArray[1].getToken(), is(equalTo("header:Authorization")));
+        assertThat(stArray[2].getToken(), is(equalTo("header:Authorization")));
+
+        assertThat(stArray[0].getValue(), is(equalTo(token2)));
+        assertThat(stArray[1].getValue(), is(equalTo(token3)));
+        assertThat(stArray[2].getValue(), is(equalTo(token1)));
+
+        assertThat(stArray[0].getFullValue(), is(equalTo(token2)));
+        assertThat(stArray[1].getFullValue(), is(equalTo(token3)));
+        assertThat(stArray[2].getFullValue(), is(equalTo("Bearer " + token1)));
     }
 
     @Test
