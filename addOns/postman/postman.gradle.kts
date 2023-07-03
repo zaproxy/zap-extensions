@@ -8,6 +8,11 @@ zapAddOn {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/postman-support/")
     }
+
+    apiClientGen {
+        api.set("org.zaproxy.addon.postman.PostmanApi")
+        messages.set(file("src/main/resources/org/zaproxy/addon/postman/resources/Messages.properties"))
+    }
 }
 
 crowdin {
