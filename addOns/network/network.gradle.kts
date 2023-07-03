@@ -61,7 +61,7 @@ dependencies {
     implementation("io.netty:netty-codec-http2:$nettyVersion")
 
     hc("org.apache.httpcomponents.client5:httpclient5:5.2.1")
-    implementation("org.apache.logging.log4j:log4j-slf4j-impl:2.19.0") {
+    implementation(libs.log4j.slf4j) {
         // Provided by ZAP.
         exclude(group = "org.apache.logging.log4j")
     }
@@ -83,5 +83,5 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:$jupiterVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$jupiterVersion")
     testImplementation("org.mockito:mockito-junit-jupiter:5.1.1")
-    testImplementation("org.apache.logging.log4j:log4j-core:2.19.0")
+    testImplementation(libs.log4j.core)
 }

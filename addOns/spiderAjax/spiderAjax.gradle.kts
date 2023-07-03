@@ -74,7 +74,7 @@ dependencies {
     compileOnly(parent!!.childProjects.get("automation")!!)
     compileOnly(parent!!.childProjects.get("commonlib")!!)
     compileOnly(parent!!.childProjects.get("network")!!)
-    compileOnly("org.apache.logging.log4j:log4j-core:2.19.0")
+    compileOnly(libs.log4j.core)
 
     implementation(files("lib/crawljax-core-3.7.1.jar"))
     implementation("commons-math:commons-math:1.2")
@@ -98,6 +98,6 @@ dependencies {
     testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(parent!!.childProjects.get("network")!!)
     testImplementation(parent!!.childProjects.get("selenium")!!)
-    testImplementation("org.apache.logging.log4j:log4j-core:2.19.0")
+    testImplementation(libs.log4j.core)
     testImplementation(project(":testutils"))
 }
