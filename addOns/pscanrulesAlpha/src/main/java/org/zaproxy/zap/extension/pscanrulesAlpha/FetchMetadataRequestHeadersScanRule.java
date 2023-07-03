@@ -35,8 +35,22 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 public class FetchMetadataRequestHeadersScanRule extends PluginPassiveScanner {
     private static final String FETCH_METADATA_REQUEST_MESSAGE_PREFIX =
             "pscanalpha.metadata-request-headers.";
-    private static final String MISSING_VULN_TYPE = "missing.";
-    private static final String INVALID_VALUES_VULN_TYPE = "invalid-values.";
+
+    private enum VulnType {
+        MISSING("missing."),
+        INVALID_VALUES("invalid-values.");
+
+        private final String i18nKey;
+
+        private VulnType(String i18nKey) {
+            this.i18nKey = i18nKey;
+        }
+
+        String getI18nKey() {
+            return i18nKey;
+        }
+    }
+
     private static final String INVALID_VALUE = "invalid";
     private static final int PLUGIN_ID = 90005;
     private final List<FetchMetaDataRequestHeaders> rules =
@@ -88,11 +102,14 @@ public class FetchMetadataRequestHeadersScanRule extends PluginPassiveScanner {
 
     abstract static class FetchMetaDataRequestHeaders {
         private final Supplier<AlertBuilder> newAlert;
-        private final String alertRef;
+        private final String alertRefMissing;
+        private final String alertRefInvalid;
 
-        FetchMetaDataRequestHeaders(Supplier<AlertBuilder> newAlert, String alertReference) {
+        FetchMetaDataRequestHeaders(
+                Supplier<AlertBuilder> newAlert, String alertRefMissing, String alertRefInvalid) {
             this.newAlert = newAlert;
-            this.alertRef = PLUGIN_ID + alertReference;
+            this.alertRefMissing = PLUGIN_ID + alertRefMissing;
+            this.alertRefInvalid = PLUGIN_ID + alertRefInvalid;
         }
 
         protected abstract String getHeader();
@@ -102,11 +119,11 @@ public class FetchMetadataRequestHeadersScanRule extends PluginPassiveScanner {
         protected abstract List<String> getValidValues();
 
         protected AlertBuilder getMissingAlert() {
-            return alert(MISSING_VULN_TYPE, "");
+            return alert(VulnType.MISSING, "");
         }
 
         protected AlertBuilder getInvalidValuesAlert(String evidence) {
-            return alert(INVALID_VALUES_VULN_TYPE, evidence);
+            return alert(VulnType.INVALID_VALUES, evidence);
         }
 
         List<AlertBuilder> build(
@@ -131,16 +148,17 @@ public class FetchMetadataRequestHeadersScanRule extends PluginPassiveScanner {
             return alert;
         };
 
-        protected AlertBuilder alert(String vulnType, String evidence) {
+        protected AlertBuilder alert(VulnType vulnType, String evidence) {
+            String i18nKey = vulnType.getI18nKey();
             return newAlert.get()
                     .setRisk(Alert.RISK_INFO)
                     .setConfidence(Alert.CONFIDENCE_HIGH)
                     .setParam(getHeader())
-                    .setName(getString(vulnType + "name"))
-                    .setDescription(getString(vulnType + "desc"))
-                    .setSolution(getString(vulnType + "soln"))
-                    .setReference(getString(vulnType + "refs"))
-                    .setAlertRef(alertRef)
+                    .setName(getString(i18nKey + "name"))
+                    .setDescription(getString(i18nKey + "desc"))
+                    .setSolution(getString(i18nKey + "soln"))
+                    .setReference(getString(i18nKey + "refs"))
+                    .setAlertRef(vulnType == VulnType.MISSING ? alertRefMissing : alertRefInvalid)
                     .setCweId(352)
                     .setWascId(9)
                     .setEvidence(evidence);
@@ -155,7 +173,7 @@ public class FetchMetadataRequestHeadersScanRule extends PluginPassiveScanner {
                 List.of("same-origin", "same-site", "cross-site", "none");
 
         SecFetchSite(Supplier<AlertBuilder> newAlert) {
-            super(newAlert, "-1");
+            super(newAlert, "-1", "-5");
         }
 
         @Override
@@ -182,7 +200,7 @@ public class FetchMetadataRequestHeadersScanRule extends PluginPassiveScanner {
                 List.of("cors", "no-cors", "navigate", "same-origin", "websocket");
 
         SecFetchMode(Supplier<AlertBuilder> newAlert) {
-            super(newAlert, "-2");
+            super(newAlert, "-2", "-6");
         }
 
         @Override
@@ -230,7 +248,7 @@ public class FetchMetadataRequestHeadersScanRule extends PluginPassiveScanner {
                         "xslt");
 
         SecFetchDest(Supplier<AlertBuilder> newAlert) {
-            super(newAlert, "-3");
+            super(newAlert, "-3", "-7");
         }
 
         @Override
@@ -256,7 +274,7 @@ public class FetchMetadataRequestHeadersScanRule extends PluginPassiveScanner {
         private static final List<String> VALID_VALUES = List.of("?1");
 
         SecFetchUser(Supplier<AlertBuilder> newAlert) {
-            super(newAlert, "-4");
+            super(newAlert, "-4", "-8");
         }
 
         @Override

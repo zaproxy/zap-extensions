@@ -23,7 +23,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 
+import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 
 class FetchMetadataRequestHeadersScanRuleTest
@@ -198,6 +200,28 @@ class FetchMetadataRequestHeadersScanRuleTest
 
         // Then
         assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    void shouldReturnExpectedExampleAlert() {
+        List<Alert> alerts = rule.getExampleAlerts();
+
+        assertThat(alerts, hasSize(8));
+        assertExampleAlert(alerts.get(0), "Sec-Fetch-Site Header is Missing", "90005-1");
+        assertExampleAlert(alerts.get(1), "Sec-Fetch-Mode Header is Missing", "90005-2");
+        assertExampleAlert(alerts.get(2), "Sec-Fetch-Dest Header is Missing", "90005-3");
+        assertExampleAlert(alerts.get(3), "Sec-Fetch-User Header is Missing", "90005-4");
+        assertExampleAlert(alerts.get(4), "Sec-Fetch-Site Header Has an Invalid Value", "90005-5");
+        assertExampleAlert(alerts.get(5), "Sec-Fetch-Mode Header Has an Invalid Value", "90005-6");
+        assertExampleAlert(alerts.get(6), "Sec-Fetch-Dest Header Has an Invalid Value", "90005-7");
+        assertExampleAlert(alerts.get(7), "Sec-Fetch-User Header Has an Invalid Value", "90005-8");
+    }
+
+    private static void assertExampleAlert(Alert alert, String name, String alertRef) {
+        assertThat(alert.getName(), equalTo(name));
+        assertThat(alert.getAlertRef(), equalTo(alertRef));
+        assertThat(alert.getRisk(), equalTo(Alert.RISK_INFO));
+        assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
     }
 
     @Override
