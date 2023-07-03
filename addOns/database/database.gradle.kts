@@ -49,10 +49,10 @@ spotless {
 }
 
 dependencies {
-    datanucleus("org.datanucleus:datanucleus-accessplatform-jdo-rdbms:6.0.1")
-    sqlite("org.xerial:sqlite-jdbc:3.39.3.0")
+    datanucleus("org.datanucleus:datanucleus-accessplatform-jdo-rdbms:6.0.4")
+    sqlite("org.xerial:sqlite-jdbc:3.42.0.0")
 
-    implementation("org.flywaydb:flyway-core:9.4.0")
+    implementation("org.flywaydb:flyway-core:9.20.0")
 
     testImplementation(project(":testutils"))
 }
