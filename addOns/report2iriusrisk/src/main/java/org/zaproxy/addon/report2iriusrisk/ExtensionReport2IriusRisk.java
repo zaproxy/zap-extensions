@@ -39,6 +39,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import org.apache.logging.log4j.LogManager;
@@ -103,6 +105,8 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
     private JTextField iriusRiskDomainInputField;
     private JTextField iriusRiskProjectIdInputField;
     private JTextField apiTokenInputField;
+    private JTextArea outputTextArea;
+    private JScrollPane scrollPane;
     private JButton submitButton;
     private String homeUser = System.getProperty("user.home");
 
@@ -152,11 +156,16 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
             // Create labels and inputs
             JLabel iriusRiskDomainLabel = new JLabel("IriusRisk Domain:");
             iriusRiskDomainInputField = new JTextField();
-            JLabel iriusRiskProjectIdLabel = new JLabel("IriusRisk Project ID:");
+            JLabel iriusRiskProjectIdLabel = new JLabel("IriusRisk Project Reference ID:");
             iriusRiskProjectIdInputField = new JTextField();
             JLabel apiTokenLabel = new JLabel("IriusRisk API Token:");
             apiTokenInputField = new JTextField();
+            outputTextArea = new JTextArea();
+            scrollPane = new JScrollPane(outputTextArea);
+            outputTextArea.setEditable(false);
+            outputTextArea.setWrapStyleWord(true); // Wrap at word boundaries
             submitButton = new JButton("Submit");
+
 
             submitButton.addActionListener(new ActionListener() { // Submit button event
                 @Override
@@ -173,7 +182,7 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
                     }
 
                     File file = null;
-                    View.getSingleton().showMessageDialog("Generating XML.");
+                    outputTextArea.append("Generating XML."+ "\n");
 
                     ReportLastScan reportLastScan = new ReportLastScan();
 
@@ -184,9 +193,9 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
                         exception.printStackTrace();
                         View.getSingleton().showWarningDialog("XML could not be generated.");
                     }
-                    View.getSingleton().showMessageDialog("XML was generated succesfully.");
+                    outputTextArea.append("XML was generated succesfully."+"\n");
                     
-                    // Endpount full path
+                    // Endpoint full path
                     String endpoint = iriusRiskDomain + "/api/v1/products/"+iriusRiskProjectId+"/tests/zap/upload";                    
 
                     try {
@@ -196,16 +205,16 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
                         HttpClient httpClient = HttpClientBuilder.create().build();
                         HttpPost httpPost = new HttpPost(endpoint);
 
-                        View.getSingleton().getOutputPanel().append("Connection created\n");
+                        outputTextArea.append("Connection created\n");
 
                         // Set headers
                         httpPost.setHeader("api-token", apiToken);
                         httpPost.setHeader("Accept", "application/json");
 
-                        View.getSingleton().getOutputPanel().append("Connection configured\n");
+                        outputTextArea.append("Connection configured\n");
 
                         String output= "Uploading XML to "+endpoint+"\n";
-                        View.getSingleton().getOutputPanel().append(output);
+                        outputTextArea.append(output);
                         // Build multipart entity
                         HttpEntity entity = MultipartEntityBuilder.create()
                                 .addPart("fileName", new FileBody(file, ContentType.APPLICATION_XML))
@@ -224,7 +233,7 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
                         String responseBody = EntityUtils.toString(responseEntity);
 
                         // Print the response body
-                        View.getSingleton().getOutputPanel().append(responseBody);
+                        outputTextArea.append(responseBody+"\n");
                         
                         if(statusCode==200 || statusCode==201){
                             View.getSingleton().showMessageDialog("Report uploaded successfully.");
@@ -232,26 +241,26 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
                             View.getSingleton().showWarningDialog("Failed to upload report: " + responseBody);
                         }
                     } catch (Exception exc) {
-                        View.getSingleton().getOutputPanel().append(exc.getMessage());
+                        outputTextArea.append(exc.getMessage());
                         View.getSingleton().showWarningDialog("Failed to upload report");
                     }
                     // Delete the XML file
                     File fileReport = new File(homeUser+"/Zap-Report.xml");
-                    LOGGER.info("Trying to delete the report xml file.");
+                    outputTextArea.append("Trying to delete the report xml file.\n");
                     if (fileReport.exists()) {
                         if (fileReport.delete()) {
-                            LOGGER.info("The file was deleted succesfully.");
+                            outputTextArea.append("The file was deleted succesfully.\n");
                         } else {
-                            LOGGER.warn("File could not be deleted.");
+                            outputTextArea.append("File could not be deleted.\n");
                         }
                     } else {
-                        LOGGER.warn("The file does not exist.");
+                        outputTextArea.append("The file does not exist.\n");
                     }
                 }
             });
 
             // Congifuration of the GUI
-            int x = 350;
+            int x = 20; // 350
             int y = 20;
             int labelWidth = 200;
             int inputWidth = 300;
@@ -268,6 +277,8 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
             iriusRiskProjectIdInputField.setBounds(x + labelWidth + gap, y + (height + gap) * 2, inputWidth, height);
 
             submitButton.setBounds( x + (gap + inputWidth)/2, y + (height + gap) * 3, labelWidth, height);
+            
+            scrollPane.setBounds(x + labelWidth + gap + inputWidth + gap + 125, y, 600, 160);
 
             statusPanel.add(iriusRiskDomainLabel);
             statusPanel.add(iriusRiskDomainInputField);
@@ -276,6 +287,7 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
             statusPanel.add(iriusRiskProjectIdLabel);
             statusPanel.add(iriusRiskProjectIdInputField);
             statusPanel.add(submitButton);
+            statusPanel.add(scrollPane);
         }
         return statusPanel;
     }

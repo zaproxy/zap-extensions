@@ -19,7 +19,6 @@ crowdin {
 }
 
 dependencies {
-    implementation(files("lib/zap-clientapi-1.11.0.jar"))
     implementation("org.apache.httpcomponents:httpclient:4.5.13")
     implementation("org.apache.httpcomponents:httpmime:4.5.14")
 }
