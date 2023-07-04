@@ -52,6 +52,7 @@ import org.zaproxy.addon.network.internal.cert.CertificateUtils;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
+import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
@@ -514,6 +515,7 @@ class ServerCertificatesOptionsPanel extends AbstractParamPanel {
     private static class IssuedCertificatesPanel {
 
         private final ZapNumberSpinner numberSpinnerValidity;
+        private final ZapTextField cdpTextField;
 
         private final JPanel panel;
 
@@ -527,6 +529,14 @@ class ServerCertificatesOptionsPanel extends AbstractParamPanel {
                             1,
                             ServerCertificatesOptions.DEFAULT_SERVER_CERT_VALIDITY,
                             ServerCertificatesOptions.DEFAULT_SERVER_CERT_VALIDITY * 10);
+            labelValidity.setLabelFor(numberSpinnerValidity);
+
+            cdpTextField = new ZapTextField();
+            JLabel labelCdp =
+                    new JLabel(
+                            Constant.messages.getString(
+                                    "network.ui.options.servercertificates.field.crldistpoint"));
+            labelCdp.setLabelFor(cdpTextField);
 
             panel = new JPanel();
             GroupLayout layout = new GroupLayout(panel);
@@ -536,16 +546,29 @@ class ServerCertificatesOptionsPanel extends AbstractParamPanel {
 
             layout.setHorizontalGroup(
                     layout.createSequentialGroup()
-                            .addComponent(labelValidity)
-                            .addComponent(numberSpinnerValidity));
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                            .addComponent(labelValidity)
+                                            .addComponent(labelCdp))
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                            .addComponent(numberSpinnerValidity)
+                                            .addComponent(cdpTextField)));
+
             layout.setVerticalGroup(
-                    layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                            .addComponent(labelValidity)
-                            .addComponent(
-                                    numberSpinnerValidity,
-                                    GroupLayout.PREFERRED_SIZE,
-                                    GroupLayout.PREFERRED_SIZE,
-                                    GroupLayout.PREFERRED_SIZE));
+                    layout.createSequentialGroup()
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                            .addComponent(labelValidity)
+                                            .addComponent(
+                                                    numberSpinnerValidity,
+                                                    GroupLayout.PREFERRED_SIZE,
+                                                    GroupLayout.PREFERRED_SIZE,
+                                                    GroupLayout.PREFERRED_SIZE))
+                            .addGroup(
+                                    layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                            .addComponent(labelCdp)
+                                            .addComponent(cdpTextField)));
         }
 
         JPanel getPanel() {
@@ -554,10 +577,13 @@ class ServerCertificatesOptionsPanel extends AbstractParamPanel {
 
         void init(ServerCertificatesOptions options) {
             numberSpinnerValidity.setValue(options.getServerCertValidity().toDays());
+            cdpTextField.setText(options.getServerCrlDistributionPoint());
+            cdpTextField.discardAllEdits();
         }
 
         void save(ServerCertificatesOptions options) {
             options.setServerCertValidity(createValidity(numberSpinnerValidity));
+            options.setServerCrlDistributionPoint(cdpTextField.getText());
         }
     }
 }

@@ -81,11 +81,15 @@ public class ServerCertificatesOptions extends VersionedAbstractParam {
     private static final String SERVER_BASE_KEY = BASE_KEY + ".server.";
     private static final String SERVER_CERT_VALIDITY_DAYS = SERVER_BASE_KEY + "certValidityDays";
 
+    private static final String SERVER_CERT_CDP = SERVER_BASE_KEY + "crlDistributionPoint";
+
     private KeyStore rootCaKeyStore;
     private Duration rootCaCertValidity = Duration.ofDays(DEFAULT_ROOT_CA_CERT_VALIDITY);
     private CertConfig rootCaCertConfig = new CertConfig(rootCaCertValidity);
 
     private Duration serverCertValidity = Duration.ofDays(DEFAULT_SERVER_CERT_VALIDITY);
+    private String serverCrlDistributionPoint;
+
     private CertConfig serverCertConfig = new CertConfig(serverCertValidity);
 
     @Override
@@ -116,7 +120,12 @@ public class ServerCertificatesOptions extends VersionedAbstractParam {
             validity = DEFAULT_SERVER_CERT_VALIDITY;
         }
         serverCertValidity = Duration.ofDays(validity);
-        serverCertConfig = new CertConfig(serverCertValidity);
+        serverCrlDistributionPoint = getString(SERVER_CERT_CDP, null);
+        refreshServerCertConfig();
+    }
+
+    private void refreshServerCertConfig() {
+        serverCertConfig = new CertConfig(serverCertValidity, serverCrlDistributionPoint);
     }
 
     private void migrateCoreConfig() {
@@ -242,7 +251,28 @@ public class ServerCertificatesOptions extends VersionedAbstractParam {
         getConfig().setProperty(SERVER_CERT_VALIDITY_DAYS, days);
 
         serverCertValidity = validity;
-        serverCertConfig = new CertConfig(serverCertValidity);
+        refreshServerCertConfig();
+    }
+
+    /**
+     * Gets the CDP of the server certificate.
+     *
+     * @return the URL.
+     */
+    public String getServerCrlDistributionPoint() {
+        return serverCrlDistributionPoint;
+    }
+
+    /**
+     * Sets the URL for the Certificate Revocation List of the server certificates.
+     *
+     * @param crlDistributionPoint CRL Distribution Point URL.
+     */
+    public void setServerCrlDistributionPoint(String crlDistributionPoint) {
+        getConfig().setProperty(SERVER_CERT_CDP, crlDistributionPoint);
+
+        serverCrlDistributionPoint = crlDistributionPoint;
+        refreshServerCertConfig();
     }
 
     /**

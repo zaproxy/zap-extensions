@@ -48,16 +48,22 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.X500NameBuilder;
 import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x509.BasicConstraints;
+import org.bouncycastle.asn1.x509.CRLDistPoint;
+import org.bouncycastle.asn1.x509.DistributionPoint;
+import org.bouncycastle.asn1.x509.DistributionPointName;
 import org.bouncycastle.asn1.x509.ExtendedKeyUsage;
 import org.bouncycastle.asn1.x509.Extension;
 import org.bouncycastle.asn1.x509.GeneralName;
@@ -308,6 +314,17 @@ public final class CertificateUtils {
                     Extension.subjectAlternativeName,
                     certData.isSubjectAlternativeNameIsCritical(),
                     new GeneralNames(subjectAlternativeNames));
+        }
+
+        if (config.getCrlDistributionPoint() != null) {
+            GeneralName gn = new GeneralName(6, new DERIA5String(config.getCrlDistributionPoint()));
+            GeneralNames gns = new GeneralNames(gn);
+            DistributionPointName dpn = new DistributionPointName(0, gns);
+            List<DistributionPoint> l = new ArrayList<>();
+            l.add(new DistributionPoint(dpn, null, null));
+            CRLDistPoint crlDistPoint = new CRLDistPoint(l.toArray(new DistributionPoint[0]));
+
+            certGen.addExtension(Extension.cRLDistributionPoints, false, crlDistPoint);
         }
 
         X509Certificate certificate = createCertificate(rootCaPrivateKey, certGen);
