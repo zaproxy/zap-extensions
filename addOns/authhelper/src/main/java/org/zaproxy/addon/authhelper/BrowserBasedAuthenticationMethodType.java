@@ -162,34 +162,32 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                                 fallbackMsg = msg;
                             }
 
-                            if (authMsg == null) {
-                                SessionManagementRequestDetails smReqDetails = null;
-                                Map<String, SessionToken> sessionTokens =
-                                        AuthUtils.getResponseSessionTokens(msg);
-                                if (!sessionTokens.isEmpty()) {
-                                    authMsg = msg;
-                                    smReqDetails =
-                                            new SessionManagementRequestDetails(
-                                                    authMsg,
-                                                    new ArrayList<>(sessionTokens.values()),
-                                                    Alert.CONFIDENCE_HIGH);
-                                } else {
-                                    Set<SessionToken> reqSessionTokens =
-                                            AuthUtils.getRequestSessionTokens(msg);
-                                    if (!reqSessionTokens.isEmpty()) {
-                                        // The request has at least one auth token we missed - try
-                                        // to find one of them
-                                        for (SessionToken st : reqSessionTokens) {
-                                            smReqDetails =
-                                                    AuthUtils.findSessionTokenSource(
-                                                            st.getValue(), firstHrefId);
-                                            if (smReqDetails != null) {
-                                                authMsg = smReqDetails.getMsg();
-                                                LOGGER.debug(
-                                                        "Session token found in href {}",
-                                                        authMsg.getHistoryRef().getHistoryId());
-                                                break;
-                                            }
+                            SessionManagementRequestDetails smReqDetails = null;
+                            Map<String, SessionToken> sessionTokens =
+                                    AuthUtils.getResponseSessionTokens(msg);
+                            if (!sessionTokens.isEmpty()) {
+                                authMsg = msg;
+                                smReqDetails =
+                                        new SessionManagementRequestDetails(
+                                                authMsg,
+                                                new ArrayList<>(sessionTokens.values()),
+                                                Alert.CONFIDENCE_HIGH);
+                            } else {
+                                Set<SessionToken> reqSessionTokens =
+                                        AuthUtils.getRequestSessionTokens(msg);
+                                if (!reqSessionTokens.isEmpty()) {
+                                    // The request has at least one auth token we missed - try
+                                    // to find one of them
+                                    for (SessionToken st : reqSessionTokens) {
+                                        smReqDetails =
+                                                AuthUtils.findSessionTokenSource(
+                                                        st.getValue(), firstHrefId);
+                                        if (smReqDetails != null) {
+                                            authMsg = smReqDetails.getMsg();
+                                            LOGGER.debug(
+                                                    "Session token found in href {}",
+                                                    authMsg.getHistoryRef().getHistoryId());
+                                            break;
                                         }
                                     }
                                 }
