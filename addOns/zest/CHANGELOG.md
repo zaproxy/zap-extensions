@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added 
+- Dialogs for scroll, scrollTo, window resize and mouse over.
+
 ### Changed
 - Update Zest library to 0.18.0:
   - Update Selenium to version 4.

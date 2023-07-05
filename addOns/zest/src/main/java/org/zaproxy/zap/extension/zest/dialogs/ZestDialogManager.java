@@ -51,6 +51,9 @@ import org.zaproxy.zest.core.v1.ZestClientAssignCookie;
 import org.zaproxy.zest.core.v1.ZestClientElementAssign;
 import org.zaproxy.zest.core.v1.ZestClientElementClear;
 import org.zaproxy.zest.core.v1.ZestClientElementClick;
+import org.zaproxy.zest.core.v1.ZestClientElementMouseOver;
+import org.zaproxy.zest.core.v1.ZestClientElementScroll;
+import org.zaproxy.zest.core.v1.ZestClientElementScrollTo;
 import org.zaproxy.zest.core.v1.ZestClientElementSendKeys;
 import org.zaproxy.zest.core.v1.ZestClientElementSubmit;
 import org.zaproxy.zest.core.v1.ZestClientLaunch;
@@ -59,6 +62,7 @@ import org.zaproxy.zest.core.v1.ZestClientSwitchToFrame;
 import org.zaproxy.zest.core.v1.ZestClientWindowClose;
 import org.zaproxy.zest.core.v1.ZestClientWindowHandle;
 import org.zaproxy.zest.core.v1.ZestClientWindowOpenUrl;
+import org.zaproxy.zest.core.v1.ZestClientWindowResize;
 import org.zaproxy.zest.core.v1.ZestComment;
 import org.zaproxy.zest.core.v1.ZestControl;
 import org.zaproxy.zest.core.v1.ZestControlReturn;
@@ -99,11 +103,15 @@ public class ZestDialogManager extends AbstractPanel {
     private ZestClientElementAssignDialog clientElementAssignDialog = null;
     private ZestClientElementClearDialog clientElementClearDialog = null;
     private ZestClientElementClickDialog clientElementClickDialog = null;
+    private ZestClientElementMouseOverDialog clientElementMouseOverDialog = null;
+    private ZestClientElementScrollDialog clientElementScrollDialog = null;
+    private ZestClientElementScrollToDialog clientElementScrollToDialog = null;
     private ZestClientElementSendKeysDialog clientElementSendKeysDialog = null;
     private ZestClientElementSubmitDialog clientElementSubmitDialog = null;
     private ZestClientWindowHandleDialog clientWindowDialog = null;
     private ZestClientWindowCloseDialog clientWindowCloseDialog = null;
     private ZestClientWindowOpenUrlDialog clientWindowOpenUrlDialog = null;
+    private ZestClientWindowResizeDialog clientWindowResizeDialog = null;
     private ZestClientSwitchToFrameDialog clientSwitchToFrameDialog = null;
     private ZestClientScreenshotDialog clientScreenshotDialog;
 
@@ -229,6 +237,27 @@ public class ZestDialogManager extends AbstractPanel {
                                                 null,
                                                 (ZestClientElementClick) obj,
                                                 false);
+                                    } else if (obj instanceof ZestClientElementMouseOver) {
+                                        showZestClientElementMouseOverDialog(
+                                                parent,
+                                                sn,
+                                                null,
+                                                (ZestClientElementMouseOver) obj,
+                                                false);
+                                    } else if (obj instanceof ZestClientElementScroll) {
+                                        showZestClientElementScrollDialog(
+                                                parent,
+                                                sn,
+                                                null,
+                                                (ZestClientElementScroll) obj,
+                                                false);
+                                    } else if (obj instanceof ZestClientElementScrollTo) {
+                                        showZestClientElementScrollToDialog(
+                                                parent,
+                                                sn,
+                                                null,
+                                                (ZestClientElementScrollTo) obj,
+                                                false);
                                     } else if (obj instanceof ZestClientElementSendKeys) {
                                         showZestClientElementSendKeysDialog(
                                                 parent,
@@ -263,6 +292,13 @@ public class ZestDialogManager extends AbstractPanel {
                                                 sn,
                                                 null,
                                                 (ZestClientWindowOpenUrl) obj,
+                                                false);
+                                    } else if (obj instanceof ZestClientWindowResize) {
+                                        showZestClientWindowResizeDialog(
+                                                parent,
+                                                sn,
+                                                null,
+                                                (ZestClientWindowResize) obj,
                                                 false);
                                     } else if (obj instanceof ZestClientSwitchToFrame) {
                                         showZestClientSwitchToFrameDialog(
@@ -661,6 +697,66 @@ public class ZestDialogManager extends AbstractPanel {
         clientElementClickDialog.setVisible(true);
     }
 
+    public void showZestClientElementMouseOverDialog(
+            ScriptNode parent,
+            ScriptNode child,
+            ZestStatement req,
+            ZestClientElementMouseOver client,
+            boolean add) {
+        if (clientElementMouseOverDialog == null) {
+            clientElementMouseOverDialog =
+                    new ZestClientElementMouseOverDialog(
+                            extension, View.getSingleton().getMainFrame(), new Dimension(300, 200));
+        } else if (clientElementMouseOverDialog.isVisible()) {
+            // Already being displayed, bring to the front but dont overwrite anything
+            bringToFront(clientElementMouseOverDialog);
+            return;
+        }
+        ZestScriptWrapper script = extension.getZestTreeModel().getScriptWrapper(parent);
+        clientElementMouseOverDialog.init(script, parent, child, req, client, add);
+        clientElementMouseOverDialog.setVisible(true);
+    }
+
+    public void showZestClientElementScrollDialog(
+            ScriptNode parent,
+            ScriptNode child,
+            ZestStatement req,
+            ZestClientElementScroll client,
+            boolean add) {
+        if (clientElementScrollDialog == null) {
+            clientElementScrollDialog =
+                    new ZestClientElementScrollDialog(
+                            extension, View.getSingleton().getMainFrame(), new Dimension(300, 250));
+        } else if (clientElementScrollDialog.isVisible()) {
+            // Already being displayed, bring to the front but dont overwrite anything
+            bringToFront(clientElementScrollDialog);
+            return;
+        }
+        ZestScriptWrapper script = extension.getZestTreeModel().getScriptWrapper(parent);
+        clientElementScrollDialog.init(script, parent, child, req, client, add);
+        clientElementScrollDialog.setVisible(true);
+    }
+
+    public void showZestClientElementScrollToDialog(
+            ScriptNode parent,
+            ScriptNode child,
+            ZestStatement req,
+            ZestClientElementScrollTo client,
+            boolean add) {
+        if (clientElementScrollToDialog == null) {
+            clientElementScrollToDialog =
+                    new ZestClientElementScrollToDialog(
+                            extension, View.getSingleton().getMainFrame(), new Dimension(300, 200));
+        } else if (clientElementScrollToDialog.isVisible()) {
+            // Already being displayed, bring to the front but dont overwrite anything
+            bringToFront(clientElementScrollToDialog);
+            return;
+        }
+        ZestScriptWrapper script = extension.getZestTreeModel().getScriptWrapper(parent);
+        clientElementScrollToDialog.init(script, parent, child, req, client, add);
+        clientElementScrollToDialog.setVisible(true);
+    }
+
     public void showZestClientElementSendKeysDialog(
             ScriptNode parent,
             ScriptNode child,
@@ -759,6 +855,26 @@ public class ZestDialogManager extends AbstractPanel {
         ZestScriptWrapper script = extension.getZestTreeModel().getScriptWrapper(parent);
         clientWindowOpenUrlDialog.init(script, parent, child, req, client, add);
         clientWindowOpenUrlDialog.setVisible(true);
+    }
+
+    public void showZestClientWindowResizeDialog(
+            ScriptNode parent,
+            ScriptNode child,
+            ZestStatement req,
+            ZestClientWindowResize client,
+            boolean add) {
+        if (clientWindowResizeDialog == null) {
+            clientWindowResizeDialog =
+                    new ZestClientWindowResizeDialog(
+                            extension, View.getSingleton().getMainFrame(), new Dimension(300, 200));
+        } else if (clientWindowResizeDialog.isVisible()) {
+            // Already being displayed, bring to the front but dont overwrite anything
+            bringToFront(clientWindowResizeDialog);
+            return;
+        }
+        ZestScriptWrapper script = extension.getZestTreeModel().getScriptWrapper(parent);
+        clientWindowResizeDialog.init(script, parent, child, req, client, add);
+        clientWindowResizeDialog.setVisible(true);
     }
 
     public void showZestClientScreenshotDialog(
@@ -865,6 +981,15 @@ public class ZestDialogManager extends AbstractPanel {
         if (clientElementClickDialog != null) {
             clientElementClickDialog.dispose();
         }
+        if (clientElementMouseOverDialog != null) {
+            clientElementMouseOverDialog.dispose();
+        }
+        if (clientElementScrollDialog != null) {
+            clientElementScrollDialog.dispose();
+        }
+        if (clientElementScrollToDialog != null) {
+            clientElementScrollToDialog.dispose();
+        }
         if (clientElementSendKeysDialog != null) {
             clientElementSendKeysDialog.dispose();
         }
@@ -879,6 +1004,9 @@ public class ZestDialogManager extends AbstractPanel {
         }
         if (clientWindowOpenUrlDialog != null) {
             clientWindowOpenUrlDialog.dispose();
+        }
+        if (clientWindowResizeDialog != null) {
+            clientWindowResizeDialog.dispose();
         }
         if (clientSwitchToFrameDialog != null) {
             clientSwitchToFrameDialog.dispose();

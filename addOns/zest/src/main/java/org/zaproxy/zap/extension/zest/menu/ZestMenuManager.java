@@ -27,6 +27,9 @@ import org.zaproxy.zest.core.v1.ZestClientAssignCookie;
 import org.zaproxy.zest.core.v1.ZestClientElementAssign;
 import org.zaproxy.zest.core.v1.ZestClientElementClear;
 import org.zaproxy.zest.core.v1.ZestClientElementClick;
+import org.zaproxy.zest.core.v1.ZestClientElementMouseOver;
+import org.zaproxy.zest.core.v1.ZestClientElementScroll;
+import org.zaproxy.zest.core.v1.ZestClientElementScrollTo;
 import org.zaproxy.zest.core.v1.ZestClientElementSendKeys;
 import org.zaproxy.zest.core.v1.ZestClientElementSubmit;
 import org.zaproxy.zest.core.v1.ZestClientLaunch;
@@ -35,6 +38,7 @@ import org.zaproxy.zest.core.v1.ZestClientSwitchToFrame;
 import org.zaproxy.zest.core.v1.ZestClientWindowClose;
 import org.zaproxy.zest.core.v1.ZestClientWindowHandle;
 import org.zaproxy.zest.core.v1.ZestClientWindowOpenUrl;
+import org.zaproxy.zest.core.v1.ZestClientWindowResize;
 import org.zaproxy.zest.core.v1.ZestStatement;
 
 public class ZestMenuManager {
@@ -79,11 +83,15 @@ public class ZestMenuManager {
     private ZestAddClientPopupMenu popupAddClientElementAssignMenu = null;
     private ZestAddClientPopupMenu popupAddClientElementClearMenu = null;
     private ZestAddClientPopupMenu popupAddClientElementClickMenu = null;
+    private ZestAddClientPopupMenu popupAddClientElementMouseOverMenu = null;
+    private ZestAddClientPopupMenu popupAddClientElementScrollMenu = null;
+    private ZestAddClientPopupMenu popupAddClientElementScrollToMenu = null;
     private ZestAddClientPopupMenu popupAddClientElementSendKeysMenu = null;
     private ZestAddClientPopupMenu popupAddClientElementSubmitMenu = null;
     private ZestAddClientPopupMenu popupAddClientWindowMenu = null;
     private ZestAddClientPopupMenu popupAddClientWindowCloseMenu = null;
     private ZestAddClientPopupMenu popupAddClientWindowOpenUrlMenu = null;
+    private ZestAddClientPopupMenu popupAddClientWindowResizeMenu = null;
     private ZestAddClientPopupMenu popupAddClientScreenshot;
     private ZestAddClientPopupMenu popupAddClientSwitchToFrameMenu = null;
 
@@ -106,6 +114,9 @@ public class ZestMenuManager {
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientElementAssignMenu());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientElementClearMenu());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientElementClickMenu());
+        extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientElementMouseOverMenu());
+        extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientElementScrollMenu());
+        extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientElementScrollToMenu());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientElementSendKeysMenu());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientElementSubmitMenu());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientScreenshot());
@@ -113,6 +124,7 @@ public class ZestMenuManager {
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientWindowMenu());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientWindowCloseMenu());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientWindowOpenUrlMenu());
+        extensionHook.getHookMenu().addPopupMenuItem(getPopupAddClientWindowResizeMenu());
 
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddConditionMenu());
         extensionHook.getHookMenu().addPopupMenuItem(getPopupAddExpressionMenu());
@@ -460,6 +472,78 @@ public class ZestMenuManager {
         return popupAddClientElementClickMenu;
     }
 
+    private ZestAddClientPopupMenu getPopupAddClientElementMouseOverMenu() {
+        if (popupAddClientElementMouseOverMenu == null) {
+            popupAddClientElementMouseOverMenu =
+                    new ZestAddClientPopupMenu(
+                            this.extension, "zest.clientElementMouseOver.popup", true) {
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        public void showDialog(
+                                ScriptNode parent, ScriptNode child, ZestStatement request) {
+                            extension
+                                    .getDialogManager()
+                                    .showZestClientElementMouseOverDialog(
+                                            parent,
+                                            child,
+                                            request,
+                                            new ZestClientElementMouseOver(),
+                                            true);
+                        }
+                    };
+        }
+        return popupAddClientElementMouseOverMenu;
+    }
+
+    private ZestAddClientPopupMenu getPopupAddClientElementScrollMenu() {
+        if (popupAddClientElementScrollMenu == null) {
+            popupAddClientElementScrollMenu =
+                    new ZestAddClientPopupMenu(
+                            this.extension, "zest.clientElementScroll.popup", true) {
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        public void showDialog(
+                                ScriptNode parent, ScriptNode child, ZestStatement request) {
+                            extension
+                                    .getDialogManager()
+                                    .showZestClientElementScrollDialog(
+                                            parent,
+                                            child,
+                                            request,
+                                            new ZestClientElementScroll(),
+                                            true);
+                        }
+                    };
+        }
+        return popupAddClientElementScrollMenu;
+    }
+
+    private ZestAddClientPopupMenu getPopupAddClientElementScrollToMenu() {
+        if (popupAddClientElementScrollToMenu == null) {
+            popupAddClientElementScrollToMenu =
+                    new ZestAddClientPopupMenu(
+                            this.extension, "zest.clientElementScrollTo.popup", true) {
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        public void showDialog(
+                                ScriptNode parent, ScriptNode child, ZestStatement request) {
+                            extension
+                                    .getDialogManager()
+                                    .showZestClientElementScrollToDialog(
+                                            parent,
+                                            child,
+                                            request,
+                                            new ZestClientElementScrollTo(),
+                                            true);
+                        }
+                    };
+        }
+        return popupAddClientElementScrollToMenu;
+    }
+
     private ZestAddClientPopupMenu getPopupAddClientElementSendKeysMenu() {
         if (popupAddClientElementSendKeysMenu == null) {
             popupAddClientElementSendKeysMenu =
@@ -625,5 +709,29 @@ public class ZestMenuManager {
                     };
         }
         return popupAddClientWindowOpenUrlMenu;
+    }
+
+    private ZestAddClientPopupMenu getPopupAddClientWindowResizeMenu() {
+        if (popupAddClientWindowResizeMenu == null) {
+            popupAddClientWindowResizeMenu =
+                    new ZestAddClientPopupMenu(
+                            this.extension, "zest.clientWindowResize.popup", true) {
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        public void showDialog(
+                                ScriptNode parent, ScriptNode child, ZestStatement request) {
+                            extension
+                                    .getDialogManager()
+                                    .showZestClientWindowResizeDialog(
+                                            parent,
+                                            child,
+                                            request,
+                                            new ZestClientWindowResize(),
+                                            true);
+                        }
+                    };
+        }
+        return popupAddClientWindowResizeMenu;
     }
 }
