@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Stack;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,6 +53,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.core.scanner.Plugin;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
@@ -237,6 +239,10 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
                                 @Override
                                 public void handleMessage(
                                         HttpMessageHandlerContext ctx, HttpMessage msg) {
+                                    if (isExcluded(msg)) {
+                                        return;
+                                    }
+
                                     ctx.overridden();
 
                                     try {
@@ -256,6 +262,17 @@ public class DomXssScanRule extends AbstractAppParamPlugin {
             }
         }
         return proxy;
+    }
+
+    private static boolean isExcluded(HttpMessage msg) {
+        String uri = msg.getRequestHeader().getURI().toString();
+        List<String> exclusions = Model.getSingleton().getSession().getGlobalExcludeURLRegexs();
+        for (String regex : exclusions) {
+            if (Pattern.matches(regex, uri)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private WebDriver createWebDriver() {

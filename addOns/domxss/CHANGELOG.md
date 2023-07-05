@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Depend on newer version of Selenium add-on.
 
+### Fixed
+- Respect global exclusions (Issue 7746).
+
 ## [15] - 2023-05-23
 ### Changed
 - Maintenance changes.
