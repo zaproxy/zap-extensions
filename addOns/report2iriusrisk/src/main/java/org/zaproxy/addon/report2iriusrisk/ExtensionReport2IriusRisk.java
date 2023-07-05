@@ -35,8 +35,12 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -45,6 +49,8 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.jackson.JsonParser;
+import org.jfree.data.json.impl.JSONArray;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -53,10 +59,14 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.report2iriusrisk.ReportLastScan.ReportType;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.ZapMenuItem;
+
+import net.sf.json.JSONException;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.HttpMultipartMode;
@@ -64,6 +74,11 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 
 
 /**
@@ -86,6 +101,8 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
     // Define your desired add-on ID
     private static final String ADDON_ID = "report2iriusrisk";
 
+   
+	
     /**
      * Relative path (from add-on package) to load add-on resources.
      *
@@ -103,10 +120,11 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
     private static final Logger LOGGER = LogManager.getLogger(ExtensionReport2IriusRisk.class);
 
     private JTextField iriusRiskDomainInputField;
-    private JTextField iriusRiskProjectIdInputField;
+    private JComboBox<String> iriusRiskProjectIdSelector;
     private JTextField apiTokenInputField;
     private JTextArea outputTextArea;
     private JScrollPane scrollPane;
+    private JButton checkConnectionButton;
     private JButton submitButton;
     private String homeUser = System.getProperty("user.home");
 
@@ -145,6 +163,31 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
         // here (if the extension declares that can be unloaded, see above method).
     }
 
+    private static List<String> extractRefField(String responseBody) {
+        // Implement your logic to extract the desired field from the response body
+        // For example, if the response body is a JSON array containing objects with "ref" field:
+        // You can use a JSON library like Jackson or Gson to parse the JSON and extract the field
+        // Here's a simple example without using a JSON library:
+        List<String> refs = new ArrayList<>();
+        try {
+            // Create a Gson instance
+            Gson gson = new Gson();
+
+            // Convert the JSON string to a JsonArray
+            JsonArray jsonArray = gson.fromJson(responseBody, JsonArray.class);
+
+            // Extract the ref values from the JsonArray
+            for (JsonElement jsonElement : jsonArray) {
+                JsonObject jsonObject = jsonElement.getAsJsonObject();
+                String ref = jsonObject.get("ref").getAsString();
+                refs.add(ref);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return refs;
+    }
+
     private AbstractPanel getStatusPanel() {
         
         if (statusPanel == null) {
@@ -153,27 +196,83 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
             statusPanel.setName(Constant.messages.getString(PREFIX + ".panel.title"));
             statusPanel.setIcon(new ImageIcon(getClass().getResource(RESOURCES + "/cake.png")));
 
+
             // Create labels and inputs
             JLabel iriusRiskDomainLabel = new JLabel("IriusRisk Domain:");
             iriusRiskDomainInputField = new JTextField();
             JLabel iriusRiskProjectIdLabel = new JLabel("IriusRisk Project Reference ID:");
-            iriusRiskProjectIdInputField = new JTextField();
+            iriusRiskProjectIdSelector = new JComboBox<>();
             JLabel apiTokenLabel = new JLabel("IriusRisk API Token:");
             apiTokenInputField = new JTextField();
             outputTextArea = new JTextArea();
             scrollPane = new JScrollPane(outputTextArea);
             outputTextArea.setEditable(false);
             outputTextArea.setWrapStyleWord(true); // Wrap at word boundaries
+            checkConnectionButton = new JButton( new ImageIcon(getClass().getResource(RESOURCES + "/refresh.png")));
             submitButton = new JButton("Submit");
 
+            // Check connection button event
+            checkConnectionButton.addActionListener(new ActionListener(){ 
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String iriusRiskDomain = iriusRiskDomainInputField.getText().strip();
+                    String apiToken = apiTokenInputField.getText().strip();
+
+                    // Check if all fields are filled
+                    if (iriusRiskDomain.isEmpty() || apiToken.isEmpty()) {
+                        View.getSingleton().showWarningDialog("Please fill in all the required fields.");
+                        return;
+                    }
+
+                    // Endpoint full path
+                    String endpoint = iriusRiskDomain + "/api/v1/products";
+                    outputTextArea.append("Trying to connect\n");
+
+                    try {
+                        // URL for the POST request
+                        URI url = new URI(endpoint);
+                        
+                        HttpClient httpClient = HttpClientBuilder.create().build();
+                        HttpGet httpGet = new HttpGet(endpoint);
+
+                        // Set headers
+                        httpGet.setHeader("api-token", apiToken);
+                        httpGet.setHeader("Accept", "application/json");
+
+                        // Execute the request
+                        HttpResponse response = httpClient.execute(httpGet);
+                        
+                        // Get the response body
+                        HttpEntity responseEntity = response.getEntity();
+                        
+                        String responseBody = EntityUtils.toString(responseEntity);
+                        
+                        List<String> refs = extractRefField(responseBody);
+                        for (String str : refs) {iriusRiskProjectIdSelector.addItem(str);}
+
+                        statusPanel.repaint();
+                        // Get the response code
+                        int statusCode = response.getStatusLine().getStatusCode();
+
+                        if(statusCode==200 || statusCode==201){
+                            outputTextArea.append("Connection successful\n");
+                        }else{
+                            outputTextArea.append("Failed to connect. " + responseBody+"\n");
+                        }
+                    } catch (Exception exc) {
+                        outputTextArea.append("Failed to connect\n");
+                        outputTextArea.append(exc.getMessage()+"\n");
+                    }
+                }
+            });
 
             submitButton.addActionListener(new ActionListener() { // Submit button event
                 @Override
                 public void actionPerformed(ActionEvent e) {
                 
-                    String iriusRiskDomain = iriusRiskDomainInputField.getText();
-                    String iriusRiskProjectId = iriusRiskProjectIdInputField.getText();
-                    String apiToken = apiTokenInputField.getText();
+                    String iriusRiskDomain = iriusRiskDomainInputField.getText().strip();
+                    String iriusRiskProjectId = iriusRiskProjectIdSelector.getSelectedItem().toString();
+                    String apiToken = apiTokenInputField.getText().strip();
 
                     // Check if all fields are filled
                     if (iriusRiskDomain.isEmpty() || iriusRiskProjectId.isEmpty() || apiToken.isEmpty()) {
@@ -274,8 +373,9 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
             apiTokenInputField.setBounds(x + labelWidth + gap, y + height + gap, inputWidth, height);
             
             iriusRiskProjectIdLabel.setBounds(x, y + (height + gap) * 2, labelWidth, height);
-            iriusRiskProjectIdInputField.setBounds(x + labelWidth + gap, y + (height + gap) * 2, inputWidth, height);
+            iriusRiskProjectIdSelector.setBounds(x + labelWidth + gap, y + (height + gap) * 2, inputWidth, height);
 
+            checkConnectionButton.setBounds( x + labelWidth + gap + inputWidth + gap, y + (height + gap)*2, height, height);
             submitButton.setBounds( x + (gap + inputWidth)/2, y + (height + gap) * 3, labelWidth, height);
             
             scrollPane.setBounds(x + labelWidth + gap + inputWidth + gap + 125, y, 600, 160);
@@ -285,7 +385,8 @@ public class ExtensionReport2IriusRisk extends ExtensionAdaptor {
             statusPanel.add(apiTokenLabel);
             statusPanel.add(apiTokenInputField);
             statusPanel.add(iriusRiskProjectIdLabel);
-            statusPanel.add(iriusRiskProjectIdInputField);
+            statusPanel.add(iriusRiskProjectIdSelector);
+            statusPanel.add(checkConnectionButton);
             statusPanel.add(submitButton);
             statusPanel.add(scrollPane);
         }
