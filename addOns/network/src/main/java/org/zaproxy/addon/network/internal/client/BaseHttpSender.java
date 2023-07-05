@@ -47,6 +47,8 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.network.internal.ratelimit.NopRateLimiter;
+import org.zaproxy.addon.network.internal.ratelimit.RateLimiter;
 import org.zaproxy.zap.network.HttpRedirectionValidator;
 import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.network.HttpSenderListener;
@@ -82,6 +84,7 @@ public abstract class BaseHttpSender<T1 extends BaseHttpSenderContext, T2, T3>
 
     private final List<HttpSenderListener> listeners;
     private final Map<HttpSender, T1> contexts;
+    private RateLimiter rateLimiter = new NopRateLimiter();
 
     @SuppressWarnings("unchecked")
     protected BaseHttpSender() {
@@ -90,6 +93,11 @@ public abstract class BaseHttpSender<T1 extends BaseHttpSenderContext, T2, T3>
                 Collections.synchronizedMap(
                         new ReferenceIdentityMap(
                                 AbstractReferenceMap.WEAK, AbstractReferenceMap.HARD));
+    }
+
+    @Override
+    public void setRateLimiter(RateLimiter rateLimiter) {
+        this.rateLimiter = Objects.requireNonNullElseGet(rateLimiter, NopRateLimiter::new);
     }
 
     @Override
@@ -360,7 +368,7 @@ public abstract class BaseHttpSender<T1 extends BaseHttpSenderContext, T2, T3>
         }
 
         LOGGER.debug("Sending message to: {}", message.getRequestHeader().getURI());
-        sendImpl(ctx, requestCtx, requestConfig, message, responseBodyConsumer);
+        sendRateLimited(ctx, requestCtx, requestConfig, message, responseBodyConsumer);
 
         if (user != null && isAuthenticationRequired(ctx, message, user)) {
             LOGGER.debug(
@@ -368,7 +376,7 @@ public abstract class BaseHttpSender<T1 extends BaseHttpSenderContext, T2, T3>
                     message.getRequestHeader().getURI());
             user.queueAuthentication(message);
             user.processMessageToMatchUser(message);
-            sendImpl(ctx, requestCtx, requestConfig, message, responseBodyConsumer);
+            sendRateLimited(ctx, requestCtx, requestConfig, message, responseBodyConsumer);
         } else {
             LOGGER.debug("SUCCESSFUL");
         }
@@ -379,6 +387,19 @@ public abstract class BaseHttpSender<T1 extends BaseHttpSenderContext, T2, T3>
                 && ctx.getInitiator() != HttpSender.AUTHENTICATION_POLL_INITIATOR
                 && !message.getRequestHeader().isImage()
                 && !user.isAuthenticated(message);
+    }
+
+    private void sendRateLimited(
+            T1 ctx,
+            T2 requestCtx,
+            HttpRequestConfig requestConfig,
+            HttpMessage message,
+            ResponseBodyConsumer<T3> responseBodyConsumer)
+            throws IOException {
+        if (ctx.getInitiator() != HttpSender.CHECK_FOR_UPDATES_INITIATOR) {
+            rateLimiter.throttle(message, ctx.getInitiator());
+        }
+        sendImpl(ctx, requestCtx, requestConfig, message, responseBodyConsumer);
     }
 
     protected abstract void sendImpl(

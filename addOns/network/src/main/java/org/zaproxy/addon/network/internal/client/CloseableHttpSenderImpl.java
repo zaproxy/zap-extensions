@@ -23,12 +23,13 @@ import java.io.IOException;
 import java.nio.file.Path;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.network.internal.ratelimit.RateLimiter;
 import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.network.HttpSenderContext;
 import org.zaproxy.zap.network.HttpSenderImpl;
 
 /**
- * A {@link HttpSenderImpl} that can be closed.
+ * A {@link HttpSenderImpl} that can be closed and throttled.
  *
  * @param <T> the type of the main context.
  */
@@ -52,4 +53,6 @@ public interface CloseableHttpSenderImpl<T extends HttpSenderContext> extends Ht
     }
 
     default void restoreState(Object implState) {}
+
+    default void setRateLimiter(RateLimiter rateLimiter) {}
 }

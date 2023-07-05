@@ -317,7 +317,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
         extension.hook(extensionHook);
         // Then
         ArgumentCaptor<AbstractParam> argument = ArgumentCaptor.forClass(AbstractParam.class);
-        verify(extensionHook, times(4)).addOptionsParamSet(argument.capture());
+        verify(extensionHook, times(5)).addOptionsParamSet(argument.capture());
         assertThat(argument.getAllValues(), hasItem(instanceOf(ServerCertificatesOptions.class)));
         assertThat(
                 extension.getServerCertificatesOptions(),
@@ -377,7 +377,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
         extension.hook(extensionHook);
         // Then
         ArgumentCaptor<AbstractParam> argument = ArgumentCaptor.forClass(AbstractParam.class);
-        verify(extensionHook, times(4)).addOptionsParamSet(argument.capture());
+        verify(extensionHook, times(5)).addOptionsParamSet(argument.capture());
         assertThat(argument.getAllValues(), hasItem(instanceOf(LocalServersOptions.class)));
         assertThat(extension.getLocalServersOptions(), is(equalTo(argument.getAllValues().get(1))));
     }
@@ -468,7 +468,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
         extension.hook(extensionHook);
         // Then
         ArgumentCaptor<AbstractParam> argument = ArgumentCaptor.forClass(AbstractParam.class);
-        verify(extensionHook, times(4)).addOptionsParamSet(argument.capture());
+        verify(extensionHook, times(5)).addOptionsParamSet(argument.capture());
         assertThat(argument.getAllValues(), hasItem(instanceOf(ConnectionOptions.class)));
     }
 
@@ -490,7 +490,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
         extension.hook(extensionHook);
         // Then
         ArgumentCaptor<AbstractParam> argument = ArgumentCaptor.forClass(AbstractParam.class);
-        verify(extensionHook, times(4)).addOptionsParamSet(argument.capture());
+        verify(extensionHook, times(5)).addOptionsParamSet(argument.capture());
         assertThat(argument.getAllValues(), hasItem(instanceOf(ClientCertificatesOptions.class)));
         assertThat(extension.getClientCertificatesOptions(), is(notNullValue()));
     }

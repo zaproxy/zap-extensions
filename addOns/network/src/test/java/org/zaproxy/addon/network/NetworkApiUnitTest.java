@@ -71,6 +71,8 @@ import org.zaproxy.addon.network.internal.cert.CertificateUtils;
 import org.zaproxy.addon.network.internal.client.HttpProxy;
 import org.zaproxy.addon.network.internal.client.HttpProxyExclusion;
 import org.zaproxy.addon.network.internal.client.SocksProxy;
+import org.zaproxy.addon.network.internal.ratelimit.RateLimitOptions;
+import org.zaproxy.addon.network.internal.ratelimit.RateLimitRule;
 import org.zaproxy.addon.network.internal.server.http.Alias;
 import org.zaproxy.addon.network.internal.server.http.LocalServerConfig;
 import org.zaproxy.addon.network.internal.server.http.LocalServerConfig.ServerMode;
@@ -92,6 +94,7 @@ class NetworkApiUnitTest extends TestUtils {
     private LocalServersOptions localServersOptions;
     private ConnectionOptions connectionOptions;
     private ClientCertificatesOptions clientCertificatesOptions;
+    private RateLimitOptions rateLimitOptions;
     private ExtensionNetwork extensionNetwork;
 
     @BeforeEach
@@ -120,6 +123,9 @@ class NetworkApiUnitTest extends TestUtils {
         clientCertificatesOptions = mock(ClientCertificatesOptions.class);
         given(extensionNetwork.getClientCertificatesOptions())
                 .willReturn(clientCertificatesOptions);
+        rateLimitOptions =
+                mock(RateLimitOptions.class, withSettings().strictness(Strictness.LENIENT));
+        given(extensionNetwork.getRateLimitOptions()).willReturn(rateLimitOptions);
         networkApi = new NetworkApi(extensionNetwork);
     }
 
@@ -141,8 +147,8 @@ class NetworkApiUnitTest extends TestUtils {
         // Given / When
         networkApi = new NetworkApi(extensionNetwork);
         // Then
-        assertThat(networkApi.getApiActions(), hasSize(26));
-        assertThat(networkApi.getApiViews(), hasSize(15));
+        assertThat(networkApi.getApiActions(), hasSize(29));
+        assertThat(networkApi.getApiViews(), hasSize(16));
         assertThat(networkApi.getApiOthers(), hasSize(3));
     }
 
@@ -1459,6 +1465,118 @@ class NetworkApiUnitTest extends TestUtils {
         checkApiElements(networkApi, networkApi.getApiOthers(), API.RequestType.other, missingKeys);
         checkApiElements(networkApi, networkApi.getApiViews(), API.RequestType.view, missingKeys);
         assertThat(missingKeys, is(empty()));
+    }
+
+    @Test
+    void shouldReturnOkForAddedRateLimitRule() throws Exception {
+        // Given
+        String name = "addRateLimitRule";
+        JSONObject params = new JSONObject();
+        params.put("description", "limit example.org");
+        params.put("matchString", "example.org");
+        params.put("enabled", "false");
+        // When
+        ApiResponse response = networkApi.handleApiAction(name, params);
+        // Then
+        assertThat(response, is(equalTo(ApiResponseElement.OK)));
+        verify(rateLimitOptions)
+                .addRule(new RateLimitRule("limit example.org", "example.org", false));
+    }
+
+    @Test
+    void shouldDefaultToEnabledForAddedRateLimitRule() throws Exception {
+        // Given
+        String name = "addRateLimitRule";
+        JSONObject params = new JSONObject();
+        params.put("description", "limit example.org");
+        params.put("matchString", "example.org");
+        // When
+        ApiResponse response = networkApi.handleApiAction(name, params);
+        // Then
+        assertThat(response, is(equalTo(ApiResponseElement.OK)));
+        verify(rateLimitOptions)
+                .addRule(new RateLimitRule("limit example.org", "example.org", true));
+    }
+
+    @Test
+    void shouldReturnOkForRemovedRateLimitRule() throws Exception {
+        // Given
+        String name = "removeRateLimitRule";
+        JSONObject params = new JSONObject();
+        params.put("description", "example.org");
+        given(rateLimitOptions.removeRule(any())).willReturn(true);
+        // When
+        ApiResponse response = networkApi.handleApiAction(name, params);
+        // Then
+        assertThat(response, is(equalTo(ApiResponseElement.OK)));
+        verify(rateLimitOptions).removeRule("example.org");
+    }
+
+    @Test
+    void shouldThrowApiExceptionForMissingRemovedRateLimitRule() throws Exception {
+        // Given
+        String name = "removeRateLimitRule";
+        JSONObject params = new JSONObject();
+        params.put("description", "example.org");
+        given(rateLimitOptions.removeRule(any())).willReturn(false);
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.DOES_NOT_EXIST)));
+        verify(rateLimitOptions).removeRule("example.org");
+    }
+
+    @Test
+    void shouldReturnOkForChangedRateLimitRule() throws Exception {
+        // Given
+        String name = "setRateLimitRuleEnabled";
+        JSONObject params = new JSONObject();
+        params.put("description", "example.org");
+        params.put("enabled", "false");
+        given(rateLimitOptions.setEnabled(any(), anyBoolean())).willReturn(true);
+        // When
+        ApiResponse response = networkApi.handleApiAction(name, params);
+        // Then
+        assertThat(response, is(equalTo(ApiResponseElement.OK)));
+        verify(rateLimitOptions).setEnabled("example.org", false);
+    }
+
+    @Test
+    void shouldThrowApiExceptionForMissingChangedRateLimitRule() throws Exception {
+        // Given
+        String name = "setRateLimitRuleEnabled";
+        JSONObject params = new JSONObject();
+        params.put("description", "example.org");
+        params.put("enabled", "true");
+        given(rateLimitOptions.setEnabled(any(), anyBoolean())).willReturn(false);
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.DOES_NOT_EXIST)));
+        verify(rateLimitOptions).setEnabled("example.org", true);
+    }
+
+    @Test
+    void shouldGetRateLimitRules() throws Exception {
+        // Given
+        String name = "getRateLimitRules";
+        JSONObject params = new JSONObject();
+        given(rateLimitOptions.getRules())
+                .willReturn(
+                        Arrays.asList(
+                                new RateLimitRule("limit example.org", "example.org", true),
+                                new RateLimitRule("limit example.com", "example.com", false)));
+        // When
+        ApiResponse response = networkApi.handleApiView(name, params);
+        // Then
+        assertThat(response.getName(), is(equalTo(name)));
+        assertThat(
+                response.toJSON().toString(),
+                is(
+                        equalTo(
+                                "{\"getRateLimitRules\":[{\"description\":\"limit example.org\",\"matchString\":\"example.org\",\"requestsPerSecond\":1,\"groupBy\":\"RULE\",\"matchRegex\":false,\"enabled\":true},{\"description\":\"limit example.com\",\"matchString\":\"example.com\",\"requestsPerSecond\":1,\"groupBy\":\"RULE\",\"matchRegex\":false,\"enabled\":false}]}")));
     }
 
     private static void checkApiElements(

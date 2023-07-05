@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
@@ -44,6 +45,7 @@ import org.zaproxy.addon.network.internal.cert.CertificateUtils;
 import org.zaproxy.addon.network.internal.client.HttpProxy;
 import org.zaproxy.addon.network.internal.client.HttpProxyExclusion;
 import org.zaproxy.addon.network.internal.client.SocksProxy;
+import org.zaproxy.addon.network.internal.ratelimit.RateLimitRule;
 import org.zaproxy.addon.network.internal.server.http.Alias;
 import org.zaproxy.addon.network.internal.server.http.LocalServerConfig;
 import org.zaproxy.addon.network.internal.server.http.LocalServerConfig.ServerMode;
@@ -71,12 +73,14 @@ public class NetworkApi extends ApiImplementor {
     private static final String ACTION_ADD_LOCAL_SERVER = "addLocalServer";
     private static final String ACTION_ADD_PASS_THROUGH = "addPassThrough";
     private static final String ACTION_ADD_PKCS12_CLIENT_CERTIFICATE = "addPkcs12ClientCertificate";
+    private static final String ACTION_ADD_RATE_LIMIT_RULE = "addRateLimitRule";
     private static final String ACTION_GENERATE_ROOT_CA_CERT = "generateRootCaCert";
     private static final String ACTION_IMPORT_ROOT_CA_CERT = "importRootCaCert";
     private static final String ACTION_REMOVE_ALIAS = "removeAlias";
     private static final String ACTION_REMOVE_HTTP_PROXY_EXCLUSION = "removeHttpProxyExclusion";
     private static final String ACTION_REMOVE_LOCAL_SERVER = "removeLocalServer";
     private static final String ACTION_REMOVE_PASS_THROUGH = "removePassThrough";
+    private static final String ACTION_REMOVE_RATE_LIMIT_RULE = "removeRateLimitRule";
     private static final String ACTION_SET_ALIAS_ENABLED = "setAliasEnabled";
     private static final String ACTION_SET_CONNECTION_TIMEOUT = "setConnectionTimeout";
     private static final String ACTION_SET_DEFAULT_USER_AGENT = "setDefaultUserAgent";
@@ -88,6 +92,7 @@ public class NetworkApi extends ApiImplementor {
     private static final String ACTION_SET_HTTP_PROXY_EXCLUSION_ENABLED =
             "setHttpProxyExclusionEnabled";
     private static final String ACTION_SET_PASS_THROUGH_ENABLED = "setPassThroughEnabled";
+    private static final String ACTION_SET_RATE_LIMIT_RULE_ENABLED = "setRateLimitRuleEnabled";
     private static final String ACTION_SET_ROOT_CA_CERT_VALIDITY = "setRootCaCertValidity";
     private static final String ACTION_SET_SERVER_CERT_VALIDITY = "setServerCertValidity";
     private static final String ACTION_SET_SOCKS_PROXY = "setSocksProxy";
@@ -101,6 +106,7 @@ public class NetworkApi extends ApiImplementor {
     private static final String VIEW_GET_HTTP_PROXY_EXCLUSIONS = "getHttpProxyExclusions";
     private static final String VIEW_GET_LOCAL_SERVERS = "getLocalServers";
     private static final String VIEW_GET_PASS_THROUGHS = "getPassThroughs";
+    private static final String VIEW_GET_RATE_LIMIT_RULES = "getRateLimitRules";
     private static final String VIEW_GET_ROOT_CA_CERT_VALIDITY = "getRootCaCertValidity";
     private static final String VIEW_GET_SERVER_CERT_VALIDITY = "getServerCertValidity";
     private static final String VIEW_GET_SOCKS_PROXY = "getSocksProxy";
@@ -122,16 +128,21 @@ public class NetworkApi extends ApiImplementor {
     private static final String PARAM_AUTHORITY = "authority";
     private static final String PARAM_BEHIND_NAT = "behindNat";
     private static final String PARAM_DECODE_RESPONSE = "decodeResponse";
+    private static final String PARAM_DESCRIPTION = "description";
     private static final String PARAM_ENABLED = "enabled";
     private static final String PARAM_FILE_PATH = "filePath";
+    private static final String PARAM_GROUP_BY = "groupBy";
     private static final String PARAM_HOST = "host";
     private static final String PARAM_INDEX = "index";
+    private static final String PARAM_MATCH_REGEX = "matchRegex";
+    private static final String PARAM_MATCH_STRING = "matchString";
     private static final String PARAM_NAME = "name";
     private static final String PARAM_PASSWORD = "password";
     private static final String PARAM_PORT = "port";
     private static final String PARAM_PROXY = "proxy";
     private static final String PARAM_REALM = "realm";
     private static final String PARAM_REMOVE_ACCEPT_ENCODING = "removeAcceptEncoding";
+    private static final String PARAM_REQUESTS_PER_SECOND = "requestsPerSecond";
     private static final String PARAM_TIMEOUT = "timeout";
     private static final String PARAM_TTL = "ttl";
     private static final String PARAM_USE_DNS = "useDns";
@@ -259,6 +270,24 @@ public class NetworkApi extends ApiImplementor {
         addApiAction(new ApiAction(ACTION_SET_USE_CLIENT_CERTIFICATE, Arrays.asList(PARAM_USE)));
 
         this.addApiOthers(new ApiOther(OTHER_ROOT_CA_CERT, false));
+
+        this.addApiView(new ApiView(VIEW_GET_RATE_LIMIT_RULES));
+        this.addApiAction(
+                new ApiAction(
+                        ACTION_ADD_RATE_LIMIT_RULE,
+                        Arrays.asList(
+                                PARAM_DESCRIPTION,
+                                PARAM_ENABLED,
+                                PARAM_MATCH_REGEX,
+                                PARAM_MATCH_STRING,
+                                PARAM_REQUESTS_PER_SECOND,
+                                PARAM_GROUP_BY)));
+        this.addApiAction(
+                new ApiAction(ACTION_REMOVE_RATE_LIMIT_RULE, Arrays.asList(PARAM_DESCRIPTION)));
+        this.addApiAction(
+                new ApiAction(
+                        ACTION_SET_RATE_LIMIT_RULE_ENABLED,
+                        Arrays.asList(PARAM_DESCRIPTION, PARAM_DESCRIPTION)));
     }
 
     @Override
@@ -547,6 +576,78 @@ public class NetworkApi extends ApiImplementor {
                     return ApiResponseElement.OK;
                 }
 
+            case ACTION_SET_RATE_LIMIT_RULE_ENABLED:
+                {
+                    if (!extensionNetwork
+                            .getRateLimitOptions()
+                            .setEnabled(
+                                    params.getString(PARAM_DESCRIPTION),
+                                    this.getParam(params, PARAM_ENABLED, false))) {
+                        throw new ApiException(ApiException.Type.DOES_NOT_EXIST, PARAM_DESCRIPTION);
+                    }
+                    return ApiResponseElement.OK;
+                }
+
+            case ACTION_ADD_RATE_LIMIT_RULE:
+                {
+                    String desc = params.getString(PARAM_DESCRIPTION);
+                    if (this.extensionNetwork.getRateLimitOptions().getRule(desc) != null) {
+                        throw new ApiException(ApiException.Type.ALREADY_EXISTS, PARAM_DESCRIPTION);
+                    }
+
+                    String matchString = params.getString(PARAM_MATCH_STRING);
+                    boolean matchRegex = getParam(params, PARAM_MATCH_REGEX, false);
+                    if (matchRegex) {
+                        try {
+                            Pattern.compile(matchString);
+                        } catch (PatternSyntaxException e) {
+                            throw new ApiException(
+                                    ApiException.Type.ILLEGAL_PARAMETER, PARAM_MATCH_STRING, e);
+                        }
+                    }
+                    int requestsPerSecond = getParam(params, PARAM_REQUESTS_PER_SECOND, 1);
+                    if (requestsPerSecond <= 0) {
+                        throw new ApiException(
+                                ApiException.Type.ILLEGAL_PARAMETER, PARAM_REQUESTS_PER_SECOND);
+                    }
+                    RateLimitRule.GroupBy groupBy;
+                    try {
+                        if (params.containsKey(PARAM_GROUP_BY)) {
+                            groupBy =
+                                    RateLimitRule.GroupBy.valueOf(params.getString(PARAM_GROUP_BY));
+                        } else {
+                            groupBy = RateLimitRule.GroupBy.RULE;
+                        }
+                    } catch (JSONException e) {
+                        throw new ApiException(
+                                ApiException.Type.ILLEGAL_PARAMETER, PARAM_GROUP_BY, e);
+                    }
+                    boolean enabled = getParam(params, PARAM_ENABLED, true);
+
+                    this.extensionNetwork
+                            .getRateLimitOptions()
+                            .addRule(
+                                    new RateLimitRule(
+                                            desc,
+                                            matchString,
+                                            matchRegex,
+                                            requestsPerSecond,
+                                            groupBy,
+                                            enabled));
+
+                    return ApiResponseElement.OK;
+                }
+
+            case ACTION_REMOVE_RATE_LIMIT_RULE:
+                {
+                    if (!extensionNetwork
+                            .getRateLimitOptions()
+                            .removeRule(params.getString(PARAM_DESCRIPTION))) {
+                        throw new ApiException(ApiException.Type.DOES_NOT_EXIST, PARAM_DESCRIPTION);
+                    }
+                    return ApiResponseElement.OK;
+                }
+
             default:
                 throw new ApiException(ApiException.Type.BAD_ACTION);
         }
@@ -750,7 +851,14 @@ public class NetworkApi extends ApiImplementor {
                                             .getConnectionOptions()
                                             .isUseGlobalHttpState()));
                 }
-
+            case VIEW_GET_RATE_LIMIT_RULES:
+                {
+                    ApiResponseList rules = new ApiResponseList(name);
+                    for (RateLimitRule rule : extensionNetwork.getRateLimitOptions().getRules()) {
+                        rules.addItem(rateLimitRuleToResponse(rule));
+                    }
+                    return rules;
+                }
             default:
                 throw new ApiException(ApiException.Type.BAD_VIEW);
         }
@@ -865,5 +973,16 @@ public class NetworkApi extends ApiImplementor {
 
         throw new ApiException(
                 ApiException.Type.URL_NOT_FOUND, msg.getRequestHeader().getURI().toString());
+    }
+
+    private static ApiResponse rateLimitRuleToResponse(RateLimitRule rule) {
+        Map<String, Object> map = new HashMap<>();
+        map.put(PARAM_DESCRIPTION, rule.getDescription());
+        map.put(PARAM_ENABLED, rule.isEnabled());
+        map.put(PARAM_MATCH_REGEX, rule.isMatchRegex());
+        map.put(PARAM_MATCH_STRING, rule.getMatchString());
+        map.put(PARAM_REQUESTS_PER_SECOND, rule.getRequestsPerSecond());
+        map.put(PARAM_GROUP_BY, rule.getGroupBy().name());
+        return new ApiResponseSet<>("rateLimitRule", map);
     }
 }

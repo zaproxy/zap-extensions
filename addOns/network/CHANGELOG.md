@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- HTTP/HTTPS rate limiting capability.
 - Allow to add a CRL Distribution Point in generated server certificates.
 - On weekly releases and versions after 2.12 allow to manage global exclusions, supersedes core functionality.
 
