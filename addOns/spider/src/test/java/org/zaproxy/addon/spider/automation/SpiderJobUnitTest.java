@@ -40,6 +40,7 @@ import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 import fi.iki.elonen.NanoHTTPD.Response.Status;
 import java.net.MalformedURLException;
+import java.net.UnknownHostException;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -573,7 +574,7 @@ class SpiderJobUnitTest extends TestUtils {
         given(env.replaceVars(url)).willReturn(url);
 
         HttpSender httpSender = mock(HttpSender.class);
-        doThrow(new ZapUnknownHostException("", true))
+        doThrow(new ZapUnknownHostException(new UnknownHostException(), true))
                 .when(httpSender)
                 .sendAndReceive(any(), anyBoolean());
 
