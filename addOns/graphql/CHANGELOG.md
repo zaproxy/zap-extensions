@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
   "Import a GraphQL schema".
 - The Import dialog shows the values used in the previous import when reopened.
 
+### Fixed
+- Handle invalid values when reading the options.
+
 ## [0.17.0] - 2023-06-19
 ### Added
 - It is now possible to disable the query generator completely.
