@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Updated encode-decode script templates to conform to the latest method signatures.
+- Update the content-length header field after setting the request body in the authentication templates.
 
 ## [0.3.0] - 2022-10-27
 ### Changed

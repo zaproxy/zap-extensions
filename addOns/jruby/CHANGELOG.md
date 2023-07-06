@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update minimum ZAP version to 2.12.0.
 
+### Fixed
+- Update the content-length header field after setting the request body in the authentication template.
+
 ## [8] - 2021-10-07
 ### Changed
 - Update links to zaproxy repo.
