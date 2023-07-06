@@ -38,11 +38,30 @@ public class ZapSocketTimeoutException extends SocketTimeoutException {
      *
      * @param msg the detail message.
      * @param timeout the value of the timeout.
+     * @deprecated (0.10.0) Use {@link #ZapSocketTimeoutException(SocketTimeoutException, int)}
+     *     instead.
      */
+    @Deprecated(since = "0.10.0", forRemoval = true)
     public ZapSocketTimeoutException(String msg, int timeout) {
         super(msg);
 
         this.timeout = timeout;
+    }
+
+    /**
+     * Constructs a {@code ZapSocketTimeoutException} with the given exception and the value of the
+     * timeout.
+     *
+     * @param e the original exception.
+     * @param timeout the value of the timeout.
+     * @throws NullPointerException if the given exception is {@code null}.
+     * @since 0.10.0
+     */
+    public ZapSocketTimeoutException(SocketTimeoutException e, int timeout) {
+        super(e.getMessage());
+
+        this.timeout = timeout;
+        setStackTrace(e.getStackTrace());
     }
 
     /**

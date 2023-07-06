@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update dependencies.
 - Update default user-agents.
 
+### Fixed
+- Keep the original stack trace of timeout and unknown host exceptions.
+
 ## [0.9.0] - 2023-06-06
 ### Changed
 - Use `TRACE` level (instead of `DEBUG`) to log client side HTTP traffic to avoid accidentally enabling it when debugging other add-ons.

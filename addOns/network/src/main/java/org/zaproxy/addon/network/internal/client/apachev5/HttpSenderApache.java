@@ -362,10 +362,10 @@ public class HttpSenderApache
             sendImpl0(ctx, requestContext, message, responseBodyConsumer);
         } catch (SocketTimeoutException e) {
             LOGGER.debug("A timeout occurred while sending the request:", e);
-            throw new ZapSocketTimeoutException(e.getMessage(), options.getTimeoutInSecs());
+            throw new ZapSocketTimeoutException(e, options.getTimeoutInSecs());
         } catch (UnknownHostException e) {
             LOGGER.debug("An unknown host exception occurred while sending the request:", e);
-            throw new ZapUnknownHostException(e.getMessage(), isProxyHost(e.getMessage()));
+            throw new ZapUnknownHostException(e, isProxyHost(e.getMessage()));
         } catch (IOException e) {
             LOGGER.debug("An I/O error occurred while sending the request:", e);
             throw e;

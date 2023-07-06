@@ -39,11 +39,31 @@ public class ZapUnknownHostException extends UnknownHostException {
      * @param host the name of the host.
      * @param fromOutgoingProxy {@code true} if failed to resolve the outgoing proxy's host, {@code
      *     false} otherwise.
+     * @deprecated (0.10.0) Use {@link #ZapUnknownHostException(UnknownHostException, boolean)}
+     *     instead.
      */
+    @Deprecated(since = "0.10.0", forRemoval = true)
     public ZapUnknownHostException(String host, boolean fromOutgoingProxy) {
         super(host);
 
         this.fromOutgoingProxy = fromOutgoingProxy;
+    }
+
+    /**
+     * Constructs a {@code ZapUnknownHostException} with the given exception and whether the host is
+     * the outgoing proxy.
+     *
+     * @param e the original exception.
+     * @param fromOutgoingProxy {@code true} if failed to resolve the outgoing proxy's host, {@code
+     *     false} otherwise.
+     * @throws NullPointerException if the given exception is {@code null}.
+     * @since 0.10.0
+     */
+    public ZapUnknownHostException(UnknownHostException e, boolean fromOutgoingProxy) {
+        super(e.getMessage());
+
+        this.fromOutgoingProxy = fromOutgoingProxy;
+        setStackTrace(e.getStackTrace());
     }
 
     /**
