@@ -14,4 +14,5 @@
     <mapID target="addon.network.options.globalexclusions" url="contents/options/globalexclusions.html" />
     <mapID target="addon.network.options.servercertificates" url="contents/options/servercertificates.html" />
     <mapID target="addon.network.options.localservers" url="contents/options/localservers.html" />
+    <mapID target="addon.network.options.ratelimit" url="contents/options/ratelimit.html" />
 </map>
