@@ -118,6 +118,14 @@ public class AuthUtils {
      */
     private static Map<Integer, VerificationRequestDetails> contextVerifMap = new HashMap<>();
 
+    /**
+     * The best session management request we have found for a context. There will only be a
+     * verification request recorded if the user has indicated that they want ZAP to auto-detect one
+     * by setting session management to auto-detect.
+     */
+    private static Map<Integer, SessionManagementRequestDetails> contextSessionMgmtMap =
+            new HashMap<>();
+
     public static long getTimeToWaitMs() {
         return timeToWaitMs;
     }
@@ -551,7 +559,6 @@ public class AuthUtils {
 
     static SessionManagementRequestDetails findSessionTokenSource(String token, int firstId) {
         ExtensionHistory extHist = AuthUtils.getExtension(ExtensionHistory.class);
-        String tokenf = token;
         int lastId = extHist.getLastHistoryId();
         if (firstId == -1) {
             firstId = Math.max(0, lastId - MAX_NUM_RECORDS_TO_CHECK);
@@ -566,7 +573,7 @@ public class AuthUtils {
                     HttpMessage msg = hr.getHttpMessage();
                     Optional<SessionToken> es =
                             AuthUtils.getAllTokens(msg).values().stream()
-                                    .filter(v -> v.getValue().equals(tokenf))
+                                    .filter(v -> v.getValue().equals(token))
                                     .findFirst();
                     if (es.isPresent()) {
                         AuthUtils.incStatsCounter(
@@ -651,6 +658,7 @@ public class AuthUtils {
     public static void clean() {
         knownTokenMap.clear();
         contextVerifMap.clear();
+        contextSessionMgmtMap.clear();
         if (executorService != null) {
             executorService.shutdown();
         }
@@ -691,6 +699,16 @@ public class AuthUtils {
     public static void setVerificationDetailsForContext(
             int contextId, VerificationRequestDetails details) {
         contextVerifMap.put(contextId, details);
+    }
+
+    public static SessionManagementRequestDetails getSessionManagementDetailsForContext(
+            int contextId) {
+        return contextSessionMgmtMap.get(contextId);
+    }
+
+    public static void setSessionManagementDetailsForContext(
+            int contextId, SessionManagementRequestDetails details) {
+        contextSessionMgmtMap.put(contextId, details);
     }
 
     private static synchronized ExecutorService getExecutorService() {

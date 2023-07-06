@@ -56,12 +56,11 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
 
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        SessionManagementRequestDetails smDetails = null;
         Map<String, SessionToken> responseTokens = AuthUtils.getResponseSessionTokens(msg);
 
         if (!responseTokens.isEmpty()) {
             // The response looks like it contains session tokens
-            smDetails =
+            SessionManagementRequestDetails smDetails =
                     new SessionManagementRequestDetails(
                             msg, new ArrayList<>(responseTokens.values()), Alert.CONFIDENCE_MEDIUM);
             getAlert(smDetails).raise();
@@ -109,8 +108,7 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                         this.getTaskHelper()
                                 .raiseAlert(smrd.getMsg().getHistoryRef(), getAlert(smrd).build());
                         Stats.incCounter("stats.auth.detect.session." + st.getKey());
-                        foundTokens = smrd.getTokens();
-                        break;
+                        foundTokens.addAll(smrd.getTokens());
                     }
                 }
             }
@@ -122,10 +120,14 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                     foundTokens.forEach(t -> LOGGER.debug("Found tokens {}", t.getToken()));
                 }
                 List<Context> contextList = AuthUtils.getRelatedContexts(msg);
+                SessionManagementRequestDetails smDetails =
+                        new SessionManagementRequestDetails(
+                                msg, foundTokens, Alert.CONFIDENCE_MEDIUM);
+
                 for (Context context : contextList) {
-                    if (context.getSessionManagementMethod().getType()
-                            instanceof AutoDetectSessionManagementMethodType) {
+                    if (isBetterAutoDetectSessionMagagement(context, smDetails)) {
                         // Reconfigure the session for the found session management method
+                        AuthUtils.setSessionManagementDetailsForContext(context.getId(), smDetails);
                         LOGGER.debug(
                                 "Auto updating session management for context {}:",
                                 context.getName());
@@ -152,6 +154,21 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                 requestTokens.forEach((st) -> LOGGER.debug("Missed token {}", st.getToken()));
             }
         }
+    }
+
+    /**
+     * Returns true if the context has been set to "auto detect" session management and the supplied
+     * SessionManagementRequestDetails is a better match than the previously found one.
+     */
+    protected boolean isBetterAutoDetectSessionMagagement(
+            Context context, SessionManagementRequestDetails smDetails) {
+        if (context.getSessionManagementMethod().getType()
+                instanceof AutoDetectSessionManagementMethodType) {
+            return true;
+        }
+        SessionManagementRequestDetails currentReq =
+                AuthUtils.getSessionManagementDetailsForContext(context.getId());
+        return currentReq != null && smDetails.getTokens().size() > currentReq.getTokens().size();
     }
 
     /**
