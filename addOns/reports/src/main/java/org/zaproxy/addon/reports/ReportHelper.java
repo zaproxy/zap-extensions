@@ -216,6 +216,13 @@ public class ReportHelper {
         return enc;
     }
 
+    // XXX Workaround for https://github.com/thymeleaf/thymeleaf-spring/issues/275
+    // Calling Alert.getParam() directly in the JSON reports leads to the issue, so move the call
+    // here instead.
+    public static String legacyEscapeTextAlertParam(Alert alert, boolean escapeJson) {
+        return legacyEscapeText(alert.getParam(), escapeJson);
+    }
+
     /** A method which mimics the escaping used for traditional ZAP reports */
     public static String legacyEscapeParagraph(String text) {
         return legacyEscapeParagraph(text, false);

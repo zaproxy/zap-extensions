@@ -47,12 +47,12 @@ crowdin {
 
 dependencies {
     compileOnly(parent!!.childProjects.get("automation")!!)
-    implementation("org.thymeleaf:thymeleaf:3.0.12.RELEASE")
+    implementation("org.thymeleaf:thymeleaf:3.1.1.RELEASE")
     implementation("org.xhtmlrenderer:flying-saucer-pdf:9.1.22")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.13.0")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.0")
-    implementation("org.snakeyaml:snakeyaml-engine:2.3")
-    implementation(libs.log4j.slf4j) {
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.2")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.15.2")
+    implementation("org.snakeyaml:snakeyaml-engine:2.6")
+    implementation(libs.log4j.slf4j2) {
         // Provided by ZAP.
         exclude(group = "org.apache.logging.log4j")
     }
