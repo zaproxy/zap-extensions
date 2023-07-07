@@ -26,8 +26,8 @@ crowdin {
 }
 
 dependencies {
-    implementation("commons-io:commons-io:2.11.0")
-    implementation("org.apache.commons:commons-csv:1.9.0")
+    implementation("commons-io:commons-io:2.13.0")
+    implementation("org.apache.commons:commons-csv:1.10.0")
     implementation("org.apache.commons:commons-collections4:4.4")
 
     testImplementation(project(":testutils"))

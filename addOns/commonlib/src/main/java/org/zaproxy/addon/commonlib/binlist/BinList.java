@@ -66,7 +66,7 @@ public final class BinList {
         Trie<String, BinRecord> trie = new PatriciaTrie<>();
         Iterable<CSVRecord> records;
         try (InputStream in = BinList.class.getResourceAsStream(BINLIST_FILE);
-                BOMInputStream bomStream = new BOMInputStream(in);
+                BOMInputStream bomStream = BOMInputStream.builder().setInputStream(in).get();
                 InputStreamReader inStream =
                         new InputStreamReader(bomStream, StandardCharsets.UTF_8)) {
 
