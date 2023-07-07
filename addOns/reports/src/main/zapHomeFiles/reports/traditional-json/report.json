@@ -22,7 +22,7 @@
 						{
 							"uri": "[(${helper.legacyEscapeText(instance.uri, true)})]",
 							"method": "[(${helper.legacyEscapeText(instance.method, true)})]",
-							"param": "[(${helper.legacyEscapeText(instance.param, true)})]",
+							"param": "[(${helper.legacyEscapeTextAlertParam(instance, true)})]",
 							"attack": "[(${helper.legacyEscapeText(instance.attack, true)})]",
 							"evidence": "[(${helper.legacyEscapeText(instance.evidence, true)})]",
 							"otherinfo": "[(${helper.legacyEscapeText(instance.otherinfo, true)})]"
