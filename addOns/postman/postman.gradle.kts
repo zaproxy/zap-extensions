@@ -17,3 +17,9 @@ crowdin {
         tokens.put("%helpPath%", resourcesPath)
     }
 }
+
+dependencies {
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.12.5")
+
+    testImplementation(project(":testutils"))
+}

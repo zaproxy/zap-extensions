@@ -19,9 +19,11 @@
  */
 package org.zaproxy.addon.postman;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -55,9 +57,25 @@ abstract class ImportFromAbstractDialog extends AbstractDialog {
                 new JButton(Constant.messages.getString(MESSAGE_PREFIX + "importbutton"));
         buttonImport.addActionListener(
                 e -> {
-                    if (validateEndpointUrl() && importDefinition()) {
-                        setVisible(false);
-                        dispose();
+                    try {
+                        if (validateEndpointUrl() && importDefinition()) {
+                            setVisible(false);
+                            dispose();
+                        }
+                    } catch (IOException ex) {
+                        if (ex instanceof JsonProcessingException) {
+                            String baseMsg = Constant.messages.getString("postman.parse.error");
+
+                            View.getSingleton().getOutputPanel().append(baseMsg + "\n");
+                            View.getSingleton().getOutputPanel().append(ex.getMessage());
+
+                            showWarningDialog(
+                                    baseMsg
+                                            + "\n\n"
+                                            + Constant.messages.getString("postman.parse.trailer"));
+                        } else {
+                            showWarningDialog(ex.getMessage());
+                        }
                     }
                 });
         JButton buttonCancel = new JButton(Constant.messages.getString("all.button.cancel"));
@@ -127,7 +145,11 @@ abstract class ImportFromAbstractDialog extends AbstractDialog {
         getEndpointField().setText("");
     }
 
-    protected abstract boolean importDefinition();
+    protected abstract boolean importDefinition() throws IOException;
+
+    protected void showMessageDialog(String message) {
+        View.getSingleton().showMessageDialog(this, message);
+    }
 
     protected void showWarningDialog(String message) {
         View.getSingleton().showWarningDialog(this, message);

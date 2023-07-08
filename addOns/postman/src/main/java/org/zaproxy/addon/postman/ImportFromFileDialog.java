@@ -20,7 +20,7 @@
 package org.zaproxy.addon.postman;
 
 import java.awt.GridBagConstraints;
-import java.io.File;
+import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -73,7 +73,7 @@ public class ImportFromFileDialog extends ImportFromAbstractDialog {
                             } catch (Exception e1) {
                                 showWarningDialog(
                                         Constant.messages.getString(
-                                                "postman.error.filenotfound", filename));
+                                                "postman.importfromfile.filenotfound", filename));
                             }
                         }
                     });
@@ -82,15 +82,11 @@ public class ImportFromFileDialog extends ImportFromAbstractDialog {
     }
 
     @Override
-    protected boolean importDefinition() {
-        File file = new File(getFromField().getText());
+    protected boolean importDefinition() throws IOException {
+        PostmanParser parser = new PostmanParser();
+        parser.importFromFile(getFromField().getText());
 
-        if (!file.canRead()) {
-            showWarningDialog(Constant.messages.getString(MESSAGE_PREFIX + "badfile"));
-            return false;
-        }
-
-        // TODO: Implement importing
+        showMessageDialog(Constant.messages.getString("postman.parse.ok"));
         return true;
     }
 }

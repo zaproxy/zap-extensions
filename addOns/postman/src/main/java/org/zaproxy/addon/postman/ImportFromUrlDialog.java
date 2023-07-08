@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.postman;
 
+import java.io.IOException;
 import javax.swing.JFrame;
 import org.parosproxy.paros.Constant;
 
@@ -35,16 +36,16 @@ public class ImportFromUrlDialog extends ImportFromAbstractDialog {
     }
 
     @Override
-    protected boolean importDefinition() {
-        String url = getFromField().getText();
+    protected boolean importDefinition() throws IOException {
+        try {
+            PostmanParser parser = new PostmanParser();
+            parser.importFromUrl(getFromField().getText());
 
-        if (url.isEmpty()) {
-            showWarningDialog(Constant.messages.getString(MESSAGE_PREFIX + "urlerror.empty"));
-            getFromField().requestFocusInWindow();
+            showMessageDialog(Constant.messages.getString("postman.parse.ok"));
+            return true;
+        } catch (IllegalArgumentException e) {
+            showWarningDialog(e.getMessage());
             return false;
         }
-
-        // TODO: Implement importing
-        return true;
     }
 }
