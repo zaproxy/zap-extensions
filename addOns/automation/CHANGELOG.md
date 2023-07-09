@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Dependency updates.
+
 ### Fixed
 - Address exception when creating a new context through the UI.
 - Allow to test alerts of Directory Browsing (ID 0), previously would report as a missing ID.
