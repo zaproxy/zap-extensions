@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrulesAlpha;
+package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -48,12 +48,12 @@ public class SsrfScanRule extends AbstractAppParamPlugin {
 
     @Override
     public String getName() {
-        return Constant.messages.getString("ascanalpha.ssrf.name");
+        return Constant.messages.getString("ascanbeta.ssrf.name");
     }
 
     @Override
     public String getDescription() {
-        return Constant.messages.getString("ascanalpha.ssrf.desc");
+        return Constant.messages.getString("ascanbeta.ssrf.desc");
     }
 
     @Override
@@ -63,12 +63,12 @@ public class SsrfScanRule extends AbstractAppParamPlugin {
 
     @Override
     public String getSolution() {
-        return Constant.messages.getString("ascanalpha.ssrf.soln");
+        return Constant.messages.getString("ascanbeta.ssrf.soln");
     }
 
     @Override
     public String getReference() {
-        return Constant.messages.getString("ascanalpha.ssrf.refs");
+        return Constant.messages.getString("ascanbeta.ssrf.refs");
     }
 
     @Override
@@ -100,7 +100,7 @@ public class SsrfScanRule extends AbstractAppParamPlugin {
                         .setAttack("https://12345.oast.example.com")
                         .setOtherInfo(
                                 Constant.messages.getString(
-                                        "ascanalpha.ssrf.otherinfo.canaryinbody"))
+                                        "ascanbeta.ssrf.otherinfo.canaryinbody"))
                         .setEvidence("54321")
                         .build());
     }
@@ -117,7 +117,7 @@ public class SsrfScanRule extends AbstractAppParamPlugin {
         if (extOast == null
                 || (extOast.getCallbackService() == null
                         && extOast.getActiveScanOastService() == null)) {
-            getParent().pluginSkipped(this, Constant.messages.getString("ascanalpha.ssrf.skipped"));
+            getParent().pluginSkipped(this, Constant.messages.getString("ascanbeta.ssrf.skipped"));
         }
     }
 
@@ -180,7 +180,7 @@ public class SsrfScanRule extends AbstractAppParamPlugin {
                 sendAndReceive(msg);
                 if (msg.getResponseBody().toString().contains(oastPayload.getCanary())) {
                     alert.setOtherInfo(
-                            Constant.messages.getString("ascanalpha.ssrf.otherinfo.canaryinbody"));
+                            Constant.messages.getString("ascanbeta.ssrf.otherinfo.canaryinbody"));
                     alert.setEvidence(oastPayload.getCanary());
                     getParent().alertFound(alert);
                     break;

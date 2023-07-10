@@ -53,6 +53,7 @@ dependencies {
     testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
     testImplementation(parent!!.childProjects.get("custompayloads")!!)
+    testImplementation(parent!!.childProjects.get("database")!!)
     testImplementation(parent!!.childProjects.get("network")!!)
     testImplementation(parent!!.childProjects.get("oast")!!)
     testImplementation(project(":testutils"))

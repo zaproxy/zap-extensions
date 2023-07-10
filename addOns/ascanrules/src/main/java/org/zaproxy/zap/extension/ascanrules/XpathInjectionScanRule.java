@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrulesBeta;
+package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
 import java.util.Map;
@@ -40,7 +40,7 @@ import org.zaproxy.zap.model.Vulnerability;
  */
 public class XpathInjectionScanRule extends AbstractAppParamPlugin {
 
-    private static final String MESSAGE_PREFIX = "ascanbeta.xpathinjection.";
+    private static final String MESSAGE_PREFIX = "ascanrules.xpathinjection.";
     private static final int PLUGIN_ID = 90021;
 
     // Evil payloads able to generate
