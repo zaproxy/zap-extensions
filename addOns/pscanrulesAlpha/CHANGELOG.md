@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Fetch Metadata Request Headers scan rule (Issue 6955).
 
+### Removed
+- The following scan rules were removed, having been promoted to Beta:
+  - Insufficient Site Isolation Against Spectre Vulnerability
+  - Source Code Disclosure
+
 ## [39] - 2023-05-03
 ### Added
 - Base64, Example, Site Isolation, and Source Code Disclosure scan rules now all provide example alerts for documentation purposes. 

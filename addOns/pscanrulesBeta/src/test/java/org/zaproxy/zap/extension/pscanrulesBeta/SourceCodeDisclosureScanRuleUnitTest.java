@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.pscanrulesAlpha;
+package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -250,6 +250,6 @@ class SourceCodeDisclosureScanRuleUnitTest
     }
 
     private String getLocalisedString(String key, Object... params) {
-        return Constant.messages.getString("pscanalpha.sourcecodedisclosure." + key, params);
+        return Constant.messages.getString("pscanbeta.sourcecodedisclosure." + key, params);
     }
 }

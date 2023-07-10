@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.pscanrulesAlpha;
+package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -630,7 +630,7 @@ public class SourceCodeDisclosureScanRule extends PluginPassiveScanner {
     }
 
     /** Prefix for internationalized messages used by this rule */
-    private static final String MESSAGE_PREFIX = "pscanalpha.sourcecodedisclosure.";
+    private static final String MESSAGE_PREFIX = "pscanbeta.sourcecodedisclosure.";
 
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
