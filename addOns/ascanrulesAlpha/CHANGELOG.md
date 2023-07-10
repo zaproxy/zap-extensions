@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Removed
+- The following scan rules were removed, having been promoted to Beta:
+  - Server Side Request Forgery
+  - Text4shell (CVE-2022-42889)
+
 ## [42] - 2022-12-13
 ### Added
 - LDAP protocol technology support.

@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - The Source Code Disclosure - File Inclusion now includes example alert functionality for documentation generation purposes (Issue 6119).
+- The following scan rules were added, having been promoted from Alpha:
+  - Server Side Request Forgery
+  - Text4shell (CVE-2022-42889)
+
+### Removed
+- The following scan rules were removed, having been promoted to Release:
+  - Log4Shell
+  - Spring Actuator Information Leak
+  - Spring4Shell
+  - Server Side Template Injection
+  - Server Side Template Injection (Blind)
+  - XPath Injection
 
 ## [46] - 2023-05-03
 ### Changed

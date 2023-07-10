@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrulesBeta;
+package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
 import java.util.Map;
@@ -46,7 +46,7 @@ import org.zaproxy.zap.model.TechSet;
  */
 public class SpringActuatorScanRule extends AbstractHostPlugin {
 
-    private static final String MESSAGE_PREFIX = "ascanbeta.springactuator.";
+    private static final String MESSAGE_PREFIX = "ascanrules.springactuator.";
     private static final int PLUGIN_ID = 40042;
     private static final Logger LOGGER = LogManager.getLogger(SpringActuatorScanRule.class);
     private static final Pattern CONTENT_TYPE =

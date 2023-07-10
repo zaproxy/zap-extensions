@@ -17,23 +17,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrulesBeta.ssti;
+package org.zaproxy.zap.extension.ascanrules.ssti;
 
 /**
- * This represents the code that is necessary to execute an arithmetic operation in Golang template
+ * This represents the code that is necessary to execute an arithmetic operation in Django template
  * engine and the expected result of the operation.
  *
  * @author DiogoMRSilva (2018)
  */
-public class GoTemplateFormat extends TemplateFormat {
+public class DjangoTemplateFormat extends TemplateFormat {
 
-    public GoTemplateFormat() {
-        super("{", "}", "{{print \"%d\" \"%d\"}}");
+    public DjangoTemplateFormat() {
+        super("{{", "}}", "{{%d0|add:%d0}}");
     }
 
     @Override
     public int getExpectedResult(int number1, int number2) {
-        String concatenated = String.format("%d%d", number1, number2);
-        return Integer.parseInt(concatenated);
+        return number1 * 10 + number2 * 10;
     }
 }

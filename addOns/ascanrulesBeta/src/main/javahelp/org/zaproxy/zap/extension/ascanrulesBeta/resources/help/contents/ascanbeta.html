@@ -100,13 +100,6 @@ This rule attempts to identify if the Spring Actuators are enabled. Tests for th
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SpringActuatorScanRule.java">SpringActuatorScanRule.java</a>
 
-<H2>Log4Shell (CVE-2021-44228 and CVE-2021-45046)</H2>
-This rule attempts to discover the Log4Shell (<a href="https://nvd.nist.gov/vuln/detail/CVE-2021-44228">CVE-2021-44228</a> and <a href="https://nvd.nist.gov/vuln/detail/CVE-2021-45046">CVE-2021-45046</a>) vulnerabilities.
-It relies on the OAST add-on to generate out-of-band payloads and verify DNS interactions.
-We recommend that this scan rule is used with header injection enabled for maximum coverage.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/Log4ShellScanRule.java">Log4ShellScanRule.java</a>
-
 <H2>Out of Band XSS</H2>
 This rule attempts to discover Out-of-band XSS vulnerabilities.
 <p>
@@ -128,17 +121,6 @@ If resources (CSS, images, etc.) are references in the response using relative, 
 permissively parsing the "cross-content" response, using techniques such as framing, then the web browser may be fooled into interpreting HTML as CSS (or other content types), leading to an XSS vulnerability.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/RelativePathConfusionScanRule.java">RelativePathConfusionScanRule.java</a>
-
-<H2>Server Side Template Injection</H2>
-This rule attempts to detect situations in which user input might be interpreted as part of the template and processed on the server, versus the user input simply being used as an argument to the template/engine.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SstiScanRule.java">SstiScanRule.java</a>
-
-<H2>Server Side Template Injection (Blind)</H2>
-This rule goes one step further than the SSTI scan rule and attempts to find places where the impact of the user input is not immediately obvious, such as when used by an admin panel, report output, invoice, etc.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SstiBlindScanRule.java">SstiBlindScanRule.java</a>
-
 <H2>Session Fixation</H2>
 Session Fixation may be possible. If this issue occurs with a login URL (where the user authenticates themselves to the application), then the URL may be given by an attacker, along with a fixed session id, to a victim, in order to later assume the identity of the victim using the given session id. If the issue occurs with a non-login page, the URL and fixed session id may only be used by an attacker to track an unauthenticated user's actions. If the vulnerability occurs on a cookie field or a form field (POST parameter) rather than on a URL (GET) parameter, then some other vulnerability may also be required in order to set the cookie field on the victim's browser, to allow the vulnerability to be exploited.
 <p>
@@ -169,28 +151,22 @@ Uses Git source code repository metadata to scan for files containing source cod
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SourceCodeDisclosureGitScanRule.java">SourceCodeDisclosureGitScanRule.java</a>
 
-<H2>Spring4Shell (CVE-2022-22965)</H2>
-This rule attempts to discover the Spring4Shell (<a href="https://tanzu.vmware.com/security/cve-2022-22965">CVE-2022-22965</a> vulnerability.
-It uses a payload of <code>class.module.classLoader.DefaultAssertionStatus=nonsense</code> on all nodes and raises an alert if this payload results in a 400 response.
-It will not raise an alert if a similar but safe payload also results in a 400 response.
+<H2>Server Side Request Forgery</H2>
+This rule attempts to find Server Side Request Forgery vulnerabilities by injecting out-of-band payloads in request parameters.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/Spring4ShellScanRule.java">Spring4ShellScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/SsrfScanRule.java">SsrfScanRule.java</a>
+
+<H2>Text4shell (CVE-2022-42889)</H2>
+This rule attempts to discover the Text4shell (<a href="https://nvd.nist.gov/vuln/detail/CVE-2022-42889">CVE-2022-42889</a>) vulnerability.
+It relies on the OAST add-on to generate out-of-band payloads and verify DNS interactions.
+<p>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/Text4ShellScanRule.java">Text4ShellScanRule.java</a>
 
 <H2>Username Enumeration</H2>
 It may be possible to enumerate usernames, based on differing HTTP responses when valid and invalid usernames are provided. This would greatly increase the probability of success of password brute-forcing attacks against the system. Note that false positives may sometimes be minimised by increasing the 'Attack Strength' Option in ZAP.  Please manually check the 'Other Info' field to confirm if this is actually an issue.
 This rule is skipped if there are no contexts defined that use Form-based Authentication, and only runs against the URL identified as the login URL of a context.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/UsernameEnumerationScanRule.java">UsernameEnumerationScanRule.java</a>
-
-<H2>XPath Injection</H2>
-As described by OWASP: "XPath Injection attacks occur when a web site uses user-supplied information to 
-construct an XPath query for XML data. By sending intentionally malformed information into the web site, 
-an attacker can find out how the XML data is structured, or access data that he may not normally have access 
-to. He may even be able to elevate his privileges on the web site if the XML data is being used for 
-authentication (such as an XML based user file) or authorization." This rule attempts to identify such 
-weaknesses.
-<p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrulesBeta/src/main/java/org/zaproxy/zap/extension/ascanrulesBeta/XpathInjectionScanRule.java">XpathInjectionScanRule.java</a>
 
 </BODY>
 </HTML>

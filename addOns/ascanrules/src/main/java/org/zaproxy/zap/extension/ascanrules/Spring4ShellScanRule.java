@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrulesBeta;
+package org.zaproxy.zap.extension.ascanrules;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -68,12 +68,12 @@ public class Spring4ShellScanRule extends AbstractAppPlugin {
 
     @Override
     public String getName() {
-        return Constant.messages.getString("ascanbeta.spring4shell.name");
+        return Constant.messages.getString("ascanrules.spring4shell.name");
     }
 
     @Override
     public String getDescription() {
-        return Constant.messages.getString("ascanbeta.spring4shell.desc");
+        return Constant.messages.getString("ascanrules.spring4shell.desc");
     }
 
     private boolean is400Response(HttpMessage msg) {
@@ -192,11 +192,11 @@ public class Spring4ShellScanRule extends AbstractAppPlugin {
 
     @Override
     public String getSolution() {
-        return Constant.messages.getString("ascanbeta.spring4shell.soln");
+        return Constant.messages.getString("ascanrules.spring4shell.soln");
     }
 
     @Override
     public String getReference() {
-        return Constant.messages.getString("ascanbeta.spring4shell.refs");
+        return Constant.messages.getString("ascanrules.spring4shell.refs");
     }
 }
