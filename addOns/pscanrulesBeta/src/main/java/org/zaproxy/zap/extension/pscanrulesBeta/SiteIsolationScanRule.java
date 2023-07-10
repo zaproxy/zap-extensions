@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.pscanrulesAlpha;
+package org.zaproxy.zap.extension.pscanrulesBeta;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,7 +66,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  */
 public class SiteIsolationScanRule extends PluginPassiveScanner {
     /** Prefix for internationalized messages used by this rule */
-    private static final String SITE_ISOLATION_MESSAGE_PREFIX = "pscanalpha.site-isolation.";
+    private static final String SITE_ISOLATION_MESSAGE_PREFIX = "pscanbeta.site-isolation.";
 
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
