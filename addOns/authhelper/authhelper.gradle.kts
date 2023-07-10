@@ -5,7 +5,6 @@ description = "Helps identify and set up authentication handling"
 zapAddOn {
     addOnName.set("Authentication Helper")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")

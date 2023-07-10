@@ -5,7 +5,6 @@ description = "Invoke external applications passing context related information 
 zapAddOn {
     addOnName.set("Invoke Applications")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")

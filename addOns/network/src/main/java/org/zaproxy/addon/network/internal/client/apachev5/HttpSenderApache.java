@@ -283,7 +283,7 @@ public class HttpSenderApache
             HttpSenderContextApache ctx, HttpRequestConfig requestConfig) {
         ZapHttpClientContext context = new ZapHttpClientContext();
 
-        if (ctx.getInitiator() != HttpSender.CHECK_FOR_UPDATES_INITIATOR) {
+        if (ctx.getInitiator() != CHECK_FOR_UPDATES_INITIATOR) {
             context.setAttribute(SslConnectionSocketFactory.LAX_ATTR_NAME, Boolean.TRUE);
         }
 

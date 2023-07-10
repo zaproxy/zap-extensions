@@ -5,7 +5,6 @@ description = "Allows you to generate and analyze pseudo random tokens, such as 
 zapAddOn {
     addOnName.set("Token Generation and Analysis")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")

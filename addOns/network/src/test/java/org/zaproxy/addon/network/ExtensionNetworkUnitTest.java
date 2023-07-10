@@ -88,6 +88,7 @@ import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
+import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -118,6 +119,7 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 class ExtensionNetworkUnitTest extends TestUtils {
 
     private MockedStatic<ZAP> zap;
+    private Session session;
     private Model model;
     private OptionsParam optionsParam;
     private ExtensionLoader extensionLoader;
@@ -140,6 +142,8 @@ class ExtensionNetworkUnitTest extends TestUtils {
         given(optionsParam.getProxyParam())
                 .willReturn(mock(org.parosproxy.paros.core.proxy.ProxyParam.class));
         given(model.getOptionsParam()).willReturn(optionsParam);
+        session = mock(Session.class);
+        given(model.getSession()).willReturn(session);
 
         extension = new ExtensionNetwork();
         extension.init();
@@ -317,7 +321,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
         extension.hook(extensionHook);
         // Then
         ArgumentCaptor<AbstractParam> argument = ArgumentCaptor.forClass(AbstractParam.class);
-        verify(extensionHook, times(5)).addOptionsParamSet(argument.capture());
+        verify(extensionHook, times(6)).addOptionsParamSet(argument.capture());
         assertThat(argument.getAllValues(), hasItem(instanceOf(ServerCertificatesOptions.class)));
         assertThat(
                 extension.getServerCertificatesOptions(),
@@ -354,6 +358,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
     }
 
     @Test
+    @SuppressWarnings("removal")
     void shouldAddLegacyProxyListenerHandlerOnHookAlways() {
         // Given
         ExtensionHook extensionHook = mock(ExtensionHook.class);
@@ -377,7 +382,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
         extension.hook(extensionHook);
         // Then
         ArgumentCaptor<AbstractParam> argument = ArgumentCaptor.forClass(AbstractParam.class);
-        verify(extensionHook, times(5)).addOptionsParamSet(argument.capture());
+        verify(extensionHook, times(6)).addOptionsParamSet(argument.capture());
         assertThat(argument.getAllValues(), hasItem(instanceOf(LocalServersOptions.class)));
         assertThat(extension.getLocalServersOptions(), is(equalTo(argument.getAllValues().get(1))));
     }
@@ -468,7 +473,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
         extension.hook(extensionHook);
         // Then
         ArgumentCaptor<AbstractParam> argument = ArgumentCaptor.forClass(AbstractParam.class);
-        verify(extensionHook, times(5)).addOptionsParamSet(argument.capture());
+        verify(extensionHook, times(6)).addOptionsParamSet(argument.capture());
         assertThat(argument.getAllValues(), hasItem(instanceOf(ConnectionOptions.class)));
     }
 
@@ -490,7 +495,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
         extension.hook(extensionHook);
         // Then
         ArgumentCaptor<AbstractParam> argument = ArgumentCaptor.forClass(AbstractParam.class);
-        verify(extensionHook, times(5)).addOptionsParamSet(argument.capture());
+        verify(extensionHook, times(6)).addOptionsParamSet(argument.capture());
         assertThat(argument.getAllValues(), hasItem(instanceOf(ClientCertificatesOptions.class)));
         assertThat(extension.getClientCertificatesOptions(), is(notNullValue()));
     }
@@ -780,7 +785,7 @@ class ExtensionNetworkUnitTest extends TestUtils {
 
     @Test
     void shouldNotBeUnloadable() {
-        assertThat(extension.canUnload(), is(false));
+        assertThat(extension.canUnload(), is(true));
     }
 
     @Test
@@ -791,9 +796,11 @@ class ExtensionNetworkUnitTest extends TestUtils {
         extension.unload();
         // Then
         assertThat(Security.getProvider(BouncyCastleProvider.PROVIDER_NAME), is(nullValue()));
+        verify(session).setGlobalExcludedUrlRegexsSupplier(null);
     }
 
     @Test
+    @SuppressWarnings("removal")
     void shouldUnloadLegacyProxyListenerHandlerAlways() {
         // Given
         extension.hook(mock(ExtensionHook.class));

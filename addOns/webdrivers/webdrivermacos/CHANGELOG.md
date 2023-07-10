@@ -4,87 +4,62 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Update minimum ZAP version to 2.13.0.
 
 ## [56] - 2023-06-01
 ### Changed
 - Update ChromeDriver to 114.0.5735.90.
 
-
-
 ## [55] - 2023-05-04
 ### Changed
 - Update ChromeDriver to 113.0.5672.63.
-
-
 
 ## [54] - 2023-04-06
 ### Changed
 - Update ChromeDriver to 112.0.5615.49.
 
-
-
 ## [53] - 2023-04-04
 ### Changed
 - Update geckodriver to 0.33.0.
 
-
-
 ## [52] - 2023-03-09
 ### Changed
 - Update ChromeDriver to 111.0.5563.64.
-
-
 
 ## [51] - 2023-02-08
 ### Changed
 - Update geckodriver to 0.32.2.
 - Update ChromeDriver to 110.0.5481.77.
 
-
-
 ## [50] - 2023-02-02
 ### Changed
 - Update geckodriver to 0.32.1.
-
-
 
 ## [49] - 2023-01-12
 ### Changed
 - Update ChromeDriver to 109.0.5414.74.
 
-
-
 ## [48] - 2022-12-01
 ### Changed
 - Update ChromeDriver to 108.0.5359.71.
-
-
 
 ## [47] - 2022-10-27
 ### Changed
 - Update minimum ZAP version to 2.12.0.
 - Update ChromeDriver to 107.0.5304.62.
 
-
-
 ## [46] - 2022-10-14
 ### Changed
 - Update geckodriver to 0.32.0.
-
-
 
 ## [45] - 2022-09-29
 ### Changed
 - Update ChromeDriver to 106.0.5249.61.
 
-
-
 ## [44] - 2022-09-01
 ### Changed
 - Update ChromeDriver to 105.0.5195.52.
-
-
 
 ## [43] - 2022-08-04
 ### Changed
@@ -114,7 +89,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [37] - 2022-03-29
 ### Added
 - Add aarch64/arm64 WebDrivers.
-
 
 ## [36] - 2022-03-04
 ### Changed

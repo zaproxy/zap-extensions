@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - X-Backend-Server Scan Rule
     - X-ChromeLogger-Data Header Information Leak Scan Rule
 
+### Changed
+- Update minimum ZAP version to 2.13.0.
+
 ## [49] - 2023-06-06
 ### Changed
 - The X-AspNet-Version Response Header Scan Rule now includes example alert functionality for documentation generation purposes (Issue 6119).

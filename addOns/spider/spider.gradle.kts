@@ -5,7 +5,6 @@ description = "Spider used for automatically finding URIs on a site."
 zapAddOn {
     addOnName.set("Spider")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")

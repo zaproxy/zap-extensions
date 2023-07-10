@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.replacer;
 
 import java.util.List;
 import java.util.regex.Pattern;
-import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.utils.Enableable;
 
 public class ReplacerParamRule extends Enableable {
@@ -215,9 +214,6 @@ public class ReplacerParamRule extends Enableable {
     }
 
     public boolean appliesToInitiator(int initiator) {
-        if (initiator == HttpSender.CHECK_FOR_UPDATES_INITIATOR) {
-            return false;
-        }
         return appliesToAllInitiators() || initiators.contains(initiator);
     }
 

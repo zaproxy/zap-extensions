@@ -6,7 +6,6 @@ description = "Allows to manually edit and send messages."
 zapAddOn {
     addOnName.set("Requester")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.12.0")
 
     manifest {
         author.set("Surikato and the ZAP Dev Team")

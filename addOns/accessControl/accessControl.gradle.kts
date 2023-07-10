@@ -2,7 +2,6 @@ description = "Adds a set of tools for testing access control in web application
 
 zapAddOn {
     addOnName.set("Access Control Testing")
-    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")

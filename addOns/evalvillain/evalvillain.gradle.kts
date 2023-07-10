@@ -2,7 +2,6 @@ description = "Adds the Eval Villain extension to Firefox when launched from ZAP
 
 zapAddOn {
     addOnName.set("Eval Villain")
-    zapVersion.set("2.12.0")
 
     manifest {
         author.set("Dennis Goodlett and the ZAP Dev Team")

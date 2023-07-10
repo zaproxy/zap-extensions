@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ## Unreleased
 ### Changed
+- Update minimum ZAP version to 2.13.0.
 - The "Import a GraphQL Schema from a File" and "Import a GraphQL schema from a URL" menu items were merged into one,
   "Import a GraphQL schema".
 - The Import dialog shows the values used in the previous import when reopened.

@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - On weekly releases and versions after 2.12 allow to manage global exclusions, supersedes core functionality.
 
 ### Changed
+- Update minimum ZAP version to 2.13.0.
 - Update dependencies.
 - Update default user-agents.
 

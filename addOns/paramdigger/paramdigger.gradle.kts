@@ -2,7 +2,6 @@ description = "Identify hidden, unlinked parameters. Useful for finding web cach
 
 zapAddOn {
     addOnName.set("Parameter Digger")
-    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team and Arkaprabha Chakraborty")

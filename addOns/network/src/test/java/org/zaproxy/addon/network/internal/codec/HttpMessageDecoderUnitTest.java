@@ -114,7 +114,7 @@ abstract class HttpMessageDecoderUnitTest {
         assertThat(message, is(notNullValue()));
         HttpHeader header = extractHeader(message);
         assertThat(header.getHeaders(), hasSize(2));
-        checkHeader(header, 0, "Content-Length", "0");
+        checkHeader(header, 0, "content-length", "0");
         checkHeader(header, 1, "Y", "x");
         assertThat(extractBody(message).toString(), is(equalTo("")));
         assertChannelState();
@@ -124,7 +124,7 @@ abstract class HttpMessageDecoderUnitTest {
     void shouldReadFixedLengthBody() {
         // Given
         String body = "0123456789012345";
-        String content = getPrimeHeader() + "Content-Length: 16\r\n\r\n" + body;
+        String content = getPrimeHeader() + "content-length: 16\r\n\r\n" + body;
         // When
         written(content, true);
         // Then
@@ -132,7 +132,7 @@ abstract class HttpMessageDecoderUnitTest {
         assertThat(message, is(notNullValue()));
         HttpHeader header = extractHeader(message);
         assertThat(header.getHeaders(), hasSize(1));
-        checkHeader(header, 0, "Content-Length", "16");
+        checkHeader(header, 0, "content-length", "16");
         assertThat(extractBody(message).toString(), is(equalTo(body)));
         assertChannelState();
     }
@@ -143,7 +143,7 @@ abstract class HttpMessageDecoderUnitTest {
         int numberOfRequests = 2;
         String content =
                 StringUtils.repeat(
-                        getPrimeHeader() + "Content-Length: 1\r\n\r\nA", numberOfRequests);
+                        getPrimeHeader() + "content-length: 1\r\n\r\nA", numberOfRequests);
         // When
         written(content, true);
         // Then
@@ -151,7 +151,7 @@ abstract class HttpMessageDecoderUnitTest {
             HttpMessage message = channel.readInbound();
             assertThat(message, is(notNullValue()));
             HttpHeader header = extractHeader(message);
-            checkHeader(header, 0, "Content-Length", "1");
+            checkHeader(header, 0, "content-length", "1");
             assertThat(extractBody(message).toString(), is(equalTo("A")));
         }
         assertChannelState();
@@ -160,7 +160,7 @@ abstract class HttpMessageDecoderUnitTest {
     @Test
     void shouldProduceMessageWithExceptionIfChannelClosedBeforeSendingFullFixedLengthBody() {
         // Given / When
-        written(getPrimeHeader() + "Content-Length: 5\r\n\r\n123", false);
+        written(getPrimeHeader() + "content-length: 5\r\n\r\n123", false);
         channel.close();
         // Then
         HttpMessage message = channel.readInbound();
@@ -175,7 +175,7 @@ abstract class HttpMessageDecoderUnitTest {
         // Given
         String body = "0123456789012345";
         String content =
-                getPrimeHeader() + "Content-Length: 4\r\nContent-Length: 16\r\n\r\n" + body;
+                getPrimeHeader() + "content-length: 4\r\ncontent-length: 16\r\n\r\n" + body;
         // When
         written(content, true);
         // Then
@@ -183,7 +183,7 @@ abstract class HttpMessageDecoderUnitTest {
         assertThat(message, is(notNullValue()));
         HttpHeader header = extractHeader(message);
         assertThat(header.getHeaders(), hasSize(2));
-        checkHeader(header, 0, "Content-Length", "4", "16");
+        checkHeader(header, 0, "content-length", "4", "16");
         assertThat(extractBody(message).toString(), is(equalTo(body)));
         assertChannelState();
     }
@@ -200,7 +200,7 @@ abstract class HttpMessageDecoderUnitTest {
         assertThat(message, is(notNullValue()));
         HttpHeader header = extractHeader(message);
         assertThat(header.getHeaders(), hasSize(1));
-        checkHeader(header, 0, "Content-Length", "7");
+        checkHeader(header, 0, "content-length", "7");
         assertThat(extractBody(message).toString(), is(equalTo("Abcwxyz")));
         assertChannelState();
     }
@@ -218,7 +218,7 @@ abstract class HttpMessageDecoderUnitTest {
         assertThat(message, is(notNullValue()));
         HttpHeader header = extractHeader(message);
         assertThat(header.getHeaders(), hasSize(1));
-        checkHeader(header, 0, "Content-Length", "7");
+        checkHeader(header, 0, "content-length", "7");
         assertThat(extractBody(message).toString(), is(equalTo("Abcwxyz")));
         assertChannelState();
     }
@@ -239,7 +239,7 @@ abstract class HttpMessageDecoderUnitTest {
         assertThat(message, is(notNullValue()));
         HttpHeader header = extractHeader(message);
         assertThat(header.getHeaders(), hasSize(1));
-        checkHeader(header, 0, "Content-Length", "3");
+        checkHeader(header, 0, "content-length", "3");
         assertThat(extractBody(message).toString(), is(equalTo("Abc")));
         assertChannelState();
     }
@@ -270,7 +270,7 @@ abstract class HttpMessageDecoderUnitTest {
         assertThat(message, is(notNullValue()));
         HttpHeader header = extractHeader(message);
         assertThat(header.getHeaders(), hasSize(1));
-        checkHeader(header, 0, "Content-Length", "7");
+        checkHeader(header, 0, "content-length", "7");
         assertThat(extractBody(message).toString(), is(equalTo("Abcwxyz")));
         assertChannelState();
     }
@@ -303,7 +303,7 @@ abstract class HttpMessageDecoderUnitTest {
         assertThat(header.getHeaders(), hasSize(3));
         checkHeader(header, 0, "A", "b");
         checkHeader(header, 1, "X", "y");
-        checkHeader(header, 2, "Content-Length", "0");
+        checkHeader(header, 2, "content-length", "0");
         assertThat(extractBody(message).toString(), is(equalTo("")));
         assertChannelState();
     }

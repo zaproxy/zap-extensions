@@ -104,7 +104,7 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat("Cookie without SameSite Attribute", equalTo(alertsRaised.get(0).getName()));
         assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("set-cookie: test"));
     }
 
     @Test
@@ -130,7 +130,7 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
         Alert alert = alertsRaised.get(0);
         assertEquals("Cookie with SameSite Attribute None", alert.getName());
         assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("set-cookie: test"));
     }
 
     @Test
@@ -174,7 +174,7 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("set-cookie: test"));
     }
 
     @Test
@@ -186,7 +186,7 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("set-cookie: test"));
     }
 
     @Test
@@ -200,7 +200,7 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("set-cookie: test"));
     }
 
     @Test
@@ -214,7 +214,7 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("set-cookie: test"));
     }
 
     @Test
@@ -260,7 +260,7 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("set-cookie: test"));
     }
 
     @Test
@@ -278,7 +278,7 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("set-cookie: test"));
     }
 
     @Test
@@ -310,7 +310,7 @@ class CookieSameSiteScanRuleUnitTest extends PassiveScannerTest<CookieSameSiteSc
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("test"));
-        assertThat(alertsRaised.get(0).getEvidence(), equalTo("Set-Cookie: test"));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo("set-cookie: test"));
     }
 
     private static HttpMessage createMessage() throws HttpMalformedHeaderException {

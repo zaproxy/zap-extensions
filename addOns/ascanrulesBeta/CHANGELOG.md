@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Server Side Request Forgery
   - Text4shell (CVE-2022-42889)
 
+### Changed
+- Update minimum ZAP version to 2.13.0.
+
 ### Removed
 - The following scan rules were removed, having been promoted to Release:
   - Log4Shell

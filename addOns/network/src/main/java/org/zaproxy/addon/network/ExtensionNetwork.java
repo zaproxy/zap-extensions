@@ -124,8 +124,6 @@ import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiElement;
 import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.brk.ExtensionBreak;
-import org.zaproxy.zap.extension.globalexcludeurl.ExtensionGlobalExcludeURL;
-import org.zaproxy.zap.network.HttpSenderImpl;
 import org.zaproxy.zap.utils.ZapPortNumberSpinner;
 
 public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineListener {
@@ -148,8 +146,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     private static final int ARG_HOST_IDX = 3;
     private static final int ARG_PORT_IDX = 4;
-
-    private Boolean dynamicUnload;
 
     private CloseableHttpSenderImpl<?> httpSenderNetwork;
 
@@ -178,10 +174,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     private RateLimitExtensionHelper rateLimitExtensionHelper;
 
-    private boolean provideGlobalExclusions;
     private GlobalExclusionsOptions globalExclusionsOptions;
     private GlobalExclusionsOptionsPanel globalExclusionsOptionsPanel;
-    private Method setGlobalExcludedUrlRegexsSupplier;
 
     private HttpSender proxyHttpSender;
     private HttpSenderHandler httpSenderHandler;
@@ -237,19 +231,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             HttpSender.setImpl(httpSenderNetwork);
         } catch (Exception e) {
             LOGGER.error("An error occurred while creating the sender:", e);
-        }
-
-        try {
-            provideGlobalExclusions =
-                    ExtensionGlobalExcludeURL.class.getAnnotation(Deprecated.class) != null;
-
-            if (provideGlobalExclusions) {
-                setGlobalExcludedUrlRegexsSupplier =
-                        Session.class.getDeclaredMethod(
-                                "setGlobalExcludedUrlRegexsSupplier", Supplier.class);
-            }
-        } catch (Exception e) {
-            provideGlobalExclusions = false;
         }
     }
 
@@ -507,6 +488,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     }
 
     @Override
+    @SuppressWarnings("removal")
     public void hook(ExtensionHook extensionHook) {
         extensionHook.addApiImplementor(new NetworkApi(this));
         extensionHook.addSessionListener(new SessionChangedListenerImpl());
@@ -527,10 +509,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
         rateLimitExtensionHelper.hook(extensionHook);
 
-        if (provideGlobalExclusions) {
-            globalExclusionsOptions = new GlobalExclusionsOptions();
-            extensionHook.addOptionsParamSet(globalExclusionsOptions);
-        }
+        globalExclusionsOptions = new GlobalExclusionsOptions();
+        extensionHook.addOptionsParamSet(globalExclusionsOptions);
 
         aliasChecker =
                 requestHeader -> {
@@ -587,12 +567,10 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             optionsDialog.addParamPanel(
                     networkNode, rateLimitExtensionHelper.getRateLimitOptionsPanel(), true);
 
-            if (provideGlobalExclusions) {
-                globalExclusionsOptionsPanel = new GlobalExclusionsOptionsPanel(optionsDialog);
-                optionsDialog.addParamPanel(networkNode, globalExclusionsOptionsPanel, true);
-                hookView.addOptionPanel(
-                        new LegacyOptionsPanel("globalexcludeurl", globalExclusionsOptionsPanel));
-            }
+            globalExclusionsOptionsPanel = new GlobalExclusionsOptionsPanel(optionsDialog);
+            optionsDialog.addParamPanel(networkNode, globalExclusionsOptionsPanel, true);
+            hookView.addOptionPanel(
+                    new LegacyOptionsPanel("globalexcludeurl", globalExclusionsOptionsPanel));
         }
     }
 
@@ -774,15 +752,10 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             localServerInfoLabel.update();
         }
 
-        if (provideGlobalExclusions) {
-            try {
-                setGlobalExcludedUrlRegexsSupplier.invoke(
-                        getModel().getSession(),
-                        (Supplier<List<String>>) ExtensionNetwork.this::getGlobalExcludedUrlRegexs);
-            } catch (Exception e) {
-                LOGGER.warn("Failed to set global exclusions into the session.", e);
-            }
-        }
+        getModel()
+                .getSession()
+                .setGlobalExcludedUrlRegexsSupplier(
+                        ExtensionNetwork.this::getGlobalExcludedUrlRegexs);
     }
 
     private static class BreakSerialiseState
@@ -1375,20 +1348,11 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     @Override
     public boolean canUnload() {
-        if (dynamicUnload != null) {
-            return dynamicUnload;
-        }
-
-        try {
-            dynamicUnload = HttpSenderImpl.class.getMethod("restoreState", Object.class) != null;
-        } catch (Exception e) {
-            dynamicUnload = false;
-        }
-        return dynamicUnload;
+        return true;
     }
 
     @Override
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings({"deprecation", "removal"})
     public void unload() {
         Control.getSingleton().getExtensionLoader().removeProxyServer(legacyProxyListenerHandler);
         legacyProxyListenerHandler = null;
@@ -1419,10 +1383,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             optionsDialog.removeParamPanel(connectionOptionsPanel);
             optionsDialog.removeParamPanel(clientCertificatesOptionsPanel);
             optionsDialog.removeParamPanel(rateLimitExtensionHelper.getRateLimitOptionsPanel());
-
-            if (provideGlobalExclusions) {
-                optionsDialog.removeParamPanel(globalExclusionsOptionsPanel);
-            }
+            optionsDialog.removeParamPanel(globalExclusionsOptionsPanel);
 
             if (removeBreakListenerMethod != null) {
                 try {
@@ -1433,14 +1394,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             }
         }
 
-        if (provideGlobalExclusions) {
-            try {
-                setGlobalExcludedUrlRegexsSupplier.invoke(
-                        getModel().getSession(), (Supplier<List<String>>) null);
-            } catch (Exception e) {
-                LOGGER.warn("Failed to reset global exclusions into the session.", e);
-            }
-        }
+        getModel().getSession().setGlobalExcludedUrlRegexsSupplier(null);
     }
 
     @Override
@@ -1573,15 +1527,9 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             globalHttpState = new HttpState();
             getModel().getOptionsParam().getConnectionParam().setHttpState(globalHttpState);
 
-            if (session != null && provideGlobalExclusions) {
-                try {
-                    setGlobalExcludedUrlRegexsSupplier.invoke(
-                            session,
-                            (Supplier<List<String>>)
-                                    ExtensionNetwork.this::getGlobalExcludedUrlRegexs);
-                } catch (Exception e) {
-                    LOGGER.warn("Failed to set global exclusions into the session.", e);
-                }
+            if (session != null) {
+                session.setGlobalExcludedUrlRegexsSupplier(
+                        ExtensionNetwork.this::getGlobalExcludedUrlRegexs);
             }
 
             rateLimitExtensionHelper.reset();

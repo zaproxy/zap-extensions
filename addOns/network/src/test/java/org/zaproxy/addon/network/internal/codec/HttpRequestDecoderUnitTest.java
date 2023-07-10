@@ -91,13 +91,13 @@ class HttpRequestDecoderUnitTest extends HttpMessageDecoderUnitTest {
 
     static Stream<String> headersDifferentSeparators() {
         return Stream.of(
-                "GET / HTTP/1.1\r\nContent-Length: 0\r\nY: x\r\n\r\n",
-                "GET / HTTP/1.1\nContent-Length: 0\nY: x\n\n",
-                "GET / HTTP/1.1\nContent-Length: 0\r\nY: x\r\n\n");
+                "GET / HTTP/1.1\r\ncontent-length: 0\r\nY: x\r\n\r\n",
+                "GET / HTTP/1.1\ncontent-length: 0\nY: x\n\n",
+                "GET / HTTP/1.1\ncontent-length: 0\r\nY: x\r\n\n");
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"", "\r\nContent-Length: 0"})
+    @ValueSource(strings = {"", "\r\ncontent-length: 0"})
     void shouldReadEmptyBody(String contentLength) {
         // Given
         String content = "POST / HTTP/1.1" + contentLength + "\r\n\r\n";

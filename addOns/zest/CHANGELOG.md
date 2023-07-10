@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Dialogs for scroll, scrollTo, window resize and mouse over.
 
 ### Changed
+- Update minimum ZAP version to 2.13.0.
 - Update Zest library to 0.18.0:
   - Update Selenium to version 4.
   - jBrowserDriver (JBD), Opera, and PhantomJS are no longer supported (no longer being actively maintained).

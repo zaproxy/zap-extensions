@@ -5,7 +5,6 @@ description = "All of the add-ons just containing release, beta and alpha status
 zapAddOn {
     addOnName.set("Collection: Scan Rules Pack")
     addOnStatus.set(AddOnStatus.ALPHA)
-    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")

@@ -65,6 +65,9 @@ import org.zaproxy.zap.utils.Pair;
 public abstract class BaseHttpSender<T1 extends BaseHttpSenderContext, T2, T3>
         implements CloseableHttpSenderImpl<T1> {
 
+    @SuppressWarnings("deprecation")
+    protected static final int CHECK_FOR_UPDATES_INITIATOR = HttpSender.CHECK_FOR_UPDATES_INITIATOR;
+
     protected static final byte[] EMPTY_BODY = {};
 
     private static final String CONTEXTS_FIELD = "contexts";
@@ -222,6 +225,13 @@ public abstract class BaseHttpSender<T1 extends BaseHttpSenderContext, T2, T3>
     protected abstract byte[] getBytes(T3 body) throws IOException;
 
     protected abstract T2 createRequestContext(T1 ctx, HttpRequestConfig requestConfig);
+
+    @Override
+    public void sendAndReceive(
+            HttpSender parent, HttpRequestConfig config, HttpMessage msg, Path file)
+            throws IOException {
+        sendAndReceive(getContext(parent), config, msg, file);
+    }
 
     @Override
     public void sendAndReceive(T1 ctx, HttpRequestConfig config, HttpMessage msg, Path file)
@@ -396,7 +406,7 @@ public abstract class BaseHttpSender<T1 extends BaseHttpSenderContext, T2, T3>
             HttpMessage message,
             ResponseBodyConsumer<T3> responseBodyConsumer)
             throws IOException {
-        if (ctx.getInitiator() != HttpSender.CHECK_FOR_UPDATES_INITIATOR) {
+        if (ctx.getInitiator() != CHECK_FOR_UPDATES_INITIATOR) {
             rateLimiter.throttle(message, ctx.getInitiator());
         }
         sendImpl(ctx, requestCtx, requestConfig, message, responseBodyConsumer);

@@ -5,7 +5,6 @@ description = "This Value Generator Add-on allows a user to define field names a
 zapAddOn {
     addOnName.set("Value Generator")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")

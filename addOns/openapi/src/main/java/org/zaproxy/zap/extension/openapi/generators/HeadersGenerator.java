@@ -35,7 +35,7 @@ import org.zaproxy.zap.extension.openapi.converter.swagger.OperationModel;
 
 public class HeadersGenerator {
 
-    private static final String ACCEPT = "Accept";
+    private static final String ACCEPT = "accept";
     private static final String HEADER = "header";
     private static final String COOKIE = "cookie";
 

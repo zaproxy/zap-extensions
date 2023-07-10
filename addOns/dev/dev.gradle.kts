@@ -2,7 +2,6 @@ description = "An add-on to help with development of ZAP."
 
 zapAddOn {
     addOnName.set("Dev Add-on")
-    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")

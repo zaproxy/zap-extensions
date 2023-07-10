@@ -5,7 +5,6 @@ description = "Automation Framework."
 zapAddOn {
     addOnName.set("Automation Framework")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")
