@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [29] - 2023-07-11
 ### Changed
 - Update minimum ZAP version to 2.13.0.
 - Maintenance changes.
@@ -213,6 +213,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[29]: https://github.com/zaproxy/zap-extensions/releases/websocket-v29
 [28]: https://github.com/zaproxy/zap-extensions/releases/websocket-v28
 [27]: https://github.com/zaproxy/zap-extensions/releases/websocket-v27
 [26]: https://github.com/zaproxy/zap-extensions/releases/websocket-v26

@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [23.15.0] - 2023-07-11
 ### Added
 - Support for authentication handlers.
 
@@ -280,6 +280,7 @@ By default it allows files with extension `.js` and `.css`.
 
 
 
+[23.15.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.15.0
 [23.14.1]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.14.1
 [23.14.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.14.0
 [23.13.1]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.13.1

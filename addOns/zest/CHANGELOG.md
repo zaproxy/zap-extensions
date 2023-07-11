@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [39] - 2023-07-11
 ### Added 
 - Dialogs for scroll, scrollTo, window resize and mouse over.
 
@@ -283,6 +283,7 @@ Sender scripts. (Issue 5590)
 
 - Updated for 2.1.0
 
+[39]: https://github.com/zaproxy/zap-extensions/releases/zest-v39
 [38]: https://github.com/zaproxy/zap-extensions/releases/zest-v38
 [37]: https://github.com/zaproxy/zap-extensions/releases/zest-v37
 [36]: https://github.com/zaproxy/zap-extensions/releases/zest-v36
