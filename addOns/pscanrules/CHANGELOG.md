@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [50] - 2023-07-11
 ### Added
 - The following now include example alert functionality for documentation generation purposes (Issue 6119):
     - Re-examine Cache-control Directives Scan Rule
@@ -412,6 +412,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[50]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v50
 [49]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v49
 [48]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v48
 [47]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v47
