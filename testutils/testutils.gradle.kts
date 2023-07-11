@@ -15,9 +15,9 @@ configurations {
 }
 
 dependencies {
-    compileOnly("org.zaproxy:zap:2.12.0")
+    compileOnly("org.zaproxy:zap:2.13.0-SNAPSHOT")
     implementation(parent!!.childProjects.get("addOns")!!.childProjects.get("network")!!)
-    implementation("org.apache.httpcomponents.client5:httpclient5:5.2-beta1")
+    implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
 
     api("org.hamcrest:hamcrest-library:2.2")
     api("org.junit.jupiter:junit-jupiter-api:$jupiterVersion")

@@ -19,7 +19,6 @@ description = "Allows you to spider sites that make heavy use of JavaScript usin
 zapAddOn {
     addOnName.set("Ajax Spider")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")

@@ -5,7 +5,6 @@ description = "Lists of directory names to be used with Forced Browse or Fuzzer 
 zapAddOn {
     addOnName.set("Directory List v2.3")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")

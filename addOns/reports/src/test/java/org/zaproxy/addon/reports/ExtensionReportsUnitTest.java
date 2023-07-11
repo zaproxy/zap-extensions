@@ -817,7 +817,7 @@ class ExtensionReportsUnitTest {
                 instances.getJSONObject(i).getString("request-header"),
                 is(
                         equalTo(
-                                "GET http://example.com/example_3 HTTP/1.1\r\nHost: example.com\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0\r\nPragma: no-cache\r\nCache-Control: no-cache\r\n\r\n")));
+                                "GET http://example.com/example_3 HTTP/1.1\r\nhost: example.com\r\nuser-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0\r\npragma: no-cache\r\ncache-control: no-cache\r\n\r\n")));
         assertThat(
                 instances.getJSONObject(i).getString("request-body"),
                 is(equalTo("Test Request Body")));
@@ -1074,7 +1074,7 @@ class ExtensionReportsUnitTest {
                     instanceChildNodes.item(y).getTextContent(),
                     is(
                             equalTo(
-                                    "GET http://example.com/example_3 HTTP/1.1\nHost: example.com\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0\nPragma: no-cache\nCache-Control: no-cache\n\n")));
+                                    "GET http://example.com/example_3 HTTP/1.1\nhost: example.com\nuser-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0\npragma: no-cache\ncache-control: no-cache\n\n")));
             y++;
             assertThat(instanceChildNodes.item(y).getNodeName(), is(equalTo("#text"))); // Filler
             y++;

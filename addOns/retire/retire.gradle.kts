@@ -5,7 +5,6 @@ description = "Retire.js"
 zapAddOn {
     addOnName.set("Retire.js")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.12.0")
 
     manifest {
         author.set("Nikita Mundhada and the ZAP Dev Team")

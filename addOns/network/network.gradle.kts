@@ -11,7 +11,6 @@ configurations.implementation { extendsFrom(hc) }
 zapAddOn {
     addOnName.set("Network")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")

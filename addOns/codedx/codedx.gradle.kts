@@ -2,7 +2,6 @@ description = "Includes request and response data in XML reports and provides th
 
 zapAddOn {
     addOnName.set("Code Dx Extension")
-    zapVersion.set("2.12.0")
 
     manifest {
         author.set("Code Dx, Inc.")

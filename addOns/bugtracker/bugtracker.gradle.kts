@@ -2,7 +2,6 @@ description = "Bug Tracker extension."
 
 zapAddOn {
     addOnName.set("Bug Tracker")
-    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")

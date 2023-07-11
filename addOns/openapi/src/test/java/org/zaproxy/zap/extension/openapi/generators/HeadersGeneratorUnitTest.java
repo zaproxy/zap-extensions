@@ -70,7 +70,7 @@ class HeadersGeneratorUnitTest {
         // When
         headersGenerator.generateContentTypeHeaders(operation, headers, "");
         // Then
-        assertThat(headers, not(contains(header("Content-Type"))));
+        assertThat(headers, not(contains(header("content-type"))));
     }
 
     @Test
@@ -82,7 +82,7 @@ class HeadersGeneratorUnitTest {
         // When
         headersGenerator.generateContentTypeHeaders(operation, headers, "");
         // Then
-        assertThat(headers, not(contains(header("Content-Type"))));
+        assertThat(headers, not(contains(header("content-type"))));
     }
 
     @ParameterizedTest
@@ -95,7 +95,7 @@ class HeadersGeneratorUnitTest {
         // When
         headersGenerator.generateContentTypeHeaders(operation, headers, "");
         // Then
-        assertThat(headers, not(contains(header("Content-Type"))));
+        assertThat(headers, not(contains(header("content-type"))));
     }
 
     @ParameterizedTest
@@ -108,7 +108,7 @@ class HeadersGeneratorUnitTest {
         // When
         headersGenerator.generateContentTypeHeaders(operation, headers, "");
         // Then
-        assertThat(headers, contains(header("Content-Type", mediaType)));
+        assertThat(headers, contains(header("content-type", mediaType)));
     }
 
     @ParameterizedTest
@@ -122,7 +122,7 @@ class HeadersGeneratorUnitTest {
         // When
         headersGenerator.generateContentTypeHeaders(operation, headers, "");
         // Then
-        assertThat(headers, contains(header("Content-Type", mediaType)));
+        assertThat(headers, contains(header("content-type", mediaType)));
     }
 
     @ParameterizedTest
@@ -140,7 +140,7 @@ class HeadersGeneratorUnitTest {
                 headers,
                 contains(
                         header(
-                                "Content-Type",
+                                "content-type",
                                 mediaType + "; boundary=AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")));
     }
 
@@ -153,7 +153,7 @@ class HeadersGeneratorUnitTest {
         // When
         headersGenerator.generateContentTypeHeaders(operation, headers, "{\"a\":\"b\"}");
         // Then
-        assertThat(headers, contains(header("Content-Type", "application/json")));
+        assertThat(headers, contains(header("content-type", "application/json")));
     }
 
     @Test
@@ -166,7 +166,7 @@ class HeadersGeneratorUnitTest {
         // When
         headersGenerator.generateAcceptHeaders(operation, headers);
         // Then
-        assertThat(headers, contains(header("Accept", "*/*")));
+        assertThat(headers, contains(header("accept", "*/*")));
     }
 
     @Test
@@ -178,7 +178,7 @@ class HeadersGeneratorUnitTest {
         // When
         headersGenerator.generateAcceptHeaders(operation, headers);
         // Then
-        assertThat(headers, contains(header("Accept", "*/*")));
+        assertThat(headers, contains(header("accept", "*/*")));
     }
 
     @Test
@@ -190,7 +190,7 @@ class HeadersGeneratorUnitTest {
         // When
         headersGenerator.generateAcceptHeaders(operation, headers);
         // Then
-        assertThat(headers, contains(header("Accept", "text/plain")));
+        assertThat(headers, contains(header("accept", "text/plain")));
     }
 
     @Test
@@ -202,7 +202,7 @@ class HeadersGeneratorUnitTest {
         // When
         headersGenerator.generateAcceptHeaders(operation, headers);
         // Then
-        assertThat(headers, contains(header("Accept", "text/x, text/y")));
+        assertThat(headers, contains(header("accept", "text/x, text/y")));
     }
 
     @Test
@@ -218,7 +218,7 @@ class HeadersGeneratorUnitTest {
         // Then
         assertThat(
                 headers,
-                contains(header("Accept", "text/a1, text/b1, text/b2, text/c1, text/c2, text/c3")));
+                contains(header("accept", "text/a1, text/b1, text/b2, text/c1, text/c2, text/c3")));
     }
 
     @Test
@@ -231,7 +231,7 @@ class HeadersGeneratorUnitTest {
         // When
         headersGenerator.generateAcceptHeaders(operation, headers);
         // Then
-        assertThat(headers, contains(header("Accept", "text/plain")));
+        assertThat(headers, contains(header("accept", "text/plain")));
     }
 
     @Test
@@ -323,7 +323,7 @@ class HeadersGeneratorUnitTest {
         // When
         headersGenerator.generateCustomHeader(operation, headers);
         // Then
-        assertThat(headers, contains(header("Cookie", cookieName + "=" + cookieValue)));
+        assertThat(headers, contains(header("cookie", cookieName + "=" + cookieValue)));
     }
 
     @Test
@@ -347,7 +347,7 @@ class HeadersGeneratorUnitTest {
                 headers,
                 contains(
                         header(
-                                "Cookie",
+                                "cookie",
                                 cookieName1
                                         + "="
                                         + cookieValue1
@@ -390,10 +390,10 @@ class HeadersGeneratorUnitTest {
         assertThat(
                 headers,
                 contains(
-                        header("Accept", "text/plain"),
-                        header("Content-Type", "application/json"),
+                        header("accept", "text/plain"),
+                        header("content-type", "application/json"),
                         header(headerName, headerValue),
-                        header("Cookie", cookieName + "=" + cookieValue)));
+                        header("cookie", cookieName + "=" + cookieValue)));
     }
 
     private static ApiResponse mockResponseWithMediaTypes(String... types) {

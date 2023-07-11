@@ -2,7 +2,6 @@ description = "Gives the possibility of defining a sequence of requests to be sc
 
 zapAddOn {
     addOnName.set("Sequence")
-    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")

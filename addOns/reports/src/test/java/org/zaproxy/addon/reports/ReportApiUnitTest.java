@@ -410,11 +410,12 @@ class ReportApiUnitTest {
                         () -> reportApi.handleApiAction(ReportApi.ACTION_GENERATE, params));
 
         // Then
-        assertThat(exception.getMessage(), is("illegal_parameter"));
+        assertThat(
+                exception.getMessage(), is("ILLEGAL_PARAMETER (!reports.api.error.badSections!)"));
         assertThat(
                 exception.toString(true),
                 is(
-                        "Provided parameter has illegal or unrecognized value (illegal_parameter) : !reports.api.error.badSections!"));
+                        "Provided parameter has illegal or unrecognized value (illegal_parameter): !reports.api.error.badSections!"));
     }
 
     @Test

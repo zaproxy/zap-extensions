@@ -146,12 +146,19 @@ subprojects {
         }
     }
 
-    val apiGenClasspath = configurations.detachedConfiguration(dependencies.create("org.zaproxy:zap:2.12.0"))
+    val zapGav = "org.zaproxy:zap:2.13.0-SNAPSHOT"
+    dependencies {
+        "zap"(zapGav)
+    }
+
+    val apiGenClasspath = configurations.detachedConfiguration(dependencies.create(zapGav))
 
     zapAddOn {
         releaseLink.set(project.provider { "https://github.com/zaproxy/zap-extensions/releases/${zapAddOn.addOnId.get()}-v@CURRENT_VERSION@" })
 
         manifest {
+            zapVersion.set("2.13.0")
+
             changesFile.set(tasks.named<ConvertMarkdownToHtml>("generateManifestChanges").flatMap { it.html })
             repo.set("https://github.com/zaproxy/zap-extensions/")
         }

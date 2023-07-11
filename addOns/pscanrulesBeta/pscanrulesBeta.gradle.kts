@@ -5,7 +5,6 @@ description = "The beta status Passive Scanner rules"
 zapAddOn {
     addOnName.set("Passive scanner rules (beta)")
     addOnStatus.set(AddOnStatus.BETA)
-    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")

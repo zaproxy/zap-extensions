@@ -3,7 +3,6 @@ description = "Exposes client (browser) side information in ZAP using Firefox an
 
 zapAddOn {
     addOnName.set("Client Side Integration")
-    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")

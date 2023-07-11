@@ -16,7 +16,6 @@ description = "FuzzDB files which can be used with the ZAP fuzzer"
 zapAddOn {
     addOnName.set("FuzzDB Files")
     addOnStatus.set(AddOnStatus.RELEASE)
-    zapVersion.set("2.12.0")
 
     manifest {
         author.set("ZAP Dev Team")

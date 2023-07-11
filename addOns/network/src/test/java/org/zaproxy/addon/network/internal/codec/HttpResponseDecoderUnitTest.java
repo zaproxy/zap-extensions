@@ -81,9 +81,9 @@ class HttpResponseDecoderUnitTest extends HttpMessageDecoderUnitTest {
 
     static Stream<String> headersDifferentSeparators() {
         return Stream.of(
-                "HTTP/1.1 200 OK\r\nContent-Length: 0\r\nY: x\r\n\r\n",
-                "HTTP/1.1 200 OK\nContent-Length: 0\nY: x\n\n",
-                "HTTP/1.1 200 OK\nContent-Length: 0\r\nY: x\r\n\n");
+                "HTTP/1.1 200 OK\r\ncontent-length: 0\r\nY: x\r\n\r\n",
+                "HTTP/1.1 200 OK\ncontent-length: 0\nY: x\n\n",
+                "HTTP/1.1 200 OK\ncontent-length: 0\r\nY: x\r\n\n");
     }
 
     @Test
@@ -107,7 +107,7 @@ class HttpResponseDecoderUnitTest extends HttpMessageDecoderUnitTest {
         String content =
                 "HTTP/1.1 "
                         + statusCode
-                        + "\r\n\r\nHTTP/1.1 200 OK\r\nContent-Length: 3\r\n\r\nABC";
+                        + "\r\n\r\nHTTP/1.1 200 OK\r\ncontent-length: 3\r\n\r\nABC";
         // When
         written(content, true);
         // Then
@@ -144,7 +144,7 @@ class HttpResponseDecoderUnitTest extends HttpMessageDecoderUnitTest {
         String content =
                 "HTTP/1.1 101\r\nUpgrade: "
                         + httpVersion
-                        + "\r\n\r\nHTTP/1.1 200 OK\r\nContent-Length: 3\r\n\r\nABC";
+                        + "\r\n\r\nHTTP/1.1 200 OK\r\ncontent-length: 3\r\n\r\nABC";
         // When
         written(content, true);
         // Then

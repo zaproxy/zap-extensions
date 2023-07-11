@@ -372,6 +372,7 @@ public class ExtensionCallHome extends ExtensionAdaptor
         return os;
     }
 
+    @SuppressWarnings("deprecation")
     private HttpSender getHttpSender() {
         if (httpSender == null) {
             httpSender = new HttpSender(HttpSender.CHECK_FOR_UPDATES_INITIATOR);

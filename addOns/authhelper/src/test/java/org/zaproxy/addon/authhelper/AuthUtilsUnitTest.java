@@ -195,12 +195,12 @@ class AuthUtilsUnitTest extends TestUtils {
         // Then
         assertThat(tokens.size(), is(equalTo(1)));
 
-        assertThat(tokens.get("header:Authorization"), is(notNullValue()));
+        assertThat(tokens.get("header:authorization"), is(notNullValue()));
         assertThat(
-                tokens.get("header:Authorization").getSource(),
+                tokens.get("header:authorization").getSource(),
                 is(equalTo(SessionToken.HEADER_SOURCE)));
         assertThat(
-                tokens.get("header:Authorization").getKey(), is(equalTo(HttpHeader.AUTHORIZATION)));
+                tokens.get("header:authorization").getKey(), is(equalTo(HttpHeader.AUTHORIZATION)));
     }
 
     @Test
@@ -390,7 +390,7 @@ class AuthUtilsUnitTest extends TestUtils {
         // Then
         assertThat(headerTokens.size(), is(equalTo(2)));
         assertThat(headerTokens.get(0).first, is(equalTo(HttpHeader.AUTHORIZATION)));
-        assertThat(headerTokens.get(0).second, is(equalTo("Bearer {%header:Authorization%}")));
+        assertThat(headerTokens.get(0).second, is(equalTo("Bearer {%header:authorization%}")));
         assertThat(headerTokens.get(1).first, is(equalTo(HttpHeader.COOKIE)));
         assertThat(headerTokens.get(1).second, is(equalTo("{%json:set.cookie%}; SameSite=Strict")));
     }
@@ -422,7 +422,7 @@ class AuthUtilsUnitTest extends TestUtils {
         // Then
         assertThat(headerTokens.size(), is(equalTo(1)));
         assertThat(headerTokens.get(0).first, is(equalTo(HttpHeader.AUTHORIZATION)));
-        assertThat(headerTokens.get(0).second, is(equalTo("Bearer {%header:Authorization%}")));
+        assertThat(headerTokens.get(0).second, is(equalTo("Bearer {%header:authorization%}")));
     }
 
     @Test
@@ -480,8 +480,8 @@ class AuthUtilsUnitTest extends TestUtils {
         assertThat(stArray[2].getSource(), is(equalTo(SessionToken.HEADER_SOURCE)));
 
         assertThat(stArray[0].getToken(), is(equalTo("cookie:id")));
-        assertThat(stArray[1].getToken(), is(equalTo("header:Authorization")));
-        assertThat(stArray[2].getToken(), is(equalTo("header:Authorization")));
+        assertThat(stArray[1].getToken(), is(equalTo("header:authorization")));
+        assertThat(stArray[2].getToken(), is(equalTo("header:authorization")));
 
         assertThat(stArray[0].getValue(), is(equalTo(token2)));
         assertThat(stArray[1].getValue(), is(equalTo(token3)));

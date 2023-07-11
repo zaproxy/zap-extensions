@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Auth page which uses one request and one cookie
 - Auth page which uses multiple requests and multiple cookies
 
+### Changed
+- Update minimum ZAP version to 2.13.0.
+
 ## [0.2.0] - 2023-05-09
 
 ### Added

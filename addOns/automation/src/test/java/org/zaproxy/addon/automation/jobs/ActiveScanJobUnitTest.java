@@ -191,7 +191,7 @@ class ActiveScanJobUnitTest {
                 job.getConfigParameters(new ScannerParamWrapper(), job.getParamMethodName());
 
         // Then
-        assertThat(params.size(), is(equalTo(10)));
+        assertThat(params.size(), is(equalTo(11)));
 
         assertThat(params.containsKey("addQueryParam"), is(equalTo(true)));
         assertThat(params.containsKey("defaultPolicy"), is(equalTo(true)));
@@ -203,6 +203,7 @@ class ActiveScanJobUnitTest {
         assertThat(params.containsKey("scanHeadersAllRequests"), is(equalTo(true)));
         assertThat(params.containsKey("threadPerHost"), is(equalTo(true)));
         assertThat(params.containsKey("scanNullJsonValues"), is(equalTo(true)));
+        assertThat(params.containsKey("maxAlertsPerRule"), is(equalTo(true)));
     }
 
     @Test
@@ -216,7 +217,6 @@ class ActiveScanJobUnitTest {
                 job.getConfigParameters(new ScannerParamWrapper(), job.getParamMethodName());
 
         // Then
-        assertThat(params.size(), is(equalTo(10)));
         assertThat(params.containsKey("threadPerHost"), is(equalTo(true)));
         assertTrue(Integer.parseInt(params.get("threadPerHost")) > 0);
     }
@@ -233,7 +233,9 @@ class ActiveScanJobUnitTest {
     private static class ScannerParamWrapper {
         @SuppressWarnings("unused")
         public ScannerParam getScannerParam() {
-            return new ScannerParam();
+            ScannerParam param = new ScannerParam();
+            param.load(new ZapXmlConfiguration());
+            return param;
         }
     }
 

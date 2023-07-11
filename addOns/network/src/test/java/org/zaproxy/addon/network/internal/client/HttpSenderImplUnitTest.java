@@ -248,7 +248,7 @@ class HttpSenderImplUnitTest {
 
     static Stream<Arguments> noBodyKeepAliveResponseAndSendAndReceiveMethods() {
         return Stream.of("1.0", "1.1")
-                .map(version -> "HTTP/" + version + " 200 OK\r\nConnection: keep-alive\r\n\r\n")
+                .map(version -> "HTTP/" + version + " 200 OK\r\nconnection: keep-alive\r\n\r\n")
                 .flatMap(response -> sendAndReceiveMethods().map(sm -> arguments(response, sm)));
     }
 
@@ -258,7 +258,7 @@ class HttpSenderImplUnitTest {
                         version ->
                                 "HTTP/"
                                         + version
-                                        + " 200 OK\r\nContent-Length: 0\r\nConnection: keep-alive\r\n\r\n")
+                                        + " 200 OK\r\ncontent-length: 0\r\nconnection: keep-alive\r\n\r\n")
                 .flatMap(response -> sendAndReceiveMethods().map(sm -> arguments(response, sm)));
     }
 
@@ -270,7 +270,7 @@ class HttpSenderImplUnitTest {
                 "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
         void shouldNotBeThrottledForCfuInitiator(SenderMethod method) throws Exception {
             // Given
-            httpSender.setInitiator(HttpSender.CHECK_FOR_UPDATES_INITIATOR);
+            httpSender.setInitiator(BaseHttpSender.CHECK_FOR_UPDATES_INITIATOR);
             HttpRequestHeader requestHeader = message.getRequestHeader();
             requestHeader.setHeader("Host", "localhost:" + serverPort);
             requestHeader.setContentLength(0);
@@ -421,10 +421,10 @@ class HttpSenderImplUnitTest {
                                     "GET "
                                             + getServerUri("/")
                                             + " HTTP/1.1\r\n"
-                                            + "Host: localhost:"
+                                            + "host: localhost:"
                                             + serverPort
                                             + "\r\n"
-                                            + "Content-Length: 0\r\n"
+                                            + "content-length: 0\r\n"
                                             + "\r\n")));
             assertThat(receivedMessage.getRequestBody().toString(), is(equalTo("")));
         }
@@ -449,10 +449,10 @@ class HttpSenderImplUnitTest {
                                     "GET "
                                             + getServerUri("/")
                                             + " HTTP/1.1\r\n"
-                                            + "Host: localhost:"
+                                            + "host: localhost:"
                                             + serverPort
                                             + "\r\n"
-                                            + "Content-Length: 0\r\n"
+                                            + "content-length: 0\r\n"
                                             + "\r\n")));
             assertThat(receivedMessage.getRequestBody().toString(), is(equalTo("")));
         }
@@ -475,7 +475,7 @@ class HttpSenderImplUnitTest {
                                     "GET "
                                             + getServerUri("/")
                                             + " HTTP/1.1\r\n"
-                                            + "Host: localhost:"
+                                            + "host: localhost:"
                                             + serverPort
                                             + "\r\n\r\n")));
             assertThat(receivedMessage.getRequestBody().toString(), is(equalTo("")));
@@ -501,10 +501,10 @@ class HttpSenderImplUnitTest {
                                     "GET "
                                             + getServerUri("/")
                                             + " HTTP/1.1\r\n"
-                                            + "Host: localhost:"
+                                            + "host: localhost:"
                                             + serverPort
                                             + "\r\n"
-                                            + "Content-Length: 42\r\n"
+                                            + "content-length: 42\r\n"
                                             + "\r\n")));
             assertThat(receivedMessage.getRequestBody().toString(), is(equalTo("")));
         }
@@ -525,7 +525,7 @@ class HttpSenderImplUnitTest {
                     "GET "
                             + getServerUri("/")
                             + " HTTP/1.1\r\n"
-                            + "Host: localhost:"
+                            + "host: localhost:"
                             + serverPort
                             + "\r\n"
                             + "content-length: 0\r\n"
@@ -585,7 +585,7 @@ class HttpSenderImplUnitTest {
         void shouldHaveDataReceived(SenderMethod method) throws Exception {
             // Given
             String responseHeader =
-                    "HTTP/1.1 500 Reason\r\nHeader1: HeaderValue\r\nX: y\r\nContent-Length: 13\r\n\r\n";
+                    "HTTP/1.1 500 Reason\r\nheader1: HeaderValue\r\nx: y\r\ncontent-length: 13\r\n\r\n";
             String responseBody = "Response Body";
             server.setHttpMessageHandler(
                     (ctx, msg) -> {
@@ -623,7 +623,7 @@ class HttpSenderImplUnitTest {
                 throws Exception {
             // Given
             String responseHeader =
-                    "HTTP/1.1 200 OK\r\nContent-Length: 420\r\nConnection: close\r\n\r\n";
+                    "HTTP/1.1 200 OK\r\ncontent-length: 420\r\nConnection: close\r\n\r\n";
             String responseBody = "Response Body";
             server.setHttpMessageHandler(
                     (ctx, msg) -> {
@@ -643,7 +643,7 @@ class HttpSenderImplUnitTest {
                 "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
         void shouldPreserveNonAsciiCharactersInHeader(SenderMethod method) throws Exception {
             // Given
-            String responseHeader = "HTTP/1.1 200 OK\r\nJ/ψ:  → VP\r\nContent-Length: 0\r\n\r\n";
+            String responseHeader = "HTTP/1.1 200 OK\r\nJ/ψ:  → VP\r\ncontent-length: 0\r\n\r\n";
             server.setHttpMessageHandler((ctx, msg) -> msg.setResponseHeader(responseHeader));
             // When
             method.sendWith(httpSender, message);
@@ -661,7 +661,7 @@ class HttpSenderImplUnitTest {
                     (ctx, msg) -> {
                         ByteBuf out = ctx.alloc().buffer();
                         ByteBufUtil.writeAscii(
-                                out, "HTTP/1.1 200 OK\r\nContent-Length: " + size + "\r\n\r\n");
+                                out, "HTTP/1.1 200 OK\r\ncontent-length: " + size + "\r\n\r\n");
                         ctx.write(out);
 
                         out = ctx.alloc().buffer(10);
@@ -1800,10 +1800,10 @@ class HttpSenderImplUnitTest {
                                         + " "
                                         + getServerUri("/")
                                         + " HTTP/1.1\r\n"
-                                        + "Content-Length: "
+                                        + "content-length: "
                                         + requestBody.getBytes(StandardCharsets.US_ASCII).length
                                         + "\r\n"
-                                        + "Host: localhost:"
+                                        + "host: localhost:"
                                         + serverPort
                                         + "\r\n"
                                         + "\r\n")));
