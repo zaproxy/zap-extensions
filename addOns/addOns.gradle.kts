@@ -146,7 +146,7 @@ subprojects {
         }
     }
 
-    val zapGav = "org.zaproxy:zap:2.13.0-SNAPSHOT"
+    val zapGav = "org.zaproxy:zap:2.13.0"
     dependencies {
         "zap"(zapGav)
     }
