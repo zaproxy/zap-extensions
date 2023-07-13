@@ -287,7 +287,7 @@ public class NetworkApi extends ApiImplementor {
         this.addApiAction(
                 new ApiAction(
                         ACTION_SET_RATE_LIMIT_RULE_ENABLED,
-                        Arrays.asList(PARAM_DESCRIPTION, PARAM_DESCRIPTION)));
+                        Arrays.asList(PARAM_DESCRIPTION, PARAM_ENABLED)));
     }
 
     @Override
