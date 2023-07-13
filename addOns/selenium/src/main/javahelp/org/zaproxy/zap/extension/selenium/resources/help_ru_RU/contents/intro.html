@@ -68,28 +68,13 @@
 			<td>Браузер в комплекте, не предъявляет никаких требований. </td>
 		</tr>
 		<tr>
-			<td>Opera</td>
-			<td>opera</td>
-			<td>Временно не работает. </td>
-		</tr>
-		<tr>
-			<td>PhantomJS</td>
-			<td>phantomjs</td>
-			<td>Известно, что работает следующая версия: 2.1.1 (могут работать и более старые версии). 
-				Требуется бинарный файл PhantomJS, если его нет в системном PATH, его можно установить в опциях. 
-				Дополнительные сведения о PhantomJS и о том, как его получить, см. на <a
-				href="http://phantomjs.org/">веб-сайте PhantomJS</a> (см.
-с помощью PhantomJS). 
-			</td>
-		</tr>
-		<tr>
 			<td>Safari</td>
 			<td>safari</td>
 			<td>&nbsp;</td>
 		</tr>
 	</table>
-	<p>Чтобы использовать Firefox, Chrome, Opera, PhantomJS и Safari, вы должны
-установить их в вашей системе.  ID браузера можно использовать для выбора
+	<p>To use Firefox, Chrome, and Safari, you must
+		have them installed in your system. ID браузера можно использовать для выбора
 браузере при настройке ZAP через командную строку или с помощью ZAP API (например,
 настроить AJAX Spider на использование того или иного браузера). 
 	<p>
@@ -106,31 +91,19 @@ ZAP предоставляет надстройки с WebDrivers, когда э
 по возможности использовать более новые/последние версии браузеров. 
 
 	<p>
-		<strong>Примечание.</strong> Надстройки ZAP могут добавлять дополнительные браузеры. 
+		<strong>Note:</strong> ZAP add-ons can add additional browsers.
 
-	<p>
-		<strong>Примечание Firefox/geckodriver.</strong> Существует проблема (<a
-			href="https://bugzilla.mozilla.org/show_bug.cgi?id=1103196">Ошибка 1103196</a>), которая
-предотвращает использование HTTPS-сайтов в версиях &ge; 48 и &lt; 52. 
-	<p>
-		<strong>PhantomJS Note:</strong> Есть проблема( <a
-			href="https://github.com/ariya/phantomjs/issues/11342">ошибка #11342 </a>), что предотвращает
-сайты на локальном хосте, 127.0.0.1 и ::1 от проксирования через ZAP.  Пока не будет исправления
-доступными, рекомендуется не использовать его в этих случаях.  Некоторые надстройки могут отображать
-предупреждающее сообщение, когда это произойдет.  В качестве обходного пути можно определить, в  <code>хосты</code>
-		файл, сопоставление доменного имени с локальным адресом и использование этого доменного имени. 
-
-	<h2>Смотрите также </h2>
+	<h2>See also</h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td><a href="options.html">Параметры Selenium экрана </a></td>
-			<td>для обзора опций Selenium </td>
+			<td><a href="options.html">Options Selenium screen</a></td>
+			<td>for an overview of the Selenium Options</td>
 		</tr>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
 			<td><a href="api.html">API</a></td>
-			<td>для обзора Selenium API </td>
+			<td>for an overview of the Selenium API</td>
 		</tr>
 	</table>
 

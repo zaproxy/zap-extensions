@@ -203,25 +203,60 @@ ZAP использует собственный сертификат.  Это т
 </i>. 
 	</p>
 
+	<h3>CRL Distribution Point</h3>
+	<p>
+		Sometimes, a valid certificate is not enough to have a working TLS MITM.
+		For example, <code>libcurl</code> on Windows uses <code>schannel</code> as its backend,
+		which by default will check if a valid Certificate Revocation List Distribution Point
+		is provided in the certificate, and try to contact and retrieve this CRL.
+		If you're lucky the binary is verbose, and the error message will be clear enough :
+	</p>
+
+	<p style="padding-left: 20pt;">
+		<code>
+			PS C:\Users\alice> curl.exe https://ifconfig.me/<br>
+			curl: (35) schannel: next InitializeSecurityContext failed: Unknown error (0x80092012) - The revocation function was unable to check revocation for the certificate.<br>
+		</code>
+	</p>
+	<p>
+		This may also manifest as a TLS Handshake Failure at the network level :
+	</p>
+
+	<p style="padding-left: 20pt;">
+		<code>
+			6    0.023470    192.168.56.104    1.2.3.4    TLSv1.2    273    Client Hello<br>
+			8    0.033465    1.2.3.4    192.168.56.104    TLSv1.2    144    Server Hello<br>
+		 11    0.033875    1.2.3.4    192.168.56.104    TLSv1.2    527    Certificate<br>
+		 13    0.084581    1.2.3.4    192.168.56.104    TLSv1.2    401    Server Key Exchange, Server Hello Done<br>
+		 16    0.158961    1.2.3.4    192.168.56.104    TLSv1.2    61    Alert (Level: Fatal, Description: Handshake Failure)<br>
+		</code>
+	</p>
+	<p>
+		This option enables you to specify a CRL Distribution Point that will be added in each of the generated certificates.
+		Obviously, you need to create a custom Root Certificate Authority, using for example <a href="https://github.com/kaysond/spki">https://github.com/kaysond/spki</a>,
+		a wrapper for OpenSSL that generates and manages a simple PKI suitable for small deployments, support CRLs and OCSP, and make the CRL available to the victim client,
+		using for example a tiny HTTP server.
+	</p>
+
 	<h2><a name="install">Установите сертификат ZAP Root CA </a></h2>
 	<p>
-		Любой HTTPS-клиент, который вы хотите использовать, должен знать сертификат OWASP Root CA.
-как «доверенный корневой сертификат».  Обычно приходится устанавливать вручную
-ZAP-сертификат в список доверенных корневых сертификатов вашего браузера. 
+		Any HTTPS client you want to use, has to know the OWASP Root CA certificate
+		as 'trusted root certificate'. Typically you have to install manually the
+		ZAP certificate into your browser's list of trusted root certificates.
 	</p>
 	<h3>Windows / Internet Explorer</h3>
 	<p>
-		Самый простой способ — нажать <a href="#view">просмотреть</a> и выбрать
-«Установить сертификат».  Кроме того, вы можете сохранить/экспортировать созданный
-сертификат (скопируйте его на целевой компьютер) и дважды щелкните файл .CER. 
-		При этом обычный мастер Windows для установки сертификата
-появляется помощь. 
-		В этом мастере вручную выберите хранилище сертификатов.  Не позволять
-Windows автоматически выбирает хранилище сертификатов. 
-		Выберите «доверенные корневые сертификаты» в качестве хранилища и завершите работу мастера. 
+		The easiest way is to click on <a href="#view">view</a> and choose
+		'Install certificate'. Alternatively, you can save/export your generated
+		certificate (copy it to you target computer) and double click the .CER file.
+		When doing so, the regular Windows wizard for certificate installation
+		assistance is popping up.
+		In this wizard manually choose the certificate store. Do NOT let
+		Windows choose automatically the certificate store.
+		Choose 'trusted root certificates' as store and finalize the wizard.
 	</p>
 	<p>
-		После успешной установки вы можете проверить сертификат. 
+		After successfully installation, you can check the certificate.
 	</p>
 		<ol>
 		<li>Перейти к параметрам Интернета </li>
@@ -233,9 +268,9 @@ Windows автоматически выбирает хранилище серт�
 
 	<h3>Mozilla Firefox</h3>
 	<p>
-		Firefox использует собственное хранилище сертификатов.  Вот почему вы должны
-импортируйте его дважды, когда вы используете оба браузера в Windows. 
-		Установка и поздняя проверка выполняются в том же диалоговом окне настроек: 
+		Firefox is using it's own certificate store. Thats why you have to
+		import it twice, when you're using both browser on windows.
+		Installation and late on validation is done in the same preferences dialog:
 	</p>
 		<ol>
 		<li>Перейти к настройкам </li>
@@ -250,13 +285,13 @@ Windows автоматически выбирает хранилище серт�
 
 	<H2 style="color: red; font-weight: bold; text-decoration: underline;">Риски </H2>
 	<p>
-		<b>Внимание, есть риски!</b><br>
-При добавлении самогенерируемых корневых сертификатов ЦС в список доверенных
-корневые сертификаты, каждый с корневым сертификатом может переправлять данные
-в вашу систему (браузер). 
-		Другими словами, когда вы тестируете не в безопасной среде, а на
-производительные машины, имейте в виду, что вы открываете дополнительную атаку
-вектор в вашу систему. 
+		<b>Attention, there are risks!</b><br>
+		When adding self generated Root CA certificates to your list of trusted
+		root certificates, everyone with the root certificate can smuggle data
+		into your system (browser).
+		In other words when you're not testing in a safe environment, but on
+		productive machines, be aware that you're opening an additional attack
+		vector to your system.
 	</p>
 
 	<H2>Смотрите также </H2>

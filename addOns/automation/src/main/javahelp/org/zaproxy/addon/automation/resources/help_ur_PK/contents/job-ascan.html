@@ -31,6 +31,7 @@ This job supports <a href="test-monitor.html">monitor</a> tests.
       injectPluginIdInHeader:          # Bool: If set then the relevant rule Id will be injected into the X-ZAP-Scan-ID header of each request, default: false
       scanHeadersAllRequests:          # Bool: If set then the headers of requests that do not include any parameters will be scanned, default: false
       threadPerHost:                   # Int: The max number of threads per host, default: 2
+      maxAlertsPerRule:                # Int: Maximum number of alerts to raise per rule, default: 0 unlimited
     policyDefinition:                  # The policy definition - only used if the 'policy' is not set
       defaultStrength:                 # String: The default Attack Strength for all rules, one of Low, Medium, High, Insane (not recommended), default: Medium
       defaultThreshold:                # String: The default Alert Threshold for all rules, one of Off, Low, Medium, High, default: Medium

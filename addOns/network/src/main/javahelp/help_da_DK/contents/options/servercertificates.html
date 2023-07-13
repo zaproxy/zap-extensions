@@ -203,6 +203,41 @@
 		</i>.
 	</p>
 
+	<h3>CRL Distribution Point</h3>
+	<p>
+		Sometimes, a valid certificate is not enough to have a working TLS MITM.
+		For example, <code>libcurl</code> on Windows uses <code>schannel</code> as its backend,
+		which by default will check if a valid Certificate Revocation List Distribution Point
+		is provided in the certificate, and try to contact and retrieve this CRL.
+		If you're lucky the binary is verbose, and the error message will be clear enough :
+	</p>
+
+	<p style="padding-left: 20pt;">
+		<code>
+			PS C:\Users\alice> curl.exe https://ifconfig.me/<br>
+			curl: (35) schannel: next InitializeSecurityContext failed: Unknown error (0x80092012) - The revocation function was unable to check revocation for the certificate.<br>
+		</code>
+	</p>
+	<p>
+		This may also manifest as a TLS Handshake Failure at the network level :
+	</p>
+
+	<p style="padding-left: 20pt;">
+		<code>
+			6    0.023470    192.168.56.104    1.2.3.4    TLSv1.2    273    Client Hello<br>
+			8    0.033465    1.2.3.4    192.168.56.104    TLSv1.2    144    Server Hello<br>
+		 11    0.033875    1.2.3.4    192.168.56.104    TLSv1.2    527    Certificate<br>
+		 13    0.084581    1.2.3.4    192.168.56.104    TLSv1.2    401    Server Key Exchange, Server Hello Done<br>
+		 16    0.158961    1.2.3.4    192.168.56.104    TLSv1.2    61    Alert (Level: Fatal, Description: Handshake Failure)<br>
+		</code>
+	</p>
+	<p>
+		This option enables you to specify a CRL Distribution Point that will be added in each of the generated certificates.
+		Obviously, you need to create a custom Root Certificate Authority, using for example <a href="https://github.com/kaysond/spki">https://github.com/kaysond/spki</a>,
+		a wrapper for OpenSSL that generates and manages a simple PKI suitable for small deployments, support CRLs and OCSP, and make the CRL available to the victim client,
+		using for example a tiny HTTP server.
+	</p>
+
 	<h2><a name="install">Install ZAP Root CA certificate</a></h2>
 	<p>
 		Any HTTPS client you want to use, has to know the OWASP Root CA certificate
