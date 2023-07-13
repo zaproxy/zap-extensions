@@ -1527,19 +1527,20 @@ class NetworkApiUnitTest extends TestUtils {
         verify(rateLimitOptions).removeRule("example.org");
     }
 
-    @Test
-    void shouldReturnOkForChangedRateLimitRule() throws Exception {
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldReturnOkForChangedRateLimitRule(boolean enabled) throws Exception {
         // Given
         String name = "setRateLimitRuleEnabled";
         JSONObject params = new JSONObject();
         params.put("description", "example.org");
-        params.put("enabled", "false");
+        params.put("enabled", enabled);
         given(rateLimitOptions.setEnabled(any(), anyBoolean())).willReturn(true);
         // When
         ApiResponse response = networkApi.handleApiAction(name, params);
         // Then
         assertThat(response, is(equalTo(ApiResponseElement.OK)));
-        verify(rateLimitOptions).setEnabled("example.org", false);
+        verify(rateLimitOptions).setEnabled("example.org", enabled);
     }
 
     @Test
