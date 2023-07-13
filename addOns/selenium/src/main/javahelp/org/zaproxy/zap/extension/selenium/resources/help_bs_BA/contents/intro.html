@@ -66,27 +66,12 @@
 			<td>Bundled browser, does not have any requirement.</td>
 		</tr>
 		<tr>
-			<td>Opera</td>
-			<td>opera</td>
-			<td>Temporarily not working.</td>
-		</tr>
-		<tr>
-			<td>PhantomJS</td>
-			<td>phantomjs</td>
-			<td>The following version is known to work: 2.1.1 (older versions might work too).
-				Requires PhantomJS binary, if not on the system's PATH, it can be set in the options.
-				For more information on PhantomJS and how to obtain it refer to the <a
-				href="http://phantomjs.org/">PhantomJS website</a> (see footer note for caveat when
-				using PhantomJS).
-			</td>
-		</tr>
-		<tr>
 			<td>Safari</td>
 			<td>safari</td>
 			<td>&nbsp;</td>
 		</tr>
 	</table>
-	<p>To use Firefox, Chrome, Opera, PhantomJS and Safari, you must
+	<p>To use Firefox, Chrome, and Safari, you must
 		have them installed in your system. The ID of the browser can be used to choose the
 		browser when configuring ZAP through the command line or using the ZAP API (for example,
 		to set the AJAX Spider to use one or other browser).
@@ -105,18 +90,6 @@
 
 	<p>
 		<strong>Note:</strong> ZAP add-ons can add additional browsers.
-
-	<p>
-		<strong>Firefox/geckodriver Note:</strong> There's an issue (<a
-			href="https://bugzilla.mozilla.org/show_bug.cgi?id=1103196">Bug 1103196</a>) that
-		prevents HTTPS sites from being used in versions &ge; 48 and &lt; 52.
-	<p>
-		<strong>PhantomJS Note:</strong> There's an issue (<a
-			href="https://github.com/ariya/phantomjs/issues/11342">Issue #11342</a>) that prevents
-		sites at localhost, 127.0.0.1 and ::1 from being proxied through ZAP. Until a fix is
-		available is advised to not use it in those cases. Some add-ons might choose to show
-		warning message when that happens. As workaround one could define, in the <code>hosts</code>
-		file, a domain name mapping to the local address and use that domain name instead.
 
 	<h2>See also</h2>
 	<table>

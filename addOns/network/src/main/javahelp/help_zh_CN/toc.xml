@@ -9,7 +9,9 @@
                 <tocitem text="Options" target="addon.network.options">
                     <tocitem text="Client Certificates" target="addon.network.options.clientcertificates"/>
                     <tocitem text="Connection" target="addon.network.options.connection"/>
+                    <tocitem text="Global Exclusions" target="addon.network.options.globalexclusions"/>
                     <tocitem text="Local Servers/Proxies" target="addon.network.options.localservers"/>
+                    <tocitem text="Rate Limit" target="addon.network.options.ratelimit"/>
                     <tocitem text="Server Certificates" target="addon.network.options.servercertificates"/>
                 </tocitem>
             </tocitem>

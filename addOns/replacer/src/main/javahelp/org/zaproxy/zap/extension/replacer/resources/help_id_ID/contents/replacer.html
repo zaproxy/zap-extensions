@@ -61,12 +61,41 @@ This option is disabled when matching actual headers.
 Hexadecimal bytes are represented with "\x00 - \xFF" (for example "abc\x01\x02\x03def").
 
 <h3>Replacement String</h3>
+<p>
 The new string that will replace the specified selection.
 Hexadecimal bytes are represented with "\x00 - \xFF".
 The literal string "\x00" can be kept with "\\x00".
+</p>
 
 <h3>Enable</h3>
 If not set then the rule will not apply.
+
+<h3>Token Processing</h3>
+<p>
+When enabled, the Replacement String may contain a single token which is replaced with a dynamic value:
+</p>
+<table>
+	<tr>
+		<th>Token</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td>{{RINT|MIN|MAX}}</td>
+		<td>
+			<p>Random Integer. <code>MIN</code> and <code>MAX</code> are each optional.</p> 
+			<p><code>MIN</code> defaults to <code>0</code></p>
+			<p><code>MAX</code> defaults to <a href="https://docs.oracle.com/javase/8/docs/api/constant-values.html#java.lang.Integer.MAX_VALUE">Integer.maxValue</a></p>
+		</td>
+	</tr>
+	<tr>
+		<td>{{UUID}}</td>
+		<td>Random UUID generated using <a href="https://docs.oracle.com/javase/8/docs/api/java/util/UUID.html#randomUUID--">java.util.UUID.randomUUID()</a></td>
+	</tr>
+	<tr>
+		<td>{{TICKS}}</td>
+		<td>Unix epoch milliseconds using <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/System.html#currentTimeMillis--">System.currentTimeMillis()</a></td>
+	</tr>
+</table> 
 
 <h3>Initiators tab</h3>
 Allows you to specify which 'initiators' the rule should apply to.
@@ -74,8 +103,8 @@ Each ZAP component which can send and receive messages is a separate initiator, 
 control over exactly when the rule should apply.
 
 <p>
-Jika anda membutuhkan lebih mengontrol kapan dan bagaimana teks harus diganti maka anda dapat menggunakan ZAP Script Konsol yang
-memberi anda kontrol penuh atas ZAP pesan.
+If you need even more control over when and how text should be replaced then you can use the ZAP Script Console which
+gives you complete control over the ZAP messages.
 
 </body>
 </html>

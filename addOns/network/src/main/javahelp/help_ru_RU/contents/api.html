@@ -51,6 +51,17 @@
 				<li>index: The index of the certificate in the file, defaults to 0.</li>
 			</ul>
 		</li>
+		<li>
+			addRateLimitRule (description* enabled* matchRegex matchString requestsPerSecond* groupBy*): Adds a rule to the rate limiter.
+			<ul>
+				<li>description: A description that allows you to identify the rule. Each rule must have a unique description.</li>
+				<li>enabled: The enabled state, true or false.</li>
+				<li>matchRegex: Determines if matchString is a regular expression or a plain string: true or false.</li>
+				<li>matchString: A plain string match is handled based on DNS conventions. If the string has one or two components. If matchRegex is true, this is a regular expression.</li>
+				<li>requestsPerSecond: The maximum number of requests per second.</li>
+				<li>groupBy: How to group hosts when applying rate limiting: rule or host</li>
+			</ul>
+		</li>
 		<li>generateRootCaCert: Generates a new Root CA certificate, used to issue server certificates.</li>
 		<li>importRootCaCert (filePath*): Imports a Root CA certificate to be used to issue server certificates.
 			<ul>
@@ -80,6 +91,12 @@
 			removePassThrough (authority*):  Removes a pass-through.
 			<ul>
 				<li>authority: The value of the authority.</li>
+			</ul>
+		</li>
+		<li>
+			removeRateLimitRule (description*):  Removes a rule from the rate limiter.
+			<ul>
+				<li>description: The description of the rule.</li>
 			</ul>
 		</li>
 		<li>
@@ -144,6 +161,13 @@
 			</ul>
 		</li>
 		<li>
+			setRateLimitRuleEnabled (description*, enabled*): Set enabled state for a rate limit rule.
+			<ul>
+				<li>description: The description of the rule.</li>
+				<li>enabled: The enabled state, true or false.</li>
+			</ul>
+		</li>
+		<li>
 			setRootCaCertValidity (validity*): Sets the Root CA certificate validity. Used when generating a new Root CA certificate.
 			<ul>
 				<li>validity: The number of days that the generated Root CA certificate will be valid for.</li>
@@ -196,6 +220,7 @@
 		<li>getHttpProxyExclusions: Gets the HTTP proxy exclusions.</li>
 		<li>getLocalServers: Gets the local servers/proxies.</li>
 		<li>getPassThroughs: Gets the authorities that will pass-through the local proxies.</li>
+		<li>getRateLimitRules: Gets the rate limit rules.</li>
 		<li>getRootCaCertValidity: Gets the Root CA certificate validity, in days. Used when generating a new Root CA certificate.</li>
 		<li>getServerCertValidity:  Gets the server certificate validity, in days. Used when generating server certificates.</li>
 		<li>getSocksProxy: Gets the SOCKS proxy.</li>
