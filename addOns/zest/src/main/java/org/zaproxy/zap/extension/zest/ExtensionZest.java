@@ -142,6 +142,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     private String startRecordingUrl = null;
     private int recordingWinId = 0;
     private ScriptNode recordingNode = null;
+    private boolean clientRecordingActive = false;
 
     private ExtensionNetwork extensionNetwork;
 
@@ -1507,8 +1508,11 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         clientUrlToWindowHandle.clear();
         startRecordingUrl = uri;
         recordingWinId = 0;
-        // And turn off the recording button, at least for now
-        this.getRecordButton().setSelected(false);
+        clientRecordingActive = true;
+    }
+
+    public void stopClientRecording() {
+        clientRecordingActive = false;
     }
 
     public void setRecordingNode(ScriptNode node) {
@@ -1590,13 +1594,22 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             LOGGER.error(e1.getMessage(), e1);
         }
 
+        addClientZestStatement(stmt);
+    }
+
+    public void addClientZestStatement(JSONObject jsonMessage) throws Exception {
+        ZestStatement stmt = (new ZestStatementFromJson(jsonMessage)).getZestStatement();
+        addClientZestStatement(stmt);
+    }
+
+    public void addClientZestStatement(ZestStatement stmt) {
         if (stmt != null) {
             final ZestStatement stmtFinal = stmt;
 
             EventQueue.invokeLater(
                     () -> {
                         try {
-                            addToParent(clientRecordingNode, stmtFinal, false);
+                            addToParent(getRecordingNode(), stmtFinal, false);
                         } catch (Exception e) {
                             LOGGER.error(e.getMessage(), e);
                         }
@@ -1604,6 +1617,10 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         }
     }
 
+    public boolean isClientRecodingActive() {
+        return clientRecordingActive;
+    }
+    
     /**/
     @Override
     public void preInvoke(ScriptWrapper script) {

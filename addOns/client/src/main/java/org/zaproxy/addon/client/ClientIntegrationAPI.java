@@ -43,9 +43,10 @@ public class ClientIntegrationAPI extends ApiImplementor {
 
     private static final String ACTION_REPORT_OBJECT = "reportObject";
     private static final String ACTION_REPORT_EVENT = "reportEvent";
-
+    private static final String ACTION_REPORT_ZEST_SCRIPT = "reportZestScript";
     private static final String PARAM_OBJECT_JSON = "objectJson";
     private static final String PARAM_EVENT_JSON = "eventJson";
+    private static final String PARAM_SCRIPT_JSON = "scriptJson";
 
     private static final Logger LOGGER = LogManager.getLogger(ClientIntegrationAPI.class);
 
@@ -138,6 +139,17 @@ public class ClientIntegrationAPI extends ApiImplementor {
                 this.extension.addReportedObject(new ReportedEvent(json));
                 break;
 
+            case ACTION_REPORT_ZEST_SCRIPT:
+                String scriptJson = this.getParam(params, PARAM_SCRIPT_JSON, "");
+                LOGGER.debug("Got script: {}", scriptJson);
+                json = JSONObject.fromObject(scriptJson);
+                try {
+                    this.extension.addReportedZestStatement(json);
+                } catch (Exception e) {
+                    LOGGER.debug(e);
+                }
+                break;
+
             default:
                 throw new ApiException(ApiException.Type.BAD_ACTION);
         }
@@ -167,6 +179,12 @@ public class ClientIntegrationAPI extends ApiImplementor {
             } else if (body.startsWith(PARAM_EVENT_JSON)) {
                 this.extension.addReportedObject(
                         new ReportedEvent(decodeParam(body, PARAM_EVENT_JSON)));
+            } else if (body.startsWith(PARAM_SCRIPT_JSON)) {
+                try {
+                    this.extension.addReportedZestStatement(decodeParam(body, PARAM_SCRIPT_JSON));
+                } catch (Exception e) {
+                    LOGGER.debug(e);
+                }
             }
 
         } else {

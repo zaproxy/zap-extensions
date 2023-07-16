@@ -20,6 +20,7 @@
 package org.zaproxy.addon.client;
 
 import java.util.List;
+import net.sf.json.JSONObject;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -28,6 +29,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
+import org.zaproxy.addon.client.zest.ZestClientRecordingHelper;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 
@@ -49,6 +51,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     private ClientHistoryPanel clientHistoryPanel;
     private ClientHistoryTableModel clientHistoryTableModel;
     private RedirectScript redirectScript;
+    private ClientZestInterface clientHandler;
 
     private ClientIntegrationAPI api;
 
@@ -181,5 +184,17 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         public void sessionModeChanged(Mode mode) {
             // Ignore
         }
+    }
+
+    public void addReportedZestStatement(JSONObject json) throws Exception {
+        clientHandler.addZestStatementUtil(json);
+    }
+
+    public void setClientRecorderHelper(ZestClientRecordingHelper clientHandler) {
+        this.clientHandler = clientHandler;
+    }
+
+    public void removeClientRecorderHelper() {
+        clientHandler = null;
     }
 }

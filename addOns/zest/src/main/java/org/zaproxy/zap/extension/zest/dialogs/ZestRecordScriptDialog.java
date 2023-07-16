@@ -21,22 +21,22 @@ package org.zaproxy.zap.extension.zest.dialogs;
 
 import java.awt.Dimension;
 import java.awt.Frame;
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.view.StandardFieldsDialog;
@@ -57,6 +57,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
     private static final String FIELD_APPROX = "zest.dialog.script.label.approx";
     private static final String FIELD_LOAD = "zest.dialog.script.label.load";
     private static final String FIELD_CLIENT_NODE = "zest.dialog.script.label.clientnode";
+    private static final String FIELD_BROWSER = "zest.dialog.script.label.browser";
 
     private static final Logger LOGGER = LogManager.getLogger(ZestRecordScriptDialog.class);
 
@@ -79,6 +80,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
         this.addTextField(0, FIELD_TITLE, "");
         this.addComboField(0, FIELD_TYPE, this.getScriptTypes(), "", false);
         this.addComboField(0, FIELD_RECORD, this.getRecordTypes(), "", false);
+        this.addComboField(0, FIELD_BROWSER, this.getBrowserNames(), "", false);
 
         this.addNodeSelectField(0, FIELD_CLIENT_NODE, node, true, false);
 
@@ -118,6 +120,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
                         getField(FIELD_STATUS).setEnabled(false);
                         getField(FIELD_LENGTH).setEnabled(false);
                         getField(FIELD_APPROX).setEnabled(false);
+                        getField(FIELD_BROWSER).setEnabled(true);
                     }
                 });
     }
@@ -153,8 +156,15 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
         List<String> list = new ArrayList<>();
         list.add(Constant.messages.getString("zest.dialog.script.record.type.server"));
         // TODO disable until support improved...
-        // list.add(Constant.messages.getString("zest.dialog.script.record.type.client"));
+        list.add(Constant.messages.getString("zest.dialog.script.record.type.client"));
         return list;
+    }
+
+    private List<String> getBrowserNames() {
+        List<String> browsers = new ArrayList<>();
+        browsers.add("Firefox");
+        browsers.add("Chrome");
+        return browsers;
     }
 
     private boolean isServerSide() {
@@ -174,6 +184,17 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
             }
         }
         return list;
+    }
+
+    private void launchBrowser(String url, String browserName) {
+        ExtensionSelenium extSelenium =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
+        WebDriver wd = extSelenium.getProxiedBrowserByName(browserName);
+        String zapurl = wd.getCurrentUrl();
+        wd.get(url);
+        JavascriptExecutor jsExecutor = (JavascriptExecutor) wd;
+        jsExecutor.executeScript("localStorage.setItem('localzapurl', '" + zapurl + "')");
+        jsExecutor.executeScript("localStorage.setItem('localzapenable',false)");
     }
 
     @Override
@@ -212,9 +233,6 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
                 scriptWrapper.setIncLengthAssertion(this.getBoolValue(FIELD_LENGTH));
                 scriptWrapper.setLengthApprox(this.getIntValue(FIELD_APPROX));
             }
-
-        } else {
-            // Client side
         }
 
         ScriptNode scriptNode = extension.add(scriptWrapper, false);
@@ -224,25 +242,17 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
 
         if (!this.isServerSide()) {
             String url = this.getStringValue(FIELD_CLIENT_NODE);
-            Extension extPnh =
-                    Control.getSingleton().getExtensionLoader().getExtension("ExtensionPlugNHack");
-            if (extPnh != null) {
-
-                Method method = null;
-                try {
-                    URI uri = new URI(url, true);
-
-                    extension.startClientRecording(url);
-
-                    method = extPnh.getClass().getMethod("launchAndRecordClient", URI.class);
-
-                    method.invoke(extPnh, uri);
-
-                } catch (Exception e) {
-                    // Its an older version, so just dont try to use it
-                    LOGGER.debug(e);
-                }
-            }
+            String browser = this.getStringValue(FIELD_BROWSER);
+            extension.startClientRecording(url);
+            Thread browserThread =
+                    new Thread(
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    launchBrowser(url, browser);
+                                }
+                            });
+            browserThread.start();
         }
     }
 
@@ -250,6 +260,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
     public void cancelPressed() {
         super.cancelPressed();
         extension.cancelScriptRecording();
+        extension.stopClientRecording();
     }
 
     @Override
