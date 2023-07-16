@@ -23,7 +23,9 @@ import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
 import java.awt.EventQueue;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,9 +60,10 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.addon.commonlib.ui.ProgressPane;
 import org.zaproxy.addon.commonlib.ui.ProgressPanel;
+import org.zaproxy.zap.extension.openapi.OpenApiExceptions.InvalidDefinitionException;
+import org.zaproxy.zap.extension.openapi.OpenApiExceptions.InvalidUrlException;
 import org.zaproxy.zap.extension.openapi.TableOpenApi.TableOpenApiReadResult;
 import org.zaproxy.zap.extension.openapi.VariantOpenApi.VariantOpenApiChecks;
-import org.zaproxy.zap.extension.openapi.converter.swagger.InvalidUrlException;
 import org.zaproxy.zap.extension.openapi.converter.swagger.OperationModel;
 import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerConverter;
 import org.zaproxy.zap.extension.openapi.network.RequestModel;
@@ -69,6 +72,7 @@ import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.DefaultValueGenerator;
 import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.model.ValueGenerator;
+import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineListener {
@@ -82,10 +86,8 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     private static final List<Class<? extends Extension>> DEPENDENCIES =
             Collections.unmodifiableList(Arrays.asList(ExtensionCommonlib.class));
 
-    private ZapMenuItem menuImportLocalOpenApi = null;
-    private ZapMenuItem menuImportUrlOpenApi = null;
-    private ImportFromFileDialog currentFileDialog = null;
-    private ImportFromUrlDialog currentUrlDialog = null;
+    private ZapMenuItem menuImportOpenApi;
+    private ImportDialog importDialog;
     private int threadId = 1;
     private ValueGenerator valueGenerator;
     private final Map<Integer, VariantOpenApiChecks> variantChecksMap = new HashMap<>();
@@ -116,8 +118,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
         super.hook(extensionHook);
 
         if (hasView()) {
-            extensionHook.getHookMenu().addImportMenuItem(getMenuImportLocalOpenApi());
-            extensionHook.getHookMenu().addImportMenuItem(getMenuImportUrlOpenApi());
+            extensionHook.getHookMenu().addImportMenuItem(getMenuImportOpenApi());
             extensionHook.addSessionListener(new SessionChangedListenerImpl());
             extensionHook.getHookView().addStatusPanel(getProgressPanel());
         }
@@ -131,13 +132,9 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     @Override
     public void unload() {
         super.unload();
-        if (currentFileDialog != null) {
-            currentFileDialog.dispose();
-            currentFileDialog.unload();
-        }
-        if (currentUrlDialog != null) {
-            currentUrlDialog.dispose();
-            currentUrlDialog.unload();
+        if (importDialog != null) {
+            importDialog.dispose();
+            importDialog.unload();
         }
     }
 
@@ -174,48 +171,22 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                 .getProgressPanel();
     }
 
-    /* Menu option to import a local OpenApi file. */
-    private ZapMenuItem getMenuImportLocalOpenApi() {
-        if (menuImportLocalOpenApi == null) {
-            menuImportLocalOpenApi = new ZapMenuItem("openapi.topmenu.import.importopenapi");
-            menuImportLocalOpenApi.setToolTipText(
-                    Constant.messages.getString("openapi.topmenu.import.importopenapi.tooltip"));
-            menuImportLocalOpenApi.addActionListener(
+    private ZapMenuItem getMenuImportOpenApi() {
+        if (menuImportOpenApi == null) {
+            menuImportOpenApi = new ZapMenuItem("openapi.topmenu.import.importOpenapi");
+            menuImportOpenApi.setToolTipText(
+                    Constant.messages.getString("openapi.topmenu.import.importOpenapi.tooltip"));
+            menuImportOpenApi.addActionListener(
                     e -> {
-                        if (currentFileDialog == null) {
-                            currentFileDialog =
-                                    new ImportFromFileDialog(
-                                            View.getSingleton().getMainFrame(),
-                                            ExtensionOpenApi.this);
-                        } else {
-                            currentFileDialog.setVisible(true);
+                        if (importDialog == null) {
+                            importDialog =
+                                    new ImportDialog(
+                                            getView().getMainFrame(), ExtensionOpenApi.this);
                         }
+                        importDialog.setVisible(true);
                     });
         }
-        return menuImportLocalOpenApi;
-    }
-
-    /* Menu option to import a OpenApi file from a given URL. */
-    private ZapMenuItem getMenuImportUrlOpenApi() {
-        if (menuImportUrlOpenApi == null) {
-            menuImportUrlOpenApi = new ZapMenuItem("openapi.topmenu.import.importremoteopenapi");
-            menuImportUrlOpenApi.setToolTipText(
-                    Constant.messages.getString(
-                            "openapi.topmenu.import.importremoteopenapi.tooltip"));
-
-            menuImportUrlOpenApi.addActionListener(
-                    e -> {
-                        if (currentUrlDialog == null) {
-                            currentUrlDialog =
-                                    new ImportFromUrlDialog(
-                                            View.getSingleton().getMainFrame(),
-                                            ExtensionOpenApi.this);
-                        } else {
-                            currentUrlDialog.setVisible(true);
-                        }
-                    });
-        }
-        return menuImportUrlOpenApi;
+        return menuImportOpenApi;
     }
 
     public void importOpenApiDefinition(final URI uri) {
@@ -286,15 +257,18 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                             requestor,
                             contextId,
                             false));
-            return results;
         } catch (IOException e) {
             if (initViaUi) {
-                View.getSingleton()
-                        .showWarningDialog(Constant.messages.getString("openapi.io.error"));
+                ThreadUtils.invokeAndWaitHandled(
+                        () ->
+                                importDialog.showWarningDialog(
+                                        Constant.messages.getString(
+                                                "openapi.import.error.inaccessible")));
             }
             LOGGER.warn(e.getMessage(), e);
+            results.setErrors(null);
         }
-        return null;
+        return results;
     }
 
     public void importOpenApiDefinition(final File file) {
@@ -350,42 +324,51 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
     public OpenApiResults importOpenApiDefinitionV2(
             final File file, final String targetUrl, boolean initViaUi, int contextId) {
+        OpenApiResults results = new OpenApiResults();
         try {
-            OpenApiResults results = new OpenApiResults();
             Requestor requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR);
             requestor.addListener(new HistoryPersister(results));
 
             if (!file.exists()) {
-                throw new IOException(file.getAbsolutePath() + " does not exist.");
+                throw new IOException(
+                        Constant.messages.getString("openapi.import.error.fileNotFound"));
+            }
+
+            try (var br = new BufferedReader(new FileReader(file))) {
+                if (br.readLine() == null) {
+                    throw new OpenApiExceptions.EmptyDefinitionException();
+                }
             }
 
             SwaggerParseResult swaggerParseResult = SwaggerConverter.parse(file);
             OpenAPI openApi = swaggerParseResult.getOpenAPI();
 
-            List<String> errors;
             if (openApi == null) {
-                errors = swaggerParseResult.getMessages();
-            } else {
-                errors =
-                        importOpenApiDefinition(
-                                Json.pretty(openApi),
-                                targetUrl,
-                                null,
-                                initViaUi,
-                                requestor,
-                                contextId,
-                                false);
+                throw new InvalidDefinitionException();
             }
+
+            List<String> errors =
+                    importOpenApiDefinition(
+                            Json.pretty(openApi),
+                            targetUrl,
+                            null,
+                            initViaUi,
+                            requestor,
+                            contextId,
+                            false);
             results.setErrors(errors);
-            return results;
         } catch (IOException e) {
             if (initViaUi) {
-                View.getSingleton()
-                        .showWarningDialog(Constant.messages.getString("openapi.io.error"));
+                ThreadUtils.invokeAndWaitHandled(
+                        () ->
+                                importDialog.showWarningDialog(
+                                        Constant.messages.getString(
+                                                "openapi.import.error.inaccessible")));
             }
             LOGGER.warn(e.getMessage(), e);
+            results.setErrors(null);
         }
-        return null;
+        return results;
     }
 
     private List<String> importOpenApiDefinition(
@@ -396,6 +379,10 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
             final Requestor requestor,
             int contextId,
             boolean existsInDb) {
+        if (defn == null || defn.isEmpty()) {
+            throw new OpenApiExceptions.EmptyDefinitionException();
+        }
+
         final List<String> errors = new ArrayList<>();
         SwaggerConverter converter =
                 new SwaggerConverter(targetUrl, definitionUrl, defn, getValueGenerator());
@@ -467,12 +454,11 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                                         Constant.messages.getString("openapi.parse.error", exMsg);
                                 View.getSingleton().getOutputPanel().append(baseMessage);
                                 View.getSingleton().getOutputPanel().append(e);
-                                View.getSingleton()
-                                        .showWarningDialog(
-                                                baseMessage
-                                                        + "\n\n"
-                                                        + Constant.messages.getString(
-                                                                "openapi.parse.trailer"));
+                                importDialog.showWarningDialog(
+                                        baseMessage
+                                                + "\n\n"
+                                                + Constant.messages.getString(
+                                                        "openapi.parse.trailer"));
                             }
                             errors.add(Constant.messages.getString("openapi.parse.error", e));
                             logErrors(errors, initViaUi);
@@ -723,11 +709,8 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     private class SessionChangedListenerImpl implements SessionChangedListener {
         @Override
         public void sessionChanged(Session session) {
-            if (currentFileDialog != null) {
-                currentFileDialog.refreshContextsComboBox();
-            }
-            if (currentUrlDialog != null) {
-                currentUrlDialog.refreshContextsComboBox();
+            if (importDialog != null) {
+                importDialog.refreshContextsComboBox();
             }
             if (session != null) {
                 for (Context context : session.getContexts()) {
@@ -739,11 +722,8 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
         @Override
         public void sessionAboutToChange(Session session) {
-            if (currentFileDialog != null) {
-                currentFileDialog.clear();
-            }
-            if (currentUrlDialog != null) {
-                currentUrlDialog.clear();
+            if (importDialog != null) {
+                importDialog.clearFields();
             }
             variantChecksMap.clear();
         }
