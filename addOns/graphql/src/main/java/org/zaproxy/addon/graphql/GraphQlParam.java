@@ -295,25 +295,9 @@ public class GraphQlParam extends VersionedAbstractParam {
                 getInt(PARAM_MAX_ADDITIONAL_QUERY_DEPTH, DEFAULT_MAX_ADDITIONAL_QUERY_DEPTH);
         maxArgsDepth = getInt(PARAM_MAX_ARGS_DEPTH, DEFAULT_MAX_ARGS_DEPTH);
         optionalArgsEnabled = getBoolean(PARAM_OPTIONAL_ARGS, DEFAULT_OPTIONAL_ARGS);
-        argsType = getEnum(ArgsTypeOption.class, PARAM_ARGS_TYPE, DEFAULT_ARGS_TYPE);
-        querySplitType =
-                getEnum(QuerySplitOption.class, PARAM_QUERY_SPLIT_TYPE, DEFAULT_QUERY_SPLIT_TYPE);
-        requestMethod =
-                getEnum(RequestMethodOption.class, PARAM_REQUEST_METHOD, DEFAULT_REQUEST_METHOD);
-    }
-
-    private <T extends Enum<T>> T getEnum(Class<T> enumType, String key, T defaultValue) {
-        String value = getString(key, defaultValue.toString());
-        try {
-            return Enum.valueOf(enumType, value);
-        } catch (IllegalArgumentException e) {
-            LOGGER.warn(
-                    "Using default {}, {}. Failed to convert from: {}",
-                    enumType.getSimpleName(),
-                    defaultValue,
-                    value);
-        }
-        return defaultValue;
+        argsType = getEnum(PARAM_ARGS_TYPE, DEFAULT_ARGS_TYPE);
+        querySplitType = getEnum(PARAM_QUERY_SPLIT_TYPE, DEFAULT_QUERY_SPLIT_TYPE);
+        requestMethod = getEnum(PARAM_REQUEST_METHOD, DEFAULT_REQUEST_METHOD);
     }
 
     @Override

@@ -335,11 +335,7 @@ public class SpiderParam extends VersionedAbstractParam {
         this.skipURL = getString(SPIDER_SKIP_URL, "");
         parseSkipURL(this.skipURL);
 
-        handleParametersVisited =
-                HandleParametersOption.valueOf(
-                        getString(
-                                SPIDER_HANDLE_PARAMETERS,
-                                HandleParametersOption.USE_ALL.toString()));
+        handleParametersVisited = getEnum(SPIDER_HANDLE_PARAMETERS, HandleParametersOption.USE_ALL);
 
         this.handleODataParametersVisited = getBoolean(SPIDER_HANDLE_ODATA_PARAMETERS, false);
 
