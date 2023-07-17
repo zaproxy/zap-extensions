@@ -150,6 +150,8 @@ public class FuzzerDialog<
                 fuzzLocationsPanel.reset();
             } else {
                 fuzzMessagePanel.saveData();
+                // Reset the message to show any automatic changes.
+                fuzzMessagePanel.setMessage(getMessage());
                 Stats.incCounter(ExtensionFuzz.MESSAGES_EDITED_STATS);
             }
             this.fuzzMessagePanel.setEditable(editable);
