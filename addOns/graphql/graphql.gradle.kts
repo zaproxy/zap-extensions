@@ -76,7 +76,7 @@ dependencies {
     compileOnly(parent!!.childProjects.get("formhandler")!!)
     compileOnly(parent!!.childProjects.get("spider")!!)
     implementation("com.google.code.gson:gson:2.10.1")
-    implementation("com.graphql-java:graphql-java:20.4")
+    implementation("com.graphql-java:graphql-java:21.0")
 
     testImplementation(parent!!.childProjects.get("automation")!!)
     testImplementation(parent!!.childProjects.get("commonlib")!!)
