@@ -20,18 +20,12 @@
 package org.zaproxy.zap.extension.zest;
 
 import net.sf.json.JSONObject;
-import org.parosproxy.paros.Constant;
 import org.zaproxy.zest.core.v1.ZestClientElementClick;
 import org.zaproxy.zest.core.v1.ZestClientElementSendKeys;
 import org.zaproxy.zest.core.v1.ZestClientLaunch;
 import org.zaproxy.zest.core.v1.ZestStatement;
 
 public class ZestStatementFromJson {
-
-    private ZestStatement stmt;
-    private String elementType;
-    private int index;
-
     private static final String type = "zestScript";
     private static final String I18N_PREFIX = "client.type.";
     private static final String ELEMENT_TYPE = "elementType";
@@ -49,14 +43,14 @@ public class ZestStatementFromJson {
     private static final String ZEST_CLIENT_ELEMENT_CLICK = "ZestClientElementClick";
     private static final String ZEST_CLIENT_ELEMENT_SEND_KEYS = "ZestClientElementSendKeys";
 
-    protected ZestStatementFromJson(JSONObject json) throws Exception {
-        super();
+    public static ZestStatement createZestStatementFromJson(JSONObject json) throws Exception {
+        ZestStatement stmt = null;
         if (json.containsKey(ELEMENT_TYPE) && json.containsKey(INDEX)) {
-            index = json.getInt(INDEX);
-            elementType = json.getString(ELEMENT_TYPE);
-            switch (this.elementType) {
+            int index = json.getInt(INDEX);
+            String elementType = json.getString(ELEMENT_TYPE);
+            switch (elementType) {
                 case ZEST_CLIENT_LAUNCH:
-                    this.stmt =
+                    stmt =
                             (ZestStatement)
                                     new ZestClientLaunch(
                                             json.getString(WINDOW_HANDLE),
@@ -67,7 +61,7 @@ public class ZestStatementFromJson {
                     break;
 
                 case ZEST_CLIENT_ELEMENT_CLICK:
-                    this.stmt =
+                    stmt =
                             (ZestStatement)
                                     new ZestClientElementClick(
                                             json.getString(WINDOW_HANDLE),
@@ -75,7 +69,7 @@ public class ZestStatementFromJson {
                                             json.getString(ELEMENT));
                     break;
                 case ZEST_CLIENT_ELEMENT_SEND_KEYS:
-                    this.stmt =
+                    stmt =
                             (ZestStatement)
                                     new ZestClientElementSendKeys(
                                             json.getString(WINDOW_HANDLE),
@@ -87,20 +81,6 @@ public class ZestStatementFromJson {
                     throw new Exception("Not found");
             }
         }
-    }
-
-    public ZestStatement getZestStatement() {
-        return this.stmt;
-    }
-
-    public int getIndex() {
-        return this.index;
-    }
-
-    public String getI18nType() {
-        if (Constant.messages.containsKey(I18N_PREFIX + type)) {
-            return Constant.messages.getString(I18N_PREFIX + type);
-        }
-        return type;
+        return stmt;
     }
 }

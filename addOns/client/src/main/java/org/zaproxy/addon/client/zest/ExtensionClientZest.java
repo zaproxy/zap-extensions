@@ -20,7 +20,6 @@
 package org.zaproxy.addon.client.zest;
 
 import java.util.List;
-import net.sf.json.JSONObject;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
@@ -31,12 +30,10 @@ import org.zaproxy.zap.extension.zest.ExtensionZest;
 
 public class ExtensionClientZest extends ExtensionAdaptor {
 
-    public static final String NAME = "ExtensionAuthhelperAjax";
-
-    private ZestClientRecordingHelper clientHelper;
+    public static final String NAME = "ExtensionClientZest";
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
-            List.of(ExtensionZest.class);
+            List.of(ExtensionZest.class, ExtensionClientIntegration.class);
 
     public ExtensionClientZest() {
         super(NAME);
@@ -49,8 +46,12 @@ public class ExtensionClientZest extends ExtensionAdaptor {
                 Control.getSingleton()
                         .getExtensionLoader()
                         .getExtension(ExtensionClientIntegration.class);
-        clientHelper = new ZestClientRecordingHelper(this);
-        extClient.setClientRecorderHelper(clientHelper);
+        extClient.setClientRecorderHelper(this::addZestStatement);
+
+        ExtensionZest extZest =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionZest.class);
+
+        extZest.setClientHelper(() -> true);
     }
 
     @Override
@@ -64,7 +65,11 @@ public class ExtensionClientZest extends ExtensionAdaptor {
                 Control.getSingleton()
                         .getExtensionLoader()
                         .getExtension(ExtensionClientIntegration.class);
-        extClient.removeClientRecorderHelper();
+        extClient.setClientRecorderHelper(null);
+
+        ExtensionZest extZest =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionZest.class);
+        extZest.setClientHelper(null);
     }
 
     @Override
@@ -82,11 +87,9 @@ public class ExtensionClientZest extends ExtensionAdaptor {
         return Constant.messages.getString("client.zest.name");
     }
 
-    void addZestStatement(JSONObject stmt) throws Exception {
+    void addZestStatement(String stmt) throws Exception {
         ExtensionZest extZst =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionZest.class);
-        if (extZst.isClientRecodingActive()) {
-            extZst.addClientZestStatement(stmt);
-        }
+        extZst.addClientZestStatementFromString(stmt);
     }
 }

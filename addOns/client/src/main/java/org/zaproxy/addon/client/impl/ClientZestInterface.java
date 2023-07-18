@@ -17,13 +17,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.client;
-
-import net.sf.json.JSONObject;
+package org.zaproxy.addon.client.impl;
 
 /**
  * This interface defines the contract for a client-side extension handling Zest statements. Zest
  * statements represent specific actions or operations to be performed by the ZAP Add-on.
+ *
+ * <p>Note: This interface is not intended to be implemented or used by other add-ons.
  */
 public interface ClientZestInterface {
 
@@ -33,5 +33,5 @@ public interface ClientZestInterface {
      * @param stmt the JSONObject representing the Zest statement to be added.
      * @throws Exception if an error occurs while adding the Zest statement.
      */
-    void addZestStatementUtil(JSONObject stmt) throws Exception;
+    void addZestStatementUtil(String stmt) throws Exception;
 }

@@ -44,6 +44,7 @@ public class ClientIntegrationAPI extends ApiImplementor {
     private static final String ACTION_REPORT_OBJECT = "reportObject";
     private static final String ACTION_REPORT_EVENT = "reportEvent";
     private static final String ACTION_REPORT_ZEST_SCRIPT = "reportZestScript";
+
     private static final String PARAM_OBJECT_JSON = "objectJson";
     private static final String PARAM_EVENT_JSON = "eventJson";
     private static final String PARAM_SCRIPT_JSON = "scriptJson";
@@ -58,6 +59,8 @@ public class ClientIntegrationAPI extends ApiImplementor {
         this.extension = extension;
         this.addApiAction(new ApiAction(ACTION_REPORT_OBJECT, new String[] {PARAM_OBJECT_JSON}));
         this.addApiAction(new ApiAction(ACTION_REPORT_EVENT, new String[] {PARAM_EVENT_JSON}));
+        this.addApiAction(
+                new ApiAction(ACTION_REPORT_ZEST_SCRIPT, new String[] {PARAM_SCRIPT_JSON}));
 
         ServerInfo serverInfo =
                 Control.getSingleton()
@@ -142,9 +145,8 @@ public class ClientIntegrationAPI extends ApiImplementor {
             case ACTION_REPORT_ZEST_SCRIPT:
                 String scriptJson = this.getParam(params, PARAM_SCRIPT_JSON, "");
                 LOGGER.debug("Got script: {}", scriptJson);
-                json = JSONObject.fromObject(scriptJson);
                 try {
-                    this.extension.addReportedZestStatement(json);
+                    this.extension.addReportedZestStatement(scriptJson);
                 } catch (Exception e) {
                     LOGGER.debug(e);
                 }
@@ -157,7 +159,7 @@ public class ClientIntegrationAPI extends ApiImplementor {
         return ApiResponseElement.OK;
     }
 
-    static JSONObject decodeParam(String body, String param) {
+    static String decodeParamString(String body, String param) {
         // Should always start with 'param'=
         String str = body.substring(param.length() + 1);
         int apikeyIndex = str.indexOf("&apikey=");
@@ -165,6 +167,11 @@ public class ClientIntegrationAPI extends ApiImplementor {
             str = str.substring(0, apikeyIndex);
         }
         str = URLDecoder.decode(str, StandardCharsets.UTF_8);
+        return str;
+    }
+
+    static JSONObject decodeParam(String body, String param) {
+        String str = decodeParamString(body, param);
         return JSONObject.fromObject(str);
     }
 
@@ -181,7 +188,8 @@ public class ClientIntegrationAPI extends ApiImplementor {
                         new ReportedEvent(decodeParam(body, PARAM_EVENT_JSON)));
             } else if (body.startsWith(PARAM_SCRIPT_JSON)) {
                 try {
-                    this.extension.addReportedZestStatement(decodeParam(body, PARAM_SCRIPT_JSON));
+                    this.extension.addReportedZestStatement(
+                            decodeParamString(body, PARAM_SCRIPT_JSON));
                 } catch (Exception e) {
                     LOGGER.debug(e);
                 }

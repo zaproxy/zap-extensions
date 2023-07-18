@@ -17,20 +17,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.client.zest;
+package org.zaproxy.zap.extension.zest;
 
-import net.sf.json.JSONObject;
-import org.zaproxy.addon.client.ClientZestInterface;
+/*
+ * The ZestClientHelperInterface is an interface that should be implemented by ZAP client add-on
+ * to provide support for Zest scripts recording.
+ */
+public interface ZestClientHelperInterface {
 
-public class ZestClientRecordingHelper implements ClientZestInterface {
-    ExtensionClientZest extClientZst;
-
-    public ZestClientRecordingHelper(ExtensionClientZest ext) {
-        extClientZst = ext;
-    }
-
-    @Override
-    public void addZestStatementUtil(JSONObject stmt) throws Exception {
-        extClientZst.addZestStatement(stmt);
-    }
+    /**
+     * Checks whether the ZAP client add-on is currently active and supports Zest scripts.
+     *
+     * @return {@code true} if the client is active and supports Zest, {@code false} otherwise.
+     */
+    boolean isClientActive();
 }

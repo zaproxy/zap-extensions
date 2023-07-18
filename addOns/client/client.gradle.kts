@@ -3,7 +3,6 @@ description = "Exposes client (browser) side information in ZAP using Firefox an
 
 zapAddOn {
     addOnName.set("Client Side Integration")
-    zapVersion.set("2.13.0")
 
     manifest {
         author.set("ZAP Dev Team")
@@ -16,7 +15,7 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("zest") {
-                            version.set(">=39")
+                            version.set(">=40")
                         }
                     }
                 }
@@ -48,11 +47,5 @@ dependencies {
     zapAddOn("network")
     zapAddOn("zest")
 
-    implementation("org.zaproxy:zest:0.18.0") {
-        // Provided by Selenium add-on.
-        exclude(group = "org.seleniumhq.selenium")
-        // Provided by ZAP.
-        exclude(group = "net.htmlparser.jericho", module = "jericho-html")
-    }
     testImplementation(project(":testutils"))
 }

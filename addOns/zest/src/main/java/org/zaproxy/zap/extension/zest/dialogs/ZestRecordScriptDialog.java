@@ -33,6 +33,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
@@ -58,6 +59,9 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
     private static final String FIELD_LOAD = "zest.dialog.script.label.load";
     private static final String FIELD_CLIENT_NODE = "zest.dialog.script.label.clientnode";
     private static final String FIELD_BROWSER = "zest.dialog.script.label.browser";
+    private static final String ERROR_BROWSER = "zest.dialog.script.error.browser";
+    private static final String ERROR_CLIENT = "zest.dialog.script.error.client";
+    private static final List<String> BROWSER_NAMES = List.of("Firefox", "Chrome");
 
     private static final Logger LOGGER = LogManager.getLogger(ZestRecordScriptDialog.class);
 
@@ -80,7 +84,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
         this.addTextField(0, FIELD_TITLE, "");
         this.addComboField(0, FIELD_TYPE, this.getScriptTypes(), "", false);
         this.addComboField(0, FIELD_RECORD, this.getRecordTypes(), "", false);
-        this.addComboField(0, FIELD_BROWSER, this.getBrowserNames(), "", false);
+        this.addComboField(0, FIELD_BROWSER, BROWSER_NAMES, "", false);
 
         this.addNodeSelectField(0, FIELD_CLIENT_NODE, node, true, false);
 
@@ -155,16 +159,8 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
     private List<String> getRecordTypes() {
         List<String> list = new ArrayList<>();
         list.add(Constant.messages.getString("zest.dialog.script.record.type.server"));
-        // TODO disable until support improved...
         list.add(Constant.messages.getString("zest.dialog.script.record.type.client"));
         return list;
-    }
-
-    private List<String> getBrowserNames() {
-        List<String> browsers = new ArrayList<>();
-        browsers.add("Firefox");
-        browsers.add("Chrome");
-        return browsers;
     }
 
     private boolean isServerSide() {
@@ -190,6 +186,12 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
         ExtensionSelenium extSelenium =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
         WebDriver wd = extSelenium.getProxiedBrowserByName(browserName);
+        if (wd == null) {
+            cancelPressed();
+            LOGGER.error(Constant.messages.getString(ERROR_BROWSER));
+            View.getSingleton().showWarningDialog(Constant.messages.getString(ERROR_BROWSER));
+            return;
+        }
         String zapurl = wd.getCurrentUrl();
         wd.get(url);
         JavascriptExecutor jsExecutor = (JavascriptExecutor) wd;
@@ -241,16 +243,18 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
         extension.setRecordingNode(scriptNode);
 
         if (!this.isServerSide()) {
+            if (!this.extension.isClientAccessible()) {
+                LOGGER.error(ERROR_CLIENT);
+                View.getSingleton().showWarningDialog(Constant.messages.getString(ERROR_CLIENT));
+                return;
+            }
             String url = this.getStringValue(FIELD_CLIENT_NODE);
             String browser = this.getStringValue(FIELD_BROWSER);
             extension.startClientRecording(url);
             Thread browserThread =
                     new Thread(
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    launchBrowser(url, browser);
-                                }
+                            () -> {
+                                launchBrowser(url, browser);
                             });
             browserThread.start();
         }
