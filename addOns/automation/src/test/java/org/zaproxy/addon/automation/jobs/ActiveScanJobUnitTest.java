@@ -141,7 +141,11 @@ class ActiveScanJobUnitTest {
     @Test
     void shouldApplyCustomConfigParams() {
         // Given
-        String yamlStr = "parameters:\n" + "  maxScanDurationInMins: 12\n" + "  policy: testPolicy";
+        String yamlStr =
+                "parameters:\n"
+                        + "  maxScanDurationInMins: 12\n"
+                        + "  maxAlertsPerRule: 5\n"
+                        + "  policy: testPolicy";
         AutomationProgress progress = new AutomationProgress();
         Yaml yaml = new Yaml();
         Object data = yaml.load(yamlStr);
@@ -154,6 +158,7 @@ class ActiveScanJobUnitTest {
 
         // Then
         assertThat(job.getParameters().getMaxScanDurationInMins(), is(equalTo(12)));
+        assertThat(job.getParameters().getMaxAlertsPerRule(), is(equalTo(5)));
         assertThat(job.getParameters().getPolicy(), is(equalTo("testPolicy")));
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));

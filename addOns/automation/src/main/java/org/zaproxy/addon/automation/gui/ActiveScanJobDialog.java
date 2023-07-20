@@ -61,6 +61,8 @@ public class ActiveScanJobDialog extends StandardFieldsDialog {
     private static final String POLICY_PARAM = "automation.dialog.ascan.policy";
     private static final String MAX_RULE_DURATION_PARAM = "automation.dialog.ascan.maxruleduration";
     private static final String MAX_SCAN_DURATION_PARAM = "automation.dialog.ascan.maxscanduration";
+    private static final String MAX_ALERTS_PER_RULE_PARAM =
+            "automation.dialog.ascan.maxalertsperrule";
     private static final String FIELD_ADVANCED = "automation.dialog.ascan.advanced";
 
     private static final String DEFAULT_THRESHOLD_PARAM =
@@ -115,6 +117,12 @@ public class ActiveScanJobDialog extends StandardFieldsDialog {
                 0,
                 Integer.MAX_VALUE,
                 JobUtils.unBox(JobUtils.unBox(job.getParameters().getMaxScanDurationInMins())));
+        addNumberField(
+                0,
+                MAX_ALERTS_PER_RULE_PARAM,
+                0,
+                Integer.MAX_VALUE,
+                JobUtils.unBox(job.getParameters().getMaxAlertsPerRule()));
         this.addCheckBoxField(0, FIELD_ADVANCED, advOptionsSet());
         this.addFieldListener(FIELD_ADVANCED, e -> setAdvancedTabs(getBoolValue(FIELD_ADVANCED)));
 
@@ -221,6 +229,7 @@ public class ActiveScanJobDialog extends StandardFieldsDialog {
         this.job
                 .getParameters()
                 .setMaxScanDurationInMins(this.getIntValue(MAX_SCAN_DURATION_PARAM));
+        job.getParameters().setMaxAlertsPerRule(getIntValue(MAX_ALERTS_PER_RULE_PARAM));
 
         this.job
                 .getData()
