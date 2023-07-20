@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [47] - 2023-07-20
 ### Added
 - The Source Code Disclosure - File Inclusion now includes example alert functionality for documentation generation purposes (Issue 6119).
 - The following scan rules were added, having been promoted from Alpha:
@@ -452,6 +452,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[47]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v47
 [46]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v46
 [45]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v45
 [44]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v44
