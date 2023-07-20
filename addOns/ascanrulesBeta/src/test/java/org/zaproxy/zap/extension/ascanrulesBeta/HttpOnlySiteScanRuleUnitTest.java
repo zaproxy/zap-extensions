@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import javax.net.ssl.SSLException;
 import org.apache.commons.httpclient.URI;
@@ -147,6 +149,25 @@ class HttpOnlySiteScanRuleUnitTest extends ActiveScannerTest<HttpOnlySiteScanRul
             assertThat(alertsRaised, hasSize(0));
             assertThat(httpMessagesSent, hasSize(1));
         }
+    }
+
+    @Test
+    void shouldReturnExpectedExampleAlert() {
+        List<Alert> alerts = rule.getExampleAlerts();
+
+        assertThat(alerts.size(), is(equalTo(1)));
+
+        Alert alert = alerts.get(0);
+
+        Map<String, String> tags = alert.getTags();
+        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags, hasKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()));
+        assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()));
+        assertThat(tags, hasKey(CommonAlertTag.WSTG_V42_SESS_02_COOKIE_ATTRS.getTag()));
+        assertThat(alert.getUri(), is(equalTo("http://example.com")));
+        assertThat(alert.getOtherInfo(), containsString("https://example.com"));
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 
     private static HttpMessage getHttpMessage(int port) throws Exception {
