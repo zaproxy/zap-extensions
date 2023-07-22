@@ -189,7 +189,8 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
         if (wd == null) {
             cancelPressed();
             LOGGER.error(Constant.messages.getString(ERROR_BROWSER));
-            View.getSingleton().showWarningDialog(Constant.messages.getString(ERROR_BROWSER));
+            View.getSingleton()
+                    .showWarningDialog(Constant.messages.getString(ERROR_BROWSER, browserName));
             return;
         }
         String zapurl = wd.getCurrentUrl();
@@ -251,11 +252,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
             String url = this.getStringValue(FIELD_CLIENT_NODE);
             String browser = this.getStringValue(FIELD_BROWSER);
             extension.startClientRecording(url);
-            Thread browserThread =
-                    new Thread(
-                            () -> {
-                                launchBrowser(url, browser);
-                            });
+            Thread browserThread = new Thread(() -> launchBrowser(url, browser));
             browserThread.start();
         }
     }

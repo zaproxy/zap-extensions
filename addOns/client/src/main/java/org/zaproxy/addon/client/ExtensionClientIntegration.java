@@ -195,4 +195,8 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     public void setClientRecorderHelper(ClientZestInterface clientHandler) {
         this.clientHandler = clientHandler;
     }
+
+    public ClientZestInterface getClientRecorderHelper() {
+        return clientHandler;
+    }
 }

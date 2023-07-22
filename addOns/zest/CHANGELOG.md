@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Added 
-- Client support to record zest script.
+- Client support to record zest scripts.
 
 ### Changed
 - Maintenance changes.

@@ -20,9 +20,12 @@
 package org.zaproxy.zap.extension.zest;
 
 import net.sf.json.JSONObject;
+import org.zaproxy.zest.core.v1.ZestClientElementClear;
 import org.zaproxy.zest.core.v1.ZestClientElementClick;
 import org.zaproxy.zest.core.v1.ZestClientElementSendKeys;
 import org.zaproxy.zest.core.v1.ZestClientLaunch;
+import org.zaproxy.zest.core.v1.ZestClientSwitchToFrame;
+import org.zaproxy.zest.core.v1.ZestClientWindowClose;
 import org.zaproxy.zest.core.v1.ZestStatement;
 
 public class ZestStatementFromJson {
@@ -38,10 +41,17 @@ public class ZestStatementFromJson {
     private static final String TYPE = "type";
     private static final String ELEMENT = "element";
     private static final String VALUE = "value";
+    private static final String SLEEP_IN_SECONDS = "sleepInSeconds";
+    private static final String FRAME_INDEX = "frameIndex";
+    private static final String FRAME_NAME = "frameName";
+    private static final String FRAME_ISPARENT = "parent";
 
     private static final String ZEST_CLIENT_LAUNCH = "ZestClientLaunch";
     private static final String ZEST_CLIENT_ELEMENT_CLICK = "ZestClientElementClick";
     private static final String ZEST_CLIENT_ELEMENT_SEND_KEYS = "ZestClientElementSendKeys";
+    private static final String ZEST_CLIENT_ELEMENT_CLEAR = "ZestClientElementClear";
+    private static final String ZEST_CLIENT_WINDOW_CLOSE = "ZestClientWindowClose";
+    private static final String ZEST_CLIENT_SWITCH_TO_FRAME = "ZestClientSwitchToFrame";
 
     public static ZestStatement createZestStatementFromJson(JSONObject json) throws Exception {
         ZestStatement stmt = null;
@@ -77,8 +87,32 @@ public class ZestStatementFromJson {
                                             json.getString(ELEMENT),
                                             json.getString(VALUE));
                     break;
+                case ZEST_CLIENT_ELEMENT_CLEAR:
+                    stmt =
+                            (ZestStatement)
+                                    new ZestClientElementClear(
+                                            json.getString(WINDOW_HANDLE),
+                                            json.getString(TYPE),
+                                            json.getString(ELEMENT));
+                    break;
+                case ZEST_CLIENT_WINDOW_CLOSE:
+                    stmt =
+                            (ZestStatement)
+                                    new ZestClientWindowClose(
+                                            json.getString(WINDOW_HANDLE),
+                                            json.getInt(SLEEP_IN_SECONDS));
+                    break;
+                case ZEST_CLIENT_SWITCH_TO_FRAME:
+                    stmt =
+                            (ZestStatement)
+                                    new ZestClientSwitchToFrame(
+                                            json.getString(WINDOW_HANDLE),
+                                            json.getInt(FRAME_INDEX),
+                                            json.getString(FRAME_NAME),
+                                            json.getBoolean(FRAME_ISPARENT));
+                    break;
                 default:
-                    throw new Exception("Not found");
+                    throw new Exception("Element Type Not found");
             }
         }
         return stmt;

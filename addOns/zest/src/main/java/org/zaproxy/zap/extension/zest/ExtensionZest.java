@@ -1639,7 +1639,9 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     }
 
     public boolean isClientAccessible() {
-        if (zestClientHelper == null) return false;
+        if (zestClientHelper == null) {
+            return false;
+        }
         return zestClientHelper.isClientActive();
     }
     /**/
