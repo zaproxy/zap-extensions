@@ -525,7 +525,6 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
             String uri) {
         return newAlert()
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setDescription(Constant.messages.getString("ascanbeta.sourcecodedisclosure.desc"))
                 .setUri(uri)
                 .setParam(paramname)
                 .setAttack(prefixedUrlfilename)
@@ -536,11 +535,6 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
                                 NON_EXISTANT_FILENAME,
                                 randomversussourcefilenamematchpercentage,
                                 this.thresholdPercentage))
-                .setSolution(
-                        Constant.messages.getString("ascanbeta.sourcecodedisclosure.lfibased.soln"))
-                .setEvidence(
-                        Constant.messages.getString(
-                                "ascanbeta.sourcecodedisclosure.lfibased.evidence"))
                 .setMessage(sourceattackmsg);
     }
 

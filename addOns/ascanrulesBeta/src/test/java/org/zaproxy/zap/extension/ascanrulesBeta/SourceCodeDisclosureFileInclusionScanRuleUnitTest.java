@@ -29,6 +29,8 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.zap.model.Vulnerabilities;
+import org.zaproxy.zap.model.Vulnerability;
 
 class SourceCodeDisclosureFileInclusionScanRuleUnitTest
         extends ActiveScannerTest<SourceCodeDisclosureFileInclusionScanRule> {
@@ -64,17 +66,22 @@ class SourceCodeDisclosureFileInclusionScanRuleUnitTest
 
     @Test
     void shouldReturnExpectedExampleAlert() {
+        // Given
+        Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_33");
+        // When
         List<Alert> alerts = rule.getExampleAlerts();
-
+        // Then
         assertThat(alerts.size(), is(equalTo(1)));
+        Alert alert = alerts.get(0);
 
-        for (Alert alert : alerts) {
-            Map<String, String> tags = alert.getTags();
-            assertThat(tags.size(), is(equalTo(2)));
-            assertThat(tags, hasKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()));
-            assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()));
-            assertThat(alert.getRisk(), is(equalTo(Alert.RISK_HIGH)));
-            assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
-        }
+        Map<String, String> tags = alert.getTags();
+        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags, hasKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()));
+        assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()));
+
+        assertThat(alert.getDescription(), is(equalTo(vuln.getDescription())));
+        assertThat(alert.getSolution(), is(equalTo(vuln.getSolution())));
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 }
