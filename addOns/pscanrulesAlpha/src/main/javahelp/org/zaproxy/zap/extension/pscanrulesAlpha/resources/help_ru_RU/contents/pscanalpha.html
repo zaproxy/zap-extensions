@@ -26,58 +26,57 @@ For more details see: <a href="https://www.zaproxy.org/blog/2014-04-03-hacking-z
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/Base64Disclosure.java">Base64Disclosure.java</a>
 
-<h2>Site Isolation Scan Rule</h2>
-Spectre is a side-channel attack allowing an attacker to read data
-from memory. One of the counter-measures is to prevent sensitive data
-from entering the memory and to separate trusted and untrusted documents in
-different browsing contexts. Three headers have been defined to enable that:
-<ul>
- <li>Cross-Origin-Resource-Policy</li>
- <li>Cross-Origin-Embedder-Policy</li>
- <li>Cross-Origin-Opener-Policy</li>
-</ul>
-The Cross-Origin-Embedder-Policy (COEP) header <q>prevents a document from
- loading any non-same-origin resources which don't explicitly grant the document
- permission to be loaded.</q> (from
-<a href="https://docs.google.com/document/d/1zDlfvfTJ_9e8Jdc8ehuV4zMEu9ySMCiTGMS9y0GU92k/edit">COOP and COEP explained</a>).
-<blockquote cite="https://resourcepolicy.fyi/">
- The Cross-Origin-Resource-Policy (CORP) header allows you
- to control the set of origins that are empowered to include
- a resource. It is a robust defense against attacks like Spectre,
- as it allows browsers to block a given response before it enters
- an attacker's process.
-</blockquote>
-For example, an attacker site can include an image tag with an attribute
-src to an internal content. The browser will load the data. With a
-side-channel attack, an attacker will be able to read it.
-
-The Cross-Origin-Opener-Policy (COOP) header forces the browser to create
-multiple browsing contexts to separate trusted and untrusted documents.
-
-Site Isolation is complementary with Cross-Origin-Resource-Blocking, a
-mechanism managed independently by the browser.
-
-<p>
- Сгенерированные оповещения: 
-<ul>
- <li><b>Cross-Origin-Resource-Policy Header Missing or Invalid</b></li>
- <li><b>Cross-Origin-Embedder-Policy Header Missing or Invalid</b></li>
- <li><b>Cross-Origin-Opener-Policy Header Missing or Invalid</b></li>
-</ul>
-<p>
- Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SiteIsolationScanRule.java">SiteIsolationScanRule.java</a>
-
 <h2>Example Passive Scan Rule: Denial of Service</h2>
 This implements a very simple example passive scan rule.<br>
 For more details see: <a href="https://www.zaproxy.org/blog/2014-04-03-hacking-zap-3-passive-scan-rules/">Hacking ZAP Part 3: Passive Scan Rules</a>.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/ExampleSimplePassiveScanRule.java">ExampleSimplePassiveScanRule.java</a>
 
-<h2>Source Code Disclosure</h2>
-Application Source Code was disclosed by the web server.<br>
-NOTE: Ignores CSS, JavaScript, images, and font files.
+<h2>Fetch Metadata Request Headers Scan Rule</h2>
+Fetch Metadata Request headers are HTTP request headers that provide additional information about a request's origin.
+This additional information helps the server to implement resource isolation policy, allowing external sites to request only
+those resources that are intended for sharing, and that are used appropriately. This approach can help mitigate common
+cross-site web vulnerabilities such as CSRF, Cross-site Script Inclusion, timing attacks, and cross-origin information leaks.
+The Fetch Metadata Request headers are:
+<ul>
+ <li>Sec-Fetch-Site</li>
+ <li>Sec-Fetch-Mode</li>
+ <li>Sec-Fetch-Dest</li>
+ <li>Sec-Fetch-User</li>
+</ul>
+(from <a href="https://developer.mozilla.org/en-US/docs/Glossary/Fetch_metadata_request_header">Fetch Metadata Headers</a>)
+
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/SourceCodeDisclosureScanRule.java">SourceCodeDisclosureScanRule.java</a>
+Sec-Fetch-Site indicates the relationship between a request initiator's origin and the origin of requested resource.
+(from <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-Site">Sec-Fetch-Site</a>)
+
+<p>
+Sec-Fetch-Mode allows the server to distinguish between requests originating from a user navigating between HTML
+pages and requests to load images and other resources.
+(from <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-Mode">Sec-Fetch-Mode</a>)
+
+<p>
+Sec-Fetch-Dest indicates where and how the requested resource will be used.
+(from <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-Dest">Sec-Fetch-Dest</a>)
+
+<p>
+Sec-Fetch-User is only sent for requests initiated by user activation.
+(from <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Sec-Fetch-User">Sec-Fetch-User</a>)
+
+<p>
+ Alerts generated:
+<ul>
+ <li><b>Sec-Fetch-Site Header is Missing</b></li>
+ <li><b>Sec-Fetch-Site Header Has an Invalid Value</b></li>
+ <li><b>Sec-Fetch-Mode Header is Missing</b></li>
+ <li><b>Sec-Fetch-Mode Header Has an Invalid Value</b></li>
+ <li><b>Sec-Fetch-Dest Header is Missing</b></li>
+ <li><b>Sec-Fetch-Dest Header Has an Invalid Value</b></li>
+ <li><b>Sec-Fetch-User Header is Missing</b></li>
+ <li><b>Sec-Fetch-User Header Has an Invalid Value</b></li>
+</ul>
+<p>
+ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesAlpha/src/main/java/org/zaproxy/zap/extension/pscanrulesAlpha/FetchMetadataRequestHeadersScanRule.java">FetchMetadataRequestHeadersScanRule.java</a>
 
 </body>
 </html>
