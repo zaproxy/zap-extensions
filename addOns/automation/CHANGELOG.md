@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Added
+- Add support for max alerts per rule in the Active Scan job (Issue 7784).
 
 ## [0.30.0] - 2023-07-11
 ### Changed

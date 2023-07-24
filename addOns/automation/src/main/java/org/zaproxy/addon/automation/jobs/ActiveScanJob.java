@@ -556,6 +556,7 @@ public class ActiveScanJob extends AutomationJob {
         private Boolean injectPluginIdInHeader;
         private Boolean scanHeadersAllRequests;
         private Integer threadPerHost;
+        private Integer maxAlertsPerRule;
 
         public Parameters() {}
 
@@ -657,6 +658,14 @@ public class ActiveScanJob extends AutomationJob {
 
         public void setThreadPerHost(Integer threadPerHost) {
             this.threadPerHost = threadPerHost;
+        }
+
+        public Integer getMaxAlertsPerRule() {
+            return maxAlertsPerRule;
+        }
+
+        public void setMaxAlertsPerRule(Integer maxAlertsPerRule) {
+            this.maxAlertsPerRule = maxAlertsPerRule;
         }
     }
 }
