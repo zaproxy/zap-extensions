@@ -20,55 +20,50 @@
 package org.zaproxy.addon.postman;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.IOException;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.zaproxy.addon.postman.models.Item;
+import org.zaproxy.addon.postman.models.ItemGroup;
 import org.zaproxy.addon.postman.models.PostmanCollection;
 import org.zaproxy.zap.testutils.TestUtils;
 
-class PostmanParserUnitTest extends TestUtils {
+class AbstractItemDeserializerUnitTest extends TestUtils {
 
     @BeforeEach
     void setup() throws Exception {
         setUpZap();
-        startServer();
     }
 
-    @AfterEach
-    void teardown() throws Exception {
-        stopServer();
+    static Object[][] deserializationTestData() {
+        return new Object[][] {
+            {"{\"item\":{\"request\":{}}}", Item.class},
+            {"{\"item\":{\"item\":[]}}", ItemGroup.class},
+            {"{\"item\":[{\"request\":{}}]}", Item.class},
+            {"{\"item\":[{\"item\":[{\"request\":{}}]}]}", ItemGroup.class}
+        };
     }
 
-    @Test
-    void shouldFailWhenDefnIsInvalidJson() throws Exception {
+    @ParameterizedTest
+    @MethodSource("deserializationTestData")
+    void shouldDeserializeItems(String defn, Class<?> expectedType) throws Exception {
         PostmanParser parser = new PostmanParser();
-        assertThrows(IOException.class, () -> parser.importDefinition("{"));
-    }
-
-    @Test
-    void shouldParseWhenDefnIsValidJson() throws Exception {
-        PostmanParser parser = new PostmanParser();
-        assertDoesNotThrow(() -> parser.parse("{}"));
-    }
-
-    @Test
-    void shouldParseKnownAttributes() throws Exception {
-        PostmanParser parser = new PostmanParser();
-        String defn = "{\"item\":true,\"variable\":\"\"}"; // Random types for leniency
         PostmanCollection collection = parser.parse(defn);
 
-        assertNotNull(collection.getItem());
-        assertNotNull(collection.getVariable());
+        assertEquals(1, collection.getItem().size());
+        assertTrue(expectedType.isInstance(collection.getItem().get(0)));
     }
 
     @Test
-    void shouldIgnoreUnKnownAttributes() throws Exception {
+    void shouldParseWithInvalidItemsSilently() throws Exception {
         PostmanParser parser = new PostmanParser();
-        String defn = "{\"unKnown1\":true,\"unKnown2\":\"\"}";
-        assertDoesNotThrow(() -> parser.parse(defn));
+        String defn = "{\"item\":[true,{\"randomKey\":\"randomValue\"}]}";
+
+        PostmanCollection collection = assertDoesNotThrow(() -> parser.parse(defn));
+        assertEquals(0, collection.getItem().size());
     }
 }
