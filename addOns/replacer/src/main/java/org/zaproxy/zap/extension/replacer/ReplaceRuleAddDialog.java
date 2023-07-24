@@ -88,16 +88,19 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
         this.addTextField(0, URL_FIELD, "");
         this.addComboField(0, MATCH_TYPE_FIELD, getMatchTypes(), selectedStr);
 
+        boolean stringMatchType = true;
         if (ReplacerParamRule.MatchType.REQ_HEADER.equals(selectedMatchType)) {
             this.addComboField(0, MATCH_STR_FIELD, getDefaultRequestHeaders(), "", true);
             this.addCheckBoxField(0, REGEX_FIELD, false);
             // Only support exact matches with headers
             this.getField(REGEX_FIELD).setEnabled(false);
+            stringMatchType = false;
         } else if (ReplacerParamRule.MatchType.RESP_HEADER.equals(selectedMatchType)) {
             this.addComboField(0, MATCH_STR_FIELD, getDefaultResponseHeaders(), "", true);
             this.addCheckBoxField(0, REGEX_FIELD, false);
             // Only support exact matches with headers
             this.getField(REGEX_FIELD).setEnabled(false);
+            stringMatchType = false;
         } else {
             this.addTextField(0, MATCH_STR_FIELD, "");
             this.addCheckBoxField(0, REGEX_FIELD, false);
@@ -107,6 +110,7 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
         this.addReadOnlyField(0, INIT_TYPE_SUMMARY_FIELD, "", false);
         this.addCheckBoxField(0, ENABLE_FIELD, false);
         this.addCheckBoxField(0, ENABLE_TOKEN_PROCESSING, false);
+        getField(ENABLE_TOKEN_PROCESSING).setEnabled(stringMatchType);
         this.addPadding(0);
 
         this.addCheckBoxField(1, INIT_TYPE_ALL_FIELD, true);

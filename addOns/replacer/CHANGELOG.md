@@ -4,7 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Document that Token Processing applies just to string match types and disable the field in
+the dialogue when other match types are selected.
 
 ## [13] - 2023-07-11
 ### Changed
