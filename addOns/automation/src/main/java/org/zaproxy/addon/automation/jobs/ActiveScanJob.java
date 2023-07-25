@@ -53,6 +53,7 @@ public class ActiveScanJob extends AutomationJob {
 
     private static final String PARAM_CONTEXT = "context";
     private static final String PARAM_POLICY = "policy";
+    private static final String PARAM_USER = "user";
 
     private static final String RULES_ELEMENT_NAME = "rules";
 
@@ -186,7 +187,7 @@ public class ActiveScanJob extends AutomationJob {
                 this.parameters,
                 JobUtils.getJobOptions(this, progress),
                 this.getName(),
-                new String[] {PARAM_POLICY, PARAM_CONTEXT},
+                new String[] {PARAM_POLICY, PARAM_CONTEXT, PARAM_USER},
                 progress,
                 this.getPlan().getEnv());
     }
