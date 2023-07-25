@@ -71,7 +71,9 @@ public class OutputPanel extends AbstractPanel {
     private ZapTextArea txtOutput = null;
     private boolean clearOnRun = false;
 
-    /** @param extension */
+    /**
+     * @param extension
+     */
     public OutputPanel(ExtensionScriptsUI extension) {
         super();
         this.extension = extension;
@@ -171,6 +173,7 @@ public class OutputPanel extends AbstractPanel {
         }
         return jScrollPane;
     }
+
     /**
      * This method initializes txtOutput
      *

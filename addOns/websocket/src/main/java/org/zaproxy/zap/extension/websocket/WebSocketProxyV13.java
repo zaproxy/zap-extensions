@@ -51,19 +51,25 @@ public class WebSocketProxyV13 extends WebSocketProxy {
      */
     private static final int PAYLOAD_MAX_FRAME_LENGTH = Integer.MAX_VALUE;
 
-    /** @see WebSocketProxy#WebSocketProxy(Socket, Socket) */
+    /**
+     * @see WebSocketProxy#WebSocketProxy(Socket, Socket)
+     */
     public WebSocketProxyV13(Socket localSocket, Socket remoteSocket) throws WebSocketException {
         super(localSocket, remoteSocket);
     }
 
-    /** @see WebSocketProxy#WebSocketProxy(Socket, Socket, String, int) */
+    /**
+     * @see WebSocketProxy#WebSocketProxy(Socket, Socket, String, int)
+     */
     public WebSocketProxyV13(
             Socket localSocket, Socket remoteSocket, String targetHost, int targetPort)
             throws WebSocketException {
         super(localSocket, remoteSocket, targetHost, targetPort);
     }
 
-    /** @see WebSocketProxy#createWebSocketMessage(InputStream, byte) */
+    /**
+     * @see WebSocketProxy#createWebSocketMessage(InputStream, byte)
+     */
     @Override
     protected WebSocketMessage createWebSocketMessage(InputStream in, byte frameHeader)
             throws IOException {
@@ -595,7 +601,9 @@ public class WebSocketProxyV13 extends WebSocketProxy {
             return buffer;
         }
 
-        /** @see WebSocketMessage#forward(OutputStream) */
+        /**
+         * @see WebSocketMessage#forward(OutputStream)
+         */
         @Override
         public boolean forward(OutputStream out) throws IOException {
             if (out == null) {

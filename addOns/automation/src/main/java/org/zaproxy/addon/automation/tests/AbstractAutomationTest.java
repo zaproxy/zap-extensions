@@ -137,7 +137,9 @@ public abstract class AbstractAutomationTest {
         return null;
     }
 
-    /** @return the default name, which will be used if the user does not specify one */
+    /**
+     * @return the default name, which will be used if the user does not specify one
+     */
     public String getDefaultName() {
         return this.getJob().getName() + "/" + this.getTestType();
     }

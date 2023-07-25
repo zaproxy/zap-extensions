@@ -24,7 +24,9 @@ package com.sittinglittleduck.DirBuster;
 
 import java.util.Vector;
 
-/** @author james */
+/**
+ * @author james
+ */
 public class DirToCheck {
     String name = "";
     private Vector<ExtToCheck> exts = new Vector<>(10, 10);

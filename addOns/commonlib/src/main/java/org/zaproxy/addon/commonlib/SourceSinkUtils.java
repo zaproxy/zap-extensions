@@ -62,6 +62,7 @@ public final class SourceSinkUtils {
      * @see org.apache.commons.httpclient.URI#toString()
      */
     private static Map<String, String> cachedUris;
+
     /**
      * A {@code Map} to cache the parameter names used by source messages ({@code UserDataSource}).
      *

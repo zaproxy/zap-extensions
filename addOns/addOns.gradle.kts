@@ -13,7 +13,6 @@ import org.zaproxy.gradle.addon.internal.tasks.HandleRelease
 import org.zaproxy.gradle.addon.manifest.ManifestExtension
 import org.zaproxy.gradle.addon.misc.ConvertMarkdownToHtml
 import org.zaproxy.gradle.crowdin.CrowdinExtension
-import java.util.Locale
 
 plugins {
     eclipse
@@ -123,9 +122,6 @@ subprojects {
             toolchain {
                 languageVersion.set(JavaLanguageVersion.of(System.getenv("ZAP_JAVA_VERSION")))
             }
-
-            sourceCompatibility = null
-            targetCompatibility = null
         }
     }
 
@@ -429,7 +425,7 @@ tasks.register("reportMissingHelp") {
             println("All add-ons have help.")
         } else {
             println("The following add-ons do not have help:")
-            addOns.forEach { println("${it.addOnId.get()} (${it.addOnStatus.get().toString().toLowerCase(Locale.ROOT)})") }
+            addOns.forEach { println("${it.addOnId.get()} (${it.addOnStatus.get().toString().lowercase()})") }
         }
     }
 }
@@ -461,7 +457,7 @@ tasks.register<TestReport>("testReport") {
     }
 
     doLast {
-        val reportUrl = File(destinationDirectory.get().getAsFile(), "index.html").toURL()
+        val reportUrl = File(destinationDirectory.get().getAsFile(), "index.html").toURI()
         logger.lifecycle("Test Report: $reportUrl")
     }
 }
@@ -477,7 +473,7 @@ val jacocoReport by tasks.registering(JacocoReport::class) {
     }
 
     doLast {
-        val reportUrl = File(reports.html.outputLocation.get().getAsFile(), "index.html").toURL()
+        val reportUrl = File(reports.html.outputLocation.get().getAsFile(), "index.html").toURI()
         logger.lifecycle("Coverage Report: $reportUrl")
     }
 }

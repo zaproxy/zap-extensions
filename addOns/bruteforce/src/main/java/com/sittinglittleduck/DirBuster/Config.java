@@ -28,6 +28,7 @@ public class Config {
 
     /** The version number of the program */
     public static final String version = "0.12";
+
     /*
      * 0.12
      * Command line interface added
@@ -155,11 +156,13 @@ public class Config {
      */
     /** Date the version was completed */
     public static final String versionDate = "06/05/2008";
+
     /** User agent that will be used */
     public static String userAgent =
             "DirBuster-"
                     + version
                     + " (http://www.owasp.org/index.php/Category:OWASP_DirBuster_Project)";
+
     /** Default setting for connection timeout, in seconds */
     public static String failCaseString = "thereIsNoWayThat-You-CanBeThere";
 

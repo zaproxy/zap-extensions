@@ -28,6 +28,7 @@ import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
  */
 public class WebSocketMessagesPayloadFilter {
     private String stringPayloadPattern;
+
     /**
      * Defines the expression used to filter the websocket messages in the {@link
      * WebSocketMessagesView} by their payload. This expression is either an regular expression or a

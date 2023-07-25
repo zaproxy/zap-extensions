@@ -50,7 +50,9 @@ public class OptionsFormHandlerTableModel
         return fields;
     }
 
-    /** @param fields The fields to set. */
+    /**
+     * @param fields The fields to set.
+     */
     public void setFields(List<FormHandlerParamField> fields) {
         this.fields = new ArrayList<>(fields.size());
 

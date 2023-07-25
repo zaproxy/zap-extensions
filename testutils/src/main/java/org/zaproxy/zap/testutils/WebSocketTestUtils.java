@@ -58,7 +58,9 @@ public abstract class WebSocketTestUtils extends TestUtils {
         }
     }
 
-    /** @return If WebServer was started return it, in any other case returns null */
+    /**
+     * @return If WebServer was started return it, in any other case returns null
+     */
     public NanoWebSocketTestServer getWebSocketTestServer() {
         return webSocketTestServer;
     }

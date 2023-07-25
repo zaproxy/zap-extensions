@@ -134,7 +134,9 @@ public class WebSocketUiHelper {
         return opcodeComboBox;
     }
 
-    /** @return Null if '--All Opcodes--' is selected */
+    /**
+     * @return Null if '--All Opcodes--' is selected
+     */
     public String getSelectedOpcode() {
         if (getOpcodeSingleSelect().getSelectedIndex() == 0) {
             return null;
@@ -142,7 +144,9 @@ public class WebSocketUiHelper {
         return (String) getOpcodeSingleSelect().getSelectedItem();
     }
 
-    /** @return Null if '--All Opcodes--' is selected */
+    /**
+     * @return Null if '--All Opcodes--' is selected
+     */
     public Integer getSelectedOpcodeInteger() {
         if (getOpcodeSingleSelect().getSelectedIndex() == 0) {
             return null;
@@ -193,7 +197,9 @@ public class WebSocketUiHelper {
         return opcodes;
     }
 
-    /** @return Null if '--All Opcodes--' is selected */
+    /**
+     * @return Null if '--All Opcodes--' is selected
+     */
     public List<String> getSelectedOpcodes() {
         boolean isSelectAll = false;
         List<String> values = new ArrayList<>();
@@ -214,7 +220,9 @@ public class WebSocketUiHelper {
         return values;
     }
 
-    /** @return Null if '--All Opcodes--' is selected */
+    /**
+     * @return Null if '--All Opcodes--' is selected
+     */
     public List<Integer> getSelectedOpcodeIntegers() {
         List<String> opcodes = getSelectedOpcodes();
         if (opcodes == null) {
@@ -287,7 +295,9 @@ public class WebSocketUiHelper {
                 });
     }
 
-    /** @return Null if '--All Channels--' is selected */
+    /**
+     * @return Null if '--All Channels--' is selected
+     */
     public Integer getSelectedChannelId() {
         if (getChannelSingleSelect().getSelectedIndex() == 0) {
             return null;
@@ -345,7 +355,9 @@ public class WebSocketUiHelper {
         return channels;
     }
 
-    /** @return Null if '--All Channels--' is selected. */
+    /**
+     * @return Null if '--All Channels--' is selected.
+     */
     public List<Integer> getSelectedChannelIds() {
         boolean isSelectAll = false;
         List<Integer> values = new ArrayList<>();

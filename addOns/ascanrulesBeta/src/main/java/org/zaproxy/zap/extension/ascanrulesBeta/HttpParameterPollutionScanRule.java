@@ -268,7 +268,9 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin {
         return params;
     }
 
-    /** @param vulnLinks list of the vulnerable links in the page */
+    /**
+     * @param vulnLinks list of the vulnerable links in the page
+     */
     public void generateReport(List<String> vulnLinks) {
         String vulnParams = "";
         for (String s : vulnLinks) {

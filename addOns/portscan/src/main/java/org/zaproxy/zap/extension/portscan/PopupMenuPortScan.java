@@ -31,7 +31,9 @@ public class PopupMenuPortScan extends PopupMenuItemSiteNodeContainer {
     private static final long serialVersionUID = 1L;
     private ExtensionPortScan extension = null;
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public PopupMenuPortScan(String label) {
         super(label);
         this.setIcon(

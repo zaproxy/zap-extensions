@@ -354,7 +354,9 @@ public class InteractshService extends OastService implements OptionsChangedList
                         TimeUnit.SECONDS);
     }
 
-    /** @return new interactions from the server. */
+    /**
+     * @return new interactions from the server.
+     */
     public synchronized List<InteractshEvent> getInteractions() {
         try {
             if (!isRegistered) {

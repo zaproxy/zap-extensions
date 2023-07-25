@@ -162,7 +162,9 @@ public class WebSocketAlertWrapper {
             return this;
         }
 
-        /** @throws NullPointerException If name is null */
+        /**
+         * @throws NullPointerException If name is null
+         */
         public WebSocketAlertBuilder setName(String name) {
             this.name = Objects.requireNonNull(name);
             return this;
@@ -247,7 +249,9 @@ public class WebSocketAlertWrapper {
             return this;
         }
 
-        /** @throws IllegalStateException If Plugin ID, Alert Source or Name have not been set. */
+        /**
+         * @throws IllegalStateException If Plugin ID, Alert Source or Name have not been set.
+         */
         public WebSocketAlertWrapper build() {
 
             if (pluginId != -1 && source != null && !name.isEmpty()) {

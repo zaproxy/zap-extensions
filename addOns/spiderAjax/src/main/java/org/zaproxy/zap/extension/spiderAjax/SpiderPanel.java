@@ -119,7 +119,9 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
         return scrollLog;
     }
 
-    /** @return the AJAX Spider Panel */
+    /**
+     * @return the AJAX Spider Panel
+     */
     private javax.swing.JPanel getAJAXSpiderPanel() {
         if (AJAXSpiderPanel == null) {
 
@@ -151,7 +153,9 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
         return AJAXSpiderPanel;
     }
 
-    /** @return The Stop Scan Button */
+    /**
+     * @return The Stop Scan Button
+     */
     private JButton getStopScanButton() {
         if (stopScanButton == null) {
             stopScanButton = new JButton();
@@ -195,7 +199,9 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
         this.getStopScanButton().setEnabled(false);
     }
 
-    /** @return The Start Scan Button */
+    /**
+     * @return The Start Scan Button
+     */
     private JButton getStartScanButton() {
         if (startScanButton == null) {
             startScanButton = new JButton();
@@ -233,7 +239,9 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
         return !visitedUrls.contains(msg.getRequestHeader().getURI().toString());
     }
 
-    /** @return the Options Button */
+    /**
+     * @return the Options Button
+     */
     private JButton getOptionsButton() {
         if (optionsButton == null) {
             optionsButton = new JButton();
@@ -259,7 +267,10 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
         }
         return exportButton;
     }
-    /** @return the panel toolbar */
+
+    /**
+     * @return the panel toolbar
+     */
     private javax.swing.JToolBar getPanelToolbar() {
         if (panelToolbar == null) {
 
@@ -342,7 +353,9 @@ public class SpiderPanel extends AbstractPanel implements SpiderListener {
         return spiderResultsTable;
     }
 
-    /** @param filter the history filter */
+    /**
+     * @param filter the history filter
+     */
     public void setFilterStatus(HistoryFilter filter) {
         filterStatus.setText(filter.toShortString());
         filterStatus.setToolTipText(filter.toLongString());

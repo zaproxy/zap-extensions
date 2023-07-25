@@ -50,11 +50,13 @@ import org.zaproxy.zap.users.User;
 public class ContextAccessRulesManager {
 
     private static final Logger LOGGER = LogManager.getLogger(ContextAccessRulesManager.class);
+
     /**
      * In order to store access rules for unauthenticated visitors, we'll use -1 as the id, which is
      * an id that should not be generated for normal users.
      */
     public static final int UNAUTHENTICATED_USER_ID = -1;
+
     /** The separator used during the serialization of the rules. */
     private static final char SERIALIZATION_SEPARATOR = '`';
 

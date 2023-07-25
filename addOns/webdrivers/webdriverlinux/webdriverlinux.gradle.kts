@@ -1,3 +1,4 @@
+import org.zaproxy.gradle.addon.AddOnPlugin
 import org.zaproxy.gradle.addon.AddOnStatus
 import org.zaproxy.gradle.tasks.DownloadWebDriver
 
@@ -17,6 +18,10 @@ zapAddOn {
             localeToken.set("%LC%")
         }
     }
+}
+
+tasks.named(AddOnPlugin.GENERATE_MANIFEST_TASK_NAME) {
+    dependsOn(tasks.withType<DownloadWebDriver>())
 }
 
 tasks {

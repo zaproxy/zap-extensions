@@ -68,7 +68,9 @@ public class SQLiTestRequest {
     private static final String TAG_REQUEST_CHAR = "char";
     private static final String TAG_REQUEST_COLUMNS = "columns";
 
-    /** @param value */
+    /**
+     * @param value
+     */
     protected SQLiTestRequest(Element el) {
         this();
 

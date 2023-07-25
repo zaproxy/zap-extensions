@@ -76,8 +76,11 @@ public class PassiveScanJobResultData extends JobResultData {
     }
 
     private AlertNode getRootAlertNode()
-            throws NoSuchMethodException, SecurityException, IllegalAccessException,
-                    IllegalArgumentException, InvocationTargetException {
+            throws NoSuchMethodException,
+                    SecurityException,
+                    IllegalAccessException,
+                    IllegalArgumentException,
+                    InvocationTargetException {
         if (this.rootAlertNode != null) {
             return this.rootAlertNode;
         }

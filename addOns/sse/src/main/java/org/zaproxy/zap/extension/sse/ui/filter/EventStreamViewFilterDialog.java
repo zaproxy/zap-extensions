@@ -152,6 +152,7 @@ public class EventStreamViewFilterDialog extends AbstractDialog {
         }
         return btnApply;
     }
+
     /**
      * This method initializes btnCancel
      *
@@ -193,7 +194,9 @@ public class EventStreamViewFilterDialog extends AbstractDialog {
         return btnReset;
     }
 
-    /** @return model holding the values set by this dialog */
+    /**
+     * @return model holding the values set by this dialog
+     */
     public EventStreamViewFilter getFilter() {
         return filter;
     }

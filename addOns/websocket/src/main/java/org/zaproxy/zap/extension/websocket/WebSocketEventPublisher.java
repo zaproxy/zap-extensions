@@ -35,6 +35,7 @@ public final class WebSocketEventPublisher implements EventPublisher, WebSocketS
 
     /** The event sent when a {@code WebSocketMessage} is seen. */
     public static final String EVENT_MESSAGE = "ws.message";
+
     /** The event sent when a {@code WebSocketProxy} state change occurs. */
     public static final String EVENT_STATE_CHANGE = "ws.stateChange";
 

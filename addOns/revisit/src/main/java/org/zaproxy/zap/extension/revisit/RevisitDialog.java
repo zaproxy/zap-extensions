@@ -75,7 +75,9 @@ public class RevisitDialog extends AbstractDialog {
     private Date startTime;
     private Date endTime;
 
-    /** @throws HeadlessException */
+    /**
+     * @throws HeadlessException
+     */
     public RevisitDialog(ExtensionRevisit extension) throws HeadlessException {
         super();
         this.extension = extension;
@@ -145,6 +147,7 @@ public class RevisitDialog extends AbstractDialog {
         }
         getOkButton().setEnabled(true);
     }
+
     /**
      * This method initializes jPanel
      *

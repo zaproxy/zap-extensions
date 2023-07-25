@@ -34,7 +34,9 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 
-/** @author yhawke (2014) */
+/**
+ * @author yhawke (2014)
+ */
 public class PaddingOracleScanRule extends AbstractAppParamPlugin {
 
     // List of all possible errors

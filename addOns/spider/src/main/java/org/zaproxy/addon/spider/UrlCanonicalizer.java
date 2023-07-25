@@ -206,6 +206,7 @@ public final class UrlCanonicalizer {
         return buildCleanedParametersUriRepresentation(
                 uri, handleParameters, handleODataParametersVisited, name -> false);
     }
+
     /**
      * Builds a String representation of the URI with cleaned parameters, that can be used when
      * checking if an URI was already visited. The URI provided as a parameter should be already

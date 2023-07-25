@@ -42,6 +42,7 @@ public class ZestRedactDialog extends StandardFieldsDialog {
 
     private String replaceWith = "\u2588\u2588\u2588\u2588\u2588"; // 5 'block' characters
     private boolean replaceInCurrent = true;
+
     // private boolean replaceInAdded = true;
 
     public ZestRedactDialog(ExtensionZest ext, Frame owner, Dimension dim) {

@@ -309,6 +309,7 @@ public class AccessControlScannerThread
         private Context targetContext;
         private List<User> targetUsers;
         private boolean raiseAlerts;
+
         /**
          * Defines the risk level with which alerts should be raised and corresponds to the alert
          * levels from {@link Alert#MSG_RISK}, such as {@link Alert#RISK_HIGH}.

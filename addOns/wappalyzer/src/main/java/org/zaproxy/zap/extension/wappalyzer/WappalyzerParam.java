@@ -30,8 +30,10 @@ public class WappalyzerParam extends VersionedAbstractParam {
      * <p>It only needs to be updated for configurations changes (not releases of the add-on).
      */
     private static final int PARAM_CURRENT_VERSION = 1;
+
     /** The base configuration key for all "wappalyzer" configurations. */
     private static final String PARAM_BASE_KEY = "wappalyzer";
+
     /** The configuration key for the state of wappalyzer functionality. */
     private static final String PARAM_WAPPALYZER_STATE = PARAM_BASE_KEY + ".enabled";
 

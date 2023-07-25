@@ -108,6 +108,7 @@ public class WebSocketPassiveScannerManager {
     public boolean hasTable() {
         return passiveScanThread.hasTable();
     }
+
     /**
      * Adds the WebSocketPassive Scanner if not null
      *
@@ -203,7 +204,9 @@ public class WebSocketPassiveScannerManager {
         return getPassiveScannersSet().remove(new WebSocketPassiveScannerDecorator(passiveScanner));
     }
 
-    /** @return an iterator for all WebSocket Passive Scanners */
+    /**
+     * @return an iterator for all WebSocket Passive Scanners
+     */
     protected Iterator<WebSocketPassiveScannerDecorator> getIterator() {
         return getPassiveScannersSet().iterator();
     }

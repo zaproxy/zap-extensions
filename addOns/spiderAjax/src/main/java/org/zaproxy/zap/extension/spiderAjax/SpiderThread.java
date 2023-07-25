@@ -161,12 +161,16 @@ public class SpiderThread implements Runnable {
         outOfScopeResponseHeader = responseHeader;
     }
 
-    /** @return the SpiderThread object */
+    /**
+     * @return the SpiderThread object
+     */
     public SpiderThread getSpiderThread() {
         return this;
     }
 
-    /** @return the SpiderThread object */
+    /**
+     * @return the SpiderThread object
+     */
     public boolean isRunning() {
         return this.running;
     }

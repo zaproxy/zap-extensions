@@ -65,7 +65,9 @@ public class BeanShellConsoleFrame extends AbstractFrame {
 
     private static final Logger LOGGER = LogManager.getLogger(BeanShellConsoleFrame.class);
 
-    /** @throws HeadlessException */
+    /**
+     * @throws HeadlessException
+     */
     public BeanShellConsoleFrame() throws HeadlessException {
         super();
         initialize();
@@ -93,6 +95,7 @@ public class BeanShellConsoleFrame extends AbstractFrame {
         }
         return panelCommand;
     }
+
     /**
      * This method initializes jButton
      *

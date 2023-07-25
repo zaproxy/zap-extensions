@@ -42,7 +42,9 @@ public class PopupNewScriptFromType extends ExtensionPopupMenuItem {
         initialize();
     }
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public PopupNewScriptFromType(String label) {
         super(label);
     }

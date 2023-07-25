@@ -1,6 +1,6 @@
 plugins {
     `kotlin-dsl`
-    id("com.diffplug.spotless") version "6.14.1"
+    id("com.diffplug.spotless") version "6.20.0"
 }
 
 repositories {
@@ -10,7 +10,7 @@ repositories {
 spotless {
     java {
         licenseHeaderFile(file("../gradle/spotless/license.java"))
-        googleJavaFormat("1.7").aosp()
+        googleJavaFormat("1.17.0").aosp()
     }
 
     kotlin {
@@ -32,15 +32,15 @@ dependencies {
     implementation("io.github.bonigarcia:webdrivermanager:5.1.0") {
         exclude("com.fasterxml.jackson.core")
     }
-    implementation("com.diffplug.spotless:spotless-plugin-gradle:6.14.1")
+    implementation("com.diffplug.spotless:spotless-plugin-gradle:6.20.0")
 }
 
-val javaVersion = JavaVersion.VERSION_11
 java {
+    val javaVersion = JavaVersion.VERSION_11
     sourceCompatibility = javaVersion
     targetCompatibility = javaVersion
 }
 
-kotlinDslPluginOptions {
-    jvmTarget.set(javaVersion.toString())
+kotlin {
+    jvmToolchain(11)
 }

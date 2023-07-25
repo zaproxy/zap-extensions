@@ -40,7 +40,9 @@ public class PopupDuplicateScript extends ExtensionPopupMenuItem {
         initialize();
     }
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public PopupDuplicateScript(String label) {
         super(label);
     }

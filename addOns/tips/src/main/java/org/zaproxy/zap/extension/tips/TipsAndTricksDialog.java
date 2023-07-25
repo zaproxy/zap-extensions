@@ -50,7 +50,9 @@ public class TipsAndTricksDialog extends AbstractDialog {
     private JPanel jPanel1 = null;
     private String lastTip = null;
 
-    /** @throws HeadlessException */
+    /**
+     * @throws HeadlessException
+     */
     public TipsAndTricksDialog(ExtensionTipsAndTricks ext, Frame parent) throws HeadlessException {
         super(parent, true);
         this.ext = ext;
@@ -129,6 +131,7 @@ public class TipsAndTricksDialog extends AbstractDialog {
         }
         return btnNextTip;
     }
+
     /**
      * This method initializes the close button
      *
@@ -169,6 +172,7 @@ public class TipsAndTricksDialog extends AbstractDialog {
         }
         return txtTip;
     }
+
     /**
      * This method initializes jPanel1
      *

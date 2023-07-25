@@ -375,7 +375,9 @@ public class OptionsAjaxSpider extends AbstractParamPanel {
         return ajaxSpiderClickModel;
     }
 
-    /** @return the help file of the plugin */
+    /**
+     * @return the help file of the plugin
+     */
     @Override
     public String getHelpIndex() {
         return "addon.spiderajax.options";

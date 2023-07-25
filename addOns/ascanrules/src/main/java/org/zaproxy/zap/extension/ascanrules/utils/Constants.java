@@ -19,7 +19,9 @@
  */
 package org.zaproxy.zap.extension.ascanrules.utils;
 
-/** @author KSASAN (preetkaran20@gmail.com) Constants file for extensions */
+/**
+ * @author KSASAN (preetkaran20@gmail.com) Constants file for extensions
+ */
 public final class Constants {
 
     public static final String NULL_BYTE_CHARACTER = String.valueOf((char) 0);

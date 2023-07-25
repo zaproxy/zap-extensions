@@ -71,6 +71,7 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
         NULL_BYTE_CHARACTER + "HtTp://",
         NULL_BYTE_CHARACTER + "HtTpS://",
     };
+
     /** the various local file targets to look for (prefixed by the prefixes above) */
     private static final String[] REMOTE_FILE_TARGETS = {
         "www.google.com/",
@@ -79,6 +80,7 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
         "www.google.com/search?q=OWASP%20ZAP",
         "www.google.com:80/search?q=OWASP%20ZAP",
     };
+
     /** the patterns to look for, associated with the equivalent remote file targets above */
     private static final Pattern[] REMOTE_FILE_PATTERNS = {
         Pattern.compile("<title>Google</title>"),
@@ -87,6 +89,7 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
         Pattern.compile("<title.*?Google.*?/title>"),
         Pattern.compile("<title.*?Google.*?/title>"),
     };
+
     /** The number of requests we will send per parameter, based on the attack strength */
     private static final int REQ_PER_PARAM_OFF = 0;
 
@@ -94,8 +97,10 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
     private static final int REQ_PER_PARAM_MEDIUM = 2;
     private static final int REQ_PER_PARAM_HIGH = 4;
     private static final int REQ_PER_PARAM_INSANE = REMOTE_FILE_TARGET_PREFIXES.length;
+
     /** details of the vulnerability which we are attempting to find */
     private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_5");
+
     /** the logger object */
     private static final Logger LOGGER = LogManager.getLogger(RemoteFileIncludeScanRule.class);
 

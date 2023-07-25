@@ -32,14 +32,18 @@ public class PopupMenuAjaxSite extends PopupMenuItemSiteNodeContainer {
     private static final long serialVersionUID = 1L;
     private ExtensionAjax extension = null;
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public PopupMenuAjaxSite(String label, ExtensionAjax extension) {
         super(label);
         this.setIcon(new ImageIcon(getClass().getResource("/resource/icon/16/spiderAjax.png")));
         this.extension = extension;
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     private ExtensionAjax getExtensionSpider() {
         if (extension == null) {
             extension =

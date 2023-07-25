@@ -77,6 +77,7 @@ public abstract class WebSocketMessage {
     public static final int OPCODE_CLOSE = 0x8;
     public static final int OPCODE_PING = 0x9;
     public static final int OPCODE_PONG = 0xA;
+
     // control frames (0xB - 0xF are reserved for further control frames)
 
     /**
@@ -174,7 +175,9 @@ public abstract class WebSocketMessage {
         this.dto = baseDto;
     }
 
-    /** @return consecutive number unique within one WebSocket channel */
+    /**
+     * @return consecutive number unique within one WebSocket channel
+     */
     public int getMessageId() {
         return messageId;
     }
@@ -207,12 +210,16 @@ public abstract class WebSocketMessage {
         return closeCode;
     }
 
-    /** @return the opcode for this message. */
+    /**
+     * @return the opcode for this message.
+     */
     public final int getOpcode() {
         return opcode;
     }
 
-    /** @see WebSocketMessage#isBinary(int) */
+    /**
+     * @see WebSocketMessage#isBinary(int)
+     */
     public final boolean isBinary() {
         return isBinary(opcode);
     }
@@ -225,7 +232,9 @@ public abstract class WebSocketMessage {
         return opcode == OPCODE_BINARY;
     }
 
-    /** @see WebSocketMessage#isText(int) */
+    /**
+     * @see WebSocketMessage#isText(int)
+     */
     public final boolean isText() {
         return isText(opcode);
     }
@@ -238,7 +247,9 @@ public abstract class WebSocketMessage {
         return opcode == OPCODE_TEXT;
     }
 
-    /** @see WebSocketMessage#isControl(int) */
+    /**
+     * @see WebSocketMessage#isControl(int)
+     */
     public final boolean isControl() {
         return isControl(opcode);
     }
@@ -265,7 +276,9 @@ public abstract class WebSocketMessage {
         return isFinished;
     }
 
-    /** @return readable representation of this messages opcode */
+    /**
+     * @return readable representation of this messages opcode
+     */
     public String getOpcodeString() {
         return opcode2string(opcode);
     }
@@ -350,7 +363,9 @@ public abstract class WebSocketMessage {
         return timestamp;
     }
 
-    /** @return number of bytes used in the payload */
+    /**
+     * @return number of bytes used in the payload
+     */
     public abstract Integer getPayloadLength();
 
     /**

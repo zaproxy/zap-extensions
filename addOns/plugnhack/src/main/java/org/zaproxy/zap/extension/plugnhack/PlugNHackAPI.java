@@ -62,7 +62,9 @@ public class PlugNHackAPI extends ApiImplementor {
         this(null);
     }
 
-    /** @param ext */
+    /**
+     * @param ext
+     */
     public PlugNHackAPI(ExtensionPlugNHack ext) {
 
         extension = ext;
@@ -81,7 +83,9 @@ public class PlugNHackAPI extends ApiImplementor {
         this.addApiShortcut(OTHER_MANIFEST);
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     @Override
     public String getPrefix() {
         return PREFIX;

@@ -43,6 +43,7 @@ import org.zaproxy.zap.common.VersionedAbstractParam;
 public class LocalServersOptions extends VersionedAbstractParam {
 
     private static final Logger LOGGER = LogManager.getLogger(LocalServersOptions.class);
+
     /**
      * The current version of the configurations. Used to keep track of configuration changes
      * between releases, in case changes/updates are needed.

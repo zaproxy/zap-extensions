@@ -30,7 +30,9 @@ public class PopupMenuOpenAndMonitorUrl extends PopupMenuItemHttpMessageContaine
     private static final long serialVersionUID = 1L;
     private MonitoredPagesManager mpm = null;
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public PopupMenuOpenAndMonitorUrl(MonitoredPagesManager mpm) {
         super(Constant.messages.getString("plugnhack.menu.monitor.open"));
         this.mpm = mpm;

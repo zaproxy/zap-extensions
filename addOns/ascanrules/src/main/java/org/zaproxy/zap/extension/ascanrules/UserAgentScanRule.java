@@ -37,7 +37,9 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 
-/** @author kniepdennis@gmail.com */
+/**
+ * @author kniepdennis@gmail.com
+ */
 public class UserAgentScanRule extends AbstractAppPlugin {
 
     private static final Logger LOGGER = LogManager.getLogger(UserAgentScanRule.class);

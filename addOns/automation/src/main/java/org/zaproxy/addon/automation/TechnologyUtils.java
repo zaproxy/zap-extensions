@@ -38,6 +38,7 @@ public class TechnologyUtils {
                 .forEach(tech -> list.add(tech.getName()));
         return list;
     }
+
     /**
      * @param incTech
      * @param excTech

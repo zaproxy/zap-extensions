@@ -81,7 +81,9 @@ public class SQLiTestResponse {
     private static final String TAG_RESPONSE_TIME = "time";
     private static final String TAG_RESPONSE_UNION = "union";
 
-    /** @param el */
+    /**
+     * @param el
+     */
     protected SQLiTestResponse(Element el) {
         this();
 

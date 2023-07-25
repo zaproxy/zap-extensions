@@ -33,12 +33,16 @@ public class PopupEncoderMenu extends ExtensionPopupMenuItem {
         super(Constant.messages.getString("encoder.tools.menu.encdec"));
     }
 
-    /** @return Returns the lastInvoker. */
+    /**
+     * @return Returns the lastInvoker.
+     */
     public JTextComponent getLastInvoker() {
         return lastInvoker;
     }
 
-    /** @param lastInvoker The lastInvoker to set. */
+    /**
+     * @param lastInvoker The lastInvoker to set.
+     */
     public void setLastInvoker(JTextComponent lastInvoker) {
         this.lastInvoker = lastInvoker;
     }

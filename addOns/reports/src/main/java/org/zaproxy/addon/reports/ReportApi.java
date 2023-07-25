@@ -336,7 +336,7 @@ public class ReportApi extends ApiImplementor {
                 }
                 parent.appendChild(el);
             }
-        };
+        }
     }
 
     private static boolean isContainedParam(String paramName, JSONObject params) {

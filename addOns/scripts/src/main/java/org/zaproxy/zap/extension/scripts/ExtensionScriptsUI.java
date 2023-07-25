@@ -107,6 +107,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
     private ScriptWrapper currentLockedScript = null;
     private boolean lockOutputToDisplayedScript = false;
+
     // private ZapMenuItem menuEnableScripts = null;
 
     // private static final Logger LOGGER = Logger.getLogger(ExtensionScriptsUI.class);

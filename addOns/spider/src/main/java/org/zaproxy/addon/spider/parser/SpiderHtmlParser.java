@@ -67,6 +67,7 @@ public class SpiderHtmlParser extends SpiderParser {
                     HTMLElementName.H6,
                     HTMLElementName.LI,
                     HTMLElementName.BLOCKQUOTE);
+
     /**
      * Functional interface that allows custom handling of URLs retrieved in attributes, to be
      * manipulated before the URL is sent to a {@link SpiderParser#processURL} call.
@@ -80,7 +81,9 @@ public class SpiderHtmlParser extends SpiderParser {
 
     private boolean baseTagSet;
 
-    /** @throws NullPointerException if {@code message} is null. */
+    /**
+     * @throws NullPointerException if {@code message} is null.
+     */
     @Override
     public boolean parseResource(ParseContext ctx) {
 
@@ -435,7 +438,9 @@ public class SpiderHtmlParser extends SpiderParser {
         return true;
     }
 
-    /** @throws NullPointerException if {@code message} is null. */
+    /**
+     * @throws NullPointerException if {@code message} is null.
+     */
     @Override
     public boolean canParseResource(ParseContext ctx, boolean wasAlreadyConsumed) {
         // Fallback parser - if it's a HTML message which has not already been processed

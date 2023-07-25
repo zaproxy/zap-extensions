@@ -150,7 +150,9 @@ public class SQLiBoundary {
         }
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     public int getLevel() {
         return level;
     }
@@ -171,17 +173,23 @@ public class SQLiBoundary {
         return where.isEmpty() || where.contains(testWhere);
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     public int getPtype() {
         return ptype;
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     public String getPrefix() {
         return prefix;
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     public String getSuffix() {
         return suffix;
     }

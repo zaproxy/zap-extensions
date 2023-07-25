@@ -42,7 +42,9 @@ public class PopupRemoveScript extends ExtensionPopupMenuItem {
         initialize();
     }
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public PopupRemoveScript(String label) {
         super(label);
     }

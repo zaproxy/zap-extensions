@@ -327,6 +327,7 @@ public class TableEventStream extends ParosAbstractTable {
             throws SQLException {
         return buildEvents(rs, interpretLiteralBytes, -1);
     }
+
     /**
      * @param rs
      * @param interpretLiteralBytes

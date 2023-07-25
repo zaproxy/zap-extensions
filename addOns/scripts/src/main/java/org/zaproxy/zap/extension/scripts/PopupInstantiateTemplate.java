@@ -40,7 +40,9 @@ public class PopupInstantiateTemplate extends ExtensionPopupMenuItem {
         initialize();
     }
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public PopupInstantiateTemplate(String label) {
         super(label);
     }
