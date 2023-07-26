@@ -41,11 +41,13 @@ XSS Description
   * !reports.report.alerts.detail.param!: `Test Param`
   * !reports.report.alerts.detail.attack!: `Test "Attack\"`
   * !reports.report.alerts.detail.evidence!: `Test <p>Evidence`
+  * !reports.report.alerts.detail.otherinfo!: `Test 'Other\`
 * !reports.report.alerts.detail.url!: http://example.com/example_3
   * !reports.report.alerts.detail.method!: `GET`
   * !reports.report.alerts.detail.param!: `Test Param`
   * !reports.report.alerts.detail.attack!: `Test "Attack\"`
   * !reports.report.alerts.detail.evidence!: `Test <p>Evidence`
+  * !reports.report.alerts.detail.otherinfo!: `Test Another 'Other\`
 
 !reports.report.alerts.detail.instances!: 2
 

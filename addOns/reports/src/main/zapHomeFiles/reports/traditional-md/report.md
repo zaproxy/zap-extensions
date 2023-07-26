@@ -40,6 +40,7 @@
   * [(#{report.alerts.detail.param})]: `[(${instance.userObject.param})]`
   * [(#{report.alerts.detail.attack})]: `[(${instance.userObject.attack})]`
   * [(#{report.alerts.detail.evidence})]: `[(${instance.userObject.evidence})]`
+  * [(#{report.alerts.detail.otherinfo})]: `[(${instance.userObject.otherinfo})]`
 [/th:block]
 [(#{report.alerts.detail.instances})]: [(${alert.childCount})]
 
