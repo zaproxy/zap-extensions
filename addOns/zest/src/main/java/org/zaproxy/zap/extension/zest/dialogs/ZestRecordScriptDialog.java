@@ -37,6 +37,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
@@ -59,10 +60,13 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
     private static final String FIELD_LOAD = "zest.dialog.script.label.load";
     private static final String FIELD_CLIENT_NODE = "zest.dialog.script.label.clientnode";
     private static final String FIELD_BROWSER = "zest.dialog.script.label.browser";
-    private static final String ERROR_BROWSER = "zest.dialog.script.error.browser";
     private static final String ERROR_CLIENT = "zest.dialog.script.error.client";
-    private static final List<String> BROWSER_NAMES = List.of("Firefox", "Chrome");
+    private static final String THREAD_PREFIX = "ZAP-client-browser-";
+    private static final String CHROME = "Chrome";
+    private static final String FIREFOX = "Firefox";
+    private static final List<String> BROWSER_NAMES = List.of(FIREFOX, CHROME);
 
+    private int threadId = 1;
     private static final Logger LOGGER = LogManager.getLogger(ZestRecordScriptDialog.class);
 
     private static final long serialVersionUID = 1L;
@@ -185,19 +189,32 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
     private void launchBrowser(String url, String browserName) {
         ExtensionSelenium extSelenium =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
-        WebDriver wd = extSelenium.getProxiedBrowserByName(browserName);
-        if (wd == null) {
-            cancelPressed();
-            LOGGER.error(Constant.messages.getString(ERROR_BROWSER));
-            View.getSingleton()
-                    .showWarningDialog(Constant.messages.getString(ERROR_BROWSER, browserName));
-            return;
+        try {
+        	 WebDriver wd = extSelenium.getProxiedBrowserByName(browserName);
+        	 if(wd == null) {
+        		 throw new NullPointerException(); 
+        	 }
+        	 String zapurl = wd.getCurrentUrl();
+             wd.get(url);
+             JavascriptExecutor jsExecutor = (JavascriptExecutor) wd;
+             jsExecutor.executeScript("localStorage.setItem('localzapurl', '" + zapurl + "')");
+             jsExecutor.executeScript("localStorage.setItem('localzapenable',false)");
         }
-        String zapurl = wd.getCurrentUrl();
-        wd.get(url);
-        JavascriptExecutor jsExecutor = (JavascriptExecutor) wd;
-        jsExecutor.executeScript("localStorage.setItem('localzapurl', '" + zapurl + "')");
-        jsExecutor.executeScript("localStorage.setItem('localzapenable',false)");
+        catch(NullPointerException e) {
+        	String msg;
+            if (browserName == CHROME) {
+                msg = extSelenium.getWarnMessageFailedToStart(Browser.CHROME);
+            } else {
+                msg = extSelenium.getWarnMessageFailedToStart(Browser.FIREFOX);
+            }
+            cancelPressed();
+            LOGGER.error(msg);
+            View.getSingleton().showWarningDialog(msg);
+        }
+        catch(Exception e) {
+        	cancelPressed();
+            LOGGER.error(e.getMessage());
+        }
     }
 
     @Override
@@ -252,7 +269,8 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
             String url = this.getStringValue(FIELD_CLIENT_NODE);
             String browser = this.getStringValue(FIELD_BROWSER);
             extension.startClientRecording(url);
-            Thread browserThread = new Thread(() -> launchBrowser(url, browser));
+            Thread browserThread =
+                    new Thread(() -> launchBrowser(url, browser), THREAD_PREFIX + threadId++);
             browserThread.start();
         }
     }
