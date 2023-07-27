@@ -66,19 +66,14 @@ crowdin {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("automation")!!)
-    compileOnly(parent!!.childProjects.get("commonlib")!!)
-    compileOnly(parent!!.childProjects.get("database")!!)
-    compileOnly(parent!!.childProjects.get("formhandler")!!)
-    compileOnly(parent!!.childProjects.get("network")!!)
+    zapAddOn("automation")
+    zapAddOn("commonlib")
+    zapAddOn("database")
+    zapAddOn("formhandler")
+    zapAddOn("network")
 
     implementation("io.kaitai:kaitai-struct-runtime:0.10")
 
-    testImplementation(parent!!.childProjects.get("automation")!!)
-    testImplementation(parent!!.childProjects.get("commonlib")!!)
-    testImplementation(parent!!.childProjects.get("database")!!)
-    testImplementation(parent!!.childProjects.get("formhandler")!!)
-    testImplementation(parent!!.childProjects.get("network")!!)
     testImplementation(project(":testutils"))
 }
 

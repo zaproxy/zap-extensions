@@ -41,6 +41,6 @@ zapAddOn {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("network")!!)
-    compileOnly(parent!!.childProjects.get("requester")!!)
+    zapAddOn("network")
+    zapAddOn("requester")
 }

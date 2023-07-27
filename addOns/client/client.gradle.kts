@@ -29,8 +29,8 @@ crowdin {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("selenium")!!)
-    compileOnly(parent!!.childProjects.get("network")!!)
+    zapAddOn("selenium")
+    zapAddOn("network")
 
     testImplementation(project(":testutils"))
 }

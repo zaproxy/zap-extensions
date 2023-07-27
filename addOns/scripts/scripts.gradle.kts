@@ -39,8 +39,8 @@ spotless {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("automation")!!)
+    zapAddOn("automation")
+
     testImplementation(project(":testutils"))
-    testImplementation(parent!!.childProjects.get("automation")!!)
     testImplementation("org.snakeyaml:snakeyaml-engine:2.3")
 }

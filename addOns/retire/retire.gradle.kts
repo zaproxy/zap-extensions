@@ -36,10 +36,9 @@ crowdin {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("commonlib")!!)
+    zapAddOn("commonlib")
 
     implementation("com.google.code.gson:gson:2.8.8")
 
-    testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(project(":testutils"))
 }

@@ -32,7 +32,7 @@ zapAddOn {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("automation")!!)
+    zapAddOn("automation")
+
     testImplementation(project(":testutils"))
-    testImplementation(parent!!.childProjects.get("automation")!!)
 }

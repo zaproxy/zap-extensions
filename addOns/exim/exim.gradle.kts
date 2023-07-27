@@ -51,12 +51,11 @@ crowdin {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("automation")!!)
-    compileOnly(parent!!.childProjects.get("commonlib")!!)
+    zapAddOn("automation")
+    zapAddOn("commonlib")
+
     implementation(files("lib/org.jwall.web.audit-0.2.15.jar"))
 
-    testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
-    testImplementation(parent!!.childProjects.get("automation")!!)
     testImplementation(project(":testutils"))
 }

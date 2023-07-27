@@ -39,8 +39,8 @@ zapAddOn {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("automation")!!)
-    compileOnly(parent!!.childProjects.get("commonlib")!!)
+    zapAddOn("automation")
+    zapAddOn("commonlib")
 
     implementation("com.google.re2j:re2j:1.6")
 
@@ -53,6 +53,5 @@ dependencies {
 
     implementation("org.jsoup:jsoup:1.14.3")
 
-    testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(project(":testutils"))
 }

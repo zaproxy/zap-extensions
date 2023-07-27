@@ -57,10 +57,9 @@ datanucleus {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects["database"]!!)
-    compileOnly(parent!!.childProjects["graaljs"]!!)
-    compileOnly(parent!!.childProjects["network"]!!)
+    zapAddOn("database")
+    zapAddOn("graaljs")
+    zapAddOn("network")
 
     testImplementation(project(":testutils"))
-    testImplementation(parent!!.childProjects["network"]!!)
 }

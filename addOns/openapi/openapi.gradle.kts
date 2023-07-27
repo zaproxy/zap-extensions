@@ -71,10 +71,10 @@ configurations {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("automation")!!)
-    compileOnly(parent!!.childProjects.get("commonlib")!!)
-    compileOnly(parent!!.childProjects.get("formhandler")!!)
-    compileOnly(parent!!.childProjects.get("spider")!!)
+    zapAddOn("automation")
+    zapAddOn("commonlib")
+    zapAddOn("formhandler")
+    zapAddOn("spider")
 
     implementation("io.swagger.parser.v3:swagger-parser:2.1.16")
     implementation("io.swagger:swagger-compat-spec-parser:1.0.67") {
@@ -87,11 +87,7 @@ dependencies {
         exclude(group = "org.apache.logging.log4j")
     }
 
-    testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
     testImplementation(libs.log4j.core)
-    testImplementation(parent!!.childProjects.get("automation")!!)
-    testImplementation(parent!!.childProjects.get("formhandler")!!)
-    testImplementation(parent!!.childProjects.get("spider")!!)
     testImplementation(project(":testutils"))
 }

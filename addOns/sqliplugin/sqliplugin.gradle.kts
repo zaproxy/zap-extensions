@@ -32,7 +32,7 @@ crowdin {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("commonlib")!!)
+    zapAddOn("commonlib")
 
     implementation("org.jdom:jdom:2.0.2")
 }

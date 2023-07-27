@@ -69,10 +69,11 @@ zapAddOn {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("selenium")!!)
-    compileOnly(parent!!.childProjects.get("automation")!!)
-    compileOnly(parent!!.childProjects.get("commonlib")!!)
-    compileOnly(parent!!.childProjects.get("network")!!)
+    zapAddOn("selenium")
+    zapAddOn("automation")
+    zapAddOn("commonlib")
+    zapAddOn("network")
+
     compileOnly(libs.log4j.core)
 
     implementation(files("lib/crawljax-core-3.7.1.jar"))
@@ -93,10 +94,6 @@ dependencies {
     }
     implementation("xmlunit:xmlunit:1.6")
 
-    testImplementation(parent!!.childProjects.get("automation")!!)
-    testImplementation(parent!!.childProjects.get("commonlib")!!)
-    testImplementation(parent!!.childProjects.get("network")!!)
-    testImplementation(parent!!.childProjects.get("selenium")!!)
     testImplementation(libs.log4j.core)
     testImplementation(project(":testutils"))
 }

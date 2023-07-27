@@ -40,8 +40,7 @@ dependencies {
         exclude(group = "org.apache.logging.log4j")
     }
 
-    compileOnly(parent!!.childProjects.get("network")!!)
+    zapAddOn("network")
 
-    testImplementation(parent!!.childProjects.get("network")!!)
     testImplementation(project(":testutils"))
 }

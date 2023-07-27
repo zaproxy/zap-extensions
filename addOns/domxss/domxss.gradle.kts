@@ -32,12 +32,10 @@ zapAddOn {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("commonlib")!!)
-    compileOnly(parent!!.childProjects.get("network")!!)
-    compileOnly(parent!!.childProjects.get("selenium")!!)
-    testImplementation(parent!!.childProjects.get("commonlib")!!)
-    testImplementation(parent!!.childProjects.get("network")!!)
-    testImplementation(parent!!.childProjects.get("selenium")!!)
+    zapAddOn("commonlib")
+    zapAddOn("network")
+    zapAddOn("selenium")
+
     testImplementation("io.github.bonigarcia:webdrivermanager:5.0.3")
     testImplementation(project(":testutils"))
 }

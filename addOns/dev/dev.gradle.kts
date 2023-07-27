@@ -18,6 +18,5 @@ zapAddOn {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("network")!!)
-    testImplementation(parent!!.childProjects.get("network")!!)
+    zapAddOn("network")
 }
