@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Added
+- The HTTP Only Site scan rule now includes example alert functionality for documentation generation purposes (Issue 6119).
 
 ## [47] - 2023-07-20
 ### Added

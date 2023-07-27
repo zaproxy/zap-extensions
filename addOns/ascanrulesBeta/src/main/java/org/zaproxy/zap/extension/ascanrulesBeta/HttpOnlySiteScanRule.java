@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.util.List;
 import java.util.Map;
 import javax.net.ssl.SSLException;
 import org.apache.commons.httpclient.URI;
@@ -32,6 +33,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -108,18 +110,22 @@ public class HttpOnlySiteScanRule extends AbstractHostPlugin {
         return ALERT_TAGS;
     }
 
-    public void raiseAlert(HttpMessage newRequest, String message) {
-        String newUri = newRequest.getRequestHeader().getURI().toString();
+    private AlertBuilder createAlert(String message, String oldUri, String newUri) {
         String otherInfoDetail =
                 Constant.messages.getString(MESSAGE_PREFIX + "otherinfo." + message);
-        newAlert()
+
+        return newAlert()
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setUri(getBaseMsg().getRequestHeader().getURI().toString())
+                .setUri(oldUri)
                 .setOtherInfo(
                         Constant.messages.getString(
-                                MESSAGE_PREFIX + "otherinfo", otherInfoDetail, newUri))
-                .setMessage(newRequest)
-                .raise();
+                                MESSAGE_PREFIX + "otherinfo", otherInfoDetail, newUri));
+    }
+
+    public void raiseAlert(HttpMessage newRequest, String message) {
+        String oldUri = getBaseMsg().getRequestHeader().getURI().toString();
+        String newUri = newRequest.getRequestHeader().getURI().toString();
+        createAlert(message, oldUri, newUri).setMessage(newRequest).raise();
     }
 
     public URI constructURI(String redirect, URI oldURI) {
@@ -220,5 +226,16 @@ public class HttpOnlySiteScanRule extends AbstractHostPlugin {
             return -1;
         }
         return port;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        String domain = "example.com";
+        return List.of(
+                createAlert(
+                                "noredirection",
+                                HttpHeader.SCHEME_HTTP + domain,
+                                HttpHeader.SCHEME_HTTPS + domain)
+                        .build());
     }
 }
