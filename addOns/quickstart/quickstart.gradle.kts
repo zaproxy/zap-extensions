@@ -80,10 +80,10 @@ zapAddOn {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("callhome")!!)
-    compileOnly(parent!!.childProjects.get("network")!!)
-    compileOnly(parent!!.childProjects.get("reports")!!)
-    compileOnly(parent!!.childProjects.get("selenium")!!)
-    compileOnly(parent!!.childProjects.get("spider")!!)
-    compileOnly(parent!!.childProjects.get("spiderAjax")!!)
+    zapAddOn("callhome")
+    zapAddOn("network")
+    zapAddOn("reports")
+    zapAddOn("selenium")
+    zapAddOn("spider")
+    zapAddOn("spiderAjax")
 }

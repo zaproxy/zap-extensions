@@ -48,12 +48,10 @@ crowdin {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("commonlib")!!)
-    compileOnly(parent!!.childProjects.get("network")!!)
-    compileOnly(parent!!.childProjects.get("selenium")!!)
-    compileOnly(parent!!.childProjects.get("spiderAjax")!!)
+    zapAddOn("commonlib")
+    zapAddOn("network")
+    zapAddOn("selenium")
+    zapAddOn("spiderAjax")
+
     testImplementation(project(":testutils"))
-    testImplementation(parent!!.childProjects.get("commonlib")!!)
-    testImplementation(parent!!.childProjects.get("network")!!)
-    testImplementation(parent!!.childProjects.get("selenium")!!)
 }

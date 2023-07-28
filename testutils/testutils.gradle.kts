@@ -16,7 +16,7 @@ configurations {
 
 dependencies {
     compileOnly("org.zaproxy:zap:2.13.0")
-    implementation(parent!!.childProjects.get("addOns")!!.childProjects.get("network")!!)
+    implementation(project(":addOns:network"))
     implementation("org.apache.httpcomponents.client5:httpclient5:5.2.1")
 
     api("org.hamcrest:hamcrest-library:2.2")

@@ -48,8 +48,8 @@ zapAddOn {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("fuzz")!!)
-    compileOnly(parent!!.childProjects.get("requester")!!)
+    zapAddOn("fuzz")
+    zapAddOn("requester")
 
     testImplementation(project(":testutils"))
 }

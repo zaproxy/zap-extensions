@@ -30,19 +30,15 @@ zapAddOn {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("commonlib")!!)
-    compileOnly(parent!!.childProjects.get("database")!!)
-    compileOnly(parent!!.childProjects.get("network")!!)
-    compileOnly(parent!!.childProjects.get("oast")!!)
+    zapAddOn("commonlib")
+    zapAddOn("database")
+    zapAddOn("network")
+    zapAddOn("oast")
 
     implementation("com.googlecode.java-diff-utils:diffutils:1.3.0")
     implementation("org.jsoup:jsoup:1.14.3")
 
-    testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
-    testImplementation(parent!!.childProjects.get("database")!!)
-    testImplementation(parent!!.childProjects.get("network")!!)
-    testImplementation(parent!!.childProjects.get("oast")!!)
     testImplementation(project(":testutils"))
 }
 

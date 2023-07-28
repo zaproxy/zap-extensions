@@ -21,12 +21,11 @@ zapAddOn {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("commonlib")!!)
+    zapAddOn("commonlib")
 
     implementation("com.adobe.xmp:xmpcore:6.0.6")
     implementation("com.drewnoakes:metadata-extractor:2.13.0")
 
-    testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(project(":testutils"))
 }
 

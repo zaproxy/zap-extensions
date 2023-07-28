@@ -1,6 +1,7 @@
 import com.diffplug.gradle.spotless.JavaExtension
 import com.diffplug.gradle.spotless.SpotlessExtension
 import org.gradle.api.Project
+import org.gradle.api.artifacts.dsl.DependencyHandler
 
 /**
  * Configures the java extension with all Java files except the given ones and configures
@@ -35,3 +36,12 @@ fun SpotlessExtension.javaWith3rdPartyFormatted(project: Project, files: List<St
  */
 fun JavaExtension.googleJavaFormatAosp() =
     googleJavaFormat("1.7").aosp()
+
+/**
+ * Adds an add-on project as a dependency.
+ */
+fun DependencyHandler.zapAddOn(addOnId: String) {
+    add("zapAddOn", project(mapOf("path" to ":addOns:$addOnId")))
+
+    add("testRuntimeOnly", project(mapOf("path" to ":addOns:$addOnId", "configuration" to "zapAddOn")))
+}

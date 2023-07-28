@@ -45,7 +45,8 @@ crowdin {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("automation")!!)
+    zapAddOn("automation")
+
     implementation("org.thymeleaf:thymeleaf:3.1.1.RELEASE")
     implementation("org.xhtmlrenderer:flying-saucer-pdf:9.1.22")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.2")
@@ -56,7 +57,6 @@ dependencies {
         exclude(group = "org.apache.logging.log4j")
     }
 
-    testImplementation(parent!!.childProjects.get("automation")!!)
     testImplementation(project(":testutils"))
 }
 

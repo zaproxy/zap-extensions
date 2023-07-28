@@ -30,7 +30,7 @@ crowdin {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("automation")!!)
-    testImplementation(parent!!.childProjects.get("automation")!!)
+    zapAddOn("automation")
+
     testImplementation(project(":testutils"))
 }

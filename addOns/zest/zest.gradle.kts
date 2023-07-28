@@ -35,8 +35,9 @@ zapAddOn {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("network")!!)
-    compileOnly(parent!!.childProjects.get("selenium")!!)
+    zapAddOn("network")
+    zapAddOn("selenium")
+
     implementation("org.zaproxy:zest:0.18.0") {
         // Provided by Selenium add-on.
         exclude(group = "org.seleniumhq.selenium")
@@ -49,6 +50,4 @@ dependencies {
     }
 
     testImplementation(project(":testutils"))
-    testImplementation(parent!!.childProjects.get("network")!!)
-    testImplementation(parent!!.childProjects.get("selenium")!!)
 }

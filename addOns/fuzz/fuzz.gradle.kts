@@ -20,7 +20,8 @@ zapAddOn {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("commonlib")!!)
+    zapAddOn("commonlib")
+
     implementation("com.natpryce:snodge:2.1.2.2")
     implementation("org.owasp.jbrofuzz:jbrofuzz-core:2.5.1") {
         // Only "jbrofuzz-core" is needed.
@@ -28,6 +29,5 @@ dependencies {
     }
     implementation("com.github.mifmif:generex:1.0.2")
 
-    testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(project(":testutils"))
 }

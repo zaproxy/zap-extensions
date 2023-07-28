@@ -24,10 +24,8 @@ zapAddOn {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("commonlib")!!)
-    compileOnly(parent!!.childProjects.get("network")!!)
+    zapAddOn("commonlib")
+    zapAddOn("network")
 
-    testImplementation(parent!!.childProjects.get("commonlib")!!)
-    testImplementation(parent!!.childProjects.get("network")!!)
     testImplementation(project(":testutils"))
 }

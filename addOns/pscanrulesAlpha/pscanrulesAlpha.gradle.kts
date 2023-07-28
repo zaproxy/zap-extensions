@@ -17,8 +17,7 @@ zapAddOn {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("commonlib")!!)
+    zapAddOn("commonlib")
 
-    testImplementation(parent!!.childProjects.get("commonlib")!!)
     testImplementation(project(":testutils"))
 }

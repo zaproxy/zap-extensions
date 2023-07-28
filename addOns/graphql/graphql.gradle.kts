@@ -71,17 +71,14 @@ crowdin {
 }
 
 dependencies {
-    compileOnly(parent!!.childProjects.get("automation")!!)
-    compileOnly(parent!!.childProjects.get("commonlib")!!)
-    compileOnly(parent!!.childProjects.get("formhandler")!!)
-    compileOnly(parent!!.childProjects.get("spider")!!)
+    zapAddOn("automation")
+    zapAddOn("commonlib")
+    zapAddOn("formhandler")
+    zapAddOn("spider")
+
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.graphql-java:graphql-java:21.0")
 
-    testImplementation(parent!!.childProjects.get("automation")!!)
-    testImplementation(parent!!.childProjects.get("commonlib")!!)
-    testImplementation(parent!!.childProjects.get("formhandler")!!)
-    testImplementation(parent!!.childProjects.get("spider")!!)
     testImplementation(project(":testutils"))
     testImplementation(libs.log4j.core)
 }
