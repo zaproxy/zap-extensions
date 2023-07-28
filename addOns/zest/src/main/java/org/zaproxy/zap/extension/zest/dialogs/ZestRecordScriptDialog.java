@@ -37,7 +37,6 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
-import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
@@ -190,30 +189,18 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
         ExtensionSelenium extSelenium =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
         try {
-        	 WebDriver wd = extSelenium.getProxiedBrowserByName(browserName);
-        	 if(wd == null) {
-        		 throw new NullPointerException(); 
-        	 }
-        	 String zapurl = wd.getCurrentUrl();
-             wd.get(url);
-             JavascriptExecutor jsExecutor = (JavascriptExecutor) wd;
-             jsExecutor.executeScript("localStorage.setItem('localzapurl', '" + zapurl + "')");
-             jsExecutor.executeScript("localStorage.setItem('localzapenable',false)");
-        }
-        catch(NullPointerException e) {
-        	String msg;
-            if (browserName == CHROME) {
-                msg = extSelenium.getWarnMessageFailedToStart(Browser.CHROME);
-            } else {
-                msg = extSelenium.getWarnMessageFailedToStart(Browser.FIREFOX);
-            }
+            WebDriver wd = extSelenium.getProxiedBrowserByName(browserName);
+            String zapurl = wd.getCurrentUrl();
+            wd.get(url);
+            JavascriptExecutor jsExecutor = (JavascriptExecutor) wd;
+            jsExecutor.executeScript("localStorage.setItem('localzapurl', '" + zapurl + "')");
+            jsExecutor.executeScript("localStorage.setItem('localzapenable',false)");
+        } catch (RuntimeException e) {
+            String msg =
+                    extSelenium.getWarnMessageFailedToStart(
+                            browserName.toLowerCase(), new Throwable(e));
             cancelPressed();
-            LOGGER.error(msg);
             View.getSingleton().showWarningDialog(msg);
-        }
-        catch(Exception e) {
-        	cancelPressed();
-            LOGGER.error(e.getMessage());
         }
     }
 

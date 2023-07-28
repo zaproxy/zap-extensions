@@ -48,6 +48,4 @@ dependencies {
     zapAddOn("zest")
 
     testImplementation(project(":testutils"))
-    testImplementation(parent!!.childProjects.get("zest")!!)
-    testImplementation(parent!!.childProjects.get("selenium")!!)
 }
