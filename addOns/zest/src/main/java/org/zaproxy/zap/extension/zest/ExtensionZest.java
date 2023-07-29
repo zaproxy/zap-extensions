@@ -1644,6 +1644,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         }
         return zestClientHelper.isClientActive();
     }
+
     /**/
     @Override
     public void preInvoke(ScriptWrapper script) {

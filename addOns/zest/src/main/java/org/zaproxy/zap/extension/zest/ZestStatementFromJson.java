@@ -26,6 +26,7 @@ import org.zaproxy.zest.core.v1.ZestClientElementSendKeys;
 import org.zaproxy.zest.core.v1.ZestClientLaunch;
 import org.zaproxy.zest.core.v1.ZestClientSwitchToFrame;
 import org.zaproxy.zest.core.v1.ZestClientWindowClose;
+import org.zaproxy.zest.core.v1.ZestClientWindowResize;
 import org.zaproxy.zest.core.v1.ZestStatement;
 
 public class ZestStatementFromJson {
@@ -45,6 +46,8 @@ public class ZestStatementFromJson {
     private static final String FRAME_INDEX = "frameIndex";
     private static final String FRAME_NAME = "frameName";
     private static final String FRAME_ISPARENT = "parent";
+    private static final String X_VALUE = "x";
+    private static final String Y_VALUE = "y";
 
     private static final String ZEST_CLIENT_LAUNCH = "ZestClientLaunch";
     private static final String ZEST_CLIENT_ELEMENT_CLICK = "ZestClientElementClick";
@@ -52,6 +55,7 @@ public class ZestStatementFromJson {
     private static final String ZEST_CLIENT_ELEMENT_CLEAR = "ZestClientElementClear";
     private static final String ZEST_CLIENT_WINDOW_CLOSE = "ZestClientWindowClose";
     private static final String ZEST_CLIENT_SWITCH_TO_FRAME = "ZestClientSwitchToFrame";
+    private static final String ZEST_CLIENT_WINDOW_RESIZE = "ZestClientWindowResize";
 
     public static ZestStatement createZestStatementFromJson(JSONObject json) throws Exception {
         ZestStatement stmt = null;
@@ -110,6 +114,14 @@ public class ZestStatementFromJson {
                                             json.getInt(FRAME_INDEX),
                                             json.getString(FRAME_NAME),
                                             json.getBoolean(FRAME_ISPARENT));
+                    break;
+                case ZEST_CLIENT_WINDOW_RESIZE:
+                    stmt =
+                            (ZestStatement)
+                                    new ZestClientWindowResize(
+                                            json.getString(WINDOW_HANDLE),
+                                            json.getInt(X_VALUE),
+                                            json.getInt(Y_VALUE));
                     break;
                 default:
                     throw new Exception("Element Type Not found");
