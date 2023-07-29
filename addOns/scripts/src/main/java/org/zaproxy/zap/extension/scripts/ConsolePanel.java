@@ -447,10 +447,6 @@ public class ConsolePanel extends AbstractPanel {
             // so only do for text based ones
             setTabFocus();
         }
-
-        if (!isTabVisible()) {
-            setTabFocus();
-        }
     }
 
     /**
