@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update minimum ZAP version to 2.13.0.
 - Maintenance changes.
+- Move time based attacks to their own scan rules (Issue 7341).
 
 ### Removed
 - The following scan rules were removed, having been promoted to Beta:

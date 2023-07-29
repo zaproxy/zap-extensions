@@ -35,19 +35,19 @@ import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
-/** Unit test for {@link SqlInjectionHypersonicScanRule}. */
-class SqlInjectionHypersonicScanRuleUnitTest
-        extends ActiveScannerTest<SqlInjectionHypersonicScanRule> {
+/** Unit test for {@link SqlInjectionPostgreTimingScanRule}. */
+class SqlInjectionPostgreTimingScanRuleUnitTest
+        extends ActiveScannerTest<SqlInjectionPostgreTimingScanRule> {
 
     @Override
-    protected SqlInjectionHypersonicScanRule createScanner() {
-        return new SqlInjectionHypersonicScanRule();
+    protected SqlInjectionPostgreTimingScanRule createScanner() {
+        return new SqlInjectionPostgreTimingScanRule();
     }
 
     @Test
-    void shouldTargetHypersonicSQLTech() throws Exception {
+    void shouldTargetPostgreSQLTech() throws Exception {
         // Given
-        TechSet techSet = techSet(Tech.HypersonicSQL);
+        TechSet techSet = techSet(Tech.PostgreSQL);
         // When
         boolean targets = rule.targets(techSet);
         // Then
@@ -55,9 +55,9 @@ class SqlInjectionHypersonicScanRuleUnitTest
     }
 
     @Test
-    void shouldNotTargetNonHypersonicSQLTechs() throws Exception {
+    void shouldNotTargetNonPostgreSQLTechs() throws Exception {
         // Given
-        TechSet techSet = techSetWithout(Tech.HypersonicSQL);
+        TechSet techSet = techSetWithout(Tech.PostgreSQL);
         // When
         boolean targets = rule.targets(techSet);
         // Then
@@ -76,13 +76,13 @@ class SqlInjectionHypersonicScanRuleUnitTest
                     protected Response serve(IHTTPSession session) {
                         String name = getFirstParamValue(session, "name");
                         String response = "<html><body></body></html>";
-                        if (name != null && name.contains("Thread.sleep")) {
+                        if (name != null && name.contains("pg_sleep(")) {
                             try {
                                 Thread.sleep(time);
                             } catch (InterruptedException e) {
                                 // Ignore
                             }
-                            time += 300;
+                            time += 1000;
                         }
                         return newFixedLengthResponse(response);
                     }
@@ -91,7 +91,7 @@ class SqlInjectionHypersonicScanRuleUnitTest
         HttpMessage msg = this.getHttpMessage(test + "?name=test");
 
         this.rule.init(msg, this.parent);
-        this.rule.setSleepInMs(300);
+        this.rule.setSleepInSeconds(1);
 
         this.rule.scan();
 
@@ -100,7 +100,7 @@ class SqlInjectionHypersonicScanRuleUnitTest
         assertThat(
                 alertsRaised.get(0).getAttack(),
                 equalTo(
-                        "field: [name], value ['; select \"java.lang.Thread.sleep\"(300) from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME' -- ]"));
+                        "field: [name], value [case when cast(pg_sleep(1) as varchar) > '' then 0 else 1 end -- ]"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
@@ -121,7 +121,7 @@ class SqlInjectionHypersonicScanRuleUnitTest
                         } catch (InterruptedException e) {
                             // Ignore
                         }
-                        time += 300;
+                        time += 1000;
                         return newFixedLengthResponse(response);
                     }
                 });
@@ -129,7 +129,7 @@ class SqlInjectionHypersonicScanRuleUnitTest
         HttpMessage msg = this.getHttpMessage(test + "?name=test");
 
         this.rule.init(msg, this.parent);
-        this.rule.setSleepInMs(300);
+        this.rule.setSleepInSeconds(1);
 
         this.rule.scan();
 

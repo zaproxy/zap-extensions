@@ -48,7 +48,7 @@ import org.zaproxy.zap.model.TechSet;
  *
  * @author 70pointer
  */
-public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
+public class SqlInjectionMySqlTimingScanRule extends AbstractAppParamPlugin {
 
     private boolean doTimeBased = false;
 
@@ -195,7 +195,8 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
                     CommonAlertTag.WSTG_V42_INPV_05_SQLI);
 
     /** for logging. */
-    private static final Logger LOGGER = LogManager.getLogger(SqlInjectionMySqlScanRule.class);
+    private static final Logger LOGGER =
+            LogManager.getLogger(SqlInjectionMySqlTimingScanRule.class);
 
     @Override
     public int getId() {

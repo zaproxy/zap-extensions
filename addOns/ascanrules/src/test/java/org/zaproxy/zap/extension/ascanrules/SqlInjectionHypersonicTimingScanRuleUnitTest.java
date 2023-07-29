@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2020 The ZAP Development Team
+ * Copyright 2016 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,18 +35,19 @@ import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
-/** Unit test for {@link SqlInjectionMsSqlScanRule}. */
-class SqlInjectionMsSqlScanRuleUnitTest extends ActiveScannerTest<SqlInjectionMsSqlScanRule> {
+/** Unit test for {@link SqlInjectionHypersonicTimingScanRule}. */
+class SqlInjectionHypersonicTimingScanRuleUnitTest
+        extends ActiveScannerTest<SqlInjectionHypersonicTimingScanRule> {
 
     @Override
-    protected SqlInjectionMsSqlScanRule createScanner() {
-        return new SqlInjectionMsSqlScanRule();
+    protected SqlInjectionHypersonicTimingScanRule createScanner() {
+        return new SqlInjectionHypersonicTimingScanRule();
     }
 
     @Test
-    void shouldTargetMsSQLTech() throws Exception {
+    void shouldTargetHypersonicSQLTech() throws Exception {
         // Given
-        TechSet techSet = techSet(Tech.MsSQL);
+        TechSet techSet = techSet(Tech.HypersonicSQL);
         // When
         boolean targets = rule.targets(techSet);
         // Then
@@ -54,9 +55,9 @@ class SqlInjectionMsSqlScanRuleUnitTest extends ActiveScannerTest<SqlInjectionMs
     }
 
     @Test
-    void shouldNotTargetNonMsSQLTechs() throws Exception {
+    void shouldNotTargetNonHypersonicSQLTechs() throws Exception {
         // Given
-        TechSet techSet = techSetWithout(Tech.MsSQL);
+        TechSet techSet = techSetWithout(Tech.HypersonicSQL);
         // When
         boolean targets = rule.targets(techSet);
         // Then
@@ -75,13 +76,13 @@ class SqlInjectionMsSqlScanRuleUnitTest extends ActiveScannerTest<SqlInjectionMs
                     protected Response serve(IHTTPSession session) {
                         String name = getFirstParamValue(session, "name");
                         String response = "<html><body></body></html>";
-                        if (name != null && name.contains(" WAITFOR DELAY ")) {
+                        if (name != null && name.contains("Thread.sleep")) {
                             try {
                                 Thread.sleep(time);
                             } catch (InterruptedException e) {
                                 // Ignore
                             }
-                            time += 1000;
+                            time += 300;
                         }
                         return newFixedLengthResponse(response);
                     }
@@ -90,13 +91,16 @@ class SqlInjectionMsSqlScanRuleUnitTest extends ActiveScannerTest<SqlInjectionMs
         HttpMessage msg = this.getHttpMessage(test + "?name=test");
 
         this.rule.init(msg, this.parent);
-        this.rule.setSleepInSeconds(1);
+        this.rule.setSleepInMs(300);
 
         this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
-        assertThat(alertsRaised.get(0).getAttack(), equalTo("test' WAITFOR DELAY '0:0:1' -- "));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                equalTo(
+                        "field: [name], value ['; select \"java.lang.Thread.sleep\"(300) from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME' -- ]"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
@@ -117,7 +121,7 @@ class SqlInjectionMsSqlScanRuleUnitTest extends ActiveScannerTest<SqlInjectionMs
                         } catch (InterruptedException e) {
                             // Ignore
                         }
-                        time += 1000;
+                        time += 300;
                         return newFixedLengthResponse(response);
                     }
                 });
@@ -125,7 +129,7 @@ class SqlInjectionMsSqlScanRuleUnitTest extends ActiveScannerTest<SqlInjectionMs
         HttpMessage msg = this.getHttpMessage(test + "?name=test");
 
         this.rule.init(msg, this.parent);
-        this.rule.setSleepInSeconds(1);
+        this.rule.setSleepInMs(300);
 
         this.rule.scan();
 
