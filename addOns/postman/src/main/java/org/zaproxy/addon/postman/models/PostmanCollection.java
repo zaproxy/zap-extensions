@@ -17,21 +17,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.postman;
+package org.zaproxy.addon.postman.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.util.List;
+import org.zaproxy.addon.postman.AbstractItemDeserializer;
 
+/**
+ * Represents a collection in the Postman format.
+ *
+ * @see https://learning.postman.com/collection-format/reference/collection/
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PostmanCollection {
 
-    private Object item;
+    @JsonDeserialize(using = AbstractItemDeserializer.class)
+    private List<AbstractItem> item;
+
     private Object variable;
 
-    public Object getItem() {
+    public List<AbstractItem> getItem() {
         return item;
     }
 
-    public void setItem(Object item) {
+    public void setItem(List<AbstractItem> item) {
         this.item = item;
     }
 
