@@ -242,8 +242,11 @@ public class ExtensionReports extends ExtensionAdaptor {
     }
 
     public AlertNode getRootAlertNode()
-            throws NoSuchMethodException, SecurityException, IllegalAccessException,
-                    IllegalArgumentException, InvocationTargetException {
+            throws NoSuchMethodException,
+                    SecurityException,
+                    IllegalAccessException,
+                    IllegalArgumentException,
+                    InvocationTargetException {
         ExtensionAlert extAlert =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class);
 

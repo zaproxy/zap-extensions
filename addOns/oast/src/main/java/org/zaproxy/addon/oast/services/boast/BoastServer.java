@@ -73,7 +73,9 @@ public class BoastServer {
         canary = entity.getCanary();
     }
 
-    /** @return new BOAST events found on polling */
+    /**
+     * @return new BOAST events found on polling
+     */
     public List<BoastEvent> poll() {
         try {
             httpSender.sendAndReceive(boastMsg);

@@ -217,7 +217,8 @@ public class FrontEndScannerAPI extends ApiImplementor {
     private String placeUserScriptsInto(String string) throws IOException {
         try {
             String functions =
-                    this.extension.getExtensionScript()
+                    this.extension
+                            .getExtensionScript()
                             .getScripts(ExtensionFrontEndScanner.SCRIPT_TYPE_CLIENT_PASSIVE)
                             .stream()
                             .filter(ScriptWrapper::isEnabled)

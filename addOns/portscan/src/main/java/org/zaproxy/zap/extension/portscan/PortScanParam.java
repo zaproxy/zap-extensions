@@ -112,11 +112,16 @@ public class PortScanParam extends VersionedAbstractParam {
         getConfig().setProperty(THREAD_PER_SCAN, Integer.toString(this.threadPerScan));
     }
 
-    /** @return Returns the thread. */
+    /**
+     * @return Returns the thread.
+     */
     public int getMaxPort() {
         return maxPort;
     }
-    /** @param maxPort */
+
+    /**
+     * @param maxPort
+     */
     public void setMaxPort(int maxPort) {
         this.maxPort = maxPort;
         getConfig().setProperty(MAX_PORT, Integer.toString(this.maxPort));

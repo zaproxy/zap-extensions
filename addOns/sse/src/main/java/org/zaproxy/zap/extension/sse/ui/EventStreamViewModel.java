@@ -111,7 +111,9 @@ public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
         return activeStreamId;
     }
 
-    /** @return size of currently visible messages */
+    /**
+     * @return size of currently visible messages
+     */
     @Override
     public int getRowCount() {
         if (table == null) {
@@ -216,19 +218,25 @@ public class EventStreamViewModel extends PagingTableModel<ServerSentEvent> {
         }
     }
 
-    /** @return number of columns */
+    /**
+     * @return number of columns
+     */
     @Override
     public int getColumnCount() {
         return COLUMN_COUNT;
     }
 
-    /** @return name of the given column index */
+    /**
+     * @return name of the given column index
+     */
     @Override
     public String getColumnName(int columnIndex) {
         return COLUMN_NAMES[columnIndex];
     }
 
-    /** @return type of column for given column index */
+    /**
+     * @return type of column for given column index
+     */
     @Override
     public Class<?> getColumnClass(int columnIndex) {
         switch (columnIndex) {

@@ -115,7 +115,9 @@ public class ZestPasteVariablePopupMenu extends ExtensionPopupMenuItem {
         return true;
     }
 
-    /** @param lastInvoker The lastInvoker to set. */
+    /**
+     * @param lastInvoker The lastInvoker to set.
+     */
     public void setLastInvoker(JTextComponent lastInvoker) {
         this.lastInvoker = lastInvoker;
     }

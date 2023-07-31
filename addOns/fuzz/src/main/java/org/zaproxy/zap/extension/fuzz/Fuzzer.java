@@ -22,7 +22,9 @@ package org.zaproxy.zap.extension.fuzz;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.model.GenericScanner2;
 
-/** @param <M> the type of message fuzzed by this fuzzer */
+/**
+ * @param <M> the type of message fuzzed by this fuzzer
+ */
 public interface Fuzzer<M extends Message> extends GenericScanner2 {
 
     void addFuzzerProgressListener(FuzzerProgressListener listener);

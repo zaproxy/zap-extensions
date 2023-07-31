@@ -48,7 +48,9 @@ public abstract class ZestAddClientPopupMenu extends ExtensionPopupMenuItem {
         initialize(label);
     }
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public ZestAddClientPopupMenu(String label) {
         super(label);
     }

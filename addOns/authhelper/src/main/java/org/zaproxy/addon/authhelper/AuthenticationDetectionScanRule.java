@@ -56,21 +56,25 @@ public class AuthenticationDetectionScanRule extends PluginPassiveScanner {
      * these will be the first choice.
      */
     private static final List<String> USER_PARAMS = List.of("user", "email", "acc", "account", "u");
+
     /**
      * A list of commonly used user parameter name elements. A parameter which starts with one of
      * these (case insensitive) will be the second choice.
      */
     private static final List<String> USER_ELEMENTS = List.of("user", "email", "acc", "login");
+
     /**
      * A list of commonly used password parameter names. An exact (case insensitive) match on one of
      * these will be the first choice.
      */
     private static final List<String> PASSWORD_PARAMS = List.of("password", "pwd", "p");
+
     /**
      * A list of commonly used password parameter name elements. A parameter which starts with one
      * of these (case insensitive) will be the second choice.
      */
     private static final List<String> PASSWORD_ELEMENTS = List.of("pass", "pwd");
+
     /**
      * A list of commonly used string in authentication request URLs. A URL containing any of these
      * strings as well as a recognised user and password parameter will be treated as a high
@@ -78,6 +82,7 @@ public class AuthenticationDetectionScanRule extends PluginPassiveScanner {
      */
     private static final List<String> AUTH_URL_SEGMENTS =
             List.of("login", "signin", "sign-in", "inloggen", "accueil");
+
     /**
      * A list of commonly used string in register request URLs. A URL containing any of these
      * strings NOT be counted as an authentication request even if there are recognised user and

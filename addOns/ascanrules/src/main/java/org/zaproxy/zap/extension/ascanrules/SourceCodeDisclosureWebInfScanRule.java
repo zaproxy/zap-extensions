@@ -71,6 +71,7 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin {
                             new String[] {
                                 "web.xml", "applicationContext.xml" // for Spring
                             }));
+
     /**
      * match on Java class names (including the package info) we're "flexible" on the package names
      * and class names containing uppercase versus lowercase, by necessity.

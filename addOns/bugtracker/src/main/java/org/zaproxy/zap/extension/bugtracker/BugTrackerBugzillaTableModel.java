@@ -49,7 +49,9 @@ public class BugTrackerBugzillaTableModel
         return configs;
     }
 
-    /** @param configs The configs to set. */
+    /**
+     * @param configs The configs to set.
+     */
     public void setConfigs(List<BugTrackerBugzillaConfigParams> configs) {
         this.configs = new ArrayList<>(configs.size());
 

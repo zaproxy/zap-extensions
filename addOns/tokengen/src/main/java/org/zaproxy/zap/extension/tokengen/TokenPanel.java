@@ -145,6 +145,7 @@ public class TokenPanel extends AbstractPanel {
         }
         return panelCommand;
     }
+
     /**/
 
     private javax.swing.JToolBar getPanelToolbar() {

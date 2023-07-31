@@ -245,7 +245,8 @@ public class ContextDataManager {
         public void loadContextData(Session session, Context context) {
             try {
                 List<ExcludedElement> loaded =
-                        session.getContextDataStrings(context.getId(), TYPE_EXCLUDED_ELEMENTS)
+                        session
+                                .getContextDataStrings(context.getId(), TYPE_EXCLUDED_ELEMENTS)
                                 .stream()
                                 .map(this::decodeExcludedElement)
                                 .filter(Objects::nonNull)

@@ -100,7 +100,9 @@ public class WebSocketMessageDTO implements Message {
 
     private static final Logger LOGGER = LogManager.getLogger(WebSocketMessageDTO.class);
 
-    /** @param channel */
+    /**
+     * @param channel
+     */
     public WebSocketMessageDTO(WebSocketChannelDTO channel) {
         this.channel = channel;
     }

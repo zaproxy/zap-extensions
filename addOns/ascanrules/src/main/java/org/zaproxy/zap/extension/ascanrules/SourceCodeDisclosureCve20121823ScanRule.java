@@ -67,6 +67,7 @@ public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin {
                         CommonAlertTag.OWASP_2017_A09_VULN_COMP));
         CommonAlertTag.putCve(ALERT_TAGS, CVE);
     }
+
     /**
      * details of the vulnerability which we are attempting to find WASC 20 = Improper Input
      * Handling

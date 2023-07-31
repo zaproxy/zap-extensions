@@ -150,7 +150,9 @@ public class HttpFuzzerTaskProcessorUtils {
         return payloads;
     }
 
-    /** @deprecated (2.0.0) Use {@link #getPayloads()} instead. */
+    /**
+     * @deprecated (2.0.0) Use {@link #getPayloads()} instead.
+     */
     @Deprecated
     @SuppressWarnings("javadoc")
     public List<Object> getPaylaods() {

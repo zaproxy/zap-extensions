@@ -113,8 +113,11 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
     @Override
     public String run(ZestScript script, Map<String, String> params)
-            throws ZestAssertFailException, ZestActionFailException, IOException,
-                    ZestInvalidCommonTestException, ZestAssignFailException,
+            throws ZestAssertFailException,
+                    ZestActionFailException,
+                    IOException,
+                    ZestInvalidCommonTestException,
+                    ZestAssignFailException,
                     ZestClientFailException {
         LOGGER.debug("Run script {}", script.getTitle());
         // Check for any missing parameters
@@ -155,8 +158,11 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
 
     @Override
     public String run(ZestScript script, ZestRequest target, Map<String, String> params)
-            throws ZestAssertFailException, ZestActionFailException, IOException,
-                    ZestInvalidCommonTestException, ZestAssignFailException,
+            throws ZestAssertFailException,
+                    ZestActionFailException,
+                    IOException,
+                    ZestInvalidCommonTestException,
+                    ZestAssignFailException,
                     ZestClientFailException {
         LOGGER.debug("Run script {}", script.getTitle());
         if (wrapper.getWriter() != null) {
@@ -267,8 +273,12 @@ public class ZestZapRunner extends ZestBasicRunner implements ScannerListener {
     @Override
     public ZestResponse runStatement(
             ZestScript script, ZestStatement stmt, ZestResponse lastResponse)
-            throws ZestAssertFailException, ZestActionFailException, ZestInvalidCommonTestException,
-                    IOException, ZestAssignFailException, ZestClientFailException {
+            throws ZestAssertFailException,
+                    ZestActionFailException,
+                    ZestInvalidCommonTestException,
+                    IOException,
+                    ZestAssignFailException,
+                    ZestClientFailException {
         LOGGER.debug("runStatement {}", stmt.getElementType());
         while (this.isPaused() && !this.isStop) {
             try {

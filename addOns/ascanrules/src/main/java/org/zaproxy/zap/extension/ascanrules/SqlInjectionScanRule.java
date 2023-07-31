@@ -105,6 +105,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
     private int countBooleanBasedRequests = 0;
     private int countUnionBasedRequests = 0;
     private int countOrderByBasedRequests = 0;
+
     // private int countStackedBasedRequests = 0;  //TODO: use in the stacked based queries
     // implementation
     /**
@@ -112,6 +113,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
      * almost every single RDBMS considered here
      */
     public static final String SQL_ONE_LINE_COMMENT = " -- ";
+
     /**
      * used to inject to check for SQL errors: some basic SQL metacharacters ordered so as to
      * maximise SQL errors Note that we do separate runs for each family of characters, in case one
@@ -395,6 +397,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
             return Arrays.asList(strings);
         }
     }
+
     /**
      * always true statement for comparison in boolean based SQL injection check try the commented
      * versions first, because the law of averages says that the column being queried is more likely
@@ -412,6 +415,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
         "%' " + SQL_ONE_LINE_COMMENT, // attack for SQL LIKE statements
         "%\" " + SQL_ONE_LINE_COMMENT, // attack for SQL LIKE statements
     };
+
     /** always false statement for comparison in boolean based SQL injection check */
     private static final String[] SQL_LOGIC_AND_FALSE = {
         " AND 1=2" + SQL_ONE_LINE_COMMENT,
@@ -424,6 +428,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
         "XYZABCDEFGHIJ' " + SQL_ONE_LINE_COMMENT, // attack for SQL LIKE statements
         "XYZABCDEFGHIJ\" " + SQL_ONE_LINE_COMMENT, // attack for SQL LIKE statements
     };
+
     /**
      * always true statement for comparison if no output is returned from AND in boolean based SQL
      * injection check Note that, if necessary, the code also tries a variant with the one-line
@@ -440,6 +445,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
         "%' " + SQL_ONE_LINE_COMMENT, // attack for SQL LIKE statements
         "%\" " + SQL_ONE_LINE_COMMENT, // attack for SQL LIKE statements
     };
+
     /**
      * generic UNION statements. Hoping these will cause a specific error message that we will
      * recognise
@@ -455,6 +461,7 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin {
 
     /** for logging. */
     private static final Logger LOGGER = LogManager.getLogger(SqlInjectionScanRule.class);
+
     /** determines if we should output Debug level logging */
     private boolean debugEnabled = LOGGER.isDebugEnabled();
 

@@ -67,6 +67,7 @@ public class SpiderAPI extends ApiImplementor {
 
     /** The Constant PREFIX defining the name/prefix of the api. */
     private static final String PREFIX = "spider";
+
     /** The Constant ACTION_START_SCAN that defines the action of starting a new scan. */
     private static final String ACTION_START_SCAN = "scan";
 
@@ -74,6 +75,7 @@ public class SpiderAPI extends ApiImplementor {
 
     private static final String ACTION_PAUSE_SCAN = "pause";
     private static final String ACTION_RESUME_SCAN = "resume";
+
     /** The Constant ACTION_STOP_SCAN that defines the action of stopping a pending scan. */
     private static final String ACTION_STOP_SCAN = "stop";
 

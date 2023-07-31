@@ -51,7 +51,9 @@ public class PortScanPanel extends ScanPanel implements ScanListenner {
 
     private PortScanResultsTable portScanResultsTable;
 
-    /** @param portScanParam */
+    /**
+     * @param portScanParam
+     */
     public PortScanPanel(ExtensionPortScan extension, PortScanParam portScanParam) {
         // 'picture list' icon
         super(

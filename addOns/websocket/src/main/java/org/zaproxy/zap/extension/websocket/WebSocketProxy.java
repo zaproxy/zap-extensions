@@ -554,7 +554,9 @@ public abstract class WebSocketProxy {
         }
     }
 
-    /** @return True if proxy's state is {@link State#OPEN}. */
+    /**
+     * @return True if proxy's state is {@link State#OPEN}.
+     */
     public boolean isConnected() {
         if (state != null && state.equals(State.OPEN)) {
             return true;

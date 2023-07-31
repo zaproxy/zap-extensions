@@ -128,7 +128,9 @@ public class SarifReportDataSupport {
         }
     }
 
-    /** @return a sorted collection of SARIF rules */
+    /**
+     * @return a sorted collection of SARIF rules
+     */
     public Collection<SarifRule> getRules() {
         if (rulesMap == null) {
             rulesMap = createRules();

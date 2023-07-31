@@ -33,6 +33,7 @@ public class EncodeDecodeScriptHelper {
     public static EncodeDecodeScriptHelper getSingleton() {
         return INSTANCE;
     }
+
     /**
      * Returns the processor with the given identified, or a default processor which will state the
      * sought one was not found.

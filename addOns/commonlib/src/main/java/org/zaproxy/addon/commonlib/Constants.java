@@ -19,7 +19,9 @@
  */
 package org.zaproxy.addon.commonlib;
 
-/** @since 1.13.0 */
+/**
+ * @since 1.13.0
+ */
 public final class Constants {
 
     private Constants() {}

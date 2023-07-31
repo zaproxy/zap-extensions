@@ -176,8 +176,11 @@ public class KeyStores extends AbstractList<KeyStoreEntry> {
     }
 
     private static Provider createInstance(String name, Class<?> paramClass, Object param)
-            throws ClassNotFoundException, NoSuchMethodException, InstantiationException,
-                    IllegalAccessException, InvocationTargetException {
+            throws ClassNotFoundException,
+                    NoSuchMethodException,
+                    InstantiationException,
+                    IllegalAccessException,
+                    InvocationTargetException {
         Class<?> instanceClass = Class.forName(name);
         Constructor<?> c = instanceClass.getConstructor(new Class<?>[] {paramClass});
         return (Provider) c.newInstance(new Object[] {param});

@@ -39,7 +39,9 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-/** @author Vahid Rafiei (@vahid_r) */
+/**
+ * @author Vahid Rafiei (@vahid_r)
+ */
 class CookieLooselyScopedScanRuleUnitTest extends PassiveScannerTest<CookieLooselyScopedScanRule> {
 
     private Model model;

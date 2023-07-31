@@ -268,7 +268,8 @@ public abstract class BaseHttpSender<T1 extends BaseHttpSenderContext, T2, T3>
                             while ((totalRead +=
                                             channel.transferFrom(
                                                     Channels.newChannel(is), totalRead, 1 << 24))
-                                    < header.getContentLength()) ;
+                                    < header.getContentLength())
+                                ;
                         }
                     };
         }

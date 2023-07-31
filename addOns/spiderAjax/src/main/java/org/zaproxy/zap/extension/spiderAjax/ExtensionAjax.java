@@ -243,7 +243,9 @@ public class ExtensionAjax extends ExtensionAdaptor {
         return ajaxSpiderParam;
     }
 
-    /** @return the PopupMenuAjaxSite object */
+    /**
+     * @return the PopupMenuAjaxSite object
+     */
     private PopupMenuAjaxSite getPopupMenuAjaxSite() {
         if (popupMenuSpiderSite == null) {
             popupMenuSpiderSite =
@@ -268,7 +270,9 @@ public class ExtensionAjax extends ExtensionAdaptor {
         return menuItemCustomScan;
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     private OptionsAjaxSpider getOptionsSpiderPanel() {
         if (optionsAjaxSpider == null) {
             ExtensionSelenium extSelenium =
@@ -433,17 +437,23 @@ public class ExtensionAjax extends ExtensionAdaptor {
         return null;
     }
 
-    /** @param ignoredRegexs */
+    /**
+     * @param ignoredRegexs
+     */
     public void setExcludeList(List<String> ignoredRegexs) {
         this.excludeList = ignoredRegexs;
     }
 
-    /** @return the exclude list */
+    /**
+     * @return the exclude list
+     */
     public List<String> getExcludeList() {
         return excludeList;
     }
 
-    /** @return description of the plugin */
+    /**
+     * @return description of the plugin
+     */
     @Override
     public String getDescription() {
         return this.getMessages().getString("spiderajax.desc");

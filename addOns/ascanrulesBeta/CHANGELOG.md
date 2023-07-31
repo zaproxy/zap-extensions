@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - The HTTP Only Site scan rule now includes example alert functionality for documentation generation purposes (Issue 6119).
 
+### Changed
+- Maintenance changes.
+
 ## [47] - 2023-07-20
 ### Added
 - The Source Code Disclosure - File Inclusion now includes example alert functionality for documentation generation purposes (Issue 6119).

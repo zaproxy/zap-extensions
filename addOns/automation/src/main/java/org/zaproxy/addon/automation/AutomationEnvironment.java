@@ -208,10 +208,7 @@ public class AutomationEnvironment {
     }
 
     public List<String> getContextNames() {
-        return contexts.stream()
-                .map(ContextWrapper::getData)
-                .collect(Collectors.toList())
-                .stream()
+        return contexts.stream().map(ContextWrapper::getData).collect(Collectors.toList()).stream()
                 .map(ContextWrapper.Data::getName)
                 .collect(Collectors.toList());
     }

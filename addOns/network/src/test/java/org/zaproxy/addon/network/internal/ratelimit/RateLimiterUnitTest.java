@@ -44,14 +44,19 @@ import org.zaproxy.zap.utils.Pair;
 
 class RateLimiterUnitTest {
     RateLimitOptions params;
+
     /** Domain group by rule. */
     RateLimitRule ruleExampleDotCom;
+
     /** Host. */
     RateLimitRule ruleWwwOwaspDotCom;
+
     /** Domain group by host. */
     RateLimitRule ruleSubBigcorpDotCom;
+
     /** More specific bigcorp.com. */
     RateLimitRule ruleCareersBigcorpDotCom;
+
     /** Always disabled. */
     RateLimitRule ruleDisabled;
 

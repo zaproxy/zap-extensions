@@ -1,3 +1,4 @@
+import org.zaproxy.gradle.addon.AddOnPlugin
 import org.zaproxy.gradle.addon.AddOnStatus
 import org.zaproxy.gradle.tasks.ProcessSvnDiggerFiles
 
@@ -22,6 +23,10 @@ zapAddOn {
             localeToken.set("%LC%")
         }
     }
+}
+
+tasks.named(AddOnPlugin.GENERATE_MANIFEST_TASK_NAME) {
+    dependsOn(processFiles)
 }
 
 crowdin {

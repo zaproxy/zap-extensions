@@ -33,7 +33,9 @@ public class SpiderRobotstxtParser extends SpiderParser {
     private static final int PATTERNS_DISALLOW_LENGTH = 9;
     private static final int PATTERNS_ALLOW_LENGTH = 6;
 
-    /** @throws NullPointerException if {@code message} is null. */
+    /**
+     * @throws NullPointerException if {@code message} is null.
+     */
     @Override
     public boolean parseResource(ParseContext ctx) {
         if (!ctx.getSpiderParam().isParseRobotsTxt()) {

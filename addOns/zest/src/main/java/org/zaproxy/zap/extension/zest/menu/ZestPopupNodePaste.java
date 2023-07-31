@@ -48,7 +48,9 @@ public class ZestPopupNodePaste extends ExtensionPopupMenuItem {
         initialize();
     }
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public ZestPopupNodePaste(String label) {
         super(label);
     }

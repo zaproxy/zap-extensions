@@ -213,6 +213,7 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }
+
     /**
      * finds the source code for the given file, using Git metadata on the server (if this is
      * available)

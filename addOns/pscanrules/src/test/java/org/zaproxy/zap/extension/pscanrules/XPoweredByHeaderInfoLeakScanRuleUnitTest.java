@@ -29,7 +29,9 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 
-/** @author Vahid Rafiei (@vahid_r) */
+/**
+ * @author Vahid Rafiei (@vahid_r)
+ */
 class XPoweredByHeaderInfoLeakScanRuleUnitTest
         extends PassiveScannerTest<XPoweredByHeaderInfoLeakScanRule> {
 

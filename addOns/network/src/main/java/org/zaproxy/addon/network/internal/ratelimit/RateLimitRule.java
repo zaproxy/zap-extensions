@@ -42,12 +42,15 @@ public class RateLimitRule extends Enableable {
 
     /** Description of the rule, also used as a unique identifier. */
     private String description;
+
     /** The string to match against the URI host (no protocol, port, path, etc.) */
     private String matchString;
+
     /** Indicates if matchString is a regular expression (true). */
     private boolean matchRegex;
 
     private int requestsPerSecond;
+
     /** How to group hosts when applying rate limiting. */
     private GroupBy groupBy = GroupBy.RULE;
 

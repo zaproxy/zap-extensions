@@ -23,7 +23,9 @@ import java.util.List;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.utils.NetworkUtils;
 
-/** @author psiinon */
+/**
+ * @author psiinon
+ */
 public class CallbackParam extends VersionedAbstractParam {
 
     private static final int PARAM_CURRENT_VERSION = 1;

@@ -50,7 +50,9 @@ public class WebSocketMessagesViewFilter {
         opcodeList = list;
     }
 
-    /** @return Null if all opcodes are allowed */
+    /**
+     * @return Null if all opcodes are allowed
+     */
     public List<Integer> getOpcodes() {
         return opcodeList;
     }
@@ -80,7 +82,9 @@ public class WebSocketMessagesViewFilter {
         return payloadFilter;
     }
 
-    /** @return Null if both directions should be shown */
+    /**
+     * @return Null if both directions should be shown
+     */
     public Direction getDirection() {
         return direction;
     }
@@ -134,12 +138,16 @@ public class WebSocketMessagesViewFilter {
         return false;
     }
 
-    /** @return short description of applied filter */
+    /**
+     * @return short description of applied filter
+     */
     public String toShortString() {
         return toString(false);
     }
 
-    /** @return description of applied filter */
+    /**
+     * @return description of applied filter
+     */
     public String toLongString() {
         return toString(true);
     }

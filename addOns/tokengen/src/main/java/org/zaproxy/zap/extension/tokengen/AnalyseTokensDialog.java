@@ -72,7 +72,9 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
 
     private ResourceBundle messages;
 
-    /** @throws HeadlessException */
+    /**
+     * @throws HeadlessException
+     */
     public AnalyseTokensDialog(ResourceBundle messages) throws HeadlessException {
         super(View.getSingleton().getMainFrame(), false);
         this.messages = messages;
@@ -294,6 +296,7 @@ public class AnalyseTokensDialog extends AbstractDialog implements TokenAnalyser
         }
         return errorsScrollPane;
     }
+
     /**
      * This method initializes txtOutput
      *

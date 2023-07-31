@@ -55,12 +55,16 @@ public class EventStreamViewFilter {
         return false;
     }
 
-    /** @return short description of applied filter */
+    /**
+     * @return short description of applied filter
+     */
     public String toShortString() {
         return toString(false);
     }
 
-    /** @return description of applied filter */
+    /**
+     * @return description of applied filter
+     */
     public String toLongString() {
         return toString(true);
     }

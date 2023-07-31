@@ -29,7 +29,9 @@ public class TokenGenPopupMenu extends PopupMenuItemHttpMessageContainer {
     private static final long serialVersionUID = 1L;
     private ExtensionTokenGen extension = null;
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public TokenGenPopupMenu(String label) {
         super(label);
         setIcon(new ImageIcon(getClass().getResource("/resource/icon/fugue/barcode.png")));

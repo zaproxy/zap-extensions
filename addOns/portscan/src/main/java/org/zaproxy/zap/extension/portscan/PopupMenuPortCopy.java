@@ -44,7 +44,9 @@ public class PopupMenuPortCopy extends ExtensionPopupMenuItem implements Clipboa
         initialize();
     }
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public PopupMenuPortCopy(String label) {
         super(label);
         initialize();

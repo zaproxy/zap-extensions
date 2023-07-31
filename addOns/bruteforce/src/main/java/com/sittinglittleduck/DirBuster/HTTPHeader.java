@@ -20,7 +20,9 @@
 
 package com.sittinglittleduck.DirBuster;
 
-/** @author james */
+/**
+ * @author james
+ */
 public class HTTPHeader {
     private String header;
     private String value;

@@ -76,10 +76,13 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
     /* These are the WEBDAV methods bundled */
     private static final List<String> WEBDAV_METHODS =
             Arrays.asList("COPY", "LOCK", "MKCOL", "MOVE", "PROPFIND", "PROPPATCH", "UNLOCK");
+
     /** details of the vulnerability which we are attempting to find 45 = "Fingerprinting" */
     private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_45");
+
     /** the logger object */
     private static final Logger LOGGER = LogManager.getLogger(InsecureHttpMethodScanRule.class);
+
     /**
      * The set of methods that we know are unsafe. It's a combination of the 'default' HTTP methods
      * and the WEBDAV methods.

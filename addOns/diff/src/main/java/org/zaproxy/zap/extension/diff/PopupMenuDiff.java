@@ -34,7 +34,9 @@ public class PopupMenuDiff extends PopupMenuItemHistoryReferenceContainer {
     private ExtensionDiff ext = null;
     private boolean request = false;
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public PopupMenuDiff(String label, ExtensionDiff ext, boolean request) {
         super(label, true);
         this.setName("DiffPopup");

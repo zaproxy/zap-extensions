@@ -113,6 +113,7 @@ public class ClientMap extends SortedTreeModel {
         this.nodeStructureChanged(root);
     }
 }
+
 /**
  * Based on example code from: <a
  * href="http://www.java2s.com/Code/Java/Swing-JFC/AtreemodelusingtheSortTreeModelwithaFilehierarchyasinput.htm">Sorted

@@ -47,7 +47,9 @@ public class OptionsInvokeTableModel extends AbstractMultipleOptionsTableModel<I
         super();
     }
 
-    /** @param apps The listAuth to set. */
+    /**
+     * @param apps The listAuth to set.
+     */
     public void setListInvokableApps(List<InvokableApp> apps) {
         this.listApps = new ArrayList<>(apps.size());
 

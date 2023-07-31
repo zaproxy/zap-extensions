@@ -127,22 +127,30 @@ public class ComparableResponse {
         }
     }
 
-    /** @return the status code */
+    /**
+     * @return the status code
+     */
     public int getStatusCode() {
         return statusCode;
     }
 
-    /** @return the body */
+    /**
+     * @return the body
+     */
     public String getBody() {
         return body;
     }
 
-    /** @return the headers */
+    /**
+     * @return the headers
+     */
     public Map<String, String> getHeaders() {
         return headers;
     }
 
-    /** @return the valueSent */
+    /**
+     * @return the valueSent
+     */
     public String getValueSent() {
         return valueSent;
     }
@@ -453,7 +461,9 @@ public class ComparableResponse {
         return 0;
     }
 
-    /** @return all The Possible Paths. */
+    /**
+     * @return all The Possible Paths.
+     */
     private Map<String, Integer> getAllPaths() {
         synchronized (this) {
             if (allPaths == null) {

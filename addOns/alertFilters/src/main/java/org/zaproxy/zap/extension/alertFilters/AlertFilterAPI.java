@@ -385,8 +385,10 @@ public class AlertFilterAPI extends ApiImplementor {
         return Model.getSingleton().getSession().getContexts().stream()
                 .map(
                         ctx ->
-                                extension.getContextAlertFilterManager(ctx.getId())
-                                        .getAlertFilters().stream()
+                                extension
+                                        .getContextAlertFilterManager(ctx.getId())
+                                        .getAlertFilters()
+                                        .stream()
                                         .filter(AlertFilter::isEnabled)
                                         .map(f -> extension.applyAlertFilter(f, testOnly))
                                         .collect(Collectors.summingInt(Integer::intValue)))

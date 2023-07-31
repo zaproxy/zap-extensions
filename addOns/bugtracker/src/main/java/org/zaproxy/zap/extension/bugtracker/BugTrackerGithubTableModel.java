@@ -49,7 +49,9 @@ public class BugTrackerGithubTableModel
         return configs;
     }
 
-    /** @param configs The configs to set. */
+    /**
+     * @param configs The configs to set.
+     */
     public void setConfigs(List<BugTrackerGithubConfigParams> configs) {
         this.configs = new ArrayList<>(configs.size());
 

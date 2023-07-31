@@ -45,7 +45,9 @@ public class PopupEnableDisableScript extends ExtensionPopupMenuItem {
         initialize();
     }
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public PopupEnableDisableScript(String label) {
         super(label);
     }
