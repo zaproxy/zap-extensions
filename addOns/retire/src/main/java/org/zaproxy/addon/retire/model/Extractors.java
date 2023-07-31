@@ -19,10 +19,14 @@
  */
 package org.zaproxy.addon.retire.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.util.StdConverter;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+@JsonIgnoreProperties("filecontentreplace")
 public class Extractors {
 
     public static final String TYPE_FUNC = "func";
@@ -31,10 +35,18 @@ public class Extractors {
     public static final String TYPE_FILECONTENT = "filecontent";
     public static final String TYPE_HASHES = "hashes";
 
+    @JsonDeserialize(contentConverter = VersionConverter.class)
     private List<String> func = null;
+
+    @JsonDeserialize(contentConverter = VersionConverter.class)
     private List<String> filename = null;
+
+    @JsonDeserialize(contentConverter = VersionConverter.class)
     private List<String> uri = null;
+
+    @JsonDeserialize(contentConverter = VersionConverter.class)
     private List<String> filecontent = null;
+
     private Map<String, String> hashes; // hash, version
 
     public List<String> getFunc() {
@@ -92,6 +104,32 @@ public class Extractors {
                 return getFilecontent();
             default:
                 return getUri();
+        }
+    }
+
+    static class VersionConverter extends StdConverter<String, String> {
+
+        private static final String VERSION_TOKEN = "§§version§§";
+        private static final String VERSION_SUB_PATTERN = "[0-9][0-9a-z._\\-]+?";
+
+        @Override
+        public String convert(String value) {
+            return fixPattern(value);
+        }
+
+        static String fixPattern(String inPattern) {
+            String goodPattern = inPattern.replace(VERSION_TOKEN, VERSION_SUB_PATTERN);
+            if (goodPattern.contains("{")) {
+                // PatternSyntaxException: {} is treated as an empty number of chars definition ex:
+                // [a-z]{8}
+                goodPattern = goodPattern.replaceAll("\\{\\}", "\\\\{\\\\}");
+            }
+            if (goodPattern.endsWith(VERSION_SUB_PATTERN + ")")) {
+                // If the pattern ends with a version sub pattern, then artificially bound it with a
+                // whitespace check
+                goodPattern = goodPattern + "\\s";
+            }
+            return goodPattern;
         }
     }
 }

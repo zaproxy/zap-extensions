@@ -19,13 +19,25 @@
  */
 package org.zaproxy.addon.retire.model;
 
-import com.google.gson.annotations.SerializedName;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Collections;
 import java.util.List;
 
+@JsonIgnoreProperties({
+    "blog",
+    "gist",
+    "githubID",
+    "issue",
+    "osvdb",
+    "PR",
+    "retid",
+    "release",
+    "tenable"
+})
 public class Identifiers {
 
-    @SerializedName("CVE")
+    @JsonProperty("CVE")
     private List<String> cve = null;
 
     private String bug;
