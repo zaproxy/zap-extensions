@@ -39,6 +39,8 @@ import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.addon.automation.jobs.JobData;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.zap.extension.openapi.ExtensionOpenApi;
+import org.zaproxy.zap.extension.openapi.OpenApiExceptions.EmptyDefinitionException;
+import org.zaproxy.zap.extension.openapi.OpenApiExceptions.InvalidDefinitionException;
 import org.zaproxy.zap.extension.openapi.OpenApiResults;
 
 public class OpenApiJob extends AutomationJob {
@@ -118,9 +120,15 @@ public class OpenApiJob extends AutomationJob {
         if (!StringUtils.isEmpty(apiFile)) {
             File file = JobUtils.getFile(apiFile, getPlan());
             if (file.exists() && file.canRead()) {
-                OpenApiResults results =
-                        getExtOpenApi()
-                                .importOpenApiDefinitionV2(file, targetUrl, false, contextId);
+                OpenApiResults results;
+                try {
+                    results =
+                            getExtOpenApi()
+                                    .importOpenApiDefinitionV2(file, targetUrl, false, contextId);
+                } catch (EmptyDefinitionException | InvalidDefinitionException e) {
+                    progress.error(e.getLocalizedMessage());
+                    return;
+                }
                 List<String> errors = results.getErrors();
                 if (errors != null && errors.size() > 0) {
                     for (String error : errors) {
