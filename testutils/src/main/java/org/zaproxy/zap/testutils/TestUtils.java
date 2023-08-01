@@ -192,7 +192,7 @@ public abstract class TestUtils {
      * @see #stopServer()
      */
     protected void startServer() throws IOException {
-        startServer(getRandomPort());
+        startServer(0);
     }
 
     /**
