@@ -14,6 +14,15 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/report-generation/")
+
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">= 1.16.0 & < 2.0.0")
+                }
+            }
+        }
+
         extensions {
             register("org.zaproxy.addon.reports.automation.ExtensionReportAutomation") {
                 classnames {
@@ -46,12 +55,10 @@ crowdin {
 
 dependencies {
     zapAddOn("automation")
+    zapAddOn("commonlib")
 
     implementation("org.thymeleaf:thymeleaf:3.1.1.RELEASE")
     implementation("org.xhtmlrenderer:flying-saucer-pdf:9.1.22")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.2")
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.15.2")
-    implementation("org.snakeyaml:snakeyaml-engine:2.6")
     implementation(libs.log4j.slf4j2) {
         // Provided by ZAP.
         exclude(group = "org.apache.logging.log4j")
