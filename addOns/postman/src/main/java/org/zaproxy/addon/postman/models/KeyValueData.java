@@ -23,22 +23,38 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.zaproxy.addon.postman.deserializers.ObjectDeserializer;
 
-/**
- * Represents an item in the Postman format which is the basic building block of a collection.
- *
- * @see https://learning.postman.com/collection-format/reference/item/
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Item extends AbstractItem {
+public class KeyValueData extends AbstractListElement {
+    @JsonDeserialize(using = ObjectDeserializer.class)
+    private String key;
 
     @JsonDeserialize(using = ObjectDeserializer.class)
-    private Request request;
+    private String value;
 
-    public Request getRequest() {
-        return request;
+    @JsonDeserialize(using = ObjectDeserializer.class)
+    private Boolean disabled;
+
+    public String getKey() {
+        return key;
     }
 
-    public void setRequest(Request request) {
-        this.request = request;
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public Boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
     }
 }
