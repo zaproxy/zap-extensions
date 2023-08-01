@@ -35,19 +35,6 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.ascanrules.parserapi.impl.JavaScriptLexer;
 import org.zaproxy.zap.extension.ascanrules.parserapi.impl.JavaScriptParser;
 
-class MyErrorListener extends BaseErrorListener {
-    @Override
-    public void syntaxError(
-            Recognizer<?, ?> recognizer,
-            Object offendingSymbol,
-            int line,
-            int charPositionInLine,
-            String msg,
-            RecognitionException e) {
-        throw new java.lang.Error("Syntax Error");
-    }
-}
-
 public class ParserApi {
 
     private static final char SINGLE_QUOTE_CHARACTER = '\'';
@@ -93,11 +80,11 @@ public class ParserApi {
         CommonTokenStream cts = new CommonTokenStream(jsLexer);
         JavaScriptParser jsParser = new JavaScriptParser(cts);
         jsParser.removeErrorListeners();
-        jsParser.addErrorListener(new MyErrorListener());
+        jsParser.addErrorListener(ThrowOnSyntaxErrorListener.INSTANCE);
 
         try {
             jsParser.program();
-        } catch (Error e) {
+        } catch (Exception e) {
             return false;
         }
 
@@ -143,5 +130,27 @@ public class ParserApi {
         }
 
         return Context.NO_QUOTE;
+    }
+
+    private static class ThrowOnSyntaxErrorListener extends BaseErrorListener {
+
+        static final ThrowOnSyntaxErrorListener INSTANCE = new ThrowOnSyntaxErrorListener();
+
+        // Reuse the exception, used just for control flow.
+        private static final RuntimeException SYNTAX_EXCEPTION =
+                new IllegalArgumentException("Syntax Error");
+
+        private ThrowOnSyntaxErrorListener() {}
+
+        @Override
+        public void syntaxError(
+                Recognizer<?, ?> recognizer,
+                Object offendingSymbol,
+                int line,
+                int charPositionInLine,
+                String msg,
+                RecognitionException e) {
+            throw SYNTAX_EXCEPTION;
+        }
     }
 }
