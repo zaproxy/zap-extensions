@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 - Update minimum ZAP version to 2.13.0.
+- Depend on Common Library add-on to reuse libraries (Issue 7961).
+
+### Fixed
+- Use other library to format the JSON bodies (Issue 7798).
 
 ## [2] - 2021-10-07
 ### Added

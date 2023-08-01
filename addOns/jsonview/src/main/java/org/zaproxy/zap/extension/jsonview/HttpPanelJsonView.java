@@ -24,11 +24,6 @@ import java.awt.Component;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import net.sf.json.JSON;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONException;
-import net.sf.json.JSONNull;
-import net.sf.json.JSONObject;
 import org.apache.commons.configuration.FileConfiguration;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.parosproxy.paros.network.HttpMessage;
@@ -41,6 +36,7 @@ import org.zaproxy.zap.extension.httppanel.view.HttpPanelViewModelEvent;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelViewModelListener;
 import org.zaproxy.zap.extension.httppanel.view.impl.models.http.request.RequestBodyStringHttpPanelViewModel;
 import org.zaproxy.zap.extension.httppanel.view.impl.models.http.response.ResponseBodyStringHttpPanelViewModel;
+import org.zaproxy.zap.extension.jsonview.internal.JsonFormatter;
 
 public class HttpPanelJsonView implements HttpPanelView, HttpPanelViewModelListener {
 
@@ -124,12 +120,8 @@ public class HttpPanelJsonView implements HttpPanelView, HttpPanelViewModelListe
         } else {
             return false;
         }
-        try {
-            toJson(jsonString);
-            return true;
-        } catch (JSONException e) {
-            return false;
-        }
+
+        return JsonFormatter.isJson(jsonString);
     }
 
     @Override
@@ -175,37 +167,12 @@ public class HttpPanelJsonView implements HttpPanelView, HttpPanelViewModelListe
     @Override
     public void dataChanged(HttpPanelViewModelEvent e) {
         String body = ((AbstractStringHttpPanelViewModel) e.getSource()).getData();
-        try {
-            JSON json = toJson(body);
-            if (json instanceof JSONNull) {
-                // avoid the string "null" for empty bodies
-                httpPanelJsonArea.setText("");
-            } else {
-                httpPanelJsonArea.setText(json.toString(2));
-            }
-        } catch (JSONException ex) {
-            httpPanelJsonArea.setText(body);
-        }
+        httpPanelJsonArea.setText(JsonFormatter.toFormattedJson(body));
+
         if (!isEditable()) {
             httpPanelJsonArea.discardAllEdits();
         }
         // TODO: scrolling to top when new message is opened
         // httpPanelJsonArea.setCaretPosition(0);
-    }
-
-    private static JSON toJson(String s) throws JSONException {
-        JSON object;
-        s = s.trim();
-
-        if (s.isEmpty()) {
-            object = JSONNull.getInstance();
-        } else if (s.startsWith("{")) {
-            object = JSONObject.fromObject(s);
-        } else if (s.startsWith("[")) {
-            object = JSONArray.fromObject(s);
-        } else {
-            throw new JSONException("Expected a '{', '[', or an empty message");
-        }
-        return object;
     }
 }
