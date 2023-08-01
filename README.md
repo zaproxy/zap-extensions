@@ -2,7 +2,7 @@
 [![CodeQL](https://github.com/zaproxy/zap-extensions/actions/workflows/codeql.yml/badge.svg)](https://github.com/zaproxy/zap-extensions/actions/workflows/codeql.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=zaproxy_zap-extensions&metric=alert_status)](https://sonarcloud.io/dashboard?id=zaproxy_zap-extensions)
 
-This project contains add-ons for the [OWASP Zed Attack Proxy](https://github.com/zaproxy/zaproxy) (ZAP).
+This project contains add-ons for the [Zed Attack Proxy](https://github.com/zaproxy/zaproxy) (ZAP).
 
 If you are using the latest version of ZAP then you can browse and download add-ons from within ZAP by clicking on this button in the toolbar:
 
