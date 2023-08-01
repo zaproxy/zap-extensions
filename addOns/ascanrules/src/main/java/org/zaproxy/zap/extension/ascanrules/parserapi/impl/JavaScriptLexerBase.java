@@ -1,10 +1,10 @@
+// Refer to README.md.
 package org.zaproxy.zap.extension.ascanrules.parserapi.impl;
 
-import java.util.Stack;
+import org.antlr.v4.runtime.*;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.Token;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  * All lexer methods that used in grammar (IsStrictMode)
@@ -16,7 +16,7 @@ public abstract class JavaScriptLexerBase extends Lexer
      * Stores values of nested modes. By default mode is strict or
      * defined externally (useStrictDefault)
      */
-    private Stack<Boolean> scopeStrictModes = new Stack<Boolean>();
+    private final Deque<Boolean> scopeStrictModes = new ArrayDeque<>();
 
     private Token lastToken = null;
     /**
@@ -150,5 +150,15 @@ public abstract class JavaScriptLexerBase extends Lexer
                 // In all other cases, a regex literal _is_ possible.
                 return true;
         }
+    }
+
+    @Override
+    public void reset() {
+        this.scopeStrictModes.clear();
+        this.lastToken = null;
+        this.useStrictDefault = false;
+        this.useStrictCurrent = false;
+        this.templateDepth = 0;
+        super.reset();
     }
 }

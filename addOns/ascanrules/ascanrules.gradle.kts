@@ -56,7 +56,7 @@ dependencies {
     zapAddOn("network")
     zapAddOn("oast")
 
-    val antlrVersion = "4.9.3"
+    val antlrVersion = "4.13.0"
     antlr("org.antlr:antlr4:$antlrVersion")
     implementation("org.antlr:antlr4-runtime:$antlrVersion")
 
@@ -79,7 +79,7 @@ val generateGrammarSource by tasks.existing(AntlrTask::class) {
 }
 
 tasks.withType<JavaCompile>().configureEach {
-    options.errorprone.excludedPaths.set(".*/generated-src/.*")
+    options.errorprone.excludedPaths.set(".*/(generated-src|$jsParserDir)/.*")
 }
 
 spotless {
