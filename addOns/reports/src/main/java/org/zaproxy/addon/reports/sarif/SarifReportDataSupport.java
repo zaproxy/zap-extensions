@@ -35,7 +35,7 @@ import org.zaproxy.zap.extension.alert.AlertNode;
 
 /**
  * The SARIF data structure needs GUIDs, has multiple references etc. inside which are not available
- * from standard OWASP ZAP report data.<br>
+ * from standard ZAP report data.<br>
  * <br>
  * So this class gives support to access SARIF related parts inside templates easily.
  */

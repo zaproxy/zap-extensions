@@ -84,9 +84,9 @@
          [/th:block]],
          "tool": {
             "driver": {
-               "guid": [[${sarifSupport.components.owaspZap.guid}]],
-               "informationUri": [[${sarifSupport.components.owaspZap.informationUri}]],
-               "name": [[${sarifSupport.components.owaspZap.name}]],
+               "guid": [[${sarifSupport.components.zap.guid}]],
+               "informationUri": [[${sarifSupport.components.zap.informationUri}]],
+               "name": [[${sarifSupport.components.zap.name}]],
                "rules": [ [#th:block th:each="sarifRule, sarifRuleState: ${sarifSupport.rules}"]
                   {
                      "id": [[${sarifRule.id}]],

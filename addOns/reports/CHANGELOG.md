@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - Traditional Markdown Report
     - Traditional PDF Report
 - Depend on Common Library add-on to reuse libraries (Issue 7961).
+- Update program name in reports.
 
 ## [0.23.0] - 2023-07-11
 ### Changed
