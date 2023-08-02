@@ -257,6 +257,10 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                 }
                 sendAndReceive(hackedMessage, true); // follow redirects
 
+                if (isPage404(hackedMessage)) {
+                    return;
+                }
+
                 // get ready to parse the HTML
                 Document doc = Jsoup.parse(new String(hackedMessage.getResponseBody().getBytes()));
                 String extraInfo = null;
