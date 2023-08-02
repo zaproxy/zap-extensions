@@ -470,7 +470,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
             template = "traditional-xml";
         }
 
-        getExtReport().generateReport(template, fileName, "OWASP ZAP Report", "", false);
+        getExtReport().generateReport(template, fileName, "ZAP Report", "", false);
     }
 
     private CommandLineArgument[] getCommandLineArguments() {
