@@ -293,20 +293,20 @@ subprojects {
                     artifact(tasks["javadocJar"])
 
                     pom {
-                        name.set(project.zapAddOn.addOnName.map { "OWASP ZAP - $it Add-on" })
+                        name.set(project.zapAddOn.addOnName.map { "ZAP - $it Add-on" })
                         packaging = "jar"
                         description.set(project.description)
                         url.set("https://github.com/zaproxy/zap-extensions")
                         inceptionYear.set(project.property("zap.maven.pom.inceptionyear") as String)
 
                         organization {
-                            name.set("OWASP")
+                            name.set("ZAP")
                             url.set("https://www.zaproxy.org/")
                         }
 
                         mailingLists {
                             mailingList {
-                                name.set("OWASP ZAP Developer Group")
+                                name.set("ZAP Developer Group")
                                 post.set("zaproxy-develop@googlegroups.com")
                                 archive.set("https://groups.google.com/group/zaproxy-develop")
                             }
