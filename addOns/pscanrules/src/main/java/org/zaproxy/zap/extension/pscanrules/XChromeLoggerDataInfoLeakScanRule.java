@@ -33,11 +33,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-/**
- * X-ChromeLogger-Data header information leak passive scan rule
- *
- * @author kingthorin+owaspzap@gmail.com
- */
+/** X-ChromeLogger-Data header information leak passive scan rule */
 public class XChromeLoggerDataInfoLeakScanRule extends PluginPassiveScanner {
 
     private static final String MESSAGE_PREFIX = "pscanrules.xchromeloggerdata.";
