@@ -8,10 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The HTTP Only Site scan rule now includes example alert functionality for documentation generation purposes (Issue 6119).
 
 ### Changed
-- Enhanced Relative Path Confusion Scan Rule with 404 Response Check
 - Maintenance changes.
 
 ### Fixed
+- Enhanced Relative Path Confusion Scan Rule with 404 response check and accommodate Custom Page definitions.
 - The Source Code Disclosure - File Inclusion alerts now consistently leverage the description and solution from the associated vulnerability details.
 
 ## [47] - 2023-07-20
