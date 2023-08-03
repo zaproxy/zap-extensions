@@ -54,7 +54,6 @@ import org.zaproxy.zap.model.Vulnerability;
  * https://owasp.org/www-community/attacks/Command_Injection
  *
  * @author yhawke (2013)
- * @author kingthorin+owaspzap@gmail.com (2015)
  */
 public class CommandInjectionScanRule extends AbstractAppParamPlugin {
 

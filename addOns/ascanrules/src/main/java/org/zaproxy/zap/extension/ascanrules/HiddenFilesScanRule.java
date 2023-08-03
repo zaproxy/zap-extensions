@@ -58,8 +58,6 @@ import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
  * <p><strong>Note:</strong> Binary matching assumes:<br>
  * - Start position 0 (ex: checking magic numbers) [startsWith, not contains]<br>
  * - Response is ASCII compatible (which should include UTF-8 and ISO-8859-1)
- *
- * @author kingthorin+owaspzap@gmail.com
  */
 public class HiddenFilesScanRule extends AbstractHostPlugin {
 

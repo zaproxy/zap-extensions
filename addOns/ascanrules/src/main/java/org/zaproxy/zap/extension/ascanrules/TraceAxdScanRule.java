@@ -29,8 +29,6 @@ import org.zaproxy.zap.model.TechSet;
 /**
  * Active scan rule which checks whether or not trace.axd is exposed.
  * https://github.com/zaproxy/zaproxy/issues/3280
- *
- * @author kingthorin+owaspzap@gmail.com
  */
 public class TraceAxdScanRule extends AbstractAppFilePlugin {
 

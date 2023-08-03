@@ -31,11 +31,7 @@ import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-/**
- * Big Redirects passive scan rule https://github.com/zaproxy/zaproxy/issues/1257
- *
- * @author kingthorin+owaspzap@gmail.com
- */
+/** Big Redirects passive scan rule https://github.com/zaproxy/zaproxy/issues/1257 */
 public class BigRedirectsScanRule extends PluginPassiveScanner {
 
     private static final String MESSAGE_PREFIX = "pscanrules.bigredirects.";
