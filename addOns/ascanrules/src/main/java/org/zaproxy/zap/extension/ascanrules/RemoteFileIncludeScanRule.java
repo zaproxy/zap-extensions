@@ -77,8 +77,8 @@ public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
         "www.google.com/",
         "www.google.com:80/",
         "www.google.com",
-        "www.google.com/search?q=OWASP%20ZAP",
-        "www.google.com:80/search?q=OWASP%20ZAP",
+        "www.google.com/search?q=ZAP",
+        "www.google.com:80/search?q=ZAP",
     };
 
     /** the patterns to look for, associated with the equivalent remote file targets above */
