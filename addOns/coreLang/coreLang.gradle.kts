@@ -8,6 +8,6 @@ zapAddOn {
 
     manifest {
         author.set("ZAP Dev Team")
-        url.set("https://crowdin.com/project/owasp-zap")
+        url.set("https://crowdin.com/project/zaproxy")
     }
 }
