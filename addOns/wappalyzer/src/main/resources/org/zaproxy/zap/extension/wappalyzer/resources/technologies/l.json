@@ -54,6 +54,22 @@
     "website": "https://wiki.lkqd.com",
     "xhr": "\\.lkqd\\.net"
   },
+  "LlamaLink Cloud Server": {
+    "cats": [
+      22
+    ],
+    "description": "LlamaLink Cloud Server is a custom dynamic web server based on Nginx Web server that load balance user traffic between hosting nodes and allows fast and cached expiriance to website users.",
+    "icon": "LlamaLink.png",
+    "implies": "Nginx",
+    "headers": {
+      "Server": "^LlamaLink\\sCloud$"
+    },
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "website": "https://llamalink.net"
+  },
   "LOU": {
     "cats": [
       58
@@ -330,6 +346,21 @@
     "oss": true,
     "scriptSrc": "ls\\.unveilhooks(?:\\.min)?\\.js",
     "website": "https://github.com/aFarkas/lazysizes/tree/gh-pages/plugins/unveilhooks"
+  },
+  "LeadChat": {
+    "cats": [
+      53
+    ],
+    "description": "LeadChat offers live-operators and CRM solutions that utilise LiveChat chat software to facilitate real-time engagement with website visitors for businesses.",
+    "icon": "LeadChat.svg",
+    "requires": "LiveChat",
+    "scriptSrc": "(?://|\\.)chatsystem\\.io/",
+    "pricing": [
+      "recurring",
+      "payg",
+      "poa"
+    ],
+    "website": "https://www.leadchat.com"
   },
   "Leadfeeder": {
     "cats": [
@@ -1717,12 +1748,10 @@
   },
   "Loox": {
     "cats": [
-      90,
-      100
+      90
     ],
     "description": "Loox is a reviews app for Shopify that helps you gather reviews and user-generated photos from your customers.",
     "icon": "Loox.svg",
-    "implies": "Shopify",
     "js": {
       "loox_global_hash": ""
     },

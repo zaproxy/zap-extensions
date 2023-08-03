@@ -572,7 +572,7 @@
       6
     ],
     "description": "Kibo Commerce is a enterprise ecommerce platform  that offers a cloud-based, end-to-end commerce solution for retailers and branded manufacturers.",
-    "icon": "Kibo.png",
+    "icon": "Kibo.svg",
     "pricing": [
       "poa"
     ],
@@ -585,22 +585,18 @@
       74
     ],
     "description": "Kibo Personalization is a omnichannel personalisation software powered by machine learning to deliver individualized customer experiences and powered by Monetate and Certona.",
-    "icon": "Kibo.png",
+    "icon": "Kibo.svg",
     "js": {
       "BaynoteAPI": "",
       "BaynoteJSVersion": "",
       "certona.recommendations": "",
-      "certonaRecommendations": "",
-      "monetate": "",
-      "monetateQ": "",
-      "monetateT": ""
+      "certonaRecommendations": ""
     },
     "pricing": [
       "poa"
     ],
     "saas": true,
     "scriptSrc": [
-      "\\.monetate\\.net",
       "\\.baynote\\.net",
       "\\.certona\\.net"
     ],
