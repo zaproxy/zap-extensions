@@ -34,13 +34,3 @@ dependencies {
     }
     implementation("com.diffplug.spotless:spotless-plugin-gradle:6.20.0")
 }
-
-java {
-    val javaVersion = JavaVersion.VERSION_11
-    sourceCompatibility = javaVersion
-    targetCompatibility = javaVersion
-}
-
-kotlin {
-    jvmToolchain(11)
-}
