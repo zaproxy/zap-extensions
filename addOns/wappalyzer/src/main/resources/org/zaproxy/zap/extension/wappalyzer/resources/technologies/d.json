@@ -412,10 +412,11 @@
     "scriptSrc": "www\\.datadoghq-browser-agent\\.com",
     "website": "https://www.datadoghq.com"
   },
-  "Datadome": {
+  "DataDome": {
     "cats": [
       16
     ],
+    "description": "DataDome is a cybersecurity platform that specialises in bot protection and mitigation, offering advanced solutions to safeguard websites and mobile applications against malicious bot traffic, credential stuffing, scraping, and other automated threats.",
     "cookies": {
       "datadome": "",
       "datadome-_zldp": "",
@@ -426,9 +427,32 @@
       "X-DataDome": "",
       "X-DataDome-CID": ""
     },
-    "icon": "datadome.png",
+    "icon": "DataDome.svg",
     "scriptSrc": "^https://ct\\.datadome\\.co/[a-z]\\.js$",
-    "website": "https://datadome.co/"
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "website": "https://datadome.co"
+  },
+  "Datatrics": {
+    "cats": [
+      97
+    ],
+    "description": "Datatrics is a data-driven marketing platform that provides businesses with advanced tools and analytics to optimise customer experiences, personalise marketing campaigns, and drive engagement through data-driven insights and automation.",
+    "icon": "Datatrics.svg",
+    "dom": "link[href*='.datatrics.com']",
+    "js": {
+      "datatricsEvents": "",
+      "DatatricsClick": ""
+    },
+    "saas": true,
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "website": "https://datatrics.com"
   },
   "DatoCMS": {
     "cats": [
@@ -1744,6 +1768,26 @@
     "saas": true,
     "scriptSrc": "chat-app\\.meudroz\\.com/",
     "website": "https://meudroz.com/droz-bot/"
+  },
+  "Drubbit": {
+    "cats": [
+      6
+    ],
+    "description": "Drubbit is an ecommerce platform with a Content Management System (CMS) for creating product pages, managing checkout processes, facilitating payments, and handling shipping.",
+    "icon": "Drubbit.svg",
+    "implies": [
+      "Node.js",
+      "MySQL"
+    ],
+    "meta": {
+      "generator": "^Drubbit Commerce$"
+    },
+    "pricing": [
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://drubbit.com"
   },
   "Drupal": {
     "cats": [

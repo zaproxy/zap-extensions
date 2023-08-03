@@ -615,6 +615,22 @@
     "saas": true,
     "website": "https://www.etsy.com/pattern"
   },
+  "PayGreen": {
+    "cats": [
+      41
+    ],
+    "description": "PayGreen is a French payment processor.",
+    "icon": "PayGreen.svg",
+    "js": {
+      "paygreenjs": ""
+    },
+    "pricing": [
+      "payg",
+      "low",
+      "recurring"
+    ],
+    "website": "https://www.paygreen.io"
+  },
   "Pay It Later": {
     "cats": [
       91
@@ -755,6 +771,22 @@
       "\\.paypal\\.com/tagmanager/pptm\\.js"
     ],
     "website": "https://developer.paypal.com/docs/marketing-solutions"
+  },
+  "Payplug": {
+    "cats": [
+      41
+    ],
+    "description": "Payplug is a French omnichannel payment solution dedicated to merchants.",
+    "icon": "Payplug.svg",
+    "js": {
+      "payplug.card": "",
+      "payplug_ajax_url": "",
+      "PAYPLUG_DOMAIN": "\\.payplug\\.com"
+    },
+    "pricing": [
+      "payg"
+    ],
+    "website": "https://www.payplug.com"
   },
   "PayWhirl": {
     "cats": [
@@ -2010,9 +2042,19 @@
       "X-Powered-By": "^Plesk(?:L|W)in",
       "X-Powered-By-Plesk": "^Plesk"
     },
-    "icon": "Plesk.png",
+    "icon": "Plesk.svg",
+    "meta": {
+      "plesk-build": ""
+    },
+    "js": {
+      "Plesk.Form": ""
+    },
     "scriptSrc": "common\\.js\\?plesk",
-    "website": "https://www.plesk.com/"
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://www.plesk.com"
   },
   "Pligg": {
     "cats": [
@@ -2035,12 +2077,14 @@
     ],
     "cpe": "cpe:2.3:a:plone:plone:*:*:*:*:*:*:*:*",
     "description": "Plone is a free and open source content management system (CMS) built on top of the Zope application server.",
+    "dom": "link[href^='/++resource++']",
     "icon": "Plone.svg",
     "implies": "Python",
     "meta": {
       "generator": "Plone"
     },
     "oss": true,
+    "scriptSrc": "^/\\+\\+resource\\+\\+",
     "website": "https://plone.org/"
   },
   "Plotly": {
@@ -2632,6 +2676,7 @@
     ],
     "requiresCategory": 12,
     "saas": true,
+    "scriptSrc": "\\.prepr\\.io/",
     "website": "https://prepr.io"
   },
   "Press Customizr": {
@@ -2723,10 +2768,10 @@
       "MySQL"
     ],
     "js": {
-      "freeProductTranslation": "\\;confidence:25",
+      "freeProductTranslation": "\\;confidence:40",
       "prestashop": "",
-      "priceDisplayMethod": "\\;confidence:25",
-      "priceDisplayPrecision": "\\;confidence:25",
+      "priceDisplayMethod": "\\;confidence:40",
+      "priceDisplayPrecision": "\\;confidence:40",
       "rcAnalyticsEvents.eventPrestashopCheckout": ""
     },
     "meta": {
@@ -3009,6 +3054,53 @@
     ],
     "website": "https://www.profitwell.com/"
   },
+  "Progress Sitefinity": {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:progress:sitefinity:*:*:*:*:*:*:*:*",
+    "description": "Progress Sitefinity is a content management system (CMS) that you use to create, store, manage, and present content on your website.",
+    "icon": "Sitefinity.svg",
+    "implies": "Microsoft ASP.NET",
+    "js": {
+      "sfDataIntell": ""
+    },
+    "meta": {
+      "generator": "^Sitefinity\\s([\\S]{3,9})\\;version:\\1"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.sitefinity.com"
+  },
+  "Progress WS_FTP": {
+    "cats": [
+      19
+    ],
+    "cpe":"cpe:2.3:a:progress:ws_ftp_server:*:*:*:*:*:*:*:*",
+    "description": "Progress WS_FTP is a file transfer client software developed by Progress Software Corporation, supporting FTP, FTPS, SFTP, and HTTPS protocols with features like drag-and-drop support, file synchronization, and encrypted data transmission.",
+    "dom": "form[name='formLogin'][action='login.aspx' i][id='formLogin']\\;confidence:40",
+    "scriptSrc": "/ThinClient/(?:WTM|WebResource)(?:\\.axd|/public)\\;confidence:60",
+    "requires": "Microsoft ASP.NET",
+    "icon": "Progress.svg",
+    "website": "https://www.progress.com/ws_ftp"
+  },
+  "Progress MOVEit": {
+    "cats": [
+      19
+    ],
+    "description": "Progress MOVEit is a managed file transfer solution that enables secure and compliant transfer of sensitive files while providing automation, central management, and auditing capabilities.",
+    "headers": {
+      "X-Moveitisapi-Version": "^(.+)$\\;version:\\1"
+    },  
+    "meta": {
+      "apple-itunes-app": "app-id=1500056420",
+      "google-play-app": "app-id=com\\.progress\\.moveit\\.transfer\\.dev\\.appid"
+    },
+    "icon": "Progress.svg",
+    "website": "https://www.progress.com/moveit"
+  },
   "Project Wonderful": {
     "cats": [
       36
@@ -3053,6 +3145,25 @@
     ],
     "saas": true,
     "website": "https://promobuilding.ru"
+  },
+  "PRONOTE": {
+    "cats": [
+      21
+    ],
+    "description": "PRONOTE is an information system created by Index Education, a French company, designed for deployment in approximately 7,400 schools to enable streamlined communication among administrative personnel, teachers, and families.",
+    "icon": "PRONOTE.png",
+    "meta": {
+      "application-name": "^PRONOTE$"
+    },
+    "headers": {
+      "Server": "^PRONOTE\\s[\\d]{4}\\s-\\s([\\d\\.]+)\\;version:\\1"
+    },
+    "saas": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://www.index-education.com/fr/logiciel-gestion-vie-scolaire.php"
   },
   "Proton Mail": {
     "cats": [
@@ -3152,6 +3263,37 @@
       "generator": "Proximis Unified Commerce"
     },
     "website": "https://www.proximis.com"
+  },
+  "Proxmox VE": {
+    "cats": [
+      60
+    ],
+    "description": "Proxmox VE is an open-source virtualisation and containerisation platform that provides a web-based management interface to manage virtual machines, containers, storage, and networking.",
+    "icon": "Proxmox.svg",
+    "headers": {
+      "Server": "pve-api-daemon/[\\d\\.]+"
+    },
+    "oss": true,
+    "saas": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://proxmox.com/en/proxmox-ve"
+  },
+  "Proxmox Mail Gateway": {
+    "cats": [
+      16
+    ],
+    "description": "Proxmox Mail Gateway is a mail security and anti-spam solution designed to protect email servers and ensure secure and reliable email communication.",
+    "icon": "Proxmox.svg",
+    "requires": "Proxmox VE",
+    "js": {
+      "pmg-mail-tracker": "",
+      "pmg-spam-archive": ""
+    },
+    "oss": true,
+    "website": "https://proxmox.com/en/proxmox-mail-gateway"
   },
   "Pterodactyl Panel": {
     "cats": [

@@ -2310,6 +2310,22 @@
     ],
     "website": "https://www.royalmail.com"
   },
+  "Rubedo": {
+    "cats": [
+      1
+    ],
+    "description": "Rubedo is an open-source PHP CMS powered by the Zend Framework, NoSQL MongoDB, Elasticsearch, and AngularJS, offering advanced features for content management and development.",
+    "implies": [
+      "MongoDB",
+      "Elasticsearch",
+      "PHP"
+    ],
+    "js": {
+      "rubedoConfig": ""
+    },
+    "oss": true,
+    "website": "https://github.com/WebTales/rubedo"
+  },
   "Rubicon Project": {
     "cats": [
       36
@@ -2379,7 +2395,8 @@
     "implies": "Ruby",
     "js": {
       "ReactOnRails": "",
-      "__REACT_ON_RAILS_EVENT_HANDLERS_RAN_ONCE__": ""
+      "__REACT_ON_RAILS_EVENT_HANDLERS_RAN_ONCE__": "",
+      "_rails_loaded": ""
     },
     "meta": {
       "csrf-param": "^authenticity_token$\\;confidence:50"
