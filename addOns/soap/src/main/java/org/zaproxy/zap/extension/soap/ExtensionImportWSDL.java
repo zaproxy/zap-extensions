@@ -24,9 +24,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.security.InvalidParameterException;
-import javax.swing.JFileChooser;
-import javax.swing.SwingUtilities;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -36,8 +33,8 @@ import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.db.DatabaseUnsupportedException;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.view.View;
+import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.model.Session;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
@@ -56,8 +53,8 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
     private static final String THREAD_PREFIX = "ZAP-Import-WSDL-";
     private static final String SCRIPT_NAME = "SOAP Support.js";
 
-    private ZapMenuItem menuImportLocalWSDL = null;
-    private ZapMenuItem menuImportUrlWSDL = null;
+    private ZapMenuItem menuImportWsdl;
+    private ImportDialog importDialog;
     private int threadId = 1;
 
     private final TableWsdl table = new TableWsdl();
@@ -90,8 +87,25 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
         extensionHook.addApiImplementor(new SoapAPI(this));
 
         if (hasView()) {
-            extensionHook.getHookMenu().addImportMenuItem(getMenuImportLocalWSDL());
-            extensionHook.getHookMenu().addImportMenuItem(getMenuImportUrlWSDL());
+            extensionHook.getHookMenu().addImportMenuItem(getMenuImportWsdl());
+            extensionHook.addSessionListener(
+                    new SessionChangedListener() {
+                        @Override
+                        public void sessionAboutToChange(Session session) {
+                            if (importDialog != null) {
+                                importDialog.clearFields();
+                            }
+                        }
+
+                        @Override
+                        public void sessionChanged(Session session) {}
+
+                        @Override
+                        public void sessionScopeChanged(Session session) {}
+
+                        @Override
+                        public void sessionModeChanged(Control.Mode mode) {}
+                    });
         }
     }
 
@@ -108,6 +122,9 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
     @Override
     public void unload() {
         super.unload();
+        if (importDialog != null) {
+            importDialog.dispose();
+        }
         removeScript();
     }
 
@@ -121,59 +138,23 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
         return table;
     }
 
-    /* Menu option to import a local WSDL file. */
-    private ZapMenuItem getMenuImportLocalWSDL() {
-        if (menuImportLocalWSDL == null) {
-            menuImportLocalWSDL =
+    private ZapMenuItem getMenuImportWsdl() {
+        if (menuImportWsdl == null) {
+            menuImportWsdl =
                     new ZapMenuItem(
                             "soap.topmenu.import.importWSDL",
-                            getView()
-                                    .getMenuShortcutKeyStroke(
-                                            KeyEvent.VK_I, KeyEvent.SHIFT_DOWN_MASK, false));
-            menuImportLocalWSDL.setToolTipText(
+                            getView().getMenuShortcutKeyStroke(KeyEvent.VK_J, 0, false));
+            menuImportWsdl.setToolTipText(
                     Constant.messages.getString("soap.topmenu.import.importWSDL.tooltip"));
-
-            menuImportLocalWSDL.addActionListener(
+            menuImportWsdl.addActionListener(
                     e -> {
-                        // Prompt for a WSDL file.
-                        final JFileChooser chooser =
-                                new JFileChooser(
-                                        Model.getSingleton().getOptionsParam().getUserDirectory());
-                        FileNameExtensionFilter filter =
-                                new FileNameExtensionFilter(
-                                        Constant.messages.getString(
-                                                "soap.topmenu.import.importWSDL.filter.description"),
-                                        "wsdl");
-                        chooser.setFileFilter(filter);
-                        int rc = chooser.showOpenDialog(View.getSingleton().getMainFrame());
-                        if (rc == JFileChooser.APPROVE_OPTION) {
-                            fileUrlWSDLImport(chooser.getSelectedFile());
+                        if (importDialog == null) {
+                            importDialog = new ImportDialog(getView().getMainFrame(), this);
                         }
+                        importDialog.setVisible(true);
                     });
         }
-        return menuImportLocalWSDL;
-    }
-
-    /* Menu option to import a WSDL file from a given URL. */
-    private ZapMenuItem getMenuImportUrlWSDL() {
-        if (menuImportUrlWSDL == null) {
-            menuImportUrlWSDL =
-                    new ZapMenuItem(
-                            "soap.topmenu.import.importRemoteWSDL",
-                            getView().getMenuShortcutKeyStroke(KeyEvent.VK_J, 0, false));
-            menuImportUrlWSDL.setToolTipText(
-                    Constant.messages.getString("soap.topmenu.import.importRemoteWSDL.tooltip"));
-
-            final ExtensionImportWSDL shadowCopy = this;
-            menuImportUrlWSDL.addActionListener(
-                    e ->
-                            SwingUtilities.invokeLater(
-                                    () ->
-                                            new ImportFromUrlDialog(
-                                                    View.getSingleton().getMainFrame(),
-                                                    shadowCopy)));
-        }
-        return menuImportUrlWSDL;
+        return menuImportWsdl;
     }
 
     public void syncImportWsdlUrl(final String url) {
