@@ -33,5 +33,5 @@ public interface ClientZestInterface {
      * @param stmt the JSONObject representing the Zest statement to be added.
      * @throws Exception if an error occurs while adding the Zest statement.
      */
-    void addZestStatementUtil(String stmt) throws Exception;
+    void addZestStatement(String stmt) throws Exception;
 }

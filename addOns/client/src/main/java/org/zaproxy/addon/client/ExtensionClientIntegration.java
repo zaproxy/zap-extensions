@@ -185,11 +185,11 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         }
     }
 
-    void addReportedZestStatement(String stmt) throws Exception {
+    void addZestStatement(String stmt) throws Exception {
         if (clientHandler == null) {
             return;
         }
-        clientHandler.addZestStatementUtil(stmt);
+        clientHandler.addZestStatement(stmt);
     }
 
     public void setClientRecorderHelper(ClientZestInterface clientHandler) {

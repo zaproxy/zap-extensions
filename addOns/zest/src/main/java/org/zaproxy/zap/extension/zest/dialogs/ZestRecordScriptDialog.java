@@ -37,6 +37,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
@@ -61,9 +62,6 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
     private static final String FIELD_BROWSER = "zest.dialog.script.label.browser";
     private static final String ERROR_CLIENT = "zest.dialog.script.error.client";
     private static final String THREAD_PREFIX = "ZAP-client-browser-";
-    private static final String CHROME = "Chrome";
-    private static final String FIREFOX = "Firefox";
-    private static final List<String> BROWSER_NAMES = List.of(FIREFOX, CHROME);
 
     private int threadId = 1;
     private static final Logger LOGGER = LogManager.getLogger(ZestRecordScriptDialog.class);
@@ -87,7 +85,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
         this.addTextField(0, FIELD_TITLE, "");
         this.addComboField(0, FIELD_TYPE, this.getScriptTypes(), "", false);
         this.addComboField(0, FIELD_RECORD, this.getRecordTypes(), "", false);
-        this.addComboField(0, FIELD_BROWSER, BROWSER_NAMES, "", false);
+        this.addComboField(0, FIELD_BROWSER, getBrowsers(), "", false);
 
         this.addNodeSelectField(0, FIELD_CLIENT_NODE, node, true, false);
 
@@ -108,6 +106,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
             getField(FIELD_PREFIX).setEnabled(false);
         } else {
             getField(FIELD_CLIENT_NODE).setEnabled(false);
+            getField(FIELD_BROWSER).setEnabled(false);
         }
 
         this.addFieldListener(
@@ -120,6 +119,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
                         getField(FIELD_STATUS).setEnabled(true);
                         getField(FIELD_LENGTH).setEnabled(true);
                         getField(FIELD_APPROX).setEnabled(true);
+                        getField(FIELD_BROWSER).setEnabled(false);
                     } else {
                         getField(FIELD_CLIENT_NODE).setEnabled(true);
                         getField(FIELD_PREFIX).setEnabled(false);
@@ -169,6 +169,16 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
     private boolean isServerSide() {
         return this.getStringValue(FIELD_RECORD)
                 .equals(Constant.messages.getString("zest.dialog.script.record.type.server"));
+    }
+
+    private List<String> getBrowsers() {
+        List<String> browsers = new ArrayList<>();
+        String firefox = Browser.FIREFOX.getId();
+        String chrome = Browser.CHROME.getId();
+
+        browsers.add(Character.toUpperCase(firefox.charAt(0)) + firefox.substring(1));
+        browsers.add(Character.toUpperCase(chrome.charAt(0)) + chrome.substring(1));
+        return browsers;
     }
 
     private List<String> getSites() {
