@@ -118,8 +118,10 @@ public class SpiderHtmlFormParser extends SpiderParser {
                     action = action.substring(0, fs);
                 }
 
+                
                 url = getCanonicalUrl(ctx, action, baseURL);
-                FormData formData = prepareFormDataSet(ctx, form);
+                String encoding = form.getAttributeValue("enctype");
+                FormData formData = prepareFormDataSet(ctx, form, encoding);
 
                 // Process the case of a POST method
                 if (method != null && method.trim().equalsIgnoreCase(METHOD_POST)) {
@@ -130,12 +132,6 @@ public class SpiderHtmlFormParser extends SpiderParser {
                     }
                     getLogger().debug("Canonical URL constructed using '{}': {}", action, fullURL);
 
-                    /*
-                     * Ignore encoding, as we will not POST files anyway, so using
-                     * "application/x-www-form-urlencoded" is adequate
-                     */
-                    // String encoding = form.getAttributeValue("enctype");
-                    // if (encoding != null && encoding.equals("multipart/form-data"))
 
                     for (String submitData : formData) {
                         notifyPostResourceFound(ctx, fullURL, submitData);
@@ -307,15 +303,17 @@ public class SpiderHtmlFormParser extends SpiderParser {
      * @param form the form
      * @return the list
      */
-    private FormData prepareFormDataSet(ParseContext ctx, Element form) {
+    private FormData prepareFormDataSet(ParseContext ctx, Element form, String encoding) {
         List<FormDataField> formDataFields = new LinkedList<>();
+
+        getLogger().info("Encoding is: {}", encoding);
 
         // Process each form field
         Iterator<FormField> it = getFormFields(ctx, form).iterator();
         while (it.hasNext()) {
             FormField field = it.next();
             getLogger().debug("New form field: {}", field.getDebugInfo());
-            for (String value : getDefaultTextValue(ctx, field)) {
+            for (String value : getDefaultTextValue(ctx, field, encoding)) {
                 formDataFields.add(
                         new FormDataField(
                                 field.getName(),
@@ -371,7 +369,7 @@ public class SpiderHtmlFormParser extends SpiderParser {
      * @param field the field
      * @return a list with the values
      */
-    private List<String> getDefaultTextValue(ParseContext ctx, FormField field) {
+    private List<String> getDefaultTextValue(ParseContext ctx, FormField field, String encoding) {
 
         // Get the Id
         String fieldId = field.getName();
@@ -399,7 +397,8 @@ public class SpiderHtmlFormParser extends SpiderParser {
                                         value,
                                         definedValues,
                                         envAttributes,
-                                        fieldAttributes);
+                                        fieldAttributes,
+                                        encoding);
                 submitFields.add(finalValue);
             }
             return submitFields;
@@ -452,9 +451,11 @@ public class SpiderHtmlFormParser extends SpiderParser {
                                 defaultValue,
                                 definedValues,
                                 envAttributes,
-                                fieldAttributes);
+                                fieldAttributes,
+                                encoding);
 
         getLogger().debug("Generated: {}. For field {}", finalValue, field.getName());
+        getLogger().info("Generated: {}. For field {}", finalValue, field.getName());
 
         values = new ArrayList<>(1);
         values.add(finalValue);
