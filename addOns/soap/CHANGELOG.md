@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- The "Import a WSDL file from local file system" and "Import a WSDL file from a URL" menu items were merged into one,
+  "Import a WSDL File". The merged dialog uses the shortcut `Ctrl+J` (`Cmd+J` on macOS).
+- The Import dialog shows the values used in the previous import when reopened.
 - Maintenance changes.
 
 ## [18] - 2023-07-11
