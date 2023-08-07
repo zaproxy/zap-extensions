@@ -10,7 +10,7 @@
 	This screens allows to manage and configure the root CA certificate and issued certificates.
 
 	<p>
-	OWASP ZAP allows you to transparently decrypt SSL connections.
+	ZAP allows you to transparently decrypt SSL connections.
 	For doing so, ZAP has to encrypt each request before sending
 	to the server and decrypt each response, which comes back.
 	But, this is already done by the browser.
@@ -75,10 +75,10 @@
 	</p>
 	<p style="padding-left: 20pt;">
 		<code>
-		CN = OWASP Zed Attack Proxy Root CA<br>
+		CN = Zed Attack Proxy Root CA<br>
 		L = 87b77fe834b0a301<br>
-		O = OWASP Root CA<br>
-		OU = OWASP ZAP Root CA<br>
+		O = ZAP Root CA<br>
+		OU = ZAP Root CA<br>
 		C = XX<br>
 		</code>
 	</p>
@@ -92,9 +92,9 @@
 	<h3>Import</h3>
 	<p>
 		When you're using multiple ZAP installation and you want to use the same
-		Root CA certificate, so you can import it. Simply use one installation of OWASP ZAP
+		Root CA certificate, so you can import it. Simply use one installation of ZAP
 		to generate one Root CA certificate.<br>
-		Copy the file 'OWASP ZAP/config.xml' from your users home directory to
+		Copy the file 'config.xml' from ZAP's home directory to
 		the PC, where you want to use the same certificate and press 'import' to import it.
 	</p>
 	<p>
@@ -178,9 +178,9 @@
 	<p style="padding-left: 20pt;">
 		<code>
 		CN = www.example.com<br>
-		E = owasp-zed-attack-proxy@lists.owasp.org<br>
+		E = zaproxy-develop@googlegroups.com<br>
 		C = XX<br>
-		O = OWASP<br>
+		O = ZAP<br>
 		OU = Zed Attack Proxy Project<br>
 		</code>
 	</p>
@@ -240,7 +240,7 @@
 
 	<h2><a name="install">Install ZAP Root CA certificate</a></h2>
 	<p>
-		Any HTTPS client you want to use, has to know the OWASP Root CA certificate
+		Any HTTPS client you want to use, has to know the ZAP Root CA certificate
 		as 'trusted root certificate'. Typically you have to install manually the
 		ZAP certificate into your browser's list of trusted root certificates.
 	</p>
@@ -263,7 +263,7 @@
 		<li>Tab Content</li>
 		<li>Click certificates</li>
 		<li>Click tab trusted root certificates</li>
-		<li>The OWASP ZAP Root CA should be there</li>
+		<li>The ZAP Root CA should be there</li>
 		</ol>
 
 	<h3>Mozilla Firefox</h3>
@@ -278,7 +278,7 @@
 		<li>Tab Cryptography/Certificates</li>
 		<li>Click View Certificates</li>
 		<li>Click Authorities tab</li>
-		<li>Click Import and choose the saved <tt>owasp_zap_root_ca.cer</tt> file</li>
+		<li>Click Import and choose the saved <tt>zap_root_ca.cer</tt> file</li>
 		<li>In the wizard choose to trust this certificate to identify web sites (check on the boxes)</li>
 		<li>Finalize the wizard</li>
 		</ol>
