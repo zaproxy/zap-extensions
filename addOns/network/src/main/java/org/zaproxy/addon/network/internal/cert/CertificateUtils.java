@@ -164,13 +164,13 @@ public final class CertificateUtils {
         // using the hash code of the user's name and home path, keeps anonymity
         // but also gives user a chance to distinguish between each other
         X500NameBuilder nameBuilder = new X500NameBuilder(BCStyle.INSTANCE);
-        nameBuilder.addRDN(BCStyle.CN, "OWASP Zed Attack Proxy Root CA");
+        nameBuilder.addRDN(BCStyle.CN, "Zed Attack Proxy Root CA");
         nameBuilder.addRDN(
                 BCStyle.L,
                 Integer.toHexString(System.getProperty("user.name").hashCode())
                         + Integer.toHexString(System.getProperty("user.home").hashCode()));
-        nameBuilder.addRDN(BCStyle.O, "OWASP Root CA");
-        nameBuilder.addRDN(BCStyle.OU, "OWASP ZAP Root CA");
+        nameBuilder.addRDN(BCStyle.O, "ZAP Root CA");
+        nameBuilder.addRDN(BCStyle.OU, "ZAP Root CA");
         nameBuilder.addRDN(BCStyle.C, "xx");
 
         X500Name name = nameBuilder.build();
@@ -284,7 +284,7 @@ public final class CertificateUtils {
             namebld.addRDN(BCStyle.CN, certData.getCommonName());
         }
         namebld.addRDN(BCStyle.OU, "Zed Attack Proxy Project");
-        namebld.addRDN(BCStyle.O, "OWASP");
+        namebld.addRDN(BCStyle.O, "ZAP");
         namebld.addRDN(BCStyle.C, "xx");
         namebld.addRDN(BCStyle.EmailAddress, "zaproxy-develop@googlegroups.com");
 
