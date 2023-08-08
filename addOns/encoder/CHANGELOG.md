@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Do not rely on the default charset in Full URL and ASCII Hex encoders/decoders.
+
 ## [1.2.0] - 2023-07-11
 ### Changed
 - Update minimum ZAP version to 2.13.0.
