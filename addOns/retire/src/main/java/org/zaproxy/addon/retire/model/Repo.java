@@ -19,16 +19,13 @@
  */
 package org.zaproxy.addon.retire.model;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParseException;
-import com.google.gson.reflect.TypeToken;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -70,15 +67,11 @@ public class Repo {
         }
     }
 
-    private static Map<String, RepoEntry> createEntries(Reader reader) throws IOException {
+    static Map<String, RepoEntry> createEntries(Reader reader) throws IOException {
         try {
-            Gson gson =
-                    new GsonBuilder()
-                            .registerTypeAdapter(Extractors.class, new ExtractorsTypeAdapter())
-                            .create();
-            Type repoMapType = new TypeToken<Map<String, RepoEntry>>() {}.getType();
-            return gson.fromJson(reader, repoMapType);
-        } catch (JsonParseException e) {
+            return new ObjectMapper()
+                    .readValue(reader, new TypeReference<Map<String, RepoEntry>>() {});
+        } catch (Exception e) {
             throw new IOException("An error occurred while parsing the file.", e);
         }
     }
@@ -146,6 +139,7 @@ public class Repo {
         }
         return msg.getResponseBody().toString();
     }
+
     /*
      * This function computes the SHA 1 hash of the HTTP response body,
      * IF the hash matches that of an existing entry in the vulnerability database

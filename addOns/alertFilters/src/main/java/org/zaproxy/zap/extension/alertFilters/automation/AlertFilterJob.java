@@ -84,7 +84,7 @@ public class AlertFilterJob extends AutomationJob {
         private Risk(int id, String i18nString) {
             this.id = id;
             this.i18nString = i18nString;
-        };
+        }
 
         public int getId() {
             return this.id;

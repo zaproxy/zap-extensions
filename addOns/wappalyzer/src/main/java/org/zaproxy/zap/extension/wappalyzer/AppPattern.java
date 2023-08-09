@@ -42,6 +42,7 @@ public class AppPattern {
             // Ignore
         }
     }
+
     /**
      * Returns the java version of the regex pattern - its provided as the core requires a java
      * Pattern when searching for evidence. It should not be used for matching in this package, use

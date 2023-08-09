@@ -149,7 +149,8 @@ public class LegacySocketAdapter extends SimpleChannelInboundHandler<ByteBuf> {
                 }
                 int read = Math.min(len, buf.readableBytes());
                 buf.readBytes(b, off, read);
-                while (!buf.isReadable() && pendingReads.poll() != null) ;
+                while (!buf.isReadable() && pendingReads.poll() != null)
+                    ;
                 return read;
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();

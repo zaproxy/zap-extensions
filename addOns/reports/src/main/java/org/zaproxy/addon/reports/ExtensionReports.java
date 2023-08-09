@@ -242,8 +242,11 @@ public class ExtensionReports extends ExtensionAdaptor {
     }
 
     public AlertNode getRootAlertNode()
-            throws NoSuchMethodException, SecurityException, IllegalAccessException,
-                    IllegalArgumentException, InvocationTargetException {
+            throws NoSuchMethodException,
+                    SecurityException,
+                    IllegalAccessException,
+                    IllegalArgumentException,
+                    InvocationTargetException {
         ExtensionAlert extAlert =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class);
 
@@ -392,7 +395,7 @@ public class ExtensionReports extends ExtensionAdaptor {
                         "generatedString", SIMPLE_DATE_FORMAT.format(System.currentTimeMillis()));
             }
             context.setVariable("zapVersion", Constant.PROGRAM_VERSION);
-            context.setVariable("programName", Constant.PROGRAM_NAME);
+            context.setVariable("programName", Constant.PROGRAM_NAME_SHORT);
 
             if (reportDataHandler != null) {
                 reportDataHandler.handle(reportData);

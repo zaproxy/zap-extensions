@@ -1066,6 +1066,7 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }
+
     /**
      * determines if the SSL server behind the streams is vulnerable based on its response to
      * malformed heartbeat message
@@ -1210,6 +1211,7 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
         LOGGER.debug("NOT VULNERABLE. No suitable heartbeat response within the timeout");
         return false;
     }
+
     /**
      * reads an SSL message from the inputstream
      *
@@ -1272,6 +1274,7 @@ public class HeartBleedActiveScanRule extends AbstractHostPlugin {
                             + " bytes");
         return buffer;
     }
+
     /**
      * a helper class used to pass internal SSL details around
      *

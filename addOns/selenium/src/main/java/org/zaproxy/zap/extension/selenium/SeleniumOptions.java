@@ -58,7 +58,10 @@ public class SeleniumOptions extends VersionedAbstractParam {
     public static final String FIREFOX_BINARY_SYSTEM_PROPERTY =
             "zap.selenium.webdriver.firefox.bin";
     public static final String FIREFOX_DRIVER_SYSTEM_PROPERTY = "webdriver.gecko.driver";
-    /** @deprecated IE is no longer supported. */
+
+    /**
+     * @deprecated IE is no longer supported.
+     */
     @Deprecated
     public static final String IE_DRIVER_SYSTEM_PROPERTY =
             InternetExplorerDriverService.IE_DRIVER_EXE_PROPERTY;

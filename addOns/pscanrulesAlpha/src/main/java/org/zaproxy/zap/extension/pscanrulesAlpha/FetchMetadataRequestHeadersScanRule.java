@@ -146,7 +146,7 @@ public class FetchMetadataRequestHeadersScanRule extends PluginPassiveScanner {
                 }
             }
             return alert;
-        };
+        }
 
         protected AlertBuilder alert(VulnType vulnType, String evidence) {
             String i18nKey = vulnType.getI18nKey();

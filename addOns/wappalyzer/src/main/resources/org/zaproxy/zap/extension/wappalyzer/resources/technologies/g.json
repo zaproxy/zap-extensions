@@ -478,6 +478,22 @@
     ],
     "website": "https://www.genesys.com"
   },
+  "genezio": {
+    "cats": [
+      47
+    ],
+    "description": "Genezio is a code generation tool that facilitates app logic focus, organises backend API code in deployable classes, autogenerates class interfaces with JSON-RPC for typesafe API calls, supports REST and Webhooks, enables simple API code deployment on pre-configured infrastructure using a shell command, and provides an SDK that eliminates the need to handle URLs, headers.",
+    "icon": "genezio.svg",
+    "headers": {
+      "X-Powered-By": "^genezio$"
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "website": "https://genez.io"
+  },
   "Geniee": {
     "cats": [
       36
@@ -730,6 +746,22 @@
     "url": "\\.gigalixirapp\\.com",
     "website": "https://gigalixir.com/"
   },
+  "Gist": {
+    "cats": [
+      52
+    ],
+    "description": "Gist is email marketing automation, live chat, and helpdesk software.",
+    "icon": "gist_live_chat.svg",
+    "js": {
+      "gist.setAppId ": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "website": "https://getgist.com/live-chat"
+  },
   "Gist Giftship": {
     "cats": [
       100
@@ -959,6 +991,20 @@
     "saas": true,
     "scriptSrc": "cdn\\.glassboxcdn\\.com/",
     "website": "https://www.glassbox.com"
+  },
+  "Glassix": {
+    "cats": [
+      52
+    ],
+    "description": "Glassix is an omnichannel messaging platform for service, sales, and support centers.",
+    "js": {
+      "GlassixWidgetClient": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://glassix.co.il"
   },
   "Glide.js": {
     "cats": [
@@ -2252,6 +2298,20 @@
       "DC.identifier": "/content\\.jsp\\?objectid="
     },
     "website": "https://www.greenvalley.nl/Public/Producten/Content_Management/CMS"
+  },
+  "GreatPages": {
+    "cats": [
+      51
+    ],
+    "description": "GreatPages is a multi-purpose page builder software developed in Brazil.",
+    "icon": "GreatPages.svg",
+    "saas": true,
+    "scriptSrc": "\\.greatpages\\.com\\.br/",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://www.greatpages.com.br"
   },
   "Greenhouse": {
     "cats": [

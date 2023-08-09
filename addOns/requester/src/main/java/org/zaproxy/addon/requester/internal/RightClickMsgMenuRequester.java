@@ -32,7 +32,9 @@ public class RightClickMsgMenuRequester extends PopupMenuItemHttpMessageContaine
     private static final long serialVersionUID = 1L;
     private ExtensionRequester extension = null;
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public RightClickMsgMenuRequester(String label) {
         super(label);
         this.setAccelerator(View.getSingleton().getMenuShortcutKeyStroke(KeyEvent.VK_W, 0, false));

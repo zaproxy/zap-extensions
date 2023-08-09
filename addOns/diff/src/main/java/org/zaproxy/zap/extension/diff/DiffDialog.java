@@ -69,7 +69,9 @@ public class DiffDialog extends AbstractDialog implements AdjustmentListener {
     private JLabel rightHeader = null;
     private JCheckBox syncCheckbox = null;
 
-    /** @throws HeadlessException */
+    /**
+     * @throws HeadlessException
+     */
     public DiffDialog() throws HeadlessException {
         super();
         initialize();
@@ -112,6 +114,7 @@ public class DiffDialog extends AbstractDialog implements AdjustmentListener {
 
         pack();
     }
+
     /**
      * This method initializes jPanel
      *
@@ -247,6 +250,7 @@ public class DiffDialog extends AbstractDialog implements AdjustmentListener {
         }
         return end;
     }
+
     /**
      * This method initializes jScrollPane
      *

@@ -107,6 +107,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
     private ScriptWrapper currentLockedScript = null;
     private boolean lockOutputToDisplayedScript = false;
+
     // private ZapMenuItem menuEnableScripts = null;
 
     // private static final Logger LOGGER = Logger.getLogger(ExtensionScriptsUI.class);
@@ -386,9 +387,9 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
     @Override
     public void displayScript(ScriptWrapper script) {
-    	displayScript(script, true); 
+        displayScript(script, true);
     }
-    
+
     public void displayScript(ScriptWrapper script, boolean allowFocus) {
         if (!View.isInitialised()) {
             return;
@@ -417,7 +418,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             this.saveChanges();
 
             // push to ScriptConsole
-            this.getConsolePanel().setScript(script,allowFocus);
+            this.getConsolePanel().setScript(script, allowFocus);
 
             // Show in the tree panel
             ScriptNode node = this.getExtScript().getTreeModel().getNodeForScript(script);

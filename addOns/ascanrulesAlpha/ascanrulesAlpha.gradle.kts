@@ -17,6 +17,10 @@ zapAddOn {
     }
 }
 
+tasks.named("compileJava") {
+    mustRunAfter(parent!!.childProjects.get("oast")!!.tasks.named("enhance"))
+}
+
 dependencies {
     zapAddOn("commonlib")
 

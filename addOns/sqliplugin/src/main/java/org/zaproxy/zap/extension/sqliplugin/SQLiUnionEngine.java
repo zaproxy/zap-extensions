@@ -77,7 +77,9 @@ public class SQLiUnionEngine {
     // Logger instance
     private static final Logger LOGGER = LogManager.getLogger(SQLiUnionEngine.class);
 
-    /** @param plugin */
+    /**
+     * @param plugin
+     */
     public SQLiUnionEngine(SQLInjectionScanRule plugin) {
         this.plugin = plugin;
         this.where = SQLiPayloadManager.WHERE_ORIGINAL;

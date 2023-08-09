@@ -7,6 +7,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Add support for max alerts per rule in the Active Scan job (Issue 7784).
 
+### Changed
+- Maintenance changes.
+
+### Fixed
+- Address error logged when using the Active Scan job.
+
 ## [0.30.0] - 2023-07-11
 ### Changed
 - Update minimum ZAP version to 2.13.0.

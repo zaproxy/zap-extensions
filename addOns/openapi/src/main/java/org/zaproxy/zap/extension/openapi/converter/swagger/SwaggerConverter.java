@@ -52,6 +52,9 @@ import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.zap.extension.openapi.OpenApiExceptions.EmptyDefinitionException;
+import org.zaproxy.zap.extension.openapi.OpenApiExceptions.InvalidDefinitionException;
+import org.zaproxy.zap.extension.openapi.OpenApiExceptions.InvalidUrlException;
 import org.zaproxy.zap.extension.openapi.VariantOpenApi;
 import org.zaproxy.zap.extension.openapi.converter.Converter;
 import org.zaproxy.zap.extension.openapi.generators.Generators;
@@ -88,7 +91,7 @@ public class SwaggerConverter implements Converter {
     private Generators generators;
     private List<String> errors = new ArrayList<>();
     private Set<String> apiUrls;
-    private OpenAPI openAPI;
+    private OpenAPI openApiModel;
     private List<OperationModel> operationModels;
 
     public SwaggerConverter(String defn, ValueGenerator valGen) {
@@ -124,7 +127,7 @@ public class SwaggerConverter implements Converter {
     public SwaggerConverter(
             String targetUrl, String definitionUrl, String defn, ValueGenerator valueGenerator) {
         if (defn == null || defn.isEmpty()) {
-            throw new IllegalArgumentException("The definition must not be null or empty.");
+            throw new EmptyDefinitionException();
         }
 
         try {
@@ -160,6 +163,15 @@ public class SwaggerConverter implements Converter {
         // Remove BOM, if any. Swagger library checks the first char to decide if it should be
         // parsed as JSON or YAML.
         this.defn = defn.replace("\uFEFF", "");
+
+        try {
+            openApiModel = createModelFromDefinition();
+            if (openApiModel == null) {
+                throw new InvalidDefinitionException();
+            }
+        } catch (SwaggerException e) {
+            throw new InvalidDefinitionException();
+        }
     }
 
     private static UriBuilder validateSupportedScheme(UriBuilder uriBuilder) {
@@ -199,15 +211,9 @@ public class SwaggerConverter implements Converter {
     }
 
     private List<OperationModel> readOpenAPISpec() throws SwaggerException {
-        openAPI = getOpenAPI();
-        if (openAPI == null) {
-            throw new SwaggerException(
-                    Constant.messages.getString(BASE_KEY_I18N + "parse.defn.exception", defn));
-        }
-
         List<OperationModel> operations = new ArrayList<>();
-        apiUrls = createApiUrls(openAPI.getServers());
-        for (Map.Entry<String, PathItem> entry : openAPI.getPaths().entrySet()) {
+        apiUrls = createApiUrls(openApiModel.getServers());
+        for (Map.Entry<String, PathItem> entry : openApiModel.getPaths().entrySet()) {
             PathItem path = entry.getValue();
             Set<String> pathApiUrls = createApiUrls(path.getServers(), apiUrls);
 
@@ -244,7 +250,7 @@ public class SwaggerConverter implements Converter {
         return createApiUrls(servers);
     }
 
-    private OpenAPI getOpenAPI() throws SwaggerException {
+    private OpenAPI createModelFromDefinition() throws SwaggerException {
         ParseOptions options = new ParseOptions();
         options.setResolve(true);
         options.setResolveFully(true);

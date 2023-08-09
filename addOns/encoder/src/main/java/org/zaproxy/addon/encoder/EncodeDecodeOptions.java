@@ -30,6 +30,7 @@ public class EncodeDecodeOptions extends VersionedAbstractParam {
      * <p>It only needs to be updated for configurations changes (not releases of the add-on).
      */
     private static final int PARAM_CURRENT_VERSION = 1;
+
     /** The base configuration key for all "encoder" configurations. */
     private static final String PARAM_BASE_KEY = "encoder";
 

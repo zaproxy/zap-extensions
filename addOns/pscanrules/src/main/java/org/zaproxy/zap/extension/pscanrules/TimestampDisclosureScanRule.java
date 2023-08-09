@@ -64,6 +64,7 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
                                     ZONED_NOW.plusYears(10).toInstant().getEpochSecond())));
     private static final Instant ONE_YEAR_AGO = ZONED_NOW.minusYears(1).toInstant();
     private static final Instant ONE_YEAR_FROM_NOW = ZONED_NOW.plusYears(1).toInstant();
+
     /** a map of a regular expression pattern to details of the timestamp type found */
     static Map<Pattern, String> timestampPatterns = new HashMap<>();
 

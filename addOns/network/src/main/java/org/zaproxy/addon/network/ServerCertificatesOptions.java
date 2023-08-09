@@ -70,6 +70,7 @@ public class ServerCertificatesOptions extends VersionedAbstractParam {
     private static final String CONFIG_VERSION_KEY = BASE_KEY + VERSION_ATTRIBUTE;
 
     private static final String ROOT_CA_BASE_KEY = BASE_KEY + ".rootCa.";
+
     /**
      * The configuration key used to read the encoded {@code KeyStore} containing the root CA
      * certificate and the private key.

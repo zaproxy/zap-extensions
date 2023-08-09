@@ -436,6 +436,7 @@
     "cpe": "cpe:2.3:a:omeka:omeka:*:*:*:*:*:*:*:*:*",
     "description": "Omeka is a free Content Management System (CMS) used by archives, historical societies, libraries, museums, and individual researchers for publishing digital collections.",
     "icon": "Omeka.png",
+    "dom": "link[rel*='stylesheet'][href*='css/myomeka.css'], link[rel*='stylesheet'][href*='/omeka/plugins/'], footer > p > a[href*='//omeka.org']",
     "js": {
       "Omeka": ""
     },
@@ -1315,11 +1316,15 @@
     },
     "cpe": "cpe:2.3:a:episerver:episerver:*:*:*:*:*:*:*:*",
     "description": "Optimizely Content Management (formerly EPiServer) is digital content, ecommerce, and marketing management solution designed for editors and marketers.",
+    "dom": "link[href*='/EPiServer.Forms/']",
     "headers": {
       "content-security-policy": "\\.episerver\\.net"
     },
     "icon": "Optimizely.svg",
     "implies": "Microsoft ASP.NET",
+    "js": {
+      "epi.EPiServer": ""
+    },
     "meta": {
       "generator": "EPiServer"
     },
@@ -1501,6 +1506,17 @@
     "scriptSrc": "service\\.maxymiser\\.net",
     "website": "https://www.oracle.com/uk/cx/marketing/personalization-testing"
   },
+  "Oracle Moat Measurement": {
+    "cats": [
+      10
+    ],
+    "description": "Oracle Moat delivers solutions that are critical to measuring advertising effectiveness, including verification and attention, reach, and frequency as well as sales lift measurement.",
+    "icon": "Oracle.svg",
+    "scriptSrc": [
+      "moatads\\.com"
+    ],
+    "website": "https://www.oracle.com/cx/advertising/measurement/"
+  },
   "Oracle Recommendations On Demand": {
     "cats": [
       10
@@ -1605,6 +1621,24 @@
     ],
     "saas": true,
     "website": "https://www.orckestra.com"
+  },
+  "OrderCast": {
+    "cats": [
+      6
+    ],
+    "description": "OrderCast is a B2B ecommerce platform focused on streamlining wholesale operations, offering SKU management, order handling, and customisable online store features for improved customer experience.",
+    "icon": "OrderCast.svg",
+    "implies": [
+      "Python",
+      "React"
+    ],
+    "pricing": [
+      "poa",
+      "recurring"
+    ],
+    "saas": true,
+    "url": "\\.(?:eu|us1)\\.ordercast\\.io/",
+    "website": "https://www.ordercast.io"
   },
   "Order Deadline": {
     "cats": [
@@ -1727,10 +1761,7 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": [
-      "cookieconsent\\.min\\.js",
-      "cmp\\.osano\\.com/"
-    ],
+    "scriptSrc": "cmp\\.osano\\.com/",
     "website": "https://www.osano.com"
   },
   "Osterreichische Post": {

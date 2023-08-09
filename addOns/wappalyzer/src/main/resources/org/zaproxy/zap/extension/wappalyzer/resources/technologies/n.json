@@ -294,6 +294,23 @@
     "scriptSrc": "rua-api\\.ncloud\\.com/",
     "website": "https://analytics.naver.com"
   },
+  "Navidium Shipping Protection": {
+    "cats": [
+      5
+    ],
+    "description": "Navidium is a shipping insurance company that covers packages that are lost, stolen, or damaged in transit. Navidium Shipping Protection is an optional shipping protection service where, in the event of an incident (the order is damaged, lost, or stolen during transit), we will immediately re-ship any damaged, lost, or stolen products.",
+    "icon": "Navidium.svg",
+    "js": {
+      "nvdShop": "\\.myshopify\\.com"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "^.*/navidium-extension-checker\\.js$",
+    "website": "https://navidiumapp.com"
+  },
   "Neat A/B testing": {
     "cats": [
       74,

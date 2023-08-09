@@ -41,14 +41,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.zap.extension.openapi.AbstractOpenApiTest;
+import org.zaproxy.zap.extension.openapi.OpenApiExceptions.EmptyDefinitionException;
+import org.zaproxy.zap.extension.openapi.OpenApiExceptions.InvalidUrlException;
 import org.zaproxy.zap.extension.openapi.network.RequestModel;
 
 /** Unit test for {@link SwaggerConverter}. */
 class SwaggerConverterUnitTest extends AbstractOpenApiTest {
 
     private static final String WELLFORMED_URL = "http://example.com";
-    private static final String DUMMY_DEFINITION = "{}";
     private static final UriBuilder EMPTY_URI_BUILDER = UriBuilder.parse("");
+    private final String DUMMY_DEFINITION = getHtml("dummy_definition.yaml");
 
     @Test
     void shouldThrowInvalidUrlIfDefinitionUrlHasNoScheme() {
@@ -261,7 +263,7 @@ class SwaggerConverterUnitTest extends AbstractOpenApiTest {
         // Given
         String definition = null;
         // When / Then
-        assertThrows(IllegalArgumentException.class, () -> new SwaggerConverter(definition, null));
+        assertThrows(EmptyDefinitionException.class, () -> new SwaggerConverter(definition, null));
     }
 
     @Test
@@ -270,7 +272,7 @@ class SwaggerConverterUnitTest extends AbstractOpenApiTest {
         String definition = null;
         // When / Then
         assertThrows(
-                IllegalArgumentException.class,
+                EmptyDefinitionException.class,
                 () -> new SwaggerConverter(null, null, definition, null));
     }
 
@@ -279,7 +281,7 @@ class SwaggerConverterUnitTest extends AbstractOpenApiTest {
         // Given
         String definition = "";
         // When / Then
-        assertThrows(IllegalArgumentException.class, () -> new SwaggerConverter(definition, null));
+        assertThrows(EmptyDefinitionException.class, () -> new SwaggerConverter(definition, null));
     }
 
     @Test
@@ -288,24 +290,18 @@ class SwaggerConverterUnitTest extends AbstractOpenApiTest {
         String definition = "";
         // When / Then
         assertThrows(
-                IllegalArgumentException.class,
+                EmptyDefinitionException.class,
                 () -> new SwaggerConverter(null, null, definition, null));
     }
 
     @Test
     void shouldCreateSwaggerConverter2ArgWithDefinitionNotEmpty() {
-        // Given
-        String definition = "{}";
-        // When / Then
-        assertDoesNotThrow(() -> new SwaggerConverter(definition, null));
+        assertDoesNotThrow(() -> new SwaggerConverter(DUMMY_DEFINITION, null));
     }
 
     @Test
     void shouldCreateSwaggerConverter4ArgWithDefinitionNotEmpty() {
-        // Given
-        String definition = "{}";
-        // When / Then
-        assertDoesNotThrow(() -> new SwaggerConverter(null, null, definition, null));
+        assertDoesNotThrow(() -> new SwaggerConverter(null, null, DUMMY_DEFINITION, null));
     }
 
     @Test

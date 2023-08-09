@@ -445,14 +445,16 @@ public class ConsolePanel extends AbstractPanel {
         getCommandPanel().setEditable(script.getEngine().isTextBased());
         updateButtonsState();
         updateCommandPanelState(script);
-
+        if (!allowFocus) {
+            return;
+        }
         if (script.getEngine().isTextBased()) {
             // This causes a lot of pain when recording client side Zest scripts,
             // so only do for text based ones
             setTabFocus();
         }
 
-        if (allowFocus && !isTabVisible()) {
+        if (!isTabVisible()) {
             setTabFocus();
         }
     }

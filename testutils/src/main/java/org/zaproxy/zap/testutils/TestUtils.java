@@ -192,7 +192,7 @@ public abstract class TestUtils {
      * @see #stopServer()
      */
     protected void startServer() throws IOException {
-        startServer(getRandomPort());
+        startServer(0);
     }
 
     /**
@@ -322,6 +322,7 @@ public abstract class TestUtils {
             throws HttpMalformedHeaderException {
         return getHttpMessage(method, DEFAULT_CONTENT_TYPE, path, responseBody);
     }
+
     /**
      * Creates a HTTP message with the given data, for the {@link #nano test server}.
      *

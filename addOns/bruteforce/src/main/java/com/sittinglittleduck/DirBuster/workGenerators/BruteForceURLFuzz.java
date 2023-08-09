@@ -34,7 +34,9 @@ import java.util.concurrent.BlockingQueue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/** @author James */
+/**
+ * @author James
+ */
 public class BruteForceURLFuzz implements Runnable {
 
     private String[] list;

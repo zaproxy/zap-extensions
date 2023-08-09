@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Dependency updates.
+- The "Import an OpenAPI definition from the local file system" and "Import an OpenAPI definition from a URL" menu items
+  were merged into one, "Import an OpenAPI definition".
+
+### Fixed
+- Importing empty or invalid OpenAPI definitions failed silently in some cases (Issue 7949).
 
 ## [35] - 2023-07-11
 ### Changed

@@ -112,6 +112,7 @@ public class OptionsZestPanel extends AbstractParamPanel {
         }
         return tableIgnoreHeaders;
     }
+
     /**
      * This method initializes jScrollPane
      *

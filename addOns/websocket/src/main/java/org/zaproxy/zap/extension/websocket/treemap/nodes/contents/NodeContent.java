@@ -26,15 +26,21 @@ import org.zaproxy.zap.extension.websocket.treemap.nodes.structural.TreeNode;
 
 public interface NodeContent extends Comparable<NodeContent> {
 
-    /** @return the name of the content. */
+    /**
+     * @return the name of the content.
+     */
     String getName();
 
-    /** @return the host name if need be. */
+    /**
+     * @return the host name if need be.
+     */
     default WebSocketMessageDTO getMessage() {
         return null;
     }
 
-    /** @return the host name if need be. */
+    /**
+     * @return the host name if need be.
+     */
     default String getHost() {
         return null;
     }

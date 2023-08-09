@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
+import org.zaproxy.zap.extension.openapi.OpenApiExceptions.InvalidUrlException;
 
 /** Unit test for {@link InvalidUrlException}. */
 class InvalidUrlExceptionUnitTest {

@@ -506,6 +506,7 @@ public class TableWebSocket extends ParosAbstractTable {
             throws SQLException, DatabaseException {
         return buildMessageDTOs(rs, interpretLiteralBytes, -1);
     }
+
     /**
      * @param rs
      * @param interpretLiteralBytes

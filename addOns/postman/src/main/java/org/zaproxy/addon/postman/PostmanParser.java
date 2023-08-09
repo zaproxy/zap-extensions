@@ -29,6 +29,7 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.io.FileUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.postman.models.PostmanCollection;
 
 public class PostmanParser {
 

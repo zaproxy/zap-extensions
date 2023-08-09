@@ -52,6 +52,8 @@ public interface NodeFactory {
     TreeNode getHostTreeNode(WebSocketChannelDTO channel)
             throws DatabaseException, HttpMalformedHeaderException;
 
-    /** @return the Root of Tree Structure */
+    /**
+     * @return the Root of Tree Structure
+     */
     TreeNode getRoot();
 }

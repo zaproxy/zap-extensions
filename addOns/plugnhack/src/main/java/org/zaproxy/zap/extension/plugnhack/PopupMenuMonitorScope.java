@@ -30,7 +30,9 @@ public class PopupMenuMonitorScope extends PopupMenuItemHttpMessageContainer {
     private MonitoredPagesManager mpm = null;
     private boolean monitored = false;
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public PopupMenuMonitorScope(MonitoredPagesManager mpm) {
         super(Constant.messages.getString("plugnhack.menu.monitor.inscope"));
         this.mpm = mpm;

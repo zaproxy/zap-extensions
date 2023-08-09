@@ -37,6 +37,7 @@ import org.apache.logging.log4j.Logger;
 public class Utils {
 
     private static final Logger LOGGER = LogManager.getLogger(Utils.class);
+
     /**
      * Returns a List of all parameters to be used from a given wordlist file.
      *

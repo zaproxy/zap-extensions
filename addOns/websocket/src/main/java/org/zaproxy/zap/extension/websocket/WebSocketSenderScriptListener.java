@@ -27,7 +27,9 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy.Initiator;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy.State;
 
-/** @author Juha Kivekas */
+/**
+ * @author Juha Kivekas
+ */
 public class WebSocketSenderScriptListener implements WebSocketSenderListener {
 
     private ExtensionScript extensionScript;

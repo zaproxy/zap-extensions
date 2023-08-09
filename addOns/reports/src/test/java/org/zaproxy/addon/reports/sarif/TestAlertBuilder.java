@@ -154,7 +154,9 @@ public class TestAlertBuilder {
         return this;
     }
 
-    /** @return created alert */
+    /**
+     * @return created alert
+     */
     public Alert build() {
         Alert alert = new Alert(pluginId, risk, confidence, name);
 

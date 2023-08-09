@@ -204,6 +204,7 @@ public class WebSocketMessagesViewFilterDialog extends AbstractDialog {
         }
         return btnApply;
     }
+
     /**
      * This method initializes btnCancel
      *
@@ -259,7 +260,9 @@ public class WebSocketMessagesViewFilterDialog extends AbstractDialog {
         return btnReset;
     }
 
-    /** @return model holding the values set by this dialog */
+    /**
+     * @return model holding the values set by this dialog
+     */
     public WebSocketMessagesViewFilter getFilter() {
         return filter;
     }

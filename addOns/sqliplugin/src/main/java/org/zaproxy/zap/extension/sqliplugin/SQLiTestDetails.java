@@ -63,7 +63,9 @@ public class SQLiTestDetails {
     private static final String TAG_DETAILS_DBMS_VERSION = "dbms_version";
     private static final String TAG_DETAILS_OS = "os";
 
-    /** @param el */
+    /**
+     * @param el
+     */
     protected SQLiTestDetails(Element el) {
         this();
 
@@ -83,7 +85,9 @@ public class SQLiTestDetails {
         }
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     public List<DBMSHelper> getDbms() {
         return this.dbms;
     }
@@ -96,12 +100,16 @@ public class SQLiTestDetails {
         return this.dbms.contains(dbms);
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     public String getDbmsVersion() {
         return dbmsVersion;
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     public String getOs() {
         return os;
     }

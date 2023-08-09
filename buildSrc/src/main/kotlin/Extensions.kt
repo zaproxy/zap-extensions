@@ -35,7 +35,7 @@ fun SpotlessExtension.javaWith3rdPartyFormatted(project: Project, files: List<St
  * Configures the Google Java Format (AOSP).
  */
 fun JavaExtension.googleJavaFormatAosp() =
-    googleJavaFormat("1.7").aosp()
+    googleJavaFormat("1.17.0").aosp()
 
 /**
  * Adds an add-on project as a dependency.

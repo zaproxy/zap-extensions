@@ -69,7 +69,9 @@ public class WebSocketChannelDTO implements Comparable<WebSocketChannelDTO> {
         return false;
     }
 
-    /** @return Null or HTTP message containing handshake. */
+    /**
+     * @return Null or HTTP message containing handshake.
+     */
     public HistoryReference getHandshakeReference() {
         if (historyId == null) {
             return null;

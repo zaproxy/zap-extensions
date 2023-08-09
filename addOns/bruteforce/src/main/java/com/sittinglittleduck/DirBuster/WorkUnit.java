@@ -37,6 +37,7 @@ public class WorkUnit {
 
     // the item used to produce the check
     private String itemToCheck;
+
     /** Creates a new instance of WorkUnit */
     public WorkUnit(
             URL url, boolean isDir, HttpMethod method, BaseCase baseCaseObj, String itemToCheck) {

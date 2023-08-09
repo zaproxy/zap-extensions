@@ -31,7 +31,9 @@ import org.zaproxy.zap.extension.api.ApiImplementor;
 import org.zaproxy.zap.extension.api.ApiResponse;
 import org.zaproxy.zap.extension.api.ApiResponseElement;
 import org.zaproxy.zap.extension.api.ApiResponseList;
-import org.zaproxy.zap.extension.openapi.converter.swagger.InvalidUrlException;
+import org.zaproxy.zap.extension.openapi.OpenApiExceptions.EmptyDefinitionException;
+import org.zaproxy.zap.extension.openapi.OpenApiExceptions.InvalidDefinitionException;
+import org.zaproxy.zap.extension.openapi.OpenApiExceptions.InvalidUrlException;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.ApiUtils;
 
@@ -90,6 +92,8 @@ public class OpenApiAPI extends ApiImplementor {
                 errors = extension.importOpenApiDefinition(file, target, false, ctxId);
             } catch (InvalidUrlException e) {
                 throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_TARGET);
+            } catch (EmptyDefinitionException | InvalidDefinitionException e) {
+                throw new ApiException(ApiException.Type.BAD_EXTERNAL_DATA, e.getMessage(), e);
             }
 
             if (errors == null) {
@@ -131,8 +135,9 @@ public class OpenApiAPI extends ApiImplementor {
                 throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_URL);
             } catch (InvalidUrlException e) {
                 throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_HOST_OVERRIDE);
+            } catch (EmptyDefinitionException | InvalidDefinitionException e) {
+                throw new ApiException(ApiException.Type.BAD_EXTERNAL_DATA, e.getMessage(), e);
             }
-
         } else {
             throw new ApiException(ApiException.Type.BAD_ACTION);
         }

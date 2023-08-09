@@ -27,9 +27,10 @@ import java.io.IOException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.zaproxy.addon.postman.models.PostmanCollection;
 import org.zaproxy.zap.testutils.TestUtils;
 
-public class PostmanParserUnitTest extends TestUtils {
+class PostmanParserUnitTest extends TestUtils {
 
     @BeforeEach
     void setup() throws Exception {

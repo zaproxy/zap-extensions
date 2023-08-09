@@ -147,7 +147,9 @@ public class LocalServer extends HttpServer {
         super.start(serverConfig.getAddress(), serverConfig.getPort());
     }
 
-    /** @throws IOException always, the server should be started with {@link #start()}. */
+    /**
+     * @throws IOException always, the server should be started with {@link #start()}.
+     */
     @Override
     public int start(String address, int port) throws IOException {
         throw new IOException("The local server should be started with the start() method.");

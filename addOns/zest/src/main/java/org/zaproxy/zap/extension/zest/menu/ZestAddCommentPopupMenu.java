@@ -46,7 +46,9 @@ public class ZestAddCommentPopupMenu extends ExtensionPopupMenuItem {
         initialize();
     }
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public ZestAddCommentPopupMenu(String label) {
         super(label);
     }

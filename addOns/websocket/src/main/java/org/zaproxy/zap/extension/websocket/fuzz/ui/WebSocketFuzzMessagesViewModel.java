@@ -72,13 +72,17 @@ public class WebSocketFuzzMessagesViewModel extends WebSocketMessagesViewModel {
         this.currentFuzzId = currentFuzzId;
     }
 
-    /** @return number of columns */
+    /**
+     * @return number of columns
+     */
     @Override
     public int getColumnCount() {
         return COLUMN_COUNT;
     }
 
-    /** @return name of the given column index */
+    /**
+     * @return name of the given column index
+     */
     @Override
     public String getColumnName(int columnIndex) {
         final int totalParent = WebSocketMessagesViewModel.COLUMN_COUNT;
@@ -114,7 +118,9 @@ public class WebSocketFuzzMessagesViewModel extends WebSocketMessagesViewModel {
         return super.getRealValueAt(message, columnIndex);
     }
 
-    /** @return type of column for given column index */
+    /**
+     * @return type of column for given column index
+     */
     @Override
     public Class<?> getColumnClass(int columnIndex) {
         switch (columnIndex) {

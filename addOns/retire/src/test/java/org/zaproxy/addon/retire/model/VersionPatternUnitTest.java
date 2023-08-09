@@ -28,6 +28,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.zaproxy.addon.retire.model.Extractors.VersionConverter;
 
 class VersionPatternUnitTest {
 
@@ -47,7 +48,7 @@ class VersionPatternUnitTest {
         // Given
         String pattern = "bootstrap-(§§version§§)(\\.min)?\\.js";
         // When
-        String goodPattern = ExtractorsTypeAdapter.fixPattern(pattern);
+        String goodPattern = VersionConverter.fixPattern(pattern);
         Pattern patternToTest = Pattern.compile(goodPattern);
         Matcher matcher = patternToTest.matcher(input);
         boolean matched = matcher.find();
@@ -71,7 +72,7 @@ class VersionPatternUnitTest {
         // Given
         String pattern = "/\\*!? Bootstrap v(§§version§§)";
         // When
-        String goodPattern = ExtractorsTypeAdapter.fixPattern(pattern);
+        String goodPattern = VersionConverter.fixPattern(pattern);
         Pattern patternToTest = Pattern.compile(goodPattern);
         Matcher matcher = patternToTest.matcher(input);
         boolean matched = matcher.find();

@@ -42,5 +42,4 @@ dependencies {
     zapAddOn("automation")
 
     testImplementation(project(":testutils"))
-    testImplementation("org.snakeyaml:snakeyaml-engine:2.3")
 }

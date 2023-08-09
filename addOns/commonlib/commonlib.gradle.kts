@@ -25,6 +25,10 @@ crowdin {
 }
 
 dependencies {
+    api(platform("com.fasterxml.jackson:jackson-bom:2.15.2"))
+    api("com.fasterxml.jackson.core:jackson-databind")
+    api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
+
     implementation("commons-io:commons-io:2.13.0")
     implementation("org.apache.commons:commons-csv:1.10.0")
     implementation("org.apache.commons:commons-collections4:4.4")

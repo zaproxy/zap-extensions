@@ -5,7 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
-- Focus only on Text-Based scripts to avoid recording issues with client scripts.
+- Allow to display script without focusing on it.
+- Maintenance changes.
 
 ## [39] - 2023-07-11
 ### Changed

@@ -31,7 +31,9 @@ public class PopupMenuBruteForceSite extends PopupMenuItemSiteNodeContainer {
     private static final long serialVersionUID = 1L;
     private ExtensionBruteForce extension = null;
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public PopupMenuBruteForceSite(String label) {
         super(label);
         this.setIcon(

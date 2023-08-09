@@ -79,7 +79,9 @@ public class WebSocketPassiveScanThread extends Thread
         messagesBuffer = new LinkedBlockingQueue<>();
     }
 
-    /** @return true if the table was initialized */
+    /**
+     * @return true if the table was initialized
+     */
     public boolean hasTable() {
         return tableWebSocket != null;
     }

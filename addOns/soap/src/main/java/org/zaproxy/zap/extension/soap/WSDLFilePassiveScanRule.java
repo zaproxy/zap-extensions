@@ -30,7 +30,9 @@ import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-/** @author albertov91 */
+/**
+ * @author albertov91
+ */
 public class WSDLFilePassiveScanRule extends PluginPassiveScanner {
 
     /** Prefix for internationalized messages used by this rule */

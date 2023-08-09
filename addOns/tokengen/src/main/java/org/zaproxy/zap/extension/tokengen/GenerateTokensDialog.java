@@ -73,7 +73,9 @@ public class GenerateTokensDialog extends AbstractDialog {
 
     private ResourceBundle messages;
 
-    /** @throws HeadlessException */
+    /**
+     * @throws HeadlessException
+     */
     public GenerateTokensDialog(ResourceBundle messages) throws HeadlessException {
         super();
         this.messages = messages;
@@ -207,6 +209,7 @@ public class GenerateTokensDialog extends AbstractDialog {
         gbc.gridwidth = width;
         return gbc;
     }
+
     /*
     private FilteredZapTextField getGenerateField() {
     	if (generateField == null) {

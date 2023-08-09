@@ -54,8 +54,12 @@ class WSDLFilePassiveScanRuleTestCase extends PassiveScannerTestUtils<WSDLFilePa
 
     @Test
     void isWsdlTest()
-            throws NoSuchMethodException, SecurityException, IllegalAccessException,
-                    IllegalArgumentException, InvocationTargetException, IOException {
+            throws NoSuchMethodException,
+                    SecurityException,
+                    IllegalAccessException,
+                    IllegalArgumentException,
+                    InvocationTargetException,
+                    IOException {
 
         HttpMessage wsdlMsg = new HttpMessage();
         wsdlMsg = Sample.setRequestHeaderContent(wsdlMsg);

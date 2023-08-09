@@ -46,7 +46,9 @@ public class ZestPopupZestDelete extends ExtensionPopupMenuItem {
         initialize();
     }
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public ZestPopupZestDelete(String label) {
         super(label);
     }

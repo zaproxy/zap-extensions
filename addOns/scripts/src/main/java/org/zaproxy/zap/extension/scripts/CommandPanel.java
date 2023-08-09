@@ -37,8 +37,10 @@ import org.zaproxy.zap.utils.ZapLabel;
 public class CommandPanel extends AbstractPanel {
 
     private static final long serialVersionUID = -947074835463140074L;
+
     /** Max amount of data(byte) before editor usage is disable */
     private static final int EDITOR_SCRIPT_MAX_SIZE_THRESHOLD = 1_000_000;
+
     /** Max amount of data(byte) before highlight feature is deactivated */
     private static final int HIGHLIGHT_SCRIPT_MAX_SIZE_THRESHOLD = 500_000;
 
@@ -66,6 +68,7 @@ public class CommandPanel extends AbstractPanel {
         largeScriptLabel.setWrapStyleWord(true);
         largeScriptPanel.add(new JScrollPane(largeScriptLabel));
     }
+
     /**
      * This method initializes jScrollPane
      *

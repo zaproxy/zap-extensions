@@ -646,19 +646,25 @@ public class LdapInjectionScanRule extends AbstractAppParamPlugin {
         return false; // did not throw an alert
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     @Override
     public int getRisk() {
         return Alert.RISK_HIGH;
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     @Override
     public int getCweId() {
         return 90;
     }
 
-    /** @return */
+    /**
+     * @return
+     */
     @Override
     public int getWascId() {
         return 29;

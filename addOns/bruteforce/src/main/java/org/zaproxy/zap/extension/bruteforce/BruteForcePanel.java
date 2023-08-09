@@ -66,7 +66,9 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 
     private static final long serialVersionUID = 1L;
 
-    /** @deprecated (2.3.0) Replaced by {@link #MESSAGE_CONTAINER_NAME}. */
+    /**
+     * @deprecated (2.3.0) Replaced by {@link #MESSAGE_CONTAINER_NAME}.
+     */
     @Deprecated public static final String PANEL_NAME = "bruteforce";
 
     /**
@@ -113,7 +115,9 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
 
     private static final Logger LOGGER = LogManager.getLogger(BruteForcePanel.class);
 
-    /** @param bruteForceParam */
+    /**
+     * @param bruteForceParam
+     */
     public BruteForcePanel(ExtensionBruteForce extension, BruteForceParam bruteForceParam) {
         super();
         this.extension = extension;
@@ -191,6 +195,7 @@ public class BruteForcePanel extends AbstractPanel implements BruteForceListenne
         }
         return panelCommand;
     }
+
     /**/
 
     private javax.swing.JToolBar getPanelToolbar() {

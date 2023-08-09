@@ -37,7 +37,9 @@ public class PopupMenuItemInvoke extends PopupMenuItemHttpMessageContainer {
 
     private static final Logger LOGGER = LogManager.getLogger(PopupMenuItemInvoke.class);
 
-    /** @param label */
+    /**
+     * @param label
+     */
     public PopupMenuItemInvoke(String label) {
         super(label);
     }

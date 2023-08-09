@@ -314,8 +314,10 @@ public class ExtensionCallHome extends ExtensionAdaptor
                             data.put("teltype", "add-ons");
                             addExtendedData(data);
                             // Add the add-on summary details
-                            ExtensionFactory.getAddOnLoader().getAddOnCollection()
-                                    .getInstalledAddOns().stream()
+                            ExtensionFactory.getAddOnLoader()
+                                    .getAddOnCollection()
+                                    .getInstalledAddOns()
+                                    .stream()
                                     .forEach(
                                             oe -> data.put(oe.getId(), oe.getVersion().toString()));
 
