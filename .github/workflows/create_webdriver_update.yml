@@ -40,7 +40,7 @@ jobs:
         CHROME_INPUT=${CHROME_INPUT:-"cxx" }
         echo $CHROME_INPUT
         if [ $CHROME_INPUT == "cxx" ]; then
-          CHROME_VERS=$(curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE)
+          CHROME_VERS=$(curl -s https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions.json|jq -r .channels.Stable.version)
         else
           CHROME_VERS=${{ github.event.inputs.chrome_version }}
         fi
