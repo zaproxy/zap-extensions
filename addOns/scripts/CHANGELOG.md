@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Allow to display script without focusing on it.
 - Maintenance changes.
 
 ## [39] - 2023-07-11

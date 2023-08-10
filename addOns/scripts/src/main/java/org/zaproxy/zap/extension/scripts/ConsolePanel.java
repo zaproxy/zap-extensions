@@ -431,6 +431,10 @@ public class ConsolePanel extends AbstractPanel {
     }
 
     public void setScript(ScriptWrapper script) {
+        setScript(script, true);
+    }
+
+    public void setScript(ScriptWrapper script, boolean allowFocus) {
         if (this.script != null) {
             // Save the offset
             scriptWrapperToOffset.put(this.script, getCommandPanel().getCommandCursorPosition());
@@ -441,7 +445,9 @@ public class ConsolePanel extends AbstractPanel {
         getCommandPanel().setEditable(script.getEngine().isTextBased());
         updateButtonsState();
         updateCommandPanelState(script);
-
+        if (!allowFocus) {
+            return;
+        }
         if (script.getEngine().isTextBased()) {
             // This causes a lot of pain when recording client side Zest scripts,
             // so only do for text based ones
