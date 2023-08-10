@@ -152,11 +152,11 @@
 		when exporting the certificate and double clicking on it.
 	</p>
 
-	<h3>Save</h3>
+	<h3><a name="save">Save</a></h3>
 	<p>
 		In the options dialog of ZAP you're seeing the raw bytes (hexa-decimal encoded)
 		of the certificate. Many programs are using this simple format for import/export
-		functions. When clicking 'export', these bytes are saved to disk.
+		functions. When clicking Save, these bytes are saved to disk.
 		This is equal to selecting all and doing CTRL+C (copy to clipboard) and
 		save it into a new .CER file (which is simple text as you see in the dialog).
 	</p>
@@ -246,14 +246,16 @@
 	</p>
 	<h3>Windows / Internet Explorer</h3>
 	<p>
-		The easiest way is to click on <a href="#view">view</a> and choose
-		'Install certificate'. Alternatively, you can save/export your generated
-		certificate (copy it to you target computer) and double click the .CER file.
+		The easiest way is to click on <a href="#view">View</a> and choose
+		'Install certificate'. Alternatively, you can <a href="#save">Save</a> your generated
+		certificate and double click the .CER file.
 		When doing so, the regular Windows wizard for certificate installation
 		assistance is popping up.
 		In this wizard manually choose the certificate store. Do NOT let
 		Windows choose automatically the certificate store.
 		Choose 'trusted root certificates' as store and finalize the wizard.
+		<br>
+		You can also copy the saved file and install it in other computers as needed.
 	</p>
 	<p>
 		After successfully installation, you can check the certificate.
@@ -268,8 +270,8 @@
 
 	<h3>Mozilla Firefox</h3>
 	<p>
-		Firefox is using it's own certificate store. Thats why you have to
-		import it twice, when you're using both browser on windows.
+		Firefox is using it's own certificate store. That's why you have to
+		import it twice, when you're using both browsers on Windows.
 		Installation and late on validation is done in the same preferences dialog:
 	</p>
 		<ol>
@@ -278,7 +280,7 @@
 		<li>Tab Cryptography/Certificates</li>
 		<li>Click View Certificates</li>
 		<li>Click Authorities tab</li>
-		<li>Click Import and choose the saved <tt>zap_root_ca.cer</tt> file</li>
+		<li>Click Import and choose the <a href="#save">saved</a> <tt>zap_root_ca.cer</tt> file</li>
 		<li>In the wizard choose to trust this certificate to identify web sites (check on the boxes)</li>
 		<li>Finalize the wizard</li>
 		</ol>
