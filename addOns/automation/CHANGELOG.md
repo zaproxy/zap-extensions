@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Removed
+- The SnakeYAML Engine dependency was removed.
+
 ### Fixed
 - Address error logged when using the Active Scan job.
 

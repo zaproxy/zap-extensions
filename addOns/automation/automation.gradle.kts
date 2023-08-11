@@ -40,7 +40,6 @@ dependencies {
     api("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:$jacksonVersion")
     api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:$jacksonVersion")
     api("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
-    api("org.snakeyaml:snakeyaml-engine:2.6")
 
     testImplementation(project(":testutils"))
 }
