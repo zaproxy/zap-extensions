@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- The following reports now include "Other Info" for alerts:
+    - Traditional Markdown Report
+    - Traditional PDF Report
+- Depend on Common Library add-on to reuse libraries (Issue 7961).
+- Update program name in reports.
 
 ## [0.23.0] - 2023-07-11
 ### Changed

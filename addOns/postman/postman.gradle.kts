@@ -6,6 +6,14 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/postman-support/")
+
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">= 1.16.0 & < 2.0.0")
+                }
+            }
+        }
     }
 
     apiClientGen {
@@ -23,7 +31,7 @@ crowdin {
 }
 
 dependencies {
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.12.5")
+    zapAddOn("commonlib")
 
     testImplementation(project(":testutils"))
 }

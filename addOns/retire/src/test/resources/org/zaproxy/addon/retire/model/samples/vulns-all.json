@@ -1,0 +1,19 @@
+{
+  "lib" : {
+    "vulnerabilities" : [ {
+      "atOrAbove" : "atorabove",
+      "below" : "below",
+      "severity" : "severity",
+      "cwe" : [ "cwe 1", "cwe 2" ],
+      "identifiers" : {
+        "CVE" : [ "cve 1", "cve 2" ],
+        "bug" : "bug",
+        "summary" : "summary",
+        "githubID" : "githubid",
+        "PR" : "pr",
+        "issue" : "issue"
+      },
+      "info" : [ "info 1", "info 2" ]
+    } ]
+  }
+}

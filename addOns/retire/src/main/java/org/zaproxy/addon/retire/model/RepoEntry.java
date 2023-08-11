@@ -19,12 +19,14 @@
  */
 package org.zaproxy.addon.retire.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 
+@JsonIgnoreProperties({"basePurl", "bowername", "npmname"})
 public class RepoEntry {
 
-    List<Vulnerability> vulnerabilities;
-    Extractors extractors;
+    private List<Vulnerability> vulnerabilities;
+    private Extractors extractors;
 
     public List<Vulnerability> getVulnerabilities() {
         return vulnerabilities;

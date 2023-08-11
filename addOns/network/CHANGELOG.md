@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- Update names of generated root CA certificate and issued server certificates.
+- Help improvements.
 
 ### Fixed
 - Correct declaration of mandatory parameters of the API endpoint `setRateLimitRuleEnabled`.

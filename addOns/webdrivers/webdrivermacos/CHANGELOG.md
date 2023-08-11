@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [58] - 2023-08-09
+### Changed
+- Update ChromeDriver to 115.0.5790.170.
+
+
+
 ## [57] - 2023-07-11
 ### Changed
 - Update minimum ZAP version to 2.13.0.
@@ -255,6 +261,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27
 
+[58]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v58
 [57]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v57
 [56]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v56
 [55]: https://github.com/zaproxy/zap-extensions/releases/webdrivermacos-v55

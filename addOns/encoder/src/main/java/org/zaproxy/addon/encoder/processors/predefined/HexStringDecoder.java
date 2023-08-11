@@ -19,6 +19,8 @@
  */
 package org.zaproxy.addon.encoder.processors.predefined;
 
+import java.nio.charset.StandardCharsets;
+
 public class HexStringDecoder extends DefaultEncodeDecodeProcessor {
 
     private static final HexStringDecoder INSTANCE = new HexStringDecoder();
@@ -42,7 +44,7 @@ public class HexStringDecoder extends DefaultEncodeDecodeProcessor {
                 offset += 2;
                 rawToByte[i] = (byte) (Integer.parseInt(chunk, 16) & 0x000000FF);
             }
-            decodedText = new String(rawToByte);
+            decodedText = new String(rawToByte, StandardCharsets.UTF_8);
         }
         return decodedText;
     }

@@ -36,8 +36,6 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 /**
  * Active scan rule which checks whether or not POST requests with parameters are accepted as GET
  * equivalent requests.
- *
- * @author kingthorin+owaspzap@gmail.com
  */
 public class GetForPostScanRule extends AbstractAppPlugin {
 

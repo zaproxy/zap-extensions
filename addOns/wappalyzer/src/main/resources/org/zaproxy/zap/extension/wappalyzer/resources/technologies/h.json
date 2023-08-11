@@ -198,13 +198,14 @@
     ],
     "cpe": "cpe:2.3:a:handlebars.js_project:handlebars.js:*:*:*:*:*:*:*:*",
     "description": "Handlebars is a JavaScript library used to create reusable webpage templates.",
-    "html": "<[^>]*type=[^>]text\\/x-handlebars-template",
-    "icon": "Handlebars.png",
+    "dom": "script[type='text/x-handlebars-template']",
+    "icon": "Handlebars.svg",
     "js": {
       "Handlebars": "",
       "Handlebars.VERSION": "^(.+)$\\;version:\\1"
     },
     "scriptSrc": "handlebars(?:\\.runtime)?(?:-v([\\d.]+?))?(?:\\.min)?\\.js\\;version:\\1",
+    "oss": true,
     "website": "https://handlebarsjs.com"
   },
   "Handtalk": {
@@ -830,6 +831,24 @@
     },
     "scriptSrc": "highcharts.*\\.js",
     "website": "https://www.highcharts.com"
+  },
+  "HighLevel": {
+    "cats": [
+      32,
+      53
+    ],
+    "description": "HighLevel is an all-in-one marketing and automation platform designed for marketing agencies and small businesses to manage CRM, marketing campaigns, sales funnels, appointment scheduling, and more.",
+    "icon": "HighLevel.svg",
+    "js": {
+      "leadConnector.chatWidget": ""
+    },
+    "scriptSrc": "\\.leadconnectorhq\\.com/",
+    "saas": true,
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "website": "https://www.gohighlevel.com"
   },
   "Highlight.js": {
     "cats": [

@@ -387,6 +387,10 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
     @Override
     public void displayScript(ScriptWrapper script) {
+        displayScript(script, true);
+    }
+
+    public void displayScript(ScriptWrapper script, boolean allowFocus) {
         if (!View.isInitialised()) {
             return;
         }
@@ -414,7 +418,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             this.saveChanges();
 
             // push to ScriptConsole
-            this.getConsolePanel().setScript(script);
+            this.getConsolePanel().setScript(script, allowFocus);
 
             // Show in the tree panel
             ScriptNode node = this.getExtScript().getTreeModel().getNodeForScript(script);

@@ -1,0 +1,16 @@
+{
+  "lib" : {
+    "extractors" : {
+      "filecontent" : [ "filecontent 1", "filecontent 2", "§§version§§" ],
+      "filecontentreplace" : [ "filecontentreplace 1", "filecontentreplace 2", "§§version§§" ],
+      "filename" : [ "filename 1", "filename 2", "§§version§§" ],
+      "func" : [ "func 1", "func 2", "§§version§§" ],
+      "hashes" : {
+        "hash 1" : "version 1",
+        "hash 2" : "version 2",
+        "§§version§§" : "§§version§§"
+      },
+      "uri" : [ "uri 1", "uri 2", "§§version§§" ]
+    }
+  }
+}

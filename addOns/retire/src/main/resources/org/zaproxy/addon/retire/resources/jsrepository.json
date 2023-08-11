@@ -48,7 +48,7 @@
           "summary": "Selector interpreted as HTML",
           "githubID": "GHSA-2pqj-h3vj-pqgw"
         },
-        "severity": "high",
+        "severity": "medium",
         "info": [
           "http://bugs.jquery.com/ticket/11290",
           "https://nvd.nist.gov/vuln/detail/CVE-2012-6708",
@@ -203,7 +203,7 @@
         "atOrAbove": "1.0.3",
         "cwe": ["CWE-79"],
         "identifiers": {
-          "CVE": ["CVE-2020-11023"],
+          "CVE": ["CVE-2020-11023", "CVE-2020-23064"],
           "issue": "4647",
           "summary": "passing HTML containing <option> elements from untrusted sources - even after sanitizing it - to one of jQuery's DOM manipulation methods (i.e. .html(), .append(), and others) may execute untrusted code.",
           "githubID": "GHSA-jpcq-cgw6-v4j6"
@@ -301,7 +301,7 @@
       },
       {
         "below": "1.19.4",
-        "severity": "low",
+        "severity": "medium",
         "cwe": ["CWE-1333"],
         "identifiers": {
           "CVE": ["CVE-2021-43306"],
@@ -654,6 +654,69 @@
       "hashes": {}
     }
   },
+  "jquery.terminal": {
+    "vulnerabilities": [
+      {
+        "below": "1.21.0",
+        "severity": "medium",
+        "cwe": ["CWE-79"],
+        "identifiers": {
+          "summary": "Reflected Cross-Site Scripting in jquery.terminal",
+          "githubID": "GHSA-2hwp-g4g7-mwwj"
+        },
+        "info": [
+          "https://github.com/jcubic/jquery.terminal/commit/c8b7727d21960031b62a4ef1ed52f3c634046211",
+          "https://www.npmjs.com/advisories/769"
+        ]
+      },
+      {
+        "below": "2.31.1",
+        "severity": "low",
+        "cwe": ["CWE-79", "CWE-80"],
+        "identifiers": {
+          "summary": "jquery.terminal self XSS on user input",
+          "githubID": "GHSA-x9r5-jxvq-4387",
+          "CVE": ["CVE-2021-43862"]
+        },
+        "info": [
+          "https://github.com/jcubic/jquery.terminal/security/advisories/GHSA-x9r5-jxvq-4387",
+          "https://nvd.nist.gov/vuln/detail/CVE-2021-43862"
+        ]
+      }
+    ],
+    "extractors": {
+      "uri": ["/jquery.terminal[@/](§§version§§)/"],
+      "filecontent": [
+        "version (§§version§§)[\\s]+\\*[\\s]+\\* This file is part of jQuery Terminal.",
+        "\\$\\.terminal=\\{version:\"(§§version§§)\""
+      ]
+    }
+  },
+  "jquery-deparam": {
+    "vulnerabilities": [
+      {
+        "below": "999",
+        "severity": "high",
+        "cwe": ["CWE-1321"],
+        "identifiers": {
+          "githubID": "GHSA-xg68-chx2-253g",
+          "CVE": ["CVE-2021-20087"]
+        },
+        "info": ["https://nvd.nist.gov/vuln/detail/CVE-2021-20087"]
+      }
+    ],
+    "extractors": {
+      "hashes": {
+        "61c9d49ae64331402c3bde766c9dc504ed2ca509": "0.5.3",
+        "10a68e5048995351a01b0ad7f322bb755a576a02": "0.5.2",
+        "b8f063c860fa3aab266df06b290e7da648f9328d": "0.4.2",
+        "851bc74dc664aa55130ecc74dd6b1243becc3242": "0.4.1",
+        "2aae12841f4d00143ffc1effa59fbd058218c29f": "0.4.0",
+        "967942805137f9eb0ae26005d94e8285e2e288a0": "0.3.0",
+        "fbf2e115feae7ade26788e38ebf338af11a98bb2": "0.1.0"
+      }
+    }
+  },
   "jPlayer": {
     "bowername": ["jPlayer"],
     "npmname": "jplayer",
@@ -817,12 +880,11 @@
       },
       {
         "below": "4.9.7",
-        "severity": "medium",
+        "severity": "high",
         "cwe": ["CWE-79"],
         "identifiers": {
           "summary": "TinyMCE before 4.9.7 and 5.x before 5.1.4 allows XSS in the core parser, the paste plugin, and the visualchars plugin by using the clipboard or APIs to insert content into the editor.",
-          "githubID": "GHSA-p7j5-4mwm-hv86",
-          "CVE": ["CVE-2020-17480"]
+          "githubID": "GHSA-p7j5-4mwm-hv86"
         },
         "info": [
           "https://github.com/tinymce/tinymce/security/advisories/GHSA-p7j5-4mwm-hv86"
@@ -831,12 +893,11 @@
       {
         "below": "5.1.4",
         "atOrAbove": "5.0.0",
-        "severity": "medium",
+        "severity": "high",
         "cwe": ["CWE-79"],
         "identifiers": {
           "summary": "TinyMCE before 4.9.7 and 5.x before 5.1.4 allows XSS in the core parser, the paste plugin, and the visualchars plugin by using the clipboard or APIs to insert content into the editor.",
-          "githubID": "GHSA-p7j5-4mwm-hv86",
-          "CVE": ["CVE-2020-17480"]
+          "githubID": "GHSA-p7j5-4mwm-hv86"
         },
         "info": [
           "https://github.com/tinymce/tinymce/security/advisories/GHSA-p7j5-4mwm-hv86"
@@ -875,8 +936,8 @@
         "cwe": ["CWE-79"],
         "identifiers": {
           "summary": "Cross-site scripting vulnerability in TinyMCE",
-          "retid": "63",
-          "githubID": "GHSA-vrv8-v4w8-f95h"
+          "githubID": "GHSA-vrv8-v4w8-f95h",
+          "CVE": ["CVE-2020-12648"]
         },
         "info": [
           "https://github.com/tinymce/tinymce/security/advisories/GHSA-vrv8-v4w8-f95h"
@@ -889,8 +950,8 @@
         "cwe": ["CWE-79"],
         "identifiers": {
           "summary": "Cross-site scripting vulnerability in TinyMCE",
-          "retid": "63",
-          "githubID": "GHSA-vrv8-v4w8-f95h"
+          "githubID": "GHSA-vrv8-v4w8-f95h",
+          "CVE": ["CVE-2020-12648"]
         },
         "info": [
           "https://github.com/tinymce/tinymce/security/advisories/GHSA-vrv8-v4w8-f95h"
@@ -903,7 +964,8 @@
         "cwe": ["CWE-79"],
         "identifiers": {
           "summary": "The vulnerability allowed arbitrary JavaScript execution when inserting a specially crafted piece of content into the editor via the clipboard or APIs",
-          "githubID": "GHSA-27gm-ghr9-4v95"
+          "githubID": "GHSA-27gm-ghr9-4v95",
+          "CVE": ["CVE-2020-17480"]
         },
         "info": [
           "https://github.com/tinymce/tinymce/security/advisories/GHSA-27gm-ghr9-4v95"
@@ -915,7 +977,8 @@
         "cwe": ["CWE-79"],
         "identifiers": {
           "summary": "The vulnerability allowed arbitrary JavaScript execution when inserting a specially crafted piece of content into the editor via the clipboard or APIs",
-          "githubID": "GHSA-27gm-ghr9-4v95"
+          "githubID": "GHSA-27gm-ghr9-4v95",
+          "CVE": ["CVE-2020-17480"]
         },
         "info": [
           "https://github.com/tinymce/tinymce/security/advisories/GHSA-27gm-ghr9-4v95"

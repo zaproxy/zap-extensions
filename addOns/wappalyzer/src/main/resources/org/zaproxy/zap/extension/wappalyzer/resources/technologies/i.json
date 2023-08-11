@@ -31,6 +31,26 @@
     "icon": "IBM.svg",
     "website": "https://ibm.com/software/webservers/httpservers"
   },
+  "ID5": {
+    "cats": [
+      36
+    ],
+    "description": "ID5 is a company that offers an identity solution for digital advertising, providing a Universal ID that enables privacy-compliant user recognition and tracking across websites without relying on personal information or third-party cookies.",
+    "saas": true,
+    "icon": "ID5.svg",
+    "website": "https://id5.io/",
+    "scriptSrc": [
+      "^https://(?:cdn\\.)?id5-sync\\.com/"
+    ],
+    "xhr": ".*id5-sync\\.com",
+    "cookies": {
+      "id5": ""
+    },
+    "js": {
+      "ID5._version": "^(.+)$\\;version:\\1",
+      "__id5_instances": ""
+    }
+  },
   "IIS": {
     "cats": [
       22
@@ -192,6 +212,9 @@
       "PHP",
       "Symfony"
     ],
+    "meta": {
+      "generator": "^eZ Platform"
+    },
     "pricing": [
       "high",
       "recurring"
@@ -392,10 +415,13 @@
   },
   "Imperva": {
     "cats": [
-      16
+      16,
+      31
     ],
+    "description": "Imperva is a cyber security software and services company for networking, data, and application security.",
     "headers": {
-      "X-Iinfo": ""
+      "X-Iinfo": "",
+      "x-cdn": "^Imperva"
     },
     "icon": "Imperva.svg",
     "scriptSrc": [

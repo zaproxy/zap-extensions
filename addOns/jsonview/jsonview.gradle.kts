@@ -11,6 +11,14 @@ zapAddOn {
             baseName.set("help%LC%.helpset")
             localeToken.set("%LC%")
         }
+
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">= 1.16.0 & < 2.0.0")
+                }
+            }
+        }
     }
 }
 
@@ -19,4 +27,10 @@ crowdin {
         file.set(file("$rootDir/gradle/crowdin-help-only.yml"))
         tokens.put("%helpPath%", "")
     }
+}
+
+dependencies {
+    zapAddOn("commonlib")
+
+    testImplementation(project(":testutils"))
 }
