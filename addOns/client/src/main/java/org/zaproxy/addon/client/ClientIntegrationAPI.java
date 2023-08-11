@@ -188,8 +188,7 @@ public class ClientIntegrationAPI extends ApiImplementor {
                         new ReportedEvent(decodeParam(body, PARAM_EVENT_JSON)));
             } else if (body.startsWith(PARAM_SCRIPT_JSON)) {
                 try {
-                    this.extension.addZestStatement(
-                            decodeParamString(body, PARAM_SCRIPT_JSON));
+                    this.extension.addZestStatement(decodeParamString(body, PARAM_SCRIPT_JSON));
                 } catch (Exception e) {
                     LOGGER.debug(e);
                 }

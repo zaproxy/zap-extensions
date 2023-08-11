@@ -335,6 +335,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                 }
             }
         }
+
         if (this.getExtScript().getScriptUI() != null) {
             this.getExtScript()
                     .getScriptUI()
