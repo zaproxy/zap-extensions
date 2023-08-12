@@ -9,7 +9,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">= 1.14.0 & < 2.0.0")
+                    version.set(">= 1.16.0 & < 2.0.0")
                 }
             }
         }
@@ -76,7 +76,6 @@ dependencies {
     zapAddOn("formhandler")
     zapAddOn("spider")
 
-    implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.graphql-java:graphql-java:21.0")
 
     testImplementation(project(":testutils"))

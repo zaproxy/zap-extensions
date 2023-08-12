@@ -19,9 +19,9 @@
  */
 package org.zaproxy.addon.graphql;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -43,7 +43,7 @@ public class GraphQlFingerprinter {
     private static final Map<String, String> FINGERPRINTING_ALERT_TAGS =
             CommonAlertTag.toMap(CommonAlertTag.WSTG_V42_INFO_02_FINGERPRINT_WEB_SERVER);
     private static final Logger LOGGER = LogManager.getLogger(GraphQlFingerprinter.class);
-    private static final Gson GSON = new Gson();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private final Requestor requestor;
     private final Map<String, HttpMessage> queryCache;
@@ -122,20 +122,19 @@ public class GraphQlFingerprinter {
         }
         try {
             String response = lastQueryMsg.getResponseBody().toString();
-            JsonElement errors = GSON.fromJson(response, JsonObject.class).get("errors");
-            if (errors == null || !errors.isJsonArray()) {
+            JsonNode errors = OBJECT_MAPPER.readValue(response, JsonNode.class).get("errors");
+            if (errors == null || !errors.isArray()) {
                 return false;
             }
-            var errorsArray = errors.getAsJsonArray();
-            for (var error : errorsArray) {
-                if (!error.isJsonObject()) {
+            for (var error : errors) {
+                if (!error.isObject()) {
                     continue;
                 }
-                var errorFieldValue = error.getAsJsonObject().get(errorField);
+                var errorFieldValue = error.get(errorField);
                 if (errorFieldValue == null) {
                     continue;
                 }
-                if (errorFieldValue.getAsString().contains(substring)) {
+                if (errorFieldValue.asText().contains(substring)) {
                     matchedString = substring;
                     return true;
                 }
@@ -196,7 +195,7 @@ public class GraphQlFingerprinter {
         if (errorContains("Unknown directive '@abc'.")) {
             try {
                 String response = lastQueryMsg.getResponseBody().toString();
-                JsonElement data = GSON.fromJson(response, JsonObject.class).get("data");
+                JsonNode data = OBJECT_MAPPER.readValue(response, JsonNode.class).get("data");
                 if (data == null) {
                     matchedString = null;
                     return true;
@@ -223,11 +222,9 @@ public class GraphQlFingerprinter {
         if (lastQueryMsg != null && lastQueryMsg.getResponseHeader().isJson()) {
             try {
                 String response = lastQueryMsg.getResponseBody().toString();
-                JsonElement data = GSON.fromJson(response, JsonObject.class).get("data");
-                if (data != null && data.isJsonObject()) {
-                    var dataObject = data.getAsJsonObject();
-                    if (dataObject.has("__typename")
-                            && "Query".equals(dataObject.get("__typename").getAsString())) {
+                JsonNode data = OBJECT_MAPPER.readValue(response, JsonNode.class).get("data");
+                if (data != null && data.isObject()) {
+                    if (data.has("__typename") && "Query".equals(data.get("__typename").asText())) {
                         matchedString = "Query";
                         return true;
                     }
@@ -252,25 +249,23 @@ public class GraphQlFingerprinter {
                 return false;
             }
             String response = lastQueryMsg.getResponseBody().toString();
-            JsonElement errors = GSON.fromJson(response, JsonObject.class).get("errors");
-            if (errors == null || !errors.isJsonArray()) {
+            JsonNode errors = OBJECT_MAPPER.readValue(response, JsonNode.class).get("errors");
+            if (errors == null || !errors.isArray()) {
                 return false;
             }
-            var errorsArray = errors.getAsJsonArray();
-            if (errorsArray.size() == 0) {
+            if (errors.size() == 0) {
                 return false;
             }
-            var error = errorsArray.get(0);
-            if (error == null || !error.isJsonObject()) {
+            var error = errors.get(0);
+            if (error == null || !error.isObject()) {
                 return false;
             }
-            JsonElement extensions = error.getAsJsonObject().get("extensions");
-            if (extensions == null || !extensions.isJsonObject()) {
+            JsonNode extensions = error.get("extensions");
+            if (extensions == null || !extensions.isObject()) {
                 return false;
             }
-            var extensionsObject = extensions.getAsJsonObject();
-            if (extensionsObject.has("code")
-                    && "INVALID_PAYLOAD".equals(extensionsObject.get("code").getAsString())) {
+            if (extensions.has("code")
+                    && "INVALID_PAYLOAD".equals(extensions.get("code").asText())) {
                 matchedString = "INVALID_PAYLOAD";
                 return true;
             }
@@ -303,11 +298,9 @@ public class GraphQlFingerprinter {
         if (lastQueryMsg != null && lastQueryMsg.getResponseHeader().isJson()) {
             try {
                 String response = lastQueryMsg.getResponseBody().toString();
-                JsonElement data = GSON.fromJson(response, JsonObject.class).get("data");
-                if (data != null && data.isJsonObject()) {
-                    var dataObject = data.getAsJsonObject();
-                    if (dataObject.has("alias1$1")
-                            && "QueryRoot".equals(dataObject.get("alias1$1").getAsString())) {
+                JsonNode data = OBJECT_MAPPER.readValue(response, JsonNode.class).get("data");
+                if (data != null && data.isObject()) {
+                    if (data.has("alias1$1") && "QueryRoot".equals(data.get("alias1$1").asText())) {
                         matchedString = "QueryRoot";
                         return true;
                     }
@@ -343,11 +336,9 @@ public class GraphQlFingerprinter {
         sendQuery("{__typename}");
         try {
             String response = lastQueryMsg.getResponseBody().toString();
-            JsonElement data = GSON.fromJson(response, JsonObject.class).get("data");
-            if (data != null && data.isJsonObject()) {
-                var dataObject = data.getAsJsonObject();
-                if (dataObject.has("__typename")
-                        && "RootQuery".equals(dataObject.get("__typename").getAsString())) {
+            JsonNode data = OBJECT_MAPPER.readValue(response, JsonNode.class).get("data");
+            if (data != null && data.isObject()) {
+                if (data.has("__typename") && "RootQuery".equals(data.get("__typename").asText())) {
                     matchedString = "RootQuery";
                     return true;
                 }
@@ -406,11 +397,10 @@ public class GraphQlFingerprinter {
         if (lastQueryMsg != null && lastQueryMsg.getResponseHeader().isJson()) {
             try {
                 String response = lastQueryMsg.getResponseBody().toString();
-                JsonElement data = GSON.fromJson(response, JsonObject.class).get("data");
-                if (data != null && data.isJsonObject()) {
-                    var dataObject = data.getAsJsonObject();
-                    if (dataObject.has("__typename")
-                            && "query_root".equals(dataObject.get("__typename").getAsString())) {
+                JsonNode data = OBJECT_MAPPER.readValue(response, JsonNode.class).get("data");
+                if (data != null && data.isObject()) {
+                    if (data.has("__typename")
+                            && "query_root".equals(data.get("__typename").asText())) {
                         matchedString = "query_root";
                         return true;
                     }
@@ -481,13 +471,14 @@ public class GraphQlFingerprinter {
                 return false;
             }
             String response = lastQueryMsg.getResponseBody().toString();
-            JsonElement syntaxError = GSON.fromJson(response, JsonObject.class).get("syntaxError");
-            if (syntaxError == null || !syntaxError.isJsonPrimitive()) {
+            JsonNode syntaxError =
+                    OBJECT_MAPPER.readValue(response, JsonNode.class).get("syntaxError");
+            if (syntaxError == null || !syntaxError.isValueNode()) {
                 return false;
             }
             String expectedError =
                     "Syntax error while parsing GraphQL query. Invalid input \"queryy\", expected ExecutableDefinition or TypeSystemDefinition";
-            if (syntaxError.getAsString().contains(expectedError)) {
+            if (syntaxError.asText().contains(expectedError)) {
                 matchedString = expectedError;
                 return true;
             }
@@ -499,8 +490,12 @@ public class GraphQlFingerprinter {
     private boolean checkStrawberryEngine() {
         sendQuery("query @deprecated {__typename}");
         String response = lastQueryMsg.getResponseBody().toString();
-        return errorContains("Directive '@deprecated' may not be used on query.")
-                && GSON.fromJson(response, JsonObject.class).has("data");
+        try {
+            return errorContains("Directive '@deprecated' may not be used on query.")
+                    && OBJECT_MAPPER.readValue(response, JsonNode.class).has("data");
+        } catch (JsonProcessingException ignore) {
+        }
+        return false;
     }
 
     private boolean checkTartifletteEngine() {
@@ -537,18 +532,16 @@ public class GraphQlFingerprinter {
         }
         try {
             String response = lastQueryMsg.getResponseBody().toString();
-            JsonElement extensions = GSON.fromJson(response, JsonObject.class).get("extensions");
-            if (extensions != null && extensions.isJsonObject()) {
-                var extensionsObject = extensions.getAsJsonObject();
-                JsonElement debug = extensionsObject.get("debug");
-                if (debug != null && debug.isJsonArray()) {
-                    var debugArray = debug.getAsJsonArray();
-                    if (!debugArray.isEmpty()) {
-                        var debugObject = debugArray.get(0).getAsJsonObject();
+            JsonNode extensions =
+                    OBJECT_MAPPER.readValue(response, JsonNode.class).get("extensions");
+            if (extensions != null && extensions.isObject()) {
+                JsonNode debug = extensions.get("debug");
+                if (debug != null && debug.isArray()) {
+                    if (!debug.isEmpty()) {
+                        var debugObject = debug.get(0);
                         String expectedDebugType = "DEBUG_LOGS_INACTIVE";
                         if (debugObject.has("type")
-                                && expectedDebugType.equals(
-                                        debugObject.get("type").getAsString())) {
+                                && expectedDebugType.equals(debugObject.get("type").asText())) {
                             matchedString = expectedDebugType;
                             return true;
                         }
@@ -556,7 +549,7 @@ public class GraphQlFingerprinter {
                                 "GraphQL Debug logging is not active. To see debug logs, GRAPHQL_DEBUG must be enabled.";
                         if (debugObject.has("message")
                                 && expectedDebugMessage.equals(
-                                        debugObject.get("message").getAsString())) {
+                                        debugObject.get("message").asText())) {
                             matchedString = expectedDebugMessage;
                             return true;
                         }
