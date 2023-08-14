@@ -77,6 +77,9 @@ public class AutomationPlan {
             env.setPlan(this);
 
             jobs = new ArrayList<>();
+            if (jobsData == null) {
+                return;
+            }
 
             for (Object jobObj : jobsData) {
                 if (!(jobObj instanceof LinkedHashMap<?, ?>)) {
