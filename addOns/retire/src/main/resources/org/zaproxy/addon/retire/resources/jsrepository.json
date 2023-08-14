@@ -301,7 +301,7 @@
       },
       {
         "below": "1.19.4",
-        "severity": "medium",
+        "severity": "low",
         "cwe": ["CWE-1333"],
         "identifiers": {
           "CVE": ["CVE-2021-43306"],
@@ -715,6 +715,33 @@
         "967942805137f9eb0ae26005d94e8285e2e288a0": "0.3.0",
         "fbf2e115feae7ade26788e38ebf338af11a98bb2": "0.1.0"
       }
+    }
+  },
+  "tableexport.jquery.plugin": {
+    "vulnerabilities": [
+      {
+        "below": "1.25.0",
+        "severity": "medium",
+        "cwe": ["CWE-79"],
+        "identifiers": {
+          "summary": "There is a cross-site scripting vulnerability with default `onCellHtmlData`",
+          "githubID": "GHSA-j636-crp3-m584",
+          "CVE": ["CVE-2022-1291"]
+        },
+        "info": [
+          "https://github.com/hhurz/tableexport.jquery.plugin/commit/dcbaee23cf98328397a153e71556f75202988ec9"
+        ]
+      }
+    ],
+    "extractors": {
+      "uri": [
+        "/tableexport.jquery.plugin@(§§version§§)/tableExport.min.js",
+        "/TableExport/(§§version§§)/js/tableexport.min.js"
+      ],
+      "filecontent": [
+        "/\\*[\\s]+tableExport.jquery.plugin[\\s]+Version (§§version§§)",
+        "/\\*![\\s]+\\* TableExport.js v(§§version§§)"
+      ]
     }
   },
   "jPlayer": {
