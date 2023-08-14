@@ -355,7 +355,7 @@
       36
     ],
     "description": "Hashtag Labs is a full-service digital ad operations company.",
-    "dom": "link[href*='//htlbid.com]",
+    "dom": "link[href*='//htlbid.com']",
     "icon": "Hashtag Labs.svg",
     "js": {
       "htlbid.cmd": ""
