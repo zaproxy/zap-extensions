@@ -1,4 +1,28 @@
 {
+  "E-Com Plus": {
+    "cats": [
+      108
+    ],
+    "description": "E-Com Plus is an open fair-code ecommerce platform designed to be used with headless commerce APIs.",
+    "icon": "E-Com Plus.svg",
+    "implies": [
+      "Vue.js",
+      "TypeScript"
+    ],
+    "js": {
+      "ecomPassport.storageKey": "ecomPassportClient"
+    },
+    "meta": {
+      "generator": "^E-Com\\sPlus\\sStorefront$"
+    },
+    "pricing": [
+      "poa",
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://www.ecomplus.io"
+  },
   "E-monsite": {
     "cats": [
       1
@@ -796,13 +820,13 @@
     ],
     "description": "ElkArte is an open-source PHP-based forum software with MySQL integration, offering features such as user authentication, topic categorisation, post formatting, private messaging, moderation tools, and customisable themes and extensions.",
     "icon": "ElkArte.png",
-    "requires": "PHP",
     "implies": "MySQL",
     "js": {
       "elk_forum_action": "",
       "elk_iso_case_folding": ""
     },
     "oss": true,
+    "requires": "PHP",
     "website": "https://www.elkarte.net"
   },
   "Ellucian CRM Recruit": {
@@ -2019,30 +2043,6 @@
       "fe_eclass_guest": "\\;confidence:50"
     },
     "website": "https://www.eclass.com.hk"
-  },
-  "E-Com Plus": {
-    "cats": [
-      108
-    ],
-    "description": "E-Com Plus is an open fair-code ecommerce platform designed to be used with headless commerce APIs.",
-    "icon": "E-Com Plus.svg",
-    "implies": [
-      "Vue.js",
-      "TypeScript"
-    ],
-    "meta": {
-      "generator": "^E-Com\\sPlus\\sStorefront$"
-    },
-    "js": {
-      "ecomPassport.storageKey": "ecomPassportClient"
-    },
-    "saas": true,
-    "pricing": [
-      "poa",
-      "recurring",
-      "payg"
-    ],
-    "website": "https://www.ecomplus.io"
   },
   "eDokan": {
     "cats": [

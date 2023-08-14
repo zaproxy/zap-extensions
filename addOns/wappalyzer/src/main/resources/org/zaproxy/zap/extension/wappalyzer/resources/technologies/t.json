@@ -323,6 +323,9 @@
     "cats": [
       36
     ],
+    "cookies": {
+      "taboola_session_id": ""
+    },
     "description": "Taboola is a content discovery & native advertising platform for publishers and advertisers.",
     "dom": {
       "link[href*='.taboola.com']": {
@@ -333,12 +336,9 @@
     },
     "icon": "Taboola.svg",
     "js": {
-      "_taboola": "",
       "TRCImpl.global": "",
+      "_taboola": "",
       "taboola_view_id": ""
-    },
-    "cookies": {
-      "taboola_session_id": ""
     },
     "pricing": [
       "payg"
@@ -2249,6 +2249,18 @@
     ],
     "saas": true,
     "website": "https://www.tiqets.com/affiliate"
+  },
+  "Tistory": {
+    "cats": [
+      1,
+      11
+    ],
+    "description": "Tistory is a South Korean blog-publishing service that allows private or multi-user blogs.",
+    "icon": "Tistory.svg",
+    "js": {
+      "TistoryBlog": ""
+    },
+    "website": "https://tistory.com"
   },
   "Titan": {
     "cats": [

@@ -976,6 +976,24 @@
     "saas": true,
     "website": "https://nodeping.com"
   },
+  "Nogin": {
+    "cats": [
+      19
+    ],
+    "description": "Nogin is a platform operating as Commerce-as-a-Service (CaaS), offering cloud-based ecommerce functionalities and infrastructure for seamless integration and development of ecommerce solutions.",
+    "icon": "Nogin.png",
+    "js": {
+      "nogin.wishlist": ""
+    },
+    "pricing": [
+      "high",
+      "recurring",
+      "poa"
+    ],
+    "requiresCategory": 6,
+    "scriptSrc": "\\.nogin\\.com/",
+    "website": "https://www.nogin.com"
+  },
   "Noibu": {
     "cats": [
       13
@@ -1156,12 +1174,13 @@
       "Node.js"
     ],
     "js": {
-      "$nuxt": ""
+      "$nuxt": "",
+      "useNuxtApp": ""
     },
     "scriptSrc": [
       "/_nuxt/"
     ],
-    "website": "https://nuxtjs.org"
+    "website": "https://nuxt.com"
   },
   "nghttpx - HTTP/2 proxy": {
     "cats": [

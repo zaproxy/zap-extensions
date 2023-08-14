@@ -333,6 +333,15 @@
     },
     "website": "https://tools.ietf.org/html/rfc7617"
   },
+  "Basil.css": {
+    "cats": [
+      66
+    ],
+    "description": "Basil.css is a responsive and customizable UI framework.",
+    "dom": "link[href*='/basil.css'], link[href*='/basilcss']",
+    "icon": "basilcss.svg",
+    "website": "https://basilcss.com"
+  },
   "Basis Technologies": {
     "cats": [
       36
@@ -470,8 +479,8 @@
       11
     ],
     "description": "Beehiiv is a relatively young, hosted newsletter platform built for businesses and creators.",
-    "icon": "Beehiiv.svg",
     "dom": "link[href*='media.beehiiv.com/']",
+    "icon": "Beehiiv.svg",
     "pricing": [
       "freemium",
       "low",
@@ -485,8 +494,8 @@
       49
     ],
     "description": "Beehiiv RSS feed is a feature of the Beehiiv. Beehiiv is a relatively young, hosted newsletter platform built for businesses and creators.",
-    "icon": "Beehiiv.svg",
     "dom": "iframe[src*='embeds.beehiiv.com/']",
+    "icon": "Beehiiv.svg",
     "pricing": [
       "freemium",
       "low",
@@ -693,9 +702,8 @@
       6
     ],
     "description": "BigCommerce B2B Edition is a specialised version of the BigCommerce ecommerce platform tailored for B2B companies, offering features such as custom pricing, catalogues, bulk ordering, quote requests, multi-user accounts, PO processing, and advanced reporting.",
-    "icon": "BigCommerce B2B Edition.svg",
-    "requires": "BigCommerce",
     "excludes": "BigCommerce",
+    "icon": "BigCommerce B2B Edition.svg",
     "js": {
       "bundleB2BFeatureFlags": "",
       "bundleb2b.text.tpa": ""
@@ -704,6 +712,7 @@
       "mid",
       "recurring"
     ],
+    "requires": "BigCommerce",
     "saas": true,
     "scriptSrc": "cdn\\.bundleb2b\\.net/",
     "website": "https://www.bundleb2b.com"
@@ -1670,11 +1679,11 @@
     ],
     "description": "BookVisit is an IT services and IT consulting, recreation, and hotel company located in Goteborg,Sweden.",
     "icon": "BookVisit.png",
-    "scriptSrc": "online\\.bookvisit\\.com/",
-    "saas": true,
     "pricing": [
       "poa"
     ],
+    "saas": true,
+    "scriptSrc": "online\\.bookvisit\\.com/",
     "website": "https://bookvisit.com"
   },
   "Bookatable": {
@@ -2323,6 +2332,23 @@
     "scriptSrc": "/wp-content/plugins/salesforce-wordpress-to-lead/",
     "website": "https://brilliantplugins.com/downloads/salesforce/"
   },
+  "Brimble": {
+    "cats": [
+      62
+    ],
+    "description": "Brimble is a cloud platform for deploying frontend web applications.",
+    "headers": {
+      "server": "^Brimble$",
+      "x-brimble-id": ""
+    },
+    "icon": "brimble.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "website": "https://brimble.io"
+  },
   "Broadstreet": {
     "cats": [
       36
@@ -2844,22 +2870,5 @@
     "saas": true,
     "scriptSrc": "cdn\\.ibdok\\.ir/",
     "website": "https://bdok.ir"
-  },
-  "Brimble": {
-    "cats": [
-      62
-    ],
-    "description": "Brimble is a cloud platform for deploying frontend web applications.",
-    "headers": {
-      "server": "^Brimble$",
-      "x-brimble-id": ""
-    },
-    "icon": "brimble.svg",
-    "pricing": [
-      "freemium",
-      "low",
-      "recurring"
-    ],
-    "website": "https://brimble.io"
   }
 }

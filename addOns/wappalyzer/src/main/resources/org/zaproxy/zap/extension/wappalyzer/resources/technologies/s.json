@@ -470,7 +470,7 @@
     "cookies": {
       "SAKAIID": ""
     },
-    "cpe": "cpe:2.3:a:sakailms:sakai:*:*:*:*:*:*:*:*:*",
+    "cpe": "cpe:2.3:a:sakailms:sakai:*:*:*:*:*:*:*:*",
     "description": "Sakai is a robust open-source learning management system created by higher ed for higher ed.",
     "icon": "Sakai.png",
     "js": {
@@ -1540,6 +1540,20 @@
     "saas": true,
     "website": "https://selldone.com"
   },
+  "SellersCommerce": {
+    "cats": [
+      6
+    ],
+    "description": "SellersCommerce is a medium ecommerce software company that provides b2b ecommerce platform to retail companies.",
+    "icon": "SellersCommerce.png",
+    "pricing": [
+      "poa"
+    ],
+    "requires": "Microsoft ASP.NET",
+    "saas": true,
+    "scriptSrc": "\\.sellerscommerce\\.com/",
+    "website": "https://www.sellerscommerce.com"
+  },
   "Selless": {
     "cats": [
       6
@@ -1555,20 +1569,6 @@
     ],
     "saas": true,
     "website": "https://selless.com"
-  },
-  "SellersCommerce": {
-    "cats": [
-      6
-    ],
-    "description": "SellersCommerce is a medium ecommerce software company that provides b2b ecommerce platform to retail companies.",
-    "icon": "SellersCommerce.png",
-    "pricing": [
-      "poa"
-    ],
-    "saas": true,
-    "scriptSrc": "\\.sellerscommerce\\.com/",
-    "requires": "Microsoft ASP.NET",
-    "website": "https://www.sellerscommerce.com"
   },
   "Sellfy": {
     "cats": [
@@ -2797,11 +2797,11 @@
     ],
     "description": "Shoppub is an ecommerce platform that focuses on implementing advanced business rules.",
     "icon": "Shoppub.svg",
-    "meta": {
-      "author": "^Shoppub$"
-    },
     "js": {
       "Shoppub.store": ""
+    },
+    "meta": {
+      "author": "^Shoppub$"
     },
     "pricing": [
       "mid",
@@ -3369,11 +3369,11 @@
     "js": {
       "SirvoyBookingWidget": ""
     },
-    "saas": true,
     "pricing": [
       "low",
       "recurring"
     ],
+    "saas": true,
     "website": "https://sirvoy.com"
   },
   "Site Kit": {
@@ -3653,7 +3653,7 @@
       "high"
     ],
     "probe": {
-      "/layouts/System/VisitorIdentification.aspx": ""
+      "/layouts/System/VisitorIdentification.aspx": "sc_Contact"
     },
     "saas": true,
     "website": "https://www.sitecore.com/"
@@ -3673,6 +3673,40 @@
     "saas": true,
     "scriptSrc": "/sitecore-engage-v\\.([\\d\\.]+)\\.min\\.js\\;version:\\1",
     "website": "https://www.sitecore.com/products/engagement-cloud"
+  },
+  "Sitecore Experience Edge": {
+    "cats": [
+      23
+    ],
+    "description": "Sitecore Experience Edge is a product that optimises content delivery by utilising edge computing and caching technologies to enhance website performance and user experience.",
+    "dom": "img[src*='edge.sitecorecloud.io']",
+    "icon": "Sitecore.svg",
+    "implies": [
+      "GraphQL",
+      "Sitecore Experience Platform"
+    ],
+    "pricing": [
+      "poa",
+      "recurring",
+      "high"
+    ],
+    "requiresCategory": 12,
+    "saas": false,
+    "website": "https://doc.sitecore.com/xp/en/developers/101/developer-tools/experience-edge-for-xm-apis.html"
+  },
+  "Sitecore Experience Platform": {
+    "cats": [
+      1
+    ],
+    "description": "Sitecore Experience Platform is a digital platform used by businesses to create, manage, and deliver personalised content and experiences to users across different channels.",
+    "icon": "Sitecore.svg",
+    "pricing": [
+      "poa",
+      "recurring",
+      "high"
+    ],
+    "saas": true,
+    "website": "https://www.sitecore.com/products/sitecore-experience-platform"
   },
   "Siteglide": {
     "cats": [
@@ -3916,23 +3950,6 @@
     "saas": true,
     "website": "https://www.skolengo.com"
   },
-  "Skyflow": {
-    "cats": [
-      16
-    ],
-    "description": "Skyflow is a company that provides a secure data privacy platform and API.",
-    "icon": "Skyflow.svg",
-    "js": {
-      "Skyflow.ElementType.CARD_NUMBER": "",
-      "Skyflow.ValidationRuleType": ""
-    },
-    "pricing": [
-      "high",
-      "recurring"
-    ],
-    "saas": true,
-    "website": "https://www.skyflow.com"
-  },
   "Sky-Shop": {
     "cats": [
       6
@@ -3975,6 +3992,23 @@
     "saas": true,
     "scriptSrc": "sv-wc-payment-gateway-payment-form\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1",
     "website": "https://www.skyverge.com"
+  },
+  "Skyflow": {
+    "cats": [
+      16
+    ],
+    "description": "Skyflow is a company that provides a secure data privacy platform and API.",
+    "icon": "Skyflow.svg",
+    "js": {
+      "Skyflow.ElementType.CARD_NUMBER": "",
+      "Skyflow.ValidationRuleType": ""
+    },
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.skyflow.com"
   },
   "Slate": {
     "cats": [
@@ -6664,6 +6698,19 @@
     "saas": true,
     "website": "https://www.summercart.com"
   },
+  "Summernote": {
+    "cats": [
+      20
+    ],
+    "description": "Summernote is an open-source JavaScript library that offers a feature-rich WYSIWYG editor for web applications, allowing users to create and edit formatted content in a familiar word processor-like interface.",
+    "icon": "Summernote.svg",
+    "oss": true,
+    "scriptSrc": [
+      "/(?:S|s)ummernote(?:\\.min)?\\.js",
+      "/summernote(?:@|-)([\\d\\.]+)/\\;version:\\1"
+    ],
+    "website": "https://summernote.org"
+  },
   "Sumo": {
     "cats": [
       5,
@@ -6728,12 +6775,12 @@
       "__NUXT__.config.public.supabase": ""
     },
     "oss": true,
-    "saas": true,
     "pricing": [
       "freemium",
       "payg",
       "recurring"
     ],
+    "saas": true,
     "website": "https://supabase.com"
   },
   "Super Builder": {
@@ -6888,17 +6935,14 @@
       66
     ],
     "description": "SvelteKit is the official Svelte framework for building web applications with a flexible filesystem-based routing.",
-    "meta": {
-      "generator": "SvelteKit"
-    },
     "dom": {
       "#svelte-announcer": {
         "exists": ""
       },
       "a": {
         "attributes": {
-          "sveltekit:prefetch": "",
-          "data-sveltekit-preload-data": ""
+          "data-sveltekit-preload-data": "",
+          "sveltekit:prefetch": ""
         }
       }
     },
@@ -6908,6 +6952,9 @@
       "Node.js",
       "Vite"
     ],
+    "meta": {
+      "generator": "SvelteKit"
+    },
     "oss": true,
     "website": "https://kit.svelte.dev"
   },
@@ -6947,8 +6994,14 @@
     "cats": [
       59
     ],
-    "description": "SweetAlert is a beautiful replacement for JavaScript's alert.",
-    "html": "<link[^>]+?href=\"[^\"]+sweet-alert(?:\\.min)?\\.css",
+    "description": "SweetAlert is a JavaScript library that provides alternative alert and modal dialog boxes for web applications, with customisable features, aiming to improve the user interface of the default browser dialogs.",
+    "dom": {
+      "link[href*='sweet-alert']": {
+        "attributes": {
+          "href": "sweet-alert(?:\\.min)?\\.css"
+        }
+      }
+    },
     "icon": "SweetAlert.png",
     "oss": true,
     "scriptSrc": "sweet(?:-)?alert(?:\\.min)?\\.js",
@@ -6958,9 +7011,14 @@
     "cats": [
       59
     ],
-    "description": "SweetAlert2 is a beautiful, responsive, customizable, accessible replacement for JavaScript's popup boxes.",
-    "excludes": "SweetAlert",
-    "html": "<link[^>]+?href=\"[^\"]+sweetalert2(?:\\.min)?\\.css",
+    "description": "SweetAlert2 is a JavaScript library that provides customisable, visually appealing, and responsive alert and modal dialog boxes for web applications.",
+    "dom": {
+      "link[href*='sweetalert2']": {
+        "attributes": {
+          "href": "sweetalert2(?:\\.min)?\\.css"
+        }
+      }
+    },
     "icon": "SweetAlert2.svg",
     "js": {
       "Sweetalert2": ""
@@ -6982,16 +7040,17 @@
       "swell-session": ""
     },
     "description": "Swell is a headless ecommerce platform for modern brands, startups, and agencies.",
-    "html": [
-      "<[^>]*swell\\.is",
-      "<[^>]*swell\\.store",
-      "<[^>]*schema\\.io"
-    ],
+    "dom": "img[srcset*='.swell.is'], img[srcset*='.swell.store'], img[srcset*='.schema.io']",
+    "excludes": "Shopify",
     "icon": "Swell.svg",
     "js": {
-      "swell.version": "^(.+)$\\;version:\\1"
+      "swell.version": ""
     },
-    "website": "https://www.swell.is/"
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "website": "https://www.swell.is"
   },
   "Swiffy Slider": {
     "cats": [
@@ -7234,6 +7293,22 @@
     "icon": "scrollreveal.svg",
     "scriptSrc": "scrollreveal(?:\\.min)(?:\\.js)",
     "website": "https://scrollrevealjs.org"
+  },
+  "shadcn/ui": {
+    "cats": [
+      66
+    ],
+    "css": [
+      "--destructive-foreground"
+    ],
+    "description": "shadcn/ui is a component system built with Radix UI and Tailwind CSS.",
+    "icon": "shadcn-ui.svg",
+    "implies": [
+      "Radix UI",
+      "Tailwind CSS"
+    ],
+    "oss": true,
+    "website": "https://ui.shadcn.com"
   },
   "shine.js": {
     "cats": [

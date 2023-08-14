@@ -352,6 +352,23 @@
     },
     "website": "https://awstats.sourceforge.net"
   },
+  "AbhiCMS": {
+    "cats": [
+      1
+    ],
+    "description": "AbhiCMS is a lesser-known content management system that may not have a significant user base or active development community.",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "meta": {
+      "generator": "AbhiCMS\\s([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://website999.org"
+  },
   "Abicart": {
     "cats": [
       6
@@ -370,23 +387,6 @@
     ],
     "saas": true,
     "website": "https://abicart.com/"
-  },
-  "AbhiCMS": {
-    "cats": [
-      1
-    ],
-    "description": "AbhiCMS is a lesser-known content management system that may not have a significant user base or active development community.",
-    "implies": [
-      "PHP",
-      "MySQL"
-    ],
-    "meta": {
-      "generator": "AbhiCMS\\s([\\d\\.]+)\\;version:\\1"
-    },
-    "pricing": [
-      "poa"
-    ],
-    "website": "https://website999.org"
   },
   "Absorb": {
     "cats": [
@@ -791,22 +791,6 @@
     "scriptSrc": "\\.acquire\\.io/(?!cobrowse)",
     "website": "https://acquire.io"
   },
-  "ActBlue": {
-    "cats": [
-      111
-    ],
-    "description": "ActBlue is an online fundraising platform that facilitates secure donations to Democratic candidates and progressive causes, streamlining the process of processing and distributing campaign contributions.",
-    "icon": "ActBlue.svg",
-    "dom": "a[href*='//secure.actblue.com/donate/']",
-    "js": {
-      "actblue.__configuration": ""
-    },
-    "pricing": [
-      "payg"
-    ],
-    "saas": true,
-    "website": "https://secure.actblue.com"
-  },
   "Act-On": {
     "cats": [
       32
@@ -823,6 +807,22 @@
     "saas": true,
     "scriptSrc": "/cdnr/\\d+/acton/bn/tracker/\\d+",
     "website": "https://act-on.com"
+  },
+  "ActBlue": {
+    "cats": [
+      111
+    ],
+    "description": "ActBlue is an online fundraising platform that facilitates secure donations to Democratic candidates and progressive causes, streamlining the process of processing and distributing campaign contributions.",
+    "dom": "a[href*='//secure.actblue.com/donate/']",
+    "icon": "ActBlue.svg",
+    "js": {
+      "actblue.__configuration": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://secure.actblue.com"
   },
   "Actito": {
     "cats": [
@@ -1731,13 +1731,19 @@
     "cats": [
       11
     ],
+    "description": "Aegea is a blog engine created by Ilya Birman.",
     "headers": {
-      "X-Powered-By": "^E2 Aegea v(\\d+)$\\;version:\\1"
+      "X-Powered-By": "^(?:E2\\s)?Aegea\\s(?:v)?([\\d\\.]+)\\;version:\\1"
     },
     "icon": "Aegea.png",
     "implies": [
       "PHP",
       "jQuery"
+    ],
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
     ],
     "website": "https://blogengine.ru"
   },
@@ -2467,8 +2473,8 @@
       69
     ],
     "description": "Alliance Auth is an access management platform designed for Eve Online groups. It controls access to applications and services based on in-game memberships.",
-    "icon": "Alliance Auth.svg",
     "dom": "link[rel='stylesheet'][href*='/static/allianceauth/css']",
+    "icon": "Alliance Auth.svg",
     "implies": [
       "Django",
       "Python",
@@ -3110,7 +3116,7 @@
     "cats": [
       12
     ],
-    "cpe": "cpe:2.3:a:angularjs:angular:*:*:*:*:*:*:*:*:*",
+    "cpe": "cpe:2.3:a:angularjs:angular:*:*:*:*:*:*:*:*",
     "description": "Angular is a TypeScript-based open-source web application framework led by the Angular Team at Google.",
     "dom": {
       "[ng-version]": {
@@ -3400,8 +3406,8 @@
     "cpe": "cpe:2.3:a:apache:apisix:*:*:*:*:*:*:*:*",
     "description": "Apache APISIX is an open-source, cloud-native API gateway developed by the Apache Software Foundation. It provides a scalable and high-performance solution for managing and securing API traffic.",
     "headers": {
-      "server": "^APISIX(?:/([\\d\\.]+))?$\\;version:\\1",
-      "X-APISIX-Upstream-Status": ""
+      "X-APISIX-Upstream-Status": "",
+      "server": "^APISIX(?:/([\\d\\.]+))?$\\;version:\\1"
     },
     "icon": "Apache APISIX.svg",
     "oss": true,
@@ -3429,9 +3435,9 @@
     "html": "<html[^>]* xmlns:jspwiki=",
     "icon": "Apache.svg",
     "implies": "Apache Tomcat",
+    "oss": true,
     "scriptSrc": "jspwiki",
     "url": "wiki\\.jsp",
-    "oss": true,
     "website": "https://jspwiki.org"
   },
   "Apache Tomcat": {
@@ -4578,26 +4584,6 @@
     ],
     "website": "https://auth0.github.io/auth0.js/index.html"
   },
-  "authorize.net": {
-    "cats": [
-      41
-    ],
-    "description": "Authorize.net is a secure online payment gateway service that enables businesses to accept payments through various channels, such as ecommerce websites, mobile devices, and retail stores, providing a trusted platform for processing credit card and electronic cheque payments.",
-    "icon": "authorize.net.svg",
-    "headers": {
-      "Content-Security-Policy": "\\.authorize\\.net\\s"
-    },
-    "js": {
-      "config.authorizenet_public_client_key": ""
-    },
-    "scriptSrc": "\\.authorize\\.net/",
-    "saas": true,
-    "pricing": [
-      "recurring",
-      "payg"
-    ],
-    "website": "https://www.authorize.net"
-  },
   "Auth0 Lock": {
     "cats": [
       69
@@ -5236,6 +5222,26 @@
     "icon": "augmented-ui.png",
     "oss": true,
     "website": "https://augmented-ui.com"
+  },
+  "authorize.net": {
+    "cats": [
+      41
+    ],
+    "description": "Authorize.net is a secure online payment gateway service that enables businesses to accept payments through various channels, such as ecommerce websites, mobile devices, and retail stores, providing a trusted platform for processing credit card and electronic cheque payments.",
+    "headers": {
+      "Content-Security-Policy": "\\.authorize\\.net\\s"
+    },
+    "icon": "authorize.net.svg",
+    "js": {
+      "config.authorizenet_public_client_key": ""
+    },
+    "pricing": [
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.authorize\\.net/",
+    "website": "https://www.authorize.net"
   },
   "autoComplete.js": {
     "cats": [

@@ -127,6 +127,21 @@
     "scriptSrc": "zanox\\.com/scripts/zanox\\.js$",
     "website": "https://zanox.com"
   },
+  "Zeabur": {
+    "cats": [
+      62
+    ],
+    "description": "Zeabur is a platform for running full stack apps and databases.",
+    "headers": {
+      "X-Zeabur-Request-Id": ""
+    },
+    "icon": "zeabur.svg",
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "website": "https://zeabur.com"
+  },
   "Zeald": {
     "cats": [
       6
