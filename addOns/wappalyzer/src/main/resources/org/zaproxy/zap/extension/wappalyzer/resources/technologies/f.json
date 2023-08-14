@@ -1300,19 +1300,6 @@
     "scriptSrc": "fontify\\.nitroapps\\.co/",
     "website": "https://apps.shopify.com/fontify-change-customize-font-for-your-store"
   },
-  "Forethought Solve": {
-    "cats": [
-      5
-    ],
-    "description": "Forethought Solve is a live-chat widget that uses generative AI to automate responses for common questions across all channels.",
-    "icon": "Forethought Solve.svg",
-    "pricing": [
-      "poa"
-    ],
-    "saas": true,
-    "scriptSrc": "solve-widget\\.forethought\\.ai/",
-    "website": "https://forethought.ai/platform/solve/"
-  },
   "FooPlugins FooGallery": {
     "cats": [
       87,
@@ -1398,6 +1385,19 @@
     ],
     "saas": true,
     "website": "https://foodomaa.com"
+  },
+  "Forethought Solve": {
+    "cats": [
+      5
+    ],
+    "description": "Forethought Solve is a live-chat widget that uses generative AI to automate responses for common questions across all channels.",
+    "icon": "Forethought Solve.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "solve-widget\\.forethought\\.ai/",
+    "website": "https://forethought.ai/platform/solve/"
   },
   "Fork Awesome": {
     "cats": [
@@ -2071,6 +2071,22 @@
     "scriptSrc": "//chat-assets\\.frontapp\\.com/",
     "website": "https://front.com"
   },
+  "Front-Commerce": {
+    "cats": [
+      108
+    ],
+    "description": "Front-Commerce is a React-based ecommerce framework that provides a development environment and tools for building online stores, offering seamless integration with backend systems through GraphQL and supporting popular platforms like Adobe Commerce, BigCommerce, OpenMage, Contentful or Prismic.",
+    "dom": "link[data-chunk*='front-commerce-src-web-theme-routes'], script[data-chunk*='front-commerce-src-web-theme-routes']",
+    "icon": "front-commerce.svg",
+    "implies": [
+      "React",
+      "GraphQL",
+      "Webpack",
+      "Node.js",
+      "PWA"
+    ],
+    "website": "https://front-commerce.com"
+  },
   "FrontPage": {
     "cats": [
       20
@@ -2398,21 +2414,5 @@
     "oss": true,
     "scriptSrc": "/fullPage\\.js(?:/([\\d\\.]+)/)?\\;version:\\1",
     "website": "https://github.com/alvarotrigo/fullpage.js"
-  },
-  "Front-Commerce": {
-    "cats": [
-      108
-    ],
-    "description": "Front-Commerce is a React-based ecommerce framework that provides a development environment and tools for building online stores, offering seamless integration with backend systems through GraphQL and supporting popular platforms like Adobe Commerce, BigCommerce, OpenMage, Contentful or Prismic.",
-    "icon": "front-commerce.svg",
-    "implies": [
-      "React",
-      "GraphQL",
-      "Webpack",
-      "Node.js",
-      "PWA"
-    ],
-    "dom": "link[data-chunk*='front-commerce-src-web-theme-routes'], script[data-chunk*='front-commerce-src-web-theme-routes']",
-    "website": "https://front-commerce.com"
   }
 }

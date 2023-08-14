@@ -355,7 +355,7 @@
     },
     "oss": true,
     "probe": {
-      "/magento_version": ""
+      "/magento_version": "magento"
     },
     "scriptSrc": [
       "js/mage",
@@ -404,13 +404,13 @@
     ],
     "description": "Magixite offers the Web Content Accessibility Guidelines (WCAG), a set of guidelines and requirements designed to help designers and developers improve the accessibility of web content, ensuring it can be effectively used by individuals with disabilities.",
     "icon": "Magixite.png",
-    "saas": true,
-    "scriptSrc": "acc\\.magixite\\.com/",
     "pricing": [
       "freemium",
       "low",
       "recurring"
     ],
+    "saas": true,
+    "scriptSrc": "acc\\.magixite\\.com/",
     "website": "https://acc.magixite.com"
   },
   "MailChimp": {
@@ -689,8 +689,8 @@
     "dom": "style[data-emotion='mantine-global'], style[data-emotion='mantine']",
     "icon": "Mantine.svg",
     "implies": "TypeScript",
-    "requires": "React",
     "oss": true,
+    "requires": "React",
     "website": "https://mantine.dev"
   },
   "MantisBT": {
@@ -698,12 +698,12 @@
       13
     ],
     "cpe": "cpe:2.3:a:mantisbt:mantisbt:*:*:*:*:*:*:*:*",
-    "icon": "MantisBT.png",
     "description": "MantisBT is an open-source, web-based issue tracking system written in PHP with a MySQL database backend, designed to facilitate bug tracking and project management for software development teams.",
     "dom": "link[rel='stylesheet'][href*='/css/ace-mantis.css']",
-    "requires": "PHP",
+    "icon": "MantisBT.png",
     "implies": "MySQL",
     "oss": true,
+    "requires": "PHP",
     "website": "https://www.mantisbt.org"
   },
   "ManyChat": {
@@ -1181,6 +1181,8 @@
     "description": "Mautic is a free and open-source marketing automation tool for Content Management, Social Media, Email Marketing, and can be used for the integration of social networks, campaign management, forms, questionnaires, reports, etc.",
     "icon": "mautic.svg",
     "js": {
+      "MauticFormValidations": "",
+      "MauticSDK": "",
       "MauticTrackingObject": ""
     },
     "scriptSrc": "[^a-z]mtc.*\\.js",

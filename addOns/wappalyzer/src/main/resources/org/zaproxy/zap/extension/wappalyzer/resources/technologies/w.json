@@ -600,11 +600,11 @@
     "js": {
       "wask_analytics": ""
     },
-    "saas": true,
     "pricing": [
       "low",
       "recurring"
     ],
+    "saas": true,
     "website": "https://www.wask.co"
   },
   "Waveform": {
@@ -656,6 +656,23 @@
       "wz.mmConfig.buildVersion": ""
     },
     "website": "https://wazimo.com"
+  },
+  "WeWeb": {
+    "cats": [
+      51
+    ],
+    "description": "WeWeb is a no-code front-end builder that allows customers to build on-top of any back-end.",
+    "icon": "WeWeb.svg",
+    "js": {
+      "wwg_designInfo.wewebPreviewURL": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.weweb.io"
   },
   "Weaver Xtreme": {
     "cats": [
@@ -761,6 +778,10 @@
       "Content-Type": "application/wasm"
     },
     "icon": "WebAssembly.svg",
+    "js": {
+      "wasmBinary": "",
+      "wasmBinaryFile": ""
+    },
     "oss": true,
     "scriptSrc": "/wasm_exec\\.js",
     "website": "https://webassembly.org/"
@@ -1356,23 +1377,6 @@
     ],
     "website": "https://www.weltpixel.com/magento-2-theme-pearl"
   },
-  "WeWeb": {
-    "cats": [
-      51
-    ],
-    "description": "WeWeb is a no-code front-end builder that allows customers to build on-top of any back-end.",
-    "icon": "WeWeb.svg",
-    "js": {
-      "wwg_designInfo.wewebPreviewURL": ""
-    },
-    "pricing": [
-      "freemium",
-      "low",
-      "recurring"
-    ],
-    "saas": true,
-    "website": "https://www.weweb.io"
-  },
   "Whatfix": {
     "cats": [
       58
@@ -1926,8 +1930,8 @@
     ],
     "description": "WooCommerce Subscriptions primarily allows you to create and sell subscription products from your WooCommerce shop.",
     "dom": "link[href*='/wp-content/plugins/woocommerce-subscriptions/']",
-    "implies": "WooCommerce",
     "icon": "WooCommerce.svg",
+    "implies": "WooCommerce",
     "pricing": [
       "low",
       "recurring"

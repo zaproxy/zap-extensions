@@ -478,22 +478,6 @@
     ],
     "website": "https://www.genesys.com"
   },
-  "genezio": {
-    "cats": [
-      47
-    ],
-    "description": "Genezio is a code generation tool that facilitates app logic focus, organises backend API code in deployable classes, autogenerates class interfaces with JSON-RPC for typesafe API calls, supports REST and Webhooks, enables simple API code deployment on pre-configured infrastructure using a shell command, and provides an SDK that eliminates the need to handle URLs, headers.",
-    "icon": "genezio.svg",
-    "headers": {
-      "X-Powered-By": "^genezio$"
-    },
-    "pricing": [
-      "freemium",
-      "low",
-      "recurring"
-    ],
-    "website": "https://genez.io"
-  },
   "Geniee": {
     "cats": [
       36
@@ -2287,6 +2271,20 @@
     "scriptSrc": "/wp-content/plugins/gravityforms/js/[^/]+\\.js\\?ver=([\\d.]+)$\\;version:\\1",
     "website": "https://gravityforms.com"
   },
+  "GreatPages": {
+    "cats": [
+      51
+    ],
+    "description": "GreatPages is a multi-purpose page builder software developed in Brazil.",
+    "icon": "GreatPages.svg",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.greatpages\\.com\\.br/",
+    "website": "https://www.greatpages.com.br"
+  },
   "Green Valley CMS": {
     "cats": [
       1
@@ -2298,20 +2296,6 @@
       "DC.identifier": "/content\\.jsp\\?objectid="
     },
     "website": "https://www.greenvalley.nl/Public/Producten/Content_Management/CMS"
-  },
-  "GreatPages": {
-    "cats": [
-      51
-    ],
-    "description": "GreatPages is a multi-purpose page builder software developed in Brazil.",
-    "icon": "GreatPages.svg",
-    "saas": true,
-    "scriptSrc": "\\.greatpages\\.com\\.br/",
-    "pricing": [
-      "low",
-      "recurring"
-    ],
-    "website": "https://www.greatpages.com.br"
   },
   "Greenhouse": {
     "cats": [
@@ -2549,6 +2533,22 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/gutenberg/",
     "website": "https://github.com/WordPress/gutenberg"
+  },
+  "genezio": {
+    "cats": [
+      47
+    ],
+    "description": "Genezio is a code generation tool that facilitates app logic focus, organises backend API code in deployable classes, autogenerates class interfaces with JSON-RPC for typesafe API calls, supports REST and Webhooks, enables simple API code deployment on pre-configured infrastructure using a shell command, and provides an SDK that eliminates the need to handle URLs, headers.",
+    "headers": {
+      "X-Powered-By": "^genezio$"
+    },
+    "icon": "genezio.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "website": "https://genez.io"
   },
   "git": {
     "cats": [

@@ -433,10 +433,10 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:2.3:a:omeka:omeka:*:*:*:*:*:*:*:*:*",
+    "cpe": "cpe:2.3:a:omeka:omeka:*:*:*:*:*:*:*:*",
     "description": "Omeka is a free Content Management System (CMS) used by archives, historical societies, libraries, museums, and individual researchers for publishing digital collections.",
-    "icon": "Omeka.png",
     "dom": "link[rel*='stylesheet'][href*='css/myomeka.css'], link[rel*='stylesheet'][href*='/omeka/plugins/'], footer > p > a[href*='//omeka.org']",
+    "icon": "Omeka.png",
     "js": {
       "Omeka": ""
     },
@@ -1216,6 +1216,17 @@
     "scriptSrc": "//dealer-cdn\\.com/",
     "website": "https://operatebeyond.com/dealer-websites-marketing"
   },
+  "Opigno LMS": {
+    "cats": [
+      21
+    ],
+    "description": "Opigno LMS is an open-source Learning Management System (LMS) based on Drupal, designed for creating and delivering online courses and educational content.",
+    "icon": "Opigno LMS.svg",
+    "oss": true,
+    "requires": "Drupal",
+    "scripts": "opigno_(?:commerce|wtp_app|scorm|learning_path)",
+    "website": "https://www.opigno.org"
+  },
   "OpinionLab": {
     "cats": [
       73
@@ -1622,6 +1633,23 @@
     "saas": true,
     "website": "https://www.orckestra.com"
   },
+  "Order Deadline": {
+    "cats": [
+      100
+    ],
+    "description": "Order Deadline is an estimated delivery, countdown timer, shipping date Shopify app.",
+    "icon": "Order Deadline.png",
+    "implies": "Shopify",
+    "js": {
+      "orderDeadlineAppByEESL": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://apps.shopify.com/order-deadline"
+  },
   "OrderCast": {
     "cats": [
       6
@@ -1639,23 +1667,6 @@
     "saas": true,
     "url": "\\.(?:eu|us1)\\.ordercast\\.io/",
     "website": "https://www.ordercast.io"
-  },
-  "Order Deadline": {
-    "cats": [
-      100
-    ],
-    "description": "Order Deadline is an estimated delivery, countdown timer, shipping date Shopify app.",
-    "icon": "Order Deadline.png",
-    "implies": "Shopify",
-    "js": {
-      "orderDeadlineAppByEESL": ""
-    },
-    "pricing": [
-      "low",
-      "recurring"
-    ],
-    "saas": true,
-    "website": "https://apps.shopify.com/order-deadline"
   },
   "OrderLogic app": {
     "cats": [

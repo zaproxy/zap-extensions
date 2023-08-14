@@ -35,21 +35,21 @@
     "cats": [
       36
     ],
-    "description": "ID5 is a company that offers an identity solution for digital advertising, providing a Universal ID that enables privacy-compliant user recognition and tracking across websites without relying on personal information or third-party cookies.",
-    "saas": true,
-    "icon": "ID5.svg",
-    "website": "https://id5.io/",
-    "scriptSrc": [
-      "^https://(?:cdn\\.)?id5-sync\\.com/"
-    ],
-    "xhr": ".*id5-sync\\.com",
     "cookies": {
       "id5": ""
     },
+    "description": "ID5 is a company that offers an identity solution for digital advertising, providing a Universal ID that enables privacy-compliant user recognition and tracking across websites without relying on personal information or third-party cookies.",
+    "icon": "ID5.svg",
     "js": {
       "ID5._version": "^(.+)$\\;version:\\1",
       "__id5_instances": ""
-    }
+    },
+    "saas": true,
+    "scriptSrc": [
+      "^https://(?:cdn\\.)?id5-sync\\.com/"
+    ],
+    "website": "https://id5.io/",
+    "xhr": ".*id5-sync\\.com"
   },
   "IIS": {
     "cats": [
@@ -699,6 +699,18 @@
     ],
     "website": "https://www.infomaniak.com"
   },
+  "InforUMobile": {
+    "cats": [
+      52
+    ],
+    "description": "InforUMobile is a multi-channel system that enables digital communication with customers, offering various channels for interacting and engaging with users, developed by the Shamir Systems Group.",
+    "dom": "iframe[src*='bot.frontcld.com/bot/chat']",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.inforu.co.il"
+  },
   "Infoset": {
     "cats": [
       52,
@@ -1138,11 +1150,13 @@
     "cats": [
       18
     ],
-    "icon": "ionic.png",
+    "description": "Ionic is an open-source framework that enables developers to create cross-platform mobile, web, and desktop applications using web technologies like HTML, CSS, and JavaScript.",
+    "icon": "Ionic.svg",
     "js": {
       "Ionic.config": "",
       "Ionic.version": "^(.+)$\\;version:\\1"
     },
+    "oss": true,
     "website": "https://ionicframework.com"
   },
   "Ionicons": {
@@ -1150,8 +1164,9 @@
       17
     ],
     "description": "Ionicons is an open-source icon set crafted for web, iOS, Android, and desktop apps.",
-    "html": "<link[^>]* href=[^>]+ionicons(?:\\.min)?\\.css",
-    "icon": "Ionicons.png",
+    "dom": "link[href*='/ionicons.min.css'], link[href*='/ionicons.css']",
+    "icon": "Ionicons.svg",
+    "oss": true,
     "website": "https://ionicons.com"
   },
   "IrisLMS": {
