@@ -32,7 +32,7 @@ import org.zaproxy.addon.postman.models.ItemGroup;
 import org.zaproxy.addon.postman.models.PostmanCollection;
 import org.zaproxy.zap.testutils.TestUtils;
 
-class AbstractItemDeserializerUnitTest extends TestUtils {
+class ListDeserializerUnitTest extends TestUtils {
 
     @BeforeEach
     void setup() throws Exception {
