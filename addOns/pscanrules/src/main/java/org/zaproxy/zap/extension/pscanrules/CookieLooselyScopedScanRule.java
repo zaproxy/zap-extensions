@@ -77,7 +77,7 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner {
 
         // raise alert if have found any loosely scoped cookies
         if (looselyScopedCookies.size() > 0) {
-            raiseAlert(msg, id, host, looselyScopedCookies);
+            buildAlert(host, looselyScopedCookies).raise();
         }
     }
 
@@ -158,8 +158,7 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner {
         return true;
     }
 
-    private void raiseAlert(
-            HttpMessage msg, int id, String host, List<HttpCookie> looselyScopedCookies) {
+    private AlertBuilder buildAlert(String host, List<HttpCookie> looselyScopedCookies) {
 
         StringBuilder sbCookies = new StringBuilder();
         for (HttpCookie cookie : looselyScopedCookies) {
@@ -167,7 +166,7 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner {
                     Constant.messages.getString(MESSAGE_PREFIX + "extrainfo.cookie", cookie));
         }
 
-        newAlert()
+        return newAlert()
                 .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_LOW)
                 .setDescription(getDescription())
@@ -176,8 +175,16 @@ public class CookieLooselyScopedScanRule extends PluginPassiveScanner {
                 .setSolution(getSolution())
                 .setReference(getReference())
                 .setCweId(getCweId())
-                .setWascId(getWascId())
-                .raise();
+                .setWascId(getWascId());
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                "subdomain.example.com",
+                                HttpCookie.parse("name=value; domain=example.com"))
+                        .build());
     }
 
     @Override
