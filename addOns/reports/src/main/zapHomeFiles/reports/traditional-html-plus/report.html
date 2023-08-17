@@ -360,6 +360,12 @@
 						<td th:text="${instance.userObject.evidence}" width="80%">Evidence</td>
 					</tr>
 					<tr>
+						<td th:text="#{report.alerts.detail.otherinfo}" width="20%"
+							class="indent2">Other Info</td>
+						<td th:text="${instance.userObject.otherinfo}" width="80%">Other
+							Info</td>
+					</tr>
+					<tr>
 						<td width="20%" class="indent2">
 							<div th:id="${'alert-' + instance.userObject.alertId}">
 								<a

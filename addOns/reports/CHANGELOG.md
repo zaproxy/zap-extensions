@@ -7,6 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 - The following reports now include "Other Info" for alerts:
+    - Traditional HTML Report
+    - Traditional HTML Report with requests and responses
     - Traditional Markdown Report
     - Traditional PDF Report
 - Depend on Common Library add-on to reuse libraries (Issue 7961).
