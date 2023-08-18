@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Add statistics for browser launch successes and failures that include the requester, e.g.:
+  - `stats.selenium.launch.<requester-id>.<browser-id>`
+  - `stats.selenium.launch.<requester-id>.<browser-id>.failure`
+
 ### Changed
 - Maintenance changes.
 - Update Selenium to version 4.11.0.

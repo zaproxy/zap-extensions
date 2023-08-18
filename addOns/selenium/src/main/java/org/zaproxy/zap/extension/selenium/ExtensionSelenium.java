@@ -890,14 +890,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             String proxyAddress,
             int proxyPort,
             boolean enableExtensions) {
-        validateProxyAddressPort(proxyAddress, proxyPort);
-
-        WebDriver wd =
-                getWebDriverImpl(
-                        requester, browser, proxyAddress, proxyPort, c -> {}, enableExtensions);
-        webDrivers.add(wd);
-        updateStats(browser);
-        return wd;
+        return getWebDriver(requester, browser, proxyAddress, proxyPort, c -> {}, enableExtensions);
     }
 
     public static WebDriver getWebDriver(
@@ -914,8 +907,6 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             int proxyPort,
             Consumer<MutableCapabilities> consumer,
             boolean enableExtensions) {
-        validateProxyAddressPort(proxyAddress, proxyPort);
-
         return getWebDriver(-1, browser, proxyAddress, proxyPort, consumer, enableExtensions);
     }
 
@@ -928,16 +919,33 @@ public class ExtensionSelenium extends ExtensionAdaptor {
             boolean enableExtensions) {
         validateProxyAddressPort(proxyAddress, proxyPort);
 
-        WebDriver wd =
-                getWebDriverImpl(
-                        requester, browser, proxyAddress, proxyPort, consumer, enableExtensions);
+        WebDriver wd;
+        try {
+            wd =
+                    getWebDriverImpl(
+                            requester,
+                            browser,
+                            proxyAddress,
+                            proxyPort,
+                            consumer,
+                            enableExtensions);
+            updateLaunchStats(requester, browser, true);
+        } catch (Exception e) {
+            updateLaunchStats(requester, browser, false);
+            throw e;
+        }
         webDrivers.add(wd);
-        updateStats(browser);
         return wd;
     }
 
-    private static void updateStats(Browser browser) {
-        Stats.incCounter("stats.selenium.launch." + browser.getId());
+    private static void updateLaunchStats(int requester, Browser browser, boolean success) {
+        String key = "stats.selenium.launch." + requester + "." + browser.getId();
+        if (success) {
+            Stats.incCounter("stats.selenium.launch." + browser.getId());
+        } else {
+            key += ".failure";
+        }
+        Stats.incCounter(key);
     }
 
     private static void setCommonOptions(
