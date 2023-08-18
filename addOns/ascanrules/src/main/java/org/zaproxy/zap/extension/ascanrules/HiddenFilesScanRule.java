@@ -292,8 +292,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
     }
 
     private static String getOtherInfo(HiddenFile file) {
-        String otherInfo =
-                Constant.messages.getString(MESSAGE_PREFIX + "otherinfo", file.getType());
+        String otherInfo = file.getType();
         String extra = file.getExtra();
         if (!extra.isBlank()) {
             otherInfo += "\n\n" + extra;

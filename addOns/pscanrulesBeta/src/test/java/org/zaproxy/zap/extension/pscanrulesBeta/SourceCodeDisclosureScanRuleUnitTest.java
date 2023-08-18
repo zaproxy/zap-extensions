@@ -241,7 +241,7 @@ class SourceCodeDisclosureScanRuleUnitTest
         assertThat(alert.getName(), is(getLocalisedString("name") + " - " + language));
         assertThat(alert.getDescription(), is(getLocalisedString("desc") + " - " + language));
         assertThat(alert.getUri(), is(URI));
-        assertThat(alert.getOtherInfo(), is(getLocalisedString("extrainfo", evidence)));
+        assertThat(alert.getOtherInfo(), is(""));
         assertThat(alert.getSolution(), is(getLocalisedString("soln")));
         assertThat(alert.getReference(), is(getLocalisedString("refs")));
         assertThat(alert.getEvidence(), is(evidence));
