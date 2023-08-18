@@ -85,8 +85,9 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
      */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        if (AlertThreshold.HIGH.equals(getAlertThreshold()) && !msg.isInScope()) {
-            return; // At HIGH threshold return if the msg isn't in scope
+        if (AlertThreshold.HIGH.equals(getAlertThreshold()) && !msg.isInScope()
+                || !msg.getResponseHeader().isHtml()) {
+            return;
         }
 
         // need to do this if we are to be able to get an element's parent. Do it as early as
@@ -132,13 +133,12 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
                 StringBuilder sbForm = new StringBuilder();
                 SortedSet<String> elementNames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
                 ++numberOfFormsPassed;
-                // if the form has no parent, it is pretty likely invalid HTML (or Javascript!!!),
+                // if the form has no parent, it is pretty likely invalid HTML,
                 // so we will not report
                 // any alerts on it.
-                // ie. This logic is necessary to eliminate false positives on non-HTML files.
                 if (formElement.getParentElement() == null) {
                     LOGGER.debug(
-                            "Skipping HTML form because it has no parent. Likely not actually HTML.");
+                            "Skipping HTML form because it has no parent. Likely not actually valid HTML.");
                     continue; // do not report a missing anti-CSRF field on this form
                 }
                 if (formOnIgnoreList(formElement, ignoreList)) {

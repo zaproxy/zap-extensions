@@ -38,6 +38,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -67,8 +68,13 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         HttpRequestHeader requestHeader = new HttpRequestHeader();
         requestHeader.setURI(new URI("http://example.com", false));
 
+        HttpResponseHeader responseHeader = new HttpResponseHeader();
+        responseHeader.setStatusCode(200);
+        responseHeader.setHeader("Content-type", "text/html");
+
         msg = new HttpMessage();
         msg.setRequestHeader(requestHeader);
+        msg.setResponseHeader(responseHeader);
     }
 
     @Override
@@ -422,6 +428,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
                     }
                 };
         newMsg.getRequestHeader().setURI(new URI("http://", "localhost", "/", ""));
+        newMsg.getResponseHeader().setHeader("Content-type", "text/html");
         newMsg.setResponseBody(
                 "<html><head></head><body>"
                         + "<form name=\"someName\" data-no-csrf><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
