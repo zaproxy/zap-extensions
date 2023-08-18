@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 - Use HTTPS and resolve redirections in the alert references.
+- The alerts ASP.NET ViewState Disclosure and ASP.NET ViewState Integrity no longer have the evidence duplicated in the Other Info field.
 
 ## [40] - 2023-07-20
 ### Added
