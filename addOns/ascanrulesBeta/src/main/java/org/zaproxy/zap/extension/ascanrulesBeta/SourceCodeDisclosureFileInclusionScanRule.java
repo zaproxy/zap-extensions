@@ -523,6 +523,22 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
             Integer randomversussourcefilenamematchpercentage,
             HttpMessage sourceattackmsg,
             String uri) {
+        return createAlert(
+                paramname,
+                prefixedUrlfilename,
+                NON_EXISTANT_FILENAME,
+                randomversussourcefilenamematchpercentage,
+                sourceattackmsg,
+                uri);
+    }
+
+    private AlertBuilder createAlert(
+            String paramname,
+            String prefixedUrlfilename,
+            String nonExistentFilename,
+            Integer randomversussourcefilenamematchpercentage,
+            HttpMessage sourceattackmsg,
+            String uri) {
         return newAlert()
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setUri(uri)
@@ -532,7 +548,7 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
                         Constant.messages.getString(
                                 "ascanbeta.sourcecodedisclosure.lfibased.extrainfo",
                                 prefixedUrlfilename,
-                                NON_EXISTANT_FILENAME,
+                                nonExistentFilename,
                                 randomversussourcefilenamematchpercentage,
                                 this.thresholdPercentage))
                 .setMessage(sourceattackmsg);
@@ -541,6 +557,14 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
     @Override
     public List<Alert> getExampleAlerts() {
         String exampleUri = "https://example.com";
-        return List.of(createAlert("name", "../config/database.php", 48, null, exampleUri).build());
+        return List.of(
+                createAlert(
+                                "name",
+                                "../config/database.php",
+                                "jzdysfaeeinxxtsvjfggrwaucugjvsvpawibnv",
+                                48,
+                                null,
+                                exampleUri)
+                        .build());
     }
 }
