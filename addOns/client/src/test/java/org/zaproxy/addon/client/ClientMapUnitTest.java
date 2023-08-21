@@ -17,15 +17,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.clent;
+package org.zaproxy.addon.client;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
 import org.junit.jupiter.api.Test;
-import org.zaproxy.addon.client.ClientMap;
-import org.zaproxy.addon.client.ClientNode;
-import org.zaproxy.addon.client.ClientSideDetails;
 
 class ClientMapUnitTest {
 
