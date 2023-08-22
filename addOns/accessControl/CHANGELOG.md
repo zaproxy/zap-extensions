@@ -4,8 +4,13 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Add OWASP Top 10 tags to the alerts raised.
+- The add-on now includes example alert functionality for documentation generation purposes (Issue 6119).
+
 ### Changed
 - Update minimum ZAP version to 2.13.0.
+- Depend on Common Library add-on.
 - Maintenance changes.
 
 ## [8] - 2022-10-28
