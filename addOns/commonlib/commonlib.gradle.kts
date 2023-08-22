@@ -34,7 +34,7 @@ zapAddOn {
 
 crowdin {
     configuration {
-        file.set(file("$rootDir/gradle/crowdin-help-only.yml"))
+        file.set(file("$projectDir/gradle/crowdin.yml"))
         tokens.put("%helpPath%", "")
     }
 }

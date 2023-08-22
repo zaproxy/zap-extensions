@@ -24,7 +24,7 @@ zapAddOn {
                     version.set(">= 15.13.0")
                 }
                 register("commonlib") {
-                    version.set(">= 1.6.0 & < 2.0.0")
+                    version.set(">= 1.17.0 & < 2.0.0")
                 }
             }
         }

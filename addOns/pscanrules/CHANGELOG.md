@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 - The alerts of the Hash Disclosure scan rule no longer have the evidence duplicated in the Other Info field.
+- Depend on newer version of Common Library add-on.
 
 ## [50] - 2023-07-11
 ### Added
