@@ -19,9 +19,9 @@
  */
 package org.zaproxy.addon.graphql;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import graphql.introspection.IntrospectionQueryBuilder;
 import graphql.introspection.IntrospectionResultToSchema;
 import graphql.language.Document;
@@ -102,10 +102,10 @@ public class GraphQlParser {
         }
         try {
             Map<String, Object> result =
-                    new Gson()
-                            .fromJson(
+                    new ObjectMapper()
+                            .readValue(
                                     importMessage.getResponseBody().toString(),
-                                    new TypeToken<Map<String, Object>>() {}.getType());
+                                    new TypeReference<Map<String, Object>>() {});
             if (result == null) {
                 throw new IOException("The response was empty.");
             }
@@ -121,7 +121,7 @@ public class GraphQlParser {
             }
             String schemaSdl = new SchemaPrinter().print(schema);
             parse(schemaSdl);
-        } catch (JsonSyntaxException e) {
+        } catch (JacksonException e) {
             throw new IOException("The response was not valid JSON.");
         }
     }

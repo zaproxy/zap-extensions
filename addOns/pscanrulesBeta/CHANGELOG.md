@@ -4,7 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Use HTTPS and resolve redirections in the alert references.
+- The alerts of the Source Code Disclosure scan rule no longer have the evidence duplicated in the Other Info field.
 
 ## [34] - 2023-07-20
 ### Added

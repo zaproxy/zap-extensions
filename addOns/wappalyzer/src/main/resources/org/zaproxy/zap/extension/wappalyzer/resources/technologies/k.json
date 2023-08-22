@@ -337,13 +337,33 @@
     "scriptSrc": "karma\\.mdpcdn\\.com",
     "website": "https://karma-runner.github.io"
   },
+  "Karte": {
+    "cats": [
+      74,
+      76
+    ],
+    "description": "Karte is a customer engagement and marketing automation platform that enables businesses to understand their customers, deliver personalised experiences, and optimise marketing strategies.",
+    "icon": "Karte.png",
+    "js": {
+      "__KARTE_REWRITE_ADMIN_CONFIG": "",
+      "__karte_live": "",
+      "__karte_loaded": "",
+      "__karte_tracker": ""
+    },
+    "pricing": [
+      "poa",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://karte.io"
+  },
   "Kartra": {
     "cats": [
       32
     ],
     "description": "Kartra is an online business platform that offers marketing and sales tools.",
     "dom": "form[action*='app.kartra.com']",
-    "icon": "Kartra.png",
+    "icon": "Kartra.svg",
     "js": {
       "init_kartra_tracking": "",
       "kartra_tracking_loaded": ""
@@ -355,6 +375,24 @@
     "saas": true,
     "scriptSrc": "app\\.kartra\\.com",
     "website": "https://home.kartra.com"
+  },
+  "Kasada": {
+    "cats": [
+      16
+    ],
+    "cookies": {
+      "KP_UIDz": ""
+    },
+    "description": "Kasada is a cybersecurity company that provides a platform to protect websites and web applications from bot attacks and malicious activities.",
+    "icon": "Kasada.svg",
+    "js": {
+      "KPSDK.configure": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.kasada.io"
   },
   "Keap": {
     "cats": [
@@ -836,6 +874,20 @@
     "saas": true,
     "scriptSrc": "analytics\\.klickly\\.com/pixel\\.js\\?v=([\\d\\.]+)\\;version:\\1",
     "website": "https://www.klickly.com"
+  },
+  "Knak": {
+    "cats": [
+      75
+    ],
+    "description": "Knak is a platform that provides customisable email and landing page templates to simplify the creation of visually appealing marketing campaigns.",
+    "dom": "img[src*='.knak.io/']",
+    "icon": "Knak.svg",
+    "pricing": [
+      "poa",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://knak.com"
   },
   "Knockout.js": {
     "cats": [

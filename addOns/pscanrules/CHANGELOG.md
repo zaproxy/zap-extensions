@@ -4,8 +4,13 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- The following now include example alert functionality for documentation generation purposes (Issue 6119):
+  - Loosely Scoped Cookie scan rule.
+
 ### Changed
 - Maintenance changes.
+- The alerts of the Hash Disclosure scan rule no longer have the evidence duplicated in the Other Info field.
 
 ## [50] - 2023-07-11
 ### Added

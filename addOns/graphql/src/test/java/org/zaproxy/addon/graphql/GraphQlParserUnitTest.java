@@ -27,15 +27,18 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
+import java.util.Locale;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.testutils.StaticContentServerHandler;
 import org.zaproxy.zap.testutils.TestUtils;
+import org.zaproxy.zap.utils.I18N;
 
 class GraphQlParserUnitTest extends TestUtils {
 
@@ -46,6 +49,7 @@ class GraphQlParserUnitTest extends TestUtils {
         setUpZap();
         startServer();
         endpointUrl = "http://localhost:" + nano.getListeningPort();
+        Constant.messages = new I18N(Locale.ENGLISH);
     }
 
     @AfterEach

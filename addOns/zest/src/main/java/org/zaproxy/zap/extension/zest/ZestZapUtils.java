@@ -137,7 +137,7 @@ public class ZestZapUtils {
 
         if (za instanceof ZestScript) {
             ZestScript zs = (ZestScript) za;
-            return indexStr + Constant.messages.getString("zest.element.script", zs.getTitle());
+            return indexStr + zs.getTitle();
         } else if (za instanceof ZestRequest) {
             ZestRequest zr = (ZestRequest) za;
             if (zr.getUrl() != null) {
@@ -151,8 +151,7 @@ public class ZestZapUtils {
             }
         } else if (za instanceof ZestResponse) {
             ZestResponse zr = (ZestResponse) za;
-            return indexStr
-                    + Constant.messages.getString("zest.element.response", zr.getStatusCode());
+            return indexStr + zr.getStatusCode();
 
         } else if (za instanceof ZestAssertion) {
             ZestAssertion zas = (ZestAssertion) za;

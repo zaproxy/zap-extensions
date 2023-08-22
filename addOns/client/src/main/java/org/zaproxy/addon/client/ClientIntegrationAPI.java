@@ -25,11 +25,9 @@ import java.util.Locale;
 import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
-import org.zaproxy.addon.network.ExtensionNetwork;
-import org.zaproxy.addon.network.server.ServerInfo;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
@@ -62,17 +60,8 @@ public class ClientIntegrationAPI extends ApiImplementor {
         this.addApiAction(
                 new ApiAction(ACTION_REPORT_ZEST_SCRIPT, new String[] {PARAM_SCRIPT_JSON}));
 
-        ServerInfo serverInfo =
-                Control.getSingleton()
-                        .getExtensionLoader()
-                        .getExtension(ExtensionNetwork.class)
-                        .getMainProxyServerInfo();
-
         callbackUrl =
-                API.getInstance()
-                        .getCallBackUrl(
-                                this,
-                                "http://" + serverInfo.getAddress() + ":" + serverInfo.getPort());
+                API.getInstance().getCallBackUrl(this, HttpHeader.SCHEME_HTTPS + API.API_DOMAIN);
         LOGGER.debug("Client API callback URL: {}", callbackUrl);
     }
 

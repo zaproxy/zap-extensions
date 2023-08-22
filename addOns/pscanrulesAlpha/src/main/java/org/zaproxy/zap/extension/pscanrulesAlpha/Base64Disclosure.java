@@ -335,9 +335,6 @@ public class Base64Disclosure extends PluginPassiveScanner {
                 .setName(Constant.messages.getString("pscanalpha.base64disclosure.viewstate.name"))
                 .setDescription(
                         Constant.messages.getString("pscanalpha.base64disclosure.viewstate.desc"))
-                .setOtherInfo(
-                        Constant.messages.getString(
-                                "pscanalpha.base64disclosure.viewstate.extrainfo", viewstatexml))
                 .setSolution(
                         Constant.messages.getString("pscanalpha.base64disclosure.viewstate.soln"))
                 .setReference(
@@ -354,10 +351,6 @@ public class Base64Disclosure extends PluginPassiveScanner {
                 .setDescription(
                         Constant.messages.getString(
                                 "pscanalpha.base64disclosure.viewstatewithoutmac.desc"))
-                .setOtherInfo(
-                        Constant.messages.getString(
-                                "pscanalpha.base64disclosure.viewstatewithoutmac.extrainfo",
-                                viewstatexml))
                 .setSolution(
                         Constant.messages.getString(
                                 "pscanalpha.base64disclosure.viewstatewithoutmac.soln"))
@@ -372,7 +365,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
     private AlertBuilder createBase64Alert(String evidence, byte[] data) {
         return createBasicAlert("-3")
                 .setDescription(getDescription())
-                .setOtherInfo(getExtraInfo(evidence, data))
+                .setOtherInfo(new String(data))
                 .setSolution(getSolution())
                 .setReference(getReference())
                 .setEvidence(evidence);
@@ -406,10 +399,5 @@ public class Base64Disclosure extends PluginPassiveScanner {
 
     private static String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
-    private static String getExtraInfo(String evidence, byte[] decodeddata) {
-        return Constant.messages.getString(
-                MESSAGE_PREFIX + "extrainfo", evidence, new String(decodeddata));
     }
 }

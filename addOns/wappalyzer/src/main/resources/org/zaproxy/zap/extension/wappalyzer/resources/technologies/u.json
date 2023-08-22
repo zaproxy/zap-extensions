@@ -200,13 +200,13 @@
       2
     ],
     "description": "Ultimate Bulletin Board is an internet forum software designed for online communities, offering features such as user registration, thread organisation, moderation tools, search functionality, and customisable design options to facilitate discussions and community engagement.",
+    "implies": "PHP",
     "meta": {
       "generator": "^UBB\\.threads\\s([\\d\\.]+)$\\;version:\\1"
     },
     "pricing": [
       "onetime"
     ],
-    "implies": "PHP",
     "website": "https://www.ubbcentral.com"
   },
   "Ultimate GDPR & CCPA": {
@@ -269,6 +269,9 @@
     "cats": [
       1
     ],
+    "cookies": {
+      "merchello": "\\;version:7"
+    },
     "description": "Umbraco is an open-source Microsoft ASP.NET based content management system.",
     "dom": [
       "script[src*='/UmbracoForms/']",
@@ -277,9 +280,6 @@
     "headers": {
       "X-Umbraco-Version": "^(.+)$\\;version:\\1"
     },
-    "cookies": {
-      "merchello": "\\;version:7"
-    }, 
     "icon": "Umbraco.svg",
     "implies": "Microsoft ASP.NET",
     "js": {
