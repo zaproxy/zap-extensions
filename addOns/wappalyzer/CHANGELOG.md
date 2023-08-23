@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update minimum ZAP version to 2.14.0.
+- Moved from Apache batik libraries to weisJ's jsvg library (thus reducing the size of the add-on).
 
 ## [21.24.0] - 2023-09-07
 ### Changed

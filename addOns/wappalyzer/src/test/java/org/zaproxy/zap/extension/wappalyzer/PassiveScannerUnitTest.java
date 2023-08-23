@@ -39,14 +39,14 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.testutils.PassiveScannerTestUtils;
 
-class WappalyzerPassiveScannerUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveScanner> {
+class PassiveScannerUnitTest extends PassiveScannerTestUtils<WappalyzerPassiveScanner> {
 
-    WappalyzerApplicationTestHolder defaultHolder;
+    ApplicationTestHolder defaultHolder;
 
-    public WappalyzerApplicationTestHolder getDefaultHolder() {
+    public ApplicationTestHolder getDefaultHolder() {
         if (defaultHolder == null) {
             try {
-                defaultHolder = new WappalyzerApplicationTestHolder();
+                defaultHolder = new ApplicationTestHolder();
                 WappalyzerJsonParser parser = new WappalyzerJsonParser();
                 WappalyzerData result =
                         parser.parse(

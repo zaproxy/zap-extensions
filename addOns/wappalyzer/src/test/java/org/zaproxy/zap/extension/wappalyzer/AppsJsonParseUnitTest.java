@@ -27,7 +27,7 @@ import java.util.Collections;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-class WappalyzerAppsJsonParseUnitTest {
+class AppsJsonParseUnitTest {
 
     @Test
     void test() throws IOException {
