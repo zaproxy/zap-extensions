@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Depend on newer versions of Automation Framework and Common Library add-ons (Related to Issue 7961).
+
 ### Fixed
 - Ensure icons render when expected.
 
