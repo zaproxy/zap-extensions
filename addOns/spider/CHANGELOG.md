@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- Depend on newer versions of Automation Framework and Common Library add-ons (Related to Issue 7961).
 
 ## [0.5.0] - 2023-07-11
 ### Changed

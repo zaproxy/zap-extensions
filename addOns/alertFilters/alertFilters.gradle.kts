@@ -17,8 +17,9 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("automation") {
-                            version.set(">=0.24.0")
+                            version.set(">=0.31.0")
                         }
+                        register("commonlib")
                     }
                 }
             }
@@ -33,6 +34,7 @@ zapAddOn {
 
 dependencies {
     zapAddOn("automation")
+    zapAddOn("commonlib")
 
     testImplementation(project(":testutils"))
 }

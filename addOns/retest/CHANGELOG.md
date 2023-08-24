@@ -5,7 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-
+### Changed
+- Depend on newer versions of Automation Framework and Common Library add-ons (Related to Issue 7961).
 
 ## [0.6.0] - 2023-07-11
 ### Changed

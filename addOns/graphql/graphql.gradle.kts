@@ -9,7 +9,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">= 1.16.0 & < 2.0.0")
+                    version.set(">= 1.17.0 & < 2.0.0")
                 }
             }
         }
@@ -21,7 +21,7 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("automation") {
-                            version.set(">=0.24.0")
+                            version.set(">=0.31.0")
                         }
                     }
                 }
