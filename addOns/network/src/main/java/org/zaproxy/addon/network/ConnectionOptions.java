@@ -138,6 +138,8 @@ public class ConnectionOptions extends VersionedAbstractParam {
     private static final String DNS_TTL_SUCCESSFUL_QUERIES_SECURITY_PROPERTY =
             "networkaddress.cache.ttl";
 
+    private boolean legacyRemoveCacheHeaders;
+
     private static final boolean DEFAULT_STORE_HTTP_PROXY_PASS = true;
 
     private List<ChangesListener> changesListeners = new ArrayList<>();
@@ -213,6 +215,17 @@ public class ConnectionOptions extends VersionedAbstractParam {
         parseSocksProxyOptions();
 
         notifyChangesListeners();
+
+        legacyRemoveCacheHeaders = getBoolean(BASE_KEY + ".legacy.removeCacheHeaders", false);
+    }
+
+    /**
+     * Not part of the public API.
+     *
+     * @return {@code false} by default.
+     */
+    public boolean isLegacyRemoveCacheHeaders() {
+        return legacyRemoveCacheHeaders;
     }
 
     private void migrateCoreConfigs() {
