@@ -30,19 +30,14 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionPostman extends ExtensionAdaptor implements CommandLineListener {
 
     public static final String NAME = "ExtensionPostman";
 
-    private ZapMenuItem menuImportFilePostman;
-    private ZapMenuItem menuImportUrlPostman;
-    private ImportFromFileDialog currentFileDialog;
-    private ImportFromUrlDialog currentUrlDialog;
-
-    protected static final String MESSAGE_PREFIX = "postman.topmenu.";
+    private ZapMenuItem menuImportPostmanCollection;
+    private ImportDialog importDialog;
 
     private static final int ARG_IMPORT_FILE_IDX = 0;
     private static final int ARG_IMPORT_URL_IDX = 1;
@@ -57,60 +52,35 @@ public class ExtensionPostman extends ExtensionAdaptor implements CommandLineLis
         super.hook(extensionHook);
 
         if (hasView()) {
-            extensionHook.getHookMenu().addImportMenuItem(getMenuImportFilePostman());
-            extensionHook.getHookMenu().addImportMenuItem(getMenuImportUrlPostman());
+            extensionHook.getHookMenu().addImportMenuItem(getMenuImportPostmanCollection());
             extensionHook.addSessionListener(new SessionChangedListenerImpl());
         }
         extensionHook.addApiImplementor(new PostmanApi());
         extensionHook.addCommandLine(getCommandLineArguments());
     }
 
-    private ZapMenuItem getMenuImportFilePostman() {
-        if (menuImportFilePostman == null) {
-            menuImportFilePostman = new ZapMenuItem(MESSAGE_PREFIX + "import");
-            menuImportFilePostman.setToolTipText(
-                    Constant.messages.getString(MESSAGE_PREFIX + "import.tooltip"));
-            menuImportFilePostman.addActionListener(
+    private ZapMenuItem getMenuImportPostmanCollection() {
+        if (menuImportPostmanCollection == null) {
+            menuImportPostmanCollection = new ZapMenuItem("postman.topmenu.import");
+            menuImportPostmanCollection.setToolTipText(
+                    Constant.messages.getString("postman.topmenu.import.tooltip"));
+            menuImportPostmanCollection.addActionListener(
                     e -> {
-                        if (currentFileDialog == null) {
-                            currentFileDialog =
-                                    new ImportFromFileDialog(View.getSingleton().getMainFrame());
-                        } else {
-                            currentFileDialog.setVisible(true);
+                        if (importDialog == null) {
+                            importDialog = new ImportDialog(getView().getMainFrame());
                         }
+                        importDialog.setVisible(true);
                     });
         }
-        return menuImportFilePostman;
-    }
-
-    private ZapMenuItem getMenuImportUrlPostman() {
-        if (menuImportUrlPostman == null) {
-            menuImportUrlPostman = new ZapMenuItem(MESSAGE_PREFIX + "importremote");
-            menuImportUrlPostman.setToolTipText(
-                    Constant.messages.getString(MESSAGE_PREFIX + "importremote.tooltip"));
-
-            menuImportUrlPostman.addActionListener(
-                    e -> {
-                        if (currentUrlDialog == null) {
-                            currentUrlDialog =
-                                    new ImportFromUrlDialog(View.getSingleton().getMainFrame());
-                        } else {
-                            currentUrlDialog.setVisible(true);
-                        }
-                    });
-        }
-        return menuImportUrlPostman;
+        return menuImportPostmanCollection;
     }
 
     @Override
     public void unload() {
         super.unload();
 
-        if (currentFileDialog != null) {
-            currentFileDialog.dispose();
-        }
-        if (currentUrlDialog != null) {
-            currentUrlDialog.dispose();
+        if (importDialog != null) {
+            importDialog.dispose();
         }
     }
 
@@ -187,11 +157,8 @@ public class ExtensionPostman extends ExtensionAdaptor implements CommandLineLis
 
         @Override
         public void sessionAboutToChange(Session session) {
-            if (currentFileDialog != null) {
-                currentFileDialog.clear();
-            }
-            if (currentUrlDialog != null) {
-                currentUrlDialog.clear();
+            if (importDialog != null) {
+                importDialog.clearFields();
             }
         }
 

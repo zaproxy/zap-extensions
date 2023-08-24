@@ -49,9 +49,9 @@ class ObjectDeserializerUnitTest extends TestUtils {
 
     @ParameterizedTest
     @MethodSource("deserializationTestData")
-    void shouldDeserializeObject(String defn) throws Exception {
+    void shouldDeserializeObject(String collectionJson) throws Exception {
         PostmanParser parser = new PostmanParser();
-        PostmanCollection collection = parser.parse(defn);
+        PostmanCollection collection = parser.parse(collectionJson);
 
         Url url = ((Item) collection.getItem().get(0)).getRequest().getUrl();
         assertNotNull(url);
@@ -64,9 +64,9 @@ class ObjectDeserializerUnitTest extends TestUtils {
     @Test
     void shouldDeserializeInvalidObjectSilently() throws Exception {
         PostmanParser parser = new PostmanParser();
-        String defn = "{\"item\":{\"request\":{\"url\":true}}}}";
+        String collectionJson = "{\"item\":{\"request\":{\"url\":true}}}}";
 
-        PostmanCollection collection = assertDoesNotThrow(() -> parser.parse(defn));
+        PostmanCollection collection = assertDoesNotThrow(() -> parser.parse(collectionJson));
         assertNull(((Item) collection.getItem().get(0)).getRequest().getUrl());
     }
 }

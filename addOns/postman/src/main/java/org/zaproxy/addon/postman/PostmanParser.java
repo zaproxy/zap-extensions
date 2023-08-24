@@ -51,8 +51,8 @@ public class PostmanParser {
                     Constant.messages.getString(MESSAGE_PREFIX + "file.cannotreadfile", filePath));
         }
 
-        String defn = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-        importDefinition(defn);
+        String collectionJson = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+        importCollection(collectionJson);
     }
 
     public void importFromUrl(final String url) throws IllegalArgumentException, IOException {
@@ -68,19 +68,19 @@ public class PostmanParser {
                     Constant.messages.getString(MESSAGE_PREFIX + "url.unsupportedscheme", url));
         }
 
-        String defn = requestor.getResponseBody(uri);
-        importDefinition(defn);
+        String collectionJson = requestor.getResponseBody(uri);
+        importCollection(collectionJson);
     }
 
-    public void importDefinition(String defn) throws JsonProcessingException {
-        PostmanCollection postmanCollection = parse(defn);
+    public void importCollection(String collection) throws JsonProcessingException {
+        PostmanCollection postmanCollection = parse(collection);
 
         // TODO: Extract list of HttpMessage from PostmanCollection and send requests
     }
 
-    public PostmanCollection parse(String defn) throws JsonProcessingException {
+    public PostmanCollection parse(String collectionJson) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(defn, PostmanCollection.class);
+        return objectMapper.readValue(collectionJson, PostmanCollection.class);
     }
 
     private static boolean isSupportedScheme(String scheme) {
