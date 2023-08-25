@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Dependency updates.
 - The "Import an OpenAPI definition from the local file system" and "Import an OpenAPI definition from a URL" menu items
   were merged into one, "Import an OpenAPI Definition".
+- Depend on newer versions of Automation Framework and Common Library add-ons (Related to Issue 7961).
 
 ### Fixed
 - Importing empty or invalid OpenAPI definitions failed silently in some cases (Issue 7949).

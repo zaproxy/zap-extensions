@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   "Import a WSDL File". The merged dialog uses the shortcut `Ctrl+J` (`Cmd+J` on macOS).
 - The Import dialog shows the values used in the previous import when reopened.
 - Maintenance changes.
+- Depend on newer versions of Automation Framework and Common Library add-ons (Related to Issue 7961).
 
 ## [18] - 2023-07-11
 ### Changed

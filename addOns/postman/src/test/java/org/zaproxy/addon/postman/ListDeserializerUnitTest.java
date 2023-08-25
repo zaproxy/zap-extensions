@@ -50,9 +50,9 @@ class ListDeserializerUnitTest extends TestUtils {
 
     @ParameterizedTest
     @MethodSource("deserializationTestData")
-    void shouldDeserializeItems(String defn, Class<?> expectedType) throws Exception {
+    void shouldDeserializeItems(String collectionJson, Class<?> expectedType) throws Exception {
         PostmanParser parser = new PostmanParser();
-        PostmanCollection collection = parser.parse(defn);
+        PostmanCollection collection = parser.parse(collectionJson);
 
         assertEquals(1, collection.getItem().size());
         assertTrue(expectedType.isInstance(collection.getItem().get(0)));
@@ -61,9 +61,9 @@ class ListDeserializerUnitTest extends TestUtils {
     @Test
     void shouldParseWithInvalidItemsSilently() throws Exception {
         PostmanParser parser = new PostmanParser();
-        String defn = "{\"item\":[true,{\"randomKey\":\"randomValue\"}]}";
+        String collectionJson = "{\"item\":[true,{\"randomKey\":\"randomValue\"}]}";
 
-        PostmanCollection collection = assertDoesNotThrow(() -> parser.parse(defn));
+        PostmanCollection collection = assertDoesNotThrow(() -> parser.parse(collectionJson));
         assertEquals(0, collection.getItem().size());
     }
 }

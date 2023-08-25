@@ -44,13 +44,13 @@ class PostmanParserUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldFailWhenDefnIsInvalidJson() throws Exception {
+    void shouldFailWhenCollectionIsInvalidJson() throws Exception {
         PostmanParser parser = new PostmanParser();
-        assertThrows(IOException.class, () -> parser.importDefinition("{"));
+        assertThrows(IOException.class, () -> parser.importCollection("{"));
     }
 
     @Test
-    void shouldParseWhenDefnIsValidJson() throws Exception {
+    void shouldParseWhenCollectionIsValidJson() throws Exception {
         PostmanParser parser = new PostmanParser();
         assertDoesNotThrow(() -> parser.parse("{}"));
     }
@@ -58,8 +58,8 @@ class PostmanParserUnitTest extends TestUtils {
     @Test
     void shouldParseKnownAttributes() throws Exception {
         PostmanParser parser = new PostmanParser();
-        String defn = "{\"item\":true,\"variable\":\"\"}"; // Random types for leniency
-        PostmanCollection collection = parser.parse(defn);
+        String collectionJson = "{\"item\":true,\"variable\":\"\"}"; // Random types for leniency
+        PostmanCollection collection = parser.parse(collectionJson);
 
         assertNotNull(collection.getItem());
         assertNotNull(collection.getVariable());
@@ -68,7 +68,7 @@ class PostmanParserUnitTest extends TestUtils {
     @Test
     void shouldIgnoreUnKnownAttributes() throws Exception {
         PostmanParser parser = new PostmanParser();
-        String defn = "{\"unKnown1\":true,\"unKnown2\":\"\"}";
-        assertDoesNotThrow(() -> parser.parse(defn));
+        String collectionJson = "{\"unKnown1\":true,\"unKnown2\":\"\"}";
+        assertDoesNotThrow(() -> parser.parse(collectionJson));
     }
 }

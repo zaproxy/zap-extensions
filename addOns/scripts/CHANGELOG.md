@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Allow to display script without focusing on it.
 - Maintenance changes.
+- Depend on newer version of Automation Framework add-on (Related to Issue 7961).
 
 ## [39] - 2023-07-11
 ### Changed
