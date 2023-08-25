@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.client;
 
+import org.openqa.selenium.JavascriptExecutor;
 import org.zaproxy.zap.extension.selenium.BrowserHook;
 import org.zaproxy.zap.extension.selenium.SeleniumScriptUtils;
 
@@ -32,6 +33,10 @@ public class RedirectScript implements BrowserHook {
 
     @Override
     public void browserLaunched(SeleniumScriptUtils ssutils) {
-        ssutils.getWebDriver().get(api.getCallbackUrl());
+        String zapurl = api.getCallbackUrl();
+        ssutils.getWebDriver().get(zapurl);
+        JavascriptExecutor jsExecutor = (JavascriptExecutor) ssutils.getWebDriver();
+        jsExecutor.executeScript("localStorage.setItem('localzapurl', '" + zapurl + "')");
+        jsExecutor.executeScript("localStorage.setItem('localzapenable',false)");
     }
 }

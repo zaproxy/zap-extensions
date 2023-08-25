@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -200,10 +199,6 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
         try {
             WebDriver wd = extSelenium.getProxiedBrowserByName(browserName);
-            String zapurl = wd.getCurrentUrl();
-            JavascriptExecutor jsExecutor = (JavascriptExecutor) wd;
-            jsExecutor.executeScript("localStorage.setItem('localzapurl', '" + zapurl + "')");
-            jsExecutor.executeScript("localStorage.setItem('localzapenable',false)");
             wd.get(url);
         } catch (RuntimeException e) {
             String msg =
