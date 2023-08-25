@@ -441,7 +441,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
                     }
                 };
         newMsg.getRequestHeader().setURI(new URI("http://", "localhost", "/", ""));
-        newMsg.getResponseHeader().setHeader("Content-type", "text/html");
+        newMsg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "text/html");
         newMsg.setResponseBody(
                 "<html><head></head><body>"
                         + "<form name=\"someName\" data-no-csrf><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"
