@@ -36,6 +36,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
@@ -70,7 +71,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
 
         HttpResponseHeader responseHeader = new HttpResponseHeader();
         responseHeader.setStatusCode(200);
-        responseHeader.setHeader("Content-type", "text/html");
+        responseHeader.setHeader(HttpHeader.CONTENT_TYPE, "text/html");
 
         msg = new HttpMessage();
         msg.setRequestHeader(requestHeader);
@@ -109,6 +110,18 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_SESS_05_CSRF.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_SESS_05_CSRF.getValue())));
+    }
+
+    @Test
+    void shouldNotRaiseAlertIfContentTypeIsNotHTML() {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "application/json");
+        msg.setResponseBody("no html");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(alertsRaised.size(), 0);
     }
 
     @Test
