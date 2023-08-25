@@ -1032,6 +1032,9 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                 // also useful for other launched browsers.
                 firefoxOptions.addPreference("network.captive-portal-service.enabled", false);
 
+                // give permission to ZAP browser extension 
+                firefoxOptions.addPreference("extensions.firebug.onByDefault", true);
+                
                 if (requester == HttpSender.AJAX_SPIDER_INITIATOR
                         || requester == HttpSender.ACTIVE_SCANNER_INITIATOR) {
                     // Disable JSON viewer, otherwise AJAX Spider or scan rules will use it,

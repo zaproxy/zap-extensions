@@ -173,10 +173,10 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
 
     private List<String> getBrowsers() {
         List<String> browsers = new ArrayList<>();
-        String firefox = Browser.FIREFOX.getId();
+        // String firefox = Browser.FIREFOX.getId();
         String chrome = Browser.CHROME.getId();
 
-        browsers.add(Character.toUpperCase(firefox.charAt(0)) + firefox.substring(1));
+        // browsers.add(Character.toUpperCase(firefox.charAt(0)) + firefox.substring(1));
         browsers.add(Character.toUpperCase(chrome.charAt(0)) + chrome.substring(1));
         return browsers;
     }
@@ -201,10 +201,10 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
         try {
             WebDriver wd = extSelenium.getProxiedBrowserByName(browserName);
             String zapurl = wd.getCurrentUrl();
-            wd.get(url);
             JavascriptExecutor jsExecutor = (JavascriptExecutor) wd;
             jsExecutor.executeScript("localStorage.setItem('localzapurl', '" + zapurl + "')");
             jsExecutor.executeScript("localStorage.setItem('localzapenable',false)");
+            wd.get(url);
         } catch (RuntimeException e) {
             String msg =
                     extSelenium.getWarnMessageFailedToStart(
