@@ -17,18 +17,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.zest;
+package org.zaproxy.addon.client.impl;
 
-/*
- * The ZestClientHelperInterface is an interface that should be implemented by ZAP client add-on
- * to provide support for Zest scripts recording.
+/**
+ * This interface defines the contract for a client-side extension handling Zest statements. Zest
+ * statements represent specific actions or operations to be performed by the Add-on.
+ *
+ * <p>Note: This interface is not intended to be implemented or used by other add-ons.
  */
-public interface ZestClientHelperInterface {
+public interface ClientZestRecorder {
 
     /**
-     * Checks whether the ZAP client add-on is currently active and supports Zest scripts.
+     * Adds a Zest statement to the client's Zest statement utility.
      *
-     * @return {@code true} if the client is active and supports Zest, {@code false} otherwise.
+     * @param stmt the stringified JSON object representing the Zest statement to be added.
+     * @throws Exception if an error occurs while adding the Zest statement.
      */
-    boolean isClientActive();
+    void addZestStatement(String stmt) throws Exception;
 }

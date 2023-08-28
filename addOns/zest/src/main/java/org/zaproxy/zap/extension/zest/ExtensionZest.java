@@ -147,7 +147,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     private int recordingWinId = 0;
     private ScriptNode recordingNode = null;
     private boolean clientRecordingActive;
-    private ZestClientHelperInterface zestClientHelper;
+    private ZestClientRecorderHelper zestClientHelper;
 
     private ExtensionNetwork extensionNetwork;
 
@@ -1635,7 +1635,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         return clientRecordingActive;
     }
 
-    public void setClientHelper(ZestClientHelperInterface zestClientHelper) {
+    public void setClientHelper(ZestClientRecorderHelper zestClientHelper) {
         this.zestClientHelper = zestClientHelper;
     }
 

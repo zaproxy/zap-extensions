@@ -25,6 +25,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
@@ -203,7 +204,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
         } catch (RuntimeException e) {
             String msg =
                     extSelenium.getWarnMessageFailedToStart(
-                            browserName.toLowerCase(), new Throwable(e));
+                            browserName.toLowerCase(Locale.ROOT), e);
             cancelPressed();
             View.getSingleton().showWarningDialog(msg);
         }
@@ -228,7 +229,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
             try {
                 script.setPrefix(this.getStringValue(FIELD_PREFIX));
             } catch (MalformedURLException e) {
-                LOGGER.error(e.getMessage(), e);
+                LOGGER.warn(e.getMessage(), e);
             }
         }
 

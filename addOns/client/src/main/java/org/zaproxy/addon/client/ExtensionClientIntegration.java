@@ -28,7 +28,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
-import org.zaproxy.addon.client.impl.ClientZestInterface;
+import org.zaproxy.addon.client.impl.ClientZestRecorder;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 
@@ -50,7 +50,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     private ClientHistoryPanel clientHistoryPanel;
     private ClientHistoryTableModel clientHistoryTableModel;
     private RedirectScript redirectScript;
-    private ClientZestInterface clientHandler;
+    private ClientZestRecorder clientHandler;
 
     private ClientIntegrationAPI api;
 
@@ -192,11 +192,11 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         clientHandler.addZestStatement(stmt);
     }
 
-    public void setClientRecorderHelper(ClientZestInterface clientHandler) {
+    public void setClientRecorderHelper(ClientZestRecorder clientHandler) {
         this.clientHandler = clientHandler;
     }
 
-    public ClientZestInterface getClientRecorderHelper() {
+    public ClientZestRecorder getClientRecorderHelper() {
         return clientHandler;
     }
 }

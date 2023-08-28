@@ -69,7 +69,7 @@ public class ExtensionClientZestTest {
     }
 
     @Test
-    void shouldLoadZestHelper() {
+    void shouldLoadClientHelper() {
         // Given
         ExtensionZest extensionZest = mock(ExtensionZest.class);
         given(extensionLoader.getExtension(ExtensionZest.class)).willReturn(extensionZest);
@@ -80,7 +80,7 @@ public class ExtensionClientZestTest {
     }
 
     @Test
-    void shouldRemoveZestHelperOnUnload() {
+    void shouldRemoveClientHelperOnUnload() {
         // Given
         ExtensionZest extensionZest = mock(ExtensionZest.class);
         given(extensionLoader.getExtension(ExtensionZest.class)).willReturn(extensionZest);
@@ -92,7 +92,7 @@ public class ExtensionClientZestTest {
     }
 
     @Test
-    void shouldLoadClietHelper() {
+    void shouldLoadClientRecorderHelper() {
         // Given
         ExtensionClientIntegration extensionClient = mock(ExtensionClientIntegration.class);
         given(extensionLoader.getExtension(ExtensionClientIntegration.class))
@@ -104,7 +104,7 @@ public class ExtensionClientZestTest {
     }
 
     @Test
-    void shouldRemoveClientHelperOnUnload() {
+    void shouldRemoveClientRecorderHelperOnUnload() {
         // Given
         ExtensionClientIntegration extensionClient = mock(ExtensionClientIntegration.class);
         given(extensionLoader.getExtension(ExtensionClientIntegration.class))
