@@ -34,11 +34,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
+import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.addon.spider.filters.FetchFilter;
 import org.zaproxy.addon.spider.filters.HttpPrefixFetchFilter;
 import org.zaproxy.addon.spider.filters.ParseFilter;
@@ -46,7 +48,6 @@ import org.zaproxy.addon.spider.parser.SpiderParser;
 import org.zaproxy.addon.spider.parser.SvgHrefParser;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.model.Context;
-import org.zaproxy.zap.model.DefaultValueGenerator;
 import org.zaproxy.zap.model.ScanController;
 import org.zaproxy.zap.model.StructuralNode;
 import org.zaproxy.zap.model.StructuralSiteNode;
@@ -57,9 +58,11 @@ import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController<SpiderScan> {
-    public static final String NAME = "ExtensionSpider2";
 
-    private ValueGenerator generator = new DefaultValueGenerator();
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionCommonlib.class);
+
+    public static final String NAME = "ExtensionSpider2";
 
     /** The spider panel. */
     private SpiderPanel spiderPanel;
@@ -106,16 +109,20 @@ public class ExtensionSpider2 extends ExtensionAdaptor implements ScanController
     }
 
     @Override
+    public List<Class<? extends Extension>> getDependencies() {
+        return DEPENDENCIES;
+    }
+
+    @Override
     public void init() {
         SpiderEventPublisher.getPublisher();
     }
 
-    public void setValueGenerator(ValueGenerator generator) {
-        this.generator = generator == null ? new DefaultValueGenerator() : generator;
-    }
-
     ValueGenerator getValueGenerator() {
-        return generator;
+        return Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionCommonlib.class)
+                .getValueGenerator();
     }
 
     @Override

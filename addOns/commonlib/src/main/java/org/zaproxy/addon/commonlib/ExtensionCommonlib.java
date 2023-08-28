@@ -19,6 +19,9 @@
  */
 package org.zaproxy.addon.commonlib;
 
+import java.util.List;
+import java.util.Map;
+import org.apache.commons.httpclient.URI;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -26,8 +29,43 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.commonlib.ui.ProgressPanel;
+import org.zaproxy.zap.model.DefaultValueGenerator;
+import org.zaproxy.zap.model.ValueGenerator;
 
 public class ExtensionCommonlib extends ExtensionAdaptor {
+
+    private static final ValueGenerator DEFAULT_VALUE_GENERATOR = new DefaultValueGenerator();
+
+    private ValueGenerator valueGeneratorImpl;
+
+    private final ValueGenerator valueGeneratorWrapper =
+            (URI uri,
+                    String url,
+                    String fieldId,
+                    String defaultValue,
+                    List<String> definedValues,
+                    Map<String, String> envAttributes,
+                    Map<String, String> fieldAttributes) -> {
+                var local = valueGeneratorImpl;
+                if (local != null) {
+                    return local.getValue(
+                            uri,
+                            url,
+                            fieldId,
+                            defaultValue,
+                            definedValues,
+                            envAttributes,
+                            fieldAttributes);
+                }
+                return DEFAULT_VALUE_GENERATOR.getValue(
+                        uri,
+                        url,
+                        fieldId,
+                        defaultValue,
+                        definedValues,
+                        envAttributes,
+                        fieldAttributes);
+            };
 
     private ProgressPanel progressPanel;
 
@@ -64,6 +102,21 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
     @Override
     public String getUIName() {
         return Constant.messages.getString("commonlib.name");
+    }
+
+    /**
+     * Gets the value generator.
+     *
+     * @return the value generator, never {@code null}.
+     * @since 2.17.0
+     */
+    public ValueGenerator getValueGenerator() {
+        return valueGeneratorWrapper;
+    }
+
+    /** <strong>Note:</strong> Not part of the public API. */
+    public void setCustomValueGenerator(ValueGenerator generator) {
+        this.valueGeneratorImpl = generator;
     }
 
     private class SessionChangedListenerImpl implements SessionChangedListener {

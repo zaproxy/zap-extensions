@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.spider.formhandler;
+package org.zaproxy.addon.commonlib.formhandler;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -39,36 +39,37 @@ import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
-import org.zaproxy.addon.spider.ExtensionSpider2;
+import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.zap.extension.formhandler.ExtensionFormHandler;
 import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.testutils.TestUtils;
 
-/** Unit test for {@link ExtensionSpiderFormHandler}. */
-class ExtensionSpiderFormHandlerUnitTest extends TestUtils {
+/** Unit test for {@link ExtensionCommonlibFormHandler}. */
+class ExtensionCommonlibFormHandlerUnitTest extends TestUtils {
 
-    private ExtensionSpider2 extensionSpider;
+    private ExtensionCommonlib extensionCommonlib;
     private ExtensionFormHandler extensionFormHandler;
-    private ExtensionLoader extensionLoader;
-    private ExtensionSpiderFormHandler extension;
+    private ExtensionCommonlibFormHandler extension;
 
     @BeforeEach
     void setUp() {
-        extension = new ExtensionSpiderFormHandler();
-        mockMessages("org.zaproxy.addon.spider.resources." + Constant.MESSAGES_PREFIX, "spider");
+        extension = new ExtensionCommonlibFormHandler();
+        mockMessages(
+                "org.zaproxy.addon.commonlib.resources." + Constant.MESSAGES_PREFIX, "commonlib");
 
         Model model = mock(Model.class, withSettings().strictness(Strictness.LENIENT));
         Model.setSingletonForTesting(model);
 
-        extensionLoader =
+        ExtensionLoader extensionLoader =
                 mock(ExtensionLoader.class, withSettings().strictness(Strictness.LENIENT));
         Control.initSingletonForTesting(model, extensionLoader);
 
-        extensionSpider = mockLoadedExtension(ExtensionSpider2.class);
-        extensionFormHandler = mockLoadedExtension(ExtensionFormHandler.class);
+        extensionCommonlib = mockLoadedExtension(extensionLoader, ExtensionCommonlib.class);
+        extensionFormHandler = mockLoadedExtension(extensionLoader, ExtensionFormHandler.class);
     }
 
-    private <T extends Extension> T mockLoadedExtension(Class<T> clazz) {
+    private static <T extends Extension> T mockLoadedExtension(
+            ExtensionLoader extensionLoader, Class<T> clazz) {
         T extension = mock(clazz);
         given(extensionLoader.getExtension(clazz)).willReturn(extension);
         return extension;
@@ -78,7 +79,9 @@ class ExtensionSpiderFormHandlerUnitTest extends TestUtils {
     void shouldHaveName() {
         assertThat(
                 extension.getName(),
-                is(equalTo("org.zaproxy.addon.spider.formhandler.ExtensionSpiderFormHandler")));
+                is(
+                        equalTo(
+                                "org.zaproxy.addon.commonlib.formhandler.ExtensionCommonlibFormHandler")));
     }
 
     @Test
@@ -95,7 +98,7 @@ class ExtensionSpiderFormHandlerUnitTest extends TestUtils {
     void shouldHaveExpectedDependencies() {
         assertThat(
                 extension.getDependencies(),
-                containsInAnyOrder(ExtensionFormHandler.class, ExtensionSpider2.class));
+                containsInAnyOrder(ExtensionFormHandler.class, ExtensionCommonlib.class));
     }
 
     @Test
@@ -107,7 +110,7 @@ class ExtensionSpiderFormHandlerUnitTest extends TestUtils {
         // When
         extension.hook(extensionHook);
         // Then
-        verify(extensionSpider).setValueGenerator(valueGenerator);
+        verify(extensionCommonlib).setCustomValueGenerator(valueGenerator);
     }
 
     @Test
@@ -120,6 +123,6 @@ class ExtensionSpiderFormHandlerUnitTest extends TestUtils {
         // Given / When
         extension.unload();
         // Then
-        verify(extensionSpider).setValueGenerator(null);
+        verify(extensionCommonlib).setCustomValueGenerator(null);
     }
 }

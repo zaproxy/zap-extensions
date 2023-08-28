@@ -34,18 +34,6 @@ zapAddOn {
                     }
                 }
             }
-            register("org.zaproxy.zap.extension.openapi.formhandler.ExtensionOpenApiFormHandler") {
-                classnames {
-                    allowed.set(listOf("org.zaproxy.zap.extension.openapi.formhandler"))
-                }
-                dependencies {
-                    addOns {
-                        register("formhandler") {
-                            version.set(">=6.0.0 & < 7.0.0")
-                        }
-                    }
-                }
-            }
         }
         dependencies {
             addOns {
@@ -73,7 +61,6 @@ configurations {
 dependencies {
     zapAddOn("automation")
     zapAddOn("commonlib")
-    zapAddOn("formhandler")
     zapAddOn("spider")
 
     implementation("io.swagger.parser.v3:swagger-parser:2.1.16")

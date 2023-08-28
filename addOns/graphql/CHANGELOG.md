@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 - Dependency updates.
 - Maintenance changes.
 - Depend on newer versions of Automation Framework and Common Library add-ons (Related to Issue 7961).
+- Use Common Library add-on to obtain the Value Generator (Issue 8016).
 
 ## [0.18.0] - 2023-07-11
 ### Changed

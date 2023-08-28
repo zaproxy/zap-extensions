@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.security.InvalidParameterException;
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -31,16 +32,17 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.db.Database;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.db.DatabaseUnsupportedException;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
+import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
-import org.zaproxy.zap.model.DefaultValueGenerator;
 import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.view.ZapMenuItem;
 
@@ -48,6 +50,9 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionImportWSDL";
     public static final String STATS_ADDED_URLS = "soap.urls.added";
+
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionCommonlib.class);
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionImportWSDL.class);
     private static final String THREAD_PREFIX = "ZAP-Import-WSDL-";
@@ -59,21 +64,22 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 
     private final TableWsdl table = new TableWsdl();
     private final WSDLCustomParser parser = new WSDLCustomParser(this::getValueGenerator, table);
-    private ValueGenerator valueGenerator;
 
     public ExtensionImportWSDL() {
         super(NAME);
         this.setOrder(158);
-
-        setValueGenerator(null);
     }
 
-    public void setValueGenerator(ValueGenerator valueGenerator) {
-        this.valueGenerator = valueGenerator == null ? new DefaultValueGenerator() : valueGenerator;
+    @Override
+    public List<Class<? extends Extension>> getDependencies() {
+        return DEPENDENCIES;
     }
 
     private ValueGenerator getValueGenerator() {
-        return valueGenerator;
+        return Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionCommonlib.class)
+                .getValueGenerator();
     }
 
     public WSDLCustomParser getParser() {

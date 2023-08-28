@@ -44,19 +44,6 @@ zapAddOn {
                     }
                 }
             }
-
-            register("org.zaproxy.zap.extension.soap.formhandler.ExtensionSoapFormHandler") {
-                classnames {
-                    allowed.set(listOf("org.zaproxy.zap.extension.soap.formhandler"))
-                }
-                dependencies {
-                    addOns {
-                        register("formhandler") {
-                            version.set(">=6.0.0 & < 7.0.0")
-                        }
-                    }
-                }
-            }
         }
     }
 
@@ -69,7 +56,6 @@ zapAddOn {
 dependencies {
     zapAddOn("automation")
     zapAddOn("commonlib")
-    zapAddOn("formhandler")
     zapAddOn("spider")
 
     implementation("com.predic8:soa-model-core:2.0.1")
