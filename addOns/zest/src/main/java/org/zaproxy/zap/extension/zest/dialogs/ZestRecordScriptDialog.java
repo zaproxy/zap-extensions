@@ -229,7 +229,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
             try {
                 script.setPrefix(this.getStringValue(FIELD_PREFIX));
             } catch (MalformedURLException e) {
-                LOGGER.warn(e.getMessage(), e);
+                LOGGER.error(e.getMessage(), e);
             }
         }
 
@@ -255,7 +255,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
 
         if (!this.isServerSide()) {
             if (!this.extension.isClientAccessible()) {
-                LOGGER.error(ERROR_CLIENT);
+                LOGGER.warn(ERROR_CLIENT);
                 View.getSingleton().showWarningDialog(Constant.messages.getString(ERROR_CLIENT));
                 return;
             }
