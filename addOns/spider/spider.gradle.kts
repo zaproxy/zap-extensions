@@ -35,19 +35,6 @@ zapAddOn {
                     }
                 }
             }
-
-            register("org.zaproxy.addon.spider.formhandler.ExtensionSpiderFormHandler") {
-                classnames {
-                    allowed.set(listOf("org.zaproxy.addon.spider.formhandler"))
-                }
-                dependencies {
-                    addOns {
-                        register("formhandler") {
-                            version.set(">=6.0.0 & < 7.0.0")
-                        }
-                    }
-                }
-            }
         }
     }
 
@@ -69,7 +56,6 @@ dependencies {
     zapAddOn("automation")
     zapAddOn("commonlib")
     zapAddOn("database")
-    zapAddOn("formhandler")
     zapAddOn("network")
 
     implementation("io.kaitai:kaitai-struct-runtime:0.10")

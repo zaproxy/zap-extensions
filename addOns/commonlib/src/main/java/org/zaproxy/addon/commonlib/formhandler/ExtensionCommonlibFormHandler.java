@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.graphql.formhandler;
+package org.zaproxy.addon.commonlib.formhandler;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,24 +27,24 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.zaproxy.addon.graphql.ExtensionGraphQl;
+import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.zap.extension.formhandler.ExtensionFormHandler;
 import org.zaproxy.zap.model.ValueGenerator;
 
-public class ExtensionGraphQlFormHandler extends ExtensionAdaptor {
+public class ExtensionCommonlibFormHandler extends ExtensionAdaptor {
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
             Collections.unmodifiableList(
-                    Arrays.asList(ExtensionFormHandler.class, ExtensionGraphQl.class));
+                    Arrays.asList(ExtensionFormHandler.class, ExtensionCommonlib.class));
 
     @Override
     public String getUIName() {
-        return Constant.messages.getString("graphql.formhandler.name");
+        return Constant.messages.getString("commonlib.formhandler.name");
     }
 
     @Override
     public String getDescription() {
-        return Constant.messages.getString("graphql.formhandler.desc");
+        return Constant.messages.getString("commonlib.formhandler.desc");
     }
 
     @Override
@@ -56,7 +56,11 @@ public class ExtensionGraphQlFormHandler extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         ValueGenerator valueGenerator =
                 getExtension(ExtensionFormHandler.class).getValueGenerator();
-        getExtension(ExtensionGraphQl.class).setValueGenerator(valueGenerator);
+        setCustomValueGenerator(valueGenerator);
+    }
+
+    private static void setCustomValueGenerator(ValueGenerator valueGenerator) {
+        getExtension(ExtensionCommonlib.class).setCustomValueGenerator(valueGenerator);
     }
 
     private static <T extends Extension> T getExtension(Class<T> clazz) {
@@ -70,6 +74,6 @@ public class ExtensionGraphQlFormHandler extends ExtensionAdaptor {
 
     @Override
     public void unload() {
-        getExtension(ExtensionGraphQl.class).setValueGenerator(null);
+        setCustomValueGenerator(null);
     }
 }
