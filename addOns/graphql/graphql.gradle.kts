@@ -27,19 +27,6 @@ zapAddOn {
                 }
             }
 
-            register("org.zaproxy.addon.graphql.formhandler.ExtensionGraphQlFormHandler") {
-                classnames {
-                    allowed.set(listOf("org.zaproxy.addon.graphql.formhandler"))
-                }
-                dependencies {
-                    addOns {
-                        register("formhandler") {
-                            version.set(">=6.0.0 & < 7.0.0")
-                        }
-                    }
-                }
-            }
-
             register("org.zaproxy.addon.graphql.spider.ExtensionGraphQlSpider") {
                 classnames {
                     allowed.set(listOf("org.zaproxy.addon.graphql.spider"))
@@ -73,7 +60,6 @@ crowdin {
 dependencies {
     zapAddOn("automation")
     zapAddOn("commonlib")
-    zapAddOn("formhandler")
     zapAddOn("spider")
 
     implementation("com.graphql-java:graphql-java:21.0")
