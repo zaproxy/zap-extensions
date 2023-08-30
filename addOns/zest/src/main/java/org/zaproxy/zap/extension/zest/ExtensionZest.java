@@ -538,9 +538,13 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     }
 
     public ScriptNode add(ZestScriptWrapper script, boolean display) {
+        return add(script, display, true);
+    }
+
+    public ScriptNode add(ZestScriptWrapper script, boolean display, boolean allowFocus) {
         LOGGER.debug("add script {}", script.getName());
         ScriptNode node = this.getExtScript().addScript(script, display);
-        this.display(script, node, true);
+        this.display(script, node, true, allowFocus);
         if (script.isRecording()) {
             scriptNodeRecording = node;
             // OK, I admit I dont know why this line is required .. but it is ;)
@@ -551,9 +555,18 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     }
 
     public void display(ZestScriptWrapper script, ScriptNode node, boolean expand) {
+        display(script, node, expand, true);
+    }
+
+    public void display(
+            ZestScriptWrapper script, ScriptNode node, boolean expand, boolean allowFocus) {
         if (View.isInitialised() && this.getExtScript().getScriptUI() != null) {
-            this.getExtScript().getScriptUI().selectNode(node, expand);
-            this.getExtScript().getScriptUI().displayScript(script);
+            if (allowFocus) {
+                // This function internally calls set script, which is not trivial to change at the
+                // moment
+                this.getExtScript().getScriptUI().selectNode(node, expand);
+            }
+            displayScript(script, allowFocus);
         }
     }
 
@@ -571,6 +584,10 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     }
 
     public void updated(ScriptNode node) {
+        updated(node, true);
+    }
+
+    public void updated(ScriptNode node, boolean allowFocus) {
         if (node == null) {
             return;
         }
@@ -583,6 +600,19 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         if (this.getExtScript().getScriptUI() != null
                 && this.getExtScript().getScriptUI().isScriptDisplayed(sw)) {
             // We need to do this to prevent the UI slating any changes
+            displayScript(sw, allowFocus);
+        }
+    }
+
+    private void displayScript(ZestScriptWrapper sw, boolean allowFocus) {
+        try {
+            Method displayScriptMethod =
+                    this.getExtScript()
+                            .getScriptUI()
+                            .getClass()
+                            .getDeclaredMethod("displayScript", ScriptWrapper.class, boolean.class);
+            displayScriptMethod.invoke(this.getExtScript().getScriptUI(), sw, allowFocus);
+        } catch (Exception e) {
             this.getExtScript().getScriptUI().displayScript(sw);
         }
     }
@@ -845,6 +875,11 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
     public final ScriptNode addToParent(
             ScriptNode parent, ZestStatement newChild, boolean display) {
+        return addToParent(parent, newChild, display, true);
+    }
+
+    public final ScriptNode addToParent(
+            ScriptNode parent, ZestStatement newChild, boolean display, boolean allowFocus) {
         LOGGER.debug(
                 "addToParent parent={} new={}", parent.getNodeName(), newChild.getElementType());
         ScriptNode node;
@@ -875,7 +910,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             throw new IllegalArgumentException(
                     "Unexpected parent node: " + parentElement + " " + parent.getNodeName());
         }
-        this.updated(node);
+        this.updated(node, allowFocus);
         if (display) {
             this.display(node, false);
         }
@@ -1623,7 +1658,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             EventQueue.invokeLater(
                     () -> {
                         try {
-                            addToParent(getRecordingNode(), stmtFinal, false);
+                            addToParent(getRecordingNode(), stmtFinal, false, false);
                         } catch (Exception e) {
                             LOGGER.error(e.getMessage(), e);
                         }
