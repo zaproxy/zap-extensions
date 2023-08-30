@@ -71,6 +71,7 @@ import org.zaproxy.zap.extension.script.ScriptEventListener;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.zest.ZestResultsTableModel.ZestResultsTableEntry;
 import org.zaproxy.zap.extension.zest.dialogs.ZestDialogManager;
 import org.zaproxy.zap.extension.zest.menu.ZestMenuManager;
@@ -110,7 +111,10 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
             Collections.unmodifiableList(
-                    Arrays.asList(ExtensionScript.class, ExtensionNetwork.class));
+                    Arrays.asList(
+                            ExtensionScript.class,
+                            ExtensionNetwork.class,
+                            ExtensionSelenium.class));
 
     private ZestParam param = null;
     private OptionsZestPanel optionsZestPanel = null;
@@ -142,6 +146,8 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     private String startRecordingUrl = null;
     private int recordingWinId = 0;
     private ScriptNode recordingNode = null;
+    private boolean clientRecordingActive;
+    private ZestClientRecorderHelper zestClientHelper;
 
     private ExtensionNetwork extensionNetwork;
 
@@ -1509,6 +1515,11 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         recordingWinId = 0;
         // And turn off the recording button, at least for now
         this.getRecordButton().setSelected(false);
+        clientRecordingActive = true;
+    }
+
+    public void stopClientRecording() {
+        clientRecordingActive = false;
     }
 
     public void setRecordingNode(ScriptNode node) {
@@ -1590,18 +1601,49 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             LOGGER.error(e1.getMessage(), e1);
         }
 
+        addClientZestStatement(stmt);
+    }
+
+    public void addClientZestStatementFromString(String stmt) throws Exception {
+        if (!isClientRecordingActive()) {
+            return;
+        }
+        addClientZestStatement(JSONObject.fromObject(stmt));
+    }
+
+    private void addClientZestStatement(JSONObject jsonMessage) throws Exception {
+        ZestStatement stmt = ZestStatementFromJson.createZestStatementFromJson(jsonMessage);
+        addClientZestStatement(stmt);
+    }
+
+    private void addClientZestStatement(ZestStatement stmt) {
         if (stmt != null) {
             final ZestStatement stmtFinal = stmt;
 
             EventQueue.invokeLater(
                     () -> {
                         try {
-                            addToParent(clientRecordingNode, stmtFinal, false);
+                            addToParent(getRecordingNode(), stmtFinal, false);
                         } catch (Exception e) {
                             LOGGER.error(e.getMessage(), e);
                         }
                     });
         }
+    }
+
+    public boolean isClientRecordingActive() {
+        return clientRecordingActive;
+    }
+
+    public void setClientHelper(ZestClientRecorderHelper zestClientHelper) {
+        this.zestClientHelper = zestClientHelper;
+    }
+
+    public boolean isClientAccessible() {
+        if (zestClientHelper == null) {
+            return false;
+        }
+        return zestClientHelper.isClientActive();
     }
 
     /**/
