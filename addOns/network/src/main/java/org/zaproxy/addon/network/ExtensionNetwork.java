@@ -111,6 +111,7 @@ import org.zaproxy.addon.network.internal.server.http.handlers.CloseOnRecursiveR
 import org.zaproxy.addon.network.internal.server.http.handlers.ConnectReceivedHandler;
 import org.zaproxy.addon.network.internal.server.http.handlers.DecodeResponseHandler;
 import org.zaproxy.addon.network.internal.server.http.handlers.HttpSenderHandler;
+import org.zaproxy.addon.network.internal.server.http.handlers.LegacyNoCacheRequestHandler;
 import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
 import org.zaproxy.addon.network.internal.server.http.handlers.RemoveAcceptEncodingHandler;
 import org.zaproxy.addon.network.internal.ui.LocalServerInfoLabel;
@@ -152,6 +153,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     private org.parosproxy.paros.network.ConnectionParam legacyConnectionOptions;
 
     private LegacyProxyListenerHandler legacyProxyListenerHandler;
+    private LegacyNoCacheRequestHandler legacyNoCacheRequestHandler;
     private Object syncGroups = new Object();
     private boolean groupsInitiated;
     private NioEventLoopGroup mainEventLoopGroup;
@@ -476,6 +478,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
         legacyProxyListenerHandler = new LegacyProxyListenerHandler();
         Control.getSingleton().getExtensionLoader().addProxyServer(legacyProxyListenerHandler);
+        legacyNoCacheRequestHandler =
+                new LegacyNoCacheRequestHandler(getModel(), connectionOptions);
 
         extensionHook.addCommandLine(createCommandLineArgs());
 
@@ -799,6 +803,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                 serverCertificateService,
                 legacyProxyListenerHandler,
                 passThroughHandler,
+                legacyNoCacheRequestHandler,
                 httpSenderHandler,
                 new LocalServerConfig(config, aliasChecker),
                 serialiseForBreak,
