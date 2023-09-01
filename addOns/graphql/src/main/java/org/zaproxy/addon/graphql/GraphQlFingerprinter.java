@@ -144,33 +144,37 @@ public class GraphQlFingerprinter {
         return false;
     }
 
+    static Alert.Builder createFingerprintingAlert(String engineId) {
+        final String enginePrefix = "graphql.engine." + engineId + ".";
+        return Alert.builder()
+                .setPluginId(ExtensionGraphQl.TOOL_ALERT_ID)
+                .setAlertRef(FINGERPRINTING_ALERT_REF)
+                .setName(Constant.messages.getString("graphql.fingerprinting.alert.name"))
+                .setDescription(
+                        Constant.messages.getString(
+                                "graphql.fingerprinting.alert.desc",
+                                Constant.messages.getString(enginePrefix + "name"),
+                                Constant.messages.getString(enginePrefix + "technologies")))
+                .setReference(Constant.messages.getString(enginePrefix + "docsUrl"))
+                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setRisk(Alert.RISK_INFO)
+                .setCweId(205)
+                .setWascId(45)
+                .setSource(Alert.Source.TOOL)
+                .setTags(FINGERPRINTING_ALERT_TAGS);
+    }
+
     private void raiseFingerprintingAlert(String engineId) {
         var extAlert =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class);
         if (extAlert == null) {
             return;
         }
-        final String enginePrefix = "graphql.engine." + engineId + ".";
         Alert alert =
-                Alert.builder()
-                        .setPluginId(ExtensionGraphQl.TOOL_ALERT_ID)
-                        .setAlertRef(FINGERPRINTING_ALERT_REF)
-                        .setName(Constant.messages.getString("graphql.fingerprinting.alert.name"))
-                        .setDescription(
-                                Constant.messages.getString(
-                                        "graphql.fingerprinting.alert.desc",
-                                        Constant.messages.getString(enginePrefix + "name"),
-                                        Constant.messages.getString(enginePrefix + "technologies")))
-                        .setReference(Constant.messages.getString(enginePrefix + "docsUrl"))
-                        .setConfidence(Alert.CONFIDENCE_HIGH)
-                        .setRisk(Alert.RISK_INFO)
+                createFingerprintingAlert(engineId)
+                        .setEvidence(matchedString)
                         .setMessage(lastQueryMsg)
                         .setUri(requestor.getEndpointUrl().toString())
-                        .setEvidence(matchedString)
-                        .setCweId(205)
-                        .setWascId(45)
-                        .setSource(Alert.Source.TOOL)
-                        .setTags(FINGERPRINTING_ALERT_TAGS)
                         .build();
         extAlert.alertFound(alert, null);
     }
