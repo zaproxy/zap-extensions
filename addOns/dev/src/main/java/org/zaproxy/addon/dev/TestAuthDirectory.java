@@ -17,36 +17,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.dev.auth.jsonMultipleCookies;
+package org.zaproxy.addon.dev;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang.RandomStringUtils;
-import org.zaproxy.addon.dev.TestAuthDirectory;
-import org.zaproxy.addon.dev.TestProxyServer;
 
-/**
- * A login page which uses one JSON request to login endpoint. The token is returned in a standard
- * field but is submitted with the "Bearer" prefix and in a cookie.
- */
-public class JsonMultipleCookiesDir extends TestAuthDirectory {
+/** A test directory which uses authentication. */
+public abstract class TestAuthDirectory extends TestDirectory {
 
-    private Map<String, String> tempTokens = new HashMap<>();
+    // These are test credentials, so hardcoding them is fine ;)
+    private static final String[][] USERS = {{"test@test.com", "password123"}};
 
-    public JsonMultipleCookiesDir(TestProxyServer server, String name) {
+    private Map<String, String> sessions = new HashMap<>();
+
+    public TestAuthDirectory(TestProxyServer server, String name) {
         super(server, name);
-        this.addPage(new JsonMultipleCookiesLoginPage(server));
-        this.addPage(new JsonMultipleCookiesSessionPage(server));
-        this.addPage(new JsonMultipleCookiesVerificationPage(server));
     }
 
-    public String getTempToken(String username) {
+    public boolean isValid(String username, String password) {
+        return Arrays.stream(USERS)
+                .filter(c -> (c[0].equals(username) && c[1].equals(password)))
+                .findAny()
+                .isPresent();
+    }
+
+    public String getToken(String username) {
         String token = RandomStringUtils.randomAlphanumeric(32);
-        tempTokens.put(token, username);
+        sessions.put(token, username);
         return token;
     }
 
-    public String getTempUser(String token) {
-        return tempTokens.get(token);
+    public String getUser(String token) {
+        return sessions.get(token);
     }
 }
