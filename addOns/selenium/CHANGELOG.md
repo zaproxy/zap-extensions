@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Maintenance changes.
-- Update Selenium to version 4.11.0.
+- Update Selenium to version 4.12.0.
 
 ## [15.13.0] - 2023-07-11
 ### Changed
