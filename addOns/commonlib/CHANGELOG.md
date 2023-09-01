@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Provide Jackson datatype library for other add-ons (Issue 7961).
 - Provide the Value Generator for other add-ons (Issue 8016).
+- Provide vulnerability data, migrated from core (Issue 8012).
 
 ## [1.16.0] - 2023-08-14
 ### Added

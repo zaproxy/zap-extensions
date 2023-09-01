@@ -36,6 +36,7 @@ import org.zaproxy.addon.network.internal.server.http.handlers.CloseOnRecursiveR
 import org.zaproxy.addon.network.internal.server.http.handlers.ConnectReceivedHandler;
 import org.zaproxy.addon.network.internal.server.http.handlers.DecodeResponseHandler;
 import org.zaproxy.addon.network.internal.server.http.handlers.HttpSenderHandler;
+import org.zaproxy.addon.network.internal.server.http.handlers.LegacyNoCacheRequestHandler;
 import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
 import org.zaproxy.addon.network.internal.server.http.handlers.RemoveAcceptEncodingHandler;
 import org.zaproxy.addon.network.internal.server.http.handlers.ZapApiHandler;
@@ -45,6 +46,7 @@ public class LocalServer extends HttpServer {
 
     private final Executor executor;
     private final LegacyProxyListenerHandler legacyHandler;
+    private final LegacyNoCacheRequestHandler legacyNoCacheRequestHandler;
     private final PassThroughHandler passThroughHandler;
     private final HttpSenderHandler httpSenderHandler;
 
@@ -67,6 +69,7 @@ public class LocalServer extends HttpServer {
      * @param certificateService the certificate service.
      * @param legacyHandler the handler for legacy (core) listeners.
      * @param passThroughHandler the pass-through handler.
+     * @param legacyNoCacheRequestHandler the handler that removes cache related headers.
      * @param httpSenderHandler the HTTP Sender handler.
      * @param serverConfig the server configuration
      * @param serialiseState the serialisation state.
@@ -79,6 +82,7 @@ public class LocalServer extends HttpServer {
             ServerCertificateService certificateService,
             LegacyProxyListenerHandler legacyHandler,
             PassThroughHandler passThroughHandler,
+            LegacyNoCacheRequestHandler legacyNoCacheRequestHandler,
             HttpSenderHandler httpSenderHandler,
             LocalServerConfig serverConfig,
             SerialiseState serialiseState,
@@ -87,6 +91,7 @@ public class LocalServer extends HttpServer {
         this.executor = executor;
         this.legacyHandler = legacyHandler;
         this.passThroughHandler = Objects.requireNonNull(passThroughHandler);
+        this.legacyNoCacheRequestHandler = legacyNoCacheRequestHandler;
         this.httpSenderHandler = httpSenderHandler;
         this.serverConfig = Objects.requireNonNull(serverConfig);
 
@@ -111,6 +116,7 @@ public class LocalServer extends HttpServer {
                         aliasRewriteHandler,
                         zapApiHandler,
                         CloseOnRecursiveRequestHandler.getInstance(),
+                        legacyNoCacheRequestHandler,
                         removeAcceptEncodingHandler,
                         decodeResponseHandler,
                         legacyHandler,

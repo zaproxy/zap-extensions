@@ -28,6 +28,7 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
+import org.zaproxy.addon.commonlib.internal.vulns.LegacyVulnerabilities;
 import org.zaproxy.addon.commonlib.ui.ProgressPanel;
 import org.zaproxy.zap.model.DefaultValueGenerator;
 import org.zaproxy.zap.model.ValueGenerator;
@@ -69,6 +70,10 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
 
     private ProgressPanel progressPanel;
 
+    public ExtensionCommonlib() {
+        LegacyVulnerabilities.load();
+    }
+
     @Override
     public void hook(ExtensionHook extensionHook) {
         if (hasView()) {
@@ -87,6 +92,11 @@ public class ExtensionCommonlib extends ExtensionAdaptor {
     @Override
     public boolean canUnload() {
         return true;
+    }
+
+    @Override
+    public void unload() {
+        LegacyVulnerabilities.unload();
     }
 
     @Override

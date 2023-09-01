@@ -188,6 +188,22 @@ public class GraphQlParser {
         }
     }
 
+    static Alert.Builder createIntrospectionAlert() {
+        return Alert.builder()
+                .setPluginId(ExtensionGraphQl.TOOL_ALERT_ID)
+                .setAlertRef(INTROSPECTION_ALERT_REF)
+                .setName(Constant.messages.getString("graphql.introspection.alert.name"))
+                .setDescription(Constant.messages.getString("graphql.introspection.alert.desc"))
+                .setReference(Constant.messages.getString("graphql.introspection.alert.ref"))
+                .setSolution(Constant.messages.getString("graphql.introspection.alert.soln"))
+                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setRisk(Alert.RISK_INFO)
+                .setCweId(16)
+                .setWascId(15)
+                .setSource(Alert.Source.TOOL)
+                .setTags(INTROSPECTION_ALERT_TAGS);
+    }
+
     private void raiseIntrospectionAlert(HttpMessage msg) {
         var extAlert =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class);
@@ -195,22 +211,7 @@ public class GraphQlParser {
             return;
         }
         Alert alert =
-                Alert.builder()
-                        .setPluginId(ExtensionGraphQl.TOOL_ALERT_ID)
-                        .setAlertRef(INTROSPECTION_ALERT_REF)
-                        .setName(Constant.messages.getString("graphql.introspection.alert.name"))
-                        .setDescription(
-                                Constant.messages.getString("graphql.introspection.alert.desc"))
-                        .setReference(
-                                Constant.messages.getString("graphql.introspection.alert.ref"))
-                        .setSolution(
-                                Constant.messages.getString("graphql.introspection.alert.soln"))
-                        .setConfidence(Alert.CONFIDENCE_HIGH)
-                        .setRisk(Alert.RISK_INFO)
-                        .setCweId(16)
-                        .setWascId(15)
-                        .setSource(Alert.Source.TOOL)
-                        .setTags(INTROSPECTION_ALERT_TAGS)
+                createIntrospectionAlert()
                         .setHistoryRef(msg.getHistoryRef())
                         .setMessage(msg)
                         .build();
