@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Update minimum ZAP version to 2.13.0.
+- Added TestAuthDirectory abstract class to reduce duplicated code.
 
 ## [0.2.0] - 2023-05-09
 

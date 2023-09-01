@@ -19,44 +19,18 @@
  */
 package org.zaproxy.addon.dev.auth.nonStdJsonBearer;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import org.apache.commons.lang.RandomStringUtils;
-import org.zaproxy.addon.dev.TestDirectory;
+import org.zaproxy.addon.dev.TestAuthDirectory;
 import org.zaproxy.addon.dev.TestProxyServer;
 
 /**
  * A login page which uses one JSON request to login endpoint. The token is returned in a non
  * standard JSON field.
  */
-public class NonStdJsonBearerDir extends TestDirectory {
-
-    // These are test credentials, so hardcoding them is fine ;)
-    private static final String[][] USERS = {{"test@test.com", "password123"}};
-
-    private Map<String, String> sessions = new HashMap<>();
+public class NonStdJsonBearerDir extends TestAuthDirectory {
 
     public NonStdJsonBearerDir(TestProxyServer server, String name) {
         super(server, name);
         this.addPage(new NonStdJsonBearerLoginPage(server));
         this.addPage(new NonStdJsonBearerVerificationPage(server));
-    }
-
-    public boolean isValid(String username, String password) {
-        return Arrays.stream(USERS)
-                .filter(c -> (c[0].equals(username) && c[1].equals(password)))
-                .findAny()
-                .isPresent();
-    }
-
-    public String getToken(String username) {
-        String token = RandomStringUtils.randomAlphanumeric(32);
-        sessions.put(token, username);
-        return token;
-    }
-
-    public String getUser(String token) {
-        return sessions.get(token);
     }
 }
