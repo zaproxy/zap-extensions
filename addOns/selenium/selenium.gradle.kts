@@ -27,7 +27,7 @@ zapAddOn {
 }
 
 dependencies {
-    var seleniumVersion = "4.11.0"
+    var seleniumVersion = "4.12.0"
     api("org.seleniumhq.selenium:selenium-java:$seleniumVersion") {
         exclude(group = "io.netty")
     }
