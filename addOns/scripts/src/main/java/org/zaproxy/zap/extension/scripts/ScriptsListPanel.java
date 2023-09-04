@@ -690,16 +690,10 @@ public class ScriptsListPanel extends AbstractPanel {
     }
 
     public void showInTree(ScriptNode node, boolean expand) {
-        showInTree(node, expand, true);
-    }
-
-    public void showInTree(ScriptNode node, boolean expand, boolean allowFocus) {
         TreeNode[] path = node.getPath();
         TreePath tp = new TreePath(path);
         getTree().setExpandsSelectedPaths(true);
-        if (allowFocus) {
-            getTree().setSelectionPath(tp);
-        }
+        getTree().setSelectionPath(tp);
         getTree().scrollPathToVisible(tp);
         if (expand) {
             getTree().expandPath(tp);

@@ -107,6 +107,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
     private ScriptWrapper currentLockedScript = null;
     private boolean lockOutputToDisplayedScript = false;
+    private boolean allowDisplayScriptFocus = true;
 
     // private ZapMenuItem menuEnableScripts = null;
 
@@ -387,7 +388,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
     @Override
     public void displayScript(ScriptWrapper script) {
-        displayScript(script, true);
+        displayScript(script, allowDisplayScriptFocus);
     }
 
     public void displayScript(ScriptWrapper script, boolean allowFocus) {
@@ -789,7 +790,9 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
 
     public void selectNode(ScriptNode node, boolean expand, boolean allowFocus) {
         if (View.isInitialised()) {
-            this.getScriptsPanel().showInTree(node, expand, allowFocus);
+            this.allowDisplayScriptFocus = allowFocus;
+            this.getScriptsPanel().showInTree(node, expand);
+            this.allowDisplayScriptFocus = true;
             this.getScriptsPanel().setTabFocus();
         }
     }
