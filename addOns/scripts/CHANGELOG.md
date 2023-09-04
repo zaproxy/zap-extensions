@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Allow to select a script node without focusing on it.
 - Allow to display script without focusing on it.
 - Maintenance changes.
 - Depend on newer version of Automation Framework add-on (Related to Issue 7961).
