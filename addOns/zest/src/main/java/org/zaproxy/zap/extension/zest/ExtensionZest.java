@@ -561,11 +561,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     public void display(
             ZestScriptWrapper script, ScriptNode node, boolean expand, boolean allowFocus) {
         if (View.isInitialised() && this.getExtScript().getScriptUI() != null) {
-            if (allowFocus) {
-                // This function internally calls set script, which is not trivial to change at the
-                // moment
-                this.getExtScript().getScriptUI().selectNode(node, expand);
-            }
+            selectNode(node, expand, allowFocus);
             displayScript(script, allowFocus);
         }
     }
@@ -614,6 +610,20 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             displayScriptMethod.invoke(this.getExtScript().getScriptUI(), sw, allowFocus);
         } catch (Exception e) {
             this.getExtScript().getScriptUI().displayScript(sw);
+        }
+    }
+
+    private void selectNode(ScriptNode node, boolean expand, boolean allowFocus) {
+        try {
+            Method selectNodeMethod =
+                    this.getExtScript()
+                            .getScriptUI()
+                            .getClass()
+                            .getDeclaredMethod(
+                                    "selectNode", ScriptNode.class, boolean.class, boolean.class);
+            selectNodeMethod.invoke(this.getExtScript().getScriptUI(), node, expand, allowFocus);
+        } catch (Exception e) {
+            this.getExtScript().getScriptUI().selectNode(node, expand);
         }
     }
 
