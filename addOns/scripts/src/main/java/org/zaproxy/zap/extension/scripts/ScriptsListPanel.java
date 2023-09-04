@@ -103,6 +103,7 @@ public class ScriptsListPanel extends AbstractPanel {
     private LoadScriptDialog loadScriptDialog = null;
     private EditScriptDialog editScriptDialog = null;
     private CopyScriptDialog copyScriptDialog = null;
+    private boolean allowFocus = true;
 
     private HttpMessage lastMessageDisplayed = null;
 
@@ -653,7 +654,8 @@ public class ScriptsListPanel extends AbstractPanel {
                         if (node.isTemplate()) {
                             extension.displayTemplate((ScriptWrapper) node.getUserObject());
                         } else {
-                            extension.displayScript((ScriptWrapper) node.getUserObject());
+                            extension.displayScript(
+                                    (ScriptWrapper) node.getUserObject(), allowFocus);
                         }
                     }
                     break;
@@ -690,10 +692,16 @@ public class ScriptsListPanel extends AbstractPanel {
     }
 
     public void showInTree(ScriptNode node, boolean expand) {
+        showInTree(node, expand, true);
+    }
+
+    public void showInTree(ScriptNode node, boolean expand, boolean allowFocus) {
         TreeNode[] path = node.getPath();
         TreePath tp = new TreePath(path);
         getTree().setExpandsSelectedPaths(true);
+        this.allowFocus = allowFocus;
         getTree().setSelectionPath(tp);
+        this.allowFocus = true;
         getTree().scrollPathToVisible(tp);
         if (expand) {
             getTree().expandPath(tp);
