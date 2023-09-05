@@ -44,6 +44,7 @@ dependencies {
 
     api(platform("com.fasterxml.jackson:jackson-bom:2.15.2"))
     api("com.fasterxml.jackson.core:jackson-databind")
+    api("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
     api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
     api("com.fasterxml.jackson.datatype:jackson-datatype-jdk8")
 
