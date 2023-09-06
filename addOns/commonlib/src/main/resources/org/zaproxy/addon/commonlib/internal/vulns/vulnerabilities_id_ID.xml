@@ -322,9 +322,8 @@ Memastikan bahwa semua kegagalan dalam alokasi sumber daya yang menempatkan sist
 
 Jenis yang paling umum dari serangan brute force pada aplikasi web adalah sebuah serangan terhadap masukan kredensial. Karena pengguna tidak perlu mengingat kata sandi, mereka sering memilih mudah untuk menghafal kata-kata atau frasa seperti kata sandi, membuat serangan brute force yang berguna menggunakan sebuah kamus. Serangan tersebut mencoba untuk masuk ke sistem dengan menggunakan daftar besar kata-kata dan frase sebagai potensi kata sandi yang sering disebut "serangan daftar kata" atau "serangan kamus". Kata sandi juga berusaha dapat mencakup variasi dari kata-kata umum untuk kata sandi seperti yang dihasilkan dengan mengganti "o" dengan "0" dan "i" dengan "1" serta informasi pribadi termasuk nama anggota keluarga, tanggal lahir dan nomor telepon.
 	</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
-	<reference>TBA</reference>
 </vuln_item_wasc_11a>
 
 <vuln_items>wasc_11b</vuln_items>
@@ -334,9 +333,8 @@ Jenis yang paling umum dari serangan brute force pada aplikasi web adalah sebuah
 
 Karena HTTP adalah protokol tanpa kewarganegaraan, untuk mempertahankan aplikasi web negara perlu memastikan bahwa pengenal sesi dikirim oleh peramban dengan setiap permintaan. Pengenal sesi paling sering disimpan dalam cookie HTTP atau URL. Dengan menggunakan serangan brute force, penyerang bisa menebak pengenal sesi pengguna lain. Hal ini dapat menyebabkan penyerang meniru identitas pengguna, mengambil informasi pribadi dan melakukan tindakan atas nama pengguna.
 	</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
-	<reference>TBA</reference>
 </vuln_item_wasc_11b>
 
 <vuln_items>wasc_11c</vuln_items>
@@ -348,9 +346,8 @@ Ketika file berada di direktori yang dilayani oleh server web namun tidak terhub
 
 Serangan brute force mencoba menemukan file yang tidak terhubung dengan mencoba mengakses sejumlah besar file. Daftar nama file percobaan mungkin diambil dari daftar file potensial yang diketahui atau berdasarkan varian dari file yang terlihat di situs web. Informasi lebih lanjut tentang direktori dan file kasar dapat ditemukan di kerentanan terkait, lokasi sumber yang dapat diprediksi.
 	</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
-	<reference>TBA</reference>
 </vuln_item_wasc_11c>
 
 <vuln_items>wasc_11d</vuln_items>
@@ -364,9 +361,8 @@ Untuk mengisi informasi yang hilang, si hacker bisa menebak informasi yang hilan
     * Menebak CVV/CSC hanya memerlukan 1000 atau 10000 usaha karena jumlahnya hanya 3 atau 4 digit, tergantung pada jenis kartunya.
     * Menebak tanggal kadaluwarsa hanya membutuhkan beberapa lusin usaha.
 	</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
-	<reference>TBA</reference>
 </vuln_item_wasc_11d>
 
 <vuln_items>wasc_12</vuln_items>
@@ -383,9 +379,8 @@ Link khusus dibuat dapat dikirim ke pengguna melalui e-mail, pesan instan, yang 
 
 Serangan ini mengeksploitasi kepercayaan hubungan yang terjalin antara pengguna dan situs web. Teknik ini telah digunakan untuk membuat halaman web palsu seperti formulir masuk, perusakan, siaran pers palsu, dll.
 	</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Content-Spoofing</reference>
-	<reference>TBA</reference>
 </vuln_item_wasc_12>
 
 <vuln_items>wasc_13</vuln_items>
@@ -411,9 +406,8 @@ Laman yang memberikan tanggapan berbeda berdasarkan validitas data juga dapat me
 Server mungkin termasuk akun default dan kata sandi yang terkenal. Kegagalan untuk sepenuhnya mengunci atau mengeras server dapat meninggalkan file tidak semestinya mengatur dan izin direktori. Sertifikat SSL dan enkripsi pengaturan tidak dikonfigurasi, penggunaan sertifikat default, dan otentikasi tidak tepat pelaksanaan dengan sistem eksternal dapat membahayakan kerahasiaan informasi.
 
 Kesalahan informasi pesan verbose yang dapat mengakibatkan kebocoran data, dan informasi yang diungkapkan dapat digunakan untuk merumuskan tingkat berikutnya dari serangan. Salah di konfigurasi server perangkat lunak dapat mengizinkan direktori pengindeksan dan serangan jalur traversal.</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Server-Misconfiguration</reference>
-	<reference/>
 </vuln_item_wasc_14>
 
 <vuln_items>wasc_15</vuln_items>
@@ -422,9 +416,8 @@ Kesalahan informasi pesan verbose yang dapat mengakibatkan kebocoran data, dan i
 	<desc>Serangan aplikasi misconfiguration yang mengeksploitasi kelemahan konfigurasi ditemukan di aplikasi web. Banyak aplikasi hadir dengan fitur yang tidak perlu dan tidak aman, seperti fitur debug dan QA, yang diaktifkan secara default. Fitur ini dapat memberikan sarana bagi hacker untuk bypass otentikasi metode dan mendapatkan akses ke informasi sensitif, mungkin dengan hak tinggi.
 
 Demikian juga, instalasi default mungkin termasuk nama pengguna dan kata sandi, kode-keras akun backdoor, terkenal akses khusus mekanisme, dan salah mengatur hak akses untuk file-file yang dapat diakses melalui server web. Sampel standar dapat diakses di lingkungan produksi. Aplikasi berbasis file-file konfigurasi yang tidak benar dikurung dapat mengungkapkan teks yang jelas koneksi string ke database, dan pengaturan default di file konfigurasi mungkin telah tidak ditetapkan dalam pikiran dengan keamanan. Semua ini kesalahan konfigurasi dapat menyebabkan akses tidak sah ke informasi sensitif.</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Application-Misconfiguration</reference>
-	<reference/>
 </vuln_item_wasc_15>
 
 <vuln_items>wasc_16</vuln_items>
@@ -452,9 +445,8 @@ Demikian juga, instalasi default mungkin termasuk nama pengguna dan kata sandi, 
 	<desc>Prediksi sesi/kredensial adalah metode pembajakan atau meniru sebuah situs web pengguna. Menyimpulkan atau menebak nilai unik yang mengidentifikasi sebuah sesi tertentu atau pengguna menyelesaikan serangan. Juga dikenal sebagai sesi pembajakan, konsekuensi dapat memungkinkan kemampuan penyerang untuk mengeluarkan permintaan situs web dengan tanpa hak pengguna.
 
 Banyak situs web yang dirancang untuk mengotentikasi dan melacak pengguna ketika komunikasi ini pertama kali didirikan. Untuk melakukan hal ini, pengguna harus membuktikan identitas mereka ke situs web, biasanya dengan menyediakan nama pengguna/katasandi (kredensial) kombinasi. Dari pada melewati ini rahasia kredensial bolak-balik dengan masing-masing transaksi, situs web yang akan menghasilkan sebuah "sesi ID" untuk mengidentifikasi sesi pengguna saat dikonfirmasi. Selanjutnya komunikasi antara pengguna dan situs web yang ditandai dengan sesi ID sebagai "bukti" dikonfirmasi sesi. Jika seorang penyerang dapat memprediksi atau menebak sesi ID dari pengguna lain, aktivitas penipuan adalah mungkin.</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Credential-and-Session-Prediction</reference>
-	<reference/>
 </vuln_item_wasc_18>
 
 <vuln_items>wasc_19</vuln_items>
@@ -490,7 +482,6 @@ Perhatikan bahwa pengkodean output yang tepat, melarikan diri, dan mengutip adal
 
 Bila memungkinkan, mungkin paling aman untuk melarang meta-karakter sama sekali, alih-alih melarikan diri dari mereka. Ini akan memberikan beberapa pertahanan secara mendalam. Setelah data dimasukkan ke dalam database, proses selanjutnya dapat diabaikan untuk menghindari karakter meta sebelum digunakan, dan Anda mungkin tidak memiliki kontrol atas proses tersebut.</solution>
 	<reference>http://projects.webappsec.org/SQL-Injection</reference>
-	<reference/>
 </vuln_item_wasc_19>
 
 <vuln_items>wasc_20</vuln_items>
@@ -551,7 +542,7 @@ Fungsi aplikasi web yang sering menjadi target otomatis untuk serangan yang mung
     * Jajak pendapat online - jajak pendapat dan jenis sistem pemungutan suara online lainnya dapat ditumbangkan secara otomatis dengan pilihan tertentu.
     * Pengiriman pesan SMS berbasis web dapat memanfaatkan sistem pengiriman pesan SMS untuk pengguna ponsel spam
 	</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Insufficient+Anti-automation</reference>
 	<reference>http://cwe.mitre.org/data/definitions/116.html</reference>
 </vuln_item_wasc_21>
@@ -588,16 +579,14 @@ Gunakan validasi masukan sebagai ukuran pertahanan-dalam-mendalam untuk menguran
 
 Ketika bertukar data antara komponen-komponen, memastikan bahwa kedua komponen yang menggunakan pengkodean karakter yang sama. Pastikan pengkodean yang tepat diterapkan pada setiap antarmuka. Secara eksplisit mengatur pengkodean yang kamu gunakan kapan pun protokol ini memungkinkan kamu untuk melakukannya.</solution>
 	<reference>http://projects.webappsec.org/Improper-Output-Handling</reference>
-	<reference/>
 </vuln_item_wasc_22>
 
 <vuln_items>wasc_23</vuln_items>
 <vuln_item_wasc_23>
 	<alert>Injeksi XML</alert>
 	<desc>XML Injection adalah teknik serangan yang digunakan untuk memanipulasi atau mengkompromikan logika aplikasi atau layanan XML. Penyuntikan konten dan / atau struktur XML yang tidak diinginkan ke dalam pesan XML dapat mengubah logika niat aplikasi. Lebih lanjut, XML injeksi dapat menyebabkan penyisipan konten berbahaya ke pesan/dokumen yang dihasilkan.</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/XML-Injection</reference>
-	<reference/>
 </vuln_item_wasc_23>
 
 <vuln_items>wasc_24</vuln_items>
@@ -651,9 +640,8 @@ Salah satu yang digunakan untuk teknik ini adalah untuk meningkatkan teknik peme
 
 Penyelundupan respon HTTP menggunakan teknik penyandian permintaan HTTP - seperti teknik untuk mengeksploitasi perbedaan antara mekanisme Pemisahan Respon HTTP (atau server proxy) yang akan dianggap sebagai aliran respon HTTP, dan aliran respons yang diurai oleh server proxy (atau browser). Jadi, sementara mekanisme pemisahan respons anti-HTTP dapat mempertimbangkan respons respons tertentu yang tidak berbahaya (respons HTTP tunggal), proxy / browser mungkin masih mengurainya sebagai dua respons HTTP, dan karenanya rentan terhadap semua hasil pemisahan respons HTTP asli. teknik (dalam kasus penggunaan pertama) atau rentan terhadap spoofing halaman (dalam kasus kedua). Sebagai contoh, beberapa mekanisme pemisahan respons anti-HTTP yang digunakan oleh beberapa mesin aplikasi melarang aplikasi memasukkan header yang berisi CR + LF ke respon. Namun penyerang dapat memaksa aplikasi memasukkan header yang berisi CR, sehingga menghindari mekanisme pertahanan. Namun penyerang dapat memaksa aplikasi memasukkan header yang berisi CR, sehingga menghindari mekanisme pertahanan.
 	</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/HTTP-Response-Smuggling</reference>
-	<reference/>
 </vuln_item_wasc_27>
 
 <vuln_items>wasc_28</vuln_items>
@@ -847,7 +835,6 @@ Jika penyerang mengajukan pernyataan Sertakan Server-sisi, dia mungkin memiliki 
 - Entitas HTML menyandikan data yang dipasok pengguna sebelum mengirimkannya ke laman dengan izin eksekusi SSI.
 - Gunakan SUExec agar halaman dijalankan sebagai pemilik file, bukan pengguna server web.</solution>
 	<reference>http://projects.webappsec.org/SSI-Injection</reference>
-	<reference/>
 </vuln_item_wasc_36>
 
 <vuln_items>wasc_37</vuln_items>
@@ -913,9 +900,8 @@ Ada dua jenis proses utama yang memerlukan validasi: flow control dan logika bis
 "Flow control" mengacu pada proses multi langkah yang mengharuskan setiap langkah dilakukan dalam urutan tertentu oleh pengguna. Bila penyerang melakukan langkah yang salah atau tidak sesuai, kontrol akses mungkin dilewati dan kesalahan integritas aplikasi mungkin terjadi. Contoh proses multi langkah termasuk transfer kawat, pemulihan kata sandi, checkout pembelian, dan pendaftaran akun.
 
 "Logika bisnis" mengacu pada konteks di mana proses akan dijalankan sesuai dengan kebutuhan bisnis. Memanfaatkan kelemahan logika bisnis membutuhkan pengetahuan bisnis; Jika tidak ada pengetahuan yang dibutuhkan untuk memanfaatkannya, kemungkinan besar itu bukan kesalahan logika bisnis. Karena ini, tindakan pengamanan khas seperti pemindaian dan pengkajian kode tidak akan menemukan kelas kelemahan ini. Salah satu pendekatan pengujian ditawarkan oleh OWASP dalam Panduan Pengujian mereka.</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Insufficient-Process-Validation</reference>
-	<reference/>
 </vuln_item_wasc_40>
 
 <vuln_items>wasc_41</vuln_items>
@@ -953,9 +939,8 @@ Pastikan semua kegagalan dalam alokasi sumber daya menempatkan sistem ke dalam p
 	<alert>Entitas Eksternal XML</alert>
 	<desc>Teknik ini memanfaatkan fitur XML untuk membangun dokumen secara dinamis pada saat pemrosesan. Pesan XML dapat memberikan data secara eksplisit atau dengan menunjuk ke URI dimana data ada. Dalam teknik penyerangan, entitas eksternal bisa menganti nilai entitas dengan data berbahaya, rujukan alternatif atau mungkin membahayakan keamanan dari data server/XML aplikasi memiliki akses untuk.
 	Penyerang mungkin juga menggunakan entitas eksternal agar mendownload server layanan web kode berbahaya atau konten ke server untuk digunakan dalam sekunder atau ikut pada serangan.</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/XML-External-Entities</reference>
-	<reference/>
 </vuln_item_wasc_43>
 
 <vuln_items>wasc_44</vuln_items>
@@ -977,9 +962,8 @@ Sebelum mengurai file XML dengan DTDs terkait, pindai deklarasi entitas rekursif
 	<desc>Metodologi yang paling umum untuk penyerang adalah untuk mencetak tapak pertama targetnya kehadiran web dan menghitung sebanyak mungkin informasi. Dengan informasi ini, penyerang bisa mengembangkan sebuah skenario serangan akurat, yang secara efektif akan mengeksploitasi kerentanan dalam jenis/versi perangkat lunak yang digunakan oleh host target.
 
 Sidik jari multi-tier mirip dengan pendahulunya, TCP / IP Sidik jari (dengan pemindai seperti Nmap) kecuali difokuskan pada Lapisan Aplikasi dari model OSI dan bukan Transport Layer. Teori dibalik sidik jari ini adalah untuk membuat profil platform target yang akurat pada, teknologi perangkat lunak aplikasi web, versi database backend, konfigurasi dan bahkan mungkin arsitektur/topologi jaringan mereka.</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Fingerprinting</reference>
-	<reference/>
 </vuln_item_wasc_45>
 
 <vuln_items>wasc_46</vuln_items>
@@ -1012,9 +996,8 @@ Aplikasi Web harus membatalkan sesi setelah waktu siaga yang telah ditentukan te
 <vuln_item_wasc_48>
 	<alert>Pengindeksan tidak aman</alert>
 	<desc>Pengindeksan tidak aman merupakan ancaman terhadap kerahasiaan data situs web. Pengindeksan konten situs web melalui proses yang memiliki akses ke file yang seharusnya tidak dapat diakses publik berpotensi membocorkan informasi tentang keberadaan file tersebut, dan tentang isinya. Dalam proses pengindeksan, informasi tersebut dikumpulkan dan disimpan oleh proses pengindeksan, yang kemudian dapat diambil (walaupun tidak sepele) oleh penyerang yang ditentukan, biasanya melalui serangkaian pertanyaan ke mesin pencari. Penyerang tidak menggagalkan model keamanan mesin pencari. Dengan demikian, serangan ini halus dan sangat sulit untuk dideteksi dan digagalkan - tidak mudah untuk membedakan permintaan penyerang dari kueri pengguna yang sah.</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Insecure-Indexing</reference>
-	<reference/>
 </vuln_item_wasc_48>
 
 <vuln_items>wasc_49</vuln_items>

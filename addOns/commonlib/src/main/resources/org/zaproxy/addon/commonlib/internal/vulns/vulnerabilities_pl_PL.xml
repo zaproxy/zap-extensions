@@ -342,9 +342,8 @@ Upewnij się, że wszystkie awarie alokacji zasobów umieszczają system w bezpi
 
 Najczęstszym rodzajem ataku typu brutalnej siły w aplikacjach internetowych jest atak na dane logowania. Ponieważ użytkownicy muszą pamiętać hasła, często wybierają łatwe do zapamiętania słowa lub wyrażenia jako hasła, dokonując brutalnego ataku przy użyciu słownika. Taki atak usiłujący zalogować się do systemu używając wielkiej listy wyrazów i fraz jako potencjalne hasła, jest często nazywany "atak listy wyrazów" lub "atak ze słownikiem". Próby haseł mogą również zawierać odmiany słów wspólnych dla haseł, takich jak generowane przez zamianę "o" na "0" i "i" na "1", a także dane osobowe, w tym nazwiska członków rodziny, daty urodzenia i numery telefonów.
 	</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
-	<reference>TBA</reference>
 </vuln_item_wasc_11a>
 
 <vuln_items>wasc_11b</vuln_items>
@@ -354,9 +353,8 @@ Najczęstszym rodzajem ataku typu brutalnej siły w aplikacjach internetowych je
 
 Ponieważ HTTP jest protokołem bezstanowym, w celu utrzymania stanu, aplikacje internetowe muszą zapewnić, że identyfikator sesji jest wysyłany przez przeglądarkę przy każdym żądaniu. Identyfikator sesji jest najczęściej przechowywany w pliku cookie lub adresie URL protokołu HTTP. Używając metody ataku brutalnej siły, osoba atakująca może odgadnąć identyfikator sesji innego użytkownika. Może prowadzić to do podawania się hakera za użytkownika, wyszukania osobistych informacji i przeprowadzenia działań w imieniu użytkownika.
 	</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
-	<reference>TBA</reference>
 </vuln_item_wasc_11b>
 
 <vuln_items>wasc_11c</vuln_items>
@@ -368,9 +366,8 @@ Gdy pliki znajdują się w katalogach obsługiwanych przez serwer sieciowy, ale 
 
 Metoda brutalnego ataku próbuje zlokalizować niepołączony plik poprzez próbowanie uzyskania dostępu do dużych liczb plików. Lista dostępnych nazw plików może być pochwycona z listy ze znanych potencjalnych plików lub opartych na wariantach widocznych plików na stronie internetowej. Więcej informacji na temat katalogów i plików metody brutalnego ataku można znaleźć w powiązanych zagrożeniach niebezpieczeństwa, przewidywalnej lokalizacji zasobów.
 	</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
-	<reference>TBA</reference>
 </vuln_item_wasc_11c>
 
 <vuln_items>wasc_11d</vuln_items>
@@ -384,9 +381,8 @@ W celu wypełnienia brakujących informacji, haker może odgadnąć brakujące i
     * Zgadywanie CVV / CSC wymaga tylko 1000 lub 10000 prób, ponieważ ilość cyfr to tylko 3 lub 4, w zależności od rodzaju karty.
     * Zgadywanie daty ważności wymaga jedynie kilka tuzin prób.
 	</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
-	<reference>TBA</reference>
 </vuln_item_wasc_11d>
 
 <vuln_items>wasc_12</vuln_items>
@@ -404,9 +400,8 @@ Specjalnie zrobione ręcznie linki mogą być wysłane przez e-maila, błyskawic
 
 Ten atak wykorzystuje relację zaufania założonej pomiędzy użytkownikiem a stroną internetową. Technika była używana do tworzenia fałszywych stron internetowych obejmujących postać loginów, zniszczenia, fałszywe informacje prasowe itd.
 	</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Content-Spoofing</reference>
-	<reference>TBA</reference>
 </vuln_item_wasc_12>
 
 <vuln_items>wasc_13</vuln_items>
@@ -432,9 +427,8 @@ Strony, które podają różne odpowiedzi w oparciu o ważność danych, mogą r
 Serwery mogą obejmować dobrze znane standardowe konta oraz hasła. Niepowodzenia w całkowitym zablokowaniu lub zahartowaniu serwera może spowodować niepoprawne ustawienia uprawnień do pliku i katalogu. Błędnie skonfigurowane certyfikaty SSL i ustawienia szyfrowania, użycie domyślnych certyfikatów i niewłaściwa implementacja uwierzytelniania w zewnętrznych systemach może zagrozić poufności informacji.
 
 Wielosłowne i informacyjne komunikaty o błędach mogą skutkować wyciekiem danych, a ujawnione informacje mogą zostać wykorzystane do opracowania następnego poziomu ataku. Nieprawidłowe konfiguracje w oprogramowaniu serwera mogą zezwalać na indeksowanie katalogów i ataki na przemierzanie ścieżek.</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Server-Misconfiguration</reference>
-	<reference/>
 </vuln_item_wasc_14>
 
 <vuln_items>wasc_15</vuln_items>
@@ -443,9 +437,8 @@ Wielosłowne i informacyjne komunikaty o błędach mogą skutkować wyciekiem da
 	<desc>Ataki typu Błędna Konfiguracja Aplikacji wykorzystują słabości konfiguracji wykryte w aplikacjach internetowych. Wiele aplikacji zawiera niepotrzebne i niebezpieczne funkcje, takie jak funkcje debugowania i kontroli jakości, które są domyślnie włączone. Funkcje te mogą zapewnić hakerom możliwość ominięcia metod uwierzytelniania i uzyskania dostępu do poufnych informacji, być może z podwyższonymi uprawnieniami.
 
 Podobnie instalacje domyślne mogą zawierać dobrze znane nazwy użytkowników i hasła, wprowadzone na stałe konta backdoorów, specjalne mechanizmy dostępu i niepoprawne uprawnienia dla plików dostępnych przez serwery Www. Domyślne przykłady mogą być dostępne w środowiskach produkcyjnych. Pliki konfiguracyjne oparte na aplikacjach, które nie są odpowiednio zablokowane, mogą zawierać wyraźne ciągi połączeń tekstowych do bazy danych, a domyślne ustawienia w plikach konfiguracyjnych mogły nie zostać ustawione z myślą o bezpieczeństwie. Wszystkie te błędy konfiguracyjne mogą prowadzić do nieupoważnionego dostępu do poufnych informacji.</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Application-Misconfiguration</reference>
-	<reference/>
 </vuln_item_wasc_15>
 
 <vuln_items>wasc_16</vuln_items>
@@ -472,9 +465,8 @@ Podobnie instalacje domyślne mogą zawierać dobrze znane nazwy użytkowników 
 	<desc>Predykcja Danych Dostępowych i Sesji jest metodą przejęcia lub podszywania się pod użytkownika strony internetowej. Dedukowanie lub odgadywanie unikalnej wartości, która identyfikuje określoną sesję lub użytkownika, dokonuje ataku. Także znana jako Przejmowanie Sesji, konsekwencje mogą umożliwić atakującym wysyłanie żądań ze strony internetowej z przywilejami zaatakowanego użytkownika.
 
 Wiele stron internetowych są zaprojektowane do autoryzacji i śledzenia użytkownika kiedy komunikacja jest pierwszy raz nawiązana. Do zrobienia tego, użytkownicy muszą udowodnić ich tożsamość stronie internetowej, zwykle poprzez podanie kombinacji nazwy/hasła(danych dostępowych). Zamiast przekazywać te poufne poświadczenia w każdej transakcji, strony internetowe będą generować unikalny "identyfikator sesji", aby zidentyfikować sesję użytkownika jako uwierzytelnioną. Późniejsza komunikacja między użytkownikiem a witryną WWW jest oznaczana identyfikatorem sesji jako "dowód" uwierzytelnionej sesji. Jeśli atakujący jest w stanie przewidzieć lub odgadnąć identyfikator sesji innego użytkownika, możliwe jest oszukańcze działanie.</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Credential-and-Session-Prediction</reference>
-	<reference/>
 </vuln_item_wasc_18>
 
 <vuln_items>wasc_19</vuln_items>
@@ -510,7 +502,6 @@ Miej na uwadze, że poprawne kodowanie danych wyjściowych, unikanie i cytowanie
 
 Jeśli jest to możliwe do zrealizowania, najbezpieczniejszym sposobem będzie zupełne blokowanie ponad-znaków, zamiast ich omijania. Zapewni to pewną gruntowną defensywę. Po tym jak dane będą wprowadzone do bazy danych, procesy następnie mogą lekceważyć omijanie ponad-znaków przed użyciem, a ty możesz nie mieć kontroli nad tymi procesami.</solution>
 	<reference>http://projects.webappsec.org/SQL-Injection</reference>
-	<reference/>
 </vuln_item_wasc_19>
 
 <vuln_items>wasc_20</vuln_items>
@@ -575,7 +566,7 @@ Funkcjonalność aplikacji webowej, która jest często celem ataków automatyza
     *Sondaże online- sondaże i inne typy systemów internetowego głosowania mogą być automatycznie skorumpowane na korzyść określonego wyboru.
     *Wysyłanie Wiadomości SMS oparte na sieci- atakujący mogą wykorzystać systemy wysyłające wiadomości SMS w celu spamowania telefonów użytkowników
 	</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Insufficient+Anti-automation</reference>
 	<reference>http://cwe.mitre.org/data/definitions/116.html</reference>
 </vuln_item_wasc_21>
@@ -612,16 +603,14 @@ Użyj weryfikacji danych wejściowych jako środek dogłębnej obrony do redukow
 
 Podczas wymiany danych między komponentami upewnij się, że oba komponenty używają tego samego kodowania znaków. Upewnij się, że odpowiednie kodowanie jest stosowane w każdym interfejsie. Jawnie ustaw kodowanie, którego używasz, gdy tylko pozwala na to protokół.</solution>
 	<reference>http://projects.webappsec.org/Improper-Output-Handling</reference>
-	<reference/>
 </vuln_item_wasc_22>
 
 <vuln_items>wasc_23</vuln_items>
 <vuln_item_wasc_23>
 	<alert>Iniekcja XML</alert>
 	<desc>Iniekcja XML jest techniką ataku używaną do manipulowania lub naruszenia logiki aplikacji lub usługi XML. Wstrzyknięcie niezamierzonej treści XML i / lub struktur do komunikatu XML może zmienić zamierzoną logikę aplikacji. Ponadto, iniekcja XML może spowodować wstawienie złośliwej treści do powstałej wiadomości / dokumentu.</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/XML-Injection</reference>
-	<reference/>
 </vuln_item_wasc_23>
 
 <vuln_items>wasc_24</vuln_items>
@@ -675,9 +664,8 @@ Jednym z zastosowań tej techniki jest ulepszenie podstawowej techniki dzielenia
 
 Przemycanie odpowiedzi HTTP wykorzystuje techniki podobne do przemycania żądań HTTP, aby wykorzystać rozbieżności między tym, co mechanizm zapobiegania dzielenia odpowiedzi HTTP (lub serwer proxy) uznałby za strumień odpowiedzi HTTP, a strumień odpowiedzi jako analizowany przez serwer proxy (lub przeglądarkę). Tak więc, podczas gdy mechanizm zapobiegania dzielenia odpowiedzi HTTP może uznać dany strumień odpowiedzi za nieszkodliwy (pojedyncza odpowiedź HTTP), proxy / przeglądarka może nadal przetwarzać je jako dwie odpowiedzi HTTP, a zatem może być podatna na wszystkie wyniki pierwotnej techniki podziału odpowiedzi HTTP (w pierwszym przypadku użycia) lub może być podatna na podszywanie się (w drugim przypadku). Na przykład niektóre mechanizmy zapobiegania dzieleniu odpowiedzi HTTP używane przez niektóre silniki aplikacji zabraniają aplikacji wstawiania nagłówka zawierającego CR+LF do odpowiedzi. Jednak atakujący może zmusić aplikację do wstawienia nagłówka zawierającego CR, tym samym obchodząc mechanizm obronny. Niektóre serwery proxy nadal mogą traktować CR (tylko) jako separator nagłówka (i odpowiedzi), a zatem połączenie serwera internetowego i serwera proxy nadal będzie narażone na atak, który może zatruć pamięć podręczną proxy.
 	</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/HTTP-Response-Smuggling</reference>
-	<reference/>
 </vuln_item_wasc_27>
 
 <vuln_items>wasc_28</vuln_items>
@@ -867,7 +855,6 @@ Jeśli osoba atakująca prześle instrukcje do wykonania po stronie serwera, mo�
 - encja HTML koduje dane dostarczone przez użytkownika przed przekazaniem ich do strony z uprawnieniami do wykonywania SSI.
 - Użyj SUExec, aby strona była wykonywana jako właściciel pliku, a nie użytkownik serwera WWW.</solution>
 	<reference>http://projects.webappsec.org/SSI-Injection</reference>
-	<reference/>
 </vuln_item_wasc_36>
 
 <vuln_items>wasc_37</vuln_items>
@@ -935,9 +922,8 @@ Istnieją dwa główne typy procesów, które wymagają sprawdzenia poprawności
 "Kontrola przepływu" odnosi się do procesów wieloetapowych, które wymagają, aby każdy krok był wykonywany w określonej kolejności przez użytkownika. Gdy atakujący wykonuje krok nieprawidłowo lub niezgodnie z kolejnością, kontrola dostępu może zostać ominięta i może wystąpić błąd integralności aplikacji. Przykładami wieloetapowych procesów są przelewy, odzyskiwanie hasła, przeprowadzenie zakupu i rejestracja konta.
 
 "Logika biznesowa" odnosi się do kontekstu, w którym proces będzie wykonywany zgodnie z wymogami biznesowymi. Wykorzystanie słabości logiki biznesowej wymaga znajomości biznesu; jeśli nie jest potrzebna wiedza, aby ją wykorzystać, najprawdopodobniej nie jest to błąd logiki biznesowej. Z tego powodu typowe środki bezpieczeństwa, takie jak skanowanie i weryfikacja kodu, nie znajdą tej klasy słabości. Jedno z podejść do testowania oferuje OWASP w swoim Przewodniku Testowania.</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Insufficient-Process-Validation</reference>
-	<reference/>
 </vuln_item_wasc_40>
 
 <vuln_items>wasc_41</vuln_items>
@@ -975,9 +961,8 @@ Upewnij się, że wszystkie awarie w alokacji zasobów stawiają system w bezpie
 	<alert>Zewnętrzne Odwołania XML</alert>
 	<desc>Ta technika wykorzystuje funkcję XML do dynamicznego budowania dokumentów w czasie przetwarzania. Komunikat XML może jawnie dostarczać dane lub wskazywać URI, w którym dane istnieją. W technice tego ataku podmioty zewnętrzne mogą zastąpić wartość jednostki złośliwymi danymi, alternatywnymi poleceniami lub mogą zagrozić bezpieczeństwu danych, do których dostęp ma aplikacja serwer/XML.
 	Atakujący mogą również używać Zewnętrznych Odwołań, aby serwer usług WWW pobierał złośliwy kod lub zawartość na serwer w celu użycia w atakach wtórnych lub następczych.</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/XML-External-Entities</reference>
-	<reference/>
 </vuln_item_wasc_43>
 
 <vuln_items>wasc_44</vuln_items>
@@ -999,9 +984,8 @@ Przed rozpoczęciem analizowania plików XML z powiązanymi definicjami DTD nale
 	<desc>Najpowszechniejszą metodologią dla atakujących jest najpierw zbadanie obecności celu w sieci i zebranie jak największej ilości informacji. Dzięki tym informacjom osoba atakująca może opracować dokładny scenariusz ataku, który skutecznie wykorzysta lukę w typie/wersji oprogramowania wykorzystywanej przez hosta docelowego.
 
 Wielopoziomowy "odcisk palca" jest podobny do jego poprzednika, zbierania "odcisków palców" TCP/IP (skanerem takim jak Nmap), z tym że koncentruje się on na warstwie aplikacji modelu OSI zamiast warstwy transportowej. Teoria stojąca za zbieraniem "odcisków palców" polega na stworzeniu dokładnego profilu platformy celu, technologii oprogramowania aplikacji internetowej, bazy danych backend, konfiguracji i ewentualnie również architektury/topologii sieci.</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Fingerprinting</reference>
-	<reference/>
 </vuln_item_wasc_45>
 
 <vuln_items>wasc_46</vuln_items>
@@ -1034,9 +1018,8 @@ Aplikacja internetowa powinna unieważnić sesję po upływie zdefiniowanego cza
 <vuln_item_wasc_48>
 	<alert>Niezabezpieczone Indeksowanie</alert>
 	<desc>Niezabezpieczone Indeksowanie stanowi zagrożenie dla poufności danych na stronie internetowej. Indeksowanie zawartości strony internetowej za pośrednictwem procesu, który ma dostęp do plików, które nie powinny być publicznie dostępne, może potencjalnie ujawnić informacje o istnieniu takich plików i ich zawartości. W procesie indeksowania takie informacje są gromadzone i przechowywane w procesie indeksowania, który później może zostać odtworzony (choć nie trywialnie) przez określonego agresora, zazwyczaj za pomocą szeregu zapytań do wyszukiwarki. Atakujący nie omija modelu zabezpieczeń wyszukiwarki. W związku z tym atak ten jest subtelny i bardzo trudny do wykrycia i zablokowania - nie jest łatwo odróżnić zapytania atakującego od prawidłowych zapytań użytkownika.</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Insecure-Indexing</reference>
-	<reference/>
 </vuln_item_wasc_48>
 
 <vuln_items>wasc_49</vuln_items>

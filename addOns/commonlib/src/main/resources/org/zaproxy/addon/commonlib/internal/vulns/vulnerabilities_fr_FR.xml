@@ -340,9 +340,8 @@ Veillez à ce que tous les échecs d'allocation des ressources laissent le syst�
 
 Le type le plus commun d'attaque par force brute dans les applications internet est une attaque contre les identifiants d'ouverture de session. Comme les utilisateurs doivent se souvenir de nombreux mots de passe, ils choisissent souvent des mots ou des expressions faciles à mémoriser, ce qui rend possible les attaques par force brute à l'aide d'un dictionnaire. Une telle attaque, qui tente l'authentification à un système à l'aide d'une grande liste de mots et de phrases comme mots de passe potentiels, est souvent appelée une "attaque par liste de mots" (word list attack) ou une "attaque par dictionnaire" (dictionary attack). Les mots de passe testés peuvent également inclure les variations de mots communément utilisés pour des mots de passe, tels que ceux générés en remplaçant "o" par "0" et "i" par "1", de même que des informations personnelles, comme les noms des membres de la famille, les dates de naissance et les numéros de téléphone.
 	</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
-	<reference>TBA</reference>
 </vuln_item_wasc_11a>
 
 <vuln_items>wasc_11b</vuln_items>
@@ -352,9 +351,8 @@ Le type le plus commun d'attaque par force brute dans les applications internet 
 
 Comme HTTP est un protocole sans suivi d'état, les applications internet doivent s'assurer qu'un identifiant de session est envoyé par le navigateur à chaque requête, ceci afin de maintenir un suivi d'état. Le plus souvent, l'identifiant de session est conservé dans un cookie HTTP ou dans l'URL. À l'aide d'une attaque par force brute, un agresseur peut deviner l'identifiant de session d'un autre utilisateur. Cela peut permettre au pirate d'emprunter l'identité de l'utilisateur, de récupérer des informations personnelles et d'exécuter des actions au nom de l'utilisateur.
 	</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
-	<reference>TBA</reference>
 </vuln_item_wasc_11b>
 
 <vuln_items>wasc_11c</vuln_items>
@@ -366,9 +364,8 @@ Lorsque des fichiers résident dans des répertoires qui sont servis par le serv
 
 Une attaque par force brute tente de localiser les fichiers non liés en essayant d'accéder à un grand nombre de fichiers. La liste de noms de fichier essayés pourrait être basée sur une liste de fichiers potentiels connus ou construite à partir de variantes des fichiers visibles sur le site internet. Plus d'informations sur les attaques par force brute sur les répertoires et les fichiers se trouvent dans la vulnérabilité nommée "emplacement de ressources prévisibles".
 	</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
-	<reference>TBA</reference>
 </vuln_item_wasc_11c>
 
 <vuln_items>wasc_11d</vuln_items>
@@ -382,9 +379,8 @@ Afin de saisir les informations manquantes, le pirate peut deviner les informati
     * Deviner un code CVV/CSC ne nécessite que 1000 ou 10000 tentatives, du fait que le nombre est seulement de 3 ou 4 chiffres, selon le type de carte.
     * Deviner une date d'expiration nécessite seulement quelques douzaines de tentatives.
 	</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
-	<reference>TBA</reference>
 </vuln_item_wasc_11d>
 
 <vuln_items>wasc_12</vuln_items>
@@ -402,9 +398,8 @@ Des liens spécialement conçus peuvent être envoyés à l'utilisateur par e-ma
 
 Cette attaque exploite la relation de confiance établie entre l'utilisateur et le site internet. La technique a été utilisée pour créer de fausses pages web, notamment des formulaires d'identification, des pages vandalisées, de faux communiqués de presse, etc.
 	</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Content-Spoofing</reference>
-	<reference>TBA</reference>
 </vuln_item_wasc_12>
 
 <vuln_items>wasc_13</vuln_items>
@@ -430,9 +425,8 @@ Des pages fournissant des réponses différentes selon la validité des données
 Les serveurs peuvent inclure des comptes par défaut et des mots de passe bien connus. Oublier de tout verrouiller ou de durcir le serveur peut laisser ouverts les droits d'accès aux fichiers et aux répertoires. Des certificats SSL et des paramètres de chiffrement mal configurés, l'utilisation de certificats par défaut et l'implémentation d'authentification à des systèmes externes incorrecte peuvent compromettre la confidentialité des informations.
 
 Des messages d'erreur détaillés et informatifs peuvent entraîner des fuites de données et les renseignements révélés pourraient servir à formuler le prochain niveau de l'attaque. Des configurations incorrectes du logiciel du serveur peuvent permettre l'indexation de répertoires et les attaques par traversée de chemins.</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Server-Misconfiguration</reference>
-	<reference/>
 </vuln_item_wasc_14>
 
 <vuln_items>wasc_15</vuln_items>
@@ -441,9 +435,8 @@ Des messages d'erreur détaillés et informatifs peuvent entraîner des fuites d
 	<desc>Les attaques au travers de mauvaises configurations des applications (Application Misconfiguration attacks) exploitent les failles de configuration dans les applications internet. De nombreuses applications sont fournies avec des fonctionnalités inutiles et dangereuses, telles que des fonctionnalités de débogage et d'assurance qualité (QA) activées par défaut. Ces fonctionnalités peuvent fournir un moyen pour un pirate de contourner les méthodes d'authentification et d'accéder à des informations sensibles, peut-être avec des privilèges élevés.
 
 Par ailleurs, les installations par défaut peuvent inclure des noms d'utilisateur et des mots de passe connus, des comptes de porte dérobée codés en dur, des  mécanismes d'accès spéciaux et des autorisations incorrectes pour l'accès aux fichiers par l'intermédiaire de serveurs internet. Des exemples d'applications par défaut peuvent être accessibles dans les environnements de production. Les fichiers de configuration des applications qui ne sont pas correctement verrouillés peuvent révéler en clair des chaînes de connexion à la base de données, et les paramètres par défaut peuvent ne pas avoir été définis dans les fichiers de configuration avec la sécurité à l'esprit. Toutes ces erreurs de configuration peuvent conduire à un accès non autorisé à des informations sensibles.</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Application-Misconfiguration</reference>
-	<reference/>
 </vuln_item_wasc_15>
 
 <vuln_items>wasc_16</vuln_items>
@@ -470,9 +463,8 @@ Par ailleurs, les installations par défaut peuvent inclure des noms d'utilisate
 	<desc>La prédiction des identifiants et des sessions (Credential/Session Prediction) est une méthode pour détourner l'authentification à un site internet ou pour se faire passer pour un utilisateur du site. Déduire ou deviner la valeur unique qui identifie une session particulière ou un utilisateur réalise l'attaque. Également connu sous le nom de détournement de session (Session Hijacking), les conséquences sont de permettre aux pirates d'émettre des requêtes de site internet avec les privilèges de l'utilisateur infecté.
 
 De nombreux sites web sont conçus pour authentifier un utilisateur à l'établissement de la connexion. Pour ce faire, les utilisateurs doivent prouver leur identité auprès du site internet, en fournissant généralement une combinaison nom d'utilisateur/mot de passe (identifiants). Plutôt que de transmettre ces informations confidentielles dans les deux sens à chaque transaction, les sites internet généreront un "identificateur de session" unique destiné à qualifier la session de l'utilisateur comme étant authentifiée. Toute communication ultérieure entre l'utilisateur et le site web est marquée avec l'identificateur de session comme "preuve" d'une session authentifiée. Si un agresseur peut prédire ou deviner l'identificateur de session d'un autre utilisateur, une activité frauduleuse est possible.</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Credential-and-Session-Prediction</reference>
-	<reference/>
 </vuln_item_wasc_18>
 
 <vuln_items>wasc_19</vuln_items>
@@ -508,7 +500,6 @@ Notez que le codage de sortie, l'échappement, et la mise entre guillemets est l
 
 Lorsque c'est possible, il peut être plus sûr d'interdire complètement les méta-caractères plutôt que de les échapper. Ceci amènera une certaine défense en profondeur. Après que les données sont entrées dans la base de données, des processus ultérieurs peuvent négliger d'échapper les méta-caractères avant utilisation, et vous pouvez ne pas avoir le contrôle de ces processus.</solution>
 	<reference>http://projects.webappsec.org/SQL-Injection</reference>
-	<reference/>
 </vuln_item_wasc_19>
 
 <vuln_items>wasc_20</vuln_items>
@@ -568,7 +559,7 @@ Les fonctionnalités ci-dessous sont souvent la cible d'attaques par automatisat
     * Sondages en ligne - les sondages et autres types de systèmes de vote en ligne peuvent être automatiquement détournés en faveur d'un certain choix.
     * Envoi de textos par internet - des agresseurs peuvent exploiter les systèmes de messagerie SMS pour spammer les utilisateurs de téléphone mobile
 	</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Insufficient+Anti-automation</reference>
 	<reference>http://cwe.mitre.org/data/definitions/116.html</reference>
 </vuln_item_wasc_21>
@@ -605,16 +596,14 @@ Utilisez la validation d'entrée comme mesure de défense en profondeur pour ré
 
 Lors de l'échange de données entre des composants, assurez-vous que les deux composants utilisent le même codage de caractères. Assurez-vous que l'encodage approprié est appliqué à chaque interface. Définissez explicitement l'encodage que vous utilisez chaque fois que le protocole le permet.</solution>
 	<reference>http://projects.webappsec.org/Improper-Output-Handling</reference>
-	<reference/>
 </vuln_item_wasc_22>
 
 <vuln_items>wasc_23</vuln_items>
 <vuln_item_wasc_23>
 	<alert>Injection XML</alert>
 	<desc>L'injection XML est une technique d'attaque utilisée pour manipuler ou compromettre la logique d'un service ou d'une application XML. L'injection de contenu ou de structures XML accidentel dans un message XML peut modifier la logique prévue de l'application. De plus, l'injection XML peut provoquer l'insertion de contenu malveillant dans le message ou document résultant.</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/XML-Injection</reference>
-	<reference/>
 </vuln_item_wasc_23>
 
 <vuln_items>wasc_24</vuln_items>
@@ -668,9 +657,8 @@ Cette technique est fréquemment utilisée pour contourner les mesures contre  l
 
 Le trafic de réponses HTTP utilise le trafic de requêtes HTTP - comme les techniques pour exploiter les divergences entre ce qu'un mécanisme contre le fractionnement de réponse HTTP (ou un serveur proxy) considérerait comme le flux de réponse HTTP, et le flux de réponse tel qu'analysé par un serveur proxy (ou un navigateur). Ainsi, alors même qu'un mécanisme contre le fractionnement de réponse HTTP peut considérer un certain flux de réponse comme inoffensif (réponse HTTP unique), un proxy/navigateur peut toujours l'analyser comme deux réponses HTTP, et donc être sensible à tous les résultats de la technique de fractionnement de réponse HTTP originale (dans le premier cas d'utilisation), ou être sujet à l'usurpation de page (dans le second cas). Par exemple, certains mécanismes de protection contre le fractionnement de réponse HTTP utilisés par certains moteurs applicatifs interdisent à l'application d'insérer un en-tête contenant CR + LF à la réponse. Pourtant, un agresseur peut forcer l'application à insérer un en-tête contenant des CRs, contournant ainsi le mécanisme de défense. Certains serveurs proxy peuvent encore traîter les CR (tous seuls) comme un séparateur d'en-tête (et de réponse) , et par conséquent la combinaison du serveur internet et du serveur proxy sera toujours vulnérable à une attaque pouvant empoisonner le cache du proxy.
 	</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/HTTP-Response-Smuggling</reference>
-	<reference/>
 </vuln_item_wasc_27>
 
 <vuln_items>wasc_28</vuln_items>
@@ -860,7 +848,6 @@ Si un utilisateur malveillant soumet une instruction Server-Side Include, il peu
 - encodez selon HTML les données fournies par l'utilisateur avant de les passer à une page ayant des autorisations d'exécution de SSI.
 - Utilisez SUExec pour que la page s'exécute en tant que propriétaire du fichier plutôt que comme utilisateur du serveur internet.</solution>
 	<reference>http://projects.webappsec.org/SSI-Injection</reference>
-	<reference/>
 </vuln_item_wasc_36>
 
 <vuln_items>wasc_37</vuln_items>
@@ -926,9 +913,8 @@ Il existe deux principaux types de processus nécessitant une validation: le flu
 Le "flux de contrôle" se réfère à des processus en plusieurs étapes, qui nécessitent que chacune des étapes soit effectuée par l'utilisateur dans un ordre spécifique. Quand un agresseur effectue l'étape incorrectement ou dans un ordre différent, les contrôles d'accès peuvent être contournés et une erreur d'intégrité peut se produire dans l'application. Des exemples de procéssus à plusieurs étapes sont: virements, récupération de mot de passe, achats en ligne et enregistrement de nouveau compte.
 
 La "logique métier" se réfère au contexte dans lequel un processus s'exécutera selon les exigences métier. Exploiter une faille de logique métier exige la connaissance de l'entreprise et de ses affaires; si aucune connaissance n'est nécessaire pour exploiter cette faille, alors il ne s'agit très probablement pas d'un défaut de logique métier. Pour cette raison, les mesures de sécurité typiques, telles que les analyses de code et les revues de code, ne permettront pas de trouver cette classe de faille. Une approche pour tester la logique métier est fournie par OWASP dans leur Guide de test.</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Insufficient-Process-Validation</reference>
-	<reference/>
 </vuln_item_wasc_40>
 
 <vuln_items>wasc_41</vuln_items>
@@ -966,9 +952,8 @@ Assurez-vous que tous les échecs dans l'allocation des ressources laissent le s
 	<alert>Entités XML externes</alert>
 	<desc>La technique des entités XML externes (XML External Entities) tire parti d'une fonctionnalité du langage XML pour générer dynamiquement des documents au moment du traitement. Un message XML peut soit fournir des données explicitement, soit pointer vers un URI où les données sont disponibles. Dans cette technique d'attaque, des entités externes peuvent remplacer la valeur de l'entité par des données malveillantes ou des renvois alternatifs, ou peuvent compromettre la sécurité des données auxquelles le serveur ou l'application XML a accès.
 	Les agresseurs peuvent également utiliser des entités externes pour forcer le serveur de services internet à télécharger du code ou du contenu malveillant sur le serveur pour utilisation dans des attaques secondaires ou ultérieures.</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/XML-External-Entities</reference>
-	<reference/>
 </vuln_item_wasc_43>
 
 <vuln_items>wasc_44</vuln_items>
@@ -990,9 +975,8 @@ Avant d'analyser des fichiers XML avec des DTDs associées, recherchez les décl
 	<desc>La méthodologie la plus couramment utilisée par les pirates consiste d'abord à observer la présence internet de la cible et de rassembler le plus d'informations possible. Avec ces informations, l'agresseur peut développer un scénario d'attaque précis, qui exploitera efficacement une vulnérabilité du type ou de la version du logiciel utilisé par l'hôte cible.
 
 La recherche d'empreintes multi-tier est similaire à son prédécesseur, la recherche d'empreintes TCP/IP (avec un scanner comme Nmap), sauf qu'elle se concentre sur la couche Application du modèle OSI, au lieu de la couche de Transport. La théorie derrière cette recherche d'empreintes est de créer un profil exact de la plateforme de la cible, de la  technologie de l'application internet, de la version de la base de données, des configurations et peut-être même de l'architecture et de la topologie du réseau.</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Fingerprinting</reference>
-	<reference/>
 </vuln_item_wasc_45>
 
 <vuln_items>wasc_46</vuln_items>
@@ -1025,9 +1009,8 @@ Une application internet devrait invalider une session après un temps d'inactiv
 <vuln_item_wasc_48>
 	<alert>Indexation non sécurisée</alert>
 	<desc>L'indexation non sécurisée (Insecure Indexing) constitue une menace pour la confidentialité des données du site internet. L'indexation de contenu de site internet par un processus ayant accès à des fichiers qui ne sont pas censés être accessibles au public constitue une fuite potentielle d'informations concernant l'existence de tels fichiers et sur leur contenu. Dans le processus d'indexation, ces informations sont recueillies et stockées par le processus d'indexation, et peuvent être récupérées plus tard (quoique pas trivialement) par un agresseur déterminé, généralement au moyen d'une série de requêtes sur le moteur de recherche. L'attaquant ne contrarie pas le modèle de sécurité du moteur de recherche. En soi, cette attaque est subtile et très difficile à détecter et à déjouer - il n'est pas facile de distinguer les requêtes de l'agresseur de celles des utilisateurs légitimes.</desc>
-	<solution>TBA</solution>
+	<solution></solution>
 	<reference>http://projects.webappsec.org/Insecure-Indexing</reference>
-	<reference/>
 </vuln_item_wasc_48>
 
 <vuln_items>wasc_49</vuln_items>

@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -99,12 +100,7 @@ public class DefaultVulnerabilities implements Vulnerabilities {
                                         candidateFilename,
                                         locale);
 
-                                var persisted =
-                                        new XmlMapper()
-                                                .readValue(
-                                                        new BufferedInputStream(is),
-                                                        PersistedVulnerabilities.class);
-                                return new LoadResult(persisted);
+                                return loadVulnerabilities(is);
                             } catch (IOException e) {
                                 LOGGER.error(e.getMessage(), e);
                                 return null;
@@ -117,7 +113,14 @@ public class DefaultVulnerabilities implements Vulnerabilities {
         return new LoadResult(new PersistedVulnerabilities());
     }
 
-    private static class LoadResult {
+    static LoadResult loadVulnerabilities(InputStream is) throws IOException {
+        var persisted =
+                new XmlMapper()
+                        .readValue(new BufferedInputStream(is), PersistedVulnerabilities.class);
+        return new LoadResult(persisted);
+    }
+
+    static class LoadResult {
 
         private static final int VULN_ITEM_PREFIX_LENGTH = "vuln_item_".length();
 
