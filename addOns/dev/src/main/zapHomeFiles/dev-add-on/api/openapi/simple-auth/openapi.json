@@ -1,0 +1,42 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Simple OpenAPI Example",
+    "description": "A simple API that defines just one unauthenticated endpoint",
+    "contact": {
+      "name": "ZAP Core Team"
+    },
+    "license": {
+      "name": "MIT"
+    }
+  },
+  "host": "localhost:9091",
+  "basePath": "/api/openapi/simple-auth",
+  "schemes": [
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/test-api": {
+      "get": {
+        "description": "A simple API endpoint",
+        "operationId": "test",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "API response"
+            }
+        }
+      }
+    }
+  }
+}
