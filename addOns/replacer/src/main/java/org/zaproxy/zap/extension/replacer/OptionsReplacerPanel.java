@@ -140,7 +140,6 @@ public class OptionsReplacerPanel extends AbstractParamPanel {
                         new ReplaceRuleAddDialog(
                                 (Window) View.getSingleton().getOptionsDialog(null),
                                 "replacer.add.title",
-                                replacerParam,
                                 (OptionsReplacerTableModel) model);
                 addDialog.pack();
             }
@@ -157,7 +156,6 @@ public class OptionsReplacerPanel extends AbstractParamPanel {
                         new ReplaceRuleModifyDialog(
                                 (Window) View.getSingleton().getOptionsDialog(null),
                                 "replacer.modify.title",
-                                replacerParam,
                                 (OptionsReplacerTableModel) model);
                 modifyDialog.pack();
             }

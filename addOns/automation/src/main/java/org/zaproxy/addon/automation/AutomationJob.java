@@ -226,18 +226,16 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
     }
 
     public void applyParameters(AutomationProgress progress) {
-        verifyOrApplyParameters(
-                this.getParamMethodObject(), this.getParamMethodName(), progress, false);
+        verifyOrApplyParameters(this.getParamMethodName(), progress, false);
     }
 
     public void verifyParameters(AutomationProgress progress) {
-        verifyOrApplyParameters(
-                this.getParamMethodObject(), this.getParamMethodName(), progress, true);
+        verifyOrApplyParameters(this.getParamMethodName(), progress, true);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     void verifyOrApplyParameters(
-            Object obj, String optionsGetterName, AutomationProgress progress, boolean verify) {
+            String optionsGetterName, AutomationProgress progress, boolean verify) {
         if (this.jobData == null) {
             return;
         }
@@ -270,7 +268,7 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
                 progress.error(
                         Constant.messages.getString(
                                 "automation.error.options.methods",
-                                obj.getClass().getCanonicalName(),
+                                options.getClass().getCanonicalName(),
                                 optionsGetterName,
                                 e1.getMessage()));
                 return;
@@ -353,7 +351,7 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
                                     progress.error(
                                             Constant.messages.getString(
                                                     "automation.error.options.badcall",
-                                                    obj.getClass().getCanonicalName(),
+                                                    options.getClass().getCanonicalName(),
                                                     paramMethodName,
                                                     e.getMessage()));
                                 }
@@ -361,7 +359,7 @@ public abstract class AutomationJob implements Comparable<AutomationJob> {
                                 progress.error(
                                         Constant.messages.getString(
                                                 "automation.error.options.badtype",
-                                                obj.getClass().getCanonicalName(),
+                                                options.getClass().getCanonicalName(),
                                                 paramMethodName,
                                                 optMethod.getParameterTypes()[0]
                                                         .getCanonicalName()));

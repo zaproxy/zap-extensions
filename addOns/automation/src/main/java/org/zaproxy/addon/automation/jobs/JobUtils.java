@@ -21,6 +21,7 @@ package org.zaproxy.addon.automation.jobs;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
@@ -442,7 +443,7 @@ public class JobUtils {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    static <T> T objectToType(Object obj, T t) {
+    static <T> T objectToType(Object obj, Class<?> t) {
         if (String.class.equals(t)) {
             return (T) obj.toString();
         } else if (Integer.class.equals(t) || int.class.equals(t)) {
@@ -469,7 +470,7 @@ public class JobUtils {
 
         } else if (List.class.equals(t)) {
             if (obj instanceof List) {
-                List<String> list = new ArrayList<>();
+                List<T> list = new ArrayList<>();
                 list.addAll((ArrayList) obj);
                 return (T) list;
             } else {
@@ -483,8 +484,29 @@ public class JobUtils {
             }
             throw new IllegalArgumentException(
                     "Enum value must be one of " + EnumUtils.getEnumList((Class<Enum>) t));
+        } else if (t.isArray()) {
+            if (obj instanceof List) {
+                List objList = (List) obj;
+                try {
+                    // This is nasty, but it works ;)
+                    String arrayClassName = t.getCanonicalName();
+                    String arrayBaseClassName =
+                            arrayClassName.substring(0, arrayClassName.length() - 2);
+                    T[] array =
+                            (T[])
+                                    Array.newInstance(
+                                            Class.forName(arrayBaseClassName), objList.size());
+                    objList.toArray(array);
+                    return (T) array;
+                } catch (Exception e) {
+                    LOGGER.error("Unable to map to an array from a list", e);
+                    return null;
+                }
+            } else {
+                LOGGER.error(
+                        "Unable to map to an array from {}", obj.getClass().getCanonicalName());
+            }
         }
-
         return null;
     }
 

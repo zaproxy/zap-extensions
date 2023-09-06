@@ -33,8 +33,10 @@ import static org.mockito.Mockito.withSettings;
 
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeAll;
@@ -198,6 +200,17 @@ class JobUtilsUnitTest {
         Object enumBBB = JobUtils.objectToType("bbB", enumeration.class);
         Object map = JobUtils.objectToType(hmap, Map.class);
 
+        Class<String[]> stringArrayClass = String[].class;
+        List<String> strList = new ArrayList<>();
+        strList.add("str");
+        Object strArray = JobUtils.objectToType(strList, stringArrayClass);
+
+        Class<Integer[]> intArrayClass = Integer[].class;
+        List<Integer> intList = new ArrayList<>();
+        intList.add(3);
+        intList.add(9);
+        Object intArray = JobUtils.objectToType(intList, intArrayClass);
+
         // Then
         assertThat(string, is(equalTo("string")));
         assertThat(integer5, is(equalTo(5)));
@@ -212,6 +225,13 @@ class JobUtilsUnitTest {
         assertThat(enumBBB, is(equalTo(enumeration.bbb)));
         assertThat(map.getClass(), is(equalTo(HashMap.class)));
         assertThat(((Map<?, ?>) map).size(), is(equalTo(2)));
+        assertThat(strArray.getClass(), is(equalTo(stringArrayClass)));
+        assertThat(((String[]) strArray).length, is(equalTo(1)));
+        assertThat(((String[]) strArray)[0], is(equalTo("str")));
+        assertThat(intArray.getClass(), is(equalTo(intArrayClass)));
+        assertThat(((Integer[]) intArray).length, is(equalTo(2)));
+        assertThat(((Integer[]) intArray)[0], is(equalTo(3)));
+        assertThat(((Integer[]) intArray)[1], is(equalTo(9)));
     }
 
     @Test
