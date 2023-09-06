@@ -990,7 +990,6 @@ class AutomationJobUnitTest {
         assertThat(progress.hasWarnings(), is(equalTo(false)));
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     @Test
     void shouldFailOnBadOptionsGetterName() {
         // Given
@@ -998,20 +997,40 @@ class AutomationJobUnitTest {
         AutomationJob job = new AutomationJobImpl(tpc, "getBadTestParam");
         AutomationProgress progress = new AutomationProgress();
 
-        Map map = new HashMap();
-        LinkedHashMap<?, ?> params = new LinkedHashMap(map);
-        LinkedHashMap<String, Object> jobData = new LinkedHashMap();
+        Map<?, ?> map = new HashMap<>();
+        LinkedHashMap<?, ?> params = new LinkedHashMap<>(map);
+        LinkedHashMap<String, Object> jobData = new LinkedHashMap<>();
         jobData.put("parameters", params);
 
         // When
         job.setJobData(jobData);
-        job.verifyOrApplyParameters(tpc, "getBadTestParam", progress, false);
+        job.verifyOrApplyParameters("getBadTestParam", progress, false);
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(progress.getErrors().size(), is(equalTo(1)));
         assertThat(progress.getErrors().get(0), is(equalTo("!automation.error.options.method!")));
+    }
+
+    @Test
+    void shouldNotFailToVerifyIfNoObject() {
+        // Given
+        AutomationJob job = new AutomationJobImpl(null, "getNullParam");
+        AutomationProgress progress = new AutomationProgress();
+
+        Map<?, ?> map = new HashMap<>();
+        LinkedHashMap<?, ?> params = new LinkedHashMap<>(map);
+        LinkedHashMap<String, Object> jobData = new LinkedHashMap<>();
+        jobData.put("parameters", params);
+
+        // When
+        job.setJobData(jobData);
+        job.verifyOrApplyParameters("getBadTestParam", progress, false);
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
     }
 
     @Test

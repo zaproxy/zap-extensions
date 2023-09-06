@@ -184,6 +184,11 @@ public class ReplacerParam extends AbstractParam {
         saveRules();
     }
 
+    public void clearRules() {
+        this.rules = new ArrayList<>();
+        saveRules();
+    }
+
     private void saveRules() {
 
         ((HierarchicalConfiguration) getConfig()).clearTree(ALL_RULES_KEY);

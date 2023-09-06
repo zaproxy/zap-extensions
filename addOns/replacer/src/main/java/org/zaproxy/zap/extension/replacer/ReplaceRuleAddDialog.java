@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import javax.swing.JCheckBox;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType;
@@ -63,17 +64,12 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
     protected static final String INIT_TYPE_USER_FIELD = "replacer.label.init.user";
     protected static final String INIT_TYPE_TOKEN_GEN_FIELD = "replacer.label.init.tokengen";
 
-    private ReplacerParam replacerParam;
     private ReplacerParamRule rule;
     private OptionsReplacerTableModel replacerModel;
 
     public ReplaceRuleAddDialog(
-            Window owner,
-            String title,
-            ReplacerParam replacerParam,
-            OptionsReplacerTableModel replacerModel) {
+            Window owner, String title, OptionsReplacerTableModel replacerModel) {
         super(owner, title, DisplayUtils.getScaledDimension(500, 350), ADV_TAB_LABELS, true);
-        this.replacerParam = replacerParam;
         this.replacerModel = replacerModel;
         initFields();
     }
@@ -173,14 +169,6 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
 
     public OptionsReplacerTableModel getReplacerModel() {
         return this.replacerModel;
-    }
-
-    public ReplacerParam getReplacerParam() {
-        return replacerParam;
-    }
-
-    public void setReplacerParam(ReplacerParam replacerParam) {
-        this.replacerParam = replacerParam;
     }
 
     private void setRule(ReplacerParamRule rule, MatchType selectedMatchType) {
@@ -299,7 +287,10 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
     }
 
     protected String checkIfUnique() {
-        if (this.replacerModel.containsRule(this.getStringValue(DESC_FIELD))) {
+        // this.replacerModel will be null when used with the AF - plans may be run on other systems
+        // or delete all existing rules
+        if (this.replacerModel != null
+                && this.replacerModel.containsRule(this.getStringValue(DESC_FIELD))) {
             return Constant.messages.getString("replacer.add.warning.existdesc");
         }
         return null;
@@ -492,12 +483,31 @@ public class ReplaceRuleAddDialog extends StandardFieldsDialog {
         }
     }
 
+    /**
+     * Allows callers to specify that rules added will always be enabled.
+     *
+     * @param enableEnabled
+     */
+    public void setEnableEnabled(boolean enableEnabled) {
+        JCheckBox enabledField = (JCheckBox) this.getField(ENABLE_FIELD);
+        if (!enableEnabled) {
+            enabledField.setSelected(true);
+        }
+        enabledField.setEnabled(enableEnabled);
+    }
+
     public void clear() {
         this.rule = null;
+        setEnableEnabled(true);
         this.setFieldValue(DESC_FIELD, "");
         this.setFieldValue(MATCH_STR_FIELD, "");
         this.setFieldValue(REPLACEMENT_FIELD, "");
         this.setFieldValue(ENABLE_FIELD, false);
         this.setFieldValue(ENABLE_TOKEN_PROCESSING, false);
+    }
+
+    @Override
+    public String getHelpIndex() {
+        return "replacer";
     }
 }

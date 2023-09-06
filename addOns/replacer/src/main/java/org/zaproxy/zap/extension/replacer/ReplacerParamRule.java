@@ -120,7 +120,9 @@ public class ReplacerParamRule extends Enableable {
         this.matchType = matchType;
         this.matchString = matchString;
         this.matchRegex = matchRegex;
-        this.escapedReplacement = HexString.compile(replacement);
+        if (replacement != null) {
+            this.escapedReplacement = HexString.compile(replacement);
+        }
         this.replacement = replacement;
         this.initiators = initiators;
         this.tokenProcessingEnabled = tokenProcessingEnabled;
