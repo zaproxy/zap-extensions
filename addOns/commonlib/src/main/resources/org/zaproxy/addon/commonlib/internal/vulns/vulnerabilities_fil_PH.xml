@@ -341,7 +341,7 @@ Tiyakin na ang lahat ng mga kabiguan sa alokasyong inilagay sa sistema sa isang 
 
 Ang pina ka karaniwang uri ng isang brute force na atake sa web na mga aplikasyon ay isang atake laban sa log-in credentials. Pagkat ang mga gumagamit ay kailangang tandaan ang mga password, madalas silang pumili ng pinakamadaling matandaan na mga pananalita o salita bilang kanilang mga password, paggawa ng isang brute force na atake gamit ang isang diksiyonaryo ay magagamit. Gayong pag-atake ay sinusubok ang pag-login sa isang sistema gamit ang isang malaking listahan ng mga pananalita at salita bilang potensyal na mga password ay kadalasang tinatawag bilang "atake sa listahan ng pananalita" o isang "atake sa diksiyonaryo". Ang pagsusubok ng mga password maaring isinama ang kaibahan ng mga karaniwang salita sa mga password gaya ng nabuo sa pamamagitan ng pagpalit sa "o" ng "0" at "i" ng "1" gaya ng personal na impormasyon kasali ang mga pangalan ng mga miyembro ng pamilya, araw na isinilang at mga numero ng telepono.
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11a>
 
@@ -352,7 +352,7 @@ Ang pina ka karaniwang uri ng isang brute force na atake sa web na mga aplikasyo
 
 Dahil ang HTTP ay isang stateless protocol, upang mapanatili ang mga aplkasyon ng state web kailangang tiyakin na ang isang identifier ng sesyon ay ipinadala ng browser sa bawat kahilingan. Ang identifier ng sesyon ay karaniwang naka-store sa isang HTTP cookie o URL. Gamit ang malupit na pwersa ng pag-atake, ang isang taga-atake ay maaaring mahulaan ang identifier ng sesyon ng iba pang gumagamit. Ito ay maaaring humantong sa pagpapanggap ng taga-atake bilang ang gumagamit, pagkuha ng mga personal na impormasyon at magssagawa ng mga aksyon sa ngalan ng gumagamit.
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11b>
 
@@ -365,7 +365,7 @@ Kapag ang mga file nakatira sa mga direktoryo na mga pinaglingkuran sa pamamagit
 
 Ang isang brute force na atake ay sumusubok na maghanap sa hindi naka-ugnay na file sa pamamagitan ng pagsusumikap na pumasok sa mga malalaking numero ng mga file. Ang listahan sa sinusubukang mga pangalan ng file ay maaaring makuha mula sa isang listahan sa kilalang potensyal na mga file o batay sa iba't iba na nakikitang mga file sa web site. Para sa karagdagang impormasyon sa brute forcing na mga direktoryo at mga file ay makikita sa kapanalig na kahinaan, manghuhula ng mapagkunan ng lokasyon.
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11c>
 
@@ -380,7 +380,7 @@ Upang punan ang nawawalang impormasyon ang hacker ay maghuhula ng nawawalang imp
     * Paghuhula ng CVV/CSC ay nangangailangan lamang ng 1000 o 10000 na pagtatangka gaya ng numero ay 3 o 4 digit lamang, depende sa uri ng card.
     * Paghuhula ng petsa ng expiration ay nangangailangan ng ilang dosenang patatangka lamang.
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11d>
 
@@ -398,7 +398,7 @@ Lalong lalo na ang gawa na mga kaugnay ay pwedeng maipadala ng isang gumagamit g
 
 Ang atake na ito ay nagsasamantala ng tiwala sa relasyon na naitatag sa pagitan ng gumagamit at ng web site. Ang pamamaraan ay nagamit upang lumikha ng pekeng mga pahina ng web kabilang ang mga form sa pag-login, mga kabaligtaran, maling mga pahayag, atbp.
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Content-Spoofing</reference>
 </vuln_item_wasc_12>
 
@@ -425,7 +425,7 @@ Mga pahina na nagbibigay ng iba't ibang mga tugon batay sa kabuluhan ng datos ay
 Mga server ay maaaring magsama ng kilalang default na mga account at mga password. Kabiguan na lubos na i-lock na pababa o patigasin ang server na maaaring iwanan ang pagtakda ng file at mga direktoryo na mga permiso. Hindi maayos na pagkumpigure sa SSL na sertipiko at pag-encryption na mga setting, ang ginagamit sa default na katibayan, at hindi maayos na pagpapatunay na implementasyon na may panlabas na mga sistema ay maaaring ikompromiso ang pagiging kumpidensyal na impormasyon.
 
 Verbose at nakapagtuturo sa maling mga mensahe ay maaaring magresulta sa tulo ng datos, at ang impormasyon ay inihayag ay magagamit sa bumalangkas sa susunod na antas ng atake. Ang maling mga kumpigurasyon sa software ng server ay maaaring magpahintulot sa pag-iindex ng direktoryo at daan sa traversal na mga pag-aatake.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Server-Misconfiguration</reference>
 </vuln_item_wasc_14>
 
@@ -435,7 +435,7 @@ Verbose at nakapagtuturo sa maling mga mensahe ay maaaring magresulta sa tulo ng
 	<desc>Ang hindi maayos na kumpigurasyon sa aplikasyon na pag-atake ay pagsamatalahan ng mga kahinaan na makikita sa mga aplikasyon sa web. Maraming mga aplikasyon ang dumating na may hindi kinakailangan at hindi ligtas na mga tampok, tulad ng debug at QA na mga tampok, pinagana sa pamamagitan ng default. Mga tampok na ito ay maaaring magbigay ng isang paraan para sa isang hacker na lampasan ang mga pamamaraan ng pagpapatunay at makakuha ng access sa sensitibong impormasyon, marahil may nakataas na mga pribilehiyo.
 
 Gayundin, ang default na mga installation ay maaaring magsama ng mga kilalang username at password, hard-coded na mga backdoor account, mga espesyal na mekanismo ng pag-access, at hindi tamang mga permiso na itinakda para sa mga file na maa-access sa pamamagitan ng mga web server. Ang default na mga halimbawa ay maaaring ma-access sa mga environment ng produksyon. Ang mga file ng kumpigurasyon na nakabase sa aplikasyon na hindi maayos na naka-lock down ay maaaring magbunyag ng malinaw na mga string ng koneksyon ng teksto sa database, at ng mga default na setting sa mga file mg kumpigurasyon na maaaring hindi na-set na may iniisip na seguridad. Lahat ng mga maling kumpigurasyong ito ay maaaring humantong sa hindi awtorisadong pag-access sa sensitibong impormasyon.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Application-Misconfiguration</reference>
 </vuln_item_wasc_15>
 
@@ -463,7 +463,7 @@ Gayundin, ang default na mga installation ay maaaring magsama ng mga kilalang us
 	<desc>Ang Credential/Sesyon na hula ay isang pamamaraan sa hijacking o impersonating sa isang gumagamit ng web site. Pagbabawa o paghula ng natatanging halaga na tinukoy ang isang partikular na sesyon o naisasakatupad ang pag-aatake ng gumagamit. Kilala rin bilang Hijacking na sesyon, ang mga bunga ay magpapahintulot sa mga umaatake na kakayanin ang isyu ng mga kahilingan ng web site na may naka-kompromiso sa pribilehiyo ng gumagamit.
 
 Maraming mga web site ay dinisenyo upang mapatunayan at subaybayan ang isang gumagamit kapag ang kumunikasyon ay unang itinatatag. Upang gawin ito, ang mga gumagamit dapat nagpatunay sa kanilang pagkakakilanlan sa web site, karaniwan ay sa pamamagitan ng pagbibigay ng isang username/password (mga kredensyal) na kumbinasyon. Sa halip na pagpasa ng mga kompidensyal na mga kredensyal pabalik at paatras na may bawat transaksyon, ang mga web site ay bumubuo ng isang natatanging "ID ng sesyon" upang tukuyin ang gumagamit ng sesyon nang mapagtibay. Kasunod na komunikasyon sa pagitan ng gumagamit at sa web site ay naka-tag na may ID ng sesyon bilang "katibayan" sa pagpapatunay na sesyon. Kung ang isang umatake ay kayang mahulaan o hulaan ang ID ng sesyon sa isa pang gumagamit, pandaraya na aktibidad ay posible.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Credential-and-Session-Prediction</reference>
 </vuln_item_wasc_18>
 
@@ -563,7 +563,7 @@ Ang aplikasyon ng web na kakayahan na ang mdaalas na target para sa awtomasyon n
     * Ang mga Online poll - mga poll at ibang mga uri sa online na mga pagboto na mga sistema ay awtomatikong mapagsamantalahan na pabor ng isang ilang pagpipilian.
     * Ang Web-based SMS na mensahe ng pagpapadala - mga umaatake ay maaaring mag-exployt ng SMS na mensahe sa mga sistema sa pag-ayos sa spam mobile phone ng mga gumagamit
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Insufficient+Anti-automation</reference>
 	<reference>http://cwe.mitre.org/data/definitions/116.html</reference>
 </vuln_item_wasc_21>
@@ -606,7 +606,7 @@ Kapag ang pagpapalit ng datos sa pagitan ng mga bahagi, masisiguro na ang mga ko
 <vuln_item_wasc_23>
 	<alert>XML Injection</alert>
 	<desc>Ang XML Injection ay isang atake na pamamaraan na ginagamit upang manipulahin o ikompromiso ang lohika ng isang XML na aplikasyon o serbisyo. Ang injection sa di-sinasadyang XML na nilalaman at/o mga istruktura para sa isang XML na mensahe na maaaring balakin ang lohika ng aplikasyon. Dagdag pa rito, ang XML Injection ay maaaring maging sanhi ng insertion ng malisyosong nilalaman sa resultang mensahe/dokumento.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/XML-Injection</reference>
 </vuln_item_wasc_23>
 
@@ -659,7 +659,7 @@ Ang isang gumagamit para sa teknek na ito ay isang pagtitibay sa basic na HTTP n
 
 Ang HTTP na tugon ng smuggling ay gumagamit ng HTTP na hiling ng smuggling -tulad ng mga pamamaraan upang pagsamantalahan ang pagkakaiba sa pagitan na kong ano ang anti- HTTP na tugon na paghihiwalay na mekanismo (o isang proxy server) na magiging isaalang-alangsa HTTP na tugon ng stream, at ang sagot na stream na gaya ng proxy server (o isang browser). Kaya, habang ang anti- HTTP na tugon ng paghihiwalay na mekanismo ay maaaring isaalang-alang ng isang partikular na tugon ng stream na di nakasasama (solong HTTP na tugon), isang proxy/browser ay maaaring i-parse pa rin bilang dalawang HTTP na mga sagot, at kaya mahilig sa lahat ng mga kinalalabasan sa orihinal na HTTP na tugon ng paghihiwalay na pamamaraan ( sa unang paggamit ng kaso) o maging madaling kapitan sa pahinang spoofing (sa pangalawang kaso). Halimbawa, ang ilang anti- HTTP na tugon ng naghahating mga mekanismo na ginagamit ng ilang mga aplikasyon ng mga makinarya na ipinagbabawal ang aplikasyon mula sa pagpasok ng isang header na naglalaman ng CR+LF na sagot. Gayon man ang umaatake ay maaaring pumipilit sa aplikasyon sa pagsingit sa isang header na naglalaman ng CRs, nang sa gayon ay circumventing sa pagtatanggol ng mekanismo. Ilang proxy na mga server ay maaaring maging treat CR (lamang) bilang isang header (at sagot) ng tagahiwalay, at bilang tulad ang kumbinasyon sa web server at proxy server ay maging vulnerable sa isang pag-aatake na maaaring maglason sa cache ng proxy.
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/HTTP-Response-Smuggling</reference>
 </vuln_item_wasc_27>
 
@@ -915,7 +915,7 @@ Mayroong dalawang pangunahing uri ng mga proseso na nangangailangan ng pagpapatu
 Ang "kontrol ng daloy" ay tumutukoy sa maraming-hakbang na mga proseso na kinakailangang ang bawat hakbang ay maisagawa sa isang partikular na pagkakasunud-sunod ng gumagamit. Kapag ang isang taga-atake ay nagsagawa ng hindi tamang hakbang o wala sa pagkasunod-sunod, ang mga kontrol ng access ay maaaring na-bypass at isang kamalian sa integridad ng aplikasyon ang maaaring mangyari. Mga halimbawa ng maramihang-hakbang na mga proseso ay kinabibilangan ng wire transfer, pagrekober ng password, checkout ng purchase, at pag-sign-up ng account.
 
 "Lohika ng negosyo" ay tumutukoy sa konteksto kung saan ang isang proseso ay magsasagawa ayon sa pinamamahalaan ng mga kinakailangan sa negosyo. Ang pagsasamantala sa kahinaan ng lohika ng negosyo ay nangangailangan ng kaalaman sa negosyo; kung walang kinakailangang kaalaman para pagsamantalahan ito, malamang na hindi ito isang kapintasan ng lohika ng negosyo. Dahil dito, ang tipikal na mga hakbang ng seguridad tulad ng pag-scan at pagsusuri ng code ay hindi makikita ang ganitong klase ng kahinaan. Isang paraan sa pagsusuri ay inaalok ng OWASP sa kanilang Gabay sa Pagsusuri.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Insufficient-Process-Validation</reference>
 </vuln_item_wasc_40>
 
@@ -954,7 +954,7 @@ Tiyakin na ang lahat ng pagkabigo sa alokasyon ng mapagkukunan ay maglalagay sa 
 	<alert>Ang XML na panglabas na mga entity</alert>
 	<desc>Ito pamamaraan ay nagtatagal ng kalamangan ng isang feature sa XML para bumuo ng mga dokumento nang pabago bago sa oras ng pagproproseso. Ang isang XML na mensahe ay sinumang nagbibigay ng datos explicitly o sa pamamagitan ng pagtuturo sa isang URI na kung saan ang datos ay umiiral. Sa pamamaraan ng pag-atake, ang mga panlabas na entidad ay maaaring palitan ang halaga ng entidad na may malisyosong datos, alternatibong mga sanggunian o maaaring ikompromiso ang seguridad ng datos na may access ang server/XML na aplikasyon.
 	Maaaring gamitin din ng mga taga-atake ang Panlabas na mga Entidad upang i-download ng server ng mga web service ang malisyosong code o nilalaman sa server para magamit sa sekondarya o sundin ang mga pag-atake.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/XML-External-Entities</reference>
 </vuln_item_wasc_43>
 
@@ -977,7 +977,7 @@ Bago i-parse ang mga file ng XML na may kaugnay na mga DTD, i-scan para sa mga d
 	<desc>Ang pinaka-karaniwang pamamaraan para sa mga taga-atake ay ang i-footprint muna ang presensya sa web ng target at isa-isahin ang impormasyon hanggan't maaari. Sa pamamagitan ng impormasyong ito, ang taga-atake ay maaaring bumuo ng isang tumpak na sitwasyon ng pag-atake, na epektibong magsasamantala ng isang kahinaan sa uri/bersyon ng software na ginagamit ng target na host.
 
 Ang multi-tier na fingerprinting ay katulad ng pinalitan nito, ang TCP/IP Fingerprinting (na may isang scanner tulad ng Nmap) maliban sa ito ay nakatuon sa Layer ng Aplikasyon ng modelo ng OSI sa halip na sa Layer ng Transport. Ang teorya sa likod ng fingerprinting na ito ay upang lumikha ng isang tumpak na profile ng platform ng target, teknolohiya ng software ng aplikasyon ng web, backend database na bersyon, mga kumpigurasyon at marahil kahit na ang kanilang arkitektura ng network/topology.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Fingerprinting</reference>
 </vuln_item_wasc_45>
 
@@ -1011,7 +1011,7 @@ Ang isang aplikasyon ng Web ay dapat ipawalang-bisa ang isang sesyon pagkatapos 
 <vuln_item_wasc_48>
 	<alert>Hindi ligtas na indexing</alert>
 	<desc>Ang walang seguridad na pag-index ay isang banta sa pagiging kompidensyal ng datos ng web site. Ang pag-index ng mga nilalaman ng web-site sa pamamagitan ng isang proseso na may access sa mga file na hindi dapat ma-access ng publiko ay may potensyal na magbunyag ng impormasyon tungkol sa pagkakaroon ng gayong mga file, at tungkol sa kanilang nilalaman. Sa proseso ng pag-index, ang naturang impormasyon ay kinolekta at inimbak sa pamamagitan ng proseso ng pag-index, na maaaring makuhang muli sa ibang pagkakataon (kahit na hindi trivially) ng isang tinukoy na taga-atake, karaniwang sa pamamagitan ng isang serye ng mga query sa search engine. Hindi sinalungat ng taga-atake ang modelo ng seguridad ng search engine. Dahil dito, ang pag-atakeng ito ay banayad at napakahirap na tuklasin at mapigilan - hindi madaling makilala ang mga query ng taga-atake mula sa mga query ng lehitimong gumagamit.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Insecure-Indexing</reference>
 </vuln_item_wasc_48>
 
