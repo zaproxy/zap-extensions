@@ -142,6 +142,10 @@ public class TestDirectory implements HttpMessageHandler {
                     contentType = "text/css";
                 } else if (name.endsWith(".js")) {
                     contentType = "text/javascript";
+                } else if (name.endsWith(".json")) {
+                    contentType = "application/json";
+                } else if (name.endsWith(".yaml")) {
+                    contentType = "application/yaml";
                 } else {
                     LOGGER.error("Unexpected tutorial file extension: {}", name);
                 }
