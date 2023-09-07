@@ -342,7 +342,7 @@ Siguroha nga tanan nga mga kapakyasan sa gigahin na kapanguhaan kay nagbutang sa
 
 Ang labing komon na type sa usa ka brute force na atake sa web na mga aplikasyon kay ang atake batok sa log-in na mga kredensyal. Sukad ang mga tiggamit kay nagkinahanglan na hinumduman ang mga password, sila kanunay nga mopili ug sayon na pagsag-ulo sa mga pulong o mga phrase na ingon man ang mga password, nga naghimo sa usa ka brute force na atake na mogamit sa diksiyonaryo nga mapuslanon. Ang maong pag-atake nagsulay pag log-in sa sistema gamit ang dako nga listahan sa mga pulong ug mga hugpong na ingon sa potensyal na mga password sa kanunay nga gitawag ug usa ka "atake sa pulong nga listahan" o usa ka "atake sa diksiyonaryo". Pagsulay sa mga password kay naglakip usab sa mga pulong nga komon sa mga password, sama sa namugna nga pinaagi sa pag-ilis sa "o" sa "i" nga adunay "1" ug ingon man ang personal na impormasyon na naglakip sa mga pangalan sa membro sa pamilya, adaw natawhan ug mga numero sa telepono.
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11a>
 
@@ -353,7 +353,7 @@ Ang labing komon na type sa usa ka brute force na atake sa web na mga aplikasyon
 
 Sukad na ang HTTP kay usa ka stateless na protocol, aron pagmintinar ang estado na web na mga aplikasyon kay nagkinahanglan na siguruhon na ang sesyon na tig-tanaw kay nagpadala sa browser sa matag hangyo. Ang sesyon nga tig-tanaw kay pinaka komon na gitipigan sa HTTP cookie o URL. Gamit ang brute force na atake, ang tig-atake kay makatagna sa sesyon na tig-tanaw sa uban nga tiggamit. Mahimo kini nga ang tig-atake pagpakaaron-ingnon an ang tiggamit, pagkuha sa personal na impormasyon ug pagbuhat sa mga aksyon alang sa tiggamit.
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11b>
 
@@ -366,7 +366,7 @@ Kung ang mga file naa sa sulod sa mga direktoryo ug nagserbisyo sa web server pe
 
 Usa ka brute force na atake kay naningkamot nga makit-an ang wala nakasumpay sa file pinaagi sa pag-access sa usa ka dako nga numero sa mga file. Ang listahan sa gipugos na mga pangalan sa file kay mahimong makuha gikan sa listahan sa nailhan na potensyal na mga file o base sa mga laing mga makita na mga file sa web site. Daghan na impormasyon sa brute forcing na mga direktoryo ug mga file kay makita sa nahilakip na kahuyang, nahibal-an na kapanguhaan nga dapit.
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11c>
 
@@ -381,7 +381,7 @@ Aron mabutangan ang nawala nga impormasyon na ang hacker kay nagtagna sa nawala 
     * Pagtagna sa CVV/CSC kay nagkinahanglan lamang ug 1000 o 10000 na mga pagsulay kay tungod ang numero kay adunay 3 o 4 ka mga digit lamang, depende sa tipo sa card.
     * Pagtagna sa petsa sa expiration kay nagkinahanglan lamang ug daghan nga dosenang mga pagsulay.
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11d>
 
@@ -399,7 +399,7 @@ Ilabi na ang gihimo na mga link kay mahimong mapadala ngadto sa usa ka tiggamit 
 
 Kini nga atake kay nagpahimulos sa pagsalig nga relasyon nga gitukod tali sa tiggamit ug sa web site. Ang teknik kay gigamit sa paghimo ug mga peke nga mga web page lakip na ang login na mga form, mga defacement, mga bakak na gipanggawas sa press, ug uban pa.
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Content-Spoofing</reference>
 </vuln_item_wasc_12>
 
@@ -426,7 +426,7 @@ Mga panid kay naghatag ug lainlaing mga tubag base sa pagkabalido sa datos na ma
 Ang mga server kay mahimong maglakip ug inila nga default na mga account ug mga password. Pagpakyas sa hingpit na pagkagapos o pagmagahi sa server kay mahimong mobiya nga dili angay na ipagtakda sa file ug direktoryo na mga pagtugot. Mga sayop na mga kumpigurasyon sa SSL na mga sertipiko ug mga pag-encrypt na setting, ang paggamit sa default na mga sertipiko, ug dili sakto na pagmatuod nga pagpatuman uban sa gawas nga mga sistema na mahimong makakomprimiso sa confidentiality sa impormasyon.
 
 Verbose ug informative na sayop na mga mensahe kay mahimong moresulta sa pagkawala sa datos, ug ang impormasyon kay gipadayag kay mahimong magamit sa paghimo sa sunod na lebel sa pag-atake. Ang dili sakto nga mga kumpigurasyon sa server software kay mahimong motugot sa direktoryo na pag-index ug pag-atake sa agianan na traversal.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Server-Misconfiguration</reference>
 </vuln_item_wasc_14>
 
@@ -436,7 +436,7 @@ Verbose ug informative na sayop na mga mensahe kay mahimong moresulta sa pagkawa
 	<desc>Ang dili sakto nga kumpigurasyon sa aplikasyon na mga atake kay nagpahimulos sa kumpigurasyon na pagkahuyang na makita sa web na mga aplikasyon. Daghan nga mga aplikasyon kay moabot uban sa wala kinahanglana ug dili luwas na mga bahin, sana sa pag-debug ug QA sa mga bahin, nga nakahimo pinaagi sa default. Kini nga mga bahin kay mahimong maghatag ug usa ka paaagi sa ug ka hacker para i-bypass ang pagkatinuod nga mga pamaagi ug makaangkon ug access para sa sensitibo na impormasyon, tingali uban ang taas nga mga pribilehiyo.
 
 Mao usab, ang default na mga installation kay mahimong maglakip sa ilado na mga username ug mga password, mga account na naka hard code backdoor, espesyal access na mga mekanismo, ug dili sakto na mga pagtugot na gibutang para sa mga file na makasulod gamit sa mga web server. Default na mga sample kay mahimong ma-access sa produksyon na mga environment. Base sa aplikasyon na configurasyon na mga file na dili maayo pagkatrangka kay mahimong mopadayag sa tin-aw nga teksto na koneksyon na mga string ngadto sa database, ug ang default na mga string sa configurasyon na mga file kay mahimong wala naka-set ug seguridad sa hunahuna. Tanan niini nga dili sakto nga configurasyon kay mopadulong sa dili awtorisado na access ngadto sa sensitibo na impormasyon.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Application-Misconfiguration</reference>
 </vuln_item_wasc_15>
 
@@ -464,7 +464,7 @@ Mao usab, ang default na mga installation kay mahimong maglakip sa ilado na mga 
 	<desc>Kredensiyal/Sesyon na Prediction kay usa ka pamaagi sa pag-hijack o pagsuon sa usa ka web site nga tiggamit. Pagbawas ug pagtagna sa talagsaong mga bili nga nagpaila sa usa ka partikular na sesyon o ang tiggamit nagatuman sa atake. Kini giila usab na Sesyon Hijacking, ang mga sangputanan kay mahimong sa mga tig-atake ug abilidad para i-isyu ang web site nga mga hangyo nga adunay nakompromiso na mga pribilehiyo sa tiggamit.
 
 Daghan na mga web site kay gidesinyo sa pagpamatuod ug pagsubay sa usa ka tiggamit kung ang komunikasyon kay una natukod. Para himoon kini, ang mga tiggamit kay kailangan na pamatud-an ang iyang pagkatawo sa web site, na kasagaran ang pagbutang sa username/password (mga kredensyal) na mga kumbinasyon. Inay nga moagi sa pagpasa sa kini nga mga kompidensyal na mga kredensyal na pabalikbalik sa matag transaksiyon, mga web site kay makahimo ug usa ka talagsaong "sesyon ID" para ilhon ang sesyon sa tiggamit ingon nga tinuod. Pagkahuman na komunikasyon tali sa tiggamit ug sa web site kay naka-tag niini ug sesyon ID ingon nga "pagmatuod" sa gipamatud-an na sesyon. Kung ang tig-atake kay mahibaw-an o matag-anan ang sesyon ID sa lain nga tiggamit, malimbongon na aktibidad kay posible.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Credential-and-Session-Prediction</reference>
 </vuln_item_wasc_18>
 
@@ -563,7 +563,7 @@ Ang web aplikasyon na functionality nga mao ang kanunay nga usa ka target para s
     * Online na mga poll - ang mga poll ig mga itpo sa online na pagbutar na mga sistema kay mahimong awtomatiko na nadaot sa pabor sa usa ka pagpili.
     * Ang Web-based SMS na mensahe sa pagpadala - ang mga tig-atake kay mahimong pagpahimulos sa SMS na mensahe sa pagpadala na sistema aron sa pag-spam sa mobile phone na mga tiggamit
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Insufficient+Anti-automation</reference>
 	<reference>http://cwe.mitre.org/data/definitions/116.html</reference>
 </vuln_item_wasc_21>
@@ -606,7 +606,7 @@ Kung kanus-a pag pagbaylobaylo ug mga datos tali sa mga komponent, siguradoha na
 <vuln_item_wasc_23>
 	<alert>XML Injection</alert>
 	<desc>Ang XML na Injection kay usa ka atake na teknik na gigamit para manipular o pagkompromiso sa lohika sa usa ka XML na aplikasyon o serbisyo. Ang injection kay wala tuyoa nga XML na sulod ug/o na mga istraktura padung sa XML na mensahe nga mahimong makausab sa tuyo na lohika sa aplikasyon. Dugang pa, ang XML na injection kay hinungdan sa pagpasulod sa mga malisyoso na mga sulod padung sa pagkaresulta sa mensahe/dokumento.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/XML-Injection</reference>
 </vuln_item_wasc_23>
 
@@ -661,7 +661,7 @@ Usa ka gamit para sa kini nga teknik kay ang pagdugang sa batakang HTTP na tubag
 
 Ang HTTP na tubag sa pagpayuhot kay makahimo paggamit sa HTTP na tubag na pareho sa pagpayuhot na mga teknik para magpahimulos sa mga kalainan tali sa kung unsa ang anti-HTTP na Tubag sa Pagpayuhot na mekanismo (o usa ka proxy server) na hunahunaa na mahimong HTTP tubag na stream, ug ang tubag na stream kay ingon nga gisusi sa usa ka proxy server (o usa ka browser). Busa, samtang usa ka anti-HTTP na tubag sa pagkabulag na mekanismo kay mahimong hunahunaon ang usa ka partikular na tubag na stream na dili makadaot (solo na HTTP na tubag), usa ka proxy/browser kay mahimo pa nga i-parse kini sa duha ka HTTP na mga tubag, ug busa mahimong dali nga mahitabo sa tanan na mga mahitabo sa orihinal na HTTP na tubag sa pagkabulag na teknik (sa unang paggamit nga kaso) o pag-ayo sa panid sa pag-spoof (sa ikaduha nga kaso). Pananglitan, daghang anti-HTTP na tubag sa pagkabulang na mga mekanismo na gigamit sa daghan aplikasyon na mga makina nga nagdumili sa aplikasyon sa pagpasulod sa header nga naa'y sulod na CR+LF sa tubag. Apan usa ka tig-atake kay mamahimong mopugos sa aplikasyon sa pagsal-ot sa usa ka header nga adunay sulod na CR, sa ingon wala na ang depensa nga mekanismo. Sa daghan na mga proxy na server nga mahimo pa gihapon ang pagtagad sa CR (lamang) sa usa ka header (ug nagtubag) sa nagabuwag, ug ingon nga ang kumbinasyon sa web server ug proxy server kay sa gihapon mahuyang sa usa ka atake na naghilo sa cache sa proxy.
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/HTTP-Response-Smuggling</reference>
 </vuln_item_wasc_27>
 
@@ -917,7 +917,7 @@ Aduhay duha ka pangunang mga matang sa mga proseso nga nagkinahanglan ug balidas
 Ang "Pagdumala sa agos" kay nagtumong sa multi-step na mga proseso nga nagkinahanglan ug matag lakang nga gihimo sa espesipiko na order pinaagi sa tiggamit. Kung ang tig-atake kay naghimo ug lakang na dili sakto o dili apil, ang access na mga kontrol na mahimong ma-bypass ug usa ka aplikasyon na integridad na sayop kay mahimong mahitabo. Mga Pananglitan sa multi-step na mga proseso na naglakip ug pagbalhin sa wire, pagkuha sa password, pagpalit sa checkout, ug account sign-up.
 
 "Logic sa negosyo" kay nagtumong sa konteksto diin usa ka proseso kay padaganon ingon nga gidumala sa kinahanglanon sa negosyo. Pagpahimulos sa usa ka negosyo sa kahuyang sa lohika nga nanginahanglan ug kahibalo sa negosyo; kung walay kahibalo nga kinahanglanon sa pagpahimulos niini, dayon lagmit kini dili usa ka kulangan sa lohika sa negosyo. Tungod niini, kasagaran na pagsukod sa seguridad sama sa mga scan ug pagtan-aw sa code kay dili makakita sa unsa ang klase sa kahuyang niini. Usa ka paagi sa pagsulay kay gihatag sa OWASP sa iyang Pagsulay na Giya.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Insufficient-Process-Validation</reference>
 </vuln_item_wasc_40>
 
@@ -956,7 +956,7 @@ Siguroha nga tanan nga mga kapakyasan sa gigahin na kapanguhaan kay nagbutang sa
 	<alert>XML na Gawas na mga Entidad</alert>
 	<desc>Kini nga teknik kay nagkuha ug bentaha sa bahin niini sa XML para mahimo ug mga dokumento nga mausab sa oras sa pagproseso. Ang XML na mensahe kay mahimo man na makahatag ug datos na tin-aw o sa pagtudlo sa usa ka URI na kung asa ang datos anaa. Sa teknik sa atake, gawas na mga entidad kay makapuli sa entidad na bili na adunay malisyoso na datos, alternatibo na mga referral o mahimong makompromiso sa seguridad sa datos sa server/XML aplikasyon nga adunay access sad.
 	Ang mga tig-atake kay mahimo usab ang Gawas na mga Entidad aron makabaton sa web na mga serbisyo na server download sa malisyoso na code o sulod sa server para gamiton sa ikaduha o sunod nga mga atake.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/XML-External-Entities</reference>
 </vuln_item_wasc_43>
 
@@ -979,7 +979,7 @@ Sa dili pa magparse sa mga XML file na nalangkit sa mga DTD, scan alang sa recur
 	<desc>Ang pinaka komon na pamaagi para sa mga tig-atake kay ang unang footprint sa target sa presensya sa web ug pag-ihap niini nga daghan na impormasyon na kutob sa mahimo. Uban niini nga kasayuran, ang tig-atake kay mahimong makahimo ug usa ka sakto nga sitwasyon, na nga epektibo nga makaabusar sa usa ka pagkahuyang sa tipo/bersyon sa software nga gigamit na pinaagi sa target host.
 
 Ang daghan na pag-fingerprint sa pareha sa iyang mga gisundan, ang TCP/IP na Figerprinting (nga adunay usa ka scanner sama sa Nmap) na gawas nga kini naka-focus sa Aplikasyon Layer sa OSI na modelo imbis nga Transport Layer. Ang teorya luyo niini sa pag-fingerprint kay ang pagbuhat ug sakto nga profile sa platform sa target, web aplikasyon software na teknolohiya, backend database na bersyon, mga configuration ug posible bisan ang ilang network na arkitektura/topology.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Fingerprinting</reference>
 </vuln_item_wasc_45>
 
@@ -1013,7 +1013,7 @@ Usa ka Web aplikasyon kay dapat mopawala sa usa ka sesyon paghuman sa una nga gi
 <vuln_item_wasc_48>
 	<alert>Dili luwas na Pag-index</alert>
 	<desc>Dili luwas na Pag-index kay usa ka bahad sa datos na kompidensyal sa web site. Pag-index sa web-site na mga sulod sa pamaagi sa proseso na adunay access sa mga file na dili kuno ma-abli sa publiko kay adunay potensyal sa pagkaawas sa impormasyon bahin sa paglungtad sa maong mga file, ug bahin sa ilang mga sulod. Sa proseso sa pag-index, sama sa impormasyon na nakuha ug nabutang sa pamaagi sa pag-index na proseso, nga sa ulahi mahimo na makuha (bisan dili gamay) pinaagi sa usa ka determinado nga tig-atake, kasagaran sa paggamit sa serye sa mga query para sa search engine. Ang tig-atake kay dili mapakyas ang modelo sa seguridad sa search engine. Ingon niana, kini nga atake kay hinay ug grabe kalisod na mailhan ug sa pag-foil - kini kay dili sayon na maila ang mga query sa tig-atake gikan sa lehitimong mga query sa tiggamit.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Insecure-Indexing</reference>
 </vuln_item_wasc_48>
 
