@@ -50,14 +50,16 @@ import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
 import org.zaproxy.addon.automation.AutomationPlan;
 import org.zaproxy.addon.automation.AutomationProgress;
+import org.zaproxy.addon.automation.ExtensionAutomation;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
 
 /** Unit test for {@link JobUtils}. */
-class JobUtilsUnitTest {
+class JobUtilsUnitTest extends TestUtils {
 
     enum enumeration {
         aaa,
@@ -67,6 +69,30 @@ class JobUtilsUnitTest {
     @BeforeAll
     static void setUp() {
         Constant.messages = new I18N(Locale.getDefault());
+    }
+
+    @Test
+    void shouldApplyParamsToObject() {
+        // Given
+        mockMessages(new ExtensionAutomation());
+        AutomationProgress progress = mock(AutomationProgress.class);
+        HashMap<String, Object> src = new HashMap<>();
+        src.put("bool", "true");
+        src.put("valueString", "String");
+        src.put("array", List.of(1, "A"));
+        src.put("list", List.of(2, "B"));
+        Data dest = new Data();
+        // When
+        JobUtils.applyParamsToObject(src, dest, "name", null, progress);
+        // Then
+        verify(progress).info("Job name set bool = true");
+        assertThat(dest.isBool(), is(equalTo(Boolean.TRUE)));
+        verify(progress).info("Job name set valueString = String");
+        assertThat(dest.getValueString(), is(equalTo("String")));
+        verify(progress).info("Job name set array = [1, A]");
+        assertThat(dest.getArray(), is(equalTo(new Object[] {1, "A"})));
+        verify(progress).info("Job name set list = [2, B]");
+        assertThat(dest.getList(), is(equalTo(List.of(2, "B"))));
     }
 
     @Test
@@ -91,7 +117,6 @@ class JobUtilsUnitTest {
         Data dest = new Data();
         AutomationProgress progress = mock(AutomationProgress.class);
         AutomationEnvironment env = mock(AutomationEnvironment.class);
-        given(env.replaceVars(any())).willAnswer(invocation -> invocation.getArgument(0));
         // When
         JobUtils.applyObjectToObject(
                 source, dest, "name", new String[] {"valueString", "bool"}, progress, env);
@@ -260,7 +285,6 @@ class JobUtilsUnitTest {
         AutomationProgress progress = mock(AutomationProgress.class);
         ScriptWrapper otherScriptWrapper = mock(ScriptWrapper.class);
         given(otherScriptWrapper.getFile()).willReturn(new File("/other-script.ext"));
-        given(otherScriptWrapper.getEngineName()).willReturn(engineName);
         ScriptWrapper otherScriptWrapper2 = mock(ScriptWrapper.class);
         given(otherScriptWrapper2.getFile()).willReturn(file);
         given(otherScriptWrapper2.getEngineName()).willReturn("other engine");
@@ -399,9 +423,11 @@ class JobUtilsUnitTest {
         return extensionScript;
     }
 
-    private static class Data {
+    static class Data {
         private String valueString;
         private Boolean bool;
+        private Object[] array;
+        private List<Object> list;
 
         Data() {}
 
@@ -414,8 +440,6 @@ class JobUtilsUnitTest {
             return valueString;
         }
 
-        @SuppressWarnings("unused")
-        // Used by reflection
         public void setValueString(String valueString) {
             this.valueString = valueString;
         }
@@ -424,10 +448,24 @@ class JobUtilsUnitTest {
             return bool;
         }
 
-        @SuppressWarnings("unused")
-        // Used by reflection
         public void setBool(Boolean bool) {
             this.bool = bool;
+        }
+
+        public Object[] getArray() {
+            return array;
+        }
+
+        public void setArray(Object[] array) {
+            this.array = array;
+        }
+
+        public List<Object> getList() {
+            return list;
+        }
+
+        public void setList(List<Object> list) {
+            this.list = list;
         }
     }
 }
