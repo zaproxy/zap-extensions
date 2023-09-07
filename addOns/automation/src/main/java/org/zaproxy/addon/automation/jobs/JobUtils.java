@@ -298,7 +298,7 @@ public class JobUtils {
                                             "automation.info.setparam",
                                             objectName, // TODO changed param
                                             key,
-                                            value));
+                                            toStringValue(value)));
                         } catch (Exception e) {
                             progress.error(
                                     Constant.messages.getString(
@@ -324,6 +324,13 @@ public class JobUtils {
                                 "automation.error.options.unknown", objectName, key));
             }
         }
+    }
+
+    private static Object toStringValue(Object value) {
+        if (value == null || !value.getClass().isArray()) {
+            return value;
+        }
+        return Arrays.toString((Object[]) value);
     }
 
     public static void applyObjectToObject(
@@ -471,7 +478,7 @@ public class JobUtils {
         } else if (List.class.equals(t)) {
             if (obj instanceof List) {
                 List<T> list = new ArrayList<>();
-                list.addAll((ArrayList) obj);
+                list.addAll((List) obj);
                 return (T) list;
             } else {
                 LOGGER.error("Unable to map to an List from {}", obj.getClass().getCanonicalName());
