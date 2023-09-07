@@ -36,8 +36,8 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.zap.model.Vulnerabilities;
-import org.zaproxy.zap.model.Vulnerability;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 
 /**
  * a scan rule that looks for application source code disclosure using Git metadata/file disclosure
@@ -50,7 +50,7 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
      * details of the vulnerability which we are attempting to find 34 = "Predictable Resource
      * Location"
      */
-    private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_34");
+    private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_34");
 
     /** the logger object */
     private static final Logger LOGGER =
@@ -103,17 +103,7 @@ public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
 
     @Override
     public String getReference() {
-        if (vuln != null) {
-            StringBuilder sb = new StringBuilder();
-            for (String ref : vuln.getReferences()) {
-                if (sb.length() > 0) {
-                    sb.append('\n');
-                }
-                sb.append(ref);
-            }
-            return sb.toString();
-        }
-        return "Failed to load vulnerability reference from file";
+        return VULN.getReferencesAsString();
     }
 
     private String getEvidence(String filename, String gitURIs) {

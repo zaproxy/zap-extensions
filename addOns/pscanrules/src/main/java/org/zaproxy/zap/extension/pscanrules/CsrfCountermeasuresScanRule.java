@@ -38,11 +38,11 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
-import org.zaproxy.zap.model.Vulnerabilities;
-import org.zaproxy.zap.model.Vulnerability;
 
 /**
  * The CsrfCountermeasuresScanRule identifies *potential* vulnerabilities with the lack of known
@@ -53,7 +53,7 @@ import org.zaproxy.zap.model.Vulnerability;
 public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
 
     /** contains the base vulnerability that this plugin refers to */
-    private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_9");
+    private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_9");
 
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
@@ -255,31 +255,15 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
     }
 
     public String getDescription() {
-        if (vuln != null) {
-            return vuln.getDescription();
-        }
-        return "Failed to load vulnerability description from file";
+        return VULN.getDescription();
     }
 
     public String getSolution() {
-        if (vuln != null) {
-            return vuln.getSolution();
-        }
-        return "Failed to load vulnerability solution from file";
+        return VULN.getSolution();
     }
 
     public String getReference() {
-        if (vuln != null) {
-            StringBuilder sb = new StringBuilder();
-            for (String ref : vuln.getReferences()) {
-                if (sb.length() > 0) {
-                    sb.append('\n');
-                }
-                sb.append(ref);
-            }
-            return sb.toString();
-        }
-        return "Failed to load vulnerability reference from file";
+        return VULN.getReferencesAsString();
     }
 
     @Override

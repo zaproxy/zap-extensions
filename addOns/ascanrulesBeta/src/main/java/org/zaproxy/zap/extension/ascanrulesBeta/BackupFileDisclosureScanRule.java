@@ -35,8 +35,8 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.zap.model.Vulnerabilities;
-import org.zaproxy.zap.model.Vulnerability;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 
 /**
  * a scan rule that looks for backup files disclosed on the web server
@@ -284,7 +284,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
      * details of the vulnerability which we are attempting to find 34 = "Predictable Resource
      * Location"
      */
-    private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_34");
+    private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_34");
 
     private static final Logger LOGGER = LogManager.getLogger(BackupFileDisclosureScanRule.class);
 
@@ -310,10 +310,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
 
     @Override
     public String getSolution() {
-        if (vuln != null) {
-            return vuln.getSolution();
-        }
-        return "Failed to load vulnerability solution from file";
+        return VULN.getSolution();
     }
 
     @Override

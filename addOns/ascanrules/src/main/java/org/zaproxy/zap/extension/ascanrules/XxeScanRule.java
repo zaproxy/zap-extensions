@@ -34,9 +34,9 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.addon.oast.ExtensionOast;
-import org.zaproxy.zap.model.Vulnerabilities;
-import org.zaproxy.zap.model.Vulnerability;
 
 /**
  * https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing
@@ -49,7 +49,7 @@ public class XxeScanRule extends AbstractAppPlugin {
     private static final int PLUGIN_ID = 90023;
 
     // Get the correct vulnerability description from WASC
-    private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_43");
+    private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_43");
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A03_INJECTION,
@@ -118,10 +118,7 @@ public class XxeScanRule extends AbstractAppPlugin {
 
     @Override
     public String getDescription() {
-        if (vuln != null) {
-            return vuln.getDescription();
-        }
-        return "Failed to load vulnerability description from file";
+        return VULN.getDescription();
     }
 
     @Override
@@ -131,29 +128,12 @@ public class XxeScanRule extends AbstractAppPlugin {
 
     @Override
     public String getSolution() {
-        if (vuln != null) {
-            return vuln.getSolution();
-        }
-
-        return "Failed to load vulnerability solution from file";
+        return VULN.getSolution();
     }
 
     @Override
     public String getReference() {
-        if (vuln != null) {
-            StringBuilder sb = new StringBuilder();
-            for (String ref : vuln.getReferences()) {
-                if (sb.length() > 0) {
-                    sb.append('\n');
-                }
-
-                sb.append(ref);
-            }
-
-            return sb.toString();
-        }
-
-        return "Failed to load vulnerability reference from file";
+        return VULN.getReferencesAsString();
     }
 
     @Override

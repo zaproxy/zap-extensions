@@ -23,9 +23,6 @@ import java.awt.CardLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -42,8 +39,8 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.network.HttpRequestHeader;
-import org.zaproxy.zap.model.Vulnerabilities;
-import org.zaproxy.zap.model.Vulnerability;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.utils.ZapTextArea;
@@ -71,8 +68,6 @@ public class EditAlertPanel extends AbstractPanel {
     private JComboBox<String> alertEditRisk = null;
     private ZapTextArea alertOtherInfo = null;
     private DefaultComboBoxModel<String> nameListModel = null;
-
-    private List<Vulnerability> vulnerabilities = null;
 
     public EditAlertPanel() {
         super();
@@ -135,10 +130,10 @@ public class EditAlertPanel extends AbstractPanel {
             alertEditName = new JComboBox<>();
             alertEditName.setEditable(true);
             nameListModel = new DefaultComboBoxModel<>();
-            List<String> allVulns = getAllVulnerabilityNames();
-            for (String vuln : allVulns) {
-                nameListModel.addElement(vuln);
-            }
+            Vulnerabilities.getDefault().getAll().stream()
+                    .map(Vulnerability::getName)
+                    .sorted()
+                    .forEach(nameListModel::addElement);
             alertEditName.setModel(nameListModel);
 
             alertEditMethod = new JComboBox<>();
@@ -257,23 +252,6 @@ public class EditAlertPanel extends AbstractPanel {
         alertEditEvidence.discardAllEdits();
         setAlertOtherInfo(alertData.getOtherInfo());
         cardLayout.show(this, getAlertPane().getName());
-    }
-
-    private List<Vulnerability> getAllVulnerabilities() {
-        if (vulnerabilities == null) {
-            vulnerabilities = Vulnerabilities.getAllVulnerabilities();
-        }
-        return vulnerabilities;
-    }
-
-    private List<String> getAllVulnerabilityNames() {
-        List<Vulnerability> vulns = this.getAllVulnerabilities();
-        List<String> names = new ArrayList<>(vulns.size());
-        for (Vulnerability v : vulns) {
-            names.add(v.getAlert());
-        }
-        Collections.sort(names);
-        return names;
     }
 
     private void setAlertOtherInfo(String otherInfo) {
