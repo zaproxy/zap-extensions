@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [57] - 2023-09-08
 ### Changed
 - Maintenance changes.
 - Depend on newer version of Common Library add-on.
@@ -440,6 +440,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[57]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v57
 [56]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v56
 [55]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v55
 [54]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v54
