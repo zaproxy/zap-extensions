@@ -38,5 +38,8 @@ public class RedirectScript implements BrowserHook {
         JavascriptExecutor jsExecutor = (JavascriptExecutor) ssutils.getWebDriver();
         jsExecutor.executeScript("localStorage.setItem('localzapurl', '" + zapurl + "')");
         jsExecutor.executeScript("localStorage.setItem('localzapenable',false)");
+
+        // This statement make sure that the ZAP browser extension is configured properly
+        ssutils.getWebDriver().get(zapurl);
     }
 }
