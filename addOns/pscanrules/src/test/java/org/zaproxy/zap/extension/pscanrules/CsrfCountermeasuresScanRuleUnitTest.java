@@ -115,9 +115,8 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
     @Test
     void shouldNotRaiseAlertIfContentTypeIsNotHTML() {
         // Given
-        HttpMessage msg = new HttpMessage();
-        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "application/json");
-        msg.setResponseBody("no html");
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "application/json");
+        formWithoutAntiCsrfToken();
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -158,8 +157,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
     @Test
     void shouldRaiseAlertIfThereIsNoCSRFTokenFound() {
         // Given
-        msg.setResponseBody(
-                "<html><head></head><body><form id=\"no_csrf_token\"><input type=\"text\"/><input type=\"submit\"/></form></body></html>");
+        formWithoutAntiCsrfToken();
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -430,6 +428,11 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(1, alertsRaised.size());
+    }
+
+    void formWithoutAntiCsrfToken() {
+        msg.setResponseBody(
+                "<html><head></head><body><form id=\"no_csrf_token\"><input type=\"text\"/><input type=\"submit\"/></form></body></html>");
     }
 
     private HttpMessage createScopedMessage(boolean isInScope) throws URIException {
