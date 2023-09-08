@@ -150,6 +150,8 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     private ZestClientRecorderHelper zestClientHelper;
 
     private ExtensionNetwork extensionNetwork;
+    private Method displayScriptMethod;
+    private Method selectNodeMethod;
 
     public ExtensionZest() {
         super(NAME);
@@ -602,7 +604,11 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
     private void displayScript(ZestScriptWrapper sw, boolean allowFocus) {
         try {
-            Method displayScriptMethod =
+            if (displayScriptMethod != null) {
+                displayScriptMethod.invoke(this.getExtScript().getScriptUI(), sw, allowFocus);
+                return;
+            }
+            displayScriptMethod =
                     this.getExtScript()
                             .getScriptUI()
                             .getClass()
@@ -615,7 +621,12 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
 
     private void selectNode(ScriptNode node, boolean expand, boolean allowFocus) {
         try {
-            Method selectNodeMethod =
+            if (selectNodeMethod != null) {
+                selectNodeMethod.invoke(
+                        this.getExtScript().getScriptUI(), node, expand, allowFocus);
+                return;
+            }
+            selectNodeMethod =
                     this.getExtScript()
                             .getScriptUI()
                             .getClass()

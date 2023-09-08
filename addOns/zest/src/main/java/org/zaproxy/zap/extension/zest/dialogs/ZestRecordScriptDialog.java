@@ -247,15 +247,9 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
                 scriptWrapper.setLengthApprox(this.getIntValue(FIELD_APPROX));
             }
         }
-        ScriptNode scriptNode;
-
-        if (this.isServerSide()) {
-            scriptNode = extension.add(scriptWrapper, false);
-            extension.updated(scriptNode);
-        } else {
-            scriptNode = extension.add(scriptWrapper, false, false);
-            extension.updated(scriptNode, false);
-        }
+        boolean allowFocus = isServerSide();
+        ScriptNode scriptNode = extension.add(scriptWrapper, false, allowFocus);
+        extension.updated(scriptNode, allowFocus);
         extension.setRecordingNode(scriptNode);
 
         if (!this.isServerSide()) {
