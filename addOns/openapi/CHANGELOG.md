@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [36] - 2023-09-07
 ### Changed
 - Dependency updates.
 - The "Import an OpenAPI definition from the local file system" and "Import an OpenAPI definition from a URL" menu items
@@ -283,6 +286,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[36]: https://github.com/zaproxy/zap-extensions/releases/openapi-v36
 [35]: https://github.com/zaproxy/zap-extensions/releases/openapi-v35
 [34]: https://github.com/zaproxy/zap-extensions/releases/openapi-v34
 [33]: https://github.com/zaproxy/zap-extensions/releases/openapi-v33

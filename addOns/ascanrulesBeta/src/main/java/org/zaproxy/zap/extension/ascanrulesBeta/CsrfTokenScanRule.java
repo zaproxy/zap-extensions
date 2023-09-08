@@ -42,10 +42,10 @@ import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.zap.extension.httpsessions.HttpSessionsParam;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
-import org.zaproxy.zap.model.Vulnerabilities;
-import org.zaproxy.zap.model.Vulnerability;
 
 /**
  * CsrfTokenScanRule is an effort to improve the anti-CSRF token detection of ZAP It is based on
@@ -66,7 +66,7 @@ public class CsrfTokenScanRule extends AbstractAppPlugin {
     private String ignoreAttValue;
 
     // WASC Threat Classification (WASC-9)
-    private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_9");
+    private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_9");
 
     private static final Logger LOGGER = LogManager.getLogger(CsrfTokenScanRule.class);
 
@@ -82,10 +82,7 @@ public class CsrfTokenScanRule extends AbstractAppPlugin {
 
     @Override
     public String getDescription() {
-        if (vuln != null) {
-            return vuln.getDescription();
-        }
-        return "Failed to load vulnerability description from file";
+        return VULN.getDescription();
     }
 
     @Override
@@ -95,25 +92,12 @@ public class CsrfTokenScanRule extends AbstractAppPlugin {
 
     @Override
     public String getSolution() {
-        if (vuln != null) {
-            return vuln.getSolution();
-        }
-        return "Failed to load vulnerability solution from file";
+        return VULN.getSolution();
     }
 
     @Override
     public String getReference() {
-        if (vuln != null) {
-            StringBuilder sb = new StringBuilder();
-            for (String ref : vuln.getReferences()) {
-                if (sb.length() > 0) {
-                    sb.append("\n");
-                }
-                sb.append(ref);
-            }
-            return sb.toString();
-        }
-        return "Failed to load vulnerability reference from file";
+        return VULN.getReferencesAsString();
     }
 
     @Override

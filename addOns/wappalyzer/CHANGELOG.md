@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [21.24.0] - 2023-09-07
 ### Changed
 - Dependency updates.
 - Depend on newer versions of Automation Framework and Common Library add-ons (Related to Issue 7961).
@@ -294,6 +297,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - First version
 
 
+[21.24.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.24.0
 [21.23.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.23.0
 [21.22.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.22.0
 [21.21.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.21.0

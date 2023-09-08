@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Maintenance changes.
+
+## [0.6.0] - 2023-09-07
+### Changed
+- Maintenance changes.
 - Depend on newer versions of Automation Framework and Common Library add-ons (Related to Issue 7961).
 - Use Common Library add-on to obtain the Value Generator (Issue 8016).
 
@@ -62,6 +66,7 @@ The following table illustrates the changes versus the previous core release(s) 
 |                                                                                                                                         | SVG image files are parsed to identify HREF attributes and extract/resolve any contained links. (Issue 4984)                                                                                                        |
 |                                                                                                                                         | Irrelevant Parameters - Allows to manage the parameters that should be removed when canonicalising the URLs found. The session token names defined in the HTTP Sessions options are taken into account and removed (Issue 4388). |
 
+[0.6.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.6.0
 [0.5.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.5.0
 [0.4.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.4.0
 [0.3.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.3.0

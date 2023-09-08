@@ -64,7 +64,7 @@ public class DsStoreParser extends SpiderParser {
         for (MasterBlockRef masterBlockRef : dsStore.buddyAllocatorBody().directories()) {
             // Each B-tree directory has one master block comprising metadata.
             MasterBlock masterBlock = masterBlockRef.masterBlock();
-            getLogger().debug("Rcords: {}", masterBlock.numRecords());
+            getLogger().debug("Records: {}", masterBlock.numRecords());
 
             Block rootBlock = masterBlock.rootBlock();
 

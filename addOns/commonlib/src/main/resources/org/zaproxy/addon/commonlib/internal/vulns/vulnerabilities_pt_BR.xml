@@ -385,7 +385,7 @@ Certifique-se de que todas as falhas na alocação de recursos não colocam o si
 
 O tipo mais comum de ataque de força bruta em aplicativos da web é um ataque contra credenciais de login. Como os usuários precisam se lembrar de senhas, eles geralmente selecionam para tal, palavras ou frases fáceis de memorizar, fazendo com que o uso de um  dicionário de possíveis frases, termos e combinações seja muito útil em um ataque de força bruta. Esse tipo de ataque de tentativa de login em um sistema usando uma grande lista de palavras e frases como senhas em potencial é freqüentemente chamado de "ataque de lista de palavras" ou "ataque de dicionário". As tentativas de senha também podem incluir variações de palavras comuns em senhas, como aquelas geradas pela substituição de "o" por "0" e "i" por "1", bem como informações pessoais, incluindo nomes de familiares, datas de nascimento e números de telefone.
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11a>
 
@@ -396,7 +396,7 @@ O tipo mais comum de ataque de força bruta em aplicativos da web é um ataque c
 
 Como o HTTP é um protocolo sem estado, para manter o estado os aplicativos da web precisam garantir que um identificador de sessão seja enviado pelo navegador com cada solicitação. O identificador de sessão é mais comumente armazenado em um cookie HTTP ou URL. Usando um ataque de força bruta, um invasor pode adivinhar o identificador de sessão de outro usuário. Isso pode fazer com que o invasor se faça passar pelo usuário, obtendo informações pessoais e realizando ações em nome do usuário.
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11b>
 
@@ -409,7 +409,7 @@ Quando os arquivos estão alocados em diretórios disponibilizados pelo servidor
 
 Um ataque de força bruta tenta localizar o arquivo desvinculado tentando acessar um grande número de arquivos. A lista de nomes de arquivos tentados pode ser obtida de uma lista de arquivos potenciais conhecidos ou com base em variantes dos arquivos visíveis no site. Mais informações sobre ataques de força bruta em diretórios e arquivos podem ser encontradas na vulnerabilidade associada, localização de recurso previsível.
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11c>
 
@@ -426,7 +426,7 @@ Para completar as informações ausentes, o hacker pode adivinhar as informaçõ
     
 * - Adivinhar uma data de expiração requer apenas algumas dezenas de tentativas.
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11d>
 
@@ -447,7 +447,7 @@ Links especialmente criados podem ser enviados a um usuário por e-mail, mensage
 
 Este ataque explora a relação de confiança estabelecida entre o usuário e o site. A técnica tem sido usada para criar páginas da web falsas, incluindo formulários de login, desfiguração de sites, comunicados de imprensa falsos, etc.
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Content-Spoofing</reference>
 </vuln_item_wasc_12>
 
@@ -474,7 +474,7 @@ Páginas que fornecem respostas diferentes com base na validade dos dados també
 Os servidores podem incluir contas e senhas padrão bem conhecidas. A falha em bloquear ou proteger totalmente o servidor pode deixar permissões de arquivo e diretório configuradas incorretamente. Certificados SSL e conformações de criptografia mal configurados, o uso de certificados padrão e a implementação de autenticação inadequada com sistemas externos podem comprometer a confidencialidade das informações.
 
 Mensagens de erro detalhadas e informativas podem resultar em vazamento de dados, e as informações reveladas podem ser usadas para formular o próximo nível de ataque. Configurações incorretas no software do servidor podem permitir a indexação de diretório e ataques de travessia/passagem de caminho.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Server-Misconfiguration</reference>
 </vuln_item_wasc_14>
 
@@ -484,7 +484,7 @@ Mensagens de erro detalhadas e informativas podem resultar em vazamento de dados
 	<desc>Ataques de configuração incorreta de aplicação exploram os pontos fracos de configuração encontrados em aplicações web. Muitas aplicações vêm com recursos desnecessários e inseguros, como recursos de depuração e controle de qualidade, habilitados por padrão. Esses recursos podem fornecer meios para um hacker contornar os métodos de autenticação e obter acesso a informações confidenciais, talvez com privilégios elevados.
 
 Da mesma forma, as instalações padrão podem incluir nomes de usuário e senhas bem conhecidos, contas backdoor codificadas, mecanismos de acesso especiais e permissões incorretas definidas para arquivos acessíveis por meio de servidores da web. Samples padrão podem estar acessíveis em ambientes de produção. Arquivos de configuração baseados em aplicativos que não são bloqueados adequadamente podem revelar strings de conexão de texto não criptografado para o banco de dados, e as configurações padrão nos arquivos de configuração podem não ter sido definidas com a segurança em mente. Todas essas configurações incorretas podem levar ao acesso não autorizado a informações confidenciais.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Application-Misconfiguration</reference>
 </vuln_item_wasc_15>
 
@@ -512,7 +512,7 @@ Da mesma forma, as instalações padrão podem incluir nomes de usuário e senha
 	<desc>Previsão de Credencial/Sessão é um método de sequestro de seção ou a simulação de ser um usuário de site. Deduzindo ou adivinhando o valor exclusivo que identifica uma determinada sessão ou usuário, o ataque é completado. Também conhecido como sequestro de sessão, as consequências podem permitir que os invasores façam solicitações de sites com os privilégios do usuário comprometido.
 
 Muitos sites são projetados para autenticar e rastrear um usuário quando a comunicação é estabelecida pela primeira vez. Para fazer isso, os usuários devem provar sua identidade para o site, normalmente fornecendo uma combinação de nome de usuário/senha (credenciais). Em vez de passar essas credenciais confidenciais para frente e para trás com cada transação, os sites irão gerar um "ID de sessão" exclusivo para identificar a sessão do usuário como autenticada. A comunicação subsequente entre o usuário e o site é marcada com o ID da sessão como "prova" da sessão autenticada. Se um invasor for capaz de prever ou adivinhar o ID da sessão de outro usuário, a atividade fraudulenta é possível.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Credential-and-Session-Prediction</reference>
 </vuln_item_wasc_18>
 
@@ -616,7 +616,7 @@ As funcionalidades de aplicações web que costumam ser alvo de ataques de autom
     
 * - Envio de mensagens SMS baseado na Web - os invasores podem explorar sistemas de envio de mensagens SMS para enviar spam para usuários de telefones celulares.
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Insufficient+Anti-automation</reference>
 	<reference>http://cwe.mitre.org/data/definitions/116.html</reference>
 </vuln_item_wasc_21>
@@ -659,7 +659,7 @@ Ao trocar dados entre componentes, certifique-se de que ambos os componentes est
 <vuln_item_wasc_23>
 	<alert>Injeção XML</alert>
 	<desc>Injeção XML (XML Injection) é uma técnica de ataque usada para manipular ou comprometer a lógica de uma aplicação ou serviço XML. A injeção de conteúdo e/ou estruturas XML não intencionais em uma mensagem XML pode alterar a lógica pretendida da aplicação. Além disso, a injeção de XML pode causar a inserção de conteúdo malicioso na mensagem/documento resultante.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/XML-Injection</reference>
 </vuln_item_wasc_23>
 
@@ -715,7 +715,7 @@ Um uso para essa técnica é aprimorar a técnica de divisão de resposta HTTP b
 
 O contrabando de resposta HTTP faz uso de técnicas semelhantes a contrabando de solicitação HTTP para explorar as discrepâncias entre o que um mecanismo de divisão de resposta HTTP (ou um servidor proxy) consideraria ser o fluxo de resposta HTTP e o fluxo de resposta analisado por um servidor proxy (ou um navegador). Assim, embora um mecanismo de anti-divisão de resposta HTTP possa considerar um fluxo de resposta específico inofensivo (resposta HTTP única), um proxy/navegador ainda pode analisá-lo como duas respostas HTTP e portanto, ser suscetível a todos os resultados da técnica de divisão de resposta HTTP original (no primeiro caso de uso) ou ser suscetível a falsificação de página (no segundo caso). Por exemplo, alguns mecanismos de anti-divisão de resposta HTTP em uso por alguns engines de aplicação, a proíbem de inserir um cabeçalho contendo CR+LF na resposta. Ainda assim, um invasor pode forçar a aplicação a inserir um cabeçalho contendo CRs, contornando assim o mecanismo de defesa. Alguns servidores proxy ainda podem tratar CR (apenas) como um separador de cabeçalho (e resposta) e, como tal, a combinação de servidor web e servidor proxy ainda estará vulnerável a um ataque que pode envenenar o cache do proxy.
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/HTTP-Response-Smuggling</reference>
 </vuln_item_wasc_27>
 
@@ -973,7 +973,7 @@ Existem dois tipos principais de processos que requerem validação: controle de
 "Controle de fluxo" refere-se a processos de várias etapas que exigem que cada etapa seja realizada em uma ordem específica pelo usuário. Quando um invasor executa a etapa incorretamente ou fora de ordem, os controles de acesso podem ser ignorados e pode ocorrer um erro de integridade do aplicativo. Exemplos de processos de várias etapas incluem transferência eletrônica, recuperação de senha, finalização da compra e inscrição na conta.
 
 "Lógica de negócios" se refere ao contexto no qual um processo será executado conforme regido pelos requisitos de negócios. Explorar uma fraqueza da lógica de negócios requer conhecimento do negócio; se nenhum conhecimento é necessário para explorá-lo, provavelmente não é uma falha de lógica de negócios. Devido a isso, medidas de segurança típicas, como varreduras e revisão de código, não encontrarão essa classe de fraqueza. Uma abordagem de teste é oferecida pelo OWASP em seu Guia de Teste.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Insufficient-Process-Validation</reference>
 </vuln_item_wasc_40>
 
@@ -1015,7 +1015,7 @@ Certifique-se de que todas as falhas na alocação de recursos não colocam o si
 	<alert>Entidades Externas XML</alert>
 	<desc>Essa técnica aproveita um recurso do XML para construir documentos dinamicamente no momento do processamento. Uma mensagem XML pode fornecer dados explicitamente ou apontando para um URI onde os dados existem. Na técnica de ataque, entidades externas podem substituir o valor da entidade por dados maliciosos, referências alternativas ou podem comprometer a segurança dos dados aos quais o servidor/aplicativo XML tem acesso.
 	Os invasores também podem usar Entidades Externas para que o servidor de serviços da web baixe código malicioso ou conteúdo para o servidor para uso em ataques secundários ou acompanhamento.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/XML-External-Entities</reference>
 </vuln_item_wasc_43>
 
@@ -1038,7 +1038,7 @@ Antes de analisar arquivos XML com DTDs associados, verifique as declarações d
 	<desc>A metodologia mais comum para invasores é primeiro rastrear a presença do alvo na web e enumerar o máximo de informações possível. Com essas informações, o invasor pode desenvolver um cenário de ataque preciso, que explorará com eficácia uma vulnerabilidade no tipo/versão do software que está sendo utilizado pelo host de destino.
 
 O fingerprinting multicamadas é semelhante a seu antecessor, TCP/IP fingerprinting (com um scanner como o Nmap), exceto que ela é focada na Camada de Aplicação do modelo OSI em vez da Camada de Transporte. A teoria por trás do fingerprinting é criar um perfil preciso da plataforma de destino, tecnologia de software de aplicativo da web, versão do banco de dados de backend, configurações e possivelmente até mesmo sua arquitetura/topologia de rede.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Fingerprinting</reference>
 </vuln_item_wasc_45>
 
@@ -1072,7 +1072,7 @@ Uma aplicação web deve invalidar uma sessão após um tempo ocioso predefinido
 <vuln_item_wasc_48>
 	<alert>Indexação Insegura</alert>
 	<desc>A indexação insegura é uma ameaça à confidencialidade dos dados do site. A indexação de conteúdo de um site por meio de um processo que tem acesso a arquivos que não deveriam ser publicamente acessíveis tem o potencial de vazar informações sobre a existência de tais arquivos e sobre seu conteúdo. No processo de indexação, tais informações são coletadas e armazenadas pelo processo de indexação, que pode ser posteriormente recuperado (embora não trivialmente) por um determinado invasor, normalmente por meio de uma série de consultas ao mecanismo de busca. O invasor não impede o modelo de segurança do mecanismo de pesquisa. Como tal, este ataque é sutil e muito difícil de detectar e frustrar - não é fácil distinguir as consultas do invasor das consultas de um usuário legítimo.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Insecure-Indexing</reference>
 </vuln_item_wasc_48>
 

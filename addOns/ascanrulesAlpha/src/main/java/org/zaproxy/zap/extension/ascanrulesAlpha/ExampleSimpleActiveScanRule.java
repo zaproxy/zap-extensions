@@ -28,10 +28,10 @@ import org.parosproxy.paros.core.scanner.AbstractAppParamPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
-import org.zaproxy.zap.model.Vulnerabilities;
-import org.zaproxy.zap.model.Vulnerability;
 
 /**
  * An example active scan rule, for more details see
@@ -42,7 +42,7 @@ import org.zaproxy.zap.model.Vulnerability;
 public class ExampleSimpleActiveScanRule extends AbstractAppParamPlugin {
 
     // wasc_10 is Denial of Service - well, its just an example ;)
-    private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_10");
+    private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_10");
 
     private Random rnd = new Random();
 
@@ -60,10 +60,7 @@ public class ExampleSimpleActiveScanRule extends AbstractAppParamPlugin {
     @Override
     public String getName() {
         // Strip off the "Example Active Scan Rule: " part if implementing a real one ;)
-        if (vuln != null) {
-            return "Example Active Scan Rule: " + vuln.getAlert();
-        }
-        return "Example Active Scan Rule: Denial of Service";
+        return "Example Active Scan Rule: " + VULN.getName();
     }
 
     @Override
@@ -77,10 +74,7 @@ public class ExampleSimpleActiveScanRule extends AbstractAppParamPlugin {
 
     @Override
     public String getDescription() {
-        if (vuln != null) {
-            return vuln.getDescription();
-        }
-        return "Failed to load vulnerability description from file";
+        return VULN.getDescription();
     }
 
     @Override
@@ -90,25 +84,12 @@ public class ExampleSimpleActiveScanRule extends AbstractAppParamPlugin {
 
     @Override
     public String getSolution() {
-        if (vuln != null) {
-            return vuln.getSolution();
-        }
-        return "Failed to load vulnerability solution from file";
+        return VULN.getSolution();
     }
 
     @Override
     public String getReference() {
-        if (vuln != null) {
-            StringBuilder sb = new StringBuilder();
-            for (String ref : vuln.getReferences()) {
-                if (sb.length() > 0) {
-                    sb.append("\n");
-                }
-                sb.append(ref);
-            }
-            return sb.toString();
-        }
-        return "Failed to load vulnerability reference from file";
+        return VULN.getReferencesAsString();
     }
 
     /*

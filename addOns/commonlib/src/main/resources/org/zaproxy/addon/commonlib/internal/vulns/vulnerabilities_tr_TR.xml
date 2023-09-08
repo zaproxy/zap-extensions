@@ -338,7 +338,7 @@ Kaynak paylaştırmadaki tüm başarısızlıkların sistemi güvenli durum konu
 
 Web uygulamalarındaki en yaygın kaba kuvvet saldırısı tipi, giriş bilgilerine karşı yapılan saldırıdır. Kullanıcıların şifresini hatırlaması gerektiği için, genellikle şifrelerinde ezberlemesi kolay kelime ve cümleri kullanabilirler, bu sayede hatırlaması kolay bir şifreleri olur. Potansiyel şifreler olarak büyük bir kelime ve deyim listesi kullanan bir sisteme giriş yapmaya çalışan böyle bir saldırıya genellikle "kelime listesi saldırısı" veya "sözlük saldırısı" adı verilir. Girilen şifreler, "o" nun "0" ve "i" nin "1" ile değiştirilmesiyle üretilenler gibi, ayrıca aile üyelerinin adları, doğum tarihleri ve telefon numaraları da dahil olmak üzere kişisel bilgiler gibi şifrelere özgü sözcük varyasyonlarını içerebilir.
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11a>
 
@@ -349,7 +349,7 @@ Web uygulamalarındaki en yaygın kaba kuvvet saldırısı tipi, giriş bilgiler
 
 HTTP durum bilgisi olmayan bir protokol olduğundan, devlet web korumak için uygulamaları bir oturum kimliği ve her isteğin bir tarayıcı tarafından gönderildiğinden emin olunması gerekir. Oturum tanımlayıcısı en sık HTTP çerezinde veya URL'de depolanmaktadır. Kaba kuvvet saldırısı kullanarak, bir saldırgan başka bir kullanıcının oturum tanımlayıcısını tahmin edebilir. Bu, saldırganların kullanıcıların kimliğine bürünmesine, kişisel bilgilerin çalınmasına ve kullanıcı adına eylemler gerçekleştirmesine neden olabilir.
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11b>
 
@@ -362,7 +362,7 @@ Dosyalar herhangi bir yerle bağlantılı değilse ve web sunucusu tarafından s
 
 Bir kaba kuvvet saldırısı, bağlantısız dosyayı çok sayıda dosyaya erişmeye çalışarak bulmayı dener. Girilen dosya adlarının listesi bilinen potansiyel dosyaların bir listesinden oluşabilir veya web sitesinde görülebilen dosyaların türevlerine dayalı olabilir. Kaba kuvvet dizinleri ve daha fazla bilgili dosyaların güvenlik açığı, öngörülebilir kaynak konumu içinde bulunabilir.
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11c>
 
@@ -377,7 +377,7 @@ Eksik bilgileri doldurmak için, bilgisayar korsanı kayıp bilgileri mümkün o
     * CVV / CSC'yi deneyerek bulmak, kartın türüne bağlı olarak yalnızca 3 veya 4 basamaktan oluştuğu için yalnızca 1000 veya 10000 denemede bulunabilir.
     * Son kullanma tarihinin tahmin edilebilmesi sadece birkaç düzine deneme gerektirir.
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11d>
 
@@ -396,7 +396,7 @@ Bazı web sayfaları, dinamik olarak oluşturulmuş HTML içerik kaynaklarını 
 
 Bu saldırılar, kullanıcılar ve web siteleri arasında oluşan güveni kullanır. Bu teknik, giriş formları, sızdırma, yanlış basın bültenleri vb. Dahil olmak üzere sahte web sayfaları kurmak için kullanılmıştır.
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Content-Spoofing</reference>
 </vuln_item_wasc_12>
 
@@ -423,7 +423,7 @@ Verilerin geçerliliğine dayalı olarak farklı yanıtlar sunan sayfalar da bil
 Sunucular, herkesçe bilinen hesapları ve parolaları içerebilir. Sunucuyu tam güvenli hale getirmez veya güçlendirmezseniz, dosya ve dizin izinlerine erişilerek yanlış ayarlanabilir. Yanlış yapılandırılmış SSL sertifikaları ve şifreleme ayarları, varsayılan sertifikaların kullanılması ve harici sistemlerle yetersiz doğrulama uygulaması, bilginin gizliliği tehlikeye girebilir.
 
 Ayrıntılı ve bilgilendirici hata mesajları veri sızıntılarına neden olabilir ve ortaya çıkan bu bilgiler bir sonraki saldırının formüle edilmesi için kullanılabilir. Sunucu yazılımındaki yanlış yapılandırmalar dizin ekleme ve yol geçişi saldırılarına izin verebilir.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Server-Misconfiguration</reference>
 </vuln_item_wasc_14>
 
@@ -433,7 +433,7 @@ Ayrıntılı ve bilgilendirici hata mesajları veri sızıntılarına neden olab
 	<desc>Uygulama Yanlış yapılandırma saldırıları, web uygulamalarında bulunan yapılandırma zayıflıklarını hedef almaktadır. Çoğu uygulama, varsayılan olarak etkinleştirilmiş olan hata ayıklama ve QA özellikleri gibi gereksiz ve güvensiz özellikler barındırır. Bu özellikler, bir bilgisayar korsanının kimlik doğrulama yöntemlerini geçip belki de yüksek ayrıcalıklarla hassas bilgilere erişebilmesi için kullanabilceği bir yol sağlayabilir.
 
 Aynı şekilde, varsayılan yüklemeler iyi bilinen kullanıcı adlarını ve şifreleri içerebilir, sabit kodlu arka kapı hesaplarını, özel erişim mekanizmalarını ve Web sunucuları üzerinden erişilebilen dosyalar için yanlış izinler ayarlanır. Varsayılan örnekler, üretim ortamlarında erişilebilir olmalıdır. Düzgün kilitlenmemiş uygulama tabanlı yapılandırma dosyaları, açık metin bağlantı dizelerini veritabanına gösterebilir ve yapılandırma dosyalarındaki varsayılan ayarlar güvenlik göz önüne alınarak yapılmamış olabilir. Bu yanlış yapılandırmaların tümü, hassas bilgilere yetkisiz erişime neden olabilir.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Application-Misconfiguration</reference>
 </vuln_item_wasc_15>
 
@@ -461,7 +461,7 @@ Aynı şekilde, varsayılan yüklemeler iyi bilinen kullanıcı adlarını ve ş
 	<desc>Kimlik/Oturum tahmini, bir web sitesi kullanıcısını kaçırmak veya kimliğine bürünmek için kullanılan bir yöntemdir. Kestirmeden sonuca varmak belirli bir oturumu veya kullanıcıyı tanımlayan benzersiz değerini tahmin etmek saldırıyı gerçekleştirir. Oturum Kaçırma olarak da bilinen bu olaylarda, sonuçlar saldırganlara güvenliği ihlal edilen kullanıcının ayrıcalıklarıyla web sitesi isteklerini vermesine olanak sağlayabilir.
 
 Birçok web sitesi, iletişim ilk kurulduğunda bir kullanıcıyı kimliklendirmek ve takip etmek üzere tasarlanmıştır. Bunu yapmak için, kullanıcı genelde kullanıcı adı / şifre (kimlik bilgileri) kombinasyonu sağlayarak kimlik bilgilerini web sitesinde ispatlamalıdır. Bu özel bilgileri her işlemle ileri geri taşımaktansa, web siteleri kullanıcı oturumunu kimliklendirilmiş olarak tanımlamak için eşsiz bir "oturum kimliği" oluşturacaktır. Kimliklendirilmiş oturumun bir "kanıtı olarak", kullanıcı ile web sitesi arasındaki sonraki iletişim, oturum kimliği ile etiketlenir. Bir saldırgan, başka bir kullanıcının oturum kimliğini tahmin edebiliyorsa sahte etkinlik mümkündür.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Credential-and-Session-Prediction</reference>
 </vuln_item_wasc_18>
 
@@ -560,7 +560,7 @@ Aşağıdaki özellikler otomatik saldırıların hedefidir:
     * Çevrimiçi anketler - Anketler veya diğer çevrimiçi oylama sistemleri otomatik olarak belli bir tercih lehine değiştirilebilir.
     * Web tabanlı SMS mesajı gönderme - saldırganlar cep telefonu kullanıcılarına spam göndermek için SMS mesajı gönderme sistemlerinden yararlanabilirler
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Insufficient+Anti-automation</reference>
 	<reference>http://cwe.mitre.org/data/definitions/116.html</reference>
 </vuln_item_wasc_21>
@@ -603,7 +603,7 @@ Bileşenler arasında veri alışverişi yaparken, iki bileşenin de aynı karak
 <vuln_item_wasc_23>
 	<alert>XML Enjeksiyonu</alert>
 	<desc>XML enjeksiyonu XML uygulamasının ya da hizmetinin mantığını değiştirmek ya da bozmak için kullanılan bir saldırı tekniğidir. İstenmeyen XML içeriği ve/veya yapılarını bir XML iletisine enjekte edilmesi, uygulamanın mantığını değiştirebilir. Dahası, XML enjeksiyonu ortaya çıkan mesaja/belgeye zararlı içeriğin eklenmesine neden olabilir.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/XML-Injection</reference>
 </vuln_item_wasc_23>
 
@@ -658,7 +658,7 @@ Bu tekniğin bir kullanımı, anti-HTTP cevap bölme önlemlerinden kaçmak içi
 
 HTTP cevap kaçakçılığı, bir anti-HTTP Cevap Bölme mekanizmasının (veya proxy sunucusunun) HTTP cevap akışı olarak gördüğü ile proxy sunucusu (veya bir tarayıcı) tarafından ayrıştırılan cevap akışı arasındaki uyumsuzluklardan yararlanmak için HTTP istek kaçakçılığı gibi teknikler kullanır. Yani, bir anti-HTTP cevap bölme mekanizması belli bir cevap akşının zararsız olarak görürken (tek HTTP cevabı), bir proxy/tarayıcı onu iki HTTP cevabı olarak ayrıştırabilir, ve bu nedenle orijinal HTTP cevap bölme tekniğinin tüm sonuçlarına (ilk kullanım durumunda) ya da sayfa sızdırmaya duyarlı olabilir (ikinci durumda). Örneğin, bazı uygulama motorları tarafından kullanılan bazı anti-HTTP yanıtı bölme mekanizmaları, uygulamanın yanıtta CR+LF içeren bir üstbilgi eklemesini yasaklamaktadır. Yine de bir saldırgan, uygulamanın CR'ler içeren bir başlık eklemeye zorlayabilir, böylece savunma mekanizmasını atlatabilir. Bazı proxy sunucuları CR'ye (sadece) bir başlık (ve cevap) ayırıcı olarak davranabilir ve web sunucusu ve proxy sunucusu birleşimi, proxy önbelleğini zehirleyebilecek bir saldırıya karşı halen savunmasızdır.
 	</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/HTTP-Response-Smuggling</reference>
 </vuln_item_wasc_27>
 
@@ -914,7 +914,7 @@ Doğrulama gerektiren iki tür ana süreç vardır: akış kontrolü ve işletme
 "Akış kontrolü", tüm adımların kullanıcı tarafından belirli bir sırada gerçekleşmesini gerektiren çoklu adım süreçlerini ifade eder. Bir saldırgan bir adımı yanlış veya düzensiz gerçekleştirirse, erişim kontrolleri es geçilebilir ve bir uygulama bütünlüğü hatası oluşabilir. Çoklu adım süreçlerine havale, şifre kurtarma, satın alma çıkışları ve hesaba girme örnek olarak verilebilir.
 
 "İşletme mantığı", işletme gereksinimleri tarafından yönetilen süreç uygulamaları kapsamını ifade eder. İşletme mantığı zayıflığının kötüye kullanılması işletme bilgisi gerektirir. Eğer kötüye kullanım için bilgi gerekmiyorsa, o zaman büyük ihtimalle işletme mantık akışı değildir. Bundan dolayı, tarama ve kod değerlendirmeleri gibi güvenlik önlemleri bu zayıflık sınıfını bulamaz. Bir test yaklaşımı, Test Kılavuzunda OWASP tarafından sunulmuştur.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Insufficient-Process-Validation</reference>
 </vuln_item_wasc_40>
 
@@ -953,7 +953,7 @@ Tüm kaynak dağıtımlarında meydana gelen hataların sistemi güvenli bir kon
 	<alert>XML Dış Varlıklar</alert>
 	<desc>Belgeleri işleme sırasında dinamik olarak oluşturmak için teknik XML özelliğinden yararlanın. XML mesajı ya veriyi doğrudan sağlar ya da verinin olduğu URI'yı işaret eder. Saldırı yönetiminde harici varlıklar, varlık değerini zararlı veriyle değiştirebilir, başvuruları değiştirebilirveya sunucu/XML uygulamasının erişimi olan verilerin güvenliğini tehlikeye atabilir.
 	Saldırganlar aynı zamanda zararlı kodu veya içeriği indirmek için web hizmeti sunucusu olan Harici Varlıkları da kullanabilirler.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/XML-External-Entities</reference>
 </vuln_item_wasc_43>
 
@@ -976,7 +976,7 @@ XML dosyalarını ilişkili DTD'lerle arıştırmadan önce, tekrar eden varlık
 	<desc>The most common methodology for attackers is to first footprint the target's web presence and enumerate as much information as possible. Bu bilgiyle saldıran, hedef konak tarafından değerlendirilen yazılım tipi/sürümündeki bir zayıflıktan faydalanacak bir atak senaryosu geliştirebilir.
 
 Çok katmanlı parmak izi, bir öncekine olan TCP/IP Parmak İzine (Nmap gibi bir tarayıcıyla yapılır) benzerdir. Sadece bu, Taşıma Tabakası yerine OSI modeline Uygulama Tabakasına odaklanır. Bu parmak izinin arkasındaki teori, hedefin platformunun, web uygulama yazılımı teknolojisinin, arka uç veritabanı sürümünün, yapılandırmanın ve hatta muhtemelen mimari / topoloji ağının doğru bir profilini oluşturmaktır.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Fingerprinting</reference>
 </vuln_item_wasc_45>
 
@@ -1010,7 +1010,7 @@ Bir Web uygulaması, daha önceden tanımlanan boş bekleme süresi geçtikten s
 <vuln_item_wasc_48>
 	<alert>Güvensiz Dizinleme</alert>
 	<desc>Güvensiz dizinleme, web sitesinin veri gizliliği için bir tehdittir. Açık olarak erişilebilir olmaması gereken dosyalara erişimi olan internet sitesi içeriği endekslemesinin dosya ve içerik gibi bilgileri sızdırma potansiyeli vardır. Dizinleme işlemi sırasında, bu tür bilgiler, belirlenen bir saldırgan tarafından, genellikle arama motoruna yapılan bir dizi sorgu aracılığıyla daha sonra tekrar alınabilen (hiç de önemsiz olmasa da) dizin oluşturma işlemi tarafından toplanır ve saklanır. Saldırgan, arama moturunun güvenlik modelini bozmaz. Bu sebeple, bu saldırı çok inceliklidir ve algılanması ve tespit edilmesi çok zordur - saldırganın sorgularını mantıklı kullanıcı sorgularından ayırmak kolay değildir.</desc>
-	<solution></solution>
+	<solution/>
 	<reference>http://projects.webappsec.org/Insecure-Indexing</reference>
 </vuln_item_wasc_48>
 
