@@ -219,6 +219,25 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             this.getExtScript().getScriptUI().addRenderer(ZestScriptWrapper.class, renderer);
             this.getExtScript().getScriptUI().disableScriptDialog(ZestScriptWrapper.class);
         }
+        try {
+            displayScriptMethod =
+                    this.getExtScript()
+                            .getScriptUI()
+                            .getClass()
+                            .getDeclaredMethod("displayScript", ScriptWrapper.class, boolean.class);
+        } catch (Exception e) {
+            LOGGER.info("Unable to find displayScript method with allowFocus", e);
+        }
+        try {
+            selectNodeMethod =
+                    this.getExtScript()
+                            .getScriptUI()
+                            .getClass()
+                            .getDeclaredMethod(
+                                    "selectNode", ScriptNode.class, boolean.class, boolean.class);
+        } catch (Exception e) {
+            LOGGER.info("Unable to find selectNode method with allowFocus", e);
+        }
     }
 
     private List<Path> getDefaultTemplates() {
@@ -603,39 +622,28 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     }
 
     private void displayScript(ZestScriptWrapper sw, boolean allowFocus) {
-        try {
-            if (displayScriptMethod != null) {
+        if (displayScriptMethod != null) {
+            try {
                 displayScriptMethod.invoke(this.getExtScript().getScriptUI(), sw, allowFocus);
                 return;
+            } catch (Exception e) {
+                LOGGER.info("Error while invoking displayScript Method with allowFocus", e);
             }
-            displayScriptMethod =
-                    this.getExtScript()
-                            .getScriptUI()
-                            .getClass()
-                            .getDeclaredMethod("displayScript", ScriptWrapper.class, boolean.class);
-            displayScriptMethod.invoke(this.getExtScript().getScriptUI(), sw, allowFocus);
-        } catch (Exception e) {
-            this.getExtScript().getScriptUI().displayScript(sw);
         }
+        this.getExtScript().getScriptUI().displayScript(sw);
     }
 
     private void selectNode(ScriptNode node, boolean expand, boolean allowFocus) {
-        try {
-            if (selectNodeMethod != null) {
+        if (selectNodeMethod != null) {
+            try {
                 selectNodeMethod.invoke(
                         this.getExtScript().getScriptUI(), node, expand, allowFocus);
                 return;
+            } catch (Exception e) {
+                LOGGER.info("Error while invoking selectNode Method with allowFocus", e);
             }
-            selectNodeMethod =
-                    this.getExtScript()
-                            .getScriptUI()
-                            .getClass()
-                            .getDeclaredMethod(
-                                    "selectNode", ScriptNode.class, boolean.class, boolean.class);
-            selectNodeMethod.invoke(this.getExtScript().getScriptUI(), node, expand, allowFocus);
-        } catch (Exception e) {
-            this.getExtScript().getScriptUI().selectNode(node, expand);
         }
+        this.getExtScript().getScriptUI().selectNode(node, expand);
     }
 
     public List<ScriptNode> getAllZestScriptNodes() {
