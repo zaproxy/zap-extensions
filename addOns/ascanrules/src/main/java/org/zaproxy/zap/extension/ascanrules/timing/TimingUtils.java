@@ -24,13 +24,17 @@ import java.io.IOException;
 /** Utility class to host time-based blind detection algorithms. */
 public class TimingUtils {
 
+    // Minimum requests required for a meaningful result
+    private static final int MINIMUM_REQUESTS = 3;
+
     /**
      * Sends time-based blind requests and analyze the response times using simple linear
      * regression. If this returns true, then an increment in payload delay positively correlates to
      * an increment in actual delay, indicating the presence of an injection vulnerability. This
      * particular implementation is designed to send as few requests as possible, and will return
      * false immediately if the correlation dips too low or if the actual delay is less than the
-     * expected delay.
+     * expected delay. This implementation also requires a minimum number of request data points to
+     * prevent false positives where a website only responded once or twice within the time limit.
      *
      * @param requestsLimit the hard limit on how many times at most requestSender will be called.
      *     in practice, if there is a correlation, within 0-2 to this number of requests will be
@@ -62,14 +66,17 @@ public class TimingUtils {
                     "requires at least 5 seconds to get meaningful results");
         }
 
-        if (requestsLimit < 3) {
+        if (requestsLimit < MINIMUM_REQUESTS) {
             throw new IllegalArgumentException(
-                    "requires at least 3 requests to get meaningful results");
+                    String.format(
+                            "requires at least %d requests to get meaningful results",
+                            MINIMUM_REQUESTS));
         }
 
         OnlineSimpleLinearRegression regression = new OnlineSimpleLinearRegression();
 
         int requestsLeft = requestsLimit;
+        int requestsMade = 0;
         double secondsLeft = secondsLimit;
         int currentDelay = 1;
 
@@ -96,6 +103,7 @@ public class TimingUtils {
             // update seconds left, requests left, and increase the next delay
             secondsLeft = secondsLeft - y;
             requestsLeft = requestsLeft - 1;
+            requestsMade++;
             currentDelay = currentDelay + 1;
 
             // if doing a longer request next would put us over time, wrap around to sending shorter
@@ -108,7 +116,8 @@ public class TimingUtils {
         // we want the slope and correlation to both be reasonably close to 1
         // if the correlation is bad, the relationship is non-linear
         // if the slope is bad, the relationship is not positively 1:1
-        return regression.isWithinConfidence(correlationErrorRange, 1.0, slopeErrorRange);
+        return requestsMade >= MINIMUM_REQUESTS
+                && regression.isWithinConfidence(correlationErrorRange, 1.0, slopeErrorRange);
     }
 
     @FunctionalInterface
