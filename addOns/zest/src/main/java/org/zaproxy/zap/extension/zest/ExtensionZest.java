@@ -226,7 +226,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                             .getClass()
                             .getDeclaredMethod("displayScript", ScriptWrapper.class, boolean.class);
         } catch (Exception e) {
-            LOGGER.info("Unable to find displayScript method with allowFocus", e);
+            LOGGER.debug("Unable to find displayScript method with allowFocus", e);
         }
         try {
             selectNodeMethod =
@@ -236,7 +236,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                             .getDeclaredMethod(
                                     "selectNode", ScriptNode.class, boolean.class, boolean.class);
         } catch (Exception e) {
-            LOGGER.info("Unable to find selectNode method with allowFocus", e);
+            LOGGER.debug("Unable to find selectNode method with allowFocus", e);
         }
     }
 
@@ -627,7 +627,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                 displayScriptMethod.invoke(this.getExtScript().getScriptUI(), sw, allowFocus);
                 return;
             } catch (Exception e) {
-                LOGGER.info("Error while invoking displayScript Method with allowFocus", e);
+                LOGGER.debug("Error while invoking displayScript Method with allowFocus", e);
             }
         }
         this.getExtScript().getScriptUI().displayScript(sw);
@@ -640,7 +640,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
                         this.getExtScript().getScriptUI(), node, expand, allowFocus);
                 return;
             } catch (Exception e) {
-                LOGGER.info("Error while invoking selectNode Method with allowFocus", e);
+                LOGGER.debug("Error while invoking selectNode Method with allowFocus", e);
             }
         }
         this.getExtScript().getScriptUI().selectNode(node, expand);
