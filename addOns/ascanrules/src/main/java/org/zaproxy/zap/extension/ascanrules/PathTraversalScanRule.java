@@ -40,10 +40,10 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.addon.network.common.ZapSocketTimeoutException;
 import org.zaproxy.zap.model.Tech;
-import org.zaproxy.zap.model.Vulnerabilities;
-import org.zaproxy.zap.model.Vulnerability;
 
 /** A scan rule that looks for Path Traversal vulnerabilities. */
 public class PathTraversalScanRule extends AbstractAppParamPlugin {
@@ -177,7 +177,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
     /*
      * details of the vulnerability which we are attempting to find
      */
-    private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_33");
+    private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_33");
 
     private static final Logger LOGGER = LogManager.getLogger(PathTraversalScanRule.class);
 
@@ -193,10 +193,7 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
 
     @Override
     public String getDescription() {
-        if (vuln != null) {
-            return vuln.getDescription();
-        }
-        return "Failed to load vulnerability description from file";
+        return VULN.getDescription();
     }
 
     @Override
@@ -206,26 +203,12 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin {
 
     @Override
     public String getSolution() {
-        if (vuln != null) {
-            return vuln.getSolution();
-        }
-        return "Failed to load vulnerability solution from file";
+        return VULN.getSolution();
     }
 
     @Override
     public String getReference() {
-        if (vuln != null) {
-            StringBuilder sb = new StringBuilder();
-            for (String ref : vuln.getReferences()) {
-                if (sb.length() > 0) {
-                    sb.append('\n');
-                }
-                sb.append(ref);
-            }
-            return sb.toString();
-        }
-
-        return "Failed to load vulnerability reference from file";
+        return VULN.getReferencesAsString();
     }
 
     /**

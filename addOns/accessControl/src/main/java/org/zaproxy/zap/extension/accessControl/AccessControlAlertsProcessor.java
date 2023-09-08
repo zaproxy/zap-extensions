@@ -30,12 +30,12 @@ import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlNodeResult;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlResultEntry;
 import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.AccessControlScanStartOptions;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
-import org.zaproxy.zap.model.Vulnerabilities;
-import org.zaproxy.zap.model.Vulnerability;
 
 /**
  * The object that processes obtained scan results and raises {@link Alert Alerts}, if necessary.
@@ -45,10 +45,10 @@ import org.zaproxy.zap.model.Vulnerability;
 public class AccessControlAlertsProcessor {
     private static final Logger LOGGER = LogManager.getLogger(AccessControlAlertsProcessor.class);
 
-    private static Vulnerability vulnerabilityAuthentication =
-            Vulnerabilities.getVulnerability("wasc_1");
-    private static Vulnerability vulnerabilityAuthorization =
-            Vulnerabilities.getVulnerability("wasc_2");
+    private static final Vulnerability VULNERABILITY_AUTHENTICATION =
+            Vulnerabilities.getDefault().get("wasc_1");
+    private static final Vulnerability VULNERABILITY_AUTHORIZATION =
+            Vulnerabilities.getDefault().get("wasc_2");
 
     private static final String AUTHENTICATION_ALERT_TITLE =
             Constant.messages.getString("accessControl.alert.authentication.name");
@@ -120,15 +120,15 @@ public class AccessControlAlertsProcessor {
                 .setRisk(risk)
                 .setConfidence(Alert.CONFIDENCE_HIGH)
                 .setName(AUTHORIZATION_ALERT_TITLE)
-                .setDescription(Vulnerabilities.getDescription(vulnerabilityAuthorization))
+                .setDescription(VULNERABILITY_AUTHORIZATION.getDescription())
                 .setOtherInfo(
                         Constant.messages.getString(
                                 "accessControl.alert.authorization.otherinfo",
                                 userName,
                                 requestAuthorized,
                                 accessRule))
-                .setSolution(Vulnerabilities.getSolution(vulnerabilityAuthorization))
-                .setReference(Vulnerabilities.getReference(vulnerabilityAuthorization))
+                .setSolution(VULNERABILITY_AUTHORIZATION.getSolution())
+                .setReference(VULNERABILITY_AUTHORIZATION.getReferencesAsString())
                 .setCweId(205)
                 .setWascId(2)
                 .setUri(uri)
@@ -162,14 +162,14 @@ public class AccessControlAlertsProcessor {
                 .setRisk(risk)
                 .setConfidence(Alert.CONFIDENCE_HIGH)
                 .setName(AUTHENTICATION_ALERT_TITLE)
-                .setDescription(Vulnerabilities.getDescription(vulnerabilityAuthentication))
+                .setDescription(VULNERABILITY_AUTHENTICATION.getDescription())
                 .setOtherInfo(
                         Constant.messages.getString(
                                 "accessControl.alert.authentication.otherinfo",
                                 requestAuthorized,
                                 accessRule))
-                .setSolution(Vulnerabilities.getSolution(vulnerabilityAuthentication))
-                .setReference(Vulnerabilities.getReference(vulnerabilityAuthentication))
+                .setSolution(VULNERABILITY_AUTHENTICATION.getSolution())
+                .setReference(VULNERABILITY_AUTHENTICATION.getReferencesAsString())
                 .setCweId(287)
                 .setWascId(1)
                 .setUri(uri)

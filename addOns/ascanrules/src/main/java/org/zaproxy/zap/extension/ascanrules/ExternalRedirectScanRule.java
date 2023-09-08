@@ -42,8 +42,8 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
-import org.zaproxy.zap.model.Vulnerabilities;
-import org.zaproxy.zap.model.Vulnerability;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 
 /**
  * Reviewed scan rule for External Redirect
@@ -112,7 +112,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
     };
 
     // Get WASC Vulnerability description
-    private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_38");
+    private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_38");
 
     private static final Logger LOGGER = LogManager.getLogger(ExternalRedirectScanRule.class);
 
@@ -128,10 +128,7 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
 
     @Override
     public String getDescription() {
-        if (vuln != null) {
-            return vuln.getDescription();
-        }
-        return "Failed to load vulnerability description from file";
+        return VULN.getDescription();
     }
 
     @Override
@@ -141,28 +138,12 @@ public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
 
     @Override
     public String getSolution() {
-        if (vuln != null) {
-            return vuln.getSolution();
-        }
-        return "Failed to load vulnerability solution from file";
+        return VULN.getSolution();
     }
 
     @Override
     public String getReference() {
-        if (vuln != null) {
-            StringBuilder sb = new StringBuilder();
-            for (String ref : vuln.getReferences()) {
-                if (sb.length() > 0) {
-                    sb.append('\n');
-                }
-
-                sb.append(ref);
-            }
-
-            return sb.toString();
-        }
-
-        return "Failed to load vulnerability reference from file";
+        return VULN.getReferencesAsString();
     }
 
     /**

@@ -37,10 +37,10 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.SourceSinkUtils;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.zap.extension.ascanrules.httputils.HtmlContext;
 import org.zaproxy.zap.extension.ascanrules.httputils.HtmlContextAnalyser;
-import org.zaproxy.zap.model.Vulnerabilities;
-import org.zaproxy.zap.model.Vulnerability;
 
 public class PersistentXssScanRule extends AbstractAppParamPlugin {
 
@@ -57,7 +57,7 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
     private static final List<Integer> GET_POST_TYPES =
             Arrays.asList(NameValuePair.TYPE_QUERY_STRING, NameValuePair.TYPE_POST_DATA);
 
-    private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_8");
+    private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_8");
     private static final Logger LOGGER = LogManager.getLogger(PersistentXssScanRule.class);
     private int currentParamType;
 
@@ -78,10 +78,7 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
 
     @Override
     public String getDescription() {
-        if (vuln != null) {
-            return vuln.getDescription();
-        }
-        return "Failed to load vulnerability description from file";
+        return VULN.getDescription();
     }
 
     @Override
@@ -91,25 +88,12 @@ public class PersistentXssScanRule extends AbstractAppParamPlugin {
 
     @Override
     public String getSolution() {
-        if (vuln != null) {
-            return vuln.getSolution();
-        }
-        return "Failed to load vulnerability solution from file";
+        return VULN.getSolution();
     }
 
     @Override
     public String getReference() {
-        if (vuln != null) {
-            StringBuilder sb = new StringBuilder();
-            for (String ref : vuln.getReferences()) {
-                if (sb.length() > 0) {
-                    sb.append('\n');
-                }
-                sb.append(ref);
-            }
-            return sb.toString();
-        }
-        return "Failed to load vulnerability reference from file";
+        return VULN.getReferencesAsString();
     }
 
     @Override

@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update minimum ZAP version to 2.13.0.
 - Depend on Common Library add-on.
+- Use vulnerability data directly from Common Library add-on.
 - Maintenance changes.
 
 ## [8] - 2022-10-28

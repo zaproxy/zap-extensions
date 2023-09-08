@@ -7,6 +7,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## Unreleased
 ### Changed
 - Depend on newer versions of Automation Framework and Common Library add-ons (Related to Issue 7961).
+- Use vulnerability data directly from Common Library add-on.
 
 ## [0.6.0] - 2023-07-11
 ### Changed

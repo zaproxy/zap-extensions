@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Maintenance changes.
 - Remove the dependency on OAST add-on, no longer required.
 - Depend on newer version of Common Library add-on.
+- Use vulnerability data directly from Common Library add-on.
 
 ## [43] - 2023-07-20
 ### Changed

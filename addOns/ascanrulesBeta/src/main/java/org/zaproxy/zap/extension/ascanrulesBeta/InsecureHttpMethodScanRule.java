@@ -52,8 +52,8 @@ import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
-import org.zaproxy.zap.model.Vulnerabilities;
-import org.zaproxy.zap.model.Vulnerability;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 
 /**
  * a scan rule that looks for known insecure HTTP methods enabled for the URL Note that HTTP methods
@@ -78,7 +78,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
             Arrays.asList("COPY", "LOCK", "MKCOL", "MOVE", "PROPFIND", "PROPPATCH", "UNLOCK");
 
     /** details of the vulnerability which we are attempting to find 45 = "Fingerprinting" */
-    private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_45");
+    private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_45");
 
     /** the logger object */
     private static final Logger LOGGER = LogManager.getLogger(InsecureHttpMethodScanRule.class);
@@ -113,10 +113,7 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
 
     @Override
     public String getDescription() {
-        if (vuln != null) {
-            return vuln.getDescription();
-        }
-        return "Failed to load vulnerability description from file";
+        return VULN.getDescription();
     }
 
     @Override
@@ -126,25 +123,12 @@ public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
 
     @Override
     public String getSolution() {
-        if (vuln != null) {
-            return vuln.getSolution();
-        }
-        return "Failed to load vulnerability solution from file";
+        return VULN.getSolution();
     }
 
     @Override
     public String getReference() {
-        if (vuln != null) {
-            StringBuilder sb = new StringBuilder();
-            for (String ref : vuln.getReferences()) {
-                if (sb.length() > 0) {
-                    sb.append('\n');
-                }
-                sb.append(ref);
-            }
-            return sb.toString();
-        }
-        return "Failed to load vulnerability reference from file";
+        return VULN.getReferencesAsString();
     }
 
     @Override

@@ -42,12 +42,12 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.zap.extension.ascanrules.timing.TimingUtils;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
-import org.zaproxy.zap.model.Vulnerabilities;
-import org.zaproxy.zap.model.Vulnerability;
 
 /**
  * Active scan rule for Command Injection testing and verification.
@@ -288,7 +288,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
     private static final Logger LOGGER = LogManager.getLogger(CommandInjectionScanRule.class);
 
     // Get WASC Vulnerability description
-    private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_31");
+    private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_31");
 
     /** The number of seconds used in time-based attacks (i.e. sleep commands). */
     private int timeSleepSeconds = DEFAULT_TIME_SLEEP_SEC;
@@ -325,11 +325,7 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
 
     @Override
     public String getSolution() {
-        if (vuln != null) {
-            return vuln.getSolution();
-        }
-
-        return "Failed to load vulnerability solution from file";
+        return VULN.getSolution();
     }
 
     @Override
