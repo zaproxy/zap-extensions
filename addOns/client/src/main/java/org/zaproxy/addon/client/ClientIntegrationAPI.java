@@ -41,11 +41,11 @@ public class ClientIntegrationAPI extends ApiImplementor {
 
     private static final String ACTION_REPORT_OBJECT = "reportObject";
     private static final String ACTION_REPORT_EVENT = "reportEvent";
-    private static final String ACTION_REPORT_ZEST_SCRIPT = "reportZestScript";
+    private static final String ACTION_REPORT_ZEST_STATEMENT = "reportZestStatement";
 
     private static final String PARAM_OBJECT_JSON = "objectJson";
     private static final String PARAM_EVENT_JSON = "eventJson";
-    private static final String PARAM_SCRIPT_JSON = "scriptJson";
+    private static final String PARAM_STATEMENT_JSON = "statementJson";
 
     private static final Logger LOGGER = LogManager.getLogger(ClientIntegrationAPI.class);
 
@@ -58,7 +58,7 @@ public class ClientIntegrationAPI extends ApiImplementor {
         this.addApiAction(new ApiAction(ACTION_REPORT_OBJECT, new String[] {PARAM_OBJECT_JSON}));
         this.addApiAction(new ApiAction(ACTION_REPORT_EVENT, new String[] {PARAM_EVENT_JSON}));
         this.addApiAction(
-                new ApiAction(ACTION_REPORT_ZEST_SCRIPT, new String[] {PARAM_SCRIPT_JSON}));
+                new ApiAction(ACTION_REPORT_ZEST_STATEMENT, new String[] {PARAM_STATEMENT_JSON}));
 
         callbackUrl =
                 API.getInstance().getCallBackUrl(this, HttpHeader.SCHEME_HTTPS + API.API_DOMAIN);
@@ -131,8 +131,8 @@ public class ClientIntegrationAPI extends ApiImplementor {
                 this.extension.addReportedObject(new ReportedEvent(json));
                 break;
 
-            case ACTION_REPORT_ZEST_SCRIPT:
-                String scriptJson = this.getParam(params, PARAM_SCRIPT_JSON, "");
+            case ACTION_REPORT_ZEST_STATEMENT:
+                String scriptJson = this.getParam(params, PARAM_STATEMENT_JSON, "");
                 LOGGER.debug("Got script: {}", scriptJson);
                 try {
                     this.extension.addZestStatement(scriptJson);
@@ -175,9 +175,9 @@ public class ClientIntegrationAPI extends ApiImplementor {
             } else if (body.startsWith(PARAM_EVENT_JSON)) {
                 this.extension.addReportedObject(
                         new ReportedEvent(decodeParam(body, PARAM_EVENT_JSON)));
-            } else if (body.startsWith(PARAM_SCRIPT_JSON)) {
+            } else if (body.startsWith(PARAM_STATEMENT_JSON)) {
                 try {
-                    this.extension.addZestStatement(decodeParamString(body, PARAM_SCRIPT_JSON));
+                    this.extension.addZestStatement(decodeParamString(body, PARAM_STATEMENT_JSON));
                 } catch (Exception e) {
                     LOGGER.debug(e);
                 }
