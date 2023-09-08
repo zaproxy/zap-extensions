@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [48] - 2023-09-08
 ### Added
 - The HTTP Only Site scan rule now includes example alert functionality for documentation generation purposes (Issue 6119).
 
@@ -464,6 +464,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[48]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v48
 [47]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v47
 [46]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v46
 [45]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v45

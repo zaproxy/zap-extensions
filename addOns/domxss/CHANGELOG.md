@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [17] - 2023-09-08
 ### Changed
 - Depend on newer version of Common Library add-on.
 - Use vulnerability data directly from Common Library add-on.
@@ -109,6 +109,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## 1 - 2015-08-24
 
 
+[17]: https://github.com/zaproxy/zap-extensions/releases/domxss-v17
 [16]: https://github.com/zaproxy/zap-extensions/releases/domxss-v16
 [15]: https://github.com/zaproxy/zap-extensions/releases/domxss-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/domxss-v14

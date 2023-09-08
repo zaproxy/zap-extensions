@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [41] - 2023-09-08
 ### Changed
 - Maintenance changes.
 - Use HTTPS and resolve redirections in the alert references.
@@ -352,6 +352,7 @@ As well as Alert Refs where applicable (Issues 6119 & 7100).
 - Updated User Controlled Open Redirect, Cookie and Charset rules after testing with
 - http://www.testcases.org/watcher/ test pages.
 
+[41]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v39
 [38]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesAlpha-v38
