@@ -34,6 +34,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
+import org.zaproxy.zap.utils.FontUtils.FontType;
 import org.zaproxy.zap.utils.ZapTextArea;
 import org.zaproxy.zap.view.ZapToggleButton;
 
@@ -169,7 +170,7 @@ public class OutputPanel extends AbstractPanel {
             jScrollPane.setName("ConsoleScrollPane");
             jScrollPane.setHorizontalScrollBarPolicy(
                     javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-            jScrollPane.setFont(FontUtils.getFont("Dialog"));
+            jScrollPane.setFont(FontUtils.getFont(FontType.workPanels));
         }
         return jScrollPane;
     }
@@ -184,7 +185,7 @@ public class OutputPanel extends AbstractPanel {
             txtOutput = new ZapTextArea();
             txtOutput.setEditable(false);
             txtOutput.setLineWrap(true);
-            txtOutput.setFont(FontUtils.getFont("Dialog"));
+            txtOutput.setFont(FontUtils.getFont(FontType.workPanels));
             txtOutput.setName("");
             txtOutput.setComponentPopupMenu(ZapPopupMenu.INSTANCE);
         }

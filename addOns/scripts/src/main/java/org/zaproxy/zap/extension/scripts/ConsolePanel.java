@@ -45,7 +45,6 @@ import org.parosproxy.paros.extension.AbstractPanel;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.utils.DisplayUtils;
-import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.ZapToggleButton;
 
@@ -216,7 +215,6 @@ public class ConsolePanel extends AbstractPanel {
             panelToolbar.setFloatable(false);
             panelToolbar.setRollover(true);
             panelToolbar.setPreferredSize(new java.awt.Dimension(800, 30));
-            panelToolbar.setFont(FontUtils.getFont("Dialog"));
             panelToolbar.setName("ParamsToolbar");
 
             panelToolbar.add(this.getRunButton(), LayoutHelper.getGBC(0, 0, 1, 0.0D));
