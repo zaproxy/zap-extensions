@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [40] - 2023-09-11
 ### Changed
 - Allow to select a script node without focusing on it.
 - Allow to display script without focusing on it.
@@ -248,6 +248,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[40]: https://github.com/zaproxy/zap-extensions/releases/scripts-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/scripts-v39
 [38]: https://github.com/zaproxy/zap-extensions/releases/scripts-v38
 [37]: https://github.com/zaproxy/zap-extensions/releases/scripts-v37
