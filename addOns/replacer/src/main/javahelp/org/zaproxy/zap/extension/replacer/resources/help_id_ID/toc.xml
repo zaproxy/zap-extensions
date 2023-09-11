@@ -6,7 +6,9 @@
 <toc version="2.0">
 	<tocitem text="Paduan Pengguna ZAP" tocid="toplevelitem">
 		<tocitem text="Pengaya" tocid="addons">
-			<tocitem text="Menggantikan" image="replacer-icon" target="replacer"/>
+			<tocitem text="Menggantikan" image="replacer-icon" target="replacer">
+				<tocitem text="Automation" target="replacer.automation" />
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

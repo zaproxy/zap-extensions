@@ -12,10 +12,12 @@ Değiştirici, sorgu ve yanıtlarda string değiştirmek için kolay bir yoldur.
 <p>
 Seçeneklerden ve varsayılan olarak '&lt;ctrl&gt; R' kısayolu ile hızlıca erişilebilir.
 <p>
-Replacer Seçenekler paneli, ihtiyacınız olan birçok değiştirme kuralını tanımlamanıza olanak sağlar.<br>
-Her kural aşağıdaki alanlarla tanımlanır:
-<h3>Açıklama</h3>
-Kuralın tanınmasına imkan veren bir açıklama.
+It also supports the <a href="automation.html">Automation Framework</a>.
+<p>
+The Replacer Options panel allows you to define as many replacement rules as you need.<br>
+Each rule is defined by the following fields:
+<h3>Description</h3>
+A description that allows you to identify the rule.
 
 <h3>URL</h3>
 A regular expression to match the URL of the message, if empty the rule applies to all messages.<br>
@@ -96,6 +98,14 @@ When enabled, the Replacement String may contain a single token which is replace
 		<td>Unix epoch milliseconds using <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/System.html#currentTimeMillis--">System.currentTimeMillis()</a></td>
 	</tr>
 </table> 
+<p>
+<strong>Note:</strong> This option applies only to the following Match Types:
+<ul>
+	<li>Request Header String</li>
+	<li>Request Body String</li>
+	<li>Response Header String</li>
+	<li>Response Body String</li>
+</ul>
 
 <h3>Initiators tab</h3>
 Allows you to specify which 'initiators' the rule should apply to.
