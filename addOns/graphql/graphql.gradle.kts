@@ -62,7 +62,7 @@ dependencies {
     zapAddOn("commonlib")
     zapAddOn("spider")
 
-    implementation("com.graphql-java:graphql-java:21.0")
+    implementation("com.graphql-java:graphql-java:21.1")
 
     testImplementation(project(":testutils"))
     testImplementation(libs.log4j.core)
