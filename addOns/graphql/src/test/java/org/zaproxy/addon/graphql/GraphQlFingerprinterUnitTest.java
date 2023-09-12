@@ -279,7 +279,11 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
                 arguments("tartiflette", errorResponse("syntax error, unexpected IDENTIFIER")),
                 arguments(
                         "Directus",
-                        "{ \"errors\" : [ { \"extensions\" : { \"code\" : \"INVALID_PAYLOAD\" } } ] }"));
+                        "{ \"errors\" : [ { \"extensions\" : { \"code\" : \"INVALID_PAYLOAD\" } } ] }"),
+                arguments(
+                        "Absinthe",
+                        errorResponse(
+                                "Cannot query field \\\"zaproxy\\\" on type \\\"RootQueryType\\\".")));
     }
 
     private static String errorResponse(String error) {
