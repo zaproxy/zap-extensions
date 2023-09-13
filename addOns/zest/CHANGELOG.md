@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [40] - 2023-09-11
 ### Added 
 - Client support to record Zest scripts.
 
@@ -293,6 +296,7 @@ Sender scripts. (Issue 5590)
 
 - Updated for 2.1.0
 
+[40]: https://github.com/zaproxy/zap-extensions/releases/zest-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/zest-v39
 [38]: https://github.com/zaproxy/zap-extensions/releases/zest-v38
 [37]: https://github.com/zaproxy/zap-extensions/releases/zest-v37

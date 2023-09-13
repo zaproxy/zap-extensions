@@ -88,6 +88,7 @@ public class GraphQlFingerprinter {
         fingerprinters.put("strawberry", this::checkStrawberryEngine);
         fingerprinters.put("tartiflette", this::checkTartifletteEngine);
         fingerprinters.put("directus", this::checkDirectusEngine);
+        fingerprinters.put("absinthe", this::checkAbsintheEngine);
 
         for (var fingerprinter : fingerprinters.entrySet()) {
             try {
@@ -177,6 +178,11 @@ public class GraphQlFingerprinter {
                         .setUri(requestor.getEndpointUrl().toString())
                         .build();
         extAlert.alertFound(alert, null);
+    }
+
+    private boolean checkAbsintheEngine() {
+        sendQuery("{zaproxy}");
+        return errorContains("Cannot query field \"zaproxy\" on type \"RootQueryType\".");
     }
 
     private boolean checkAgooEngine() {
