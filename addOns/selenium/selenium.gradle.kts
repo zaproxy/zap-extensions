@@ -27,12 +27,12 @@ zapAddOn {
 }
 
 dependencies {
-    var seleniumVersion = "4.12.0"
+    var seleniumVersion = "4.12.1"
     api("org.seleniumhq.selenium:selenium-java:$seleniumVersion") {
         exclude(group = "io.netty")
     }
     implementation("org.seleniumhq.selenium:selenium-http-jdk-client:$seleniumVersion")
-    api("org.seleniumhq.selenium:htmlunit-driver:$seleniumVersion") {
+    api("org.seleniumhq.selenium:htmlunit-driver:4.12.0") {
         exclude(group = "io.netty")
     }
     implementation(libs.log4j.slf4j) {
