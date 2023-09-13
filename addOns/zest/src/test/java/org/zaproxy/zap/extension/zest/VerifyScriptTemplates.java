@@ -23,7 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.zaproxy.zap.testutils.AbstractVerifyScriptTemplates;
-import org.zaproxy.zest.core.v1.ZestJSON;
+import org.zaproxy.zest.core.v1.ZestYaml;
 
 /** Verifies that the Zest script templates are parsed without errors. */
 public class VerifyScriptTemplates extends AbstractVerifyScriptTemplates {
@@ -35,6 +35,6 @@ public class VerifyScriptTemplates extends AbstractVerifyScriptTemplates {
 
     @Override
     protected void parseTemplate(Path template) throws Exception {
-        ZestJSON.fromString(new String(Files.readAllBytes(template), StandardCharsets.UTF_8));
+        ZestYaml.fromString(new String(Files.readAllBytes(template), StandardCharsets.UTF_8));
     }
 }

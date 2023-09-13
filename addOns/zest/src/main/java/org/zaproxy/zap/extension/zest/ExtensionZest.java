@@ -90,6 +90,7 @@ import org.zaproxy.zest.core.v1.ZestExpression;
 import org.zaproxy.zest.core.v1.ZestExpressionLength;
 import org.zaproxy.zest.core.v1.ZestExpressionStatusCode;
 import org.zaproxy.zest.core.v1.ZestFieldDefinition;
+import org.zaproxy.zest.core.v1.ZestJSON;
 import org.zaproxy.zest.core.v1.ZestLoop;
 import org.zaproxy.zest.core.v1.ZestRequest;
 import org.zaproxy.zest.core.v1.ZestResponse;
@@ -97,6 +98,7 @@ import org.zaproxy.zest.core.v1.ZestScript;
 import org.zaproxy.zest.core.v1.ZestStatement;
 import org.zaproxy.zest.core.v1.ZestStructuredExpression;
 import org.zaproxy.zest.core.v1.ZestVariables;
+import org.zaproxy.zest.core.v1.ZestYaml;
 import org.zaproxy.zest.impl.ZestScriptEngineFactory;
 
 public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, ScriptEventListener {
@@ -1571,6 +1573,18 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
         }
         this.clientUrlToWindowHandle.put(url, windowHandle);
         return windowHandle;
+    }
+
+    public ZestElement convertStringToElement(String string) {
+        return "YAML".equals(getParam().getScriptFormat())
+                ? ZestYaml.fromString(string)
+                : ZestJSON.fromString(string);
+    }
+
+    public String convertElementToString(ZestElement element) {
+        return "YAML".equals(getParam().getScriptFormat())
+                ? ZestYaml.toString(element)
+                : ZestJSON.toString(element);
     }
 
     public void startClientRecording(String uri) {

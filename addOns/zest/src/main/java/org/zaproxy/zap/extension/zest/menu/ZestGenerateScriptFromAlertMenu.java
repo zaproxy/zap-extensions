@@ -40,7 +40,6 @@ import org.zaproxy.zest.core.v1.ZestActionFail;
 import org.zaproxy.zest.core.v1.ZestComment;
 import org.zaproxy.zest.core.v1.ZestConditional;
 import org.zaproxy.zest.core.v1.ZestExpressionRegex;
-import org.zaproxy.zest.core.v1.ZestJSON;
 import org.zaproxy.zest.core.v1.ZestScript;
 import org.zaproxy.zest.core.v1.ZestVariables;
 
@@ -191,7 +190,7 @@ public class ZestGenerateScriptFromAlertMenu extends PopupMenuItemHttpMessageCon
         ScriptWrapper sw = new ScriptWrapper();
         sw.setName(sz.getTitle());
         sw.setDescription(sz.getDescription());
-        sw.setContents(ZestJSON.toString(sz));
+        sw.setContents(extension.convertElementToString(sz));
         sw.setType(extension.getExtScript().getScriptType(ExtensionScript.TYPE_STANDALONE));
         sw.setEngine(this.extension.getZestEngineWrapper());
 
