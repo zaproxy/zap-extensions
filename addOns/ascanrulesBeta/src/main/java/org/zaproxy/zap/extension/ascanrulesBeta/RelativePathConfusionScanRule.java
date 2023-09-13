@@ -257,7 +257,7 @@ public class RelativePathConfusionScanRule extends AbstractAppPlugin {
                 }
                 sendAndReceive(hackedMessage, true); // follow redirects
 
-                if (isPage404(hackedMessage)) {
+                if (!hackedMessage.getResponseHeader().isHtml()) {
                     return;
                 }
 

@@ -69,8 +69,8 @@ class RelativePathConfusionScanRuleUnitTest
     void shouldNotAlertIfBaseUrlReturns404Code() throws Exception {
         // Given
         String test = "/";
-        nano.addHandler(new NotFoundResponseWithReqPath(test));
-        HttpMessage message = getHttpMessage(test + "sitemap.xml"); // 404 not found
+        nano.addHandler(new NonHtmlResponseWithReqPath(test));
+        HttpMessage message = getHttpMessage(test + "sitemap.xml"); // Non-HTML page
         rule.init(message, parent);
         // When
         rule.scan();
@@ -82,8 +82,8 @@ class RelativePathConfusionScanRuleUnitTest
     void shouldAlertIfRelativePathConfusionIsFound() throws Exception {
         // Given
         String test = "/";
-        nano.addHandler(new OkStatusResponseWithReqPath(test));
-        HttpMessage message = getHttpMessage(test + "sitemap.xml"); // 200 OK
+        nano.addHandler(new HtmlResponseWithReqPath(test));
+        HttpMessage message = getHttpMessage(test + "temp.html"); // HTML page
         rule.init(message, parent);
         // When
         rule.scan();
@@ -91,37 +91,32 @@ class RelativePathConfusionScanRuleUnitTest
         assertThat(alertsRaised, hasSize(1));
     }
 
-    private static class NotFoundResponseWithReqPath extends NanoServerHandler {
+    private static class NonHtmlResponseWithReqPath extends NanoServerHandler {
         private static final String PATH_TOKEN = "@@@PATH@@@";
-        private static final String NOT_FOUND_RESPONSE_WITH_REQUESTED_PATH =
-                "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n"
-                        + "<html><head>\n"
-                        + "<title>404 Not Found</title>\n"
-                        + "</head><body>\n"
-                        + "<h1>Forbidden</h1>\n"
-                        + "<p>Page not found "
+        private static final String NON_HTML_RESPONSE_WITH_REQUESTED_PATH =
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                        + "<sampleXml>\n"
                         + PATH_TOKEN
-                        + "\n"
-                        + "on this server.</p>\n"
                         + "<a href=\"javascript:history.back()\">Return to the previous page</a>\n"
-                        + "</body></html>";
+                        + "</sampleXml>\n"
+                        + "\n";
 
-        public NotFoundResponseWithReqPath(String name) {
+        public NonHtmlResponseWithReqPath(String name) {
             super(name);
         }
 
         @Override
         protected Response serve(IHTTPSession session) {
             return newFixedLengthResponse(
-                    Response.Status.NOT_FOUND,
-                    "text/html",
-                    NOT_FOUND_RESPONSE_WITH_REQUESTED_PATH.replace(PATH_TOKEN, session.getUri()));
+                    Response.Status.OK,
+                    "text/xml",
+                    NON_HTML_RESPONSE_WITH_REQUESTED_PATH.replace(PATH_TOKEN, session.getUri()));
         }
     }
 
-    private static class OkStatusResponseWithReqPath extends NanoServerHandler {
+    private static class HtmlResponseWithReqPath extends NanoServerHandler {
         private static final String PATH_TOKEN = "@@@PATH@@@";
-        private static final String OK_STATUS_RESPONSE_WITH_REQUESTED_PATH =
+        private static final String HTML_RESPONSE_WITH_REQUESTED_PATH =
                 "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n"
                         + "<html><head>\n"
                         + "<title>Title</title>\n"
@@ -133,7 +128,7 @@ class RelativePathConfusionScanRuleUnitTest
                         + "<a href=\"javascript:history.back()\">Return to the previous page</a>\n"
                         + "</body></html>";
 
-        public OkStatusResponseWithReqPath(String name) {
+        public HtmlResponseWithReqPath(String name) {
             super(name);
         }
 
@@ -142,7 +137,7 @@ class RelativePathConfusionScanRuleUnitTest
             return newFixedLengthResponse(
                     Response.Status.OK,
                     "text/html",
-                    OK_STATUS_RESPONSE_WITH_REQUESTED_PATH.replace(PATH_TOKEN, session.getUri()));
+                    HTML_RESPONSE_WITH_REQUESTED_PATH.replace(PATH_TOKEN, session.getUri()));
         }
     }
 }
