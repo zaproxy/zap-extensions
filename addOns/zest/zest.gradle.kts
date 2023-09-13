@@ -22,23 +22,29 @@ zapAddOn {
         url.set("https://www.zaproxy.org/docs/desktop/addons/zest/")
         dependencies {
             addOns {
+                register("commonlib") {
+                    version.set(">=1.16.0")
+                }
                 register("network") {
                     version.set(">=0.2.0")
                 }
+                register("scripts")
                 register("selenium") {
                     version.set(">= 15.13.0")
                 }
-                register("scripts")
             }
         }
     }
 }
 
 dependencies {
+    zapAddOn("commonlib")
     zapAddOn("network")
     zapAddOn("selenium")
 
-    implementation("org.zaproxy:zest:0.18.0") {
+    implementation("org.zaproxy:zest:0.19.0") {
+        // Provided by commonlib add-on.
+        exclude(group = "com.fasterxml.jackson")
         // Provided by Selenium add-on.
         exclude(group = "org.seleniumhq.selenium")
         // Provided by ZAP.

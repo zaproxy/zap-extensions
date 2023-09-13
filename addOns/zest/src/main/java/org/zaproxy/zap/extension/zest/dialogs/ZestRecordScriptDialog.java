@@ -42,7 +42,6 @@ import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.extension.zest.ZestScriptWrapper;
 import org.zaproxy.zap.view.StandardFieldsDialog;
-import org.zaproxy.zest.core.v1.ZestJSON;
 import org.zaproxy.zest.core.v1.ZestScript;
 import org.zaproxy.zest.impl.ZestScriptEngineFactory;
 
@@ -235,7 +234,7 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
 
         scriptWrapper.setName(script.getTitle());
         scriptWrapper.setDescription(script.getDescription());
-        scriptWrapper.setContents(ZestJSON.toString(script));
+        scriptWrapper.setContents(extension.convertElementToString(script));
         scriptWrapper.setLoadOnStart(this.getBoolValue(FIELD_LOAD));
 
         if (this.isServerSide()) {

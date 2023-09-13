@@ -28,7 +28,6 @@ import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
-import org.zaproxy.zest.core.v1.ZestJSON;
 import org.zaproxy.zest.core.v1.ZestScript;
 import org.zaproxy.zest.core.v1.ZestScript.Type;
 
@@ -50,7 +49,7 @@ public class ZestScriptWrapper extends ScriptWrapper {
 
     public ZestScriptWrapper(ScriptWrapper script) {
         this.original = script;
-        zestScript = (ZestScript) ZestJSON.fromString(script.getContents());
+        zestScript = (ZestScript) getExtension().convertStringToElement(script.getContents());
         if (zestScript == null) {
             // new script
             zestScript = new ZestScript();
@@ -189,7 +188,7 @@ public class ZestScriptWrapper extends ScriptWrapper {
 
     @Override
     public String getContents() {
-        return ZestJSON.toString(this.zestScript);
+        return getExtension().convertElementToString(this.zestScript);
     }
 
     @Override

@@ -24,6 +24,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -37,6 +38,7 @@ public class OptionsZestPanel extends AbstractParamPanel {
 
     private static final long serialVersionUID = 1L;
     private JTable tableIgnoreHeaders = null;
+    private JComboBox<String> scriptFormat;
     private JCheckBox incResps = null;
     private JScrollPane jScrollPane = null;
     private OptionsZestIgnoreHeadersTableModel ignoreHeadersModel = null;
@@ -52,16 +54,24 @@ public class OptionsZestPanel extends AbstractParamPanel {
         this.setLayout(new GridBagLayout());
         this.setSize(409, 268);
         this.setName(Constant.messages.getString("zest.options.title"));
-        this.add(this.getIncResps(), LayoutHelper.getGBC(0, 0, 1, 1.0, new Insets(0, 0, 5, 0)));
+        int row = 0;
+        this.add(
+                new JLabel(Constant.messages.getString("zest.options.label.scriptFormat")),
+                LayoutHelper.getGBC(0, row, 1, 1.0, new Insets(0, 0, 5, 0)));
+        this.add(getScriptFormat(), LayoutHelper.getGBC(1, row, 1, 1.0, new Insets(0, 0, 5, 0)));
+        row++;
+        this.add(this.getIncResps(), LayoutHelper.getGBC(0, row, 2, 1.0, new Insets(0, 0, 5, 0)));
+        row++;
         this.add(
                 new JLabel(Constant.messages.getString("zest.options.label.ignoreheaders")),
-                LayoutHelper.getGBC(0, 1, 1, 1.0, new Insets(0, 0, 5, 0)));
+                LayoutHelper.getGBC(0, row, 2, 1.0, new Insets(0, 0, 5, 0)));
+        row++;
         this.add(
                 getJScrollPane(),
                 LayoutHelper.getGBC(
                         0,
+                        row,
                         2,
-                        1,
                         1.0,
                         1.0,
                         GridBagConstraints.BOTH,
@@ -76,6 +86,7 @@ public class OptionsZestPanel extends AbstractParamPanel {
         getIncResps().setSelected(param.isIncludeResponses());
         getModel().setAllHeaders(param.getAllHeaders());
         getModel().setIgnoredHeaders(param.getIgnoredHeaders());
+        getScriptFormat().setSelectedItem(param.getScriptFormat());
     }
 
     @Override
@@ -87,6 +98,15 @@ public class OptionsZestPanel extends AbstractParamPanel {
         ZestParam param = optionsParam.getParamSet(ZestParam.class);
         param.setIncludeResponses(getIncResps().isSelected());
         param.setIgnoredHeaders(getModel().getIgnoredHeaders());
+        param.setScriptFormat((String) getScriptFormat().getSelectedItem());
+    }
+
+    private JComboBox<String> getScriptFormat() {
+        if (scriptFormat == null) {
+            scriptFormat = new JComboBox<>(new String[] {"JSON", "YAML"});
+            scriptFormat.setSelectedIndex(0);
+        }
+        return scriptFormat;
     }
 
     private JCheckBox getIncResps() {

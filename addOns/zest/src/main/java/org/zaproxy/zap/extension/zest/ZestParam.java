@@ -83,6 +83,7 @@ public class ZestParam extends AbstractParam {
 
     private static final String IGNORE_HEADERS_KEY = DEFAULT_ZEST_KEY + ".ignoreHeaders";
     private static final String INCLUDE_RESPONSES_KEY = DEFAULT_ZEST_KEY + ".incResponses";
+    private static final String ZEST_FORMAT_KEY = DEFAULT_ZEST_KEY + ".scriptFormat";
 
     /** The Constant log. */
     private static final Logger LOGGER = LogManager.getLogger(ZestParam.class);
@@ -95,12 +96,15 @@ public class ZestParam extends AbstractParam {
 
     private boolean includeResponses = true;
 
+    private String scriptFormat = "JSON";
+
     /** Instantiates a new Zest param. */
     public ZestParam() {}
 
     @Override
     protected void parse() {
         this.includeResponses = getBoolean(INCLUDE_RESPONSES_KEY, true);
+        this.scriptFormat = sanitizeScriptFormat(getString(ZEST_FORMAT_KEY, "JSON"));
         try {
 
             this.allHeaders.clear();
@@ -155,5 +159,21 @@ public class ZestParam extends AbstractParam {
     public void setIncludeResponses(boolean includeResponses) {
         this.includeResponses = includeResponses;
         getConfig().setProperty(INCLUDE_RESPONSES_KEY, this.includeResponses);
+    }
+
+    public String getScriptFormat() {
+        return scriptFormat;
+    }
+
+    public void setScriptFormat(String scriptFormat) {
+        this.scriptFormat = sanitizeScriptFormat(scriptFormat);
+        getConfig().setProperty(ZEST_FORMAT_KEY, this.scriptFormat);
+    }
+
+    private static String sanitizeScriptFormat(String format) {
+        if (format != null && "YAML".equalsIgnoreCase(format.strip())) {
+            return "YAML";
+        }
+        return "JSON";
     }
 }
