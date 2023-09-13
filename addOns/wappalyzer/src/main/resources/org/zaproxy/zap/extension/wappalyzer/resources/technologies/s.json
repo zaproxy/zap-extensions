@@ -470,7 +470,7 @@
     "cookies": {
       "SAKAIID": ""
     },
-    "cpe": "cpe:2.3:a:sakailms:sakai:*:*:*:*:*:*:*:*:*",
+    "cpe": "cpe:2.3:a:sakailms:sakai:*:*:*:*:*:*:*:*",
     "description": "Sakai is a robust open-source learning management system created by higher ed for higher ed.",
     "icon": "Sakai.png",
     "js": {
@@ -793,12 +793,21 @@
     "cats": [
       6
     ],
-    "description": "Salla is an ecommerce platform.",
+    "description": "Salla is an ecommerce platform specifically tailored to serve businesses and customers in Saudi Arabia.",
     "headers": {
       "x-powered-by": "^Salla$"
     },
     "icon": "Salla.svg",
-    "scriptSrc": "cdn\\.salla\\.sa/",
+    "js": {
+      "Salla.shop": "",
+      "SallaApplePay": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
     "website": "https://salla.sa"
   },
   "Salonist": {
@@ -1530,6 +1539,36 @@
     ],
     "saas": true,
     "website": "https://selldone.com"
+  },
+  "SellersCommerce": {
+    "cats": [
+      6
+    ],
+    "description": "SellersCommerce is a medium ecommerce software company that provides b2b ecommerce platform to retail companies.",
+    "icon": "SellersCommerce.png",
+    "pricing": [
+      "poa"
+    ],
+    "requires": "Microsoft ASP.NET",
+    "saas": true,
+    "scriptSrc": "\\.sellerscommerce\\.com/",
+    "website": "https://www.sellerscommerce.com"
+  },
+  "Selless": {
+    "cats": [
+      6
+    ],
+    "description": "Selless is an all-in-one, ready-to-use ecommerce platform.",
+    "icon": "Selless.svg",
+    "js": {
+      "__NEXT_DATA__.assetPrefix": "\\.selless\\.us/"
+    },
+    "pricing": [
+      "poa",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://selless.com"
   },
   "Sellfy": {
     "cats": [
@@ -2752,6 +2791,25 @@
     "scriptSrc": "cdn\\.shoppinggives\\.com/",
     "website": "https://shoppinggives.com"
   },
+  "Shoppub": {
+    "cats": [
+      6
+    ],
+    "description": "Shoppub is an ecommerce platform that focuses on implementing advanced business rules.",
+    "icon": "Shoppub.svg",
+    "js": {
+      "Shoppub.store": ""
+    },
+    "meta": {
+      "author": "^Shoppub$"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.shoppub.com.br"
+  },
   "Shoppy": {
     "cats": [
       6
@@ -3302,6 +3360,22 @@
     "scriptSrc": "cdn\\.app\\.sirge\\.com/",
     "website": "https://www.sirge.com"
   },
+  "Sirvoy": {
+    "cats": [
+      72
+    ],
+    "description": "Sirvoy is a cloud-based hotel management software that streamlines various hotel operations, including reservation management, channel management, online booking, and property management.",
+    "icon": "Sirvoy.svg",
+    "js": {
+      "SirvoyBookingWidget": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://sirvoy.com"
+  },
   "Site Kit": {
     "cats": [
       10,
@@ -3579,30 +3653,60 @@
       "high"
     ],
     "probe": {
-      "/layouts/System/VisitorIdentification.aspx": ""
+      "/layouts/System/VisitorIdentification.aspx": "sc_Contact"
     },
     "saas": true,
     "website": "https://www.sitecore.com/"
   },
-  "Sitefinity": {
+  "Sitecore Engagement Cloud": {
+    "cats": [
+      97
+    ],
+    "description": "Sitecore Engagement Cloud is a cloud-based customer experience management platform offering content management, personalisation, marketing automation, analytics, and omni-channel delivery for enhancing digital marketing efforts and improving customer experiences.",
+    "icon": "Sitecore.svg",
+    "implies": "Sitecore",
+    "pricing": [
+      "poa",
+      "recurring",
+      "high"
+    ],
+    "saas": true,
+    "scriptSrc": "/sitecore-engage-v\\.([\\d\\.]+)\\.min\\.js\\;version:\\1",
+    "website": "https://www.sitecore.com/products/engagement-cloud"
+  },
+  "Sitecore Experience Edge": {
+    "cats": [
+      23
+    ],
+    "description": "Sitecore Experience Edge is a product that optimises content delivery by utilising edge computing and caching technologies to enhance website performance and user experience.",
+    "dom": "img[src*='edge.sitecorecloud.io']",
+    "icon": "Sitecore.svg",
+    "implies": [
+      "GraphQL",
+      "Sitecore Experience Platform"
+    ],
+    "pricing": [
+      "poa",
+      "recurring",
+      "high"
+    ],
+    "requiresCategory": 12,
+    "saas": false,
+    "website": "https://doc.sitecore.com/xp/en/developers/101/developer-tools/experience-edge-for-xm-apis.html"
+  },
+  "Sitecore Experience Platform": {
     "cats": [
       1
     ],
-    "cpe": "cpe:2.3:a:progress:sitefinity:*:*:*:*:*:*:*:*",
-    "description": "Sitefinity is a content management system (CMS) that you use to create, store, manage, and present content on your website.",
-    "icon": "Sitefinity.svg",
-    "implies": "Microsoft ASP.NET",
-    "js": {
-      "sfDataIntell": ""
-    },
-    "meta": {
-      "generator": "^Sitefinity\\s([\\S]{3,9})\\;version:\\1"
-    },
+    "description": "Sitecore Experience Platform is a digital platform used by businesses to create, manage, and deliver personalised content and experiences to users across different channels.",
+    "icon": "Sitecore.svg",
     "pricing": [
-      "poa"
+      "poa",
+      "recurring",
+      "high"
     ],
     "saas": true,
-    "website": "https://www.sitefinity.com"
+    "website": "https://www.sitecore.com/products/sitecore-experience-platform"
   },
   "Siteglide": {
     "cats": [
@@ -3888,6 +3992,23 @@
     "saas": true,
     "scriptSrc": "sv-wc-payment-gateway-payment-form\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1",
     "website": "https://www.skyverge.com"
+  },
+  "Skyflow": {
+    "cats": [
+      16
+    ],
+    "description": "Skyflow is a company that provides a secure data privacy platform and API.",
+    "icon": "Skyflow.svg",
+    "js": {
+      "Skyflow.ElementType.CARD_NUMBER": "",
+      "Skyflow.ValidationRuleType": ""
+    },
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.skyflow.com"
   },
   "Slate": {
     "cats": [
@@ -4651,7 +4772,7 @@
       "SolidJS"
     ],
     "js": {
-      "_$HY": ""
+      "_$HY.init": ""
     },
     "oss": true,
     "website": "https://start.solidjs.com"
@@ -4949,7 +5070,7 @@
       67
     ],
     "description": "Spatie Laravel Cookie Consent is a banner that is displayed on websites to ask visitors for consent for the use of cookies.",
-    "icon": "Spatie.png",
+    "icon": "Spatie.svg",
     "implies": "Laravel",
     "js": {
       "laravelCookieConsent": ""
@@ -4979,7 +5100,7 @@
     ],
     "description": "Spatie Support Bubble is a non-intrusive support form.",
     "dom": "div.spatie-support-bubble",
-    "icon": "Spatie.png",
+    "icon": "Spatie.svg",
     "implies": [
       "Laravel",
       "Tailwind CSS"
@@ -6247,7 +6368,7 @@
       1
     ],
     "description": "Storyblok is a headless CMS with a visual editor for developers, marketers and content editors. Storyblok helps your team to manage content and digital experiences for every use-case from corporate websites, ecommerce, helpdesks, mobile apps, screen displays, and more.",
-    "dom": "img[src*='//a.storyblok.com/']",
+    "dom": "img[src*='//a.storyblok.com/'], img[srcset*='a.storyblok.com']",
     "headers": {
       "content-security-policy": "app\\.storyblok\\.com",
       "x-frame-options": "app\\.storyblok\\.com"
@@ -6577,6 +6698,19 @@
     "saas": true,
     "website": "https://www.summercart.com"
   },
+  "Summernote": {
+    "cats": [
+      20
+    ],
+    "description": "Summernote is an open-source JavaScript library that offers a feature-rich WYSIWYG editor for web applications, allowing users to create and edit formatted content in a familiar word processor-like interface.",
+    "icon": "Summernote.svg",
+    "oss": true,
+    "scriptSrc": [
+      "/(?:S|s)ummernote(?:\\.min)?\\.js",
+      "/summernote(?:@|-)([\\d\\.]+)/\\;version:\\1"
+    ],
+    "website": "https://summernote.org"
+  },
   "Sumo": {
     "cats": [
       5,
@@ -6628,6 +6762,26 @@
     "requires": "Next.js",
     "saas": true,
     "website": "https://suncel.io"
+  },
+  "Supabase": {
+    "cats": [
+      47
+    ],
+    "description": "Supabase is an open-source platform that offers a Postgres database, Authentication, APIs, Edge Functions, Realtime subscriptions, Storage, and Vector embeddings for project development.",
+    "icon": "Supabase.svg",
+    "implies": "PostgreSQL",
+    "js": {
+      "__NUXT__.config.public.SUPABASE_URL": "",
+      "__NUXT__.config.public.supabase": ""
+    },
+    "oss": true,
+    "pricing": [
+      "freemium",
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://supabase.com"
   },
   "Super Builder": {
     "cats": [
@@ -6787,6 +6941,7 @@
       },
       "a": {
         "attributes": {
+          "data-sveltekit-preload-data": "",
           "sveltekit:prefetch": ""
         }
       }
@@ -6797,6 +6952,9 @@
       "Node.js",
       "Vite"
     ],
+    "meta": {
+      "generator": "SvelteKit"
+    },
     "oss": true,
     "website": "https://kit.svelte.dev"
   },
@@ -6836,8 +6994,14 @@
     "cats": [
       59
     ],
-    "description": "SweetAlert is a beautiful replacement for JavaScript's alert.",
-    "html": "<link[^>]+?href=\"[^\"]+sweet-alert(?:\\.min)?\\.css",
+    "description": "SweetAlert is a JavaScript library that provides alternative alert and modal dialog boxes for web applications, with customisable features, aiming to improve the user interface of the default browser dialogs.",
+    "dom": {
+      "link[href*='sweet-alert']": {
+        "attributes": {
+          "href": "sweet-alert(?:\\.min)?\\.css"
+        }
+      }
+    },
     "icon": "SweetAlert.png",
     "oss": true,
     "scriptSrc": "sweet(?:-)?alert(?:\\.min)?\\.js",
@@ -6847,9 +7011,14 @@
     "cats": [
       59
     ],
-    "description": "SweetAlert2 is a beautiful, responsive, customizable, accessible replacement for JavaScript's popup boxes.",
-    "excludes": "SweetAlert",
-    "html": "<link[^>]+?href=\"[^\"]+sweetalert2(?:\\.min)?\\.css",
+    "description": "SweetAlert2 is a JavaScript library that provides customisable, visually appealing, and responsive alert and modal dialog boxes for web applications.",
+    "dom": {
+      "link[href*='sweetalert2']": {
+        "attributes": {
+          "href": "sweetalert2(?:\\.min)?\\.css"
+        }
+      }
+    },
     "icon": "SweetAlert2.svg",
     "js": {
       "Sweetalert2": ""
@@ -6871,16 +7040,17 @@
       "swell-session": ""
     },
     "description": "Swell is a headless ecommerce platform for modern brands, startups, and agencies.",
-    "html": [
-      "<[^>]*swell\\.is",
-      "<[^>]*swell\\.store",
-      "<[^>]*schema\\.io"
-    ],
+    "dom": "img[srcset*='.swell.is'], img[srcset*='.swell.store'], img[srcset*='.schema.io']",
+    "excludes": "Shopify",
     "icon": "Swell.svg",
     "js": {
-      "swell.version": "^(.+)$\\;version:\\1"
+      "swell.version": ""
     },
-    "website": "https://www.swell.is/"
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "website": "https://www.swell.is"
   },
   "Swiffy Slider": {
     "cats": [
@@ -7123,6 +7293,22 @@
     "icon": "scrollreveal.svg",
     "scriptSrc": "scrollreveal(?:\\.min)(?:\\.js)",
     "website": "https://scrollrevealjs.org"
+  },
+  "shadcn/ui": {
+    "cats": [
+      66
+    ],
+    "css": [
+      "--destructive-foreground"
+    ],
+    "description": "shadcn/ui is a component system built with Radix UI and Tailwind CSS.",
+    "icon": "shadcn-ui.svg",
+    "implies": [
+      "Radix UI",
+      "Tailwind CSS"
+    ],
+    "oss": true,
+    "website": "https://ui.shadcn.com"
   },
   "shine.js": {
     "cats": [

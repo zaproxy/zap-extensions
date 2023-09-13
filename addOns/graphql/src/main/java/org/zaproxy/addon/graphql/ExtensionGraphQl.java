@@ -31,22 +31,29 @@ import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.CommandLineArgument;
 import org.parosproxy.paros.extension.CommandLineListener;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.addon.commonlib.ExtensionCommonlib;
+import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
 import org.zaproxy.zap.extension.script.ExtensionScript;
-import org.zaproxy.zap.model.DefaultValueGenerator;
 import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionGraphQl extends ExtensionAdaptor
-        implements CommandLineListener, SessionChangedListener {
+        implements CommandLineListener, SessionChangedListener, ExampleAlertProvider {
 
     public static final String NAME = "ExtensionGraphQl";
+
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionCommonlib.class);
+
     static final int TOOL_ALERT_ID = 50007;
     private static final Logger LOGGER = LogManager.getLogger(ExtensionGraphQl.class);
 
@@ -60,20 +67,20 @@ public class ExtensionGraphQl extends ExtensionAdaptor
     private static final int ARG_IMPORT_URL_IDX = 1;
     private static final int ARG_END_URL_IDX = 2;
 
-    private ValueGenerator valueGenerator;
-
     public ExtensionGraphQl() {
         super(NAME);
-
-        setValueGenerator(null);
     }
 
-    public void setValueGenerator(ValueGenerator valueGenerator) {
-        this.valueGenerator = valueGenerator == null ? new DefaultValueGenerator() : valueGenerator;
+    @Override
+    public List<Class<? extends Extension>> getDependencies() {
+        return DEPENDENCIES;
     }
 
     ValueGenerator getValueGenerator() {
-        return valueGenerator;
+        return Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionCommonlib.class)
+                .getValueGenerator();
     }
 
     @Override
@@ -279,5 +286,12 @@ public class ExtensionGraphQl extends ExtensionAdaptor
     public boolean handleFile(File file) {
         // Not supported
         return false;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                GraphQlParser.createIntrospectionAlert().build(),
+                GraphQlFingerprinter.createFingerprintingAlert("example").build());
     }
 }

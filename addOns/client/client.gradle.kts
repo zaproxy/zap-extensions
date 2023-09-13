@@ -7,6 +7,20 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/client-side-integration/")
+        extensions {
+            register("org.zaproxy.addon.client.zest.ExtensionClientZest") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.client.zest"))
+                }
+                dependencies {
+                    addOns {
+                        register("zest") {
+                            version.set(">=40")
+                        }
+                    }
+                }
+            }
+        }
         dependencies {
             addOns {
                 register("selenium") {
@@ -31,6 +45,7 @@ crowdin {
 dependencies {
     zapAddOn("selenium")
     zapAddOn("network")
+    zapAddOn("zest")
 
     testImplementation(project(":testutils"))
 }

@@ -1,0 +1,10 @@
+  - type: "replacer"                   # Replacer rules
+    parameters:
+      deleteAllRules:                  # Boolean, if true then will delete all existing replacer rules, default false
+    rules:                             # A list of replacer rules
+      - description:                   # String, the name of the rule
+        url:                           # String, a regex which will be used to match URLs, if empty then it will match all
+        matchType:                     # String, one of req_header, req_header_str, req_body_str, resp_header, resp_header_str, resp_body_str
+        matchString:                   # String, will be used to identify what should be replaced
+        matchRegex:                    # Boolean, if set then the matchString will be treated as a regex, default false
+        replacementString:             # String, the new string that will replace the specified selection

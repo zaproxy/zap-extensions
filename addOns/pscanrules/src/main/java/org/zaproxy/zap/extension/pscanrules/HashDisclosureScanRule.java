@@ -252,7 +252,6 @@ public class HashDisclosureScanRule extends PluginPassiveScanner {
                                 .setRisk(hashalert.getRisk())
                                 .setConfidence(hashalert.getConfidence())
                                 .setDescription(getDescription() + " - " + hashType)
-                                .setOtherInfo(getExtraInfo(msg, evidence))
                                 .setSolution(getSolution())
                                 .setReference(getReference())
                                 .setEvidence(evidence)
@@ -282,10 +281,6 @@ public class HashDisclosureScanRule extends PluginPassiveScanner {
 
     private String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
-    private String getExtraInfo(HttpMessage msg, String arg0) {
-        return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", arg0);
     }
 
     @Override

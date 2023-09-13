@@ -17,7 +17,7 @@ zapAddOn {
                     version.set(">=0.3.0")
                 }
                 register("commonlib") {
-                    version.set(">= 1.13.0 & < 2.0.0")
+                    version.set(">= 1.17.0 & < 2.0.0")
                 }
             }
         }
@@ -30,20 +30,7 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("automation") {
-                            version.set(">=0.17.0")
-                        }
-                    }
-                }
-            }
-
-            register("org.zaproxy.addon.spider.formhandler.ExtensionSpiderFormHandler") {
-                classnames {
-                    allowed.set(listOf("org.zaproxy.addon.spider.formhandler"))
-                }
-                dependencies {
-                    addOns {
-                        register("formhandler") {
-                            version.set(">=6.0.0 & < 7.0.0")
+                            version.set(">=0.31.0")
                         }
                     }
                 }
@@ -69,7 +56,6 @@ dependencies {
     zapAddOn("automation")
     zapAddOn("commonlib")
     zapAddOn("database")
-    zapAddOn("formhandler")
     zapAddOn("network")
 
     implementation("io.kaitai:kaitai-struct-runtime:0.10")

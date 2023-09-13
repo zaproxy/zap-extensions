@@ -31,7 +31,7 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("automation") {
-                            version.set(">=0.17.0")
+                            version.set(">=0.31.0")
                         }
                     }
                 }
@@ -40,7 +40,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">= 1.13.0 & < 2.0.0")
+                    version.set(">= 1.17.0 & < 2.0.0")
                 }
                 register("network") {
                     version.set(">=0.1.0")

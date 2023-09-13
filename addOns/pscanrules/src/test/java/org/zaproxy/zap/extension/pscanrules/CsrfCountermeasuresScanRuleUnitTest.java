@@ -36,8 +36,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -67,8 +69,13 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         HttpRequestHeader requestHeader = new HttpRequestHeader();
         requestHeader.setURI(new URI("http://example.com", false));
 
+        HttpResponseHeader responseHeader = new HttpResponseHeader();
+        responseHeader.setStatusCode(200);
+        responseHeader.setHeader(HttpHeader.CONTENT_TYPE, "text/html");
+
         msg = new HttpMessage();
         msg.setRequestHeader(requestHeader);
+        msg.setResponseHeader(responseHeader);
     }
 
     @Override
@@ -106,6 +113,17 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
     }
 
     @Test
+    void shouldNotRaiseAlertIfContentTypeIsNotHTML() {
+        // Given
+        msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "application/json");
+        formWithoutAntiCsrfToken();
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(alertsRaised.size(), 0);
+    }
+
+    @Test
     void shouldNotRaiseAlertIfThereIsNoHTML() {
         // Given
         msg.setResponseBody("no html");
@@ -139,8 +157,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
     @Test
     void shouldRaiseAlertIfThereIsNoCSRFTokenFound() {
         // Given
-        msg.setResponseBody(
-                "<html><head></head><body><form id=\"no_csrf_token\"><input type=\"text\"/><input type=\"submit\"/></form></body></html>");
+        formWithoutAntiCsrfToken();
         // When
         scanHttpResponseReceive(msg);
         // Then
@@ -413,6 +430,11 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         assertEquals(1, alertsRaised.size());
     }
 
+    void formWithoutAntiCsrfToken() {
+        msg.setResponseBody(
+                "<html><head></head><body><form id=\"no_csrf_token\"><input type=\"text\"/><input type=\"submit\"/></form></body></html>");
+    }
+
     private HttpMessage createScopedMessage(boolean isInScope) throws URIException {
         HttpMessage newMsg =
                 new HttpMessage() {
@@ -422,6 +444,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
                     }
                 };
         newMsg.getRequestHeader().setURI(new URI("http://", "localhost", "/", ""));
+        newMsg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "text/html");
         newMsg.setResponseBody(
                 "<html><head></head><body>"
                         + "<form name=\"someName\" data-no-csrf><input type=\"text\" name=\"name\"/><input type=\"submit\"/></form>"

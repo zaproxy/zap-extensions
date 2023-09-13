@@ -37,8 +37,6 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 /**
  * Content Security Policy Header Missing passive scan rule
  * https://github.com/zaproxy/zaproxy/issues/1169
- *
- * @author kingthorin+owaspzap@gmail.com
  */
 public class ContentSecurityPolicyMissingScanRule extends PluginPassiveScanner {
 

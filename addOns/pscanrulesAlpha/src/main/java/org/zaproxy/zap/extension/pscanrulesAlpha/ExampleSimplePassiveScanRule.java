@@ -27,9 +27,9 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
-import org.zaproxy.zap.model.Vulnerabilities;
-import org.zaproxy.zap.model.Vulnerability;
 
 /**
  * An example passive scan rule, for more details see
@@ -40,7 +40,7 @@ import org.zaproxy.zap.model.Vulnerability;
 public class ExampleSimplePassiveScanRule extends PluginPassiveScanner {
 
     // wasc_10 is Denial of Service - well, its just an example ;)
-    private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_10");
+    private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_10");
     private static final Logger LOGGER = LogManager.getLogger(ExampleSimplePassiveScanRule.class);
 
     private Random rnd = new Random();
@@ -98,37 +98,18 @@ public class ExampleSimplePassiveScanRule extends PluginPassiveScanner {
     @Override
     public String getName() {
         // Strip off the "Example Passive Scan Rule: " part if implementing a real one ;)
-        if (vuln != null) {
-            return "Example Passive Scan Rule: " + vuln.getAlert();
-        }
-        return "Example Passive Scan Rule: Denial of Service";
+        return "Example Passive Scan Rule: " + VULN.getName();
     }
 
     public String getDescription() {
-        if (vuln != null) {
-            return vuln.getDescription();
-        }
-        return "Failed to load vulnerability description from file";
+        return VULN.getDescription();
     }
 
     public String getSolution() {
-        if (vuln != null) {
-            return vuln.getSolution();
-        }
-        return "Failed to load vulnerability solution from file";
+        return VULN.getSolution();
     }
 
     public String getReference() {
-        if (vuln != null) {
-            StringBuilder sb = new StringBuilder();
-            for (String ref : vuln.getReferences()) {
-                if (sb.length() > 0) {
-                    sb.append("\n");
-                }
-                sb.append(ref);
-            }
-            return sb.toString();
-        }
-        return "Failed to load vulnerability reference from file";
+        return VULN.getReferencesAsString();
     }
 }

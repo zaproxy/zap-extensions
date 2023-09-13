@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<OWASPZAPReport programName="OWASP ZAP" version="Dev Build" generated="Thu, 20 Oct 2022 17:11:39">
+<OWASPZAPReport programName="ZAP" version="Dev Build" generated="Thu, 20 Oct 2022 17:11:39">
 	
 		<site name="http://example.com" host="example.com" port="80" ssl="false">
 			<alerts>

@@ -4,30 +4,33 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [21.24.0] - 2023-09-07
+### Changed
+- Dependency updates.
+- Depend on newer versions of Automation Framework and Common Library add-ons (Related to Issue 7961).
+
+### Fixed
+- Ensure icons render when expected.
+
+## [21.23.0] - 2023-08-14
 ### Changed
 - Maintenance changes.
 - Update minimum ZAP version to 2.13.0.
 - Updated with upstream Wappalyzer icon and pattern changes.
 
-
-
 ## [21.22.0] - 2023-06-06
 ### Changed
 - Updated with upstream Wappalyzer icon and pattern changes.
-
-
 
 ## [21.21.0] - 2023-05-03
 ### Changed
 - Updated with upstream Wappalyzer icon and pattern changes.
 
-
-
 ## [21.20.0] - 2023-04-04
 ### Changed
 - Updated with upstream Wappalyzer icon and pattern changes.
-
-
 
 ## [21.19.0] - 2023-03-03
 ### Changed
@@ -37,8 +40,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [21.18.0] - 2023-01-06
 ### Changed
 - Updated with upstream Wappalyzer icon and pattern changes.
-
-
 
 ## [21.17.0] - 2022-12-13
 ### Changed
@@ -51,13 +52,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Updated with upstream Wappalyzer icon and pattern changes.
 
-
-
 ## [21.15.0] - 2022-11-03
 ### Changed
 - Updated with upstream Wappalyzer icon and pattern changes.
-
-
 
 ## [21.14.0] - 2022-10-27
 ### Changed
@@ -300,6 +297,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - First version
 
 
+[21.24.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.24.0
+[21.23.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.23.0
 [21.22.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.22.0
 [21.21.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.21.0
 [21.20.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.20.0

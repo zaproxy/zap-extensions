@@ -1,6 +1,6 @@
 {
   "commands":[{
-    "description":"OWASP ZAP Commands"
+    "description":"ZAP Commands"
   },
   {
     "name":"session",

@@ -58,9 +58,11 @@ import org.parosproxy.paros.db.TableHistory;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.zap.extension.ascan.VariantFactory;
 import org.zaproxy.zap.extension.openapi.OpenApiExceptions.InvalidDefinitionException;
 import org.zaproxy.zap.model.Context;
+import org.zaproxy.zap.model.DefaultValueGenerator;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -85,6 +87,11 @@ class ExtensionOpenApiTest extends AbstractServerTest {
 
         Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
         Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
+
+        ExtensionCommonlib extCommonlib =
+                mock(ExtensionCommonlib.class, withSettings().strictness(Strictness.LENIENT));
+        given(extensionLoader.getExtension(ExtensionCommonlib.class)).willReturn(extCommonlib);
+        given(extCommonlib.getValueGenerator()).willReturn(new DefaultValueGenerator());
 
         tableHistory = mock(TableHistory.class);
         HistoryReference.setTableHistory(tableHistory);

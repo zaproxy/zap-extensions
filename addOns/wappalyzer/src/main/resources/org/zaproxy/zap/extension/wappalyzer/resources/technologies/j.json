@@ -851,7 +851,7 @@
     "cats": [
       26
     ],
-    "description": "jQTouch is an open-source Zepto/ JQuery plugin with native animations, automatic navigation, and themes for mobile WebKit browsers like iPhone, G1 (Android), and Palm Pre.",
+    "description": "jQTouch is an open-source Zepto/ jQuery plugin with native animations, automatic navigation, and themes for mobile WebKit browsers like iPhone, G1 (Android), and Palm Pre.",
     "icon": "jQTouch.png",
     "js": {
       "jQT": ""
@@ -936,7 +936,7 @@
     "cats": [
       59
     ],
-    "description": "JQuery Modal is an overlay dialog box or in other words, a popup window that is made to display on the top or 'overlayed' on the current page.",
+    "description": "jQuery Modal is an overlay dialog box or in other words, a popup window that is made to display on the top or 'overlayed' on the current page.",
     "dom": "link[href*='jquery.modal.min.css']",
     "icon": "jQuery Modal.png",
     "implies": "jQuery",

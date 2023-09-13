@@ -44,10 +44,9 @@ import org.zaproxy.zap.view.widgets.WritableFileChooser;
 @SuppressWarnings("serial")
 public class DefaultExplorePanel extends QuickStartSubPanel {
     private static final long serialVersionUID = 1L;
-    private static final String OWASP_ZAP_ROOT_CA_NAME = "owasp_zap_root_ca";
-    private static final String OWASP_ZAP_ROOT_CA_FILE_EXT = ".cer";
-    private static final String OWASP_ZAP_ROOT_CA_FILENAME =
-            OWASP_ZAP_ROOT_CA_NAME + OWASP_ZAP_ROOT_CA_FILE_EXT;
+    private static final String ZAP_ROOT_CA_NAME = "zap_root_ca";
+    private static final String ZAP_ROOT_CA_FILE_EXT = ".cer";
+    private static final String ZAP_ROOT_CA_FILENAME = ZAP_ROOT_CA_NAME + ZAP_ROOT_CA_FILE_EXT;
 
     private ImageIcon icon;
     private JPanel contentPanel;
@@ -133,7 +132,7 @@ public class DefaultExplorePanel extends QuickStartSubPanel {
                                 new WritableFileChooser(new File(System.getProperty("user.home")));
                         fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
                         fc.setMultiSelectionEnabled(false);
-                        fc.setSelectedFile(new File(OWASP_ZAP_ROOT_CA_FILENAME));
+                        fc.setSelectedFile(new File(ZAP_ROOT_CA_FILENAME));
                         if (fc.showSaveDialog(DefaultExplorePanel.this)
                                 == JFileChooser.APPROVE_OPTION) {
                             final File f = fc.getSelectedFile();

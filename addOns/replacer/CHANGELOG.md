@@ -4,6 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [14] - 2023-09-07
+### Added
+- Support for the Automation Framework (Issue 7686).
+
 ### Changed
 - Document that Token Processing applies just to string match types and disable the field in
 the dialogue when other match types are selected.
@@ -88,6 +94,7 @@ the dialogue when other match types are selected.
 
 - First version
 
+[14]: https://github.com/zaproxy/zap-extensions/releases/replacer-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/replacer-v13
 [12]: https://github.com/zaproxy/zap-extensions/releases/replacer-v12
 [11]: https://github.com/zaproxy/zap-extensions/releases/replacer-v11

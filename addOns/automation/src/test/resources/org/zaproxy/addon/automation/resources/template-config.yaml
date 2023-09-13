@@ -1,4 +1,4 @@
---- # OWASP ZAP automation configuration file, for more details see https://www.zaproxy.org/docs/automate/automation-framework/
+--- # ZAP automation configuration file, for more details see https://www.zaproxy.org/docs/automate/automation-framework/
 env:                                   # The environment, mandatory
   contexts :                           # List of 1 or more contexts, mandatory
     - name: context 1                  # Name to be used to refer to this context in other jobs, mandatory

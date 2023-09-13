@@ -33,11 +33,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-/**
- * X-Debug-Token passive scan rule https://github.com/zaproxy/zaproxy/issues/2452
- *
- * @author kingthorin+owaspzap@gmail.com
- */
+/** X-Debug-Token passive scan rule https://github.com/zaproxy/zaproxy/issues/2452 */
 public class XDebugTokenScanRule extends PluginPassiveScanner {
 
     private static final String MESSAGE_PREFIX = "pscanrules.xdebugtoken.";

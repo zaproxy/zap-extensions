@@ -69,7 +69,6 @@ import org.zaproxy.zap.extension.openapi.converter.swagger.SwaggerConverter;
 import org.zaproxy.zap.extension.openapi.network.RequestModel;
 import org.zaproxy.zap.extension.openapi.network.Requestor;
 import org.zaproxy.zap.model.Context;
-import org.zaproxy.zap.model.DefaultValueGenerator;
 import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.utils.ThreadUtils;
@@ -89,7 +88,6 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     private ZapMenuItem menuImportOpenApi;
     private ImportDialog importDialog;
     private int threadId = 1;
-    private ValueGenerator valueGenerator;
     private final Map<Integer, VariantOpenApiChecks> variantChecksMap = new HashMap<>();
     private TableOpenApi table = new TableOpenApi();
 
@@ -102,15 +100,13 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
     public ExtensionOpenApi() {
         super(NAME);
-        setValueGenerator(null);
-    }
-
-    public void setValueGenerator(ValueGenerator valueGenerator) {
-        this.valueGenerator = valueGenerator == null ? new DefaultValueGenerator() : valueGenerator;
     }
 
     public ValueGenerator getValueGenerator() {
-        return valueGenerator;
+        return Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionCommonlib.class)
+                .getValueGenerator();
     }
 
     @Override

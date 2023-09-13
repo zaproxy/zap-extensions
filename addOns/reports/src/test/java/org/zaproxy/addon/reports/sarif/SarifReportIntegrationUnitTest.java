@@ -132,17 +132,16 @@ class SarifReportIntegrationUnitTest {
     }
 
     private void assertTool(JsonNode firstRun, InspectionContext inspectionContext) {
-        SarifToolDataProvider owaspZap = SarifToolData.INSTANCE.getOwaspZap();
+        SarifToolDataProvider zap = SarifToolData.INSTANCE.getZap();
         SarifToolDataProvider cwe = SarifToolData.INSTANCE.getCwe();
 
         JsonNode tool = firstRun.get("tool");
 
         // driver
         JsonNode driver = tool.get("driver");
-        assertEquals(owaspZap.getGuid(), driver.get("guid").asText());
-        assertEquals(
-                owaspZap.getInformationUri().toString(), driver.get("informationUri").asText());
-        assertEquals(owaspZap.getName(), driver.get("name").asText());
+        assertEquals(zap.getGuid(), driver.get("guid").asText());
+        assertEquals(zap.getInformationUri().toString(), driver.get("informationUri").asText());
+        assertEquals(zap.getName(), driver.get("name").asText());
 
         assertEquals("0.0.0-" + ZAP_VERSION_DEV_BUILD, driver.get("version").asText());
         // Remark: In our test the simulated ZAP version is "Dev Build". But this is not really a

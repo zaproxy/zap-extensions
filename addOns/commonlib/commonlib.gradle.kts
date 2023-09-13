@@ -14,20 +14,39 @@ zapAddOn {
             baseName.set("help%LC%.helpset")
             localeToken.set("%LC%")
         }
+
+        extensions {
+            register("org.zaproxy.addon.commonlib.formhandler.ExtensionCommonlibFormHandler") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.commonlib.formhandler"))
+                }
+                dependencies {
+                    addOns {
+                        register("formhandler") {
+                            version.set(">=6.0.0 & < 7.0.0")
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 
 crowdin {
     configuration {
-        file.set(file("$rootDir/gradle/crowdin-help-only.yml"))
+        file.set(file("$projectDir/gradle/crowdin.yml"))
         tokens.put("%helpPath%", "")
     }
 }
 
 dependencies {
+    zapAddOn("formhandler")
+
     api(platform("com.fasterxml.jackson:jackson-bom:2.15.2"))
     api("com.fasterxml.jackson.core:jackson-databind")
+    api("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
     api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
+    api("com.fasterxml.jackson.datatype:jackson-datatype-jdk8")
 
     implementation("commons-io:commons-io:2.13.0")
     implementation("org.apache.commons:commons-csv:1.10.0")

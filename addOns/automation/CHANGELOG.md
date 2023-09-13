@@ -4,14 +4,25 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Fixed
+- Correct output of array values set to the jobs.
+
+## [0.31.0] - 2023-09-07
 ### Added
 - Add support for max alerts per rule in the Active Scan job (Issue 7784).
 
 ### Changed
 - Maintenance changes.
+- Depend on newer version of Common Library add-on (Related to Issue 7961).
+- Clarify authentication docs.
+
+### Removed
+- The SnakeYAML Engine dependency was removed.
 
 ### Fixed
 - Address error logged when using the Active Scan job.
+- Do not fail to load plans without jobs.
+- Support converting Lists to arrays when updating objects.
 
 ## [0.30.0] - 2023-07-11
 ### Changed
@@ -298,6 +309,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.31.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.31.0
 [0.30.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.30.0
 [0.29.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.29.0
 [0.28.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.28.0

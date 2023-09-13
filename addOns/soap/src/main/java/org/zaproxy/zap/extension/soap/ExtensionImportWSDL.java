@@ -21,12 +21,7 @@ package org.zaproxy.zap.extension.soap;
 
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.security.InvalidParameterException;
-import javax.swing.JFileChooser;
-import javax.swing.SwingUtilities;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -34,16 +29,13 @@ import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.db.Database;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.db.DatabaseUnsupportedException;
+import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.model.Model;
-import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
+import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.model.Session;
+import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.zap.extension.script.ExtensionScript;
-import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
-import org.zaproxy.zap.extension.script.ScriptType;
-import org.zaproxy.zap.extension.script.ScriptWrapper;
-import org.zaproxy.zap.model.DefaultValueGenerator;
 import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.view.ZapMenuItem;
 
@@ -52,31 +44,34 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
     public static final String NAME = "ExtensionImportWSDL";
     public static final String STATS_ADDED_URLS = "soap.urls.added";
 
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionCommonlib.class);
+
     private static final Logger LOGGER = LogManager.getLogger(ExtensionImportWSDL.class);
     private static final String THREAD_PREFIX = "ZAP-Import-WSDL-";
-    private static final String SCRIPT_NAME = "SOAP Support.js";
 
-    private ZapMenuItem menuImportLocalWSDL = null;
-    private ZapMenuItem menuImportUrlWSDL = null;
+    private ZapMenuItem menuImportWsdl;
+    private ImportDialog importDialog;
     private int threadId = 1;
 
     private final TableWsdl table = new TableWsdl();
     private final WSDLCustomParser parser = new WSDLCustomParser(this::getValueGenerator, table);
-    private ValueGenerator valueGenerator;
 
     public ExtensionImportWSDL() {
         super(NAME);
         this.setOrder(158);
-
-        setValueGenerator(null);
     }
 
-    public void setValueGenerator(ValueGenerator valueGenerator) {
-        this.valueGenerator = valueGenerator == null ? new DefaultValueGenerator() : valueGenerator;
+    @Override
+    public List<Class<? extends Extension>> getDependencies() {
+        return DEPENDENCIES;
     }
 
     private ValueGenerator getValueGenerator() {
-        return valueGenerator;
+        return Control.getSingleton()
+                .getExtensionLoader()
+                .getExtension(ExtensionCommonlib.class)
+                .getValueGenerator();
     }
 
     public WSDLCustomParser getParser() {
@@ -88,27 +83,47 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
         super.hook(extensionHook);
 
         extensionHook.addApiImplementor(new SoapAPI(this));
+        extensionHook.addVariant(VariantSoap.class);
 
         if (hasView()) {
-            extensionHook.getHookMenu().addImportMenuItem(getMenuImportLocalWSDL());
-            extensionHook.getHookMenu().addImportMenuItem(getMenuImportUrlWSDL());
+            extensionHook.getHookMenu().addImportMenuItem(getMenuImportWsdl());
+            extensionHook.addSessionListener(
+                    new SessionChangedListener() {
+                        @Override
+                        public void sessionAboutToChange(Session session) {
+                            if (importDialog != null) {
+                                importDialog.clearFields();
+                            }
+                        }
+
+                        @Override
+                        public void sessionChanged(Session session) {}
+
+                        @Override
+                        public void sessionScopeChanged(Session session) {}
+
+                        @Override
+                        public void sessionModeChanged(Control.Mode mode) {}
+                    });
         }
     }
 
     @Override
     public void postInit() {
-        super.postInit();
-        try {
-            addScript();
-        } catch (IOException e) {
-            LOGGER.warn("Could not add SOAP Support script.");
+        ExtensionScript extScript =
+                Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
+        String scriptName = "SOAP Support.js";
+        if (extScript != null && extScript.getScript(scriptName) != null) {
+            extScript.removeScript(extScript.getScript(scriptName));
         }
     }
 
     @Override
     public void unload() {
         super.unload();
-        removeScript();
+        if (importDialog != null) {
+            importDialog.dispose();
+        }
     }
 
     @Override
@@ -121,59 +136,23 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
         return table;
     }
 
-    /* Menu option to import a local WSDL file. */
-    private ZapMenuItem getMenuImportLocalWSDL() {
-        if (menuImportLocalWSDL == null) {
-            menuImportLocalWSDL =
+    private ZapMenuItem getMenuImportWsdl() {
+        if (menuImportWsdl == null) {
+            menuImportWsdl =
                     new ZapMenuItem(
                             "soap.topmenu.import.importWSDL",
-                            getView()
-                                    .getMenuShortcutKeyStroke(
-                                            KeyEvent.VK_I, KeyEvent.SHIFT_DOWN_MASK, false));
-            menuImportLocalWSDL.setToolTipText(
+                            getView().getMenuShortcutKeyStroke(KeyEvent.VK_J, 0, false));
+            menuImportWsdl.setToolTipText(
                     Constant.messages.getString("soap.topmenu.import.importWSDL.tooltip"));
-
-            menuImportLocalWSDL.addActionListener(
+            menuImportWsdl.addActionListener(
                     e -> {
-                        // Prompt for a WSDL file.
-                        final JFileChooser chooser =
-                                new JFileChooser(
-                                        Model.getSingleton().getOptionsParam().getUserDirectory());
-                        FileNameExtensionFilter filter =
-                                new FileNameExtensionFilter(
-                                        Constant.messages.getString(
-                                                "soap.topmenu.import.importWSDL.filter.description"),
-                                        "wsdl");
-                        chooser.setFileFilter(filter);
-                        int rc = chooser.showOpenDialog(View.getSingleton().getMainFrame());
-                        if (rc == JFileChooser.APPROVE_OPTION) {
-                            fileUrlWSDLImport(chooser.getSelectedFile());
+                        if (importDialog == null) {
+                            importDialog = new ImportDialog(getView().getMainFrame(), this);
                         }
+                        importDialog.setVisible(true);
                     });
         }
-        return menuImportLocalWSDL;
-    }
-
-    /* Menu option to import a WSDL file from a given URL. */
-    private ZapMenuItem getMenuImportUrlWSDL() {
-        if (menuImportUrlWSDL == null) {
-            menuImportUrlWSDL =
-                    new ZapMenuItem(
-                            "soap.topmenu.import.importRemoteWSDL",
-                            getView().getMenuShortcutKeyStroke(KeyEvent.VK_J, 0, false));
-            menuImportUrlWSDL.setToolTipText(
-                    Constant.messages.getString("soap.topmenu.import.importRemoteWSDL.tooltip"));
-
-            final ExtensionImportWSDL shadowCopy = this;
-            menuImportUrlWSDL.addActionListener(
-                    e ->
-                            SwingUtilities.invokeLater(
-                                    () ->
-                                            new ImportFromUrlDialog(
-                                                    View.getSingleton().getMainFrame(),
-                                                    shadowCopy)));
-        }
-        return menuImportUrlWSDL;
+        return menuImportWsdl;
     }
 
     public void syncImportWsdlUrl(final String url) {
@@ -191,55 +170,6 @@ public class ExtensionImportWSDL extends ExtensionAdaptor {
 
     public void fileUrlWSDLImport(final File file) {
         parser.extFileWSDLImport(file, THREAD_PREFIX + threadId++);
-    }
-
-    private void addScript() throws IOException {
-        ExtensionScript extScript =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
-        if (extScript != null && extScript.getScript(SCRIPT_NAME) == null) {
-            ScriptType variantType =
-                    extScript.getScriptType(ExtensionActiveScan.SCRIPT_TYPE_VARIANT);
-            ScriptEngineWrapper engine = getEngine(extScript, "Oracle Nashorn");
-            if (variantType != null && engine != null) {
-                File scriptPath =
-                        Paths.get(
-                                        Constant.getZapHome(),
-                                        ExtensionScript.SCRIPTS_DIR,
-                                        ExtensionScript.SCRIPTS_DIR,
-                                        ExtensionActiveScan.SCRIPT_TYPE_VARIANT,
-                                        SCRIPT_NAME)
-                                .toFile();
-                ScriptWrapper script =
-                        new ScriptWrapper(
-                                SCRIPT_NAME,
-                                Constant.messages.getString("soap.script.description"),
-                                engine,
-                                variantType,
-                                true,
-                                scriptPath);
-                script.setLoadOnStart(true);
-                script.reloadScript();
-                extScript.addScript(script, false);
-            }
-        }
-    }
-
-    private void removeScript() {
-        ExtensionScript extScript =
-                Control.getSingleton().getExtensionLoader().getExtension(ExtensionScript.class);
-        if (extScript != null && extScript.getScript(SCRIPT_NAME) != null) {
-            extScript.removeScript(extScript.getScript(SCRIPT_NAME));
-        }
-    }
-
-    private static ScriptEngineWrapper getEngine(ExtensionScript ext, String engineName) {
-        try {
-            return ext.getEngineWrapper(engineName);
-        } catch (InvalidParameterException e) {
-            LOGGER.warn(
-                    "The {} engine was not found, script variant will not be added.", engineName);
-        }
-        return null;
     }
 
     @Override

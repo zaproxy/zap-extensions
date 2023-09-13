@@ -35,8 +35,8 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.zap.model.Vulnerabilities;
-import org.zaproxy.zap.model.Vulnerability;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 
 /**
  * Goal: automate discovery of areas of a website where authentication via session cookies, or
@@ -61,7 +61,7 @@ public class SlackerCookieScanRule extends AbstractAppPlugin {
                     CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG,
                     CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG,
                     CommonAlertTag.WSTG_V42_SESS_02_COOKIE_ATTRS);
-    private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_45");
+    private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_45");
     private static final Logger LOGGER = LogManager.getLogger(SlackerCookieScanRule.class);
 
     @Override
@@ -310,17 +310,7 @@ public class SlackerCookieScanRule extends AbstractAppPlugin {
 
     @Override
     public String getReference() {
-        if (vuln != null) {
-            StringBuilder sb = new StringBuilder();
-            for (String ref : vuln.getReferences()) {
-                if (sb.length() > 0) {
-                    sb.append("\n");
-                }
-                sb.append(ref);
-            }
-            return sb.toString();
-        }
-        return "Cookie Slack Detector: Failed to load vulnerability reference from file";
+        return VULN.getReferencesAsString();
     }
 
     @Override

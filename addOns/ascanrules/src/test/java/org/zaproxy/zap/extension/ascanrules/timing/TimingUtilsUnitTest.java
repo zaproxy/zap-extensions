@@ -145,4 +145,21 @@ class TimingUtilsUnitTest {
         // Then
         assertThat(result, is(true));
     }
+
+    @Test
+    // verify that there is no alert when less requests were made in the time limit than required
+    // for a statistically meaningful result
+    void shouldNotAlertIfMinimumRequestsThresholdWasNotMet() throws IOException {
+        // When
+        boolean result =
+                TimingUtils.checkTimingDependence(
+                        5,
+                        20,
+                        // slow response greater than the secondsLimit
+                        x -> 21,
+                        .15,
+                        .30);
+        // Then
+        assertThat(result, is(false));
+    }
 }

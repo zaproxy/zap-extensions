@@ -105,7 +105,11 @@ class JsonFormatterUnitTest {
                 "'\t  {\"a\": {}, \"b\":\"{}\"}','{\n  \"a\" : { },\n  \"b\" : \"{}\"\n}'"
             })
     void shouldFormatObjects(String original, String expected) {
-        testFormattedValue(original, expected);
+        testFormattedValue(original, adjustLineSeparator(expected));
+    }
+
+    private static String adjustLineSeparator(String value) {
+        return value.replace("\n", System.getProperty("line.separator"));
     }
 
     @ParameterizedTest

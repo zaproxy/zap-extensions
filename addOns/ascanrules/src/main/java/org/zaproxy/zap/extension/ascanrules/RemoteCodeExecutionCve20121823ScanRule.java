@@ -33,10 +33,10 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
-import org.zaproxy.zap.model.Vulnerabilities;
-import org.zaproxy.zap.model.Vulnerability;
 
 /**
  * a scan rule that looks for, and exploits CVE-2012-1823 to perform Remote Code Execution on a
@@ -50,7 +50,7 @@ public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin {
      * details of the vulnerability which we are attempting to find WASC 20 = Improper Input
      * Handling
      */
-    private static final Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_20");
+    private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_20");
 
     /** the logger object */
     private static final Logger LOGGER =
@@ -101,10 +101,7 @@ public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin {
 
     @Override
     public String getDescription() {
-        if (vuln != null) {
-            return vuln.getDescription();
-        }
-        return "Failed to load vulnerability description from file";
+        return VULN.getDescription();
     }
 
     @Override
@@ -114,25 +111,12 @@ public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin {
 
     @Override
     public String getSolution() {
-        if (vuln != null) {
-            return vuln.getSolution();
-        }
-        return "Failed to load vulnerability solution from file";
+        return VULN.getSolution();
     }
 
     @Override
     public String getReference() {
-        if (vuln != null) {
-            StringBuilder sb = new StringBuilder();
-            for (String ref : vuln.getReferences()) {
-                if (sb.length() > 0) {
-                    sb.append('\n');
-                }
-                sb.append(ref);
-            }
-            return sb.toString();
-        }
-        return "Failed to load vulnerability reference from file";
+        return VULN.getReferencesAsString();
     }
 
     @Override

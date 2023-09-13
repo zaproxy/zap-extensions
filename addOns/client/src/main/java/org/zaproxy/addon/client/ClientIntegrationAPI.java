@@ -25,11 +25,9 @@ import java.util.Locale;
 import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
-import org.zaproxy.addon.network.ExtensionNetwork;
-import org.zaproxy.addon.network.server.ServerInfo;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiAction;
 import org.zaproxy.zap.extension.api.ApiException;
@@ -43,9 +41,11 @@ public class ClientIntegrationAPI extends ApiImplementor {
 
     private static final String ACTION_REPORT_OBJECT = "reportObject";
     private static final String ACTION_REPORT_EVENT = "reportEvent";
+    private static final String ACTION_REPORT_ZEST_STATEMENT = "reportZestStatement";
 
     private static final String PARAM_OBJECT_JSON = "objectJson";
     private static final String PARAM_EVENT_JSON = "eventJson";
+    private static final String PARAM_STATEMENT_JSON = "statementJson";
 
     private static final Logger LOGGER = LogManager.getLogger(ClientIntegrationAPI.class);
 
@@ -57,18 +57,11 @@ public class ClientIntegrationAPI extends ApiImplementor {
         this.extension = extension;
         this.addApiAction(new ApiAction(ACTION_REPORT_OBJECT, new String[] {PARAM_OBJECT_JSON}));
         this.addApiAction(new ApiAction(ACTION_REPORT_EVENT, new String[] {PARAM_EVENT_JSON}));
-
-        ServerInfo serverInfo =
-                Control.getSingleton()
-                        .getExtensionLoader()
-                        .getExtension(ExtensionNetwork.class)
-                        .getMainProxyServerInfo();
+        this.addApiAction(
+                new ApiAction(ACTION_REPORT_ZEST_STATEMENT, new String[] {PARAM_STATEMENT_JSON}));
 
         callbackUrl =
-                API.getInstance()
-                        .getCallBackUrl(
-                                this,
-                                "http://" + serverInfo.getAddress() + ":" + serverInfo.getPort());
+                API.getInstance().getCallBackUrl(this, HttpHeader.SCHEME_HTTPS + API.API_DOMAIN);
         LOGGER.debug("Client API callback URL: {}", callbackUrl);
     }
 
@@ -138,6 +131,16 @@ public class ClientIntegrationAPI extends ApiImplementor {
                 this.extension.addReportedObject(new ReportedEvent(json));
                 break;
 
+            case ACTION_REPORT_ZEST_STATEMENT:
+                String scriptJson = this.getParam(params, PARAM_STATEMENT_JSON, "");
+                LOGGER.debug("Got script: {}", scriptJson);
+                try {
+                    this.extension.addZestStatement(scriptJson);
+                } catch (Exception e) {
+                    LOGGER.debug(e);
+                }
+                break;
+
             default:
                 throw new ApiException(ApiException.Type.BAD_ACTION);
         }
@@ -145,7 +148,7 @@ public class ClientIntegrationAPI extends ApiImplementor {
         return ApiResponseElement.OK;
     }
 
-    static JSONObject decodeParam(String body, String param) {
+    static String decodeParamString(String body, String param) {
         // Should always start with 'param'=
         String str = body.substring(param.length() + 1);
         int apikeyIndex = str.indexOf("&apikey=");
@@ -153,6 +156,11 @@ public class ClientIntegrationAPI extends ApiImplementor {
             str = str.substring(0, apikeyIndex);
         }
         str = URLDecoder.decode(str, StandardCharsets.UTF_8);
+        return str;
+    }
+
+    static JSONObject decodeParam(String body, String param) {
+        String str = decodeParamString(body, param);
         return JSONObject.fromObject(str);
     }
 
@@ -167,6 +175,12 @@ public class ClientIntegrationAPI extends ApiImplementor {
             } else if (body.startsWith(PARAM_EVENT_JSON)) {
                 this.extension.addReportedObject(
                         new ReportedEvent(decodeParam(body, PARAM_EVENT_JSON)));
+            } else if (body.startsWith(PARAM_STATEMENT_JSON)) {
+                try {
+                    this.extension.addZestStatement(decodeParamString(body, PARAM_STATEMENT_JSON));
+                } catch (Exception e) {
+                    LOGGER.debug(e);
+                }
             }
 
         } else {

@@ -224,17 +224,16 @@
     ],
     "cpe": "cpe:2.3:a:typo3:typo3:*:*:*:*:*:*:*:*",
     "description": "TYPO3 is a free and open-source Web content management system written in PHP.",
-    "html": [
-      "<link[^>]+ href=\"/?typo3(?:conf|temp)/",
-      "<img[^>]+ src=\"/?typo3(?:conf|temp)/",
-      "<!--\n\tThis website is powered by TYPO3"
-    ],
+    "dom": "link[href*='typo3conf'], link[href*='typo3temp'], img[src*='typo3conf'], img[src*='typo3temp']",
     "icon": "TYPO3.svg",
     "implies": "PHP",
     "meta": {
       "generator": "TYPO3\\s+(?:CMS\\s+)?(?:[\\d.]+)?(?:\\s+CMS)?"
     },
     "oss": true,
+    "probe": {
+      "/typo3/sysext/core/Resources/Public/Images/typo3_orange.svg": ""
+    },
     "scriptSrc": "^/?typo3(?:conf|temp)/",
     "url": "/typo3/",
     "website": "https://typo3.org/"
@@ -324,6 +323,9 @@
     "cats": [
       36
     ],
+    "cookies": {
+      "taboola_session_id": ""
+    },
     "description": "Taboola is a content discovery & native advertising platform for publishers and advertisers.",
     "dom": {
       "link[href*='.taboola.com']": {
@@ -334,8 +336,8 @@
     },
     "icon": "Taboola.svg",
     "js": {
+      "TRCImpl.global": "",
       "_taboola": "",
-      "_taboolaNetworkMode": "",
       "taboola_view_id": ""
     },
     "pricing": [
@@ -2033,6 +2035,20 @@
     "saas": true,
     "website": "https://www.tiendanube.com"
   },
+  "Tiiny Host": {
+    "cats": [
+      62
+    ],
+    "description": "Tiiny Host is a web hosting service for static sites with support for custom domains, SSL, password protection, and built-in analytics.",
+    "icon": "Tiiny Host.png",
+    "pricing": [
+      "low",
+      "recurring",
+      "freemium"
+    ],
+    "scriptSrc": "(?://|\\.)tiiny\\.(?:host|site)/",
+    "website": "https://tiiny.host"
+  },
   "TikTok Pixel": {
     "cats": [
       10
@@ -2233,6 +2249,18 @@
     ],
     "saas": true,
     "website": "https://www.tiqets.com/affiliate"
+  },
+  "Tistory": {
+    "cats": [
+      1,
+      11
+    ],
+    "description": "Tistory is a South Korean blog-publishing service that allows private or multi-user blogs.",
+    "icon": "Tistory.svg",
+    "js": {
+      "TistoryBlog": ""
+    },
+    "website": "https://tistory.com"
   },
   "Titan": {
     "cats": [

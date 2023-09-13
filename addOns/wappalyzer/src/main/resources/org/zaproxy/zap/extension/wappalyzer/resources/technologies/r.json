@@ -153,6 +153,26 @@
     "cats": [
       66
     ],
+    "css": [
+      "--radix-accordion-content-height",
+      "--radix-toast-swipe-end-x",
+      "--radix-toast-swipe-move-x",
+      "--radix-navigation-menu-viewport-width",
+      "--radix-navigation-menu-viewport-height",
+      "--radix-select-trigger-width",
+      "--radix-select-trigger-height",
+      "--radix-context-menu-content-transform-origin",
+      "--radix-context-menu-content-available-height",
+      "--radix-dropdown-menu-content-available-height",
+      "--radix-dropdown-menu-content-transform-origin",
+      "--radix-hover-card-content-transform-origin",
+      "--radix-popover-trigger-width",
+      "--radix-popover-content-transform-origin",
+      "--radix-select-trigger-width",
+      "--radix-select-content-available-height",
+      "--radix-select-content-transform-origin",
+      "--radix-tooltip-content-transform-origin"
+    ],
     "description": "Radix UI is a React-based user interface component library that offers accessible, responsive, and customisable components for building web applications.",
     "dom": "a[data-radix-collection-item], button[data-radix-collection-item]",
     "icon": "Radix UI.svg",
@@ -2255,6 +2275,21 @@
     ],
     "website": "https://rollbar.com/"
   },
+  "Rosti": {
+    "cats": [
+      88
+    ],
+    "description": "Rosti is a hosting service suitable for development and production deployment of web applications.",
+    "headers": {
+      "X-Rosti": ""
+    },
+    "icon": "Rosti.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "website": "https://rosti.cz"
+  },
   "Rotic": {
     "cats": [
       52
@@ -2309,6 +2344,22 @@
       "\\bRoyal Mail\\b"
     ],
     "website": "https://www.royalmail.com"
+  },
+  "Rubedo": {
+    "cats": [
+      1
+    ],
+    "description": "Rubedo is an open-source PHP CMS powered by the Zend Framework, NoSQL MongoDB, Elasticsearch, and AngularJS, offering advanced features for content management and development.",
+    "implies": [
+      "MongoDB",
+      "Elasticsearch",
+      "PHP"
+    ],
+    "js": {
+      "rubedoConfig": ""
+    },
+    "oss": true,
+    "website": "https://github.com/WebTales/rubedo"
   },
   "Rubicon Project": {
     "cats": [
@@ -2379,7 +2430,8 @@
     "implies": "Ruby",
     "js": {
       "ReactOnRails": "",
-      "__REACT_ON_RAILS_EVENT_HANDLERS_RAN_ONCE__": ""
+      "__REACT_ON_RAILS_EVENT_HANDLERS_RAN_ONCE__": "",
+      "_rails_loaded": ""
     },
     "meta": {
       "csrf-param": "^authenticity_token$\\;confidence:50"

@@ -12,7 +12,12 @@ O substituto (replacer) é uma maneira fácil de substituir strings em solicita�
 <p>
 É acessível através das Opções e, por padrão pode ser rapidamente acessado através da tecla de atalho '&lt; ctrl &gt; R'.
 <p>
-O painel de opções Substituição permite que você defina quantas regras de substituição precisar. <br>Cada regra é definida pelos seguintes campos: <h3>Descrição</h3> Uma descrição que permite identificar a regra.
+It also supports the <a href="automation.html">Automation Framework</a>.
+<p>
+The Replacer Options panel allows you to define as many replacement rules as you need.<br>
+Each rule is defined by the following fields:
+<h3>Description</h3>
+A description that allows you to identify the rule.
 
 <h3>URL</h3>
 A regular expression to match the URL of the message, if empty the rule applies to all messages.<br>
@@ -93,6 +98,14 @@ When enabled, the Replacement String may contain a single token which is replace
 		<td>Unix epoch milliseconds using <a href="https://docs.oracle.com/javase/8/docs/api/java/lang/System.html#currentTimeMillis--">System.currentTimeMillis()</a></td>
 	</tr>
 </table> 
+<p>
+<strong>Note:</strong> This option applies only to the following Match Types:
+<ul>
+	<li>Request Header String</li>
+	<li>Request Body String</li>
+	<li>Response Header String</li>
+	<li>Response Body String</li>
+</ul>
 
 <h3>Initiators tab</h3>
 Allows you to specify which 'initiators' the rule should apply to.

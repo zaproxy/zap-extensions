@@ -17,7 +17,7 @@ zapAddOn {
                 dependencies {
                     addOns {
                         register("automation") {
-                            version.set(">=0.4.0")
+                            version.set(">=0.31.0")
                         }
                     }
                 }
@@ -26,7 +26,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">= 1.7.0 & < 2.0.0")
+                    version.set(">= 1.17.0 & < 2.0.0")
                 }
             }
         }
@@ -42,7 +42,7 @@ dependencies {
     zapAddOn("automation")
     zapAddOn("commonlib")
 
-    implementation("com.google.re2j:re2j:1.6")
+    implementation("com.google.re2j:re2j:1.7")
 
     val batikVersion = "1.14"
     implementation("org.apache.xmlgraphics:batik-anim:$batikVersion")
@@ -51,7 +51,7 @@ dependencies {
     implementation("org.apache.xmlgraphics:batik-gvt:$batikVersion")
     implementation("org.apache.xmlgraphics:batik-util:$batikVersion")
 
-    implementation("org.jsoup:jsoup:1.14.3")
+    implementation("org.jsoup:jsoup:1.16.1")
 
     testImplementation(project(":testutils"))
 }

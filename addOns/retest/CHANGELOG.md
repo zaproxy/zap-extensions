@@ -7,6 +7,11 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ## Unreleased
 
 
+## [0.7.0] - 2023-09-08
+### Changed
+- Depend on newer versions of Automation Framework and Common Library add-ons (Related to Issue 7961).
+- Use vulnerability data directly from Common Library add-on.
+
 ## [0.6.0] - 2023-07-11
 ### Changed
 - Update minimum ZAP version to 2.13.0.
@@ -49,6 +54,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Allow retesting for the presence/absence of certain alerts using the Automation Framework.
 
 
+[0.7.0]: https://github.com/zaproxy/zap-extensions/releases/retest-v0.7.0
 [0.6.0]: https://github.com/zaproxy/zap-extensions/releases/retest-v0.6.0
 [0.5.0]: https://github.com/zaproxy/zap-extensions/releases/retest-v0.5.0
 [0.4.0]: https://github.com/zaproxy/zap-extensions/releases/retest-v0.4.0

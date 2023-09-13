@@ -4,8 +4,20 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Fixed
+- The CSRF Countermeasures scan rule now skips responses that are not HTML (Issue 7890).
+
+## [51] - 2023-09-08
+### Added
+- The following now include example alert functionality for documentation generation purposes (Issue 6119):
+  - Loosely Scoped Cookie scan rule.
+
 ### Changed
+- Dependency updates.
 - Maintenance changes.
+- The alerts of the Hash Disclosure scan rule no longer have the evidence duplicated in the Other Info field.
+- Depend on newer version of Common Library add-on.
+- Use vulnerability data directly from Common Library add-on.
 
 ## [50] - 2023-07-11
 ### Added
@@ -416,6 +428,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[51]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v51
 [50]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v50
 [49]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v49
 [48]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v48

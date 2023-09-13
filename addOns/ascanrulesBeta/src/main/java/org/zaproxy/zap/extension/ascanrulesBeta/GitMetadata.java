@@ -416,7 +416,7 @@ public class GitMetadata {
                 throw new Exception(
                         "Only Git Pack File versions 2, 3, and 4 are currently supported. Git Pack File Version "
                                 + packFileVersion
-                                + " was found. Contact the zaproxy (OWASP Zap) dev team");
+                                + " was found. Contact the ZAP dev team");
             }
 
             // for pack file version 4, read the SHA1 tables from the "pack" file at this point
@@ -749,7 +749,7 @@ public class GitMetadata {
                 // TODO :support Packed Objects of type 'DELTA_ENCODED object with base
                 // BINARY_OBJ_ID'
                 throw new Exception(
-                        "Packed Objects of type 'DELTA_ENCODED object with base BINARY_OBJ_ID' are not yet supported. If you have a test case, please let the OWASP Zap dev team know!");
+                        "Packed Objects of type 'DELTA_ENCODED object with base BINARY_OBJ_ID' are not yet supported. If you have a test case, please let the ZAP dev team know!");
             }
 
             // Note that 0x7F is 0111 1111 in binary. Useful to mask off all but the top bit of a

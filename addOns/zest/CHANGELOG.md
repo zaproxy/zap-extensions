@@ -4,8 +4,14 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added 
+- Client support to record Zest scripts.
+
 ### Changed
 - Maintenance changes.
+
+### Fixed
+- Resolved the browser window focus loss problem during the recording of Zest scripts.
 
 ## [39] - 2023-07-11
 ### Added 

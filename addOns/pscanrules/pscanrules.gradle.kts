@@ -13,7 +13,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">= 1.13.0 & < 2.0.0")
+                    version.set(">= 1.17.0 & < 2.0.0")
                 }
             }
         }
@@ -36,7 +36,7 @@ zapAddOn {
 }
 
 dependencies {
-    implementation("com.google.re2j:re2j:1.6")
+    implementation("com.google.re2j:re2j:1.7")
     implementation("com.shapesecurity:salvation2:3.0.1")
 
     zapAddOn("commonlib")

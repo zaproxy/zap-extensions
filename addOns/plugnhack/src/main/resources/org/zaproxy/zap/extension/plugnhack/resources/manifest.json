@@ -1,5 +1,5 @@
 {
-  "toolName":"OWASP ZAP",
+  "toolName":"ZAP",
   "protocolVersion":"0.2",
   "features":{
     "proxy":{

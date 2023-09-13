@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [3] - 2023-09-07
 ### Changed
 - Maintenance changes.
 - Update minimum ZAP version to 2.13.0.
@@ -26,4 +29,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Initial release
 
+[3]: https://github.com/zaproxy/zap-extensions/releases/jsonview-v3
 [2]: https://github.com/zaproxy/zap-extensions/releases/jsonview-v2

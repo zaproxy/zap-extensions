@@ -591,6 +591,22 @@
     "implies": "Haskell",
     "website": "https://www.stackage.org/package/warp"
   },
+  "Wask": {
+    "cats": [
+      10
+    ],
+    "description": "Wask is a platform that offers businesses a dedicated library code to analyse website visitors, track visitor behaviour, monitor website events, and gather retention cohort data effectively.",
+    "icon": "Wask.svg",
+    "js": {
+      "wask_analytics": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.wask.co"
+  },
   "Waveform": {
     "cats": [
       5
@@ -620,6 +636,16 @@
     "requires": "WordPress",
     "website": "https://music.flatfull.com/waveme/about/"
   },
+  "WayForPay": {
+    "cats": [
+      41
+    ],
+    "description": "WayForPay is a payment processing service provider based in Europe.",
+    "dom": "form[action*='secure.wayforpay.com']",
+    "icon": "WayForPay.svg",
+    "scriptSrc": "secure\\.wayforpay\\.com",
+    "website": "https://wayforpay.com"
+  },
   "Wazimo": {
     "cats": [
       36
@@ -630,6 +656,23 @@
       "wz.mmConfig.buildVersion": ""
     },
     "website": "https://wazimo.com"
+  },
+  "WeWeb": {
+    "cats": [
+      51
+    ],
+    "description": "WeWeb is a no-code front-end builder that allows customers to build on-top of any back-end.",
+    "icon": "WeWeb.svg",
+    "js": {
+      "wwg_designInfo.wewebPreviewURL": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.weweb.io"
   },
   "Weaver Xtreme": {
     "cats": [
@@ -735,6 +778,10 @@
       "Content-Type": "application/wasm"
     },
     "icon": "WebAssembly.svg",
+    "js": {
+      "wasmBinary": "",
+      "wasmBinaryFile": ""
+    },
     "oss": true,
     "scriptSrc": "/wasm_exec\\.js",
     "website": "https://webassembly.org/"
@@ -1876,6 +1923,21 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/woocommerce-gateway-stripe/",
     "website": "https://woocommerce.com/products/stripe"
+  },
+  "WooCommerce Subscriptions": {
+    "cats": [
+      87
+    ],
+    "description": "WooCommerce Subscriptions primarily allows you to create and sell subscription products from your WooCommerce shop.",
+    "dom": "link[href*='/wp-content/plugins/woocommerce-subscriptions/']",
+    "icon": "WooCommerce.svg",
+    "implies": "WooCommerce",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "website": "https://woocommerce.com/products/woocommerce-subscriptions"
   },
   "Woopra": {
     "cats": [

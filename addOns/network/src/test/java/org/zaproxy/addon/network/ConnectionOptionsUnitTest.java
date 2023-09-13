@@ -111,6 +111,25 @@ class ConnectionOptionsUnitTest {
     }
 
     @Test
+    void shouldHaveLegacyRemoveCacheHeadersDisabledByDefault() {
+        // Given
+        options = new ConnectionOptions();
+        // When / Then
+        assertThat(options.isLegacyRemoveCacheHeaders(), is(equalTo(false)));
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    void shouldLoadConfigWithLegacyRemoveCacheHeaders(boolean enabled) {
+        // Given
+        config.setProperty("network.connection.legacy.removeCacheHeaders", enabled);
+        // When
+        options.load(config);
+        // Then
+        assertThat(options.isLegacyRemoveCacheHeaders(), is(equalTo(enabled)));
+    }
+
+    @Test
     void shouldHaveDefaultValues() {
         // Given
         options = new ConnectionOptions();

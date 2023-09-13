@@ -331,6 +331,21 @@
     "scriptSrc": "ls\\.unveilhooks(?:\\.min)?\\.js",
     "website": "https://github.com/aFarkas/lazysizes/tree/gh-pages/plugins/unveilhooks"
   },
+  "LeadChat": {
+    "cats": [
+      53
+    ],
+    "description": "LeadChat offers live-operators and CRM solutions that utilise LiveChat chat software to facilitate real-time engagement with website visitors for businesses.",
+    "icon": "LeadChat.svg",
+    "pricing": [
+      "recurring",
+      "payg",
+      "poa"
+    ],
+    "requires": "LiveChat",
+    "scriptSrc": "(?://|\\.)chatsystem\\.io/",
+    "website": "https://www.leadchat.com"
+  },
   "Leadfeeder": {
     "cats": [
       10
@@ -1360,6 +1375,22 @@
     "scriptSrc": "livewire(?:\\.min)?\\.js",
     "website": "https://laravel-livewire.com"
   },
+  "LlamaLink Cloud Server": {
+    "cats": [
+      22
+    ],
+    "description": "LlamaLink Cloud Server is a custom dynamic web server based on Nginx Web server that load balance user traffic between hosting nodes and allows fast and cached expiriance to website users.",
+    "headers": {
+      "Server": "^LlamaLink\\sCloud$"
+    },
+    "icon": "LlamaLink.png",
+    "implies": "Nginx",
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "website": "https://llamalink.net"
+  },
   "Loadable-Components": {
     "cats": [
       59
@@ -1717,12 +1748,10 @@
   },
   "Loox": {
     "cats": [
-      90,
-      100
+      90
     ],
     "description": "Loox is a reviews app for Shopify that helps you gather reviews and user-generated photos from your customers.",
     "icon": "Loox.svg",
-    "implies": "Shopify",
     "js": {
       "loox_global_hash": ""
     },
@@ -1865,6 +1894,19 @@
       "Luigis": ""
     },
     "website": "https://www.luigisbox.com"
+  },
+  "Lume": {
+    "cats": [
+      57
+    ],
+    "description": "Lume is a static site generator based on Deno.",
+    "icon": "Lume.svg",
+    "implies": "Deno",
+    "meta": {
+      "generator": "^Lume\\sv([\\d\\.]+)$\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://lume.land"
   },
   "Luna": {
     "cats": [

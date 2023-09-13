@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [35] - 2023-09-08
+### Changed
+- Use HTTPS and resolve redirections in the alert references.
+- The alerts of the Source Code Disclosure scan rule no longer have the evidence duplicated in the Other Info field.
+
 ## [34] - 2023-07-20
 ### Added
 - The following scan rules were added, having been promoted from Alpha:
@@ -298,6 +303,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[35]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v35
 [34]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v34
 [33]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v33
 [32]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v32

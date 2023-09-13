@@ -355,7 +355,7 @@
     },
     "oss": true,
     "probe": {
-      "/magento_version": ""
+      "/magento_version": "magento"
     },
     "scriptSrc": [
       "js/mage",
@@ -397,6 +397,21 @@
     ],
     "scriptSrc": "\\.magisto\\.com/",
     "website": "https://www.magisto.com"
+  },
+  "Magixite": {
+    "cats": [
+      68
+    ],
+    "description": "Magixite offers the Web Content Accessibility Guidelines (WCAG), a set of guidelines and requirements designed to help designers and developers improve the accessibility of web content, ensuring it can be effectively used by individuals with disabilities.",
+    "icon": "Magixite.png",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "acc\\.magixite\\.com/",
+    "website": "https://acc.magixite.com"
   },
   "MailChimp": {
     "cats": [
@@ -668,13 +683,14 @@
   },
   "Mantine": {
     "cats": [
-      59
+      66
     ],
-    "description": "Mantine is a React components library.",
+    "description": "Mantine is an open-source UI framework and component library for React.",
     "dom": "style[data-emotion='mantine-global'], style[data-emotion='mantine']",
     "icon": "Mantine.svg",
     "implies": "TypeScript",
     "oss": true,
+    "requires": "React",
     "website": "https://mantine.dev"
   },
   "MantisBT": {
@@ -682,9 +698,12 @@
       13
     ],
     "cpe": "cpe:2.3:a:mantisbt:mantisbt:*:*:*:*:*:*:*:*",
-    "html": "<img[^>]+ alt=\"Powered by Mantis Bugtracker",
+    "description": "MantisBT is an open-source, web-based issue tracking system written in PHP with a MySQL database backend, designed to facilitate bug tracking and project management for software development teams.",
+    "dom": "link[rel='stylesheet'][href*='/css/ace-mantis.css']",
     "icon": "MantisBT.png",
-    "implies": "PHP",
+    "implies": "MySQL",
+    "oss": true,
+    "requires": "PHP",
     "website": "https://www.mantisbt.org"
   },
   "ManyChat": {
@@ -1162,6 +1181,8 @@
     "description": "Mautic is a free and open-source marketing automation tool for Content Management, Social Media, Email Marketing, and can be used for the integration of social networks, campaign management, forms, questionnaires, reports, etc.",
     "icon": "mautic.svg",
     "js": {
+      "MauticFormValidations": "",
+      "MauticSDK": "",
       "MauticTrackingObject": ""
     },
     "scriptSrc": "[^a-z]mtc.*\\.js",
@@ -1823,11 +1844,14 @@
     "cats": [
       22
     ],
+    "description": "Microsoft HTTPAPI is a kernel-mode HTTP driver in the Windows operating system responsible for handling HTTP requests and responses with efficiency, scalability, and security.",
     "headers": {
       "Server": "Microsoft-HTTPAPI(?:/([\\d.]+))?\\;version:\\1"
     },
     "icon": "Microsoft.svg",
-    "website": "https://microsoft.com"
+    "oss": false,
+    "saas": false,
+    "website": "https://learn.microsoft.com/en-us/windows/win32/http/http-api-start-page"
   },
   "Microsoft PowerPoint": {
     "cats": [
@@ -2230,17 +2254,6 @@
     "scriptSrc": "cdn\\.moengage\\.\\w+",
     "website": "https://www.moengage.com"
   },
-  "Moat": {
-    "cats": [
-      10
-    ],
-    "description": "Moat is a digital ad analytics tool.",
-    "icon": "Moat.svg",
-    "scriptSrc": [
-      "moatads\\.com"
-    ],
-    "website": "https://moat.com/"
-  },
   "MobX": {
     "cats": [
       59
@@ -2535,6 +2548,25 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/woocommerce-gateway-moneris/",
     "website": "https://wordpress.org/plugins/wc-moneris-payment-gateway"
+  },
+  "Monetate": {
+    "cats": [
+      74,
+      76
+    ],
+    "description": "Monetate is a company that specializes in providing personalisation and customer experience optimisation solutions to businesses.",
+    "icon": "Monetate.svg",
+    "js": {
+      "monetate": "",
+      "monetateQ": "",
+      "monetateT": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.monetate\\.net",
+    "website": "https://monetate.com"
   },
   "MongoDB": {
     "cats": [

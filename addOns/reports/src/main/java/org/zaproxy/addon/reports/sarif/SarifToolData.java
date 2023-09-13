@@ -25,14 +25,14 @@ public class SarifToolData {
 
     public static final SarifToolData INSTANCE = new SarifToolData();
 
-    static final SarifToolDataProvider OWASP_ZAP =
+    static final SarifToolDataProvider ZAP =
             builder()
-                    .setName("OWASP ZAP")
+                    .setName("ZAP")
                     . // we use 1.0 here - should normally not change
                     setTaxonomyVersion("1.0")
                     .setTaxonomyComprehensive(true)
-                    .setShortDescription("OWASP Zed Attack Proxy")
-                    .setOrganization("OWASP")
+                    .setShortDescription("Zed Attack Proxy")
+                    .setOrganization("ZAP")
                     .setTaxonomyInformationUri(URI.create("https://www.zaproxy.org/"))
                     .build();
 
@@ -54,8 +54,8 @@ public class SarifToolData {
         // we only want the shared instance
     }
 
-    public SarifToolDataProvider getOwaspZap() {
-        return OWASP_ZAP;
+    public SarifToolDataProvider getZap() {
+        return ZAP;
     }
 
     public SarifToolDataProvider getCwe() {

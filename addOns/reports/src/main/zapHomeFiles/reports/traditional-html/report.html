@@ -138,7 +138,7 @@ td {
 	</h3>
 
 	<h3>
-		<th:block th:text="#{report.owaspZapVersion(${zapVersion})}">ZAP Version</th:block>
+		<th:block th:text="#{report.zapVersion(${zapVersion})}">ZAP Version</th:block>
 	</h3>
 
 	<th:block th:if="${reportData.isIncludeSection('alertcount')}">
@@ -233,6 +233,12 @@ td {
 						<td th:text="#{report.alerts.detail.evidence}" width="20%"
 							class="indent2">Evidence</td>
 						<td th:text="${instance.userObject.evidence}" width="80%">Evidence</td>
+					</tr>
+					<tr>
+						<td th:text="#{report.alerts.detail.otherinfo}" width="20%"
+							class="indent2">Other Info</td>
+						<td th:text="${instance.userObject.otherinfo}" width="80%">Other
+							Info</td>
 					</tr>
 				</th:block>
 				<tr>

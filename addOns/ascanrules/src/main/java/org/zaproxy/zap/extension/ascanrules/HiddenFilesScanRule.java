@@ -58,8 +58,6 @@ import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
  * <p><strong>Note:</strong> Binary matching assumes:<br>
  * - Start position 0 (ex: checking magic numbers) [startsWith, not contains]<br>
  * - Response is ASCII compatible (which should include UTF-8 and ISO-8859-1)
- *
- * @author kingthorin+owaspzap@gmail.com
  */
 public class HiddenFilesScanRule extends AbstractHostPlugin {
 
@@ -294,8 +292,7 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
     }
 
     private static String getOtherInfo(HiddenFile file) {
-        String otherInfo =
-                Constant.messages.getString(MESSAGE_PREFIX + "otherinfo", file.getType());
+        String otherInfo = file.getType();
         String extra = file.getExtra();
         if (!extra.isBlank()) {
             otherInfo += "\n\n" + extra;

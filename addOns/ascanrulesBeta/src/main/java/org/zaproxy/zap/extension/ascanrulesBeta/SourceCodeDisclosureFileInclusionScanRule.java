@@ -34,9 +34,9 @@ import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.DiceMatcher;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.zap.model.Tech;
-import org.zaproxy.zap.model.Vulnerabilities;
-import org.zaproxy.zap.model.Vulnerability;
 
 /**
  * a scan rule that looks for application source code disclosure using path traversal techniques
@@ -106,7 +106,7 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
     };
 
     /** details of the vulnerability which we are attempting to find 33 = "Path Traversal" */
-    private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_33");
+    private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_33");
 
     /** the logger object */
     private static final Logger LOGGER =
@@ -153,10 +153,7 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
 
     @Override
     public String getDescription() {
-        if (vuln != null) {
-            return vuln.getDescription();
-        }
-        return "Failed to load vulnerability description from file";
+        return VULN.getDescription();
     }
 
     @Override
@@ -166,25 +163,12 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
 
     @Override
     public String getSolution() {
-        if (vuln != null) {
-            return vuln.getSolution();
-        }
-        return "Failed to load vulnerability solution from file";
+        return VULN.getSolution();
     }
 
     @Override
     public String getReference() {
-        if (vuln != null) {
-            StringBuilder sb = new StringBuilder();
-            for (String ref : vuln.getReferences()) {
-                if (sb.length() > 0) {
-                    sb.append('\n');
-                }
-                sb.append(ref);
-            }
-            return sb.toString();
-        }
-        return "Failed to load vulnerability reference from file";
+        return VULN.getReferencesAsString();
     }
 
     @Override
@@ -523,6 +507,22 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
             Integer randomversussourcefilenamematchpercentage,
             HttpMessage sourceattackmsg,
             String uri) {
+        return createAlert(
+                paramname,
+                prefixedUrlfilename,
+                NON_EXISTANT_FILENAME,
+                randomversussourcefilenamematchpercentage,
+                sourceattackmsg,
+                uri);
+    }
+
+    private AlertBuilder createAlert(
+            String paramname,
+            String prefixedUrlfilename,
+            String nonExistentFilename,
+            Integer randomversussourcefilenamematchpercentage,
+            HttpMessage sourceattackmsg,
+            String uri) {
         return newAlert()
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setUri(uri)
@@ -532,7 +532,7 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
                         Constant.messages.getString(
                                 "ascanbeta.sourcecodedisclosure.lfibased.extrainfo",
                                 prefixedUrlfilename,
-                                NON_EXISTANT_FILENAME,
+                                nonExistentFilename,
                                 randomversussourcefilenamematchpercentage,
                                 this.thresholdPercentage))
                 .setMessage(sourceattackmsg);
@@ -541,6 +541,14 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
     @Override
     public List<Alert> getExampleAlerts() {
         String exampleUri = "https://example.com";
-        return List.of(createAlert("name", "../config/database.php", 48, null, exampleUri).build());
+        return List.of(
+                createAlert(
+                                "name",
+                                "../config/database.php",
+                                "jzdysfaeeinxxtsvjfggrwaucugjvsvpawibnv",
+                                48,
+                                null,
+                                exampleUri)
+                        .build());
     }
 }

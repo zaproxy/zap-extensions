@@ -341,6 +341,29 @@
     "icon": "Apple.svg",
     "website": "https://opensource.apple.com"
   },
+  "DataDome": {
+    "cats": [
+      16
+    ],
+    "cookies": {
+      "datadome": "",
+      "datadome-_zldp": "",
+      "datadome-_zldt": ""
+    },
+    "description": "DataDome is a cybersecurity platform that specialises in bot protection and mitigation, offering advanced solutions to safeguard websites and mobile applications against malicious bot traffic, credential stuffing, scraping, and other automated threats.",
+    "headers": {
+      "Server": "^DataDome$",
+      "X-DataDome": "",
+      "X-DataDome-CID": ""
+    },
+    "icon": "DataDome.svg",
+    "pricing": [
+      "high",
+      "recurring"
+    ],
+    "scriptSrc": "^https://ct\\.datadome\\.co/[a-z]\\.js$",
+    "website": "https://datadome.co"
+  },
   "DataLife Engine": {
     "cats": [
       1
@@ -412,23 +435,24 @@
     "scriptSrc": "www\\.datadoghq-browser-agent\\.com",
     "website": "https://www.datadoghq.com"
   },
-  "Datadome": {
+  "Datatrics": {
     "cats": [
-      16
+      97
     ],
-    "cookies": {
-      "datadome": "",
-      "datadome-_zldp": "",
-      "datadome-_zldt": ""
+    "description": "Datatrics is a data-driven marketing platform that provides businesses with advanced tools and analytics to optimise customer experiences, personalise marketing campaigns, and drive engagement through data-driven insights and automation.",
+    "dom": "link[href*='.datatrics.com']",
+    "icon": "Datatrics.svg",
+    "js": {
+      "DatatricsClick": "",
+      "datatricsEvents": ""
     },
-    "headers": {
-      "Server": "^DataDome$",
-      "X-DataDome": "",
-      "X-DataDome-CID": ""
-    },
-    "icon": "datadome.png",
-    "scriptSrc": "^https://ct\\.datadome\\.co/[a-z]\\.js$",
-    "website": "https://datadome.co/"
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://datatrics.com"
   },
   "DatoCMS": {
     "cats": [
@@ -1085,6 +1109,19 @@
     "html": "<!-- This comment is expected by the docker HEALTHCHECK  -->",
     "icon": "Docker.svg",
     "website": "https://www.docker.com/"
+  },
+  "Docsify": {
+    "cats": [
+      4
+    ],
+    "description": "Docsify is an open-source documentation generator for creating user-friendly documentation websites.",
+    "icon": "Docsify.svg",
+    "js": {
+      "Docsify.version": "^([\\d\\.]+)$\\;version:\\1",
+      "DocsifyCompiler": ""
+    },
+    "oss": true,
+    "website": "https://docsify.js.org"
   },
   "DocuSign": {
     "cats": [
@@ -1745,6 +1782,26 @@
     "scriptSrc": "chat-app\\.meudroz\\.com/",
     "website": "https://meudroz.com/droz-bot/"
   },
+  "Drubbit": {
+    "cats": [
+      6
+    ],
+    "description": "Drubbit is an ecommerce platform with a Content Management System (CMS) for creating product pages, managing checkout processes, facilitating payments, and handling shipping.",
+    "icon": "Drubbit.svg",
+    "implies": [
+      "Node.js",
+      "MySQL"
+    ],
+    "meta": {
+      "generator": "^Drubbit Commerce$"
+    },
+    "pricing": [
+      "recurring",
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://drubbit.com"
+  },
   "Drupal": {
     "cats": [
       1
@@ -1819,19 +1876,22 @@
   },
   "Duda": {
     "cats": [
-      1
+      1,
+      51
     ],
-    "description": "Duda is a web design platform for companies that offer web design services.",
-    "icon": "duda.png",
+    "description": "Duda is a user-friendly website builder and CMS platform that enables businesses and individuals to create responsive, mobile-friendly websites without extensive coding knowledge.",
+    "icon": "Duda.svg",
     "js": {
       "SystemID": "^.*DIRECT.*$",
       "d_version": "^(.*)$\\;version:\\1\\;confidence:0"
     },
     "pricing": [
-      "low"
+      "low",
+      "recurring"
     ],
     "saas": true,
-    "website": "https://www.duda.co/website-builder"
+    "scriptSrc": "dd-cdn\\.multiscreensite\\.com/",
+    "website": "https://www.duda.co"
   },
   "Duel": {
     "cats": [

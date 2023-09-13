@@ -38,11 +38,11 @@ import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
-import org.zaproxy.zap.model.Vulnerabilities;
-import org.zaproxy.zap.model.Vulnerability;
 
 /**
  * The CsrfCountermeasuresScanRule identifies *potential* vulnerabilities with the lack of known
@@ -53,7 +53,7 @@ import org.zaproxy.zap.model.Vulnerability;
 public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
 
     /** contains the base vulnerability that this plugin refers to */
-    private static Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_9");
+    private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_9");
 
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
@@ -85,8 +85,9 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
      */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        if (AlertThreshold.HIGH.equals(getAlertThreshold()) && !msg.isInScope()) {
-            return; // At HIGH threshold return if the msg isn't in scope
+        if (AlertThreshold.HIGH.equals(getAlertThreshold()) && !msg.isInScope()
+                || !msg.getResponseHeader().isHtml()) {
+            return;
         }
 
         // need to do this if we are to be able to get an element's parent. Do it as early as
@@ -132,13 +133,12 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
                 StringBuilder sbForm = new StringBuilder();
                 SortedSet<String> elementNames = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
                 ++numberOfFormsPassed;
-                // if the form has no parent, it is pretty likely invalid HTML (or Javascript!!!),
+                // if the form has no parent, it is pretty likely invalid HTML,
                 // so we will not report
                 // any alerts on it.
-                // ie. This logic is necessary to eliminate false positives on non-HTML files.
                 if (formElement.getParentElement() == null) {
                     LOGGER.debug(
-                            "Skipping HTML form because it has no parent. Likely not actually HTML.");
+                            "Skipping HTML form because it has no parent. Likely not actually valid HTML.");
                     continue; // do not report a missing anti-CSRF field on this form
                 }
                 if (formOnIgnoreList(formElement, ignoreList)) {
@@ -255,31 +255,15 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
     }
 
     public String getDescription() {
-        if (vuln != null) {
-            return vuln.getDescription();
-        }
-        return "Failed to load vulnerability description from file";
+        return VULN.getDescription();
     }
 
     public String getSolution() {
-        if (vuln != null) {
-            return vuln.getSolution();
-        }
-        return "Failed to load vulnerability solution from file";
+        return VULN.getSolution();
     }
 
     public String getReference() {
-        if (vuln != null) {
-            StringBuilder sb = new StringBuilder();
-            for (String ref : vuln.getReferences()) {
-                if (sb.length() > 0) {
-                    sb.append('\n');
-                }
-                sb.append(ref);
-            }
-            return sb.toString();
-        }
-        return "Failed to load vulnerability reference from file";
+        return VULN.getReferencesAsString();
     }
 
     @Override

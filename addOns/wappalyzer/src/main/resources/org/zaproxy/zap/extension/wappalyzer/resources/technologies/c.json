@@ -313,6 +313,21 @@
     "saas": true,
     "website": "https://www.cafe24.com/en/"
   },
+  "Caisy": {
+    "cats": [
+      1
+    ],
+    "description": "Caisy is a headless CMS platform providing flexible content management, seamless integration with various devices and channels, and API access for structured content delivery.",
+    "dom": "img[src*='assets.caisy.io/']",
+    "icon": "Caisy.svg",
+    "pricing": [
+      "freemium",
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://caisy.io"
+  },
   "CakePHP": {
     "cats": [
       18
@@ -508,6 +523,24 @@
     "saas": true,
     "website": "https://www.canto.com"
   },
+  "Canva": {
+    "cats": [
+      51
+    ],
+    "description": "Canva is an online graphic design platform that allows users to create various visual content using pre-designed templates and a library of elements.",
+    "icon": "Canva.svg",
+    "js": {
+      "canva_debounceResize": "",
+      "canva_scriptExecutor": ""
+    },
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.canva.com"
+  },
   "Canvas LMS": {
     "cats": [
       21
@@ -634,7 +667,7 @@
     "meta": {
       "cargo_title": ""
     },
-    "scriptSrc": "/cargo\\.",
+    "scriptSrc": "(?<!elo\\.io)/cargo\\.",
     "website": "https://cargo.site"
   },
   "Carrd": {
@@ -671,6 +704,27 @@
       "/carro\\.min\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
     ],
     "website": "https://getcarro.com"
+  },
+  "Carrot quest": {
+    "cats": [
+      10,
+      52
+    ],
+    "description": "Carrot quest is a customer engagement and communication platform that aids businesses in improving interactions with users and customers through targeted messaging, in-app messaging, live chat, email campaigns, and user behavior tracking.",
+    "headers": {
+      "Content-Security-Policy": "\\.carrotquest\\.app"
+    },
+    "icon": "Carrot quest.svg",
+    "js": {
+      "carrotquest": ""
+    },
+    "pricing": [
+      "payg",
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.carrotquest.io"
   },
   "Cart Functionality": {
     "cats": [
@@ -776,23 +830,6 @@
     "saas": true,
     "scriptSrc": "cdn\\.cartsguru\\.io/",
     "website": "https://www.carts.guru"
-  },
-  "Cashew Payments": {
-    "cats": [
-      91
-    ],
-    "description": "Cashew Payments is a buy now, pay later platform that allows its customers to shop now and pay later in equal monthly installments.",
-    "headers": {
-      "Content-Security-Policy": "\\.cashewpayments\\.com"
-    },
-    "icon": "Cashew Payments.svg",
-    "pricing": [
-      "payg"
-    ],
-    "requiresCategory": 6,
-    "saas": true,
-    "scriptSrc": "\\.cashewpayments\\.com/",
-    "website": "https://www.cashewpayments.com"
   },
   "Catberry.js": {
     "cats": [
@@ -1884,6 +1921,20 @@
     "scriptSrc": "clickheat.*\\.js",
     "website": "https://www.labsmedia.com/clickheat/index.html"
   },
+  "ClickOnce": {
+    "cats": [
+      47
+    ],
+    "css": "\\.ClickOnceInfoText",
+    "description": "ClickOnce is a Microsoft .NET deployment technology that enables the creation of self-updating Windows-based applications that can be installed and run with minimal user interaction.",
+    "dom": {
+      "a[href='https://go.microsoft.com/fwlink/?LinkId=154571']": {
+        "text": "ClickOnce and .NET Framework Resources"
+      }
+    },
+    "icon": "default.svg",
+    "website": "https://learn.microsoft.com/en-us/visualstudio/deployment/clickonce-security-and-deployment"
+  },
   "ClickTale": {
     "cats": [
       10
@@ -1997,6 +2048,20 @@
     "oss": true,
     "website": "https://github.com/underground-works/clockwork-app"
   },
+  "Closure Library": {
+    "cats": [
+      59
+    ],
+    "description": "Closure Library is a JavaScript library developed by Google for building robust web applications, offering utilities for DOM manipulation, event handling, data structures, and more.",
+    "dom": {
+      "script": {
+        "text": "Copyright\\sThe\\sClosure\\sLibrary\\sAuthors"
+      }
+    },
+    "icon": "Google.svg",
+    "oss": true,
+    "website": "https://github.com/google/closure-library"
+  },
   "CloudCart": {
     "cats": [
       6
@@ -2092,7 +2157,7 @@
       10,
       78
     ],
-    "description": "Cloudflare Browser Insights is a tool tool that measures the performance of websites from the perspective of users.",
+    "description": "Cloudflare Browser Insights is a tool that measures the performance of websites from the perspective of users.",
     "icon": "CloudFlare.svg",
     "js": {
       "__cfBeaconCustomTag": ""
@@ -2515,6 +2580,22 @@
     },
     "scriptSrc": "https?://www\\.hashing\\.win/scripts/min\\.js",
     "website": "https://www.coinimp.com"
+  },
+  "Colbass": {
+    "cats": [
+      5
+    ],
+    "description": "Colbass is AI System that transforms text into real-human voiceovers.",
+    "icon": "colbass.png",
+    "js": {
+      "colbassRunning": ""
+    },
+    "pricing": [
+      "low",
+      "onetime",
+      "recurring"
+    ],
+    "website": "https://colbass.com"
   },
   "Colibri WP": {
     "cats": [
@@ -3145,7 +3226,7 @@
     "headers": {
       "x-contentful-request-id": ""
     },
-    "html": "<[^>]+(?:https?:)?//(?:assets|downloads|images|videos)\\.(?:ct?fassets\\.net|contentful\\.com)",
+    "html": "<[^>]+(?:assets|downloads|images|videos)\\.(?:ct?fassets\\.net|contentful\\.com)",
     "icon": "Contentful.svg",
     "pricing": [
       "mid",
@@ -3827,6 +3908,22 @@
     "implies": "Craft CMS",
     "website": "https://craftcommerce.com"
   },
+  "Craftum": {
+    "cats": [
+      51
+    ],
+    "description": "Craftum is an Russian website builder.",
+    "icon": "Craftum.svg",
+    "meta": {
+      "generator": "^Craftum CMS$"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://craftum.com"
+  },
   "Cratejoy": {
     "cats": [
       1,
@@ -3869,6 +3966,22 @@
     "saas": true,
     "scriptSrc": "code\\.createjs\\.com/",
     "website": "https://code.createjs.com"
+  },
+  "Creatium": {
+    "cats": [
+      51
+    ],
+    "description": "Creatium is a website builder developed in Russia that provides a user-friendly drag-and-drop interface and a variety of customisation options for creating websites without coding knowledge.",
+    "icon": "Creatium.svg",
+    "meta": {
+      "generator": "^Creatium$"
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://creatium.io"
   },
   "Creativ.eMail": {
     "cats": [
@@ -4332,6 +4445,23 @@
     },
     "oss": true,
     "website": "https://github.com/cstate/cstate"
+  },
+  "cashew": {
+    "cats": [
+      91
+    ],
+    "description": "Cashew is a buy now, pay later platform that allows its customers to shop now and pay later in equal monthly installments.",
+    "headers": {
+      "Content-Security-Policy": "\\.cashewpayments\\.com"
+    },
+    "icon": "cashew.svg",
+    "pricing": [
+      "payg"
+    ],
+    "requiresCategory": 6,
+    "saas": true,
+    "scriptSrc": "\\.cashewpayments\\.com/",
+    "website": "https://www.cashewpayments.com"
   },
   "cdnjs": {
     "cats": [

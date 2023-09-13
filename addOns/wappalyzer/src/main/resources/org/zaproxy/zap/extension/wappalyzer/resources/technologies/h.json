@@ -198,12 +198,13 @@
     ],
     "cpe": "cpe:2.3:a:handlebars.js_project:handlebars.js:*:*:*:*:*:*:*:*",
     "description": "Handlebars is a JavaScript library used to create reusable webpage templates.",
-    "html": "<[^>]*type=[^>]text\\/x-handlebars-template",
-    "icon": "Handlebars.png",
+    "dom": "script[type='text/x-handlebars-template']",
+    "icon": "Handlebars.svg",
     "js": {
       "Handlebars": "",
       "Handlebars.VERSION": "^(.+)$\\;version:\\1"
     },
+    "oss": true,
     "scriptSrc": "handlebars(?:\\.runtime)?(?:-v([\\d.]+?))?(?:\\.min)?\\.js\\;version:\\1",
     "website": "https://handlebarsjs.com"
   },
@@ -349,6 +350,23 @@
     "url": "^https?://[^/]+\\.(?:hashnode)\\.dev",
     "website": "https://hashnode.com/"
   },
+  "Hashtag Labs": {
+    "cats": [
+      36
+    ],
+    "description": "Hashtag Labs is a full-service digital ad operations company.",
+    "dom": "link[href*='//htlbid.com']",
+    "icon": "Hashtag Labs.svg",
+    "js": {
+      "htlbid.cmd": ""
+    },
+    "pricing": [
+      "high",
+      "recurring",
+      "payg"
+    ],
+    "website": "https://hashtag-labs.com"
+  },
   "Haskell": {
     "cats": [
       27
@@ -382,6 +400,20 @@
     },
     "scriptSrc": "head\\.(?:core|load)(?:\\.min)?\\.js",
     "website": "https://headjs.com"
+  },
+  "Header Bidding Ai": {
+    "cats": [
+      36
+    ],
+    "description": "Header Bidding Ai is a provider of an automated and managed header bidding solution. Header bidding cutting-edge technique where publishers offer their ad inventory to many ad exchanges.",
+    "icon": "Header Bidding Ai.svg",
+    "pricing": [
+      "poa",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.headerbidding\\.ai/",
+    "website": "https://headerbidding.ai"
   },
   "Headless UI": {
     "cats": [
@@ -800,6 +832,24 @@
     },
     "icon": "Hiawatha.png",
     "website": "https://hiawatha-webserver.org"
+  },
+  "HighLevel": {
+    "cats": [
+      32,
+      53
+    ],
+    "description": "HighLevel is an all-in-one marketing and automation platform designed for marketing agencies and small businesses to manage CRM, marketing campaigns, sales funnels, appointment scheduling, and more.",
+    "icon": "HighLevel.svg",
+    "js": {
+      "leadConnector.chatWidget": ""
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.leadconnectorhq\\.com/",
+    "website": "https://www.gohighlevel.com"
   },
   "HighStore": {
     "cats": [

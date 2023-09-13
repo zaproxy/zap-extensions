@@ -303,7 +303,7 @@ public class ImportDialog extends AbstractDialog {
             var uri = new URI(definitionLocation, true);
             return extOpenApi.importOpenApiDefinition(
                             uri, getTargetField().getText(), true, getSelectedContextId())
-                    != null;
+                    == null;
         } catch (URIException | MalformedURLException | URISyntaxException ignored) {
             // Not a valid URI, try to import as a file
         } catch (InvalidUrlException e) {
@@ -334,7 +334,7 @@ public class ImportDialog extends AbstractDialog {
         try {
             return extOpenApi.importOpenApiDefinition(
                             file, getTargetField().getText(), true, getSelectedContextId())
-                    != null;
+                    == null;
         } catch (InvalidUrlException e) {
             ThreadUtils.invokeAndWaitHandled(
                     () -> {

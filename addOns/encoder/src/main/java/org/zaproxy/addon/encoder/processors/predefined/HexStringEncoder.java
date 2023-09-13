@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.encoder.processors.predefined;
 
+import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 
 public class HexStringEncoder extends DefaultEncodeDecodeProcessor {
@@ -27,7 +28,7 @@ public class HexStringEncoder extends DefaultEncodeDecodeProcessor {
 
     @Override
     protected String processInternal(String value) {
-        return getHexString(value.getBytes());
+        return getHexString(value.getBytes(StandardCharsets.UTF_8));
     }
 
     protected static String getHexString(byte[] buf) {

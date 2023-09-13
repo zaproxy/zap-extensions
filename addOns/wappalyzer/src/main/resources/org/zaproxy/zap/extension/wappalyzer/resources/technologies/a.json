@@ -352,6 +352,23 @@
     },
     "website": "https://awstats.sourceforge.net"
   },
+  "AbhiCMS": {
+    "cats": [
+      1
+    ],
+    "description": "AbhiCMS is a lesser-known content management system that may not have a significant user base or active development community.",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "meta": {
+      "generator": "AbhiCMS\\s([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://website999.org"
+  },
   "Abicart": {
     "cats": [
       6
@@ -790,6 +807,22 @@
     "saas": true,
     "scriptSrc": "/cdnr/\\d+/acton/bn/tracker/\\d+",
     "website": "https://act-on.com"
+  },
+  "ActBlue": {
+    "cats": [
+      111
+    ],
+    "description": "ActBlue is an online fundraising platform that facilitates secure donations to Democratic candidates and progressive causes, streamlining the process of processing and distributing campaign contributions.",
+    "dom": "a[href*='//secure.actblue.com/donate/']",
+    "icon": "ActBlue.svg",
+    "js": {
+      "actblue.__configuration": ""
+    },
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "website": "https://secure.actblue.com"
   },
   "Actito": {
     "cats": [
@@ -1698,13 +1731,19 @@
     "cats": [
       11
     ],
+    "description": "Aegea is a blog engine created by Ilya Birman.",
     "headers": {
-      "X-Powered-By": "^E2 Aegea v(\\d+)$\\;version:\\1"
+      "X-Powered-By": "^(?:E2\\s)?Aegea\\s(?:v)?([\\d\\.]+)\\;version:\\1"
     },
     "icon": "Aegea.png",
     "implies": [
       "PHP",
       "jQuery"
+    ],
+    "pricing": [
+      "low",
+      "freemium",
+      "recurring"
     ],
     "website": "https://blogengine.ru"
   },
@@ -2429,6 +2468,23 @@
     "scriptSrc": "\\.alliai\\.com/",
     "website": "https://www.alliai.com"
   },
+  "Alliance Auth": {
+    "cats": [
+      69
+    ],
+    "description": "Alliance Auth is an access management platform designed for Eve Online groups. It controls access to applications and services based on in-game memberships.",
+    "dom": "link[rel='stylesheet'][href*='/static/allianceauth/css']",
+    "icon": "Alliance Auth.svg",
+    "implies": [
+      "Django",
+      "Python",
+      "Font Awesome",
+      "Bootstrap",
+      "jQuery"
+    ],
+    "oss": true,
+    "website": "https://gitlab.com/allianceauth/allianceauth"
+  },
   "AlloyUI": {
     "cats": [
       12
@@ -2524,6 +2580,24 @@
       "poa"
     ],
     "website": "https://www.alumniq.com/platform/"
+  },
+  "AlvandCMS": {
+    "cats": [
+      1
+    ],
+    "description": "AlvandCMS is a PHP-based content management system that is commonly used in Iran.",
+    "icon": "AlvandCMS.png",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "meta": {
+      "generator": "AlvandCMS\\s([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "website": "https://alvandcms.ir"
   },
   "Amaya": {
     "cats": [
@@ -3042,7 +3116,7 @@
     "cats": [
       12
     ],
-    "cpe": "cpe:2.3:a:angularjs:angular:*:*:*:*:*:*:*:*:*",
+    "cpe": "cpe:2.3:a:angularjs:angular:*:*:*:*:*:*:*:*",
     "description": "Angular is a TypeScript-based open-source web application framework led by the Angular Team at Google.",
     "dom": {
       "[ng-version]": {
@@ -3325,6 +3399,20 @@
     "scriptSrc": "\\.anyclip\\.com",
     "website": "https://www.anyclip.com"
   },
+  "Apache APISIX": {
+    "cats": [
+      22
+    ],
+    "cpe": "cpe:2.3:a:apache:apisix:*:*:*:*:*:*:*:*",
+    "description": "Apache APISIX is an open-source, cloud-native API gateway developed by the Apache Software Foundation. It provides a scalable and high-performance solution for managing and securing API traffic.",
+    "headers": {
+      "X-APISIX-Upstream-Status": "",
+      "server": "^APISIX(?:/([\\d\\.]+))?$\\;version:\\1"
+    },
+    "icon": "Apache APISIX.svg",
+    "oss": true,
+    "website": "https://apisix.apache.org"
+  },
   "Apache HTTP Server": {
     "cats": [
       22
@@ -3335,6 +3423,7 @@
       "Server": "(?:Apache(?:$|/([\\d.]+)|[^/-])|(?:^|\\b)HTTPD)\\;version:\\1"
     },
     "icon": "Apache.svg",
+    "oss": true,
     "website": "https://httpd.apache.org/"
   },
   "Apache JSPWiki": {
@@ -3346,6 +3435,7 @@
     "html": "<html[^>]* xmlns:jspwiki=",
     "icon": "Apache.svg",
     "implies": "Apache Tomcat",
+    "oss": true,
     "scriptSrc": "jspwiki",
     "url": "wiki\\.jsp",
     "website": "https://jspwiki.org"
@@ -3362,6 +3452,7 @@
     },
     "icon": "Apache Tomcat.svg",
     "implies": "Java",
+    "oss": true,
     "website": "https://tomcat.apache.org"
   },
   "Apache Traffic Server": {
@@ -3369,10 +3460,12 @@
       22
     ],
     "cpe": "cpe:2.3:a:apache:traffic_server:*:*:*:*:*:*:*:*",
+    "description": "Apache Traffic Server is an open-source caching and proxying server that serves as an HTTP/1.1 and HTTP/2 reverse proxy with caching capabilities, load balancing, request routing, SSL termination, and support for advanced HTTP features.",
     "headers": {
       "Server": "ATS/?([\\d.]+)?\\;version:\\1"
     },
     "icon": "Apache Traffic Server.svg",
+    "oss": true,
     "website": "https://trafficserver.apache.org/"
   },
   "Apache Wicket": {
@@ -3380,11 +3473,13 @@
       18
     ],
     "cpe": "cpe:2.3:a:apache:wicket:*:*:*:*:*:*:*:*",
+    "description": "Apache Wicket is an open-source Java web application framework for building scalable and maintainable web applications.",
     "icon": "Apache Wicket.svg",
     "implies": "Java",
     "js": {
       "Wicket": ""
     },
+    "oss": true,
     "website": "https://wicket.apache.org"
   },
   "Apereo CAS": {
@@ -3416,6 +3511,22 @@
     },
     "oss": true,
     "website": "https://apexcharts.com"
+  },
+  "ApexChat": {
+    "cats": [
+      52
+    ],
+    "description": "ApexChat is a company that provides businesses with live chat software and services to facilitate real-time customer engagement, support, lead generation, and enhanced online interactions.",
+    "icon": "ApexChat.svg",
+    "js": {
+      "ApexChat": "",
+      "apexchat_dompopup_chatwindow_client": ""
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.apexchat.com"
   },
   "ApexPages": {
     "cats": [
@@ -3451,10 +3562,7 @@
     "icon": "Apisearch.png",
     "oss": true,
     "pricing": [
-      "freemium",
-      "low",
-      "mid",
-      "recurring"
+      "payg"
     ],
     "saas": true,
     "scriptSrc": "static\\.apisearch\\.cloud",
@@ -5114,6 +5222,26 @@
     "icon": "augmented-ui.png",
     "oss": true,
     "website": "https://augmented-ui.com"
+  },
+  "authorize.net": {
+    "cats": [
+      41
+    ],
+    "description": "Authorize.net is a secure online payment gateway service that enables businesses to accept payments through various channels, such as ecommerce websites, mobile devices, and retail stores, providing a trusted platform for processing credit card and electronic cheque payments.",
+    "headers": {
+      "Content-Security-Policy": "\\.authorize\\.net\\s"
+    },
+    "icon": "authorize.net.svg",
+    "js": {
+      "config.authorizenet_public_client_key": ""
+    },
+    "pricing": [
+      "recurring",
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "\\.authorize\\.net/",
+    "website": "https://www.authorize.net"
   },
   "autoComplete.js": {
     "cats": [

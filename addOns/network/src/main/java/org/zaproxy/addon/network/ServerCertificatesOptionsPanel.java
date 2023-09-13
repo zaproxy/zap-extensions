@@ -61,10 +61,9 @@ class ServerCertificatesOptionsPanel extends AbstractParamPanel {
 
     private static final Logger LOGGER = LogManager.getLogger(ServerCertificatesOptionsPanel.class);
 
-    private static final String OWASP_ZAP_ROOT_CA_NAME = "owasp_zap_root_ca";
-    private static final String OWASP_ZAP_ROOT_CA_FILE_EXT = ".cer";
-    private static final String OWASP_ZAP_ROOT_CA_FILENAME =
-            OWASP_ZAP_ROOT_CA_NAME + OWASP_ZAP_ROOT_CA_FILE_EXT;
+    private static final String ZAP_ROOT_CA_NAME = "zap_root_ca";
+    private static final String ZAP_ROOT_CA_FILE_EXT = ".cer";
+    private static final String ZAP_ROOT_CA_FILENAME = ZAP_ROOT_CA_NAME + ZAP_ROOT_CA_FILE_EXT;
 
     private static final String CONFIGURATION_FILENAME = Constant.FILE_CONFIG_NAME;
 
@@ -305,7 +304,7 @@ class ServerCertificatesOptionsPanel extends AbstractParamPanel {
                     new WritableFileChooser(new File(System.getProperty("user.home")));
             fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
             fileChooser.setMultiSelectionEnabled(false);
-            fileChooser.setSelectedFile(new File(OWASP_ZAP_ROOT_CA_FILENAME));
+            fileChooser.setSelectedFile(new File(ZAP_ROOT_CA_FILENAME));
             if (fileChooser.showSaveDialog(panel) != JFileChooser.APPROVE_OPTION) {
                 return;
             }
@@ -486,7 +485,7 @@ class ServerCertificatesOptionsPanel extends AbstractParamPanel {
         private void viewRootCaCert() {
             Path file;
             try {
-                file = Files.createTempFile(OWASP_ZAP_ROOT_CA_NAME, OWASP_ZAP_ROOT_CA_FILE_EXT);
+                file = Files.createTempFile(ZAP_ROOT_CA_NAME, ZAP_ROOT_CA_FILE_EXT);
                 writePem(file);
             } catch (IOException e) {
                 LOGGER.error("An error occured while creating the temporary file", e);

@@ -21,6 +21,7 @@ package org.zaproxy.addon.automation.jobs;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
@@ -297,7 +298,7 @@ public class JobUtils {
                                             "automation.info.setparam",
                                             objectName, // TODO changed param
                                             key,
-                                            value));
+                                            toStringValue(value)));
                         } catch (Exception e) {
                             progress.error(
                                     Constant.messages.getString(
@@ -323,6 +324,13 @@ public class JobUtils {
                                 "automation.error.options.unknown", objectName, key));
             }
         }
+    }
+
+    private static Object toStringValue(Object value) {
+        if (value == null || !value.getClass().isArray()) {
+            return value;
+        }
+        return Arrays.toString((Object[]) value);
     }
 
     public static void applyObjectToObject(
@@ -442,7 +450,7 @@ public class JobUtils {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    static <T> T objectToType(Object obj, T t) {
+    static <T> T objectToType(Object obj, Class<?> t) {
         if (String.class.equals(t)) {
             return (T) obj.toString();
         } else if (Integer.class.equals(t) || int.class.equals(t)) {
@@ -469,8 +477,8 @@ public class JobUtils {
 
         } else if (List.class.equals(t)) {
             if (obj instanceof List) {
-                List<String> list = new ArrayList<>();
-                list.addAll((ArrayList) obj);
+                List<T> list = new ArrayList<>();
+                list.addAll((List) obj);
                 return (T) list;
             } else {
                 LOGGER.error("Unable to map to an List from {}", obj.getClass().getCanonicalName());
@@ -483,8 +491,29 @@ public class JobUtils {
             }
             throw new IllegalArgumentException(
                     "Enum value must be one of " + EnumUtils.getEnumList((Class<Enum>) t));
+        } else if (t.isArray()) {
+            if (obj instanceof List) {
+                List objList = (List) obj;
+                try {
+                    // This is nasty, but it works ;)
+                    String arrayClassName = t.getCanonicalName();
+                    String arrayBaseClassName =
+                            arrayClassName.substring(0, arrayClassName.length() - 2);
+                    T[] array =
+                            (T[])
+                                    Array.newInstance(
+                                            Class.forName(arrayBaseClassName), objList.size());
+                    objList.toArray(array);
+                    return (T) array;
+                } catch (Exception e) {
+                    LOGGER.error("Unable to map to an array from a list", e);
+                    return null;
+                }
+            } else {
+                LOGGER.error(
+                        "Unable to map to an array from {}", obj.getClass().getCanonicalName());
+            }
         }
-
         return null;
     }
 

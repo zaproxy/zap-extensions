@@ -19,23 +19,17 @@
  */
 package org.zaproxy.addon.dev.auth.jsonMultipleCookies;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang.RandomStringUtils;
-import org.zaproxy.addon.dev.TestDirectory;
+import org.zaproxy.addon.dev.TestAuthDirectory;
 import org.zaproxy.addon.dev.TestProxyServer;
 
 /**
  * A login page which uses one JSON request to login endpoint. The token is returned in a standard
  * field but is submitted with the "Bearer" prefix and in a cookie.
  */
-public class JsonMultipleCookiesDir extends TestDirectory {
-
-    // These are test credentials, so hardcoding them is fine ;)
-    private static final String[][] USERS = {{"test@test.com", "password123"}};
-
-    private Map<String, String> sessions = new HashMap<>();
+public class JsonMultipleCookiesDir extends TestAuthDirectory {
 
     private Map<String, String> tempTokens = new HashMap<>();
 
@@ -46,27 +40,10 @@ public class JsonMultipleCookiesDir extends TestDirectory {
         this.addPage(new JsonMultipleCookiesVerificationPage(server));
     }
 
-    public boolean isValid(String username, String password) {
-        return Arrays.stream(USERS)
-                .filter(c -> (c[0].equals(username) && c[1].equals(password)))
-                .findAny()
-                .isPresent();
-    }
-
-    public String getToken(String username) {
-        String token = RandomStringUtils.randomAlphanumeric(32);
-        sessions.put(token, username);
-        return token;
-    }
-
     public String getTempToken(String username) {
         String token = RandomStringUtils.randomAlphanumeric(32);
         tempTokens.put(token, username);
         return token;
-    }
-
-    public String getUser(String token) {
-        return sessions.get(token);
     }
 
     public String getTempUser(String token) {

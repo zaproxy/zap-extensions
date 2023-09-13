@@ -29,8 +29,8 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.zap.model.Vulnerabilities;
-import org.zaproxy.zap.model.Vulnerability;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 
 class SourceCodeDisclosureFileInclusionScanRuleUnitTest
         extends ActiveScannerTest<SourceCodeDisclosureFileInclusionScanRule> {
@@ -67,7 +67,7 @@ class SourceCodeDisclosureFileInclusionScanRuleUnitTest
     @Test
     void shouldReturnExpectedExampleAlert() {
         // Given
-        Vulnerability vuln = Vulnerabilities.getVulnerability("wasc_33");
+        Vulnerability vuln = Vulnerabilities.getDefault().get("wasc_33");
         // When
         List<Alert> alerts = rule.getExampleAlerts();
         // Then

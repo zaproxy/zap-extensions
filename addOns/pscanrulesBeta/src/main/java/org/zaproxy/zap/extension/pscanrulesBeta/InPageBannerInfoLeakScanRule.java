@@ -36,8 +36,6 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /**
  * In Page Banner Information Leak passive scan rule https://github.com/zaproxy/zaproxy/issues/178
- *
- * @author kingthorin+owaspzap@gmail.com
  */
 public class InPageBannerInfoLeakScanRule extends PluginPassiveScanner {
 

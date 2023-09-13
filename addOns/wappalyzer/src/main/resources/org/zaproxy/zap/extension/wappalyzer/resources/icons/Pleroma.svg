@@ -1,23 +1,13 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" version="1.1" id="svg4485" width="209.00002" height="334" viewBox="0 0 209.00002 334" sodipodi:docname="pleroma_logo_vector_nobg_nopad.svg" inkscape:version="0.92.1 r15371">
-  <metadata id="metadata4491">
-    <rdf:RDF>
-      <cc:Work rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-        <dc:title/>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <defs id="defs4489"/>
-  <sodipodi:namedview pagecolor="#ffffff" bordercolor="#666666" borderopacity="1" objecttolerance="10" gridtolerance="10" guidetolerance="10" inkscape:pageopacity="0" inkscape:pageshadow="2" inkscape:window-width="2560" inkscape:window-height="1387" id="namedview4487" showgrid="false" inkscape:zoom="2" inkscape:cx="49.747283" inkscape:cy="227.83408" inkscape:window-x="1912" inkscape:window-y="-8" inkscape:window-maximized="1" inkscape:current-layer="svg4485"/>
-  <g id="g4612" transform="translate(-152,-89)">
-    <path sodipodi:nodetypes="cccccc" inkscape:connector-curvature="0" id="path4495" d="M 235,89 V 423 H 152 V 115 l 26,-26 z" style="opacity:1;fill:#fba457;fill-opacity:1;stroke:#009bff;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.17587938"/>
-    <circle r="26" cx="178" cy="115" id="path4497" style="opacity:1;fill:#fba457;fill-opacity:1;stroke:#009bff;stroke-width:0;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.17587938"/>
-    <circle r="26" cx="335" cy="230" id="path4497-0" style="opacity:1;fill:#fba457;fill-opacity:1;stroke:#009bff;stroke-width:0;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.17587938"/>
-    <path sodipodi:nodetypes="cccccc" inkscape:connector-curvature="0" id="path4516" d="M 277,256 V 89 l 84,3e-6 L 361.00002,230 335,256 Z" style="fill:#fba457;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"/>
-    <circle r="26" cx="335" cy="397" id="path4497-0-6" style="opacity:1;fill:#fba457;fill-opacity:1;stroke:#009bff;stroke-width:0;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:0.17587938"/>
-    <path sodipodi:nodetypes="cccccc" inkscape:connector-curvature="0" id="path4516-5" d="m 277,423 v -83 h 84 l 2e-5,57 L 335,423 Z" style="opacity:1;fill:#fba457;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"/>
-  </g>
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<mask id="mask0_4657_56" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="6" y="0" width="20" height="32">
+<path d="M25.5086 0.731445H6.4V31.2686H25.5086V0.731445Z" fill="white"/>
+</mask>
+<g mask="url(#mask0_4657_56)">
+<path d="M13.9886 0.731445V31.2686H6.4V3.10859L8.77714 0.731445H13.9886Z" fill="#FBA457"/>
+<path d="M8.77714 5.48573C10.09 5.48573 11.1543 4.42145 11.1543 3.10859C11.1543 1.79573 10.09 0.731445 8.77714 0.731445C7.46428 0.731445 6.4 1.79573 6.4 3.10859C6.4 4.42145 7.46428 5.48573 8.77714 5.48573Z" fill="#FBA457"/>
+<path d="M23.1314 16C24.4443 16 25.5086 14.9357 25.5086 13.6229C25.5086 12.31 24.4443 11.2457 23.1314 11.2457C21.8186 11.2457 20.7543 12.31 20.7543 13.6229C20.7543 14.9357 21.8186 16 23.1314 16Z" fill="#FBA457"/>
+<path d="M17.8286 16V0.731445H25.5086V13.6229L23.1314 16H17.8286Z" fill="#FBA457"/>
+<path d="M23.1314 31.2686C24.4443 31.2686 25.5086 30.2042 25.5086 28.8914C25.5086 27.5786 24.4443 26.5143 23.1314 26.5143C21.8186 26.5143 20.7543 27.5786 20.7543 28.8914C20.7543 30.2042 21.8186 31.2686 23.1314 31.2686Z" fill="#FBA457"/>
+<path d="M17.8286 31.2686V23.6801H25.5086V28.8915L23.1314 31.2686H17.8286Z" fill="#FBA457"/>
+</g>
 </svg>

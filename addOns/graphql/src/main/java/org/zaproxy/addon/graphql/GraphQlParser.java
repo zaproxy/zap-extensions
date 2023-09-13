@@ -19,9 +19,9 @@
  */
 package org.zaproxy.addon.graphql;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
+import com.fasterxml.jackson.core.JacksonException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import graphql.introspection.IntrospectionQueryBuilder;
 import graphql.introspection.IntrospectionResultToSchema;
 import graphql.language.Document;
@@ -102,10 +102,10 @@ public class GraphQlParser {
         }
         try {
             Map<String, Object> result =
-                    new Gson()
-                            .fromJson(
+                    new ObjectMapper()
+                            .readValue(
                                     importMessage.getResponseBody().toString(),
-                                    new TypeToken<Map<String, Object>>() {}.getType());
+                                    new TypeReference<Map<String, Object>>() {});
             if (result == null) {
                 throw new IOException("The response was empty.");
             }
@@ -121,7 +121,7 @@ public class GraphQlParser {
             }
             String schemaSdl = new SchemaPrinter().print(schema);
             parse(schemaSdl);
-        } catch (JsonSyntaxException e) {
+        } catch (JacksonException e) {
             throw new IOException("The response was not valid JSON.");
         }
     }
@@ -188,6 +188,22 @@ public class GraphQlParser {
         }
     }
 
+    static Alert.Builder createIntrospectionAlert() {
+        return Alert.builder()
+                .setPluginId(ExtensionGraphQl.TOOL_ALERT_ID)
+                .setAlertRef(INTROSPECTION_ALERT_REF)
+                .setName(Constant.messages.getString("graphql.introspection.alert.name"))
+                .setDescription(Constant.messages.getString("graphql.introspection.alert.desc"))
+                .setReference(Constant.messages.getString("graphql.introspection.alert.ref"))
+                .setSolution(Constant.messages.getString("graphql.introspection.alert.soln"))
+                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setRisk(Alert.RISK_INFO)
+                .setCweId(16)
+                .setWascId(15)
+                .setSource(Alert.Source.TOOL)
+                .setTags(INTROSPECTION_ALERT_TAGS);
+    }
+
     private void raiseIntrospectionAlert(HttpMessage msg) {
         var extAlert =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionAlert.class);
@@ -195,22 +211,7 @@ public class GraphQlParser {
             return;
         }
         Alert alert =
-                Alert.builder()
-                        .setPluginId(ExtensionGraphQl.TOOL_ALERT_ID)
-                        .setAlertRef(INTROSPECTION_ALERT_REF)
-                        .setName(Constant.messages.getString("graphql.introspection.alert.name"))
-                        .setDescription(
-                                Constant.messages.getString("graphql.introspection.alert.desc"))
-                        .setReference(
-                                Constant.messages.getString("graphql.introspection.alert.ref"))
-                        .setSolution(
-                                Constant.messages.getString("graphql.introspection.alert.soln"))
-                        .setConfidence(Alert.CONFIDENCE_HIGH)
-                        .setRisk(Alert.RISK_INFO)
-                        .setCweId(16)
-                        .setWascId(15)
-                        .setSource(Alert.Source.TOOL)
-                        .setTags(INTROSPECTION_ALERT_TAGS)
+                createIntrospectionAlert()
                         .setHistoryRef(msg.getHistoryRef())
                         .setMessage(msg)
                         .build();

@@ -1,4 +1,4 @@
-description = "Imports and spiders Postman definitions."
+description = "Imports and spiders Postman collections."
 
 zapAddOn {
     addOnName.set("Postman Support")

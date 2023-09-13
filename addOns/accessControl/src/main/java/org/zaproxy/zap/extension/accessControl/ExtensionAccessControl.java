@@ -46,6 +46,7 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.db.RecordContext;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
@@ -62,6 +63,7 @@ import org.zaproxy.zap.extension.accessControl.AccessControlScannerThread.Access
 import org.zaproxy.zap.extension.accessControl.view.AccessControlScanOptionsDialog;
 import org.zaproxy.zap.extension.accessControl.view.AccessControlStatusPanel;
 import org.zaproxy.zap.extension.accessControl.view.ContextAccessControlPanel;
+import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.extension.authorization.ExtensionAuthorization;
 import org.zaproxy.zap.extension.users.ExtensionUserManagement;
@@ -77,7 +79,10 @@ import org.zaproxy.zap.view.ContextPanelFactory;
  * applications.
  */
 public class ExtensionAccessControl extends ExtensionAdaptor
-        implements SessionChangedListener, ContextPanelFactory, ContextDataFactory {
+        implements SessionChangedListener,
+                ContextPanelFactory,
+                ContextDataFactory,
+                ExampleAlertProvider {
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionAccessControl.class);
 
@@ -678,5 +683,10 @@ public class ExtensionAccessControl extends ExtensionAdaptor
         }
 
         return result;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return AccessControlAlertsProcessor.getExampleAlerts();
     }
 }

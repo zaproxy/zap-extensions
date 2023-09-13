@@ -4,8 +4,17 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [19] - 2023-09-07
 ### Changed
+- The "Import a WSDL file from local file system" and "Import a WSDL file from a URL" menu items were merged into one,
+  "Import a WSDL File". The merged dialog uses the shortcut `Ctrl+J` (`Cmd+J` on macOS).
+- The Import dialog shows the values used in the previous import when reopened.
 - Maintenance changes.
+- Depend on newer versions of Automation Framework and Common Library add-ons (Related to Issue 7961).
+- Use Common Library add-on to obtain the Value Generator (Issue 8016).
+- The SOAP Support Script has been superseded by a variant (Issue 6500).
 
 ## [18] - 2023-07-11
 ### Changed
@@ -137,6 +146,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[19]: https://github.com/zaproxy/zap-extensions/releases/soap-v19
 [18]: https://github.com/zaproxy/zap-extensions/releases/soap-v18
 [17]: https://github.com/zaproxy/zap-extensions/releases/soap-v17
 [16]: https://github.com/zaproxy/zap-extensions/releases/soap-v16

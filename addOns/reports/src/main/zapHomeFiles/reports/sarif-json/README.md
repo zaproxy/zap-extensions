@@ -5,7 +5,7 @@ This is a reference/documentation how the DAST content is available inside SARIF
 ## Sarif 2.1.0
 https://docs.oasis-open.org/sarif/sarif/v2.1.0/os/sarif-v2.1.0-os.html
 
-### Example report with description about presenting OWASP ZAP data structure via SARIF format
+### Example report with description about presenting ZAP data structure via SARIF format
 The next example JSON is not 100% valid (it contains comments ...) - but is an explanation how the ZAP report data
 has been mapped to SARIF 2.1.0:
 
@@ -40,7 +40,7 @@ has been mapped to SARIF 2.1.0:
                     "message": {
                        // when alert.otherInfo is not empty or null text will contain this,
                        // otherwise the alert.description will be used as fallback
-                       "text" : "A text from owasp zap alert - either otherInfo or description"
+                       "text" : "A text from zap alert - either otherInfo or description"
                     },
                     // the pluginId of an alert is used as ruleId
                     // see: https://www.zaproxy.org/docs/alerts/
@@ -152,7 +152,7 @@ has been mapped to SARIF 2.1.0:
                 "driver": {
                     "guid": "4d841334-0141-4e13-bdd0-53087266ebcd",
                     "informationUri": "https://www.zaproxy.org/",
-                    "name": "OWASP ZAP",
+                    "name": "ZAP",
                     "rules": [
                         {
                             // pluginId/alertRef -  we use pluginId

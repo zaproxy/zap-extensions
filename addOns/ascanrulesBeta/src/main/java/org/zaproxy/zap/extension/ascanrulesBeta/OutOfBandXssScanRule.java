@@ -32,13 +32,13 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
+import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.addon.oast.ExtensionOast;
-import org.zaproxy.zap.model.Vulnerabilities;
-import org.zaproxy.zap.model.Vulnerability;
 
 public class OutOfBandXssScanRule extends AbstractAppParamPlugin {
 
-    private static final Vulnerability VULN = Vulnerabilities.getVulnerability("wasc_8");
+    private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_8");
     private static final int PLUGIN_ID = 40031;
     private static final Logger LOGGER = LogManager.getLogger(OutOfBandXssScanRule.class);
 
@@ -68,10 +68,7 @@ public class OutOfBandXssScanRule extends AbstractAppParamPlugin {
 
     @Override
     public String getDescription() {
-        if (VULN != null) {
-            return VULN.getDescription();
-        }
-        return "Failed to load vulnerability description from file";
+        return VULN.getDescription();
     }
 
     @Override
@@ -81,25 +78,12 @@ public class OutOfBandXssScanRule extends AbstractAppParamPlugin {
 
     @Override
     public String getSolution() {
-        if (VULN != null) {
-            return VULN.getSolution();
-        }
-        return "Failed to load vulnerability solution from file";
+        return VULN.getSolution();
     }
 
     @Override
     public String getReference() {
-        if (VULN != null) {
-            StringBuilder sb = new StringBuilder();
-            for (String ref : VULN.getReferences()) {
-                if (sb.length() > 0) {
-                    sb.append('\n');
-                }
-                sb.append(ref);
-            }
-            return sb.toString();
-        }
-        return "Failed to load vulnerability reference from file";
+        return VULN.getReferencesAsString();
     }
 
     @Override

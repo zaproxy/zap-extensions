@@ -26,7 +26,6 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.EventExecutorGroup;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.Authenticator;
 import java.net.BindException;
 import java.net.InetAddress;
@@ -112,6 +111,7 @@ import org.zaproxy.addon.network.internal.server.http.handlers.CloseOnRecursiveR
 import org.zaproxy.addon.network.internal.server.http.handlers.ConnectReceivedHandler;
 import org.zaproxy.addon.network.internal.server.http.handlers.DecodeResponseHandler;
 import org.zaproxy.addon.network.internal.server.http.handlers.HttpSenderHandler;
+import org.zaproxy.addon.network.internal.server.http.handlers.LegacyNoCacheRequestHandler;
 import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
 import org.zaproxy.addon.network.internal.server.http.handlers.RemoveAcceptEncodingHandler;
 import org.zaproxy.addon.network.internal.ui.LocalServerInfoLabel;
@@ -153,6 +153,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     private org.parosproxy.paros.network.ConnectionParam legacyConnectionOptions;
 
     private LegacyProxyListenerHandler legacyProxyListenerHandler;
+    private LegacyNoCacheRequestHandler legacyNoCacheRequestHandler;
     private Object syncGroups = new Object();
     private boolean groupsInitiated;
     private NioEventLoopGroup mainEventLoopGroup;
@@ -185,10 +186,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     private ExecutorService blockingServerExecutor;
     private LocalServer mainProxyServer;
     private ServerInfo mainProxyServerInfo;
-    private LocalServerHandler.SerialiseState serialiseForBreak;
+    private BreakSerialiseState serialiseForBreak;
     private ExtensionBreak extensionBreak;
-    private Method addBreakListenerMethod;
-    private Method removeBreakListenerMethod;
 
     private LocalServerInfoLabel localServerInfoLabel;
 
@@ -286,22 +285,6 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
         extensionBreak =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionBreak.class);
-        if (extensionBreak != null) {
-            try {
-                addBreakListenerMethod =
-                        extensionBreak
-                                .getClass()
-                                .getDeclaredMethod(
-                                        "addSerialisationRequiredListener", Consumer.class);
-                removeBreakListenerMethod =
-                        extensionBreak
-                                .getClass()
-                                .getDeclaredMethod(
-                                        "removeSerialisationRequiredListener", Consumer.class);
-            } catch (Exception e) {
-                LOGGER.error("An error occurred while getting the break methods:", e);
-            }
-        }
     }
 
     @Override
@@ -495,6 +478,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
         legacyProxyListenerHandler = new LegacyProxyListenerHandler();
         Control.getSingleton().getExtensionLoader().addProxyServer(legacyProxyListenerHandler);
+        legacyNoCacheRequestHandler =
+                new LegacyNoCacheRequestHandler(getModel(), connectionOptions);
 
         extensionHook.addCommandLine(createCommandLineArgs());
 
@@ -740,12 +725,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     @Override
     public void postInit() {
         serialiseForBreak = new BreakSerialiseState();
-        if (addBreakListenerMethod != null) {
-            try {
-                addBreakListenerMethod.invoke(extensionBreak, serialiseForBreak);
-            } catch (Exception e) {
-                LOGGER.error("An error occurred while adding the break listener:", e);
-            }
+        if (extensionBreak != null) {
+            extensionBreak.addSerialisationRequiredListener(serialiseForBreak);
         }
 
         if (hasView()) {
@@ -822,6 +803,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                 serverCertificateService,
                 legacyProxyListenerHandler,
                 passThroughHandler,
+                legacyNoCacheRequestHandler,
                 httpSenderHandler,
                 new LocalServerConfig(config, aliasChecker),
                 serialiseForBreak,
@@ -1385,12 +1367,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             optionsDialog.removeParamPanel(rateLimitExtensionHelper.getRateLimitOptionsPanel());
             optionsDialog.removeParamPanel(globalExclusionsOptionsPanel);
 
-            if (removeBreakListenerMethod != null) {
-                try {
-                    removeBreakListenerMethod.invoke(extensionBreak, serialiseForBreak);
-                } catch (Exception e) {
-                    LOGGER.error("An error occurred while removing the break listener:", e);
-                }
+            if (extensionBreak != null) {
+                extensionBreak.removeSerialisationRequiredListener(serialiseForBreak);
             }
         }
 

@@ -433,8 +433,9 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:2.3:a:omeka:omeka:*:*:*:*:*:*:*:*:*",
+    "cpe": "cpe:2.3:a:omeka:omeka:*:*:*:*:*:*:*:*",
     "description": "Omeka is a free Content Management System (CMS) used by archives, historical societies, libraries, museums, and individual researchers for publishing digital collections.",
+    "dom": "link[rel*='stylesheet'][href*='css/myomeka.css'], link[rel*='stylesheet'][href*='/omeka/plugins/'], footer > p > a[href*='//omeka.org']",
     "icon": "Omeka.png",
     "js": {
       "Omeka": ""
@@ -1215,6 +1216,17 @@
     "scriptSrc": "//dealer-cdn\\.com/",
     "website": "https://operatebeyond.com/dealer-websites-marketing"
   },
+  "Opigno LMS": {
+    "cats": [
+      21
+    ],
+    "description": "Opigno LMS is an open-source Learning Management System (LMS) based on Drupal, designed for creating and delivering online courses and educational content.",
+    "icon": "Opigno LMS.svg",
+    "oss": true,
+    "requires": "Drupal",
+    "scripts": "opigno_(?:commerce|wtp_app|scorm|learning_path)",
+    "website": "https://www.opigno.org"
+  },
   "OpinionLab": {
     "cats": [
       73
@@ -1315,11 +1327,15 @@
     },
     "cpe": "cpe:2.3:a:episerver:episerver:*:*:*:*:*:*:*:*",
     "description": "Optimizely Content Management (formerly EPiServer) is digital content, ecommerce, and marketing management solution designed for editors and marketers.",
+    "dom": "link[href*='/EPiServer.Forms/']",
     "headers": {
       "content-security-policy": "\\.episerver\\.net"
     },
     "icon": "Optimizely.svg",
     "implies": "Microsoft ASP.NET",
+    "js": {
+      "epi.EPiServer": ""
+    },
     "meta": {
       "generator": "EPiServer"
     },
@@ -1501,6 +1517,17 @@
     "scriptSrc": "service\\.maxymiser\\.net",
     "website": "https://www.oracle.com/uk/cx/marketing/personalization-testing"
   },
+  "Oracle Moat Measurement": {
+    "cats": [
+      10
+    ],
+    "description": "Oracle Moat delivers solutions that are critical to measuring advertising effectiveness, including verification and attention, reach, and frequency as well as sales lift measurement.",
+    "icon": "Oracle.svg",
+    "scriptSrc": [
+      "moatads\\.com"
+    ],
+    "website": "https://www.oracle.com/cx/advertising/measurement/"
+  },
   "Oracle Recommendations On Demand": {
     "cats": [
       10
@@ -1623,6 +1650,24 @@
     "saas": true,
     "website": "https://apps.shopify.com/order-deadline"
   },
+  "OrderCast": {
+    "cats": [
+      6
+    ],
+    "description": "OrderCast is a B2B ecommerce platform focused on streamlining wholesale operations, offering SKU management, order handling, and customisable online store features for improved customer experience.",
+    "icon": "OrderCast.svg",
+    "implies": [
+      "Python",
+      "React"
+    ],
+    "pricing": [
+      "poa",
+      "recurring"
+    ],
+    "saas": true,
+    "url": "\\.(?:eu|us1)\\.ordercast\\.io/",
+    "website": "https://www.ordercast.io"
+  },
   "OrderLogic app": {
     "cats": [
       100
@@ -1727,10 +1772,7 @@
       "recurring"
     ],
     "saas": true,
-    "scriptSrc": [
-      "cookieconsent\\.min\\.js",
-      "cmp\\.osano\\.com/"
-    ],
+    "scriptSrc": "cmp\\.osano\\.com/",
     "website": "https://www.osano.com"
   },
   "Osterreichische Post": {

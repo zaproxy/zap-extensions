@@ -91,7 +91,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
     private static final String REPLACE_ID_TOKEN = "__REPLACE_ID__";
     private static final String REPLACE_NONCE = "__REPLACE_NONCE__";
     private static final String SCRIPT_START =
-            "<!-- OWASP ZAP Start of injected code -->\n" + "<script>\n";
+            "<!-- ZAP Start of injected code -->\n" + "<script>\n";
 
     private static final String SCRIPT_API = "/OTHER/pnh/other/manifest/";
     private static final String SCRIPT_END =
@@ -105,7 +105,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                     + "','"
                     + REPLACE_ID_TOKEN
                     + "');\n"
-                    + "<!-- OWASP ZAP End of injected code -->\n"
+                    + "<!-- ZAP End of injected code -->\n"
                     + "</script>\n";
 
     public static final String NAME = "ExtensionPlugNHack";

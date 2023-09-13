@@ -20,6 +20,7 @@
 package org.zaproxy.addon.encoder.processors.predefined;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 public class FullUrlEncoder extends DefaultEncodeDecodeProcessor {
 
@@ -27,7 +28,7 @@ public class FullUrlEncoder extends DefaultEncodeDecodeProcessor {
 
     @Override
     protected String processInternal(String value) throws IOException {
-        return HexStringEncoder.getPercentHexString(value.getBytes());
+        return HexStringEncoder.getPercentHexString(value.getBytes(StandardCharsets.UTF_8));
     }
 
     public static FullUrlEncoder getSingleton() {

@@ -46,6 +46,7 @@ import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.search.ExtensionSearch;
 import org.zaproxy.zap.view.ScanPanel;
@@ -114,7 +115,8 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         }
 
         WappalyzerData result =
-                new WappalyzerJsonParser().parse(CATEGORIES_PATH, technologyFiles, hasView());
+                new WappalyzerJsonParser()
+                        .parse(CATEGORIES_PATH, technologyFiles, View.isInitialised());
         this.applications = result.getApplications();
         this.categories = result.getCategories();
 

@@ -25,10 +25,11 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import javax.script.ScriptEngine;
-import javax.script.ScriptException;
 import javax.swing.ImageIcon;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.Engine;
+import org.zaproxy.zap.control.ExtensionFactory;
 import org.zaproxy.zap.extension.script.DefaultEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
@@ -61,6 +62,12 @@ public class GraalJsEngineWrapper extends DefaultEngineWrapper {
 
     @Override
     public ScriptEngine getEngine() {
+        Engine engine =
+                Engine.newBuilder()
+                        .allowExperimentalOptions(true)
+                        .option("engine.WarnInterpreterOnly", "false")
+                        .build();
+
         Context.Builder contextBuilder =
                 Context.newBuilder("js")
                         .allowExperimentalOptions(true)
@@ -68,21 +75,10 @@ public class GraalJsEngineWrapper extends DefaultEngineWrapper {
                         .option("js.load", "true")
                         .option("js.print", "true")
                         .option("js.nashorn-compat", "true")
-                        .allowAllAccess(true);
+                        .allowAllAccess(true)
+                        .hostClassLoader(ExtensionFactory.getAddOnLoader());
 
-        ScriptEngine se = GraalJSScriptEngine.create(null, contextBuilder);
-
-        // Force use of own (add-on) class loader
-        // https://github.com/graalvm/graaljs/issues/182
-        ClassLoader previousContextClassLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-        try {
-            se.eval("");
-        } catch (ScriptException ignore) {
-        } finally {
-            Thread.currentThread().setContextClassLoader(previousContextClassLoader);
-        }
-        return se;
+        return GraalJSScriptEngine.create(engine, contextBuilder);
     }
 
     @Override

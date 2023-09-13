@@ -4,9 +4,14 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [44] - 2023-09-08
 ### Changed
 - Maintenance changes.
 - Remove the dependency on OAST add-on, no longer required.
+- Depend on newer version of Common Library add-on.
+- Use vulnerability data directly from Common Library add-on.
 
 ## [43] - 2023-07-20
 ### Changed
@@ -350,6 +355,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version, including persistent XSS tests
 
+[44]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v41
