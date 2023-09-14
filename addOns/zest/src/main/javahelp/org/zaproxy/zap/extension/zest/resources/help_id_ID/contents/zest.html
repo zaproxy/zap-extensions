@@ -29,7 +29,11 @@ Setiap permintaan yang Anda buat di bawah prefiks yang dinyatakan akan ditambahk
 Tekan tombol 'Sedang merekam sebuah skrip Zest baru' lagi untuk berhenti merekam permintaan.<br>
 Perhatikan bahwa anda hanya dapat merekam 'Stand Alone' Semangat script dengan cara ini. Jika anda ingin membuat jenis lain dari Semangat script anda harus menggunakan mekanisme lain.
 <br><br>
-Anda juga dapat klik kanan setiap Stand Alone Semangat script dan menggunakan 'Start recording' dan 'Stop recording' tombol. 
+Anda juga dapat klik kanan setiap Stand Alone Semangat script dan menggunakan 'Start recording' dan 'Stop recording' tombol.
+<br><br>
+There are two primary methods for script recording: server-side and client-side. For client-side recording, we leverage the ZAP browser extension and a dedicated client Addon. 
+<br>
+This combination allows us to efficiently capture and save user interactions in Zest scripts. 
 
 <h3>Tombol Skrip Baru</h3>
 <ul>
@@ -41,7 +45,7 @@ Anda juga dapat klik kanan setiap Stand Alone Semangat script dan menggunakan 'S
 <li>Pilih salah satu template (jika relevan)</li>
 <li>Tekan tombol 'Simpan'</li>
 </ul>
-Setiap jenis dari skrip Zest bisa dibuat memlalui cara ini.
+Setiap jenis dari skrip Zest bisa dibuat melalui cara ini.
 
 <h3>Klik kanan template Zest</h3>
 <ul>
@@ -50,7 +54,7 @@ Setiap jenis dari skrip Zest bisa dibuat memlalui cara ini.
 <li>Klik kanan pada template dan pilih 'New Script...'</li>
 <li>Tekan tombol 'Save'</li>
 </ul>
-Setiap jenis dari skrip Zest bisa dibuat melalui cara ini.
+Any type of Zest script can be created this way.
 
 <h3>Klik kanan permintaan</h3>
 <ul>
@@ -59,10 +63,10 @@ Setiap jenis dari skrip Zest bisa dibuat melalui cara ini.
 <li>Klik kanan pada mereka</li>
 <li>Pilih menu 'Tambah ke Zest Script' yang akan memungkinkan anda untuk memilih Stand Alone Script yang ada atau buat yang baru</li>
 </ul>
-Perhatikan itu anda hanya dapat menambah permintaan ke 'Stand Alone' zest Script.
+Note that you can only add request to 'Stand Alone' Zest scripts.
 
 <h3>Plug-n-Hack</h3>
-Jika anda menggunakan Firefox versi baru maka anda bisa membuat Zest Script dari dalam browser anda.<br>
+If you are using a recent version of Firefox then you can create Zest scripts from within your browser.<br>
 <ul>
 <li>Tekan tombol 'Plug-n-Hack' pada tab 'Quick Start' ZAP</li>
 <li>Memasang Add-on Plug-n-Hack Firefox dan terima semua dialog</li>
@@ -71,17 +75,17 @@ Jika anda menggunakan Firefox versi baru maka anda bisa membuat Zest Script dari
 <li>Setiap permintaan yang anda buat melalui Zap akan ditambahkan ke script</li>
 <li>Ketik 'zap record off global' untuk menghentikan rekaman script</li>
 </ul>
-Perhatikan itu anda hanya dapat merekam 'Stand Alone' Zest script dengan cara ini. jika anda ingin membuat tipe Zest script lain anda harus menggunakan mekanisme lain.
+Note that you can only record 'Stand Alone' Zest scripts in this way. If you want to create other types of Zest script you must use another mechanism.
 
 <h2>Menyunting skrip Zest</h2>
-Zest script diubah secara grafik di tab pohon script.<br>
-Setiap pernyataan adalah simpul di pohon - klik ganda simpul untuk mengubah properti pernyataan.<br>
-Anda dapat menambah, memindahkan dan menghapus pernyataan via klik kanan simpul Zest.<br>
-Anda juga dapat menambah permintaan ke 'Stand alone' Zest script dengan mengklik kanan permintaan dalam salah satu tab lain.<br>
-Juga ada beberapa pilihan klik kanan yang tersedia saat anda pilih teks di tab Permintaan atau Respon.<br>
+Zest scripts are edited graphically in the Scripts tree tab.<br>
+Each statement is a node in the tree - double click nodes to edit the statement properties.<br>
+You can add, move and remove statements via right clicking the Zest nodes.<br>
+You can also add requests to 'Stand alone' Zest scripts by right clicking the requests in any of the other tabs.<br>
+There are also some right click options available when you select text in the Request or Response tabs.<br>
 <br>
-Zest mencakup seperangkat variabel 'built in' serta memungkinkan anda untuk menyatakan milik anda sendiri.<br>
-Menu klik kanan disediakan (jika relevan) dalam dialog sunting untuk mengizinkan anda menyisipkan pada setiap nama variabel yang tersedia.<br>
+Zest includes a set of 'built in' variables as well as allowing you to declare your own.<br>
+A right click menu is provided (where relevant) in the edit dialogs to allow you to paste in any of the available variable names.<br>
 
 <h2>Tautan eksternal</h2>
 <table>

@@ -29,7 +29,11 @@ Ang anumang kahilingan na iyong ginagawa sa ilalim ng naka-specify na prefix ay 
 Pindutin ang 'Pagtatala ng isang bagong Zest na script' muli na ihinto ang pagtatala ng mga hiling.<br>
 Tandaan na maari lamang magtala ng 'Nakatayong mag-isa' Zest na ga script sa paraan na ito. Kung ikaw ay gusto na maglikha ng iabgn mga uri ng Zest na script ay dapat kang gumamit ng ibang mekanismo.
 <br><br>
-Maari mo din i-right click ang anumang Stand Alone na Zest na script at gamitin ang 'Pag-umpisa ng pagtatala' at 'Pag hinto sa pagtatala' na mga pindutan. 
+Maari mo din i-right click ang anumang Stand Alone na Zest na script at gamitin ang 'Pag-umpisa ng pagtatala' at 'Pag hinto sa pagtatala' na mga pindutan.
+<br><br>
+There are two primary methods for script recording: server-side and client-side. For client-side recording, we leverage the ZAP browser extension and a dedicated client Addon. 
+<br>
+This combination allows us to efficiently capture and save user interactions in Zest scripts. 
 
 <h3>Ang bagong script na button</h3>
 <ul>
@@ -41,7 +45,7 @@ Maari mo din i-right click ang anumang Stand Alone na Zest na script at gamitin 
 <li>Pumilli ng isa sa mga template (kung kaugnay)</li>
 <li>Pindutin ang 'Save' na button</li>
 </ul>
-Anumang uri ng Zest na script ay pwedeng mailikha sa ganitong paraan.
+Anumang uri ng Zest script ay pwedeng mailikha sa ganitong paraan.
 
 <h3>Ang pag-right clicking sa isang Zest na template</h3>
 <ul>
@@ -50,7 +54,7 @@ Anumang uri ng Zest na script ay pwedeng mailikha sa ganitong paraan.
 <li>I-right click sa template at pumili ng 'Bagong Script...'</li>
 <li>Pindutin ang 'Save' na button</li>
 </ul>
-Anumang uri ng Zest script ay pwedeng mailikha sa ganitong paraan.
+Any type of Zest script can be created this way.
 
 <h3>Ang right clicking na mga hiling</h3>
 <ul>
@@ -59,10 +63,10 @@ Anumang uri ng Zest script ay pwedeng mailikha sa ganitong paraan.
 <li>I-right click sa kanila</li>
 <li>Piliin ang 'Magdagdag sa Zest na Script' na menu na kung saan ay nagbibigay-daan sa iyo upang pumili ng isang umiiral na Stand Alone na script o lumikha ng bago</li>
 </ul>
-Tandaan na maari ka lamang magdagdag ng kahilingan na 'Stand Alone' Zest na mga script.
+Note that you can only add request to 'Stand Alone' Zest scripts.
 
 <h3>Ang Plug-n-Hack</h3>
-Kung gumagamit ka ng isang bagong bersyon ng Firefox at pagkatapos ay maaari kang lumikha ng Zest na mga script mula sa loob ng iyong browser.<br>
+If you are using a recent version of Firefox then you can create Zest scripts from within your browser.<br>
 <ul>
 <li>Pindutin ang 'Plug-n-Hack' na button sa ZAP 'Quick Start' na tab</li>
 <li>I-install ang Plug-n-Hack Firefox Add-on at tanggapin ang lahat na mga dialog</li>
@@ -71,17 +75,17 @@ Kung gumagamit ka ng isang bagong bersyon ng Firefox at pagkatapos ay maaari kan
 <li>Anumang mga hiling na ginawa sa pamamagitan ng ZAP ay madadagdag sa script</li>
 <li>I-type ang 'zap na talaan off global' upang mahinto ang pagtatala sa script</li>
 </ul>
-Tandaan na maaari lamang magtala ng 'Stand Alone' Zest na mga script sa paraan na ito. Kung ikaw ay gusto na maglikha ng ibang mga uri ng Zest script ay dapat kang gumamit ng ibang mekanismo.
+Note that you can only record 'Stand Alone' Zest scripts in this way. If you want to create other types of Zest script you must use another mechanism.
 
 <h2>Ang pag-edit ng Zest na mga script</h2>
-Ang Zest na mga script ay na-edit na naglalarawan sa mga script na tree tab.<br>
-Bawat pangungusap ay isang node sa tree - i-double click ang mga node sa pag-edit ng pahayag na mga katangian.<br>
-Maari kang magdagdag, maglipat at mag-alis ng mga pahayag gamit ang right clicking sa mga Zest node.<br>
-Maari ka ring magdagdag ng mga kahilingan sa 'Stand alon' na mga Zest script sa pamamgitan ng kanan na pag-klik sa mga kahilingan sa anumang nasa ibang mga tab.<br>
-Mayroon ding ilang mga kanan na pag-klik sa mga opsyon magagamit kapag ikaw ay pumili ng teksto sa Kahilingan o Tugon na mga tab.<br>
+Zest scripts are edited graphically in the Scripts tree tab.<br>
+Each statement is a node in the tree - double click nodes to edit the statement properties.<br>
+You can add, move and remove statements via right clicking the Zest nodes.<br>
+You can also add requests to 'Stand alone' Zest scripts by right clicking the requests in any of the other tabs.<br>
+There are also some right click options available when you select text in the Request or Response tabs.<br>
 <br>
-Ang Zest ay nagsasama ng isang sey sa 'built in' na mga variable pati na rin ang sa pagpapahintulot sa iyo upang ipahayag ang iyong sarili.<br>
-Ang isang kanang klik na menu ay nagbibigay (kung angkop) na nasa edit na mga dialog na nagpapahintulot sa iyo na mag-paste sa alinman na magagamit na variable na mga pangalan.<br>
+Zest includes a set of 'built in' variables as well as allowing you to declare your own.<br>
+A right click menu is provided (where relevant) in the edit dialogs to allow you to paste in any of the available variable names.<br>
 
 <h2>Mga panlabas na link</h2>
 <table>

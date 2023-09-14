@@ -29,7 +29,11 @@ Belirtilen önekin altında yaptığınız tüm istekler komut dosyasına eklene
 Kaydetme isteklerini durdurmak için 'Yeni bir Zest komut dosyası kaydediliyor' butonuna tekrar basın.<br>
 Bu yöntemle yalnızca 'Bağımsız' Zest komut dosyalarını kaydedebileceğinizi unutmayın. Zest komut dosyalarının diğer türlerini oluşturmak isterseniz diğer yöntemleri kullanmalısınız.
 <br><br>
-Ayrıca herhangi bir Bağımsız Zest komut dosyasına sağ tıklayabilir ve 'Kaydı başlat' ve 'Kaydı durdur' butonlarını kullanabilirsiniz. 
+Ayrıca herhangi bir Bağımsız Zest komut dosyasına sağ tıklayabilir ve 'Kaydı başlat' ve 'Kaydı durdur' butonlarını kullanabilirsiniz.
+<br><br>
+There are two primary methods for script recording: server-side and client-side. For client-side recording, we leverage the ZAP browser extension and a dedicated client Addon. 
+<br>
+This combination allows us to efficiently capture and save user interactions in Zest scripts. 
 
 <h3>Yeni Komut Dosyası Butonu</h3>
 <ul>
@@ -50,7 +54,7 @@ Bu yöntemle herhangi türde Zest komut dosyası oluşturulabilir.
 <li>Şablona sağ tıklayın ve 'Yeni Komut Dosyası...' seçin</li>
 <li>'Kaydet' butonuna basın</li>
 </ul>
-Bu yöntemle herhangi türde Zest komut dosyası oluşturulabilir.
+Any type of Zest script can be created this way.
 
 <h3>Sağ tıklama istekleri</h3>
 <ul>
@@ -59,10 +63,10 @@ Bu yöntemle herhangi türde Zest komut dosyası oluşturulabilir.
 <li>Sağ tıklayın</li>
 <li>Mevcut bir Bağımsız komut dosyası seçmenizi veya yeni bir tane oluşturmanızı sağlayan 'Zest Komut Dosyasına Ekle' menüsünü seçin</li>
 </ul>
-Yalnızca 'Bağımsız' Zest komut dosyalarına istek ekleyebileceğinizi unutmayın.
+Note that you can only add request to 'Stand Alone' Zest scripts.
 
 <h3>Plug-n-Hack</h3>
-Eğer Firefox'un yeni bir sürümünü kullanıyorsanız, Zest komut dosyalarını tarayıcınızla oluşturabilirsiniz.<br>
+If you are using a recent version of Firefox then you can create Zest scripts from within your browser.<br>
 <ul>
 <li>ZAP 'Hızlı Başlangıç' sekmesindeki 'Plug-n-Hack' butonuna basın</li>
 <li>Plug-n-Hack Firefox eklentisini yükleyin ve tüm iletileri kabul edin</li>
@@ -71,17 +75,17 @@ Eğer Firefox'un yeni bir sürümünü kullanıyorsanız, Zest komut dosyaların
 <li>ZAP vasıtasıyla yaptığınız tüm istekler komut dosyasına eklenecek</li>
 <li>Komut dosyası kaydını durdurmak için 'zap record off global' yazın</li>
 </ul>
-Bu yöntemle yalnızca 'Bağımsız' Zest komut dosyalarını kaydedebileceğinizi unutmayın. Eğer diğer Zest komut dosyası türlerini oluşturmak istiyorsanız diğer yöntemleri kullanmalısınız.
+Note that you can only record 'Stand Alone' Zest scripts in this way. If you want to create other types of Zest script you must use another mechanism.
 
 <h2>Zest komut dosyalarını düzenleme</h2>
-Zest komut dosyaları, Komut Dosyaları ağacı sekmesinde grafiksel olarak düzenlenir.<br>
-Her ifade ağaçtaki bir düğümdür - ifade özelliklerini düzenlemek için düğümlere çift tıklayın.<br>
-Zest düğümlerine sağ tıklayarak ifadeleri ekleyebilir, taşıyabilir ve kaldırabilirsiniz.<br>
-Ayrıca diğer sekmelerin herhangi birindeki isteklere sağ tıklayarak, istekleri 'Bağımsız' Zest komut dosyalarına ekleyebilirsiniz.<br>
-Ayrıca, İstek veya Yanıt sekmelerindeki metni seçtiğinizde bazı sağ tık seçenekleri de mevcuttur.<br>
+Zest scripts are edited graphically in the Scripts tree tab.<br>
+Each statement is a node in the tree - double click nodes to edit the statement properties.<br>
+You can add, move and remove statements via right clicking the Zest nodes.<br>
+You can also add requests to 'Stand alone' Zest scripts by right clicking the requests in any of the other tabs.<br>
+There are also some right click options available when you select text in the Request or Response tabs.<br>
 <br>
-Zest hem bir grup 'yerleşik' değişkenler içerir hem de size kendinizinkileri bildirmenize olanak verir.<br>
-Kullanılabilir değişken isimlerinden herhangi birini yapıştırmanızı sağlamak için düzenleme pencerelerinde bir sağ tık menüsü (ilgili yerlerde) sağlanmıştır.<br>
+Zest includes a set of 'built in' variables as well as allowing you to declare your own.<br>
+A right click menu is provided (where relevant) in the edit dialogs to allow you to paste in any of the available variable names.<br>
 
 <h2>Dış bağlantılar</h2>
 <table>
