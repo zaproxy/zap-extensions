@@ -29,7 +29,11 @@ originally developed by the Mozilla security team and is intended to be used in 
 リクエストの記録を停止するには、もう一度「新しいZestスクリプトの記録」を押してください。<br>
 この方法では、「スタンドアロン」 Zestスクリプトしか記録できないことに注意してください。 他のタイプのZestスクリプトを作成する場合は、別のメカニズムを使用する必要があります。
 <br><br>
-任意のスタンドアロンZestスクリプトを右クリックし、「記録の開始」と「記録の停止」ボタンを使用することもできます。 
+任意のスタンドアロンZestスクリプトを右クリックし、「記録の開始」と「記録の停止」ボタンを使用することもできます。
+<br><br>
+There are two primary methods for script recording: server-side and client-side. For client-side recording, we leverage the ZAP browser extension and a dedicated client Addon. 
+<br>
+This combination allows us to efficiently capture and save user interactions in Zest scripts. 
 
 <h3>新しいスクリプトボタンをクリック</h3>
 <ul>
@@ -50,7 +54,7 @@ originally developed by the Mozilla security team and is intended to be used in 
 <li>テンプレートを右クリックし、 「新しいスクリプト・・・」を選択します。</li>
 <li>セーブボタンをクリックします</li>
 </ul>
-どんなタイプのZestスクリプトもこの方法で作成することができます。
+Any type of Zest script can be created this way.
 
 <h3>リクエストを右クリック</h3>
 <ul>
@@ -59,10 +63,10 @@ originally developed by the Mozilla security team and is intended to be used in 
 <li>選択範囲を右クリックします。</li>
 <li>「Zest スクリプトの追加」メニューを選択すると、既存のスタンドアロンスクリプトを選択したり、新しいスタンドアロンスクリプトを作成したりすることができます。</li>
 </ul>
-リクエスト追加は「スタンドアロン」Zestスクリプトのみになることを注意してください。
+Note that you can only add request to 'Stand Alone' Zest scripts.
 
 <h3>Plug-n-Hack</h3>
-最新のバージョンのFirefoxを使用している場合は、ブラウザ内でZestスクリプトを作成できます。<br>
+If you are using a recent version of Firefox then you can create Zest scripts from within your browser.<br>
 <ul>
 <li>ZAP 'クイックスタート'タブの 「Plug-n-Hack」ボタンを押します。</li>
 <li>Plug-n-Hack Firefoxアドオンをインストールし、すべてのダイアログを受け入れます。</li>
@@ -71,17 +75,17 @@ originally developed by the Mozilla security team and is intended to be used in 
 <li>ZAPを通じて行ったリクエストがすべてスクリプトに追加されます。</li>
 <li>「zap record off global」と入力してスクリプトの記録を停止します。</li>
 </ul>
-この方法では、「スタンドアロン」Zestスクリプトしか記録できないことに注意してください。 他のタイプのZestスクリプトを作成する場合は、別のメカニズムを使用する必要があります。
+Note that you can only record 'Stand Alone' Zest scripts in this way. If you want to create other types of Zest script you must use another mechanism.
 
 <h2>Zestスクリプトの編集</h2>
-Zestスクリプトは、スクリプトツリータブで視覚的に編集します。<br>
-各ステートメントは、ツリーのノードです。ノードをダブルクリックすると、ステートメントのプロパティを編集できます。<br>
-Zestノードを右クリックすると、ステートメントを追加、移動、削除できます。<br>
-他のタブでいずれかのリクエストを右クリックすると、「スタンドアロン」Zestスクリプトにリクエストを追加することもできます。<br>
-また、いくつかの右クリックオプションは「リクエスト」タブまたは「レスポンス」タブで選択したテキストにも利用できます。<br>
+Zest scripts are edited graphically in the Scripts tree tab.<br>
+Each statement is a node in the tree - double click nodes to edit the statement properties.<br>
+You can add, move and remove statements via right clicking the Zest nodes.<br>
+You can also add requests to 'Stand alone' Zest scripts by right clicking the requests in any of the other tabs.<br>
+There are also some right click options available when you select text in the Request or Response tabs.<br>
 <br>
-Zestには、「ビルトイン」の変数セットが含まれています。また、独自の変数を宣言することもできます。<br>
-編集ダイアログの右クリックメニュー (該当する場所) で、使用可能な変数名をペーストできます。<br>
+Zest includes a set of 'built in' variables as well as allowing you to declare your own.<br>
+A right click menu is provided (where relevant) in the edit dialogs to allow you to paste in any of the available variable names.<br>
 
 <h2>外部リンク</h2>
 <table>

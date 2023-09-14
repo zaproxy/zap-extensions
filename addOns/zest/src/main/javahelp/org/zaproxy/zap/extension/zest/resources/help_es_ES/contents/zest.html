@@ -29,7 +29,11 @@ Cualquier solicitud que se haga bajo el prefijo especificado será agregado al s
 Presione de nuevo "Registrando un nuevo script Zest" para detener el registro de solicitudes.<br>
 Tenga en cuenta que solo se puede registrar de esta manera scripts Zest "Independientes". Si desea crear otros tipos de script Zest se debe utilizar otro mecanismo.
 <br><br>
-También se puede hacer clic derecho en cualquier script Zest Idependiente y utilizar los botones "Iniciar registro" y "Detener registro". 
+También se puede hacer clic derecho en cualquier script Zest Idependiente y utilizar los botones "Iniciar registro" y "Detener registro".
+<br><br>
+There are two primary methods for script recording: server-side and client-side. For client-side recording, we leverage the ZAP browser extension and a dedicated client Addon. 
+<br>
+This combination allows us to efficiently capture and save user interactions in Zest scripts. 
 
 <h3>Nuevo Botón Script</h3>
 <ul>
@@ -50,7 +54,7 @@ Cualquier tipo de script Zest puede crearse de esta manera.
 <li>Haga clic derecho en la plantilla y seleccione "Nuevo Script..."</li>
 <li>Presione el botón "Guardar"</li>
 </ul>
-Cualquier tipo de script Zest puede crearse de esta manera.
+Any type of Zest script can be created this way.
 
 <h3>Hacer clic derecho en las solicitudes</h3>
 <ul>
@@ -59,10 +63,10 @@ Cualquier tipo de script Zest puede crearse de esta manera.
 <li>Haga clic derecho sobre ellos</li>
 <li>Seleccione el menú "Agregar a Script Zest" el cual permite seleccionar un script "Stand Alone" existente o crear uno nuevo</li>
 </ul>
-Tenga en cuenta que solo se pueden añadir solicitudes a los script Zest "Stand Alone".
+Note that you can only add request to 'Stand Alone' Zest scripts.
 
 <h3>Plug-n-Hack</h3>
-Si está utilizando una versión reciente de Firefox puede crear scripts Zest desde dentro del navegador.<br>
+If you are using a recent version of Firefox then you can create Zest scripts from within your browser.<br>
 <ul>
 <li>Presione el botón "Plug-n-Hack" sobre la pestaña "Inicio rápido" de ZAP</li>
 <li>Instale el complemento de Firefox Plug-n-Hack y acepte todos los cuadros de diálogo</li>
@@ -71,17 +75,17 @@ Si está utilizando una versión reciente de Firefox puede crear scripts Zest de
 <li>Cualquier solicitud que se haga a través de ZAP se añadirá al script</li>
 <li>Escriba "zap record off global" para detener el registro un script</li>
 </ul>
-Tenga en cuenta que solo se puede registrar de esta manera scripts Zest "Stand Alone". Si se desea crear otros tipos de script Zest se debe utilizar otro mecanismo.
+Note that you can only record 'Stand Alone' Zest scripts in this way. If you want to create other types of Zest script you must use another mechanism.
 
 <h2>Editar script Zest</h2>
-Los scripts Zest se editan gráficamente en la pestaña de árbol Scripts.<br>
-Cada declaración es un nodo en el árbol. Haga doble clic en los nodos para editar las propiedades de la declaración.<br>
-Se puede agregar, mover y eliminar declaraciones haciendo clic derecho en los nodos Zest.<br>
-También se pueden agregar solicitudes a los scripts Zest "Stand alone" haciendo clic derecho en las solicitudes en cualquier otra pestaña.<br>
-También hay otras opciones disponibles cuando se selecciona el texto en las pestañas Solicitud o Respuesta.<br>
+Zest scripts are edited graphically in the Scripts tree tab.<br>
+Each statement is a node in the tree - double click nodes to edit the statement properties.<br>
+You can add, move and remove statements via right clicking the Zest nodes.<br>
+You can also add requests to 'Stand alone' Zest scripts by right clicking the requests in any of the other tabs.<br>
+There are also some right click options available when you select text in the Request or Response tabs.<br>
 <br>
-Zest incluye un conjunto de variables "incorporadas" y también permite declarar variables propias.<br>
-Se proporciona un menú de clic derecho (cuando corresponda) en el cuadro de diálogos de edición que permite pegar cualquiera de los nombres de variable disponible.<br>
+Zest includes a set of 'built in' variables as well as allowing you to declare your own.<br>
+A right click menu is provided (where relevant) in the edit dialogs to allow you to paste in any of the available variable names.<br>
 
 <h2>Enlaces externos</h2>
 <table>
