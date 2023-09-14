@@ -34,6 +34,12 @@ public class Item extends AbstractItem {
     @JsonDeserialize(using = ObjectDeserializer.class)
     private Request request;
 
+    public Item() {}
+
+    public Item(Request request) {
+        this.request = request;
+    }
+
     public Request getRequest() {
         return request;
     }

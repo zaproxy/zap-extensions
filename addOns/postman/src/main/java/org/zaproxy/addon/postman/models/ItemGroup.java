@@ -35,6 +35,12 @@ public class ItemGroup extends AbstractItem {
     @JsonDeserialize(using = ListDeserializer.class)
     private List<AbstractItem> item;
 
+    public ItemGroup() {}
+
+    public ItemGroup(List<AbstractItem> item) {
+        this.item = item;
+    }
+
     public List<AbstractItem> getItem() {
         return item;
     }

@@ -20,6 +20,7 @@
 package org.zaproxy.addon.postman.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.List;
 import org.zaproxy.addon.postman.deserializers.ListDeserializer;
@@ -29,8 +30,14 @@ import org.zaproxy.addon.postman.deserializers.ObjectDeserializer;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Body {
 
+    public static final String RAW = "raw";
+    public static final String URL_ENCODED = "urlencoded";
+    public static final String FORM_DATA = "formdata";
+    public static final String FILE = "file";
+    public static final String GRAPHQL = "graphql";
+
     private static final List<String> ALLOWED_MODES =
-            List.of("raw", "urlencoded", "formdata", "file", "graphql");
+            List.of(RAW, URL_ENCODED, FORM_DATA, FILE, GRAPHQL);
 
     @JsonDeserialize(using = ObjectDeserializer.class)
     private String mode;
@@ -42,12 +49,14 @@ public class Body {
     private List<KeyValueData> urlencoded;
 
     @JsonDeserialize(using = ListDeserializer.class)
+    @JsonProperty("formdata")
     private List<FormData> formData;
 
     @JsonDeserialize(using = ObjectDeserializer.class)
     private File file;
 
     @JsonDeserialize(using = ObjectDeserializer.class)
+    @JsonProperty("graphql")
     private GraphQl graphQl;
 
     @JsonDeserialize(using = ObjectDeserializer.class)
@@ -55,6 +64,12 @@ public class Body {
 
     @JsonDeserialize(using = ObjectDeserializer.class)
     private boolean disabled;
+
+    public Body() {}
+
+    public Body(String mode) {
+        this.mode = mode;
+    }
 
     public String getMode() {
         return mode;
@@ -143,6 +158,13 @@ public class Body {
 
         @JsonDeserialize(using = ObjectDeserializer.class)
         private String type;
+
+        public FormData() {}
+
+        public FormData(String key, String value, String type) {
+            super(key, value);
+            this.type = type;
+        }
 
         public String getSrc() {
             return src;
