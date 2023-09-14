@@ -21,6 +21,7 @@ package org.zaproxy.addon.postman;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -80,6 +81,9 @@ public class PostmanParser {
 
     public PostmanCollection parse(String collectionJson) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.setTypeFactory(
+                TypeFactory.defaultInstance()
+                        .withClassLoader(PostmanParser.class.getClassLoader()));
         return objectMapper.readValue(collectionJson, PostmanCollection.class);
     }
 

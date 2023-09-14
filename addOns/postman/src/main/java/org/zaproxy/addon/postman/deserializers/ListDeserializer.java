@@ -23,7 +23,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,26 +31,25 @@ import org.zaproxy.addon.postman.models.AbstractListElement;
 
 public class ListDeserializer extends JsonDeserializer<List<AbstractListElement>> {
 
-    private final ObjectMapper mapper = new ObjectMapper();
-
     @Override
     public List<AbstractListElement> deserialize(JsonParser jsonParser, DeserializationContext ctxt)
             throws IOException {
         JsonNode itemsNode = jsonParser.getCodec().readTree(jsonParser);
 
         if (itemsNode.isArray()) {
-            return deserializeArray(itemsNode);
+            return deserializeArray(jsonParser, itemsNode);
         } else if (itemsNode.isObject()) {
-            return deserializeObject(itemsNode);
+            return deserializeObject(jsonParser, itemsNode);
         }
 
         return List.of();
     }
 
-    private List<AbstractListElement> deserializeArray(JsonNode itemsNode) {
-        List<AbstractListElement> items = new ArrayList<AbstractListElement>();
+    private static List<AbstractListElement> deserializeArray(
+            JsonParser jsonParser, JsonNode itemsNode) {
+        List<AbstractListElement> items = new ArrayList<>();
         for (JsonNode itemNode : itemsNode) {
-            AbstractListElement item = deserializeItem(itemNode);
+            AbstractListElement item = deserializeItem(jsonParser, itemNode);
             if (item != null) {
                 items.add(item);
             }
@@ -59,14 +57,15 @@ public class ListDeserializer extends JsonDeserializer<List<AbstractListElement>
         return Collections.unmodifiableList(items);
     }
 
-    private List<AbstractListElement> deserializeObject(JsonNode itemNode) {
-        AbstractListElement item = deserializeItem(itemNode);
+    private static List<AbstractListElement> deserializeObject(
+            JsonParser jsonParser, JsonNode itemNode) {
+        AbstractListElement item = deserializeItem(jsonParser, itemNode);
         return (item != null) ? List.of(item) : List.of();
     }
 
-    private AbstractListElement deserializeItem(JsonNode itemNode) {
+    private static AbstractListElement deserializeItem(JsonParser jsonParser, JsonNode itemNode) {
         try {
-            return mapper.treeToValue(itemNode, AbstractListElement.class);
+            return jsonParser.getCodec().treeToValue(itemNode, AbstractListElement.class);
         } catch (Exception e) {
             return null;
         }
