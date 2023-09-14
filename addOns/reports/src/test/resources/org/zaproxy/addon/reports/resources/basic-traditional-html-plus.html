@@ -58,7 +58,7 @@
             1,
             null,
             null,
-            null];
+            1];
             /*]]>*/
             new Chart(document.getElementById("summaryChart"),
                     {
@@ -127,7 +127,7 @@
 					<div>!reports.report.risk.0!</div>
 				</td>
 				<td align="center">
-					<div>0</div>
+					<div>1</div>
 				</td>
 			</tr>
 			<tr>
@@ -156,6 +156,11 @@
 				<td><a href="#plugin-1">XSS</a></td>
 				<td align="center" class="risk-3">!reports.report.risk.3!</td>
 				<td align="center">2</td>
+			</tr>
+			<tr>
+				<td><a href="#plugin-1"></a></td>
+				<td align="center" class="risk-0">!reports.report.risk.0!</td>
+				<td align="center">0</td>
 			</tr>
 		</table>
 		<div class="spacer-lg"></div>
@@ -495,6 +500,53 @@
 				<tr>
 					<td width="20%">!reports.report.alerts.detail.wascid!</td>
 					<td width="80%">456</td>
+				</tr>
+				<tr>
+					<td width="20%">!reports.report.alerts.detail.pluginid!</td>
+					<td width="80%"><a
+						href="https://www.zaproxy.org/docs/alerts/1/">1</a></td>
+				</tr>
+			</table>
+			<div class="spacer"></div>
+		
+			<table class="results">
+				<tr height="24">
+					<th width="20%" class="risk-0"><a
+						id="plugin-1"></a>
+						<div>!reports.report.risk.0!</div></th>
+					<th class="risk-0"></th>
+				</tr>
+				<tr>
+					<td width="20%">!reports.report.alerts.detail.description!</td>
+					<td width="80%"></td>
+				</tr>
+				<TR vAlign="top">
+					<TD colspan="2"></TD>
+				</TR>
+				
+				<tr>
+					<td width="20%">!reports.report.alerts.detail.instances!</td>
+					<td width="80%">0</td>
+				</tr>
+				<tr>
+					<td width="20%">!reports.report.alerts.detail.solution!</td>
+					<td width="80%"></td>
+				</tr>
+				<tr>
+					<td width="20%">!reports.report.alerts.detail.reference!</td>
+					<td width="80%"></td>
+				</tr>
+				<tr>
+					<td width="20%">!reports.report.alerts.detail.tags!</td>
+					<td width="80%"></td>
+				</tr>
+				<tr>
+					<td width="20%">!reports.report.alerts.detail.cweid!</td>
+					<td width="80%"></td>
+				</tr>
+				<tr>
+					<td width="20%">!reports.report.alerts.detail.wascid!</td>
+					<td width="80%"></td>
 				</tr>
 				<tr>
 					<td width="20%">!reports.report.alerts.detail.pluginid!</td>

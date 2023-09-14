@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Test Title</title>
+
+<script src="basic-high-level-report/Chart.min.js" type="text/javascript"></script>
+<script src="basic-high-level-report/main.js"
+	type="text/javascript"></script>
+<link rel="stylesheet" href="basic-high-level-report/Chart.min.css">
+<!-- CSS only -->
+
+<link rel="stylesheet" href="basic-high-level-report/main.css">
+<link rel="stylesheet" href="basic-high-level-report/bootstrap.min.css">
+<link rel="stylesheet" href="basic-high-level-report/normalize.css">
+
+</head>
+<body>
+	<!-- Header material for report template -->
+	<div class="container">
+		<div class="row"></div>
+		<div class="row">
+			<div class="mx-auto" style="width: 50%;">
+				
+					<h1>
+						<!-- The ZAP Logo -->
+						<img src="basic-high-level-report/zap32x32.png" alt="">
+						<th>Test Title</th>
+					</h1>
+				
+			</div>
+		</div>
+		<div class="row"></div>
+		<div class="row">
+			<em
+				class="text-right">!reports.report.generated!</em> <em
+				class="text-right">!reports.report.zapVersion!</em>
+		</div>
+	</div>
+	<p></p>
+
+	<!-- Description, and first row of charts-->
+	<div class="container ">
+		
+
+
+
+			<div class="row">
+				<div class="col-md-2 col-lg-2 col-sm-3 col-xs-12">
+					<div class="row">
+						<p></p>
+					</div>
+					<div class="row border-bottom">
+						<b>Most Severe Alert</b> <br> <span
+							class="risk-3">High</span>   <span
+							class="risk-0">Informational</span>
+					</div>
+
+				</div>
+
+
+				
+					<th>
+						<div class="col-md-5 col-lg-5 col-sm-9 col-xs-12 piChartWrapper">
+							<canvas class="styled_canvas" id="summaryChart" width="100%"
+								height="100%"></canvas>
+						</div>
+					</th>
+				
+
+				<script type="text/javascript">
+                    /*<![CDATA[*/
+                    var title = "Vulnerability Severity";
+                    var labels = [
+                    "!reports.report.risk.3!",
+                    "!reports.report.risk.2!",
+                    "!reports.report.risk.1!",
+                    "!reports.report.risk.0!"];
+                    var data = [
+                    1,
+                    null,
+                    null,
+                    1];
+                    /*]]>*/
+
+                    renderSummaryChart(title, labels, data);
+                </script>
+
+				
+
+
+					<div
+						class="col-md-5 col-lg-4 col-sm-9 col-xs-12 piChartWrapper styled_canvas">
+						<h3>Report Description</h3>
+						<ul>
+							
+								<li>Test Description</li>
+								
+							
+						</ul>
+
+					</div>
+
+				
+
+			</div>
+		
+
+	</div>
+	<p></p>
+	<div class="container left_right_borders">
+		<div class="row">
+
+			<div class="col-md-2 col-lg-3 col-sm-6 col-xs-12">
+				<div class="row">
+					<p></p>
+				</div>
+				<div class="row border-bottom">
+					<b>Most Common Bug</b><br>
+					<span id="common_bug"></span>
+				</div>
+				<div class="row"></div>
+			</div>
+
+			
+				<div
+					class="col-md-10 col-lg-9 col-sm-12 col-xs-12 horizontalBarChartWrapper">
+					<canvas class="styled_canvas" id="summaryChartBugs" width="100%"
+						height="50%"></canvas>
+				</div>
+			
+			<script type="text/javascript">
+                initializeSummaryBugsChartRender();
+            </script>
+			<script type="text/javascript">
+                    /*<![CDATA[*/
+                    bugs_count = 2;
+                    bugs_label = "XSS";
+                    risk = "!reports.report.risk.3!";
+                    bugs_color = ""
+                    if (risk === "High") {
+                        bugs_color = "red";
+                    } else if (risk === "Medium") {
+                        bugs_color = "orange";
+                    } else if (risk === "Low") {
+                        bugs_color = "yellow";
+                    } else {
+                        bugs_color = "blue";
+                    }
+                    if (bugs_count > highest_count) {
+                        highest_count = bugs_count;
+                        most_common_bug = bugs_label;
+                        most_common_bug_color = bugs_color;
+                        document.getElementById('common_bug').innerText = most_common_bug
+                                + ' (' + bugs_count + ')';
+                    }
+                    all_bugs_count.push(bugs_count)
+                    all_colors.push(bugs_color)
+                    all_labels.push(bugs_label)
+                    /*]]>*/
+                </script><script type="text/javascript">
+                    /*<![CDATA[*/
+                    bugs_count = 0;
+                    bugs_label = "";
+                    risk = "!reports.report.risk.0!";
+                    bugs_color = ""
+                    if (risk === "High") {
+                        bugs_color = "red";
+                    } else if (risk === "Medium") {
+                        bugs_color = "orange";
+                    } else if (risk === "Low") {
+                        bugs_color = "yellow";
+                    } else {
+                        bugs_color = "blue";
+                    }
+                    if (bugs_count > highest_count) {
+                        highest_count = bugs_count;
+                        most_common_bug = bugs_label;
+                        most_common_bug_color = bugs_color;
+                        document.getElementById('common_bug').innerText = most_common_bug
+                                + ' (' + bugs_count + ')';
+                    }
+                    all_bugs_count.push(bugs_count)
+                    all_colors.push(bugs_color)
+                    all_labels.push(bugs_label)
+                    /*]]>*/
+                </script>
+			<script type="text/javascript">
+                title = "Count of Vulnerability Occurrences";
+                class_of_most_common_bug = ''
+                if (most_common_bug_color === 'red')
+                    new_class = 'risk-3'
+                else if (most_common_bug_color === 'orange')
+                    new_class = 'risk-2'
+                else if (most_common_bug_color === 'yellow')
+                    new_class = 'risk-1'
+                else if (most_common_bug_color === 'blue')
+                    new_class = 'risk-0'
+                document.getElementById('common_bug').classList.add(new_class);
+                renderSummaryBugsChart(title, all_labels, all_bugs_count,
+                        all_colors);
+            </script>
+			<p></p>
+		</div>
+	</div>
+	<p></p>
+
+	<div class="container">
+
+		
+			<div class="row">
+
+				<h3>Vulnerability Impact</h3>
+				<table class="alerts table table-hover table-bordered table-striped">
+					<caption>
+						<div>Vulnerability Descriptions</div>
+					</caption>
+					<tr>
+						<th width="5%" align="center" scope="col">#</th>
+						<th width="20%" align="center" scope="col">Name</th>
+						<th width="75%" align="center" scope="col">Impact</th>
+					</tr>
+					
+						
+							<tr>
+
+								
+								
+								
+								
+
+								<td><span>XSS</span> <span>
+										<a title="Reference 1: Test Reference"
+										href="Test Reference">[1]</a>
+								</span></td>
+								<td><span>
+										<div>XSS Description</div>
+								</span></td>
+							</tr>
+						
+							<tr>
+
+								
+								
+								
+								
+
+								<td><span></span> </td>
+								<td><span>
+										<div></div>
+								</span></td>
+							</tr>
+						
+					
+				</table>
+				<div class="spacer-lg"></div>
+			</div>
+		
+	</div>
+
+	<!-- JavaScript Bundle with Popper -->
+	<script src="basic-high-level-report/bootstrap.bundle.min.js" type="text/javascript"></script>
+	<script src="basic-high-level-report/main.js"
+		type="text/javascript"></script>
+</body>
+</html>
+
