@@ -696,6 +696,13 @@ class ExtensionReportsUnitTest {
         AlertNode root = new AlertNode(0, "Test");
         reportData.setAlertTreeRootNode(root);
         root.add(getAlertNode("XSS", "XSS Description", Alert.RISK_HIGH, Alert.CONFIDENCE_MEDIUM));
+
+        Alert emptyAlert = new Alert(1, 1, 1, "");
+        emptyAlert.setMessage(new HttpMessage(new URI("http://example.com", true)));
+        AlertNode instanceEmptyAlert = new AlertNode(0, "");
+        instanceEmptyAlert.setUserObject(emptyAlert);
+        root.add(instanceEmptyAlert);
+
         addSites(reportData);
         return reportData;
     }
@@ -724,6 +731,7 @@ class ExtensionReportsUnitTest {
     @ParameterizedTest
     @ValueSource(
             strings = {
+                "high-level-report",
                 "traditional-json",
                 "traditional-json-plus",
                 "traditional-md",
@@ -1170,6 +1178,7 @@ class ExtensionReportsUnitTest {
             Control.initSingletonForTesting(Model.getSingleton(), extensionLoader);
             Model.getSingleton().getOptionsParam().load(new ZapXmlConfiguration());
 
+            generateTestFile("high-level-report");
             generateTestFile("traditional-json");
             generateTestFile("traditional-md");
             generateTestFile("traditional-xml");

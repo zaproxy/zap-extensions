@@ -250,7 +250,7 @@
 										href="#">Alert Name</a>
 								</span></td>
 								<td><span
-									th:with="desc=${#strings.arraySplit(alert.userObject.description, '\n')[0]}">
+									th:with="desc=${#strings.isEmpty(alert.userObject.description) ? '' : #strings.arraySplit(alert.userObject.description, '\n')[0]}">
 										<div th:text="${desc}">Description</div>
 								</span></td>
 							</tr>
