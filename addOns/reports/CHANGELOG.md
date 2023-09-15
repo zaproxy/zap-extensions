@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Depend on newer versions of Automation Framework and Common Library add-ons (Related to Issue 7961).
+- Update JavaDoc links to always link to latest version of ZAP.
 
 ### Fixed
 - Fix error when generating the High Level Report Sample with an alert that has an empty description (Issue 8071).
