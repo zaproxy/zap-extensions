@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Fixed
+- Anti-CSRF token scan rule false positives by adding status code check for base and new requests
 
 ## [48] - 2023-09-08
 ### Added
