@@ -21,6 +21,8 @@ package org.zaproxy.addon.postman.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.List;
 import org.zaproxy.addon.postman.deserializers.ListDeserializer;
@@ -139,8 +141,9 @@ public class Body {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class File {
+        @JsonSetter(nulls = Nulls.SKIP)
         @JsonDeserialize(using = ObjectDeserializer.class)
-        private String src;
+        private String src = "";
 
         public String getSrc() {
             return src;
@@ -153,8 +156,9 @@ public class Body {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class FormData extends KeyValueData {
+        @JsonSetter(nulls = Nulls.SKIP)
         @JsonDeserialize(using = ObjectDeserializer.class)
-        private String src;
+        private String src = "";
 
         @JsonDeserialize(using = ObjectDeserializer.class)
         private String type;
@@ -185,8 +189,9 @@ public class Body {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class GraphQl {
+        @JsonSetter(nulls = Nulls.SKIP)
         @JsonDeserialize(using = ObjectDeserializer.class)
-        private String query;
+        private String query = "";
 
         @JsonDeserialize(using = ObjectDeserializer.class)
         private String variables;

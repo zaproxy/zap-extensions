@@ -371,10 +371,20 @@ public class PostmanParser {
             contentType = HttpHeader.JSON_CONTENT_TYPE;
 
             GraphQl graphQlBody = body.getGraphQl();
-            String query = graphQlBody.getQuery().replaceAll("\r\n", "\\\\r\\\\n");
-            String variables = graphQlBody.getVariables().replaceAll("\\s", "");
 
-            bodyContent = String.format("{\"query\":\"%s\", \"variables\":%s}", query, variables);
+            String query = graphQlBody.getQuery();
+            String variables = graphQlBody.getVariables();
+
+            if (variables != null && !variables.isEmpty()) {
+                bodyContent =
+                        String.format(
+                                "{\"query\":\"%s\", \"variables\":%s}",
+                                query.replaceAll("\r\n", "\\\\r\\\\n"),
+                                variables.replaceAll("\\s", ""));
+            } else {
+                bodyContent =
+                        String.format("{\"query\":\"%s\"}", query.replaceAll("\r\n", "\\\\r\\\\n"));
+            }
         }
 
         if (!isContentTypeAlreadySet(request.getHeader())) {
