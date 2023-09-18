@@ -215,34 +215,54 @@ public class ImportDialog extends AbstractDialog {
         }
 
         PostmanParser parser = new PostmanParser();
+        boolean importedWithoutErrors = false;
 
         try {
             new URL(collectionLocation).toURI();
             new URI(collectionLocation, true);
-            parser.importFromUrl(getCollectionField().getText());
-            return true;
-        } catch (URIException | MalformedURLException | URISyntaxException e) {
+            importedWithoutErrors = parser.importFromUrl(getCollectionField().getText(), true);
+        } catch (URIException | MalformedURLException | URISyntaxException e1) {
             // Not a valid URI, try to import as a file
+            var file = new File(collectionLocation);
+            if (!file.canRead()) {
+                ThreadUtils.invokeAndWaitHandled(
+                        () -> {
+                            showWarningFileNotFound(collectionLocation);
+                            getCollectionField().requestFocusInWindow();
+                        });
+                return false;
+            }
+            try {
+                importedWithoutErrors = parser.importFromFile(getCollectionField().getText(), true);
+            } catch (IOException e2) {
+                handleParseException(e2);
+                return false;
+            }
         } catch (IOException e) {
             handleParseException(e);
             return false;
         }
 
-        var file = new File(collectionLocation);
-        if (!file.canRead()) {
+        if (importedWithoutErrors) {
             ThreadUtils.invokeAndWaitHandled(
                     () -> {
-                        showWarningFileNotFound(collectionLocation);
+                        hideImportDialog();
+                        View.getSingleton()
+                                .showMessageDialog(
+                                        Constant.messages.getString("postman.import.ok"));
+                    });
+        } else {
+            String baseMsg = Constant.messages.getString("postman.import.okWithError");
+            ThreadUtils.invokeAndWaitHandled(
+                    () -> {
+                        showWarningDialog(
+                                baseMsg
+                                        + "\n\n"
+                                        + Constant.messages.getString("postman.import.trailer"));
                         getCollectionField().requestFocusInWindow();
                     });
-            return false;
         }
-        try {
-            parser.importFromFile(getCollectionField().getText());
-        } catch (IOException e) {
-            handleParseException(e);
-            return false;
-        }
+
         return true;
     }
 
@@ -271,12 +291,12 @@ public class ImportDialog extends AbstractDialog {
     }
 
     private void showParseErrors(Exception ex) {
-        String baseMsg = Constant.messages.getString("postman.parse.error");
+        String baseMsg = Constant.messages.getString("postman.import.error");
 
         View.getSingleton().getOutputPanel().append(baseMsg + "\n");
         View.getSingleton().getOutputPanel().append(ex.getMessage());
 
-        showWarningDialog(baseMsg + "\n\n" + Constant.messages.getString("postman.parse.trailer"));
+        showWarningDialog(baseMsg + "\n\n" + Constant.messages.getString("postman.import.trailer"));
     }
 
     private void handleParseException(Exception e) {

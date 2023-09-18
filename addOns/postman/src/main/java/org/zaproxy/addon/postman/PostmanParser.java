@@ -42,6 +42,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.postman.models.AbstractItem;
 import org.zaproxy.addon.postman.models.Body;
 import org.zaproxy.addon.postman.models.Body.FormData;
@@ -58,6 +59,9 @@ public class PostmanParser {
     Requestor requestor;
     private static final String MESSAGE_PREFIX = "postman.importfrom";
 
+    private static final String IMPORT_FORMAT_ERROR = "postman.import.error.format";
+    private static final String IMPORT_WARNING = "postman.import.warning";
+
     private static final Map<String, String> CONTENT_TYPE_MAP =
             Map.of(
                     "html", "text/html",
@@ -69,7 +73,8 @@ public class PostmanParser {
         requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR, new HistoryPersister());
     }
 
-    public void importFromFile(final String filePath) throws IOException {
+    public boolean importFromFile(final String filePath, final boolean initViaUi)
+            throws IOException {
         File file = new File(filePath);
         if (!file.exists()) {
             throw new FileNotFoundException(
@@ -81,10 +86,11 @@ public class PostmanParser {
         }
 
         String collectionJson = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-        importCollection(collectionJson);
+        return importCollection(collectionJson, initViaUi);
     }
 
-    public void importFromUrl(final String url) throws IllegalArgumentException, IOException {
+    public boolean importFromUrl(final String url, final boolean initViaUi)
+            throws IllegalArgumentException, IOException {
         if (url.isEmpty()) {
             throw new IllegalArgumentException(
                     Constant.messages.getString(MESSAGE_PREFIX + "url.emptyurl"));
@@ -98,16 +104,37 @@ public class PostmanParser {
         }
 
         String collectionJson = requestor.getResponseBody(uri);
-        importCollection(collectionJson);
+        return importCollection(collectionJson, initViaUi);
     }
 
-    public void importCollection(String collection) throws JsonProcessingException {
+    List<HttpMessage> getHttpMessages(String collection, List<String> errors)
+            throws JsonProcessingException {
         PostmanCollection postmanCollection = parse(collection);
-
         List<HttpMessage> httpMessages = new ArrayList<>();
-        extractHttpMessages(postmanCollection.getItem(), httpMessages);
 
-        requestor.run(httpMessages);
+        extractHttpMessages(postmanCollection.getItem(), httpMessages, errors);
+
+        return httpMessages;
+    }
+
+    public boolean importCollection(String collection, final boolean initViaUi)
+            throws JsonProcessingException {
+        List<String> errors = new ArrayList<>();
+        List<HttpMessage> httpMessages = getHttpMessages(collection, errors);
+
+        requestor.run(httpMessages, errors);
+
+        outputErrors(errors, initViaUi);
+
+        return errors.isEmpty();
+    }
+
+    private static void outputErrors(List<String> errors, final boolean initViaUi) {
+        if (initViaUi && errors != null) {
+            for (String error : errors) {
+                View.getSingleton().getOutputPanel().append(error + "\n");
+            }
+        }
     }
 
     public PostmanCollection parse(String collectionJson) throws JsonProcessingException {
@@ -119,15 +146,25 @@ public class PostmanParser {
     }
 
     static void extractHttpMessages(List<AbstractItem> items, List<HttpMessage> httpMessages) {
-        for (AbstractItem item : items) {
-            if (item instanceof Item) {
-                HttpMessage httpMessage = extractHttpMessage((Item) item);
-                if (httpMessage != null) {
-                    httpMessages.add(httpMessage);
+        extractHttpMessages(items, httpMessages, new ArrayList<>());
+    }
+
+    static void extractHttpMessages(
+            List<AbstractItem> items, List<HttpMessage> httpMessages, List<String> errors) {
+        if (items != null) {
+            for (AbstractItem item : items) {
+                if (item instanceof Item) {
+                    HttpMessage httpMessage = extractHttpMessage((Item) item, errors);
+                    if (httpMessage != null) {
+                        httpMessages.add(httpMessage);
+                    }
+                } else if (item instanceof ItemGroup) {
+                    extractHttpMessages(((ItemGroup) item).getItem(), httpMessages, errors);
                 }
-            } else if (item instanceof ItemGroup) {
-                extractHttpMessages(((ItemGroup) item).getItem(), httpMessages);
             }
+        }
+        if (httpMessages.isEmpty()) {
+            errors.add(Constant.messages.getString("postman.import.error.noItem"));
         }
     }
 
@@ -147,13 +184,27 @@ public class PostmanParser {
     }
 
     static HttpMessage extractHttpMessage(Item item) {
+        return extractHttpMessage(item, new ArrayList<>());
+    }
+
+    static HttpMessage extractHttpMessage(Item item, List<String> errors) {
         Request request = item.getRequest();
         if (request == null) {
+            errors.add(
+                    Constant.messages.getString(
+                            IMPORT_FORMAT_ERROR,
+                            item.getName(),
+                            Constant.messages.getString("postman.import.errorMsg.reqNotPresent")));
             return null;
         }
 
         Url url = request.getUrl();
         if (url == null) {
+            errors.add(
+                    Constant.messages.getString(
+                            IMPORT_FORMAT_ERROR,
+                            item.getName(),
+                            Constant.messages.getString("postman.import.errorMsg.urlNotPresent")));
             return null;
         }
 
@@ -162,6 +213,11 @@ public class PostmanParser {
             String rawUrl = url.getRaw();
             httpMessage = new HttpMessage(new URI(rawUrl, false));
         } catch (URIException | HttpMalformedHeaderException | NullPointerException e) {
+            errors.add(
+                    Constant.messages.getString(
+                            IMPORT_FORMAT_ERROR,
+                            item.getName(),
+                            Constant.messages.getString("postman.import.errorMsg.rawInvalid")));
             return null;
         }
 
@@ -249,7 +305,9 @@ public class PostmanParser {
             for (FormData formData : body.getFormData()) {
                 if (!formData.isDisabled()) {
                     formDataBody
-                            .append(generateMultiPartBody(formData, boundary))
+                            .append(
+                                    generateMultiPartBody(
+                                            formData, boundary, errors, item.getName()))
                             .append(HttpHeader.CRLF);
                 }
             }
@@ -264,11 +322,16 @@ public class PostmanParser {
 
             String src = body.getFile().getSrc();
 
-            contentType = getFileContentType(src);
+            contentType = getFileContentType(src, errors, item.getName());
 
             try {
                 bodyContent = FileUtils.readFileToString(new File(src), StandardCharsets.UTF_8);
             } catch (IOException e1) {
+                errors.add(
+                        Constant.messages.getString(
+                                IMPORT_WARNING,
+                                item.getName(),
+                                e1.getClass().getName() + ": " + e1.getMessage()));
             }
         } else if (mode.equals(Body.GRAPHQL)) {
             if (body.getGraphQl() == null) {
@@ -294,7 +357,8 @@ public class PostmanParser {
         return httpMessage;
     }
 
-    private static String generateMultiPartBody(FormData formData, String boundary) {
+    private static String generateMultiPartBody(
+            FormData formData, String boundary, List<String> errors, String itemName) {
         StringBuilder multipartData = new StringBuilder();
 
         multipartData.append("--").append(boundary).append(HttpHeader.CRLF);
@@ -315,7 +379,7 @@ public class PostmanParser {
                     .append('"')
                     .append(HttpHeader.CRLF);
 
-            String propertyContentType = getFileContentType(formData.getSrc());
+            String propertyContentType = getFileContentType(formData.getSrc(), errors, itemName);
             if (!propertyContentType.isEmpty()) {
                 multipartData
                         .append(HttpHeader.CONTENT_TYPE)
@@ -330,6 +394,11 @@ public class PostmanParser {
                 String defn = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
                 multipartData.append(defn);
             } catch (IOException e) {
+                errors.add(
+                        Constant.messages.getString(
+                                IMPORT_WARNING,
+                                itemName,
+                                "Could not read file: " + e.getMessage()));
                 return "";
             }
         } else {
@@ -342,11 +411,19 @@ public class PostmanParser {
         return multipartData.toString();
     }
 
-    private static String getFileContentType(String value) {
+    private static String getFileContentType(String value, List<String> errors, String itemName) {
         try {
             String osAppropriatePath = value.startsWith("/") ? value.substring(1) : value;
             return Files.probeContentType(Paths.get(osAppropriatePath));
         } catch (IOException e) {
+            errors.add(
+                    Constant.messages.getString(
+                            IMPORT_WARNING,
+                            itemName,
+                            "Could not get content type of file - "
+                                    + e.getClass().getName()
+                                    + ": "
+                                    + e.getMessage()));
             return "";
         }
     }
