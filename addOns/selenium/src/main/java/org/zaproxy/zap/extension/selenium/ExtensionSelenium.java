@@ -68,6 +68,7 @@ import org.zaproxy.zap.extension.AddonFilesChangedListener;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.selenium.internal.BrowserArgument;
 import org.zaproxy.zap.extension.selenium.internal.BuiltInSingleWebDriverProvider;
 import org.zaproxy.zap.utils.Stats;
 
@@ -517,7 +518,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
     private SeleniumOptionsPanel getOptionsPanel() {
         if (optionsPanel == null) {
-            optionsPanel = new SeleniumOptionsPanel(getMessages());
+            optionsPanel = new SeleniumOptionsPanel(getView().getOptionsDialog(), getMessages());
         }
         return optionsPanel;
     }
@@ -965,6 +966,17 @@ public class ExtensionSelenium extends ExtensionAdaptor {
         return Model.getSingleton().getOptionsParam().getParamSet(SeleniumOptions.class);
     }
 
+    private static void addFirefoxArguments(FirefoxOptions options) {
+        List<String> arguments =
+                getSeleniumOptions().getBrowserArguments(Browser.FIREFOX.getId()).stream()
+                        .filter(BrowserArgument::isEnabled)
+                        .map(BrowserArgument::getArgument)
+                        .collect(Collectors.toList());
+        if (!arguments.isEmpty()) {
+            options.addArguments(arguments);
+        }
+    }
+
     private static void addFirefoxExtensions(FirefoxDriver driver) {
         List<Path> exts =
                 getSeleniumOptions().getEnabledBrowserExtensions(Browser.FIREFOX).stream()
@@ -972,6 +984,17 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                         .collect(Collectors.toList());
         if (!exts.isEmpty()) {
             exts.stream().forEach(driver::installExtension);
+        }
+    }
+
+    private static void addChromeArguments(ChromeOptions options) {
+        List<String> arguments =
+                getSeleniumOptions().getBrowserArguments(Browser.CHROME.getId()).stream()
+                        .filter(BrowserArgument::isEnabled)
+                        .map(BrowserArgument::getArgument)
+                        .collect(Collectors.toList());
+        if (!arguments.isEmpty()) {
+            options.addArguments(arguments);
         }
     }
 
@@ -1008,6 +1031,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                     chromeOptions.setBinary(binary);
                 }
 
+                addChromeArguments(chromeOptions);
                 consumer.accept(chromeOptions);
                 return new ChromeDriver(chromeOptions);
             case FIREFOX:
@@ -1063,6 +1087,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
                     firefoxOptions.addArguments("-headless");
                 }
 
+                addFirefoxArguments(firefoxOptions);
                 consumer.accept(firefoxOptions);
                 FirefoxDriver driver = new FirefoxDriver(firefoxOptions);
                 if (enableExtensions) {

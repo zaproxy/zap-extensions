@@ -19,12 +19,14 @@
  */
 package org.zaproxy.zap.extension.selenium;
 
+import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
@@ -39,6 +41,8 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
+import org.zaproxy.zap.extension.selenium.internal.BrowserArgumentsDialog;
+import org.zaproxy.zap.extension.selenium.internal.BrowserArgumentsTableModel;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.AbstractMultipleOptionsTableModel;
 
@@ -69,11 +73,16 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
     private final JButton useBundledFirefoxDriverButton;
 
     private final JTextField chromeBinaryTextField;
+    private final JTextField chromeArgumentsTextField;
+    private final BrowserArgumentsTableModel chromeArgumentsTableModel;
     private final JTextField firefoxBinaryTextField;
+    private final JTextField firefoxArgumentsTextField;
+    private final BrowserArgumentsTableModel firefoxArgumentsTableModel;
     private final OptionsBrowserExtensionsTableModel browserExtModel;
+    private final AtomicBoolean confirmRemoveBrowserArgument;
     private static String directory;
 
-    public SeleniumOptionsPanel(ResourceBundle resourceBundle) {
+    public SeleniumOptionsPanel(Dialog parent, ResourceBundle resourceBundle) {
         setName(resourceBundle.getString("selenium.options.title"));
 
         String selectFileButtonLabel =
@@ -111,18 +120,23 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                         Browser.CHROME);
 
         chromeBinaryTextField = createTextField();
-        JButton chromeBinaryButton =
-                createButtonFileChooser(selectFileButtonLabel, chromeBinaryTextField);
-        JLabel chromeBinaryLabel =
-                new JLabel(resourceBundle.getString("selenium.options.label.chrome.binary"));
-        chromeBinaryLabel.setLabelFor(chromeBinaryTextField);
+        chromeArgumentsTextField = createTextField();
+        chromeArgumentsTextField.setEditable(false);
+
+        confirmRemoveBrowserArgument = new AtomicBoolean();
+        chromeArgumentsTableModel = new BrowserArgumentsTableModel();
+        BrowserArgumentsDialog chromeArgumentsDialog =
+                new BrowserArgumentsDialog(
+                        parent, chromeArgumentsTableModel, confirmRemoveBrowserArgument);
 
         firefoxBinaryTextField = createTextField();
-        JButton firefoxBinaryButton =
-                createButtonFileChooser(selectFileButtonLabel, firefoxBinaryTextField);
-        JLabel firefoxBinaryLabel =
-                new JLabel(resourceBundle.getString("selenium.options.label.firefox.binary"));
-        firefoxBinaryLabel.setLabelFor(firefoxBinaryTextField);
+        firefoxArgumentsTextField = createTextField();
+        firefoxArgumentsTextField.setEditable(false);
+
+        firefoxArgumentsTableModel = new BrowserArgumentsTableModel();
+        BrowserArgumentsDialog firefoxArgumentsDialog =
+                new BrowserArgumentsDialog(
+                        parent, firefoxArgumentsTableModel, confirmRemoveBrowserArgument);
 
         firefoxDriverTextField = createTextField();
         JButton firefoxDriverButton =
@@ -238,6 +252,23 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                         TitledBorder.DEFAULT_POSITION,
                         FontUtils.getFont(FontUtils.Size.standard)));
 
+        JPanel chromePanel =
+                createBinaryPanel(
+                        resourceBundle,
+                        chromeArgumentsDialog,
+                        "chrome",
+                        chromeBinaryTextField,
+                        chromeArgumentsTextField,
+                        chromeArgumentsTableModel);
+        JPanel firefoxPanel =
+                createBinaryPanel(
+                        resourceBundle,
+                        firefoxArgumentsDialog,
+                        "firefox",
+                        firefoxBinaryTextField,
+                        firefoxArgumentsTextField,
+                        firefoxArgumentsTableModel);
+
         GroupLayout binariesLayout = new GroupLayout(binariesPanel);
         binariesPanel.setLayout(binariesLayout);
 
@@ -246,41 +277,14 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
 
         binariesLayout.setHorizontalGroup(
                 binariesLayout
-                        .createSequentialGroup()
-                        .addGroup(
-                                binariesLayout
-                                        .createParallelGroup(GroupLayout.Alignment.TRAILING)
-                                        .addComponent(chromeBinaryLabel)
-                                        .addComponent(firefoxBinaryLabel))
-                        .addGroup(
-                                binariesLayout
-                                        .createParallelGroup(GroupLayout.Alignment.LEADING)
-                                        .addGroup(
-                                                binariesLayout
-                                                        .createSequentialGroup()
-                                                        .addComponent(chromeBinaryTextField)
-                                                        .addComponent(chromeBinaryButton))
-                                        .addGroup(
-                                                binariesLayout
-                                                        .createSequentialGroup()
-                                                        .addComponent(firefoxBinaryTextField)
-                                                        .addComponent(firefoxBinaryButton))));
-
+                        .createParallelGroup()
+                        .addComponent(chromePanel)
+                        .addComponent(firefoxPanel));
         binariesLayout.setVerticalGroup(
                 binariesLayout
                         .createSequentialGroup()
-                        .addGroup(
-                                binariesLayout
-                                        .createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(chromeBinaryLabel)
-                                        .addComponent(chromeBinaryTextField)
-                                        .addComponent(chromeBinaryButton))
-                        .addGroup(
-                                binariesLayout
-                                        .createParallelGroup(GroupLayout.Alignment.BASELINE)
-                                        .addComponent(firefoxBinaryLabel)
-                                        .addComponent(firefoxBinaryTextField)
-                                        .addComponent(firefoxBinaryButton)));
+                        .addComponent(chromePanel)
+                        .addComponent(firefoxPanel));
 
         JPanel browserExtPanel = new JPanel();
         GroupLayout browserExtLayout = new GroupLayout(browserExtPanel);
@@ -323,6 +327,79 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                         .addComponent(driversPanel)
                         .addComponent(binariesPanel)
                         .addComponent(browserExtPanel));
+    }
+
+    private static JPanel createBinaryPanel(
+            ResourceBundle resourceBundle,
+            BrowserArgumentsDialog browserArgumentsDialog,
+            String browser,
+            JTextField binaryTextField,
+            JTextField argsTextField,
+            BrowserArgumentsTableModel tableModel) {
+        JButton binaryButton =
+                createButtonFileChooser(
+                        resourceBundle.getString("selenium.options.label.button.select.file"),
+                        binaryTextField);
+        JLabel binaryLabel = new JLabel(resourceBundle.getString("selenium.options.label.binary"));
+        binaryLabel.setLabelFor(binaryTextField);
+
+        JButton argsButton =
+                new JButton(resourceBundle.getString("selenium.options.label.button.configure"));
+        argsButton.addActionListener(
+                e -> {
+                    browserArgumentsDialog.setVisible(true);
+                    updateArguments(tableModel, argsTextField);
+                });
+        JLabel argsLabel = new JLabel(resourceBundle.getString("selenium.options.label.args"));
+        argsLabel.setLabelFor(argsTextField);
+
+        JPanel panel = new JPanel();
+        panel.setBorder(
+                BorderFactory.createTitledBorder(
+                        null,
+                        resourceBundle.getString("selenium.options.title." + browser),
+                        TitledBorder.DEFAULT_JUSTIFICATION,
+                        TitledBorder.DEFAULT_POSITION,
+                        FontUtils.getFont(FontUtils.Size.standard)));
+
+        GroupLayout layout = new GroupLayout(panel);
+        panel.setLayout(layout);
+
+        layout.setAutoCreateGaps(true);
+        layout.setAutoCreateContainerGaps(true);
+
+        layout.setHorizontalGroup(
+                layout.createSequentialGroup()
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+                                        .addComponent(binaryLabel)
+                                        .addComponent(argsLabel))
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                                        .addComponent(binaryTextField)
+                                        .addComponent(argsTextField))
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.CENTER)
+                                        .addComponent(
+                                                binaryButton,
+                                                argsButton.getMinimumSize().width,
+                                                GroupLayout.DEFAULT_SIZE,
+                                                GroupLayout.DEFAULT_SIZE)
+                                        .addComponent(argsButton)));
+
+        layout.setVerticalGroup(
+                layout.createSequentialGroup()
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(binaryLabel)
+                                        .addComponent(binaryTextField)
+                                        .addComponent(binaryButton))
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(argsLabel)
+                                        .addComponent(argsTextField)
+                                        .addComponent(argsButton)));
+        return panel;
     }
 
     private JButton createBundledWebDriverButton(
@@ -378,10 +455,24 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                         Browser.FIREFOX, seleniumOptions.getFirefoxDriverPath(), driverAvailable));
 
         chromeBinaryTextField.setText(seleniumOptions.getChromeBinaryPath());
+        chromeArgumentsTableModel.setArguments(
+                seleniumOptions.getBrowserArguments(Browser.CHROME.getId()));
+        updateArguments(chromeArgumentsTableModel, chromeArgumentsTextField);
         firefoxBinaryTextField.setText(seleniumOptions.getFirefoxBinaryPath());
+        firefoxArgumentsTableModel.setArguments(
+                seleniumOptions.getBrowserArguments(Browser.FIREFOX.getId()));
+        updateArguments(firefoxArgumentsTableModel, firefoxArgumentsTextField);
+
+        confirmRemoveBrowserArgument.set(seleniumOptions.isConfirmRemoveBrowserArgument());
 
         browserExtModel.setExtensions(seleniumOptions.getBrowserExtensions());
         directory = seleniumOptions.getLastDirectory();
+    }
+
+    private static void updateArguments(
+            BrowserArgumentsTableModel tableModel, JTextField textField) {
+        textField.setText(tableModel.getArgumentsAsString());
+        textField.setCaretPosition(0);
     }
 
     private static String getEffectiveDriverPath(
@@ -417,11 +508,17 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         SeleniumOptions seleniumOptions = optionsParam.getParamSet(SeleniumOptions.class);
 
         seleniumOptions.setChromeBinaryPath(chromeBinaryTextField.getText());
+        seleniumOptions.setBrowserArguments(
+                Browser.CHROME.getId(), chromeArgumentsTableModel.getElements());
         seleniumOptions.setChromeDriverPath(chromeDriverTextField.getText());
         seleniumOptions.setFirefoxBinaryPath(firefoxBinaryTextField.getText());
+        seleniumOptions.setBrowserArguments(
+                Browser.FIREFOX.getId(), firefoxArgumentsTableModel.getElements());
         seleniumOptions.setFirefoxDriverPath(firefoxDriverTextField.getText());
         seleniumOptions.setBrowserExtensions(browserExtModel.getElements());
         seleniumOptions.setLastDirectory(directory);
+
+        seleniumOptions.setConfirmRemoveBrowserArgument(confirmRemoveBrowserArgument.get());
     }
 
     @Override

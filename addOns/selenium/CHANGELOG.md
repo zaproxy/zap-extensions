@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add statistics for browser launch successes and failures that include the requester, e.g.:
   - `stats.selenium.launch.<requester-id>.<browser-id>`
   - `stats.selenium.launch.<requester-id>.<browser-id>.failure`
+- Allow to configure additional (CLI) arguments for Chrome and Firefox.
 
 ### Changed
 - Maintenance changes.
