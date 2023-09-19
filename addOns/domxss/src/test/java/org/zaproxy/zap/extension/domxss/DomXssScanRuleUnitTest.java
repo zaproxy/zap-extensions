@@ -48,6 +48,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.extension.selenium.Browser;
+import org.zaproxy.zap.extension.selenium.SeleniumOptions;
 import org.zaproxy.zap.testutils.ActiveScannerTestUtils;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
@@ -66,6 +67,8 @@ class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
         Control.initSingletonForTesting(model, mock(ExtensionLoader.class));
         extensionNetwork.init();
         extensionNetwork.hook(new ExtensionHook(model, null));
+
+        model.getOptionsParam().addParamSet(new SeleniumOptions());
     }
 
     static Stream<String> testBrowsers() throws Exception {
