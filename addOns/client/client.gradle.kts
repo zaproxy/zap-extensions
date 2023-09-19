@@ -1,4 +1,3 @@
-version = "0.0.1"
 description = "Exposes client (browser) side information in ZAP using Firefox and Chrome extensions."
 
 zapAddOn {
