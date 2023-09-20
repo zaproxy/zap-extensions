@@ -25,6 +25,8 @@ import org.zaproxy.zap.extension.selenium.SeleniumScriptUtils;
 
 public class RedirectScript implements BrowserHook {
 
+    static final int ZEST_CLIENT_RECORDER_INITIATOR = -73;
+
     private ClientIntegrationAPI api;
 
     public RedirectScript(ClientIntegrationAPI api) {
@@ -37,7 +39,9 @@ public class RedirectScript implements BrowserHook {
         ssutils.getWebDriver().get(zapurl);
         JavascriptExecutor jsExecutor = (JavascriptExecutor) ssutils.getWebDriver();
         jsExecutor.executeScript("localStorage.setItem('localzapurl', '" + zapurl + "')");
-        jsExecutor.executeScript("localStorage.setItem('localzapenable',false)");
+        if (ssutils.getRequester() == ZEST_CLIENT_RECORDER_INITIATOR) {
+            jsExecutor.executeScript("localStorage.setItem('localzapenable',false)");
+        }
 
         // This statement make sure that the ZAP browser extension is configured properly
         ssutils.getWebDriver().get(zapurl);

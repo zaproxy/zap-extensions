@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Updated the Firefox extension to v0.0.6.
 - Updated the Chrome extension to v0.0.5.
+- Disable client events automatically only for Zest recording.
 
 ## [0.0.1] - 2023-09-11
 
