@@ -73,3 +73,7 @@ spotless {
         listOf("src/**/DsStore.java"),
     )
 }
+
+tasks.named<Javadoc>("javadoc") {
+    exclude("**/DsStore.java")
+}
