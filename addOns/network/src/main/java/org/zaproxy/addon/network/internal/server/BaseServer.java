@@ -52,7 +52,6 @@ import org.zaproxy.addon.network.server.Server;
  *   <li>{@link ChannelAttributes#REMOTE_ADDRESS};
  *   <li>{@link ChannelAttributes#TLS_UPGRADED} (always {@code false});
  *   <li>{@link ChannelAttributes#PROCESSING_MESSAGE} (always {@code false});
- *   <li>{@link ChannelAttributes#RECURSIVE_MESSAGE} (always {@code false}).
  * </ul>
  */
 public class BaseServer implements Server {
