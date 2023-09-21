@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Depend on Common Library add-on.
+- Maintenance changes.
 
 ## [40] - 2023-09-11
 ### Added 
