@@ -54,6 +54,7 @@ public class ImportDialog extends AbstractDialog {
 
     private JTextField fieldCollection;
     private JTextField fieldTarget;
+    private JTextField fieldVariables;
     private JButton buttonChooseFile;
     private JButton buttonCancel;
     private JButton buttonImport;
@@ -82,11 +83,23 @@ public class ImportDialog extends AbstractDialog {
                 getChooseFileButton(),
                 LayoutHelper.getGBC(2, fieldsRow, 1, 0.5, new Insets(0, 4, 4, 0)));
         fieldsRow++;
+
+        JLabel labelTaget =
+                new JLabel(Constant.messages.getString("postman.importDialog.labelTarget"));
         fieldsPanel.add(
-                new JLabel(Constant.messages.getString("postman.importDialog.labelTarget")),
-                LayoutHelper.getGBC(0, fieldsRow, 1, 0.5, new Insets(4, 0, 4, 4)));
+                labelTaget, LayoutHelper.getGBC(0, fieldsRow, 1, 0.5, new Insets(4, 0, 4, 4)));
+        labelTaget.setVisible(false);
         fieldsPanel.add(
                 getTargetField(),
+                LayoutHelper.getGBC(1, fieldsRow, 2, 0.5, new Insets(4, 4, 4, 0)));
+        getTargetField().setVisible(false);
+        fieldsRow++;
+
+        fieldsPanel.add(
+                new JLabel(Constant.messages.getString("postman.importDialog.labelVariables")),
+                LayoutHelper.getGBC(0, fieldsRow, 1, 0.5, new Insets(4, 0, 4, 4)));
+        fieldsPanel.add(
+                getVariablesField(),
                 LayoutHelper.getGBC(1, fieldsRow, 2, 0.5, new Insets(4, 4, 4, 0)));
 
         int row = 0;
@@ -124,6 +137,14 @@ public class ImportDialog extends AbstractDialog {
             setContextMenu(fieldTarget);
         }
         return fieldTarget;
+    }
+
+    private JTextField getVariablesField() {
+        if (fieldVariables == null) {
+            fieldVariables = new JTextField(25);
+            setContextMenu(fieldVariables);
+        }
+        return fieldVariables;
     }
 
     private static void setContextMenu(JTextField field) {
@@ -220,7 +241,9 @@ public class ImportDialog extends AbstractDialog {
         try {
             new URL(collectionLocation).toURI();
             new URI(collectionLocation, true);
-            importedWithoutErrors = parser.importFromUrl(getCollectionField().getText(), true);
+            importedWithoutErrors =
+                    parser.importFromUrl(
+                            getCollectionField().getText(), getVariablesField().getText(), true);
         } catch (URIException | MalformedURLException | URISyntaxException e1) {
             // Not a valid URI, try to import as a file
             var file = new File(collectionLocation);
@@ -233,7 +256,11 @@ public class ImportDialog extends AbstractDialog {
                 return false;
             }
             try {
-                importedWithoutErrors = parser.importFromFile(getCollectionField().getText(), true);
+                importedWithoutErrors =
+                        parser.importFromFile(
+                                getCollectionField().getText(),
+                                getVariablesField().getText(),
+                                true);
             } catch (IOException e2) {
                 handleParseException(e2);
                 return false;
@@ -277,6 +304,7 @@ public class ImportDialog extends AbstractDialog {
         getImportButton().setEnabled(!show);
         getCollectionField().setEnabled(!show);
         getTargetField().setEnabled(!show);
+        getVariablesField().setEditable(!show);
         getChooseFileButton().setEnabled(!show);
     }
 
@@ -323,5 +351,6 @@ public class ImportDialog extends AbstractDialog {
     void clearFields() {
         getCollectionField().setText("");
         getTargetField().setText("");
+        getVariablesField().setText("");
     }
 }
