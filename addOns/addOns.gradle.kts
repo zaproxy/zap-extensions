@@ -295,7 +295,7 @@ subprojects {
                     pom {
                         name.set(project.zapAddOn.addOnName.map { "ZAP - $it Add-on" })
                         packaging = "jar"
-                        description.set(project.description)
+                        description.set(provider { project.description })
                         url.set("https://github.com/zaproxy/zap-extensions")
                         inceptionYear.set(project.property("zap.maven.pom.inceptionyear") as String)
 
