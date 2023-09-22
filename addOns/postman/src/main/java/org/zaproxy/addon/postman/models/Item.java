@@ -34,6 +34,9 @@ public class Item extends AbstractItem {
     @JsonDeserialize(using = ObjectDeserializer.class)
     private Request request;
 
+    @JsonDeserialize(using = ObjectDeserializer.class)
+    private String name = "Unnamed Item";
+
     public Item() {}
 
     public Item(Request request) {
@@ -46,5 +49,13 @@ public class Item extends AbstractItem {
 
     public void setRequest(Request request) {
         this.request = request;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

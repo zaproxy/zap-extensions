@@ -25,9 +25,11 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,6 +41,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -59,6 +62,7 @@ class PostmanParserUnitTest extends TestUtils {
     void setup() throws Exception {
         setUpZap();
         startServer();
+        mockMessages(new ExtensionPostman());
     }
 
     @AfterEach
@@ -153,10 +157,51 @@ class PostmanParserUnitTest extends TestUtils {
                         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus eu tortor efficitur\n"));
     }
 
+    static Stream<Arguments> errorTestData() {
+        final String IMPORT_FORMAT_ERROR = "postman.import.error.format";
+        String noItemError = Constant.messages.getString("postman.import.error.noItem");
+        return Stream.of(
+                arguments("{\"item\":{}}", List.of(noItemError)),
+                arguments(
+                        "{\"item\":{\"name\":\"test\"}}",
+                        List.of(
+                                Constant.messages.getString(
+                                        IMPORT_FORMAT_ERROR,
+                                        "test",
+                                        Constant.messages.getString(
+                                                "postman.import.errorMsg.reqNotPresent")),
+                                noItemError)),
+                arguments(
+                        "{\"item\":{\"request\":{\"method\":\"POST\"}}}",
+                        List.of(
+                                Constant.messages.getString(
+                                        IMPORT_FORMAT_ERROR,
+                                        "Unnamed Item",
+                                        Constant.messages.getString(
+                                                "postman.import.errorMsg.urlNotPresent")),
+                                noItemError)),
+                arguments(
+                        "{\"item\":{\"request\":{\"url\":\"\"}}}",
+                        List.of(
+                                Constant.messages.getString(
+                                        IMPORT_FORMAT_ERROR,
+                                        "Unnamed Item",
+                                        Constant.messages.getString(
+                                                "postman.import.errorMsg.rawInvalid")),
+                                noItemError)),
+                arguments(
+                        "{\"item\":{\"request\":{\"url\":\"https://example.com\",\"body\":{\"mode\":\"file\",\"file\":{\"src\":\"invalidPath\"}}}}}",
+                        List.of(
+                                Constant.messages.getString(
+                                        "postman.import.warning",
+                                        "Unnamed Item",
+                                        NoSuchFileException.class.getName() + ": invalidPath"))));
+    }
+
     @Test
     void shouldFailWhenCollectionIsInvalidJson() throws Exception {
         PostmanParser parser = new PostmanParser();
-        assertThrows(IOException.class, () -> parser.importCollection("{"));
+        assertThrows(IOException.class, () -> parser.importCollection("{", false));
     }
 
     @Test
@@ -254,5 +299,20 @@ class PostmanParserUnitTest extends TestUtils {
         assertEquals(
                 stringBody,
                 new String(httpMessage.getRequestBody().getContent(), StandardCharsets.UTF_8));
+    }
+
+    @ParameterizedTest
+    @MethodSource("errorTestData")
+    void shouldGiveErrors(String collectionJson, List<String> expectedErrors)
+            throws JsonProcessingException {
+        PostmanParser parser = new PostmanParser();
+        List<String> errors = new ArrayList<>();
+
+        parser.getHttpMessages(collectionJson, errors);
+
+        assertEquals(expectedErrors.size(), errors.size());
+        for (int i = 0; i < errors.size(); i++) {
+            assertEquals(expectedErrors.get(i), errors.get(i));
+        }
     }
 }
