@@ -67,7 +67,7 @@ public class RecursiveRequestChecker {
     private static AwsCandidateHarvester awsCandidateHarvester;
 
     /**
-     * Tells whether or not the given {@code msg} served through the given {@given channel} is a
+     * Tells whether or not the given {@code msg} served through the given {@code channel} is a
      * recursive request.
      *
      * @param channel the channel where the message is being transmitted.
