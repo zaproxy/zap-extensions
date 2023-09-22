@@ -28,13 +28,13 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 import javax.swing.ComboBoxModel;
+import javax.swing.SwingUtilities;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.tree.ConfigurationNode;
 import org.apache.commons.httpclient.URI;
@@ -51,15 +51,28 @@ import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.extension.history.ExtensionHistory;
+import org.parosproxy.paros.model.HistoryReference;
+import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpSender;
+import org.parosproxy.paros.network.HttpStatusCode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.callhome.ExtensionCallHome;
 import org.zaproxy.addon.callhome.InvalidServiceUrlException;
 import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.addon.network.common.ZapUnknownHostException;
 import org.zaproxy.addon.reports.ExtensionReports;
+import org.zaproxy.zap.ZAP;
+import org.zaproxy.zap.ZAP.ProcessType;
+import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.ext.ExtensionExtension;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
+import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
+import org.zaproxy.zap.extension.quickstart.AttackThread.Progress;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public class ExtensionQuickStart extends ExtensionAdaptor
@@ -76,11 +89,13 @@ public class ExtensionQuickStart extends ExtensionAdaptor
     private PlugableSpider plugableSpider;
     private PlugableHud hudProvider;
     private QuickStartParam quickStartParam;
+    private HttpSender httpSender;
 
-    private CommandLineArgument[] arguments = new CommandLineArgument[3];
+    private CommandLineArgument[] arguments = new CommandLineArgument[4];
     private static final int ARG_QUICK_URL_IDX = 0;
     private static final int ARG_QUICK_OUT_IDX = 1;
     private static final int ARG_QUICK_PROGRESS_IDX = 2;
+    private static final int ARG_ZAPIT_URL_IDX = 3;
     private static final String SPIN_CHRS = "|/-\\|/-\\";
 
     private boolean runningFromCmdLine = false;
@@ -90,8 +105,11 @@ public class ExtensionQuickStart extends ExtensionAdaptor
     private ExtensionReports extReport;
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
-            Collections.unmodifiableList(
-                    Arrays.asList(ExtensionReports.class, ExtensionNetwork.class));
+            List.of(
+                    ExtensionPassiveScan.class,
+                    ExtensionAlert.class,
+                    ExtensionReports.class,
+                    ExtensionNetwork.class);
 
     private CompletableFuture<Void> newsFetcherFuture;
 
@@ -301,6 +319,81 @@ public class ExtensionQuickStart extends ExtensionAdaptor
         attackThread.start();
     }
 
+    protected SiteNode accessNode(URL url) {
+        SiteNode startNode = null;
+        // Request the URL
+        try {
+            final HttpMessage msg = new HttpMessage(new URI(url.toString(), true));
+            getHttpSender().sendAndReceive(msg, true);
+
+            if (!HttpStatusCode.isSuccess(msg.getResponseHeader().getStatusCode())) {
+                notifyProgress(
+                        Progress.failed,
+                        Constant.messages.getString(
+                                "quickstart.progress.failed.code",
+                                msg.getResponseHeader().getStatusCode()));
+
+                return null;
+            }
+
+            if (msg.getResponseHeader().isEmpty()) {
+                notifyProgress(Progress.failed);
+                return null;
+            }
+
+            ExtensionHistory extHistory =
+                    ((ExtensionHistory)
+                            Control.getSingleton()
+                                    .getExtensionLoader()
+                                    .getExtension(ExtensionHistory.NAME));
+            extHistory.addHistory(msg, HistoryReference.TYPE_PROXIED);
+
+            FutureTask<SiteNode> addSiteNodeTask =
+                    new FutureTask<>(
+                            () ->
+                                    Model.getSingleton()
+                                            .getSession()
+                                            .getSiteTree()
+                                            .addPath(msg.getHistoryRef()));
+
+            SwingUtilities.invokeLater(addSiteNodeTask);
+            startNode = addSiteNodeTask.get();
+
+        } catch (ZapUnknownHostException e1) {
+            if (e1.isFromOutgoingProxy()) {
+                notifyProgress(
+                        Progress.failed,
+                        Constant.messages.getString(
+                                "quickstart.progress.failed.badhost.proxychain", e1.getMessage()));
+            } else {
+                notifyProgress(
+                        Progress.failed,
+                        Constant.messages.getString(
+                                "quickstart.progress.failed.badhost", e1.getMessage()));
+            }
+        } catch (URIException e) {
+            notifyProgress(
+                    Progress.failed,
+                    Constant.messages.getString(
+                            "quickstart.progress.failed.reason", e.getMessage()));
+        } catch (Exception e1) {
+            LOGGER.error(e1.getMessage(), e1);
+            notifyProgress(
+                    Progress.failed,
+                    Constant.messages.getString(
+                            "quickstart.progress.failed.reason", e1.getMessage()));
+            return null;
+        }
+        return startNode;
+    }
+
+    private HttpSender getHttpSender() {
+        if (httpSender == null) {
+            httpSender = new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR);
+        }
+        return httpSender;
+    }
+
     public void notifyProgress(AttackThread.Progress progress) {
         this.notifyProgress(progress, (String) null);
     }
@@ -440,6 +533,19 @@ public class ExtensionQuickStart extends ExtensionAdaptor
                     quickAttacker.handleNoSavedReport();
                 }
             }
+        } else if (arguments[ARG_ZAPIT_URL_IDX].isEnabled()) {
+            if (!ProcessType.cmdline.equals(ZAP.getProcessType())) {
+                // For now only support the command line
+                LOGGER.warn(
+                        Constant.messages.getString("quickstart.cmdline.zapit.error.notCmdLine"));
+                return;
+            }
+            Vector<String> params = arguments[ARG_ZAPIT_URL_IDX].getArguments();
+            for (String param : params) {
+                ZapItScan reconScan = new ZapItScan(this);
+                reconScan.recon(param);
+            }
+
         } else {
             return;
         }
@@ -498,6 +604,14 @@ public class ExtensionQuickStart extends ExtensionAdaptor
                         "",
                         "-quickprogress:          "
                                 + Constant.messages.getString("quickstart.cmdline.progress.help"));
+        arguments[ARG_ZAPIT_URL_IDX] =
+                new CommandLineArgument(
+                        "-zapit",
+                        1,
+                        null,
+                        "",
+                        "-zapit <target url>      "
+                                + Constant.messages.getString("quickstart.cmdline.zapiturl.help"));
         return arguments;
     }
 
