@@ -31,12 +31,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -73,7 +75,8 @@ public class PostmanParser {
         requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR, new HistoryPersister());
     }
 
-    public boolean importFromFile(final String filePath, final boolean initViaUi)
+    public boolean importFromFile(
+            final String filePath, final String variables, final boolean initViaUi)
             throws IOException {
         File file = new File(filePath);
         if (!file.exists()) {
@@ -86,10 +89,10 @@ public class PostmanParser {
         }
 
         String collectionJson = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-        return importCollection(collectionJson, initViaUi);
+        return importCollection(collectionJson, variables, initViaUi);
     }
 
-    public boolean importFromUrl(final String url, final boolean initViaUi)
+    public boolean importFromUrl(final String url, final String variables, final boolean initViaUi)
             throws IllegalArgumentException, IOException {
         if (url.isEmpty()) {
             throw new IllegalArgumentException(
@@ -104,11 +107,14 @@ public class PostmanParser {
         }
 
         String collectionJson = requestor.getResponseBody(uri);
-        return importCollection(collectionJson, initViaUi);
+        return importCollection(collectionJson, variables, initViaUi);
     }
 
-    List<HttpMessage> getHttpMessages(String collection, List<String> errors)
+    List<HttpMessage> getHttpMessages(
+            String collection, final String variables, List<String> errors)
             throws JsonProcessingException {
+        collection = replaceVariables(collection, variables);
+
         PostmanCollection postmanCollection = parse(collection);
         List<HttpMessage> httpMessages = new ArrayList<>();
 
@@ -117,10 +123,11 @@ public class PostmanParser {
         return httpMessages;
     }
 
-    public boolean importCollection(String collection, final boolean initViaUi)
+    public boolean importCollection(
+            String collection, final String variables, final boolean initViaUi)
             throws JsonProcessingException {
         List<String> errors = new ArrayList<>();
-        List<HttpMessage> httpMessages = getHttpMessages(collection, errors);
+        List<HttpMessage> httpMessages = getHttpMessages(collection, variables, errors);
 
         requestor.run(httpMessages, errors);
 
@@ -135,6 +142,29 @@ public class PostmanParser {
                 View.getSingleton().getOutputPanel().append(error + "\n");
             }
         }
+    }
+
+    private static Map<String, String> parseVariables(String variables) {
+        Map<String, String> variableMap = new HashMap<>();
+        String[] pairs = variables.split(",");
+        for (String pair : pairs) {
+            String[] parts = pair.split("=", 2);
+            if (parts.length == 2) {
+                variableMap.put(parts[0], StringEscapeUtils.escapeJson(parts[1]));
+            }
+        }
+        return variableMap;
+    }
+
+    static String replaceVariables(String collection, String variables) {
+        Map<String, String> variableMap = parseVariables(variables);
+
+        for (Map.Entry<String, String> variableEntry : variableMap.entrySet()) {
+            String variable = "{{" + variableEntry.getKey() + "}}";
+            String value = variableEntry.getValue();
+            collection = collection.replace(variable, value);
+        }
+        return collection;
     }
 
     public PostmanCollection parse(String collectionJson) throws JsonProcessingException {

@@ -198,10 +198,54 @@ class PostmanParserUnitTest extends TestUtils {
                                         NoSuchFileException.class.getName() + ": invalidPath"))));
     }
 
+    static Stream<Arguments> variablesTestData() throws URISyntaxException {
+        return Stream.of(
+                // no pair
+                arguments(
+                        "{\"item\":{\"name\":\"{{name}}\"}}",
+                        "",
+                        "{\"item\":{\"name\":\"{{name}}\"}}"),
+                // single pair
+                arguments(
+                        "{\"item\":{\"name\":\"{{name}}\"}}",
+                        "name=someName",
+                        "{\"item\":{\"name\":\"someName\"}}"),
+                // multiple pairs
+                arguments(
+                        "{\"item\":{\"name\":\"{{name}}\",\"request\":{\"url\":\"{{url}}\"}}}",
+                        "url=https://example.com,name=someName",
+                        "{\"item\":{\"name\":\"someName\",\"request\":{\"url\":\"https:\\/\\/example.com\"}}}"),
+                // no separator
+                arguments(
+                        "{\"item\":{\"name\":\"{{name}}\"}}",
+                        "name",
+                        "{\"item\":{\"name\":\"{{name}}\"}}"),
+                // multiple separators
+                arguments(
+                        "{\"item\":{\"name\":\"{{name}}\"}}",
+                        "name=someName1=someName2",
+                        "{\"item\":{\"name\":\"someName1=someName2\"}}"),
+                // empty value
+                arguments(
+                        "{\"item\":{\"name\":\"{{name}}\"}}",
+                        "name=",
+                        "{\"item\":{\"name\":\"\"}}"),
+                // empty key
+                arguments(
+                        "{\"item\":{\"name\":\"{{name}}\"}}",
+                        "=someName",
+                        "{\"item\":{\"name\":\"{{name}}\"}}"),
+                // escaping check
+                arguments(
+                        "{\"item\":{\"name\":\"{{name}}\"}}",
+                        "name=\\",
+                        "{\"item\":{\"name\":\"\\\\\"}}"));
+    }
+
     @Test
     void shouldFailWhenCollectionIsInvalidJson() throws Exception {
         PostmanParser parser = new PostmanParser();
-        assertThrows(IOException.class, () -> parser.importCollection("{", false));
+        assertThrows(IOException.class, () -> parser.importCollection("{", "", false));
     }
 
     @Test
@@ -308,11 +352,18 @@ class PostmanParserUnitTest extends TestUtils {
         PostmanParser parser = new PostmanParser();
         List<String> errors = new ArrayList<>();
 
-        parser.getHttpMessages(collectionJson, errors);
+        parser.getHttpMessages(collectionJson, "", errors);
 
         assertEquals(expectedErrors.size(), errors.size());
         for (int i = 0; i < errors.size(); i++) {
             assertEquals(expectedErrors.get(i), errors.get(i));
         }
+    }
+
+    @MethodSource("variablesTestData")
+    void shouldReplaceValidVariables(
+            String inputCollection, String variables, String expectedOutputCollection) {
+        String outputCollection = PostmanParser.replaceVariables(inputCollection, variables);
+        assertEquals(expectedOutputCollection, outputCollection);
     }
 }
