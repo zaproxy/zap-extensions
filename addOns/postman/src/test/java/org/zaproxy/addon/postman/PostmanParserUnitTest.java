@@ -366,4 +366,44 @@ class PostmanParserUnitTest extends TestUtils {
         String outputCollection = PostmanParser.replaceVariables(inputCollection, variables);
         assertEquals(expectedOutputCollection, outputCollection);
     }
+
+    static Stream<String> nullFieldValuesTestData() {
+        String bodyBaseLeft = "{\"item\":{\"request\":{\"url\":\"https://example.com\"},\"body\":";
+        String bodyBaseRight = "}}";
+        return Stream.of(
+                "{\"item\":null}",
+                "{\"item\":{\"request\":null,\"name\":null}}",
+                "{\"item\":{\"request\":{\"url\":null,\"method\":null,\"header\":null,\"body\":null}}}",
+                "{\"item\":{\"request\":{\"url\":{\"raw\":null}}}}",
+                "{\"item\":{\"request\":{\"url\":{\"raw\":\"https://example.com\",\"header\":{\"key\":null,\"value\":null}}}}}",
+                bodyBaseLeft + "{\"mode\":null}" + bodyBaseRight,
+                bodyBaseLeft + "{\"mode\":\"raw\",\"raw\":null}" + bodyBaseRight,
+                bodyBaseLeft
+                        + "{\"mode\":\"raw\",\"raw\":\"some content\",\"options\":null}"
+                        + bodyBaseRight,
+                bodyBaseLeft
+                        + "{\"mode\":\"raw\",\"raw\":\"some content\",\"options\":{\"raw\":null}}"
+                        + bodyBaseRight,
+                bodyBaseLeft + "{\"mode\":\"urlencoded\",\"urlencoded\":null}" + bodyBaseRight,
+                bodyBaseLeft
+                        + "{\"mode\":\"urlencoded\",\"urlencoded\":{\"key\":null,\"value\":null}}"
+                        + bodyBaseRight,
+                bodyBaseLeft + "{\"mode\":\"formdata\",\"formdata\":null}" + bodyBaseRight,
+                bodyBaseLeft
+                        + "{\"mode\":\"formdata\",\"formdata\":{\"key\":null,\"value\":null,\"src\":null,\"type\":null}}"
+                        + bodyBaseRight,
+                bodyBaseLeft + "{\"mode\":\"file\",\"file\":null}" + bodyBaseRight,
+                bodyBaseLeft + "{\"mode\":\"file\",\"file\":{\"src\":null}}" + bodyBaseRight,
+                bodyBaseLeft + "{\"mode\":\"raw\",\"graphql\":null}" + bodyBaseRight,
+                bodyBaseLeft
+                        + "{\"mode\":\"raw\",\"graphql\":{\"query\":null,\"variables\":null}}"
+                        + bodyBaseRight);
+    }
+
+    @ParameterizedTest
+    @MethodSource("nullFieldValuesTestData")
+    void shouldNotFailForNullFieldValues(String collection) {
+        PostmanParser parser = new PostmanParser();
+        assertDoesNotThrow(() -> parser.importCollection(collection, "", false));
+    }
 }

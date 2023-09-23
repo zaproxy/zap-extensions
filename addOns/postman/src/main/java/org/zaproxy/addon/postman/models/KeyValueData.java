@@ -20,8 +20,10 @@
 package org.zaproxy.addon.postman.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.zaproxy.addon.postman.deserializers.ObjectDeserializer;
 import org.zaproxy.addon.postman.models.Body.FormData;
@@ -37,11 +39,13 @@ public class KeyValueData extends AbstractListElement {
         this.value = value;
     }
 
+    @JsonSetter(nulls = Nulls.SKIP)
     @JsonDeserialize(using = ObjectDeserializer.class)
-    private String key;
+    private String key = "";
 
+    @JsonSetter(nulls = Nulls.SKIP)
     @JsonDeserialize(using = ObjectDeserializer.class)
-    private String value;
+    private String value = "";
 
     @JsonDeserialize(using = ObjectDeserializer.class)
     private boolean disabled;
