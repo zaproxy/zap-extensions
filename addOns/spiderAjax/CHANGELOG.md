@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 - Depend on newer versions of Automation Framework and Common Library add-ons (Related to Issue 7961).
+- Depend on newer version of Network add-on and allow to access the ZAP API while spidering.
 
 ## [23.15.0] - 2023-07-11
 ### Added
