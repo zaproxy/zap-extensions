@@ -8,7 +8,8 @@
 		<tocitem text="アドオン" tocid="addons">
 			<tocitem text="クイック スタート" image="icon147" target="quickstart">
 				<tocitem text="コマンドライン"  target="quickstart.cmdline" />
-				<tocitem text="オプション"  target="quickstart.launch.options" />
+				<tocitem text="ZAPit Scan"  target="quickstart.zapit" />
+				<tocitem text="Launch Options"  target="quickstart.launch.options" />
 			</tocitem>
 		</tocitem>
 	</tocitem>

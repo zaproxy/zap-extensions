@@ -8,7 +8,8 @@
 		<tocitem text="Tambahan" tocid="addons">
 			<tocitem text="Mulai Cepat" image="icon147" target="quickstart">
 				<tocitem text="Baris Perintah"  target="quickstart.cmdline" />
-				<tocitem text="Peluncuran Pilihan"  target="quickstart.launch.options" />
+				<tocitem text="ZAPit Scan"  target="quickstart.zapit" />
+				<tocitem text="Launch Options"  target="quickstart.launch.options" />
 			</tocitem>
 		</tocitem>
 	</tocitem>
