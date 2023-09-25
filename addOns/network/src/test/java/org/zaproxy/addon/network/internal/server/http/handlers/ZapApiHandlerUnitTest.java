@@ -165,6 +165,10 @@ class ZapApiHandlerUnitTest {
 
     @Test
     void shouldHandleApiRequest() throws Exception {
+        shouldHandleApiRequestWith(handler);
+    }
+
+    private void shouldHandleApiRequestWith(ZapApiHandler handler) throws Exception {
         // Given
         HttpRequestBody requestBody = mock(HttpRequestBody.class);
         given(message.getRequestBody()).willReturn(requestBody);
@@ -191,5 +195,10 @@ class ZapApiHandlerUnitTest {
         verify(ctx).overridden();
         verify(message).setResponseHeader(apiResponseHeader);
         verify(message).setResponseBody(apiResponseBody);
+    }
+
+    @Test
+    void shouldHandleApiRequestAlwaysWithEnabledInstance() throws Exception {
+        shouldHandleApiRequestWith(ZapApiHandler.getEnabledInstance());
     }
 }

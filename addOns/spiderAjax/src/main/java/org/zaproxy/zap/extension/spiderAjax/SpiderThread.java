@@ -57,6 +57,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
+import org.zaproxy.addon.network.server.HttpServerConfig;
 import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.spiderAjax.SpiderListener.ResourceState;
@@ -127,8 +128,12 @@ public class SpiderThread implements Runnable {
                 extension.getMessages().getString("spiderajax.outofscope.response"));
 
         proxy =
-                extensionNetwork.createHttpProxy(
-                        HttpSender.AJAX_SPIDER_INITIATOR, new SpiderProxyListener());
+                extensionNetwork.createHttpServer(
+                        HttpServerConfig.builder()
+                                .setHttpMessageHandler(new SpiderProxyListener())
+                                .setHttpSender(new HttpSender(HttpSender.AJAX_SPIDER_INITIATOR))
+                                .setServeZapApi(true)
+                                .build());
     }
 
     private void createOutOfScopeResponse(String response) {

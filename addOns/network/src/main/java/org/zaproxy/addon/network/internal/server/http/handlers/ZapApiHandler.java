@@ -41,6 +41,17 @@ public class ZapApiHandler implements HttpMessageHandler {
 
     private static final Logger LOGGER = LogManager.getLogger(ZapApiHandler.class);
 
+    private static final ZapApiHandler ALWAYS_ENABLED = new ZapApiHandler(() -> true);
+
+    /**
+     * Gets the handler that always handles API requests.
+     *
+     * @return the handler, never {@code null}.
+     */
+    public static ZapApiHandler getEnabledInstance() {
+        return ALWAYS_ENABLED;
+    }
+
     private HandlerState state;
 
     /**

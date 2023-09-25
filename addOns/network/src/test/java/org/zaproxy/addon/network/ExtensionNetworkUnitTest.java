@@ -62,6 +62,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.Vector;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import org.apache.commons.httpclient.HttpState;
@@ -104,6 +105,7 @@ import org.zaproxy.addon.network.internal.server.http.Alias;
 import org.zaproxy.addon.network.internal.server.http.PassThrough;
 import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
+import org.zaproxy.addon.network.server.HttpServerConfig;
 import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.addon.network.server.ServerInfo;
 import org.zaproxy.addon.network.testutils.TestClient;
@@ -112,6 +114,7 @@ import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiElement;
 import org.zaproxy.zap.extension.api.CoreAPI;
+import org.zaproxy.zap.extension.api.OptionsParamApi;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link ExtensionNetwork}. */
@@ -1087,6 +1090,76 @@ class ExtensionNetworkUnitTest extends TestUtils {
         HttpMessageHandler handler = null;
         // When / Then
         assertThrows(NullPointerException.class, () -> extension.createHttpServer(handler));
+    }
+
+    @Test
+    void shouldThrowIfCreatingHttpServerWithNullConfig() throws Exception {
+        // Given
+        extension.hook(mock(ExtensionHook.class));
+        HttpServerConfig config = null;
+        // When / Then
+        assertThrows(NullPointerException.class, () -> extension.createHttpServer(config));
+    }
+
+    @Test
+    void shouldCreateHttpServerWithZapApi() throws Exception {
+        // Given
+        AtomicBoolean requestReachedHandler = new AtomicBoolean();
+        HttpMessageHandler handler = (ctx, msg) -> requestReachedHandler.set(true);
+        extension.hook(mock(ExtensionHook.class));
+        HttpMessage msg = new HttpMessage(new HttpRequestHeader("GET http://zap/ HTTP/1.1"));
+        TestClient client =
+                new TextTestClient(
+                        "127.0.0.1",
+                        ch -> ch.pipeline().addFirst("http.client", new HttpClientCodec()));
+        HttpServerConfig config =
+                HttpServerConfig.builder()
+                        .setHttpMessageHandler(handler)
+                        .setServeZapApi(true)
+                        .build();
+        given(optionsParam.getApiParam()).willReturn(mock(OptionsParamApi.class));
+        // When
+        try (Server server = extension.createHttpServer(config)) {
+            int port = server.start(Server.ANY_PORT);
+            Channel channel = client.connect(port, null);
+            channel.writeAndFlush(msg).sync();
+            TextTestClient.waitForResponse(channel);
+            // Then
+            assertThat(requestReachedHandler.get(), is(equalTo(false)));
+        } finally {
+            client.close();
+        }
+    }
+
+    @Test
+    void shouldCreateHttpProxyWithZapApi() throws Exception {
+        // Given
+        AtomicBoolean requestReachedHandler = new AtomicBoolean();
+        HttpMessageHandler handler = (ctx, msg) -> requestReachedHandler.set(true);
+        extension.hook(mock(ExtensionHook.class));
+        HttpMessage msg = new HttpMessage(new HttpRequestHeader("GET http://zap/ HTTP/1.1"));
+        TestClient client =
+                new TextTestClient(
+                        "127.0.0.1",
+                        ch -> ch.pipeline().addFirst("http.client", new HttpClientCodec()));
+        HttpServerConfig config =
+                HttpServerConfig.builder()
+                        .setHttpMessageHandler(handler)
+                        .setHttpSender(new HttpSender(1))
+                        .setServeZapApi(true)
+                        .build();
+        given(optionsParam.getApiParam()).willReturn(mock(OptionsParamApi.class));
+        // When
+        try (Server server = extension.createHttpServer(config)) {
+            int port = server.start(Server.ANY_PORT);
+            Channel channel = client.connect(port, null);
+            channel.writeAndFlush(msg).sync();
+            TextTestClient.waitForResponse(channel);
+            // Then
+            assertThat(requestReachedHandler.get(), is(equalTo(false)));
+        } finally {
+            client.close();
+        }
     }
 
     @Test
