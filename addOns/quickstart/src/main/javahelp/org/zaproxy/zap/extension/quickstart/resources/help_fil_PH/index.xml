@@ -7,5 +7,6 @@
     <!-- index entries are merged (sorted) into core index -->
 	<indexitem text="mabilis na pagsisimula" target="quickstart" />
 	<indexitem text="linya ng kautusan ng mabilis na pagsisimula" target="quickstart.cmdline" />
-	<indexitem text="mga opsyon ng paglulunsad ng mabilis na pagsisimula" target="quickstart.launch.options" />
+	<indexitem text="quick start zapit scan" target="quickstart.zapit" />
+	<indexitem text="quick start launch options" target="quickstart.launch.options" />
 </index>
