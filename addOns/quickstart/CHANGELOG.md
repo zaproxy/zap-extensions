@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [40] - 2023-09-26
 ### Fixed
 - ZAPit help links.
 - Scan could incorrectly select leaf node for active scanning.
@@ -208,6 +208,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[40]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v39
 [38]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v38
 [37]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v37
