@@ -163,6 +163,7 @@ public class AttackThread extends Thread {
                 // www.example.com/app1)
                 // Go up a level
                 startNode = startNode.getParent();
+                target.setStartNode(startNode);
             }
 
             ExtensionActiveScan extAscan =
