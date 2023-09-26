@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [23.16.0] - 2023-09-26
 ### Changed
 - Maintenance changes.
 - Depend on newer versions of Automation Framework and Common Library add-ons (Related to Issue 7961).
@@ -286,6 +286,7 @@ By default it allows files with extension `.js` and `.css`.
 
 
 
+[23.16.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.16.0
 [23.15.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.15.0
 [23.14.1]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.14.1
 [23.14.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.14.0
