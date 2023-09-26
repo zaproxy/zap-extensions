@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [41] - 2023-09-26
 ### Added
 - Allow rendering Zest scripts in YAML. The format (JSON/YAML) may be changed via the Zest Options screen.
