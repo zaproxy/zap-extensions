@@ -19,7 +19,13 @@
  */
 package org.zaproxy.addon.client;
 
+import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.List;
+import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -30,15 +36,21 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.client.impl.ClientZestRecorder;
 import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
+import org.zaproxy.zap.extension.selenium.ProfileManager;
 
 public class ExtensionClientIntegration extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionClientIntegration";
 
+    public static final String ZAP_FIREFOX_PROFILE_NAME = "zap-client-profile";
+
     protected static final String PREFIX = "client";
 
     protected static final String RESOURCES = "resources";
+
+    private static final Logger LOGGER = LogManager.getLogger(ExtensionClientIntegration.class);
 
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
             List.of(ExtensionNetwork.class, ExtensionSelenium.class);
@@ -89,6 +101,24 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
 
         redirectScript = new RedirectScript(this.api);
         extSelenium.registerBrowserHook(redirectScript);
+
+        // Check that the custom Firefox profile is available
+        ProfileManager pm = extSelenium.getProfileManager(Browser.FIREFOX);
+        try {
+            Path profileDir = pm.getOrCreateProfile(ZAP_FIREFOX_PROFILE_NAME);
+            File prefFile = profileDir.resolve("extension-preferences.json").toFile();
+            if (!prefFile.exists()) {
+                // Create the pref file which enables the extension for all sites
+                InputStream prefIs =
+                        getClass()
+                                .getResourceAsStream(
+                                        RESOURCES + "/firefox-extension-preferences.json");
+                FileUtils.copyInputStreamToFile(prefIs, prefFile);
+                extSelenium.setDefaultFirefoxProfile(ZAP_FIREFOX_PROFILE_NAME);
+            }
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
     }
 
     @Override

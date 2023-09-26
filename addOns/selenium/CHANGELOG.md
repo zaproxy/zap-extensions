@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `stats.selenium.launch.<requester-id>.<browser-id>`
   - `stats.selenium.launch.<requester-id>.<browser-id>.failure`
 - Allow to configure additional (CLI) arguments for Chrome and Firefox.
+- Support for selecting a default Firefox profile.
 
 ### Changed
 - Maintenance changes.

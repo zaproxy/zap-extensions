@@ -416,6 +416,30 @@ class SeleniumOptionsUnitTest extends TestUtils {
         assertThrows(IllegalArgumentException.class, () -> options.getBrowserArguments(browser));
     }
 
+    @Test
+    void shouldSetAndPersistFirefoxProfile() {
+        // Given
+        ZapXmlConfiguration config =
+                configWith(
+                        "<selenium>\n"
+                                + "  <firefoxProfile>test-profile</firefoxProfile>\n"
+                                + "</selenium>");
+        options.load(config);
+        String fxProfile = options.getFirefoxDefaultProfile();
+        options.load(new ZapXmlConfiguration());
+        // When
+        options.setFirefoxDefaultProfile("profile2");
+        // Then
+        assertThat(fxProfile, is(equalTo("test-profile")));
+        assertThat(options.getFirefoxDefaultProfile(), is(equalTo("profile2")));
+    }
+
+    @Test
+    void shouldThrowIfSettingNullFirefoxProfile() {
+        // Given / When / Then
+        assertThrows(NullPointerException.class, () -> options.setFirefoxDefaultProfile(null));
+    }
+
     private static ZapXmlConfiguration configWith(String value) {
         ZapXmlConfiguration config = new ZapXmlConfiguration();
         String contents =
