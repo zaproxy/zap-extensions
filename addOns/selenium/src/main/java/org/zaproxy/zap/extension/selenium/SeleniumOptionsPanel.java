@@ -25,14 +25,17 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -77,12 +80,18 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
     private final BrowserArgumentsTableModel chromeArgumentsTableModel;
     private final JTextField firefoxBinaryTextField;
     private final JTextField firefoxArgumentsTextField;
+    private final JComboBox<String> firefoxProfileCombo;
     private final BrowserArgumentsTableModel firefoxArgumentsTableModel;
     private final OptionsBrowserExtensionsTableModel browserExtModel;
     private final AtomicBoolean confirmRemoveBrowserArgument;
+    private final String temporaryBrowserProfile;
     private static String directory;
 
-    public SeleniumOptionsPanel(Dialog parent, ResourceBundle resourceBundle) {
+    private ExtensionSelenium extSelenium;
+
+    public SeleniumOptionsPanel(
+            ExtensionSelenium extSelenium, Dialog parent, ResourceBundle resourceBundle) {
+        this.extSelenium = extSelenium;
         setName(resourceBundle.getString("selenium.options.title"));
 
         String selectFileButtonLabel =
@@ -144,6 +153,10 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         JLabel firefoxDriverLabel =
                 new JLabel(resourceBundle.getString("selenium.options.label.firefox.driver"));
         firefoxDriverLabel.setLabelFor(firefoxDriverTextField);
+        firefoxProfileCombo = new JComboBox<>();
+        temporaryBrowserProfile = resourceBundle.getString("selenium.options.combo.profile.temp");
+        // Add the temp one to indicate this field is to be used
+        firefoxProfileCombo.addItem(temporaryBrowserProfile);
 
         infoBundledFirefoxDriverLabel =
                 createBundledWebDriverLabel(
@@ -259,7 +272,8 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                         "chrome",
                         chromeBinaryTextField,
                         chromeArgumentsTextField,
-                        chromeArgumentsTableModel);
+                        chromeArgumentsTableModel,
+                        new JComboBox<>());
         JPanel firefoxPanel =
                 createBinaryPanel(
                         resourceBundle,
@@ -267,7 +281,8 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                         "firefox",
                         firefoxBinaryTextField,
                         firefoxArgumentsTextField,
-                        firefoxArgumentsTableModel);
+                        firefoxArgumentsTableModel,
+                        firefoxProfileCombo);
 
         GroupLayout binariesLayout = new GroupLayout(binariesPanel);
         binariesPanel.setLayout(binariesLayout);
@@ -335,7 +350,8 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
             String browser,
             JTextField binaryTextField,
             JTextField argsTextField,
-            BrowserArgumentsTableModel tableModel) {
+            BrowserArgumentsTableModel tableModel,
+            JComboBox<String> profileCombo) {
         JButton binaryButton =
                 createButtonFileChooser(
                         resourceBundle.getString("selenium.options.label.button.select.file"),
@@ -352,6 +368,14 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                 });
         JLabel argsLabel = new JLabel(resourceBundle.getString("selenium.options.label.args"));
         argsLabel.setLabelFor(argsTextField);
+        JLabel profileLabel =
+                new JLabel(resourceBundle.getString("selenium.options.label.profile"));
+        profileLabel.setLabelFor(profileCombo);
+
+        if (profileCombo.getModel().getSize() == 0) {
+            profileCombo.setVisible(false);
+            profileLabel.setVisible(false);
+        }
 
         JPanel panel = new JPanel();
         panel.setBorder(
@@ -373,11 +397,13 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                         .addGroup(
                                 layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
                                         .addComponent(binaryLabel)
-                                        .addComponent(argsLabel))
+                                        .addComponent(argsLabel)
+                                        .addComponent(profileLabel))
                         .addGroup(
                                 layout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                         .addComponent(binaryTextField)
-                                        .addComponent(argsTextField))
+                                        .addComponent(argsTextField)
+                                        .addComponent(profileCombo))
                         .addGroup(
                                 layout.createParallelGroup(GroupLayout.Alignment.CENTER)
                                         .addComponent(
@@ -387,7 +413,7 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                                                 GroupLayout.DEFAULT_SIZE)
                                         .addComponent(argsButton)));
 
-        layout.setVerticalGroup(
+        SequentialGroup sg =
                 layout.createSequentialGroup()
                         .addGroup(
                                 layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
@@ -398,7 +424,13 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                                 layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                                         .addComponent(argsLabel)
                                         .addComponent(argsTextField)
-                                        .addComponent(argsButton)));
+                                        .addComponent(argsButton))
+                        .addGroup(
+                                layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                                        .addComponent(profileLabel)
+                                        .addComponent(profileCombo));
+
+        layout.setVerticalGroup(sg);
         return panel;
     }
 
@@ -453,6 +485,16 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         firefoxDriverTextField.setText(
                 getEffectiveDriverPath(
                         Browser.FIREFOX, seleniumOptions.getFirefoxDriverPath(), driverAvailable));
+
+        firefoxProfileCombo.removeAllItems();
+        firefoxProfileCombo.addItem(temporaryBrowserProfile);
+
+        ProfileManager fxPm = extSelenium.getProfileManager(Browser.FIREFOX);
+        if (fxPm != null) {
+            List<String> profiles = fxPm.getProfiles();
+            profiles.stream().forEach(firefoxProfileCombo::addItem);
+        }
+        firefoxProfileCombo.setSelectedItem(seleniumOptions.getFirefoxDefaultProfile());
 
         chromeBinaryTextField.setText(seleniumOptions.getChromeBinaryPath());
         chromeArgumentsTableModel.setArguments(
@@ -515,6 +557,13 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         seleniumOptions.setBrowserArguments(
                 Browser.FIREFOX.getId(), firefoxArgumentsTableModel.getElements());
         seleniumOptions.setFirefoxDriverPath(firefoxDriverTextField.getText());
+
+        String firefoxDefaultProfile = "";
+        if (firefoxProfileCombo.getSelectedIndex() > 0) {
+            firefoxDefaultProfile = firefoxProfileCombo.getSelectedItem().toString();
+        }
+        seleniumOptions.setFirefoxDefaultProfile(firefoxDefaultProfile);
+
         seleniumOptions.setBrowserExtensions(browserExtModel.getElements());
         seleniumOptions.setLastDirectory(directory);
 

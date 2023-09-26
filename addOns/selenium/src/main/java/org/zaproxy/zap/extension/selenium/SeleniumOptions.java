@@ -121,6 +121,8 @@ public class SeleniumOptions extends VersionedAbstractParam {
     /** The configuration key to read/write the path Firefox driver (geckodriver). */
     private static final String FIREFOX_DRIVER_KEY = SELENIUM_BASE_KEY + ".firefoxDriver";
 
+    private static final String FIREFOX_PROFILE_KEY = SELENIUM_BASE_KEY + ".firefoxProfile";
+
     private static final String DISABLED_EXTENSIONS_KEY = SELENIUM_BASE_KEY + ".disabledExts";
 
     private static final String EXTENSIONS_LAST_DIR_KEY = SELENIUM_BASE_KEY + ".lastDir";
@@ -138,6 +140,8 @@ public class SeleniumOptions extends VersionedAbstractParam {
 
     /** The path to Firefox driver (geckodriver). */
     private String firefoxDriverPath = "";
+
+    private String firefoxDefaultProfile = "";
 
     private List<Object> disabledExtensions;
 
@@ -184,6 +188,8 @@ public class SeleniumOptions extends VersionedAbstractParam {
         firefoxDriverPath =
                 getWebDriverPath(
                         Browser.FIREFOX, FIREFOX_DRIVER_SYSTEM_PROPERTY, FIREFOX_DRIVER_KEY);
+
+        firefoxDefaultProfile = getConfig().getString(FIREFOX_PROFILE_KEY, "");
 
         disabledExtensions = getConfig().getList(DISABLED_EXTENSIONS_KEY);
 
@@ -380,6 +386,20 @@ public class SeleniumOptions extends VersionedAbstractParam {
 
             saveAndSetSystemProperty(
                     FIREFOX_DRIVER_KEY, FIREFOX_DRIVER_SYSTEM_PROPERTY, firefoxDriverPath);
+        }
+    }
+
+    public String getFirefoxDefaultProfile() {
+        return firefoxDefaultProfile;
+    }
+
+    public void setFirefoxDefaultProfile(String firefoxDefaultProfile) {
+        Validate.notNull(
+                firefoxDefaultProfile, "Parameter firefoxDefaultProfile must not be null.");
+
+        if (!this.firefoxDefaultProfile.equals(firefoxDefaultProfile)) {
+            this.firefoxDefaultProfile = firefoxDefaultProfile;
+            this.getConfig().setProperty(FIREFOX_PROFILE_KEY, this.firefoxDefaultProfile);
         }
     }
 

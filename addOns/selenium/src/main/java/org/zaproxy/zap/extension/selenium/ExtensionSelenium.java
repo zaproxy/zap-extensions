@@ -50,6 +50,8 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.firefox.ProfilesIni;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.remote.CapabilityType;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -70,6 +72,7 @@ import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.selenium.internal.BrowserArgument;
 import org.zaproxy.zap.extension.selenium.internal.BuiltInSingleWebDriverProvider;
+import org.zaproxy.zap.extension.selenium.internal.FirefoxProfileManager;
 import org.zaproxy.zap.utils.Stats;
 
 /**
@@ -103,6 +106,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     private SeleniumAPI seleniumApi;
 
     private AddonFilesChangedListener addonFilesChangedListener;
+
+    private Map<Browser, ProfileManager> profileManagerMap = new HashMap<>();
 
     /**
      * A list containing all supported browsers by this extension.
@@ -518,7 +523,8 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
     private SeleniumOptionsPanel getOptionsPanel() {
         if (optionsPanel == null) {
-            optionsPanel = new SeleniumOptionsPanel(getView().getOptionsDialog(), getMessages());
+            optionsPanel =
+                    new SeleniumOptionsPanel(this, getView().getOptionsDialog(), getMessages());
         }
         return optionsPanel;
     }
@@ -1089,6 +1095,18 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
                 addFirefoxArguments(firefoxOptions);
                 consumer.accept(firefoxOptions);
+
+                String fxProfile = getSeleniumOptions().getFirefoxDefaultProfile();
+                if (!StringUtils.isEmpty(fxProfile)) {
+                    ProfilesIni pi = new ProfilesIni();
+                    try {
+                        FirefoxProfile firefoxProfile = pi.getProfile(fxProfile);
+                        firefoxOptions.setProfile(firefoxProfile);
+                    } catch (Exception e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                }
+
                 FirefoxDriver driver = new FirefoxDriver(firefoxOptions);
                 if (enableExtensions) {
                     addFirefoxExtensions(driver);
@@ -1281,5 +1299,32 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     public void deregisterBrowserHook(BrowserHook hook) {
         Objects.requireNonNull(hook);
         this.browserHooks.remove(hook);
+    }
+
+    /**
+     * Returns the profile manager for the specified browser.
+     *
+     * @param browser the browser
+     * @return the profile manager for the specified browser, or null if one is not supported.
+     * @since 15.14.0
+     */
+    public ProfileManager getProfileManager(Browser browser) {
+        if (Browser.FIREFOX.equals(browser)) {
+            return profileManagerMap.computeIfAbsent(browser, s -> new FirefoxProfileManager());
+        }
+        return null;
+    }
+
+    /**
+     * Sets the default Firefox profile name.
+     *
+     * @param profileName the profile name.
+     * @since 15.14.0
+     */
+    public void setDefaultFirefoxProfile(String profileName) {
+        if (getProfileManager(Browser.FIREFOX).getProfileDirectory(profileName) == null) {
+            throw new IllegalArgumentException("Firefox profile does not exist: " + profileName);
+        }
+        this.getOptions().setFirefoxDefaultProfile(profileName);
     }
 }
