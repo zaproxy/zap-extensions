@@ -854,6 +854,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     }
 
     private void startLocalServers(String overrideAddress, int overridePort, boolean install) {
+        stopLocalServers();
+
         boolean commandLineMode = ZAP.getProcessType() == ZAP.ProcessType.cmdline;
         boolean daemonMode = ZAP.getProcessType() == ZAP.ProcessType.daemon;
 
@@ -1289,6 +1291,10 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     @Override
     public void stop() {
+        stopLocalServers();
+    }
+
+    private void stopLocalServers() {
         localServers.values().removeIf(ExtensionNetwork::stopAdditionalLocalServer);
         stopLocalServer(mainProxyServer);
     }
