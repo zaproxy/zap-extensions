@@ -42,13 +42,13 @@ class ClientMapUnitTest {
         ClientMap map = new ClientMap(new ClientNode(new ClientSideDetails("Root", ""), false));
 
         // When
-        map.getOrAddNode(CCC_URL + "/", false);
-        map.getOrAddNode(BBB_DDD_URL + "/", false);
-        map.getOrAddNode(DDD_URL + "/", false);
-        map.getOrAddNode(BBB_CCC_URL + "/", false);
-        map.getOrAddNode(AAA_URL + "/", false);
-        map.getOrAddNode(BBB_BBB_URL + "/", false);
-        map.getOrAddNode(BBB_AAA_URL + "/", false);
+        map.getOrAddNode(CCC_URL + "/", false, false);
+        map.getOrAddNode(BBB_DDD_URL + "/", false, false);
+        map.getOrAddNode(DDD_URL + "/", false, false);
+        map.getOrAddNode(BBB_CCC_URL + "/", false, false);
+        map.getOrAddNode(AAA_URL + "/", false, false);
+        map.getOrAddNode(BBB_BBB_URL + "/", false, false);
+        map.getOrAddNode(BBB_AAA_URL + "/", false, false);
 
         ClientNode root = map.getRoot();
 
@@ -77,10 +77,10 @@ class ClientMapUnitTest {
         ClientMap map = new ClientMap(new ClientNode(new ClientSideDetails("Root", ""), false));
 
         // When
-        map.getOrAddNode(BBB_DDD_URL + "/", false);
-        map.getOrAddNode(BBB_CCC_URL + "/", true);
-        map.getOrAddNode(BBB_BBB_URL + "/", false);
-        map.getOrAddNode(BBB_AAA_URL + "/", true);
+        map.getOrAddNode(BBB_DDD_URL + "/", false, false);
+        map.getOrAddNode(BBB_CCC_URL + "/", false, true);
+        map.getOrAddNode(BBB_BBB_URL + "/", false, false);
+        map.getOrAddNode(BBB_AAA_URL + "/", false, true);
 
         ClientNode root = map.getRoot();
 
@@ -104,13 +104,13 @@ class ClientMapUnitTest {
         ClientMap map = new ClientMap(new ClientNode(new ClientSideDetails("Root", ""), false));
 
         // When
-        map.getOrAddNode(CCC_URL + "/", false);
-        map.getOrAddNode(BBB_DDD_URL + "/", false);
-        map.getOrAddNode(DDD_URL + "/", false);
-        map.getOrAddNode(BBB_CCC_URL + "/", true);
-        map.getOrAddNode(AAA_URL + "/", false);
-        map.getOrAddNode(BBB_BBB_URL + "/", true);
-        map.getOrAddNode(BBB_AAA_URL + "/", false);
+        map.getOrAddNode(CCC_URL + "/", false, false);
+        map.getOrAddNode(BBB_DDD_URL + "/", false, false);
+        map.getOrAddNode(DDD_URL + "/", false, false);
+        map.getOrAddNode(BBB_CCC_URL + "/", false, true);
+        map.getOrAddNode(AAA_URL + "/", false, false);
+        map.getOrAddNode(BBB_BBB_URL + "/", false, true);
+        map.getOrAddNode(BBB_AAA_URL + "/", false, false);
 
         map.clear();
 

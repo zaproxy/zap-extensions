@@ -6,6 +6,7 @@
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
 	<indexitem text="client" target="addon.client" />
+	<indexitem text="client firefox profile" target="addon.client.ajaxscan" />
 	<indexitem text="client firefox profile" target="addon.client.fxprofile" />
 	<indexitem text="client internals" target="addon.client.internals" />
 </index>

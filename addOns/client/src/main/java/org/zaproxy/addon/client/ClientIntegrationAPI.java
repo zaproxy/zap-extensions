@@ -86,34 +86,38 @@ public class ClientIntegrationAPI extends ApiImplementor {
         }
         Object url = json.get("url");
         if (url instanceof String) {
-            ThreadUtils.invokeAndWaitHandled(
-                    () -> {
-                        ClientNode node = this.extension.getOrAddClientNode((String) url, false);
-                        ClientSideDetails details = node.getUserObject();
-                        boolean wasVisited = details.isVisited();
-                        ClientSideComponent component = new ClientSideComponent(json);
-                        boolean componentAdded = details.addComponent(component);
-                        if (!wasVisited || componentAdded) {
-                            details.setVisited(true);
-                            this.extension.clientNodeChanged(node);
-                        }
-                        if (component.isStorageEvent()) {
-                            String storageUrl = node.getSite() + component.getTypeForDisplay();
-                            ClientNode storageNode =
-                                    this.extension.getOrAddClientNode(storageUrl, true);
-                            ClientSideDetails storageDetails = storageNode.getUserObject();
-                            storageDetails.setStorage(true);
-                            storageDetails.addComponent(component);
-                            this.extension.clientNodeChanged(storageNode);
-                        }
-                    });
+            String urlStr = (String) url;
+            if (!ExtensionClientIntegration.isApiUrl(urlStr)) {
+                ThreadUtils.invokeAndWaitHandled(
+                        () -> {
+                            ClientNode node =
+                                    this.extension.getOrAddClientNode(urlStr, false, false);
+                            ClientSideDetails details = node.getUserObject();
+                            boolean wasVisited = details.isVisited();
+                            ClientSideComponent component = new ClientSideComponent(json);
+                            boolean componentAdded = details.addComponent(component);
+                            if (!wasVisited || componentAdded) {
+                                details.setVisited(true);
+                                this.extension.clientNodeChanged(node);
+                            }
+                            if (component.isStorageEvent()) {
+                                String storageUrl = node.getSite() + component.getTypeForDisplay();
+                                ClientNode storageNode =
+                                        this.extension.getOrAddClientNode(storageUrl, false, true);
+                                ClientSideDetails storageDetails = storageNode.getUserObject();
+                                storageDetails.setStorage(true);
+                                storageDetails.addComponent(component);
+                                this.extension.clientNodeChanged(storageNode);
+                            }
+                        });
+            }
         } else {
             LOGGER.debug("Not got url:(: {}", url);
         }
         Object href = json.get("href");
         if (href instanceof String && ((String) href).toLowerCase(Locale.ROOT).startsWith("http")) {
             ThreadUtils.invokeAndWaitHandled(
-                    () -> this.extension.getOrAddClientNode((String) href, false));
+                    () -> this.extension.getOrAddClientNode((String) href, false, false));
         }
     }
 
@@ -132,7 +136,11 @@ public class ClientIntegrationAPI extends ApiImplementor {
                 String eventJson = this.getParam(params, PARAM_EVENT_JSON, "");
                 LOGGER.debug("Got event: {}", eventJson);
                 json = JSONObject.fromObject(eventJson);
-                this.extension.addReportedObject(new ReportedEvent(json));
+                ReportedEvent event = new ReportedEvent(json);
+                if (event.getUrl() == null
+                        || !ExtensionClientIntegration.isApiUrl(event.getUrl())) {
+                    this.extension.addReportedObject(event);
+                }
                 break;
 
             case ACTION_REPORT_ZEST_STATEMENT:

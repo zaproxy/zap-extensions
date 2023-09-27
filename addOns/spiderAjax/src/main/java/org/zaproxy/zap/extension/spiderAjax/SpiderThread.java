@@ -259,6 +259,7 @@ public class SpiderThread implements Runnable {
                 ScanEventPublisher.SCAN_STARTED_EVENT,
                 0,
                 this.target.toTarget(),
+                target.getStartUri().toString(),
                 this.target.getUser());
 
         User user = target.getUser();
