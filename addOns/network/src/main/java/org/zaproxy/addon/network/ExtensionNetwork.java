@@ -884,6 +884,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
         if (overrides) {
             localServersOptions.setMainProxy(serverConfig);
+            stopLocalServer(mainProxyServer);
         }
 
         updateCoreProxy(serverConfig);
