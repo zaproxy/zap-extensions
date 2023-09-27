@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Set;
 import net.htmlparser.jericho.HTMLElementName;
 import net.htmlparser.jericho.Source;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.lang.StringUtils;
@@ -42,13 +43,17 @@ import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
+import org.zaproxy.zap.network.HttpRedirectionValidator;
+import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.utils.Stats;
 
 public class ZapItScan {
 
     private static final Logger LOGGER = LogManager.getLogger(ZapItScan.class);
+    private static final int MAX_STR_SIZE = 80;
 
     private ExtensionQuickStart ext;
 
@@ -78,8 +83,21 @@ public class ZapItScan {
         }
         Stats.incCounter("stats.quickstart.zapit.basic");
         CommandLine.info(Constant.messages.getString("quickstart.cmdline.zapit.start", url));
-        SiteNode node = ext.accessNode(targetURL);
 
+        ZapItRedirectionValidator zirv = new ZapItRedirectionValidator();
+
+        SiteNode node =
+                ext.accessNode(
+                        targetURL,
+                        HttpRequestConfig.builder()
+                                .setFollowRedirects(true)
+                                .setRedirectionValidator(zirv)
+                                .build());
+
+        List<MessageSummary> msgs = zirv.getMessages();
+        if (msgs.isEmpty()) {
+            CommandLine.info(Constant.messages.getString("quickstart.cmdline.zapit.req.none"));
+        }
         if (node == null) {
             CommandLine.error(Constant.messages.getString("quickstart.cmdline.zapit.fail", url));
             return false;
@@ -124,7 +142,14 @@ public class ZapItScan {
                                     Method getApplicationMethod =
                                             appMatch.getClass().getMethod("getApplication");
                                     Object app = getApplicationMethod.invoke(appMatch);
-                                    techList.add(app.toString());
+                                    String appStr = app.toString();
+                                    Method getVersionMethod =
+                                            appMatch.getClass().getMethod("getVersion");
+                                    String version = (String) getVersionMethod.invoke(appMatch);
+                                    if (!StringUtils.isEmpty(version)) {
+                                        appStr += " (" + version + ")";
+                                    }
+                                    techList.add(appStr);
                                 }
                             }
                         }
@@ -172,14 +197,11 @@ public class ZapItScan {
             String extra = alert.getEvidence();
             if (StringUtils.isEmpty(extra)) {
                 extra = alert.getParam();
+            } else {
+                // Replace any newlines to keep the display tidier
+                extra = extra.replace("\r\n", " ").replace('\n', ' ');
             }
-            if (!StringUtils.isEmpty(extra)) {
-                if (extra.length() > 80) {
-                    // Keep it to a vaguely sensible length
-                    extra = extra.substring(0, 80) + "...";
-                }
-                extra = " : \"" + extra + "\"";
-            }
+            extra = " : \"" + trim(extra) + "\"";
 
             CommandLine.info(
                     "\t" + Alert.MSG_RISK[alert.getRisk()] + ": " + alert.getName() + extra);
@@ -189,15 +211,9 @@ public class ZapItScan {
         HistoryReference href = node.getHistoryReference();
         if (href != null) {
             CommandLine.info(Constant.messages.getString("quickstart.cmdline.zapit.root"));
-            CommandLine.info(
-                    Constant.messages.getString(
-                            "quickstart.cmdline.zapit.root.time", href.getRtt()));
+
             try {
                 HttpMessage msg = href.getHttpMessage();
-                CommandLine.info(
-                        Constant.messages.getString(
-                                "quickstart.cmdline.zapit.root.respbody",
-                                msg.getResponseBody().length()));
                 String contentType = msg.getResponseHeader().getHeader(HttpHeader.CONTENT_TYPE);
                 if (contentType != null) {
                     CommandLine.info(
@@ -233,5 +249,129 @@ public class ZapItScan {
             }
         }
         return true;
+    }
+
+    private static String trim(String str) {
+        if (!StringUtils.isEmpty(str) && str.length() > MAX_STR_SIZE) {
+            str = str.substring(0, MAX_STR_SIZE) + "...";
+        }
+        return str;
+    }
+
+    private static class MessageSummary {
+        private final String url;
+        private final long time;
+        private final int code;
+        private final long bodySize;
+        private final List<String> reqCookies;
+        private final List<String> respCookies;
+
+        MessageSummary(HttpMessage msg) {
+            this.url = msg.getRequestHeader().getURI().toString();
+            this.time = msg.getTimeElapsedMillis();
+            this.code = msg.getResponseHeader().getStatusCode();
+            this.bodySize = msg.getResponseBody().length();
+            this.reqCookies = msg.getRequestHeader().getHeaderValues(HttpHeader.COOKIE);
+            this.respCookies =
+                    msg.getResponseHeader().getHeaderValues(HttpResponseHeader.SET_COOKIE);
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public long getTime() {
+            return time;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public long getBodySize() {
+            return bodySize;
+        }
+
+        public List<String> getReqCookies() {
+            return reqCookies;
+        }
+
+        public List<String> getRespCookies() {
+            return respCookies;
+        }
+    }
+
+    private static class ZapItRedirectionValidator implements HttpRedirectionValidator {
+
+        private boolean printedTitle;
+        private final List<MessageSummary> messages = new ArrayList<>();
+
+        @Override
+        public boolean isValid(URI redirection) {
+            return true;
+        }
+
+        public List<MessageSummary> getMessages() {
+            return messages;
+        }
+
+        @Override
+        public void notifyMessageReceived(HttpMessage msg) {
+            // The MessageSummary is a bit superfluous now, but will be needed for caching the
+            // request when we support other sort of reports
+            MessageSummary ms = new MessageSummary(msg);
+            messages.add(ms);
+
+            if (!printedTitle) {
+                CommandLine.info(Constant.messages.getString("quickstart.cmdline.zapit.req"));
+                printedTitle = true;
+            }
+            CommandLine.info(
+                    Constant.messages.getString("quickstart.cmdline.zapit.req.url", ms.getUrl()));
+            CommandLine.info(
+                    Constant.messages.getString("quickstart.cmdline.zapit.req.time", ms.getTime()));
+            CommandLine.info(
+                    Constant.messages.getString(
+                            "quickstart.cmdline.zapit.req.code",
+                            ms.getCode(),
+                            HttpStatus.getStatusText(ms.getCode())));
+            CommandLine.info(
+                    Constant.messages.getString(
+                            "quickstart.cmdline.zapit.req.respbody", ms.getBodySize()));
+
+            List<String> reqCookies = ms.getReqCookies();
+            if (reqCookies.isEmpty()) {
+                CommandLine.info(
+                        Constant.messages.getString(
+                                "quickstart.cmdline.zapit.req.reqcookies.none"));
+            } else {
+                CommandLine.info(
+                        Constant.messages.getString("quickstart.cmdline.zapit.req.reqcookies"));
+                reqCookies.stream()
+                        .forEach(
+                                c ->
+                                        CommandLine.info(
+                                                Constant.messages.getString(
+                                                        "quickstart.cmdline.zapit.req.reqcookies.cookie",
+                                                        trim(c))));
+            }
+
+            List<String> respCookies = ms.getRespCookies();
+            if (respCookies.isEmpty()) {
+                CommandLine.info(
+                        Constant.messages.getString(
+                                "quickstart.cmdline.zapit.req.respcookies.none"));
+            } else {
+                CommandLine.info(
+                        Constant.messages.getString("quickstart.cmdline.zapit.req.respcookies"));
+                respCookies.stream()
+                        .forEach(
+                                c ->
+                                        CommandLine.info(
+                                                Constant.messages.getString(
+                                                        "quickstart.cmdline.zapit.req.respcookies.cookie",
+                                                        trim(c))));
+            }
+        }
     }
 }

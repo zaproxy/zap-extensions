@@ -28,6 +28,7 @@ import org.parosproxy.paros.model.SiteNode;
 import org.zaproxy.zap.extension.ascan.ActiveScan;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.model.Target;
+import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.utils.Stats;
 
 public class AttackThread extends Thread {
@@ -51,6 +52,9 @@ public class AttackThread extends Thread {
     private boolean useStdSpider;
 
     private static final Logger LOGGER = LogManager.getLogger(AttackThread.class);
+
+    private static final HttpRequestConfig REQ_CONFIG =
+            HttpRequestConfig.builder().setFollowRedirects(true).build();
 
     public AttackThread(ExtensionQuickStart ext, boolean useStdSpider) {
         super("ZAP-QuickStart-AttackThread");
@@ -77,7 +81,7 @@ public class AttackThread extends Thread {
         try {
             Stats.incCounter("stats.quickstart.attack");
             extension.notifyProgress(Progress.started);
-            SiteNode startNode = this.extension.accessNode(this.url);
+            SiteNode startNode = this.extension.accessNode(this.url, REQ_CONFIG);
 
             if (startNode == null) {
                 LOGGER.debug("Failed to access URL {}", url);
