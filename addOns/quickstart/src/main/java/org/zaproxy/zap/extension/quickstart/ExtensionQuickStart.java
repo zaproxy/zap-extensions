@@ -73,6 +73,7 @@ import org.zaproxy.zap.extension.ext.ExtensionExtension;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.quickstart.AttackThread.Progress;
+import org.zaproxy.zap.network.HttpRequestConfig;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 public class ExtensionQuickStart extends ExtensionAdaptor
@@ -319,12 +320,13 @@ public class ExtensionQuickStart extends ExtensionAdaptor
         attackThread.start();
     }
 
-    protected SiteNode accessNode(URL url) {
+    protected SiteNode accessNode(URL url, HttpRequestConfig config) {
         SiteNode startNode = null;
         // Request the URL
         try {
             final HttpMessage msg = new HttpMessage(new URI(url.toString(), true));
-            getHttpSender().sendAndReceive(msg, true);
+            getHttpSender().sendAndReceive(msg, config);
+            getHttpSender().setUseGlobalState(false);
 
             if (!HttpStatusCode.isSuccess(msg.getResponseHeader().getStatusCode())) {
                 notifyProgress(
@@ -390,6 +392,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
     private HttpSender getHttpSender() {
         if (httpSender == null) {
             httpSender = new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR);
+            httpSender.setUseGlobalState(false);
         }
         return httpSender;
     }
