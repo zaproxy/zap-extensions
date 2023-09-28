@@ -60,7 +60,20 @@
 	overridden and those values shown instead.
 
 	<p>
-	Se pueden encontrar mas detalles sobre el conjunto WebDrivers en la página de resumen.
+	More details about the bundled WebDrivers can be found on the overview page.
+
+	<h4>Browser Arguments</h4>
+	Both Chrome and Firefox binaries can have additional (CLI) arguments specified through the <code>Arguments...</code> button.
+
+	<p>
+	<strong>Note:</strong> Adding invalid arguments might cause the browser to fail to start. ZAP already adds some arguments (e.g. headless).
+
+	<h4>Browser Profiles</h4>
+	You can choose which Firefox profile to use by default.
+	The <code>&lt;temporary&gt;</code> profile is one which is created by Selenium each time the browser is launched.
+	<p>
+	<strong>Note:</strong> The 'client' add-on creates a profile called zap-client-profile - 
+	if you choose another profile then the Client add-on will not work without manual configuration.
 
 	<h3>Browser Extensions</h3>
 
@@ -73,7 +86,7 @@
 	Add-ons can also add new browser extensions. If you delete a browser extension via this screen then it will be added again 
 	by the add-on so either just disable it or uninstall the add-on to remove the browser extension.
 
-	<h2>Véase también</h2>
+	<h2>See also</h2>
 	<table>
 		<tr>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;</td>
