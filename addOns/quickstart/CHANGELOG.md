@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [41] - 2023-09-28
 ### Added
 - ZAPit: report summary of all requests and responses made.
 - ZAPit: report technology version if available.
@@ -216,6 +216,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[41]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v39
 [38]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v38
