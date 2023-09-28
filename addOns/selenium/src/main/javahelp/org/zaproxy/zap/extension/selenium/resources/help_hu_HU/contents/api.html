@@ -19,6 +19,12 @@
 			<th>Description</th>
 		</tr>
 		<tr>
+			<td>getBrowserArguments</td>
+			<td>nézet</td>
+			<td>browser*</td>
+			<td>Gets the browser arguments.</td>
+		</tr>
+		<tr>
 			<td>optionChromeBinaryPath</td>
 			<td>nézet</td>
 			<td></td>
@@ -32,7 +38,7 @@
 		</tr>
 		<tr>
 			<td>optionFirefoxBinaryPath</td>
-			<td>nézet</td>
+			<td>view</td>
 			<td></td>
 			<td>Returns the current path to Firefox binary</td>
 		</tr>
@@ -43,6 +49,24 @@
 			<td>Returns the current path to Firefox driver (geckodriver)</td>
 		</tr>
 		<tr>
+			<td>addBrowserArgument</td>
+			<td>akció</td>
+			<td>browser* argument* enabled</td>
+			<td>Adds a browser argument.</td>
+		</tr>
+		<tr>
+			<td>removeBrowserArgument</td>
+			<td>action</td>
+			<td>browser* argument*</td>
+			<td>Removes a browser argument.</td>
+		</tr>
+		<tr>
+			<td>setBrowserArgumentEnabled</td>
+			<td>action</td>
+			<td>browser* argument* enabled* </td>
+			<td>Sets whether or not a browser argument is enabled.</td>
+		</tr>
+		<tr>
 			<td>setOptionChromeBinaryPath</td>
 			<td>action</td>
 			<td>String*</td>
@@ -50,7 +74,7 @@
 		</tr>
 		<tr>
 			<td>setOptionChromeDriverPath</td>
-			<td>akció</td>
+			<td>action</td>
 			<td>String*</td>
 			<td>Sets the current path to ChromeDriver</td>
 		</tr>
