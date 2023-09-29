@@ -39,6 +39,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.requester.ExtensionRequester;
@@ -62,11 +63,12 @@ public class HttpPanelSender {
 
     private HttpSender delegate;
 
-    private JToggleButton fixContentLength = null;
-    private JToggleButton followRedirect = null;
-    private JToggleButton useTrackingSessionState = null;
-    private JToggleButton useCookies = null;
-    private JToggleButton useCsrf = null;
+    private JToggleButton fixContentLength;
+    private JToggleButton followRedirect;
+    private JToggleButton useTrackingSessionState;
+    private JToggleButton useCookies;
+    private JToggleButton useCsrf;
+    private JToggleButton hostHeader;
 
     public HttpPanelSender(CustomHttpPanelRequest requestPanel, HttpPanelResponse responsePanel) {
         this.responsePanel = responsePanel;
@@ -82,6 +84,7 @@ public class HttpPanelSender {
                 getButtonFollowRedirects(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
         requestPanel.addOptions(
                 getButtonFixContentLength(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
+        requestPanel.addOptions(getButtonHostHeader(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
         if (extAntiCSRF != null) {
             requestPanel.addOptions(getButtonUseCsrf(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
         }
@@ -96,6 +99,12 @@ public class HttpPanelSender {
 
         Map<String, Object> properties = new HashMap<>();
         properties.put("connection.manual.persistent", Boolean.TRUE);
+        if (!getButtonHostHeader().isSelected()) {
+            String host = httpMessage.getRequestHeader().getHeader(HttpRequestHeader.HOST);
+            if (host != null) {
+                properties.put("host", host);
+            }
+        }
         httpMessage.setUserObject(properties);
 
         if (getButtonFixContentLength().isSelected()) {
@@ -239,6 +248,15 @@ public class HttpPanelSender {
                     Constant.messages.getString("requester.httpsender.checkbox.fixlength"));
         }
         return fixContentLength;
+    }
+
+    private JToggleButton getButtonHostHeader() {
+        if (hostHeader == null) {
+            hostHeader = new JToggleButton(ExtensionRequester.createIcon("fugue/server.png"), true);
+            hostHeader.setToolTipText(
+                    Constant.messages.getString("requester.httpsender.checkbox.hostheader"));
+        }
+        return hostHeader;
     }
 
     /**
