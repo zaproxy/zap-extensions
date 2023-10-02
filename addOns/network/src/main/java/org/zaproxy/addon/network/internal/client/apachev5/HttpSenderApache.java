@@ -774,13 +774,16 @@ public class HttpSenderApache
             return request;
         }
 
-        String host = null;
-        Object hostValue = properties.get("host");
-        if (hostValue != null) {
-            host = hostValue.toString();
-        }
+        boolean hostNormalisation = !Boolean.FALSE.equals(properties.get("host.normalization"));
+        if (hostNormalisation) {
+            String host = null;
+            Object hostValue = properties.get("host");
+            if (hostValue != null) {
+                host = hostValue.toString();
+            }
 
-        addHostHeader(msg, host);
+            addHostHeader(msg, host);
+        }
 
         BasicClassicHttpRequest copy =
                 new BasicClassicHttpRequest(
@@ -796,7 +799,7 @@ public class HttpSenderApache
         copy.setVersion(toHttpVersion(msg.getRequestHeader().getVersion()));
         boolean skipHostHeader = false;
         for (HttpHeaderField header : msg.getRequestHeader().getHeaders()) {
-            if (HttpRequestHeader.HOST.equals(header.getName())) {
+            if (hostNormalisation && HttpRequestHeader.HOST.equals(header.getName())) {
                 if (skipHostHeader) {
                     continue;
                 }
