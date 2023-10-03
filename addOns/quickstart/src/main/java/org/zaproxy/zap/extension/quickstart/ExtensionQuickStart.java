@@ -29,6 +29,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Locale;
 import java.util.Vector;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -57,6 +58,7 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.network.HttpStatusCode;
@@ -546,7 +548,15 @@ public class ExtensionQuickStart extends ExtensionAdaptor
             Vector<String> params = arguments[ARG_ZAPIT_URL_IDX].getArguments();
             for (String param : params) {
                 ZapItScan reconScan = new ZapItScan(this);
-                reconScan.recon(param);
+                String paramLc = param.toLowerCase(Locale.ROOT);
+                if (!paramLc.startsWith(HttpHeader.SCHEME_HTTP)
+                        && !paramLc.startsWith(HttpHeader.SCHEME_HTTPS)) {
+                    // Scheme not specified, try both HTTP(S)
+                    reconScan.recon(HttpHeader.SCHEME_HTTP + param);
+                    reconScan.recon(HttpHeader.SCHEME_HTTPS + param);
+                } else {
+                    reconScan.recon(param);
+                }
             }
 
         } else {
