@@ -39,7 +39,6 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.requester.ExtensionRequester;
@@ -100,10 +99,7 @@ public class HttpPanelSender {
         Map<String, Object> properties = new HashMap<>();
         properties.put("connection.manual.persistent", Boolean.TRUE);
         if (!getButtonHostHeader().isSelected()) {
-            String host = httpMessage.getRequestHeader().getHeader(HttpRequestHeader.HOST);
-            if (host != null) {
-                properties.put("host", host);
-            }
+            properties.put("host.normalization", Boolean.FALSE);
         }
         httpMessage.setUserObject(properties);
 
