@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Allow to completely disable host header normalization.
 
+### Changed
+- Update default user-agents.
+
 ## [0.11.2] - 2023-09-27
 ### Fixed
 - Ensure the main proxy with custom port (`-port`) is stopped when initialising after installation in `cmd` and `daemon` modes.
