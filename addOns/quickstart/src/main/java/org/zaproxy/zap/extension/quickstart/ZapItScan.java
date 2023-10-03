@@ -92,7 +92,8 @@ public class ZapItScan {
                         HttpRequestConfig.builder()
                                 .setFollowRedirects(true)
                                 .setRedirectionValidator(zirv)
-                                .build());
+                                .build(),
+                        false);
 
         List<MessageSummary> msgs = zirv.getMessages();
         if (msgs.isEmpty()) {
