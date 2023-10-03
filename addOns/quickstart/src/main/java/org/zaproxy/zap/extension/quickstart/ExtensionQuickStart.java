@@ -320,7 +320,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
         attackThread.start();
     }
 
-    protected SiteNode accessNode(URL url, HttpRequestConfig config) {
+    protected SiteNode accessNode(URL url, HttpRequestConfig config, boolean successOnly) {
         SiteNode startNode = null;
         // Request the URL
         try {
@@ -328,7 +328,7 @@ public class ExtensionQuickStart extends ExtensionAdaptor
             getHttpSender().sendAndReceive(msg, config);
             getHttpSender().setUseGlobalState(false);
 
-            if (!HttpStatusCode.isSuccess(msg.getResponseHeader().getStatusCode())) {
+            if (successOnly && !HttpStatusCode.isSuccess(msg.getResponseHeader().getStatusCode())) {
                 notifyProgress(
                         Progress.failed,
                         Constant.messages.getString(

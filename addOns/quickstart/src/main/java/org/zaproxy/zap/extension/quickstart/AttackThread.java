@@ -81,7 +81,7 @@ public class AttackThread extends Thread {
         try {
             Stats.incCounter("stats.quickstart.attack");
             extension.notifyProgress(Progress.started);
-            SiteNode startNode = this.extension.accessNode(this.url, REQ_CONFIG);
+            SiteNode startNode = this.extension.accessNode(this.url, REQ_CONFIG, true);
 
             if (startNode == null) {
                 LOGGER.debug("Failed to access URL {}", url);
