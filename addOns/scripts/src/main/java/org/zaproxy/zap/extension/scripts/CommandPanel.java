@@ -128,7 +128,7 @@ public class CommandPanel extends AbstractPanel {
     protected void setCommandScript(String str) {
         setCommandScriptContent(str);
         getTxtOutput().discardAllEdits();
-        getTxtOutput().requestFocus();
+        getTxtOutput().requestFocusInWindow();
     }
 
     protected void setCommandCursorPosition(int offset) {

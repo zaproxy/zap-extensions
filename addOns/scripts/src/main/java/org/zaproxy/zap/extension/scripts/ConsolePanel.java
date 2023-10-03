@@ -25,18 +25,25 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
-import javax.swing.SwingUtilities;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
@@ -46,6 +53,7 @@ import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.utils.FontUtils;
+import org.zaproxy.zap.utils.ThreadUtils;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.ZapToggleButton;
 
@@ -80,6 +88,8 @@ public class ConsolePanel extends AbstractPanel {
     private Runnable dialogRunnable = null;
     private Thread changesPollingThread = null;
     private boolean pollForChanges;
+    private WatchService watchService;
+    private WatchKey scriptWatchKey;
     private static final Object[] SCRIPT_CHANGED_BUTTONS =
             new Object[] {
                 Constant.messages.getString("scripts.changed.keep"),
@@ -133,69 +143,118 @@ public class ConsolePanel extends AbstractPanel {
     }
 
     private void startPollingForChanges() {
+        try {
+            watchService = FileSystems.getDefault().newWatchService();
+        } catch (IOException e) {
+            LOGGER.warn(
+                    "Could not create watchService, polling for script changes on disk will be disabled.",
+                    e);
+            return;
+        }
+
         changesPollingThread =
                 new Thread() {
                     @Override
                     public void run() {
                         this.setName(THREAD_NAME);
                         pollForChanges = true;
+                        if (watchService == null) {
+                            return;
+                        }
+                        WatchKey watchKey;
                         while (pollForChanges) {
-                            if (dialogRunnable == null && isScriptUpdatedOnDisk()) {
-
-                                dialogRunnable =
-                                        () -> {
-                                            String message;
-                                            if (script.isChanged()) {
-                                                message =
-                                                        Constant.messages.getString(
-                                                                "scripts.console.changedOnDiskAndConsole");
-                                            } else {
-                                                message =
-                                                        Constant.messages.getString(
-                                                                "scripts.console.changedOnDisk");
-                                            }
-
-                                            if (JOptionPane.showOptionDialog(
-                                                            ConsolePanel.this,
-                                                            message,
-                                                            Constant.PROGRAM_NAME,
-                                                            JOptionPane.YES_NO_OPTION,
-                                                            JOptionPane.WARNING_MESSAGE,
-                                                            null,
-                                                            SCRIPT_CHANGED_BUTTONS,
-                                                            null)
-                                                    == JOptionPane.YES_OPTION) {
-                                                try {
-                                                    extension.getExtScript().saveScript(script);
-                                                } catch (IOException e) {
-                                                    LOGGER.error(e.getMessage(), e);
-                                                }
-                                            } else {
-                                                reloadScript();
-                                            }
-                                            dialogRunnable = null;
-                                        };
+                            try {
+                                watchKey = watchService.take();
+                            } catch (Exception e) {
+                                continue;
+                            }
+                            for (WatchEvent<?> event : watchKey.pollEvents()) {
                                 try {
-                                    SwingUtilities.invokeAndWait(dialogRunnable);
+                                    Path changedPath =
+                                            ((Path) scriptWatchKey.watchable())
+                                                    .resolve((Path) event.context());
+                                    if (!Files.isSameFile(changedPath, script.getFile().toPath())) {
+                                        continue;
+                                    }
                                 } catch (Exception e) {
-                                    LOGGER.error(e.getMessage(), e);
+                                    continue;
+                                }
+                                if (isScriptUpdatedOnDisk()) {
+                                    promptUserToKeepOrReplaceScript();
                                 }
                             }
-                            try {
-                                sleep(5000);
-                            } catch (InterruptedException e) {
-                                // Ignore
-                            }
+                            watchKey.reset();
                         }
                         changesPollingThread = null;
                     }
                 };
         changesPollingThread.setDaemon(true);
         changesPollingThread.start();
+    }
 
-        if (dialogRunnable != null) {
-            return;
+    private void promptUserToKeepOrReplaceScript() {
+        if (dialogRunnable == null) {
+            dialogRunnable =
+                    () -> {
+                        if (getSaveOrReplaceScriptChoice() == JOptionPane.YES_OPTION) {
+                            try {
+                                extension.getExtScript().saveScript(script);
+                            } catch (IOException e) {
+                                LOGGER.error(e.getMessage(), e);
+                            }
+                        } else {
+                            reloadScript();
+                        }
+                        dialogRunnable = null;
+                    };
+            ThreadUtils.invokeAndWaitHandled(dialogRunnable);
         }
+    }
+
+    private int getSaveOrReplaceScriptChoice() {
+        ScriptConsoleOptions options = extension.getScriptConsoleOptions();
+        if (script.isChanged()) {
+            return JOptionPane.showOptionDialog(
+                    ConsolePanel.this,
+                    Constant.messages.getString("scripts.console.changedOnDiskAndConsole"),
+                    Constant.PROGRAM_NAME,
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE,
+                    null,
+                    SCRIPT_CHANGED_BUTTONS,
+                    null);
+        }
+
+        if (options.getDefaultScriptChangedBehaviour()
+                == ScriptConsoleOptions.DefaultScriptChangedBehaviour.ASK_EACH_TIME) {
+            var checkBox =
+                    new JCheckBox(Constant.messages.getString("scripts.console.rememberChoice"));
+            int choice =
+                    JOptionPane.showOptionDialog(
+                            ConsolePanel.this,
+                            new Object[] {
+                                Constant.messages.getString("scripts.console.changedOnDisk"),
+                                checkBox
+                            },
+                            Constant.PROGRAM_NAME,
+                            JOptionPane.YES_NO_OPTION,
+                            JOptionPane.WARNING_MESSAGE,
+                            null,
+                            SCRIPT_CHANGED_BUTTONS,
+                            null);
+            if (checkBox.isSelected()) {
+                options.setDefaultScriptChangedBehaviour(
+                        choice == JOptionPane.YES_OPTION
+                                ? ScriptConsoleOptions.DefaultScriptChangedBehaviour.KEEP
+                                : ScriptConsoleOptions.DefaultScriptChangedBehaviour.REPLACE);
+            }
+            return choice;
+        }
+
+        return options.getDefaultScriptChangedBehaviour()
+                        == ScriptConsoleOptions.DefaultScriptChangedBehaviour.KEEP
+                ? JOptionPane.YES_OPTION
+                : JOptionPane.NO_OPTION;
     }
 
     private void reloadScript() {
@@ -407,6 +466,12 @@ public class ConsolePanel extends AbstractPanel {
     void unload() {
         getCommandPanel().unload();
         this.pollForChanges = false;
+        if (watchService != null) {
+            try {
+                watchService.close();
+            } catch (Exception ignored) {
+            }
+        }
     }
 
     public ScriptWrapper getScript() {
@@ -439,12 +504,31 @@ public class ConsolePanel extends AbstractPanel {
             // Save the offset
             scriptWrapperToOffset.put(this.script, getCommandPanel().getCommandCursorPosition());
         }
+        if (scriptWatchKey != null) {
+            scriptWatchKey.cancel();
+        }
         this.script = script;
         this.template = null;
+
+        if (script.getFile() != null && watchService != null) {
+            try {
+                scriptWatchKey =
+                        script.getFile()
+                                .toPath()
+                                .getParent()
+                                .register(watchService, StandardWatchEventKinds.ENTRY_MODIFY);
+            } catch (IOException e) {
+                LOGGER.warn(
+                        "Failed to register watchService for script file: {}", script.getFile(), e);
+            }
+        }
 
         getCommandPanel().setEditable(script.getEngine().isTextBased());
         updateButtonsState();
         updateCommandPanelState(script);
+        if (isScriptUpdatedOnDisk()) {
+            promptUserToKeepOrReplaceScript();
+        }
         if (!allowFocus) {
             return;
         }
@@ -471,7 +555,6 @@ public class ConsolePanel extends AbstractPanel {
      * @see #getCommandPanel()
      */
     private void updateCommandPanelState(ScriptWrapper script) {
-        getCommandPanel().clear();
         getCommandPanel().setCommandScript(script.getContents());
         getCommandPanel().setScriptType(script.getTypeName());
         if (this.scriptWrapperToOffset.containsKey(script)) {
