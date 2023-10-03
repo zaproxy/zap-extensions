@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update Getting Started Guide.
+- Updated for 2.14.0.
 
 ## [15] - 2023-07-11
 ### Changed
