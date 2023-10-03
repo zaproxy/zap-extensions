@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - ZAPit: carry on even if non success code returned.
+- ZAPit: scan HTTP and HTTPS if protocol not specified.
 
 ## [41] - 2023-09-28
 ### Added
