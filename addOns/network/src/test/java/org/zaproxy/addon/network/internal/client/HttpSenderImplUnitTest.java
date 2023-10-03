@@ -21,6 +21,7 @@ package org.zaproxy.addon.network.internal.client;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
@@ -1262,6 +1263,162 @@ class HttpSenderImplUnitTest {
             assertThrows(
                     ConcurrentModificationException.class,
                     () -> method.sendWith(httpSender, message));
+        }
+    }
+
+    @Nested
+    class HostNormalisation {
+
+        private HttpMessage messageReceived;
+        private String serverHost;
+
+        @BeforeEach
+        void setup() throws Exception {
+            serverHost = "localhost:" + serverPort;
+            server.setHttpMessageHandler(
+                    (ctx, msg) -> {
+                        messageReceived = msg;
+                        msg.setResponseHeader("HTTP/1.1 200\r\nContent-Length: 0");
+                    });
+
+            message.setRequestHeader("GET " + getServerUri("/") + " HTTP/1.1");
+            message.getRequestHeader().setHeader("a", "1");
+            message.getRequestHeader().setHeader(HttpRequestHeader.HOST, serverHost);
+            message.getRequestHeader().setHeader("b", "2");
+        }
+
+        @AfterEach
+        void teardown() throws IOException {
+            server.close();
+        }
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+        void shouldBeEnabledByDefaultAndRemoveDuplicatedHostHeaders(SenderMethod method)
+                throws Exception {
+            // Given
+            message.getRequestHeader().setHeader(HttpRequestHeader.HOST, "example.com");
+            message.getRequestHeader().addHeader(HttpRequestHeader.HOST, "example.org");
+            // When
+            method.sendWith(httpSender, message);
+            // Then
+            assertThat(
+                    messageReceived.getRequestHeader().toString(),
+                    containsString("a: 1\r\nhost: " + serverHost + "\r\nb: 2\r\n\r\n"));
+        }
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+        void shouldBeEnabledByDefaultAndAddHostHeader(SenderMethod method) throws Exception {
+            // Given
+            message.getRequestHeader().setHeader(HttpRequestHeader.HOST, null);
+            // When
+            method.sendWith(httpSender, message);
+            // Then
+            assertThat(
+                    messageReceived.getRequestHeader().toString(),
+                    containsString("a: 1\r\nb: 2\r\nhost: " + serverHost + "\r\n\r\n"));
+        }
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+        void shouldBeEnabledWithTrue(SenderMethod method) throws Exception {
+            // Given
+            message.setUserObject(Map.of("host.normalization", Boolean.TRUE));
+            message.getRequestHeader().setHeader(HttpRequestHeader.HOST, "example.org");
+            message.getRequestHeader().addHeader(HttpRequestHeader.HOST, "example.com");
+            // When
+            method.sendWith(httpSender, message);
+            // Then
+            assertThat(
+                    messageReceived.getRequestHeader().toString(),
+                    containsString("a: 1\r\nhost: " + serverHost + "\r\nb: 2\r\n\r\n"));
+        }
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+        void shouldBeEnabledWithInvalidValue(SenderMethod method) throws Exception {
+            // Given
+            message.setUserObject(Map.of("host.normalization", "not valid boolean"));
+            message.getRequestHeader().setHeader(HttpRequestHeader.HOST, "example.com");
+            message.getRequestHeader().addHeader(HttpRequestHeader.HOST, "example.org");
+            // When
+            method.sendWith(httpSender, message);
+            // Then
+            assertThat(
+                    messageReceived.getRequestHeader().toString(),
+                    containsString("a: 1\r\nhost: " + serverHost + "\r\nb: 2\r\n\r\n"));
+        }
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+        void shouldBeDisabledWithFalse(SenderMethod method) throws Exception {
+            // Given
+            message.setUserObject(Map.of("host.normalization", Boolean.FALSE));
+            message.getRequestHeader().setHeader(HttpRequestHeader.HOST, "example.com");
+            message.getRequestHeader().addHeader(HttpRequestHeader.HOST, "example.org");
+            // When
+            method.sendWith(httpSender, message);
+            // Then
+            assertThat(
+                    messageReceived.getRequestHeader().toString(),
+                    containsString(
+                            "a: 1\r\nhost: example.com\r\nb: 2\r\nhost: example.org\r\n\r\n"));
+        }
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+        void shouldAddNoHostHeaderWhenDisabled(SenderMethod method) throws Exception {
+            // Given
+            message.setUserObject(Map.of("host.normalization", Boolean.FALSE));
+            message.getRequestHeader().setHeader(HttpRequestHeader.HOST, null);
+            // When
+            method.sendWith(httpSender, message);
+            // Then
+            assertThat(
+                    messageReceived.getRequestHeader().toString(),
+                    containsString("a: 1\r\nb: 2\r\n\r\n"));
+        }
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+        void shouldAllowHostOverrideEvenWhenEnabled(SenderMethod method) throws Exception {
+            // Given
+            message.setUserObject(
+                    Map.of("host.normalization", Boolean.TRUE, "host", "override.example.org"));
+            message.getRequestHeader().setHeader(HttpRequestHeader.HOST, "example.com");
+            message.getRequestHeader().addHeader(HttpRequestHeader.HOST, "example.org");
+            // When
+            method.sendWith(httpSender, message);
+            // Then
+            assertThat(
+                    messageReceived.getRequestHeader().toString(),
+                    containsString("a: 1\r\nhost: override.example.org\r\nb: 2\r\n\r\n"));
+        }
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+        void shouldIgnoreHostOverrideWhenDisabled(SenderMethod method) throws Exception {
+            // Given
+            message.setUserObject(
+                    Map.of("host.normalization", Boolean.FALSE, "host", "override.example.org"));
+            message.getRequestHeader().setHeader(HttpRequestHeader.HOST, "example.com");
+            message.getRequestHeader().addHeader(HttpRequestHeader.HOST, "example.org");
+            // When
+            method.sendWith(httpSender, message);
+            // Then
+            assertThat(
+                    messageReceived.getRequestHeader().toString(),
+                    containsString(
+                            "a: 1\r\nhost: example.com\r\nb: 2\r\nhost: example.org\r\n\r\n"));
         }
     }
 
