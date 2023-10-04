@@ -52,7 +52,7 @@ public class Body {
 
     @JsonDeserialize(using = ListDeserializer.class)
     @JsonProperty("formdata")
-    private List<FormData> formData;
+    private List<KeyValueData> formData;
 
     @JsonDeserialize(using = ObjectDeserializer.class)
     private File file;
@@ -99,11 +99,11 @@ public class Body {
         this.urlencoded = urlencoded;
     }
 
-    public List<FormData> getFormData() {
+    public List<KeyValueData> getFormData() {
         return formData;
     }
 
-    public void setFormData(List<FormData> formData) {
+    public void setFormData(List<KeyValueData> formData) {
         this.formData = formData;
     }
 
@@ -151,39 +151,6 @@ public class Body {
 
         public void setSrc(String src) {
             this.src = src;
-        }
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class FormData extends KeyValueData {
-        @JsonSetter(nulls = Nulls.SKIP)
-        @JsonDeserialize(using = ObjectDeserializer.class)
-        private String src = "";
-
-        @JsonDeserialize(using = ObjectDeserializer.class)
-        private String type;
-
-        public FormData() {}
-
-        public FormData(String key, String value, String type) {
-            super(key, value);
-            this.type = type;
-        }
-
-        public String getSrc() {
-            return src;
-        }
-
-        public void setSrc(String src) {
-            this.src = src;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
         }
     }
 

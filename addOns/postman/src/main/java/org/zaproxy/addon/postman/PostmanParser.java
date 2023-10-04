@@ -47,7 +47,6 @@ import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.postman.models.AbstractItem;
 import org.zaproxy.addon.postman.models.Body;
-import org.zaproxy.addon.postman.models.Body.FormData;
 import org.zaproxy.addon.postman.models.Body.GraphQl;
 import org.zaproxy.addon.postman.models.Item;
 import org.zaproxy.addon.postman.models.ItemGroup;
@@ -118,8 +117,8 @@ public class PostmanParser {
         PostmanCollection postmanCollection = parse(collection);
         List<HttpMessage> httpMessages = new ArrayList<>();
 
-        extractHttpMessages(postmanCollection.getItem(), httpMessages, errors);
-
+        extractHttpMessages(
+                postmanCollection.getItem(), httpMessages, errors, postmanCollection.getVariable());
         return httpMessages;
     }
 
@@ -167,6 +166,29 @@ public class PostmanParser {
         return collection;
     }
 
+    static String replaceVariables(
+            String string,
+            List<KeyValueData> variables,
+            String variablePrefix,
+            String variableSuffix) {
+        if (string != null && variables != null) {
+            for (KeyValueData variableEntry : variables) {
+                String variable = variablePrefix + variableEntry.getKey() + variableSuffix;
+                String value = variableEntry.getValue();
+                string = string.replace(variable, value);
+            }
+        }
+        return string;
+    }
+
+    static String replaceJsonVariables(String value, List<KeyValueData> variables) {
+        return replaceVariables(value, variables, "{{", "}}");
+    }
+
+    static String replaceJsonPathVariables(String value, List<KeyValueData> variables) {
+        return replaceVariables(value, variables, ":", "");
+    }
+
     public PostmanCollection parse(String collectionJson) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setTypeFactory(
@@ -176,20 +198,45 @@ public class PostmanParser {
     }
 
     static void extractHttpMessages(List<AbstractItem> items, List<HttpMessage> httpMessages) {
-        extractHttpMessages(items, httpMessages, new ArrayList<>());
+        extractHttpMessages(items, httpMessages, new ArrayList<>(), null);
+    }
+
+    static List<KeyValueData> getCombinedVarList(
+            List<KeyValueData> firstList, List<KeyValueData> secondList) {
+
+        List<KeyValueData> finalList = new ArrayList<>();
+
+        if (firstList != null) {
+            finalList.addAll(firstList);
+        }
+
+        if (secondList != null) {
+            finalList.addAll(secondList);
+        }
+        return finalList;
     }
 
     static void extractHttpMessages(
-            List<AbstractItem> items, List<HttpMessage> httpMessages, List<String> errors) {
+            List<AbstractItem> items,
+            List<HttpMessage> httpMessages,
+            List<String> errors,
+            List<KeyValueData> parentVariables) {
         if (items != null) {
             for (AbstractItem item : items) {
                 if (item instanceof Item) {
-                    HttpMessage httpMessage = extractHttpMessage((Item) item, errors);
+                    HttpMessage httpMessage =
+                            extractHttpMessage((Item) item, errors, parentVariables);
                     if (httpMessage != null) {
                         httpMessages.add(httpMessage);
                     }
                 } else if (item instanceof ItemGroup) {
-                    extractHttpMessages(((ItemGroup) item).getItem(), httpMessages, errors);
+                    ItemGroup itemGroup = (ItemGroup) item;
+
+                    extractHttpMessages(
+                            itemGroup.getItem(),
+                            httpMessages,
+                            errors,
+                            getCombinedVarList(itemGroup.getVariable(), parentVariables));
                 }
             }
         }
@@ -214,10 +261,11 @@ public class PostmanParser {
     }
 
     static HttpMessage extractHttpMessage(Item item) {
-        return extractHttpMessage(item, new ArrayList<>());
+        return extractHttpMessage(item, new ArrayList<>(), null);
     }
 
-    static HttpMessage extractHttpMessage(Item item, List<String> errors) {
+    static HttpMessage extractHttpMessage(
+            Item item, List<String> errors, List<KeyValueData> parentVariables) {
         Request request = item.getRequest();
         if (request == null) {
             errors.add(
@@ -239,9 +287,19 @@ public class PostmanParser {
         }
 
         HttpMessage httpMessage;
+
+        List<KeyValueData> allVariables = getCombinedVarList(parentVariables, item.getVariable());
+
         try {
-            String rawUrl = url.getRaw();
-            httpMessage = new HttpMessage(new URI(rawUrl, false));
+            String rawUrl = replaceJsonVariables(url.getRaw(), allVariables);
+
+            List<KeyValueData> urlVariables = url.getVariable();
+            URI uri = new URI(rawUrl, false);
+
+            String pathWithReplaceVars = replaceJsonPathVariables(uri.getPath(), urlVariables);
+            uri.setPath(pathWithReplaceVars);
+
+            httpMessage = new HttpMessage(uri);
         } catch (URIException | HttpMalformedHeaderException | NullPointerException e) {
             errors.add(
                     Constant.messages.getString(
@@ -251,13 +309,16 @@ public class PostmanParser {
             return null;
         }
 
-        httpMessage.getRequestHeader().setMethod(request.getMethod());
+        String method = replaceJsonVariables(request.getMethod(), allVariables);
+        httpMessage.getRequestHeader().setMethod(method);
 
         List<KeyValueData> headers = request.getHeader();
         if (headers != null) {
             for (KeyValueData header : request.getHeader()) {
                 if (!header.isDisabled()) {
-                    httpMessage.getRequestHeader().setHeader(header.getKey(), header.getValue());
+                    String key = replaceJsonVariables(header.getKey(), allVariables);
+                    String value = replaceJsonVariables(header.getValue(), allVariables);
+                    httpMessage.getRequestHeader().setHeader(key, value);
                 }
             }
         }
@@ -332,7 +393,7 @@ public class PostmanParser {
             contentType = "multipart/form-data; boundary=" + boundary;
 
             StringBuilder formDataBody = new StringBuilder();
-            for (FormData formData : body.getFormData()) {
+            for (KeyValueData formData : body.getFormData()) {
                 if (!formData.isDisabled()) {
                     formDataBody
                             .append(
@@ -388,17 +449,20 @@ public class PostmanParser {
         }
 
         if (!isContentTypeAlreadySet(request.getHeader())) {
+            contentType = replaceJsonVariables(contentType, allVariables);
             httpMessage.getRequestHeader().setHeader(HttpHeader.CONTENT_TYPE, contentType);
         }
 
-        httpMessage.getRequestBody().setBody(bodyContent.toString());
+        bodyContent = replaceJsonVariables(bodyContent.toString(), allVariables);
+        httpMessage.getRequestBody().setBody(bodyContent);
+
         httpMessage.getRequestHeader().setContentLength(httpMessage.getRequestBody().length());
 
         return httpMessage;
     }
 
     private static String generateMultiPartBody(
-            FormData formData, String boundary, List<String> errors, String itemName) {
+            KeyValueData formData, String boundary, List<String> errors, String itemName) {
         StringBuilder multipartData = new StringBuilder();
 
         multipartData.append("--").append(boundary).append(HttpHeader.CRLF);

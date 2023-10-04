@@ -34,6 +34,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,7 +48,6 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.postman.models.AbstractItem;
 import org.zaproxy.addon.postman.models.Body;
-import org.zaproxy.addon.postman.models.Body.FormData;
 import org.zaproxy.addon.postman.models.Body.GraphQl;
 import org.zaproxy.addon.postman.models.Item;
 import org.zaproxy.addon.postman.models.ItemGroup;
@@ -102,10 +102,10 @@ class PostmanParserUnitTest extends TestUtils {
 
         Body formDataBody = new Body(Body.FORM_DATA);
         formDataBody.setFormData(
-                new ArrayList<FormData>(
+                new ArrayList<KeyValueData>(
                         List.of(
-                                new FormData("key1", "value1", "text"),
-                                new FormData("key2", "", "file"))));
+                                new KeyValueData("key1", "value1", "text"),
+                                new KeyValueData("key2", "", "file"))));
 
         GraphQl graphQl = new GraphQl();
         graphQl.setQuery(
@@ -405,5 +405,86 @@ class PostmanParserUnitTest extends TestUtils {
     void shouldNotFailForNullFieldValues(String collection) {
         PostmanParser parser = new PostmanParser();
         assertDoesNotThrow(() -> parser.importCollection(collection, "", false));
+    }
+
+    @Test
+    void shouldReplaceJsonPathVars() throws JsonProcessingException {
+        String collectionJson =
+                "{\"item\":{\"request\":{\"url\":{\"raw\":\"https://example.com/:someKey\",\"variable\":{\"key\":\"someKey\",\"value\":\"somePath\"}}}}}";
+        PostmanParser parser = new PostmanParser();
+        List<HttpMessage> messages = parser.getHttpMessages(collectionJson, "", new ArrayList<>());
+
+        assertEquals(
+                "https://example.com/somePath",
+                messages.get(0).getRequestHeader().getURI().toString());
+    }
+
+    static Stream<Arguments> jsonVarsTestData() {
+        String value = "someValue";
+        String variable = "\"variable\":[{\"key\":\"someKey\",\"value\":\"" + value + "\"}]";
+
+        String url = "\"url\":\"https://example.com/{{someKey}}\"";
+        String body = "\"body\":{\"mode\":\"raw\",\"raw\":\"Value is {{someKey}}\"}";
+        String method = "\"method\":\"{{someKey}}\"";
+        String header =
+                "\"header\":{\"key\":\""
+                        + HttpHeader.CONTENT_TYPE
+                        + "\",\"value\":\"{{someKey}}\"}";
+
+        String collectionWithCollectionVar =
+                "{\"item\":{\"request\":{"
+                        + url
+                        + ","
+                        + body
+                        + ","
+                        + method
+                        + ","
+                        + header
+                        + "}},"
+                        + variable
+                        + "}";
+        String collectionWithItemVar =
+                "{\"item\":{\"request\":{"
+                        + url
+                        + ","
+                        + body
+                        + ","
+                        + method
+                        + ","
+                        + header
+                        + "},"
+                        + variable
+                        + "}}";
+        String collectionWithItemGroupVar =
+                "{\"item\":{\"item\":{\"request\":{"
+                        + url
+                        + ","
+                        + body
+                        + ","
+                        + method
+                        + ","
+                        + header
+                        + "}}},"
+                        + variable
+                        + "}";
+
+        return Stream.of(
+                arguments(collectionWithCollectionVar, value),
+                arguments(collectionWithItemVar, value),
+                arguments(collectionWithItemGroupVar, value));
+    }
+
+    @ParameterizedTest
+    @MethodSource("jsonVarsTestData")
+    void shouldReplaceJsonVars(String collection, String value) throws JsonProcessingException {
+        PostmanParser parser = new PostmanParser();
+        List<HttpMessage> messages = parser.getHttpMessages(collection, "", new ArrayList<>());
+        HttpMessage message = messages.get(0);
+
+        assertEquals(
+                "https://example.com/" + value, message.getRequestHeader().getURI().toString());
+        assertEquals("Value is " + value, message.getRequestBody().toString());
+        assertEquals(value.toUpperCase(Locale.ROOT), message.getRequestHeader().getMethod());
+        assertEquals(value, message.getRequestHeader().getHeader(HttpHeader.CONTENT_TYPE));
     }
 }

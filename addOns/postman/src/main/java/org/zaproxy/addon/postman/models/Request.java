@@ -90,6 +90,9 @@ public class Request {
         @JsonDeserialize(using = ObjectDeserializer.class)
         private String raw;
 
+        @JsonDeserialize(using = ListDeserializer.class)
+        private List<KeyValueData> variable;
+
         public Url() {}
 
         public Url(String raw) {
@@ -102,6 +105,14 @@ public class Request {
 
         public void setRaw(String raw) {
             this.raw = raw;
+        }
+
+        public List<KeyValueData> getVariable() {
+            return variable;
+        }
+
+        public void setVariable(List<KeyValueData> variable) {
+            this.variable = variable;
         }
     }
 }

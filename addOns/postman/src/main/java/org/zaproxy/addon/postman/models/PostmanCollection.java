@@ -35,7 +35,8 @@ public class PostmanCollection {
     @JsonDeserialize(using = ListDeserializer.class)
     private List<AbstractItem> item;
 
-    private Object variable;
+    @JsonDeserialize(using = ListDeserializer.class)
+    private List<KeyValueData> variable;
 
     public List<AbstractItem> getItem() {
         return item;
@@ -45,11 +46,11 @@ public class PostmanCollection {
         this.item = item;
     }
 
-    public Object getVariable() {
+    public List<KeyValueData> getVariable() {
         return variable;
     }
 
-    public void setVariable(Object variable) {
+    public void setVariable(List<KeyValueData> variable) {
         this.variable = variable;
     }
 }
