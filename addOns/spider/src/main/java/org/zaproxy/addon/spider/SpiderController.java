@@ -195,8 +195,6 @@ public class SpiderController implements SpiderParserListener {
         // Create and submit the new task
         SpiderTask task = new SpiderTask(spider, resourceFound, uri);
         spider.submitTask(task);
-        // Add the uri to the found list
-        spider.notifyListenersFoundURI(uri.toString(), method, FetchStatus.SEED);
     }
 
     /**
