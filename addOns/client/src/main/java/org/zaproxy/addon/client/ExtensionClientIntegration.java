@@ -33,12 +33,18 @@ import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.client.impl.ClientZestRecorder;
 import org.zaproxy.addon.network.ExtensionNetwork;
+import org.zaproxy.zap.ZAP;
+import org.zaproxy.zap.eventBus.Event;
+import org.zaproxy.zap.eventBus.EventConsumer;
+import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProfileManager;
+import org.zaproxy.zap.model.ScanEventPublisher;
 
 public class ExtensionClientIntegration extends ExtensionAdaptor {
 
@@ -53,7 +59,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     private static final Logger LOGGER = LogManager.getLogger(ExtensionClientIntegration.class);
 
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
-            List.of(ExtensionNetwork.class, ExtensionSelenium.class);
+            List.of(ExtensionHistory.class, ExtensionNetwork.class, ExtensionSelenium.class);
 
     private ClientMap clientTree;
 
@@ -65,6 +71,10 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     private ClientZestRecorder clientHandler;
 
     private ClientIntegrationAPI api;
+
+    private EventConsumer eventConsumer;
+
+    private Event lastAjaxSpiderStartEvent;
 
     public ExtensionClientIntegration() {
         super(NAME);
@@ -119,6 +129,32 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+        eventConsumer =
+                new EventConsumer() {
+
+                    @Override
+                    public void eventReceived(Event event) {
+                        // Listen for AJAX Spider events
+                        if (ScanEventPublisher.SCAN_STARTED_EVENT.equals(event.getEventType())) {
+                            // Record this for when we get the stopped event
+                            lastAjaxSpiderStartEvent = event;
+                        } else if (ScanEventPublisher.SCAN_STOPPED_EVENT.equals(
+                                event.getEventType())) {
+                            // See if we can find any missed URLs in the DOM
+                            MissingUrlsThread mut =
+                                    new MissingUrlsThread(
+                                            getModel(),
+                                            lastAjaxSpiderStartEvent,
+                                            clientTree.getRoot());
+                            lastAjaxSpiderStartEvent = null;
+                            mut.start();
+                        }
+                    }
+                };
+
+        ZAP.getEventBus()
+                .registerConsumer(
+                        eventConsumer, "org.zaproxy.zap.extension.spiderAjax.SpiderEventPublisher");
     }
 
     @Override
@@ -135,6 +171,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                             .getExtension(ExtensionSelenium.class);
             extSelenium.deregisterBrowserHook(redirectScript);
         }
+        ZAP.getEventBus().unregisterConsumer(eventConsumer);
     }
 
     @Override
@@ -142,8 +179,8 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         return true;
     }
 
-    public ClientNode getOrAddClientNode(String url, boolean storage) {
-        return this.clientTree.getOrAddNode(url, storage);
+    public ClientNode getOrAddClientNode(String url, boolean visited, boolean storage) {
+        return this.clientTree.getOrAddNode(url, visited, storage);
     }
 
     public void clientNodeSelected(ClientNode node) {
@@ -176,6 +213,21 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     }
 
     public void addReportedObject(ReportedObject obj) {
+        if (obj instanceof ReportedEvent) {
+            ReportedEvent ev = (ReportedEvent) obj;
+            String url = ev.getUrl();
+            if (url != null && isApiUrl(url)) {
+                // Don't record ZAP API calls
+                return;
+            }
+        } else if (obj instanceof ReportedNode) {
+            ReportedNode rn = (ReportedNode) obj;
+            String url = rn.getUrl();
+            if (url != null && isApiUrl(url)) {
+                // Don't record ZAP API calls
+                return;
+            }
+        }
         this.clientHistoryTableModel.addReportedObject(obj);
     }
 
@@ -228,5 +280,9 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
 
     public ClientZestRecorder getClientRecorderHelper() {
         return clientHandler;
+    }
+
+    protected static boolean isApiUrl(String url) {
+        return url.startsWith(API.API_URL) || url.startsWith(API.API_URL_S);
     }
 }

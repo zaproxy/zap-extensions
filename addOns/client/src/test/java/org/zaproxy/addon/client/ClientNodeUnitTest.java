@@ -37,11 +37,11 @@ class ClientNodeUnitTest {
         ClientMap map = new ClientMap(new ClientNode(new ClientSideDetails("Root", ""), false));
 
         // When
-        map.getOrAddNode(AAA_URL + "/", false);
-        map.getOrAddNode(AAA_URL + "/ccc", false);
-        map.getOrAddNode(AAA_URL + "/ddd?ee", false);
-        map.getOrAddNode(BBB_AAA_URL + "/", false);
-        map.getOrAddNode(BBB_AAA_URL + "/#fff", false);
+        map.getOrAddNode(AAA_URL + "/", false, false);
+        map.getOrAddNode(AAA_URL + "/ccc", false, false);
+        map.getOrAddNode(AAA_URL + "/ddd?ee", false, false);
+        map.getOrAddNode(BBB_AAA_URL + "/", false, false);
+        map.getOrAddNode(BBB_AAA_URL + "/#fff", false, false);
 
         ClientNode root = map.getRoot();
 

@@ -43,7 +43,7 @@ public class ClientMap extends SortedTreeModel {
         return root;
     }
 
-    public synchronized ClientNode getOrAddNode(String url, boolean storage) {
+    public synchronized ClientNode getOrAddNode(String url, boolean visited, boolean storage) {
         LOGGER.debug("getOrAddNode {}", url);
         if (url == null) {
             throw new IllegalArgumentException("The url parameter should not be null");
@@ -90,12 +90,19 @@ public class ClientMap extends SortedTreeModel {
                 if (parent.isRoot()) {
                     parentUrl = component + "/";
                 } else {
-                    parentUrl = parent.getUserObject().getUrl() + component;
+                    String pUrl = parent.getUserObject().getUrl();
+                    if (!pUrl.endsWith("/")) {
+                        pUrl += "/";
+                    }
+                    parentUrl = pUrl + component;
                     if (!isLastComponent) {
                         parentUrl += "/";
                     }
                 }
-                child = new ClientNode(new ClientSideDetails(component, parentUrl), storage);
+                child =
+                        new ClientNode(
+                                new ClientSideDetails(component, parentUrl, visited, storage),
+                                storage);
                 this.insertNodeInto(child, parent);
                 this.nodeStructureChanged(parent);
             }

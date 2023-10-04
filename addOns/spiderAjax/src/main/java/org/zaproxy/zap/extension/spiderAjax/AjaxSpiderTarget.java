@@ -129,6 +129,8 @@ public final class AjaxSpiderTarget {
     public Target toTarget() {
         Target target = new Target();
         try {
+            // It is worth noting that this will not find anything if the start node is not in the
+            // Sites Tree
             target.setStartNode(
                     SessionStructure.find(
                             Model.getSingleton(),
