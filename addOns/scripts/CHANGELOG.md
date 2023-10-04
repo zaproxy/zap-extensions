@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [41] - 2023-10-04
 ### Added
 - Allow selecting a default behaviour when a script in the console changes on disk (Issues 5463, 7582). The allowed
