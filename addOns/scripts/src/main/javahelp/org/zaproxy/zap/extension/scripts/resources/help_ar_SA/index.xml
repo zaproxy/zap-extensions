@@ -7,5 +7,6 @@
 	<indexitem text="scripts automation" target="addon.scripts.automation" />
 	<indexitem text="script console" target="addon.scripts.scripts" />
 	<indexitem text="script console tab" target="addon.scripts.console" />
+	<indexitem text="script console options" target="addon.scripts.options" />
 	<indexitem text="scripts tree tab" target="addon.scripts.tree" />
 </index>

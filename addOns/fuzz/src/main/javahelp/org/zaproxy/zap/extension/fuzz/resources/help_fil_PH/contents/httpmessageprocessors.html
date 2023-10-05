@@ -8,7 +8,7 @@ Mga Processor ng Mensahe ng HTTP
 </head>
 <body>
 <h1>Mga Processor ng Mensahe ng HTTP</h1>
-Ang mga processor ng mensahe ng HTTP ay maaaring mag-access at magbago sa mga mensahe ng HTTP na naging fuzz, makontrol ang mga proseso ng pagpa-fuzz at makipag-ugnayan sa ZAP UI.
+HTTP Message Processors can access and change the HTTP messages being fuzzed, control the fuzzing process, and interact with the ZAP UI.
 <p>
 Ang mga built-in na mga processor ng mensahe ng HTTP ay kinabibilangan ng:
 
@@ -43,10 +43,10 @@ for all request methods. No change is done if the size of the request body is ze
 <strong>Paalala:</strong> This processor is automatically added to the list of processors.
 
 <h3>Tagapaglikha ng Tag</h3>
-Allows to add custom ‘tags’, based on contents of the response, to the State column of the results table
+Allows to add custom ‘tags’, based on contents of the response, to the State column of the results table.
 
 <h3>Processor ng Mensahe ng Gumagamit</h3>
-Allows to fuzz as a user, using one of the users defined in the contexts that include the HTTP message being fuzzed. Users must
+Allows to fuzz as a user, using one of the users defined in the Contexts that include the HTTP message being fuzzed. Users must
 exist to be able to select and add this processor.
 
 <p>

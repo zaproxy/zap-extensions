@@ -9,5 +9,6 @@
 	<mapID target="addon.scripts.scripts" url="contents/scripts.html" />
 	<mapID target="addon.scripts.automation" url="contents/automation.html" />
 	<mapID target="addon.scripts.console" url="contents/console.html" />
+	<mapID target="addon.scripts.options" url="contents/options.html" />
 	<mapID target="addon.scripts.tree" url="contents/tree.html" />
 </map>
