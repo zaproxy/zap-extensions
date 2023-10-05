@@ -9,6 +9,7 @@
 			<tocitem text="Консоль скриптов " image="addon.scripts.icon" target="addon.scripts.scripts">
 				<tocitem text="Automation" target="addon.scripts.automation" />
 				<tocitem text="Console" target="addon.scripts.console" />
+				<tocitem text="Options" target="addon.scripts.options" />
 				<tocitem text="Tree" target="addon.scripts.tree" />
 			</tocitem>
 		</tocitem>

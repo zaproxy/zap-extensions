@@ -9,7 +9,7 @@ HTTP-сообщение
 </head>
 <body>
 <h1>HTTP-сообщения </h1>
-Процессоры HTTP-сообщений могут получить доступ и изменять  HTTP-сообщения фаззингом, управляют процессом фаззинга и взаимодействуют с ZAP UI. 
+HTTP Message Processors can access and change the HTTP messages being fuzzed, control the fuzzing process, and interact with the ZAP UI.
 <p>
 Встроенные процессоры сообщений HTTP включают в себя: 
 
@@ -47,15 +47,11 @@ HTTP-сообщение
 <strong>Примечание: </strong> Этот процессор автоматически добавляется в список процессоров. 
 
 <h3>Создатель тегов </h3>
-Позволяет добавлять пользовательские «теги» на основе содержимого ответа, в столбец состояния таблицы результатов 
+Allows to add custom ‘tags’, based on contents of the response, to the State column of the results table.
 
 <h3>Процессор сообщений пользователей</h3>
-Позволяет фазз  как пользователь,
-
-используя одного из пользователей, определенных в контекстах, которые включают в себя файл HTTP.
-
-Пользователи должны
-существовать, чтобы иметь возможность выбрать и добавить этот процессор. 
+Allows to fuzz as a user, using one of the users defined in the Contexts that include the HTTP message being fuzzed. Users must
+exist to be able to select and add this processor.
 
 <p>
 Другие надстройки могут определить дополнительные процессоры сообщений HTTP. 

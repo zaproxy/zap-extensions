@@ -9,12 +9,12 @@ Fuzzing
 <body>
 <h1>Fuzzing</h1>
 <p>
-Fuzzing adalah teknik mengirimkan banyak yang tidak valid atau data yang tak terduga untuk target.
+Fuzzing is a technique of submitting lots of data to a target (often in the form of invalid or unexpected inputs).
 </p>
 <p>
-ZAP memungkinkan anda untuk fuzz apapun permintaan masih menggunakan:
+ZAP allows you to fuzz any request using:
 <ul>
-<li>Membangun di set muatan</li>
+<li>A built-in set of payloads</li>
 <li>Muatan yang didefinisikan oleh opsional add-ons</li>
 <li>Skrip kustom</li>
 </ul>
@@ -27,38 +27,35 @@ Untuk mengakses <a href="dialogue.html">Dialog fuzzer</a> anda juga dapat:
 </ul>
 
 <h3>Generator Payload</h3>
-Muatan Generator menghasilkan baku serangan yang telah mengirimkan hasil pengeditan. mengajukan untuk aplikasi target.
+Payload Generators generate the raw values or attacks that the fuzzer submits to the target application.
 <br><br>
-Mereka berhasil melalui <a href="payloads.html">Payloads dialog</a>
+Mereka berhasil melalui <a href="payloads.html">Payloads dialog</a>.
 
 <h3>Prosesor Payload</h3>
 Muatan Prosesor dapat digunakan untuk mengubah muatan tertentu sebelum mereka diserahkan.
 <br><br>
-Mereka berhasil melalui <a href="processors.html">Dialog Prosesor Payload</a>
+Mereka berhasil melalui <a href="processors.html">Dialog Prosesor Payload</a>.
 
 <h3>Lokasi Prosesor Fuzz</h3>
 Fuzz Lokasi Prosesor dapat digunakan untuk mengubah semua muatan sebelum mereka diserahkan.
 <br><br>
-Mereka berhasil melalui <a href="locations.html">Lokasi Prosesor dialog</a>
+Mereka berhasil melalui <a href="locations.html">Lokasi Prosesor dialog</a>.
 
 <h3>Prosesor Pesan</h3>
-Pesan Prosesor dapat mengakses dan mengubah pesan menjadi fuzzed, mengontrol fuzzing proses dan berinteraksi dengan ZAP UI.
+Message Processors can access and change the messages being fuzzed, control the fuzzing process, and interact with the ZAP UI.
 <br><br>
 Mereka berhasil melalui <a href="dialogue.html">Dialog fuzzer</a> 'Pesan Prosessor' tab.
 
 <p>
-Fungsi ini berdasarkan dari kode proyek OWASP JBroFuzz dan termasuk berkas berkas dari proyek fuzzdb.<br/>
-Perhatikan bahwa beberapa berkas fuzzdb telah ditinggalkan karena menyebabkan pemindai antivirus umum untuk menandai virus tersebut karena mengandung virus.<br/>
-Anda dapat menggantinya ( dan meng-upgrade fuzzdb) dengan mendownload fuzzdb versi terbaru dan memperluasnya di 'fuzzer' library.
+Some of this functionality is based on code from the OWASP JBroFuzz project and includes files from the fuzzdb project.<br/>
+Note that some fuzzdb files have been left out as they cause common anti-virus scanners to flag them as containing viruses.<br/>
+You can replace them (and upgrade fuzzdb) by downloading the latest version of fuzzdb and expanding it in the 'fuzzers' library.
 </p>
-
 
 <h2>Lihat juga</h2>
 <table>
 <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="options.html">Telah mengirimkan hasil pengeditan pilihan layar</a></td></tr>
 </table>
-
-
 
 </body>
 </html>

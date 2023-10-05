@@ -6,6 +6,7 @@
 <map version="1.0">
     <mapID target="addon.client-icon" url="contents/images/application-browser.png" />
     <mapID target="addon.client" url="contents/client.html" />
+    <mapID target="addon.client.ajaxscan" url="contents/ajax-scan.html" />
     <mapID target="addon.client.fxprofile" url="contents/firefox-profile.html" />
     <mapID target="addon.client.internals" url="contents/internals.html" />
 </map>
