@@ -1,4 +1,5 @@
 import me.champeau.gradle.japicmp.JapicmpTask
+import org.cyclonedx.gradle.CycloneDxTask
 import org.zaproxy.gradle.addon.AddOnPlugin
 import org.zaproxy.gradle.addon.AddOnPluginExtension
 import org.zaproxy.gradle.addon.apigen.ApiClientGenExtension
@@ -17,6 +18,7 @@ import org.zaproxy.gradle.crowdin.CrowdinExtension
 plugins {
     eclipse
     jacoco
+    id("org.cyclonedx.bom") version "1.7.4" apply false
     id("org.rm3l.datanucleus-gradle-plugin") version "1.7.0" apply false
     id("org.zaproxy.add-on") version "0.8.0" apply false
     id("org.zaproxy.common") version "0.1.0" apply false
@@ -90,6 +92,7 @@ subprojects {
     apply(plugin = "eclipse")
     apply(plugin = "java-library")
     apply(plugin = "jacoco")
+    apply(plugin = "org.cyclonedx.bom")
     apply(plugin = "org.rm3l.datanucleus-gradle-plugin")
     apply(plugin = "org.zaproxy.add-on")
     apply(plugin = "org.zaproxy.common")
@@ -214,6 +217,14 @@ subprojects {
             val message = versionProvider.map { "${project.zapAddOn.addOnName.get()} version $it" }
             tagMessage.set(message)
             title.set(message)
+
+            assets {
+                register("bom") {
+                    val cyclonedxBom by tasks.existing(CycloneDxTask::class)
+                    file.set(cyclonedxBom.map { project.layout.projectDirectory.file(File(it.destination.get(), "${it.outputName.get()}.json").absolutePath) })
+                    contentType.set("application/json")
+                }
+            }
         }
 
         val crowdinUploadSourceFiles = if (useCrowdin) project.tasks.named("crowdinUploadSourceFiles") else null
