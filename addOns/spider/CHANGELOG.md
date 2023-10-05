@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Maintenance changes.
-- Do not add seeds to the found list
+- Do not add seeds to the found list (Issue 7737).
 
 ## [0.11.0] - 2024-05-07
 ### Changed
