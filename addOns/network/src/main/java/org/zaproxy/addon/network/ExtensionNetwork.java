@@ -902,7 +902,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             }
         } catch (Exception e) {
 
-            if (!install && (daemonMode || commandLineMode)) {
+            if (!install && !hasView()) {
                 String message =
                         "Failed to start the main proxy: "
                                 + e.getClass().getName()
@@ -927,7 +927,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                             Constant.messages.getString(
                                     "network.cmdline.proxy.error.host.assign", address);
                 } else if (containsMessage(e, "denied") || containsMessage(e, "in use")) {
-                    if (promptUserMainProxyPort()) {
+                    if (hasView() && promptUserMainProxyPort()) {
                         return;
                     }
 
@@ -944,6 +944,12 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                         Constant.messages.getString(
                                 "network.cmdline.proxy.error.generic", e.getMessage());
                 LOGGER.warn("Failed to start the main proxy: {}", e.getMessage());
+                if (!hasView()) {
+                    return;
+                }
+            } else if (!hasView()) {
+                LOGGER.warn("Failed to start the main proxy: {}", detailedError);
+                return;
             }
 
             JOptionPane.showMessageDialog(

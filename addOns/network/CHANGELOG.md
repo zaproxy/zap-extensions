@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Update default user-agents.
 
+### Fixed
+- Do not initialize the view when failed to start the main proxy in `cmd` and `daemon` modes.
+
 ## [0.11.2] - 2023-09-27
 ### Fixed
 - Ensure the main proxy with custom port (`-port`) is stopped when initialising after installation in `cmd` and `daemon` modes.
