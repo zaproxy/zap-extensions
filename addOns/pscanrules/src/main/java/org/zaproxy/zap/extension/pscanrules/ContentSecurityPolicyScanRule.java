@@ -23,6 +23,7 @@ import com.shapesecurity.salvation2.Directives.SourceExpressionDirective;
 import com.shapesecurity.salvation2.FetchDirectiveKind;
 import com.shapesecurity.salvation2.Policy;
 import com.shapesecurity.salvation2.Policy.PolicyErrorConsumer;
+import com.shapesecurity.salvation2.Policy.Severity;
 import com.shapesecurity.salvation2.PolicyInOrigin;
 import com.shapesecurity.salvation2.URLs.URI;
 import com.shapesecurity.salvation2.URLs.URLWithScheme;
@@ -84,6 +85,7 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                     // TODO: Remove once https://github.com/shapesecurity/salvation/issues/232 is
                     // addressed
                     "require-trusted-types-for", "trusted-types");
+    private static final String PREFETCH_SRC_WARNING = "The prefetch-src directive is deprecated";
 
     private static final String RAND_FQDN = "7963124546083337415.owasp.org";
     private static final Optional<URLWithScheme> HTTP_URI =
@@ -131,6 +133,9 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                 Policy policy = parsePolicy(csp, consumer, msg, id);
                 if (policy == null) {
                     continue;
+                }
+                if (policy.getFetchDirective(FetchDirectiveKind.PrefetchSrc).isPresent()) {
+                    consumer.add(Severity.Warning, PREFETCH_SRC_WARNING, 0, -1);
                 }
 
                 if (!observedErrors.isEmpty()) {
@@ -185,14 +190,13 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
             }
         }
         if (CspUtils.hasMetaCsp(source)) {
-            checkMetaPolicy(msg, id, source, true, cspHeaderFound);
+            checkMetaPolicy(msg, id, source, cspHeaderFound);
         }
 
         LOGGER.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
     }
 
-    private void checkMetaPolicy(
-            HttpMessage msg, int id, Source source, boolean isMeta, boolean hasHeader) {
+    private void checkMetaPolicy(HttpMessage msg, int id, Source source, boolean hasHeader) {
         List<Element> cspMetaElements = getMetaPolicies(source);
         if (cspMetaElements.isEmpty()) {
             return;
@@ -214,6 +218,14 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                             }
                         };
                 Policy parsedMetaPolicy = parsePolicy(metaPolicy, metaConsumer, msg, id);
+                if (parsedMetaPolicy == null) {
+                    continue;
+                }
+                if (parsedMetaPolicy
+                        .getFetchDirective(FetchDirectiveKind.PrefetchSrc)
+                        .isPresent()) {
+                    metaConsumer.add(Severity.Warning, PREFETCH_SRC_WARNING, 0, -1);
+                }
                 checkObservedErrors(metaObservedErrors, msg, metaPolicy, true);
                 List<String> metaWildcardSources = getAllowedWildcardSources(metaPolicy);
                 // frame-ancestors isn't applicable in META
@@ -480,9 +492,6 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
         }
         if (checkPolicy(pol::allowsWorker)) {
             allowedSources.add("worker-src");
-        }
-        if (checkPolicy(pol::allowsPrefetch)) {
-            allowedSources.add("prefetch-src");
         }
         if (checkPolicy(pol::allowsFormAction)) {
             allowedSources.add("form-action");

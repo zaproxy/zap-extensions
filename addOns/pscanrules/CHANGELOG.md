@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Fixed
 - The CSRF Countermeasures scan rule now skips responses that are not HTML (Issue 7890).
+- A potential NullPointerException when a CSP declared via META tag was invalid.
+
+### Changed
+- CSP scan rule: Add deprecation warning for inclusion of prefetch-src (Issue 8077).
 
 ## [51] - 2023-09-08
 ### Added

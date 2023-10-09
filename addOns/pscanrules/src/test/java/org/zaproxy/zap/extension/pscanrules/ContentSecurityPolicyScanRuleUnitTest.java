@@ -156,7 +156,7 @@ class ContentSecurityPolicyScanRuleUnitTest
                         "The following directives either allow wildcard sources (or ancestors), are not "
                                 + "defined, or are overly broadly defined: \nscript-src, style-src, img-src, "
                                 + "connect-src, frame-src, frame-ancestors, font-src, media-src, object-src, "
-                                + "manifest-src, worker-src, prefetch-src, form-action\n\nThe directive(s): "
+                                + "manifest-src, worker-src, form-action\n\nThe directive(s): "
                                 + "frame-ancestors, form-action are among the directives that do not fallback "
                                 + "to default-src, missing/excluding them is the same as allowing anything."));
         assertThat(
@@ -288,6 +288,46 @@ class ContentSecurityPolicyScanRuleUnitTest
         scanHttpResponseReceive(msg);
         // Then
         assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldNotNpeOrAlertOnInvalidMetaCsp() {
+        // Given
+        HttpMessage msg = createHttpMessage();
+        msg.setResponseBody(
+                "<html><head><<meta http-equiv=\""
+                        + HttpFieldsNames.CONTENT_SECURITY_POLICY
+                        + "\" content=\""
+                        // The comma here causes the parsing to fail and return null
+                        + REASONABLE_META_POLICY
+                        + ","
+                        + "\"></head></html>");
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
+    }
+
+    @Test
+    void shouldAlertOnMetaCspWithPrefetch() {
+        // Given
+        HttpMessage msg = createHttpMessage();
+        msg.setResponseBody(
+                "<html><head><<meta http-equiv=\""
+                        + HttpFieldsNames.CONTENT_SECURITY_POLICY
+                        + "\" content=\""
+                        + REASONABLE_META_POLICY
+                        + "; prefetch-src *"
+                        + "\"></head></html>");
+        msg.getResponseHeader().addHeader(HttpHeader.CONTENT_TYPE, "text/html");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                is("Warnings:\n" + "The prefetch-src directive is deprecated\n"));
     }
 
     @Test
@@ -592,6 +632,19 @@ class ContentSecurityPolicyScanRuleUnitTest
                 equalTo(
                         "A non-ASCII character was encountered while attempting to parse the policy, thus rendering it invalid (no further evaluation occurred). The following invalid characters were collected: ‘’"));
         assertThat(alertsRaised.get(0).getAlertRef(), equalTo("10055-9"));
+    }
+
+    @Test
+    void shouldAlertOnReasonableCspWhichIncludesPrefetchsrc() {
+        // Given
+        HttpMessage msg = createHttpMessage("", REASONABLE_POLICY + "; prefetch-src *");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(equalTo(1)));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                is(equalTo("Warnings:\nThe prefetch-src directive is deprecated\n")));
     }
 
     private HttpMessage createHttpMessageWithReasonableCsp(String cspHeaderName) {
