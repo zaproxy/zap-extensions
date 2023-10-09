@@ -75,6 +75,7 @@ val createPullRequestNextDevIter by tasks.registering(CreatePullRequest::class) 
 }
 
 val releaseAddOn by tasks.registering
+val allJarsForBom by tasks.registering
 
 val crowdinExcludedProjects = setOf(
     childProjects.get("dev"),
@@ -181,10 +182,20 @@ subprojects {
         }
     }
 
+    allJarsForBom {
+        dependsOn(tasks.named(JavaPlugin.JAR_TASK_NAME))
+    }
+
+    val cyclonedxBom by tasks.existing(CycloneDxTask::class) {
+        setDestination(file("$buildDir/reports/bom-all"))
+        mustRunAfter(allJarsForBom)
+    }
+
     val cyclonedxRuntimeBom by tasks.registering(CycloneDxTask::class) {
         setIncludeConfigs(listOf(JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME))
         setDestination(file("$buildDir/reports/bom-runtime"))
         setOutputFormat("json")
+        mustRunAfter(allJarsForBom)
     }
 
     tasks.named<Jar>(AddOnPlugin.JAR_ZAP_ADD_ON_TASK_NAME) {
@@ -230,7 +241,6 @@ subprojects {
 
             assets {
                 register("bom") {
-                    val cyclonedxBom by tasks.existing(CycloneDxTask::class)
                     file.set(cyclonedxBom.map { project.layout.projectDirectory.file(File(it.destination.get(), "${it.outputName.get()}.json").absolutePath) })
                     contentType.set("application/json")
                 }
@@ -239,6 +249,7 @@ subprojects {
 
         val crowdinUploadSourceFiles = if (useCrowdin) project.tasks.named("crowdinUploadSourceFiles") else null
         releaseAddOn {
+            dependsOn(allJarsForBom)
             dependsOn(createReleaseAddOn)
 
             dependsOn(handleRelease)
