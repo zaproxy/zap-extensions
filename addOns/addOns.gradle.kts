@@ -181,6 +181,16 @@ subprojects {
         }
     }
 
+    val cyclonedxRuntimeBom by tasks.registering(CycloneDxTask::class) {
+        setIncludeConfigs(listOf(JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME))
+        setDestination(file("$buildDir/reports/bom-runtime"))
+        setOutputFormat("json")
+    }
+
+    tasks.named<Jar>(AddOnPlugin.JAR_ZAP_ADD_ON_TASK_NAME) {
+        from(cyclonedxRuntimeBom)
+    }
+
     if (useCrowdin) {
         crowdin {
             credentials {
