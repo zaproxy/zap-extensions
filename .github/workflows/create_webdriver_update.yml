@@ -97,5 +97,5 @@ jobs:
         if [ $IS_UPDT -eq 1 ]; then
           git push --set-upstream origin $BRANCH --force
           # Open the PR
-          hub pull-request --no-edit
+          gh pr create -f
         fi
