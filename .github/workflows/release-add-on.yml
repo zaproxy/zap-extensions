@@ -24,7 +24,7 @@ jobs:
     - name: Generate Release State
       run: ./gradlew :addOns:generateReleaseStateLastCommit
     - name: Generate JARs for BOM data
-      run: ./gradlew jar
+      run: ./gradlew -Dorg.gradle.jvmargs=-Xmx4g jar
     - name: Build and Release Add-On
       env:
         ZAPBOT_TOKEN: ${{ secrets.ZAPBOT_TOKEN }}
