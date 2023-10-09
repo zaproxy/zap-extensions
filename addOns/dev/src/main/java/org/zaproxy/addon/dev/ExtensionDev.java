@@ -54,6 +54,7 @@ public class ExtensionDev extends ExtensionAdaptor {
                             Control.getSingleton()
                                     .getExtensionLoader()
                                     .getExtension(ExtensionNetwork.class));
+            extensionHook.addApiImplementor(new DevApi());
         }
     }
 
