@@ -39,5 +39,5 @@ jobs:
           git commit -m "Eval Villain Update $SHORT_DATE" -m "Updates based on https://addons.mozilla.org/firefox/addon/eval-villain/" --signoff
           git push --set-upstream origin $BRANCH --force
           # Open the PR
-          hub pull-request --no-edit
+          gh pr create -f
         fi
