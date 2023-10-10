@@ -9,6 +9,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Maintenance changes.
 - Promoted to Beta.
 
+### Added
+- Initial API support:
+    - View payload categories.
+    - View payloads (optionally filtered by category).
+
 ## [0.12.0] - 2022-09-23
 ### Changed
 - Maintenance changes.

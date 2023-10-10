@@ -54,6 +54,7 @@ public class ExtensionCustomPayloads extends ExtensionAdaptor {
         super.hook(extensionHook);
 
         extensionHook.addOptionsParamSet(getParam());
+        extensionHook.addApiImplementor(new CustomPayloadsApi(this));
 
         if (hasView()) {
             extensionHook.getHookView().addOptionPanel(getOptionsPanel());
