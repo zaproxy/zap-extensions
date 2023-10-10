@@ -123,7 +123,8 @@ public class CsrfTokenScanRule extends AbstractAppPlugin {
     @Override
     public void scan() {
         if ((AlertThreshold.HIGH.equals(getAlertThreshold()) && !getBaseMsg().isInScope())
-                || !getBaseMsg().getResponseHeader().isHtml()) {
+                || !getBaseMsg().getResponseHeader().isHtml()
+                || isPage404(getBaseMsg())) {
             return;
         }
 
@@ -186,8 +187,13 @@ public class CsrfTokenScanRule extends AbstractAppPlugin {
                     }
                 }
                 newMsg.setCookieParams(newCookies);
-                sendAndReceive(newMsg);
+                sendAndReceive(newMsg, false);
 
+                if (newMsg.getResponseHeader().getStatusCode() != 200) {
+                    LOGGER.debug("Skipping form {} due to non-200 response code", formIdx);
+                    formIdx++;
+                    continue;
+                }
                 // We parse the HTML of the response
                 Source s2 = new Source(newMsg.getResponseBody().toString());
                 List<Element> form2Elements = s2.getAllElements(HTMLElementName.FORM);

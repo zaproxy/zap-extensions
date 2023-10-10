@@ -124,6 +124,28 @@ class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRule> {
     }
 
     @Test
+    void shouldNotProcess404() throws Exception {
+        // Given
+        HttpMessage msg =
+                getHttpMessage(
+                        "GET",
+                        "/",
+                        "function miscFunc() {\n"
+                                + "\n"
+                                + "YF = '<form method=\"POST\" action=\"miscEndPt\">\\n <input type=\"text\"></form>'\n"
+                                + "\n"
+                                + "return YF\n"
+                                + "}");
+        msg.getResponseHeader().setHeader(HttpFieldsNames.CONTENT_TYPE, "text/html");
+        msg.getResponseHeader().setStatusCode(404);
+        rule.init(msg, parent);
+        // When
+        rule.scan();
+        // Then the message is not processed, no need to check antiCSRF if not HTML
+        assertThat(httpMessagesSent, hasSize(0));
+    }
+
+    @Test
     void shouldProcessWithoutCookie() throws Exception {
         // Given
         HttpMessage msg = getAntiCSRFCompatibleMessage();
