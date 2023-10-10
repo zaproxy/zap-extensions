@@ -276,7 +276,8 @@ public class StealthManager {
     }
 
     /**
-     * Source in C++: https://source.chromium.org/chromium/chromium/src/+/master:components/embedder_support/user_agent_utils.cc;l=55-100
+     * Source in C++:
+     * https://source.chromium.org/chromium/chromium/src/+/master:components/embedder_support/user_agent_utils.cc;l=55-100
      */
     List<Map<String, String>> getBrands(String uaVersion) {
         int seed = Integer.parseInt(uaVersion.split("[.]")[0]); // the major version number
