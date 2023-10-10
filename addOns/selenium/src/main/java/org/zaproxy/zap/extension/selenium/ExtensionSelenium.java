@@ -89,10 +89,6 @@ public class ExtensionSelenium extends ExtensionAdaptor {
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionSelenium.class);
 
-    static {
-        System.setProperty("webdriver.http.factory", "jdk-http-client");
-    }
-
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
             Collections.unmodifiableList(Arrays.asList(ExtensionNetwork.class));
 
