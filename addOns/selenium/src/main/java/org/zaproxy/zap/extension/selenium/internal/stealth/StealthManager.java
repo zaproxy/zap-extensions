@@ -47,6 +47,7 @@ import org.zaproxy.zap.extension.selenium.SeleniumScriptUtils;
  * <ul>
  *   <li>https://arh.antoinevastel.com/bots/areyouheadless
  *   <li>https://bot.sannysoft.com/
+ *   <li>https://bot.incolumitas.com/
  * </ul>
  */
 public class StealthManager {
@@ -54,15 +55,17 @@ public class StealthManager {
     private static final String EVASIONS_DIR =
             "/org/zaproxy/zap/extension/selenium/resources/stealth";
     private static final Pattern ANDROID_MODEL = Pattern.compile("Android.*?;\\s([^)]+)");
-    private static final Pattern WINDOWS_VERSION = Pattern.compile("Windows .*?([0-9.]+);?");
+    private static final Pattern WINDOWS_VERSION = Pattern.compile("Windows .*?([0-9._]+);?");
     private static final Pattern ANDROID_VERSION = Pattern.compile("Android ([^;]+)");
-    private static final Pattern MACOS_VERSION = Pattern.compile("Mac OS X ([0-9.]+)");
-    private static final Pattern CHROME_VERSION = Pattern.compile("Chrome/([0-9.]+)");
+    private static final Pattern MACOS_VERSION = Pattern.compile("Mac OS X ([0-9._]+)");
+    private static final Pattern CHROME_VERSION = Pattern.compile("Chrome/([0-9._]+)");
     private static final Pattern PLATFORM_SPEC = Pattern.compile("\\(([^)]+)\\)");
-    static final String PLATFORM_MAC_OS_X = "Mac OS X";
+    static final String UA_PLATFORM_MACOS = "Mac OS X";
+    static final String PLATFORM_MAC_OS_X = "macOS";
     static final String PLATFORM_ANDROID = "Android";
     static final String PLATFORM_LINUX = "Linux";
     static final String PLATFORM_WINDOWS = "Windows";
+    static final String ARCH_X86_64 = "x64";
 
     /**
      * List of all evasions. A value of null means not loaded, an empty list means loading failed.
@@ -81,7 +84,7 @@ public class StealthManager {
             return;
         }
         evasions = new ArrayList<>();
-        utilCode = loadResourceAsString(EVASIONS_DIR + "/utils.js");
+        utilCode = "\n" + loadResourceAsString(EVASIONS_DIR + "/utils.js") + "\n";
         try (InputStream is = getClass().getResourceAsStream(EVASIONS_DIR + "/catalog.yaml")) {
             Map<String, Map<String, Object>> catalog = new Yaml().load(is);
             for (Map.Entry<String, Map<String, Object>> e : catalog.entrySet()) {
@@ -152,21 +155,35 @@ public class StealthManager {
         DevTools devTools = wd.getDevTools();
         devTools.createSession();
 
-        String userAgent = wd.executeScript("return navigator.userAgent").toString();
-        Map<String, Object> userAgentOverrides = buildUserAgentOverrides(userAgent);
-        if (userAgentOverrides != null && !userAgentOverrides.isEmpty()) {
-            LOGGER.info("UserAgent override {} => {}", userAgent, userAgentOverrides);
-            wd.executeCdpCommand("Network.setUserAgentOverride", userAgentOverrides);
-        } else {
-            LOGGER.info("UserAgent '{}' not overriden", userAgent);
-        }
-
         List<Evasion> evasions = Collections.emptyList();
         try {
             evasions = filterEvasionsByBrowser(ssutils.getBrowserId());
         } catch (IOException e) {
             LOGGER.error("Failure loading stealth evasions", e);
+            // continue, we might at least change the user agent
         }
+
+        String userAgent = wd.executeScript("return navigator.userAgent").toString();
+        Map<String, Object> userAgentOverrides = buildUserAgentOverrides(userAgent);
+        if (userAgentOverrides != null && !userAgentOverrides.isEmpty()) {
+            LOGGER.info("UserAgent override {} => {}", userAgent, userAgentOverrides);
+            wd.executeCdpCommand("Network.setUserAgentOverride", userAgentOverrides);
+            // above call does not set navigator.platform
+            if (userAgentOverrides.containsKey("platform")) {
+                String platform = String.valueOf(userAgentOverrides.get("platform"));
+                evasions.add(
+                        new Evasion(
+                                "navigator.platform",
+                                EvasionType.evaluateOnNewDocument,
+                                "utils.replaceProperty(navigator, 'platform', {value: '"
+                                        + platform
+                                        + "'});",
+                                Collections.emptyList()));
+            }
+        } else {
+            LOGGER.info("UserAgent '{}' not overriden", userAgent);
+        }
+
         if (evasions.isEmpty()) {
             LOGGER.info("No evasions available for {}", ssutils.getBrowserId());
             return;
@@ -174,17 +191,17 @@ public class StealthManager {
 
         StringBuilder newDocumentCode = new StringBuilder(65536);
 
-        newDocumentCode.append(utilCode).append('\n');
-
         for (Evasion evasion : evasions) {
             if (evasion.getType() == EvasionType.evaluateOnNewDocument) {
                 // append newlines to ensure we don't get syntax errors due to lack of newlines
                 newDocumentCode.append('\n').append(evasion.getCode()).append('\n');
             }
         }
+        LOGGER.info(
+                "Applied {} evasions available for {}", evasions.size(), ssutils.getBrowserId());
 
         if (newDocumentCode.length() > 0) {
-            addScriptToEvaluateOnNewDocument(wd, newDocumentCode.toString());
+            addScriptToEvaluateOnNewDocument(wd, utilCode + newDocumentCode);
         }
     }
 
@@ -247,14 +264,21 @@ public class StealthManager {
     }
 
     String getPlatform(String userAgent, boolean extended) {
-        if (userAgent.contains(PLATFORM_MAC_OS_X)) {
+        if (userAgent.contains(UA_PLATFORM_MACOS)) {
+            // 2023-10-11 Chrome on Apple Silicon still returns "MacIntel"
             return extended ? PLATFORM_MAC_OS_X : "MacIntel";
         } else if (userAgent.contains(PLATFORM_ANDROID)) {
             return PLATFORM_ANDROID;
         } else if (userAgent.contains(PLATFORM_LINUX)) {
             return PLATFORM_LINUX;
         } else {
-            return extended ? PLATFORM_WINDOWS : "Win32";
+            if (extended) {
+                return PLATFORM_WINDOWS;
+            }
+            if (userAgent.contains("Win64") || userAgent.contains("_64")) {
+                return "Win64";
+            }
+            return "Win32";
         }
     }
 
@@ -277,7 +301,7 @@ public class StealthManager {
 
     /**
      * Source in C++:
-     * https://source.chromium.org/chromium/chromium/src/+/master:components/embedder_support/user_agent_utils.cc;l=55-100
+     * https://source.chromium.org/chromium/chromium/src/+/master:components/embedder_support/user_agent_utils.cc;l=302-419
      */
     List<Map<String, String>> getBrands(String uaVersion) {
         int seed = Integer.parseInt(uaVersion.split("[.]")[0]); // the major version number
@@ -291,20 +315,22 @@ public class StealthManager {
                             {2, 1, 0}
                         }
                         [seed % 6];
-        String[] escapedChars = new String[] {" ", " ", ";"};
+        String[] greaseyChars =
+                new String[] {" ", "(", ":", "-", ".", "/", ")", ";", "=", "?", "_"};
+        String[] greasedVersions = {"8", "99", "24"};
         String greaseyBrand =
-                escapedChars[order[0]]
-                        + "Not"
-                        + escapedChars[order[1]]
+                "Not"
+                        + greaseyChars[seed % greaseyChars.length]
                         + "A"
-                        + escapedChars[order[2]]
+                        + greaseyChars[(seed + 1) % greaseyChars.length]
                         + "Brand";
+        String greasedVersion = greasedVersions[seed % greasedVersions.length];
 
         List<Map<String, String>> greasedBrandVersionList = new ArrayList<>(3);
         greasedBrandVersionList.add(null);
         greasedBrandVersionList.add(null);
         greasedBrandVersionList.add(null);
-        greasedBrandVersionList.set(order[0], new Brand(greaseyBrand, "99").toMap());
+        greasedBrandVersionList.set(order[0], new Brand(greaseyBrand, greasedVersion).toMap());
         greasedBrandVersionList.set(order[1], new Brand("Chromium", String.valueOf(seed)).toMap());
         greasedBrandVersionList.set(
                 order[2], new Brand("Google Chrome", String.valueOf(seed)).toMap());
@@ -345,6 +371,8 @@ public class StealthManager {
     String getPlatformArch(String userAgent) {
         if (isMobile(userAgent)) {
             return "";
+        } else if (userAgent.contains("64") || userAgent.contains("Macintosh")) {
+            return ARCH_X86_64;
         } else {
             return "x86";
         }

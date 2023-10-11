@@ -62,6 +62,8 @@ public class StealthManagerUnitTest {
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/60.3112.50 Safari/537.36";
     private static final String UA_CHROME_HEADFUL =
             "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.3112.50 Safari/537.36";
+    private static final String UA_CHROME_HEADFUL_MAC =
+            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36";
     private static final String UA_FIREFOX_HEADFUL =
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/118.0";
     private static final String UA_ANDROID =
@@ -153,46 +155,72 @@ public class StealthManagerUnitTest {
         assertThat(userAgentOverrides.get("userAgent").toString(), not(containsString("Headless")));
         // Then Linux is not identified
         assertThat(userAgentOverrides.get("userAgent").toString(), not(containsString("Linux")));
+        assertThat(userAgentOverrides.get("platform").toString(), equalTo("Win64"));
         // Then Accept-Language is overriden
         assertThat(userAgentOverrides.get("acceptLanguage").toString(), not(emptyOrNullString()));
         // Then all user agent metadata is provided
-        assertThat(userAgentOverrides.get("platform").toString(), not(emptyOrNullString()));
         @SuppressWarnings("unchecked")
         Map<String, Object> metadata =
                 (Map<String, Object>) userAgentOverrides.get("userAgentMetadata");
         assertThat(metadata, notNullValue());
-        assertThat(metadata.get("platform"), notNullValue());
-        assertThat(metadata.get("platformVersion"), notNullValue());
-        assertThat(metadata.get("architecture"), notNullValue());
+        assertThat(metadata.get("platform"), equalTo(StealthManager.PLATFORM_WINDOWS));
+        assertThat(metadata.get("platformVersion"), equalTo("10.0"));
+        assertThat(metadata.get("architecture"), equalTo(StealthManager.ARCH_X86_64));
         assertThat(metadata.get("model"), notNullValue());
-        assertThat(metadata.get("mobile"), notNullValue());
+        assertThat(metadata.get("mobile"), equalTo(false));
         assertThat(metadata.get("brands"), notNullValue());
-        assertThat(metadata.get("fullVersion"), notNullValue());
+        assertThat(metadata.get("fullVersion"), equalTo("60.3112.50"));
     }
 
     @Test
-    void buildUserAgentOverride_ChromeHeadful() {
+    void buildUserAgentOverride_ChromeHeadful_Linux() {
         // Given chrome headful user agent
         String userAgent = UA_CHROME_HEADFUL;
         // When user agent overrides are built
         Map<String, Object> userAgentOverrides = stealthManager.buildUserAgentOverrides(userAgent);
         // Then Linux is not identified
         assertThat(userAgentOverrides.get("userAgent").toString(), not(containsString("Linux")));
+        assertThat(userAgentOverrides.get("platform").toString(), equalTo("Win64"));
         // Then Accept-Language is not overriden
         assertThat(userAgentOverrides.get("acceptLanguage"), nullValue());
         // Then all user agent metadata is provided
-        assertThat(userAgentOverrides.get("platform").toString(), not(emptyOrNullString()));
         @SuppressWarnings("unchecked")
         Map<String, Object> metadata =
                 (Map<String, Object>) userAgentOverrides.get("userAgentMetadata");
         assertThat(metadata, notNullValue());
-        assertThat(metadata.get("platform"), notNullValue());
-        assertThat(metadata.get("platformVersion"), notNullValue());
-        assertThat(metadata.get("architecture"), notNullValue());
+        assertThat(metadata.get("platform"), equalTo(StealthManager.PLATFORM_WINDOWS));
+        assertThat(metadata.get("platformVersion"), equalTo("10.0"));
+        assertThat(metadata.get("architecture"), equalTo(StealthManager.ARCH_X86_64));
         assertThat(metadata.get("model"), notNullValue());
-        assertThat(metadata.get("mobile"), notNullValue());
+        assertThat(metadata.get("mobile"), equalTo(false));
         assertThat(metadata.get("brands"), notNullValue());
-        assertThat(metadata.get("fullVersion"), notNullValue());
+        assertThat(metadata.get("fullVersion"), equalTo("60.3112.50"));
+    }
+
+    @Test
+    void buildUserAgentOverride_ChromeHeadful_macOS() {
+        // Given chrome headful user agent
+        String userAgent = UA_CHROME_HEADFUL_MAC;
+        // When user agent overrides are built
+        Map<String, Object> userAgentOverrides = stealthManager.buildUserAgentOverrides(userAgent);
+        // Then Linux is not identified
+        assertThat(userAgentOverrides.get("userAgent").toString(), not(containsString("Linux")));
+        assertThat(userAgentOverrides.get("userAgent").toString(), containsString("Macintosh"));
+        assertThat(userAgentOverrides.get("platform").toString(), equalTo("MacIntel"));
+        // Then Accept-Language is not overriden
+        assertThat(userAgentOverrides.get("acceptLanguage"), nullValue());
+        // Then all user agent metadata is provided
+        @SuppressWarnings("unchecked")
+        Map<String, Object> metadata =
+                (Map<String, Object>) userAgentOverrides.get("userAgentMetadata");
+        assertThat(metadata, notNullValue());
+        assertThat(metadata.get("platform"), equalTo(StealthManager.PLATFORM_MAC_OS_X));
+        assertThat(metadata.get("platformVersion"), equalTo("10_15_7"));
+        assertThat(metadata.get("architecture"), equalTo(StealthManager.ARCH_X86_64));
+        assertThat(metadata.get("model"), notNullValue());
+        assertThat(metadata.get("mobile"), equalTo(false));
+        assertThat(metadata.get("brands"), notNullValue());
+        assertThat(metadata.get("fullVersion"), equalTo("117.0.0.0"));
     }
 
     @Test
@@ -204,9 +232,9 @@ public class StealthManagerUnitTest {
         Map<String, Object> userAgentOverrides = stealthManager.buildUserAgentOverrides(userAgent);
         // Then Linux is not identified
         assertThat(userAgentOverrides.get("userAgent").toString(), not(containsString("Linux")));
+        assertThat(userAgentOverrides.get("platform").toString(), equalTo("Win64"));
         // Then Accept-Language is not overriden
         assertThat(userAgentOverrides.get("acceptLanguage"), nullValue());
-        assertThat(userAgentOverrides.get("platform").toString(), not(emptyOrNullString()));
         // Then metadata object is provided
         @SuppressWarnings("unchecked")
         Map<String, Object> metadata =
@@ -216,11 +244,11 @@ public class StealthManagerUnitTest {
         assertThat(metadata.get("brands"), nullValue());
         assertThat(metadata.get("fullVersion"), nullValue());
         // Then all other user agent metadata
-        assertThat(metadata.get("platform"), notNullValue());
-        assertThat(metadata.get("platformVersion"), notNullValue());
-        assertThat(metadata.get("architecture"), notNullValue());
+        assertThat(metadata.get("platform"), equalTo(StealthManager.PLATFORM_WINDOWS));
+        assertThat(metadata.get("platformVersion"), equalTo("10.0"));
+        assertThat(metadata.get("architecture"), equalTo(StealthManager.ARCH_X86_64));
         assertThat(metadata.get("model"), notNullValue());
-        assertThat(metadata.get("mobile"), notNullValue());
+        assertThat(metadata.get("mobile"), equalTo(false));
     }
 
     @Test
@@ -235,16 +263,43 @@ public class StealthManagerUnitTest {
         // Then Accept-Language is not overriden
         assertThat(userAgentOverrides.get("acceptLanguage"), nullValue());
         // Then non-chrome specific user agent metadata is provided
-        assertThat(userAgentOverrides.get("platform").toString(), not(emptyOrNullString()));
+        assertThat(userAgentOverrides.get("platform").toString(), equalTo("MacIntel"));
         @SuppressWarnings("unchecked")
         Map<String, Object> metadata =
                 (Map<String, Object>) userAgentOverrides.get("userAgentMetadata");
         assertThat(metadata, notNullValue());
-        assertThat(metadata.get("platform"), notNullValue());
-        assertThat(metadata.get("platformVersion"), notNullValue());
+        assertThat(metadata.get("platform"), equalTo(StealthManager.PLATFORM_MAC_OS_X));
+        assertThat(metadata.get("platformVersion"), equalTo("10.15"));
         assertThat(metadata.get("architecture"), notNullValue());
         assertThat(metadata.get("model"), notNullValue());
-        assertThat(metadata.get("mobile"), notNullValue());
+        assertThat(metadata.get("mobile"), equalTo(false));
+        assertThat(metadata.get("brands"), nullValue());
+        assertThat(metadata.get("fullVersion"), nullValue());
+    }
+
+    @Test
+    void buildUserAgentOverride_Android() {
+        // Given firefox headful user agent
+        String userAgent = UA_ANDROID;
+        // When user agent overrides are built
+        Map<String, Object> userAgentOverrides = stealthManager.buildUserAgentOverrides(userAgent);
+        // Then user agent override is provided
+        assertThat(userAgentOverrides.get("userAgent").toString(), not(emptyOrNullString()));
+        // Then Accept-Language is not overriden
+        assertThat(userAgentOverrides.get("acceptLanguage"), nullValue());
+        // Then non-chrome specific user agent metadata is provided
+        assertThat(
+                userAgentOverrides.get("platform").toString(),
+                equalTo(StealthManager.PLATFORM_ANDROID));
+        @SuppressWarnings("unchecked")
+        Map<String, Object> metadata =
+                (Map<String, Object>) userAgentOverrides.get("userAgentMetadata");
+        assertThat(metadata, notNullValue());
+        assertThat(metadata.get("platform"), equalTo(StealthManager.PLATFORM_ANDROID));
+        assertThat(metadata.get("platformVersion"), equalTo("2.2"));
+        assertThat(metadata.get("architecture"), equalTo(""));
+        assertThat(metadata.get("model"), equalTo("Nexus One Build/FRF50"));
+        assertThat(metadata.get("mobile"), equalTo(true));
         assertThat(metadata.get("brands"), nullValue());
         assertThat(metadata.get("fullVersion"), nullValue());
     }
@@ -269,7 +324,7 @@ public class StealthManagerUnitTest {
         assertThat(metadata.get("platformVersion"), notNullValue());
         assertThat(metadata.get("architecture"), notNullValue());
         assertThat(metadata.get("model"), notNullValue());
-        assertThat(metadata.get("mobile"), notNullValue());
+        assertThat(metadata.get("mobile"), equalTo(false));
         assertThat(metadata.get("brands"), nullValue());
         assertThat(metadata.get("fullVersion"), nullValue());
     }
@@ -382,13 +437,13 @@ public class StealthManagerUnitTest {
                 equalTo(StealthManager.PLATFORM_WINDOWS));
         assertThat(
                 stealthManager.getPlatform("(Windows NT 10.0; Win64; x64)", false),
-                equalTo("Win32"));
+                equalTo("Win64"));
         // When unknown platform is provided
         // Then Windows platform is returned
         assertThat(
-                stealthManager.getPlatform("(BeOS 4.1; BeOs; x64)", true),
+                stealthManager.getPlatform("(BeOS 4.1; BeOs; x86_64)", true),
                 equalTo(StealthManager.PLATFORM_WINDOWS));
-        assertThat(stealthManager.getPlatform("(BeOS 4.1; BeOs; x64)", false), equalTo("Win32"));
+        assertThat(stealthManager.getPlatform("(BeOS 4.1; BeOs; x86_64)", false), equalTo("Win64"));
     }
 
     @Test
@@ -435,10 +490,19 @@ public class StealthManagerUnitTest {
         // Given
         // When Chrome user agent
         // Then x86
-        assertThat(stealthManager.getPlatformArch(UA_CHROME_HEADFUL), equalTo("x86"));
+        assertThat(
+                stealthManager.getPlatformArch(UA_CHROME_HEADFUL),
+                equalTo(StealthManager.ARCH_X86_64));
         // When Firefox user agent
         // Then x86
-        assertThat(stealthManager.getPlatformArch(UA_FIREFOX_HEADFUL), equalTo("x86"));
+        assertThat(
+                stealthManager.getPlatformArch(UA_FIREFOX_HEADFUL),
+                equalTo(StealthManager.ARCH_X86_64));
+        // When Windows 64-bit platform
+        // Then x64
+        assertThat(
+                stealthManager.getPlatformArch("(Windows NT 10.0; Windows; Win64)"),
+                equalTo(StealthManager.ARCH_X86_64));
         // When Android user agent
         // Then empty string
         assertThat(stealthManager.getPlatformArch(UA_ANDROID), equalTo(""));
