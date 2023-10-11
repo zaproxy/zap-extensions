@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Update default user-agents.
+- Update dependencies.
 
 ### Fixed
 - Do not initialize the view when failed to start the main proxy in `cmd` and `daemon` modes.

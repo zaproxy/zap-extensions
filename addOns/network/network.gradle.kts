@@ -54,7 +54,7 @@ spotless {
 }
 
 dependencies {
-    val nettyVersion = "4.1.94.Final"
+    val nettyVersion = "4.1.100.Final"
     implementation("io.netty:netty-codec:$nettyVersion")
     implementation("io.netty:netty-handler:$nettyVersion")
     implementation("io.netty:netty-codec-http2:$nettyVersion")
@@ -65,7 +65,7 @@ dependencies {
         exclude(group = "org.apache.logging.log4j")
     }
 
-    val bcVersion = "1.74"
+    val bcVersion = "1.76"
     val bcJava = "jdk18on"
     bouncyCastle("org.bouncycastle:bcmail-$bcJava:$bcVersion")
     bouncyCastle("org.bouncycastle:bcprov-$bcJava:$bcVersion")
