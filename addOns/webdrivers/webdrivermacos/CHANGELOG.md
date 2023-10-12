@@ -6,8 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update ChromeDriver to 118.0.5993.70.
-
-
+- Update minimum ZAP version to 2.14.0.
 
 ## [63] - 2023-10-09
 ### Changed

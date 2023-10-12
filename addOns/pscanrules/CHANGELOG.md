@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - A potential NullPointerException when a CSP declared via META tag was invalid.
 
 ### Changed
+- Update minimum ZAP version to 2.14.0.
 - CSP scan rule: Add deprecation warning for inclusion of prefetch-src (Issue 8077).
 
 ## [51] - 2023-09-08

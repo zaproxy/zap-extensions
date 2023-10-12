@@ -412,6 +412,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
         displayScript(script, true);
     }
 
+    @Override
     public void displayScript(ScriptWrapper script, boolean allowFocus) {
         if (!View.isInitialised()) {
             return;
@@ -809,6 +810,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
         selectNode(node, expand, true);
     }
 
+    @Override
     public void selectNode(ScriptNode node, boolean expand, boolean allowFocus) {
         if (View.isInitialised()) {
             this.getScriptsPanel().showInTree(node, expand, allowFocus);

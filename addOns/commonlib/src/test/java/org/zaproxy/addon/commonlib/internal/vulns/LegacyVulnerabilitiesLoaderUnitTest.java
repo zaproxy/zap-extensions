@@ -34,6 +34,7 @@ import org.zaproxy.zap.model.Vulnerability;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link LegacyVulnerabilitiesLoader}. */
+@SuppressWarnings("removal")
 class LegacyVulnerabilitiesLoaderUnitTest extends TestUtils {
 
     private static final String DEFAULT_FILE_NAME = "vulnerabilities";
