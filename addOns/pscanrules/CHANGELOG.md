@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [52] - 2023-10-12
 ### Fixed
 - The CSRF Countermeasures scan rule now skips responses that are not HTML (Issue 7890).
 - A potential NullPointerException when a CSP declared via META tag was invalid.
@@ -433,6 +433,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[52]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v52
 [51]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v51
 [50]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v50
 [49]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v49

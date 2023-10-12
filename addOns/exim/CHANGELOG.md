@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.7.0] - 2023-10-12
 ### Changed
 - Update minimum ZAP version to 2.14.0.
 - Depend on newer versions of Automation Framework and Common Library add-ons (Related to Issue 7961).
@@ -64,6 +64,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release.
 
+[0.7.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.7.0
 [0.6.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.6.0
 [0.5.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.5.0
 [0.4.0]: https://github.com/zaproxy/zap-extensions/releases/exim-v0.4.0

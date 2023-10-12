@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [15] - 2023-10-12
 ### Changed
 - Update minimum ZAP version to 2.14.0.
 
@@ -95,6 +95,7 @@ the dialogue when other match types are selected.
 
 - First version
 
+[15]: https://github.com/zaproxy/zap-extensions/releases/replacer-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/replacer-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/replacer-v13
 [12]: https://github.com/zaproxy/zap-extensions/releases/replacer-v12
