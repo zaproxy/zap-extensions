@@ -75,7 +75,9 @@ val createPullRequestNextDevIter by tasks.registering(CreatePullRequest::class) 
 }
 
 val releaseAddOn by tasks.registering
-val allJarsForBom by tasks.registering
+val allJarsForBom by tasks.registering {
+    dependsOn(project(":testutils").tasks.named(JavaPlugin.JAR_TASK_NAME))
+}
 
 val crowdinExcludedProjects = setOf(
     childProjects.get("dev"),
