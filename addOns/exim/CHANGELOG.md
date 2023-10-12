@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Update minimum ZAP version to 2.14.0.
 - Depend on newer versions of Automation Framework and Common Library add-ons (Related to Issue 7961).
 
 ## [0.6.0] - 2023-07-11

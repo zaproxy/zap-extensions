@@ -5,9 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Update minimum ZAP version to 2.14.0.
 - Updated with upstream retire.js pattern changes.
-
-
 
 ## [0.25.0] - 2023-08-14
 ### Changed

@@ -36,6 +36,7 @@ import org.zaproxy.zap.utils.LocaleUtils;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Helper class that loads {@code Vulnerability} from a XML file for a given {@code Locale}. */
+@SuppressWarnings("removal")
 public final class LegacyVulnerabilitiesLoader {
 
     private static final Logger LOGGER = LogManager.getLogger(LegacyVulnerabilitiesLoader.class);

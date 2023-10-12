@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
-- Update minimum ZAP version to 2.13.0.
+- Update minimum ZAP version to 2.14.0.
 - Replace usage of singletons with injected variables (e.g. `model`, `control`) in scripts.
 - Dependency updates.
 

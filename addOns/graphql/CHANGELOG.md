@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 - Fingerprinting check for the Absinthe GraphQL engine.
 
 ### Changed
+- Update minimum ZAP version to 2.14.0.
 - Dependency updates.
 
 ## [0.19.0] - 2023-09-07
