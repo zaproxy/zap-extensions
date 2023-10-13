@@ -34,8 +34,12 @@ import java.util.zip.ZipFile;
 import javax.swing.tree.TreeNode;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.config.Configuration;
+import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
@@ -104,6 +108,17 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
         super.init();
 
         recreateSiteTreeMap();
+
+        // Prevent jsvg from logging too many, not so useful messages.
+        setLogLevel(
+                List.of(
+                        "com.github.weisj.jsvg.util.ResourceUtil",
+                        "com.github.weisj.jsvg.parser.css.impl.SimpleCssParser",
+                        "com.github.weisj.jsvg.parser.css.impl.Lexer",
+                        "com.github.weisj.jsvg.nodes.Image",
+                        "com.github.weisj.jsvg.nodes.container.BaseContainerNode"),
+                Level.OFF);
+
         List<String> technologyFiles = new ArrayList<>();
         try (ZipFile zip = new ZipFile(getAddOn().getFile())) {
             zip.stream()
@@ -405,5 +420,28 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
          * getApplications() .forEach( app -> addApplicationsToSite( "http://localhost",
          * new ApplicationMatch(app)));
          */
+    }
+
+    private static void setLogLevel(List<String> classnames, Level level) {
+        boolean updateLoggers = false;
+        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
+        Configuration configuration = ctx.getConfiguration();
+        for (String classname : classnames) {
+            LoggerConfig loggerConfig = configuration.getLoggerConfig(classname);
+            if (!classname.equals(loggerConfig.getName())) {
+                configuration.addLogger(
+                        classname,
+                        LoggerConfig.newBuilder()
+                                .withLoggerName(classname)
+                                .withLevel(level)
+                                .withConfig(configuration)
+                                .build());
+                updateLoggers = true;
+            }
+        }
+
+        if (updateLoggers) {
+            ctx.updateLoggers();
+        }
     }
 }
