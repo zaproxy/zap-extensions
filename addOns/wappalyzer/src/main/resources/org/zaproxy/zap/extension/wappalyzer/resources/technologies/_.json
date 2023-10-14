@@ -101,6 +101,22 @@
     "scriptSrc": "4tellcdn\\.azureedge\\.net",
     "website": "https://4-tell.com"
   },
+  "42stores": {
+    "cats": [
+      6
+    ],
+    "description": "42stores is a French SaaS ecommerce solution that was established in 2008. It offers a range of features such as monitoring, customer support, and regular updates. The platform is known for its flexibility and modularity, making it possible to integrate with various ERP systems.",
+    "icon": "42stores.svg",
+    "headers": {
+      "Powered-By": "^42stores$"
+    },
+    "pricing": [
+      "poa",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://www.42stores.com"
+  },
   "51.LA": {
     "cats": [
       10

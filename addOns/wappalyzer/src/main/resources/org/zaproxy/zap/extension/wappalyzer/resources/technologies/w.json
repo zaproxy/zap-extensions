@@ -246,6 +246,21 @@
     "scriptSrc": "/wp-content/plugins/wp-maintenance-mode/.+wpmm\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://github.com/andrianvaleanu/WP-Maintenance-Mode"
   },
+  "WP Portfolio": {
+    "cats": [
+      87
+    ],
+    "description": "WP Portfolio is a premium standalone WordPress plugin designed for creating and showcasing portfolios.",
+    "icon": "WP Portfolio.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/astra-portfolio/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://wpportfolio.net"
+  },
   "WP Puzzle Basic": {
     "cats": [
       80

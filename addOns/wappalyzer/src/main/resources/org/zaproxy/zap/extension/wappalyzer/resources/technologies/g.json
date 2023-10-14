@@ -1571,6 +1571,7 @@
     ],
     "description": "Google AdSense is a program run by Google through which website publishers serve advertisements that are targeted to the site content and audience.",
     "icon": "Google AdSense.svg",
+    "dom": "amp-ad[type='adsense']",
     "js": {
       "Goog_AdSense_": "",
       "Goog_AdSense_OsdAdapter": "",

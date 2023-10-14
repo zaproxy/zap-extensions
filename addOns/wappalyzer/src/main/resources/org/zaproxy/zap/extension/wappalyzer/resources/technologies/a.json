@@ -1537,6 +1537,17 @@
     "scripts": "aem-(?:GridColumn|apps/)",
     "website": "https://www.adobe.com/marketing/experience-manager.html"
   },
+  "Adobe Experience Manager Franklin": {
+    "cats": [
+      1
+    ],
+    "cpe": "cpe:2.3:a:adobe:experience_manager:*:*:*:*:*:*:*:*",
+    "description": "Adobe Experience Manager Franklin, also known as Project Helix or Composability, is a new way to publish AEM pages using Google Drive or Microsoft Office via Sharepoint. Instead of components, Franklin uses blocks to build pages. Blocks are pieces of a document that will be transformed into web page content.",
+    "icon": "Adobe Experience Manager Franklin.svg",
+    "excludes": "Adobe Experience Manager",
+    "scriptSrc": "^.+/scripts/lib-franklin\\.js$",
+    "website": "https://www.hlx.live"
+  },
   "Adobe Experience Platform Identity Service": {
     "cats": [
       97
@@ -4196,6 +4207,22 @@
     "scriptSrc": "/wp-content/plugins/asgaros-forum/",
     "website": "https://www.asgaros.de"
   },
+  "Assertive Yield": {
+    "cats": [
+      36
+    ],
+    "description": "Assertive Yield is a SaaS company that specialises in helping SSPs (Supply-Side Platforms), publishers, and ad networks optimise their advertising revenue through real-time attribution and yield optimisation strategies.",
+    "icon": "Assertive Yield.svg",
+    "saas": true,
+    "js": {
+      "assertive.predict": ""
+    },
+    "pricing": [
+      "payg",
+      "poa"
+    ],
+    "website": "https://www.assertiveyield.com"
+  },
   "Astra": {
     "cats": [
       80
@@ -4637,6 +4664,21 @@
     "icon": "automatad.png",
     "scriptSrc": "//go\\.automatad\\.com/",
     "website": "https://automatad.com/"
+  },
+  "Automatic.css": {
+    "cats": [
+      66,
+      87
+    ],
+    "description": "Automatic.css is a CSS framework for WordPress page builders.",
+    "icon": "Automatic.css.png",
+    "dom": "link[href*='/wp-content/uploads/automatic-css/']",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "website": "https://automaticcss.com"
   },
   "Automizely": {
     "cats": [

@@ -450,6 +450,12 @@
       "X-NF-Request-ID": ""
     },
     "icon": "Netlify.svg",
+    "pricing": [
+      "freemium",
+      "low",
+      "recurring",
+      "poa"
+    ],
     "url": "^https?://[^/]+\\.netlify\\.(?:com|app)/",
     "website": "https://www.netlify.com/",
     "xhr": "cdn\\.netlify\\.com"
