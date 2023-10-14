@@ -98,7 +98,7 @@ class FrontEndScannerProxyListenerUnitTest extends TestUtils {
         String expectedHtmlFormat =
                 "<!doctype html><html lang='en'><head><script src='https:\\/\\/"
                         + HOSTNAME
-                        + "\\/zapCallBackUrl\\/-?[0-9]+\\?action=getFile&filename=front-end-scanner.js&historyReferenceId=42'><\\/script><script><\\/script><\\/head><body><\\/body></html>";
+                        + "\\/zapCallBackUrl\\/-?[0-9]+\\?action=getFile&fileName=front-end-scanner.js&historyReferenceId=42'><\\/script><script><\\/script><\\/head><body><\\/body></html>";
         String result = msg.getResponseBody().toString();
 
         assertTrue(result.matches(expectedHtmlFormat));
@@ -118,7 +118,7 @@ class FrontEndScannerProxyListenerUnitTest extends TestUtils {
         String expectedHtmlFormat =
                 "<!doctype html><html lang='en'><head><meta><script src='https:\\/\\/"
                         + HOSTNAME
-                        + "\\/zapCallBackUrl\\/-?[0-9]+\\?action=getFile&filename=front-end-scanner.js&historyReferenceId=42'><\\/script><\\/head><body><\\/body></html>";
+                        + "\\/zapCallBackUrl\\/-?[0-9]+\\?action=getFile&fileName=front-end-scanner.js&historyReferenceId=42'><\\/script><\\/head><body><\\/body></html>";
         String result = msg.getResponseBody().toString();
 
         assertTrue(result.matches(expectedHtmlFormat));
@@ -139,7 +139,7 @@ class FrontEndScannerProxyListenerUnitTest extends TestUtils {
         String expectedHtmlFormat =
                 "<!doctype html><html lang='en'><head><meta><meta><script src='https:\\/\\/"
                         + HOSTNAME
-                        + "\\/zapCallBackUrl\\/-?[0-9]+\\?action=getFile&filename=front-end-scanner.js&historyReferenceId=42'><\\/script><\\/head><body><\\/body></html>";
+                        + "\\/zapCallBackUrl\\/-?[0-9]+\\?action=getFile&fileName=front-end-scanner.js&historyReferenceId=42'><\\/script><\\/head><body><\\/body></html>";
         String result = msg.getResponseBody().toString();
 
         assertTrue(result.matches(expectedHtmlFormat));
@@ -159,7 +159,7 @@ class FrontEndScannerProxyListenerUnitTest extends TestUtils {
         String expectedHtmlFormat =
                 "<!doctype html><html lang='en'><head><script src='https:\\/\\/"
                         + HOSTNAME
-                        + "\\/zapCallBackUrl\\/-?[0-9]+\\?action=getFile&filename=front-end-scanner.js&historyReferenceId=42'><\\/script><\\/head><body><\\/body></head></html>";
+                        + "\\/zapCallBackUrl\\/-?[0-9]+\\?action=getFile&fileName=front-end-scanner.js&historyReferenceId=42'><\\/script><\\/head><body><\\/body></head></html>";
         String result = msg.getResponseBody().toString();
 
         assertTrue(result.matches(expectedHtmlFormat));
@@ -179,7 +179,7 @@ class FrontEndScannerProxyListenerUnitTest extends TestUtils {
         String expectedHtmlFormat =
                 "<!doctype html><html lang='en'><head><script src='https:\\/\\/"
                         + HOSTNAME
-                        + "\\/zapCallBackUrl\\/-?[0-9]+\\?action=getFile&filename=front-end-scanner.js&historyReferenceId=42'><\\/script><\\/head><body><\\/body></html>";
+                        + "\\/zapCallBackUrl\\/-?[0-9]+\\?action=getFile&fileName=front-end-scanner.js&historyReferenceId=42'><\\/script><\\/head><body><\\/body></html>";
         String result = msg.getResponseBody().toString();
 
         assertTrue(result.matches(expectedHtmlFormat));
@@ -199,7 +199,7 @@ class FrontEndScannerProxyListenerUnitTest extends TestUtils {
         String expectedHtmlFormat =
                 "<head><script src='https:\\/\\/"
                         + HOSTNAME
-                        + "\\/zapCallBackUrl\\/-?[0-9]+\\?action=getFile&filename=front-end-scanner.js&historyReferenceId=42'><\\/script><\\/head><body><\\/body>";
+                        + "\\/zapCallBackUrl\\/-?[0-9]+\\?action=getFile&fileName=front-end-scanner.js&historyReferenceId=42'><\\/script><\\/head><body><\\/body>";
         String result = msg.getResponseBody().toString();
 
         assertTrue(result.matches(expectedHtmlFormat));
@@ -219,7 +219,7 @@ class FrontEndScannerProxyListenerUnitTest extends TestUtils {
         String expectedHtmlFormat =
                 "<head><script src='https:\\/\\/"
                         + HOSTNAME
-                        + "\\/zapCallBackUrl\\/-?[0-9]+\\?action=getFile&filename=front-end-scanner.js&historyReferenceId=42'><\\/script><\\/head><body><\\/body>";
+                        + "\\/zapCallBackUrl\\/-?[0-9]+\\?action=getFile&fileName=front-end-scanner.js&historyReferenceId=42'><\\/script><\\/head><body><\\/body>";
         String result = msg.getResponseBody().toString();
 
         assertTrue(result.matches(expectedHtmlFormat));
