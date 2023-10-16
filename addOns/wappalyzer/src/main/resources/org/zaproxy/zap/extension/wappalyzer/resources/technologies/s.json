@@ -795,7 +795,8 @@
     ],
     "description": "Salla is an ecommerce platform specifically tailored to serve businesses and customers in Saudi Arabia.",
     "headers": {
-      "x-powered-by": "^Salla$"
+      "x-powered-by": "^Salla$",
+      "X-Frame-Options": "\\.salla\\.sa"
     },
     "icon": "Salla.svg",
     "js": {
@@ -3074,12 +3075,12 @@
     "scriptSrc": "\\.signifyd\\.com",
     "website": "https://www.signifyd.com"
   },
-  "SilverStripe": {
+  "Silverstripe": {
     "cats": [
       1
     ],
     "description": "Silverstripe CMS is a free and open source Content Management System and Framework for creating and maintaining websites and web applications.",
-    "html": "Powered by <a href=\"[^>]+SilverStripe",
+    "html": "Powered by <a href=\"[^>]+Silverstripe",
     "icon": "SilverStripe.svg",
     "implies": "PHP",
     "meta": {
@@ -6939,7 +6940,7 @@
       "#svelte-announcer": {
         "exists": ""
       },
-      "a": {
+      "a,body": {
         "attributes": {
           "data-sveltekit-preload-data": "",
           "sveltekit:prefetch": ""
@@ -7080,11 +7081,19 @@
       59
     ],
     "description": "Swiper is a JavaScript library that creates modern touch sliders with hardware-accelerated transitions.",
-    "dom": "div[data-swiper-slide-index], [swiper-container]",
+    "dom": [
+      "div[data-swiper-slide-index]", 
+      "swiper-container",
+      "swiper-slide",
+      "div.swiper-wrapper",
+      "div.swiper-initialized",
+      "div.swiper-vertical"
+    ],
     "icon": "Swiper.svg",
     "js": {
       "Swiper": ""
     },
+    "oss": true,
     "scriptSrc": "swiper(?:\\.min)?\\.js",
     "website": "https://swiperjs.com"
   },
@@ -7126,6 +7135,11 @@
       "img[src*='sylius_shop_product_tiny_thumbnail']": {
         "attributes": {
           "src": "/sylius_shop_product_tiny_thumbnail/"
+        }
+      },
+      "input#sylius_add_to_cart_cartItem_variant": {
+        "attributes": {
+          "id": ""
         }
       }
     },

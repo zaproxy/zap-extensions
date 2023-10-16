@@ -881,14 +881,15 @@
       18,
       22
     ],
+    "description": "Flask is a Python micro web framework ideal for rapidly constructing web applications, offering minimalism, flexibility, and modularity.",
     "cpe": "cpe:2.3:a:palletsprojects:flask:*:*:*:*:*:*:*:*",
     "headers": {
       "Server": "Werkzeug/?([\\d\\.]+)?\\;version:\\1"
     },
-    "icon": "Flask.png",
+    "icon": "Flask.svg",
     "implies": "Python",
     "oss": true,
-    "website": "https://flask.pocoo.org"
+    "website": "https://github.com/pallets/flask/"
   },
   "Flat UI": {
     "cats": [

@@ -269,6 +269,9 @@
     ],
     "icon": "Jekyll.svg",
     "implies": "Ruby",
+    "js": {
+      "SimpleJekyllSearch": ""
+    },
     "meta": {
       "generator": "Jekyll\\sv([\\d.]+)?\\;version:\\1"
     },

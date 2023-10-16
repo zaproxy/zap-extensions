@@ -912,6 +912,22 @@
     ],
     "website": "https://visualcomposer.com"
   },
+  "Visual Portfolio": {
+    "cats": [
+      87
+    ],
+    "description": "Visual Portfolio is a plugin with a robust set of features, designed to help you create galleries that effectively display your creative projects.",
+    "icon": "Visual Portfolio.svg",
+    "js": {
+      "VPData.screenSizes": "",
+      "VPData.version": "([\\d\\.]+)\\;version:\\1"
+    },
+    "pricing": [
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "website": "https://visualportfolio.co"
+  },
   "Visual Quiz Builder": {
     "cats": [
       100

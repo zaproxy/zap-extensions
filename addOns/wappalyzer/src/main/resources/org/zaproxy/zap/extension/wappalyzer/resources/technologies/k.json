@@ -640,6 +640,23 @@
     ],
     "website": "https://kibocommerce.com/personalization-software"
   },
+  "Kicksite": {
+    "cats": [
+      53
+    ],
+    "description": "Kicksite is a gym and martial arts member management software with attendance tracking, automated billing, free texting, lead capture forms and more.",
+    "icon": "Kicksite.png",
+    "cookies": {
+      "_kicksite_session": ""
+    },
+    "dom":"iframe[src*='.kicksite.net/']",
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://kicksite.com"
+  },
   "Kiliba": {
     "cats": [
       32
