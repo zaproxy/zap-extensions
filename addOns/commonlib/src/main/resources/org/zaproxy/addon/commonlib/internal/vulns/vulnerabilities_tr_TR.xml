@@ -10,8 +10,8 @@ Kimlik Doğrulama kurulumunun çevresinden dolaşmak için, bazı kaynaklar öze
 	<solution>Faz: Mimari ve Tasarım
 OWASP ESAPI Kimlik Kontrolü özelliği gibi, bir Kimlik Doğrulama çerçevesi veya kütüphanesi kullanınız.</solution>
 	<reference>http://projects.webappsec.org/Insufficient-Authentication</reference>
-	<reference>http://cwe.mitre.org/data/definitions/287.html</reference>
-	<reference>http://cwe.mitre.org/data/definitions/284.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/287.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/284.html</reference>
 </vuln_item_wasc_1>
 
 <vuln_items>wasc_2</vuln_items>
@@ -37,8 +37,8 @@ Ayarları, yönetimi ve ayrıcalıkların ele alınmasını çok dikkatli bir ş
 
 Yürütülen Program: Mimarlık ve Tasarım Sistem dizaynına uygun bölümlendirmenin yapıldığından ve bölümlendirmenin ayrıcalık ayırma işlevselliğini arttırmaya ve daha da güçlendirmeye yaradığından emin olun. Mimarlar ve tasarımcılar, sistem ayrıcalıklarının kullanılması ve bırakılmasının uygun olduğuna karar verdiği durumlarda en düşük ayrıcalık prensiplerine güvenmeliler.</solution>
 	<reference>http://projects.webappsec.org/Insufficient-Authentication</reference>
-	<reference>http://cwe.mitre.org/data/definitions/284.html</reference>
-	<reference>http://cwe.mitre.org/data/definitions/287.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/284.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/285.html</reference>
 </vuln_item_wasc_2>
 
 <vuln_items>wasc_3</vuln_items>
@@ -70,7 +70,7 @@ Ayrıca, 32-bit, 64-bit ve sayısal gösterimi etkileyebilecek diğer potansiyel
 Faz: Gerçekleme
 Derleyici uyarılarını yakından inceleyin ve signed / unsigned uyumsuzlukları gibi, potansiyel kritik güvenlik sorunlarını bertaraf edin. Zafiyet çok ender olarak sömürülebilir olsa da, küçük bir başarısızlık, bütün sistemi riske atabilir.</solution>
 	<reference>http://projects.webappsec.org/Integer-Overflows</reference>
-	<reference>http://cwe.mitre.org/data/definitions/190.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/190.html</reference>
 </vuln_item_wasc_3>
 
 <vuln_items>wasc_4</vuln_items>
@@ -118,7 +118,7 @@ Faz: Gerçekleme
 İsimlendirme kurallarını ve güçlü tipleri, hassas bilgi kullanılırken daha kolay farkedebilmek için kullanın. Nesne, yapı ve diğer kompleks yapıları kullanırken, hassas ve hassas olmayan veriyi mümkün oldukça ayırın.
 Bu, şifrelenmemiş veriyi kodda daha kolay farkedebilmenizi sağlar.</solution>
 	<reference>http://projects.webappsec.org/Insufficient-Authentication</reference>
-	<reference>http://cwe.mitre.org/data/definitions/287.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/311.html</reference>
 </vuln_item_wasc_4>
 
 <vuln_items>wasc_5</vuln_items>
@@ -156,7 +156,7 @@ Fazlar: Mimari ve Tasarım; Uygulama
 Güvenilmeyen girdilerin yazılımınıza girebileceği tüm olası alanları anlayın: Parametre ve argümanlar, çerezler, ağdan okunan her şey, ortam değişkenleri, ters DNS aramaları, arama sonuçları, istek başlıkları URL bileşenleri, e-postalar, dosyalar, veri tabanları ve uygulamaya veri sağlayan tüm harici sistemler. Unutmayın ki bunun gibi girdiler API çağrıları sayesinde dolaylı olarak elde edebilirler.
 Birçok dosya dahil etme sorunu, programcının belirli girdilerin, özellikle de çerezlerin ve URL bileşenlerinin değiştirilemez olmasını düşünmesinden doğar.</solution>
 	<reference>http://projects.webappsec.org/Remote-File-Inclusion</reference>
-	<reference>http://cwe.mitre.org/data/definitions/98.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/98.html</reference>
 </vuln_item_wasc_5>
 
 <vuln_items>wasc_6</vuln_items>
@@ -178,7 +178,7 @@ Tüm format dize işlevlerinin kullanıcı tarafından denetlenemeyen statik bir
 Yapı: Derleyicilerin ve bağlayıcıların uyarılarına dikkat edin çünkü uygun olmayan kullanım konusunda uyarabilirler.
 </solution>
 	<reference>http://projects.webappsec.org/Format-String</reference>
-	<reference>http://cwe.mitre.org/data/definitions/134.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/134.html</reference>
 </vuln_item_wasc_6>
 
 <vuln_items>wasc_7</vuln_items>
@@ -227,7 +227,7 @@ Aşama: Uygulama
 Sınırsız kopyalama işlevlerini, strnpy ile strcpy gibi uzunluk bağımsız değişkenlerini destekleyen benzer işlevlerle değiştirin. Mevcut değilse oluşturun.
 </solution>
 	<reference>http://projects.webappsec.org/Buffer-Overflow</reference>
-	<reference>http://cwe.mitre.org/data/definitions/119.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/119.html</reference>
 </vuln_item_wasc_7>
 
 <vuln_items>wasc_8</vuln_items>
@@ -265,7 +265,7 @@ Giriş doğrulamasını gerçekleştirirken, uzunluğu, girdi türünü, kabul e
 Ensure that you perform input validation at well-defined interfaces within the application. Bu, bir bileşen başka yerlerde yeniden kullanılması veya taşınması durumunda bile uygulamayı korumaya yardımcı olacaktır.
 	</solution>
 	<reference>http://projects.webappsec.org/Cross-Site-Scripting</reference>
-	<reference>http://cwe.mitre.org/data/definitions/79.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/79.html</reference>
 </vuln_item_wasc_8>
 
 <vuln_items>wasc_9</vuln_items>
@@ -301,7 +301,7 @@ Durum değişikliğini tetikleyen herhangi bir istek için GET yöntemini kullan
 Aşama: Uygulama
 İsteğin beklenen bir sayfadan kaynaklanıp kaynaklanmadığını görmek için HTTP Referer başlığını kontrol edin. Bu, meşru işlevselliği bozabilir, çünkü kullanıcılar veya vekiller, Referer'ı gizlilik nedenleriyle göndermeyi devre dışı bırakmış olabilirler.</solution>
 	<reference>http://projects.webappsec.org/Cross-Site-Request-Forgery</reference>
-	<reference>http://cwe.mitre.org/data/definitions/352.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/352.html</reference>
 </vuln_item_wasc_9>
 
 <vuln_items>wasc_10</vuln_items>
@@ -328,7 +328,7 @@ Protokollere belirli bir limit ölçeği yerleştirildiğinden emin olun.
 Aşama: Uygulama
 Kaynak paylaştırmadaki tüm başarısızlıkların sistemi güvenli durum konumuna getirdiğinden emin olun.</solution>
 	<reference>http://projects.webappsec.org/Denial-of-Service</reference>
-	<reference>http://cwe.mitre.org/data/definitions/400.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/400.html</reference>
 </vuln_item_wasc_10>
 
 <vuln_items>wasc_11a</vuln_items>
@@ -338,7 +338,16 @@ Kaynak paylaştırmadaki tüm başarısızlıkların sistemi güvenli durum konu
 
 Web uygulamalarındaki en yaygın kaba kuvvet saldırısı tipi, giriş bilgilerine karşı yapılan saldırıdır. Kullanıcıların şifresini hatırlaması gerektiği için, genellikle şifrelerinde ezberlemesi kolay kelime ve cümleri kullanabilirler, bu sayede hatırlaması kolay bir şifreleri olur. Potansiyel şifreler olarak büyük bir kelime ve deyim listesi kullanan bir sisteme giriş yapmaya çalışan böyle bir saldırıya genellikle "kelime listesi saldırısı" veya "sözlük saldırısı" adı verilir. Girilen şifreler, "o" nun "0" ve "i" nin "1" ile değiştirilmesiyle üretilenler gibi, ayrıca aile üyelerinin adları, doğum tarihleri ve telefon numaraları da dahil olmak üzere kişisel bilgiler gibi şifrelere özgü sözcük varyasyonlarını içerebilir.
 	</desc>
-	<solution/>
+	<solution>Brute force attacks are among the hardest to prevent, but with thorough analysis, design, and multiple countermeasures, you could limit your system's exposure to them. The general strategy is to decrease the automation potential and credential discovery likelihood. Techniques to consider include:
+    * Password Policy: Implement adequate requirements for complex passwords that are long enough and contain uncommon words, digits, and special characters;
+    * Multi-factor Authentication (MFA): MFA requires the user to provide more than one type of evidence to the authentication mechanism, thus limiting the automation potential;
+    * CAPTCHA: The CAPTCHA aims to decrease the automation potential;
+    * Web Application Firewall (WAF): WAFs strive to detect patterns of malicious traffic and could help to recognize and block brute force attacks;
+    * Rate Limiting: Restricting the number of unsuccessful login attempts from an IP address over a given period will limit the automation potential;
+    * Account Lockouts: Lock an account for a certain period after a defined number of unsuccessful login attempts;
+It is important that the techniques used to limit user access to the system be implemented properly in order to prevent abuses and negative side effects such as denial of service.
+
+Additionally consider migrating to password-less authentication mechanisms like passkeys.</solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11a>
 
@@ -349,7 +358,7 @@ Web uygulamalarındaki en yaygın kaba kuvvet saldırısı tipi, giriş bilgiler
 
 HTTP durum bilgisi olmayan bir protokol olduğundan, devlet web korumak için uygulamaları bir oturum kimliği ve her isteğin bir tarayıcı tarafından gönderildiğinden emin olunması gerekir. Oturum tanımlayıcısı en sık HTTP çerezinde veya URL'de depolanmaktadır. Kaba kuvvet saldırısı kullanarak, bir saldırgan başka bir kullanıcının oturum tanımlayıcısını tahmin edebilir. Bu, saldırganların kullanıcıların kimliğine bürünmesine, kişisel bilgilerin çalınmasına ve kullanıcı adına eylemler gerçekleştirmesine neden olabilir.
 	</desc>
-	<solution/>
+	<solution>Use mechanisms that generate random, transient, and unpredictable session identifiers.</solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11b>
 
@@ -362,7 +371,7 @@ Dosyalar herhangi bir yerle bağlantılı değilse ve web sunucusu tarafından s
 
 Bir kaba kuvvet saldırısı, bağlantısız dosyayı çok sayıda dosyaya erişmeye çalışarak bulmayı dener. Girilen dosya adlarının listesi bilinen potansiyel dosyaların bir listesinden oluşabilir veya web sitesinde görülebilen dosyaların türevlerine dayalı olabilir. Kaba kuvvet dizinleri ve daha fazla bilgili dosyaların güvenlik açığı, öngörülebilir kaynak konumu içinde bulunabilir.
 	</desc>
-	<solution/>
+	<solution>Never rely on "security by obscurity" mechanisms to restrict access to sensitive files and directories on a web server. Implement appropriate access control measures if hosting sensitive information is required.</solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11c>
 
@@ -412,7 +421,7 @@ Yazılım sürüm numaraları ve ayrıntılı hata mesajları (ASP.NET sürüm n
 Verilerin geçerliliğine dayalı olarak farklı yanıtlar sunan sayfalar da bilgi sızıntılarına neden olabilir; özellikle de web uygulaması tasarımının bir sonucu olarak gizli olduğunu düşünülen bilgiler ortaya çıktığında. Hassas veri örnekleri, (ancak bunlarla sınırlı değildir.) hesap numaraları, kullanıcı tanımlayıcıları (Sürücü lisans numarası, Pasaport numarası, Sosyal Güvenlik Numaraları, vb.) ve kullanıcıya özgü bilgiler (şifreler, oturumlar, adresler) i içerir. Bilgi Sızıntısı, bu bağlamda, kullanıcıya bile açıkça gösterilmemesi gereken, gizli veya gizli sayılan temel kullanıcı bilgilerini ortaya koymaktadır. Kredi kartı numaraları ve diğer katı şekilde düzenlenen bilgiler, uygun şifreleme ve erişim kontrolleri yapılmış olsa dahi, kullanıcı verilerinin asıl örneklerinin maruz kalmaması veya sızıntıdan daha fazla korunması gerekir.</desc>
 	<solution>Sisteminde, güven sınırlarının belirgin şekilde görünebilceği "güvenli" alanlar oluşturun. Hassas bilginin güven sınırları dışına gitmesine izin vermeyin ve güvenli alan dışındaki bir bölümle karşılaştığınızda her zaman dikkatli olun.</solution>
 	<reference>http://projects.webappsec.org/Information-Leakage</reference>
-	<reference>http://cwe.mitre.org/data/definitions/200.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
 </vuln_item_wasc_13>
 
 <vuln_items>wasc_14</vuln_items>
@@ -443,7 +452,7 @@ Aynı şekilde, varsayılan yüklemeler iyi bilinen kullanıcı adlarını ve ş
 	<desc>Eğer Normal taban dosyası ise (index.html/home.html/default.htm/default.asp/default.aspx/index.php) otomatik dizin listesi/dizin oluşturma, tüm dosyaları istenen bir dizinde listeleyen bir web sunucusu işlevidir. Bir kullanıcı bir web sitesinin ana sayfasına istediğinde, alan adını kullanarak ve belirli bir dosyayı hariç tutarak normalde http://www.example.com/directory1/ gibi bir URL'yi yazarlar. Web sunucusu bu isteği işler ve varsayılan dosya adı için belge kaynak dizini arar ve bu sayfayı alıcıya gönderir. Bu sayfa mevcut değilse, web sunucusu dinamik olarak bir dizin listesi çıkarır ve çıktıyı istemciye gönderir. Temel olarak bu, bu dizinde bir "Is" (Unix) veya "dir" (Windows) komutu yazmaya ve sonuçları HTML biçiminde göstermeye denktir. Saldırı ve güvenlik açısından bakıldığında, istenmeyen dizin listelerinin belirli bir web isteğiyle birlikte kullanılan yazılım güvenlik açıkları (aşağıda örnek bölümünde tartışıldı) nedeniyle olabileceğini fark etmek önemlidir.</desc>
 	<solution>Öneriler arasında, belge ve sunucu kökü için gerek duyulması gerektiğini kabul ederek önemli dizinlere veya dosyalara erişimi sınırlandırmak ve Otomatik Dizin Listeleri gibi özel dosyalara neden olabilecek saldırıyı formüle edip gerçekleştirirken bir saldırganın kullanabileceği bilgileri sağlayan özellikleri kapatmak gerekir.</solution>
 	<reference>http://projects.webappsec.org/Directory-Indexing</reference>
-	<reference>http://cwe.mitre.org/data/definitions/548.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/548.html</reference>
 </vuln_item_wasc_16>
 
 <vuln_items>wasc_17</vuln_items>
@@ -452,7 +461,7 @@ Aynı şekilde, varsayılan yüklemeler iyi bilinen kullanıcı adlarını ve ş
 	<desc>Yanlış dosya sistemi izinleri, bir web uygulamasının gizliliği, bütünlüğü ve kullanılabilirliği için bir tehdittir. Yanlış dosya sistemi izinleri dosyalar, klasörler ve simgesel bağlantılar üzerinde ayarlandığında sorun çıkar. Yanlış izinler ayarlandığında, bir saldırgan kısıtlanmış dosyalara veya dizinlere erişebilir ve içeriğini değiştirebilir veya silebilir. Örneğin, anonim bir kullanıcı hesabı bir dosyaya yazma iznine sahipse, bir saldırgan web uygulamasını etkileyen dosyanın içeriğini istenmeyen yollarla değiştirebilir. Bir saldırgan ayrıcalıklarını tırmandırmak ve/veya yetkisiz dosyalara erişmek için uygun olmayan sembolik bağları da kullanabilir; örneğin, web kökü dışında bir dizine işaret eden bir sembolik bağ.</desc>
 	<solution>Very carefully manage the setting, management and handling of permissions. Yazılımdaki güven sınırlarını kesin bir şekilde yönetin.</solution>
 	<reference>http://projects.webappsec.org/Improper-Filesystem-Permissions</reference>
-	<reference>http://cwe.mitre.org/data/definitions/280.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/280.html</reference>
 </vuln_item_wasc_17>
 
 <vuln_items>wasc_18</vuln_items>
@@ -540,7 +549,7 @@ Girdiniz artık değişmeyene kadar, tekrarlanan kanonlaştırma uygulamayı dü
 
 Bileşenler arasında veri alışverişi yaparken, iki bileşenin de aynı karakter kodlamasını kullandığından emin olun. Her bir arayüzde doğru şifreleme uygulandığından emin olun. Protokolün buna izin verdiğinde her zaman kullandığınız kodlamayı açıkça belirtin.</solution>
 	<reference>http://projects.webappsec.org/Improper-Input-Handling</reference>
-	<reference>http://cwe.mitre.org/data/definitions/89.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/89.html</reference>
 </vuln_item_wasc_20>
 
 <vuln_items>wasc_21</vuln_items>
@@ -562,7 +571,7 @@ Aşağıdaki özellikler otomatik saldırıların hedefidir:
 	</desc>
 	<solution/>
 	<reference>http://projects.webappsec.org/Insufficient+Anti-automation</reference>
-	<reference>http://cwe.mitre.org/data/definitions/116.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/116.html</reference>
 </vuln_item_wasc_21>
 
 <vuln_items>wasc_22</vuln_items>
@@ -615,7 +624,7 @@ Bileşenler arasında veri alışverişi yaparken, iki bileşenin de aynı karak
 
 Appropriately filter or quote CRLF sequences in user-controlled input.</solution>
 	<reference>http://projects.webappsec.org/HTTP-Request-Splitting</reference>
-	<reference>http://cwe.mitre.org/data/definitions/93.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/93.html</reference>
 </vuln_item_wasc_24>
 
 <vuln_items>wasc_25</vuln_items>
@@ -631,7 +640,7 @@ HTTP Cevap Bölmenin özü, saldırganın web sunucusunu bir çıktı akımı ol
 HTTP Cevap Bölme saldırıları sunucu komutunun HTTP cevap başlıklarına kullanıcı verilerini gömdüğü yerde gerçekleşir. Bu, genellikle komut dosyası kullanıcı verilerini yönlendirme yanıtının yeniden yönlendirme URL'sine gömerken olur(HTTP status code 3xx), veya komut dosyası kullanıcı verilerini çerez değerine yerleştirdiğinde veya yanıt bir çerez ayarlarken isimlendirir.</desc>
 	<solution>HTTP üstbilgilerini, doğrulanmamış girdi verilerini kullanmaktan kaçınarak dikkatlice oluşturun.</solution>
 	<reference>http://projects.webappsec.org/HTTP-Response-Splitting</reference>
-	<reference>http://cwe.mitre.org/data/definitions/113.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/113.html</reference>
 </vuln_item_wasc_25>
 
 <vuln_items>wasc_26</vuln_items>
@@ -646,7 +655,7 @@ Her isteğin ardından istemci oturumunu sonlandırın.
 
 Tüm sayfaları önbelleknemez hale getirin.</solution>
 	<reference>http://projects.webappsec.org/HTTP-Request-Smuggling</reference>
-	<reference>http://cwe.mitre.org/data/definitions/444.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/444.html</reference>
 </vuln_item_wasc_26>
 
 <vuln_items>wasc_27</vuln_items>
@@ -680,7 +689,7 @@ Do not rely exclusively on deny list validation to detect malicious input or to 
 
 Girişler doğrulanmadan önce uygulamanın mevcut iç temsiline göre kodlanmalı ve standart hale getirilmelidir. Uygulamanızın aynı girdiyi iki kez deşifre etmediğinden emin olun. Such errors could be used to bypass allow list schemes by introducing dangerous inputs after they have been checked.</solution>
 	<reference>http://projects.webappsec.org/Null-Byte-Injection</reference>
-	<reference>http://cwe.mitre.org/data/definitions/158.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/158.html</reference>
 </vuln_item_wasc_28>
 
 <vuln_items>wasc_29</vuln_items>
@@ -693,7 +702,7 @@ Basit Dizin Erişim Protokolü (LDAP), X.500 dizin hizmetlerini sorgulayan ve de
 Bir web uygulaması kullanıcı-kaynaklı girdileri düzgün temizleyemediğinde, bir saldırganın LDAP komutunun yapısını değiştirmesi mümkündür. Bir saldırgan LDAP ifadesinin yapısını değiştirebildiğinde, işlem komutu çalıştıran komutla aynı izinlere sahip olarak devam edecektir. (Örneğin: Veritabanı sunucusu, Web uygulama sunucusu, Web sunucusu vb.). LDAP ağacının içinden herhangi bir şeyi sorgulamak, silmek veya değiştirmek gibi yetkileri vermek ciddi güvenlik sorunlarına sebep olabilir. SQL Enjeksiyon içinde bulunan faydalanma teknikleri, LDAP Enjeksiyonu içinde benzer bir şekilde uygulanabilir.</desc>
 	<solution>Tüm girdilerin zararlı olduğunu varsay. Use an appropriate combination of black lists and white lists to neutralize LDAP syntax from user-controlled input.</solution>
 	<reference>http://projects.webappsec.org/LDAP-Injection</reference>
-	<reference>http://cwe.mitre.org/data/definitions/90.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/90.html</reference>
 </vuln_item_wasc_29>
 
 <vuln_items>wasc_30</vuln_items>
@@ -716,7 +725,7 @@ Bileşenler arasında veri alışverişi yaparken, iki bileşenin de aynı karak
 
 Uygulamanız birden çok kaynaktan gelen verileri birleştirdiğinde, doğrulamayı kaynaklar birleştirildikten sonra yapın. Tekil veri öğeleri doğrulama adımını geçebilir ama birleştirildikten sonra amaçlanan kısıtlamaları ihlal edebilir.</solution>
 	<reference>http://projects.webappsec.org/Mail-Command-Injection</reference>
-	<reference>http://cwe.mitre.org/data/definitions/88.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/88.html</reference>
 </vuln_item_wasc_30>
 
 <vuln_items>wasc_31</vuln_items>
@@ -756,7 +765,7 @@ Uygun çıktı şifreleme, kaçınma ve alıntılama işletim sistemi komut enje
 
 Doğrulamanızda bir hata yaparsanız bile (100 giriş alanında birinin unutulması gibi), uygun kodlamanın enjeksiyon tabanlı saldırılardan korunmak içindir. Tek başına yapılmadığı sürece, saldırı yüzeyinizi önemli ölçüde azaltabileceğinden, bazı saldırıları tespit etmenize izin verdiğinden ve uygun kodlamanın çözemediği diğer güvenlik avantajlarını sağladığından giriş doğrulaması hala yararlı bir tekniktir.</solution>
 	<reference>http://projects.webappsec.org/OS-Commanding</reference>
-	<reference>http://cwe.mitre.org/data/definitions/78.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/78.html</reference>
 </vuln_item_wasc_31>
 
 <vuln_items>wasc_32</vuln_items>
@@ -773,7 +782,7 @@ Arabuluculuk ilkesine uyun.
 
 Bir sertifika, iletişim kuran tarafın kimliğini doğrulama için kimlik şifreleme anahtarına bağlanır. Genellikle, sertifika, öznenin kimliğinin, ortak anahtarının ve yayıncının özel anahtarı kullanılarak yayınlanma veya sona erme süresi gibi bilgilerin şifrelenmiş biçimini alır. Sertifika, bahsi geçen kişinin genel anahtarına bağlı sertifikasının çözümlenmesiyle doğrulanabilir. Ayrıca X.509 sertifika imza zincirlerine ve PGP sertifikasyon yapısına bakınız.</solution>
 	<reference>http://projects.webappsec.org/Routing-Detour</reference>
-	<reference>http://cwe.mitre.org/data/definitions/300.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/300.html</reference>
 </vuln_item_wasc_32>
 
 <vuln_items>wasc_33</vuln_items>
@@ -809,7 +818,7 @@ Kodunuzu "jail" ya da işlem ve işletim sistemi arasına sıkı sınırlar koya
 Bu pratik bir çözüm olmayabilir ve sadece işletim sistemi üzerindeki etkileri kısıtlar; uygulamaların kalanları savunmasız kalabilir.
 </solution>
 	<reference>http://projects.webappsec.org/Path-Traversal</reference>
-	<reference>http://cwe.mitre.org/data/definitions/22.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/22.html</reference>
 </vuln_item_wasc_33>
 
 <vuln_items>wasc_34</vuln_items>
@@ -822,7 +831,7 @@ Bu, site güvenlik açıklarına yol açabilecek site bölümlerinin belirlenmes
 
 Consider using MVC based frameworks such as Struts.</solution>
 	<reference>http://projects.webappsec.org/Predictable-Resource-Location</reference>
-	<reference>http://cwe.mitre.org/data/definitions/425.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/425.html</reference>
 </vuln_item_wasc_34>
 
 <vuln_items>wasc_35</vuln_items>
@@ -833,7 +842,7 @@ Consider using MVC based frameworks such as Struts.</solution>
 
 Belleğe sistem tarafından sağlanan kaynakları kullanarak programı çalıştırın. Bu hala programın çökmesine ya da çıkmasına sebep olabilir ama sistem üzerindeki etkisi minimize edilecektir.</solution>
 	<reference>http://projects.webappsec.org/SOAP-Array-Abuse</reference>
-	<reference>http://cwe.mitre.org/data/definitions/789.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/789.html</reference>
 </vuln_item_wasc_35>
 
 <vuln_items>wasc_36</vuln_items>
@@ -865,7 +874,7 @@ Bir kullanıcının oturum kimlik numarasını, siteye giriş yapmasının ardı
 
 For platforms such as ASP that do not generate new values for sessionid cookies, utilize a secondary cookie. Bu yaklaşımda, kullanıcının tarayıcısında ikincil çerezi rastgele bir değere ayarlayın ve oturum değişkenini de aynı değere ayarlayın. Oturum değişkeni ve çerez değeri hiç eşleşmiyorsa, oturumu geçersiz kılın ve kullanıcıyı yeniden oturum açmaya zorlayın.</solution>
 	<reference>http://projects.webappsec.org/Session-Fixation</reference>
-	<reference>http://cwe.mitre.org/data/definitions/384.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/384.html</reference>
 </vuln_item_wasc_37>
 
 <vuln_items>wasc_38</vuln_items>
@@ -888,7 +897,7 @@ Güvenilir olmayan girdilerin yazılımınıza girebilecek bütün potansiyel al
 
 Bir çok yönlendirme sorunu, yazılımcının çerezler ve saklı form alanları gibi bazı girdilerin değiştirilmeyeceğini varsaydığı için ortaya çıkar.</solution>
 	<reference>http://projects.webappsec.org/URL-Redirector-Abuse</reference>
-	<reference>http://cwe.mitre.org/data/definitions/601.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/601.html</reference>
 </vuln_item_wasc_38>
 
 <vuln_items>wasc_39</vuln_items>
@@ -901,7 +910,7 @@ Eğer bir uygulama işleyiş süresi XPath sorgusu yapısı kullanıyorsa, sorgu
 
 Kullanıcı girdisini doğru bir şekilde doğrulayın. Uygun olan yerde veriyi reddet, uygun olan yerde filtrele ve uygun olan yerde kaç. XPath sorgularında kullanılar girdilerin, o ortamda güvenli olduğundan emin olun.</solution>
 	<reference>http://projects.webappsec.org/XPath-Injection</reference>
-	<reference>http://cwe.mitre.org/data/definitions/643.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/643.html</reference>
 </vuln_item_wasc_39>
 
 <vuln_items>wasc_40</vuln_items>
@@ -936,7 +945,7 @@ Protokollere belirli bir limit ölçeği yerleştirildiğinden emin olun.
 
 Tüm kaynak dağıtımlarında meydana gelen hataların sistemi güvenli bir konumda tuttuğundan emin olun.</solution>
 	<reference>http://projects.webappsec.org/XML-Attribute-Blowup</reference>
-	<reference>http://cwe.mitre.org/data/definitions/400.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/400.html</reference>
 </vuln_item_wasc_41>
 
 <vuln_items>wasc_42</vuln_items>
@@ -945,7 +954,7 @@ Tüm kaynak dağıtımlarında meydana gelen hataların sistemi güvenli bir kon
 	<desc>İşlevselliği Kötüye Kullanmak, bir web sitesinin kendine veya başkalarına saldırmak için kendi özelliklerini ve işlevselliğini kullanan bir saldırı tekniğidir. İşlevselliğin Kötüye Kullanımı, istenmeyen bir sonucu gerçekleştirmek için amaçlanan uygulama işlevinin kötüye kullanımı olarak tanımlanır. Bu saldırıların kaynakları tüketmek, kontrollere erişmek veya bilgi sızdırmak gibi farklı sonuçları vardır. Kötüye kullanım olasılığı ve seviyesi internet siteleri ve uygulamalara göre değişir. İşlevsellik saldırılarının kötüye kullanımı genellikle diğer saldırı türlerinin birleşimi ve/veya diğer saldırı vektörlerinin kullanılması şeklinde gerçekleşir.</desc>
 	<solution>API'leri her zaman belirtilen şekilde kullanmalısınız.</solution>
 	<reference>http://projects.webappsec.org/Abuse-of-Functionality</reference>
-	<reference>http://cwe.mitre.org/data/definitions/227.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/227.html</reference>
 </vuln_item_wasc_42>
 
 <vuln_items>wasc_43</vuln_items>
@@ -967,7 +976,7 @@ Mevcut sunucu kaynaklarını tamamen kullanan tekrarlı varlık genişlemesini (
 
 XML dosyalarını ilişkili DTD'lerle arıştırmadan önce, tekrar eden varlık ifadelerini arayın ve patlama potansiyeli olan içerikleri ayrıştırmaya devam etmeyin.</solution>
 	<reference>http://projects.webappsec.org/XML-Entity-Expansion</reference>
-	<reference>http://cwe.mitre.org/data/definitions/776.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/776.html</reference>
 </vuln_item_wasc_44>
 
 <vuln_items>wasc_45</vuln_items>
@@ -988,7 +997,7 @@ XML dosyalarını ilişkili DTD'lerle arıştırmadan önce, tekrar eden varlık
 
 Kullanıcı girdisini doğru bir şekilde doğrulayın. Uygun olan yerde veriyi reddet, uygun olan yerde filtrele ve uygun olan yerde kaç. XQL aramalarında kullanılacak girdilerin bu bağlamda güvenli olduğundan emin olun.</solution>
 	<reference>http://projects.webappsec.org/XQuery-Injection</reference>
-	<reference>http://cwe.mitre.org/data/definitions/652.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/652.html</reference>
 </vuln_item_wasc_46>
 
 <vuln_items>wasc_47</vuln_items>
@@ -1003,7 +1012,7 @@ Seans süre olumu iki zaman aşımı türünden meydana gelir: inaktif ve mutlak
 Bir Web uygulaması, daha önceden tanımlanan boş bekleme süresi geçtikten sonra bir seansı geçersiz kılmalı ve çıkış yaparak kullanıcıya kendi seansının geçersiz olduğunu sağlamalıdır. Bu şekilde seans ID ömrünün mümkün olduğunca kısa tutulmasına yardımcı olunur ve birden fazla kişinin bilgisayara sınırsız fiziksel erişimi olan, paylaşılan ortamlarda bu uygulama gereklidir. Çıkış yap fonksiyonu kullanıcıya daima görünür olmalı, bir kullanıcının oturumunu açıkça geçersiz kılmalı ve oturum simgesinin tekrar kullanımına imkan tanımamalıdır.</desc>
 	<solution>Seansların/kimliklerin son kullanım tarihlerinin belirlenmesi.</solution>
 	<reference>http://projects.webappsec.org/Insufficient-Session-Expiration</reference>
-	<reference>http://cwe.mitre.org/data/definitions/613.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/613.html</reference>
 </vuln_item_wasc_47>
 
 <vuln_items>wasc_48</vuln_items>
@@ -1034,7 +1043,7 @@ Kullanıcının şifre kurtarma mekanizmasına yeni şifrenin gönderileceği e-
 
 Orijinal parolayı göstermek yerine yeni bir geçici parola atayın.</solution>
 	<reference>http://projects.webappsec.org/Insufficient-Password-Recovery</reference>
-	<reference>http://cwe.mitre.org/data/definitions/640.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/640.html</reference>
 </vuln_item_wasc_49>
 
 </vulnerabilities>
