@@ -9,8 +9,8 @@
 Untuk menyiasati pengaturan otentikasi, beberapa sumber daya yang dilindungi oleh "bersembunyi" di lokasi tertentu dan tidak menghubungkan satu lokasi ke situs web utama atau tempat umum lainnya. Namun, pendekatan ini tidak lebih dari "Keamanan Melalui Ketidakjelasan". Hal ini penting untuk memahami bahwa meskipun sumber daya yang tidak diketahui oleh penyerang, itu masih tetap dapat diakses secara langsung melalui URL tertentu. Spesifik URL dapat ditemukan melalui kekerasan menyelidik file untuk umum dan direktori lokasi (/admin misalnya), pesan kesalahan, pengarah log, atau dokumentasi seperti file bantuan. Sumber daya ini, apakah mereka puas atau fungsi yang digerakkan, harus dilindungi secara memadai.</desc>
 	<solution>Tahap: Arsitektur dan desain menggunakan kerangka kerja otentikasi atau perpustakaan seperti fitur OWASP ESAPI otentikasi.</solution>
 	<reference>http://projects.webappsec.org/insufficient-transport-layer-protection</reference>
-	<reference>http://cwe.mitre.org/data/definitions/98.html</reference>
-	<reference>http://cwe.mitre.org/data/definitions/284.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/287.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/284.html</reference>
 </vuln_item_wasc_1>
 
 <vuln_items>wasc_2</vuln_items>
@@ -35,8 +35,8 @@ Sangat hati-hati mengelola pengaturan, pengelolaan, dan penanganan hak-hak istim
 Tahap: Arsitektur dan Desain 
 Memastikan bahwa sesuai kompartementalisasi ini dibangun ke dalam desain sistem dan kompartementalisasi berfungsi untuk memungkinkan dan lebih memperkuat hak istimewa pemisahan fungsi. Arsitek dan desainer harus bergantung pada prinsip dari paling tidak istimewa untuk memutuskan kapan saat yang tepat untuk digunakan dan untuk penurunan sistem hak-hak istimewa.</solution>
 	<reference>http://projects.webappsec.org/Insufficient-Authorization</reference>
-	<reference>http://cwe.mitre.org/data/definitions/284.html</reference>
-	<reference>http://cwe.mitre.org/data/definitions/98.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/284.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/285.html</reference>
 </vuln_item_wasc_2>
 
 <vuln_items>wasc_3</vuln_items>
@@ -63,7 +63,7 @@ Juga berhati-hati untuk memperhitungkan perbedaan potensi 32-bit, 64-bit dan lai
 
 Tahap: Memeriksa implementasi kompilator peringatan erat dan menghilangkan berpotensi masalah keamanan kritis, seperti ditandatangani / unsigned ketidakcocokan. Bahkan jika kelemahan ini jarang dieksploitasi, satu kegagalan dapat menyebabkan kompromi dari seluruh sistem.</solution>
 	<reference>http://projects.webappsec.org/Buffer-Overflow</reference>
-	<reference>http://cwe.mitre.org/data/definitions/98.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/190.html</reference>
 </vuln_item_wasc_3>
 
 <vuln_items>wasc_4</vuln_items>
@@ -111,7 +111,7 @@ Tahap: Pelaksanaan
 Menggunakan konvensi penamaan dan tipe yang kuat untuk membuatnya lebih mudah untuk titik sensitif ketika data sedang digunakan. Saat membuat struktur, objek, atau kompleks entitas lainnya, yang terpisah data sensitif dan tidak sensitif sebanyak mungkin.
 Hal ini membuat lebih mudah untuk menemukan tempat-tempat di dalam kode di mana data yang digunakan yang tidak terenkripsi.</solution>
 	<reference>http://projects.webappsec.org/Insufficient-Authorization</reference>
-	<reference>http://cwe.mitre.org/data/definitions/119.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/311.html</reference>
 </vuln_item_wasc_4>
 
 <vuln_items>wasc_5</vuln_items>
@@ -148,7 +148,7 @@ Tahap: Arsitektur dan Desain; Pelaksanaan
 Memahami semua potensi daerah di mana masukan tidak terpercaya dapat memasukkan perangkat lunak kamu: parameter atau argumen, cookies, apa pun baca dari jaringan, variabel lingkungan, reverse DNS lookup, hasil pernyataan, header permintaan, URL komponen, e-mail, file, database, dan sistem eksternal yang memberikan data ke aplikasi. Ingat bahwa masukan tersebut dapat diperoleh secara tidak langsung melalui panggilan API.
 Banyak masalah inklusi file terjadi karena pemrogram menganggap bahwa input tertentu tidak dapat dimodifikasi, terutama untuk cookies dan komponen URL.</solution>
 	<reference>http://projects.webappsec.org/Remote-File-Inclusion</reference>
-	<reference>http://cwe.mitre.org/data/definitions/98.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/98.html</reference>
 </vuln_item_wasc_5>
 
 <vuln_items>wasc_6</vuln_items>
@@ -170,7 +170,7 @@ Memastikan bahwa semua format fungsi string yang berlalu statis string tidak dap
 Membangun: Mengindahkan peringatan kompiler dan penghubung, karena mungkin mengingatkan kamu akan penggunaan yang tidak semestinya.
 </solution>
 	<reference>http://projects.webappsec.org/Format-String</reference>
-	<reference>http://cwe.mitre.org/data/definitions/134.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/134.html</reference>
 </vuln_item_wasc_6>
 
 <vuln_items>wasc_7</vuln_items>
@@ -215,7 +215,7 @@ Tahap: Pelaksanaan
 Mengganti terbatas fungsi salinan analog dengan fungsi-fungsi yang mendukung panjang argumen, seperti strcpy dengan strncpy. Buat ini jika tidak tersedia.
 </solution>
 	<reference>http://projects.webappsec.org/Buffer-Overflow</reference>
-	<reference>http://cwe.mitre.org/data/definitions/119.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/119.html</reference>
 </vuln_item_wasc_7>
 
 <vuln_items>wasc_8</vuln_items>
@@ -253,7 +253,7 @@ Ketika melakukan validasi masukan, mempertimbangkan semua properti yang berpoten
 Ensure that you perform input validation at well-defined interfaces within the application. Ini akan membantu melindungi aplikasi bahkan jika komponen ini digunakan kembali atau dipindahkan ke tempat lain.
 	</solution>
 	<reference>http://projects.webappsec.org/Cross-Site-Scripting</reference>
-	<reference>http://cwe.mitre.org/data/definitions/79.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/79.html</reference>
 </vuln_item_wasc_8>
 
 <vuln_items>wasc_9</vuln_items>
@@ -286,7 +286,7 @@ Jangan gunakan metode GET untuk setiap permintaan yang memicu perubahan status.
 
 Tahap: Implementasi Periksa header Referral HTTP untuk melihat apakah permintaan berasal dari halaman yang diharapkan. Ini bisa melanggar fungsi yang sah, karena pengguna atau proxy mungkin telah menonaktifkan pengiriman Rujukan karena alasan privasi.</solution>
 	<reference>http://projects.webappsec.org/Cross-Site-Request-Forgery</reference>
-	<reference>http://cwe.mitre.org/data/definitions/352.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/352.html</reference>
 </vuln_item_wasc_9>
 
 <vuln_items>wasc_10</vuln_items>
@@ -312,7 +312,7 @@ Memastikan bahwa protokol memiliki batas tertentu dari skala ditempatkan pada me
 Tahap: Pelaksanaan
 Memastikan bahwa semua kegagalan dalam alokasi sumber daya yang menempatkan sistem aman ke postur tubuh.</solution>
 	<reference>http://projects.webappsec.org/Denial-of-Service</reference>
-	<reference>http://cwe.mitre.org/data/definitions/400.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/400.html</reference>
 </vuln_item_wasc_10>
 
 <vuln_items>wasc_11a</vuln_items>
@@ -322,7 +322,16 @@ Memastikan bahwa semua kegagalan dalam alokasi sumber daya yang menempatkan sist
 
 Jenis yang paling umum dari serangan brute force pada aplikasi web adalah sebuah serangan terhadap masukan kredensial. Karena pengguna tidak perlu mengingat kata sandi, mereka sering memilih mudah untuk menghafal kata-kata atau frasa seperti kata sandi, membuat serangan brute force yang berguna menggunakan sebuah kamus. Serangan tersebut mencoba untuk masuk ke sistem dengan menggunakan daftar besar kata-kata dan frase sebagai potensi kata sandi yang sering disebut "serangan daftar kata" atau "serangan kamus". Kata sandi juga berusaha dapat mencakup variasi dari kata-kata umum untuk kata sandi seperti yang dihasilkan dengan mengganti "o" dengan "0" dan "i" dengan "1" serta informasi pribadi termasuk nama anggota keluarga, tanggal lahir dan nomor telepon.
 	</desc>
-	<solution/>
+	<solution>Brute force attacks are among the hardest to prevent, but with thorough analysis, design, and multiple countermeasures, you could limit your system's exposure to them. The general strategy is to decrease the automation potential and credential discovery likelihood. Techniques to consider include:
+    * Password Policy: Implement adequate requirements for complex passwords that are long enough and contain uncommon words, digits, and special characters;
+    * Multi-factor Authentication (MFA): MFA requires the user to provide more than one type of evidence to the authentication mechanism, thus limiting the automation potential;
+    * CAPTCHA: The CAPTCHA aims to decrease the automation potential;
+    * Web Application Firewall (WAF): WAFs strive to detect patterns of malicious traffic and could help to recognize and block brute force attacks;
+    * Rate Limiting: Restricting the number of unsuccessful login attempts from an IP address over a given period will limit the automation potential;
+    * Account Lockouts: Lock an account for a certain period after a defined number of unsuccessful login attempts;
+It is important that the techniques used to limit user access to the system be implemented properly in order to prevent abuses and negative side effects such as denial of service.
+
+Additionally consider migrating to password-less authentication mechanisms like passkeys.</solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11a>
 
@@ -333,7 +342,7 @@ Jenis yang paling umum dari serangan brute force pada aplikasi web adalah sebuah
 
 Karena HTTP adalah protokol tanpa kewarganegaraan, untuk mempertahankan aplikasi web negara perlu memastikan bahwa pengenal sesi dikirim oleh peramban dengan setiap permintaan. Pengenal sesi paling sering disimpan dalam cookie HTTP atau URL. Dengan menggunakan serangan brute force, penyerang bisa menebak pengenal sesi pengguna lain. Hal ini dapat menyebabkan penyerang meniru identitas pengguna, mengambil informasi pribadi dan melakukan tindakan atas nama pengguna.
 	</desc>
-	<solution/>
+	<solution>Use mechanisms that generate random, transient, and unpredictable session identifiers.</solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11b>
 
@@ -346,7 +355,7 @@ Ketika file berada di direktori yang dilayani oleh server web namun tidak terhub
 
 Serangan brute force mencoba menemukan file yang tidak terhubung dengan mencoba mengakses sejumlah besar file. Daftar nama file percobaan mungkin diambil dari daftar file potensial yang diketahui atau berdasarkan varian dari file yang terlihat di situs web. Informasi lebih lanjut tentang direktori dan file kasar dapat ditemukan di kerentanan terkait, lokasi sumber yang dapat diprediksi.
 	</desc>
-	<solution/>
+	<solution>Never rely on "security by obscurity" mechanisms to restrict access to sensitive files and directories on a web server. Implement appropriate access control measures if hosting sensitive information is required.</solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11c>
 
@@ -395,7 +404,7 @@ Nomor versi perangkat lunak dan pesan kesalahan verbose (seperti nomor versi ASP
 Laman yang memberikan tanggapan berbeda berdasarkan validitas data juga dapat menyebabkan Kebocoran Informasi; khususnya ketika data dianggap rahasia sedang diungkapkan sebagai hasil dari desain aplikasi web. Contoh data sensitif termasuk (namun tidak terbatas pada): nomor rekening, pengenal pengguna (nomor lisensi Driver, nomor Paspor, Nomor Jaminan Sosial, dll.) Dan informasi khusus pengguna (kata sandi, sesi, alamat). Informasi Kebocoran dalam konteks ini berkaitan dengan pemaparan data pengguna kunci yang dianggap rahasia, atau rahasia, yang seharusnya tidak terpapar secara polos, bahkan untuk pengguna. Nomor kartu kredit dan informasi lain yang sangat diatur adalah contoh utama data pengguna yang perlu dilindungi lebih jauh dari paparan atau kebocoran bahkan dengan enkripsi dan kontrol akses yang benar.</desc>
 	<solution>Kompartemen sistem Anda untuk memiliki area "aman" dimana batas kepercayaan dapat ditarik dengan jelas. Jangan biarkan data sensitif keluar dari batas kepercayaan dan selalu berhati-hati saat berinteraksi dengan kompartemen di luar area aman.</solution>
 	<reference>http://projects.webappsec.org/Information-Leakage</reference>
-	<reference>http://cwe.mitre.org/data/definitions/200.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
 </vuln_item_wasc_13>
 
 <vuln_items>wasc_14</vuln_items>
@@ -427,7 +436,7 @@ Demikian juga, instalasi default mungkin termasuk nama pengguna dan kata sandi, 
 (index.html/home.html/default.htm/default.asp/default.aspx/index.php) tidak hadir. Ketika pengguna meminta halaman utama sebuah situs web, biasanya mereka mengetik URL seperti: http://www.example.com/directory1/ - menggunakan nama domain dan tidak termasuk file tertentu. Server web memproses permintaan dan pencarian akar dokumen direktori untuk nama file default dan mengirimkan halaman ini untuk klien. Jika halaman ini tidak hadir, server web dinamis akan mengeluarkan daftar direktori dan mengirim keluar ke client. Pada dasarnya, ini adalah setara dengan mengeluarkan "ls" (Unix) atau "dir" (Windows) perintah dalam direktori ini dan menampilkan hasilnya dalam bentuk HTML. Dari sebuah serangan dan penanggulangan perspektif, itu adalah penting untuk menyadari bahwa tidak diinginkan daftar direktori mungkin karena kerentanan perangkat lunak (dibahas dalam contoh di bagian bawah) yang dikombinasikan dengan permintaan web tertentu.</desc>
 	<solution>Rekomendasi termasuk membatasi akses ke direktori atau dengan mengadopsi file perlu tahu persyaratan untuk kedua dokumen dan akar server, dan mematikan fitur-fitur seperti Daftar Direktori Otomatis yang bisa mengekspos file pribadi dan memberikan informasi yang bisa dimanfaatkan oleh penyerang ketika merumuskan atau melakukan serangan.</solution>
 	<reference>http://projects.webappsec.org/Directory-Indexing</reference>
-	<reference>http://cwe.mitre.org/data/definitions/548.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/548.html</reference>
 </vuln_item_wasc_16>
 
 <vuln_items>wasc_17</vuln_items>
@@ -436,7 +445,7 @@ Demikian juga, instalasi default mungkin termasuk nama pengguna dan kata sandi, 
 	<desc>Izin filesystem yang tidak benar merupakan ancaman terhadap kerahasiaan, integritas dan ketersediaan aplikasi web. Masalah muncul ketika sistem file salah izin yang ditetapkan pada file, folder, dan simbolik link. Saat yang tidak tepat menetapkan perizinan, seorang penyerang dapat mengakses dibatasi file atau direktori dan memodifikasi atau menghapus isinya. Misalnya, jika seorang pengguna akun anonim yang memiliki izin menulis ke sebuah file, maka penyerang dapat memodifikasi isi dari file yang mempengaruhi aplikasi web dengan cara yang tidak diinginkan. Penyerang juga dapat mengeksploitasi symlink yang tidak tepat untuk meningkatkan hak-hak mereka dan/atau mengakses file yang tidak sah; misalnya, sebuah symlink yang menunjuk ke luar dari direktori akar web.</desc>
 	<solution>Very carefully manage the setting, management and handling of permissions. Secara eksplisit mengelola zona kepercayaan dalam perangkat lunak.</solution>
 	<reference>http://projects.webappsec.org/Improper-Filesystem-Permissions</reference>
-	<reference>http://cwe.mitre.org/data/definitions/280.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/280.html</reference>
 </vuln_item_wasc_17>
 
 <vuln_items>wasc_18</vuln_items>
@@ -522,7 +531,7 @@ Pertimbangkan untuk melakukan kanonikalisasi sampai masukan kamu diulang tidak b
 
 Ketika bertukar data antara komponen-komponen, memastikan bahwa kedua komponen yang menggunakan pengkodean karakter yang sama. Pastikan pengkodean yang tepat diterapkan pada setiap antarmuka. Secara eksplisit mengatur pengkodean yang kamu gunakan kapan pun protokol ini memungkinkan kamu untuk melakukannya.</solution>
 	<reference>http://projects.webappsec.org/Improper-Input-Handling</reference>
-	<reference>http://cwe.mitre.org/data/definitions/89.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/89.html</reference>
 </vuln_item_wasc_20>
 
 <vuln_items>wasc_21</vuln_items>
@@ -544,7 +553,7 @@ Fungsi aplikasi web yang sering menjadi target otomatis untuk serangan yang mung
 	</desc>
 	<solution/>
 	<reference>http://projects.webappsec.org/Insufficient+Anti-automation</reference>
-	<reference>http://cwe.mitre.org/data/definitions/116.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/116.html</reference>
 </vuln_item_wasc_21>
 
 <vuln_items>wasc_22</vuln_items>
@@ -597,7 +606,7 @@ Ketika bertukar data antara komponen-komponen, memastikan bahwa kedua komponen y
 
 Appropriately filter or quote CRLF sequences in user-controlled input.</solution>
 	<reference>http://projects.webappsec.org/HTTP-Request-Splitting</reference>
-	<reference>http://cwe.mitre.org/data/definitions/93.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/93.html</reference>
 </vuln_item_wasc_24>
 
 <vuln_items>wasc_25</vuln_items>
@@ -613,7 +622,7 @@ Inti dari membelah respon penyerang HTTP kemampuan untuk mengirim satu permintaa
 Respon HTTP Serangan pemisah terjadi di mana skrip server menyematkan data pengguna di header tanggapan HTTP. Hal ini biasanya terjadi ketika naskah komprehensif pengguna data di pengalihan respon URL pengalihan (kode status HTTP 3xx), atau ketika naskah komprehensif pengguna data di cookie nilai atau nama ketika respon menetapkan cookie.</desc>
 	<solution>Buatlah header HTTP dengan sangat hati-hati, hindari penggunaan data masukan yang tidak divalidasi.</solution>
 	<reference>http://projects.webappsec.org/HTTP-Response-Splitting</reference>
-	<reference>http://cwe.mitre.org/data/definitions/113.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/113.html</reference>
 </vuln_item_wasc_25>
 
 <vuln_items>wasc_26</vuln_items>
@@ -628,7 +637,7 @@ Hentikan sesi klien setelah setiap permintaan.
 
 Balikkan semua halaman menjadi non-cacheable.</solution>
 	<reference>http://projects.webappsec.org/HTTP-Request-Smuggling</reference>
-	<reference>http://cwe.mitre.org/data/definitions/444.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/444.html</reference>
 </vuln_item_wasc_26>
 
 <vuln_items>wasc_27</vuln_items>
@@ -664,7 +673,7 @@ Do not rely exclusively on deny list validation to detect malicious input or to 
 
 Masukan harus diterjemahkan dan dikanonikal untuk aplikasi saat ini representasi internal sebelum divalidasi. Pastikan aplikasi Anda tidak memecahkan kode input yang sama dua kali. Such errors could be used to bypass allow list schemes by introducing dangerous inputs after they have been checked.</solution>
 	<reference>http://projects.webappsec.org/Null-Byte-Injection</reference>
-	<reference>http://cwe.mitre.org/data/definitions/158.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/158.html</reference>
 </vuln_item_wasc_28>
 
 <vuln_items>wasc_29</vuln_items>
@@ -678,7 +687,7 @@ Lightweight Directory Access Protocol (LDAP) adalah protokol standar terbuka unt
 Ketika aplikasi web gagal untuk membersihkan masukan yang diberikan oleh pengguna secara tepat, penyerang bisa saja mengubah konstruksi pemakluman LDAP. Ketika penyerang mampu memodifikasi pemakluman LDAP, proses akan berjalan dengan hak akses yang sama dengan komponen yang menjalankan perintah. (misalnya peladen berbasis data, peladen aplikasi Web, peladen Web, dll.). Hal ini dapat menyebabkan masalah keamanan serius dimana hak akses memberikan hak untuk mengecek, melakukan modifikasi atau menghapus apapun di dalam pohon LDAP. Teknik eksploitasi lanjutan yang sama yang tersedia pada SQL Injection juga dapat diterapkan dengan cara yang sama pada LDAP Injection.</desc>
 	<solution>Asumsikan semua masukan itu berbahaya Use an appropriate combination of black lists and white lists to neutralize LDAP syntax from user-controlled input.</solution>
 	<reference>http://projects.webappsec.org/LDAP-Injection</reference>
-	<reference>http://cwe.mitre.org/data/definitions/90.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/90.html</reference>
 </vuln_item_wasc_29>
 
 <vuln_items>wasc_30</vuln_items>
@@ -702,7 +711,7 @@ Ketika bertukar data antara komponen-komponen, memastikan bahwa kedua komponen y
 
 Pada saat aplikasi anda mengkombinasikan data dari berbagai sumber, lakukan validasi setelah sumbernya dikombinasikan. Elemen data individual mungkin melewati tahap validasi tapi melanggar pembatasan yang dimaksudkan setelah dikombinasikan.</solution>
 	<reference>http://projects.webappsec.org/Mail-Command-Injection</reference>
-	<reference>http://cwe.mitre.org/data/definitions/88.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/88.html</reference>
 </vuln_item_wasc_30>
 
 <vuln_items>wasc_31</vuln_items>
@@ -742,7 +751,7 @@ Perhatikan bahwa pengkodean output yang tepat, escape, dan quoting adalah solusi
 
 Bahkan jika Anda membuat kesalahan dalam validasi Anda (seperti melupakan satu dari 100 bidang masukan), pengkodean yang sesuai kemungkinan besar akan melindungi Anda dari serangan berbasis injeksi. Selama tidak dilakukan secara terpisah, validasi masukan masih merupakan teknik yang berguna, karena dapat mengurangi permukaan serangan Anda secara signifikan, memungkinkan Anda untuk mendeteksi beberapa serangan, dan memberikan manfaat keamanan lainnya yang tidak dapat ditangani oleh pengkodean yang tepat.</solution>
 	<reference>http://projects.webappsec.org/OS-Commanding</reference>
-	<reference>http://cwe.mitre.org/data/definitions/78.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/78.html</reference>
 </vuln_item_wasc_31>
 
 <vuln_items>wasc_32</vuln_items>
@@ -759,7 +768,7 @@ Patuhi prinsip mediasi yang lengkap.
 
 Sertifikat mengikat identitas ke kunci kriptografi untuk mengotentikasi pihak yang berkomunikasi. Seringkali, sertifikat tersebut mengambil bentuk hash hash yang dienkripsi dari identitas subjek, kunci publik, dan informasi seperti waktu penerbitan atau kedaluwarsa menggunakan kunci privat emiten. Sertifikat dapat divalidasi dengan mengartikan sertifikat dengan kunci publik emiten. Lihat juga rantai tanda tangan sertifikat X.509 dan struktur sertifikasi PGP.</solution>
 	<reference>http://projects.webappsec.org/Routing-Detour</reference>
-	<reference>http://cwe.mitre.org/data/definitions/300.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/300.html</reference>
 </vuln_item_wasc_32>
 
 <vuln_items>wasc_33</vuln_items>
@@ -795,7 +804,7 @@ Contoh tingkat-OS termasuk penjara chroot Unix, AppArmor, dan SELinux. Secara um
 Ini mungkin bukan solusi yang layak, dan ini hanya membatasi dampaknya terhadap sistem operasi; sisa aplikasi Anda mungkin masih bisa dikompromikan.
 </solution>
 	<reference>http://projects.webappsec.org/Path-Traversal</reference>
-	<reference>http://cwe.mitre.org/data/definitions/22.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/22.html</reference>
 </vuln_item_wasc_33>
 
 <vuln_items>wasc_34</vuln_items>
@@ -808,7 +817,7 @@ Ini tidak hanya membantu mengidentifikasi permukaan situs yang dapat menyebabkan
 
 Consider using MVC based frameworks such as Struts.</solution>
 	<reference>http://projects.webappsec.org/Predictable-Resource-Location</reference>
-	<reference>http://cwe.mitre.org/data/definitions/425.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/425.html</reference>
 </vuln_item_wasc_34>
 
 <vuln_items>wasc_35</vuln_items>
@@ -819,7 +828,7 @@ Consider using MVC based frameworks such as Struts.</solution>
 
 Jalankan program Anda menggunakan batas sumber daya yang disediakan sistem untuk memori. Ini mungkin masih menyebabkan program mogok atau keluar, tapi dampaknya terhadap sistem lainnya akan diminimalkan.</solution>
 	<reference>http://projects.webappsec.org/SOAP-Array-Abus</reference>
-	<reference>http://cwe.mitre.org/data/definitions/789.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/789.html</reference>
 </vuln_item_wasc_35>
 
 <vuln_items>wasc_36</vuln_items>
@@ -851,7 +860,7 @@ Berbeda dengan mencuri ID sesi pengguna setelah mereka masuk ke situs web, Sessi
 
 Untuk platform seperti ASP yang tidak menghasilkan nilai-nilai baru untuk sesi cookie, menggunakan cookie sekunder. Dalam pendekatan ini, menetapkan cookie sekunder pada browser pengguna ke nilai acak dan menetapkan variabel sesi ke nilai yang sama. Jika variabel sesi dan nilai cookie tidak cocok, membatalkan sesi, dan memaksa pengguna untuk masuk lagi.</solution>
 	<reference>http://projects.webappsec.org/Sesi-Fiksasi</reference>
-	<reference>http://cwe.mitre.org/data/definitions/384.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/384.html</reference>
 </vuln_item_wasc_37>
 
 <vuln_items>wasc_38</vuln_items>
@@ -874,7 +883,7 @@ Pahami semua area potensial dimana masukan yang tidak dipercaya dapat masuk ke p
 
 Banyak masalah pengalihan terbuka terjadi karena pemrogram menganggap bahwa input tertentu tidak dapat dimodifikasi, seperti sampah dan bentuk lapangan tersembunyi.</solution>
 	<reference>http://projects.webappsec.org/URL-Redirector-Abuse</reference>
-	<reference>http://cwe.mitre.org/data/definitions/601.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/601.html</reference>
 </vuln_item_wasc_38>
 
 <vuln_items>wasc_39</vuln_items>
@@ -887,7 +896,7 @@ Jika sebuah aplikasi menggunakan konstruksi query XPath run-time, memasukkan mas
 
 Validasi dengan benar masukan pengguna. Tolak data yang sesuai, saring bila sesuai dan lepaskan bila sesuai. Pastikan masukan yang akan digunakan dalam query XPath aman dalam konteks itu.</solution>
 	<reference>http://projects.webappsec.org/XPath-Injection</reference>
-	<reference>http://cwe.mitre.org/data/definitions/643.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/643.html</reference>
 </vuln_item_wasc_39>
 
 <vuln_items>wasc_40</vuln_items>
@@ -922,7 +931,7 @@ Memastikan bahwa protokol memiliki batas tertentu dari skala ditempatkan pada me
 
 Pastikan semua kegagalan dalam alokasi sumber daya menempatkan sistem ke dalam postur tubuh yang aman.</solution>
 	<reference>http://projects.webappsec.org/XML-Attribute-Blowup</reference>
-	<reference>http://cwe.mitre.org/data/definitions/400.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/400.html</reference>
 </vuln_item_wasc_41>
 
 <vuln_items>wasc_42</vuln_items>
@@ -931,7 +940,7 @@ Pastikan semua kegagalan dalam alokasi sumber daya menempatkan sistem ke dalam p
 	<desc>Penyalahgunaan Fungsi adalah teknik serangan yang menggunakan fitur dan fungsi situs web untuk menyerang dirinya sendiri atau orang lain. Penyalahgunaan Fungsi dapat digambarkan sebagai penyalahgunaan fungsi yang dimaksudkan oleh aplikasi untuk melakukan hasil yang tidak diinginkan. Serangan ini memiliki beragam hasil seperti mengkonsumsi sumber daya, menghindari akses kontrol, atau bocornya informasi. Potensi dan tingkat penyalahgunaan akan bervariasi dari situs web ke situs web dan aplikasi ke aplikasi. Penyalahgunaan serangan fungsi sering merupakan kombinasi dari jenis serangan lainnya dan / atau memanfaatkan vektor serangan lainnya.</desc>
 	<solution>Selalu gunakan API dengan cara yang ditentukan.</solution>
 	<reference>http://projects.webappsec.org/Abuse-of-Functionality</reference>
-	<reference>http://cwe.mitre.org/data/definitions/227.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/227.html</reference>
 </vuln_item_wasc_42>
 
 <vuln_items>wasc_43</vuln_items>
@@ -953,7 +962,7 @@ Pesan berbahaya XML digunakan untuk memaksa ekspansi entitas rekursif (atau pros
 
 Sebelum mengurai file XML dengan DTDs terkait, pindai deklarasi entitas rekursif dan jangan terus kan menguraikan konten yang berpotensi meledak.</solution>
 	<reference>http://projects.webappsec.org/XML-Entity-Expansion</reference>
-	<reference>http://cwe.mitre.org/data/definitions/776.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/776.html</reference>
 </vuln_item_wasc_44>
 
 <vuln_items>wasc_45</vuln_items>
@@ -974,7 +983,7 @@ Sidik jari multi-tier mirip dengan pendahulunya, TCP / IP Sidik jari (dengan pem
 
 Validasi dengan benar masukan pengguna. Tolak data yang sesuai, saring bila sesuai dan lepaskan bila sesuai. Pastikan masukan yang akan digunakan dalam query XQL aman dalam konteks itu.</solution>
 	<reference>http://projects.webappsec.org/XQuery-Injection</reference>
-	<reference>http://cwe.mitre.org/data/definitions/652.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/652.html</reference>
 </vuln_item_wasc_46>
 
 <vuln_items>wasc_47</vuln_items>
@@ -989,7 +998,7 @@ Kedatangan sesi terdiri dari dua tipe timeout: tidak aktif dan absolut. Jangka w
 Aplikasi Web harus membatalkan sesi setelah waktu siaga yang telah ditentukan telah berlalu (batas waktu) dan memberi pengguna sarana untuk membatalkan sesi mereka sendiri, yaitu logout; ini membantu menjaga jangka waktu ID sesi sesingkat mungkin dan diperlukan di lingkungan komputasi bersama di mana lebih dari satu orang memiliki akses fisik yang tidak terbatas ke komputer. Fungsi keluar harus terlihat jelas oleh pengguna, secara eksplisit membatalkan sesi pengguna dan melarang penggunaan kembali sesi token.</desc>
 	<solution>Tetapkan tanggal kadaluarsa / kredensial.</solution>
 	<reference>http://projects.webappsec.org/Insufficient-Session-Expiration</reference>
-	<reference>http://cwe.mitre.org/data/definitions/613.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/613.html</reference>
 </vuln_item_wasc_47>
 
 <vuln_items>wasc_48</vuln_items>
@@ -1020,7 +1029,7 @@ Jangan pernah mengizinkan pengguna untuk mengontrol alamat email yang akan dikir
 
 Tetapkan kata sandi sementara baru daripada mengungkapkan kata kunci asli.</solution>
 	<reference>http://projects.webappsec.org/Insufficient-Password-Recovery</reference>
-	<reference>http://cwe.mitre.org/data/definitions/640.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/640.html</reference>
 </vuln_item_wasc_49>
 
 </vulnerabilities>
