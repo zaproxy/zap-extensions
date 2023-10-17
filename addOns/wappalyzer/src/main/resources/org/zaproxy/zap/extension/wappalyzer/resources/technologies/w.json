@@ -1076,7 +1076,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:2.3:a:weblication:cms_core_&_grid:*:*:*:*:*:*:*:*",
+    "cpe": "cpe:2.3:a:weblication:cms_core_\\&_grid:*:*:*:*:*:*:*:*",
     "description": "Weblication is an enterprise-class website content management system developed by Scholl Communications AG in Germany.",
     "icon": "Weblication.svg",
     "implies": [
@@ -2260,6 +2260,21 @@
     "saas": true,
     "scriptSrc": "\\.worldztool\\.com/",
     "website": "https://www.worldz-business.net"
+  },
+  "WOW": {
+    "cats": [
+      12,
+      18,
+      25
+    ],
+    "description":"Reveal CSS animation as you scroll down a page.",
+    "pricing": [
+      "low",
+      "onetime"
+    ],
+    "oss": true,
+    "scriptSrc": "wow(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://www.delac.io/WOW"
   },
   "Wowza Video Player": {
     "cats": [

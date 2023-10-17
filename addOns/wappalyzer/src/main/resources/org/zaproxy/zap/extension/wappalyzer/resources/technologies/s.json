@@ -1963,7 +1963,7 @@
     "description": "Shaka Player is an open-source JavaScript library for adaptive media.",
     "icon": "Shaka Player.png",
     "js": {
-      "shaka.Player.version": "v([\\d\\.-\\w]+)\\;version:\\1"
+      "shaka.Player.version": "v([\\d\\.\\-\\w]+)\\;version:\\1"
     },
     "oss": true,
     "website": "https://github.com/shaka-project/shaka-player"
@@ -5217,6 +5217,18 @@
     "scriptSrc": "/wp-content/themes/spicepress(?:-pro)?/",
     "website": "https://spicethemes.com/spicepress-wordpress-theme"
   },
+  "spin.js": {
+    "cats": [
+      25
+    ],
+    "description": "Configurable JavaScript/CSS spinner that can be used as a resolution-independent loading indicator",
+    "icon": "spin.js.png",
+    "scriptSrc": [
+      "spin(?:\\.min)?\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1"
+    ],
+    "oss": true,
+    "website": "https://spin.js.org/"
+  },
   "Spin-a-Sale": {
     "cats": [
       100,
@@ -6206,6 +6218,15 @@
     "scriptSrc": "\\.steelhousemedia\\.com/(?:spx\\?dxver=([\\d.]+))?\\;version:\\1",
     "website": "https://steelhouse.com"
   },
+  "Stellar.js": {
+    "cats": [
+      59
+    ],
+    "description": "Stellar.js is a JavaScript library and jQuery plugin specifically designed to deliver parallax scrolling effects for web pages.",
+    "scriptSrc": "stellar(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "oss": true,
+    "website": "https://markdalgleish.com/projects/stellar.js/"
+  },
   "Stencil": {
     "cats": [
       18
@@ -6648,6 +6669,16 @@
     },
     "icon": "sucuri.svg",
     "website": "https://sucuri.net/"
+  },
+  "SugarJS": {
+    "cats": [
+      59
+    ],
+    "description": "SugarJS is a JavaScript library that simplifies working with native JavaScript objects, enhancing productivity and code readability.",
+    "icon": "SugarJS.svg",
+    "oss": true,
+    "scriptSrc": "sugar\\/?((?:\\d+\\.)+\\d+)?(?:\\/sugar(?:-full)?)?(?:\\.min)?\\.js\\;version:\\1",
+    "website": "https://sugarjs.com/"
   },
   "Suiteshare": {
     "cats": [

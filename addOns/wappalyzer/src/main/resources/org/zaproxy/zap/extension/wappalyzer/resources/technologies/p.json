@@ -2148,6 +2148,19 @@
     "saas": true,
     "website": "https://plugandpay.nl"
   },
+  "Plupload": {
+    "cats": [
+      5,
+      68
+    ],
+    "description": "Plupload is JavaScript API for building file uploaders.",
+    "icon": "plupload.png",
+    "oss": true,
+    "scriptSrc": [
+      "plupload(?:\\.min)?\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1"
+    ],
+    "website": "https://www.plupload.com/"
+  },
   "Plyr": {
     "cats": [
       14
