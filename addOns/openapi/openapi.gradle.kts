@@ -54,7 +54,6 @@ configurations {
     "implementation" {
         // Not needed:
         exclude(group = "com.google.code.findbugs", module = "jsr305")
-        exclude(group = "org.slf4j", module = "slf4j-ext")
     }
 }
 
@@ -63,13 +62,13 @@ dependencies {
     zapAddOn("commonlib")
     zapAddOn("spider")
 
-    implementation("io.swagger.parser.v3:swagger-parser:2.1.16")
-    implementation("io.swagger:swagger-compat-spec-parser:1.0.67") {
+    implementation("io.swagger.parser.v3:swagger-parser:2.1.18")
+    implementation("io.swagger:swagger-compat-spec-parser:1.0.68") {
         // Not needed:
         exclude(group = "com.github.java-json-tools", module = "json-schema-validator")
         exclude(group = "org.apache.httpcomponents", module = "httpclient")
     }
-    implementation(libs.log4j.slf4j) {
+    implementation(libs.log4j.slf4j2) {
         // Provided by ZAP.
         exclude(group = "org.apache.logging.log4j")
     }
