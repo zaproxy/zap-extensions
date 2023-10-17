@@ -839,6 +839,16 @@
     "scriptSrc": "\\.fitanalytics\\.com",
     "website": "https://www.fitanalytics.com"
   },
+  "FitVids.JS": {
+    "cats": [5, 14],
+    "description": "jQuery plugin for fluid width video embeds",
+    "icon": "FitVids.JS.png",
+    "scriptSrc": [
+      "fitvids(?:\\.min)?\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1"
+    ],
+    "oss": true,
+    "website": "https://fitvidsjs.com/"
+  },
   "FlagSmith": {
     "cats": [
       85
