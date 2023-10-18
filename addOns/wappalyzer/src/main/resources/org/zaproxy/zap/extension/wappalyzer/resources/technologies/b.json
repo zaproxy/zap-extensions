@@ -2870,5 +2870,20 @@
     "saas": true,
     "scriptSrc": "cdn\\.ibdok\\.ir/",
     "website": "https://bdok.ir"
+  },
+  "bxSlider": {
+    "cats": [
+      7,
+      59
+    ],
+    "description": "Add a respsonsive image slider to any website.",
+    "icon": "bxSlider.png",
+    "oss": true,
+    "pricing": [
+      "low",
+      "onetime"
+    ],
+    "scriptSrc": "bxslider(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://bxslider.com/"
   }
 }

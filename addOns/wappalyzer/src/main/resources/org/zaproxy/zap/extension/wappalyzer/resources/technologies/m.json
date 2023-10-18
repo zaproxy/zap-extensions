@@ -181,6 +181,30 @@
     "scriptSrc": "/assets/components/templates/\\;confidence:50",
     "website": "https://modx.com/content-management-framework"
   },
+  "Morphext": {
+    "cats": [
+      25,
+      59
+    ],
+    "description": "A simple, high-performance and cross-browser jQuery rotating / carousel plugin for text phrases powered by Animate.css.",
+    "icon": "Morphext.svg",
+    "oss": true,
+    "scriptSrc": "morphext(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://morphext.fyianlai.com/"
+  },
+    "Morris.js": {
+    "cats": [
+      59
+    ],
+    "description": "A JavaScript library that simplifies the process of creating interactive and responsive data visualizations on the web.",
+    "oss": true,
+    "requires": [
+      "jQuery",
+      "Raphael"
+    ],
+    "scriptSrc": "morris(?:\\/(?:area|bar|donut|grid|hover|line))?(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://morrisjs.github.io/morris.js/"
+  },
   "Moxie": {
     "cats": [5, 68],
     "description": "Pollyfills for XHR2 and File API",
