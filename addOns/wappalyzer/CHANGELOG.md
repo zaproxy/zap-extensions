@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [21.26.0] - 2023-10-18
 ### Changed
 - Updated with last AliasIO/Wappalyzer icon and pattern changes.
 - Updated with first set of icon and pattern changes from enthec/webappanalyzer.
@@ -305,6 +305,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - First version
 
 
+[21.26.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.26.0
 [21.25.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.25.0
 [21.24.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.24.0
 [21.23.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.23.0
