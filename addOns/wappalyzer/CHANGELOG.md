@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Updated with last AliasIO/Wappalyzer icon and pattern changes.
 - Updated with first set of icon and pattern changes from enthec/webappanalyzer.
+- Help entries are now identified as 'Technology Detection - Wappalyzer' to simplify searching/filtering.
 
 ## [21.25.0] - 2023-10-13
 ### Changed
