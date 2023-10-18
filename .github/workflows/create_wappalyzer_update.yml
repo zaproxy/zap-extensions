@@ -33,7 +33,7 @@ jobs:
         git checkout -b $BRANCH
         cd ..
         rm -rf zap-extensions/addOns/wappalyzer/src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources/icons
-        chmod -R 664 wappalyzer/images/icons/*.*
+        chmod -R 664 wappalyzer/src/images/icons/*.*
         cp -R wappalyzer/src/images/icons/ zap-extensions/addOns/wappalyzer/src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources/icons
         cp -f wappalyzer/src/technologies/*.json zap-extensions/addOns/wappalyzer/src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources/technologies/
         cp -f wappalyzer/src/categories.json zap-extensions/addOns/wappalyzer/src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources/categories.json
