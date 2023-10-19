@@ -210,7 +210,8 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
 
                     for (int i = 1; i <= node.getHistoryReference().getHistoryId(); i++) {
                         HistoryReference hr = extHist.getHistoryReference(i);
-                        if (hr.getHistoryType() == HistoryReference.TYPE_PROXIED
+                        if (hr != null
+                                && hr.getHistoryType() == HistoryReference.TYPE_PROXIED
                                 && isSimilarRequest(url, hr.getURI().toString())) {
                             if (!url.equals(hr.getURI().toString())) {
                                 // We dont perform an exact match above so that we can
