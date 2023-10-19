@@ -137,7 +137,7 @@ public class FrontEndScannerProxyListener implements ProxyListener {
                         .append("<script src='")
                         .append(frontEndApiUrl)
                         .append("?action=getFile")
-                        .append("&filename=front-end-scanner.js")
+                        .append("&fileName=front-end-scanner.js")
                         .append("&historyReferenceId=")
                         .append(historyReferenceId)
                         .append("'></script>");
