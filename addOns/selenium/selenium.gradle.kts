@@ -34,7 +34,7 @@ zapAddOn {
 }
 
 dependencies {
-    var seleniumVersion = "4.14.0"
+    var seleniumVersion = "4.14.1"
     selenium("org.seleniumhq.selenium:selenium-java:$seleniumVersion")
     selenium("org.seleniumhq.selenium:htmlunit-driver:4.13.0")
     implementation(libs.log4j.slf4j) {
