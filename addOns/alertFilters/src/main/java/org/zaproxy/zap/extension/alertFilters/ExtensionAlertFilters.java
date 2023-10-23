@@ -32,7 +32,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.db.RecordAlert;
 import org.parosproxy.paros.db.TableAlert;
@@ -55,9 +54,6 @@ import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.alert.PopupMenuItemAlert;
 import org.zaproxy.zap.extension.alertFilters.internal.ScanRulesInfo;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
-import org.zaproxy.zap.extension.ascan.PolicyManager;
-import org.zaproxy.zap.extension.ascan.ScanPolicy;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.ContextDataFactory;
 import org.zaproxy.zap.model.SessionStructure;
@@ -101,9 +97,6 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
     private int lastAlert = -1;
 
     private static ScanRulesInfo scanRulesInfo;
-    private static Map<String, Integer> nameToId = new HashMap<>();
-    private static Map<Integer, String> idToName = new HashMap<>();
-    private static List<String> allRuleNames;
     private static ExtensionActiveScan extAscan;
 
     private GlobalAlertFilterParam globalAlertFilterParam;
@@ -151,50 +144,6 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
                             ExtensionFactory.getAddOnLoader().getPassiveScanRules());
         }
         return scanRulesInfo;
-    }
-
-    public static List<String> getAllRuleNames() {
-        if (allRuleNames == null) {
-            allRuleNames = new ArrayList<>();
-            PolicyManager pm = getExtAscan().getPolicyManager();
-            ScanPolicy sp = pm.getDefaultScanPolicy();
-            for (Plugin plugin : sp.getPluginFactory().getAllPlugin()) {
-                allRuleNames.add(plugin.getName());
-                nameToId.put(plugin.getName(), Integer.valueOf(plugin.getId()));
-                idToName.put(Integer.valueOf(plugin.getId()), plugin.getName());
-            }
-            List<PluginPassiveScanner> listTest =
-                    new ArrayList<>(CoreFunctionality.getBuiltInPassiveScanRules());
-            listTest.addAll(ExtensionFactory.getAddOnLoader().getPassiveScanRules());
-            for (PluginPassiveScanner scanner : listTest) {
-                if (scanner.getName() != null) {
-                    allRuleNames.add(scanner.getName());
-                    nameToId.put(scanner.getName(), Integer.valueOf(scanner.getPluginId()));
-                    idToName.put(Integer.valueOf(scanner.getPluginId()), scanner.getName());
-                }
-            }
-            Collections.sort(allRuleNames);
-        }
-        return allRuleNames;
-    }
-
-    public static int getIdForRuleName(String name) {
-        if (allRuleNames == null) {
-            // init
-            getAllRuleNames();
-        }
-        if (nameToId.containsKey(name)) {
-            return nameToId.get(name);
-        }
-        return -1;
-    }
-
-    public static String getRuleNameForId(int ruleId) {
-        if (allRuleNames == null) {
-            // init
-            getAllRuleNames();
-        }
-        return idToName.get(Integer.valueOf(ruleId));
     }
 
     @Override
