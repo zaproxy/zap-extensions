@@ -69,6 +69,14 @@ public class ScanRulesInfo extends AbstractList<ScanRulesInfo.Entry> {
         return entriesById.get(id);
     }
 
+    public String getNameById(int id) {
+        Entry entry = entriesById.get(id);
+        if (entry != null) {
+            return entry.getName();
+        }
+        return String.valueOf(id);
+    }
+
     @Override
     public Entry get(int index) {
         return entries.get(index);

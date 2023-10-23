@@ -37,7 +37,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 
 /** Unit test for {@link AlertFilter}. */
-class AlertFilterTest {
+class AlertFilterUnitTest {
 
     private static final String ALERT_METHOD = "PATCH";
     private Alert alert;
