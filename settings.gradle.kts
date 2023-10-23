@@ -51,6 +51,7 @@ var addOns = listOf(
     "directorylistv1",
     "directorylistv2_3",
     "directorylistv2_3_lc",
+    "dns",
     "domxss",
     "encoder",
     "evalvillain",
