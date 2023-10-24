@@ -21,17 +21,21 @@ package org.zaproxy.zap.extension.replacer;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -222,7 +226,9 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void onHttpRequestSend(HttpMessage msg, int initiator, HttpSender httpSender) {
+        boolean hostHeaderChanged = false;
         for (ReplacerParamRule rule : this.getParams().getRules()) {
             if (rule.isEnabled()
                     && rule.appliesToInitiator(initiator)
@@ -237,6 +243,8 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                                 "Add in request header: {} : {}",
                                 rule.getMatchString(),
                                 rule.getReplacement());
+                        hostHeaderChanged |=
+                                HttpRequestHeader.HOST.equalsIgnoreCase(rule.getMatchString());
                         if (rule.getReplacement().length() == 0) {
                             // Remove the header
                             msg.getRequestHeader().setHeader(rule.getMatchString(), null);
@@ -260,7 +268,9 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                                             rule.getEscapedReplacement(),
                                             rule.isTokenProcessingEnabled());
                             try {
+                                List<HttpHeaderField> oldHostHeaders = getHostHeaders(msg);
                                 msg.setRequestHeader(new HttpRequestHeader(header));
+                                hostHeaderChanged |= !oldHostHeaders.equals(getHostHeaders(msg));
                             } catch (HttpMalformedHeaderException e) {
                                 LOGGER.error(e.getMessage(), e);
                             }
@@ -293,6 +303,24 @@ public class ExtensionReplacer extends ExtensionAdaptor implements HttpSenderLis
                 }
             }
         }
+
+        if (hostHeaderChanged) {
+            Map<String, Object> properties;
+            if (msg.getUserObject() instanceof Map<?, ?>) {
+                properties = (Map<String, Object>) msg.getUserObject();
+            } else {
+                properties = new HashMap<>();
+                msg.setUserObject(properties);
+            }
+
+            properties.put("host.normalization", Boolean.FALSE);
+        }
+    }
+
+    private static List<HttpHeaderField> getHostHeaders(HttpMessage msg) {
+        return msg.getRequestHeader().getHeaders().stream()
+                .filter(e -> HttpRequestHeader.HOST.equalsIgnoreCase(e.getName()))
+                .collect(Collectors.toList());
     }
 
     @Override
