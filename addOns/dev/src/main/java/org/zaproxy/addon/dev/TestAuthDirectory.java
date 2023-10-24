@@ -22,7 +22,7 @@ package org.zaproxy.addon.dev;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 
 /** A test directory which uses authentication. */
 public abstract class TestAuthDirectory extends TestDirectory {
