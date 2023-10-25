@@ -1,4 +1,5 @@
 import net.ltgt.gradle.errorprone.errorprone
+import org.zaproxy.gradle.spotless.ValidateImports
 
 plugins {
     id("com.diffplug.spotless")
@@ -8,6 +9,13 @@ plugins {
 }
 
 apply(from = "$rootDir/gradle/ci.gradle.kts")
+
+val validateImports = ValidateImports(
+    mapOf(
+        "import org.apache.commons.lang." to
+            "Import/use classes from Commons Lang 3, instead of Lang 2.",
+    ),
+)
 
 allprojects {
     apply(plugin = "com.diffplug.spotless")
@@ -27,6 +35,9 @@ allprojects {
             java {
                 licenseHeaderFile("$rootDir/gradle/spotless/license.java")
                 googleJavaFormatAosp()
+
+                bumpThisNumberIfACustomStepChanges(1)
+                custom("validateImports", validateImports)
             }
         }
     }
