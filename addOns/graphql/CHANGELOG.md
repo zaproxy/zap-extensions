@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## Unreleased
 ### Changed
 - Dependency updates.
+- Maintenance changes.
+
+### Fixed
+- The query generator was not using lists and non-null fields to generate queries when the lenient maximum query depth
+  criteria was met.
 
 ## [0.20.0] - 2023-10-12
 ### Added
