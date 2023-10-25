@@ -21,13 +21,18 @@ package org.zaproxy.addon.client;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
@@ -59,5 +64,58 @@ class ExtensionClientIntegrationUnitTest {
 
         // Then
         assertThat(prefFile.exists(), is(true));
+    }
+
+    @Test
+    void shouldLeaveValidFirefoxPrefIniFile() throws IOException {
+        // Given
+        List<String> validProfiles =
+                List.of(
+                        "[Profile0]",
+                        "Name=zap-client-profile",
+                        "IsRelative=1",
+                        "Path=Profiles/abcd1234.zap-client-profile");
+        Path iniPath = Files.createTempFile("fx-profiles", ".ini");
+        Files.write(iniPath, validProfiles, StandardCharsets.UTF_8, StandardOpenOption.APPEND);
+        ExtensionClientIntegration extClient = new ExtensionClientIntegration();
+
+        // When
+        extClient.checkFirefoxProfilesFile(iniPath, Path.of("ignored"));
+        List<String> updatedProfiles = Files.readAllLines(iniPath, StandardCharsets.UTF_8);
+
+        // Then
+        assertEquals(validProfiles, updatedProfiles);
+    }
+
+    @Test
+    void shouldAddZapProfileToFirefoxPrefIniFile() throws IOException {
+        // Given
+        List<String> validProfiles =
+                List.of(
+                        "[Profile2]",
+                        "Name=default",
+                        "IsRelative=1",
+                        "Path=Profiles/efgh5678.default");
+        List<String> expectedProfiles = new ArrayList<>();
+        expectedProfiles.addAll(validProfiles);
+        expectedProfiles.addAll(
+                List.of(
+                        "",
+                        "[Profile3]",
+                        "Name=zap-client-profile",
+                        "IsRelative=1",
+                        "Path=Profiles/abcd1234.zap-client-profile"));
+
+        Path iniPath = Files.createTempFile("fx-profiles", ".ini");
+        Files.write(iniPath, validProfiles, StandardCharsets.UTF_8, StandardOpenOption.APPEND);
+        ExtensionClientIntegration extClient = new ExtensionClientIntegration();
+
+        // When
+        extClient.checkFirefoxProfilesFile(
+                iniPath, Path.of("Profiles/abcd1234.zap-client-profile"));
+        List<String> updatedProfiles = Files.readAllLines(iniPath, StandardCharsets.UTF_8);
+
+        // Then
+        assertEquals(expectedProfiles, updatedProfiles);
     }
 }

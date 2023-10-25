@@ -20,8 +20,12 @@
 package org.zaproxy.addon.client;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -51,6 +55,8 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     public static final String NAME = "ExtensionClientIntegration";
 
     public static final String ZAP_FIREFOX_PROFILE_NAME = "zap-client-profile";
+
+    private static final String FIREFOX_PROFILES_INI = "profiles.ini";
 
     protected static final String PREFIX = "client";
 
@@ -116,15 +122,35 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         ProfileManager pm = extSelenium.getProfileManager(Browser.FIREFOX);
         try {
             Path profileDir = pm.getOrCreateProfile(ZAP_FIREFOX_PROFILE_NAME);
-            File prefFile = profileDir.resolve("extension-preferences.json").toFile();
-            if (!prefFile.exists()) {
-                // Create the pref file which enables the extension for all sites
-                InputStream prefIs =
-                        getClass()
-                                .getResourceAsStream(
-                                        RESOURCES + "/firefox-extension-preferences.json");
-                FileUtils.copyInputStreamToFile(prefIs, prefFile);
-                extSelenium.setDefaultFirefoxProfile(ZAP_FIREFOX_PROFILE_NAME);
+            if (profileDir != null) {
+                File prefFile = profileDir.resolve("extension-preferences.json").toFile();
+                if (!prefFile.exists()) {
+                    // Create the pref file which enables the extension for all sites
+                    InputStream prefIs =
+                            getClass()
+                                    .getResourceAsStream(
+                                            RESOURCES + "/firefox-extension-preferences.json");
+                    FileUtils.copyInputStreamToFile(prefIs, prefFile);
+                    extSelenium.setDefaultFirefoxProfile(ZAP_FIREFOX_PROFILE_NAME);
+                }
+                // On macOS we have seen the profile added but not included in profiles.ini
+                Path profileIniPath = profileDir.getParent().resolve(FIREFOX_PROFILES_INI);
+                if (!profileIniPath.toFile().exists()) {
+                    // Ini file is one level higher on macOS than linux
+                    profileIniPath =
+                            profileIniPath.getParent().getParent().resolve(FIREFOX_PROFILES_INI);
+                }
+                if (profileIniPath.toFile().exists()) {
+                    checkFirefoxProfilesFile(profileIniPath, profileIniPath.relativize(profileDir));
+                } else {
+                    LOGGER.error(
+                            "Failed to find Firefox profiles.ini file, last attempt was {}",
+                            profileIniPath);
+                }
+
+            } else {
+                LOGGER.error(
+                        "Failed to get or create Firefox profile {}", ZAP_FIREFOX_PROFILE_NAME);
             }
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -155,6 +181,44 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         ZAP.getEventBus()
                 .registerConsumer(
                         eventConsumer, "org.zaproxy.zap.extension.spiderAjax.SpiderEventPublisher");
+    }
+
+    protected void checkFirefoxProfilesFile(Path iniPath, Path profilePath) throws IOException {
+        boolean profileFound = false;
+        int lastProfile = -1;
+        for (String line : Files.readAllLines(iniPath, StandardCharsets.UTF_8)) {
+            if (line.startsWith("[Profile")) {
+                String numStr = line.substring(8, line.length() - 1);
+                try {
+                    int thisProfile = Integer.parseInt(numStr);
+                    if (thisProfile > lastProfile) {
+                        lastProfile = thisProfile;
+                    }
+                } catch (Exception e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
+            } else if (line.equals("Name=" + ZAP_FIREFOX_PROFILE_NAME)) {
+                profileFound = true;
+                break;
+            }
+        }
+        if (!profileFound) {
+            if (iniPath.toFile().canWrite()) {
+                List<String> lines =
+                        List.of(
+                                "",
+                                "[Profile" + (lastProfile + 1) + "]",
+                                "Name=" + ZAP_FIREFOX_PROFILE_NAME,
+                                "IsRelative=1",
+                                "Path=" + profilePath);
+                Files.write(iniPath, lines, StandardCharsets.UTF_8, StandardOpenOption.APPEND);
+                LOGGER.info("Updated Firefox profiles.ini to add zap-client-profile {}", iniPath);
+            } else {
+                LOGGER.error(
+                        "Cannot write to Firefox profiles.ini file, and it does not contain the zap-client-profile {}",
+                        iniPath);
+            }
+        }
     }
 
     @Override

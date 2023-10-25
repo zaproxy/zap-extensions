@@ -191,11 +191,14 @@ public class ClientIntegrationAPI extends ApiImplementor {
             String body = msg.getRequestBody().toString();
 
             if (body.startsWith(PARAM_OBJECT_JSON + "=")) {
-                handleReportObject(decodeParam(body, PARAM_OBJECT_JSON));
+                JSONObject json = decodeParam(body, PARAM_OBJECT_JSON);
+                LOGGER.debug("Got object: {}", json);
+                handleReportObject(json);
 
             } else if (body.startsWith(PARAM_EVENT_JSON)) {
-                this.extension.addReportedObject(
-                        new ReportedEvent(decodeParam(body, PARAM_EVENT_JSON)));
+                JSONObject json = decodeParam(body, PARAM_EVENT_JSON);
+                LOGGER.debug("Got event: {}", json);
+                this.extension.addReportedObject(new ReportedEvent(json));
             } else if (body.startsWith(PARAM_STATEMENT_JSON)) {
                 try {
                     this.extension.addZestStatement(decodeParamString(body, PARAM_STATEMENT_JSON));
