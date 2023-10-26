@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import org.apache.commons.configuration.Configuration;
 import org.apache.logging.log4j.LogManager;
@@ -254,16 +255,19 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
     @Override
     public void loadContextData(Session session, Context context) {
         try {
-            List<String> encodedAlertFilters =
-                    session.getContextDataStrings(context.getId(), TYPE_ALERT_FILTER);
-            ContextAlertFilterManager afManager = getContextAlertFilterManager(context.getId());
-            for (String e : encodedAlertFilters) {
-                AlertFilter af = AlertFilter.decode(context.getId(), e);
-                afManager.addAlertFilter(af);
-            }
+            addAlertFilters(
+                    context, session.getContextDataStrings(context.getId(), TYPE_ALERT_FILTER));
         } catch (Exception ex) {
             LOGGER.error("Unable to load AlertFilters.", ex);
         }
+    }
+
+    private void addAlertFilters(Context ctx, List<?> source) {
+        ContextAlertFilterManager m = getContextAlertFilterManager(ctx.getId());
+        source.stream()
+                .map(e -> AlertFilter.decode(ctx.getId(), e.toString()))
+                .filter(Objects::nonNull)
+                .forEach(m::addAlertFilter);
     }
 
     @Override
@@ -294,12 +298,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
 
     @Override
     public void importContextData(Context ctx, Configuration config) {
-        List<Object> list = config.getList(CONTEXT_CONFIG_ALERT_FILTER);
-        ContextAlertFilterManager m = getContextAlertFilterManager(ctx.getId());
-        for (Object o : list) {
-            AlertFilter af = AlertFilter.decode(ctx.getId(), o.toString());
-            m.addAlertFilter(af);
-        }
+        addAlertFilters(ctx, config.getList(CONTEXT_CONFIG_ALERT_FILTER));
     }
 
     @Override
