@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Do not fail to import or load a context with invalid alert filters.
+
 ## [18] - 2023-10-12
 ### Changed
 - Update minimum ZAP version to 2.14.0.
