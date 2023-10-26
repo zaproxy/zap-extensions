@@ -10,6 +10,8 @@ Client Side Integration
 
 This add-on adds a ZAP browser extension to both Firefox and Chrome when they are launched from ZAP.
 <p>
+The extensions stream significant browser based events back to ZAP, giving ZAP an insight into what is going on in the browser.
+<p>
 If you do not launch your browser(s) from ZAP then you can still install these extensions directly from the relevant stores:
 
 <ul>
@@ -18,7 +20,57 @@ If you do not launch your browser(s) from ZAP then you can still install these e
 </ul>
 
 Note that you may need to configure the extensions via their options pages to update the host and API key.
+
+<h2>User Interface</h2>
+
+The add-on adds 3 new tabs to ZAP:
+
+<h3>Client Map</h3>
+
+The Client Map is a hierarchical representation of the sites visited, and is similar in some ways to the Sites Tree.
+It includes nodes which represent URLs and ones which represent browser based storage.
 <p>
+Unlike the Sites Tree it includes <a href="https://en.wikipedia.org/wiki/URI_fragment">URI fragments</a> which ZAP cannot otherwise see.
+This means that the Client Map looks very different to the Sites tree for modern web apps, and may give you a better understanding of the
+client side structure of the sites.
+<p>
+Any leaf nodes in the Map with a small red 'minus' sign represent URLs which have been found in the DOM but which have not been directly accessed by ZAP.
+<p>
+Selecting a node that has been visited by ZAP will display details about that node in the Client Details tab.
+
+<h3>Client Details</h3>
+
+The Client Details tab shows details about Client Map nodes.
+<p>
+The types of data displayed include:
+<ul>
+<li>Button: Buttons detected in the DOM 
+<li>Cookies: Cookies set in the browser
+<li>FORM: Forms detected in the DOM 
+<li>Input: Input elements detected in the DOM 
+<li>Link: Links detected in the DOM 
+</ul>
+
+<h3>Client History</h3>
+
+The Client History tab shows all of the client side events sent from the browser extension to ZAP.
+<p>
+In addition to the data displayed in the Client Details tab it also includes:
+
+<ul>
+<li>DOM Mutation: Browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver">MutationObserver</a> event 
+<li>Node Added: A DOM node added to the specified URL 
+<li>Page Load: Browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/load_event">load</a> event 
+<li>Page Unload: Browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/unload_event">unload</a> event 
+</ul>
+
+<h2>AJAX Spider Enhancement</h2>
+
+This add-on provides an <a href="ajax-scan.html">AJAX Spider Enhancement</a> which can detect URLs referenced in the DOM which were not
+be accessed by the spider.
+
+<h2>Firefox Profile</h2>
+
 It also creates a <a href="firefox-profile.html">Firefox profile</a> and sets it as the default profile that ZAP will use.
 
 <p>

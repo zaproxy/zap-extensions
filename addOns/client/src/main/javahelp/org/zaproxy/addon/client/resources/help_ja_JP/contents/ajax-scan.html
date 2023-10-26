@@ -1,0 +1,23 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Client Side Integration - AJAX Spider Enhancement
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Client Side Integration - AJAX Spider Enhancement</H1>
+
+The AJAX Spider works by launching browsers, clicking links, and filling in fields.
+It is an effective way to crawl modern web apps but it is not able to directly access the DOM.
+<p>
+The browser extensions included in this add-on can access the DOM and stream specific events back to ZAP.
+<p>
+This add-on listens for AJAX Spider events and when the spider has finished it then examines the Client Map
+to see if it can find any URLs which were referenced by the DOM but which have not been accessed by ZAP.
+<p>
+If it finds any 'missed' URLs that were part of the AJAX Spider scan scope then it makes direct requests to these URLs.
+You will be able to see these requests in the History, Sites Tree, and Output tabs.
+
+</BODY>
+</HTML>
