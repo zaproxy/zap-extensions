@@ -22,6 +22,9 @@ package org.zaproxy.addon.graphql;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
+import graphql.schema.GraphQLSchema;
+import graphql.schema.idl.SchemaParser;
+import graphql.schema.idl.UnExecutableSchemaGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.zap.model.ValueGenerator;
@@ -377,6 +380,17 @@ class GraphQlGeneratorUnitTest extends TestUtils {
         generator = createGraphQlGenerator(getHtml("deepNestedLeaf.graphql"));
         String query = generator.generate(GraphQlGenerator.RequestType.QUERY);
         String expectedQuery = "query ";
+        assertEquals(expectedQuery, query);
+    }
+
+    @Test
+    void getFirstLeafQueryShouldWorkForWrappedTypes() {
+        String sdl = getHtml("listsAndNonNull.graphql");
+        GraphQLSchema schema =
+                UnExecutableSchemaGenerator.makeUnExecutableSchema(new SchemaParser().parse(sdl));
+        generator = createGraphQlGenerator(sdl);
+        String query = generator.getFirstLeafQuery(schema.getQueryType(), null, null);
+        String expectedQuery = "{ jellyBean { count } } ";
         assertEquals(expectedQuery, query);
     }
 }
