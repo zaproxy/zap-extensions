@@ -46,6 +46,7 @@ spotless {
             fileTree(projectDir) {
                 include("src/**/*.java")
                 exclude("src/main/java/org/apache/hc/client5/**/Zap*.java")
+                exclude("src/main/java/org/apache/hc/client5/**/cookie/*.java")
                 exclude("src/main/java/org/apache/hc/core5/**/*.java")
                 exclude("src/main/java/org/zaproxy/addon/network/internal/codec/netty/*.java")
             },

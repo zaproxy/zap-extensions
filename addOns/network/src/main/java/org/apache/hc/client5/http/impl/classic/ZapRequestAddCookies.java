@@ -203,8 +203,8 @@ public class ZapRequestAddCookies implements HttpRequestInterceptor {
         for (Header cookieHeader : request.getHeaders(HttpHeaders.COOKIE)) {
             for (String cookie : cookieHeader.getValue().split(";")) {
                 String[] nvp = cookie.split("=", 2);
-                String name = nvp[0].trim();
-                String value = nvp.length == 1 ? "" : nvp[1].trim();
+                String name = nvp.length == 1 ? "" : nvp[0].trim();
+                String value = nvp.length == 1 ? nvp[0].trim() : nvp[1].trim();
                 allCookies.put(name, new BasicClientCookie(name, value));
             }
         }
