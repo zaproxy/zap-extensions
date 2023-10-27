@@ -437,7 +437,7 @@ public class ConsolePanel extends AbstractPanel {
         return listener;
     }
 
-    private CommandPanel getCommandPanel() {
+    CommandPanel getCommandPanel() {
         if (commandPanel == null) {
             commandPanel = new CommandPanel(getKeyListener());
             commandPanel.setEditable(false);

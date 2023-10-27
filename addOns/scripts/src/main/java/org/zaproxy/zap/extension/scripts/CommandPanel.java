@@ -29,12 +29,14 @@ import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
+import org.parosproxy.paros.extension.OptionsChangedListener;
+import org.parosproxy.paros.model.OptionsParam;
 import org.zaproxy.zap.extension.scripts.autocomplete.ScriptAutoCompleteKeyListener;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ZapLabel;
 
 @SuppressWarnings("serial")
-public class CommandPanel extends AbstractPanel {
+public class CommandPanel extends AbstractPanel implements OptionsChangedListener {
 
     private static final long serialVersionUID = -947074835463140074L;
 
@@ -183,5 +185,15 @@ public class CommandPanel extends AbstractPanel {
             this.remove(largeScriptPanel);
             this.add(getJScrollPane(), getJScrollPane().getName());
         }
+    }
+
+    @Override
+    public void optionsChanged(OptionsParam mainOptions) {
+        optionsChanged(mainOptions.getParamSet(ScriptConsoleOptions.class));
+    }
+
+    void optionsChanged(ScriptConsoleOptions options) {
+        getTxtOutput().setTabSize(options.getTabSize());
+        getTxtOutput().setTabsEmulated(!options.isUseTabCharacter());
     }
 }

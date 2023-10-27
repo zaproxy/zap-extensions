@@ -23,12 +23,16 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import javax.swing.Box;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.TitledBorder;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
 import org.zaproxy.zap.extension.scripts.ScriptConsoleOptions.DefaultScriptChangedBehaviour;
+import org.zaproxy.zap.utils.ZapNumberSpinner;
 import org.zaproxy.zap.view.LayoutHelper;
 
 public class ScriptConsoleOptionsPanel extends AbstractParamPanel {
@@ -39,6 +43,9 @@ public class ScriptConsoleOptionsPanel extends AbstractParamPanel {
             Constant.messages.getString("scripts.console.options.panelName");
 
     private JComboBox<DefaultScriptChangedBehaviour> defaultScriptChangedBehaviour;
+    private JPanel codeStylePanel;
+    private ZapNumberSpinner tabSizeSpinner;
+    private JCheckBox useTabCharacterCheckBox;
 
     public ScriptConsoleOptionsPanel() {
         super();
@@ -56,6 +63,7 @@ public class ScriptConsoleOptionsPanel extends AbstractParamPanel {
         add(
                 getDefaultScriptChangedBehaviour(),
                 LayoutHelper.getGBC(1, row, 1, 0.5, new Insets(2, 2, 4, 4)));
+        add(getCodeStylePanel(), LayoutHelper.getGBC(0, ++row, 2, 1.0, new Insets(0, 4, 4, 4)));
 
         add(
                 Box.createHorizontalGlue(),
@@ -74,6 +82,8 @@ public class ScriptConsoleOptionsPanel extends AbstractParamPanel {
         ScriptConsoleOptions options = getScriptConsoleOptions(mainOptions);
         getDefaultScriptChangedBehaviour()
                 .setSelectedItem(options.getDefaultScriptChangedBehaviour());
+        getTabSizeSpinner().setValue(options.getTabSize());
+        getUseTabCharacterCheckBox().setSelected(options.isUseTabCharacter());
     }
 
     @Override
@@ -82,6 +92,8 @@ public class ScriptConsoleOptionsPanel extends AbstractParamPanel {
         options.setDefaultScriptChangedBehaviour(
                 (DefaultScriptChangedBehaviour)
                         getDefaultScriptChangedBehaviour().getSelectedItem());
+        options.setTabSize(getTabSizeSpinner().getValue());
+        options.setUseTabCharacter(getUseTabCharacterCheckBox().isSelected());
     }
 
     private static ScriptConsoleOptions getScriptConsoleOptions(Object mainOptions) {
@@ -104,5 +116,42 @@ public class ScriptConsoleOptionsPanel extends AbstractParamPanel {
                             });
         }
         return defaultScriptChangedBehaviour;
+    }
+
+    private JPanel getCodeStylePanel() {
+        if (codeStylePanel == null) {
+            codeStylePanel = new JPanel(new GridBagLayout());
+            codeStylePanel.setBorder(
+                    new TitledBorder(
+                            Constant.messages.getString("scripts.options.codeStyle.title")));
+            int row = 0;
+            var tabSizeLabel =
+                    new JLabel(Constant.messages.getString("scripts.options.codeStyle.tabSize"));
+            codeStylePanel.add(
+                    tabSizeLabel, LayoutHelper.getGBC(0, ++row, 1, 0.5, new Insets(2, 4, 2, 2)));
+            codeStylePanel.add(
+                    getTabSizeSpinner(),
+                    LayoutHelper.getGBC(1, row, 1, 0.5, new Insets(2, 2, 2, 4)));
+            codeStylePanel.add(
+                    getUseTabCharacterCheckBox(),
+                    LayoutHelper.getGBC(0, ++row, 2, 1.0, new Insets(2, 4, 4, 4)));
+        }
+        return codeStylePanel;
+    }
+
+    private ZapNumberSpinner getTabSizeSpinner() {
+        if (tabSizeSpinner == null) {
+            tabSizeSpinner = new ZapNumberSpinner(1, 4, 16);
+        }
+        return tabSizeSpinner;
+    }
+
+    private JCheckBox getUseTabCharacterCheckBox() {
+        if (useTabCharacterCheckBox == null) {
+            useTabCharacterCheckBox = new JCheckBox();
+            useTabCharacterCheckBox.setText(
+                    Constant.messages.getString("scripts.options.codeStyle.useTabCharacter"));
+        }
+        return useTabCharacterCheckBox;
     }
 }
