@@ -33,6 +33,7 @@ import org.parosproxy.paros.view.MainMenuBar;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.commonlib.ExtensionCommonlib;
 import org.zaproxy.addon.commonlib.ui.ProgressPanel;
+import org.zaproxy.addon.commonlib.ui.ZapSortedMenu;
 import org.zaproxy.addon.exim.har.MenuImportHar;
 import org.zaproxy.addon.exim.har.PopupMenuItemSaveHarMessage;
 import org.zaproxy.addon.exim.log.MenuItemImportLogs;
@@ -139,7 +140,7 @@ public class ExtensionExim extends ExtensionAdaptor {
 
     private JMenu getMenuExport() {
         if (menuExport == null) {
-            menuExport = new JMenu();
+            menuExport = new ZapSortedMenu();
             menuExport.setText(Constant.messages.getString("exim.menu.export"));
             menuExport.setMnemonic(Constant.messages.getChar("exim.menu.export.mnemonic"));
         }
