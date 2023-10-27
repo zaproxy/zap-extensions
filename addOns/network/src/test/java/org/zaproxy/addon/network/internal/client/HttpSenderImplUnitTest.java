@@ -1937,6 +1937,103 @@ class HttpSenderImplUnitTest {
         }
     }
 
+    @Nested
+    class Cookies {
+
+        private static final String EXPECTED_COOKIE_HEADER =
+                "a=\"a-value\"; b=b-value\"; c=\"c-value; d=d -value; e=e-v; f=f-value; F=F-value; g=\"g; \"nameA=value; nameB\"=value; \"nameC\"=value; name a=value; name     c=value     c; X; W=";
+
+        @BeforeEach
+        void setup() throws Exception {
+            server.setHttpMessageHandler(
+                    (ctx, msg) -> {
+                        msg.setResponseHeader(
+                                "HTTP/1.1 200\r\ncontent-length: 0\r\n"
+                                        + "Set-Cookie: a=\"a-value\";\r\n"
+                                        + "Set-Cookie: b=b-value\"\r\n"
+                                        + "Set-Cookie: c=\"c-value       \r\n"
+                                        + "Set-Cookie: d=d -value\r\n"
+                                        + "Set-Cookie: e=e-v;alue\r\n"
+                                        + "Set-Cookie: f=f-value\r\n"
+                                        + "Set-Cookie: F=F-value        \r\n"
+                                        + "Set-Cookie: g=\"g;-valu\"e\r\n"
+                                        + "Set-Cookie: \"nameA=value\r\n"
+                                        + "Set-Cookie: nameB\"=value\r\n"
+                                        + "Set-Cookie: \"nameC\"=value\r\n"
+                                        + "Set-Cookie:       name a     =value\r\n"
+                                        + "Set-Cookie: name     c =  value     c \r\n"
+                                        + "Set-Cookie: =X\r\n"
+                                        + "Set-Cookie: W=\r\n");
+                    });
+
+            message.setRequestHeader("GET " + getServerUri("/") + " HTTP/1.1");
+            httpSender.setUseGlobalState(false);
+        }
+
+        @AfterEach
+        void teardown() throws IOException {
+            server.close();
+        }
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+        void shouldNotBeHandleWhenNoEnabled(SenderMethod method) throws Exception {
+            // Given
+            httpSender.setUseCookies(false);
+            // When
+            method.sendWith(httpSender, message);
+            method.sendWith(httpSender, message);
+            // Then
+            assertThat(message.getRequestHeader().getHeader("cookie"), is(nullValue()));
+        }
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+        void shouldBeHandledWhenEnabled(SenderMethod method) throws Exception {
+            // Given
+            httpSender.setUseCookies(true);
+            // When
+            method.sendWith(httpSender, message);
+            method.sendWith(httpSender, message);
+            // Then
+            assertThat(message.getRequestHeader().getHeader("cookie"), is(not(nullValue())));
+        }
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+        void shouldBeSentLikeABrowserSends(SenderMethod method) throws Exception {
+            // Given
+            httpSender.setUseCookies(true);
+            // When
+            method.sendWith(httpSender, message);
+            method.sendWith(httpSender, message);
+            // Then
+            assertThat(
+                    message.getRequestHeader().getHeader("cookie"),
+                    is(equalTo(EXPECTED_COOKIE_HEADER)));
+        }
+
+        @ParameterizedTest
+        @MethodSource(
+                "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+        void shouldBeSentAlwaysTheSame(SenderMethod method) throws Exception {
+            // Given
+            httpSender.setUseCookies(true);
+            // When
+            method.sendWith(httpSender, message);
+            method.sendWith(httpSender, message);
+            method.sendWith(httpSender, message);
+            method.sendWith(httpSender, message);
+            // Then
+            assertThat(
+                    message.getRequestHeader().getHeader("cookie"),
+                    is(equalTo(EXPECTED_COOKIE_HEADER)));
+        }
+    }
+
     private HttpMessage createMessage(String method, String path) {
         try {
             URI uri = new URI(getServerUri(path), true);
