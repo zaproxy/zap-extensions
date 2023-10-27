@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - A generic UI component for keeping menu items sorted.
 
+### Changed
+- Add solution to 'Content Spoofing', 'Credential and Session Prediction', 'XML Injection' and 'XML External Entities' vulnerabilities (Issue 8056).
+
 ## [1.18.0] - 2023-10-12
 ### Changed
 - Update minimum ZAP version to 2.14.0.
