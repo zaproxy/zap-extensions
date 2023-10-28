@@ -27,6 +27,8 @@ public class ScriptConsoleOptions extends VersionedAbstractParam {
     private static String BASE_KEY = "script.console";
     private static String DEFAULT_SCRIPT_CHANGED_BEHAVIOUR =
             BASE_KEY + ".defaultScriptChangedBehaviour";
+    private static String TAB_SIZE = BASE_KEY + ".codeStyle.tabSize";
+    private static String USE_TAB_CHARACTER = BASE_KEY + ".codeStyle.useTabCharacter";
 
     /**
      * The version of the configurations. Used to keep track of configurations changes between
@@ -35,6 +37,8 @@ public class ScriptConsoleOptions extends VersionedAbstractParam {
     private static final int CURRENT_CONFIG_VERSION = 1;
 
     private DefaultScriptChangedBehaviour defaultScriptChangedBehaviour;
+    private int tabSize;
+    private boolean useTabCharacter;
 
     public DefaultScriptChangedBehaviour getDefaultScriptChangedBehaviour() {
         return defaultScriptChangedBehaviour;
@@ -45,12 +49,32 @@ public class ScriptConsoleOptions extends VersionedAbstractParam {
         getConfig().setProperty(DEFAULT_SCRIPT_CHANGED_BEHAVIOUR, behaviour.name());
     }
 
+    public int getTabSize() {
+        return tabSize;
+    }
+
+    public void setTabSize(int tabSize) {
+        this.tabSize = tabSize;
+        getConfig().setProperty(TAB_SIZE, tabSize);
+    }
+
+    public boolean isUseTabCharacter() {
+        return useTabCharacter;
+    }
+
+    public void setUseTabCharacter(boolean useTabCharacter) {
+        this.useTabCharacter = useTabCharacter;
+        getConfig().setProperty(USE_TAB_CHARACTER, useTabCharacter);
+    }
+
     @Override
     protected void parseImpl() {
         defaultScriptChangedBehaviour =
                 getEnum(
                         DEFAULT_SCRIPT_CHANGED_BEHAVIOUR,
                         DefaultScriptChangedBehaviour.ASK_EACH_TIME);
+        tabSize = getInt(TAB_SIZE, 4);
+        useTabCharacter = getBoolean(USE_TAB_CHARACTER, false);
     }
 
     @Override

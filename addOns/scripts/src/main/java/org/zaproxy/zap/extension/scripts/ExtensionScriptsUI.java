@@ -174,6 +174,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             extensionHook.getHookView().addSelectPanel(getScriptsPanel());
             extensionHook.addSessionListener(new ViewSessionChangedListener());
             extensionHook.getHookView().addWorkPanel(getConsolePanel());
+            extensionHook.addOptionsChangedListener(getConsolePanel().getCommandPanel());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupInvokeScriptWithHttpMessageMenu());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupEnableDisableScript());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupRemoveScript());
@@ -189,6 +190,13 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMenuItemSaveScript());
             ExtensionHelp.enableHelpKey(getConsolePanel(), "addon.scripts.console");
             ExtensionHelp.enableHelpKey(getScriptsPanel(), "addon.scripts.tree");
+        }
+    }
+
+    @Override
+    public void optionsLoaded() {
+        if (hasView()) {
+            getConsolePanel().getCommandPanel().optionsChanged(getScriptConsoleOptions());
         }
     }
 
