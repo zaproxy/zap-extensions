@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -44,10 +45,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
+import javax.swing.border.EmptyBorder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
@@ -75,6 +78,7 @@ public class ConsolePanel extends AbstractPanel {
     private JButton runButton = null;
     private JButton stopButton = null;
     private ZapToggleButton autoCompleteButton = null;
+    private JButton optionsButton;
     private JLabel scriptTitle = null;
     private CommandPanel commandPanel = null;
     private OutputPanel outputPanel = null;
@@ -266,23 +270,21 @@ public class ConsolePanel extends AbstractPanel {
         }
     }
 
-    private javax.swing.JToolBar getPanelToolbar() {
+    private JToolBar getPanelToolbar() {
         if (panelToolbar == null) {
-
-            panelToolbar = new javax.swing.JToolBar();
-            panelToolbar.setLayout(new java.awt.GridBagLayout());
+            panelToolbar = new JToolBar();
             panelToolbar.setEnabled(true);
             panelToolbar.setFloatable(false);
             panelToolbar.setRollover(true);
-            panelToolbar.setPreferredSize(new java.awt.Dimension(800, 30));
             panelToolbar.setFont(FontUtils.getFont("Dialog"));
-            panelToolbar.setName("ParamsToolbar");
+            panelToolbar.setName("Script Console Toolbar");
 
-            panelToolbar.add(this.getRunButton(), LayoutHelper.getGBC(0, 0, 1, 0.0D));
-            panelToolbar.add(this.getStopButton(), LayoutHelper.getGBC(1, 0, 1, 0.0D));
-            panelToolbar.add(this.getAutoCompleteButton(), LayoutHelper.getGBC(2, 0, 1, 0.0D));
-            panelToolbar.add(this.getScriptTitle(), LayoutHelper.getGBC(3, 0, 1, 0.0D));
-            panelToolbar.add(new JLabel(), LayoutHelper.getGBC(20, 0, 1, 1.0D)); // Filler
+            panelToolbar.add(getRunButton());
+            panelToolbar.add(getStopButton());
+            panelToolbar.add(getAutoCompleteButton());
+            panelToolbar.add(getScriptTitle());
+            panelToolbar.add(Box.createHorizontalGlue());
+            panelToolbar.add(getOptionsButton());
         }
         return panelToolbar;
     }
@@ -290,6 +292,7 @@ public class ConsolePanel extends AbstractPanel {
     private JLabel getScriptTitle() {
         if (scriptTitle == null) {
             scriptTitle = new JLabel();
+            scriptTitle.setBorder(new EmptyBorder(0, 5, 0, 5));
         }
         return scriptTitle;
     }
@@ -376,6 +379,26 @@ public class ConsolePanel extends AbstractPanel {
                     e -> getCommandPanel().setAutoCompleteEnabled(autoCompleteButton.isSelected()));
         }
         return autoCompleteButton;
+    }
+
+    private JButton getOptionsButton() {
+        if (optionsButton == null) {
+            optionsButton = new JButton();
+            optionsButton.setToolTipText(
+                    Constant.messages.getString("scripts.toolbar.tooltip.consoleOptions"));
+            optionsButton.setIcon(
+                    DisplayUtils.getScaledIcon(
+                            new ImageIcon(getClass().getResource("/resource/icon/16/041.png"))));
+
+            optionsButton.addActionListener(
+                    e ->
+                            Control.getSingleton()
+                                    .getMenuToolsControl()
+                                    .options(
+                                            Constant.messages.getString(
+                                                    "scripts.console.options.panelName")));
+        }
+        return optionsButton;
     }
 
     private void runScript() {
