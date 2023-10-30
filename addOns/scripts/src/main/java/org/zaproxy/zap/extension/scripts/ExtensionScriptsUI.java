@@ -683,7 +683,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
     @Override
     public void scriptChanged(ScriptWrapper script) {
         if (View.isInitialised()) {
-            this.getScriptsPanel().setButtonStates();
+            getConsolePanel().updateButtonStates();
         }
         if (script.getType().getName().equals(SCRIPT_EXT_TYPE)) {
             // Extender scripts are installed and uninstalled when they are enabled/disabled
