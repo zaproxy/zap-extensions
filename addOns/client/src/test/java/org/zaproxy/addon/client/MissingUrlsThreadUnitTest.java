@@ -35,6 +35,7 @@ import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventPublisher;
+import org.zaproxy.zap.model.StandardParameterParser;
 import org.zaproxy.zap.model.Target;
 
 class MissingUrlsThreadUnitTest {
@@ -45,6 +46,7 @@ class MissingUrlsThreadUnitTest {
     private Model model;
     private Session session;
     private SiteMap siteMap;
+    private ClientNode root;
 
     @BeforeEach
     void setUp() {
@@ -53,13 +55,16 @@ class MissingUrlsThreadUnitTest {
         given(model.getSession()).willReturn(session);
         siteMap = mock(SiteMap.class);
         given(session.getSiteTree()).willReturn(siteMap);
+        StandardParameterParser ssp = new StandardParameterParser();
+        given(session.getUrlParamParser(any(String.class))).willReturn(ssp);
+        root = new ClientNode(new ClientSideDetails("Root", ""), session);
     }
 
     @Test
     void shouldAddUrlInUnderStartNode() throws IOException {
         // Given
-        ClientMap map = new ClientMap(new ClientNode(new ClientSideDetails("Root", ""), false));
-        map.getOrAddNode(AAA_URL + "/", false, false);
+        ClientMap map = new ClientMap(root);
+        map.getOrAddNode(AAA_URL, false, false);
 
         EventPublisher evPub = mock(EventPublisher.class);
         Target target = new Target();
@@ -80,7 +85,7 @@ class MissingUrlsThreadUnitTest {
     @Test
     void shouldNotAddUrlOutOfScope() throws IOException {
         // Given
-        ClientMap map = new ClientMap(new ClientNode(new ClientSideDetails("Root", ""), false));
+        ClientMap map = new ClientMap(root);
         map.getOrAddNode(AAA_URL + "/", false, false);
 
         EventPublisher evPub = mock(EventPublisher.class);
@@ -102,8 +107,8 @@ class MissingUrlsThreadUnitTest {
     @Test
     void shouldNotAddStorageNode() throws IOException {
         // Given
-        ClientMap map = new ClientMap(new ClientNode(new ClientSideDetails("Root", ""), false));
-        map.getOrAddNode(AAA_URL + "/", false, true);
+        ClientMap map = new ClientMap(root);
+        map.getOrAddNode(AAA_URL, false, true);
 
         EventPublisher evPub = mock(EventPublisher.class);
         Target target = new Target();
@@ -124,7 +129,7 @@ class MissingUrlsThreadUnitTest {
     @Test
     void shouldNotAddUrlIfNoScope() throws IOException {
         // Given
-        ClientMap map = new ClientMap(new ClientNode(new ClientSideDetails("Root", ""), false));
+        ClientMap map = new ClientMap(root);
         map.getOrAddNode(AAA_URL + "/", false, false);
 
         EventPublisher evPub = mock(EventPublisher.class);

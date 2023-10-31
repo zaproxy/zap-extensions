@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Cases where the Firefox profile was not added successfully via Selenium.
+- Reworked the Client Map to correctly handle parameters and more edge cases.
 
 ## [0.3.0] - 2023-10-23
 ### Changed
