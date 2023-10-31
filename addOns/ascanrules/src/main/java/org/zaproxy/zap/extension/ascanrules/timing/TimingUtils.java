@@ -24,8 +24,8 @@ import java.io.IOException;
 /** Utility class to host time-based blind detection algorithms. */
 public class TimingUtils {
 
-    // Minimum requests required for a meaningful result
-    private static final int MINIMUM_REQUESTS = 3;
+    // Minimum requests required for a result
+    private static final int MINIMUM_REQUESTS = 2;
 
     /**
      * Sends time-based blind requests and analyze the response times using simple linear
@@ -36,12 +36,19 @@ public class TimingUtils {
      * expected delay. This implementation also requires a minimum number of request data points to
      * prevent false positives where a website only responded once or twice within the time limit.
      *
+     * <p>This implementation uses a series of alternating high delay and low delay requests to
+     * minimize the possibility of false positives from normal variations in application response
+     * time. For example, if it tested a delay of 1 second and 2 seconds, there's a very real
+     * possibility that the application response times normally vary by 1 second and we get a false
+     * positive. Whereas if it tests 15 seconds and 1 second, there is a much smaller chance that
+     * the application response times normally vary by 14 seconds.
+     *
      * @param requestsLimit the hard limit on how many times at most requestSender will be called.
-     *     in practice, if there is a correlation, within 0-2 to this number of requests will be
-     *     sent. if there is no correlation, most likely far fewer.
-     * @param secondsLimit the soft limit on how much total time at most should be spent on sending
-     *     requests before forcing a verdict. the limit is necessarily soft since we don't control
-     *     how long requestSender takes to resolve.
+     *     In practice, the number of requests will usually be much less, because if a positive is
+     *     clearly not even close, we exit early. Note that 1 more request than the limit may be
+     *     sent because the test actually makes pairs of requests (one high sleep value and one low
+     *     sleep value)
+     * @param highSleepTimeSeconds the high sleep value to send in requests
      * @param requestSender function that takes in the expected time, sends the request, and returns
      *     the actual delay.
      * @param correlationErrorRange the interval of acceptance for the regression correlation. for
@@ -55,69 +62,79 @@ public class TimingUtils {
      */
     public static boolean checkTimingDependence(
             int requestsLimit,
-            double secondsLimit,
+            int highSleepTimeSeconds,
             RequestSender requestSender,
             double correlationErrorRange,
             double slopeErrorRange)
             throws IOException {
 
-        if (secondsLimit < 5) {
-            throw new IllegalArgumentException(
-                    "requires at least 5 seconds to get meaningful results");
-        }
-
         if (requestsLimit < MINIMUM_REQUESTS) {
             throw new IllegalArgumentException(
                     String.format(
-                            "requires at least %d requests to get meaningful results",
-                            MINIMUM_REQUESTS));
+                            "requires at least %d requests to get results", MINIMUM_REQUESTS));
         }
 
         OnlineSimpleLinearRegression regression = new OnlineSimpleLinearRegression();
 
         int requestsLeft = requestsLimit;
-        int requestsMade = 0;
-        double secondsLeft = secondsLimit;
-        int currentDelay = 1;
 
-        // send requests until we're either out of time or out of requests
-        while (requestsLeft > 0 && secondsLeft > 0) {
-
-            // apply the provided function to get the dependent variable
-            double y = requestSender.apply(currentDelay);
-
-            // this is not a general assertion, but in our case, we want to stop early
-            // if the expected delay isn't at LEAST as much as the requested delay
-            if (y < currentDelay) {
+        // send requests until we've hit the max requests
+        // requests are sent in pairs - one high sleep value and one low sleep value
+        // optimized to stop early if correlation is clearly not possible
+        while (requestsLeft > 0) {
+            // send the high sleep value request
+            boolean isCorrelationPossible =
+                    sendRequestAndTestConfidence(regression, requestSender, highSleepTimeSeconds);
+            // return early if we're clearly not close
+            if (!isCorrelationPossible) {
                 return false;
             }
 
-            // update the regression computation with a new time pair
-            regression.addPoint(currentDelay, y);
-
-            // failure case if we're clearly not even close
-            if (!regression.isWithinConfidence(0.3, 1.0, 0.5)) {
+            // send the low value sleep request
+            isCorrelationPossible = sendRequestAndTestConfidence(regression, requestSender, 1);
+            // return early if we're clearly not close
+            if (!isCorrelationPossible) {
                 return false;
             }
 
-            // update seconds left, requests left, and increase the next delay
-            secondsLeft = secondsLeft - y;
-            requestsLeft = requestsLeft - 1;
-            requestsMade++;
-            currentDelay = currentDelay + 1;
-
-            // if doing a longer request next would put us over time, wrap around to sending shorter
-            // requests
-            if (regression.predict(currentDelay) > secondsLeft) {
-                currentDelay = 1;
-            }
+            // update requests left
+            requestsLeft = requestsLeft - 2;
         }
 
         // we want the slope and correlation to both be reasonably close to 1
         // if the correlation is bad, the relationship is non-linear
         // if the slope is bad, the relationship is not positively 1:1
-        return requestsMade >= MINIMUM_REQUESTS
-                && regression.isWithinConfidence(correlationErrorRange, 1.0, slopeErrorRange);
+        return regression.isWithinConfidence(correlationErrorRange, 1.0, slopeErrorRange);
+    }
+
+    /**
+     * Helper function to send a single request and add it to the regression Also has optimizations
+     * to check if the a correlation is clearly not possible
+     *
+     * @return - true if a correlation is still possible, false if a correlation is clearly not
+     *     possible
+     */
+    private static boolean sendRequestAndTestConfidence(
+            OnlineSimpleLinearRegression regression, RequestSender requestSender, int delay)
+            throws IOException {
+        // apply the provided function to get the dependent variable
+        double y = requestSender.apply(delay);
+
+        // this is not a general assertion, but in our case, we want to stop early
+        // if the expected delay isn't at LEAST as much as the requested delay
+        if (y < delay) {
+            return false;
+        }
+
+        // update the regression computation with a new time pair
+        regression.addPoint(delay, y);
+
+        // failure case if we're clearly not even close
+        if (!regression.isWithinConfidence(0.3, 1.0, 0.5)) {
+            return false;
+        }
+
+        return true;
     }
 
     @FunctionalInterface

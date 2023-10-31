@@ -26,6 +26,8 @@ import static org.hamcrest.Matchers.lessThanOrEqualTo;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,14 +47,14 @@ class TimingUtilsUnitTest {
     }
 
     @Test
-    // verifies that an incrementing sequence of delays is automatically generated
-    void shouldAutoIncrementDelay() throws IOException {
+    // verifies that an alternating sequence of delays is automatically generated
+    void shouldAlternateHighLowDelay() throws IOException {
         // Given
         ArrayList<Double> generatedDelays = new ArrayList<>();
         // When
         boolean result =
                 TimingUtils.checkTimingDependence(
-                        5,
+                        4,
                         15,
                         x -> {
                             generatedDelays.add(x);
@@ -62,30 +64,7 @@ class TimingUtilsUnitTest {
                         SLOPE_ERROR_RANGE);
         // Then
         assertThat(result, is(true));
-        assertThat(generatedDelays.toArray(), arrayContaining(1.0, 2.0, 3.0, 4.0, 5.0));
-    }
-
-    @Test
-    // incrementing sequence of delays is automatically generated but then loops back to 1
-    void shouldAutoIncrementThenLoop() throws IOException {
-        // Given
-        ArrayList<Double> generatedDelays = new ArrayList<>();
-        // When
-        boolean result =
-                TimingUtils.checkTimingDependence(
-                        10,
-                        20,
-                        x -> {
-                            generatedDelays.add(x);
-                            return x;
-                        },
-                        CORRELATION_ERROR_RANGE,
-                        SLOPE_ERROR_RANGE);
-        // Then
-        assertThat(result, is(true));
-        assertThat(
-                generatedDelays.toArray(),
-                arrayContaining(1.0, 2.0, 3.0, 4.0, 5.0, 1.0, 2.0, 1.0, 1.0));
+        assertThat(generatedDelays.toArray(), arrayContaining(15.0, 1.0, 15.0, 1.0));
     }
 
     @Test
@@ -95,7 +74,7 @@ class TimingUtilsUnitTest {
         // When
         boolean result =
                 TimingUtils.checkTimingDependence(
-                        5,
+                        4,
                         15,
                         // respond with a low time
                         x -> {
@@ -116,7 +95,7 @@ class TimingUtilsUnitTest {
         // When
         boolean result =
                 TimingUtils.checkTimingDependence(
-                        5,
+                        4,
                         15,
                         // source of small error
                         x -> {
@@ -136,7 +115,7 @@ class TimingUtilsUnitTest {
         // When
         boolean result =
                 TimingUtils.checkTimingDependence(
-                        5,
+                        4,
                         15,
                         // source of small error
                         x -> x + rand.nextDouble() * 0.5,
@@ -147,19 +126,24 @@ class TimingUtilsUnitTest {
     }
 
     @Test
-    // verify that there is no alert when less requests were made in the time limit than required
-    // for a statistically meaningful result
-    void shouldNotAlertIfMinimumRequestsThresholdWasNotMet() throws IOException {
+    void shouldNotAlertForUncorrelatedTimes() throws IOException {
+        // Series of response times to test
+        List<Double> delays = new ArrayList<>(Arrays.asList(15.377, 12.093, 16.588, 10.752));
+
         // When
-        boolean result =
-                TimingUtils.checkTimingDependence(
-                        5,
-                        20,
-                        // slow response greater than the secondsLimit
-                        x -> 21,
-                        .15,
-                        .30);
+        boolean result = TimingUtils.checkTimingDependence(4, 15, x -> delays.remove(0), .15, .30);
         // Then
         assertThat(result, is(false));
+    }
+
+    @Test
+    void shouldAlertForCorrelatedTimes() throws IOException {
+        // Series of response times to test
+        List<Double> delays = new ArrayList<>(Arrays.asList(16.0, 2.0, 17.0, 3.0));
+
+        // When
+        boolean result = TimingUtils.checkTimingDependence(4, 15, x -> delays.remove(0), .15, .30);
+        // Then
+        assertThat(result, is(true));
     }
 }

@@ -211,11 +211,8 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
     /** The default number of seconds used in time-based attacks (i.e. sleep commands). */
     private static final int DEFAULT_TIME_SLEEP_SEC = 5;
 
-    // time-based attack detection will not send more than the following number of requests
-    private static final int BLIND_REQUEST_LIMIT = 5;
-    // time-based attack detection will try to take less than the following number of seconds
-    // note: detection of this length will generally only happen in the positive (detecting) case.
-    private static final double BLIND_SECONDS_LIMIT = 20.0;
+    // limit the maximum number of requests sent for time-based attack detection
+    private static final int BLIND_REQUESTS_LIMIT = 4;
 
     // error range allowable for statistical time-based blind attacks (0-1.0)
     private static final double TIME_CORRELATION_ERROR_RANGE = 0.15;
@@ -623,8 +620,8 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin {
                     // use TimingUtils to detect a response to sleep payloads
                     isInjectable =
                             TimingUtils.checkTimingDependence(
-                                    BLIND_REQUEST_LIMIT,
-                                    BLIND_SECONDS_LIMIT,
+                                    BLIND_REQUESTS_LIMIT,
+                                    timeSleepSeconds,
                                     requestSender,
                                     TIME_CORRELATION_ERROR_RANGE,
                                     TIME_SLOPE_ERROR_RANGE);
