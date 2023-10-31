@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Note about custom containers in the help.
 
+### Changed
+- Updated the Chrome extension to v0.0.7.
+
 ### Fixed
 - Cases where the Firefox profile was not added successfully via Selenium.
 
