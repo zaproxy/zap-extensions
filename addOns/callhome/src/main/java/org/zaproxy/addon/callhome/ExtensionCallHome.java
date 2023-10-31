@@ -286,6 +286,7 @@ public class ExtensionCallHome extends ExtensionAdaptor
                     || key.startsWith("soap.")
                     || key.startsWith("spiderAjax.")
                     || key.startsWith("stats.alertFilter")
+                    || key.startsWith("stats.api.")
                     || key.startsWith("stats.ascan.")
                     || key.startsWith("stats.auth.")
                     || key.startsWith("stats.auto.")
