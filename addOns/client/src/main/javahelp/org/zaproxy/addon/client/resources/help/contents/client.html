@@ -37,6 +37,29 @@ client side structure of the sites.
 Any leaf nodes in the Map with a small red 'minus' sign represent URLs which have been found in the DOM but which have not been directly accessed by ZAP.
 <p>
 Selecting a node that has been visited by ZAP will display details about that node in the Client Details tab.
+<p>
+The following context menu items are supported:
+
+<h4>Copy URLs to Clipboard</h4>
+
+Copies the URLs of the selected nodes into the clipboard, separated by newlines.
+
+<h4>Delete</h4>
+
+Deletes the selected nodes.
+
+<h4>Open in Browser</h4>
+
+Opens the selected node in the chosen browser.
+This menu item is disabled if multiple nodes are selected.
+If the URL contains a fragment then this will be passed to the browser.
+
+<h4>Show in Sites Tree</h4>
+
+Opens the selected node in the Sites Tree.
+The message in the Sites Tree does not necessarily match the same message which created the Site Node.
+This menu item is disabled if multiple nodes are selected or if the URL has not yet been visited.
+If the URL contains a fragment then this will be ignored.
 
 <h3>Client Details</h3>
 

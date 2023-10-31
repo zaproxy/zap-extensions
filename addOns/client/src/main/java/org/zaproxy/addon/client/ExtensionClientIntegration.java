@@ -28,6 +28,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -39,6 +40,7 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.client.impl.ClientZestRecorder;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.ZAP;
@@ -106,6 +108,21 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             extensionHook.getHookView().addSelectPanel(getClientMapPanel());
             extensionHook.getHookView().addWorkPanel(getClientDetailsPanel());
             extensionHook.getHookView().addStatusPanel(getClientHistoryPanel());
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(new PopupMenuClientAttack(this.getClientMapPanel()));
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(new PopupMenuClientCopyUrls(this.getClientMapPanel()));
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(new PopupMenuClientDelete(this.getClientMapPanel()));
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(new PopupMenuClientOpenInBrowser(clientMapPanel));
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(new PopupMenuClientShowInSites(this.getClientMapPanel()));
         }
     }
 
@@ -253,6 +270,18 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
 
     public void clientNodeChanged(ClientNode node) {
         this.clientTree.nodeChanged(node);
+    }
+
+    public void deleteNodes(List<ClientNode> nodes) {
+        this.clientTree.deleteNodes(nodes);
+        if (View.isInitialised()) {
+            String displayedUrl = this.getClientDetailsPanel().getCurrentUrl();
+            if (StringUtils.isNotBlank(displayedUrl)
+                    && nodes.stream()
+                            .anyMatch(n -> displayedUrl.equals(n.getUserObject().getUrl()))) {
+                this.getClientDetailsPanel().clear();
+            }
+        }
     }
 
     private ClientMapPanel getClientMapPanel() {

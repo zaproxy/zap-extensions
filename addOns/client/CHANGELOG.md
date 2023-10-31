@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Note about custom containers in the help.
+- Client Map context menu items.
 
 ### Changed
 - Updated the Chrome extension to v0.0.7.
