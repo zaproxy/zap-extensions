@@ -98,7 +98,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                         new ClientNode(
                                 new ClientSideDetails(
                                         Constant.messages.getString("client.tree.title"), null),
-                                false));
+                                this.getModel().getSession()));
 
         this.api = new ClientIntegrationAPI(this);
         extensionHook.addApiImplementor(this.api);

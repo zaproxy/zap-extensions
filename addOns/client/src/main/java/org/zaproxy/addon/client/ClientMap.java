@@ -21,7 +21,6 @@ package org.zaproxy.addon.client;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import org.apache.logging.log4j.LogManager;
@@ -44,75 +43,72 @@ public class ClientMap extends SortedTreeModel {
         return root;
     }
 
-    public synchronized ClientNode getOrAddNode(String url, boolean visited, boolean storage) {
+    public ClientNode getOrAddNode(String url, boolean visited, boolean storage) {
         LOGGER.debug("getOrAddNode {}", url);
+        return this.getNode(url, visited, storage, true);
+    }
+
+    public ClientNode getNode(String url, boolean visited, boolean storage) {
+        LOGGER.debug("getNode {}", url);
+        return this.getNode(url, visited, storage, false);
+    }
+
+    private synchronized ClientNode getNode(
+            String url, boolean visited, boolean storage, boolean add) {
         if (url == null) {
             throw new IllegalArgumentException("The url parameter should not be null");
         }
-        // Parse the URL into its component pieces
-        String urlLc = url.toLowerCase(Locale.ROOT);
-        if (!(urlLc.startsWith("http://") || urlLc.startsWith("https://"))) {
-            throw new IllegalArgumentException(
-                    "The url parameter must start with 'http://' or 'https://' - was " + urlLc);
-        }
-        int offset = url.indexOf("//") + 2;
-        String prefix = url.substring(0, offset);
-
-        String queryString = "";
-        int queryOffset = url.indexOf('?');
-        if (queryOffset > 0) {
-            queryString = url.substring(queryOffset);
-            url = url.substring(0, queryOffset);
-        }
+        List<String> nodeNames =
+                ClientUtils.urlToNodes(url, root.getSession().getUrlParamParser(url));
 
         ClientNode parent = root;
         ClientNode child = null;
-        String[] components = url.substring(offset).split("/");
-        for (int i = 0; i < components.length; i++) {
-            String component = prefix + components[i];
-            boolean isLastComponent = i == components.length - 1;
-            if (isLastComponent) {
-                // TODO just extract param names...
-                component += queryString;
-            }
-            prefix = "";
-            LOGGER.debug("component {}", component);
-            boolean foundParent = false;
-            for (int j = 0; j < parent.getChildCount(); j++) {
-                child = parent.getChildAt(j);
-                if ((!isLastComponent || storage == child.isStorage())
-                        && component.equals(child.getUserObject().getName())) {
-                    foundParent = true;
-                    break;
+
+        for (int i = 0; i < nodeNames.size(); i++) {
+            String nodeName = nodeNames.get(i);
+            boolean lastComponent = i == nodeNames.size() - 1;
+            child = parent.getChild(nodeName, lastComponent && storage);
+            if (child == null) {
+                if (!add) {
+                    return null;
                 }
-            }
-            if (!foundParent) {
-                String parentUrl;
-                if (parent.isRoot()) {
-                    parentUrl = component + "/";
+                if (lastComponent) {
+                    child =
+                            new ClientNode(
+                                    new ClientSideDetails(nodeName, url, visited, storage),
+                                    storage);
                 } else {
-                    String pUrl = parent.getUserObject().getUrl();
-                    if (!pUrl.endsWith("/")) {
-                        pUrl += "/";
+                    // Create intermediate node with a suitable URL
+                    String nodeUrl;
+                    if (parent.isRoot()) {
+                        nodeUrl = nodeName + "/";
+                    } else {
+                        boolean lastBeforeFragment =
+                                (i == nodeNames.size() - 2)
+                                        && (nodeNames.get(i + 1).startsWith("#")
+                                                || nodeNames.get(i + 1).startsWith("/#"));
+
+                        if (lastBeforeFragment) {
+                            // Special case - we will not have the param values at this point
+                            nodeUrl = url.substring(0, url.indexOf("#"));
+                        } else {
+
+                            String pUrl = parent.getUserObject().getUrl();
+                            if (!pUrl.endsWith("/") && !nodeName.startsWith("/")) {
+                                pUrl += "/";
+                            }
+                            nodeUrl = pUrl + nodeName + "/";
+                        }
                     }
-                    parentUrl = pUrl + component;
-                    if (!isLastComponent) {
-                        parentUrl += "/";
-                    }
+                    child =
+                            new ClientNode(
+                                    new ClientSideDetails(nodeName, nodeUrl, false, false), false);
                 }
-                child =
-                        new ClientNode(
-                                new ClientSideDetails(component, parentUrl, visited, storage),
-                                storage);
                 this.insertNodeInto(child, parent);
                 this.nodeStructureChanged(parent);
             }
             parent = child;
         }
-        if (child == null) {
-            throw new IllegalArgumentException("No userObject set for node with url " + url);
-        }
-
         return child;
     }
 
