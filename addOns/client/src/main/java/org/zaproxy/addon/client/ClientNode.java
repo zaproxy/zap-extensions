@@ -57,4 +57,9 @@ public class ClientNode extends DefaultMutableTreeNode {
         }
         return parent.getSite();
     }
+
+    @Override
+    public String toString() {
+        return getUserObject().getUrl();
+    }
 }

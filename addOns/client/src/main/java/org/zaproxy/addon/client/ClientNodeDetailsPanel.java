@@ -82,6 +82,10 @@ public class ClientNodeDetailsPanel extends AbstractPanel {
                 .setComponents(new ArrayList<>(node.getUserObject().getComponents()));
     }
 
+    public String getCurrentUrl() {
+        return this.urlLabel.getText();
+    }
+
     public void clear() {
         this.urlLabel.setText("");
         this.getComponentTableModel().setComponents(new ArrayList<>());

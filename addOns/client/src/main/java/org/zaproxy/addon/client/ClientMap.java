@@ -20,6 +20,7 @@
 package org.zaproxy.addon.client;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Locale;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
@@ -113,6 +114,14 @@ public class ClientMap extends SortedTreeModel {
         }
 
         return child;
+    }
+
+    public void deleteNodes(List<ClientNode> nodes) {
+        for (ClientNode node : nodes) {
+            if (!node.isRoot()) {
+                removeNodeFromParent(node);
+            }
+        }
     }
 
     public void clear() {

@@ -71,6 +71,10 @@ public class ClientDetailsPanel extends AbstractPanel {
         this.setTabFocus();
     }
 
+    public String getCurrentUrl() {
+        return this.nodeDetailsPanel.getCurrentUrl();
+    }
+
     public void clear() {
         this.nodeDetailsPanel.clear();
     }
