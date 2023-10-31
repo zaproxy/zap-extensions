@@ -19,6 +19,10 @@
  */
 package org.zaproxy.addon.network.internal.server.http.handlers;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.any;
@@ -29,9 +33,12 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.net.Socket;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -527,6 +534,88 @@ class LegacyProxyListenerHandlerUnitTest {
         verify(listener2, times(0)).onHttpRequestSend(message);
         verify(listener3, times(0)).onHttpRequestSend(message);
         assertContext(0, 0);
+    }
+
+    @Test
+    @Timeout(5)
+    void shouldNotifyProxyListenerConcurrently() throws Exception {
+        // Given
+        CyclicBarrier barrier = new CyclicBarrier(3);
+        ProxyListener listener =
+                new ProxyListener() {
+
+                    @Override
+                    public int getArrangeableListenerOrder() {
+                        return 0;
+                    }
+
+                    @Override
+                    public boolean onHttpRequestSend(HttpMessage msg) {
+                        try {
+                            barrier.await();
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onHttpResponseReceive(HttpMessage msg) {
+                        return true;
+                    }
+                };
+        handler.addProxyListener(listener);
+        ForkJoinPool pool = new ForkJoinPool(2);
+        // When
+        pool.submit(
+                () -> {
+                    handler.handleMessage(ctx, message);
+                    return null;
+                });
+        pool.submit(
+                () -> {
+                    handler.handleMessage(ctx, message);
+                    return null;
+                });
+        // Then
+        barrier.await();
+        pool.shutdown();
+        assertThat(barrier.isBroken(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldNotifyProxyListenerAllowingConcurrentModifications() throws Exception {
+        // Given
+        ProxyListener listenerA = mock(ProxyListener.class);
+        given(listenerA.onHttpRequestSend(message)).willReturn(true);
+        ProxyListener listenerB = mock(ProxyListener.class);
+        given(listenerB.onHttpRequestSend(message)).willReturn(true);
+        ProxyListener listener =
+                new ProxyListener() {
+
+                    @Override
+                    public int getArrangeableListenerOrder() {
+                        return Integer.MIN_VALUE;
+                    }
+
+                    @Override
+                    public boolean onHttpRequestSend(HttpMessage msg) {
+                        handler.removeProxyListener(listenerA);
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onHttpResponseReceive(HttpMessage msg) {
+                        return true;
+                    }
+                };
+        handler.addProxyListener(listener);
+        handler.addProxyListener(listenerA);
+        handler.addProxyListener(listenerB);
+        // When / Then
+        assertDoesNotThrow(() -> handler.handleMessage(ctx, message));
+        verify(listenerA).onHttpRequestSend(message);
+        verify(listenerB).onHttpRequestSend(message);
     }
 
     @Test

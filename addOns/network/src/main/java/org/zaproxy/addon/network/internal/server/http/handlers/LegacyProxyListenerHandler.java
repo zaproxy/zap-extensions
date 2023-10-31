@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CopyOnWriteArrayList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.proxy.ArrangeableProxyListener;
@@ -66,7 +67,7 @@ public class LegacyProxyListenerHandler extends org.parosproxy.paros.core.proxy.
     public LegacyProxyListenerHandler() {
         connectRequestProxyListeners = Collections.synchronizedList(new ArrayList<>());
         overrideMessageProxyListeners = Collections.synchronizedList(new ArrayList<>());
-        proxyListeners = Collections.synchronizedList(new ArrayList<>());
+        proxyListeners = new CopyOnWriteArrayList<>();
         persistentConnectionListeners = Collections.synchronizedList(new ArrayList<>());
 
         listenersComparator =
@@ -162,19 +163,17 @@ public class LegacyProxyListenerHandler extends org.parosproxy.paros.core.proxy.
             }
         }
 
-        synchronized (proxyListeners) {
-            boolean forward = true;
-            for (ProxyListener listener : proxyListeners) {
-                if (request) {
-                    forward = handleErrors(() -> listener.onHttpRequestSend(message), forward);
-                } else {
-                    forward = handleErrors(() -> listener.onHttpResponseReceive(message), forward);
-                }
+        boolean forward = true;
+        for (ProxyListener listener : proxyListeners) {
+            if (request) {
+                forward = handleErrors(() -> listener.onHttpRequestSend(message), forward);
+            } else {
+                forward = handleErrors(() -> listener.onHttpResponseReceive(message), forward);
+            }
 
-                if (!forward) {
-                    ctx.close();
-                    return;
-                }
+            if (!forward) {
+                ctx.close();
+                return;
             }
         }
     }
