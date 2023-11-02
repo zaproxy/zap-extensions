@@ -3149,6 +3149,17 @@
     "oss": true,
     "website": "https://angular.io"
   },
+  "Angular Gridster": {
+    "cats": [
+      25,
+      59
+    ],
+    "description": "Gridster is a JavaScript library, with a simple drag-and-drop interface, for creating intuitive, dynamic and customizable layouts in web applications.",
+    "icon": "Angular.svg",
+    "oss": true,
+    "scriptSrc": "angular-gridster(?:\\.min)?\\.js",
+    "website": "https://tiberiuzuld.github.io/angular-gridster2/"
+  },
   "Angular Material": {
     "cats": [
       66
@@ -3409,6 +3420,16 @@
     "saas": true,
     "scriptSrc": "\\.anyclip\\.com",
     "website": "https://www.anyclip.com"
+  },
+  "AnythingSlider": {
+    "cats": [
+      59
+    ],
+    "description": "A robust jQuery-based slider plugin.",
+    "icon": "AnythingSlider.svg",
+    "oss": true,
+    "scriptSrc": "anythingslider(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://css-tricks.com/anythingslider-jquery-plugin/"
   },
   "Apache APISIX": {
     "cats": [

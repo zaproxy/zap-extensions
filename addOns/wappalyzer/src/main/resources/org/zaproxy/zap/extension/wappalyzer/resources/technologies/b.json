@@ -196,6 +196,16 @@
     "oss": true,
     "website": "https://backdropcms.org"
   },
+  "Backstretch": {
+    "cats": [
+      25,
+      59
+    ],
+    "description": "A simple jQuery plugin that allows you to add a dynamically-resized, slideshow-capable background image to any page or element.",
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?(?:jquery\\.)?backstretch(?:\\.min)?\\.js\\;version:\\1",
+    "website": "https://www.jquery-backstretch.com/"
+  },
   "Baidu Analytics (百度统计)": {
     "cats": [
       10
