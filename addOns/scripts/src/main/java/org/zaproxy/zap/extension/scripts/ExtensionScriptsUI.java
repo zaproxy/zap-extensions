@@ -322,7 +322,7 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
         return scriptConsoleOptions;
     }
 
-    private ConsolePanel getConsolePanel() {
+    ConsolePanel getConsolePanel() {
         if (consolePanel == null) {
             consolePanel = new ConsolePanel(this);
             consolePanel.setName(Constant.messages.getString("scripts.panel.title"));

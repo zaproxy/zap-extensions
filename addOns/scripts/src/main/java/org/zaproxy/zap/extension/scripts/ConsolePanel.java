@@ -21,6 +21,8 @@ package org.zaproxy.zap.extension.scripts;
 
 import java.awt.BorderLayout;
 import java.awt.GridBagLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
@@ -36,6 +38,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import javax.swing.AbstractAction;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -45,6 +48,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
 import javax.swing.border.EmptyBorder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -101,9 +105,14 @@ public class ConsolePanel extends AbstractPanel {
                 Constant.messages.getString("scripts.changed.replace")
             };
 
+    // TODO: Remove after this add-on depends on ZAP 2.15.0
+    private final Object scriptLock = new Object();
+
     private Map<ScriptWrapper, Integer> scriptWrapperToOffset = new HashMap<>();
 
     private static final Logger LOGGER = LogManager.getLogger(ConsolePanel.class);
+    private static final int DEFAULT_MODIFIER =
+            Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
 
     public ConsolePanel(ExtensionScriptsUI extension) {
         super();
@@ -141,10 +150,12 @@ public class ConsolePanel extends AbstractPanel {
     }
 
     private boolean isScriptUpdatedOnDisk() {
-        if (script != null) {
+        if (script == null) {
+            return false;
+        }
+        synchronized (scriptLock) {
             return script.hasChangedOnDisk();
         }
-        return false;
     }
 
     private void startPollingForChanges() {
@@ -203,7 +214,9 @@ public class ConsolePanel extends AbstractPanel {
                     () -> {
                         if (getSaveOrReplaceScriptChoice() == JOptionPane.YES_OPTION) {
                             try {
-                                extension.getExtScript().saveScript(script);
+                                synchronized (scriptLock) {
+                                    extension.getExtScript().saveScript(script);
+                                }
                             } catch (IOException e) {
                                 LOGGER.error(e.getMessage(), e);
                             }
@@ -481,8 +494,13 @@ public class ConsolePanel extends AbstractPanel {
         if (listener == null) {
             listener =
                     new KeyListener() {
+
                         @Override
                         public void keyTyped(KeyEvent e) {
+                            // Ignore ctrl+S character code
+                            if (e.getKeyChar() == KeyEvent.VK_PAUSE) {
+                                return;
+                            }
                             if (script != null && !script.isChanged()) {
                                 extension.getExtScript().setChanged(script, true);
                             }
@@ -512,6 +530,25 @@ public class ConsolePanel extends AbstractPanel {
             commandPanel = new CommandPanel(getKeyListener());
             commandPanel.setEditable(false);
             commandPanel.setCommandScript(Constant.messages.getString("scripts.welcome.cmd"));
+            String saveScriptActionKey = "scripts.action.saveScript";
+            commandPanel
+                    .getInputMap(WHEN_IN_FOCUSED_WINDOW)
+                    .put(
+                            KeyStroke.getKeyStroke(KeyEvent.VK_S, DEFAULT_MODIFIER),
+                            saveScriptActionKey);
+            commandPanel
+                    .getActionMap()
+                    .put(
+                            saveScriptActionKey,
+                            new AbstractAction() {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    if (script == null) {
+                                        return;
+                                    }
+                                    extension.getScriptsPanel().saveScript(script);
+                                }
+                            });
         }
         return commandPanel;
     }
@@ -613,6 +650,10 @@ public class ConsolePanel extends AbstractPanel {
         if (!isTabVisible()) {
             setTabFocus();
         }
+    }
+
+    Object getScriptLock() {
+        return scriptLock;
     }
 
     /**
