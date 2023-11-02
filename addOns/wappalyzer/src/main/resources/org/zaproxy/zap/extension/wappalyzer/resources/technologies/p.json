@@ -421,6 +421,15 @@
     "saas": true,
     "website": "https://panelbear.com"
   },
+  "Pannellum": {
+    "cats": [
+      59
+    ],
+    "description": "Pannellum is a lightweight, free, and open source panorama viewer for the web.",
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/(?:build\\/)?)?pannellum(?:-plugin)?\\.js\\;version:\\1",
+    "website": "https://pannellum.org/"
+  },
   "Pantheon": {
     "cats": [
       62
