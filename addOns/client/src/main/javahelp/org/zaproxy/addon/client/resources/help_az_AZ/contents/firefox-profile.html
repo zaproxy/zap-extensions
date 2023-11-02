@@ -17,5 +17,19 @@ site you use it for, every time you launch a browser from ZAP.
 This is a Firefox restriction - for more details see Bugzilla
 <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1836309">Bug 183609</a>.
 
+<H2>Custom Containers</H2>
+
+If you want to use the ZAP Firefox extension in your own containers then you may find that it does not work out of the box.
+<p>
+It should work fine in the <a href="https://www.zaproxy.org/docs/docker/">ZAP Docker Images</a> as the 
+'zap-client-profile' is added to them.
+If you create your own container images then you may need to include it as well.
+<p>
+For more information see
+<ul>
+<li>The Docker <a href="https://github.com/zaproxy/zaproxy/tree/main/docker/firefox">firefox</a> directory
+<li>The nightly <a href="https://github.com/zaproxy/zaproxy/blob/main/docker/Dockerfile-live">docker build file</a>
+</ul>
+
 </BODY>
 </HTML>
