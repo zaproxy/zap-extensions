@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.10.0] - 2023-11-03
 ### Changed
 - Add error stats to telemetry.
 
@@ -72,6 +72,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version supports Check for Updates and News calls.
 
+[0.10.0]: https://github.com/zaproxy/zap-extensions/releases/callhome-v0.10.0
 [0.9.0]: https://github.com/zaproxy/zap-extensions/releases/callhome-v0.9.0
 [0.8.0]: https://github.com/zaproxy/zap-extensions/releases/callhome-v0.8.0
 [0.7.0]: https://github.com/zaproxy/zap-extensions/releases/callhome-v0.7.0
