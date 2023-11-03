@@ -3297,6 +3297,15 @@
     "scriptSrc": "app\\.mobicredwidget\\.co\\.za",
     "website": "https://mobicred.co.za/"
   },
+  "mobile-detect.js": {
+    "cats": [
+      59
+    ],
+    "description": "Mobile-detect.js is a compact JavaScript library designed to detect devices by comparing patterns against a given User-Agent string.",
+    "oss": true,
+    "scriptSrc": "mobile-detect(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://hgoebl.github.io/mobile-detect.js/doc/MobileDetect.html"
+  },
   "mod_auth_pam": {
     "cats": [
       33

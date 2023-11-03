@@ -208,6 +208,16 @@
     "scriptSrc": "handlebars(?:\\.runtime)?(?:-v([\\d.]+?))?(?:\\.min)?\\.js\\;version:\\1",
     "website": "https://handlebarsjs.com"
   },
+  "Handsontable": {
+    "cats": [
+      59
+    ],
+    "description": "A front-end component that combines data grid features with spreadsheet UX/UI. Professional support included.",
+    "icon": "Handsontable.png",
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?(?:jquery\\.)?handsontable(?:\\.full)?(?:\\.min)?(?:\\.[\\w]+)?\\.js\\;version:\\1",
+    "website": "https://handsontable.com/"
+  },
   "Handtalk": {
     "cats": [
       68
