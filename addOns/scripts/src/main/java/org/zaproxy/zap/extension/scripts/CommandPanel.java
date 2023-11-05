@@ -22,9 +22,11 @@ package org.zaproxy.zap.extension.scripts;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.event.KeyListener;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.text.StyleContext;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.parosproxy.paros.Constant;
@@ -193,6 +195,10 @@ public class CommandPanel extends AbstractPanel implements OptionsChangedListene
     }
 
     void optionsChanged(ScriptConsoleOptions options) {
+        var font =
+                StyleContext.getDefaultStyleContext()
+                        .getFont(options.getFontName(), Font.PLAIN, options.getFontSize());
+        getTxtOutput().setFont(font);
         getTxtOutput().setTabSize(options.getTabSize());
         getTxtOutput().setTabsEmulated(!options.isUseTabCharacter());
     }
