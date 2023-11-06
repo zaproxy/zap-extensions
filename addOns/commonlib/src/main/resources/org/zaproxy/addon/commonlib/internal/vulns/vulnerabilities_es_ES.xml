@@ -27,7 +27,7 @@ Un ejemplo muy claro fue el truco realizado en el 2005 del proceso de solicitud 
  
 La autorización de datos es insuficiente
 
-Muchas aplicaciones manifiestan identificadores de datos ocultas en una URL. For example, when accessing a medical record on a system one might have a URL such as:
+Muchas aplicaciones manifiestan identificadores de datos ocultas en una URL. Por ejemplo, al acceder a un historial médico en un sistema se puede tener una URL como la siguiente:
 
 http://example.com/RecordView?id=12345
 
@@ -72,7 +72,7 @@ Asegúrate de tener en cuenta las posibles diferencias entre representaciones de
 
 Fase: Implementación
 Examina detenidamente las advertencias del compilador y elimina problemas potencialmente críticos de seguridad, como las discrepancias de signo/sin signo. Aunque la debilidad sea de difícil explotación, un solo fallo puede poner en riesgo la seguridad de todo el sistema.</solution>
-	<reference>http://projects.webappsec.org/Brute-Force</reference>
+	<reference>http://projects.webappsec.org/Integer-Overflows</reference>
 	<reference>https://cwe.mitre.org/data/definitions/190.html</reference>
 </vuln_item_wasc_3>
 
@@ -339,16 +339,16 @@ Asegúrese de que todas las fallas ocurridas en la asignación de recursos coloq
 
 El tipo más común de ataques de fuerza bruta en las aplicaciones web es aquel de un ataque contra las credenciales del inicio de sesión. Dado que todos los usuarios necesitan recordar las contraseñas, de formo frecuente seleccionan la opcion fácil de memorizar las palabras o frases como contraseñas, lo que hace que un ataque de fuerza bruta utilizando un diccionario sea muy eficaz. Tal ataque que trata de iniciar la sesión en un sistema utilizando una gran lista de palabras y frases como contraseñas que son potencialmente, normalmente se le denomina "ataque de lista de palabras" o "ataque de diccionario". Las contraseñas que fueron tratadas también pueden incluir cambios de palabras comunes a las contraseñas, como las que fueron generados por el reemplazo "o" con "0" e "i" con "1", así como información personal, incluyendo los nombres de los miembros de la familia, fechas de nacimiento y números de teléfonos.
 	</desc>
-	<solution>Brute force attacks are among the hardest to prevent, but with thorough analysis, design, and multiple countermeasures, you could limit your system's exposure to them. The general strategy is to decrease the automation potential and credential discovery likelihood. Techniques to consider include:
-    * Password Policy: Implement adequate requirements for complex passwords that are long enough and contain uncommon words, digits, and special characters;
-    * Multi-factor Authentication (MFA): MFA requires the user to provide more than one type of evidence to the authentication mechanism, thus limiting the automation potential;
-    * CAPTCHA: The CAPTCHA aims to decrease the automation potential;
-    * Web Application Firewall (WAF): WAFs strive to detect patterns of malicious traffic and could help to recognize and block brute force attacks;
-    * Rate Limiting: Restricting the number of unsuccessful login attempts from an IP address over a given period will limit the automation potential;
-    * Account Lockouts: Lock an account for a certain period after a defined number of unsuccessful login attempts;
-It is important that the techniques used to limit user access to the system be implemented properly in order to prevent abuses and negative side effects such as denial of service.
+	<solution>Los ataques de fuerza bruta se encuentran entre los más difíciles de prevenir, pero con un análisis y un diseño minuciosos, y múltiples contramedidas, podría limitar la exposición de su sistema a ellos. La estrategia general consiste en disminuir el potencial de automatización y la probabilidad de descubrimiento de credenciales. Las técnicas a considerar incluyen:
+     * Política de contraseñas: implementar requisitos adecuados para contraseñas complejas que sean lo suficientemente largas y contengan palabras, dígitos y caracteres especiales poco comunes;
+     * Autenticación multifactor (MFA): MFA requiere que el usuario proporcione más de un tipo de evidencia al mecanismo de autenticación, lo que limita el potencial de automatización;
+     * CAPTCHA: El CAPTCHA tiene como objetivo disminuir el potencial de automatización;
+     * Web Application Firewall (WAF): Los WAF se esfuerzan por detectar patrones de tráfico malicioso y podrían ayudar a reconocer y bloquear ataques de fuerza bruta;
+     * Limitación de velocidad: restringir la cantidad de intentos fallidos de inicio de sesión desde una dirección IP durante un período determinado limitará el potencial de automatización;
+     * Bloqueos de cuentas: bloquea una cuenta durante un período determinado después de un número definido de intentos fallidos de inicio de sesión;
+Es importante que las técnicas utilizadas para limitar el acceso de los usuarios al sistema se implementen correctamente para evitar abusos y efectos secundarios negativos como la denegación de servicio.
 
-Additionally consider migrating to password-less authentication mechanisms like passkeys.</solution>
+Además, considere migrar a mecanismos de autenticación sin contraseña, como passkeys.</solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11a>
 
@@ -359,7 +359,7 @@ Additionally consider migrating to password-less authentication mechanisms like 
 
 Dado que HTTP es un protocolo que no tienen estado, para poder mantener las aplicaciones web de estado usted debe asegurarse de que el navegador envíe un identificador de la sesión con cada solicitud. El identificador de la sesión normalmente se almacena en una cookie o URL HTTP. Utilizando un ataque de fuerza bruta, un atacante puede determinar el identificador de la sesión de otro usuario. Esto puedo provocar al atacante a suplantar al usuario, recuperar información personal y producir una serie de acciones en nombre del usuario.
 	</desc>
-	<solution>Use mechanisms that generate random, transient, and unpredictable session identifiers.</solution>
+	<solution>Utilizar mecanismos que generen identificadores de sesión aleatorios, transitorios e impredecibles.</solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11b>
 
@@ -372,7 +372,7 @@ Cuando los archivos se encuentran en directorios que son sevidos por el servidor
 
 Un ataque de fuerza bruta intenta localizar el archivo sin vínculo al intentar acceder a un largo número de archivos. La lista de nombres archivos intentados podría ser tomada desde una lista de archivos potencialmente conocidos o basada en las variantes de los archivos visibles en la web. Mas información sobre los directorios y archivos brutalmente forzados puede ser encontrado en la vulnerabilidad asociada, ubicación de recursos predecibles.
 	</desc>
-	<solution>Never rely on "security by obscurity" mechanisms to restrict access to sensitive files and directories on a web server. Implement appropriate access control measures if hosting sensitive information is required.</solution>
+	<solution>Nunca confíes en mecanismos de "security by obscurity" para restringir el acceso a archivos y directorios sensibles en un servidor web. Aplique medidas adecuadas de control de acceso si es necesario alojar información sensible.</solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11c>
 
