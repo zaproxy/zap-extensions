@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Do not use white background in Client Details and show Client Map icons properly when using Mac OS X look and feel (Issue 8175).
+
 ## [0.4.0] - 2023-10-31
 ### Added
 - Note about custom containers in the help.

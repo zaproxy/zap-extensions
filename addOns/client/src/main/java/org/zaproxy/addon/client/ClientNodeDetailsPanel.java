@@ -19,11 +19,8 @@
  */
 package org.zaproxy.addon.client;
 
-import java.awt.Color;
+import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -36,7 +33,6 @@ import javax.swing.SortOrder;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.ZapTable;
 
 public class ClientNodeDetailsPanel extends AbstractPanel {
@@ -53,7 +49,7 @@ public class ClientNodeDetailsPanel extends AbstractPanel {
     public ClientNodeDetailsPanel() {
         super();
 
-        this.setLayout(new GridBagLayout());
+        this.setLayout(new BorderLayout());
         setName(Constant.messages.getString(ExtensionClientIntegration.PREFIX + ".details.title"));
         setIcon(
                 new ImageIcon(
@@ -61,12 +57,7 @@ public class ClientNodeDetailsPanel extends AbstractPanel {
                                 ExtensionClientIntegration.RESOURCES
                                         + "/application-browser.png")));
 
-        this.setBackground(Color.WHITE);
-
-        add(
-                urlLabel,
-                LayoutHelper.getGBC(
-                        0, 0, 1, 1.0, 0.0, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2)));
+        add(urlLabel, BorderLayout.NORTH);
 
         table = new ZapTable();
         table.setModel(getComponentTableModel());
@@ -83,16 +74,7 @@ public class ClientNodeDetailsPanel extends AbstractPanel {
                     }
                 });
 
-        add(
-                new JScrollPane(table),
-                LayoutHelper.getGBC(
-                        0, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2)));
-
-        // Padding
-        add(
-                new JLabel(),
-                LayoutHelper.getGBC(
-                        0, 2, 1, 1.0, 1.0, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2)));
+        add(new JScrollPane(table));
     }
 
     public void setClientNode(ClientNode node) {

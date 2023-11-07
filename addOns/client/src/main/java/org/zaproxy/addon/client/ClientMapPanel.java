@@ -30,6 +30,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.LookAndFeel;
+import javax.swing.UIManager;
 import javax.swing.tree.TreePath;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
@@ -75,6 +77,14 @@ public class ClientMapPanel extends AbstractPanel {
         clientTree.setToggleClickCount(1);
         clientTree.setCellRenderer(new ClientMapTreeCellRenderer());
         clientTree.setComponentPopupMenu(new ClientCustomPopupMenu());
+
+        // Let the cell renderer define the height to properly show the icons.
+        LookAndFeel laf = UIManager.getLookAndFeel();
+        if (laf != null
+                && Constant.isMacOsX()
+                && UIManager.getSystemLookAndFeelClassName().equals(laf.getClass().getName())) {
+            clientTree.setRowHeight(0);
+        }
 
         clientTree.addTreeSelectionListener(
                 e -> {
