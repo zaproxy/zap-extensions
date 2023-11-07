@@ -393,13 +393,11 @@ In order to fill in the missing information the hacker can guess the missing inf
 		<solution>Phase: Architecture and Design
 To mitigate the risk of brute force attacks on credit card information, follow these best practices:
 
-* Implement Account Lockout: Implement an account lockout mechanism that temporarily locks an account after a certain number of failed login attempts. This will make brute force attacks significantly more difficult.
-* Strong Password Policies: Enforce strong password policies for users, including the use of complex and unique passwords. Avoid common or easily guessable passwords.
-* CAPTCHA Protection: Implement CAPTCHA challenges during the login or payment process to differentiate between human and automated attempts. CAPTCHAs can help prevent automated brute force attacks.
-* Rate Limiting: Implement rate limiting on login or payment attempts. Limit the number of requests from a single IP address or user account within a specific time frame.
+* CAPTCHA Protection: Implement CAPTCHA challenges during the payment process to differentiate between human and automated attempts. CAPTCHAs can help prevent automated brute force attacks.
+* Rate Limiting: Implement rate limiting on payment attempts. Limit the number of requests from a single IP address or user account within a specific time frame.
 * Multi-Factor Authentication (MFA): Require multi-factor authentication for sensitive transactions, including online payments. MFA adds an extra layer of security by verifying the user's identity through multiple factors, making brute force attacks more difficult.
 * Secure Data Storage: Ensure that credit card information is securely stored and encrypted. Limit access to sensitive data to authorized personnel only.
-* Continuous Monitoring: Implement continuous monitoring to detect and respond to suspicious activities, including multiple failed login attempts.
+* Continuous Monitoring: Implement continuous monitoring to detect and respond to suspicious activities, including multiple failed payment attempts.
 * Compliance with PCI DSS: If your application processes credit card information, ensure compliance with Payment Card Industry Data Security Standard (PCI DSS) requirements, which provide security guidelines for handling credit card data.
 
 Phase: Implementation
