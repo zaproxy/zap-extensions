@@ -20,26 +20,32 @@
 package org.zaproxy.addon.client;
 
 import java.awt.event.ActionEvent;
-import org.parosproxy.paros.Constant;
+import java.util.function.Function;
 
-public class PopupMenuClientCopyUrls extends PopupMenuItemClient {
+@SuppressWarnings("serial")
+public class PopupMenuClientDetailsCopy extends PopupMenuItemClientDetails {
 
     private static final long serialVersionUID = 1L;
 
-    public PopupMenuClientCopyUrls(ClientMapPanel clientMapPanel) {
-        super(Constant.messages.getString("client.tree.popup.copyurls"), clientMapPanel);
+    private Function<ClientSideComponent, String> function;
+
+    public PopupMenuClientDetailsCopy(
+            ClientDetailsPanel clientDetailsPanel,
+            String text,
+            Function<ClientSideComponent, String> function) {
+        super(text, clientDetailsPanel);
+        this.function = function;
     }
 
     @Override
     public void performAction(ActionEvent e) {
         StringBuilder sb = new StringBuilder();
-        for (ClientNode node : getClientMapPanel().getSelectedNodes()) {
-            if (!node.isRoot()
-                    && node.getUserObject() != null
-                    && !node.getUserObject().isStorage()) {
-                sb.append(node.getUserObject().getUrl());
-                sb.append('\n');
+        for (ClientSideComponent obj : getClientDetailsPanel().getSelectedRows()) {
+            String val = this.function.apply(obj);
+            if (val != null) {
+                sb.append(val);
             }
+            sb.append('\n');
         }
         ClientUtils.setClipboardContents(sb.toString());
     }

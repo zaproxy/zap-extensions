@@ -20,24 +20,33 @@
 package org.zaproxy.addon.client;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.SortOrder;
-import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.LayoutHelper;
+import org.zaproxy.zap.view.ZapTable;
 
 public class ClientNodeDetailsPanel extends AbstractPanel {
+
+    public static final String CLIENT_DETAILS_NAME = "tableClientDetails";
 
     private static final long serialVersionUID = 1L;
 
     private ComponentTableModel componentTableModel;
+    private ZapTable table;
 
     private JLabel urlLabel = new JLabel();
 
@@ -59,10 +68,20 @@ public class ClientNodeDetailsPanel extends AbstractPanel {
                 LayoutHelper.getGBC(
                         0, 0, 1, 1.0, 0.0, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2)));
 
-        JXTable table = new JXTable();
+        table = new ZapTable();
         table.setModel(getComponentTableModel());
+        table.setName(CLIENT_DETAILS_NAME);
         table.setSortOrder(0, SortOrder.ASCENDING);
         table.setColumnControlVisible(true);
+        table.setComponentPopupMenu(
+                new JPopupMenu() {
+                    private static final long serialVersionUID = 1L;
+
+                    @Override
+                    public void show(Component invoker, int x, int y) {
+                        View.getSingleton().getPopupMenu().show(invoker, x, y);
+                    }
+                });
 
         add(
                 new JScrollPane(table),
@@ -91,10 +110,17 @@ public class ClientNodeDetailsPanel extends AbstractPanel {
         this.getComponentTableModel().setComponents(new ArrayList<>());
     }
 
-    private ComponentTableModel getComponentTableModel() {
+    protected ComponentTableModel getComponentTableModel() {
         if (componentTableModel == null) {
             componentTableModel = new ComponentTableModel();
         }
         return componentTableModel;
+    }
+
+    public List<ClientSideComponent> getSelectedRows() {
+        return Arrays.stream(table.getSelectedRows())
+                .map(table::convertRowIndexToModel)
+                .mapToObj(getComponentTableModel()::getComponent)
+                .collect(Collectors.toList());
     }
 }

@@ -19,6 +19,9 @@
  */
 package org.zaproxy.addon.client;
 
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -106,5 +109,10 @@ public class ClientUtils {
         }
         sb.append(')');
         return sb.toString();
+    }
+
+    public static void setClipboardContents(String str) {
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(new StringSelection(str), null);
     }
 }

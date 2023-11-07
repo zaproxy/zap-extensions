@@ -19,14 +19,22 @@
  */
 package org.zaproxy.addon.client;
 
+import java.awt.Component;
 import java.awt.GridBagLayout;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.swing.ImageIcon;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.table.TableRowSorter;
 import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.ZapTable;
@@ -35,6 +43,7 @@ import org.zaproxy.zap.view.renderer.DateFormatStringValue;
 public class ClientHistoryPanel extends AbstractPanel {
 
     private static final long serialVersionUID = 1L;
+    public static final String CLIENT_HISTORY_NAME = "tableClientHistory";
 
     private ClientHistoryTableModel clientHistoryTableModel;
     private ZapTable historyTable;
@@ -55,9 +64,17 @@ public class ClientHistoryPanel extends AbstractPanel {
         this.add(jScrollPane, LayoutHelper.getGBC(0, 0, 1, 1.0, 1.0));
     }
 
+    public List<ReportedObject> getSelectedRows() {
+        return Arrays.stream(this.getHistoryTable().getSelectedRows())
+                .map(getHistoryTable()::convertRowIndexToModel)
+                .mapToObj(clientHistoryTableModel::getReportedObject)
+                .collect(Collectors.toList());
+    }
+
     private JXTable getHistoryTable() {
         if (historyTable == null) {
             historyTable = new ZapTable(clientHistoryTableModel);
+            historyTable.setName(CLIENT_HISTORY_NAME);
 
             historyTable.setDefaultRenderer(
                     Date.class, new DefaultTableRenderer(new DateFormatStringValue()));
@@ -81,6 +98,29 @@ public class ClientHistoryPanel extends AbstractPanel {
 
             historyTable.getColumnModel().getColumn(7).setMinWidth(100); // Text
             historyTable.getColumnModel().getColumn(7).setPreferredWidth(300);
+
+            // The # column can contain positive numbers and blank strings
+            TableRowSorter<?> tableRowSorter = new TableRowSorter<>(clientHistoryTableModel);
+            tableRowSorter.setComparator(
+                    4,
+                    new Comparator<>() {
+
+                        @Override
+                        public int compare(Object o1, Object o2) {
+                            return o1.toString().compareTo(o2.toString());
+                        }
+                    });
+            historyTable.setRowSorter(tableRowSorter);
+
+            historyTable.setComponentPopupMenu(
+                    new JPopupMenu() {
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        public void show(Component invoker, int x, int y) {
+                            View.getSingleton().getPopupMenu().show(invoker, x, y);
+                        }
+                    });
         }
         return historyTable;
     }
