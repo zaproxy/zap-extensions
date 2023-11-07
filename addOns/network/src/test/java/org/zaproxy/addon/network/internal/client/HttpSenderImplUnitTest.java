@@ -859,24 +859,31 @@ class HttpSenderImplUnitTest {
                             + "				// some comment FOLLOWED BY TRAILING TABS:		\r"
                             + "				theLineAfterwards();\r\n";
 
+            private Supplier<String> headerSupplier;
             private Supplier<String> chunkedBodySupplier;
 
             @BeforeEach
             void setUp() {
+                headerSupplier = () -> RESPONSE_HEADER;
                 server.setHttpMessageHandler(
                         (ctx, msg) -> {
-                            msg.setResponseHeader(RESPONSE_HEADER);
+                            msg.setResponseHeader(headerSupplier.get());
                             msg.setResponseBody(chunkedBodySupplier.get());
                         });
             }
 
             private void assertResponseNotChunked() {
+                assertResponseNotChunked(249, RESPONSE_BODY);
+            }
+
+            private void assertResponseNotChunked(int contentLength, String body) {
                 assertThat(server.getReceivedMessages(), hasSize(1));
                 assertThat(
                         message.getResponseHeader().getHeader("Transfer-Encoding"),
                         is(nullValue()));
-                assertThat(message.getResponseBody().toString(), is(equalTo(RESPONSE_BODY)));
-                assertThat(message.getResponseHeader().getContentLength(), is(equalTo(249)));
+                assertThat(message.getResponseBody().toString(), is(equalTo(body)));
+                assertThat(
+                        message.getResponseHeader().getContentLength(), is(equalTo(contentLength)));
             }
 
             @ParameterizedTest
@@ -929,6 +936,27 @@ class HttpSenderImplUnitTest {
                 method.sendWith(httpSender, message);
                 // Then
                 assertResponseNotChunked();
+            }
+
+            @ParameterizedTest
+            @MethodSource(
+                    "org.zaproxy.addon.network.internal.client.HttpSenderImplUnitTest#sendAndReceiveMethods")
+            void shouldHaveChunksRemovedButNoContentLengthIfSse(SenderMethod method)
+                    throws Exception {
+                // Given
+                headerSupplier =
+                        () ->
+                                "HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\nContent-Type: text/event-stream\r\n\r\n";
+                chunkedBodySupplier =
+                        () ->
+                                Integer.toHexString(RESPONSE_BODY.length())
+                                        + "\r\n"
+                                        + RESPONSE_BODY
+                                        + "\r\n0\r\n\r\n";
+                // When
+                method.sendWith(httpSender, message);
+                // Then
+                assertResponseNotChunked(-1, "");
             }
         }
     }
