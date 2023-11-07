@@ -520,7 +520,7 @@ public class HttpSenderApache
 
         updateRequestHeaders(message.getRequestHeader(), requestCtx.getRequest());
 
-        if (isSet(requestCtx, RemoveTransferEncoding.ATTR_NAME)) {
+        if (isSet(requestCtx, RemoveTransferEncoding.ATTR_NAME) && !message.isEventStream()) {
             message.getResponseHeader().setContentLength(message.getResponseBody().length());
         }
 

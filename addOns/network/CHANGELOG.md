@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Handle cookies like browsers, mostly send what is received (Issues 1232 and 7874).
+- Do not set content-length to SSE responses, which would end up being closed prematurely.
 
 ## [0.12.0] - 2023-10-12
 ### Added
