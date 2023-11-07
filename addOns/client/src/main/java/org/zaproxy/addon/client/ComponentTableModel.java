@@ -82,6 +82,10 @@ public class ComponentTableModel extends AbstractTableModel {
         return false;
     }
 
+    public ClientSideComponent getComponent(int rowIndex) {
+        return components.get(rowIndex);
+    }
+
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         ClientSideComponent component = components.get(rowIndex);

@@ -20,19 +20,44 @@
 package org.zaproxy.addon.client;
 
 import java.util.Date;
+import net.sf.json.JSONObject;
 import org.parosproxy.paros.Constant;
 
 public abstract class ReportedObject {
 
     private Date timestamp;
     private String type;
+    private String tagName;
+    private String id;
+    private String nodeName;
+    private String url;
+    private String xpath;
+    private String href;
+    private String text;
 
     private static final String I18N_PREFIX = "client.type.";
 
-    protected ReportedObject(Date timestamp, String type) {
-        super();
-        this.timestamp = timestamp;
+    protected ReportedObject(JSONObject json) {
+        this(json, json.getString("type"));
+    }
+
+    protected ReportedObject(JSONObject json, String type) {
+        this.timestamp = new Date(json.getLong("timestamp"));
         this.type = type;
+        this.tagName = getParam(json, "tagName");
+        this.id = getParam(json, "id");
+        this.nodeName = getParam(json, "nodeName");
+        this.url = getParam(json, "url");
+        this.xpath = getParam(json, "xpath");
+        this.href = getParam(json, "href");
+        this.text = getParam(json, "text");
+    }
+
+    protected static String getParam(JSONObject json, String param) {
+        if (json.containsKey(param)) {
+            return json.getString(param);
+        }
+        return null;
     }
 
     public Date getTimestamp() {
@@ -48,5 +73,33 @@ public abstract class ReportedObject {
             return Constant.messages.getString(I18N_PREFIX + type);
         }
         return type;
+    }
+
+    public String getTagName() {
+        return tagName;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getNodeName() {
+        return nodeName;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getXpath() {
+        return xpath;
+    }
+
+    public String getHref() {
+        return href;
+    }
+
+    public String getText() {
+        return text;
     }
 }

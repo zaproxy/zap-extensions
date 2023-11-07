@@ -19,55 +19,11 @@
  */
 package org.zaproxy.addon.client;
 
-import java.util.Date;
 import net.sf.json.JSONObject;
 
 public class ReportedNode extends ReportedObject {
 
-    private String tagName;
-    private String nodeId;
-    private String nodeName;
-    private String url;
-    private String href;
-    private String text;
-
     public ReportedNode(JSONObject json) {
-        super(new Date(json.getLong("timestamp")), json.getString("type")); // Not for storage
-        if (json.containsKey("tagName")) {
-            this.tagName = json.getString("tagName");
-        }
-        this.nodeId = json.getString("id");
-        this.nodeName = json.getString("nodeName");
-        this.url = json.getString("url");
-        if (json.containsKey("href")) {
-            this.href = json.getString("href");
-        }
-        if (json.containsKey("text")) {
-            this.text = json.getString("text").trim();
-        }
-    }
-
-    public String getTagName() {
-        return tagName;
-    }
-
-    public String getNodeId() {
-        return nodeId;
-    }
-
-    public String getNodeName() {
-        return nodeName;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public String getHref() {
-        return href;
-    }
-
-    public String getText() {
-        return text;
+        super(json);
     }
 }

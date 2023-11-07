@@ -108,6 +108,8 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             extensionHook.getHookView().addSelectPanel(getClientMapPanel());
             extensionHook.getHookView().addWorkPanel(getClientDetailsPanel());
             extensionHook.getHookView().addStatusPanel(getClientHistoryPanel());
+
+            // Client Map menu items
             extensionHook
                     .getHookMenu()
                     .addPopupMenuItem(new PopupMenuClientAttack(this.getClientMapPanel()));
@@ -123,6 +125,68 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             extensionHook
                     .getHookMenu()
                     .addPopupMenuItem(new PopupMenuClientShowInSites(this.getClientMapPanel()));
+
+            // Client History menu items
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(
+                            new PopupMenuClientHistoryCopy(
+                                    this.getClientHistoryPanel(),
+                                    Constant.messages.getString(
+                                            "client.history.popup.copy.nodeids"),
+                                    ReportedObject::getId));
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(
+                            new PopupMenuClientHistoryCopy(
+                                    this.getClientHistoryPanel(),
+                                    Constant.messages.getString(
+                                            "client.history.popup.copy.nodenames"),
+                                    ReportedObject::getNodeName));
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(
+                            new PopupMenuClientHistoryCopy(
+                                    this.getClientHistoryPanel(),
+                                    Constant.messages.getString("client.history.popup.copy.urls"),
+                                    ReportedObject::getUrl));
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(
+                            new PopupMenuClientHistoryCopy(
+                                    this.getClientHistoryPanel(),
+                                    Constant.messages.getString("client.history.popup.copy.texts"),
+                                    ReportedObject::getText));
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(
+                            new PopupMenuClientHistoryCopy(
+                                    this.getClientHistoryPanel(),
+                                    Constant.messages.getString("client.history.popup.copy.types"),
+                                    ReportedObject::getI18nType));
+
+            // Client Details menu items
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(
+                            new PopupMenuClientDetailsCopy(
+                                    this.getClientDetailsPanel(),
+                                    Constant.messages.getString("client.details.popup.copy.hrefs"),
+                                    ClientSideComponent::getHref));
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(
+                            new PopupMenuClientDetailsCopy(
+                                    this.getClientDetailsPanel(),
+                                    Constant.messages.getString("client.details.popup.copy.ids"),
+                                    ClientSideComponent::getId));
+            extensionHook
+                    .getHookMenu()
+                    .addPopupMenuItem(
+                            new PopupMenuClientDetailsCopy(
+                                    this.getClientDetailsPanel(),
+                                    Constant.messages.getString("client.details.popup.copy.texts"),
+                                    ClientSideComponent::getText));
         }
     }
 

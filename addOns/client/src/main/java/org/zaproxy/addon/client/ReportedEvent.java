@@ -19,30 +19,15 @@
  */
 package org.zaproxy.addon.client;
 
-import java.util.Date;
 import net.sf.json.JSONObject;
 
 public class ReportedEvent extends ReportedObject {
 
-    private String tagName;
-    private String url;
     private int count;
 
     public ReportedEvent(JSONObject json) {
-        super(new Date(json.getLong("timestamp")), json.getString("eventName"));
-        if (json.containsKey("tagName")) {
-            this.tagName = json.getString("tagName");
-        }
-        this.url = json.getString("url");
+        super(json, json.getString("eventName"));
         this.count = json.getInt("count");
-    }
-
-    public String getTagName() {
-        return tagName;
-    }
-
-    public String getUrl() {
-        return url;
     }
 
     public int getCount() {
