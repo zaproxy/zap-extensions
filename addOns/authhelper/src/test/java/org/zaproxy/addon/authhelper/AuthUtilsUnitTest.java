@@ -54,6 +54,8 @@ class AuthUtilsUnitTest extends TestUtils {
 
     @BeforeEach
     void setUp() throws Exception {
+        setUpZap();
+
         mockMessages(new ExtensionAuthhelper());
         AuthUtils.clean();
     }

@@ -37,8 +37,9 @@ import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventPublisher;
 import org.zaproxy.zap.model.StandardParameterParser;
 import org.zaproxy.zap.model.Target;
+import org.zaproxy.zap.testutils.TestUtils;
 
-class MissingUrlsThreadUnitTest {
+class MissingUrlsThreadUnitTest extends TestUtils {
 
     private static final String AAA_URL = "https://aaa.example.com";
     private static final String CCC_URL = "https://ccc.example.com";
@@ -49,12 +50,12 @@ class MissingUrlsThreadUnitTest {
     private ClientNode root;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
+        setUpZap();
+
         model = mock(Model.class);
         session = mock(Session.class);
-        given(model.getSession()).willReturn(session);
         siteMap = mock(SiteMap.class);
-        given(session.getSiteTree()).willReturn(siteMap);
         StandardParameterParser ssp = new StandardParameterParser();
         given(session.getUrlParamParser(any(String.class))).willReturn(ssp);
         root = new ClientNode(new ClientSideDetails("Root", ""), session);
@@ -63,6 +64,9 @@ class MissingUrlsThreadUnitTest {
     @Test
     void shouldAddUrlInUnderStartNode() throws IOException {
         // Given
+        given(model.getSession()).willReturn(session);
+        given(session.getSiteTree()).willReturn(siteMap);
+
         ClientMap map = new ClientMap(root);
         map.getOrAddNode(AAA_URL, false, false);
 
