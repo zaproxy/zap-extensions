@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Update Selenium to version 4.14.1.
 
+### Fixed
+- Add vertical scroll bar to the options panel to prevent the options from being hidden when resizing the Options dialogue (Issue 8178).
+
 ## [15.15.0] - 2023-10-12
 ### Changed
 - Update Selenium to version 4.14.0.
