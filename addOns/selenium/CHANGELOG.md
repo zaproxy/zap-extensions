@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
-- Update Selenium to version 4.14.1.
+- Update Selenium to version 4.15.0.
 
 ## [15.15.0] - 2023-10-12
 ### Changed
