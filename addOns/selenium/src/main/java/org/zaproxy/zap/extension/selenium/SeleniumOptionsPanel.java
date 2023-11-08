@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.selenium;
 
+import java.awt.BorderLayout;
 import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,7 +41,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.border.TitledBorder;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.AbstractParamPanel;
@@ -326,8 +329,9 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
         browserExtLayout.setVerticalGroup(
                 browserExtLayout.createSequentialGroup().addComponent(browserExtOptionsPanel));
 
-        GroupLayout layout = new GroupLayout(this);
-        setLayout(layout);
+        JPanel innerPanel = new JPanel();
+        GroupLayout layout = new GroupLayout(innerPanel);
+        innerPanel.setLayout(layout);
 
         layout.setAutoCreateGaps(true);
         layout.setAutoCreateContainerGaps(true);
@@ -342,6 +346,13 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                         .addComponent(driversPanel)
                         .addComponent(binariesPanel)
                         .addComponent(browserExtPanel));
+
+        setLayout(new BorderLayout());
+        add(
+                new JScrollPane(
+                        innerPanel,
+                        ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
+                        ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER));
     }
 
     private static JPanel createBinaryPanel(
@@ -664,6 +675,8 @@ class SeleniumOptionsPanel extends AbstractParamPanel {
                 ResourceBundle resourceBundle) {
             super(model, false);
             this.resourceBundle = resourceBundle;
+
+            getTable().setVisibleRowCount(5);
         }
 
         @Override
