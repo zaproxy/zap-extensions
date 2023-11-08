@@ -470,7 +470,7 @@
 														method and URL</span>
 												</summary>
 												<th-block
-													data-th-replace="::alertsTable(alert=${filteredAlert})">
+													data-th-replace="~{::alertsTable(alert=${filteredAlert})}">
 												</th-block>
 											</details></li>
 									</ol>
@@ -605,14 +605,14 @@
 		<th scope="row"
 			data-th-text="#{report.template.alertsTable.description}">Description</th>
 		<td><th-block
-				data-th-replace="::nl2p(text=${userObject.description})">Description</th-block></td>
+				data-th-replace="~{::nl2p(text=${userObject.description})}">Description</th-block></td>
 	</tr>
 	<tr data-th-unless="${userObject.otherInfo.isEmpty()}">
 		<th scope="row"
 			data-th-text="#{report.template.alertsTable.otherInfo}">Other
 			info</th>
 		<td><th-block
-				data-th-replace="::nl2p(text=${userObject.otherInfo})">Other
+				data-th-replace="~{::nl2p(text=${userObject.otherInfo})}">Other
 			info</th-block></td>
 	</tr>
 	<tr>
@@ -691,7 +691,7 @@
 	<tr data-th-unless="${userObject.solution.isEmpty()}">
 		<th scope="row" data-th-text="#{report.template.alertsTable.solution}">Solution</th>
 		<td><th-block
-				data-th-replace="::nl2p(text=${userObject.solution})">Solution</th-block></td>
+				data-th-replace="~{::nl2p(text=${userObject.solution})}">Solution</th-block></td>
 	</tr>
 </table>
 </th-block> </th-block>
