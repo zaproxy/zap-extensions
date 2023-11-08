@@ -42,8 +42,9 @@ import org.zaproxy.addon.automation.jobs.RequestorJob;
 import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 import org.zaproxy.addon.automation.tests.AutomationAlertTest;
 import org.zaproxy.zap.network.HttpRequestBody;
+import org.zaproxy.zap.testutils.TestUtils;
 
-class RetestPlanGeneratorUnitTest {
+class RetestPlanGeneratorUnitTest extends TestUtils {
 
     private static AutomationPlan retestPlan;
 
