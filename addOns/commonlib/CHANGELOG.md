@@ -10,7 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Add solution to 'Brute Forcing Credit Card Information' vulnerability (Issue 8056).
-
 - Add solution to 'Content Spoofing', 'Credential and Session Prediction', 'XML Injection' and 'XML External Entities' vulnerabilities (Issue 8056).
 
 ## [1.18.0] - 2023-10-12
