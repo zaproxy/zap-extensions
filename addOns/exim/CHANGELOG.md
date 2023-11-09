@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [0.8.0] - 2023-11-10
 ### Changed
 - Keep the Export menu items sorted alphabetically.
+- Dropped "to Clipboard" from ZAP copy menu items (Issue 8179).
 
 ## [0.7.0] - 2023-10-12
 ### Changed
