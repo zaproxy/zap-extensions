@@ -5,5 +5,6 @@
 
 <index version="2.0">
     <!-- index entries are merged (sorted) into core index -->
-	<indexitem text="custompayloads" target="custompayloads" />
+    <indexitem text="custompayloads" target="custompayloads" />
+    <indexitem text="Custom Payloads API" target="custompayloads.api" />
 </index>
