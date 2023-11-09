@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.scripts;
 
+import java.awt.Font;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 
@@ -27,6 +28,8 @@ public class ScriptConsoleOptions extends VersionedAbstractParam {
     private static String BASE_KEY = "script.console";
     private static String DEFAULT_SCRIPT_CHANGED_BEHAVIOUR =
             BASE_KEY + ".defaultScriptChangedBehaviour";
+    private static String FONT_NAME = BASE_KEY + ".font.name";
+    private static String FONT_SIZE = BASE_KEY + ".font.size";
     private static String TAB_SIZE = BASE_KEY + ".codeStyle.tabSize";
     private static String USE_TAB_CHARACTER = BASE_KEY + ".codeStyle.useTabCharacter";
 
@@ -37,6 +40,8 @@ public class ScriptConsoleOptions extends VersionedAbstractParam {
     private static final int CURRENT_CONFIG_VERSION = 1;
 
     private DefaultScriptChangedBehaviour defaultScriptChangedBehaviour;
+    private String fontName;
+    private int fontSize;
     private int tabSize;
     private boolean useTabCharacter;
 
@@ -47,6 +52,24 @@ public class ScriptConsoleOptions extends VersionedAbstractParam {
     public void setDefaultScriptChangedBehaviour(DefaultScriptChangedBehaviour behaviour) {
         this.defaultScriptChangedBehaviour = behaviour;
         getConfig().setProperty(DEFAULT_SCRIPT_CHANGED_BEHAVIOUR, behaviour.name());
+    }
+
+    public String getFontName() {
+        return fontName;
+    }
+
+    public void setFontName(String fontName) {
+        this.fontName = fontName;
+        getConfig().setProperty(FONT_NAME, fontName);
+    }
+
+    public int getFontSize() {
+        return fontSize;
+    }
+
+    public void setFontSize(int fontSize) {
+        this.fontSize = fontSize;
+        getConfig().setProperty(FONT_SIZE, fontSize);
     }
 
     public int getTabSize() {
@@ -73,6 +96,10 @@ public class ScriptConsoleOptions extends VersionedAbstractParam {
                 getEnum(
                         DEFAULT_SCRIPT_CHANGED_BEHAVIOUR,
                         DefaultScriptChangedBehaviour.ASK_EACH_TIME);
+        fontName = getString(FONT_NAME, Font.MONOSPACED);
+        if ((fontSize = getInt(FONT_SIZE, 12)) < 1) {
+            fontSize = 12;
+        }
         tabSize = getInt(TAB_SIZE, 4);
         useTabCharacter = getBoolean(USE_TAB_CHARACTER, false);
     }

@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   The new defaults are to use spaces with a tab size of 4.
 - A gear button to the console toolbar to open the Script Console options screen.
 - An enable / disable script button to the console toolbar to toggle enabling the open script.
+- Options to allow editing the font name and size used in the console (Issue 8065).
 
 ### Changed
 - The "Save Script" button was moved to the console toolbar.
