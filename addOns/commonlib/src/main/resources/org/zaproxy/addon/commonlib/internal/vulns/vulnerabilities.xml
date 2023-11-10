@@ -1005,7 +1005,19 @@ Before parsing XML files with associated DTDs, scan for recursive entity declara
 	<desc>The most common methodology for attackers is to first footprint the target's web presence and enumerate as much information as possible. With this information, the attacker may develop an accurate attack scenario, which will effectively exploit a vulnerability in the software type/version being utilized by the target host.
 
 Multi-tier fingerprinting is similar to its predecessor, TCP/IP Fingerprinting (with a scanner such as Nmap) except that it is focused on the Application Layer of the OSI model instead of the Transport Layer. The theory behind this fingerprinting is to create an accurate profile of the target's platform, web application software technology, backend database version, configurations and possibly even their network architecture/topology.</desc>
-	<solution></solution>
+	<solution>Implement measures to obfuscate or disguise information about the system's platform, web application software technology, backend database version, configurations, and network architecture/topology. This can include:
+
+1. **Platform and Software Diversity:** Use a mix of technologies and platforms to make it harder for attackers to build an accurate profile.
+
+2. **False Information:** Introduce fake or misleading information in system responses to confuse fingerprinting tools.
+
+3. **Response Randomization:** Randomize certain elements in responses to make it difficult for attackers to consistently identify the system.
+
+4. **Firewall Rules:** Implement firewall rules to block or limit the effectiveness of fingerprinting techniques.
+
+5. **Regular Updates:** Keep software, platforms, and configurations up-to-date to patch known vulnerabilities and prevent accurate identification based on outdated information.
+
+There is no one-size-fits-all solution, and a combination of these measures may be most effective.</solution>
 	<reference>http://projects.webappsec.org/Fingerprinting</reference>
 </vuln_item_wasc_45>
 
