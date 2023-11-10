@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [23.18.0] - 2023-11-10
 ### Added
 - Add context menu item to Contexts tree to show the AJAX Spider dialogue with the selected Context.
