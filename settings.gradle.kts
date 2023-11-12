@@ -55,6 +55,7 @@ var addOns = listOf(
     "encoder",
     "evalvillain",
     "exim",
+    "fieldenumeration",
     "formhandler",
     "frontendscanner",
     "fuzz",
