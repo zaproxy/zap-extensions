@@ -308,10 +308,11 @@ public class ScriptsListPanel extends AbstractPanel {
     protected void saveScript(ScriptWrapper script) {
         if (script.getFile() != null) {
             try {
-                extension.getExtScript().saveScript(script);
+                synchronized (extension.getConsolePanel().getScriptLock()) {
+                    extension.getExtScript().saveScript(script);
+                }
                 ((ScriptTreeModel) this.getTree().getModel())
                         .nodeChanged(this.getSelectedScriptNode());
-
             } catch (IOException e1) {
                 View.getSingleton()
                         .showWarningDialog(
@@ -351,10 +352,11 @@ public class ScriptsListPanel extends AbstractPanel {
                 script.setFile(file);
 
                 try {
-                    extension.getExtScript().saveScript(script);
+                    synchronized (extension.getConsolePanel().getScriptLock()) {
+                        extension.getExtScript().saveScript(script);
+                    }
                     ((ScriptTreeModel) this.getTree().getModel())
                             .nodeChanged(this.getSelectedScriptNode());
-
                 } catch (IOException e1) {
                     View.getSingleton()
                             .showWarningDialog(

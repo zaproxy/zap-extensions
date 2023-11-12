@@ -11,9 +11,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - A gear button to the console toolbar to open the Script Console options screen.
 - An enable / disable script button to the console toolbar to toggle enabling the open script.
 - Options to allow editing the font name and size used in the console (Issue 8065).
+- The shortcut `ctrl+S` (`cmd+S` on macOS) to save the script in the console.
 
 ### Changed
 - The "Save Script" button was moved to the console toolbar.
+
+### Fixed
+- Saving the script was causing the "Keep or Replace" dialog to show, even when no external changes were made to the script.
 
 ## [42] - 2023-10-12
 ### Changed
