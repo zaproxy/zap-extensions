@@ -250,7 +250,7 @@ public class AlertFilterAPI extends ApiImplementor {
                 af =
                         new AlertFilter(
                                 context.getId(),
-                                ApiUtils.getIntParam(params, PARAM_RULE_ID),
+                                params.getString(PARAM_RULE_ID),
                                 ApiUtils.getIntParam(params, PARAM_NEW_LEVEL),
                                 ApiUtils.getOptionalStringParam(params, PARAM_URL),
                                 getParam(params, PARAM_URL_IS_REGEX, false),
@@ -271,7 +271,7 @@ public class AlertFilterAPI extends ApiImplementor {
                 af =
                         new AlertFilter(
                                 context.getId(),
-                                ApiUtils.getIntParam(params, PARAM_RULE_ID),
+                                params.getString(PARAM_RULE_ID),
                                 ApiUtils.getIntParam(params, PARAM_NEW_LEVEL),
                                 ApiUtils.getOptionalStringParam(params, PARAM_URL),
                                 getParam(params, PARAM_URL_IS_REGEX, false),
@@ -293,7 +293,7 @@ public class AlertFilterAPI extends ApiImplementor {
                 af =
                         new AlertFilter(
                                 -1,
-                                ApiUtils.getIntParam(params, PARAM_RULE_ID),
+                                params.getString(PARAM_RULE_ID),
                                 ApiUtils.getIntParam(params, PARAM_NEW_LEVEL),
                                 ApiUtils.getOptionalStringParam(params, PARAM_URL),
                                 getParam(params, PARAM_URL_IS_REGEX, false),
@@ -321,7 +321,7 @@ public class AlertFilterAPI extends ApiImplementor {
                 af =
                         new AlertFilter(
                                 -1,
-                                ApiUtils.getIntParam(params, PARAM_RULE_ID),
+                                params.getString(PARAM_RULE_ID),
                                 ApiUtils.getIntParam(params, PARAM_NEW_LEVEL),
                                 ApiUtils.getOptionalStringParam(params, PARAM_URL),
                                 getParam(params, PARAM_URL_IS_REGEX, false),
@@ -413,7 +413,7 @@ public class AlertFilterAPI extends ApiImplementor {
         if (includeContext) {
             fields.put(PARAM_CONTEXT_ID, Integer.toString(af.getContextId()));
         }
-        fields.put(PARAM_RULE_ID, Integer.toString(af.getRuleId()));
+        fields.put(PARAM_RULE_ID, af.getRuleId());
         fields.put(PARAM_NEW_LEVEL, Integer.toString(af.getNewRisk()));
         fields.put(PARAM_URL, af.getUrl());
         fields.put(PARAM_URL_IS_REGEX, Boolean.toString(af.isUrlRegex()));

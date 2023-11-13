@@ -179,7 +179,7 @@ public class AlertFilterJob extends AutomationJob {
 
     private boolean isValid(AlertFilterData afd, AutomationProgress progress) {
         boolean result = true;
-        if (afd.getRuleId() < 0) {
+        if (StringUtils.isBlank(afd.getRuleId()) || isNegativeInteger(afd.getRuleId())) {
             progress.error(
                     Constant.messages.getString(
                             "alertFilters.automation.error.invalidruleid",
@@ -244,6 +244,15 @@ public class AlertFilterJob extends AutomationJob {
             }
         }
         return result;
+    }
+
+    private static boolean isNegativeInteger(String ruleId) {
+        try {
+            return Integer.parseInt(ruleId) < 0;
+        } catch (NumberFormatException ignore) {
+            // Not an integer.
+        }
+        return false;
     }
 
     @Override
@@ -444,7 +453,7 @@ public class AlertFilterJob extends AutomationJob {
     }
 
     public static class AlertFilterData extends AutomationData {
-        private int ruleId;
+        private String ruleId;
         private String ruleName;
         private String context;
         private String newRisk;
@@ -462,11 +471,11 @@ public class AlertFilterJob extends AutomationJob {
             methods = List.of();
         }
 
-        public int getRuleId() {
+        public String getRuleId() {
             return ruleId;
         }
 
-        public void setRuleId(int ruleId) {
+        public void setRuleId(String ruleId) {
             this.ruleId = ruleId;
         }
 

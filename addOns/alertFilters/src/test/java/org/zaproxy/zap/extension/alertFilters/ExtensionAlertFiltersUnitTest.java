@@ -78,8 +78,8 @@ class ExtensionAlertFiltersUnitTest {
         assertThat(
                 m.getAlertFilters(),
                 contains(
-                        new AlertFilter(ctxId, 42, 1, "", false, "", true),
-                        new AlertFilter(ctxId, 43, 1, "", false, "", false)));
+                        new AlertFilter(ctxId, "42", 1, "", false, "", true),
+                        new AlertFilter(ctxId, "43", 1, "", false, "", false)));
         verify(session).getContextDataStrings(ctxId, 500);
     }
 
@@ -94,7 +94,8 @@ class ExtensionAlertFiltersUnitTest {
         // Then
         ContextAlertFilterManager m = extension.getContextAlertFilterManager(ctxId);
         assertThat(
-                m.getAlertFilters(), contains(new AlertFilter(ctxId, 43, 1, "", false, "", false)));
+                m.getAlertFilters(),
+                contains(new AlertFilter(ctxId, "43", 1, "", false, "", false)));
         verify(session).getContextDataStrings(ctxId, 500);
     }
 
@@ -124,8 +125,8 @@ class ExtensionAlertFiltersUnitTest {
         assertThat(
                 m.getAlertFilters(),
                 contains(
-                        new AlertFilter(ctxId, 42, 1, "", false, "", true),
-                        new AlertFilter(ctxId, 43, 1, "", false, "", false)));
+                        new AlertFilter(ctxId, "42", 1, "", false, "", true),
+                        new AlertFilter(ctxId, "43", 1, "", false, "", false)));
     }
 
     @Test
@@ -139,7 +140,8 @@ class ExtensionAlertFiltersUnitTest {
         // Then
         ContextAlertFilterManager m = extension.getContextAlertFilterManager(ctxId);
         assertThat(
-                m.getAlertFilters(), contains(new AlertFilter(ctxId, 43, 1, "", false, "", false)));
+                m.getAlertFilters(),
+                contains(new AlertFilter(ctxId, "43", 1, "", false, "", false)));
     }
 
     private static Session sessionWithAlertFilters(String... filters) {
