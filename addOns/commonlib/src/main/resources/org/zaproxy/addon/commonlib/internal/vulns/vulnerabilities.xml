@@ -597,7 +597,7 @@ Web application functionality that is often a target for automation attacks may 
 
 3.**Device Fingerprinting:**Use device fingerprinting techniques to identify and block requests from suspicious or known automated sources.
 
-4.**Multi-Factor Authentication (2FA):**Introduce multi-factor authentication to add an extra layer of security, making it harder for automated attacks to succeed.
+4.**Multi-Factor Authentication (MFA):**Introduce multi-factor authentication to add an extra layer of security, making it harder for automated attacks to succeed.
 
 5.**Honeypots:**Deploy honeypots or hidden fields in forms to trick automated bots into revealing their presence, allowing for appropriate action.
 
