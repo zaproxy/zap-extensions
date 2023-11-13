@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [43] - 2023-11-13
 ### Added
 - Allow setting the tab size and whether to use tabs or spaces for indentation in the console.
   The old defaults were to use the tab character with a tab size of 5.
@@ -276,6 +276,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[43]: https://github.com/zaproxy/zap-extensions/releases/scripts-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/scripts-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/scripts-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/scripts-v40
