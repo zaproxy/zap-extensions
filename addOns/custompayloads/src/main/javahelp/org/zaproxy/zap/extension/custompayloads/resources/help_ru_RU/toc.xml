@@ -3,7 +3,9 @@
 <toc version="2.0">
 	<tocitem text="Руководство пользователя ZAP " tocid="toplevelitem">
 		<tocitem text="Дополнения" tocid="addons">
-			<tocitem text="Пользовательские полезные данные " target="custompayloads"/>
+			<tocitem text="Пользовательские полезные данные " target="custompayloads">
+				<tocitem text="API" target="custompayloads.api"/>
+			</tocitem>
 		</tocitem>
 	</tocitem>
 </toc>

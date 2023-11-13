@@ -386,7 +386,23 @@ Eksik bilgileri doldurmak için, bilgisayar korsanı kayıp bilgileri mümkün o
     * CVV / CSC'yi deneyerek bulmak, kartın türüne bağlı olarak yalnızca 3 veya 4 basamaktan oluştuğu için yalnızca 1000 veya 10000 denemede bulunabilir.
     * Son kullanma tarihinin tahmin edilebilmesi sadece birkaç düzine deneme gerektirir.
 	</desc>
-	<solution/>
+		<solution>Phase: Architecture and Design
+To mitigate the risk of brute force attacks on credit card information, follow these best practices:
+
+* CAPTCHA Protection: Implement CAPTCHA challenges during the payment process to differentiate between human and automated attempts. CAPTCHAs can help prevent automated brute force attacks.
+* Rate Limiting: Implement rate limiting on payment attempts. Limit the number of requests from a single IP address or user account within a specific time frame.
+* Multi-Factor Authentication (MFA): Require multi-factor authentication for sensitive transactions, including online payments. MFA adds an extra layer of security by verifying the user's identity through multiple factors, making brute force attacks more difficult.
+* Secure Data Storage: Ensure that credit card information is securely stored and encrypted. Limit access to sensitive data to authorized personnel only.
+* Continuous Monitoring: Implement continuous monitoring to detect and respond to suspicious activities, including multiple failed payment attempts.
+* Compliance with PCI DSS: If your application processes credit card information, ensure compliance with Payment Card Industry Data Security Standard (PCI DSS) requirements, which provide security guidelines for handling credit card data.
+
+Phase: Implementation
+Implement the above security measures in your application code, payment processing, and user account management functionalities.
+
+Phase: Operation
+Regularly monitor and review your security measures and adapt to evolving threats and attack patterns.
+
+</solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11d>
 
@@ -405,7 +421,7 @@ Bazı web sayfaları, dinamik olarak oluşturulmuş HTML içerik kaynaklarını 
 
 Bu saldırılar, kullanıcılar ve web siteleri arasında oluşan güveni kullanır. Bu teknik, giriş formları, sızdırma, yanlış basın bültenleri vb. Dahil olmak üzere sahte web sayfaları kurmak için kullanılmıştır.
 	</desc>
-	<solution/>
+	<solution>Implement appropriate Content Security Policy (CSP) and never trust user input.</solution>
 	<reference>http://projects.webappsec.org/Content-Spoofing</reference>
 </vuln_item_wasc_12>
 
@@ -470,7 +486,7 @@ Aynı şekilde, varsayılan yüklemeler iyi bilinen kullanıcı adlarını ve ş
 	<desc>Kimlik/Oturum tahmini, bir web sitesi kullanıcısını kaçırmak veya kimliğine bürünmek için kullanılan bir yöntemdir. Kestirmeden sonuca varmak belirli bir oturumu veya kullanıcıyı tanımlayan benzersiz değerini tahmin etmek saldırıyı gerçekleştirir. Oturum Kaçırma olarak da bilinen bu olaylarda, sonuçlar saldırganlara güvenliği ihlal edilen kullanıcının ayrıcalıklarıyla web sitesi isteklerini vermesine olanak sağlayabilir.
 
 Birçok web sitesi, iletişim ilk kurulduğunda bir kullanıcıyı kimliklendirmek ve takip etmek üzere tasarlanmıştır. Bunu yapmak için, kullanıcı genelde kullanıcı adı / şifre (kimlik bilgileri) kombinasyonu sağlayarak kimlik bilgilerini web sitesinde ispatlamalıdır. Bu özel bilgileri her işlemle ileri geri taşımaktansa, web siteleri kullanıcı oturumunu kimliklendirilmiş olarak tanımlamak için eşsiz bir "oturum kimliği" oluşturacaktır. Kimliklendirilmiş oturumun bir "kanıtı olarak", kullanıcı ile web sitesi arasındaki sonraki iletişim, oturum kimliği ile etiketlenir. Bir saldırgan, başka bir kullanıcının oturum kimliğini tahmin edebiliyorsa sahte etkinlik mümkündür.</desc>
-	<solution/>
+	<solution>Use mechanisms that generate random, transient, and unpredictable session identifiers.</solution>
 	<reference>http://projects.webappsec.org/Credential-and-Session-Prediction</reference>
 </vuln_item_wasc_18>
 
@@ -612,7 +628,7 @@ Bileşenler arasında veri alışverişi yaparken, iki bileşenin de aynı karak
 <vuln_item_wasc_23>
 	<alert>XML Enjeksiyonu</alert>
 	<desc>XML enjeksiyonu XML uygulamasının ya da hizmetinin mantığını değiştirmek ya da bozmak için kullanılan bir saldırı tekniğidir. İstenmeyen XML içeriği ve/veya yapılarını bir XML iletisine enjekte edilmesi, uygulamanın mantığını değiştirebilir. Dahası, XML enjeksiyonu ortaya çıkan mesaja/belgeye zararlı içeriğin eklenmesine neden olabilir.</desc>
-	<solution/>
+	<solution>Never trust user input. Validate and sanitize the user input before incorporating it into the XML document. Consider blocking or escaping XML meta characters e.g. "&lt;" and "&gt;" could be represented with the corresponding entities: "&amp;lt;" and "&amp;gt;".</solution>
 	<reference>http://projects.webappsec.org/XML-Injection</reference>
 </vuln_item_wasc_23>
 
@@ -962,7 +978,7 @@ Tüm kaynak dağıtımlarında meydana gelen hataların sistemi güvenli bir kon
 	<alert>XML Dış Varlıklar</alert>
 	<desc>Belgeleri işleme sırasında dinamik olarak oluşturmak için teknik XML özelliğinden yararlanın. XML mesajı ya veriyi doğrudan sağlar ya da verinin olduğu URI'yı işaret eder. Saldırı yönetiminde harici varlıklar, varlık değerini zararlı veriyle değiştirebilir, başvuruları değiştirebilirveya sunucu/XML uygulamasının erişimi olan verilerin güvenliğini tehlikeye atabilir.
 	Saldırganlar aynı zamanda zararlı kodu veya içeriği indirmek için web hizmeti sunucusu olan Harici Varlıkları da kullanabilirler.</desc>
-	<solution/>
+	<solution>XML External Entities vulnerabilities arise because the application's XML parsing library supports potentially dangerous XML features. To prevent XML External Entities vulnerabilities disable the resolution of external entities and the support for XInclude.</solution>
 	<reference>http://projects.webappsec.org/XML-External-Entities</reference>
 </vuln_item_wasc_43>
 

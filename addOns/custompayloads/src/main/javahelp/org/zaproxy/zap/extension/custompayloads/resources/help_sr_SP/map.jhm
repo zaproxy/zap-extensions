@@ -5,4 +5,5 @@
 
 <map version="1.0">
     <mapID target="custompayloads" url="contents/custompayloads.html" />
+    <mapID target="custompayloads.api" url="contents/api.html" />
 </map>
