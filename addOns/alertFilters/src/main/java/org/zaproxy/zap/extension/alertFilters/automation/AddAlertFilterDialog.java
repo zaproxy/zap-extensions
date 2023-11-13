@@ -31,11 +31,9 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.jobs.JobUtils;
-import org.zaproxy.zap.extension.alertFilters.ExtensionAlertFilters;
 import org.zaproxy.zap.extension.alertFilters.automation.AlertFilterJob.Risk;
-import org.zaproxy.zap.extension.alertFilters.internal.ScanRulesInfo;
+import org.zaproxy.zap.extension.alertFilters.internal.ui.AlertSelectionPanel;
 import org.zaproxy.zap.extension.alertFilters.internal.ui.MethodSelectionPanel;
-import org.zaproxy.zap.extension.alertFilters.internal.ui.ScanRulesInfoComboBoxModel;
 import org.zaproxy.zap.utils.DisplayUtils;
 import org.zaproxy.zap.view.StandardFieldsDialog;
 
@@ -68,7 +66,7 @@ public class AddAlertFilterDialog extends StandardFieldsDialog {
     private int tableIndex;
     private AlertFilterJob job;
     private AlertFilterTableModel model;
-    private ScanRulesInfoComboBoxModel scanRulesInfoComboBoxModel;
+    private AlertSelectionPanel alertSelectionPanel;
     private MethodSelectionPanel methodSelectionPanel;
 
     public AddAlertFilterDialog(AlertFilterJob job, AlertFilterTableModel model) {
@@ -80,7 +78,7 @@ public class AddAlertFilterDialog extends StandardFieldsDialog {
             AlertFilterTableModel model,
             AlertFilterJob.AlertFilterData rule,
             int tableIndex) {
-        super(View.getSingleton().getMainFrame(), TITLE, DisplayUtils.getScaledDimension(550, 450));
+        super(View.getSingleton().getMainFrame(), TITLE, DisplayUtils.getScaledDimension(650, 450));
         if (rule == null) {
             rule = new AlertFilterJob.AlertFilterData();
             this.addFilter = true;
@@ -90,10 +88,9 @@ public class AddAlertFilterDialog extends StandardFieldsDialog {
         this.model = model;
         this.tableIndex = tableIndex;
 
-        ScanRulesInfo scanRulesInfo = ExtensionAlertFilters.getScanRulesInfo();
-        scanRulesInfoComboBoxModel = new ScanRulesInfoComboBoxModel(scanRulesInfo);
-        scanRulesInfoComboBoxModel.setSelectedItem(scanRulesInfo.getById(rule.getRuleId()));
-        this.addComboField(RULE_PARAM, scanRulesInfoComboBoxModel);
+        alertSelectionPanel = new AlertSelectionPanel();
+        alertSelectionPanel.setSelectedId(rule.getRuleId());
+        addCustomComponent(RULE_PARAM, alertSelectionPanel.getPanel());
 
         List<String> contextNames = this.job.getEnv().getContextNames();
         // Add blank option
@@ -136,9 +133,8 @@ public class AddAlertFilterDialog extends StandardFieldsDialog {
 
     @Override
     public void save() {
-        ScanRulesInfo.Entry scanRule = scanRulesInfoComboBoxModel.getSelectedItem();
-        rule.setRuleId(scanRule.getId());
-        rule.setRuleName(scanRule.getName());
+        rule.setRuleId(alertSelectionPanel.getSelectedId());
+        rule.setRuleName(alertSelectionPanel.getSelectedName());
         rule.setContext(this.getStringValue(CONTEXT_PARAM));
         rule.setNewRisk(Risk.getRiskFromI18n(this.getStringValue(NEW_RISK_PARAM)).toString());
         rule.setParameter(this.getStringValue(PARAM_PARAM));

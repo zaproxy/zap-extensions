@@ -36,9 +36,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.model.Model;
-import org.zaproxy.zap.extension.alertFilters.internal.ScanRulesInfo;
+import org.zaproxy.zap.extension.alertFilters.internal.ui.AlertSelectionPanel;
 import org.zaproxy.zap.extension.alertFilters.internal.ui.MethodSelectionPanel;
-import org.zaproxy.zap.extension.alertFilters.internal.ui.ScanRulesInfoComboBoxModel;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.ZapTextField;
 import org.zaproxy.zap.view.AbstractFormDialog;
@@ -66,7 +65,7 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
     private JPanel fieldsPanel;
     private Insets insets = new Insets(4, 8, 2, 4);
     private JCheckBox enabledCheckBox;
-    private JComboBox<ScanRulesInfo.Entry> alertCombo;
+    private AlertSelectionPanel alertSelectionPanel;
     private JComboBox<String> newLevelCombo;
     private ZapTextField urlTextField;
     private JCheckBox urlRegexCheckBox;
@@ -140,10 +139,7 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
     protected void init() {
         if (this.oldAlertFilter != null) {
             LOGGER.debug("Initializing add alertFilter dialog for: {}", oldAlertFilter);
-            getAlertCombo()
-                    .setSelectedItem(
-                            ExtensionAlertFilters.getScanRulesInfo()
-                                    .getById(oldAlertFilter.getRuleId()));
+            getAlertSelectionPanel().setSelectedId(oldAlertFilter.getRuleId());
             getNewLevelCombo()
                     .setSelectedItem(AlertFilter.getNameForRisk(oldAlertFilter.getNewRisk()));
             getUrlTextField().setText(oldAlertFilter.getUrl());
@@ -179,7 +175,7 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
 
     @Override
     protected boolean validateFields() {
-        if (getAlertCombo().getSelectedItem() == null) {
+        if (getAlertSelectionPanel().getSelectedId() == null) {
             // Will happen with custom alerts
             JOptionPane.showMessageDialog(
                     this,
@@ -226,14 +222,13 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
     }
 
     private AlertFilter fieldsToFilter() {
-        ScanRulesInfo.Entry scanRuleInfo = (ScanRulesInfo.Entry) getAlertCombo().getSelectedItem();
         if (canChangeContext) {
             workingContext = this.getChosenContext();
         }
 
         return new AlertFilter(
                 workingContext != null ? workingContext.getId() : -1,
-                scanRuleInfo.getId(),
+                getAlertSelectionPanel().getSelectedId(),
                 getNewLevel(),
                 getUrlTextField().getText(),
                 getUrlRegexCheckBox().isSelected(),
@@ -251,7 +246,7 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
     protected void clearFields() {
         this.oldAlertFilter = null;
         this.enabledCheckBox.setSelected(true);
-        this.alertCombo.setSelectedIndex(0);
+        getAlertSelectionPanel().reset();
         this.newLevelCombo.setSelectedIndex(0);
         this.urlTextField.setText("");
         this.urlTextField.discardAllEdits();
@@ -312,9 +307,11 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
                     new JLabel(
                             Constant.messages.getString(
                                     "alertFilters.dialog.add.field.label.alert"));
-            alertLabel.setLabelFor(getAlertCombo());
+            alertLabel.setLabelFor(getAlertSelectionPanel().getPanel());
             fieldsPanel.add(alertLabel, LayoutHelper.getGBC(0, ++y, 1, 0.5D, insets));
-            fieldsPanel.add(getAlertCombo(), LayoutHelper.getGBC(1, y, 2, 0.5D, insets));
+            fieldsPanel.add(
+                    getAlertSelectionPanel().getPanel(),
+                    LayoutHelper.getGBC(1, y, 2, 0.5D, insets));
 
             JLabel newLevelLabel =
                     new JLabel(
@@ -539,14 +536,11 @@ public class DialogAddAlertFilter extends AbstractFormDialog {
         return evidenceRegexCheckBox;
     }
 
-    protected JComboBox<ScanRulesInfo.Entry> getAlertCombo() {
-        if (alertCombo == null) {
-            alertCombo =
-                    new JComboBox<>(
-                            new ScanRulesInfoComboBoxModel(
-                                    ExtensionAlertFilters.getScanRulesInfo()));
+    protected AlertSelectionPanel getAlertSelectionPanel() {
+        if (alertSelectionPanel == null) {
+            alertSelectionPanel = new AlertSelectionPanel();
         }
-        return alertCombo;
+        return alertSelectionPanel;
     }
 
     protected JComboBox<String> getNewLevelCombo() {
