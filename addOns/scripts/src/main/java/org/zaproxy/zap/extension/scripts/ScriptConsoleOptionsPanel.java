@@ -47,8 +47,7 @@ public class ScriptConsoleOptionsPanel extends AbstractParamPanel {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String NAME =
-            Constant.messages.getString("scripts.console.options.panelName");
+    private static final String NAME = Constant.messages.getString("scripts.options.console.title");
 
     private JComboBox<DefaultScriptChangedBehaviour> defaultScriptChangedBehaviour;
     private JPanel fontPanel;

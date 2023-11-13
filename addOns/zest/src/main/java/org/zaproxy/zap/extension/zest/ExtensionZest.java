@@ -181,7 +181,12 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             extensionHook.addSessionListener(new ViewSessionChangedListener());
 
             extensionHook.getHookView().addStatusPanel(this.getZestResultsPanel());
-            extensionHook.getHookView().addOptionPanel(getOptionsPanel());
+
+            String[] scriptEngineNode = {
+                Constant.messages.getString("options.script.title"),
+                Constant.messages.getString("scripts.options.engine.title")
+            };
+            getView().getOptionsDialog().addParamPanel(scriptEngineNode, getOptionsPanel(), true);
 
             this.dialogManager = new ZestDialogManager(this, this.getExtScript().getScriptUI());
             new ZestMenuManager(this, extensionHook);
@@ -333,6 +338,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
             View view = View.getSingleton();
             view.removeMainToolbarButton(getRecordButton());
             view.removeMainToolbarSeparator(getToolbarSeparator());
+            view.getOptionsDialog().removeParamPanel(getOptionsPanel());
             dialogManager.unload();
         }
 

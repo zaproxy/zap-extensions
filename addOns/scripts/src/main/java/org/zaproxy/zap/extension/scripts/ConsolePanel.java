@@ -451,7 +451,7 @@ public class ConsolePanel extends AbstractPanel {
                                     .getMenuToolsControl()
                                     .options(
                                             Constant.messages.getString(
-                                                    "scripts.console.options.panelName")));
+                                                    "scripts.options.console.title")));
         }
         return optionsButton;
     }

@@ -28,7 +28,9 @@ zapAddOn {
                 register("network") {
                     version.set(">=0.2.0")
                 }
-                register("scripts")
+                register("scripts") {
+                    version.set(">=44")
+                }
                 register("selenium") {
                     version.set(">= 15.13.0")
                 }
