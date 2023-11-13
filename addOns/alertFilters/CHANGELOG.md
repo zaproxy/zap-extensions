@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Allow to filter by alert reference (Issue 7438).
+- Allow to specify custom IDs through the GUI.
 - Maintenance changes.
 
 ### Fixed
