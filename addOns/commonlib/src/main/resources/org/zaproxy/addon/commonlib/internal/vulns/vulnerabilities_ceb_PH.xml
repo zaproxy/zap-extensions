@@ -390,7 +390,23 @@ Aron mabutangan ang nawala nga impormasyon na ang hacker kay nagtagna sa nawala 
     * Pagtagna sa CVV/CSC kay nagkinahanglan lamang ug 1000 o 10000 na mga pagsulay kay tungod ang numero kay adunay 3 o 4 ka mga digit lamang, depende sa tipo sa card.
     * Pagtagna sa petsa sa expiration kay nagkinahanglan lamang ug daghan nga dosenang mga pagsulay.
 	</desc>
-	<solution/>
+		<solution>Phase: Architecture and Design
+To mitigate the risk of brute force attacks on credit card information, follow these best practices:
+
+* CAPTCHA Protection: Implement CAPTCHA challenges during the payment process to differentiate between human and automated attempts. CAPTCHAs can help prevent automated brute force attacks.
+* Rate Limiting: Implement rate limiting on payment attempts. Limit the number of requests from a single IP address or user account within a specific time frame.
+* Multi-Factor Authentication (MFA): Require multi-factor authentication for sensitive transactions, including online payments. MFA adds an extra layer of security by verifying the user's identity through multiple factors, making brute force attacks more difficult.
+* Secure Data Storage: Ensure that credit card information is securely stored and encrypted. Limit access to sensitive data to authorized personnel only.
+* Continuous Monitoring: Implement continuous monitoring to detect and respond to suspicious activities, including multiple failed payment attempts.
+* Compliance with PCI DSS: If your application processes credit card information, ensure compliance with Payment Card Industry Data Security Standard (PCI DSS) requirements, which provide security guidelines for handling credit card data.
+
+Phase: Implementation
+Implement the above security measures in your application code, payment processing, and user account management functionalities.
+
+Phase: Operation
+Regularly monitor and review your security measures and adapt to evolving threats and attack patterns.
+
+</solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11d>
 
@@ -408,7 +424,7 @@ Ilabi na ang gihimo na mga link kay mahimong mapadala ngadto sa usa ka tiggamit 
 
 Kini nga atake kay nagpahimulos sa pagsalig nga relasyon nga gitukod tali sa tiggamit ug sa web site. Ang teknik kay gigamit sa paghimo ug mga peke nga mga web page lakip na ang login na mga form, mga defacement, mga bakak na gipanggawas sa press, ug uban pa.
 	</desc>
-	<solution/>
+	<solution>Implement appropriate Content Security Policy (CSP) and never trust user input.</solution>
 	<reference>http://projects.webappsec.org/Content-Spoofing</reference>
 </vuln_item_wasc_12>
 
@@ -473,7 +489,7 @@ Mao usab, ang default na mga installation kay mahimong maglakip sa ilado na mga 
 	<desc>Kredensiyal/Sesyon na Prediction kay usa ka pamaagi sa pag-hijack o pagsuon sa usa ka web site nga tiggamit. Pagbawas ug pagtagna sa talagsaong mga bili nga nagpaila sa usa ka partikular na sesyon o ang tiggamit nagatuman sa atake. Kini giila usab na Sesyon Hijacking, ang mga sangputanan kay mahimong sa mga tig-atake ug abilidad para i-isyu ang web site nga mga hangyo nga adunay nakompromiso na mga pribilehiyo sa tiggamit.
 
 Daghan na mga web site kay gidesinyo sa pagpamatuod ug pagsubay sa usa ka tiggamit kung ang komunikasyon kay una natukod. Para himoon kini, ang mga tiggamit kay kailangan na pamatud-an ang iyang pagkatawo sa web site, na kasagaran ang pagbutang sa username/password (mga kredensyal) na mga kumbinasyon. Inay nga moagi sa pagpasa sa kini nga mga kompidensyal na mga kredensyal na pabalikbalik sa matag transaksiyon, mga web site kay makahimo ug usa ka talagsaong "sesyon ID" para ilhon ang sesyon sa tiggamit ingon nga tinuod. Pagkahuman na komunikasyon tali sa tiggamit ug sa web site kay naka-tag niini ug sesyon ID ingon nga "pagmatuod" sa gipamatud-an na sesyon. Kung ang tig-atake kay mahibaw-an o matag-anan ang sesyon ID sa lain nga tiggamit, malimbongon na aktibidad kay posible.</desc>
-	<solution/>
+	<solution>Use mechanisms that generate random, transient, and unpredictable session identifiers.</solution>
 	<reference>http://projects.webappsec.org/Credential-and-Session-Prediction</reference>
 </vuln_item_wasc_18>
 
@@ -615,7 +631,7 @@ Kung kanus-a pag pagbaylobaylo ug mga datos tali sa mga komponent, siguradoha na
 <vuln_item_wasc_23>
 	<alert>XML Injection</alert>
 	<desc>Ang XML na Injection kay usa ka atake na teknik na gigamit para manipular o pagkompromiso sa lohika sa usa ka XML na aplikasyon o serbisyo. Ang injection kay wala tuyoa nga XML na sulod ug/o na mga istraktura padung sa XML na mensahe nga mahimong makausab sa tuyo na lohika sa aplikasyon. Dugang pa, ang XML na injection kay hinungdan sa pagpasulod sa mga malisyoso na mga sulod padung sa pagkaresulta sa mensahe/dokumento.</desc>
-	<solution/>
+	<solution>Never trust user input. Validate and sanitize the user input before incorporating it into the XML document. Consider blocking or escaping XML meta characters e.g. "&lt;" and "&gt;" could be represented with the corresponding entities: "&amp;lt;" and "&amp;gt;".</solution>
 	<reference>http://projects.webappsec.org/XML-Injection</reference>
 </vuln_item_wasc_23>
 
@@ -965,7 +981,7 @@ Siguroha nga tanan nga mga kapakyasan sa gigahin na kapanguhaan kay nagbutang sa
 	<alert>XML na Gawas na mga Entidad</alert>
 	<desc>Kini nga teknik kay nagkuha ug bentaha sa bahin niini sa XML para mahimo ug mga dokumento nga mausab sa oras sa pagproseso. Ang XML na mensahe kay mahimo man na makahatag ug datos na tin-aw o sa pagtudlo sa usa ka URI na kung asa ang datos anaa. Sa teknik sa atake, gawas na mga entidad kay makapuli sa entidad na bili na adunay malisyoso na datos, alternatibo na mga referral o mahimong makompromiso sa seguridad sa datos sa server/XML aplikasyon nga adunay access sad.
 	Ang mga tig-atake kay mahimo usab ang Gawas na mga Entidad aron makabaton sa web na mga serbisyo na server download sa malisyoso na code o sulod sa server para gamiton sa ikaduha o sunod nga mga atake.</desc>
-	<solution/>
+	<solution>XML External Entities vulnerabilities arise because the application's XML parsing library supports potentially dangerous XML features. To prevent XML External Entities vulnerabilities disable the resolution of external entities and the support for XInclude.</solution>
 	<reference>http://projects.webappsec.org/XML-External-Entities</reference>
 </vuln_item_wasc_43>
 

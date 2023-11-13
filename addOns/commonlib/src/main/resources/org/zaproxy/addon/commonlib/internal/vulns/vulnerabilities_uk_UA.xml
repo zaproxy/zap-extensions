@@ -389,7 +389,23 @@ Additionally consider migrating to password-less authentication mechanisms like 
     * Вгадування CVV або CSC потребує лише 1000 або 10000 спроб, оскільки номер складається лише з 3 або 4 цифр, залежно від типу картки.
     * Щоб вгадати термін придатності, потрібно лише кілька десятків спроб.
 	</desc>
-	<solution/>
+		<solution>Phase: Architecture and Design
+To mitigate the risk of brute force attacks on credit card information, follow these best practices:
+
+* CAPTCHA Protection: Implement CAPTCHA challenges during the payment process to differentiate between human and automated attempts. CAPTCHAs can help prevent automated brute force attacks.
+* Rate Limiting: Implement rate limiting on payment attempts. Limit the number of requests from a single IP address or user account within a specific time frame.
+* Multi-Factor Authentication (MFA): Require multi-factor authentication for sensitive transactions, including online payments. MFA adds an extra layer of security by verifying the user's identity through multiple factors, making brute force attacks more difficult.
+* Secure Data Storage: Ensure that credit card information is securely stored and encrypted. Limit access to sensitive data to authorized personnel only.
+* Continuous Monitoring: Implement continuous monitoring to detect and respond to suspicious activities, including multiple failed payment attempts.
+* Compliance with PCI DSS: If your application processes credit card information, ensure compliance with Payment Card Industry Data Security Standard (PCI DSS) requirements, which provide security guidelines for handling credit card data.
+
+Phase: Implementation
+Implement the above security measures in your application code, payment processing, and user account management functionalities.
+
+Phase: Operation
+Regularly monitor and review your security measures and adapt to evolving threats and attack patterns.
+
+</solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11d>
 
@@ -408,7 +424,7 @@ Additionally consider migrating to password-less authentication mechanisms like 
 
 Ця атака використовує довірчі стосунки, встановлені між користувачем і вебсайтом. Цей метод використовувався для створення фальшивих вебсторінок, включаючи форми для входу в систему, спотворення, фальшиві пресрелізи тощо.
 	</desc>
-	<solution/>
+	<solution>Implement appropriate Content Security Policy (CSP) and never trust user input.</solution>
 	<reference>http://projects.webappsec.org/Content-Spoofing</reference>
 </vuln_item_wasc_12>
 
@@ -473,7 +489,7 @@ Additionally consider migrating to password-less authentication mechanisms like 
 	<desc>Прогноз облікових даних/сеансу – це метод викрадення або видавання себе за користувача вебсайту. Виведення або вгадування унікального значення, яке ідентифікує конкретний сеанс або користувача, що виконує атаку. Також відоме як викрадення сеансу, наслідки можуть дозволити зловмисникам надсилати запити вебсайту з привілеями скомпрометованого користувача.
 
 Багато вебсайтів розроблено для автентифікації та відстеження користувача під час першого встановлення зв’язку. Для цього користувачі повинні підтвердити свою особу на вебсайті, як правило, шляхом надання комбінації імені користувача та пароля (облікових даних). Замість того, щоб передавати ці конфіденційні облікові дані туди-сюди з кожною транзакцією, вебсайти генеруватимуть унікальний «ідентифікатор сеансу», щоб ідентифікувати сеанс користувача як автентифікований. Подальше спілкування між користувачем і вебсайтом позначається ідентифікатором сеансу як «доказ» автентифікованого сеансу. Якщо зловмисник може передбачити або вгадати ідентифікатор сеансу іншого користувача, можлива шахрайська діяльність.</desc>
-	<solution/>
+	<solution>Use mechanisms that generate random, transient, and unpredictable session identifiers.</solution>
 	<reference>http://projects.webappsec.org/Credential-and-Session-Prediction</reference>
 </vuln_item_wasc_18>
 
@@ -615,7 +631,7 @@ Additionally consider migrating to password-less authentication mechanisms like 
 <vuln_item_wasc_23>
 	<alert>XML введення</alert>
 	<desc>XML-введення - це метод атаки, який використовується для керування або компрометації логіки XML-додатку або сервісу. Введення в XML-повідомлення ненавмисного вмісту та/або структур може змінити логіку роботи додатку. Крім того, XML-введення може призвести до вставки шкідливого вмісту в отримане повідомлення/документ.</desc>
-	<solution/>
+	<solution>Never trust user input. Validate and sanitize the user input before incorporating it into the XML document. Consider blocking or escaping XML meta characters e.g. "&lt;" and "&gt;" could be represented with the corresponding entities: "&amp;lt;" and "&amp;gt;".</solution>
 	<reference>http://projects.webappsec.org/XML-Injection</reference>
 </vuln_item_wasc_23>
 
@@ -965,7 +981,7 @@ For platforms such as ASP that do not generate new values for sessionid cookies,
 	<alert>Зовнішні об'єкти XML</alert>
 	<desc>Цей метод використовує перевагу XML динамічно створювати документи під час обробки. Повідомлення XML може надавати дані в явному вигляді або шляхом вказівки на URI, де ці дані існують. In the attack technique, external entities may replace the entity value with malicious data, alternate referrals or may compromise the security of the data the server/XML application has access to.
 	Зловмисники також можуть використовувати зовнішні об'єкти, щоб змусити сервер вебслужб завантажити шкідливий код або вміст на сервер для використання у вторинних або наступних атаках.</desc>
-	<solution/>
+	<solution>XML External Entities vulnerabilities arise because the application's XML parsing library supports potentially dangerous XML features. To prevent XML External Entities vulnerabilities disable the resolution of external entities and the support for XInclude.</solution>
 	<reference>http://projects.webappsec.org/XML-External-Entities</reference>
 </vuln_item_wasc_43>
 

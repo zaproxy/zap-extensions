@@ -389,7 +389,23 @@ Upang punan ang nawawalang impormasyon ang hacker ay maghuhula ng nawawalang imp
     * Paghuhula ng CVV/CSC ay nangangailangan lamang ng 1000 o 10000 na pagtatangka gaya ng numero ay 3 o 4 digit lamang, depende sa uri ng card.
     * Paghuhula ng petsa ng expiration ay nangangailangan ng ilang dosenang patatangka lamang.
 	</desc>
-	<solution/>
+		<solution>Phase: Architecture and Design
+To mitigate the risk of brute force attacks on credit card information, follow these best practices:
+
+* CAPTCHA Protection: Implement CAPTCHA challenges during the payment process to differentiate between human and automated attempts. CAPTCHAs can help prevent automated brute force attacks.
+* Rate Limiting: Implement rate limiting on payment attempts. Limit the number of requests from a single IP address or user account within a specific time frame.
+* Multi-Factor Authentication (MFA): Require multi-factor authentication for sensitive transactions, including online payments. MFA adds an extra layer of security by verifying the user's identity through multiple factors, making brute force attacks more difficult.
+* Secure Data Storage: Ensure that credit card information is securely stored and encrypted. Limit access to sensitive data to authorized personnel only.
+* Continuous Monitoring: Implement continuous monitoring to detect and respond to suspicious activities, including multiple failed payment attempts.
+* Compliance with PCI DSS: If your application processes credit card information, ensure compliance with Payment Card Industry Data Security Standard (PCI DSS) requirements, which provide security guidelines for handling credit card data.
+
+Phase: Implementation
+Implement the above security measures in your application code, payment processing, and user account management functionalities.
+
+Phase: Operation
+Regularly monitor and review your security measures and adapt to evolving threats and attack patterns.
+
+</solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11d>
 
@@ -407,7 +423,7 @@ Lalong lalo na ang gawa na mga kaugnay ay pwedeng maipadala ng isang gumagamit g
 
 Ang atake na ito ay nagsasamantala ng tiwala sa relasyon na naitatag sa pagitan ng gumagamit at ng web site. Ang pamamaraan ay nagamit upang lumikha ng pekeng mga pahina ng web kabilang ang mga form sa pag-login, mga kabaligtaran, maling mga pahayag, atbp.
 	</desc>
-	<solution/>
+	<solution>Implement appropriate Content Security Policy (CSP) and never trust user input.</solution>
 	<reference>http://projects.webappsec.org/Content-Spoofing</reference>
 </vuln_item_wasc_12>
 
@@ -472,7 +488,7 @@ Gayundin, ang default na mga installation ay maaaring magsama ng mga kilalang us
 	<desc>Ang Credential/Sesyon na hula ay isang pamamaraan sa hijacking o impersonating sa isang gumagamit ng web site. Pagbabawa o paghula ng natatanging halaga na tinukoy ang isang partikular na sesyon o naisasakatupad ang pag-aatake ng gumagamit. Kilala rin bilang Hijacking na sesyon, ang mga bunga ay magpapahintulot sa mga umaatake na kakayanin ang isyu ng mga kahilingan ng web site na may naka-kompromiso sa pribilehiyo ng gumagamit.
 
 Maraming mga web site ay dinisenyo upang mapatunayan at subaybayan ang isang gumagamit kapag ang kumunikasyon ay unang itinatatag. Upang gawin ito, ang mga gumagamit dapat nagpatunay sa kanilang pagkakakilanlan sa web site, karaniwan ay sa pamamagitan ng pagbibigay ng isang username/password (mga kredensyal) na kumbinasyon. Sa halip na pagpasa ng mga kompidensyal na mga kredensyal pabalik at paatras na may bawat transaksyon, ang mga web site ay bumubuo ng isang natatanging "ID ng sesyon" upang tukuyin ang gumagamit ng sesyon nang mapagtibay. Kasunod na komunikasyon sa pagitan ng gumagamit at sa web site ay naka-tag na may ID ng sesyon bilang "katibayan" sa pagpapatunay na sesyon. Kung ang isang umatake ay kayang mahulaan o hulaan ang ID ng sesyon sa isa pang gumagamit, pandaraya na aktibidad ay posible.</desc>
-	<solution/>
+	<solution>Use mechanisms that generate random, transient, and unpredictable session identifiers.</solution>
 	<reference>http://projects.webappsec.org/Credential-and-Session-Prediction</reference>
 </vuln_item_wasc_18>
 
@@ -615,7 +631,7 @@ Kapag ang pagpapalit ng datos sa pagitan ng mga bahagi, masisiguro na ang mga ko
 <vuln_item_wasc_23>
 	<alert>XML Injection</alert>
 	<desc>Ang XML Injection ay isang atake na pamamaraan na ginagamit upang manipulahin o ikompromiso ang lohika ng isang XML na aplikasyon o serbisyo. Ang injection sa di-sinasadyang XML na nilalaman at/o mga istruktura para sa isang XML na mensahe na maaaring balakin ang lohika ng aplikasyon. Dagdag pa rito, ang XML Injection ay maaaring maging sanhi ng insertion ng malisyosong nilalaman sa resultang mensahe/dokumento.</desc>
-	<solution/>
+	<solution>Never trust user input. Validate and sanitize the user input before incorporating it into the XML document. Consider blocking or escaping XML meta characters e.g. "&lt;" and "&gt;" could be represented with the corresponding entities: "&amp;lt;" and "&amp;gt;".</solution>
 	<reference>http://projects.webappsec.org/XML-Injection</reference>
 </vuln_item_wasc_23>
 
@@ -963,7 +979,7 @@ Tiyakin na ang lahat ng pagkabigo sa alokasyon ng mapagkukunan ay maglalagay sa 
 	<alert>Ang XML na panglabas na mga entity</alert>
 	<desc>Ito pamamaraan ay nagtatagal ng kalamangan ng isang feature sa XML para bumuo ng mga dokumento nang pabago bago sa oras ng pagproproseso. Ang isang XML na mensahe ay sinumang nagbibigay ng datos explicitly o sa pamamagitan ng pagtuturo sa isang URI na kung saan ang datos ay umiiral. Sa pamamaraan ng pag-atake, ang mga panlabas na entidad ay maaaring palitan ang halaga ng entidad na may malisyosong datos, alternatibong mga sanggunian o maaaring ikompromiso ang seguridad ng datos na may access ang server/XML na aplikasyon.
 	Maaaring gamitin din ng mga taga-atake ang Panlabas na mga Entidad upang i-download ng server ng mga web service ang malisyosong code o nilalaman sa server para magamit sa sekondarya o sundin ang mga pag-atake.</desc>
-	<solution/>
+	<solution>XML External Entities vulnerabilities arise because the application's XML parsing library supports potentially dangerous XML features. To prevent XML External Entities vulnerabilities disable the resolution of external entities and the support for XInclude.</solution>
 	<reference>http://projects.webappsec.org/XML-External-Entities</reference>
 </vuln_item_wasc_43>
 

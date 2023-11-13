@@ -393,7 +393,23 @@ Additionally consider migrating to password-less authentication mechanisms like 
     * Для угадывания CVV / CSC требуется всего 1000 или 10000 попыток, так как номер состоит всего из 3 или 4 цифр, в зависимости от типа карты. 
     * Для угадывания срока годности требуется всего несколько десятков попыток. 
 	</desc>
-	<solution/>
+		<solution>Phase: Architecture and Design
+To mitigate the risk of brute force attacks on credit card information, follow these best practices:
+
+* CAPTCHA Protection: Implement CAPTCHA challenges during the payment process to differentiate between human and automated attempts. CAPTCHAs can help prevent automated brute force attacks.
+* Rate Limiting: Implement rate limiting on payment attempts. Limit the number of requests from a single IP address or user account within a specific time frame.
+* Multi-Factor Authentication (MFA): Require multi-factor authentication for sensitive transactions, including online payments. MFA adds an extra layer of security by verifying the user's identity through multiple factors, making brute force attacks more difficult.
+* Secure Data Storage: Ensure that credit card information is securely stored and encrypted. Limit access to sensitive data to authorized personnel only.
+* Continuous Monitoring: Implement continuous monitoring to detect and respond to suspicious activities, including multiple failed payment attempts.
+* Compliance with PCI DSS: If your application processes credit card information, ensure compliance with Payment Card Industry Data Security Standard (PCI DSS) requirements, which provide security guidelines for handling credit card data.
+
+Phase: Implementation
+Implement the above security measures in your application code, payment processing, and user account management functionalities.
+
+Phase: Operation
+Regularly monitor and review your security measures and adapt to evolving threats and attack patterns.
+
+</solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11d>
 
@@ -412,7 +428,7 @@ Additionally consider migrating to password-less authentication mechanisms like 
 
 Эта атака использует доверительные отношения, установленные между пользователем и веб-сайтом.  Этот метод использовался для создания поддельных веб-страниц, включая формы входа, искажения, ложные пресс-релизы и т. д.
 	</desc>
-	<solution/>
+	<solution>Implement appropriate Content Security Policy (CSP) and never trust user input.</solution>
 	<reference>http://projects.webappsec.org/Content-Spoofing</reference>
 </vuln_item_wasc_12>
 
@@ -477,7 +493,7 @@ Additionally consider migrating to password-less authentication mechanisms like 
 	<desc>Прогнозирование учетных данных / сеансов - это метод взлома или выдачи себя за пользователя веб-сайта.  Выведение или угадывание уникального значения, которое идентифицирует конкретный сеанс или пользователя, выполняет атаку.  Последствия, также известные как перехват сеанса, могут позволить злоумышленникам отправлять запросы к веб-сайтам с привилегиями скомпрометированного пользователя. 
 
 Многие веб-сайты предназначены для аутентификации и отслеживания пользователя при первом установлении связи.  Для этого пользователи должны подтвердить свою личность на веб-сайте, обычно путем предоставления комбинации имени пользователя и пароля (учетных данных).  Вместо того, чтобы передавать эти конфиденциальные учетные данные туда и обратно с каждой транзакцией, веб-сайты будут генерировать уникальный «идентификатор сеанса», чтобы идентифицировать сеанс пользователя как аутентифицированный.  Последующее общение между пользователем и веб-сайтом помечается идентификатором сеанса как «доказательство» аутентифицированного сеанса.  Если злоумышленник может предсказать или угадать идентификатор сеанса другого пользователя, возможна мошенническая деятельность. </desc>
-	<solution/>
+	<solution>Use mechanisms that generate random, transient, and unpredictable session identifiers.</solution>
 	<reference>http://projects.webappsec.org/Credential-and-Session-Prediction</reference>
 </vuln_item_wasc_18>
 
@@ -619,7 +635,7 @@ Additionally consider migrating to password-less authentication mechanisms like 
 <vuln_item_wasc_23>
 	<alert>XML-инъекция </alert>
 	<desc>XML-инъекция - это метод атаки, используемый для манипулирования или компрометации логики XML-приложения или службы.  Внедрение непреднамеренного XML-содержимого и / или структур в XML-сообщение может изменить логику намерений приложения.  Кроме того, внедрение XML может вызвать вставку вредоносного содержимого в итоговое сообщение / документ. </desc>
-	<solution/>
+	<solution>Never trust user input. Validate and sanitize the user input before incorporating it into the XML document. Consider blocking or escaping XML meta characters e.g. "&lt;" and "&gt;" could be represented with the corresponding entities: "&amp;lt;" and "&amp;gt;".</solution>
 	<reference>http://projects.webappsec.org/XML-Injection</reference>
 </vuln_item_wasc_23>
 
@@ -970,7 +986,7 @@ If an attacker submits a Server-side Include statement, he may have the ability 
 	<alert>Внешние объекты XML </alert>
 	<desc>Этот метод использует преимущества XML для динамического создания документов во время обработки.  Сообщение XML может либо предоставлять данные явно, либо указывать на URI, в котором данные существуют.  В методе атаки внешние объекты могут заменить значение объекта вредоносными данными, альтернативными ссылками или могут поставить под угрозу безопасность данных, к которым сервер / приложение XML имеет доступ. 
 	Злоумышленники также могут использовать внешние объекты, чтобы сервер веб-служб загружал вредоносный код или контент на сервер для использования во вторичных или последующих атаках. </desc>
-	<solution/>
+	<solution>XML External Entities vulnerabilities arise because the application's XML parsing library supports potentially dangerous XML features. To prevent XML External Entities vulnerabilities disable the resolution of external entities and the support for XInclude.</solution>
 	<reference>http://projects.webappsec.org/XML-External-Entities</reference>
 </vuln_item_wasc_43>
 

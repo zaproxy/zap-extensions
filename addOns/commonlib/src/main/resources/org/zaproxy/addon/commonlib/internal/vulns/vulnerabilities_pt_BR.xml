@@ -435,7 +435,23 @@ Para completar as informações ausentes, o hacker pode adivinhar as informaçõ
     
 * - Adivinhar uma data de expiração requer apenas algumas dezenas de tentativas.
 	</desc>
-	<solution/>
+		<solution>Phase: Architecture and Design
+To mitigate the risk of brute force attacks on credit card information, follow these best practices:
+
+* CAPTCHA Protection: Implement CAPTCHA challenges during the payment process to differentiate between human and automated attempts. CAPTCHAs can help prevent automated brute force attacks.
+* Rate Limiting: Implement rate limiting on payment attempts. Limit the number of requests from a single IP address or user account within a specific time frame.
+* Multi-Factor Authentication (MFA): Require multi-factor authentication for sensitive transactions, including online payments. MFA adds an extra layer of security by verifying the user's identity through multiple factors, making brute force attacks more difficult.
+* Secure Data Storage: Ensure that credit card information is securely stored and encrypted. Limit access to sensitive data to authorized personnel only.
+* Continuous Monitoring: Implement continuous monitoring to detect and respond to suspicious activities, including multiple failed payment attempts.
+* Compliance with PCI DSS: If your application processes credit card information, ensure compliance with Payment Card Industry Data Security Standard (PCI DSS) requirements, which provide security guidelines for handling credit card data.
+
+Phase: Implementation
+Implement the above security measures in your application code, payment processing, and user account management functionalities.
+
+Phase: Operation
+Regularly monitor and review your security measures and adapt to evolving threats and attack patterns.
+
+</solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11d>
 
@@ -456,7 +472,7 @@ Links especialmente criados podem ser enviados a um usuário por e-mail, mensage
 
 Este ataque explora a relação de confiança estabelecida entre o usuário e o site. A técnica tem sido usada para criar páginas da web falsas, incluindo formulários de login, desfiguração de sites, comunicados de imprensa falsos, etc.
 	</desc>
-	<solution/>
+	<solution>Implement appropriate Content Security Policy (CSP) and never trust user input.</solution>
 	<reference>http://projects.webappsec.org/Content-Spoofing</reference>
 </vuln_item_wasc_12>
 
@@ -521,7 +537,7 @@ Da mesma forma, as instalações padrão podem incluir nomes de usuário e senha
 	<desc>Previsão de Credencial/Sessão é um método de sequestro de seção ou a simulação de ser um usuário de site. Deduzindo ou adivinhando o valor exclusivo que identifica uma determinada sessão ou usuário, o ataque é completado. Também conhecido como sequestro de sessão, as consequências podem permitir que os invasores façam solicitações de sites com os privilégios do usuário comprometido.
 
 Muitos sites são projetados para autenticar e rastrear um usuário quando a comunicação é estabelecida pela primeira vez. Para fazer isso, os usuários devem provar sua identidade para o site, normalmente fornecendo uma combinação de nome de usuário/senha (credenciais). Em vez de passar essas credenciais confidenciais para frente e para trás com cada transação, os sites irão gerar um "ID de sessão" exclusivo para identificar a sessão do usuário como autenticada. A comunicação subsequente entre o usuário e o site é marcada com o ID da sessão como "prova" da sessão autenticada. Se um invasor for capaz de prever ou adivinhar o ID da sessão de outro usuário, a atividade fraudulenta é possível.</desc>
-	<solution/>
+	<solution>Use mechanisms that generate random, transient, and unpredictable session identifiers.</solution>
 	<reference>http://projects.webappsec.org/Credential-and-Session-Prediction</reference>
 </vuln_item_wasc_18>
 
@@ -668,7 +684,7 @@ Ao trocar dados entre componentes, certifique-se de que ambos os componentes est
 <vuln_item_wasc_23>
 	<alert>Injeção XML</alert>
 	<desc>Injeção XML (XML Injection) é uma técnica de ataque usada para manipular ou comprometer a lógica de uma aplicação ou serviço XML. A injeção de conteúdo e/ou estruturas XML não intencionais em uma mensagem XML pode alterar a lógica pretendida da aplicação. Além disso, a injeção de XML pode causar a inserção de conteúdo malicioso na mensagem/documento resultante.</desc>
-	<solution/>
+	<solution>Never trust user input. Validate and sanitize the user input before incorporating it into the XML document. Consider blocking or escaping XML meta characters e.g. "&lt;" and "&gt;" could be represented with the corresponding entities: "&amp;lt;" and "&amp;gt;".</solution>
 	<reference>http://projects.webappsec.org/XML-Injection</reference>
 </vuln_item_wasc_23>
 
@@ -1024,7 +1040,7 @@ Certifique-se de que todas as falhas na alocação de recursos não colocam o si
 	<alert>Entidades Externas XML</alert>
 	<desc>Essa técnica aproveita um recurso do XML para construir documentos dinamicamente no momento do processamento. Uma mensagem XML pode fornecer dados explicitamente ou apontando para um URI onde os dados existem. Na técnica de ataque, entidades externas podem substituir o valor da entidade por dados maliciosos, referências alternativas ou podem comprometer a segurança dos dados aos quais o servidor/aplicativo XML tem acesso.
 	Os invasores também podem usar Entidades Externas para que o servidor de serviços da web baixe código malicioso ou conteúdo para o servidor para uso em ataques secundários ou acompanhamento.</desc>
-	<solution/>
+	<solution>XML External Entities vulnerabilities arise because the application's XML parsing library supports potentially dangerous XML features. To prevent XML External Entities vulnerabilities disable the resolution of external entities and the support for XInclude.</solution>
 	<reference>http://projects.webappsec.org/XML-External-Entities</reference>
 </vuln_item_wasc_43>
 

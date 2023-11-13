@@ -370,7 +370,23 @@ Untuk mengisi informasi yang hilang, si hacker bisa menebak informasi yang hilan
     * Menebak CVV/CSC hanya memerlukan 1000 atau 10000 usaha karena jumlahnya hanya 3 atau 4 digit, tergantung pada jenis kartunya.
     * Menebak tanggal kadaluwarsa hanya membutuhkan beberapa lusin usaha.
 	</desc>
-	<solution/>
+		<solution>Phase: Architecture and Design
+To mitigate the risk of brute force attacks on credit card information, follow these best practices:
+
+* CAPTCHA Protection: Implement CAPTCHA challenges during the payment process to differentiate between human and automated attempts. CAPTCHAs can help prevent automated brute force attacks.
+* Rate Limiting: Implement rate limiting on payment attempts. Limit the number of requests from a single IP address or user account within a specific time frame.
+* Multi-Factor Authentication (MFA): Require multi-factor authentication for sensitive transactions, including online payments. MFA adds an extra layer of security by verifying the user's identity through multiple factors, making brute force attacks more difficult.
+* Secure Data Storage: Ensure that credit card information is securely stored and encrypted. Limit access to sensitive data to authorized personnel only.
+* Continuous Monitoring: Implement continuous monitoring to detect and respond to suspicious activities, including multiple failed payment attempts.
+* Compliance with PCI DSS: If your application processes credit card information, ensure compliance with Payment Card Industry Data Security Standard (PCI DSS) requirements, which provide security guidelines for handling credit card data.
+
+Phase: Implementation
+Implement the above security measures in your application code, payment processing, and user account management functionalities.
+
+Phase: Operation
+Regularly monitor and review your security measures and adapt to evolving threats and attack patterns.
+
+</solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11d>
 
@@ -388,7 +404,7 @@ Link khusus dibuat dapat dikirim ke pengguna melalui e-mail, pesan instan, yang 
 
 Serangan ini mengeksploitasi kepercayaan hubungan yang terjalin antara pengguna dan situs web. Teknik ini telah digunakan untuk membuat halaman web palsu seperti formulir masuk, perusakan, siaran pers palsu, dll.
 	</desc>
-	<solution/>
+	<solution>Implement appropriate Content Security Policy (CSP) and never trust user input.</solution>
 	<reference>http://projects.webappsec.org/Content-Spoofing</reference>
 </vuln_item_wasc_12>
 
@@ -454,7 +470,7 @@ Demikian juga, instalasi default mungkin termasuk nama pengguna dan kata sandi, 
 	<desc>Prediksi sesi/kredensial adalah metode pembajakan atau meniru sebuah situs web pengguna. Menyimpulkan atau menebak nilai unik yang mengidentifikasi sebuah sesi tertentu atau pengguna menyelesaikan serangan. Juga dikenal sebagai sesi pembajakan, konsekuensi dapat memungkinkan kemampuan penyerang untuk mengeluarkan permintaan situs web dengan tanpa hak pengguna.
 
 Banyak situs web yang dirancang untuk mengotentikasi dan melacak pengguna ketika komunikasi ini pertama kali didirikan. Untuk melakukan hal ini, pengguna harus membuktikan identitas mereka ke situs web, biasanya dengan menyediakan nama pengguna/katasandi (kredensial) kombinasi. Dari pada melewati ini rahasia kredensial bolak-balik dengan masing-masing transaksi, situs web yang akan menghasilkan sebuah "sesi ID" untuk mengidentifikasi sesi pengguna saat dikonfirmasi. Selanjutnya komunikasi antara pengguna dan situs web yang ditandai dengan sesi ID sebagai "bukti" dikonfirmasi sesi. Jika seorang penyerang dapat memprediksi atau menebak sesi ID dari pengguna lain, aktivitas penipuan adalah mungkin.</desc>
-	<solution/>
+	<solution>Use mechanisms that generate random, transient, and unpredictable session identifiers.</solution>
 	<reference>http://projects.webappsec.org/Credential-and-Session-Prediction</reference>
 </vuln_item_wasc_18>
 
@@ -594,7 +610,7 @@ Ketika bertukar data antara komponen-komponen, memastikan bahwa kedua komponen y
 <vuln_item_wasc_23>
 	<alert>Injeksi XML</alert>
 	<desc>XML Injection adalah teknik serangan yang digunakan untuk memanipulasi atau mengkompromikan logika aplikasi atau layanan XML. Penyuntikan konten dan / atau struktur XML yang tidak diinginkan ke dalam pesan XML dapat mengubah logika niat aplikasi. Lebih lanjut, XML injeksi dapat menyebabkan penyisipan konten berbahaya ke pesan/dokumen yang dihasilkan.</desc>
-	<solution/>
+	<solution>Never trust user input. Validate and sanitize the user input before incorporating it into the XML document. Consider blocking or escaping XML meta characters e.g. "&lt;" and "&gt;" could be represented with the corresponding entities: "&amp;lt;" and "&amp;gt;".</solution>
 	<reference>http://projects.webappsec.org/XML-Injection</reference>
 </vuln_item_wasc_23>
 
@@ -948,7 +964,7 @@ Pastikan semua kegagalan dalam alokasi sumber daya menempatkan sistem ke dalam p
 	<alert>Entitas Eksternal XML</alert>
 	<desc>Teknik ini memanfaatkan fitur XML untuk membangun dokumen secara dinamis pada saat pemrosesan. Pesan XML dapat memberikan data secara eksplisit atau dengan menunjuk ke URI dimana data ada. Dalam teknik penyerangan, entitas eksternal bisa menganti nilai entitas dengan data berbahaya, rujukan alternatif atau mungkin membahayakan keamanan dari data server/XML aplikasi memiliki akses untuk.
 	Penyerang mungkin juga menggunakan entitas eksternal agar mendownload server layanan web kode berbahaya atau konten ke server untuk digunakan dalam sekunder atau ikut pada serangan.</desc>
-	<solution/>
+	<solution>XML External Entities vulnerabilities arise because the application's XML parsing library supports potentially dangerous XML features. To prevent XML External Entities vulnerabilities disable the resolution of external entities and the support for XInclude.</solution>
 	<reference>http://projects.webappsec.org/XML-External-Entities</reference>
 </vuln_item_wasc_43>
 

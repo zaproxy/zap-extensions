@@ -390,7 +390,23 @@ W celu wypełnienia brakujących informacji, haker może odgadnąć brakujące i
     * Zgadywanie CVV / CSC wymaga tylko 1000 lub 10000 prób, ponieważ ilość cyfr to tylko 3 lub 4, w zależności od rodzaju karty.
     * Zgadywanie daty ważności wymaga jedynie kilka tuzin prób.
 	</desc>
-	<solution/>
+		<solution>Phase: Architecture and Design
+To mitigate the risk of brute force attacks on credit card information, follow these best practices:
+
+* CAPTCHA Protection: Implement CAPTCHA challenges during the payment process to differentiate between human and automated attempts. CAPTCHAs can help prevent automated brute force attacks.
+* Rate Limiting: Implement rate limiting on payment attempts. Limit the number of requests from a single IP address or user account within a specific time frame.
+* Multi-Factor Authentication (MFA): Require multi-factor authentication for sensitive transactions, including online payments. MFA adds an extra layer of security by verifying the user's identity through multiple factors, making brute force attacks more difficult.
+* Secure Data Storage: Ensure that credit card information is securely stored and encrypted. Limit access to sensitive data to authorized personnel only.
+* Continuous Monitoring: Implement continuous monitoring to detect and respond to suspicious activities, including multiple failed payment attempts.
+* Compliance with PCI DSS: If your application processes credit card information, ensure compliance with Payment Card Industry Data Security Standard (PCI DSS) requirements, which provide security guidelines for handling credit card data.
+
+Phase: Implementation
+Implement the above security measures in your application code, payment processing, and user account management functionalities.
+
+Phase: Operation
+Regularly monitor and review your security measures and adapt to evolving threats and attack patterns.
+
+</solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11d>
 
@@ -409,7 +425,7 @@ Specjalnie zrobione ręcznie linki mogą być wysłane przez e-maila, błyskawic
 
 Ten atak wykorzystuje relację zaufania założonej pomiędzy użytkownikiem a stroną internetową. Technika była używana do tworzenia fałszywych stron internetowych obejmujących postać loginów, zniszczenia, fałszywe informacje prasowe itd.
 	</desc>
-	<solution/>
+	<solution>Implement appropriate Content Security Policy (CSP) and never trust user input.</solution>
 	<reference>http://projects.webappsec.org/Content-Spoofing</reference>
 </vuln_item_wasc_12>
 
@@ -474,7 +490,7 @@ Podobnie instalacje domyślne mogą zawierać dobrze znane nazwy użytkowników 
 	<desc>Predykcja Danych Dostępowych i Sesji jest metodą przejęcia lub podszywania się pod użytkownika strony internetowej. Dedukowanie lub odgadywanie unikalnej wartości, która identyfikuje określoną sesję lub użytkownika, dokonuje ataku. Także znana jako Przejmowanie Sesji, konsekwencje mogą umożliwić atakującym wysyłanie żądań ze strony internetowej z przywilejami zaatakowanego użytkownika.
 
 Wiele stron internetowych są zaprojektowane do autoryzacji i śledzenia użytkownika kiedy komunikacja jest pierwszy raz nawiązana. Do zrobienia tego, użytkownicy muszą udowodnić ich tożsamość stronie internetowej, zwykle poprzez podanie kombinacji nazwy/hasła(danych dostępowych). Zamiast przekazywać te poufne poświadczenia w każdej transakcji, strony internetowe będą generować unikalny "identyfikator sesji", aby zidentyfikować sesję użytkownika jako uwierzytelnioną. Późniejsza komunikacja między użytkownikiem a witryną WWW jest oznaczana identyfikatorem sesji jako "dowód" uwierzytelnionej sesji. Jeśli atakujący jest w stanie przewidzieć lub odgadnąć identyfikator sesji innego użytkownika, możliwe jest oszukańcze działanie.</desc>
-	<solution/>
+	<solution>Use mechanisms that generate random, transient, and unpredictable session identifiers.</solution>
 	<reference>http://projects.webappsec.org/Credential-and-Session-Prediction</reference>
 </vuln_item_wasc_18>
 
@@ -618,7 +634,7 @@ Podczas wymiany danych między komponentami upewnij się, że oba komponenty uż
 <vuln_item_wasc_23>
 	<alert>Iniekcja XML</alert>
 	<desc>Iniekcja XML jest techniką ataku używaną do manipulowania lub naruszenia logiki aplikacji lub usługi XML. Wstrzyknięcie niezamierzonej treści XML i / lub struktur do komunikatu XML może zmienić zamierzoną logikę aplikacji. Ponadto, iniekcja XML może spowodować wstawienie złośliwej treści do powstałej wiadomości / dokumentu.</desc>
-	<solution/>
+	<solution>Never trust user input. Validate and sanitize the user input before incorporating it into the XML document. Consider blocking or escaping XML meta characters e.g. "&lt;" and "&gt;" could be represented with the corresponding entities: "&amp;lt;" and "&amp;gt;".</solution>
 	<reference>http://projects.webappsec.org/XML-Injection</reference>
 </vuln_item_wasc_23>
 
@@ -970,7 +986,7 @@ Upewnij się, że wszystkie awarie w alokacji zasobów stawiają system w bezpie
 	<alert>Zewnętrzne Odwołania XML</alert>
 	<desc>Ta technika wykorzystuje funkcję XML do dynamicznego budowania dokumentów w czasie przetwarzania. Komunikat XML może jawnie dostarczać dane lub wskazywać URI, w którym dane istnieją. W technice tego ataku podmioty zewnętrzne mogą zastąpić wartość jednostki złośliwymi danymi, alternatywnymi poleceniami lub mogą zagrozić bezpieczeństwu danych, do których dostęp ma aplikacja serwer/XML.
 	Atakujący mogą również używać Zewnętrznych Odwołań, aby serwer usług WWW pobierał złośliwy kod lub zawartość na serwer w celu użycia w atakach wtórnych lub następczych.</desc>
-	<solution/>
+	<solution>XML External Entities vulnerabilities arise because the application's XML parsing library supports potentially dangerous XML features. To prevent XML External Entities vulnerabilities disable the resolution of external entities and the support for XInclude.</solution>
 	<reference>http://projects.webappsec.org/XML-External-Entities</reference>
 </vuln_item_wasc_43>
 

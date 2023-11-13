@@ -388,7 +388,23 @@ Afin de saisir les informations manquantes, le pirate peut deviner les informati
     * Deviner un code CVV/CSC ne nécessite que 1000 ou 10000 tentatives, du fait que le nombre est seulement de 3 ou 4 chiffres, selon le type de carte.
     * Deviner une date d'expiration nécessite seulement quelques douzaines de tentatives.
 	</desc>
-	<solution/>
+		<solution>Phase: Architecture and Design
+To mitigate the risk of brute force attacks on credit card information, follow these best practices:
+
+* CAPTCHA Protection: Implement CAPTCHA challenges during the payment process to differentiate between human and automated attempts. CAPTCHAs can help prevent automated brute force attacks.
+* Rate Limiting: Implement rate limiting on payment attempts. Limit the number of requests from a single IP address or user account within a specific time frame.
+* Multi-Factor Authentication (MFA): Require multi-factor authentication for sensitive transactions, including online payments. MFA adds an extra layer of security by verifying the user's identity through multiple factors, making brute force attacks more difficult.
+* Secure Data Storage: Ensure that credit card information is securely stored and encrypted. Limit access to sensitive data to authorized personnel only.
+* Continuous Monitoring: Implement continuous monitoring to detect and respond to suspicious activities, including multiple failed payment attempts.
+* Compliance with PCI DSS: If your application processes credit card information, ensure compliance with Payment Card Industry Data Security Standard (PCI DSS) requirements, which provide security guidelines for handling credit card data.
+
+Phase: Implementation
+Implement the above security measures in your application code, payment processing, and user account management functionalities.
+
+Phase: Operation
+Regularly monitor and review your security measures and adapt to evolving threats and attack patterns.
+
+</solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
 </vuln_item_wasc_11d>
 
@@ -407,7 +423,7 @@ Des liens spécialement conçus peuvent être envoyés à l'utilisateur par e-ma
 
 Cette attaque exploite la relation de confiance établie entre l'utilisateur et le site internet. La technique a été utilisée pour créer de fausses pages web, notamment des formulaires d'identification, des pages vandalisées, de faux communiqués de presse, etc.
 	</desc>
-	<solution/>
+	<solution>Implement appropriate Content Security Policy (CSP) and never trust user input.</solution>
 	<reference>http://projects.webappsec.org/Content-Spoofing</reference>
 </vuln_item_wasc_12>
 
@@ -472,7 +488,7 @@ Par ailleurs, les installations par défaut peuvent inclure des noms d'utilisate
 	<desc>La prédiction des identifiants et des sessions (Credential/Session Prediction) est une méthode pour détourner l'authentification à un site internet ou pour se faire passer pour un utilisateur du site. Déduire ou deviner la valeur unique qui identifie une session particulière ou un utilisateur réalise l'attaque. Également connu sous le nom de détournement de session (Session Hijacking), les conséquences sont de permettre aux pirates d'émettre des requêtes de site internet avec les privilèges de l'utilisateur infecté.
 
 De nombreux sites web sont conçus pour authentifier un utilisateur à l'établissement de la connexion. Pour ce faire, les utilisateurs doivent prouver leur identité auprès du site internet, en fournissant généralement une combinaison nom d'utilisateur/mot de passe (identifiants). Plutôt que de transmettre ces informations confidentielles dans les deux sens à chaque transaction, les sites internet généreront un "identificateur de session" unique destiné à qualifier la session de l'utilisateur comme étant authentifiée. Toute communication ultérieure entre l'utilisateur et le site web est marquée avec l'identificateur de session comme "preuve" d'une session authentifiée. Si un agresseur peut prédire ou deviner l'identificateur de session d'un autre utilisateur, une activité frauduleuse est possible.</desc>
-	<solution/>
+	<solution>Use mechanisms that generate random, transient, and unpredictable session identifiers.</solution>
 	<reference>http://projects.webappsec.org/Credential-and-Session-Prediction</reference>
 </vuln_item_wasc_18>
 
@@ -611,7 +627,7 @@ Lors de l'échange de données entre des composants, assurez-vous que les deux c
 <vuln_item_wasc_23>
 	<alert>Injection XML</alert>
 	<desc>L'injection XML est une technique d'attaque utilisée pour manipuler ou compromettre la logique d'un service ou d'une application XML. L'injection de contenu ou de structures XML accidentel dans un message XML peut modifier la logique prévue de l'application. De plus, l'injection XML peut provoquer l'insertion de contenu malveillant dans le message ou document résultant.</desc>
-	<solution/>
+	<solution>Never trust user input. Validate and sanitize the user input before incorporating it into the XML document. Consider blocking or escaping XML meta characters e.g. "&lt;" and "&gt;" could be represented with the corresponding entities: "&amp;lt;" and "&amp;gt;".</solution>
 	<reference>http://projects.webappsec.org/XML-Injection</reference>
 </vuln_item_wasc_23>
 
@@ -961,7 +977,7 @@ Assurez-vous que tous les échecs dans l'allocation des ressources laissent le s
 	<alert>Entités XML externes</alert>
 	<desc>La technique des entités XML externes (XML External Entities) tire parti d'une fonctionnalité du langage XML pour générer dynamiquement des documents au moment du traitement. Un message XML peut soit fournir des données explicitement, soit pointer vers un URI où les données sont disponibles. Dans cette technique d'attaque, des entités externes peuvent remplacer la valeur de l'entité par des données malveillantes ou des renvois alternatifs, ou peuvent compromettre la sécurité des données auxquelles le serveur ou l'application XML a accès.
 	Les agresseurs peuvent également utiliser des entités externes pour forcer le serveur de services internet à télécharger du code ou du contenu malveillant sur le serveur pour utilisation dans des attaques secondaires ou ultérieures.</desc>
-	<solution/>
+	<solution>XML External Entities vulnerabilities arise because the application's XML parsing library supports potentially dangerous XML features. To prevent XML External Entities vulnerabilities disable the resolution of external entities and the support for XInclude.</solution>
 	<reference>http://projects.webappsec.org/XML-External-Entities</reference>
 </vuln_item_wasc_43>
 
