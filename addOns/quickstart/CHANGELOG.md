@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- Dropped "to Clipboard" from ZAP copy menu items and buttons (Issue 8179).
 
 ## [43] - 2023-10-12
 ### Changed
