@@ -42,7 +42,7 @@ public class AlertFilter extends Enableable {
 
     // Use -1 for global alert filters
     private int contextId;
-    private int ruleId;
+    private String ruleId;
     // Use -1 as false positive
     private int newRisk;
     private String parameter;
@@ -63,7 +63,7 @@ public class AlertFilter extends Enableable {
 
     public AlertFilter(
             int contextId,
-            int ruleId,
+            String ruleId,
             int newRisk,
             String url,
             boolean isUrlRegex,
@@ -86,7 +86,7 @@ public class AlertFilter extends Enableable {
 
     public AlertFilter(
             int contextId,
-            int ruleId,
+            String ruleId,
             int newRisk,
             String url,
             boolean isUrlRegex,
@@ -115,7 +115,7 @@ public class AlertFilter extends Enableable {
 
     public AlertFilter(
             int contextId,
-            int ruleId,
+            String ruleId,
             int newRisk,
             String url,
             boolean isUrlRegex,
@@ -146,7 +146,7 @@ public class AlertFilter extends Enableable {
     public AlertFilter(int contextId, Alert alert) {
         super();
         this.contextId = contextId;
-        this.ruleId = alert.getPluginId();
+        this.ruleId = alert.getAlertRef();
         this.parameter = alert.getParam();
         this.url = alert.getUri();
         this.attack = alert.getAttack();
@@ -163,11 +163,11 @@ public class AlertFilter extends Enableable {
         this.contextId = contextId;
     }
 
-    public int getRuleId() {
+    public String getRuleId() {
         return ruleId;
     }
 
-    public void setRuleId(int ruleId) {
+    public void setRuleId(String ruleId) {
         this.ruleId = ruleId;
     }
 
@@ -341,7 +341,7 @@ public class AlertFilter extends Enableable {
             alertFilter = new AlertFilter();
             alertFilter.setContextId(contextId);
             alertFilter.setEnabled(Boolean.parseBoolean(pieces[0]));
-            alertFilter.setRuleId(Integer.parseInt(pieces[1]));
+            alertFilter.setRuleId(pieces[1]);
             alertFilter.setNewRisk(Integer.parseInt(pieces[2]));
             alertFilter.setUrl(new String(Base64.decodeBase64(pieces[3])));
             alertFilter.setUrlRegex(Boolean.parseBoolean(pieces[4]));
@@ -384,10 +384,14 @@ public class AlertFilter extends Enableable {
             LOGGER.debug("Filter disabled");
             return false;
         }
-        if (getRuleId() != alert.getPluginId()) {
-            // rule ids dont match
+        if (!getRuleId().equals(String.valueOf(alert.getPluginId()))
+                && !getRuleId().equals(alert.getAlertRef())) {
             LOGGER.debug(
-                    "Filter didn't match plugin id: {} != {}", getRuleId(), alert.getPluginId());
+                    "Filter didn't match scan rule ID and alert ref: {} != {} && {} != {}",
+                    getRuleId(),
+                    alert.getPluginId(),
+                    getRuleId(),
+                    alert.getAlertRef());
             return false;
         }
         if (!ignoreContext && this.contextId != -1) {
@@ -450,7 +454,7 @@ public class AlertFilter extends Enableable {
         result = prime * result + (isUrlRegex ? 1231 : 1237);
         result = prime * result + newRisk;
         result = prime * result + ((parameter == null) ? 0 : parameter.hashCode());
-        result = prime * result + ruleId;
+        result = prime * result + (ruleId == null ? 0 : ruleId.hashCode());
         result = prime * result + ((url == null) ? 0 : url.hashCode());
         result = prime * result + methods.hashCode();
         return result;
@@ -477,7 +481,9 @@ public class AlertFilter extends Enableable {
         if (parameter == null) {
             if (other.parameter != null) return false;
         } else if (!parameter.equals(other.parameter)) return false;
-        if (ruleId != other.ruleId) return false;
+        if (!Objects.equals(ruleId, other.ruleId)) {
+            return false;
+        }
         if (url == null) {
             if (other.url != null) return false;
         } else if (!url.equals(other.url)) return false;

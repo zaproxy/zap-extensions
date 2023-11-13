@@ -39,12 +39,17 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 /** Unit test for {@link AlertFilter}. */
 class AlertFilterUnitTest {
 
+    private static final int SCAN_RULE_ID = 420;
+    private static final String ALERT_REF = SCAN_RULE_ID + "-2";
     private static final String ALERT_METHOD = "PATCH";
+    private static final int NO_CONTEXT = -1;
+
     private Alert alert;
 
     @BeforeEach
     void before() throws Exception {
-        alert = new Alert(1, Alert.RISK_INFO, Alert.CONFIDENCE_LOW, "Test alert");
+        alert = new Alert(SCAN_RULE_ID, Alert.RISK_INFO, Alert.CONFIDENCE_LOW, "Test alert");
+        alert.setAlertRef(ALERT_REF);
         String uri = "https://www.example.com";
         alert.setUri(uri);
         alert.setParam("param");
@@ -52,6 +57,76 @@ class AlertFilterUnitTest {
         alert.setEvidence("evidence");
         alert.setMessage(
                 new HttpMessage(new HttpRequestHeader(ALERT_METHOD + " " + uri + " HTTP/1.1")));
+    }
+
+    @Test
+    void shouldUseScanRuleIdFromAlert() {
+        // Given
+        int scanRuleId = 1234;
+        alert = Alert.builder().setPluginId(scanRuleId).build();
+        // When
+        AlertFilter af = new AlertFilter(NO_CONTEXT, alert);
+        // Then
+        assertThat(af.getRuleId(), is(equalTo(String.valueOf(scanRuleId))));
+    }
+
+    @Test
+    void shouldUseAlertRefFromAlert() {
+        // Given
+        String alertRef = "0-123";
+        alert = Alert.builder().setAlertRef(alertRef).build();
+        // When
+        AlertFilter af = new AlertFilter(NO_CONTEXT, alert);
+        // Then
+        assertThat(af.getRuleId(), is(equalTo(alertRef)));
+    }
+
+    @Test
+    void shouldApplyByScanRuleId() {
+        // Given
+        AlertFilter af = new AlertFilter();
+        af.setEnabled(true);
+        af.setRuleId(String.valueOf(SCAN_RULE_ID));
+        // When
+        boolean applies = af.appliesToAlert(alert, true);
+        // Then
+        assertThat(applies, is(equalTo(true)));
+    }
+
+    @Test
+    void shouldNotApplyByScanRuleIdIfDifferent() {
+        // Given
+        AlertFilter af = new AlertFilter();
+        af.setEnabled(true);
+        af.setRuleId(String.valueOf(SCAN_RULE_ID - 1));
+        // When
+        boolean applies = af.appliesToAlert(alert, true);
+        // Then
+        assertThat(applies, is(equalTo(false)));
+    }
+
+    @Test
+    void shouldApplyByAlertRef() {
+        // Given
+        AlertFilter af = new AlertFilter();
+        af.setEnabled(true);
+        af.setRuleId(ALERT_REF);
+        // When
+        boolean applies = af.appliesToAlert(alert, true);
+        // Then
+        assertThat(applies, is(equalTo(true)));
+    }
+
+    @Test
+    void shouldNotApplyByAlertRefIfDifferent() {
+        // Given
+        AlertFilter af = new AlertFilter();
+        af.setEnabled(true);
+        af.setRuleId(ALERT_REF + "-8");
+        // When
+        boolean applies = af.appliesToAlert(alert, true);
+        // Then
+        assertThat(applies, is(equalTo(false)));
     }
 
     @Test
