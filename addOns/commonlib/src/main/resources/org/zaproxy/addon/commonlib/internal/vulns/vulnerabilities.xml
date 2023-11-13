@@ -589,7 +589,25 @@ Web application functionality that is often a target for automation attacks may 
     * Online polls - polls and other types of online voting systems can be automatically subverted in favor of a certain choice.
     * Web-based SMS message sending - attackers may exploit SMS message sending systems in order to spam mobile phone users
 	</desc>
-	<solution></solution>
+	<solution>Implement strong anti-automation measures to defend malicious attempts to automate processes. Consider the following strategies:
+
+1. **CAPTCHA and ReCAPTCHA:** Integrate CAPTCHA or ReCAPTCHA challenges in critical forms to distinguish between automated bots and human users.
+
+2. **Rate Limiting:** Enforce rate limiting on various actions to prevent rapid and repetitive requests which makes the automated attacks less effective.
+
+3. **Behavioral Analysis:** Implement behavioral analysis tools to detect patterns indicative of automation, such as unusual navigation sequences or form submissions.
+
+4. **Device Fingerprinting:** Use device fingerprinting techniques to identify and block requests from suspicious or known automated sources.
+
+5. **Two-Factor Authentication (2FA):** Introduce two-factor authentication to add an extra layer of security, making it harder for automated attacks to succeed.
+
+6. **User Account Lockout:** Implement account lockout mechanisms after a certain number of failed login attempts to avoid brute-force attacks.
+
+7. **Honeypots:** Deploy honeypots or hidden fields in forms to trick automated bots into revealing their presence, allowing for appropriate action.
+
+8. **Monitoring and Logging:** Regularly monitor and log user activities to identify and respond to unusual patterns indicative of automation.
+
+A combination of these measures is often more effective in preventing automated attacks.</solution>
 	<reference>http://projects.webappsec.org/Insufficient+Anti-automation</reference>
 	<reference>https://cwe.mitre.org/data/definitions/116.html</reference>
 </vuln_item_wasc_21>
