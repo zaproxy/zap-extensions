@@ -401,7 +401,7 @@ public class Base64Disclosure extends PluginPassiveScanner {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
-    public String getHelpLink(){
+    public String getHelpLink() {
         return "https://www.zaproxy.org/docs/desktop/addons/passive-scan-rules-alpha/#base64-disclosure";
     }
 }

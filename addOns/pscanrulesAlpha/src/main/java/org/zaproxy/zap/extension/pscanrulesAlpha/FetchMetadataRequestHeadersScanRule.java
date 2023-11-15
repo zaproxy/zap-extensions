@@ -165,7 +165,7 @@ public class FetchMetadataRequestHeadersScanRule extends PluginPassiveScanner {
         }
     }
 
-    public String getHelpLink(){
+    public String getHelpLink() {
         return "https://www.zaproxy.org/docs/desktop/addons/passive-scan-rules-alpha/#fetch-metadata-request-headers-scan-rule";
     }
 
