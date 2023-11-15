@@ -6,8 +6,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update minimum ZAP version to 2.14.0.
-
-## [41] - 2023-11-15
 ### Added
 - Website alert links (Issue 8189).
 
