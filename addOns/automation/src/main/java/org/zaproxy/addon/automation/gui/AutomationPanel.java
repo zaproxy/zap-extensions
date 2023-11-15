@@ -630,6 +630,7 @@ public class AutomationPanel extends AbstractPanel implements EventConsumer {
         if (planScrollpane == null) {
             planScrollpane = new JScrollPane();
             tree = new JXTreeTable();
+            tree.setColumnControlVisible(true);
             tree.setTreeTableModel(getTreeModel());
             tree.setTreeCellRenderer(new PlanTreeNodeCellRenderer());
             planScrollpane.setViewportView(tree);
