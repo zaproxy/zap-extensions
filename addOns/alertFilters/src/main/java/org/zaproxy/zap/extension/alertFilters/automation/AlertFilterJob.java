@@ -34,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
@@ -177,6 +178,9 @@ public class AlertFilterJob extends AutomationJob {
         }
     }
 
+    @Override
+    public void applyParameters(AutomationProgress progress) {}
+
     private boolean isValid(AlertFilterData afd, AutomationProgress progress) {
         boolean result = true;
         if (StringUtils.isBlank(afd.getRuleId()) || isNegativeInteger(afd.getRuleId())) {
@@ -307,6 +311,8 @@ public class AlertFilterJob extends AutomationJob {
                                             contextName,
                                             af.getRuleId(),
                                             af.getNewRiskName()));
+                            this.getExtAlertFilters()
+                                    .persistContextData(Model.getSingleton().getSession(), ctx);
                         }
                     }
                 }

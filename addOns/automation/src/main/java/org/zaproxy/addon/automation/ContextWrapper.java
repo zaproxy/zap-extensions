@@ -326,6 +326,7 @@ public class ContextWrapper {
         if (getData().getUsers() != null) {
             initContextUsers(context, env);
         }
+        session.saveContext(context);
     }
 
     private void initContextUsers(Context context, AutomationEnvironment env) {

@@ -11,6 +11,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Do not fail to import or load a context with invalid alert filters.
+- Incorrect warning about 'Unrecognised parameter' for deleteGlobalAlerts.
+- Persist context filter data.
 
 ## [18] - 2023-10-12
 ### Changed
