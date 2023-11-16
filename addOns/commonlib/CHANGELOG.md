@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
-- Added solution to 'Insufficient Anti automation', 'Fingerprinting' (Issue 8056).
+- Added solution to 'Insecure Indexing', 'Insufficient Anti automation', 'Fingerprinting' (Issue 8056).
 
 ## [1.19.0] - 2023-11-10
 ### Added
