@@ -40,6 +40,8 @@ public class ContentEncodingsHandler /* TODO implements HttpEncodingsHandler */ 
             encodings = List.of(HttpEncodingDeflate.getSingleton());
         } else if (encoding.contains(HttpHeader.GZIP)) {
             encodings = List.of(HttpEncodingGzip.getSingleton());
+        } else if (HttpEncodingBrotli.isAvailable() && encoding.contains("br")) {
+            encodings = List.of(HttpEncodingBrotli.getSingleton());
         }
 
         body.setContentEncodings(encodings);

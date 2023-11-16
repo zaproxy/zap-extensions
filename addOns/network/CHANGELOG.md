@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
-- On weekly releases and versions after 2.14, handle content encodings (Issue 2198).
+- On weekly releases and versions after 2.14, handle content encodings and add `br` content encoding on supported OSes (Issue 2198).
 
 ### Fixed
 - Handle cookies like browsers, mostly send what is received (Issues 1232 and 7874).
