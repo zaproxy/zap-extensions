@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [0.34.0] - 2023-11-16
 ### Added
 - Show column control in the Automation tab to allow to show/hide columns and auto resize them (`Pack All Columns`).
