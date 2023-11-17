@@ -1066,13 +1066,13 @@ A Web application should invalidate a session after a predefined idle time has p
 <vuln_item_wasc_48>
 	<alert>Insecure Indexing</alert>
 	<desc>Insecure Indexing is a threat to the data confidentiality of the web-site. Indexing web-site contents via a process that has access to files which are not supposed to be publicly accessible has the potential of leaking information about the existence of such files, and about their content. In the process of indexing, such information is collected and stored by the indexing process, which can later be retrieved (albeit not trivially) by a determined attacker, typically through a series of queries to the search engine. The attacker does not thwart the security model of the search engine. As such, this attack is subtle and very hard to detect and to foil - it’s not easy to distinguish the attacker’s queries from a legitimate user’s queries.</desc>
-	<solution>Implement measures to secure indexing processes and prevent unauthorized access to sensitive information. Following strategies can be considered:
-1.**Access Controls:**Review and restrict access permissions for the indexing process to ensure it only accesses and indexes files that are intended to be publicly available.
-2.**Robot Exclusion Standard (robots.txt):**Use the robots.txt file to explicitly specify which areas of the website should not be indexed by search engines.
-3.**Authentication Requirements:**Implement authentication mechanisms for accessing sensitive files, ensuring that only authorized users or processes can retrieve them.
-4.**File Encryption:**Encrypt sensitive files to protect their content, even if an unauthorized user gains access to the index.
-5.**URL Redaction:**Avoid including sensitive information in URLs or filenames that might be exposed during indexing.
-6.**Security Headers:**Utilize security headers (e.g., Content Security Policy) to control how browsers and search engines interact with your website.
+	<solution>Implement measures to secure indexing processes and prevent unauthorized access to sensitive information. The following strategies can be considered:
+1. **Access Controls:** Review and restrict access permissions for the indexing process to ensure it only accesses and indexes files that are intended to be publicly available.
+2. **Robot Exclusion Standard (robots.txt):** Use the robots.txt file to explicitly specify which areas of the website should not be indexed by search engines.
+3. **Authentication Requirements:** Implement authentication mechanisms for accessing sensitive files, ensuring that only authorized users or processes can retrieve them.
+4. **File Encryption:** Encrypt sensitive files to protect their content, even if an unauthorized user gains access to the index.
+5. **URL Redaction:** Avoid including sensitive information in URLs or filenames that might be exposed during indexing.
+6. **Security Headers:** Utilize security headers (e.g., Content Security Policy) to control how browsers and search engines interact with your website.
 
 A proactive and layered approach to security is crucial for safeguarding against Insecure Indexing.</solution>
 	<reference>http://projects.webappsec.org/Insecure-Indexing</reference>
