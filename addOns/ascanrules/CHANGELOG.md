@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Fixed
 - Use high and low delays for linear regression time-based tests to fix false positives from delays that were smaller than normal variance in application response times.
+- Catch correct context while analysing attributes instead of the last attribute where eyecatcher was reflected.
 
 ## [58] - 2023-10-12
 ### Changed

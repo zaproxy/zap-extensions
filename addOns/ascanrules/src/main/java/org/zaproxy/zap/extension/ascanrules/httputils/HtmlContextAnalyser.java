@@ -324,9 +324,15 @@ public class HtmlContextAnalyser {
                 Iterator<Attribute> iter = element.getAttributes().iterator();
                 while (iter.hasNext()) {
                     Attribute att = iter.next();
+
                     if (att.getValue() != null
-                            && att.getValue().toLowerCase().indexOf(target.toLowerCase()) >= 0) {
+                            && att.getValue().toLowerCase().indexOf(target.toLowerCase()) >= 0
+                            && context.getStart() >= att.getValueSegment().getBegin()
+                            && context.getEnd() <= att.getValueSegment().getEnd()) {
                         // Found the injected value
+                        if (!context.getSurroundingQuote().equals("" + att.getQuoteChar())) {
+                            context.setSurroundingQuote("" + att.getQuoteChar());
+                        }
                         context.setTagAttribute(att.getName());
                         context.setTagAttributeValue(att.getValue());
                         context.setInUrlAttribute(this.isUrlAttribute(att.getName()));
