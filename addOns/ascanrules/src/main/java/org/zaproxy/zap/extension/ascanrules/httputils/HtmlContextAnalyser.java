@@ -330,7 +330,8 @@ public class HtmlContextAnalyser {
                             && context.getStart() >= att.getValueSegment().getBegin()
                             && context.getEnd() <= att.getValueSegment().getEnd()) {
                         // Found the injected value
-                        if (!context.getSurroundingQuote().equals("" + att.getQuoteChar())) {
+                        if (!context.getSurroundingQuote().equals("" + att.getQuoteChar())
+                                && !("" + att.getQuoteChar()).equals(" ")) {
                             context.setSurroundingQuote("" + att.getQuoteChar());
                         }
                         context.setTagAttribute(att.getName());
