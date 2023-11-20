@@ -33,6 +33,9 @@ import org.zaproxy.zap.model.ParameterParser;
 
 public class ClientUtils {
 
+    public static final String LOCAL_STORAGE = "localStorage";
+    public static final String SESSION_STORAGE = "sessionStorage";
+
     public static List<String> urlToNodes(String url, ParameterParser paramParser) {
         if (url == null) {
             throw new IllegalArgumentException("The url parameter should not be null");
@@ -114,5 +117,16 @@ public class ClientUtils {
     public static void setClipboardContents(String str) {
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(new StringSelection(str), null);
+    }
+
+    public static String stripUrlFragment(String url) {
+        if (url == null) {
+            throw new IllegalArgumentException("The url parameter should not be null");
+        }
+        int fragmentOffset = url.indexOf('#');
+        if (fragmentOffset > 0) {
+            return url.substring(0, fragmentOffset);
+        }
+        return url;
     }
 }

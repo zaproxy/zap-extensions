@@ -42,10 +42,14 @@ import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.client.impl.ClientZestRecorder;
+import org.zaproxy.addon.client.pscan.ClientPassiveScanController;
+import org.zaproxy.addon.client.pscan.ClientPassiveScanHelper;
+import org.zaproxy.addon.client.pscan.OptionsPassiveScan;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventConsumer;
+import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
@@ -67,7 +71,11 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     private static final Logger LOGGER = LogManager.getLogger(ExtensionClientIntegration.class);
 
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
-            List.of(ExtensionHistory.class, ExtensionNetwork.class, ExtensionSelenium.class);
+            List.of(
+                    ExtensionAlert.class,
+                    ExtensionHistory.class,
+                    ExtensionNetwork.class,
+                    ExtensionSelenium.class);
 
     private ClientMap clientTree;
 
@@ -77,6 +85,9 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     private ClientHistoryTableModel clientHistoryTableModel;
     private RedirectScript redirectScript;
     private ClientZestRecorder clientHandler;
+    private ClientPassiveScanController scanController;
+    private ClientPassiveScanHelper pscanHelper;
+    private ClientOptions clientParam;
 
     private ClientIntegrationAPI api;
 
@@ -100,7 +111,10 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                                         Constant.messages.getString("client.tree.title"), null),
                                 this.getModel().getSession()));
 
+        scanController = new ClientPassiveScanController();
         this.api = new ClientIntegrationAPI(this);
+
+        extensionHook.addOptionsParamSet(getClientParam());
         extensionHook.addApiImplementor(this.api);
         extensionHook.addSessionListener(new SessionChangeListener());
 
@@ -187,11 +201,28 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                                     this.getClientDetailsPanel(),
                                     Constant.messages.getString("client.details.popup.copy.texts"),
                                     ClientSideComponent::getText));
+
+            extensionHook.getHookView().addOptionPanel(new OptionsPassiveScan(scanController));
         }
     }
 
     @Override
+    public void optionsLoaded() {
+        scanController.setEnabled(getClientParam().isPscanEnabled());
+        scanController.setDisabledScanRules(getClientParam().getPscanRulesDisabled());
+    }
+
+    @Override
     public void postInit() {
+        pscanHelper =
+                new ClientPassiveScanHelper(
+                        Control.getSingleton()
+                                .getExtensionLoader()
+                                .getExtension(ExtensionAlert.class),
+                        Control.getSingleton()
+                                .getExtensionLoader()
+                                .getExtension(ExtensionHistory.class));
+
         // The redirectScript is used to pass parameters to the ZAP browser extension
         ExtensionSelenium extSelenium =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
@@ -262,6 +293,13 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         ZAP.getEventBus()
                 .registerConsumer(
                         eventConsumer, "org.zaproxy.zap.extension.spiderAjax.SpiderEventPublisher");
+    }
+
+    ClientOptions getClientParam() {
+        if (clientParam == null) {
+            clientParam = new ClientOptions();
+        }
+        return clientParam;
     }
 
     protected void checkFirefoxProfilesFile(Path iniPath, Path profilePath) throws IOException {
@@ -386,6 +424,20 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             }
         }
         this.clientHistoryTableModel.addReportedObject(obj);
+        this.scanController
+                .getEnabledScanRules()
+                .forEach(
+                        s -> {
+                            try {
+                                s.scanReportedObject(obj, pscanHelper);
+                            } catch (Exception e) {
+                                LOGGER.error(e.getMessage(), e);
+                            }
+                        });
+    }
+
+    public ClientPassiveScanController getPassiveScanController() {
+        return this.scanController;
     }
 
     @Override
