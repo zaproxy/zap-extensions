@@ -19,22 +19,39 @@
  */
 package org.zaproxy.zap.extension.soap;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.model.ValueGenerator;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -42,17 +59,20 @@ import org.zaproxy.zap.testutils.TestUtils;
 class WSDLCustomParserTestCase extends TestUtils {
 
     private ValueGenerator valueGenerator;
+    private Supplier<Date> dateSupplier;
     private String wsdlContent;
     private WSDLCustomParser parser;
 
     @BeforeEach
+    @SuppressWarnings("unchecked")
     void setUp() throws Exception {
         /* Gets test wsdl file and retrieves its content as String. */
         Path wsdlPath = getResourcePath("resources/test.wsdl");
         wsdlContent = new String(Files.readAllBytes(wsdlPath), StandardCharsets.UTF_8);
 
         valueGenerator = mock(ValueGenerator.class);
-        parser = new WSDLCustomParser(() -> valueGenerator, null);
+        dateSupplier = mock(Supplier.class, withSettings().strictness(Strictness.LENIENT));
+        parser = new WSDLCustomParser(() -> valueGenerator, null, dateSupplier);
     }
 
     @Test
@@ -92,8 +112,10 @@ class WSDLCustomParserTestCase extends TestUtils {
         assertNull(result);
     }
 
-    @Test
-    void addParameterShouldUseValueGeneratorWhenAvailable() {
+    @ParameterizedTest
+    @EmptySource
+    @ValueSource(strings = {"generated"})
+    void addParameterShouldUseValueGeneratorWhenAvailable(String genValue) {
         // Given
         String path = "CelsiusToFahrenheit/Celsius";
         String paramType = "s:string";
@@ -103,44 +125,44 @@ class WSDLCustomParserTestCase extends TestUtils {
         fieldAttributes.put("type", name);
 
         when(valueGenerator.getValue(
-                        null,
-                        null,
-                        name,
-                        "",
-                        Collections.emptyList(),
-                        Collections.emptyMap(),
-                        fieldAttributes))
-                .thenReturn("TEST_VALUE");
+                        eq(null),
+                        eq(null),
+                        eq(name),
+                        anyString(),
+                        eq(List.of()),
+                        eq(Map.of()),
+                        eq(fieldAttributes)))
+                .thenReturn(genValue);
 
         // Then
         Map<String, String> expectedParams = new HashMap<>();
-        expectedParams.put("xpath:/" + path, "TEST_VALUE");
+        expectedParams.put("xpath:/" + path, genValue);
         assertEquals(expectedParams, parser.addParameter(path, paramType, name, null));
     }
 
-    @Test
-    void addParameterShouldUseDefaultValuesWhenValueIsNotSpecified() {
+    @ParameterizedTest
+    @CsvSource(
+            value = {
+                "string, paramValue",
+                "int, 0",
+                "double, 0",
+                "long, 0",
+                "date, 2023-11-21",
+                "dateTime, 2023-11-21T05:16:40+0000",
+                "something, ''"
+            })
+    void shouldGenerateAppropriateDefaultValueForValueGenerator(
+            String paramType, String expectedDefaultValue) {
         // Given
-        String path = "CelsiusToFahrenheit/Celsius";
-        String paramType = "s:string";
-        String name = "Celsius";
-        Map<String, String> fieldAttributes = new HashMap<>();
-        fieldAttributes.put("Control Type", "TEXT");
-        fieldAttributes.put("type", name);
-
-        when(valueGenerator.getValue(
-                        null,
-                        null,
-                        name,
-                        "",
-                        Collections.emptyList(),
-                        Collections.emptyMap(),
-                        fieldAttributes))
-                .thenReturn("");
+        ArgumentCaptor<String> defaultValueArgCaptor = ArgumentCaptor.forClass(String.class);
+        given(dateSupplier.get()).willReturn(new Date(1700587000000L));
+        // When
+        parser.addParameter("", paramType, "", null);
 
         // Then
-        Map<String, String> expectedParams = new HashMap<>();
-        expectedParams.put("xpath:/" + path, "paramValue");
-        assertEquals(expectedParams, parser.addParameter(path, paramType, name, null));
+        verify(valueGenerator)
+                .getValue(
+                        any(), any(), any(), defaultValueArgCaptor.capture(), any(), any(), any());
+        assertThat(defaultValueArgCaptor.getValue(), is(equalTo(expectedDefaultValue)));
     }
 }
