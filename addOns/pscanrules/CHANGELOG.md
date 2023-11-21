@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - The Application Error Disclosure rule no longer considers responses that contain ISO control characters (those which are likely to be binary file types).
+- The Time Stamp Disclosure rule now includes the header field name as Parameter in alerts when a time stamp is identified in a header value (Issue 8160).
 
 ## [52] - 2023-10-12
 ### Fixed
