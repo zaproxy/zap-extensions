@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update minimum ZAP version to 2.14.0.
 - Move "Jython" under "Scripts > Engine" in the Options panel list.
 
+### Fixed
+- Remove the script engine when the add-on is uninstalled.
+
 ## [13] - 2023-09-07
 ### Changed
 - Update minimum ZAP version to 2.13.0.
