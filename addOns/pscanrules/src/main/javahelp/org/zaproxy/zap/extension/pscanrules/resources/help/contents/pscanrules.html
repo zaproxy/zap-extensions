@@ -43,6 +43,7 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 <H2>Application Errors</H2>
 Check server responses for HTTP 500 - Internal Server Error type responses or those that contain a known error string. <br>
 <strong>Note:</strong> Matches made within script blocks or files are against the entire content not only comments.<br>
+Skips responses that contain ISO control characters (those which are likely binary files).<br>
 At HIGH Threshold don’t alert on HTTP 500 (but do for other error patterns). Also, such known error strings are much less likely to be relevant in static pages like JS / CSS so these files are only scanned at LOW threshold.<br>
 For Internal Server Error (HTTP 500) the Alert is set to Low risk and in other case it is set to Medium risk.
 
