@@ -387,21 +387,21 @@ Para completar la información faltante el hacker puede adivinar la información
     * Adivinar el CW/CSC solo requiere 1000 o 10000 intentos ya que el número es solo de 3 o 4 dígitos, dependiendo del tipo de tarjeta.
     * Adivinar la fecha de vencimiento solo requiere varias docenas de intentos.
 	</desc>
-		<solution>Phase: Architecture and Design
-To mitigate the risk of brute force attacks on credit card information, follow these best practices:
+		<solution>Fase: Arquitectura y Diseño
+Para mitigar el riesgo de ataques de fuerza bruta a la información de tarjetas de crédito, siga estas mejores prácticas:
 
-* CAPTCHA Protection: Implement CAPTCHA challenges during the payment process to differentiate between human and automated attempts. CAPTCHAs can help prevent automated brute force attacks.
-* Rate Limiting: Implement rate limiting on payment attempts. Limit the number of requests from a single IP address or user account within a specific time frame.
-* Multi-Factor Authentication (MFA): Require multi-factor authentication for sensitive transactions, including online payments. MFA adds an extra layer of security by verifying the user's identity through multiple factors, making brute force attacks more difficult.
-* Secure Data Storage: Ensure that credit card information is securely stored and encrypted. Limit access to sensitive data to authorized personnel only.
-* Continuous Monitoring: Implement continuous monitoring to detect and respond to suspicious activities, including multiple failed payment attempts.
-* Compliance with PCI DSS: If your application processes credit card information, ensure compliance with Payment Card Industry Data Security Standard (PCI DSS) requirements, which provide security guidelines for handling credit card data.
+* Protección CAPTCHA: implemente desafíos CAPTCHA durante el proceso de pago para diferenciar entre intentos humanos y automatizados. Los CAPTCHA pueden ayudar a prevenir ataques automatizados de fuerza bruta.
+* Limitación de tasa (Rate Limiting): implementar limitación de tasa en los intentos de pago. Limite la cantidad de solicitudes de una única dirección IP o cuenta de usuario dentro de un período de tiempo específico.
+* Autenticación multifactor (MFA): requiere autenticación multifactor para transacciones confidenciales, incluidos los pagos en línea. MFA agrega una capa adicional de seguridad al verificar la identidad del usuario a través de múltiples factores, lo que dificulta los ataques de fuerza bruta.
+* Almacenamiento Seguro de Datos: asegúrese de que la información de la tarjeta de crédito esté almacenada y cifrada de forma segura. Limite el acceso a datos confidenciales únicamente al personal autorizado.
+* Monitoreo Continuo: implemente un monitoreo continuo para detectar y responder a actividades sospechosas, incluidos múltiples intentos de pago fallidos.
+* Cumplimiento de PCI DSS: si su aplicación procesa información de tarjetas de crédito, asegúrese de cumplir con los requisitos del Estándar de seguridad de datos de la industria de tarjetas de pago (PCI DSS), que proporciona pautas de seguridad para el manejo de datos de tarjetas de crédito.
 
-Phase: Implementation
-Implement the above security measures in your application code, payment processing, and user account management functionalities.
+Fase: Implementación
+Implemente las medidas de seguridad anteriores en el código de su aplicación, procesamiento de pagos y funcionalidades de administración de cuentas de usuario.
 
-Phase: Operation
-Regularly monitor and review your security measures and adapt to evolving threats and attack patterns.
+Fase: Operación
+Supervise y revise periódicamente sus medidas de seguridad y adáptese a las amenazas y patrones de ataque en evolución.
 
 </solution>
 	<reference>http://projects.webappsec.org/Brute-Force</reference>
@@ -409,11 +409,11 @@ Regularly monitor and review your security measures and adapt to evolving threat
 
 <vuln_items>wasc_12</vuln_items>
 <vuln_item_wasc_12>
-	<alert>Suplantación de Contenido</alert>
-	<desc>La suplantación de contenido es una técnica de ataque que permite al atacante inyectar una carga maliciosa que es interpretada después como contenido legítimo de la aplicación web.
+	<alert>Suplantación de Contenido (Spoofing)</alert>
+	<desc>La suplantación de contenido (Spoofing) es una técnica de ataque que permite al atacante inyectar una carga maliciosa que es interpretada después como contenido legítimo de la aplicación web.
  
-Texto solo de contenido suplantado
-Un enfoque común para crear páginas dinámicamente implicar pasar el cuerpo o parte de los mismos en la página por un valor de cadena de consulta. Este enfoque es común en las páginas de error, o sitios que proporcionan historias o entras de noticias. El contenido especificado en este parámetro es luego reflejado en la página para suministrar el contenido para la página.
+Suplantación de Contenido de Solo Texto (Spoofing)
+Un enfoque común para crear páginas dinámicamente implicar pasar el cuerpo o parte de los mismos en la página por un valor de cadena de consulta. Este enfoque es común en páginas de error o sitios que ofrecen artículos o entradas de noticias. El contenido especificado en este parámetro es luego reflejado en la página para suministrar el contenido para la página.
  
 Marcado Reflejado en el Contenido Suplantado
 Algunas páginas web son servidas usando fuentes de contenido HTML construidas dinámicamente. Por ejemplo, el lugar de origen de un marco <frame src="http://foo.example/file.html"/>) podría especificarse mediante el valor de un parámetro de la URL. (http://foo.example/page?frame_src=http://foo.example/file.html). Un atacante podría ser capaz de reemplazar el valor de parámetro de "frame_src" con "frame_src=http://attacker.example/spoof.html". A diferencia de los redirectores, cuando la página web resultante se sirve la barra de buscador del navegador permanece visiblemente bajo el usurario que espera dominio (foo.example), pero los datos extranjeros (attacker.example) están envueltos por contenido legítimo.
@@ -422,7 +422,7 @@ Los enlaces que son diseñados de forma especial pueden enviarse a un usuario po
 
 Este ataque mancilla la relación de confianza establecida entre el usuario y el sitio web. La técnica ha sido usada para para crear páginas web falsas, incluyendo formularios de logueo, alteraciones, artículos de prensa falsos, etc.
 	</desc>
-	<solution>Implement appropriate Content Security Policy (CSP) and never trust user input.</solution>
+	<solution>Implemente una Política de Seguridad de Contenido (CSP) adecuada y nunca confíe en las entradas de datos de los usuarios.</solution>
 	<reference>http://projects.webappsec.org/Content-Spoofing</reference>
 </vuln_item_wasc_12>
 
@@ -628,7 +628,7 @@ Cuando se intercambia los datos entre los componentes, asegúree de que ambos co
 <vuln_item_wasc_23>
 	<alert>Inyección XML</alert>
 	<desc>XML Injection es una técnica de ataque usada para manipular o dañar la lógica de una aplicación o servicio XML. La inyección de información y/o estructuras XML que no son deseadas por un mensaje XML pueden modificar la lógica de intención de la aplicación. Además, la inyección XML puede ocasionar la inserción de contenidos maliciosos en el mensaje/documento que resultó.</desc>
-	<solution>Never trust user input. Validate and sanitize the user input before incorporating it into the XML document. Consider blocking or escaping XML meta characters e.g. "&lt;" and "&gt;" could be represented with the corresponding entities: "&amp;lt;" and "&amp;gt;".</solution>
+	<solution>Nunca confíe en las aportaciones del usuario. Valide y limpie los datos de entrada del usuario antes de incorporarla al documento XML. Considere bloquear o escapar de metacaracteres XML, p. "&lt;" y "&gt;" podría representarse con las entidades correspondientes: "&amp;lt;" y "&gt;".</solution>
 	<reference>http://projects.webappsec.org/XML-Injection</reference>
 </vuln_item_wasc_23>
 
@@ -976,7 +976,7 @@ Asegure que todos los fallos de asignación de recursos pongan al sistema en una
 	<alert>Entidades externas XML</alert>
 	<desc>Esta técnica nos permite aprovechar de una mejor forma una función de XML para poder orginar documentos en el mismo momento del procesamiento. Un mensaje de XML puede otorgar muchos datos de forma implicita o señalando a una URL donde exitan los datos. En la técnica de ataque, entidades externas pueden reemplazar el valor de la entidad con información maliciosa, alternar referencias o pueden comprometer la seguridad de la información a la que la servidor o la aplicación XML tienen acceso.
 	Los atacantes pueden también usar Entidades Externas para que el servidor de servicios web descargue códigos o contenido malicioso al servidor para usar n ataques secundarios o subsiguientes.</desc>
-	<solution>XML External Entities vulnerabilities arise because the application's XML parsing library supports potentially dangerous XML features. To prevent XML External Entities vulnerabilities disable the resolution of external entities and the support for XInclude.</solution>
+	<solution>Las vulnerabilidades de Entidades Externas XML surgen porque la biblioteca de análisis XML de la aplicación admite características XML potencialmente peligrosas. Para evitar vulnerabilidades de Entidades Externas XML, deshabilite la resolución de entidades externas y el soporte para XInclude.</solution>
 	<reference>http://projects.webappsec.org/XML-External-Entities</reference>
 </vuln_item_wasc_43>
 
