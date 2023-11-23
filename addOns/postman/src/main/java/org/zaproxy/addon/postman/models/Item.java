@@ -21,6 +21,8 @@ package org.zaproxy.addon.postman.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.util.List;
+import org.zaproxy.addon.postman.deserializers.ListDeserializer;
 import org.zaproxy.addon.postman.deserializers.ObjectDeserializer;
 
 /**
@@ -34,6 +36,12 @@ public class Item extends AbstractItem {
     @JsonDeserialize(using = ObjectDeserializer.class)
     private Request request;
 
+    @JsonDeserialize(using = ObjectDeserializer.class)
+    private String name = "Unnamed Item";
+
+    @JsonDeserialize(using = ListDeserializer.class)
+    private List<KeyValueData> variable;
+
     public Item() {}
 
     public Item(Request request) {
@@ -46,5 +54,21 @@ public class Item extends AbstractItem {
 
     public void setRequest(Request request) {
         this.request = request;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<KeyValueData> getVariable() {
+        return variable;
+    }
+
+    public void setVariable(List<KeyValueData> variable) {
+        this.variable = variable;
     }
 }

@@ -7,6 +7,16 @@
     "icon": "C.png",
     "website": "https://www.open-std.org/jtc1/sc22/wg14/"
   },
+  "C3.js": {
+    "cats": [
+      59
+    ],
+    "description": "D3 based reusable chart library",
+    "icon": "C3.js.png",
+    "requires": "D3",
+    "scriptSrc": "c3(?:\\.min)?(?:-[a-zA-Z0-9]{8})?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://c3js.org/"
+  },
   "CCV Shop": {
     "cats": [
       6
@@ -1524,6 +1534,15 @@
     ],
     "saas": true,
     "website": "https://getchorus.voxmedia.com"
+  },
+  "Chosen": {
+    "cats": [
+      12,
+      18
+    ],
+    "description": "Chosen is a jQuery plugin that makes long, unwieldy select boxes much more user-friendly.",
+    "scriptSrc": "chosen(?:\\.jquery)?(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://harvesthq.github.io/chosen/"
   },
   "Chronofresh": {
     "cats": [

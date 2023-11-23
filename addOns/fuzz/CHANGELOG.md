@@ -4,6 +4,13 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [13.12.0] - 2023-10-12
+### Changed
+- Update minimum ZAP version to 2.14.0.
+
+## [13.11.0] - 2023-10-04
 ### Changed
 - Maintenance changes.
 
@@ -199,6 +206,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[13.12.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.12.0
+[13.11.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.11.0
 [13.10.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.10.0
 [13.9.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.9.0
 [13.8.0]: https://github.com/zaproxy/zap-extensions/releases/fuzz-v13.8.0

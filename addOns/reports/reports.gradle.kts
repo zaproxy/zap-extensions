@@ -65,6 +65,7 @@ dependencies {
     }
 
     testImplementation(project(":testutils"))
+    testImplementation(libs.log4j.core)
 }
 
 spotless {

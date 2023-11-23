@@ -35,6 +35,7 @@ import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DropMode;
 import javax.swing.GroupLayout;
@@ -45,6 +46,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
 import javax.swing.TransferHandler;
@@ -92,7 +94,6 @@ public class ScriptsListPanel extends AbstractPanel {
     private javax.swing.JPanel listPanel = null;
     private javax.swing.JToolBar panelToolbar = null;
     private JButton loadButton = null;
-    private JButton saveButton = null;
     private JButton newScriptButton = null;
     private JButton optionsButton = null;
 
@@ -148,24 +149,19 @@ public class ScriptsListPanel extends AbstractPanel {
         return listPanel;
     }
 
-    private javax.swing.JToolBar getPanelToolbar() {
+    private JToolBar getPanelToolbar() {
         if (panelToolbar == null) {
-
-            panelToolbar = new javax.swing.JToolBar();
-            panelToolbar.setLayout(new GridBagLayout());
+            panelToolbar = new JToolBar();
             panelToolbar.setEnabled(true);
             panelToolbar.setFloatable(false);
             panelToolbar.setRollover(true);
-            panelToolbar.setPreferredSize(new Dimension(800, 30));
             panelToolbar.setFont(FontUtils.getFont("Dialog"));
             panelToolbar.setName("ScriptsListToolbar");
 
-            int i = 1;
-            panelToolbar.add(getLoadButton(), LayoutHelper.getGBC(i++, 0, 1, 0.0D));
-            panelToolbar.add(getSaveButton(), LayoutHelper.getGBC(i++, 0, 1, 0.0D));
-            panelToolbar.add(getNewScriptButton(), LayoutHelper.getGBC(i++, 0, 1, 0.0D));
-            panelToolbar.add(new JLabel(), LayoutHelper.getGBC(i++, 0, 1, 1.0D)); // spacer
-            panelToolbar.add(getOptionsButton(), LayoutHelper.getGBC(i++, 0, 1, 0.0D));
+            panelToolbar.add(getNewScriptButton());
+            panelToolbar.add(getLoadButton());
+            panelToolbar.add(Box.createHorizontalGlue());
+            panelToolbar.add(getOptionsButton());
         }
         return panelToolbar;
     }
@@ -184,30 +180,6 @@ public class ScriptsListPanel extends AbstractPanel {
             loadButton.addActionListener(e -> loadScript());
         }
         return loadButton;
-    }
-
-    private JButton getSaveButton() {
-        if (saveButton == null) {
-            saveButton = new JButton();
-            saveButton.setIcon(
-                    DisplayUtils.getScaledIcon(
-                            new ImageIcon(
-                                    ZAP.class.getResource(
-                                            "/resource/icon/16/096.png")))); // 'diskette' icon
-            saveButton.setToolTipText(
-                    Constant.messages.getString("scripts.list.toolbar.button.save"));
-            saveButton.setEnabled(false);
-
-            saveButton.addActionListener(
-                    e -> {
-                        ScriptWrapper script = getSelectedScript();
-                        if (script == null) {
-                            return;
-                        }
-                        saveScript(script);
-                    });
-        }
-        return saveButton;
     }
 
     private JButton getNewScriptButton() {
@@ -336,11 +308,11 @@ public class ScriptsListPanel extends AbstractPanel {
     protected void saveScript(ScriptWrapper script) {
         if (script.getFile() != null) {
             try {
-                extension.getExtScript().saveScript(script);
-                this.setButtonStates();
+                synchronized (extension.getConsolePanel().getScriptLock()) {
+                    extension.getExtScript().saveScript(script);
+                }
                 ((ScriptTreeModel) this.getTree().getModel())
                         .nodeChanged(this.getSelectedScriptNode());
-
             } catch (IOException e1) {
                 View.getSingleton()
                         .showWarningDialog(
@@ -380,11 +352,11 @@ public class ScriptsListPanel extends AbstractPanel {
                 script.setFile(file);
 
                 try {
-                    extension.getExtScript().saveScript(script);
-                    this.setButtonStates();
+                    synchronized (extension.getConsolePanel().getScriptLock()) {
+                        extension.getExtScript().saveScript(script);
+                    }
                     ((ScriptTreeModel) this.getTree().getModel())
                             .nodeChanged(this.getSelectedScriptNode());
-
                 } catch (IOException e1) {
                     View.getSingleton()
                             .showWarningDialog(
@@ -500,26 +472,6 @@ public class ScriptsListPanel extends AbstractPanel {
         }
 
         return nodes;
-    }
-
-    protected void setButtonStates() {
-        ScriptNode node = (ScriptNode) tree.getLastSelectedPathComponent();
-
-        // Loop up to support tree based scripts
-        ScriptWrapper script = null;
-        while (node != null) {
-            if (node.getUserObject() instanceof ScriptWrapper) {
-                script = (ScriptWrapper) node.getUserObject();
-                break;
-            }
-            node = node.getParent();
-        }
-
-        if (script != null) {
-            this.getSaveButton().setEnabled(script.isChanged() && script.getEngine() != null);
-        } else {
-            this.getSaveButton().setEnabled(false);
-        }
     }
 
     private JScrollPane getJScrollPane() {
@@ -643,7 +595,6 @@ public class ScriptsListPanel extends AbstractPanel {
     }
 
     private void selectionChanged() {
-        setButtonStates();
         ScriptNode node = getSelectedNode();
         while (node != null) {
             if (node.getUserObject() != null) {

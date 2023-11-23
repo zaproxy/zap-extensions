@@ -4,7 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Fixed
+- Use high and low delays for linear regression time-based tests to fix false positives from delays that were smaller than normal variance in application response times.
 
+## [58] - 2023-10-12
+### Changed
+- Update minimum ZAP version to 2.14.0.
 
 ## [57] - 2023-09-08
 ### Changed
@@ -443,6 +448,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[58]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v58
 [57]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v57
 [56]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v56
 [55]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v55

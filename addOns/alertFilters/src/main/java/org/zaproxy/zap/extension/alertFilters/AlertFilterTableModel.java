@@ -78,7 +78,7 @@ public class AlertFilterTableModel extends AbstractMultipleOptionsTableModel<Ale
             case 0:
                 return af.isEnabled();
             case 1:
-                return ExtensionAlertFilters.getRuleNameForId(af.getRuleId());
+                return ExtensionAlertFilters.getScanRulesInfo().getNameById(af.getRuleId());
             case 2:
                 return af.getUrl();
             case 3:

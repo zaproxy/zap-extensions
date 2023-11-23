@@ -19,13 +19,13 @@
  */
 package org.zaproxy.zap.extension.wappalyzer;
 
+import com.github.weisj.jsvg.SVGDocument;
+import com.github.weisj.jsvg.parser.SVGLoader;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,21 +37,10 @@ import java.util.regex.PatternSyntaxException;
 import javax.swing.ImageIcon;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
-import org.apache.batik.bridge.BridgeContext;
-import org.apache.batik.bridge.BridgeException;
-import org.apache.batik.bridge.DocumentLoader;
-import org.apache.batik.bridge.GVTBuilder;
-import org.apache.batik.bridge.UserAgent;
-import org.apache.batik.bridge.UserAgentAdapter;
-import org.apache.batik.ext.awt.RenderingHintsKeyExt;
-import org.apache.batik.gvt.GraphicsNode;
-import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.select.QueryParser;
 import org.jsoup.select.Selector.SelectorParseException;
-import org.w3c.dom.svg.SVGDocument;
 
 public class WappalyzerJsonParser {
 
@@ -180,7 +169,6 @@ public class WappalyzerJsonParser {
 
     private static Graphics2D addRenderingHints(BufferedImage image) {
         Graphics2D g2d = image.createGraphics();
-        g2d.setRenderingHint(RenderingHintsKeyExt.KEY_BUFFERED_IMAGE, new WeakReference<>(image));
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g2d.setRenderingHint(
                 RenderingHints.KEY_ALPHA_INTERPOLATION,
@@ -207,34 +195,19 @@ public class WappalyzerJsonParser {
         if (url == null) {
             return null;
         }
-        String xmlParser = XMLResourceDescriptor.getXMLParserClassName();
-        SAXSVGDocumentFactory df = new SAXSVGDocumentFactory(xmlParser);
-        SVGDocument doc = null;
-        GraphicsNode svgIcon = null;
-        try {
-            doc = df.createSVGDocument(url.toString());
-        } catch (RuntimeException | IOException re) {
-            // v1 SVGs are unsupported
-            return null;
-        }
-        doc.getRootElement().setAttribute("width", String.valueOf(SIZE));
-        doc.getRootElement().setAttribute("height", String.valueOf(SIZE));
-        UserAgent userAgent = new UserAgentAdapter();
-        DocumentLoader loader = new DocumentLoader(userAgent);
-        GVTBuilder builder = new GVTBuilder();
-        try {
-            svgIcon = builder.build(new BridgeContext(userAgent, loader), doc);
-        } catch (BridgeException | StringIndexOutOfBoundsException ex) {
-            LOGGER.debug("Failed to parse SVG. {}", ex.getMessage());
-            return null;
-        }
-
-        AffineTransform transform = new AffineTransform(1, 0.0, 0.0, 1, 0, 0);
+        SVGLoader loader = new SVGLoader();
+        SVGDocument svgDocument = loader.load(url);
         BufferedImage image = new BufferedImage(SIZE, SIZE, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = addRenderingHints(image);
-        svgIcon.setTransform(transform);
-        svgIcon.paint(g2d);
-        g2d.dispose();
+        Graphics2D g = image.createGraphics();
+        try {
+            if (svgDocument != null) {
+                svgDocument.render(null, g);
+            }
+        } catch (Exception e) {
+            LOGGER.debug("Failed to load: {}, because of {}", url, e.getMessage());
+        }
+        g.dispose();
+
         return new ImageIcon(image);
     }
 

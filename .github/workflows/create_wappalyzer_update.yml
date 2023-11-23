@@ -17,13 +17,14 @@ jobs:
         git config --global user.email "12745184+zapbot@users.noreply.github.com"
         git config --global user.name $GITHUB_USER
         # Clone repos
-        git clone https://github.com/AliasIO/wappalyzer.git --depth 1
+        SRC_REPO="enthec/webappanalyzer"
+        git clone https://github.com/$SRC_REPO.git --depth 1 wappalyzer
         git clone -o upstream https://github.com/zaproxy/zap-extensions.git
         cd zap-extensions
         git remote add origin https://github.com/$GITHUB_USER/zap-extensions.git
         cd ../wappalyzer
         # Setup env vars for later
-        SRC_BASE="AliasIO/Wappalyzer@"$(git log -1 --format=format:%h)
+        SRC_BASE=$SRC_REPO"@"$(git log -1 --format=format:%h)
         BRANCH="wappalyzer-update"
         SHORT_DATE="$(date +"%Y-%m-%d")"
         export GITHUB_TOKEN=${{ secrets.ZAPBOT_TOKEN }}
@@ -32,9 +33,8 @@ jobs:
         git checkout -b $BRANCH
         cd ..
         rm -rf zap-extensions/addOns/wappalyzer/src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources/icons
-        chmod -R 664 wappalyzer/src/drivers/webextension/images/icons/*.*
-        rm -rf wappalyzer/src/drivers/webextension/images/icons/converted/
-        cp -R wappalyzer/src/drivers/webextension/images/icons/ zap-extensions/addOns/wappalyzer/src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources/icons
+        chmod -R 664 wappalyzer/src/images/icons/*.*
+        cp -R wappalyzer/src/images/icons/ zap-extensions/addOns/wappalyzer/src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources/icons
         cp -f wappalyzer/src/technologies/*.json zap-extensions/addOns/wappalyzer/src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources/technologies/
         cp -f wappalyzer/src/categories.json zap-extensions/addOns/wappalyzer/src/main/resources/org/zaproxy/zap/extension/wappalyzer/resources/categories.json
         cd zap-extensions
@@ -42,11 +42,11 @@ jobs:
         git update-index -q --refresh
         ## If there are changes: comment, commit, PR
         if ! git diff-index --quiet HEAD --; then
-          ./gradlew :addOns:wappalyzer:updateChangelog --change="- Updated with upstream Wappalyzer icon and pattern changes."
+          ./gradlew :addOns:wappalyzer:updateChangelog --change="- Updated with enthec upstream icon and pattern changes."
           git remote set-url origin https://$GITHUB_USER:$GITHUB_TOKEN@github.com/$GITHUB_USER/zap-extensions.git
           git add .
           git commit -m "Wappalyzer Update $SHORT_DATE" -m "Updates based on $SRC_BASE" --signoff
           git push --set-upstream origin $BRANCH --force
           # Open the PR
-          hub pull-request --no-edit
+          gh pr create -f
         fi

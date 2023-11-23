@@ -5,6 +5,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Maintenance changes.
+- Dropped "to Clipboard" from ZAP copy menu items and buttons (Issue 8179).
+
+## [43] - 2023-10-12
+### Changed
+- Update minimum ZAP version to 2.14.0.
+
+## [42] - 2023-10-04
+### Changed
+- ZAPit: carry on even if non success code returned.
+- ZAPit: scan HTTP and HTTPS if protocol not specified.
+
+## [41] - 2023-09-28
+### Added
+- ZAPit: report summary of all requests and responses made.
+- ZAPit: report technology version if available.
+
+### Fixed
+- ZAPit: Support cookies in redirects.
+
+## [40] - 2023-09-26
+### Fixed
+- ZAPit help links.
+- Scan could incorrectly select leaf node for active scanning.
+
+## [39] - 2023-09-22
+### Added
+- ZAPit recon scan.
+
+### Changed
 - Update names of the default cert and report.
 
 ## [38] - 2023-07-11
@@ -200,6 +230,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[43]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v43
+[42]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v42
+[41]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v41
+[40]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v40
+[39]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v39
 [38]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v38
 [37]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v37
 [36]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v36

@@ -450,6 +450,28 @@
     "scriptSrc": "npm/leanplum-sdk\\@([\\d.]+)\\;version:\\1",
     "website": "https://www.leanplum.com"
   },
+  "LearnDash": {
+    "cats": [
+      21,
+      87
+    ],
+    "description": "LearnDash is a WordPress plugin that enables the creation and management of online courses, quizzes, and educational content within a website.",
+    "icon": "LearnDash.svg",
+    "dom": {
+      "link[href*='/wp-content/plugins/sfwd-lms/']": {
+        "attributes": {
+          "href": "/wp-content/plugins/sfwd-lms/.+\\.css(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1"
+        }
+      }
+    },
+    "requires": "WordPress",
+    "pricing": [
+      "low",
+      "onetime",
+      "recurring"
+    ],
+    "website": "https://www.learndash.com"
+  },
   "LearnWorlds": {
     "cats": [
       21
@@ -1379,9 +1401,9 @@
     "cats": [
       22
     ],
-    "description": "LlamaLink Cloud Server is a custom dynamic web server based on Nginx Web server that load balance user traffic between hosting nodes and allows fast and cached expiriance to website users.",
+    "description": "LlamaLink Cloud Server is a custom dynamic web server based on Nginx Web server that load balance user traffic between hosting nodes and allows fast and cached experience to web and app users.",
     "headers": {
-      "Server": "^LlamaLink\\sCloud$"
+      "Server": "^LlamaLink"
     },
     "icon": "LlamaLink.png",
     "implies": "Nginx",
@@ -1496,6 +1518,23 @@
     },
     "scriptSrc": "lodash.*\\.js",
     "website": "https://www.lodash.com"
+  },
+  "Loglib": {
+    "cats": [
+      10
+    ],
+    "description": "Loglib is a Open Source and Privacy-First web analytics that aims to provide simple yet can be powerful based on your needs.",
+    "icon": "Loglib.svg",
+    "js": {
+      "lli": "",
+      "llc": ""
+    },
+    "pricing": [
+      "freemium"
+    ],
+    "oss": true,
+    "saas": true,
+    "website": "https://www.loglib.io"
   },
   "LogRocket": {
     "cats": [

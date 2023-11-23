@@ -173,7 +173,8 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 
 <h2>CSRF Countermeasures</h2>
 This rule identifies "potential" vulnerabilities with the lack of known CSRF 
-countermeasures in pages with forms.<br>
+countermeasures in HTML pages with forms.<br>
+The rule does not scan messages that are not HTML pages.<br>
 At HIGH alert threshold only scans messages which are in scope.<br>
 Post 2.5.0 you can specify a comma separated list of identifiers in the 
 <code>rules.csrf.ignorelist</code> parameter via the Options 'Rule configuration' panel.

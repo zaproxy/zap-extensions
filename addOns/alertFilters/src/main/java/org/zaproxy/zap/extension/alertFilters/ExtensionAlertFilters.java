@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import org.apache.commons.configuration.Configuration;
 import org.apache.logging.log4j.LogManager;
@@ -32,7 +33,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.core.scanner.Alert;
-import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.db.DatabaseException;
 import org.parosproxy.paros.db.RecordAlert;
 import org.parosproxy.paros.db.TableAlert;
@@ -55,9 +55,6 @@ import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.alert.PopupMenuItemAlert;
 import org.zaproxy.zap.extension.alertFilters.internal.ScanRulesInfo;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
-import org.zaproxy.zap.extension.ascan.PolicyManager;
-import org.zaproxy.zap.extension.ascan.ScanPolicy;
-import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.ContextDataFactory;
 import org.zaproxy.zap.model.SessionStructure;
@@ -101,9 +98,6 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
     private int lastAlert = -1;
 
     private static ScanRulesInfo scanRulesInfo;
-    private static Map<String, Integer> nameToId = new HashMap<>();
-    private static Map<Integer, String> idToName = new HashMap<>();
-    private static List<String> allRuleNames;
     private static ExtensionActiveScan extAscan;
 
     private GlobalAlertFilterParam globalAlertFilterParam;
@@ -151,50 +145,6 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
                             ExtensionFactory.getAddOnLoader().getPassiveScanRules());
         }
         return scanRulesInfo;
-    }
-
-    public static List<String> getAllRuleNames() {
-        if (allRuleNames == null) {
-            allRuleNames = new ArrayList<>();
-            PolicyManager pm = getExtAscan().getPolicyManager();
-            ScanPolicy sp = pm.getDefaultScanPolicy();
-            for (Plugin plugin : sp.getPluginFactory().getAllPlugin()) {
-                allRuleNames.add(plugin.getName());
-                nameToId.put(plugin.getName(), Integer.valueOf(plugin.getId()));
-                idToName.put(Integer.valueOf(plugin.getId()), plugin.getName());
-            }
-            List<PluginPassiveScanner> listTest =
-                    new ArrayList<>(CoreFunctionality.getBuiltInPassiveScanRules());
-            listTest.addAll(ExtensionFactory.getAddOnLoader().getPassiveScanRules());
-            for (PluginPassiveScanner scanner : listTest) {
-                if (scanner.getName() != null) {
-                    allRuleNames.add(scanner.getName());
-                    nameToId.put(scanner.getName(), Integer.valueOf(scanner.getPluginId()));
-                    idToName.put(Integer.valueOf(scanner.getPluginId()), scanner.getName());
-                }
-            }
-            Collections.sort(allRuleNames);
-        }
-        return allRuleNames;
-    }
-
-    public static int getIdForRuleName(String name) {
-        if (allRuleNames == null) {
-            // init
-            getAllRuleNames();
-        }
-        if (nameToId.containsKey(name)) {
-            return nameToId.get(name);
-        }
-        return -1;
-    }
-
-    public static String getRuleNameForId(int ruleId) {
-        if (allRuleNames == null) {
-            // init
-            getAllRuleNames();
-        }
-        return idToName.get(Integer.valueOf(ruleId));
     }
 
     @Override
@@ -305,16 +255,19 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
     @Override
     public void loadContextData(Session session, Context context) {
         try {
-            List<String> encodedAlertFilters =
-                    session.getContextDataStrings(context.getId(), TYPE_ALERT_FILTER);
-            ContextAlertFilterManager afManager = getContextAlertFilterManager(context.getId());
-            for (String e : encodedAlertFilters) {
-                AlertFilter af = AlertFilter.decode(context.getId(), e);
-                afManager.addAlertFilter(af);
-            }
+            addAlertFilters(
+                    context, session.getContextDataStrings(context.getId(), TYPE_ALERT_FILTER));
         } catch (Exception ex) {
             LOGGER.error("Unable to load AlertFilters.", ex);
         }
+    }
+
+    private void addAlertFilters(Context ctx, List<?> source) {
+        ContextAlertFilterManager m = getContextAlertFilterManager(ctx.getId());
+        source.stream()
+                .map(e -> AlertFilter.decode(ctx.getId(), e.toString()))
+                .filter(Objects::nonNull)
+                .forEach(m::addAlertFilter);
     }
 
     @Override
@@ -345,12 +298,7 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
 
     @Override
     public void importContextData(Context ctx, Configuration config) {
-        List<Object> list = config.getList(CONTEXT_CONFIG_ALERT_FILTER);
-        ContextAlertFilterManager m = getContextAlertFilterManager(ctx.getId());
-        for (Object o : list) {
-            AlertFilter af = AlertFilter.decode(ctx.getId(), o.toString());
-            m.addAlertFilter(af);
-        }
+        addAlertFilters(ctx, config.getList(CONTEXT_CONFIG_ALERT_FILTER));
     }
 
     @Override

@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.scripts;
 
 import java.awt.Component;
-import java.awt.Font;
 import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
@@ -36,7 +35,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.utils.DisplayUtils;
-import org.zaproxy.zap.utils.FontUtils;
 
 public class SyntaxHighlightTextArea extends RSyntaxTextArea {
 
@@ -122,15 +120,6 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
         setCloseCurlyBraces(false);
         setCloseMarkupTags(false);
         setClearWhitespaceLinesEnabled(false);
-
-        Font font;
-        if (!FontUtils.isDefaultFontSet()) {
-            // Use default RSyntaxTextArea font instead but with correct font size.
-            font = FontUtils.getFont(this.getFont().getFontName());
-        } else {
-            font = FontUtils.getFont(Font.PLAIN);
-        }
-        this.setFont(font);
 
         if (DisplayUtils.isDarkLookAndFeel()) {
             darkLaF = true;

@@ -22,7 +22,10 @@ package org.zaproxy.addon.reports;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
@@ -30,6 +33,8 @@ import static org.mockito.Mockito.withSettings;
 import com.lowagie.text.DocumentException;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,6 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Consumer;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -46,6 +52,16 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.StringLayout;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.LoggerConfig;
+import org.apache.logging.log4j.core.config.Property;
+import org.apache.logging.log4j.core.layout.PatternLayout;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -70,25 +86,24 @@ import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
-class ExtensionReportsUnitTest {
+class ExtensionReportsUnitTest extends TestUtils {
 
     private static final String HTML_REPORT_ALERT_SUMMARY_SECTION = "alertcount";
     private static final String HTML_REPORT_INSTANCE_SUMMARY_SECTION = "instancecount";
     private static final String HTML_REPORT_ALERT_DETAIL_SECTION = "alertdetails";
     private static final String HTML_REPORT_PASSING_RULES_SECTION = "passingrules";
 
-    private static final String HTML_REPORT_ALERT_SUMMARY_SECTION_TITLE =
-            "!reports.report.alerts.summary!";
-    private static final String HTML_REPORT_INSTANCE_SUMMARY_SECTION_TITLE =
-            "!reports.report.alerts.list!";
-    private static final String HTML_REPORT_ALERT_DETAILS_SECTION_TITLE =
-            "!reports.report.alerts.detail!";
+    private static final String HTML_REPORT_ALERT_SUMMARY_SECTION_TITLE = "Summary of Alerts";
+    private static final String HTML_REPORT_INSTANCE_SUMMARY_SECTION_TITLE = "Alerts";
+    private static final String HTML_REPORT_ALERT_DETAILS_SECTION_TITLE = "Alert Detail";
     // The Passing rules section is defined in the report specific i18n file
     private static final String HTML_REPORT_PASSING_RULES_SECTION_TITLE = "Passing Rules";
 
+    private List<String> logEvents;
+
     @BeforeEach
     void setUp() throws Exception {
-        Constant.messages = new I18N(Locale.ENGLISH);
+        mockMessages(new ExtensionReports());
 
         Model model = mock(Model.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         Model.setSingletonForTesting(model);
@@ -100,6 +115,12 @@ class ExtensionReportsUnitTest {
         Constant.PROGRAM_VERSION = "Dev Build";
         HttpRequestHeader.setDefaultUserAgent(
                 "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0");
+        logEvents = registerLogEvents();
+    }
+
+    @AfterEach
+    void cleanup() throws URISyntaxException {
+        Configurator.reconfigure(getClass().getResource("/log4j2-test.properties").toURI());
     }
 
     @Test
@@ -199,6 +220,14 @@ class ExtensionReportsUnitTest {
             int pluginId, int level, String name, String uri, int childCount) {
         Alert alert = new Alert(pluginId);
         alert.setUri(uri);
+        alert.setDescription("Foo-Desc");
+        alert.setSolution("Foo-Sol");
+        alert.setOtherInfo("Foo-Other");
+        try {
+            alert.setMessage(new HttpMessage(new URI(uri, true)));
+        } catch (URIException | HttpMalformedHeaderException | NullPointerException e) {
+            throw new RuntimeException(e);
+        }
         AlertNode alertNode = new AlertNode(level, name);
         alertNode.setUserObject(alert);
         for (int i = 0; i < childCount; i++) {
@@ -563,7 +592,7 @@ class ExtensionReportsUnitTest {
 
         // Then
         assertThat(report.contains(HTML_REPORT_ALERT_SUMMARY_SECTION_TITLE), is(true));
-        assertThat(report.contains(HTML_REPORT_INSTANCE_SUMMARY_SECTION_TITLE), is(false));
+        assertThat(report.contains(HTML_REPORT_INSTANCE_SUMMARY_SECTION_TITLE), is(true));
         assertThat(report.contains(HTML_REPORT_ALERT_DETAILS_SECTION_TITLE), is(false));
     }
 
@@ -742,6 +771,7 @@ class ExtensionReportsUnitTest {
             })
     void shouldGenerateExpectedReport(String templateName) throws Exception {
         // Given
+        Constant.messages = new I18N(Locale.ENGLISH);
         Template template = getTemplateFromYamlFile(templateName);
         String fileName = "basic-" + templateName;
         File f = File.createTempFile(fileName, template.getExtension());
@@ -780,9 +810,7 @@ class ExtensionReportsUnitTest {
         assertThat(alerts.getJSONObject(0).getString("name"), is(equalTo("XSS")));
         assertThat(alerts.getJSONObject(0).getString("riskcode"), is(equalTo("3")));
         assertThat(alerts.getJSONObject(0).getString("confidence"), is(equalTo("2")));
-        assertThat(
-                alerts.getJSONObject(0).getString("riskdesc"),
-                is(equalTo("!reports.report.risk.3! (!reports.report.confidence.2!)")));
+        assertThat(alerts.getJSONObject(0).getString("riskdesc"), is(equalTo("High (Medium)")));
         assertThat(
                 alerts.getJSONObject(0).getString("desc"), is(equalTo("<p>XSS Description</p>")));
         assertThat(alerts.getJSONObject(0).getString("count"), is(equalTo("2")));
@@ -954,16 +982,12 @@ class ExtensionReportsUnitTest {
         assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
         i++;
         assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("riskdesc")));
-        assertThat(
-                alertItemNodes.item(i).getTextContent(),
-                is(equalTo("!reports.report.risk.3! (!reports.report.confidence.2!)")));
+        assertThat(alertItemNodes.item(i).getTextContent(), is(equalTo("High (Medium)")));
         i++;
         assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
         i++;
         assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("confidencedesc")));
-        assertThat(
-                alertItemNodes.item(i).getTextContent(),
-                is(equalTo("!reports.report.confidence.2!")));
+        assertThat(alertItemNodes.item(i).getTextContent(), is(equalTo("Medium")));
         i++;
         assertThat(alertItemNodes.item(i).getNodeName(), is(equalTo("#text"))); // Filler
         i++;
@@ -1149,6 +1173,59 @@ class ExtensionReportsUnitTest {
         assertThat(root.getAttribute("generated").length(), is(greaterThan(20)));
     }
 
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "modern",
+                "high-level-report",
+                "risk-confidence-html",
+                "traditional-html",
+                "traditional-html-plus",
+                "traditional-json",
+                "traditional-json-plus",
+                "traditional-md",
+                "traditional-pdf",
+                "traditional-xml",
+                "traditional-xml-plus"
+            })
+    void shouldGenerateReportsWithoutWarnings(String reportName) throws Exception {
+        // Given
+        ExtensionReports extRep = new ExtensionReports();
+        ReportData reportData = setupReportData();
+        File f = File.createTempFile("zap.reports.test", "x");
+        Template template = getTemplateFromYamlFile(reportName);
+        // When
+        File r = extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
+        String report = new String(Files.readAllBytes(r.toPath()));
+        // Then
+        assertThat(report.length(), greaterThan(0));
+        assertThat(logEvents, not(hasItem(startsWith("WARN"))));
+        assertThat(logEvents, not(hasItem(startsWith("ERROR"))));
+    }
+
+    private ReportData setupReportData() {
+        ReportData reportData = getTestReportData();
+        AlertNode root = new AlertNode(0, "Alerts");
+        root.add(newAlertNode(1, Alert.RISK_HIGH, "Alert High 1", "https://www.example.com", 1));
+        root.add(newAlertNode(2, Alert.RISK_LOW, "Alert Low 1", "https://www.example.com", 3));
+        root.add(
+                newAlertNode(
+                        2,
+                        ExtensionReports.RISK_FALSE_POSITIVE,
+                        "Alert Low 2",
+                        "https://www.example.com",
+                        8));
+        reportData.setAlertTreeRootNode(root);
+        String site1 = "https://www.example.com";
+        reportData.setSites(List.of(site1));
+        reportData.setIncludeAllConfidences(true);
+        reportData.setIncludeAllRisks(true);
+        reportData.setDescription("");
+        reportData.addSection("alerts");
+        reportData.addSection("appendix");
+        return reportData;
+    }
+
     private static void generateTestFile(String templateName) throws Exception {
 
         Template template = getTemplateFromYamlFile(templateName);
@@ -1196,5 +1273,48 @@ class ExtensionReportsUnitTest {
                                 ExtensionReports.class,
                                 "/reports/" + templateName + "/template.yaml")
                         .toFile());
+    }
+
+    private static List<String> registerLogEvents() {
+        List<String> logEvents = new ArrayList<>();
+        TestLogAppender logAppender = new TestLogAppender("%p %m%n", logEvents::add);
+        LoggerContext context = LoggerContext.getContext();
+        LoggerConfig rootLoggerconfig = context.getConfiguration().getRootLogger();
+        rootLoggerconfig.getAppenders().values().forEach(context.getRootLogger()::removeAppender);
+        rootLoggerconfig.addAppender(logAppender, null, null);
+        rootLoggerconfig.setLevel(Level.ALL);
+        context.updateLoggers();
+        return logEvents;
+    }
+
+    static class TestLogAppender extends AbstractAppender {
+
+        private static final Property[] NO_PROPERTIES = {};
+
+        private final Consumer<String> logConsumer;
+
+        public TestLogAppender(Consumer<String> logConsumer) {
+            this("%m%n", logConsumer);
+        }
+
+        public TestLogAppender(String pattern, Consumer<String> logConsumer) {
+            super(
+                    "TestLogAppender",
+                    null,
+                    PatternLayout.newBuilder()
+                            .withDisableAnsi(true)
+                            .withCharset(StandardCharsets.UTF_8)
+                            .withPattern(pattern)
+                            .build(),
+                    true,
+                    NO_PROPERTIES);
+            this.logConsumer = logConsumer;
+            start();
+        }
+
+        @Override
+        public void append(LogEvent event) {
+            logConsumer.accept(((StringLayout) getLayout()).toSerializable(event));
+        }
     }
 }

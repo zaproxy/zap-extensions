@@ -196,6 +196,16 @@
     "oss": true,
     "website": "https://backdropcms.org"
   },
+  "Backstretch": {
+    "cats": [
+      25,
+      59
+    ],
+    "description": "A simple jQuery plugin that allows you to add a dynamically-resized, slideshow-capable background image to any page or element.",
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?(?:jquery\\.)?backstretch(?:\\.min)?\\.js\\;version:\\1",
+    "website": "https://www.jquery-backstretch.com/"
+  },
   "Baidu Analytics (百度统计)": {
     "cats": [
       10
@@ -2870,5 +2880,20 @@
     "saas": true,
     "scriptSrc": "cdn\\.ibdok\\.ir/",
     "website": "https://bdok.ir"
+  },
+  "bxSlider": {
+    "cats": [
+      7,
+      59
+    ],
+    "description": "Add a respsonsive image slider to any website.",
+    "icon": "bxSlider.png",
+    "oss": true,
+    "pricing": [
+      "low",
+      "onetime"
+    ],
+    "scriptSrc": "bxslider(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://bxslider.com/"
   }
 }

@@ -31,20 +31,22 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.postman.models.AbstractItem;
 import org.zaproxy.addon.postman.models.Body;
-import org.zaproxy.addon.postman.models.Body.FormData;
 import org.zaproxy.addon.postman.models.Body.GraphQl;
 import org.zaproxy.addon.postman.models.Item;
 import org.zaproxy.addon.postman.models.ItemGroup;
@@ -58,6 +60,9 @@ public class PostmanParser {
     Requestor requestor;
     private static final String MESSAGE_PREFIX = "postman.importfrom";
 
+    private static final String IMPORT_FORMAT_ERROR = "postman.import.error.format";
+    private static final String IMPORT_WARNING = "postman.import.warning";
+
     private static final Map<String, String> CONTENT_TYPE_MAP =
             Map.of(
                     "html", "text/html",
@@ -69,7 +74,9 @@ public class PostmanParser {
         requestor = new Requestor(HttpSender.MANUAL_REQUEST_INITIATOR, new HistoryPersister());
     }
 
-    public void importFromFile(final String filePath) throws IOException {
+    public boolean importFromFile(
+            final String filePath, final String variables, final boolean initViaUi)
+            throws IOException {
         File file = new File(filePath);
         if (!file.exists()) {
             throw new FileNotFoundException(
@@ -81,10 +88,11 @@ public class PostmanParser {
         }
 
         String collectionJson = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
-        importCollection(collectionJson);
+        return importCollection(collectionJson, variables, initViaUi);
     }
 
-    public void importFromUrl(final String url) throws IllegalArgumentException, IOException {
+    public boolean importFromUrl(final String url, final String variables, final boolean initViaUi)
+            throws IllegalArgumentException, IOException {
         if (url.isEmpty()) {
             throw new IllegalArgumentException(
                     Constant.messages.getString(MESSAGE_PREFIX + "url.emptyurl"));
@@ -98,16 +106,87 @@ public class PostmanParser {
         }
 
         String collectionJson = requestor.getResponseBody(uri);
-        importCollection(collectionJson);
+        return importCollection(collectionJson, variables, initViaUi);
     }
 
-    public void importCollection(String collection) throws JsonProcessingException {
+    List<HttpMessage> getHttpMessages(
+            String collection, final String variables, List<String> errors)
+            throws JsonProcessingException {
+        collection = replaceVariables(collection, variables);
+
         PostmanCollection postmanCollection = parse(collection);
-
         List<HttpMessage> httpMessages = new ArrayList<>();
-        extractHttpMessages(postmanCollection.getItem(), httpMessages);
 
-        requestor.run(httpMessages);
+        extractHttpMessages(
+                postmanCollection.getItem(), httpMessages, errors, postmanCollection.getVariable());
+        return httpMessages;
+    }
+
+    public boolean importCollection(
+            String collection, final String variables, final boolean initViaUi)
+            throws JsonProcessingException {
+        List<String> errors = new ArrayList<>();
+        List<HttpMessage> httpMessages = getHttpMessages(collection, variables, errors);
+
+        requestor.run(httpMessages, errors);
+
+        outputErrors(errors, initViaUi);
+
+        return errors.isEmpty();
+    }
+
+    private static void outputErrors(List<String> errors, final boolean initViaUi) {
+        if (initViaUi && errors != null) {
+            for (String error : errors) {
+                View.getSingleton().getOutputPanel().append(error + "\n");
+            }
+        }
+    }
+
+    private static Map<String, String> parseVariables(String variables) {
+        Map<String, String> variableMap = new HashMap<>();
+        String[] pairs = variables.split(",");
+        for (String pair : pairs) {
+            String[] parts = pair.split("=", 2);
+            if (parts.length == 2) {
+                variableMap.put(parts[0], StringEscapeUtils.escapeJson(parts[1]));
+            }
+        }
+        return variableMap;
+    }
+
+    static String replaceVariables(String collection, String variables) {
+        Map<String, String> variableMap = parseVariables(variables);
+
+        for (Map.Entry<String, String> variableEntry : variableMap.entrySet()) {
+            String variable = "{{" + variableEntry.getKey() + "}}";
+            String value = variableEntry.getValue();
+            collection = collection.replace(variable, value);
+        }
+        return collection;
+    }
+
+    static String replaceVariables(
+            String string,
+            List<KeyValueData> variables,
+            String variablePrefix,
+            String variableSuffix) {
+        if (string != null && variables != null) {
+            for (KeyValueData variableEntry : variables) {
+                String variable = variablePrefix + variableEntry.getKey() + variableSuffix;
+                String value = variableEntry.getValue();
+                string = string.replace(variable, value);
+            }
+        }
+        return string;
+    }
+
+    static String replaceJsonVariables(String value, List<KeyValueData> variables) {
+        return replaceVariables(value, variables, "{{", "}}");
+    }
+
+    static String replaceJsonPathVariables(String value, List<KeyValueData> variables) {
+        return replaceVariables(value, variables, ":", "");
     }
 
     public PostmanCollection parse(String collectionJson) throws JsonProcessingException {
@@ -119,15 +198,50 @@ public class PostmanParser {
     }
 
     static void extractHttpMessages(List<AbstractItem> items, List<HttpMessage> httpMessages) {
-        for (AbstractItem item : items) {
-            if (item instanceof Item) {
-                HttpMessage httpMessage = extractHttpMessage((Item) item);
-                if (httpMessage != null) {
-                    httpMessages.add(httpMessage);
+        extractHttpMessages(items, httpMessages, new ArrayList<>(), null);
+    }
+
+    static List<KeyValueData> getCombinedVarList(
+            List<KeyValueData> firstList, List<KeyValueData> secondList) {
+
+        List<KeyValueData> finalList = new ArrayList<>();
+
+        if (firstList != null) {
+            finalList.addAll(firstList);
+        }
+
+        if (secondList != null) {
+            finalList.addAll(secondList);
+        }
+        return finalList;
+    }
+
+    static void extractHttpMessages(
+            List<AbstractItem> items,
+            List<HttpMessage> httpMessages,
+            List<String> errors,
+            List<KeyValueData> parentVariables) {
+        if (items != null) {
+            for (AbstractItem item : items) {
+                if (item instanceof Item) {
+                    HttpMessage httpMessage =
+                            extractHttpMessage((Item) item, errors, parentVariables);
+                    if (httpMessage != null) {
+                        httpMessages.add(httpMessage);
+                    }
+                } else if (item instanceof ItemGroup) {
+                    ItemGroup itemGroup = (ItemGroup) item;
+
+                    extractHttpMessages(
+                            itemGroup.getItem(),
+                            httpMessages,
+                            errors,
+                            getCombinedVarList(itemGroup.getVariable(), parentVariables));
                 }
-            } else if (item instanceof ItemGroup) {
-                extractHttpMessages(((ItemGroup) item).getItem(), httpMessages);
             }
+        }
+        if (httpMessages.isEmpty()) {
+            errors.add(Constant.messages.getString("postman.import.error.noItem"));
         }
     }
 
@@ -147,31 +261,64 @@ public class PostmanParser {
     }
 
     static HttpMessage extractHttpMessage(Item item) {
+        return extractHttpMessage(item, new ArrayList<>(), null);
+    }
+
+    static HttpMessage extractHttpMessage(
+            Item item, List<String> errors, List<KeyValueData> parentVariables) {
         Request request = item.getRequest();
         if (request == null) {
+            errors.add(
+                    Constant.messages.getString(
+                            IMPORT_FORMAT_ERROR,
+                            item.getName(),
+                            Constant.messages.getString("postman.import.errorMsg.reqNotPresent")));
             return null;
         }
 
         Url url = request.getUrl();
         if (url == null) {
+            errors.add(
+                    Constant.messages.getString(
+                            IMPORT_FORMAT_ERROR,
+                            item.getName(),
+                            Constant.messages.getString("postman.import.errorMsg.urlNotPresent")));
             return null;
         }
 
         HttpMessage httpMessage;
+
+        List<KeyValueData> allVariables = getCombinedVarList(parentVariables, item.getVariable());
+
         try {
-            String rawUrl = url.getRaw();
-            httpMessage = new HttpMessage(new URI(rawUrl, false));
+            String rawUrl = replaceJsonVariables(url.getRaw(), allVariables);
+
+            List<KeyValueData> urlVariables = url.getVariable();
+            URI uri = new URI(rawUrl, false);
+
+            String pathWithReplaceVars = replaceJsonPathVariables(uri.getPath(), urlVariables);
+            uri.setPath(pathWithReplaceVars);
+
+            httpMessage = new HttpMessage(uri);
         } catch (URIException | HttpMalformedHeaderException | NullPointerException e) {
+            errors.add(
+                    Constant.messages.getString(
+                            IMPORT_FORMAT_ERROR,
+                            item.getName(),
+                            Constant.messages.getString("postman.import.errorMsg.rawInvalid")));
             return null;
         }
 
-        httpMessage.getRequestHeader().setMethod(request.getMethod());
+        String method = replaceJsonVariables(request.getMethod(), allVariables);
+        httpMessage.getRequestHeader().setMethod(method);
 
         List<KeyValueData> headers = request.getHeader();
         if (headers != null) {
             for (KeyValueData header : request.getHeader()) {
                 if (!header.isDisabled()) {
-                    httpMessage.getRequestHeader().setHeader(header.getKey(), header.getValue());
+                    String key = replaceJsonVariables(header.getKey(), allVariables);
+                    String value = replaceJsonVariables(header.getValue(), allVariables);
+                    httpMessage.getRequestHeader().setHeader(key, value);
                 }
             }
         }
@@ -246,10 +393,12 @@ public class PostmanParser {
             contentType = "multipart/form-data; boundary=" + boundary;
 
             StringBuilder formDataBody = new StringBuilder();
-            for (FormData formData : body.getFormData()) {
+            for (KeyValueData formData : body.getFormData()) {
                 if (!formData.isDisabled()) {
                     formDataBody
-                            .append(generateMultiPartBody(formData, boundary))
+                            .append(
+                                    generateMultiPartBody(
+                                            formData, boundary, errors, item.getName()))
                             .append(HttpHeader.CRLF);
                 }
             }
@@ -264,11 +413,16 @@ public class PostmanParser {
 
             String src = body.getFile().getSrc();
 
-            contentType = getFileContentType(src);
+            contentType = getFileContentType(src, errors, item.getName());
 
             try {
                 bodyContent = FileUtils.readFileToString(new File(src), StandardCharsets.UTF_8);
             } catch (IOException e1) {
+                errors.add(
+                        Constant.messages.getString(
+                                IMPORT_WARNING,
+                                item.getName(),
+                                e1.getClass().getName() + ": " + e1.getMessage()));
             }
         } else if (mode.equals(Body.GRAPHQL)) {
             if (body.getGraphQl() == null) {
@@ -278,23 +432,37 @@ public class PostmanParser {
             contentType = HttpHeader.JSON_CONTENT_TYPE;
 
             GraphQl graphQlBody = body.getGraphQl();
-            String query = graphQlBody.getQuery().replaceAll("\r\n", "\\\\r\\\\n");
-            String variables = graphQlBody.getVariables().replaceAll("\\s", "");
 
-            bodyContent = String.format("{\"query\":\"%s\", \"variables\":%s}", query, variables);
+            String query = graphQlBody.getQuery();
+            String variables = graphQlBody.getVariables();
+
+            if (variables != null && !variables.isEmpty()) {
+                bodyContent =
+                        String.format(
+                                "{\"query\":\"%s\", \"variables\":%s}",
+                                query.replaceAll("\r\n", "\\\\r\\\\n"),
+                                variables.replaceAll("\\s", ""));
+            } else {
+                bodyContent =
+                        String.format("{\"query\":\"%s\"}", query.replaceAll("\r\n", "\\\\r\\\\n"));
+            }
         }
 
         if (!isContentTypeAlreadySet(request.getHeader())) {
+            contentType = replaceJsonVariables(contentType, allVariables);
             httpMessage.getRequestHeader().setHeader(HttpHeader.CONTENT_TYPE, contentType);
         }
 
-        httpMessage.getRequestBody().setBody(bodyContent.toString());
+        bodyContent = replaceJsonVariables(bodyContent.toString(), allVariables);
+        httpMessage.getRequestBody().setBody(bodyContent);
+
         httpMessage.getRequestHeader().setContentLength(httpMessage.getRequestBody().length());
 
         return httpMessage;
     }
 
-    private static String generateMultiPartBody(FormData formData, String boundary) {
+    private static String generateMultiPartBody(
+            KeyValueData formData, String boundary, List<String> errors, String itemName) {
         StringBuilder multipartData = new StringBuilder();
 
         multipartData.append("--").append(boundary).append(HttpHeader.CRLF);
@@ -315,7 +483,7 @@ public class PostmanParser {
                     .append('"')
                     .append(HttpHeader.CRLF);
 
-            String propertyContentType = getFileContentType(formData.getSrc());
+            String propertyContentType = getFileContentType(formData.getSrc(), errors, itemName);
             if (!propertyContentType.isEmpty()) {
                 multipartData
                         .append(HttpHeader.CONTENT_TYPE)
@@ -330,6 +498,11 @@ public class PostmanParser {
                 String defn = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
                 multipartData.append(defn);
             } catch (IOException e) {
+                errors.add(
+                        Constant.messages.getString(
+                                IMPORT_WARNING,
+                                itemName,
+                                "Could not read file: " + e.getMessage()));
                 return "";
             }
         } else {
@@ -342,11 +515,19 @@ public class PostmanParser {
         return multipartData.toString();
     }
 
-    private static String getFileContentType(String value) {
+    private static String getFileContentType(String value, List<String> errors, String itemName) {
         try {
             String osAppropriatePath = value.startsWith("/") ? value.substring(1) : value;
             return Files.probeContentType(Paths.get(osAppropriatePath));
         } catch (IOException e) {
+            errors.add(
+                    Constant.messages.getString(
+                            IMPORT_WARNING,
+                            itemName,
+                            "Could not get content type of file - "
+                                    + e.getClass().getName()
+                                    + ": "
+                                    + e.getMessage()));
             return "";
         }
     }

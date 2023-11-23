@@ -4,7 +4,36 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Rename "Script Console" in the Options panel list to "Console".
 
+## [43] - 2023-11-13
+### Added
+- Allow setting the tab size and whether to use tabs or spaces for indentation in the console.
+  The old defaults were to use the tab character with a tab size of 5.
+  The new defaults are to use spaces with a tab size of 4.
+- A gear button to the console toolbar to open the Script Console options screen.
+- An enable / disable script button to the console toolbar to toggle enabling the open script.
+- Options to allow editing the font name and size used in the console (Issue 8065).
+- The shortcut `ctrl+S` (`cmd+S` on macOS) to save the script in the console.
+
+### Changed
+- The "Save Script" button was moved to the console toolbar.
+
+### Fixed
+- Saving the script was causing the "Keep or Replace" dialog to show, even when no external changes were made to the script.
+
+## [42] - 2023-10-12
+### Changed
+- Update minimum ZAP version to 2.14.0.
+
+## [41] - 2023-10-04
+### Added
+- Allow selecting a default behaviour when a script in the console changes on disk (Issues 5463, 7582). The allowed
+  options are "Ask Each Time", "Keep Script", and "Replace Script".
+
+### Changed
+- Update extender template scripts to also work with Graal.js engine.
 
 ## [40] - 2023-09-11
 ### Changed
@@ -251,6 +280,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[43]: https://github.com/zaproxy/zap-extensions/releases/scripts-v43
+[42]: https://github.com/zaproxy/zap-extensions/releases/scripts-v42
+[41]: https://github.com/zaproxy/zap-extensions/releases/scripts-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/scripts-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/scripts-v39
 [38]: https://github.com/zaproxy/zap-extensions/releases/scripts-v38

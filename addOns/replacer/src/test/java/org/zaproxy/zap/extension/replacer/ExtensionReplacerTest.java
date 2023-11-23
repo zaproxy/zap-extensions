@@ -22,7 +22,10 @@ package org.zaproxy.zap.extension.replacer;
 import static java.nio.charset.StandardCharsets.US_ASCII;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasEntry;
+import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.matchesRegex;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.REQ_BODY_STR;
 import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.REQ_HEADER;
@@ -31,6 +34,7 @@ import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.RES
 import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.RESP_HEADER;
 import static org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType.RESP_HEADER_STR;
 
+import java.util.Map;
 import java.util.regex.PatternSyntaxException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,6 +44,7 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 
 class ExtensionReplacerTest {
 
@@ -49,10 +54,14 @@ class ExtensionReplacerTest {
             new String(new byte[] {'a', 'b', 'c', 1, 2, 3, 'd', 'e', 'f'}, US_ASCII);
     private HttpMessage msg;
 
+    private ExtensionReplacer extensionReplacer;
+
     @BeforeEach
     void setUp() throws Exception {
         msg = new HttpMessage();
         msg.setRequestHeader("GET https://example.com/ HTTP/1.1");
+
+        extensionReplacer = new ExtensionReplacer();
     }
 
     @ParameterizedTest
@@ -113,6 +122,88 @@ class ExtensionReplacerTest {
         boolean matches = rule.matchesUrl(targetUrl);
         // Then
         assertThat(matches, equalTo(expectedMatch));
+    }
+
+    @Test
+    void shouldReplaceHostHeaderInRequest() throws HttpMalformedHeaderException {
+        // Given
+        msg.setRequestHeader("GET / HTTP/1.1\r\n" + hostHeader("x"));
+        String replacement = "y";
+        replacerRule(REQ_HEADER, HttpRequestHeader.HOST, replacement);
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(
+                msg.getRequestHeader().getHeader(HttpRequestHeader.HOST), is(equalTo(replacement)));
+        assertHostNormalizationDisabled(msg);
+    }
+
+    private void replacerRule(
+            ReplacerParamRule.MatchType matchType, String matchString, String replacement) {
+        extensionReplacer
+                .getParams()
+                .getRules()
+                .add(
+                        new ReplacerParamRule(
+                                "", matchType, matchString, false, replacement, null, true));
+    }
+
+    private static String hostHeader(String value) {
+        return HttpRequestHeader.HOST + ": " + value;
+    }
+
+    private static void assertHostNormalizationDisabled(HttpMessage msg) {
+        @SuppressWarnings("unchecked")
+        Map<String, Object> userObject = (Map<String, Object>) msg.getUserObject();
+        assertThat(userObject, hasEntry("host.normalization", Boolean.FALSE));
+    }
+
+    @Test
+    void shouldRemoveHostHeaderInRequest() throws HttpMalformedHeaderException {
+        // Given
+        msg.setRequestHeader("GET / HTTP/1.1\r\n" + hostHeader("x"));
+        replacerRule(REQ_HEADER, HttpRequestHeader.HOST, "");
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestHeader().getHeader(HttpRequestHeader.HOST), is(nullValue()));
+        assertHostNormalizationDisabled(msg);
+    }
+
+    @Test
+    void shouldReplaceHostHeaderInRequestHeader() throws HttpMalformedHeaderException {
+        // Given
+        String hostHeader = hostHeader("x");
+        msg.setRequestHeader("GET / HTTP/1.1\r\n" + hostHeader);
+        String replacement = "y";
+        replacerRule(REQ_HEADER_STR, hostHeader, hostHeader(replacement));
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(
+                msg.getRequestHeader().getHeader(HttpRequestHeader.HOST), is(equalTo(replacement)));
+        assertHostNormalizationDisabled(msg);
+    }
+
+    @Test
+    void shouldRemoveHostHeaderInRequestHeader() throws HttpMalformedHeaderException {
+        // Given
+        String hostHeader = hostHeader("x");
+        msg.setRequestHeader("GET / HTTP/1.1\r\n" + hostHeader);
+        replacerRule(REQ_HEADER_STR, hostHeader, "");
+
+        // When
+        extensionReplacer.onHttpRequestSend(msg, 0, null);
+
+        // Then
+        assertThat(msg.getRequestHeader().getHeader(HttpRequestHeader.HOST), is(nullValue()));
+        assertHostNormalizationDisabled(msg);
     }
 
     @Test

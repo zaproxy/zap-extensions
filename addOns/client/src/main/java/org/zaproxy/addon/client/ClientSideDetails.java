@@ -30,14 +30,15 @@ public class ClientSideDetails {
 
     private Set<ClientSideComponent> components = new HashSet<>();
 
-    public ClientSideDetails(String name, String url, boolean visited) {
+    public ClientSideDetails(String name, String url, boolean visited, boolean storage) {
         this.name = name;
         this.url = url;
         this.visited = visited;
+        this.storage = storage;
     }
 
     public ClientSideDetails(String name, String url) {
-        this(name, url, false);
+        this(name, url, false, false);
     }
 
     public String getName() {

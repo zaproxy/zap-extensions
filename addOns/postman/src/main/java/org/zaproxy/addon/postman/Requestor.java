@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpSender;
 
@@ -50,12 +51,15 @@ public class Requestor {
         return httpRequest.getResponseBody().toString();
     }
 
-    public void run(List<HttpMessage> httpMessages) {
+    public void run(List<HttpMessage> httpMessages, List<String> errors) {
         for (HttpMessage httpMessage : httpMessages) {
             try {
                 sender.sendAndReceive(httpMessage, true);
                 listener.handleMessage(httpMessage, initiator);
             } catch (IOException e) {
+                errors.add(
+                        Constant.messages.getString(
+                                "postman.import.error.unreachableUrl", e.getMessage()));
                 LOGGER.debug(e.getMessage(), e);
             }
         }

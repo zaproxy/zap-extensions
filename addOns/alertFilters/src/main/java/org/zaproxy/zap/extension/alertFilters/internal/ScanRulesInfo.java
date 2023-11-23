@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.alertFilters.internal;
 
+import java.lang.reflect.Constructor;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,15 +27,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
+import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.zap.extension.alert.ExampleAlertProvider;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.extension.ascan.ScanPolicy;
+import org.zaproxy.zap.extension.pscan.PassiveScanData;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 public class ScanRulesInfo extends AbstractList<ScanRulesInfo.Entry> {
 
+    private static final Logger LOGGER = LogManager.getLogger(ScanRulesInfo.class);
+
     private List<Entry> entries;
-    private Map<Integer, Entry> entriesById;
+    private Map<String, Entry> entriesById;
 
     public ScanRulesInfo(
             ExtensionActiveScan extensionActiveScan,
@@ -44,29 +55,87 @@ public class ScanRulesInfo extends AbstractList<ScanRulesInfo.Entry> {
         entriesById = new HashMap<>();
         ScanPolicy sp = extensionActiveScan.getPolicyManager().getDefaultScanPolicy();
         for (Plugin scanRule : sp.getPluginFactory().getAllPlugin()) {
-            addEntry(scanRule.getId(), scanRule.getName());
+            addEntry(scanRule, scanRule.getId(), scanRule.getName());
         }
         for (PluginPassiveScanner scanRule : builtInPassiveScanRules) {
-            addEntry(scanRule.getPluginId(), scanRule.getName());
+            addEntry(scanRule, scanRule.getPluginId(), scanRule.getName());
         }
         for (PluginPassiveScanner scanRule : passiveScanRules) {
-            addEntry(scanRule.getPluginId(), scanRule.getName());
+            addEntry(scanRule, scanRule.getPluginId(), scanRule.getName());
         }
         Collections.sort(entries);
     }
 
-    private void addEntry(int id, String name) {
+    private void addEntry(Object scanRule, int id, String name) {
         if (id == -1) {
             return;
         }
 
+        String idStr = String.valueOf(id);
+        addEntry(idStr, name);
+
+        addAlertRefs(idStr, scanRule);
+    }
+
+    private void addAlertRefs(String id, Object scanRule) {
+        if (!(scanRule instanceof ExampleAlertProvider)) {
+            return;
+        }
+
+        ExampleAlertProvider exampleAlertProvider = (ExampleAlertProvider) scanRule;
+        if (scanRule instanceof PluginPassiveScanner) {
+            try {
+                PluginPassiveScanner pps = ((PluginPassiveScanner) exampleAlertProvider).copy();
+                Constructor<PassiveScanData> constructor =
+                        PassiveScanData.class.getDeclaredConstructor(HttpMessage.class);
+                constructor.setAccessible(true);
+                PassiveScanData psd =
+                        constructor.newInstance(
+                                new HttpMessage(new HttpRequestHeader("GET / HTTP/1.1")));
+                pps.setHelper(psd);
+                exampleAlertProvider = pps;
+            } catch (Exception e) {
+                LOGGER.warn("Failed to initialize the passive scan rule:", e);
+                return;
+            }
+        }
+
+        List<Alert> exampleAlerts;
+        try {
+            exampleAlerts = exampleAlertProvider.getExampleAlerts();
+        } catch (Exception e) {
+            LOGGER.warn("Failed to get the example alerts:", e);
+            return;
+        }
+
+        if (exampleAlerts == null || exampleAlerts.isEmpty()) {
+            return;
+        }
+        exampleAlerts.stream()
+                .filter(e -> !e.getAlertRef().equals(id))
+                .forEach(e -> addEntry(e.getAlertRef(), e.getName()));
+    }
+
+    private void addEntry(String id, String name) {
         Entry entry = new Entry(id, name);
         entriesById.put(id, entry);
         entries.add(entry);
     }
 
-    public Entry getById(int id) {
+    public Set<String> getIds() {
+        return entriesById.keySet();
+    }
+
+    public Entry getById(String id) {
         return entriesById.get(id);
+    }
+
+    public String getNameById(String id) {
+        Entry entry = entriesById.get(id);
+        if (entry != null) {
+            return entry.getName();
+        }
+        return id;
     }
 
     @Override
@@ -91,16 +160,15 @@ public class ScanRulesInfo extends AbstractList<ScanRulesInfo.Entry> {
 
     public static class Entry implements Comparable<Entry> {
 
-        private final int id;
+        private final String id;
         private final String name;
 
-        Entry(int id, String name) {
+        Entry(String id, String name) {
             this.id = id;
-            this.name =
-                    name == null || name.isEmpty() ? String.valueOf(id) : name + " (" + id + ")";
+            this.name = name == null || name.isEmpty() ? id : name + " (" + id + ")";
         }
 
-        public int getId() {
+        public String getId() {
             return id;
         }
 
@@ -117,7 +185,7 @@ public class ScanRulesInfo extends AbstractList<ScanRulesInfo.Entry> {
             if (result != 0) {
                 return result;
             }
-            return Integer.compare(id, o.id);
+            return id.compareTo(o.id);
         }
 
         @Override
@@ -134,7 +202,7 @@ public class ScanRulesInfo extends AbstractList<ScanRulesInfo.Entry> {
                 return false;
             }
             Entry other = (Entry) obj;
-            return id == other.id;
+            return Objects.equals(id, other.id);
         }
 
         @Override

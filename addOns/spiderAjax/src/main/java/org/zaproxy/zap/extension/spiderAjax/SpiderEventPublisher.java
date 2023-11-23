@@ -19,7 +19,11 @@
  */
 package org.zaproxy.zap.extension.spiderAjax;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.zaproxy.zap.ZAP;
+import org.zaproxy.zap.eventBus.Event;
+import org.zaproxy.zap.eventBus.EventPublisher;
 import org.zaproxy.zap.model.ScanEventPublisher;
 import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.users.User;
@@ -41,6 +45,26 @@ public class SpiderEventPublisher extends ScanEventPublisher {
         return publisher;
     }
 
+    /*
+     * Temporary method to allow the URL to be included, pending core changes
+     */
+    void publishScanEvent(
+            EventPublisher publisher,
+            String event,
+            int scanId,
+            Target target,
+            String url,
+            User user) {
+        Map<String, String> map = new HashMap<>();
+        map.put(SCAN_ID, Integer.toString(scanId));
+        if (user != null) {
+            map.put(USER_ID, Integer.toString(user.getId()));
+            map.put(USER_NAME, user.getName());
+        }
+        map.put("url", url);
+        ZAP.getEventBus().publishSyncEvent(publisher, new Event(publisher, event, target, map));
+    }
+
     static synchronized void unregisterPublisher() {
         if (publisher == null) {
             return;
@@ -53,8 +77,9 @@ public class SpiderEventPublisher extends ScanEventPublisher {
         publisher.publishScanEvent(publisher, event, scanId);
     }
 
-    public static void publishScanEvent(String event, int scanId, Target target, User user) {
+    public static void publishScanEvent(
+            String event, int scanId, Target target, String url, User user) {
         SpiderEventPublisher publisher = getPublisher();
-        publisher.publishScanEvent(publisher, event, scanId, target, user);
+        publisher.publishScanEvent(publisher, event, scanId, target, url, user);
     }
 }

@@ -358,8 +358,7 @@ public class GraphQlGenerator {
      * @param variableName StringBuilder used for variable names.
      * @return the generated query
      */
-    private String getFirstLeafQuery(
-            GraphQLType type, JSONObject variables, StringBuilder variableName) {
+    String getFirstLeafQuery(GraphQLType type, JSONObject variables, StringBuilder variableName) {
 
         class Node {
             final GraphQLType graphQLType;
@@ -479,10 +478,11 @@ public class GraphQlGenerator {
     }
 
     private GraphQLFieldDefinition getFirstLeafField(GraphQLType type) {
+        type = GraphQLTypeUtil.unwrapAll(type);
         if (type instanceof GraphQLObjectType) {
             GraphQLObjectType object = (GraphQLObjectType) type;
             return object.getFieldDefinitions().stream()
-                    .filter(f -> GraphQLTypeUtil.isLeaf(f.getType()))
+                    .filter(f -> GraphQLTypeUtil.isLeaf(GraphQLTypeUtil.unwrapAll(f.getType())))
                     .findFirst()
                     .orElse(null);
         }

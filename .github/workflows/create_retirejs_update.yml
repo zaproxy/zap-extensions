@@ -43,5 +43,5 @@ jobs:
           git commit -m "retire.js Update $SHORT_DATE" -m "Updates based on $SRC_BASE" --signoff
           git push --set-upstream origin $BRANCH --force
           # Open the PR
-          hub pull-request --no-edit
+          gh pr create -f
         fi

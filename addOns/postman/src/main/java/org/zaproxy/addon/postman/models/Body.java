@@ -21,6 +21,8 @@ package org.zaproxy.addon.postman.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import java.util.List;
 import org.zaproxy.addon.postman.deserializers.ListDeserializer;
@@ -50,7 +52,7 @@ public class Body {
 
     @JsonDeserialize(using = ListDeserializer.class)
     @JsonProperty("formdata")
-    private List<FormData> formData;
+    private List<KeyValueData> formData;
 
     @JsonDeserialize(using = ObjectDeserializer.class)
     private File file;
@@ -97,11 +99,11 @@ public class Body {
         this.urlencoded = urlencoded;
     }
 
-    public List<FormData> getFormData() {
+    public List<KeyValueData> getFormData() {
         return formData;
     }
 
-    public void setFormData(List<FormData> formData) {
+    public void setFormData(List<KeyValueData> formData) {
         this.formData = formData;
     }
 
@@ -139,8 +141,9 @@ public class Body {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class File {
+        @JsonSetter(nulls = Nulls.SKIP)
         @JsonDeserialize(using = ObjectDeserializer.class)
-        private String src;
+        private String src = "";
 
         public String getSrc() {
             return src;
@@ -148,45 +151,14 @@ public class Body {
 
         public void setSrc(String src) {
             this.src = src;
-        }
-    }
-
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class FormData extends KeyValueData {
-        @JsonDeserialize(using = ObjectDeserializer.class)
-        private String src;
-
-        @JsonDeserialize(using = ObjectDeserializer.class)
-        private String type;
-
-        public FormData() {}
-
-        public FormData(String key, String value, String type) {
-            super(key, value);
-            this.type = type;
-        }
-
-        public String getSrc() {
-            return src;
-        }
-
-        public void setSrc(String src) {
-            this.src = src;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public void setType(String type) {
-            this.type = type;
         }
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class GraphQl {
+        @JsonSetter(nulls = Nulls.SKIP)
         @JsonDeserialize(using = ObjectDeserializer.class)
-        private String query;
+        private String query = "";
 
         @JsonDeserialize(using = ObjectDeserializer.class)
         private String variables;

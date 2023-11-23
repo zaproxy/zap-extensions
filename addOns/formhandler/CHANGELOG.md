@@ -4,7 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [6.5.0] - 2023-10-12
 ### Changed
+- Update minimum ZAP version to 2.14.0.
 - Maintenance changes.
 - Tweak help for proper rendering in the website.
 
@@ -70,6 +74,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[6.5.0]: https://github.com/zaproxy/zap-extensions/releases/formhandler-v6.5.0
 [6.4.0]: https://github.com/zaproxy/zap-extensions/releases/formhandler-v6.4.0
 [6.3.0]: https://github.com/zaproxy/zap-extensions/releases/formhandler-v6.3.0
 [6.2.1]: https://github.com/zaproxy/zap-extensions/releases/formhandler-v6.2.1

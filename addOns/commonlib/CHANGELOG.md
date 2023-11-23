@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Added solution to 'Fingerprinting' (Issue 8056).
+
+## [1.19.0] - 2023-11-10
+### Added
+- A generic UI component for keeping menu items sorted.
+
+### Changed
+- Add solution to 'Brute Forcing Credit Card Information', 'Content Spoofing', 'Credential and Session Prediction', 'XML Injection' and 'XML External Entities' vulnerabilities (Issue 8056).
+
+## [1.18.0] - 2023-10-12
+### Changed
+- Update minimum ZAP version to 2.14.0.
+- Add solution to 'Brute Forcing Log-in Credentials', 'Brute Forcing Session Identifiers' and 'Brute Forcing Directories and Files' vulnerabilities (Issue 8056).
 - Update vulnerabilities' CWE references to use HTTPS scheme.
 
 ## [1.17.0] - 2023-09-07
@@ -117,6 +130,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 First version.
 
+[1.19.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.19.0
+[1.18.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.18.0
 [1.17.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.17.0
 [1.16.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.16.0
 [1.15.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.15.0

@@ -5,6 +5,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- On weekly releases and versions after 2.14, handle content encodings (Issue 2198).
+
+### Fixed
+- Handle cookies like browsers, mostly send what is received (Issues 1232 and 7874).
+- Do not set content-length to SSE responses, which would end up being closed prematurely.
+
+## [0.12.0] - 2023-10-12
+### Added
+- Allow to completely disable host header normalization.
+
+### Changed
+- Update minimum ZAP version to 2.14.0.
+- Update default user-agents.
+- Update dependencies.
+
+### Fixed
+- Do not initialize the view when failed to start the main proxy in `cmd` and `daemon` modes.
+
+## [0.11.2] - 2023-09-27
+### Fixed
+- Ensure the main proxy with custom port (`-port`) is stopped when initialising after installation in `cmd` and `daemon` modes.
+
+## [0.11.1] - 2023-09-27
+### Fixed
+- Ensure servers are stopped when initialising after installation in `cmd` and `daemon` modes.
+
+## [0.11.0] - 2023-09-26
+### Added
+- Allow to create custom servers with the ZAP API.
+
 ### Changed
 - Maintenance changes.
 - Update names of generated root CA certificate and issued server certificates.
@@ -124,6 +155,10 @@ would not be cleared when reusing the same message.
   - Options panel to manage the root CA certificate and issued certificates.
   - API endpoints to configure the validity of the root CA certificate and issued certificates ([Issue 4673](https://github.com/zaproxy/zaproxy/issues/4673)).
 
+[0.12.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.12.0
+[0.11.2]: https://github.com/zaproxy/zap-extensions/releases/network-v0.11.2
+[0.11.1]: https://github.com/zaproxy/zap-extensions/releases/network-v0.11.1
+[0.11.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.11.0
 [0.10.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.10.0
 [0.9.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.9.0
 [0.8.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.8.0

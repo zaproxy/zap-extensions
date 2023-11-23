@@ -1174,6 +1174,15 @@
     "scriptSrc": "cdn\\.enlistly\\.com/",
     "website": "https://enlistly.com"
   },
+  "Enquire.js": {
+    "cats": [
+      59
+    ],
+    "description": "enquire.js is a lightweight, pure JavaScript library for responding to CSS media queries.",
+    "oss": true,
+    "scriptSrc": "enquire(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://wicky.nillia.ms/enquire.js/"
+  },
   "Ensi": {
     "cats": [
       6
@@ -1383,7 +1392,7 @@
     "cats": [
       27
     ],
-    "cpe": "cpe:2.3:a:erlang:erlang%2fotp:*:*:*:*:*:*:*:*",
+    "cpe": "cpe:2.3:a:erlang:erlang\\/otp:*:*:*:*:*:*:*:*",
     "description": "Erlang is a general-purpose, concurrent, functional programming language, and a garbage-collected runtime system.",
     "headers": {
       "Server": "Erlang( OTP/(?:[\\d.ABR-]+))?\\;version:\\1"

@@ -2,6 +2,9 @@ import org.zaproxy.gradle.addon.AddOnStatus
 
 description = "WebDriver provider and includes HtmlUnit browser"
 
+val selenium by configurations.creating
+configurations.api { extendsFrom(selenium) }
+
 zapAddOn {
     addOnName.set("Selenium")
     addOnStatus.set(AddOnStatus.RELEASE)
@@ -17,24 +20,22 @@ zapAddOn {
                 }
             }
         }
+
+        bundledLibs {
+            libs.from(selenium)
+        }
     }
 
     apiClientGen {
         api.set("org.zaproxy.zap.extension.selenium.SeleniumAPI")
-        options.set("org.zaproxy.zap.extension.selenium.SeleniumOptions")
         messages.set(file("src/main/resources/org/zaproxy/zap/extension/selenium/resources/Messages.properties"))
     }
 }
 
 dependencies {
-    var seleniumVersion = "4.12.1"
-    api("org.seleniumhq.selenium:selenium-java:$seleniumVersion") {
-        exclude(group = "io.netty")
-    }
-    implementation("org.seleniumhq.selenium:selenium-http-jdk-client:$seleniumVersion")
-    api("org.seleniumhq.selenium:htmlunit-driver:4.12.0") {
-        exclude(group = "io.netty")
-    }
+    var seleniumVersion = "4.15.0"
+    selenium("org.seleniumhq.selenium:selenium-java:$seleniumVersion")
+    selenium("org.seleniumhq.selenium:htmlunit-driver:4.13.0")
     implementation(libs.log4j.slf4j) {
         // Provided by ZAP.
         exclude(group = "org.apache.logging.log4j")

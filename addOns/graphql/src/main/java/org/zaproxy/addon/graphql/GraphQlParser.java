@@ -54,7 +54,8 @@ public class GraphQlParser {
                     IntrospectionQueryBuilder.Options.defaultOptions()
                             .descriptions(false)
                             .directiveIsRepeatable(false)
-                            .inputValueDeprecation(false));
+                            .inputValueDeprecation(false)
+                            .isOneOf(false));
     private static AtomicInteger threadId = new AtomicInteger();
     private static final String INTROSPECTION_ALERT_REF = ExtensionGraphQl.TOOL_ALERT_ID + "-1";
     private static final Map<String, String> INTROSPECTION_ALERT_TAGS =

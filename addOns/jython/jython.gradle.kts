@@ -9,6 +9,13 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/python-scripting/")
+        dependencies {
+            addOns {
+                register("scripts") {
+                    version.set(">=44")
+                }
+            }
+        }
     }
 }
 

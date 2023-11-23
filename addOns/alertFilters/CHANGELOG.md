@@ -4,7 +4,22 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [19] - 2023-11-16
 ### Changed
+- Allow to filter by alert reference (Issue 7438).
+- Allow to specify custom IDs through the GUI.
+- Maintenance changes.
+
+### Fixed
+- Do not fail to import or load a context with invalid alert filters.
+- Incorrect warning about 'Unrecognised parameter' for deleteGlobalAlerts.
+- Persist context filter data.
+
+## [18] - 2023-10-12
+### Changed
+- Update minimum ZAP version to 2.14.0.
 - Maintenance changes.
 - Depend on newer version of Automation Framework add-on for the automation job (Related to Issue 7961).
 
@@ -112,6 +127,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[19]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v19
+[18]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v18
 [17]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v17
 [16]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v16
 [15]: https://github.com/zaproxy/zap-extensions/releases/alertFilters-v15

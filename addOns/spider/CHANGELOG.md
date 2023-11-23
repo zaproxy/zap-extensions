@@ -5,7 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+
+## [0.7.0] - 2023-10-12
 ### Changed
+- Update minimum ZAP version to 2.14.0.
 - Maintenance changes.
 
 ## [0.6.0] - 2023-09-07
@@ -66,6 +70,7 @@ The following table illustrates the changes versus the previous core release(s) 
 |                                                                                                                                         | SVG image files are parsed to identify HREF attributes and extract/resolve any contained links. (Issue 4984)                                                                                                        |
 |                                                                                                                                         | Irrelevant Parameters - Allows to manage the parameters that should be removed when canonicalising the URLs found. The session token names defined in the HTTP Sessions options are taken into account and removed (Issue 4388). |
 
+[0.7.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.7.0
 [0.6.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.6.0
 [0.5.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.5.0
 [0.4.0]: https://github.com/zaproxy/zap-extensions/releases/spider-v0.4.0

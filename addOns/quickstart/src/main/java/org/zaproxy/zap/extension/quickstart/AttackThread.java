@@ -20,24 +20,16 @@
 package org.zaproxy.zap.extension.quickstart;
 
 import java.net.URL;
-import javax.swing.SwingUtilities;
-import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
-import org.parosproxy.paros.extension.history.ExtensionHistory;
-import org.parosproxy.paros.model.HistoryReference;
-import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.SiteNode;
-import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpSender;
-import org.parosproxy.paros.network.HttpStatusCode;
-import org.zaproxy.addon.network.common.ZapUnknownHostException;
 import org.zaproxy.zap.extension.ascan.ActiveScan;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
 import org.zaproxy.zap.model.Target;
+import org.zaproxy.zap.network.HttpRequestConfig;
+import org.zaproxy.zap.utils.Stats;
 
 public class AttackThread extends Thread {
 
@@ -54,13 +46,15 @@ public class AttackThread extends Thread {
 
     private ExtensionQuickStart extension;
     private URL url;
-    private HttpSender httpSender = null;
     private TraditionalSpider traditionalSpider;
     private PlugableSpider plugableSpider;
     private boolean stopAttack = false;
     private boolean useStdSpider;
 
     private static final Logger LOGGER = LogManager.getLogger(AttackThread.class);
+
+    private static final HttpRequestConfig REQ_CONFIG =
+            HttpRequestConfig.builder().setFollowRedirects(true).build();
 
     public AttackThread(ExtensionQuickStart ext, boolean useStdSpider) {
         super("ZAP-QuickStart-AttackThread");
@@ -85,8 +79,9 @@ public class AttackThread extends Thread {
         stopAttack = false;
         boolean completed = false;
         try {
+            Stats.incCounter("stats.quickstart.attack");
             extension.notifyProgress(Progress.started);
-            SiteNode startNode = this.accessNode(this.url);
+            SiteNode startNode = this.extension.accessNode(this.url, REQ_CONFIG, true);
 
             if (startNode == null) {
                 LOGGER.debug("Failed to access URL {}", url);
@@ -172,6 +167,7 @@ public class AttackThread extends Thread {
                 // www.example.com/app1)
                 // Go up a level
                 startNode = startNode.getParent();
+                target.setStartNode(startNode);
             }
 
             ExtensionActiveScan extAscan =
@@ -221,96 +217,6 @@ public class AttackThread extends Thread {
                 extension.notifyProgress(Progress.complete);
             }
         }
-    }
-
-    private SiteNode accessNode(URL url) {
-        SiteNode startNode = null;
-        // Request the URL
-        try {
-            final HttpMessage msg = new HttpMessage(new URI(url.toString(), true));
-            getHttpSender().sendAndReceive(msg, true);
-
-            if (!HttpStatusCode.isSuccess(msg.getResponseHeader().getStatusCode())) {
-                extension.notifyProgress(
-                        Progress.failed,
-                        Constant.messages.getString(
-                                "quickstart.progress.failed.code",
-                                msg.getResponseHeader().getStatusCode()));
-
-                return null;
-            }
-
-            if (msg.getResponseHeader().isEmpty()) {
-                extension.notifyProgress(Progress.failed);
-                return null;
-            }
-
-            ExtensionHistory extHistory =
-                    ((ExtensionHistory)
-                            Control.getSingleton()
-                                    .getExtensionLoader()
-                                    .getExtension(ExtensionHistory.NAME));
-            extHistory.addHistory(msg, HistoryReference.TYPE_PROXIED);
-
-            SwingUtilities.invokeAndWait(
-                    () ->
-                            // Needs to be done on the EDT
-                            Model.getSingleton()
-                                    .getSession()
-                                    .getSiteTree()
-                                    .addPath(msg.getHistoryRef()));
-
-            String urlStr = url.toString();
-            if (urlStr.endsWith("/")) {
-                // The sites tree treats URLs ending in a slash as leaf nodes
-                urlStr = urlStr.substring(0, urlStr.length() - 1);
-            }
-            URI uri = new URI(urlStr, false);
-
-            for (int i = 0; i < 10; i++) {
-                startNode = Model.getSingleton().getSession().getSiteTree().findNode(uri);
-                if (startNode != null) {
-                    break;
-                }
-                try {
-                    sleep(200);
-                } catch (InterruptedException e) {
-                    // Ignore
-                }
-            }
-        } catch (ZapUnknownHostException e1) {
-            if (e1.isFromOutgoingProxy()) {
-                extension.notifyProgress(
-                        Progress.failed,
-                        Constant.messages.getString(
-                                "quickstart.progress.failed.badhost.proxychain", e1.getMessage()));
-            } else {
-                extension.notifyProgress(
-                        Progress.failed,
-                        Constant.messages.getString(
-                                "quickstart.progress.failed.badhost", e1.getMessage()));
-            }
-        } catch (URIException e) {
-            extension.notifyProgress(
-                    Progress.failed,
-                    Constant.messages.getString(
-                            "quickstart.progress.failed.reason", e.getMessage()));
-        } catch (Exception e1) {
-            LOGGER.error(e1.getMessage(), e1);
-            extension.notifyProgress(
-                    Progress.failed,
-                    Constant.messages.getString(
-                            "quickstart.progress.failed.reason", e1.getMessage()));
-            return null;
-        }
-        return startNode;
-    }
-
-    private HttpSender getHttpSender() {
-        if (httpSender == null) {
-            httpSender = new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR);
-        }
-        return httpSender;
     }
 
     public void stopAttack() {

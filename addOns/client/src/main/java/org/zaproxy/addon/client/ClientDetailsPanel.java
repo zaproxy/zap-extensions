@@ -22,6 +22,7 @@ package org.zaproxy.addon.client;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -71,7 +72,15 @@ public class ClientDetailsPanel extends AbstractPanel {
         this.setTabFocus();
     }
 
+    public String getCurrentUrl() {
+        return this.nodeDetailsPanel.getCurrentUrl();
+    }
+
     public void clear() {
         this.nodeDetailsPanel.clear();
+    }
+
+    public List<ClientSideComponent> getSelectedRows() {
+        return nodeDetailsPanel.getSelectedRows();
     }
 }

@@ -89,16 +89,16 @@ themes: # Необязательный список тем — разные цв
 	Вкладка «Предупреждения» на рабочем столе, но обрезана, чтобы удалить
 	все предупреждения, которые не соответствуют выбранные критерии.
 	<p>
-		Каждый узел в дереве является <a
-			href="https://javadoc.io/static/org.zaproxy/zap/2.10.0/org/zaproxy/zap/extension/alert/AlertNode.html">AlertNode</a>.
+		Every node in the tree is an <a
+			href="https://javadoc.io/doc/org.zaproxy/zap/latest/org/zaproxy/zap/extension/alert/AlertNode.html">AlertNode</a>.
 	</p>
 	<p>Узел верхнего уровня не содержит никаких полезных данных.</p>
 	<p>
 		Для каждого найденного типа предупреждений существует один узел
-		второго уровня. Эти узлы имеют 'userObject' типа <a
-			href="https://javadoc.io/static/org.zaproxy/zap/2.10.0/org/parosproxy/paros/core/scanner/Alert.html">Alert</a>
-		который дает вам доступ ко всем данным предупреждений и связанным с
-		ними запрос и ответ.
+		второго уровня. These nodes have a 'userObject' of type <a
+			href="https://javadoc.io/doc/org.zaproxy/zap/latest/org/parosproxy/paros/core/scanner/Alert.html">Alert</a>
+		which gives you access to all of the alert data and the associated
+		request and response.
 	</p>
 	<p>Третий и последний уровень содержит экземпляры предупреждений —
 		это все того же типа, что и их родительский узел, и дают доступ к

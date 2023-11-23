@@ -1,4 +1,3 @@
-version = "0.0.1"
 description = "Exposes client (browser) side information in ZAP using Firefox and Chrome extensions."
 
 zapAddOn {
@@ -24,7 +23,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("selenium") {
-                    version.set("15.*")
+                    version.set(">=15.14.0")
                 }
                 register("network") {
                     version.set(">=0.8.0")

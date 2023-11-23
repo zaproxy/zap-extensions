@@ -21,38 +21,157 @@ package org.zaproxy.addon.client;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.parosproxy.paros.model.Session;
+import org.zaproxy.zap.model.StandardParameterParser;
 
 class ClientNodeUnitTest {
 
-    private static final String AAA_URL = "https://aaa.com";
-    private static final String BBB_URL = "https://bbb.com";
+    private static final String EXAMPLE_COM = "https://www.example.com";
 
-    private static final String BBB_AAA_URL = "https://bbb.com/aaa";
+    private ClientNode root;
 
-    @Test
-    void shouldReturnSite() {
+    @BeforeEach
+    void setUp() {
+        Session session = mock(Session.class);
+        StandardParameterParser ssp = new StandardParameterParser();
+        given(session.getUrlParamParser(any(String.class))).willReturn(ssp);
+        root = new ClientNode(new ClientSideDetails("Root", ""), session);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {EXAMPLE_COM, EXAMPLE_COM + "2", EXAMPLE_COM + "3"})
+    void shouldGetRootChild(String childName) {
         // Given
-        ClientMap map = new ClientMap(new ClientNode(new ClientSideDetails("Root", ""), false));
+        ClientMap map = new ClientMap(root);
+        map.getOrAddNode(EXAMPLE_COM + "3", false, false);
+        map.getOrAddNode(EXAMPLE_COM, false, false);
+        map.getOrAddNode(EXAMPLE_COM + "2", false, false);
 
         // When
-        map.getOrAddNode(AAA_URL + "/", false);
-        map.getOrAddNode(AAA_URL + "/ccc", false);
-        map.getOrAddNode(AAA_URL + "/ddd?ee", false);
-        map.getOrAddNode(BBB_AAA_URL + "/", false);
-        map.getOrAddNode(BBB_AAA_URL + "/#fff", false);
-
-        ClientNode root = map.getRoot();
+        ClientNode child = root.getChild(childName, false);
 
         // Then
-        assertThat(root.getChildCount(), is(2));
-        assertThat(root.getChildAt(0).getChildCount(), is(2));
-        assertThat(root.getChildAt(0).getSite(), is(AAA_URL + "/"));
-        assertThat(root.getChildAt(0).getChildAt(0).getSite(), is(AAA_URL + "/"));
-        assertThat(root.getChildAt(0).getChildAt(1).getSite(), is(AAA_URL + "/"));
-        assertThat(root.getChildAt(1).getChildCount(), is(1));
-        assertThat(root.getChildAt(1).getSite(), is(BBB_URL + "/"));
-        assertThat(root.getChildAt(1).getChildAt(0).getSite(), is(BBB_URL + "/"));
+        assertNotNull(child);
+        assertThat(child.getUserObject().getName(), is(childName));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"cccc", "bbb", "aa"})
+    void shouldGetNonRootChild(String childName) {
+        // Given
+        ClientMap map = new ClientMap(root);
+        map.getOrAddNode(EXAMPLE_COM, false, false);
+        map.getOrAddNode(EXAMPLE_COM + "/cccc", false, false);
+        map.getOrAddNode(EXAMPLE_COM + "/bbb", false, false);
+        map.getOrAddNode(EXAMPLE_COM + "/aa", false, false);
+
+        // When
+        ClientNode site = root.getChild(EXAMPLE_COM, false);
+        assertNotNull(site);
+        ClientNode child = site.getChild(childName, false);
+
+        // Then
+        assertNotNull(child);
+        assertThat(child.getUserObject().getName(), is(childName));
+    }
+
+    @Test
+    void shouldNotGetNonStorageChild() {
+        // Given
+        ClientMap map = new ClientMap(root);
+        map.getOrAddNode(EXAMPLE_COM, false, false);
+        map.getOrAddNode(EXAMPLE_COM + "/cccc", false, false);
+        map.getOrAddNode(EXAMPLE_COM + "/bbb", false, true);
+        map.getOrAddNode(EXAMPLE_COM + "/aa", false, false);
+
+        // When
+        ClientNode site = root.getChild(EXAMPLE_COM, false);
+        assertNotNull(site);
+        ClientNode child = site.getChild("bbb", false);
+
+        // Then
+        assertNull(child);
+    }
+
+    @Test
+    void shouldGetNonStorageChild() {
+        // Given
+        ClientMap map = new ClientMap(root);
+        map.getOrAddNode(EXAMPLE_COM, false, false);
+        map.getOrAddNode(EXAMPLE_COM + "/cccc", false, false);
+        map.getOrAddNode(EXAMPLE_COM + "/bbb", false, true);
+        map.getOrAddNode(EXAMPLE_COM + "/aa", false, false);
+
+        // When
+        ClientNode site = root.getChild(EXAMPLE_COM, false);
+        assertNotNull(site);
+        ClientNode child = site.getChild("bbb", true);
+
+        // Then
+        assertNotNull(child);
+        assertThat(child.getUserObject().getName(), is("bbb"));
+        assertThat(child.getUserObject().isStorage(), is(true));
+    }
+
+    @Test
+    void shouldGetSite() {
+        // Given
+        ClientMap map = new ClientMap(root);
+        map.getOrAddNode(EXAMPLE_COM + "/aaa/bbb/ccc?aa=bb#f", false, false);
+
+        // When
+        ClientNode site = root.getChild(EXAMPLE_COM, false);
+
+        // Then
+        assertNotNull(site);
+        assertThat(site.getSite(), is(EXAMPLE_COM + "/"));
+        assertThat(site.getChildCount(), is(1));
+        assertThat(site.getChildAt(0).getSite(), is(EXAMPLE_COM + "/"));
+        assertThat(site.getChildAt(0).getChildCount(), is(1));
+        assertThat(site.getChildAt(0).getChildAt(0).getSite(), is(EXAMPLE_COM + "/"));
+        assertThat(site.getChildAt(0).getChildAt(0).getChildCount(), is(1));
+        assertThat(site.getChildAt(0).getChildAt(0).getChildAt(0).getSite(), is(EXAMPLE_COM + "/"));
+        assertThat(site.getChildAt(0).getChildAt(0).getChildAt(0).getChildCount(), is(1));
+        assertThat(
+                site.getChildAt(0).getChildAt(0).getChildAt(0).getChildAt(0).getSite(),
+                is(EXAMPLE_COM + "/"));
+        assertThat(
+                site.getChildAt(0).getChildAt(0).getChildAt(0).getChildAt(0).getChildCount(),
+                is(0));
+    }
+
+    @Test
+    void shouldGetSession() {
+        // Given
+        ClientMap map = new ClientMap(root);
+        map.getOrAddNode(EXAMPLE_COM + "/aaa/bbb/ccc?aa=bb#f", false, false);
+
+        // When
+        ClientNode site = root.getChild(EXAMPLE_COM, false);
+
+        // Then
+        assertNotNull(site);
+        assertNotNull(site.getSession());
+        assertThat(site.getChildCount(), is(1));
+        assertNotNull(site.getChildAt(0).getSession());
+        assertThat(site.getChildAt(0).getChildCount(), is(1));
+        assertNotNull(site.getChildAt(0).getChildAt(0).getSession());
+        assertThat(site.getChildAt(0).getChildAt(0).getChildCount(), is(1));
+        assertNotNull(site.getChildAt(0).getChildAt(0).getChildAt(0).getSession());
+        assertThat(site.getChildAt(0).getChildAt(0).getChildAt(0).getChildCount(), is(1));
+        assertNotNull(site.getChildAt(0).getChildAt(0).getChildAt(0).getChildAt(0).getSession());
+        assertThat(
+                site.getChildAt(0).getChildAt(0).getChildAt(0).getChildAt(0).getChildCount(),
+                is(0));
     }
 }

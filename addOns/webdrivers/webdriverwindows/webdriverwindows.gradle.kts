@@ -25,9 +25,14 @@ tasks.named(AddOnPlugin.GENERATE_MANIFEST_TASK_NAME) {
 }
 
 tasks {
-    register<DownloadWebDriver>("downloadChromeDriver") {
+    register<DownloadWebDriver>("downloadChromeDriverX32") {
         browser.set(DownloadWebDriver.Browser.CHROME)
         arch.set(DownloadWebDriver.Arch.X32)
+    }
+
+    register<DownloadWebDriver>("downloadChromeDriverX64") {
+        browser.set(DownloadWebDriver.Browser.CHROME)
+        arch.set(DownloadWebDriver.Arch.X64)
     }
 
     register<DownloadWebDriver>("downloadGeckodriverX32") {

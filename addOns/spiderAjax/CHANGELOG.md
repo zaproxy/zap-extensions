@@ -4,9 +4,28 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [23.18.0] - 2023-11-10
+### Added
+- Add context menu item to Contexts tree to show the AJAX Spider dialogue with the selected Context.
+
+### Changed
+- Add icon to the Tools menu item.
+- Scale icons.
+
+## [23.17.0] - 2023-10-12
+### Changed
+- Update minimum ZAP version to 2.14.0.
+
+### Fixed
+- Add URL to start event.
+
+## [23.16.0] - 2023-09-26
 ### Changed
 - Maintenance changes.
 - Depend on newer versions of Automation Framework and Common Library add-ons (Related to Issue 7961).
+- Depend on newer version of Network add-on and allow to access the ZAP API while spidering.
 
 ## [23.15.0] - 2023-07-11
 ### Added
@@ -285,6 +304,9 @@ By default it allows files with extension `.js` and `.css`.
 
 
 
+[23.18.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.18.0
+[23.17.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.17.0
+[23.16.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.16.0
 [23.15.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.15.0
 [23.14.1]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.14.1
 [23.14.0]: https://github.com/zaproxy/zap-extensions/releases/spiderAjax-v23.14.0

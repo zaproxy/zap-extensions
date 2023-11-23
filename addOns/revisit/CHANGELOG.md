@@ -4,9 +4,15 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [5] - 2023-10-23
 ### Changed
 - Maintenance changes.
-- Update minimum ZAP version to 2.13.0.
+- Update minimum ZAP version to 2.14.0.
+
+### Fixed
+- Prevent exception when processing history after deleting messages.
 
 ## [4] - 2021-10-07
 ### Added
@@ -30,4 +36,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[5]: https://github.com/zaproxy/zap-extensions/releases/revisit-v5
 [4]: https://github.com/zaproxy/zap-extensions/releases/revisit-v4

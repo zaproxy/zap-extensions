@@ -5,7 +5,7 @@
 // See the other templates for examples on how to do add different functionality. 
 
 // Script variable to use when uninstalling
-var popupmenuitemtype = Java.type("org.zaproxy.zap.view.popup.PopupMenuItemHistoryReferenceContainer");
+var popupmenuitemtype = Java.extend(Java.type("org.zaproxy.zap.view.popup.PopupMenuItemHistoryReferenceContainer"));
 var menuitem = new popupmenuitemtype("Example history reference menu") {
       performAction: function(href) {
         print("Example menu called with " + href.getHttpMessage().getRequestHeader().getURI().toString());

@@ -839,6 +839,16 @@
     "scriptSrc": "\\.fitanalytics\\.com",
     "website": "https://www.fitanalytics.com"
   },
+  "FitVids.JS": {
+    "cats": [5, 14],
+    "description": "jQuery plugin for fluid width video embeds",
+    "icon": "FitVids.JS.png",
+    "scriptSrc": [
+      "fitvids(?:\\.min)?\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1"
+    ],
+    "oss": true,
+    "website": "https://fitvidsjs.com/"
+  },
   "FlagSmith": {
     "cats": [
       85
@@ -881,14 +891,15 @@
       18,
       22
     ],
+    "description": "Flask is a Python micro web framework ideal for rapidly constructing web applications, offering minimalism, flexibility, and modularity.",
     "cpe": "cpe:2.3:a:palletsprojects:flask:*:*:*:*:*:*:*:*",
     "headers": {
       "Server": "Werkzeug/?([\\d\\.]+)?\\;version:\\1"
     },
-    "icon": "Flask.png",
+    "icon": "Flask.svg",
     "implies": "Python",
     "oss": true,
-    "website": "https://flask.pocoo.org"
+    "website": "https://github.com/pallets/flask/"
   },
   "Flat UI": {
     "cats": [

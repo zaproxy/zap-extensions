@@ -4,7 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [15] - 2023-10-12
 ### Changed
+- Update minimum ZAP version to 2.14.0.
 - Maintenance changes.
 
 ## [14] - 2023-07-11
@@ -95,6 +99,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release as an add-on, previously bundled with ZAP core.
 
+[15]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v13
 [12]: https://github.com/zaproxy/zap-extensions/releases/bruteforce-v12

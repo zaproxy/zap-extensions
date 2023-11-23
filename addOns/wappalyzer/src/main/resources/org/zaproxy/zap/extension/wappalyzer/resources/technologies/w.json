@@ -246,6 +246,21 @@
     "scriptSrc": "/wp-content/plugins/wp-maintenance-mode/.+wpmm\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://github.com/andrianvaleanu/WP-Maintenance-Mode"
   },
+  "WP Portfolio": {
+    "cats": [
+      87
+    ],
+    "description": "WP Portfolio is a premium standalone WordPress plugin designed for creating and showcasing portfolios.",
+    "icon": "WP Portfolio.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "onetime"
+    ],
+    "requires": "WordPress",
+    "scriptSrc": "/wp-content/plugins/astra-portfolio/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "website": "https://wpportfolio.net"
+  },
   "WP Puzzle Basic": {
     "cats": [
       80
@@ -1061,7 +1076,7 @@
     "cats": [
       1
     ],
-    "cpe": "cpe:2.3:a:weblication:cms_core_&_grid:*:*:*:*:*:*:*:*",
+    "cpe": "cpe:2.3:a:weblication:cms_core_\\&_grid:*:*:*:*:*:*:*:*",
     "description": "Weblication is an enterprise-class website content management system developed by Scholl Communications AG in Germany.",
     "icon": "Weblication.svg",
     "implies": [
@@ -2245,6 +2260,21 @@
     "saas": true,
     "scriptSrc": "\\.worldztool\\.com/",
     "website": "https://www.worldz-business.net"
+  },
+  "WOW": {
+    "cats": [
+      12,
+      18,
+      25
+    ],
+    "description":"Reveal CSS animation as you scroll down a page.",
+    "pricing": [
+      "low",
+      "onetime"
+    ],
+    "oss": true,
+    "scriptSrc": "wow(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://www.delac.io/WOW"
   },
   "Wowza Video Player": {
     "cats": [

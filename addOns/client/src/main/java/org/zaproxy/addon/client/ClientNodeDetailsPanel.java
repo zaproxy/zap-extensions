@@ -19,32 +19,37 @@
  */
 package org.zaproxy.addon.client;
 
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.BorderLayout;
+import java.awt.Component;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.SortOrder;
-import org.jdesktop.swingx.JXTable;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
-import org.zaproxy.zap.view.LayoutHelper;
+import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.view.ZapTable;
 
 public class ClientNodeDetailsPanel extends AbstractPanel {
+
+    public static final String CLIENT_DETAILS_NAME = "tableClientDetails";
 
     private static final long serialVersionUID = 1L;
 
     private ComponentTableModel componentTableModel;
+    private ZapTable table;
 
     private JLabel urlLabel = new JLabel();
 
     public ClientNodeDetailsPanel() {
         super();
 
-        this.setLayout(new GridBagLayout());
+        this.setLayout(new BorderLayout());
         setName(Constant.messages.getString(ExtensionClientIntegration.PREFIX + ".details.title"));
         setIcon(
                 new ImageIcon(
@@ -52,28 +57,24 @@ public class ClientNodeDetailsPanel extends AbstractPanel {
                                 ExtensionClientIntegration.RESOURCES
                                         + "/application-browser.png")));
 
-        this.setBackground(Color.WHITE);
+        add(urlLabel, BorderLayout.NORTH);
 
-        add(
-                urlLabel,
-                LayoutHelper.getGBC(
-                        0, 0, 1, 1.0, 0.0, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2)));
-
-        JXTable table = new JXTable();
+        table = new ZapTable();
         table.setModel(getComponentTableModel());
+        table.setName(CLIENT_DETAILS_NAME);
         table.setSortOrder(0, SortOrder.ASCENDING);
         table.setColumnControlVisible(true);
+        table.setComponentPopupMenu(
+                new JPopupMenu() {
+                    private static final long serialVersionUID = 1L;
 
-        add(
-                new JScrollPane(table),
-                LayoutHelper.getGBC(
-                        0, 1, 1, 1.0, 1.0, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2)));
+                    @Override
+                    public void show(Component invoker, int x, int y) {
+                        View.getSingleton().getPopupMenu().show(invoker, x, y);
+                    }
+                });
 
-        // Padding
-        add(
-                new JLabel(),
-                LayoutHelper.getGBC(
-                        0, 2, 1, 1.0, 1.0, GridBagConstraints.BOTH, new Insets(2, 2, 2, 2)));
+        add(new JScrollPane(table));
     }
 
     public void setClientNode(ClientNode node) {
@@ -82,15 +83,26 @@ public class ClientNodeDetailsPanel extends AbstractPanel {
                 .setComponents(new ArrayList<>(node.getUserObject().getComponents()));
     }
 
+    public String getCurrentUrl() {
+        return this.urlLabel.getText();
+    }
+
     public void clear() {
         this.urlLabel.setText("");
         this.getComponentTableModel().setComponents(new ArrayList<>());
     }
 
-    private ComponentTableModel getComponentTableModel() {
+    protected ComponentTableModel getComponentTableModel() {
         if (componentTableModel == null) {
             componentTableModel = new ComponentTableModel();
         }
         return componentTableModel;
+    }
+
+    public List<ClientSideComponent> getSelectedRows() {
+        return Arrays.stream(table.getSelectedRows())
+                .map(table::convertRowIndexToModel)
+                .mapToObj(getComponentTableModel()::getComponent)
+                .collect(Collectors.toList());
     }
 }

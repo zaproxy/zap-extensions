@@ -4,7 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Update minimum ZAP version to 2.14.0.
+- Maintenance changes.
 
+### Added
+- Add ZAP API endpoint to get the OpenAPI definition of the ZAP API.
 
 ## [0.3.0] - 2023-09-07
 

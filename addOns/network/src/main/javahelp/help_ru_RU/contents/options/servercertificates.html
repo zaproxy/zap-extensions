@@ -10,7 +10,7 @@
 	This screens allows to manage and configure the root CA certificate and issued certificates.
 
 	<p>
-	OWASP ZAP позволяет прозрачно расшифровывать SSL-соединения. 
+	ZAP allows you to transparently decrypt SSL connections.
 	Для этого ZAP должен шифровать каждый запрос перед отправкой.
 на сервер и расшифровывать каждый ответ, который возвращается. 
 	Но это уже делает браузер. 
@@ -75,10 +75,10 @@ ZAP использует собственный сертификат.  Это т
 	</p>
 	<p style="padding-left: 20pt;">
 		<code>
-		CN = OWASP Zed Attack Proxy Root CA<br>
+		CN = Zed Attack Proxy Root CA<br>
 		L = 87b77fe834b0a301<br>
-		O = OWASP Root CA<br>
-		OU = OWASP ZAP Root CA<br>
+		O = ZAP Root CA<br>
+		OU = ZAP Root CA<br>
 		C = XX<br>
 		</code>
 	</p>
@@ -92,10 +92,10 @@ ZAP использует собственный сертификат.  Это т
 	<h3>Импортировать </h3>
 	<p>
 		Когда вы используете несколько установок ZAP и хотите использовать один и тот же
-Сертификат корневого центра (Root CA) сертификации, чтобы вы могли его импортировать.  Просто используйте одну установку OWASP ZAP
-для создания одного корневого сертификата ЦС (Root CA).<br>
-Скопируйте файл «OWASP ZAP/config.xml» из домашнего каталога вашего пользователя в
-ПК, где вы хотите использовать тот же сертификат, и нажмите «импорт», чтобы импортировать его. 
+Сертификат корневого центра (Root CA) сертификации, чтобы вы могли его импортировать.  Simply use one installation of ZAP
+		to generate one Root CA certificate.<br>
+		Copy the file 'config.xml' from ZAP's home directory to
+		the PC, where you want to use the same certificate and press 'import' to import it.
 	</p>
 	<p>
 		В качестве альтернативы вы можете использовать параметры <a href="../cmdline.html">командной строки</a>: 
@@ -152,11 +152,11 @@ ZAP использует собственный сертификат.  Это т
 при экспорте сертификата и двойным щелчком по нему. 
 	</p>
 
-	<h3>Сохранить</h3>
+	<h3><a name="save">Save</a></h3>
 	<p>
 		В диалоговом окне параметров ZAP вы видите необработанные байты (в шестнадцатеричной кодировке)
 сертификата.  Многие программы используют этот простой формат для импорта/экспорта.
-функции.  При нажатии «экспорт» эти байты сохраняются на диск. 
+функции.  When clicking Save, these bytes are saved to disk.
 		Это эквивалентно выбору всего и выполнению CTRL+C (копировать в буфер обмена) и
 сохраните его в новый файл .CER (который представляет собой простой текст, как вы видите в диалоговом окне). 
 	</p>
@@ -178,9 +178,9 @@ ZAP использует собственный сертификат.  Это т
 	<p style="padding-left: 20pt;">
 		<code>
 		CN = www.example.com<br>
-		E = owasp-zed-attack-proxy@lists.owasp.org<br>
+		E = zaproxy-develop@googlegroups.com<br>
 		C = XX<br>
-		O = OWASP<br>
+		O = ZAP<br>
 		OU = Zed Attack Proxy Project<br>
 		</code>
 	</p>
@@ -240,20 +240,22 @@ ZAP использует собственный сертификат.  Это т
 
 	<h2><a name="install">Установите сертификат ZAP Root CA </a></h2>
 	<p>
-		Any HTTPS client you want to use, has to know the OWASP Root CA certificate
+		Any HTTPS client you want to use, has to know the ZAP Root CA certificate
 		as 'trusted root certificate'. Typically you have to install manually the
 		ZAP certificate into your browser's list of trusted root certificates.
 	</p>
 	<h3>Windows / Internet Explorer</h3>
 	<p>
-		The easiest way is to click on <a href="#view">view</a> and choose
-		'Install certificate'. Alternatively, you can save/export your generated
-		certificate (copy it to you target computer) and double click the .CER file.
+		The easiest way is to click on <a href="#view">View</a> and choose
+		'Install certificate'. Alternatively, you can <a href="#save">Save</a> your generated
+		certificate and double click the .CER file.
 		When doing so, the regular Windows wizard for certificate installation
 		assistance is popping up.
 		In this wizard manually choose the certificate store. Do NOT let
 		Windows choose automatically the certificate store.
 		Choose 'trusted root certificates' as store and finalize the wizard.
+		<br>
+		You can also copy the saved file and install it in other computers as needed.
 	</p>
 	<p>
 		After successfully installation, you can check the certificate.
@@ -263,13 +265,13 @@ ZAP использует собственный сертификат.  Это т
 		<li>Вкладка Содержимое </li>
 		<li>Щелкните сертификаты </li>
 		<li>Перейдите на вкладку доверенные корневые сертификаты. </li>
-		<li>Там должен быть OWASP ZAP Root CA. </li>
+		<li>The ZAP Root CA should be there</li>
 		</ol>
 
 	<h3>Mozilla Firefox</h3>
 	<p>
-		Firefox is using it's own certificate store. Thats why you have to
-		import it twice, when you're using both browser on windows.
+		Firefox is using it's own certificate store. That's why you have to
+		import it twice, when you're using both browsers on Windows.
 		Installation and late on validation is done in the same preferences dialog:
 	</p>
 		<ol>
@@ -278,7 +280,7 @@ ZAP использует собственный сертификат.  Это т
 		<li>Вкладка Криптография/Сертификаты </li>
 		<li>Щелкните Просмотр сертификатов. </li>
 		<li>Перейдите на вкладку «Полномочия». </li>
-		<li>Нажмите «Импортировать» и выберите сохраненный файл <tt>owasp_zap_root_ca.cer</tt>. </li>
+		<li>Click Import and choose the <a href="#save">saved</a> <tt>zap_root_ca.cer</tt> file</li>
 		<li>В мастере выберите доверять этому сертификату для идентификации веб-сайтов (установите флажки) </li>
 		<li>Завершить работу мастера </li>
 		</ol>

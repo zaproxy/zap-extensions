@@ -208,6 +208,16 @@
     "scriptSrc": "handlebars(?:\\.runtime)?(?:-v([\\d.]+?))?(?:\\.min)?\\.js\\;version:\\1",
     "website": "https://handlebarsjs.com"
   },
+  "Handsontable": {
+    "cats": [
+      59
+    ],
+    "description": "A front-end component that combines data grid features with spreadsheet UX/UI. Professional support included.",
+    "icon": "Handsontable.png",
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?(?:jquery\\.)?handsontable(?:\\.full)?(?:\\.min)?(?:\\.[\\w]+)?\\.js\\;version:\\1",
+    "website": "https://handsontable.com/"
+  },
   "Handtalk": {
     "cats": [
       68
@@ -435,6 +445,16 @@
     "icon": "Headless UI.svg",
     "oss": true,
     "website": "https://headlessui.dev"
+  },
+  "Headroom.js": {
+    "cats": [
+      5,
+      59
+    ],
+    "description": "Headroom.js is a JS widget that allows you to react to the user's scroll. The header slides out of view when scrolling down and slides back in when scrolling up.",
+    "oss": true,
+    "scriptSrc": "headroom(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://wicky.nillia.ms/headroom.js/"
   },
   "Heap": {
     "cats": [

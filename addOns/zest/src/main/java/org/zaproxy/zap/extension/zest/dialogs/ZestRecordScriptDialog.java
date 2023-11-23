@@ -48,6 +48,8 @@ import org.zaproxy.zest.impl.ZestScriptEngineFactory;
 @SuppressWarnings("serial")
 public class ZestRecordScriptDialog extends StandardFieldsDialog {
 
+    private static final int ZEST_CLIENT_RECORDER_INITIATOR = -73;
+
     private static final String FIELD_TITLE = "zest.dialog.script.label.title";
     private static final String FIELD_PREFIX = "zest.dialog.script.label.prefix";
     private static final String FIELD_DESC = "zest.dialog.script.label.desc";
@@ -198,7 +200,9 @@ public class ZestRecordScriptDialog extends StandardFieldsDialog {
         ExtensionSelenium extSelenium =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
         try {
-            WebDriver wd = extSelenium.getProxiedBrowserByName(browserName);
+            WebDriver wd =
+                    extSelenium.getProxiedBrowserByName(
+                            ZEST_CLIENT_RECORDER_INITIATOR, browserName, null);
             wd.get(url);
         } catch (RuntimeException e) {
             String msg =

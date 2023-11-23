@@ -35,6 +35,9 @@ public class ItemGroup extends AbstractItem {
     @JsonDeserialize(using = ListDeserializer.class)
     private List<AbstractItem> item;
 
+    @JsonDeserialize(using = ListDeserializer.class)
+    private List<KeyValueData> variable;
+
     public ItemGroup() {}
 
     public ItemGroup(List<AbstractItem> item) {
@@ -47,5 +50,13 @@ public class ItemGroup extends AbstractItem {
 
     public void setItem(List<AbstractItem> item) {
         this.item = item;
+    }
+
+    public List<KeyValueData> getVariable() {
+        return variable;
+    }
+
+    public void setVariable(List<KeyValueData> variable) {
+        this.variable = variable;
     }
 }

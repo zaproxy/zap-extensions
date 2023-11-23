@@ -21,7 +21,7 @@ package org.zaproxy.addon.dev.auth.jsonMultipleCookies;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.zaproxy.addon.dev.TestAuthDirectory;
 import org.zaproxy.addon.dev.TestProxyServer;
 

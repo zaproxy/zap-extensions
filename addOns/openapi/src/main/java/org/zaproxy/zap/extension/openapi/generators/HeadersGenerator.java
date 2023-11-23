@@ -42,6 +42,9 @@ public class HeadersGenerator {
     private static final char COOKIE_NAME_VALUE_SEPARATOR = '=';
     private static final String COOKIE_SEPARATOR = "; ";
 
+    private static final List<String> HEADERS_TO_SKIP_CUSTOM =
+            List.of(ACCEPT, HttpHeader.CONTENT_TYPE);
+
     private DataGenerator dataGenerator;
 
     public HeadersGenerator(DataGenerator dataGenerator) {
@@ -65,6 +68,9 @@ public class HeadersGenerator {
                 }
                 if (HEADER.equals(parameter.getIn())) {
                     String name = parameter.getName();
+                    if (HEADERS_TO_SKIP_CUSTOM.stream().anyMatch(x -> x.equalsIgnoreCase(name))) {
+                        continue;
+                    }
                     String value = dataGenerator.generate(name, parameter);
                     HttpHeaderField header = new HttpHeaderField(name, value);
                     headers.add(header);

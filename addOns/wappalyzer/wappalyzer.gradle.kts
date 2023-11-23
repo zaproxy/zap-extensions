@@ -42,15 +42,10 @@ dependencies {
     zapAddOn("automation")
     zapAddOn("commonlib")
 
+    compileOnly(libs.log4j.core)
+
     implementation("com.google.re2j:re2j:1.7")
-
-    val batikVersion = "1.14"
-    implementation("org.apache.xmlgraphics:batik-anim:$batikVersion")
-    implementation("org.apache.xmlgraphics:batik-bridge:$batikVersion")
-    implementation("org.apache.xmlgraphics:batik-ext:$batikVersion")
-    implementation("org.apache.xmlgraphics:batik-gvt:$batikVersion")
-    implementation("org.apache.xmlgraphics:batik-util:$batikVersion")
-
+    implementation("com.github.weisj:jsvg:1.2.0")
     implementation("org.jsoup:jsoup:1.16.1")
 
     testImplementation(project(":testutils"))

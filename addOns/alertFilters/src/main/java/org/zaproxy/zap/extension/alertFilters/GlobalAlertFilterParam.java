@@ -164,7 +164,7 @@ public class GlobalAlertFilterParam extends VersionedAbstractParam {
                 alertFilters.add(
                         new AlertFilter(
                                 -1,
-                                sub.getInt(FILTER_RULE_ID_KEY),
+                                sub.getString(FILTER_RULE_ID_KEY),
                                 sub.getInt(FILTER_NEW_RISK_KEY),
                                 sub.getString(FILTER_URL_KEY, null),
                                 sub.getBoolean(FILTER_URL_IS_REGEX_KEY, false),

@@ -269,6 +269,9 @@
     ],
     "icon": "Jekyll.svg",
     "implies": "Ruby",
+    "js": {
+      "SimpleJekyllSearch": ""
+    },
     "meta": {
       "generator": "Jekyll\\sv([\\d.]+)?\\;version:\\1"
     },
@@ -827,7 +830,7 @@
     "icon": "jComponent.png",
     "implies": "jQuery",
     "js": {
-      "MAIN.version": ".*\\;version:\\1"
+      "MAIN.version": "(.*)\\;version:\\1"
     },
     "website": "https://componentator.com"
   },

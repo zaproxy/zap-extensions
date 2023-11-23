@@ -46,6 +46,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.zaproxy.zap.extension.openapi.converter.swagger.OperationModel;
 
@@ -394,6 +395,47 @@ class HeadersGeneratorUnitTest {
                         header("content-type", "application/json"),
                         header(headerName, headerValue),
                         header("cookie", cookieName + "=" + cookieValue)));
+    }
+
+    @Test
+    void shouldIgnoreGeneratedHeadersDeclaredInTheDefinition() {
+        // Given
+        Operation operation = mock(Operation.class);
+
+        ApiResponse response = mockResponseWithMediaTypes("text/plain");
+        mockOperationWithResponses(operation, response);
+
+        RequestBody request = mockRequestWithMediaTypes("multipart/form-data");
+        mockOperationWithRequest(operation, request);
+
+        String headerName = HttpHeader.CONTENT_TYPE;
+        String headerValue = "multipart/form-data";
+        Parameter headerParameter = headerParam(headerName);
+        given(dataGenerator.generate(headerName, headerParameter)).willReturn(headerValue);
+
+        List<Parameter> parameters = asList(headerParameter);
+        mockOperationWithParameters(operation, parameters);
+
+        OperationModel operationModel = mock(OperationModel.class);
+        given(operationModel.getOperation()).willReturn(operation);
+        // When
+        List<HttpHeaderField> headers =
+                headersGenerator.generate(
+                        operationModel,
+                        "--dedf6635-f3ad-439d-a9e9-a0efd0bc1a64\n"
+                                + "Content-Disposition: form-data; name=\"sub_id\"\n"
+                                + "Content-Type: text/plain\n"
+                                + "\n"
+                                + "\"John Doe\"\n"
+                                + "--dedf6635-f3ad-439d-a9e9-a0efd0bc1a64--");
+        // Then
+        assertThat(
+                headers,
+                contains(
+                        header("accept", "text/plain"),
+                        header(
+                                "content-type",
+                                "multipart/form-data; boundary=dedf6635-f3ad-439d-a9e9-a0efd0bc1a64")));
     }
 
     private static ApiResponse mockResponseWithMediaTypes(String... types) {

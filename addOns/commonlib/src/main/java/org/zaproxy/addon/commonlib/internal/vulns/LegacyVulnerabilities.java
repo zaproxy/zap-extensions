@@ -31,6 +31,7 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 
 /** Loads and provides {@code Vulnerability} using (legacy) core classes. */
+@SuppressWarnings({"deprecation", "removal"})
 public class LegacyVulnerabilities {
 
     private static final Logger LOGGER = LogManager.getLogger(LegacyVulnerabilities.class);
@@ -38,20 +39,8 @@ public class LegacyVulnerabilities {
     private static Map<String, org.zaproxy.zap.model.Vulnerability> vulnerabilitiesMap;
     private static List<org.zaproxy.zap.model.Vulnerability> vulnerabilities;
 
-    private static Method setProviderMethod;
-
     public static void load() {
-        if (org.zaproxy.zap.model.Vulnerabilities.class.getAnnotation(Deprecated.class) == null) {
-            return;
-        }
-
         try {
-            Class<?> providerClass =
-                    Class.forName("org.zaproxy.zap.model.Vulnerabilities$Provider");
-            setProviderMethod =
-                    org.zaproxy.zap.model.Vulnerabilities.class.getDeclaredMethod(
-                            "setProvider", providerClass);
-
             InvocationHandler invocationHandler =
                     (o, method, args) -> {
                         switch (method.getName()) {
@@ -68,10 +57,13 @@ public class LegacyVulnerabilities {
                     };
 
             setVulnerabilitiesProvider(
-                    Proxy.newProxyInstance(
-                            LegacyVulnerabilities.class.getClassLoader(),
-                            new Class<?>[] {providerClass},
-                            invocationHandler));
+                    (org.zaproxy.zap.model.Vulnerabilities.Provider)
+                            Proxy.newProxyInstance(
+                                    LegacyVulnerabilities.class.getClassLoader(),
+                                    new Class<?>[] {
+                                        org.zaproxy.zap.model.Vulnerabilities.Provider.class
+                                    },
+                                    invocationHandler));
         } catch (Exception e) {
             LOGGER.error("Failed to load add-on vulnerabilities:", e);
         }
@@ -109,15 +101,8 @@ public class LegacyVulnerabilities {
         return vulnerabilitiesMap;
     }
 
-    private static void setVulnerabilitiesProvider(Object provider) {
-        if (setProviderMethod == null) {
-            return;
-        }
-
-        try {
-            setProviderMethod.invoke(org.zaproxy.zap.model.Vulnerabilities.class, provider);
-        } catch (Exception e) {
-            LOGGER.error("Failed to apply provider:", e);
-        }
+    private static void setVulnerabilitiesProvider(
+            org.zaproxy.zap.model.Vulnerabilities.Provider provider) {
+        org.zaproxy.zap.model.Vulnerabilities.setProvider(provider);
     }
 }

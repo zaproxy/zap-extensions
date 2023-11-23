@@ -863,6 +863,17 @@
     "scriptSrc": "\\.digitalriver\\.com/",
     "website": "https://www.digitalriver.com"
   },
+  "dimple": {
+    "cats": [
+      25,
+      59
+    ],
+    "description": "dimple.js is a powerful and flexible open-source charting API for d3 letting you quickly and easily create and combine bar, line, area and scatter charts.",
+    "oss": true,
+    "requires": "D3",
+    "scriptSrc": "dimple(?:\\/lib\\/[\\w\\.]+)?(?:\\/theme\\/js\\/[\\w\\.-]+)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "http://dimplejs.org/"
+  },
   "DirectAdmin": {
     "cats": [
       9

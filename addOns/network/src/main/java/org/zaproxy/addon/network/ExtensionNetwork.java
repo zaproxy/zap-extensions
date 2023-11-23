@@ -26,6 +26,9 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.EventExecutorGroup;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.net.Authenticator;
 import java.net.BindException;
 import java.net.InetAddress;
@@ -42,6 +45,7 @@ import java.nio.file.Paths;
 import java.security.KeyStore;
 import java.security.Security;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -80,11 +84,15 @@ import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.network.HttpBody;
+import org.parosproxy.paros.network.HttpHeader;
+import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.OptionsDialog;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.network.LocalServersOptions.ServersChangedListener;
+import org.zaproxy.addon.network.internal.ContentEncodingsHandler;
 import org.zaproxy.addon.network.internal.TlsUtils;
 import org.zaproxy.addon.network.internal.cert.CertData;
 import org.zaproxy.addon.network.internal.cert.CertificateUtils;
@@ -114,9 +122,11 @@ import org.zaproxy.addon.network.internal.server.http.handlers.HttpSenderHandler
 import org.zaproxy.addon.network.internal.server.http.handlers.LegacyNoCacheRequestHandler;
 import org.zaproxy.addon.network.internal.server.http.handlers.LegacyProxyListenerHandler;
 import org.zaproxy.addon.network.internal.server.http.handlers.RemoveAcceptEncodingHandler;
+import org.zaproxy.addon.network.internal.server.http.handlers.ZapApiHandler;
 import org.zaproxy.addon.network.internal.ui.LocalServerInfoLabel;
 import org.zaproxy.addon.network.internal.ui.PromptHttpProxyPasswordDialog;
 import org.zaproxy.addon.network.server.HttpMessageHandler;
+import org.zaproxy.addon.network.server.HttpServerConfig;
 import org.zaproxy.addon.network.server.Server;
 import org.zaproxy.addon.network.server.ServerInfo;
 import org.zaproxy.zap.ZAP;
@@ -146,6 +156,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     private static final int ARG_HOST_IDX = 3;
     private static final int ARG_PORT_IDX = 4;
+
+    private Method setContentEncodingsHandlerMethod;
 
     private CloseableHttpSenderImpl<?> httpSenderNetwork;
 
@@ -205,6 +217,30 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
         // Force initialisation.
         TlsUtils.getSupportedTlsProtocols();
+
+        try {
+            Class<?> handlerClass =
+                    Class.forName("org.parosproxy.paros.network.HttpMessage$HttpEncodingsHandler");
+            ContentEncodingsHandler handler = new ContentEncodingsHandler();
+            InvocationHandler invocationHandler =
+                    (o, method, args) -> {
+                        if ("handle".equals(method.getName())) {
+                            handler.handle((HttpHeader) args[0], (HttpBody) args[1]);
+                        }
+                        return null;
+                    };
+
+            setContentEncodingsHandlerMethod =
+                    HttpMessage.class.getMethod("setContentEncodingsHandler", handlerClass);
+            setContentEncodingsHandlerMethod.invoke(
+                    null,
+                    Proxy.newProxyInstance(
+                            getClass().getClassLoader(),
+                            new Class<?>[] {handlerClass},
+                            invocationHandler));
+        } catch (Exception e) {
+            LOGGER.debug("An error occurred while setting content encodings handler:", e);
+        }
 
         connectionOptions = new ConnectionOptions();
         legacyConnectionOptions =
@@ -387,20 +423,11 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
      * @return the server.
      * @throws NullPointerException if the given handler is {@code null}.
      * @since 0.1.0
+     * @see #createHttpServer(HttpServerConfig)
      */
     public Server createHttpServer(HttpMessageHandler handler) {
         Objects.requireNonNull(handler);
-        List<HttpMessageHandler> handlers =
-                Arrays.asList(ConnectReceivedHandler.getSetAndOverrideInstance(), handler);
-        return createHttpServer(() -> new MainServerHandler(blockingServerExecutor, handlers));
-    }
-
-    private Server createHttpServer(Supplier<MainServerHandler> handler) {
-        return new HttpServer(
-                getMainEventLoopGroup(),
-                getMainEventExecutorGroup(),
-                serverCertificateService,
-                handler);
+        return createHttpServer(HttpServerConfig.builder().setHttpMessageHandler(handler).build());
     }
 
     /**
@@ -424,11 +451,15 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
      * @return the server.
      * @throws NullPointerException if the given handler is {@code null}.
      * @since 0.1.0
+     * @see #createHttpServer(HttpServerConfig)
      */
     public Server createHttpProxy(int initiator, HttpMessageHandler handler) {
         Objects.requireNonNull(handler);
-        HttpSender httpSender = new HttpSender(initiator);
-        return createHttpProxy(httpSender, handler);
+        return createHttpServer(
+                HttpServerConfig.builder()
+                        .setHttpSender(new HttpSender(initiator))
+                        .setHttpMessageHandler(handler)
+                        .build());
     }
 
     /**
@@ -442,22 +473,67 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
      * @return the server.
      * @throws NullPointerException if the HTTP sender and given handler are {@code null}.
      * @since 0.1.0
+     * @see #createHttpServer(HttpServerConfig)
      */
     public Server createHttpProxy(HttpSender httpSender, HttpMessageHandler handler) {
         Objects.requireNonNull(handler);
         Objects.requireNonNull(httpSender);
-        List<HttpMessageHandler> handlers =
-                Arrays.asList(
-                        ConnectReceivedHandler.getSetAndOverrideInstance(),
-                        RemoveAcceptEncodingHandler.getEnabledInstance(),
-                        DecodeResponseHandler.getEnabledInstance(),
-                        handler,
-                        CloseOnRecursiveRequestHandler.getInstance(),
-                        new HttpSenderHandler(httpSender));
         return createHttpServer(
-                () ->
-                        new MainProxyHandler(
-                                blockingServerExecutor, legacyProxyListenerHandler, handlers));
+                HttpServerConfig.builder()
+                        .setHttpSender(httpSender)
+                        .setHttpMessageHandler(handler)
+                        .build());
+    }
+
+    /**
+     * Creates an HTTP server with the given configuration.
+     *
+     * <p>The CONNECT requests are automatically handled as is the possible TLS upgrade.
+     *
+     * <p>A configuration with an {@link HttpSender} creates a proxy. The connection is
+     * automatically closed on recursive requests.
+     *
+     * @param config the server configuration.
+     * @return the server.
+     * @throws NullPointerException if the given config is {@code null}.
+     * @since 0.11.0
+     */
+    public Server createHttpServer(HttpServerConfig config) {
+        Objects.requireNonNull(config);
+
+        Supplier<MainServerHandler> mainServerHandler;
+        boolean addApiHandler = config.isServeZapApi();
+        HttpSender httpSender = config.getHttpSender();
+        if (httpSender != null) {
+            List<HttpMessageHandler> handlers = new ArrayList<>(addApiHandler ? 7 : 6);
+            handlers.add(ConnectReceivedHandler.getSetAndOverrideInstance());
+            handlers.add(RemoveAcceptEncodingHandler.getEnabledInstance());
+            handlers.add(DecodeResponseHandler.getEnabledInstance());
+            if (addApiHandler) {
+                handlers.add(ZapApiHandler.getEnabledInstance());
+            }
+            handlers.add(config.getHttpMessageHandler());
+            handlers.add(CloseOnRecursiveRequestHandler.getInstance());
+            handlers.add(new HttpSenderHandler(httpSender));
+            mainServerHandler =
+                    () ->
+                            new MainProxyHandler(
+                                    blockingServerExecutor, legacyProxyListenerHandler, handlers);
+        } else {
+            List<HttpMessageHandler> handlers = new ArrayList<>(addApiHandler ? 3 : 2);
+            handlers.add(ConnectReceivedHandler.getSetAndOverrideInstance());
+            if (addApiHandler) {
+                handlers.add(ZapApiHandler.getEnabledInstance());
+            }
+            handlers.add(config.getHttpMessageHandler());
+            mainServerHandler = () -> new MainServerHandler(blockingServerExecutor, handlers);
+        }
+
+        return new HttpServer(
+                getMainEventLoopGroup(),
+                getMainEventExecutorGroup(),
+                serverCertificateService,
+                mainServerHandler);
     }
 
     @Override
@@ -811,6 +887,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     }
 
     private void startLocalServers(String overrideAddress, int overridePort, boolean install) {
+        stopLocalServers();
+
         boolean commandLineMode = ZAP.getProcessType() == ZAP.ProcessType.cmdline;
         boolean daemonMode = ZAP.getProcessType() == ZAP.ProcessType.daemon;
 
@@ -839,6 +917,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
         if (overrides) {
             localServersOptions.setMainProxy(serverConfig);
+            stopLocalServer(mainProxyServer);
         }
 
         updateCoreProxy(serverConfig);
@@ -856,7 +935,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
             }
         } catch (Exception e) {
 
-            if (!install && (daemonMode || commandLineMode)) {
+            if (!install && !hasView()) {
                 String message =
                         "Failed to start the main proxy: "
                                 + e.getClass().getName()
@@ -881,7 +960,7 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                             Constant.messages.getString(
                                     "network.cmdline.proxy.error.host.assign", address);
                 } else if (containsMessage(e, "denied") || containsMessage(e, "in use")) {
-                    if (promptUserMainProxyPort()) {
+                    if (hasView() && promptUserMainProxyPort()) {
                         return;
                     }
 
@@ -898,6 +977,12 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                         Constant.messages.getString(
                                 "network.cmdline.proxy.error.generic", e.getMessage());
                 LOGGER.warn("Failed to start the main proxy: {}", e.getMessage());
+                if (!hasView()) {
+                    return;
+                }
+            } else if (!hasView()) {
+                LOGGER.warn("Failed to start the main proxy: {}", detailedError);
+                return;
             }
 
             JOptionPane.showMessageDialog(
@@ -1246,6 +1331,10 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     @Override
     public void stop() {
+        stopLocalServers();
+    }
+
+    private void stopLocalServers() {
         localServers.values().removeIf(ExtensionNetwork::stopAdditionalLocalServer);
         stopLocalServer(mainProxyServer);
     }
@@ -1336,6 +1425,14 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
     @Override
     @SuppressWarnings({"deprecation", "removal"})
     public void unload() {
+        if (setContentEncodingsHandlerMethod != null) {
+            try {
+                setContentEncodingsHandlerMethod.invoke(null, (Object) null);
+            } catch (Exception e) {
+                LOGGER.error("An error occurred while unloading the content encodings handler:", e);
+            }
+        }
+
         Control.getSingleton().getExtensionLoader().removeProxyServer(legacyProxyListenerHandler);
         legacyProxyListenerHandler = null;
 

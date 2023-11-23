@@ -19,21 +19,33 @@
  */
 package org.zaproxy.addon.client;
 
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.swing.ImageIcon;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.LookAndFeel;
+import javax.swing.UIManager;
+import javax.swing.tree.TreePath;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.view.LayoutHelper;
 
 @SuppressWarnings("serial")
 public class ClientMapPanel extends AbstractPanel {
 
+    public static final String CLIENT_TREE_NAME = "treeClient";
+
     private static final long serialVersionUID = 1L;
     private ExtensionClientIntegration extension;
+    private JTree clientTree;
     private ClientMap clientMap;
     private JScrollPane scrollPane;
 
@@ -59,11 +71,20 @@ public class ClientMapPanel extends AbstractPanel {
     }
 
     public void setClientMap(ClientMap clientMap) {
-        JTree clientTree = new JTree(clientMap);
+        clientTree = new JTree(clientMap);
         clientTree.setShowsRootHandles(true);
-        clientTree.setName("treeClient");
+        clientTree.setName(CLIENT_TREE_NAME);
         clientTree.setToggleClickCount(1);
         clientTree.setCellRenderer(new ClientMapTreeCellRenderer());
+        clientTree.setComponentPopupMenu(new ClientCustomPopupMenu());
+
+        // Let the cell renderer define the height to properly show the icons.
+        LookAndFeel laf = UIManager.getLookAndFeel();
+        if (laf != null
+                && Constant.isMacOsX()
+                && UIManager.getSystemLookAndFeelClassName().equals(laf.getClass().getName())) {
+            clientTree.setRowHeight(0);
+        }
 
         clientTree.addTreeSelectionListener(
                 e -> {
@@ -79,6 +100,57 @@ public class ClientMapPanel extends AbstractPanel {
     public void clear() {
         if (this.clientMap != null) {
             this.clientMap.clear();
+        }
+    }
+
+    public List<ClientNode> getSelectedNodes() {
+        return Stream.ofNullable(clientTree.getSelectionPaths())
+                .flatMap(Stream::of)
+                .map(TreePath::getLastPathComponent)
+                .map(ClientNode.class::cast)
+                .collect(Collectors.toList());
+    }
+
+    public void deleteNodes(List<ClientNode> nodes) {
+        for (ClientNode node : nodes) {
+            if (!node.isRoot()) {
+                clientMap.removeNodeFromParent(node);
+            }
+        }
+    }
+
+    public ClientNode getSelectedNode() {
+        return (ClientNode) clientTree.getSelectionPath().getLastPathComponent();
+    }
+
+    public ExtensionClientIntegration getExtension() {
+        return extension;
+    }
+
+    protected class ClientCustomPopupMenu extends JPopupMenu {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public void show(Component invoker, int x, int y) {
+            TreePath tp = clientTree.getPathForLocation(x, y);
+            if (tp != null) {
+                boolean select = true;
+                // Only select a new item if the current item is not
+                // already selected - this is to allow multiple items
+                // to be selected
+                if (clientTree.getSelectionPaths() != null) {
+                    for (TreePath t : clientTree.getSelectionPaths()) {
+                        if (t.equals(tp)) {
+                            select = false;
+                            break;
+                        }
+                    }
+                }
+                if (select) {
+                    clientTree.getSelectionModel().setSelectionPath(tp);
+                }
+            }
+            View.getSingleton().getPopupMenu().show(invoker, x, y);
         }
     }
 }

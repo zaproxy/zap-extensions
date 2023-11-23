@@ -49,7 +49,7 @@ class PortScanParamUnitTest {
     @BeforeAll
     static void beforeAll() {
         Constant.messages = mock(I18N.class);
-        Control.initSingletonForTesting(Model.getSingleton(), mock(ExtensionLoader.class));
+        Control.initSingletonForTesting(mock(Model.class), mock(ExtensionLoader.class));
     }
 
     @AfterAll

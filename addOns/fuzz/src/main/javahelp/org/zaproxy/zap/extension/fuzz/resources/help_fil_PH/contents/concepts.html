@@ -9,12 +9,12 @@ Fuzzing
 <body>
 <h1>Pag-fuzz</h1>
 <p>
-Ang pag-fuzz ay isang paraan para sa pagpasa ng maraming inbalido o di inaasahang data para sa isang target.
+Fuzzing is a technique of submitting lots of data to a target (often in the form of invalid or unexpected inputs).
 </p>
 <p>
-Ang ZAP ay pinahihintulutan ka para magfuzz sa ano mang kahilingan ng nananatiling gumagamit:
+ZAP allows you to fuzz any request using:
 <ul>
-<li>Isang pagbuo sa itinakdang mga payload</li>
+<li>A built-in set of payloads</li>
 <li>Ang mga payload ay nakatutukoy sa pamamagitan ng opsyonal na mga add-on</li>
 <li>Pagtangkilik ng mga iskripto</li>
 </ul>
@@ -27,38 +27,35 @@ Para i-access ang <a href="dialogue.html">Pagfuzz ng dayalog</a> ikaw rin ay maa
 </ul>
 
 <h3>Mga Generator ng Payload</h3>
-Mga Generator ng payload lumikha ng mga raw attack na ang fuzzer ang magpapasa para sa target na application.
+Payload Generators generate the raw values or attacks that the fuzzer submits to the target application.
 <br><br>
-Sila ay namamahala sa pamamagitan ng <a href="payloads.html">Mga payload dayalog</a>
+Sila ay namamahala sa pamamagitan ng <a href="payloads.html">Mga payload dayalog</a>.
 
 <h3>Mga prosesor ng payload</h3>
 Mga prosesor ng payload ay maaaring magamit para mapalitan ang tiyak na mga payload bago sila magpasa.
 <br><br>
-Sila'y namamahala sa pamamagitan ng <a href="processors.html">Mga proseso ng payload dayalog</a>
+Sila'y namamahala sa pamamagitan ng <a href="processors.html">Mga proseso ng payload dayalog</a>.
 
 <h3>Ang lokasyon ng mga prosesor ng Fuzz</h3>
 Ang lokasyon ng Fuzz ng mga prosesor ay maaaring gamitin para palitan ang lahat ng mga payload bago ito i-submit.
 <br><br>
-Pinamamahalaan nila ito sa pamamagitan ng <a href="locations.html">Lokasyon ng prosesor ng dayalogo</a>
+Pinamamahalaan nila ito sa pamamagitan ng <a href="locations.html">Lokasyon ng prosesor ng dayalogo</a>.
 
 <h3>Ang mga mensahe ng prosesor</h3>
-Ang mga mensahe ng prosesor ay maaaring maccess at mapalitan ang mga mensahe na naging fuzz, kontrolin ang proseso ng fuzz at makipagugnayan sa ZAP UI.
+Message Processors can access and change the messages being fuzzed, control the fuzzing process, and interact with the ZAP UI.
 <br><br>
 Pinamamahalaan nila ito sa pamamagitan ng <a href="dialogue.html">Dayalogo ng Fuzz</a> 'Mga mensahe ng prosesor' tab.
 
 <p>
-Ang pagpapaganang ito ay base sa code na mula sa proyekto ng OWASP JBroFuzz at kasama dito ang mga file na mula sa proyekto ng fuzzdb.<br/>
-Paalala na ang ilang mga file ng fuzzdb ay naiwan sa labas bilang sila ang magiging dahilan ng karaniwang anti virus na mga scanner para hudyatan sila bilang naglalaman na mga virus.<br/>
-Maaari mong palitan sila (at pataasin ang fuzzdb) sa pamamagitan ng pag-download ng bagong bersyon ng fuzzdb at palawakin ito sa aklatan ng 'mga fuzzer'.
+Some of this functionality is based on code from the OWASP JBroFuzz project and includes files from the fuzzdb project.<br/>
+Note that some fuzzdb files have been left out as they cause common anti-virus scanners to flag them as containing viruses.<br/>
+You can replace them (and upgrade fuzzdb) by downloading the latest version of fuzzdb and expanding it in the 'fuzzers' library.
 </p>
-
 
 <h2>Tignan din</h2>
 <table>
 <tr><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td><a href="options.html">Opsyon screen ng Fuzzer</a></td></tr>
 </table>
-
-
 
 </body>
 </html>

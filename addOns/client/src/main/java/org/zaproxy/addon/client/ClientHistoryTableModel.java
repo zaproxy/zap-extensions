@@ -102,7 +102,7 @@ public class ClientHistoryTableModel extends AbstractTableModel {
                 case 5:
                     return node.getNodeName();
                 case 6:
-                    return node.getNodeId();
+                    return node.getId();
                 case 7:
                     return node.getText();
                 default:
@@ -133,6 +133,10 @@ public class ClientHistoryTableModel extends AbstractTableModel {
             }
         }
         return null;
+    }
+
+    public ReportedObject getReportedObject(int rowIndex) {
+        return this.history.get(rowIndex);
     }
 
     public synchronized void addReportedObject(ReportedObject obj) {

@@ -4,9 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [7] - 2023-10-23
 ### Changed
 - Maintenance changes.
-- Update minimum ZAP version to 2.13.0.
+- Update minimum ZAP version to 2.14.0.
 
 ### Fixed
 - Prevent exception if no display (Issue 3978).
@@ -44,4 +47,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[7]: https://github.com/zaproxy/zap-extensions/releases/sequence-v7
 [6]: https://github.com/zaproxy/zap-extensions/releases/sequence-v6

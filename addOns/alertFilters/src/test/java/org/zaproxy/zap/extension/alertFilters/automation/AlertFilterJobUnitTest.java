@@ -146,6 +146,26 @@ class AlertFilterJobUnitTest {
     }
 
     @ParameterizedTest
+    @ValueSource(strings = {"0-1", "2-3"})
+    void shouldAcceptAlertRefInRuleId(String alertRef) {
+        // Given
+        AutomationProgress progress = new AutomationProgress();
+        AlertFilterJob job = new AlertFilterJob();
+        String contextStr = "parameters: \nalertFilters:\n- ruleId: " + alertRef;
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> jobData = yaml.load(contextStr);
+
+        // When
+        job.setJobData(jobData);
+        job.verifyParameters(progress);
+
+        // Then
+        assertThat(
+                progress.getErrors(),
+                not(hasItem("!alertFilters.automation.error.invalidruleid!")));
+    }
+
+    @ParameterizedTest
     @ValueSource(ints = {-2, -1})
     void shouldErrorOnInvalidRuleId(long scanRuleId) {
         // Given

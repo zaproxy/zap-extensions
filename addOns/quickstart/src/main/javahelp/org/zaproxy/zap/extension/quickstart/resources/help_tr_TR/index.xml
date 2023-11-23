@@ -7,5 +7,6 @@
     <!-- index entries are merged (sorted) into core index -->
 	<indexitem text="hızlı başlat" target="quickstart" />
 	<indexitem text="hızlı başlat komut satırı" target="quickstart.cmdline" />
-	<indexitem text="hızlı başlat çalıştırma seçenekleri" target="quickstart.launch.options" />
+	<indexitem text="quick start zapit scan" target="quickstart.zapit" />
+	<indexitem text="quick start launch options" target="quickstart.launch.options" />
 </index>

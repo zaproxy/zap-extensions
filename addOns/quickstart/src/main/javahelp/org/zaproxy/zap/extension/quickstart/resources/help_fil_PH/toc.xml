@@ -8,7 +8,8 @@
 		<tocitem text="Mga Add On" tocid="addons">
 			<tocitem text="Mabilis na umpisa" image="icon147" target="quickstart">
 				<tocitem text="Linya ng Kautusan"  target="quickstart.cmdline" />
-				<tocitem text="Mga Opsyon ng Paglulunsad"  target="quickstart.launch.options" />
+				<tocitem text="ZAPit Scan"  target="quickstart.zapit" />
+				<tocitem text="Launch Options"  target="quickstart.launch.options" />
 			</tocitem>
 		</tocitem>
 	</tocitem>

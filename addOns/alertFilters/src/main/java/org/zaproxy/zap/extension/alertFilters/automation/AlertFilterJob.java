@@ -34,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.automation.AutomationData;
 import org.zaproxy.addon.automation.AutomationEnvironment;
 import org.zaproxy.addon.automation.AutomationJob;
@@ -177,9 +178,12 @@ public class AlertFilterJob extends AutomationJob {
         }
     }
 
+    @Override
+    public void applyParameters(AutomationProgress progress) {}
+
     private boolean isValid(AlertFilterData afd, AutomationProgress progress) {
         boolean result = true;
-        if (afd.getRuleId() < 0) {
+        if (StringUtils.isBlank(afd.getRuleId()) || isNegativeInteger(afd.getRuleId())) {
             progress.error(
                     Constant.messages.getString(
                             "alertFilters.automation.error.invalidruleid",
@@ -246,6 +250,15 @@ public class AlertFilterJob extends AutomationJob {
         return result;
     }
 
+    private static boolean isNegativeInteger(String ruleId) {
+        try {
+            return Integer.parseInt(ruleId) < 0;
+        } catch (NumberFormatException ignore) {
+            // Not an integer.
+        }
+        return false;
+    }
+
     @Override
     public Map<String, String> getCustomConfigParameters() {
         Map<String, String> map = super.getCustomConfigParameters();
@@ -298,6 +311,8 @@ public class AlertFilterJob extends AutomationJob {
                                             contextName,
                                             af.getRuleId(),
                                             af.getNewRiskName()));
+                            this.getExtAlertFilters()
+                                    .persistContextData(Model.getSingleton().getSession(), ctx);
                         }
                     }
                 }
@@ -444,7 +459,7 @@ public class AlertFilterJob extends AutomationJob {
     }
 
     public static class AlertFilterData extends AutomationData {
-        private int ruleId;
+        private String ruleId;
         private String ruleName;
         private String context;
         private String newRisk;
@@ -462,11 +477,11 @@ public class AlertFilterJob extends AutomationJob {
             methods = List.of();
         }
 
-        public int getRuleId() {
+        public String getRuleId() {
             return ruleId;
         }
 
-        public void setRuleId(int ruleId) {
+        public void setRuleId(String ruleId) {
             this.ruleId = ruleId;
         }
 

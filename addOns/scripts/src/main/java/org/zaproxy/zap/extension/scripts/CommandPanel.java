@@ -22,19 +22,23 @@ package org.zaproxy.zap.extension.scripts;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.event.KeyListener;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.text.StyleContext;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.AbstractPanel;
+import org.parosproxy.paros.extension.OptionsChangedListener;
+import org.parosproxy.paros.model.OptionsParam;
 import org.zaproxy.zap.extension.scripts.autocomplete.ScriptAutoCompleteKeyListener;
 import org.zaproxy.zap.utils.FontUtils;
 import org.zaproxy.zap.utils.ZapLabel;
 
 @SuppressWarnings("serial")
-public class CommandPanel extends AbstractPanel {
+public class CommandPanel extends AbstractPanel implements OptionsChangedListener {
 
     private static final long serialVersionUID = -947074835463140074L;
 
@@ -128,7 +132,7 @@ public class CommandPanel extends AbstractPanel {
     protected void setCommandScript(String str) {
         setCommandScriptContent(str);
         getTxtOutput().discardAllEdits();
-        getTxtOutput().requestFocus();
+        getTxtOutput().requestFocusInWindow();
     }
 
     protected void setCommandCursorPosition(int offset) {
@@ -183,5 +187,19 @@ public class CommandPanel extends AbstractPanel {
             this.remove(largeScriptPanel);
             this.add(getJScrollPane(), getJScrollPane().getName());
         }
+    }
+
+    @Override
+    public void optionsChanged(OptionsParam mainOptions) {
+        optionsChanged(mainOptions.getParamSet(ScriptConsoleOptions.class));
+    }
+
+    void optionsChanged(ScriptConsoleOptions options) {
+        var font =
+                StyleContext.getDefaultStyleContext()
+                        .getFont(options.getFontName(), Font.PLAIN, options.getFontSize());
+        getTxtOutput().setFont(font);
+        getTxtOutput().setTabSize(options.getTabSize());
+        getTxtOutput().setTabsEmulated(!options.isUseTabCharacter());
     }
 }
