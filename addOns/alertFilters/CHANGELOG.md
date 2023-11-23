@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Reword label in the automation job to prevent any confusion between the Alert Filters and the Alerts.
 
 ## [19] - 2023-11-16
 ### Changed
