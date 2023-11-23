@@ -18,17 +18,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update minimum ZAP version to 2.14.0.
 
-## [38] - 2023-10-23
-### Changed
-- Dependency updates.
-
-### Fixed
-- An issue in the headers generator which might lead to content-type header being incorrectly set.
-
-## [37] - 2023-10-12
-### Changed
-- Update minimum ZAP version to 2.14.0.
-
 ## [36] - 2023-09-07
 ### Changed
 - Dependency updates.
