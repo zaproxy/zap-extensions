@@ -99,6 +99,16 @@ public class ClientHistoryPanel extends AbstractPanel {
             historyTable.getColumnModel().getColumn(7).setMinWidth(100); // Text
             historyTable.getColumnModel().getColumn(7).setPreferredWidth(300);
 
+            historyTable.setComponentPopupMenu(
+                    new JPopupMenu() {
+                        private static final long serialVersionUID = 1L;
+
+                        @Override
+                        public void show(Component invoker, int x, int y) {
+                            View.getSingleton().getPopupMenu().show(invoker, x, y);
+                        }
+                    });
+
             // The # column can contain positive numbers and blank strings
             TableRowSorter<?> tableRowSorter = new TableRowSorter<>(clientHistoryTableModel);
             tableRowSorter.setComparator(
