@@ -654,7 +654,8 @@ public class SourceCodeDisclosureScanRule extends PluginPassiveScanner {
         if (ResourceIdentificationUtils.isCss(msg)
                 || ResourceIdentificationUtils.isJavaScript(msg)
                 || ResourceIdentificationUtils.isImage(msg)
-                || ResourceIdentificationUtils.isFont(msg)) {
+                || ResourceIdentificationUtils.isFont(msg)
+                || ResourceIdentificationUtils.responseContainsControlChars(msg)) {
             return;
         }
 

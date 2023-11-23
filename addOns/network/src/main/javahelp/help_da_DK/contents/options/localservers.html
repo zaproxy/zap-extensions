@@ -61,7 +61,13 @@
 	<H4>Remove Accept-Encoding Request Header</H4>
 	Allows the proxy to remove the "Accept-Encoding" request-header field, so no (unsupported) encoding transformations are done to the response.<br/>
 	This option should be always enabled unless when testing the encoding transformations.<br/>
-	The messages encoded with unsupported encodings will not be correctly scanned (either by passive and active scanners).
+	The messages encoded with unsupported encodings will not be correctly scanned (either by passive or active scanners).<br/>
+	Supported content encodings:
+	<ul>
+		<li><code>br</code>, on Linux x64, macOS (Intel and Apple Silicon), and Windows x64</li>
+		<li><code>deflate</code></li>
+		<li><code>gzip</code></li>
+	</ul>
 
 	<H4>Decode Response</H4>
 	Allows the proxy to automatically decode (i.e. gzip, deflate) the response. This option is needed for applications that ignore
