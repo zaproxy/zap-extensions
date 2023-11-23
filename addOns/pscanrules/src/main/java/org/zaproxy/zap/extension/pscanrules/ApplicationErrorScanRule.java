@@ -157,6 +157,9 @@ public class ApplicationErrorScanRule extends PluginPassiveScanner {
      */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
+        if (ResourceIdentificationUtils.responseContainsControlChars(msg)) {
+            return;
+        }
 
         // First check if it's an INTERNAL SERVER ERROR
         if (getHelper().isPage500(msg)) {

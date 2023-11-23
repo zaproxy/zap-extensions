@@ -13,21 +13,21 @@ Alert Filter Automation Framework Support
 <H2>Работа: alertFilter </H2>
 Задание alertFilter позволяет определять глобальные и контекстно-зависимые фильтры предупреждений. 
 <pre>
-  - type: alertFilter # Используется для изменения уровней риска предупреждений.
-    параметры:
-      deleteGlobalAlerts: true # Boolean, если true, то будут удалены все существующие глобальные оповещения, по умолчанию false
-    alertFilters: # Список применяемых фильтров alertFilters
-      - ruleId: # Int: идентификатор правила обязательного оповещения.
-        newRisk: # String: Обязательный новый уровень риска, один из «Ложно-положительный», «Информация», «Низкий», «Средний», «Высокий».
-        context: # String: Необязательное имя контекста, если оно пусто, будет создан глобальный фильтр предупреждений
-        url: # String: Необязательная строка для сопоставления с предупреждением, поддерживает переменные среды
-        urlRegex: # Boolean: Необязательно, если true, то URL-адрес является регулярным выражением
-        параметр: # String: Необязательная строка для сопоставления с полем параметра предупреждения
-        parameterRegex: # Boolean: Необязательно, если true, то параметр является регулярным выражением, поддерживает переменные среды
-        Атака: # Строка: Необязательная строка для сопоставления с полем атаки предупреждения
-        attackRegex: # Boolean: Необязательно, если true, то атака является регулярным выражением
-        Доказательство: # Строка: Необязательная строка для сопоставления с полем свидетельства предупреждения
-        ДоказательствоRegex: # Boolean: Необязательно, если true, то доказательством является регулярное выражение. 
+  - type: alertFilter                  # Used to change the risk levels of alerts
+    parameters:
+      deleteGlobalAlerts: true         # Boolean, if true then will delete all existing global alerts, default false
+    alertFilters:                      # A list of alertFilters to be applied
+      - ruleId:                        # Int: Mandatory, the scan rule ID or the alert reference
+        newRisk:                       # String: Mandatory new risk level, one of 'False Positive', 'Info', 'Low', 'Medium', 'High'
+        context:                       # String: Optional context name, if empty then a global alert filter will be created
+        url:                           # String: Optional string to match against the alert, supports environment vars
+        urlRegex:                      # Boolean: Optional, if true then the url is a regex
+        parameter:                     # String: Optional string to match against the alert parameter field
+        parameterRegex:                # Boolean: Optional, if true then the parameter is a regex, supports environment vars
+        attack:                        # String: Optional string to match against the alert attack field
+        attackRegex:                   # Boolean: Optional, if true then the attack is a regex
+        evidence:                      # String: Optional string to match against the alert evidence field
+        evidenceRegex:                 # Boolean: Optional, if true then the evidence is a regex
 </pre>
 
 </BODY>

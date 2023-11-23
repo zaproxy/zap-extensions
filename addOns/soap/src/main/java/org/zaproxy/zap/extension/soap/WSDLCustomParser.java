@@ -82,10 +82,19 @@ public class WSDLCustomParser {
     private SOAPMsgConfig lastConfig; // Only used for unit testing purposes.
     private final Supplier<ValueGenerator> valueGeneratorSupplier;
     private final TableWsdl table;
+    private final Supplier<Date> dateSupplier;
 
     public WSDLCustomParser(Supplier<ValueGenerator> valueGeneratorSupplier, TableWsdl table) {
+        this(valueGeneratorSupplier, table, Date::new);
+    }
+
+    WSDLCustomParser(
+            Supplier<ValueGenerator> valueGeneratorSupplier,
+            TableWsdl table,
+            Supplier<Date> dateSupplier) {
         this.valueGeneratorSupplier = valueGeneratorSupplier;
         this.table = table;
+        this.dateSupplier = dateSupplier;
     }
 
     /* Import a WSDL document from a URL synchronously. */
@@ -478,43 +487,33 @@ public class WSDLCustomParser {
                                 null,
                                 null,
                                 name,
-                                "",
+                                getDefaultValue(paramType),
                                 Collections.emptyList(),
                                 Collections.emptyMap(),
                                 fieldAttributes);
-        if (valGenValue != null && !valGenValue.isEmpty()) {
-            formParams.put("xpath:/" + path, valGenValue);
-            return formParams;
-        }
+        formParams.put("xpath:/" + path, valGenValue);
+        return formParams;
+    }
 
-        /* Parameter value depends on parameter type. */
+    private String getDefaultValue(String paramType) {
         switch (paramType) {
             case "string":
-                formParams.put("xpath:/" + path, "paramValue");
-                break;
+                return "paramValue";
             case "int":
             case "double":
             case "long":
-                formParams.put("xpath:/" + path, "0");
-                break;
+                return "0";
             case "date":
-                {
-                    Date date = new Date();
-                    SimpleDateFormat dt1 = new SimpleDateFormat("CCyy-MM-dd");
-                    String dateS = dt1.format(date);
-                    formParams.put("xpath:/" + path, dateS);
-                    break;
-                }
+                return dateFormat("yyyy-MM-dd");
             case "dateTime":
-                {
-                    Date date = new Date();
-                    SimpleDateFormat dt1 = new SimpleDateFormat("CCyy-MM-ddThh:mm:ssZ");
-                    String dateS = dt1.format(date);
-                    formParams.put("xpath:/" + path, dateS);
-                    break;
-                }
+                return dateFormat("yyyy-MM-dd'T'hh:mm:ssZ");
+            default:
+                return "";
         }
-        return formParams;
+    }
+
+    private String dateFormat(String format) {
+        return new SimpleDateFormat(format).format(dateSupplier.get());
     }
 
     /* Generates a SOAP request associated to the specified binding operation. */

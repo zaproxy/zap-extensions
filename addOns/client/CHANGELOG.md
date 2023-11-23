@@ -4,8 +4,18 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [0.6.0] - 2023-11-23
+### Added
+- Support for passive scanning
+- Passive scan rules:
+  - Information Disclosure - Information in Browser Storage
+  - Information Disclosure - Sensitive Information in Browser Storage
+
 ### Changed
 - Dropped "to Clipboard" from ZAP copy menu items (Issue 8179).
+- Changed to add back '#' nodes.
 
 ## [0.5.0] - 2023-11-07
 ### Added
@@ -59,6 +69,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.6.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.6.0
 [0.5.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.5.0
 [0.4.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.4.0
 [0.3.0]: https://github.com/zaproxy/zap-extensions/releases/client-v0.3.0

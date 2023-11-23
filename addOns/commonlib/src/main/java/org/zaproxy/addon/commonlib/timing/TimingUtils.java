@@ -17,11 +17,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrules.timing;
+package org.zaproxy.addon.commonlib.timing;
 
 import java.io.IOException;
 
-/** Utility class to host time-based blind detection algorithms. */
+/**
+ * Utility class to host time-based blind detection algorithms.
+ *
+ * @since 1.20.0
+ */
 public class TimingUtils {
 
     // Minimum requests required for a result

@@ -35,6 +35,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 
@@ -195,6 +196,17 @@ class SourceCodeDisclosureScanRuleUnitTest
         // Given
         msg.setResponseBody(wrapWithHTML(CODE_PHP2));
         msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, type);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
+    @Test
+    void shouldNotRaiseAlertOnValidPhpWhenControlCharactersInResponse()
+            throws HttpMalformedHeaderException, IOException {
+        // Given
+        msg.setResponseBody("<?=#:æ´Dü?>");
         // When
         scanHttpResponseReceive(msg);
         // Then

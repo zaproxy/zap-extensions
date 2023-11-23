@@ -62,7 +62,7 @@ dependencies {
     zapAddOn("commonlib")
     zapAddOn("spider")
 
-    implementation("io.swagger.parser.v3:swagger-parser:2.1.18")
+    implementation("io.swagger.parser.v3:swagger-parser:2.1.19")
     implementation("io.swagger:swagger-compat-spec-parser:1.0.68") {
         // Not needed:
         exclude(group = "com.github.java-json-tools", module = "json-schema-validator")
