@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Dropped "to Clipboard" from ZAP copy menu items (Issue 8179).
+- Changed to add back '#' nodes.
 
 ## [0.5.0] - 2023-11-07
 ### Added
