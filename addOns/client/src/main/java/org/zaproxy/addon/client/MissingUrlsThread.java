@@ -105,11 +105,7 @@ public class MissingUrlsThread extends Thread {
     protected void traverseMap(ClientNode node) {
         ClientSideDetails csd = node.getUserObject();
         if (csd != null && !csd.isStorage() && csd.getUrl() != null) {
-            String url = csd.getUrl();
-            int fragmentOffset = url.indexOf('#');
-            if (fragmentOffset > 0) {
-                url = url.substring(0, fragmentOffset);
-            }
+            String url = ClientUtils.stripUrlFragment(csd.getUrl());
             Target target = startEvent.getTarget();
             String startUrl = null;
             if (target != null && target.getStartNode() != null) {

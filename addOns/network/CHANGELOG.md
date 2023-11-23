@@ -5,8 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+
+## [0.13.0] - 2023-11-17
 ### Added
-- On weekly releases and versions after 2.14, handle content encodings (Issue 2198).
+- On weekly releases and versions after 2.14, handle content encodings and add `br` content encoding on supported OSes (Issue 2198).
 
 ### Fixed
 - Handle cookies like browsers, mostly send what is received (Issues 1232 and 7874).
@@ -155,6 +158,7 @@ would not be cleared when reusing the same message.
   - Options panel to manage the root CA certificate and issued certificates.
   - API endpoints to configure the validity of the root CA certificate and issued certificates ([Issue 4673](https://github.com/zaproxy/zaproxy/issues/4673)).
 
+[0.13.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.13.0
 [0.12.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.12.0
 [0.11.2]: https://github.com/zaproxy/zap-extensions/releases/network-v0.11.2
 [0.11.1]: https://github.com/zaproxy/zap-extensions/releases/network-v0.11.1

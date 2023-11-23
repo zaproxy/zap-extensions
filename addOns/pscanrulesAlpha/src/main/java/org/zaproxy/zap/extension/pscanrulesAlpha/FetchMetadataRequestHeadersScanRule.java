@@ -165,6 +165,10 @@ public class FetchMetadataRequestHeadersScanRule extends PluginPassiveScanner {
         }
     }
 
+    public String getHelpLink() {
+        return "https://www.zaproxy.org/docs/desktop/addons/passive-scan-rules-alpha/#fetch-metadata-request-headers-scan-rule";
+    }
+
     static class SecFetchSite extends FetchMetaDataRequestHeaders {
         public static final String HEADER = "Sec-Fetch-Site";
         private static final String SFS_PREFIX_MESSAGE =

@@ -98,6 +98,28 @@ class BodyGeneratorUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldGenerateIntlPhoneWithLeadingPlusChar() throws IOException {
+        // Ensure https://github.com/zaproxy/zaproxy/issues/6644 doesn't reoccur
+        // Given
+        OpenAPI openAPI = parseResource("petstore_reduced_intl_phone.yaml");
+        // When
+        String json =
+                generators
+                        .getBodyGenerator()
+                        .generate(
+                                openAPI.getPaths()
+                                        .get("/pets")
+                                        .getPost()
+                                        .getRequestBody()
+                                        .getContent()
+                                        .get("application/json"));
+        // Then
+        assertEquals(
+                "{\"name\":\"John Doe\",\"tag\":\"John Doe\",\"phoneNumber\":\"+15555555555\"}",
+                json);
+    }
+
+    @Test
     void shouldGenerateJsonObject() throws IOException {
         OpenAPI openAPI = parseResource("PetStore_defn.yaml");
 

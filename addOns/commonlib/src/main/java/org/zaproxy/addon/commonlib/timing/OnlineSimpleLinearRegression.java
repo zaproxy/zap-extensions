@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.ascanrules.timing;
+package org.zaproxy.addon.commonlib.timing;
 
 /**
  * A helper class to compute the Simple Linear Regression of a series of (x,y) pairs. This
@@ -32,6 +32,8 @@ package org.zaproxy.zap.extension.ascanrules.timing;
  * <br>
  * By convention, we fix correlation and slope at 1.0 and the intercept at 0.0 when insufficient
  * data points (<2) have been added.
+ *
+ * @since 1.20.0
  */
 public class OnlineSimpleLinearRegression {
     private double count;

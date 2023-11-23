@@ -5,8 +5,12 @@ description = "Provides core networking capabilities."
 val bouncyCastle by configurations.creating
 configurations.api { extendsFrom(bouncyCastle) }
 
+val brotli by configurations.creating
 val hc by configurations.creating
-configurations.implementation { extendsFrom(hc) }
+configurations.implementation {
+    extendsFrom(brotli)
+    extendsFrom(hc)
+}
 
 zapAddOn {
     addOnName.set("Network")
@@ -23,6 +27,7 @@ zapAddOn {
 
         bundledLibs {
             libs.from(bouncyCastle)
+            libs.from(brotli)
             libs.from(hc)
         }
     }
@@ -71,6 +76,13 @@ dependencies {
     bouncyCastle("org.bouncycastle:bcmail-$bcJava:$bcVersion")
     bouncyCastle("org.bouncycastle:bcprov-$bcJava:$bcVersion")
     bouncyCastle("org.bouncycastle:bcpkix-$bcJava:$bcVersion")
+
+    val brotliVersion = "1.13.0"
+    brotli("com.aayushatharva.brotli4j:brotli4j:$brotliVersion")
+    brotli("com.aayushatharva.brotli4j:native-windows-x86_64:$brotliVersion")
+    brotli("com.aayushatharva.brotli4j:native-linux-x86_64:$brotliVersion")
+    brotli("com.aayushatharva.brotli4j:native-osx-x86_64:$brotliVersion")
+    brotli("com.aayushatharva.brotli4j:native-osx-aarch64:$brotliVersion")
 
     implementation("org.jitsi:ice4j:3.0-24-g34c2ce5") {
         // Don't need its dependencies, for now.

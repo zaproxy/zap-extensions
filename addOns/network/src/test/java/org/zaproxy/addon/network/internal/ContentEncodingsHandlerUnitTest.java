@@ -27,6 +27,7 @@ import static org.mockito.Mockito.verify;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -68,6 +69,21 @@ class ContentEncodingsHandlerUnitTest {
         handler.handle(header, body);
         // Then
         verify(body).setContentEncodings(asList(HttpEncodingDeflate.getSingleton()));
+    }
+
+    @Test
+    @EnabledIf(
+            value = "org.zaproxy.addon.network.internal.HttpEncodingBrotli#isAvailable",
+            disabledReason = "OS not supported")
+    void shouldSetBrotliEncodingToBody() {
+        // Given
+        HttpHeader header = mock(HttpHeader.class);
+        given(header.getHeader(HttpHeader.CONTENT_ENCODING)).willReturn("br");
+        HttpBody body = mock(HttpBody.class);
+        // When
+        handler.handle(header, body);
+        // Then
+        verify(body).setContentEncodings(asList(HttpEncodingBrotli.getSingleton()));
     }
 
     @ParameterizedTest

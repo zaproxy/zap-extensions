@@ -334,6 +334,22 @@ class ApplicationErrorScanRuleUnitTest extends PassiveScannerTest<ApplicationErr
     }
 
     @Test
+    void shouldNotRaiseAlertOnBinaryResponse() throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = new HttpMessage();
+        msg.setRequestHeader(REQUEST_HEADER);
+        msg.setResponseHeader(createResponseHeader(OK));
+        String expectedEvidence = "Microsoft OLE DB Provider for ODBC Drivers";
+        msg.setResponseBody(":æ´Dü" + expectedEvidence);
+        given(passiveScanData.isPage500(any())).willReturn(false);
+        given(passiveScanData.isPage404(any())).willReturn(false);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(equalTo(0)));
+    }
+
+    @Test
     void shouldNotRaiseAlertForResponseCodeOkAndContentTypeWebAssemblyWhenFilePayloadPresent()
             throws HttpMalformedHeaderException {
         // Given
