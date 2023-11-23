@@ -147,6 +147,22 @@ class ClientNodeUnitTest {
                 is(EXAMPLE_COM + "/"));
         assertThat(
                 site.getChildAt(0).getChildAt(0).getChildAt(0).getChildAt(0).getChildCount(),
+                is(1));
+        assertThat(
+                site.getChildAt(0)
+                        .getChildAt(0)
+                        .getChildAt(0)
+                        .getChildAt(0)
+                        .getChildAt(0)
+                        .getSite(),
+                is(EXAMPLE_COM + "/"));
+        assertThat(
+                site.getChildAt(0)
+                        .getChildAt(0)
+                        .getChildAt(0)
+                        .getChildAt(0)
+                        .getChildAt(0)
+                        .getChildCount(),
                 is(0));
     }
 
@@ -172,6 +188,21 @@ class ClientNodeUnitTest {
         assertNotNull(site.getChildAt(0).getChildAt(0).getChildAt(0).getChildAt(0).getSession());
         assertThat(
                 site.getChildAt(0).getChildAt(0).getChildAt(0).getChildAt(0).getChildCount(),
+                is(1));
+        assertNotNull(
+                site.getChildAt(0)
+                        .getChildAt(0)
+                        .getChildAt(0)
+                        .getChildAt(0)
+                        .getChildAt(0)
+                        .getSession());
+        assertThat(
+                site.getChildAt(0)
+                        .getChildAt(0)
+                        .getChildAt(0)
+                        .getChildAt(0)
+                        .getChildAt(0)
+                        .getChildCount(),
                 is(0));
     }
 }

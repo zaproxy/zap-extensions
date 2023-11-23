@@ -84,7 +84,7 @@ public class ClientMap extends SortedTreeModel {
                         nodeUrl = nodeName + "/";
                     } else {
                         boolean lastBeforeFragment =
-                                (i == nodeNames.size() - 2)
+                                (i <= nodeNames.size() - 2)
                                         && (nodeNames.get(i + 1).startsWith("#")
                                                 || nodeNames.get(i + 1).startsWith("/#"));
 
@@ -92,12 +92,16 @@ public class ClientMap extends SortedTreeModel {
                             // Special case - we will not have the param values at this point
                             nodeUrl = url.substring(0, url.indexOf("#"));
                         } else {
-
                             String pUrl = parent.getUserObject().getUrl();
-                            if (!pUrl.endsWith("/") && !nodeName.startsWith("/")) {
-                                pUrl += "/";
+
+                            if (nodeName.equals("#") || nodeName.equals("/#")) {
+                                nodeUrl = pUrl + "#";
+                            } else {
+                                if (!pUrl.endsWith("/") && !nodeName.startsWith("/")) {
+                                    pUrl += "/";
+                                }
+                                nodeUrl = pUrl + nodeName + "/";
                             }
-                            nodeUrl = pUrl + nodeName + "/";
                         }
                     }
                     child =

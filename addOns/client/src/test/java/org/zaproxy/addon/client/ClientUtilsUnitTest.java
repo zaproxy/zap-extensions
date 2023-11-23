@@ -108,30 +108,54 @@ class ClientUtilsUnitTest {
             assertThat(nodes.get(1), is("/(a)"));
         }
 
+        @Test
+        void shouldHandleSiteNoSlashWithFragment() {
+            // Given / When
+            List<String> nodes = ClientUtils.urlToNodes(EXAMPLE_COM + "#", spp);
+
+            // Then
+            assertThat(nodes.size(), is(2));
+            assertThat(nodes.get(0), is(EXAMPLE_COM));
+            assertThat(nodes.get(1), is("#"));
+        }
+
         @ParameterizedTest
-        @ValueSource(strings = {"", "f", "a=b", "a&b=c/d=f#f"})
+        @ValueSource(strings = {"f", "a=b", "a&b=c/d=f#f"})
         void shouldHandleBaseSiteNoSlashWithFragment(String fragment) {
             // Given / When
             List<String> nodes = ClientUtils.urlToNodes(EXAMPLE_COM + "#" + fragment, spp);
 
             // Then
+            assertThat(nodes.size(), is(3));
+            assertThat(nodes.get(0), is(EXAMPLE_COM));
+            assertThat(nodes.get(1), is("#"));
+            assertThat(nodes.get(2), is(fragment));
+        }
+
+        @Test
+        void shouldHandleSiteWithSlashWithFragment() {
+            // Given / When
+            List<String> nodes = ClientUtils.urlToNodes(EXAMPLE_COM + "/#", spp);
+
+            // Then
             assertThat(nodes.size(), is(2));
             assertThat(nodes.get(0), is(EXAMPLE_COM));
-            assertThat(nodes.get(1), is("#" + fragment));
+            assertThat(nodes.get(1), is("/#"));
         }
 
         @ParameterizedTest
         // Check fragments can contain any characters that are also significant in the
         // rest of the URL
-        @ValueSource(strings = {"", "f", "a=b", "a&b=c/d=f#f"})
+        @ValueSource(strings = {"f", "a=b", "a&b=c/d=f#f"})
         void shouldHandleBaseSiteWithSlashWithFragment(String fragment) {
             // Given / When
             List<String> nodes = ClientUtils.urlToNodes(EXAMPLE_COM + "/#" + fragment, spp);
 
             // Then
-            assertThat(nodes.size(), is(2));
+            assertThat(nodes.size(), is(3));
             assertThat(nodes.get(0), is(EXAMPLE_COM));
-            assertThat(nodes.get(1), is("/#" + fragment));
+            assertThat(nodes.get(1), is("/#"));
+            assertThat(nodes.get(2), is(fragment));
         }
 
         @Test
@@ -140,10 +164,11 @@ class ClientUtilsUnitTest {
             List<String> nodes = ClientUtils.urlToNodes(EXAMPLE_COM + "/p?a=b#f", spp);
 
             // Then
-            assertThat(nodes.size(), is(3));
+            assertThat(nodes.size(), is(4));
             assertThat(nodes.get(0), is(EXAMPLE_COM));
             assertThat(nodes.get(1), is("p(a)"));
-            assertThat(nodes.get(2), is("#f"));
+            assertThat(nodes.get(2), is("#"));
+            assertThat(nodes.get(3), is("f"));
         }
 
         @Test
@@ -152,12 +177,13 @@ class ClientUtilsUnitTest {
             List<String> nodes = ClientUtils.urlToNodes(EXAMPLE_COM + "/p/q/r?a=b#f", spp);
 
             // Then
-            assertThat(nodes.size(), is(5));
+            assertThat(nodes.size(), is(6));
             assertThat(nodes.get(0), is(EXAMPLE_COM));
             assertThat(nodes.get(1), is("p"));
             assertThat(nodes.get(2), is("q"));
             assertThat(nodes.get(3), is("r(a)"));
-            assertThat(nodes.get(4), is("#f"));
+            assertThat(nodes.get(4), is("#"));
+            assertThat(nodes.get(5), is("f"));
         }
 
         @Test
@@ -166,13 +192,14 @@ class ClientUtilsUnitTest {
             List<String> nodes = ClientUtils.urlToNodes(EXAMPLE_COM + "/p/q/r/?a=b#f", spp);
 
             // Then
-            assertThat(nodes.size(), is(6));
+            assertThat(nodes.size(), is(7));
             assertThat(nodes.get(0), is(EXAMPLE_COM));
             assertThat(nodes.get(1), is("p"));
             assertThat(nodes.get(2), is("q"));
             assertThat(nodes.get(3), is("r"));
             assertThat(nodes.get(4), is("/(a)"));
-            assertThat(nodes.get(5), is("#f"));
+            assertThat(nodes.get(5), is("#"));
+            assertThat(nodes.get(6), is("f"));
         }
 
         @Test
@@ -181,13 +208,14 @@ class ClientUtilsUnitTest {
             List<String> nodes = ClientUtils.urlToNodes(EXAMPLE_COM + "/p/q/r/?e=f&a=b&c#f", spp);
 
             // Then
-            assertThat(nodes.size(), is(6));
+            assertThat(nodes.size(), is(7));
             assertThat(nodes.get(0), is(EXAMPLE_COM));
             assertThat(nodes.get(1), is("p"));
             assertThat(nodes.get(2), is("q"));
             assertThat(nodes.get(3), is("r"));
             assertThat(nodes.get(4), is("/(a,c,e)"));
-            assertThat(nodes.get(5), is("#f"));
+            assertThat(nodes.get(5), is("#"));
+            assertThat(nodes.get(6), is("f"));
         }
     }
 

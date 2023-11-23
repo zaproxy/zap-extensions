@@ -86,7 +86,13 @@ public class ClientUtils {
             }
         }
         if (fragment != null) {
-            nodes.add(prefix + fragment);
+            if (fragment.length() == 1) {
+                // Just the #, nothing else
+                nodes.add(prefix + fragment);
+            } else {
+                nodes.add(prefix + '#');
+                nodes.add(fragment.substring(1));
+            }
             prefix = "";
         }
         if (StringUtils.isNotBlank(prefix)) {

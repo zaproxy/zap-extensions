@@ -68,6 +68,35 @@ class ClientMapUnitTest {
     }
 
     @Test
+    void shouldHandleBaseSiteSlashFragmentSlash() {
+        // Given
+        ClientMap map = new ClientMap(root);
+
+        // When
+        map.getOrAddNode(AAA_URL + "/#/", false, false);
+
+        // Then
+        assertThat(root.getChildCount(), is(1));
+        assertThat(root.getUserObject().getName(), is("Root"));
+        assertThat(root.getUserObject().getUrl(), is(""));
+
+        assertThat(root.getChildAt(0).getUserObject().getName(), is(AAA_URL));
+        assertThat(root.getChildAt(0).getUserObject().getUrl(), is(AAA_URL + "/"));
+        assertThat(root.getChildAt(0).getChildCount(), is(1));
+
+        assertThat(root.getChildAt(0).getChildAt(0).getUserObject().getName(), is("/#"));
+        assertThat(root.getChildAt(0).getChildAt(0).getUserObject().getUrl(), is(AAA_URL + "/#"));
+        assertThat(root.getChildAt(0).getChildAt(0).getChildCount(), is(1));
+
+        assertThat(
+                root.getChildAt(0).getChildAt(0).getChildAt(0).getUserObject().getName(), is("/"));
+        assertThat(
+                root.getChildAt(0).getChildAt(0).getChildAt(0).getUserObject().getUrl(),
+                is(AAA_URL + "/#/"));
+        assertThat(root.getChildAt(0).getChildAt(0).getChildAt(0).getChildCount(), is(0));
+    }
+
+    @Test
     void shouldAddOrderedNodes() {
         // Given
         ClientMap map = new ClientMap(root);
@@ -254,28 +283,58 @@ class ClientMapUnitTest {
         assertThat(root.getChildCount(), is(1));
         assertThat(root.getChildAt(0).getUserObject().getName(), is("https://www.example.com"));
         assertThat(root.getChildAt(0).getChildCount(), is(3));
-        assertThat(root.getChildAt(0).getChildAt(0).getUserObject().getName(), is("#second"));
+
+        assertThat(root.getChildAt(0).getChildAt(0).getUserObject().getName(), is("#"));
         assertThat(
-                root.getChildAt(0).getChildAt(0).getUserObject().getUrl(),
+                root.getChildAt(0).getChildAt(0).getChildAt(0).getUserObject().getName(),
+                is("second"));
+        assertThat(
+                root.getChildAt(0).getChildAt(0).getChildAt(0).getUserObject().getUrl(),
                 is("https://www.example.com#second"));
-        assertThat(root.getChildAt(0).getChildAt(0).getChildCount(), is(0));
-        assertThat(root.getChildAt(0).getChildAt(1).getUserObject().getName(), is("/#first"));
+
+        assertThat(root.getChildAt(0).getChildAt(1).getChildCount(), is(1));
+        assertThat(root.getChildAt(0).getChildAt(1).getUserObject().getName(), is("/#"));
+        assertThat(root.getChildAt(0).getChildAt(1).getChildAt(0).getChildCount(), is(0));
         assertThat(
-                root.getChildAt(0).getChildAt(1).getUserObject().getUrl(),
+                root.getChildAt(0).getChildAt(1).getChildAt(0).getUserObject().getName(),
+                is("first"));
+        assertThat(
+                root.getChildAt(0).getChildAt(1).getChildAt(0).getUserObject().getUrl(),
                 is("https://www.example.com/#first"));
-        assertThat(root.getChildAt(0).getChildAt(1).getChildCount(), is(0));
+        assertThat(root.getChildAt(0).getChildAt(1).getChildAt(0).getChildCount(), is(0));
+
         assertThat(root.getChildAt(0).getChildAt(2).getUserObject().getName(), is("/(p1,p2)"));
         assertThat(
                 root.getChildAt(0).getChildAt(2).getUserObject().getUrl(),
                 is("https://www.example.com/?p2=v3&p1=v4"));
         assertThat(root.getChildAt(0).getChildAt(2).getChildCount(), is(1));
         assertThat(
-                root.getChildAt(0).getChildAt(2).getChildAt(0).getUserObject().getName(),
-                is("#third"));
+                root.getChildAt(0).getChildAt(2).getChildAt(0).getUserObject().getName(), is("#"));
+        System.out.println(root.getChildAt(0).getChildAt(2).getChildAt(0).getUserObject().getUrl());
+        System.out.println("https://www.example.com/?p2=v3&p1=v4#/");
         assertThat(
                 root.getChildAt(0).getChildAt(2).getChildAt(0).getUserObject().getUrl(),
+                is("https://www.example.com/?p2=v3&p1=v4#"));
+        assertThat(root.getChildAt(0).getChildAt(2).getChildAt(0).getChildCount(), is(1));
+        assertThat(
+                root.getChildAt(0)
+                        .getChildAt(2)
+                        .getChildAt(0)
+                        .getChildAt(0)
+                        .getUserObject()
+                        .getName(),
+                is("third"));
+        assertThat(
+                root.getChildAt(0)
+                        .getChildAt(2)
+                        .getChildAt(0)
+                        .getChildAt(0)
+                        .getUserObject()
+                        .getUrl(),
                 is("https://www.example.com/?p2=v3&p1=v4#third"));
-        assertThat(root.getChildAt(0).getChildAt(2).getChildAt(0).getChildCount(), is(0));
+        assertThat(
+                root.getChildAt(0).getChildAt(2).getChildAt(0).getChildAt(0).getChildCount(),
+                is(0));
     }
 
     @Test
