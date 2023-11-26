@@ -27,4 +27,5 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:$ktVersion")
 
     testImplementation(project(":testutils"))
+    testRuntimeOnly(project(":addOns:encoder"))
 }
