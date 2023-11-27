@@ -86,8 +86,15 @@ public class TestProxyServer {
         openapiDir.addDirectory(new OpenApiSimpleAuthDir(this, "simple-auth"));
         openapiDir.addDirectory(new OpenApiSimpleUnauthDir(this, "simple-unauth"));
 
+        TestDirectory htmlDir = new TestDirectory(this, "html");
+        TestDirectory locStoreDir = new TestDirectory(this, "localStorage");
+        TestDirectory sessStoreDir = new TestDirectory(this, "sessionStorage");
+        htmlDir.addDirectory(locStoreDir);
+        htmlDir.addDirectory(sessStoreDir);
+
         root.addDirectory(authDir);
         root.addDirectory(apiDir);
+        root.addDirectory(htmlDir);
     }
 
     private Server getServer() {
