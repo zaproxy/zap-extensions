@@ -8,7 +8,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Depend on newer version of Common Library add-on.
 
 ### Fixed
-- Use high and low delays for linear regression time-based tests to fix false positives from delays that were smaller than normal variance in application response times.
 - Use high and low delays for linear regression time-based tests to fix false positives from delays that were smaller than normal variance in application response times, which affected Command Injection scan rule.
 - Catch correct context while analysing attributes instead of the last attribute where eyecatcher was reflected.
 
