@@ -26,9 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
@@ -78,16 +76,12 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
 
     @Test
     void verifyIgnoredHeadersListAsExpected() {
-        // Given / When
-        List<String> ignoreList =
-                Arrays.asList(TimestampDisclosureScanRule.RESPONSE_HEADERS_TO_IGNORE);
-        // Then
-        assertEquals(11, ignoreList.size());
+        // Given / When / Then
+        assertEquals(11, TimestampDisclosureScanRule.RESPONSE_HEADERS_TO_IGNORE.size());
     }
 
     private static Stream<Arguments> headersToIgnoreSource() {
-        return Arrays.stream(TimestampDisclosureScanRule.RESPONSE_HEADERS_TO_IGNORE)
-                .map(Arguments::of);
+        return TimestampDisclosureScanRule.RESPONSE_HEADERS_TO_IGNORE.stream().map(Arguments::of);
     }
 
     @ParameterizedTest
@@ -95,9 +89,26 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
     void shouldNotRaiseAlertOnIgnorableHeaders(String header) throws Exception {
         // Given
         HttpMessage msg = createMessage("");
-        // This creates a header that would be Alerted upon if not ignored
-        // It does not necessarily create a header with realistic content
-        String headerToTest = header + ": 2147483647";
+        Instant testDate = ZonedDateTime.now().minusMonths(6).toInstant();
+        String strTestDate = String.valueOf(testDate.getEpochSecond());
+        String headerToTest = header + ": " + strTestDate;
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n" + "Server: Apache-Coyote/1.1\r\n" + headerToTest + "\r\n");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"nel", "AGE", "etaG"})
+    void shouldNotRaiseAlertOnIgnorableHeadersRegardlessOfCapitalization(String header)
+            throws Exception {
+        // Given
+        HttpMessage msg = createMessage("");
+        Instant testDate = ZonedDateTime.now().minusMonths(6).toInstant();
+        String strTestDate = String.valueOf(testDate.getEpochSecond());
+        String headerToTest = header + ": " + strTestDate;
         msg.setResponseHeader(
                 "HTTP/1.1 200 OK\r\n" + "Server: Apache-Coyote/1.1\r\n" + headerToTest + "\r\n");
         // When
@@ -336,6 +347,30 @@ class TimestampDisclosureScanRuleUnitTest extends PassiveScannerTest<TimestampDi
         // Then
         assertEquals(1, alertsRaised.size());
         assertEquals(strTestDate, alertsRaised.get(0).getEvidence());
+        assertEquals("", alertsRaised.get(0).getParam());
+    }
+
+    @Test
+    void shouldRaiseAlertWithParamOnTimeStampWhenFarInTheFutureInHeader() throws Exception {
+        String headerName = "x-timestamp";
+        long epochY2038 = 2147483647L;
+        Instant eventHorizon = ZonedDateTime.now().plusYears(10).toInstant();
+
+        long future =
+                (eventHorizon.isBefore(new Date(TimeUnit.SECONDS.toMillis(epochY2038)).toInstant())
+                                ? eventHorizon.getEpochSecond()
+                                : epochY2038)
+                        - 1;
+        // Given
+        String strTestDate = String.valueOf(future);
+        HttpMessage msg = createMessage("");
+        msg.getResponseHeader().addHeader(headerName, strTestDate);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(1, alertsRaised.size());
+        assertEquals(strTestDate, alertsRaised.get(0).getEvidence());
+        assertEquals(headerName, alertsRaised.get(0).getParam());
     }
 
     @Test

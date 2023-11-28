@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.pscanrules;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -100,37 +101,25 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
      * ignore the following response headers for the purposes of the comparison, since they cause
      * false positives
      */
-    public static final String[] RESPONSE_HEADERS_TO_IGNORE = {
-        HttpHeader._KEEP_ALIVE,
-        HttpHeader.CACHE_CONTROL,
-        "ETag",
-        "Age",
-        "Strict-Transport-Security",
-        "Report-To",
-        "NEL",
-        "Expect-CT",
-        "RateLimit-Reset",
-        "X-RateLimit-Reset",
-        "X-Rate-Limit-Reset"
-    };
+    public static final List<String> RESPONSE_HEADERS_TO_IGNORE =
+            List.of(
+                    HttpHeader._KEEP_ALIVE,
+                    HttpHeader.CACHE_CONTROL,
+                    "ETag",
+                    "Age",
+                    "Strict-Transport-Security",
+                    "Report-To",
+                    "NEL",
+                    "Expect-CT",
+                    "RateLimit-Reset",
+                    "X-RateLimit-Reset",
+                    "X-Rate-Limit-Reset");
 
-    /**
-     * gets the name of the scanner
-     *
-     * @return
-     */
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    /**
-     * scans the HTTP response for timestamp signatures
-     *
-     * @param msg
-     * @param id
-     * @param source unused
-     */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         if (ResourceIdentificationUtils.isFont(msg)) {
@@ -138,28 +127,12 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
         }
         LOGGER.debug("Checking message {} for timestamps", msg.getRequestHeader().getURI());
 
-        List<HttpHeaderField> responseheaders = msg.getResponseHeader().getHeaders();
-        StringBuilder filteredResponseheaders = new StringBuilder();
-        for (HttpHeaderField responseheader : responseheaders) {
-            boolean ignoreHeader = false;
-            for (String headerToIgnore : RESPONSE_HEADERS_TO_IGNORE) {
-                if (responseheader.getName().equalsIgnoreCase(headerToIgnore)) {
-                    LOGGER.debug("Ignoring header {}", responseheader.getName());
-                    ignoreHeader = true;
-                    break; // out of inner loop
-                }
-            }
-            if (!ignoreHeader) {
-                filteredResponseheaders
-                        .append('\n')
-                        .append(responseheader.getName())
-                        .append(": ")
-                        .append(responseheader.getValue());
-            }
-        }
-
-        String responsebody = msg.getResponseBody().toString();
-        String[] responseparts = {filteredResponseheaders.toString(), responsebody};
+        List<HttpHeaderField> responseparts = new ArrayList<>();
+        msg.getResponseHeader().getHeaders().stream()
+                .filter(header -> !containsIgnoreCase(RESPONSE_HEADERS_TO_IGNORE, header.getName()))
+                .forEach(responseparts::add);
+        // Empty 'name' for body
+        responseparts.add(new HttpHeaderField("", msg.getResponseBody().toString()));
 
         // try each of the patterns in turn against the response.
         String timestampType = null;
@@ -173,8 +146,8 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
                     "Trying Timestamp Pattern: {} for timestamp type {}",
                     timestampPattern,
                     timestampType);
-            for (String haystack : responseparts) {
-                Matcher matcher = timestampPattern.matcher(haystack);
+            for (HttpHeaderField haystack : responseparts) {
+                Matcher matcher = timestampPattern.matcher(haystack.getValue());
                 while (matcher.find()) {
                     String evidence = matcher.group();
                     Date timestamp = null;
@@ -185,14 +158,13 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
                         // the number is not formatted correctly to be a timestamp. Skip it.
                         continue;
                     }
-                    if (!AlertThreshold.LOW.equals(threshold)) {
-                        if (RANGE_START.after(timestamp) || RANGE_STOP.before(timestamp)) {
-                            continue;
-                        }
+                    if (!AlertThreshold.LOW.equals(threshold)
+                            && (RANGE_START.after(timestamp) || RANGE_STOP.before(timestamp))) {
+                        continue;
                     }
                     LOGGER.debug("Found a match for timestamp type {}:{}", timestampType, evidence);
 
-                    if (evidence != null && evidence.length() > 0) {
+                    if (evidence != null && !evidence.isEmpty()) {
                         // we found something.. potentially
                         if (AlertThreshold.HIGH.equals(threshold)) {
                             Instant foundInstant = Instant.ofEpochSecond(Long.parseLong(evidence));
@@ -206,7 +178,8 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
                                 .setRisk(getRisk())
                                 .setConfidence(Alert.CONFIDENCE_LOW)
                                 .setDescription(getDescription() + " - " + timestampType)
-                                .setOtherInfo(getExtraInfo(msg, evidence, timestamp))
+                                .setParam(haystack.getName())
+                                .setOtherInfo(getExtraInfo(evidence, timestamp))
                                 .setSolution(getSolution())
                                 .setReference(getReference())
                                 .setEvidence(evidence)
@@ -221,11 +194,6 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
         }
     }
 
-    /**
-     * get the id of the scan rule
-     *
-     * @return
-     */
     @Override
     public int getPluginId() {
         return 10096;
@@ -235,41 +203,19 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
         return Alert.RISK_LOW;
     }
 
-    /**
-     * get the description of the alert
-     *
-     * @return
-     */
     public String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    /**
-     * get the solution for the alert
-     *
-     * @return
-     */
     public String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    /**
-     * gets references for the alert
-     *
-     * @return
-     */
     public String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
-    /**
-     * gets extra information associated with the alert
-     *
-     * @param msg
-     * @param arg0
-     * @return
-     */
-    private String getExtraInfo(HttpMessage msg, String evidence, Date timestamp) {
+    private static String getExtraInfo(String evidence, Date timestamp) {
         String formattedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(timestamp);
         return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", evidence, formattedDate);
     }
@@ -285,5 +231,14 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
 
     public int getWascId() {
         return 13; // WASC Id - Info leakage
+    }
+
+    private static boolean containsIgnoreCase(List<String> list, String test) {
+        for (String element : list) {
+            if (element.equalsIgnoreCase(test)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
