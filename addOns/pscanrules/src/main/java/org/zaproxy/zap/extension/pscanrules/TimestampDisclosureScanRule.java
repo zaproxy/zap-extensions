@@ -115,23 +115,11 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
                     "X-RateLimit-Reset",
                     "X-Rate-Limit-Reset");
 
-    /**
-     * gets the name of the scanner
-     *
-     * @return
-     */
     @Override
     public String getName() {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    /**
-     * scans the HTTP response for timestamp signatures
-     *
-     * @param msg
-     * @param id
-     * @param source unused
-     */
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         if (ResourceIdentificationUtils.isFont(msg)) {
@@ -170,14 +158,13 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
                         // the number is not formatted correctly to be a timestamp. Skip it.
                         continue;
                     }
-                    if (!AlertThreshold.LOW.equals(threshold)) {
-                        if (RANGE_START.after(timestamp) || RANGE_STOP.before(timestamp)) {
-                            continue;
-                        }
+                    if (!AlertThreshold.LOW.equals(threshold)
+                            && (RANGE_START.after(timestamp) || RANGE_STOP.before(timestamp))) {
+                        continue;
                     }
                     LOGGER.debug("Found a match for timestamp type {}:{}", timestampType, evidence);
 
-                    if (evidence != null && evidence.length() > 0) {
+                    if (evidence != null && !evidence.isEmpty()) {
                         // we found something.. potentially
                         if (AlertThreshold.HIGH.equals(threshold)) {
                             Instant foundInstant = Instant.ofEpochSecond(Long.parseLong(evidence));
@@ -192,7 +179,7 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
                                 .setConfidence(Alert.CONFIDENCE_LOW)
                                 .setDescription(getDescription() + " - " + timestampType)
                                 .setParam(haystack.getName())
-                                .setOtherInfo(getExtraInfo(msg, evidence, timestamp))
+                                .setOtherInfo(getExtraInfo(evidence, timestamp))
                                 .setSolution(getSolution())
                                 .setReference(getReference())
                                 .setEvidence(evidence)
@@ -207,11 +194,6 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
         }
     }
 
-    /**
-     * get the id of the scan rule
-     *
-     * @return
-     */
     @Override
     public int getPluginId() {
         return 10096;
@@ -221,41 +203,19 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
         return Alert.RISK_LOW;
     }
 
-    /**
-     * get the description of the alert
-     *
-     * @return
-     */
     public String getDescription() {
         return Constant.messages.getString(MESSAGE_PREFIX + "desc");
     }
 
-    /**
-     * get the solution for the alert
-     *
-     * @return
-     */
     public String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
     }
 
-    /**
-     * gets references for the alert
-     *
-     * @return
-     */
     public String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
-    /**
-     * gets extra information associated with the alert
-     *
-     * @param msg
-     * @param arg0
-     * @return
-     */
-    private String getExtraInfo(HttpMessage msg, String evidence, Date timestamp) {
+    private static String getExtraInfo(String evidence, Date timestamp) {
         String formattedDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(timestamp);
         return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", evidence, formattedDate);
     }
