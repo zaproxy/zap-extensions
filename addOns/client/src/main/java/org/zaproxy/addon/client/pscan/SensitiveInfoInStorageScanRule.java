@@ -31,7 +31,7 @@ import org.zaproxy.addon.client.ClientUtils;
 import org.zaproxy.addon.client.ReportedNode;
 import org.zaproxy.addon.client.ReportedObject;
 
-public class SensitiveInfoInStorageScanrule extends ClientPassiveAbstractScanRule {
+public class SensitiveInfoInStorageScanRule extends ClientPassiveAbstractScanRule {
 
     private static final String LOCAL_STORAGE = "localStorage";
     private static final String SESSION_STORAGE = "sessionStorage";
@@ -66,20 +66,25 @@ public class SensitiveInfoInStorageScanrule extends ClientPassiveAbstractScanRul
     public void scanReportedObject(ReportedObject obj, ClientPassiveScanHelper helper) {
         if (LOCAL_STORAGE.equals(obj.getType()) || SESSION_STORAGE.equals(obj.getType())) {
             HistoryReference hr = helper.findHistoryRef(obj.getUrl());
+            String value = obj.getText();
+            String decodedValue = ClientPassiveScanHelper.base64Decode(value);
 
-            if (isCreditCard(obj.getText())) {
-                helper.raiseAlert(this.getAlertBuilder(obj, InfoType.cc).build(), hr);
+            if (isCreditCard(value) || isCreditCard(decodedValue)) {
+                helper.raiseAlert(this.getAlertBuilder(obj, decodedValue, InfoType.cc).build(), hr);
             }
-            if (isEmailAddress(obj.getText())) {
-                helper.raiseAlert(this.getAlertBuilder(obj, InfoType.email).build(), hr);
+            if (isEmailAddress(value) || isEmailAddress(decodedValue)) {
+                helper.raiseAlert(
+                        this.getAlertBuilder(obj, decodedValue, InfoType.email).build(), hr);
             }
-            if (isUsSSN(obj.getText())) {
-                helper.raiseAlert(this.getAlertBuilder(obj, InfoType.ssn).build(), hr);
+            if (isUsSSN(value) || isUsSSN(decodedValue)) {
+                helper.raiseAlert(
+                        this.getAlertBuilder(obj, decodedValue, InfoType.ssn).build(), hr);
             }
         }
     }
 
-    protected Alert.Builder getAlertBuilder(ReportedObject obj, InfoType infoType) {
+    protected Alert.Builder getAlertBuilder(
+            ReportedObject obj, String decodedValue, InfoType infoType) {
         return this.getBaseAlertBuilder(obj)
                 .setAlertRef(
                         getId() + "-" + (ClientUtils.LOCAL_STORAGE.equals(obj.getType()) ? 1 : 2))
@@ -92,9 +97,14 @@ public class SensitiveInfoInStorageScanrule extends ClientPassiveAbstractScanRul
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setRisk(Alert.RISK_LOW)
                 .setOtherInfo(
-                        Constant.messages.getString(
-                                "client.pscan.seninfoinstorage.other." + infoType,
-                                obj.getId() + "=" + obj.getText()))
+                        decodedValue == null
+                                ? Constant.messages.getString(
+                                        "client.pscan.seninfoinstorage.other." + infoType,
+                                        obj.getId() + "=" + obj.getText())
+                                : Constant.messages.getString(
+                                        "client.pscan.seninfoinstorage.other.base64." + infoType,
+                                        obj.getId() + "=" + obj.getText(),
+                                        obj.getId() + "=" + decodedValue))
                 .setSolution(Constant.messages.getString("client.pscan.seninfoinstorage.solution"))
                 .setCweId(200) // CWE Id: 200 - Information Exposure
                 .setWascId(13); // WASC Id: 13 - Information Leakage
@@ -109,29 +119,33 @@ public class SensitiveInfoInStorageScanrule extends ClientPassiveAbstractScanRul
         obj.put("tagname", "");
         obj.put("id", "key");
         obj.put("text", "value");
-        alerts.add(getAlertBuilder(new ReportedNode(obj), InfoType.cc).build());
+        alerts.add(getAlertBuilder(new ReportedNode(obj), null, InfoType.cc).build());
         obj.put("type", SESSION_STORAGE);
-        alerts.add(getAlertBuilder(new ReportedNode(obj), InfoType.email).build());
+        alerts.add(getAlertBuilder(new ReportedNode(obj), null, InfoType.email).build());
         return alerts;
     }
 
-    private boolean isEmailAddress(String emailAddress) {
-        Matcher matcher = emailAddressPattern.matcher(emailAddress);
+    private boolean isEmailAddress(String value) {
+        if (value == null) {
+            return false;
+        }
+        Matcher matcher = emailAddressPattern.matcher(value);
         return matcher.find();
     }
 
-    private boolean isCreditCard(String creditCard) {
-        Matcher matcher = creditCardPattern.matcher(creditCard);
+    private boolean isCreditCard(String value) {
+        if (value == null) {
+            return false;
+        }
+        Matcher matcher = creditCardPattern.matcher(value);
         return matcher.find();
     }
 
-    private boolean isUsSSN(String usSSN) {
-        Matcher matcher = usSSNPattern.matcher(usSSN);
+    private boolean isUsSSN(String value) {
+        if (value == null) {
+            return false;
+        }
+        Matcher matcher = usSSNPattern.matcher(value);
         return matcher.find();
-    }
-
-    @Override
-    public String getHelpLink() {
-        return "https://www.zaproxy.org/docs/desktop/addons/client-side-integration/pscan/#id-120001";
     }
 }

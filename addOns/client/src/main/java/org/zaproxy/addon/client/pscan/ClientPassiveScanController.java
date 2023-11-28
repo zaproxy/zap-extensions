@@ -34,7 +34,8 @@ public class ClientPassiveScanController {
     public ClientPassiveScanController() {
         scanRules = new ArrayList<>();
         scanRules.add(new InformationInStorageScanRule());
-        scanRules.add(new SensitiveInfoInStorageScanrule());
+        scanRules.add(new SensitiveInfoInStorageScanRule());
+        scanRules.add(new JwtInStorageScanRule());
     }
 
     public boolean isEnabled() {

@@ -50,6 +50,9 @@ public class InformationInStorageScanRule extends ClientPassiveAbstractScanRule 
     }
 
     private Alert.Builder getAlertBuilder(ReportedObject obj) {
+        String value = obj.getText();
+        String decodedValue = ClientPassiveScanHelper.base64Decode(value);
+
         return this.getBaseAlertBuilder(obj)
                 .setAlertRef(
                         getId() + "-" + (ClientUtils.LOCAL_STORAGE.equals(obj.getType()) ? 1 : 2))
@@ -62,9 +65,14 @@ public class InformationInStorageScanRule extends ClientPassiveAbstractScanRule 
                 .setConfidence(Alert.CONFIDENCE_HIGH)
                 .setRisk(Alert.RISK_INFO)
                 .setOtherInfo(
-                        Constant.messages.getString(
-                                "client.pscan.infoinstorage.other",
-                                obj.getId() + "=" + obj.getText()))
+                        decodedValue == null
+                                ? Constant.messages.getString(
+                                        "client.pscan.infoinstorage.other",
+                                        obj.getId() + "=" + value)
+                                : Constant.messages.getString(
+                                        "client.pscan.infoinstorage.other.base64",
+                                        obj.getId() + "=" + value,
+                                        obj.getId() + "=" + decodedValue))
                 .setSolution(Constant.messages.getString("client.pscan.infoinstorage.solution"))
                 .setCweId(200) // CWE Id: 200 - Information Exposure
                 .setWascId(13); // WASC Id: 13 - Information Leakage
