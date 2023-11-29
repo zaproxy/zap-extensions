@@ -4,14 +4,16 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Added
+- Support for base64 decoding in existing scan rules.
+- Passive scan rule: JWT in Browser Storage.
 
 ## [0.6.0] - 2023-11-23
 ### Added
-- Support for passive scanning
+- Support for passive scanning.
 - Passive scan rules:
-  - Information Disclosure - Information in Browser Storage
-  - Information Disclosure - Sensitive Information in Browser Storage
+  - Information Disclosure - Information in Browser Storage.
+  - Information Disclosure - Sensitive Information in Browser Storage.
 
 ### Changed
 - Dropped "to Clipboard" from ZAP copy menu items (Issue 8179).

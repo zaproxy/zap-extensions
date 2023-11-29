@@ -19,6 +19,10 @@
  */
 package org.zaproxy.addon.client.pscan;
 
+import java.awt.event.KeyEvent;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -32,7 +36,6 @@ public class ClientPassiveScanHelper {
 
     private static final Logger LOGGER = LogManager.getLogger(ClientPassiveScanHelper.class);
     private static final int MAX_HREFS_TO_CHECK = 1000;
-
     private ExtensionAlert extAlert;
     private ExtensionHistory extHistory;
 
@@ -58,6 +61,47 @@ public class ClientPassiveScanHelper {
         }
         // Include the limit in case we change it in the future
         Stats.incCounter("stats.client.pscan.href.missing." + MAX_HREFS_TO_CHECK);
+        return null;
+    }
+
+    private static boolean isPrintable(char c) {
+        // Partly based on https://stackoverflow.com/a/418560/1509834
+        Character.UnicodeBlock block = Character.UnicodeBlock.of(c);
+        return (Character.isWhitespace(c)
+                || (!Character.isISOControl(c))
+                        && c != KeyEvent.CHAR_UNDEFINED
+                        && block != null
+                        && block != Character.UnicodeBlock.SPECIALS);
+    }
+
+    public static boolean isPrintable(CharSequence cs) {
+        for (int i = 0; i < cs.length(); i++) {
+            if (!isPrintable(cs.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Base64 decode where the result is a printable string
+     *
+     * @param value the string to be decoded
+     * @return the Base64 decoded version of the value or null if the value was not Base64 encoded,
+     *     or if the result is not printable
+     */
+    public static String base64Decode(String value) {
+        if (StringUtils.isNotBlank(value)) {
+            try {
+                String decoded =
+                        new String(Base64.getDecoder().decode(value), StandardCharsets.UTF_8);
+                if (isPrintable(decoded)) {
+                    return decoded;
+                }
+            } catch (Exception e) {
+                // Ignore, it obviously wasn't Base64 encoded
+            }
+        }
         return null;
     }
 

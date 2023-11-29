@@ -19,13 +19,16 @@
  */
 package org.zaproxy.addon.client.pscan;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.Base64;
 import java.util.List;
 import net.sf.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,20 +36,21 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.ReportedEvent;
 import org.zaproxy.zap.testutils.TestUtils;
 
-/** Unit test for {@link SensitiveInfoInStorageScanrule}. */
-class SensitiveInfoInStorageUnitTest extends TestUtils {
+/** Unit test for {@link SensitiveInfoInStorageScanRule}. */
+class SensitiveInfoInStorageScanRuleUnitTest extends TestUtils {
 
-    private SensitiveInfoInStorageScanrule rule;
+    private SensitiveInfoInStorageScanRule rule;
     private ClientPassiveScanHelper helper;
 
     @BeforeEach
     void setUp() {
-        rule = new SensitiveInfoInStorageScanrule();
+        rule = new SensitiveInfoInStorageScanRule();
         mockMessages(new ExtensionClientIntegration());
         helper = mock(ClientPassiveScanHelper.class);
     }
@@ -112,6 +116,27 @@ class SensitiveInfoInStorageUnitTest extends TestUtils {
         rule.scanReportedObject(event, helper);
         // Then
         verify(helper).raiseAlert(any(), any());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "localStorage,test@test.com",
+        "localStorage,6011000990139424",
+        "sessionStorage,000-00-0000"
+    })
+    void shouldRaiseAlertsWithDecodedValueForStorageEvents(String type, String text) {
+        // Given
+        ReportedEvent event =
+                getReportedEvent(type, Base64.getEncoder().encodeToString(text.getBytes()));
+        ArgumentCaptor<Alert> captor = ArgumentCaptor.forClass(Alert.class);
+        // When
+        rule.scanReportedObject(event, helper);
+        // Then
+        verify(helper).raiseAlert(any(), any());
+        verify(helper).raiseAlert(captor.capture(), any());
+        Alert alert = captor.getValue();
+        assertThat(alert, is(notNullValue()));
+        assertThat(alert.getOtherInfo(), containsString(text));
     }
 
     @ParameterizedTest

@@ -44,21 +44,27 @@ class ClientPassiveScanControllerUnitTest {
     void shouldInitWithTheRightDefaults() {
         // Given / When / Then
         assertThat(pscanController.isEnabled(), is(true));
-        assertThat(pscanController.getAllScanRules().size(), is(2));
+        assertThat(pscanController.getAllScanRules().size(), is(3));
         assertThat(
                 pscanController.getAllScanRules().get(0).getClass(),
                 is(InformationInStorageScanRule.class));
         assertThat(
                 pscanController.getAllScanRules().get(1).getClass(),
-                is(SensitiveInfoInStorageScanrule.class));
+                is(SensitiveInfoInStorageScanRule.class));
+        assertThat(
+                pscanController.getAllScanRules().get(2).getClass(),
+                is(JwtInStorageScanRule.class));
         assertThat(pscanController.getDisabledScanRules().size(), is(0));
-        assertThat(pscanController.getEnabledScanRules().size(), is(2));
+        assertThat(pscanController.getEnabledScanRules().size(), is(3));
         assertThat(
                 pscanController.getEnabledScanRules().get(0).getClass(),
                 is(InformationInStorageScanRule.class));
         assertThat(
                 pscanController.getEnabledScanRules().get(1).getClass(),
-                is(SensitiveInfoInStorageScanrule.class));
+                is(SensitiveInfoInStorageScanRule.class));
+        assertThat(
+                pscanController.getEnabledScanRules().get(2).getClass(),
+                is(JwtInStorageScanRule.class));
     }
 
     @ParameterizedTest
@@ -109,10 +115,10 @@ class ClientPassiveScanControllerUnitTest {
         pscanController.setDisabledScanRules(Arrays.asList(120000));
 
         // Then
-        assertThat(pscanController.getEnabledScanRules().size(), is(1));
+        assertThat(pscanController.getEnabledScanRules().size(), is(2));
         assertThat(
                 pscanController.getEnabledScanRules().get(0).getClass(),
-                is(SensitiveInfoInStorageScanrule.class));
+                is(SensitiveInfoInStorageScanRule.class));
         assertThat(pscanController.getDisabledScanRules().size(), is(1));
         assertThat(
                 pscanController.getDisabledScanRules().get(0).getClass(),
