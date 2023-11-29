@@ -19,14 +19,26 @@
  */
 package org.zaproxy.zap.extension.ascanrulesAlpha;
 
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
+import fi.iki.elonen.NanoHTTPD.IHTTPSession;
+import fi.iki.elonen.NanoHTTPD.Response;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Plugin;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
+import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.zap.testutils.NanoServerHandler;
 
 /** Unit test for {@link MongoDbInjectionScanRule}. */
 class MongoDbInjectionScanRuleUnitTest extends ActiveScannerTest<MongoDbInjectionScanRule> {
@@ -78,5 +90,77 @@ class MongoDbInjectionScanRuleUnitTest extends ActiveScannerTest<MongoDbInjectio
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_INPV_05_SQLI.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_INPV_05_SQLI.getValue())));
+    }
+
+    @Test
+    void shouldDetectTimeBasedInjection() throws HttpMalformedHeaderException {
+        // Given
+        Pattern sleepPattern = Pattern.compile("0\\s+\\|\\|\\s+sleep\\((\\d+)(?:\\.\\d+)?\\)");
+        String regularContent = "<!DOCTYPE html><html><body>Nothing to see here.</body></html>";
+        Set<String> payloadSet = new HashSet<>();
+        nano.addHandler(
+                new NanoServerHandler("/") {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String value = getFirstParamValue(session, "p");
+                        if (value == null) {
+                            return newFixedLengthResponse(regularContent);
+                        }
+                        if (value.contains("sleep(")) {
+                            payloadSet.add(value);
+                        }
+                        Matcher match = sleepPattern.matcher(value);
+                        if (!match.find()) {
+                            return newFixedLengthResponse(regularContent);
+                        }
+                        try {
+                            int sleepInput = Integer.parseInt(match.group(1));
+                            Thread.sleep(sleepInput * 1000L);
+                        } catch (InterruptedException ex) {
+                            // Ignore
+                        }
+                        return newFixedLengthResponse(regularContent);
+                    }
+                });
+        rule.init(getHttpMessage("/?p=a"), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(payloadSet, hasSize(greaterThanOrEqualTo(10)));
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(sleepPattern.matcher(alertsRaised.get(0).getAttack()).find(), is(true));
+    }
+
+    @Test
+    void shouldNotAlertIfAllTimesGetLonger() throws Exception {
+        String test = "/shouldNotReportGeneralTimingIssue/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    private int time = 100;
+
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String response =
+                                "<!DOCTYPE html><html><body>Nothing to see here.</body></html>";
+                        try {
+                            if (getFirstParamValue(session, "name").contains("sleep(")) {
+                                Thread.sleep(time);
+                                time += 1000;
+                            }
+
+                        } catch (InterruptedException e) {
+                            // Ignore
+                        }
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+
+        this.rule.init(msg, this.parent);
+        this.rule.scan();
+
+        assertThat(alertsRaised.size(), equalTo(0));
     }
 }

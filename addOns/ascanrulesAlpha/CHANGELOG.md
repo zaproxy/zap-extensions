@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update minimum ZAP version to 2.14.0.
+- Depend on newer version of Common Library add-on.
+
+### Fixed
+- Fix time-based false positives in NoSQL Injection - MongoDB scan rule.
 
 ## [44] - 2023-09-08
 ### Changed
