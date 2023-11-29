@@ -35,7 +35,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 
-class SameOriginMethodExecutionScanRuleTest
+class SameOriginMethodExecutionScanRuleUnitTest
         extends PassiveScannerTest<SameOriginMethodExecutionScanRule> {
 
     @Override
