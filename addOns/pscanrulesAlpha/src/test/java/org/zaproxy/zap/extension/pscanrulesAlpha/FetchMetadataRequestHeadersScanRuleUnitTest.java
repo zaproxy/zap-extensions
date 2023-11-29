@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 
-class FetchMetadataRequestHeadersScanRuleTest
+class FetchMetadataRequestHeadersScanRuleUnitTest
         extends PassiveScannerTest<FetchMetadataRequestHeadersScanRule> {
     private static final String HTTP_METHOD = "GET / HTTP/1.1\r\n";
     private static final String SFS_VALID_HEADER = "Sec-Fetch-Site: same-origin\r\n";
