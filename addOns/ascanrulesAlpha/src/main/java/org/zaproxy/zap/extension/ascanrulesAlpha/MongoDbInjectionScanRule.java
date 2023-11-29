@@ -66,8 +66,8 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
     private static final String JSON_ATTACK = "json";
     private static final String AUTH_BYPASS_ATTACK = "authbypass";
     private static final String JSON_TOKEN = "$ZAP";
-    private static final int BLIND_REQUEST_LIMIT = 5;
-    private static final int DEFAULT_TIME_SLEEP_SEC = 10;
+    private static final int BLIND_REQUEST_LIMIT = 4;
+    private static final int DEFAULT_TIME_SLEEP_SEC = 5;
     private static final double TIME_CORRELATION_ERROR_RANGE = 0.15;
     private static final double TIME_SLOPE_ERROR_RANGE = 0.30;
     // Packages of attack rules
@@ -107,7 +107,7 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
                     CommonAlertTag.OWASP_2021_A03_INJECTION,
                     CommonAlertTag.OWASP_2017_A01_INJECTION,
                     CommonAlertTag.WSTG_V42_INPV_05_SQLI);
-    private int maxDelay;
+    private int timeSleepSeconds;
     // Error messages that addressing to a well-known vulnerability
     private final Pattern[] errorPatterns = {
         Pattern.compile(
@@ -186,7 +186,7 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
     @Override
     public void init() {
         try {
-            maxDelay = this.getConfig().getInt(RULE_SLEEP_TIME, DEFAULT_TIME_SLEEP_SEC);
+            timeSleepSeconds = this.getConfig().getInt(RULE_SLEEP_TIME, DEFAULT_TIME_SLEEP_SEC);
         } catch (ConversionException e) {
             LOGGER.debug(
                     "Invalid value for '{}': {}",
@@ -331,7 +331,6 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
         // The $where clause executes associated JS function one time for each tuple --> sleep time
         // = interval * nTuples
         if (!isBingo && doTimedScan) {
-            String paramValue;
             if (isStop()) {
                 LOGGER.debug(STOP_LOG);
                 return;
@@ -339,13 +338,13 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
             LOGGER.debug("Starting with the javascript code injection payloads:");
             int index = 0;
             while (index < SLEEP_INJECTION.length) {
-                String sleepPayload = SLEEP_INJECTION[index];
                 if (isStop()) {
                     LOGGER.debug(STOP_LOG);
                     return;
                 }
+                String sleepPayload = SLEEP_INJECTION[index];
                 AtomicReference<HttpMessage> message = new AtomicReference<>();
-                paramValue = sleepPayload.replace("{0}", String.valueOf(maxDelay));
+                String paramValue = sleepPayload.replace("{0}", String.valueOf(timeSleepSeconds));
                 LOGGER.debug("Trying with the value: {}", sleepPayload);
 
                 TimingUtils.RequestSender requestSender =
@@ -369,7 +368,7 @@ public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
                         isInjectable =
                                 TimingUtils.checkTimingDependence(
                                         BLIND_REQUEST_LIMIT,
-                                        maxDelay,
+                                        timeSleepSeconds,
                                         requestSender,
                                         TIME_CORRELATION_ERROR_RANGE,
                                         TIME_SLOPE_ERROR_RANGE);

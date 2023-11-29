@@ -25,7 +25,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.fail;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
@@ -118,7 +117,7 @@ class MongoDbInjectionScanRuleUnitTest extends ActiveScannerTest<MongoDbInjectio
                             int sleepInput = Integer.parseInt(match.group(1));
                             Thread.sleep(sleepInput * 1000L);
                         } catch (InterruptedException ex) {
-                            fail("failed to sleep thread for time-based nosql injection");
+                            // Ignore
                         }
                         return newFixedLengthResponse(regularContent);
                     }
