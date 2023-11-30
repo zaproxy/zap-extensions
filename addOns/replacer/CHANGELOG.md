@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [16] - 2023-11-30
 ### Changed
 - Allow to replace (change or remove) the Host header (Issue 5475).
 
@@ -99,6 +99,7 @@ the dialogue when other match types are selected.
 
 - First version
 
+[16]: https://github.com/zaproxy/zap-extensions/releases/replacer-v16
 [15]: https://github.com/zaproxy/zap-extensions/releases/replacer-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/replacer-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/replacer-v13
