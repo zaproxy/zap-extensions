@@ -46,7 +46,7 @@ dependencies {
 
     implementation("com.google.re2j:re2j:1.7")
     implementation("com.github.weisj:jsvg:1.2.0")
-    implementation("org.jsoup:jsoup:1.16.1")
+    implementation("org.jsoup:jsoup:1.16.2")
 
     testImplementation(project(":testutils"))
 }
