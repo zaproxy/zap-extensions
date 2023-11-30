@@ -28,7 +28,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.model.HistoryReference;
 import org.zaproxy.addon.client.ClientUtils;
-import org.zaproxy.addon.client.ReportedNode;
+import org.zaproxy.addon.client.ReportedElement;
 import org.zaproxy.addon.client.ReportedObject;
 
 public class SensitiveInfoInStorageScanRule extends ClientPassiveAbstractScanRule {
@@ -119,9 +119,9 @@ public class SensitiveInfoInStorageScanRule extends ClientPassiveAbstractScanRul
         obj.put("tagname", "");
         obj.put("id", "key");
         obj.put("text", "value");
-        alerts.add(getAlertBuilder(new ReportedNode(obj), null, InfoType.cc).build());
+        alerts.add(getAlertBuilder(new ReportedElement(obj), null, InfoType.cc).build());
         obj.put("type", SESSION_STORAGE);
-        alerts.add(getAlertBuilder(new ReportedNode(obj), null, InfoType.email).build());
+        alerts.add(getAlertBuilder(new ReportedElement(obj), null, InfoType.email).build());
         return alerts;
     }
 

@@ -21,9 +21,24 @@ package org.zaproxy.addon.client;
 
 import net.sf.json.JSONObject;
 
-public class ReportedNode extends ReportedObject {
+public class ReportedElement extends ReportedObject {
 
-    public ReportedNode(JSONObject json) {
+    private String tagType;
+    private int formId = -1;
+
+    public ReportedElement(JSONObject json) {
         super(json);
+        this.tagType = getParam(json, "tagType");
+        if (json.containsKey("formId")) {
+            this.formId = json.getInt("formId");
+        }
+    }
+
+    public String getTagType() {
+        return tagType;
+    }
+
+    public int getFormId() {
+        return formId;
     }
 }

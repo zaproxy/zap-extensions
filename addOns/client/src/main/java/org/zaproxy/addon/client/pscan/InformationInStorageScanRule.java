@@ -25,7 +25,7 @@ import net.sf.json.JSONObject;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.client.ClientUtils;
-import org.zaproxy.addon.client.ReportedNode;
+import org.zaproxy.addon.client.ReportedElement;
 import org.zaproxy.addon.client.ReportedObject;
 
 public class InformationInStorageScanRule extends ClientPassiveAbstractScanRule {
@@ -87,9 +87,9 @@ public class InformationInStorageScanRule extends ClientPassiveAbstractScanRule 
         obj.put("tagname", "");
         obj.put("id", "key");
         obj.put("text", "value");
-        alerts.add(getAlertBuilder(new ReportedNode(obj)).build());
+        alerts.add(getAlertBuilder(new ReportedElement(obj)).build());
         obj.put("type", ClientUtils.SESSION_STORAGE);
-        alerts.add(getAlertBuilder(new ReportedNode(obj)).build());
+        alerts.add(getAlertBuilder(new ReportedElement(obj)).build());
         return alerts;
     }
 }
