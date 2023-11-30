@@ -231,7 +231,9 @@ public class RequestorJob extends AutomationJob {
                     progress.warn(
                             Constant.messages.getString(
                                     "automation.error.requestor.codemismatch",
-                                    msg,
+                                    msg.getRequestHeader().getMethod()
+                                            + " "
+                                            + msg.getRequestHeader().getURI(),
                                     req.getResponseCode(),
                                     receivedCode));
                 }
