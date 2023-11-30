@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [53] - 2023-11-30
 ### Changed
 - The Application Error Disclosure rule no longer considers responses that contain ISO control characters (those which are likely to be binary file types).
