@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Passive scan rule: JWT in Browser Storage.
 - Additional input field data returned from the extension.
 
+### Changed
+- Updated the Firefox extension to v0.0.8.
+
 ## [0.6.0] - 2023-11-23
 ### Added
 - Support for passive scanning.
