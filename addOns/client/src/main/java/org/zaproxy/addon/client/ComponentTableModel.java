@@ -34,6 +34,10 @@ public class ComponentTableModel extends AbstractTableModel {
         Constant.messages.getString(
                 ExtensionClientIntegration.PREFIX + ".components.table.header.id"),
         Constant.messages.getString(
+                ExtensionClientIntegration.PREFIX + ".components.table.header.tagType"),
+        Constant.messages.getString(
+                ExtensionClientIntegration.PREFIX + ".components.table.header.form"),
+        Constant.messages.getString(
                 ExtensionClientIntegration.PREFIX + ".components.table.header.href"),
         Constant.messages.getString(
                 ExtensionClientIntegration.PREFIX + ".components.table.header.text")
@@ -95,11 +99,19 @@ public class ComponentTableModel extends AbstractTableModel {
             case 1:
                 return component.getId();
             case 2:
+                return component.getTagType();
+            case 3:
+                int formId = component.getFormId();
+                if (formId >= 0) {
+                    return Integer.toString(formId);
+                }
+                return "";
+            case 4:
                 if (component.isStorageEvent()) {
                     return component.getParentUrl();
                 }
                 return component.getHref();
-            case 3:
+            case 5:
                 return component.getText();
             default:
                 return null;

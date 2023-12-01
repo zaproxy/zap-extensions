@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support for base64 decoding in existing scan rules.
 - Passive scan rule: JWT in Browser Storage.
+- Additional input field data returned from the extension.
 
 ## [0.6.0] - 2023-11-23
 ### Added

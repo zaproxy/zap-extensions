@@ -85,8 +85,8 @@ public class ClientHistoryTableModel extends AbstractTableModel {
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         ReportedObject obj = this.history.get(rowIndex);
-        if (obj instanceof ReportedNode) {
-            ReportedNode node = (ReportedNode) obj;
+        if (obj instanceof ReportedElement) {
+            ReportedElement node = (ReportedElement) obj;
 
             switch (columnIndex) {
                 case 0:

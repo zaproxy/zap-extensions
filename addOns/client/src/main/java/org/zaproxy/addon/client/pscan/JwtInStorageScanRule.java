@@ -28,7 +28,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.client.ClientUtils;
-import org.zaproxy.addon.client.ReportedNode;
+import org.zaproxy.addon.client.ReportedElement;
 import org.zaproxy.addon.client.ReportedObject;
 
 public class JwtInStorageScanRule extends ClientPassiveAbstractScanRule {
@@ -126,9 +126,9 @@ public class JwtInStorageScanRule extends ClientPassiveAbstractScanRule {
         obj.put("tagname", "");
         obj.put("id", "key");
         obj.put("text", "value");
-        alerts.add(getAlertBuilder(new ReportedNode(obj), header, payload, sig).build());
+        alerts.add(getAlertBuilder(new ReportedElement(obj), header, payload, sig).build());
         obj.put("type", ClientUtils.SESSION_STORAGE);
-        alerts.add(getAlertBuilder(new ReportedNode(obj), header, payload, sig).build());
+        alerts.add(getAlertBuilder(new ReportedElement(obj), header, payload, sig).build());
         return alerts;
     }
 }

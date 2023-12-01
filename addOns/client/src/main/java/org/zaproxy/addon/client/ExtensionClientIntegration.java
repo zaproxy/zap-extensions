@@ -415,8 +415,8 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                 // Don't record ZAP API calls
                 return;
             }
-        } else if (obj instanceof ReportedNode) {
-            ReportedNode rn = (ReportedNode) obj;
+        } else if (obj instanceof ReportedElement) {
+            ReportedElement rn = (ReportedElement) obj;
             String url = rn.getUrl();
             if (url != null && isApiUrl(url)) {
                 // Don't record ZAP API calls

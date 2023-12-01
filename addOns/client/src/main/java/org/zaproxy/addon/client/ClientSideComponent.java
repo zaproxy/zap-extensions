@@ -31,16 +31,8 @@ public class ClientSideComponent {
     private String href;
     private String text;
     private String type;
-
-    public ClientSideComponent(
-            String tagName, String id, String parentUrl, String href, String text, String type) {
-        this.tagName = tagName;
-        this.id = id;
-        this.parentUrl = parentUrl;
-        this.href = href;
-        this.text = text;
-        this.type = type;
-    }
+    private String tagType;
+    private int formId = -1;
 
     public ClientSideComponent(JSONObject json) {
         this.tagName = json.getString("tagName");
@@ -52,6 +44,12 @@ public class ClientSideComponent {
         }
         if (json.containsKey("text")) {
             this.text = json.getString("text").trim();
+        }
+        if (json.containsKey("tagType")) {
+            this.tagType = json.getString("tagType").trim();
+        }
+        if (json.containsKey("formId")) {
+            this.formId = json.getInt("formId");
         }
     }
 
@@ -108,6 +106,14 @@ public class ClientSideComponent {
             default:
                 return false;
         }
+    }
+
+    public String getTagType() {
+        return tagType;
+    }
+
+    public int getFormId() {
+        return formId;
     }
 
     @Override
