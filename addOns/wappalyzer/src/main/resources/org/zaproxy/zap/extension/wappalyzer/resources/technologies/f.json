@@ -989,6 +989,16 @@
     "scriptSrc": "flickity(?:/|@)([\\d\\.]+).+flickity(?:\\.pkgd)?(?:\\.min)?\\.js\\;version:\\1",
     "website": "https://flickity.metafizzy.co"
   },
+  "FlipClock.js": {
+    "cats": [
+      25,
+      59
+    ],
+    "description": "FlipClock.js is a JavaScript library, offering a modern twist to displaying time and countdowns on web applications.",
+    "oss": true,
+    "scriptSrc": "flipclock(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://flipclock.readthedocs.io/en/dev-1.0.0/CHANGE%20LOG/"
+  },
   "FlippingBook": {
     "cats": [
       5

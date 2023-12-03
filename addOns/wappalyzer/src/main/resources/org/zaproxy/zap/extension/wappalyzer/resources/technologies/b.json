@@ -1862,6 +1862,16 @@
     "scriptSrc": "/assets/booster-page-speed-optimizer\\.js",
     "website": "https://apps.shopify.com/page-speed-optimizer"
   },
+  "Bootbox.js": {
+    "cats": [
+      59
+    ],
+    "description": "Bootbox.js is a small JavaScript library which allows you to create custom modal dialogs using Bootstrap modals, without having to worry about creating, managing, or removing any of the required DOM elements or JavaScript event handlers.",
+    "icon": "Bootbox.js.png",
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?bootbox(?:\\.min)?\\.js\\;version:\\1",
+    "website": "https://bootboxjs.com/"
+  },
   "Bootic": {
     "cats": [
       6
@@ -2880,6 +2890,15 @@
     "saas": true,
     "scriptSrc": "cdn\\.ibdok\\.ir/",
     "website": "https://bdok.ir"
+  },
+  "bowser": {
+    "cats": [
+      59
+    ],
+    "description": "A small, fast and rich-API browser/platform/engine detector for both browser and node.",
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?bowser(?:\\.min)?(?:[-\\.][\\d\\w]{0,64})?\\.js\\;version:\\1",
+    "website": "https://opencollective.com/bowser"
   },
   "bxSlider": {
     "cats": [

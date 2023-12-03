@@ -1049,6 +1049,15 @@
     "saas": true,
     "website": "https://webflow.com/ecommerce"
   },
+  "Web Font Loader": {
+    "cats": [
+      59
+    ],
+    "description": "WebFont Loader is a versatile JavaScript library that provides enhanced control and flexibility in managing web fonts.",
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?webfontloader(?:\\.min)?(?:[-\\.][\\d\\w]{0,32})?\\.js\\;version:\\1",
+    "website": "https://github.com/typekit/webfontloader"
+  },
   "Webgains": {
     "cats": [
       71
@@ -2022,7 +2031,8 @@
     "description": "WordPress is a free and open-source content management system written in PHP and paired with a MySQL or MariaDB database. Features include a plugin architecture and a template system.",
     "headers": {
       "X-Pingback": "/xmlrpc\\.php$",
-      "link": "rel=\"https://api\\.w\\.org/\""
+      "link": "rel=\"https://api\\.w\\.org/\"",
+      "X-Redirect-By": "WordPress"
     },
     "html": [
       "<link rel=[\"']stylesheet[\"'] [^>]+/wp-(?:content|includes)/",
@@ -2392,6 +2402,15 @@
     "saas": true,
     "scriptSrc": "\\.sistemawbuy\\.com\\.br/",
     "website": "https://www.wbuy.com.br"
+  },
+  "waitForImages": {
+    "cats": [
+      59
+    ],
+    "description": "waitForImages is a lightweight, high-performance JavaScript library that simplifies the handling of image preloading events.",
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/(?:jquery\\.)?)?waitforimages(?:-((?:\\d+\\.)+\\d+)-modded)?(?:\\.min)?\\.js\\;version:\\1\\2",
+    "website": "https://github.com/alexanderdickson/waitForImages"
   },
   "wap.store": {
     "cats": [
