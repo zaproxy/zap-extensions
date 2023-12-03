@@ -2622,6 +2622,16 @@
     "oss": true,
     "website": "https://www.w3.org/Amaya"
   },
+  "Amaze UI": {
+    "cats": [
+      59
+    ],
+    "description": "Amaze UI is a mobile-first JavaScript library designed to simplify front-end development.",
+    "icon": "Amaze UI.png",
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/(?:js\\/)?)?amazeui(?:\\/js\\/jquery)?(?:\\.widgets)?(?:\\.helper)?(?:\\.legacy)?(?:\\.min)?\\.js\\;version:\\1",
+    "website": "https://amazeui.shopxo.net/"
+  },
   "Amazon ALB": {
     "cats": [
       65
@@ -2980,6 +2990,16 @@
     ],
     "saas": true,
     "website": "https://amplience.com"
+  },
+  "Amplify JS": {
+    "cats": [
+      59
+    ],
+    "description": "AmplifyJS is a set of components designed to solve common web application problems with a simplistic API. Amplify's goal is to simplify all forms of data handling by providing a unified API for various data sources.",
+    "icon": "Amplify JS.png",
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?amplify(?:-production)?(?:\\.core)?(?:\\.store)?(?:\\.min)?(?:[-\\.][\\d\\w]{0,40})?\\.js\\;version:\\1",
+    "website": "https://amplifyjs.com/"
   },
   "Amplitude": {
     "cats": [
