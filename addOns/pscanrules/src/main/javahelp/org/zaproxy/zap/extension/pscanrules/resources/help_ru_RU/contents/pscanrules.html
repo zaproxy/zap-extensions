@@ -43,6 +43,7 @@ However at LOW threshold the above issues will still be reported but at a LOW ri
 <h2>Ошибки приложения</h2>
 Проверьте ответы сервера на наличие ответов типа HTTP 500 — Internal Server Error или тех, которые содержат известную строку ошибки.  <br>
 <strong>Note:</strong> Matches made within script blocks or files are against the entire content not only comments.<br>
+Skips responses that contain ISO control characters (those which are likely binary files).<br>
 At HIGH Threshold don’t alert on HTTP 500 (but do for other error patterns). Also, such known error strings are much less likely to be relevant in static pages like JS / CSS so these files are only scanned at LOW threshold.<br>
 For Internal Server Error (HTTP 500) the Alert is set to Low risk and in other case it is set to Medium risk.
 
