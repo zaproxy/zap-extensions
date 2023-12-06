@@ -89,6 +89,7 @@ public class GraphQlFingerprinter {
         fingerprinters.put("tartiflette", this::checkTartifletteEngine);
         fingerprinters.put("directus", this::checkDirectusEngine);
         fingerprinters.put("absinthe", this::checkAbsintheEngine);
+        fingerprinters.put("graphql-dotnet", this::checkGraphqlDotNetEngine);
 
         for (var fingerprinter : fingerprinters.entrySet()) {
             try {
@@ -332,6 +333,11 @@ public class GraphQlFingerprinter {
         }
         sendQuery("");
         return errorContains("The query in the body is empty");
+    }
+
+    private boolean checkGraphqlDotNetEngine() {
+        sendQuery("query @skip {__typename}");
+        return errorContains("Directive 'skip' may not be used on Query.");
     }
 
     private boolean checkGraphQlGoEngine() {

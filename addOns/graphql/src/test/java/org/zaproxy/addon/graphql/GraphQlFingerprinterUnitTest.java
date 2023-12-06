@@ -283,7 +283,10 @@ class GraphQlFingerprinterUnitTest extends TestUtils {
                 arguments(
                         "Absinthe",
                         errorResponse(
-                                "Cannot query field \\\"zaproxy\\\" on type \\\"RootQueryType\\\".")));
+                                "Cannot query field \\\"zaproxy\\\" on type \\\"RootQueryType\\\".")),
+                arguments(
+                        "GraphQL.NET",
+                        errorResponse("Directive 'skip' may not be used on Query.")));
     }
 
     private static String errorResponse(String error) {
