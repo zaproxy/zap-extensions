@@ -93,6 +93,25 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
     private static final Logger LOGGER = LogManager.getLogger(CrossSiteScriptingScanRule.class);
     private int currentParamType;
 
+    private static final char FULL_WIDTH_LESS_THAN_CHAR = '＜';
+    private static final char FULL_WIDTH_GREATER_THAN_CHAR = '＞';
+
+    /**
+     * Mutations can either be where one character can be safely replaced by another or where one
+     * character can be incorrectly converted back to the original
+     */
+    private static final List<List<Mutation>> MUTATIONS =
+            List.of(
+                    List.of(new Mutation('(', '`'), new Mutation(')', '`')),
+                    List.of(
+                            new Mutation('<', FULL_WIDTH_LESS_THAN_CHAR, true),
+                            new Mutation('>', FULL_WIDTH_GREATER_THAN_CHAR, true)),
+                    List.of(
+                            new Mutation('(', '`'),
+                            new Mutation(')', '`'),
+                            new Mutation('<', FULL_WIDTH_LESS_THAN_CHAR, true),
+                            new Mutation('>', FULL_WIDTH_GREATER_THAN_CHAR, true)));
+
     @Override
     public int getId() {
         return 40012;
@@ -180,6 +199,30 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
             boolean findDecoded,
             boolean isNullByteSpecialHandling,
             boolean ignoreSafeParents) {
+        return this.performAttack(
+                msg,
+                param,
+                attack,
+                targetContext,
+                evidence,
+                ignoreFlags,
+                findDecoded,
+                isNullByteSpecialHandling,
+                ignoreSafeParents,
+                false);
+    }
+
+    private List<HtmlContext> performAttack(
+            HttpMessage msg,
+            String param,
+            String attack,
+            HtmlContext targetContext,
+            String evidence,
+            int ignoreFlags,
+            boolean findDecoded,
+            boolean isNullByteSpecialHandling,
+            boolean ignoreSafeParents,
+            boolean mutateAttack) {
         if (isStop()) {
             return null;
         }
@@ -213,16 +256,102 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
             evidence = attack;
         }
         HtmlContextAnalyser hca = new HtmlContextAnalyser(msg2);
+        List<HtmlContext> contexts;
         if (Plugin.AlertThreshold.HIGH.equals(this.getAlertThreshold())) {
             // High level, so check all results are in the expected context
-            return hca.getHtmlContexts(
-                    findDecoded ? getURLDecode(evidence) : evidence,
-                    targetContext,
-                    ignoreFlags,
-                    ignoreSafeParents);
+            contexts =
+                    hca.getHtmlContexts(
+                            findDecoded ? getURLDecode(evidence) : evidence,
+                            targetContext,
+                            ignoreFlags,
+                            ignoreSafeParents);
+        } else {
+            contexts =
+                    hca.getHtmlContexts(
+                            findDecoded ? getURLDecode(evidence) : evidence,
+                            null,
+                            0,
+                            ignoreSafeParents);
         }
-        return hca.getHtmlContexts(
-                findDecoded ? getURLDecode(evidence) : evidence, null, 0, ignoreSafeParents);
+        if (mutateAttack || !contexts.isEmpty()) {
+            return contexts;
+        }
+        return this.mutateAttack(
+                msg2,
+                param,
+                attack,
+                targetContext,
+                evidence,
+                ignoreFlags,
+                findDecoded,
+                isNullByteSpecialHandling,
+                ignoreSafeParents);
+    }
+
+    /**
+     * Checks to see if the payload is reflected in the response with specific characters filtered.
+     * If so it attempts the same attack but with those characters replaced by other ones known to
+     * work instead.
+     */
+    private List<HtmlContext> mutateAttack(
+            HttpMessage msg,
+            String param,
+            String attack,
+            HtmlContext targetContext,
+            String evidence,
+            int ignoreFlags,
+            boolean findDecoded,
+            boolean isNullByteSpecialHandling,
+            boolean ignoreSafeParents) {
+
+        /** Check response for attacks with specific chrs filtered */
+        for (List<Mutation> mList : MUTATIONS) {
+            // check if the attack contains the first of the chrs to be mutated, it doesnt matter
+            // which one
+            if (attack.contains(String.valueOf(mList.get(0).original))) {
+                HtmlContextAnalyser hca = new HtmlContextAnalyser(msg);
+                // Remove all of the chrs to be mutated
+                String filteredEvidence = attack;
+                for (Mutation mutation : mList) {
+                    filteredEvidence =
+                            filteredEvidence.replace(String.valueOf(mutation.original), "");
+                }
+
+                List<HtmlContext> contexts =
+                        hca.getHtmlContexts(
+                                findDecoded ? getURLDecode(filteredEvidence) : filteredEvidence,
+                                targetContext,
+                                ignoreFlags,
+                                ignoreSafeParents);
+                if (!contexts.isEmpty()) {
+                    // Try again with new attack
+                    String mutatedAttack = attack;
+                    String mutatedEvidence = attack;
+                    for (Mutation mutation : mList) {
+                        mutatedAttack =
+                                mutatedAttack.replace(
+                                        mutation.getOriginal(), mutation.getMutation());
+                        if (!mutation.isCheckOriginal()) {
+                            mutatedEvidence =
+                                    mutatedEvidence.replace(
+                                            mutation.getOriginal(), mutation.getMutation());
+                        }
+                    }
+                    return this.performAttack(
+                            msg,
+                            param,
+                            mutatedAttack,
+                            targetContext,
+                            mutatedEvidence,
+                            ignoreFlags,
+                            findDecoded,
+                            isNullByteSpecialHandling,
+                            ignoreSafeParents,
+                            true);
+                }
+            }
+        }
+        return List.of();
     }
 
     private void raiseAlert(int confidence, String param, HtmlContext ctx, String otherInfo) {
@@ -886,5 +1015,33 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin {
     @Override
     public int getWascId() {
         return 8;
+    }
+
+    private static class Mutation {
+        private char original;
+        private char mutation;
+        private boolean checkOriginal;
+
+        public Mutation(char original, char mutation) {
+            this(original, mutation, false);
+        }
+
+        public Mutation(char original, char mutation, boolean checkOriginal) {
+            this.original = original;
+            this.mutation = mutation;
+            this.checkOriginal = checkOriginal;
+        }
+
+        public char getOriginal() {
+            return original;
+        }
+
+        public char getMutation() {
+            return mutation;
+        }
+
+        public boolean isCheckOriginal() {
+            return checkOriginal;
+        }
     }
 }
