@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
 import java.net.SocketException;
-import java.net.SocketTimeoutException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -276,20 +275,16 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
                             && countTimeBasedRequests < doTimeMaxRequests;
                     timeBasedSQLindex++) {
                 countTimeBasedRequests++;
-                int index = timeBasedSQLindex;
                 AtomicReference<HttpMessage> message = new AtomicReference<>();
                 String payloadValue =
-                        SQL_POSTGRES_TIME_REPLACEMENTS[index]
-                                .replace(ORIG_VALUE_TOKEN, paramValue)
-                                .replace(SLEEP_TOKEN, String.valueOf(sleepInSeconds));
+                        SQL_POSTGRES_TIME_REPLACEMENTS[timeBasedSQLindex].replace(
+                                ORIG_VALUE_TOKEN, paramValue);
                 TimingUtils.RequestSender requestSender =
                         x -> {
                             HttpMessage timedMsg = getNewMsg();
                             message.set(timedMsg);
                             String finalPayload =
-                                    SQL_POSTGRES_TIME_REPLACEMENTS[index]
-                                            .replace(ORIG_VALUE_TOKEN, paramValue)
-                                            .replace(SLEEP_TOKEN, String.valueOf(x));
+                                    payloadValue.replace(SLEEP_TOKEN, String.valueOf(x));
                             setParameter(timedMsg, paramName, finalPayload);
                             // send the request and retrieve the response
                             sendAndReceive(timedMsg, false); // do not follow redirects
@@ -307,7 +302,7 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
                                         TIME_CORRELATION_ERROR_RANGE,
                                         TIME_SLOPE_ERROR_RANGE);
                     } catch (SocketException ex) {
-                        LOGGER.info(
+                        LOGGER.debug(
                                 "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
                                 ex.getClass().getName(),
                                 ex.getMessage(),
@@ -319,17 +314,18 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
                         // We Found IT!
                         String extraInfo =
                                 Constant.messages.getString(
-                                        "astraScripts.ascanrules.sqlinjection.alert.timebased.extrainfo",
+                                        "ascanrules.sqlinjection.alert.timebased.extrainfo",
                                         payloadValue,
                                         "",
                                         paramValue);
                         String attack =
                                 Constant.messages.getString(
-                                        "astraScripts.ascanrules.sqlinjection.alert.booleanbased.attack",
+                                        "ascanrules.sqlinjection.alert.booleanbased.attack",
                                         paramName,
-                                        payloadValue);
-                        LOGGER.info(
-                                "[Time Based Postrgres SQL Injection -  Found] on parameter [{}] with value [{}]",
+                                        payloadValue.replace(
+                                                SLEEP_TOKEN, String.valueOf(sleepInSeconds)));
+                        LOGGER.debug(
+                                "[Time Based Postrgres SQL Injection - Found] on parameter [{}] with value [{}]",
                                 paramName,
                                 paramValue);
 
@@ -343,9 +339,6 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
                                 .setOtherInfo(extraInfo)
                                 .raise();
                     }
-                } catch (SocketTimeoutException ex) {
-                    LOGGER.info(
-                            "Caught in exception when happned due to socket timeout, trying with the lowest interval");
                 } catch (IOException ex) {
                     LOGGER.warn(
                             "Time based postgres SQL Injection vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
