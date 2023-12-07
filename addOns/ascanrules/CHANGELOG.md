@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Use high and low delays for linear regression time-based tests to fix false positives from delays that were smaller than normal variance in application response times, which affected Command Injection scan rule.
+- Improved SQL Injection - PostgreSQL (Time Based) scan rule by using time-based linear regression tests.
 
 ## [58] - 2023-10-12
 ### Changed
