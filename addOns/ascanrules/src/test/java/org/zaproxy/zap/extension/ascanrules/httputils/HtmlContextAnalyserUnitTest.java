@@ -194,7 +194,21 @@ public class HtmlContextAnalyserUnitTest extends TestUtils {
     }
 
     @Test
-    void shouldParseTheCorrectSurroundingQuotesForTagAttributes() throws Exception {
+    void shouldParseWithNoQuotes() throws Exception {
+        String catcher = "hg4378as";
+        msg = new HttpMessage();
+        msg.setRequestHeader("GET /index.html HTTP/1.1");
+        msg.setResponseBody("<html> <body> <span id=" + catcher + ">hello</span> </body> </html>");
+        HtmlContextAnalyser analyser = new HtmlContextAnalyser(msg);
+        List<HtmlContext> contexts = analyser.getHtmlContexts(catcher, null, 0);
+        assertThat(contexts.size(), is(equalTo(1)));
+        HtmlContext ctx = contexts.get(0);
+        assertThat(ctx.getParentTag(), is(equalTo("span")));
+        assertThat(ctx.getSurroundingQuote(), is(equalTo("")));
+    }
+
+    @Test
+    void shouldParseTheCorrectSurroundingQuotesForTagAttributesWithMixedQuotes() throws Exception {
         String catcher = "hg4378as";
         msg = new HttpMessage();
         msg.setRequestHeader("GET /index.html HTTP/1.1");
