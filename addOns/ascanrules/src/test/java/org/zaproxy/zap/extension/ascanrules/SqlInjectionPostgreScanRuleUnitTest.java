@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.ascanrules;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
@@ -75,7 +74,7 @@ class SqlInjectionPostgreScanRuleUnitTest extends ActiveScannerTest<SqlInjection
         Pattern sleepPattern =
                 Pattern.compile(
                         "^case\\s+when\\s+cast\\(pg_sleep\\((\\d+)(?:\\.\\d+)?\\)\\s+as\\s+varchar\\)\\s+>\\s+''\\s+then\\s+0\\s+else\\s+1\\s+end$");
-        Set<String> payloadSet = new HashSet<>();
+        Set<String> payloadSent = new HashSet<>();
 
         this.nano.addHandler(
                 new NanoServerHandler(test) {
@@ -88,7 +87,7 @@ class SqlInjectionPostgreScanRuleUnitTest extends ActiveScannerTest<SqlInjection
                             return newFixedLengthResponse(response);
                         }
                         if (name.contains("pg_sleep(")) {
-                            payloadSet.add(name);
+                            payloadSent.add(name);
                         }
                         Matcher match = sleepPattern.matcher(name);
                         if (!match.find()) {
@@ -113,7 +112,7 @@ class SqlInjectionPostgreScanRuleUnitTest extends ActiveScannerTest<SqlInjection
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
-        assertThat(payloadSet, hasSize(greaterThanOrEqualTo(6)));
+        assertThat(payloadSent, hasSize(2));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }

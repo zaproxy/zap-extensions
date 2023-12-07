@@ -282,7 +282,7 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
                 TimingUtils.RequestSender requestSender =
                         x -> {
                             HttpMessage timedMsg = getNewMsg();
-                            message.set(timedMsg);
+                            message.compareAndSet(null, timedMsg);
                             String finalPayload =
                                     payloadValue.replace(SLEEP_TOKEN, String.valueOf(x));
                             setParameter(timedMsg, paramName, finalPayload);
@@ -311,19 +311,21 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
                     }
 
                     if (isInjectable) {
+                        String finalPayloadValue =
+                                payloadValue.replace(SLEEP_TOKEN, String.valueOf(sleepInSeconds));
                         // We Found IT!
                         String extraInfo =
                                 Constant.messages.getString(
                                         "ascanrules.sqlinjection.alert.timebased.extrainfo",
-                                        payloadValue,
-                                        "",
-                                        paramValue);
+                                        finalPayloadValue,
+                                        message.get().getTimeElapsedMillis(),
+                                        paramValue,
+                                        getBaseMsg().getTimeElapsedMillis());
                         String attack =
                                 Constant.messages.getString(
                                         "ascanrules.sqlinjection.alert.booleanbased.attack",
                                         paramName,
-                                        payloadValue.replace(
-                                                SLEEP_TOKEN, String.valueOf(sleepInSeconds)));
+                                        finalPayloadValue);
                         LOGGER.debug(
                                 "[Time Based Postrgres SQL Injection - Found] on parameter [{}] with value [{}]",
                                 paramName,
@@ -338,6 +340,7 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
                                 .setMessage(message.get())
                                 .setOtherInfo(extraInfo)
                                 .raise();
+                        return;
                     }
                 } catch (IOException ex) {
                     LOGGER.warn(
