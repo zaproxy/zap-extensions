@@ -192,4 +192,61 @@ public class HtmlContextAnalyserUnitTest extends TestUtils {
         assertThat(tagMap.get("span").size(), is(equalTo(0)));
         assertThat(tagMap.get("a").size(), is(equalTo(0)));
     }
+
+    @Test
+    void shouldParseWithNoQuotes() throws Exception {
+        String catcher = "hg4378as";
+        msg = new HttpMessage();
+        msg.setRequestHeader("GET /index.html HTTP/1.1");
+        msg.setResponseBody("<html> <body> <span id=" + catcher + ">hello</span> </body> </html>");
+        HtmlContextAnalyser analyser = new HtmlContextAnalyser(msg);
+        List<HtmlContext> contexts = analyser.getHtmlContexts(catcher, null, 0);
+        assertThat(contexts.size(), is(equalTo(1)));
+        HtmlContext ctx = contexts.get(0);
+        assertThat(ctx.getParentTag(), is(equalTo("span")));
+        assertThat(ctx.getSurroundingQuote(), is(equalTo("")));
+    }
+
+    @Test
+    void shouldParseTheCorrectSurroundingQuotesForTagAttributesWithMixedQuotes() throws Exception {
+        String catcher = "hg4378as";
+        msg = new HttpMessage();
+        msg.setRequestHeader("GET /index.html HTTP/1.1");
+        msg.setResponseBody(
+                "<html> <body> <span id='{\"entity\": \""
+                        + catcher
+                        + "\"}'>hello</span> <a></a> </body> </html>");
+        HtmlContextAnalyser analyser = new HtmlContextAnalyser(msg);
+        List<HtmlContext> contexts = analyser.getHtmlContexts(catcher, null, 0);
+        assertThat(contexts.size(), is(equalTo(1)));
+        HtmlContext ctx = contexts.get(0);
+        assertThat(ctx.getParentTag(), is(equalTo("span")));
+        assertThat(ctx.getSurroundingQuote(), is(equalTo("\'")));
+    }
+
+    @Test
+    void shouldParseTheCorrectAttribute() throws Exception {
+        String catcher = "hg4378as";
+        msg = new HttpMessage();
+        msg.setRequestHeader("GET /index.html HTTP/1.1");
+        msg.setResponseBody(
+                "<html> <body> <span id='{\"entity\": \""
+                        + catcher
+                        + "\"}' name=\""
+                        + catcher
+                        + "\">hello</span> <a></a> </body> </html>");
+        HtmlContextAnalyser analyser = new HtmlContextAnalyser(msg);
+        List<HtmlContext> contexts = analyser.getHtmlContexts(catcher, null, 0);
+        assertThat(contexts.size(), is(equalTo(2)));
+
+        HtmlContext ctx1 = contexts.get(0);
+        assertThat(ctx1.getParentTag(), is(equalTo("span")));
+        assertThat(ctx1.getTagAttribute(), is(equalTo("id")));
+        assertThat(ctx1.getSurroundingQuote(), is(equalTo("'")));
+
+        HtmlContext ctx2 = contexts.get(1);
+        assertThat(ctx2.getParentTag(), is(equalTo("span")));
+        assertThat(ctx2.getTagAttribute(), is(equalTo("name")));
+        assertThat(ctx2.getSurroundingQuote(), is(equalTo("\"")));
+    }
 }
