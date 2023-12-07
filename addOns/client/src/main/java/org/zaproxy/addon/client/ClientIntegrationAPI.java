@@ -79,7 +79,7 @@ public class ClientIntegrationAPI extends ApiImplementor {
     }
 
     private void handleReportObject(JSONObject json) {
-        ReportedNode rnode = new ReportedNode(json);
+        ReportedElement rnode = new ReportedElement(json);
         if (!"A".equals(rnode.getNodeName())) {
             // Dont add links - they flood the table
             this.extension.addReportedObject(rnode);

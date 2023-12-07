@@ -446,6 +446,16 @@
     "scriptSrc": "acc\\.magixite\\.com/",
     "website": "https://acc.magixite.com"
   },
+  "Magnific Popup": {
+    "cats": [
+      59
+    ],
+    "description": "Magnific Popup is a responsive lightbox & dialog script with focus on performance and providing best experience for user with any device.",
+    "icon": "Magnific Popup.png",
+    "oss": true,
+    "scriptSrc": "magnific-popup(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://dimsemenov.com/plugins/magnific-popup/"
+  },
   "MailChimp": {
     "cats": [
       32,
@@ -512,6 +522,16 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/mailchimp-for-wp/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
     "website": "https://www.mc4wp.com"
+  },
+  "Mailcheck": {
+    "cats": [
+      59
+    ],
+    "description": "Mailcheck is a JavaScript library designed to address the issue of misspelled email addresses during user input.",
+    "icon": "Mailcheck.png",
+    "oss": true,
+    "scriptSrc": "mailcheck(?:\\.min)?\\.js(?:\\?v(?:er)?=(\\d+\\.\\d+\\.\\d+))?\\;version:\\1",
+    "website": "https://github.com/mailcheck/mailcheck"
   },
   "MailerLite": {
     "cats": [

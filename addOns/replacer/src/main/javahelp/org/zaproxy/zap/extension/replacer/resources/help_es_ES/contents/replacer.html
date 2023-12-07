@@ -36,6 +36,9 @@ If the header is not present and the replacement text is not empty then the head
 In this case the 'Match String' will be treated as a string or regex expression.
 If it is present in the request header then it will be replaced by the replacement text.
 
+<h5>Host Header</h5>
+Both the Request Header and Request Header String match types can change/remove the Host header, while sending the message to the original request-target.
+
 <h4>Request Body String</h4>
 In this case the 'Match String' will be treated as a string or regex expression.
 If it is present in the request body then it will be replaced by the replacement text.

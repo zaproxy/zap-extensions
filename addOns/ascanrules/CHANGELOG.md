@@ -4,11 +4,15 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Support for mutations in reflected XSS rule.
+
 ### Changed
 - Depend on newer version of Common Library add-on.
 
 ### Fixed
 - Use high and low delays for linear regression time-based tests to fix false positives from delays that were smaller than normal variance in application response times, which affected Command Injection scan rule.
+- Improved SQL Injection - PostgreSQL (Time Based) scan rule by using time-based linear regression tests.
 - Catch correct context while analysing attributes instead of the last attribute where eyecatcher was reflected.
 
 ## [58] - 2023-10-12

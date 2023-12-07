@@ -449,6 +449,17 @@
     ],
     "website": "https://pantheon.io/"
   },
+  "Paper.js": {
+    "cats": [
+      25,
+      59
+    ],
+    "description": "Paper.js is an open-source, vector graphics scripting framework, which offers a powerful Scene Graph and extensive functionality to create and manipulate graphic items using layers, gradients, blending, and other advanced features",
+    "icon": "Paper.js.png",
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?paper(?:-full)?(?:-core)?(?:\\.min)?(?:-[\\d\\w]{0,64})?\\.js\\;version:\\1",
+    "website": "http://paperjs.org/"
+  },
   "Paradox": {
     "cats": [
       101
@@ -3663,6 +3674,20 @@
     ],
     "saas": false,
     "website": "https://www.pythonanywhere.com"
+  },
+  "p5.js": {
+    "cats": [
+      59
+    ],
+    "description": "p5.js is a JavaScript library for creative coding, with a focus on making coding accessible and inclusive for artists, designers, educators, beginners, and anyone else.",
+    "icon": "p5.js.svg",
+    "js": {
+      "p5.Camera": "",
+      "p5.ColorConversion": ""
+    },
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/(?:addons\\/)?)?p5(?:\\.sound)?(?:\\.dom)?(?:\\.min)?\\.js\\;version:\\1",
+    "website": "https://p5js.org"
   },
   "papaya CMS": {
     "cats": [

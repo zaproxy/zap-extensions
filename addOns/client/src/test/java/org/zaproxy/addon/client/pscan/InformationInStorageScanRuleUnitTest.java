@@ -19,26 +19,30 @@
  */
 package org.zaproxy.addon.client.pscan;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import java.util.Base64;
 import java.util.List;
 import net.sf.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.addon.client.ReportedEvent;
 import org.zaproxy.zap.testutils.TestUtils;
 
 /** Unit test for {@link InformationInStorageScanRule}. */
-class InformationInStorageUnitTest extends TestUtils {
+class InformationInStorageScanRuleUnitTest extends TestUtils {
 
     private InformationInStorageScanRule rule;
     private ClientPassiveScanHelper helper;
@@ -100,7 +104,7 @@ class InformationInStorageUnitTest extends TestUtils {
     @ValueSource(strings = {"localStorage", "sessionStorage"})
     void shouldRaiseAlertsForStorageEvents(String type) {
         // Given
-        ReportedEvent event = getReportedEvent(type);
+        ReportedEvent event = getReportedEvent(type, "test");
         // When
         rule.scanReportedObject(event, helper);
         // Then
@@ -108,18 +112,40 @@ class InformationInStorageUnitTest extends TestUtils {
     }
 
     @ParameterizedTest
+    @ValueSource(strings = {"localStorage", "sessionStorage"})
+    void shouldRaiseAlertsWithDecodedValueForStorageEvents(String type) {
+        // Given
+        String value = "this_is_a_test_string";
+        ReportedEvent event =
+                getReportedEvent(type, Base64.getEncoder().encodeToString(value.getBytes()));
+        ArgumentCaptor<Alert> captor = ArgumentCaptor.forClass(Alert.class);
+        // When
+        rule.scanReportedObject(event, helper);
+        // Then
+        verify(helper).raiseAlert(captor.capture(), any());
+        Alert alert = captor.getValue();
+        assertThat(alert, is(notNullValue()));
+        assertThat(alert.getOtherInfo(), containsString(value));
+    }
+
+    @ParameterizedTest
     @ValueSource(strings = {"cookies", "domMutation", ""})
     void shouldNotRaiseAlertsForNonStorageEvents(String type) {
         // Given
-        ReportedEvent event = getReportedEvent(type);
+        ReportedEvent event = getReportedEvent(type, "any");
         // When
         rule.scanReportedObject(event, helper);
         // Then
         verify(helper, times(0)).raiseAlert(any(), any());
     }
 
-    private static ReportedEvent getReportedEvent(String eventName) {
+    private static ReportedEvent getReportedEvent(String eventName, String value) {
         return new ReportedEvent(
-                JSONObject.fromObject("{eventName='" + eventName + "', timestamp=1, count=0}"));
+                JSONObject.fromObject(
+                        "{eventName='"
+                                + eventName
+                                + "', id='key', text='"
+                                + value
+                                + "', timestamp=1, count=0}"));
     }
 }

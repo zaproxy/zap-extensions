@@ -22,11 +22,16 @@ package org.zaproxy.zap.extension.ascanrules;
 import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -66,22 +71,33 @@ class SqlInjectionPostgreScanRuleUnitTest extends ActiveScannerTest<SqlInjection
     @Test
     void shouldAlertIfSleepTimesGetLonger() throws Exception {
         String test = "/shouldReportSqlTimingIssue/";
+        Pattern sleepPattern =
+                Pattern.compile(
+                        "^case\\s+when\\s+cast\\(pg_sleep\\((\\d+)(?:\\.\\d+)?\\)\\s+as\\s+varchar\\)\\s+>\\s+''\\s+then\\s+0\\s+else\\s+1\\s+end$");
+        Set<String> payloadSent = new HashSet<>();
 
         this.nano.addHandler(
                 new NanoServerHandler(test) {
-                    private int time = 100;
 
                     @Override
                     protected Response serve(IHTTPSession session) {
                         String name = getFirstParamValue(session, "name");
                         String response = "<html><body></body></html>";
-                        if (name != null && name.contains("pg_sleep(")) {
-                            try {
-                                Thread.sleep(time);
-                            } catch (InterruptedException e) {
-                                // Ignore
-                            }
-                            time += 1000;
+                        if (name == null) {
+                            return newFixedLengthResponse(response);
+                        }
+                        if (name.contains("pg_sleep(")) {
+                            payloadSent.add(name);
+                        }
+                        Matcher match = sleepPattern.matcher(name);
+                        if (!match.find()) {
+                            return newFixedLengthResponse(name);
+                        }
+                        try {
+                            int sleepInput = Integer.parseInt(match.group(1));
+                            Thread.sleep(sleepInput * 1000L);
+                        } catch (InterruptedException e) {
+                            // Ignore
                         }
                         return newFixedLengthResponse(response);
                     }
@@ -90,16 +106,13 @@ class SqlInjectionPostgreScanRuleUnitTest extends ActiveScannerTest<SqlInjection
         HttpMessage msg = this.getHttpMessage(test + "?name=test");
 
         this.rule.init(msg, this.parent);
-        this.rule.setSleepInSeconds(1);
+        this.rule.setSleepInSeconds(5);
 
         this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
-        assertThat(
-                alertsRaised.get(0).getAttack(),
-                equalTo(
-                        "field: [name], value [case when cast(pg_sleep(1) as varchar) > '' then 0 else 1 end -- ]"));
+        assertThat(payloadSent, hasSize(2));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
@@ -128,7 +141,7 @@ class SqlInjectionPostgreScanRuleUnitTest extends ActiveScannerTest<SqlInjection
         HttpMessage msg = this.getHttpMessage(test + "?name=test");
 
         this.rule.init(msg, this.parent);
-        this.rule.setSleepInSeconds(1);
+        this.rule.setSleepInSeconds(5);
 
         this.rule.scan();
 

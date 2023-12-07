@@ -19,9 +19,11 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import java.io.IOException;
 import java.net.SocketException;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,6 +33,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.timing.TimingUtils;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
@@ -60,13 +63,18 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
 
     private int doTimeMaxRequests = 0;
 
-    private int sleepInSeconds = 15;
+    private int sleepInSeconds;
 
     /** Postgresql one-line comment */
     public static final String SQL_ONE_LINE_COMMENT = " -- ";
 
     private static final String ORIG_VALUE_TOKEN = "<<<<ORIGINALVALUE>>>>";
     private static final String SLEEP_TOKEN = "<<<<SLEEP>>>>";
+    private static final int DEFAULT_TIME_SLEEP_SEC = 5;
+    private static final int BLIND_REQUEST_LIMIT = 4;
+    // error range allowable for statistical time-based blind attacks (0-1.0)
+    private static final double TIME_CORRELATION_ERROR_RANGE = 0.15;
+    private static final double TIME_SLOPE_ERROR_RANGE = 0.30;
 
     /**
      * create a map of SQL related error message fragments, and map them back to the RDBMS that they
@@ -240,8 +248,9 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
         }
         // Read the sleep value from the configs
         try {
-            this.sleepInSeconds =
-                    this.getConfig().getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, 15);
+            sleepInSeconds =
+                    this.getConfig()
+                            .getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, DEFAULT_TIME_SLEEP_SEC);
         } catch (ConversionException e) {
             LOGGER.debug(
                     "Invalid value for 'rules.common.sleep': {}",
@@ -259,129 +268,88 @@ public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
         try {
             // Timing Baseline check: we need to get the time that it took the original query, to
             // know if the time based check is working correctly..
-            HttpMessage msgTimeBaseline = getNewMsg();
-            try {
-                sendAndReceive(msgTimeBaseline, false); // do not follow redirects
-            } catch (java.net.SocketTimeoutException e) {
-                // to be expected occasionally, if the base query was one that contains some
-                // parameters exploiting time based SQL injection?
-                LOGGER.debug(
-                        "The Base Time Check timed out on [{}] URL [{}]",
-                        msgTimeBaseline.getRequestHeader().getMethod(),
-                        msgTimeBaseline.getRequestHeader().getURI());
-            } catch (SocketException ex) {
-                LOGGER.debug(
-                        "Caught {} {} when accessing: {}",
-                        ex.getClass().getName(),
-                        ex.getMessage(),
-                        msgTimeBaseline.getRequestHeader().getURI());
-                return; // No need to keep going
-            }
-            long originalTimeUsed = msgTimeBaseline.getTimeElapsedMillis();
-            // end of timing baseline check
-
             int countTimeBasedRequests = 0;
-
-            LOGGER.debug(
-                    "Scanning URL [{}] [{}], field [{}] with original value [{}] for SQL Injection",
-                    getBaseMsg().getRequestHeader().getMethod(),
-                    getBaseMsg().getRequestHeader().getURI(),
-                    paramName,
-                    paramValue);
-
-            // POSTGRES specific time based SQL injection checks
             for (int timeBasedSQLindex = 0;
                     timeBasedSQLindex < SQL_POSTGRES_TIME_REPLACEMENTS.length
                             && doTimeBased
                             && countTimeBasedRequests < doTimeMaxRequests;
                     timeBasedSQLindex++) {
-                HttpMessage msgAttack = getNewMsg();
-                String newTimeBasedInjectionValue =
-                        SQL_POSTGRES_TIME_REPLACEMENTS[timeBasedSQLindex]
-                                .replace(ORIG_VALUE_TOKEN, paramValue)
-                                .replace(SLEEP_TOKEN, Integer.toString(sleepInSeconds));
-
-                setParameter(msgAttack, paramName, newTimeBasedInjectionValue);
-
-                // send it.
+                countTimeBasedRequests++;
+                AtomicReference<HttpMessage> message = new AtomicReference<>();
+                String payloadValue =
+                        SQL_POSTGRES_TIME_REPLACEMENTS[timeBasedSQLindex].replace(
+                                ORIG_VALUE_TOKEN, paramValue);
+                TimingUtils.RequestSender requestSender =
+                        x -> {
+                            HttpMessage timedMsg = getNewMsg();
+                            message.compareAndSet(null, timedMsg);
+                            String finalPayload =
+                                    payloadValue.replace(SLEEP_TOKEN, String.valueOf(x));
+                            setParameter(timedMsg, paramName, finalPayload);
+                            // send the request and retrieve the response
+                            sendAndReceive(timedMsg, false); // do not follow redirects
+                            return timedMsg.getTimeElapsedMillis() / 1000.0;
+                        };
+                boolean isInjectable;
                 try {
-                    sendAndReceive(msgAttack, false); // do not follow redirects
-                    countTimeBasedRequests++;
-                } catch (java.net.SocketTimeoutException e) {
-                    // this is to be expected, if we start sending slow queries to the database.
-                    // ignore it in this case.. and just get the time.
-                    LOGGER.debug(
-                            "The time check query timed out on [{}] URL [{}] on field: [{}]",
-                            msgTimeBaseline.getRequestHeader().getMethod(),
-                            msgTimeBaseline.getRequestHeader().getURI(),
-                            paramName);
-                } catch (SocketException ex) {
-                    LOGGER.debug(
-                            "Caught {} {} when accessing: {}",
-                            ex.getClass().getName(),
-                            ex.getMessage(),
-                            msgTimeBaseline.getRequestHeader().getURI());
-                    return; // No need to keep going
-                }
-                long modifiedTimeUsed = msgAttack.getTimeElapsedMillis();
-
-                LOGGER.debug(
-                        "Time Based SQL Injection test: [{}] on field: [{}] with value [{}] took {}ms, where the original took {}ms",
-                        newTimeBasedInjectionValue,
-                        paramName,
-                        newTimeBasedInjectionValue,
-                        modifiedTimeUsed,
-                        originalTimeUsed);
-
-                if (modifiedTimeUsed >= (originalTimeUsed + (sleepInSeconds * 1000))) {
-                    // takes more than 15 (by default) extra seconds => likely time based SQL
-                    // injection
-
-                    // But first double check
-                    HttpMessage msgc = getNewMsg();
                     try {
-                        sendAndReceive(msgc, false); // do not follow redirects
-                    } catch (Exception e) {
-                        // Ignore all exceptions
+                        // use TimingUtils to detect a response to sleep payloads
+                        isInjectable =
+                                TimingUtils.checkTimingDependence(
+                                        BLIND_REQUEST_LIMIT,
+                                        sleepInSeconds,
+                                        requestSender,
+                                        TIME_CORRELATION_ERROR_RANGE,
+                                        TIME_SLOPE_ERROR_RANGE);
+                    } catch (SocketException ex) {
+                        LOGGER.debug(
+                                "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
+                                ex.getClass().getName(),
+                                ex.getMessage(),
+                                message.get().getRequestHeader().getURI());
+                        continue; // Something went wrong, move to next blind iteration
                     }
-                    long checkTimeUsed = msgc.getTimeElapsedMillis();
-                    if (checkTimeUsed >= (originalTimeUsed + (this.sleepInSeconds * 1000) - 200)) {
-                        // Looks like the server is overloaded, very unlikely this is a real issue
-                        continue;
+
+                    if (isInjectable) {
+                        String finalPayloadValue =
+                                payloadValue.replace(SLEEP_TOKEN, String.valueOf(sleepInSeconds));
+                        // We Found IT!
+                        String extraInfo =
+                                Constant.messages.getString(
+                                        "ascanrules.sqlinjection.alert.timebased.extrainfo",
+                                        finalPayloadValue,
+                                        message.get().getTimeElapsedMillis(),
+                                        paramValue,
+                                        getBaseMsg().getTimeElapsedMillis());
+                        String attack =
+                                Constant.messages.getString(
+                                        "ascanrules.sqlinjection.alert.booleanbased.attack",
+                                        paramName,
+                                        finalPayloadValue);
+                        LOGGER.debug(
+                                "[Time Based Postrgres SQL Injection - Found] on parameter [{}] with value [{}]",
+                                paramName,
+                                paramValue);
+
+                        newAlert()
+                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                                .setName(getName() + " - Time Based")
+                                .setUri(getBaseMsg().getRequestHeader().getURI().toString())
+                                .setParam(paramName)
+                                .setAttack(attack)
+                                .setMessage(message.get())
+                                .setOtherInfo(extraInfo)
+                                .raise();
+                        return;
                     }
-
-                    String extraInfo =
-                            Constant.messages.getString(
-                                    "ascanrules.sqlinjection.alert.timebased.extrainfo",
-                                    newTimeBasedInjectionValue,
-                                    modifiedTimeUsed,
-                                    paramValue,
-                                    originalTimeUsed);
-                    String attack =
-                            Constant.messages.getString(
-                                    "ascanrules.sqlinjection.alert.booleanbased.attack",
-                                    paramName,
-                                    newTimeBasedInjectionValue);
-
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setName(getName() + " - Time Based")
-                            .setUri(getBaseMsg().getRequestHeader().getURI().toString())
-                            .setParam(paramName)
-                            .setAttack(attack)
-                            .setOtherInfo(extraInfo)
-                            .setMessage(msgAttack)
-                            .raise();
-
-                    LOGGER.debug(
-                            "A likely Time Based SQL Injection Vulnerability has been found with [{}] URL [{}] on field: [{}]",
-                            msgAttack.getRequestHeader().getMethod(),
-                            msgAttack.getRequestHeader().getURI(),
-                            paramName);
-                    return;
-                } // query took longer than the amount of time we attempted to retard it by
-            } // for each time based SQL index
-            // end of check for time based SQL Injection
+                } catch (IOException ex) {
+                    LOGGER.warn(
+                            "Time based postgres SQL Injection vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
+                            paramName,
+                            paramValue,
+                            ex);
+                }
+            }
 
         } catch (Exception e) {
             // Do not try to internationalise this.. we need an error message in any event..

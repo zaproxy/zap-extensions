@@ -2184,6 +2184,134 @@ class CrossSiteScriptingScanRuleUnitTest extends ActiveScannerTest<CrossSiteScri
         assertThat(alertsRaised.size(), equalTo(0));
     }
 
+    @Test
+    void shouldReportXssInParagraphFilteredBrackets() throws NullPointerException, IOException {
+        // Given
+        String test = "/shouldReportXssInParagraphFilteredBrackets/";
+        String expectedAttack = "</p><scrIpt>alert`1`;</scRipt><p>";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response;
+                        if (name != null) {
+                            // Strip out <>
+                            name = name.replaceAll("\\(", "").replaceAll("\\)", "");
+                            response =
+                                    getHtml(
+                                            "InputInParagraph.html",
+                                            new String[][] {{"name", name}});
+                        } else {
+                            response = getHtml("NoInput.html");
+                        }
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+        this.rule.init(msg, this.parent);
+        // When
+        this.rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(alertsRaised.get(0).getAttack(), equalTo(expectedAttack));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo(expectedAttack));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    void shouldReportXssInParagraphFilteredGtLt() throws NullPointerException, IOException {
+        String test = "/shouldReportXssInParagraphFilteredGtLt/";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response;
+                        if (name != null) {
+                            // Strip out <> but 'correct' full width gt/lt chrs
+                            name =
+                                    name.replaceAll("<", "")
+                                            .replaceAll("＜", "<")
+                                            .replaceAll(">", "")
+                                            .replaceAll("＞", ">");
+                            response =
+                                    getHtml(
+                                            "InputInParagraph.html",
+                                            new String[][] {{"name", name}});
+                        } else {
+                            response = getHtml("NoInput.html");
+                        }
+                        return newFixedLengthResponse(response);
+                    }
+                });
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+        this.rule.init(msg, this.parent);
+
+        this.rule.scan();
+
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(
+                alertsRaised.get(0).getEvidence(),
+                equalTo("</p>" + CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT + "<p>"));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(
+                alertsRaised.get(0).getAttack(),
+                equalTo("</p>" + CrossSiteScriptingScanRule.GENERIC_SCRIPT_ALERT + "<p>"));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
+    @Test
+    void shouldReportXssInParagraphFilteredBracketsGtLt() throws NullPointerException, IOException {
+        // Given
+        String test = "/shouldReportXssInParagraphFilteredBrackets/";
+        String expectedAttack = "</p><scrIpt>alert`1`;</scRipt><p>";
+
+        this.nano.addHandler(
+                new NanoServerHandler(test) {
+                    @Override
+                    protected Response serve(IHTTPSession session) {
+                        String name = getFirstParamValue(session, "name");
+                        String response;
+                        if (name != null) {
+                            // Strip out ()<> but 'correct' full width gt/lt chrs
+                            name =
+                                    name.replaceAll("\\(", "")
+                                            .replaceAll("\\)", "")
+                                            .replaceAll("<", "")
+                                            .replaceAll("＜", "<")
+                                            .replaceAll(">", "")
+                                            .replaceAll("＞", ">");
+                            response =
+                                    getHtml(
+                                            "InputInParagraph.html",
+                                            new String[][] {{"name", name}});
+                        } else {
+                            response = getHtml("NoInput.html");
+                        }
+                        return newFixedLengthResponse(response);
+                    }
+                });
+
+        HttpMessage msg = this.getHttpMessage(test + "?name=test");
+        this.rule.init(msg, this.parent);
+        // When
+        this.rule.scan();
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        assertThat(alertsRaised.get(0).getAttack(), equalTo(expectedAttack));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo(expectedAttack));
+        assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
+        assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+    }
+
     @Override
     protected Path getResourcePath(String resourcePath) {
         return super.getResourcePath("crosssitescriptingscanrule/" + resourcePath);

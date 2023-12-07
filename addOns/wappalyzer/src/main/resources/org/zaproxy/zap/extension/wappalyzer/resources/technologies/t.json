@@ -3487,6 +3487,15 @@
     "url": "/admin/login\\.php?referer=http%3A%2F%2F",
     "website": "https://typecho.org/"
   },
+  "Typed.js": {
+    "cats": [
+      59
+    ],
+    "description": "Typed.js is a library that types. It is designed to create typewriter-style animations with ease.",
+    "oss": true,
+    "scriptSrc": "typed(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://mattboldt.com/demos/typed-js/"
+  },
   "Typeform": {
     "cats": [
       73

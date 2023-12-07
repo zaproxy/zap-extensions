@@ -7214,6 +7214,20 @@
     },
     "website": "https://www.sympa.org/"
   },
+  "Syncfusion": {
+    "cats": [
+      59
+    ],
+    "description": "Syncfusion is a suite of JavaScript libraries crafted for modern web development. It's modular design enables developers to create interactive, and responsive applications, enhancing user experience across various devices and platforms.",
+    "icon": "syncfusion.svg",
+    "pricing": [
+      "mid",
+      "recurring",
+      "poa"
+    ],
+    "scriptSrc": "syncfusion(?:\\.com)?(?:\\/ej\\d)?(?:-[base|input|buttons|lists|calendars]+)?(?:\\/dist)?(?:\\/global)?(?:\\/ej\\d)?(?:-[base|input|buttons|lists|calendars]+)?(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://www.syncfusion.com/"
+  },
   "Syndeca": {
     "cats": [
       10,

@@ -28,6 +28,7 @@ zapAddOn {
                 register("network") {
                     version.set(">=0.8.0")
                 }
+                register("commonlib")
             }
         }
     }
@@ -42,6 +43,7 @@ crowdin {
 }
 
 dependencies {
+    zapAddOn("commonlib")
     zapAddOn("selenium")
     zapAddOn("network")
     zapAddOn("zest")

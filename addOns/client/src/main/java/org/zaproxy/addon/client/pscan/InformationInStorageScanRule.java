@@ -25,7 +25,7 @@ import net.sf.json.JSONObject;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.client.ClientUtils;
-import org.zaproxy.addon.client.ReportedNode;
+import org.zaproxy.addon.client.ReportedElement;
 import org.zaproxy.addon.client.ReportedObject;
 
 public class InformationInStorageScanRule extends ClientPassiveAbstractScanRule {
@@ -50,6 +50,9 @@ public class InformationInStorageScanRule extends ClientPassiveAbstractScanRule 
     }
 
     private Alert.Builder getAlertBuilder(ReportedObject obj) {
+        String value = obj.getText();
+        String decodedValue = ClientPassiveScanHelper.base64Decode(value);
+
         return this.getBaseAlertBuilder(obj)
                 .setAlertRef(
                         getId() + "-" + (ClientUtils.LOCAL_STORAGE.equals(obj.getType()) ? 1 : 2))
@@ -62,9 +65,14 @@ public class InformationInStorageScanRule extends ClientPassiveAbstractScanRule 
                 .setConfidence(Alert.CONFIDENCE_HIGH)
                 .setRisk(Alert.RISK_INFO)
                 .setOtherInfo(
-                        Constant.messages.getString(
-                                "client.pscan.infoinstorage.other",
-                                obj.getId() + "=" + obj.getText()))
+                        decodedValue == null
+                                ? Constant.messages.getString(
+                                        "client.pscan.infoinstorage.other",
+                                        obj.getId() + "=" + value)
+                                : Constant.messages.getString(
+                                        "client.pscan.infoinstorage.other.base64",
+                                        obj.getId() + "=" + value,
+                                        obj.getId() + "=" + decodedValue))
                 .setSolution(Constant.messages.getString("client.pscan.infoinstorage.solution"))
                 .setCweId(200) // CWE Id: 200 - Information Exposure
                 .setWascId(13); // WASC Id: 13 - Information Leakage
@@ -79,9 +87,9 @@ public class InformationInStorageScanRule extends ClientPassiveAbstractScanRule 
         obj.put("tagname", "");
         obj.put("id", "key");
         obj.put("text", "value");
-        alerts.add(getAlertBuilder(new ReportedNode(obj)).build());
+        alerts.add(getAlertBuilder(new ReportedElement(obj)).build());
         obj.put("type", ClientUtils.SESSION_STORAGE);
-        alerts.add(getAlertBuilder(new ReportedNode(obj)).build());
+        alerts.add(getAlertBuilder(new ReportedElement(obj)).build());
         return alerts;
     }
 }

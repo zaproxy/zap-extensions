@@ -3,7 +3,7 @@ import org.zaproxy.gradle.spotless.ValidateImports
 
 plugins {
     id("com.diffplug.spotless")
-    id("com.github.ben-manes.versions") version "0.47.0"
+    id("com.github.ben-manes.versions") version "0.50.0"
     id("org.sonarqube") version "4.3.0.3225"
     id("net.ltgt.errorprone") version "3.1.0"
 }
@@ -44,7 +44,7 @@ allprojects {
 
     project.plugins.withType(JavaPlugin::class) {
         dependencies {
-            "errorprone"("com.google.errorprone:error_prone_core:2.20.0")
+            "errorprone"("com.google.errorprone:error_prone_core:2.23.0")
         }
 
         java {
