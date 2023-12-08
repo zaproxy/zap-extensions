@@ -24,9 +24,11 @@ import java.awt.event.ItemEvent;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import javax.net.ssl.SSLException;
 import javax.swing.JToggleButton;
+import javax.swing.JButton;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,6 +41,8 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
+import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.requester.ExtensionRequester;
@@ -68,9 +72,13 @@ public class HttpPanelSender {
     private JToggleButton useCookies;
     private JToggleButton useCsrf;
     private JToggleButton hostHeader;
+    private JButton lowerCaseHeaderName;
+
+    private CustomHttpPanelRequest customHttpPanelRequest;
 
     public HttpPanelSender(CustomHttpPanelRequest requestPanel, HttpPanelResponse responsePanel) {
         this.responsePanel = responsePanel;
+        this.customHttpPanelRequest = requestPanel;
 
         extAntiCSRF =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionAntiCSRF.class);
@@ -84,6 +92,7 @@ public class HttpPanelSender {
         requestPanel.addOptions(
                 getButtonFixContentLength(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
         requestPanel.addOptions(getButtonHostHeader(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
+        requestPanel.addOptions(getButtonLowerCaseHeaderName(),HttpPanel.OptionsLocation.AFTER_COMPONENTS); // modified
         if (extAntiCSRF != null) {
             requestPanel.addOptions(getButtonUseCsrf(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
         }
@@ -253,6 +262,25 @@ public class HttpPanelSender {
                     Constant.messages.getString("requester.httpsender.checkbox.hostheader"));
         }
         return hostHeader;
+    }
+
+    private JButton getButtonLowerCaseHeaderName(){
+        if(lowerCaseHeaderName == null){
+            lowerCaseHeaderName = new JButton(ExtensionRequester.createIcon("lowercase-header-button.png"));
+            lowerCaseHeaderName.setToolTipText("Lowercase Headers");
+            lowerCaseHeaderName.addActionListener(e->lowerCaseHeaderNameButtonTriggered());
+        }
+        return lowerCaseHeaderName;
+    }
+
+    private void lowerCaseHeaderNameButtonTriggered(){
+        customHttpPanelRequest.saveData();
+        HttpRequestHeader httpRequestHeader = ((HttpMessage)customHttpPanelRequest.getMessage()).getRequestHeader();
+        for (HttpHeaderField field : httpRequestHeader.getHeaders()) {
+            httpRequestHeader.setHeader(field.getName(),null);
+            httpRequestHeader.addHeader(field.getName().toLowerCase(Locale.ROOT),field.getValue());
+        }
+        customHttpPanelRequest.updateContent();
     }
 
     /**
