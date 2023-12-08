@@ -273,13 +273,13 @@ public class HttpPanelSender {
                     new JButton(ExtensionRequester.createIcon("lowercase-header-button.png"));
             lowerCaseHeaderNames.setToolTipText(
                     Constant.messages.getString(
-                            "requester.httpsender.checkbox.lowerCaseHeadersName"));
-            lowerCaseHeaderNames.addActionListener(e -> lowerCaseHeaderNamed());
+                            "requester.httpsender.button.lowerCaseHeadersName"));
+            lowerCaseHeaderNames.addActionListener(e -> lowerCaseHeaderNames());
         }
         return lowerCaseHeaderNames;
     }
 
-    private void lowerCaseHeaderNamed() {
+    private void lowerCaseHeaderNames() {
         customHttpPanelRequest.saveData();
         HttpRequestHeader httpRequestHeader =
                 ((HttpMessage) customHttpPanelRequest.getMessage()).getRequestHeader();
