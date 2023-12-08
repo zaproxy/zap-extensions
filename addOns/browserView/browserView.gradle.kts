@@ -1,5 +1,5 @@
 plugins {
-    id("org.openjfx.javafxplugin") version "0.0.13"
+    id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
 description = "Adds an option to render HTML responses like a browser"

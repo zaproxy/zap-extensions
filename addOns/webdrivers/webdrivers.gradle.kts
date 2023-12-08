@@ -61,12 +61,12 @@ subprojects {
     }
 
     afterEvaluate {
-        val webdriversDir = file("$buildDir/webdrivers/")
+        val webdriversDir = layout.buildDirectory.dir("webdrivers")
         val targetOs = project.extra["targetOs"] as DownloadWebDriver.OS
 
         val downloadTasks = tasks.withType<DownloadWebDriver>().also {
             it.configureEach {
-                configureDownloadTask(webdriversDir, targetOs, this)
+                configureDownloadTask(webdriversDir.get().asFile, targetOs, this)
                 webdriverClasspath.from(wdm)
             }
         }

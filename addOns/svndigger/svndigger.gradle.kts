@@ -4,7 +4,7 @@ import org.zaproxy.gradle.tasks.ProcessSvnDiggerFiles
 
 description = "SVN Digger files which can be used with ZAP forced browsing"
 
-val svndiggerDir = file("$buildDir/zapAddOn/homeFiles/")
+val svndiggerDir = layout.buildDirectory.dir("zapAddOn/homeFiles/")
 val processFiles by tasks.registering(ProcessSvnDiggerFiles::class) {
     outputDir.set(svndiggerDir)
 }

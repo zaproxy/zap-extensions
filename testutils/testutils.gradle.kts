@@ -1,5 +1,6 @@
 plugins {
     `java-library`
+    id("org.zaproxy.common")
 }
 
 description = "Common test utilities for the add-ons."
