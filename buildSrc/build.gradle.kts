@@ -1,6 +1,7 @@
 plugins {
     `kotlin-dsl`
     id("com.diffplug.spotless") version "6.20.0"
+    id("org.zaproxy.common") version "0.2.0"
 }
 
 repositories {
@@ -8,11 +9,6 @@ repositories {
 }
 
 spotless {
-    java {
-        licenseHeaderFile(file("../gradle/spotless/license.java"))
-        googleJavaFormat("1.17.0").aosp()
-    }
-
     kotlin {
         ktlint()
     }
@@ -20,11 +16,6 @@ spotless {
     kotlinGradle {
         ktlint()
     }
-}
-
-tasks.withType<JavaCompile>().configureEach {
-    options.encoding = "utf-8"
-    options.compilerArgs = listOf("-Xlint:all", "-Xlint:-path", "-Xlint:-options", "-Werror")
 }
 
 dependencies {

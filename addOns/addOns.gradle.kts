@@ -18,12 +18,11 @@ import org.zaproxy.gradle.crowdin.CrowdinExtension
 plugins {
     eclipse
     jacoco
-    id("org.cyclonedx.bom") version "1.7.4" apply false
-    id("org.rm3l.datanucleus-gradle-plugin") version "1.7.0" apply false
-    id("org.zaproxy.add-on") version "0.9.0" apply false
-    id("org.zaproxy.common") version "0.1.0" apply false
+    id("org.cyclonedx.bom") version "1.8.1" apply false
+    id("org.rm3l.datanucleus-gradle-plugin") version "2.0.0" apply false
+    id("org.zaproxy.add-on") version "0.10.0" apply false
     id("org.zaproxy.crowdin") version "0.3.1" apply false
-    id("me.champeau.gradle.japicmp") version "0.4.1" apply false
+    id("me.champeau.gradle.japicmp") version "0.4.2" apply false
 }
 
 description = "Common configuration of the add-ons."
@@ -36,11 +35,6 @@ val mandatoryAddOns = listOf(
 val parentProjects = listOf(
     "webdrivers",
 )
-
-val jacocoToolVersion = "0.8.8"
-jacoco {
-    toolVersion = jacocoToolVersion
-}
 
 val ghReleaseDataProvider = provider {
     subprojects.first().zapAddOn.gitHubRelease
@@ -131,10 +125,6 @@ subprojects {
         }
     }
 
-    jacoco {
-        toolVersion = jacocoToolVersion
-    }
-
     tasks.named<JacocoReport>("jacocoTestReport") {
         reports {
             xml.required.set(true)
@@ -189,13 +179,13 @@ subprojects {
     }
 
     val cyclonedxBom by tasks.existing(CycloneDxTask::class) {
-        setDestination(file("$buildDir/reports/bom-all"))
+        setDestination(layout.buildDirectory.dir("reports/bom-all").get().asFile)
         mustRunAfter(allJarsForBom)
     }
 
     val cyclonedxRuntimeBom by tasks.registering(CycloneDxTask::class) {
         setIncludeConfigs(listOf(JavaPlugin.RUNTIME_CLASSPATH_CONFIGURATION_NAME))
-        setDestination(file("$buildDir/reports/bom-runtime"))
+        setDestination(layout.buildDirectory.dir("reports/bom-runtime").get().asFile)
         setOutputFormat("json")
         mustRunAfter(allJarsForBom)
     }
@@ -390,7 +380,7 @@ subprojects {
             ignoreMissingClasses.set(true)
 
             richReport {
-                destinationDir.set(file("$buildDir/reports/japicmp/"))
+                destinationDir.set(layout.buildDirectory.dir("reports/japicmp/"))
                 reportName.set("japi.html")
                 addDefaultRules.set(true)
             }
@@ -483,7 +473,7 @@ tasks.register("deployMandatoryAddOns") {
 }
 
 tasks.register<TestReport>("testReport") {
-    destinationDirectory.set(file("$buildDir/reports/allTests"))
+    destinationDirectory.set(layout.buildDirectory.dir("reports/allTests"))
     subprojects.forEach {
         it.plugins.withType(JavaPlugin::class) {
             testResults.from(it.tasks.withType<Test>())

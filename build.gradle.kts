@@ -3,6 +3,7 @@ import org.zaproxy.gradle.spotless.ValidateImports
 
 plugins {
     id("com.diffplug.spotless")
+    id("org.zaproxy.common") version "0.2.0" apply false
     id("com.github.ben-manes.versions") version "0.50.0"
     id("org.sonarqube") version "4.3.0.3225"
     id("net.ltgt.errorprone") version "3.1.0"
@@ -33,9 +34,6 @@ allprojects {
 
         project.plugins.withType(JavaPlugin::class) {
             java {
-                licenseHeaderFile("$rootDir/gradle/spotless/license.java")
-                googleJavaFormatAosp()
-
                 bumpThisNumberIfACustomStepChanges(1)
                 custom("validateImports", validateImports)
             }
@@ -55,8 +53,6 @@ allprojects {
     }
 
     tasks.withType<JavaCompile>().configureEach {
-        options.encoding = "utf-8"
-        options.compilerArgs = listOf("-Xlint:all", "-Xlint:-path", "-Xlint:-options", "-Werror")
         options.errorprone {
             disableAllChecks.set(true)
             error(
