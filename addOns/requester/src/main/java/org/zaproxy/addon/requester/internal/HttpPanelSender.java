@@ -54,6 +54,7 @@ import org.zaproxy.zap.extension.httppanel.view.impl.models.http.HttpPanelViewMo
 import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.network.HttpRedirectionValidator;
 import org.zaproxy.zap.network.HttpRequestConfig;
+import org.zaproxy.zap.utils.I18N;
 
 /** Knows how to send {@link HttpMessage} objects. */
 public class HttpPanelSender {
@@ -72,7 +73,7 @@ public class HttpPanelSender {
     private JToggleButton useCookies;
     private JToggleButton useCsrf;
     private JToggleButton hostHeader;
-    private JButton lowerCaseHeaderName;
+    private JButton lowerCaseHeaderNames;
 
     private CustomHttpPanelRequest customHttpPanelRequest;
 
@@ -262,20 +263,23 @@ public class HttpPanelSender {
             hostHeader.setToolTipText(
                     Constant.messages.getString("requester.httpsender.checkbox.hostheader"));
         }
+        I18N c = Constant.messages;
         return hostHeader;
     }
 
     private JButton getButtonLowerCaseHeaderName() {
-        if (lowerCaseHeaderName == null) {
-            lowerCaseHeaderName =
+        if (lowerCaseHeaderNames == null) {
+            lowerCaseHeaderNames =
                     new JButton(ExtensionRequester.createIcon("lowercase-header-button.png"));
-            lowerCaseHeaderName.setToolTipText("Lowercase Headers");
-            lowerCaseHeaderName.addActionListener(e -> lowerCaseHeaderNameButtonTriggered());
+            lowerCaseHeaderNames.setToolTipText(
+                    Constant.messages.getString(
+                            "requester.httpsender.checkbox.lowerCaseHeadersName"));
+            lowerCaseHeaderNames.addActionListener(e -> lowerCaseHeaderNamed());
         }
-        return lowerCaseHeaderName;
+        return lowerCaseHeaderNames;
     }
 
-    private void lowerCaseHeaderNameButtonTriggered() {
+    private void lowerCaseHeaderNamed() {
         customHttpPanelRequest.saveData();
         HttpRequestHeader httpRequestHeader =
                 ((HttpMessage) customHttpPanelRequest.getMessage()).getRequestHeader();
