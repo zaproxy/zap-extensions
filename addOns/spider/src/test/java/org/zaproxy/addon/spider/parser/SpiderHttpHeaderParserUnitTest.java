@@ -21,6 +21,7 @@ package org.zaproxy.addon.spider.parser;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -28,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -92,6 +94,48 @@ class SpiderHttpHeaderParserUnitTest extends SpiderParserTestUtils<SpiderHttpHea
         // Then
         assertThat(parsed, is(equalTo(false)));
         assertThat(listener.getUrlsFound(), is(empty()));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void shouldNotExtractUrlIfUrlFromLinkHeaderValueIsEmptyorNull(String value) {
+        // Given
+        msg.getResponseHeader().addHeader(HttpHeader.LINK, value);
+        // When
+        boolean parsed = parser.parseResource(ctx);
+        // Then
+        assertThat(parsed, is(equalTo(false)));
+        assertThat(listener.getUrlsFound(), is(empty()));
+    }
+
+    @Test
+    void shouldExtractUrlsFromMultipleLinkHeaders() {
+        // Given
+        msg.getResponseHeader()
+                .addHeader(
+                        HttpHeader.LINK,
+                        "<https://www.example.info/wp-json/>; rel=\"https://api.w.org/\"");
+        msg.getResponseHeader()
+                .addHeader(
+                        HttpHeader.LINK,
+                        "<https://www.example.info/wp-json/wp/v2/pages/2>; rel=\"alternate\"; type=\"application/json\"");
+        msg.getResponseHeader()
+                .addHeader(HttpHeader.LINK, "<https://www.example.info/>; rel=shortlink");
+        // The URL of the base message is http://example.com"
+        msg.getResponseHeader().addHeader(HttpHeader.LINK, "</foo>; rel=rellink");
+        // This next one should be ignored
+        msg.getResponseHeader().addHeader("FLink", "<https://foo.bar>; rel=\"alt\"");
+        // When
+        boolean parsed = parser.parseResource(ctx);
+        // Then
+        assertThat(parsed, is(equalTo(false)));
+        assertThat(
+                listener.getUrlsFound(),
+                containsInAnyOrder(
+                        "https://www.example.info/wp-json/",
+                        "https://www.example.info/wp-json/wp/v2/pages/2",
+                        "https://www.example.info/",
+                        "http://example.com/foo"));
     }
 
     @Test

@@ -21,6 +21,7 @@ package org.zaproxy.addon.spider.parser;
 
 import java.util.regex.Matcher;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 
 /**
  * The Class SpiderHttpHeaderParser is used for parsing of HTTP headers that can include URLs.
@@ -34,14 +35,12 @@ public class SpiderHttpHeaderParser extends SpiderParser {
         HttpMessage message = ctx.getHttpMessage();
 
         // Content-location header
-        // TODO replace when next core version available HttpHeader.CONTENT_LOCATION
-        String location = message.getResponseHeader().getHeader("Content-Location");
+        String location = message.getResponseHeader().getHeader(HttpFieldsNames.CONTENT_LOCATION);
         if (location != null && !location.isEmpty()) {
             processUrl(ctx, location);
         }
         // Refresh header
-        // TODO replace when next core version available HttpHeader.REFRESH
-        String refresh = message.getResponseHeader().getHeader("Refresh");
+        String refresh = message.getResponseHeader().getHeader(HttpFieldsNames.REFRESH);
         if (refresh != null && !refresh.isEmpty()) {
             Matcher matcher = SpiderHtmlParser.URL_PATTERN.matcher(refresh);
             if (matcher.find()) {
@@ -51,23 +50,24 @@ public class SpiderHttpHeaderParser extends SpiderParser {
         }
 
         // Link header - potentially multiple absolute or relative URLs in < >
-        // TODO replace when next core version available HttpHeader.LINK
-        String link = message.getResponseHeader().getHeader("Link");
-        if (link != null && !link.isEmpty()) {
-            int offset = 0;
-            while (true) {
-                int i = link.indexOf("<", offset);
-                if (i < 0) {
-                    break;
-                }
-                int j = link.indexOf(">", i);
-                if (j < 0) {
-                    break;
-                }
-                processUrl(ctx, link.substring(i + 1, j));
-                offset = j;
-            }
-        }
+        message.getResponseHeader().getHeaderValues(HttpFieldsNames.LINK).stream()
+                .filter(headerValue -> headerValue != null && !headerValue.isEmpty())
+                .forEach(
+                        headerValue -> {
+                            int offset = 0;
+                            while (true) {
+                                int i = headerValue.indexOf("<", offset);
+                                if (i < 0) {
+                                    break;
+                                }
+                                int j = headerValue.indexOf(">", i);
+                                if (j < 0) {
+                                    break;
+                                }
+                                processUrl(ctx, headerValue.substring(i + 1, j));
+                                offset = j;
+                            }
+                        });
         // We do not consider the message fully parsed
         return false;
     }
