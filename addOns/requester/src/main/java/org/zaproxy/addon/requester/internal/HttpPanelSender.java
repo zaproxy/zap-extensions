@@ -303,7 +303,6 @@ public class HttpPanelSender {
         }
     }
 
-
     /**
      * A {@link HttpRedirectionValidator} that enforces the {@link
      * org.parosproxy.paros.control.Control.Mode Mode} when validating the {@code URI} of
