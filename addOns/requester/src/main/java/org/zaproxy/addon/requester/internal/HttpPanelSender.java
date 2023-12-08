@@ -93,8 +93,7 @@ public class HttpPanelSender {
                 getButtonFixContentLength(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
         requestPanel.addOptions(getButtonHostHeader(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
         requestPanel.addOptions(
-                getButtonLowerCaseHeaderName(),
-                HttpPanel.OptionsLocation.AFTER_COMPONENTS);
+                getButtonLowerCaseHeaderName(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
         if (extAntiCSRF != null) {
             requestPanel.addOptions(getButtonUseCsrf(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
         }
