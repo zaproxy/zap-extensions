@@ -27,8 +27,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import javax.net.ssl.SSLException;
-import javax.swing.JToggleButton;
 import javax.swing.JButton;
+import javax.swing.JToggleButton;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,10 +39,10 @@ import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
-import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.requester.ExtensionRequester;
@@ -92,7 +92,9 @@ public class HttpPanelSender {
         requestPanel.addOptions(
                 getButtonFixContentLength(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
         requestPanel.addOptions(getButtonHostHeader(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
-        requestPanel.addOptions(getButtonLowerCaseHeaderName(),HttpPanel.OptionsLocation.AFTER_COMPONENTS); // modified
+        requestPanel.addOptions(
+                getButtonLowerCaseHeaderName(),
+                HttpPanel.OptionsLocation.AFTER_COMPONENTS);
         if (extAntiCSRF != null) {
             requestPanel.addOptions(getButtonUseCsrf(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
         }
@@ -264,21 +266,23 @@ public class HttpPanelSender {
         return hostHeader;
     }
 
-    private JButton getButtonLowerCaseHeaderName(){
-        if(lowerCaseHeaderName == null){
-            lowerCaseHeaderName = new JButton(ExtensionRequester.createIcon("lowercase-header-button.png"));
+    private JButton getButtonLowerCaseHeaderName() {
+        if (lowerCaseHeaderName == null) {
+            lowerCaseHeaderName =
+                    new JButton(ExtensionRequester.createIcon("lowercase-header-button.png"));
             lowerCaseHeaderName.setToolTipText("Lowercase Headers");
-            lowerCaseHeaderName.addActionListener(e->lowerCaseHeaderNameButtonTriggered());
+            lowerCaseHeaderName.addActionListener(e -> lowerCaseHeaderNameButtonTriggered());
         }
         return lowerCaseHeaderName;
     }
 
-    private void lowerCaseHeaderNameButtonTriggered(){
+    private void lowerCaseHeaderNameButtonTriggered() {
         customHttpPanelRequest.saveData();
-        HttpRequestHeader httpRequestHeader = ((HttpMessage)customHttpPanelRequest.getMessage()).getRequestHeader();
+        HttpRequestHeader httpRequestHeader =
+                ((HttpMessage) customHttpPanelRequest.getMessage()).getRequestHeader();
         for (HttpHeaderField field : httpRequestHeader.getHeaders()) {
-            httpRequestHeader.setHeader(field.getName(),null);
-            httpRequestHeader.addHeader(field.getName().toLowerCase(Locale.ROOT),field.getValue());
+            httpRequestHeader.setHeader(field.getName(), null);
+            httpRequestHeader.addHeader(field.getName().toLowerCase(Locale.ROOT), field.getValue());
         }
         customHttpPanelRequest.updateContent();
     }
