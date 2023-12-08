@@ -24,8 +24,10 @@ import java.awt.event.ItemEvent;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import javax.net.ssl.SSLException;
+import javax.swing.JButton;
 import javax.swing.JToggleButton;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
@@ -37,8 +39,10 @@ import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.requester.ExtensionRequester;
@@ -50,6 +54,7 @@ import org.zaproxy.zap.extension.httppanel.view.impl.models.http.HttpPanelViewMo
 import org.zaproxy.zap.model.SessionStructure;
 import org.zaproxy.zap.network.HttpRedirectionValidator;
 import org.zaproxy.zap.network.HttpRequestConfig;
+import org.zaproxy.zap.utils.I18N;
 
 /** Knows how to send {@link HttpMessage} objects. */
 public class HttpPanelSender {
@@ -68,9 +73,13 @@ public class HttpPanelSender {
     private JToggleButton useCookies;
     private JToggleButton useCsrf;
     private JToggleButton hostHeader;
+    private JButton lowerCaseHeaderNames;
+
+    private CustomHttpPanelRequest customHttpPanelRequest;
 
     public HttpPanelSender(CustomHttpPanelRequest requestPanel, HttpPanelResponse responsePanel) {
         this.responsePanel = responsePanel;
+        this.customHttpPanelRequest = requestPanel;
 
         extAntiCSRF =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionAntiCSRF.class);
@@ -84,6 +93,8 @@ public class HttpPanelSender {
         requestPanel.addOptions(
                 getButtonFixContentLength(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
         requestPanel.addOptions(getButtonHostHeader(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
+        requestPanel.addOptions(
+                getButtonLowerCaseHeaderName(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
         if (extAntiCSRF != null) {
             requestPanel.addOptions(getButtonUseCsrf(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
         }
@@ -252,7 +263,31 @@ public class HttpPanelSender {
             hostHeader.setToolTipText(
                     Constant.messages.getString("requester.httpsender.checkbox.hostheader"));
         }
+        I18N c = Constant.messages;
         return hostHeader;
+    }
+
+    private JButton getButtonLowerCaseHeaderName() {
+        if (lowerCaseHeaderNames == null) {
+            lowerCaseHeaderNames =
+                    new JButton(ExtensionRequester.createIcon("lowercase-header-button.png"));
+            lowerCaseHeaderNames.setToolTipText(
+                    Constant.messages.getString(
+                            "requester.httpsender.checkbox.lowerCaseHeadersName"));
+            lowerCaseHeaderNames.addActionListener(e -> lowerCaseHeaderNamed());
+        }
+        return lowerCaseHeaderNames;
+    }
+
+    private void lowerCaseHeaderNamed() {
+        customHttpPanelRequest.saveData();
+        HttpRequestHeader httpRequestHeader =
+                ((HttpMessage) customHttpPanelRequest.getMessage()).getRequestHeader();
+        for (HttpHeaderField field : httpRequestHeader.getHeaders()) {
+            httpRequestHeader.setHeader(field.getName(), null);
+            httpRequestHeader.addHeader(field.getName().toLowerCase(Locale.ROOT), field.getValue());
+        }
+        customHttpPanelRequest.updateContent();
     }
 
     /**
