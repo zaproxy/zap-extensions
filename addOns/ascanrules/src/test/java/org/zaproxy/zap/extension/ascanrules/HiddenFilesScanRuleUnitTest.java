@@ -239,8 +239,8 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
     }
 
     @ParameterizedTest
-    @EnumSource(names = {"LOW", "MEDIUM"})
-    void shouldNotRaiseAlertIfTestedUrlRespondsForbiddenWhenThresholdNotHigh(
+    @EnumSource(names = {"MEDIUM", "HIGH"})
+    void shouldNotRaiseAlertIfTestedUrlRespondsForbiddenWhenThresholdNotLow(
             AlertThreshold threshold) throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldNotAlert";
@@ -268,7 +268,7 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
     }
 
     @Test
-    void shouldRaiseAlertWithLowConfidenceIfTestedUrlRespondsForbiddenAtHighThreshold()
+    void shouldRaiseAlertWithLowConfidenceIfTestedUrlRespondsForbiddenAtLowThreshold()
             throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldAlert";
@@ -286,7 +286,7 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
         HttpMessage msg = this.getHttpMessage(servePath);
 
         rule.init(msg, this.parent);
-        rule.setAlertThreshold(AlertThreshold.HIGH);
+        rule.setAlertThreshold(AlertThreshold.LOW);
         HiddenFilesScanRule.addTestPayload(hiddenFile);
 
         // When
@@ -328,7 +328,7 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
     }
 
     @Test
-    void shouldAlertWithLowConfidenceIfContentStringsDontAllMatchAtHighThreshold()
+    void shouldAlertWithLowConfidenceIfContentStringsDontAllMatchAtLowThreshold()
             throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldAlert";
@@ -346,7 +346,7 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
         HttpMessage msg = this.getHttpMessage(servePath);
 
         rule.init(msg, this.parent);
-        rule.setAlertThreshold(AlertThreshold.HIGH);
+        rule.setAlertThreshold(AlertThreshold.LOW);
         HiddenFilesScanRule.addTestPayload(hiddenFile);
 
         // When
@@ -362,8 +362,8 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
     }
 
     @ParameterizedTest
-    @EnumSource(names = {"LOW", "MEDIUM"})
-    void shouldNotAlertIfContentStringsDontAllMatchWhenNotHighThreshold(AlertThreshold threshold)
+    @EnumSource(names = {"MEDIUM", "HIGH"})
+    void shouldNotAlertIfContentStringsDontAllMatchWhenNotLowThreshold(AlertThreshold threshold)
             throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldAlert";
@@ -519,7 +519,7 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
 
     @Test
     void
-            shouldRaiseAlertWithLowConfidenceIfTestedUrlRespondsOkWithRelevantContentButDoesContainNotContentAtHighThreshold()
+            shouldRaiseAlertWithLowConfidenceIfTestedUrlRespondsOkWithRelevantContentButDoesContainNotContentAtLowThreshold()
                     throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldAlert";
@@ -540,7 +540,7 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
         HttpMessage msg = this.getHttpMessage(servePath);
 
         rule.init(msg, this.parent);
-        rule.setAlertThreshold(AlertThreshold.HIGH);
+        rule.setAlertThreshold(AlertThreshold.LOW);
         HiddenFilesScanRule.addTestPayload(hiddenFile);
 
         // When
@@ -555,9 +555,9 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
     }
 
     @ParameterizedTest
-    @EnumSource(names = {"LOW", "MEDIUM"})
+    @EnumSource(names = {"MEDIUM", "HIGH"})
     void
-            shouldNotRaiseAlertIfTestedUrlRespondsOkWithRelevantContentButDoesContainNotContentWhenNotHighThreshold(
+            shouldNotRaiseAlertIfTestedUrlRespondsOkWithRelevantContentButDoesContainNotContentWhenNotLowThreshold(
                     AlertThreshold threshold) throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldAlert";
@@ -627,7 +627,7 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
 
     @Test
     void
-            shouldRaiseAlertWithLowConfidenceIfTestedUrlRespondsOkWithoutRelevantBinContentAtHighThreshold()
+            shouldRaiseAlertWithLowConfidenceIfTestedUrlRespondsOkWithoutRelevantBinContentAtLowThreshold()
                     throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldAlert";
@@ -653,7 +653,7 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
         HttpMessage msg = this.getHttpMessage(servePath);
 
         rule.init(msg, this.parent);
-        rule.setAlertThreshold(AlertThreshold.HIGH);
+        rule.setAlertThreshold(AlertThreshold.LOW);
         HiddenFilesScanRule.addTestPayload(hiddenFile);
 
         // When
@@ -668,8 +668,8 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
     }
 
     @ParameterizedTest
-    @EnumSource(names = {"LOW", "MEDIUM"})
-    void shouldNotRaiseAlertIfTestedUrlRespondsOkWithoutRelevantBinContentWhenNotHighThreshold(
+    @EnumSource(names = {"MEDIUM", "HIGH"})
+    void shouldNotRaiseAlertIfTestedUrlRespondsOkWithoutRelevantBinContentWhenNotLowThreshold(
             AlertThreshold threshold) throws HttpMalformedHeaderException {
         // Given
         String servePath = "/shouldAlert";
