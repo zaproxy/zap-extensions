@@ -292,6 +292,18 @@ public class HttpPanelSender {
         customHttpPanelRequest.updateContent();
     }
 
+    public static void testLowerCaseHeaderNames(HttpMessage msg) {
+        HttpRequestHeader httpRequestHeader = msg.getRequestHeader();
+        List<HttpHeaderField> fields = httpRequestHeader.getHeaders();
+        for (HttpHeaderField field : fields) {
+            httpRequestHeader.setHeader(field.getName(), null);
+        }
+        for (HttpHeaderField field : fields) {
+            httpRequestHeader.addHeader(field.getName().toLowerCase(Locale.ROOT), field.getValue());
+        }
+    }
+
+
     /**
      * A {@link HttpRedirectionValidator} that enforces the {@link
      * org.parosproxy.paros.control.Control.Mode Mode} when validating the {@code URI} of
