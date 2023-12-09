@@ -24,6 +24,7 @@ import java.awt.event.ItemEvent;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.net.ssl.SSLException;
@@ -281,8 +282,11 @@ public class HttpPanelSender {
         customHttpPanelRequest.saveData();
         HttpRequestHeader httpRequestHeader =
                 ((HttpMessage) customHttpPanelRequest.getMessage()).getRequestHeader();
-        for (HttpHeaderField field : httpRequestHeader.getHeaders()) {
+        List<HttpHeaderField> fields = httpRequestHeader.getHeaders();
+        for (HttpHeaderField field : fields) {
             httpRequestHeader.setHeader(field.getName(), null);
+        }
+        for (HttpHeaderField field : fields) {
             httpRequestHeader.addHeader(field.getName().toLowerCase(Locale.ROOT), field.getValue());
         }
         customHttpPanelRequest.updateContent();
