@@ -19,14 +19,17 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import net.htmlparser.jericho.Source;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
@@ -44,6 +47,8 @@ public class BigRedirectsScanRule extends PluginPassiveScanner {
                     CommonAlertTag.OWASP_2017_A03_DATA_EXPOSED,
                     CommonAlertTag.WSTG_V42_INFO_05_CONTENT_LEAK);
 
+    private static final Pattern HREF_PATTERN = Pattern.compile("href", Pattern.CASE_INSENSITIVE);
+
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         long start = System.currentTimeMillis();
@@ -53,8 +58,7 @@ public class BigRedirectsScanRule extends PluginPassiveScanner {
         if (HttpStatusCode.isRedirection(msg.getResponseHeader().getStatusCode())
                 && msg.getResponseHeader().getStatusCode() != 304) { // This response is a redirect
             int responseLocationHeaderURILength = 0;
-            String locationHeaderValue =
-                    msg.getResponseHeader().getHeader(HttpResponseHeader.LOCATION);
+            String locationHeaderValue = msg.getResponseHeader().getHeader(HttpHeader.LOCATION);
             if (locationHeaderValue != null) {
                 responseLocationHeaderURILength = locationHeaderValue.length();
             } else { // No location header found
@@ -70,22 +74,18 @@ public class BigRedirectsScanRule extends PluginPassiveScanner {
                 // Check if response is bigger than predicted
                 if (responseBodyLength > predictedResponseSize) {
                     // Response is larger than predicted so raise an alert
-                    newAlert()
-                            .setRisk(Alert.RISK_LOW)
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setDescription(getDescription())
-                            .setOtherInfo(
-                                    Constant.messages.getString(
-                                            MESSAGE_PREFIX + "extrainfo",
-                                            responseLocationHeaderURILength,
-                                            locationHeaderValue,
-                                            predictedResponseSize,
-                                            responseBodyLength))
-                            .setSolution(getSolution())
-                            .setReference(getReference())
-                            .setCweId(201)
-                            .setWascId(13)
+                    createBigAlert(
+                                    responseLocationHeaderURILength,
+                                    locationHeaderValue,
+                                    predictedResponseSize,
+                                    responseBodyLength)
                             .raise();
+                } else {
+                    Matcher matcher = HREF_PATTERN.matcher(msg.getResponseBody().toString());
+                    long hrefCount = matcher.results().count();
+                    if (hrefCount > 1) {
+                        createMultiAlert(hrefCount).raise();
+                    }
                 }
             }
         }
@@ -106,6 +106,44 @@ public class BigRedirectsScanRule extends PluginPassiveScanner {
         return predictedResponseSize;
     }
 
+    private AlertBuilder createBaseAlert(String ref) {
+        return newAlert()
+                .setRisk(Alert.RISK_LOW)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setSolution(getSolution())
+                .setCweId(201)
+                .setWascId(13)
+                .setAlertRef(String.valueOf(PLUGIN_ID) + ref);
+    }
+
+    private AlertBuilder createBigAlert(
+            int urlLength, String url, int predictedMaxLength, int actualMaxLength) {
+        return createBaseAlert("-1")
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "desc"))
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                MESSAGE_PREFIX + "extrainfo",
+                                urlLength,
+                                url,
+                                predictedMaxLength,
+                                actualMaxLength));
+    }
+
+    private AlertBuilder createMultiAlert(long hrefCount) {
+        return createBaseAlert("-2")
+                .setName(Constant.messages.getString(MESSAGE_PREFIX + "multi.name"))
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "multi.desc"))
+                .setOtherInfo(
+                        Constant.messages.getString(MESSAGE_PREFIX + "multi.extrainfo", hrefCount));
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                createBigAlert(18, "http://example.com", 318, 319).build(),
+                createMultiAlert(3).build());
+    }
+
     @Override
     public int getPluginId() {
         return PLUGIN_ID;
@@ -116,20 +154,17 @@ public class BigRedirectsScanRule extends PluginPassiveScanner {
         return Constant.messages.getString(MESSAGE_PREFIX + "name");
     }
 
-    private String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "desc");
-    }
-
     private String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
-    }
-
-    private String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    public String getHelpLink() {
+        return "https://www.zaproxy.org/docs/desktop/addons/passive-scan-rules/#id-"
+                + getPluginId();
     }
 }
