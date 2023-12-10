@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ## Added 
-- Added Button to lowercase Header Names
+- Button to lowercase request header names (Issue 8176).
 
 ## [7.4.0] - 2023-10-12
 ### Added
