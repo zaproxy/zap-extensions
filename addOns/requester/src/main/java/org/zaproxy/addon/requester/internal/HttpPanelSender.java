@@ -94,7 +94,7 @@ public class HttpPanelSender {
                 getButtonFixContentLength(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
         requestPanel.addOptions(getButtonHostHeader(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
         requestPanel.addOptions(
-                getButtonLowerCaseHeaderName(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
+                getButtonLowerCaseHeaderNames(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
         if (extAntiCSRF != null) {
             requestPanel.addOptions(getButtonUseCsrf(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
         }
@@ -266,7 +266,7 @@ public class HttpPanelSender {
         return hostHeader;
     }
 
-    private JButton getButtonLowerCaseHeaderName() {
+    private JButton getButtonLowerCaseHeaderNames() {
         if (lowerCaseHeaderNames == null) {
             lowerCaseHeaderNames =
                     new JButton(ExtensionRequester.createIcon("lowercase-header-button.png"));
