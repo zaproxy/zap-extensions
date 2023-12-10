@@ -280,19 +280,12 @@ public class HttpPanelSender {
 
     private void lowerCaseHeaderNames() {
         customHttpPanelRequest.saveData();
-        HttpRequestHeader httpRequestHeader =
-                ((HttpMessage) customHttpPanelRequest.getMessage()).getRequestHeader();
-        List<HttpHeaderField> fields = httpRequestHeader.getHeaders();
-        for (HttpHeaderField field : fields) {
-            httpRequestHeader.setHeader(field.getName(), null);
-        }
-        for (HttpHeaderField field : fields) {
-            httpRequestHeader.addHeader(field.getName().toLowerCase(Locale.ROOT), field.getValue());
-        }
+        HttpMessage msg = ((HttpMessage) customHttpPanelRequest.getMessage());
+        setLowerCaseHeaderNames(msg);
         customHttpPanelRequest.updateContent();
     }
 
-    public static void testLowerCaseHeaderNames(HttpMessage msg) {
+    static void setLowerCaseHeaderNames(HttpMessage msg) {
         HttpRequestHeader httpRequestHeader = msg.getRequestHeader();
         List<HttpHeaderField> fields = httpRequestHeader.getHeaders();
         for (HttpHeaderField field : fields) {

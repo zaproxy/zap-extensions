@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.requester;
+package org.zaproxy.addon.requester.internal;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -31,7 +31,6 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
-import org.zaproxy.addon.requester.internal.HttpPanelSender;
 
 class HttpPanelSenderUnitTest {
 
@@ -54,7 +53,7 @@ class HttpPanelSenderUnitTest {
         msg.getRequestHeader().addHeader("X-Client", "Foo-bar 1.1.0");
         msg.getRequestHeader().addHeader("X-Client", "Foo-not-bar 2.0");
         // When
-        HttpPanelSender.testLowerCaseHeaderNames(msg);
+        HttpPanelSender.setLowerCaseHeaderNames(msg);
         // Then
         assertThat(msg.getRequestHeader().getHeaders().size(), is(equalTo(3)));
         assertThat(
