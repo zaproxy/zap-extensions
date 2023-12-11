@@ -588,7 +588,16 @@ Ang aplikasyon ng web na kakayahan na ang mdaalas na target para sa awtomasyon n
     * Ang mga Online poll - mga poll at ibang mga uri sa online na mga pagboto na mga sistema ay awtomatikong mapagsamantalahan na pabor ng isang ilang pagpipilian.
     * Ang Web-based SMS na mensahe ng pagpapadala - mga umaatake ay maaaring mag-exployt ng SMS na mensahe sa mga sistema sa pag-ayos sa spam mobile phone ng mga gumagamit
 	</desc>
-	<solution/>
+	<solution>Implement strong anti-automation measures to defend against malicious attempts to automate processes. Consider the following strategies:
+1. **CAPTCHA:** Integrate CAPTCHA challenges in critical forms to distinguish between automated bots and human users.
+2. **Rate Limiting:** Enforce rate limiting on various actions to prevent rapid and repetitive requests which makes the automated attacks less effective.
+3. **Behavioral Analysis:** Implement behavioral analysis tools to detect patterns indicative of automation, such as unusual navigation sequences or form submissions.
+4. **Device Fingerprinting:** Use device fingerprinting techniques to identify and block requests from suspicious or known automated sources.
+5. **Multi-Factor Authentication (MFA):** Introduce multi-factor authentication to add an extra layer of security, making it harder for automated attacks to succeed.
+6. **Honeypots:** Deploy honeypots or hidden fields in forms to trick automated bots into revealing their presence, allowing for appropriate action.
+7. **Monitoring and Logging:** Regularly monitor and log user activities to identify and respond to unusual patterns indicative of automation.
+
+A combination of these measures is often more effective in preventing automated attacks.</solution>
 	<reference>http://projects.webappsec.org/Insufficient+Anti-automation</reference>
 	<reference>https://cwe.mitre.org/data/definitions/116.html</reference>
 </vuln_item_wasc_21>
@@ -1002,7 +1011,19 @@ Bago i-parse ang mga file ng XML na may kaugnay na mga DTD, i-scan para sa mga d
 	<desc>Ang pinaka-karaniwang pamamaraan para sa mga taga-atake ay ang i-footprint muna ang presensya sa web ng target at isa-isahin ang impormasyon hanggan't maaari. Sa pamamagitan ng impormasyong ito, ang taga-atake ay maaaring bumuo ng isang tumpak na sitwasyon ng pag-atake, na epektibong magsasamantala ng isang kahinaan sa uri/bersyon ng software na ginagamit ng target na host.
 
 Ang multi-tier na fingerprinting ay katulad ng pinalitan nito, ang TCP/IP Fingerprinting (na may isang scanner tulad ng Nmap) maliban sa ito ay nakatuon sa Layer ng Aplikasyon ng modelo ng OSI sa halip na sa Layer ng Transport. Ang teorya sa likod ng fingerprinting na ito ay upang lumikha ng isang tumpak na profile ng platform ng target, teknolohiya ng software ng aplikasyon ng web, backend database na bersyon, mga kumpigurasyon at marahil kahit na ang kanilang arkitektura ng network/topology.</desc>
-	<solution/>
+	<solution>Implement measures to obfuscate or disguise information about the system's platform, web application software technology, backend database version, configurations, and network architecture/topology. This can include:
+
+1. **Platform and Software Diversity:** Use a mix of technologies and platforms to make it harder for attackers to build an accurate profile.
+
+2. **False Information:** Introduce fake or misleading information in system responses to confuse fingerprinting tools.
+
+3. **Response Randomization:** Randomize certain elements in responses to make it difficult for attackers to consistently identify the system.
+
+4. **Firewall Rules:** Implement firewall rules to block or limit the effectiveness of fingerprinting techniques.
+
+5. **Regular Updates:** Keep software, platforms, and configurations up-to-date to patch known vulnerabilities and prevent accurate identification based on outdated information.
+
+There is no one-size-fits-all solution, and a combination of these measures may be most effective.</solution>
 	<reference>http://projects.webappsec.org/Fingerprinting</reference>
 </vuln_item_wasc_45>
 
@@ -1036,7 +1057,15 @@ Ang isang aplikasyon ng Web ay dapat ipawalang-bisa ang isang sesyon pagkatapos 
 <vuln_item_wasc_48>
 	<alert>Hindi ligtas na indexing</alert>
 	<desc>Ang walang seguridad na pag-index ay isang banta sa pagiging kompidensyal ng datos ng web site. Ang pag-index ng mga nilalaman ng web-site sa pamamagitan ng isang proseso na may access sa mga file na hindi dapat ma-access ng publiko ay may potensyal na magbunyag ng impormasyon tungkol sa pagkakaroon ng gayong mga file, at tungkol sa kanilang nilalaman. Sa proseso ng pag-index, ang naturang impormasyon ay kinolekta at inimbak sa pamamagitan ng proseso ng pag-index, na maaaring makuhang muli sa ibang pagkakataon (kahit na hindi trivially) ng isang tinukoy na taga-atake, karaniwang sa pamamagitan ng isang serye ng mga query sa search engine. Hindi sinalungat ng taga-atake ang modelo ng seguridad ng search engine. Dahil dito, ang pag-atakeng ito ay banayad at napakahirap na tuklasin at mapigilan - hindi madaling makilala ang mga query ng taga-atake mula sa mga query ng lehitimong gumagamit.</desc>
-	<solution/>
+	<solution>Implement measures to secure indexing processes and prevent unauthorized access to sensitive information. The following strategies can be considered:
+1. **Access Controls:** Review and restrict access permissions for the indexing process to ensure it only accesses and indexes files that are intended to be publicly available.
+2. **Robot Exclusion Standard (robots.txt):** Use the robots.txt file to explicitly specify which areas of the website should not be indexed by search engines.
+3. **Authentication Requirements:** Implement authentication mechanisms for accessing sensitive files, ensuring that only authorized users or processes can retrieve them.
+4. **File Encryption:** Encrypt sensitive files to protect their content, even if an unauthorized user gains access to the files.
+5. **URL Redaction:** Avoid including sensitive information in URLs or filenames that might be exposed during indexing.
+6. **Security Headers:** Utilize security headers (e.g., Content Security Policy) to control how browsers and search engines interact with your website.
+
+A proactive and layered approach to security is crucial for safeguarding against Insecure Indexing.</solution>
 	<reference>http://projects.webappsec.org/Insecure-Indexing</reference>
 </vuln_item_wasc_48>
 

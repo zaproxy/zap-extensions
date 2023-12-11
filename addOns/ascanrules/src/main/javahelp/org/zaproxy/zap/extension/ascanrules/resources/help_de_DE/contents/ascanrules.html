@@ -75,6 +75,8 @@ If the alert threshold is set to LOW, XSS injection located in a JSON response r
 For other response content-types a LOW confidence alert is raised.<br>
 If the alert threshold is set to either MEDIUM or HIGH, XSS injection located in non-HTML responses do not generate alerts.<br>
 <p>
+If specific characters are stripped out of a reflected payload then the attacks will be repeated with alternative characters that might have the same effect.
+<p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/ascanrules/src/main/java/org/zaproxy/zap/extension/ascanrules/CrossSiteScriptingScanRule.java">CrossSiteScriptingScanRule.java</a>
 
 <h2>Cross Site Scripting (persistent)</h2>
