@@ -20,8 +20,12 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
+import java.net.SocketException;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,6 +35,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.timing.TimingUtils;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
@@ -59,40 +64,84 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
      * original parameter value at runtime in these examples below (see * comment) TODO: Add
      * SQL_MSSQL_TIME_REPLACEMENTS queries related to PARAM in SELECT/UPDATE/DELETE clause
      */
-    private static final String[] SQL_MSSQL_TIME_REPLACEMENTS = {
-        // Param in WHERE clause
-        ORIG_VALUE_TOKEN + " WAITFOR DELAY '" + SLEEP_TOKEN + "'" + SQL_ONE_LINE_COMMENT,
-        ORIG_VALUE_TOKEN + "' WAITFOR DELAY '" + SLEEP_TOKEN + "'" + SQL_ONE_LINE_COMMENT,
-        ORIG_VALUE_TOKEN + "\" WAITFOR DELAY '" + SLEEP_TOKEN + "'" + SQL_ONE_LINE_COMMENT,
-        ORIG_VALUE_TOKEN + ") WAITFOR DELAY '" + SLEEP_TOKEN + "'" + SQL_ONE_LINE_COMMENT,
-        ORIG_VALUE_TOKEN + ") ' WAITFOR DELAY '" + SLEEP_TOKEN + "'" + SQL_ONE_LINE_COMMENT,
-        ORIG_VALUE_TOKEN + ") \" WAITFOR DELAY '" + SLEEP_TOKEN + "'" + SQL_ONE_LINE_COMMENT,
-        ORIG_VALUE_TOKEN + ")) WAITFOR DELAY '" + SLEEP_TOKEN + "'" + SQL_ONE_LINE_COMMENT,
-        ORIG_VALUE_TOKEN + ")) ' WAITFOR DELAY '" + SLEEP_TOKEN + "'" + SQL_ONE_LINE_COMMENT,
-        ORIG_VALUE_TOKEN + ")) \" WAITFOR DELAY '" + SLEEP_TOKEN + "'" + SQL_ONE_LINE_COMMENT,
-        ORIG_VALUE_TOKEN + ") WAITFOR DELAY '" + SLEEP_TOKEN + "' (",
-        ORIG_VALUE_TOKEN + ") ' WAITFOR DELAY '" + SLEEP_TOKEN + "' (",
-        ORIG_VALUE_TOKEN + ") \" WAITFOR DELAY '" + SLEEP_TOKEN + "' (",
-        ORIG_VALUE_TOKEN + ")) WAITFOR DELAY '" + SLEEP_TOKEN + "' ((",
-        ORIG_VALUE_TOKEN + ")) ' WAITFOR DELAY '" + SLEEP_TOKEN + "' ((",
-        ORIG_VALUE_TOKEN + ")) \" WAITFOR DELAY '" + SLEEP_TOKEN + "' ((",
-    };
+    private static final List<String> SQL_MSSQL_TIME_REPLACEMENTS =
+            List.of(
+                    // Param in WHERE clause
+                    ORIG_VALUE_TOKEN
+                            + " WAITFOR DELAY '"
+                            + SLEEP_TOKEN
+                            + "'"
+                            + SQL_ONE_LINE_COMMENT,
+                    ORIG_VALUE_TOKEN
+                            + "' WAITFOR DELAY '"
+                            + SLEEP_TOKEN
+                            + "'"
+                            + SQL_ONE_LINE_COMMENT,
+                    ORIG_VALUE_TOKEN
+                            + "\" WAITFOR DELAY '"
+                            + SLEEP_TOKEN
+                            + "'"
+                            + SQL_ONE_LINE_COMMENT,
+                    ORIG_VALUE_TOKEN
+                            + ") WAITFOR DELAY '"
+                            + SLEEP_TOKEN
+                            + "'"
+                            + SQL_ONE_LINE_COMMENT,
+                    ORIG_VALUE_TOKEN
+                            + ") ' WAITFOR DELAY '"
+                            + SLEEP_TOKEN
+                            + "'"
+                            + SQL_ONE_LINE_COMMENT,
+                    ORIG_VALUE_TOKEN
+                            + ") \" WAITFOR DELAY '"
+                            + SLEEP_TOKEN
+                            + "'"
+                            + SQL_ONE_LINE_COMMENT,
+                    ORIG_VALUE_TOKEN
+                            + ")) WAITFOR DELAY '"
+                            + SLEEP_TOKEN
+                            + "'"
+                            + SQL_ONE_LINE_COMMENT,
+                    ORIG_VALUE_TOKEN
+                            + ")) ' WAITFOR DELAY '"
+                            + SLEEP_TOKEN
+                            + "'"
+                            + SQL_ONE_LINE_COMMENT,
+                    ORIG_VALUE_TOKEN
+                            + ")) \" WAITFOR DELAY '"
+                            + SLEEP_TOKEN
+                            + "'"
+                            + SQL_ONE_LINE_COMMENT,
+                    ORIG_VALUE_TOKEN + ") WAITFOR DELAY '" + SLEEP_TOKEN + "' (",
+                    ORIG_VALUE_TOKEN + ") ' WAITFOR DELAY '" + SLEEP_TOKEN + "' (",
+                    ORIG_VALUE_TOKEN + ") \" WAITFOR DELAY '" + SLEEP_TOKEN + "' (",
+                    ORIG_VALUE_TOKEN + ")) WAITFOR DELAY '" + SLEEP_TOKEN + "' ((",
+                    ORIG_VALUE_TOKEN + ")) ' WAITFOR DELAY '" + SLEEP_TOKEN + "' ((",
+                    ORIG_VALUE_TOKEN + ")) \" WAITFOR DELAY '" + SLEEP_TOKEN + "' ((");
+
+    /** The default number of seconds used in time-based attacks (i.e. sleep commands). */
+    private static final int DEFAULT_SLEEP_TIME = 5;
+
+    // limit the maximum number of requests sent for time-based attack detection
+    private static final int BLIND_REQUESTS_LIMIT = 4;
+
+    // error range allowable for statistical time-based blind attacks (0-1.0)
+    private static final double TIME_CORRELATION_ERROR_RANGE = 0.15;
+    private static final double TIME_SLOPE_ERROR_RANGE = 0.30;
 
     /** for logging. */
     private static final Logger LOGGER = LogManager.getLogger(SqlInjectionMsSqlScanRule.class);
 
-    private static final int DEFAULT_SLEEP_TIME = 15;
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A03_INJECTION,
                     CommonAlertTag.OWASP_2017_A01_INJECTION,
                     CommonAlertTag.WSTG_V42_INPV_05_SQLI);
 
-    private boolean doTimeBased;
-    private int doTimeMaxRequests;
-    private int sleepInSeconds = DEFAULT_SLEEP_TIME;
-    // how many requests have we made?
-    private int countTimeBasedRequests;
+    /** The number of seconds used in time-based attacks (i.e. sleep commands). */
+    private int timeSleepSeconds = DEFAULT_SLEEP_TIME;
+
+    private int blindTargetCount = SQL_MSSQL_TIME_REPLACEMENTS.size();
 
     @Override
     public int getId() {
@@ -135,22 +184,18 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
 
         // set up what we are allowed to do, depending on the attack strength that was set.
         if (this.getAttackStrength() == AttackStrength.LOW) {
-            doTimeBased = true;
-            doTimeMaxRequests = 3;
+            blindTargetCount = 6;
         } else if (this.getAttackStrength() == AttackStrength.MEDIUM) {
-            doTimeBased = true;
-            doTimeMaxRequests = 6;
+            blindTargetCount = 10;
         } else if (this.getAttackStrength() == AttackStrength.HIGH) {
-            doTimeBased = true;
-            doTimeMaxRequests = 12;
+            blindTargetCount = 12;
         } else if (this.getAttackStrength() == AttackStrength.INSANE) {
-            doTimeBased = true;
-            doTimeMaxRequests = 100;
+            blindTargetCount = SQL_MSSQL_TIME_REPLACEMENTS.size();
         }
 
         // Read the sleep value from the configs
         try {
-            this.sleepInSeconds =
+            this.timeSleepSeconds =
                     this.getConfig()
                             .getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, DEFAULT_SLEEP_TIME);
         } catch (ConversionException e) {
@@ -158,139 +203,89 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
                     "Invalid value for 'rules.common.sleep': {}",
                     this.getConfig().getString(RuleConfigParam.RULE_COMMON_SLEEP_TIME));
         }
-        LOGGER.debug("Sleep set to {} seconds", sleepInSeconds);
+        LOGGER.debug("Sleep set to {} seconds", timeSleepSeconds);
     }
 
     /** scans for SQL Injection vulnerabilities, using MsSQL specific syntax. */
     @Override
     public void scan(HttpMessage originalMessage, String paramName, String paramValue) {
-        try {
-            // Timing Baseline check: we need to get the time that it took the original query, to
-            // know if the time based check is working correctly..
-            HttpMessage msgTimeBaseline = getNewMsg();
-            long originalTimeUsed = getRoundTripTime(msgTimeBaseline);
-            // if the time was very slow (because JSP was being compiled on first call, for
-            // instance)
-            // then the rest of the time based logic will fail.  Lets double-check for that scenario
-            // by requesting the url again.
-            // If it comes back in a more reasonable time, we will use that time instead as our
-            // baseline.  If it come out in a slow fashion again,
-            // we will abort the check on this URL, since we will only spend lots of time trying
-            // request, when we will (very likely) not get positive results.
-            int sleepTimeInMilliSeconds = sleepInSeconds * 1000;
-            if (originalTimeUsed > sleepTimeInMilliSeconds) {
-                long originalTimeUsed2 = getRoundTripTime(msgTimeBaseline);
-                if (originalTimeUsed2 > sleepTimeInMilliSeconds) {
-                    // no better the second time around.  we need to bale out.
+        LOGGER.debug(
+                "Scanning URL [{}] [{}], field [{}] with value [{}] for MsSQL Injection",
+                getBaseMsg().getRequestHeader().getMethod(),
+                getBaseMsg().getRequestHeader().getURI(),
+                paramName,
+                paramValue);
+
+        AtomicReference<HttpMessage> message = new AtomicReference<>();
+        AtomicReference<String> attack = new AtomicReference<>();
+        Iterator<String> it = SQL_MSSQL_TIME_REPLACEMENTS.iterator();
+        for (int i = 0; !isStop() && it.hasNext() && i < blindTargetCount; i++) {
+            String sleepPayload = it.next();
+            TimingUtils.RequestSender requestSender =
+                    x -> {
+                        HttpMessage msg = getNewMsg();
+                        message.compareAndSet(null, msg);
+
+                        String finalPayload =
+                                sleepPayload
+                                        .replace(ORIG_VALUE_TOKEN, paramValue)
+                                        .replace(SLEEP_TOKEN, getSleepToken((int) x));
+
+                        setParameter(msg, paramName, finalPayload);
+                        LOGGER.debug("Testing [{}] = [{}]", paramName, finalPayload);
+                        attack.compareAndSet(null, finalPayload);
+
+                        sendAndReceive(msg, false);
+                        return msg.getTimeElapsedMillis() / 1000.0;
+                    };
+
+            try {
+                boolean injectable =
+                        TimingUtils.checkTimingDependence(
+                                BLIND_REQUESTS_LIMIT,
+                                timeSleepSeconds,
+                                requestSender,
+                                TIME_CORRELATION_ERROR_RANGE,
+                                TIME_SLOPE_ERROR_RANGE);
+
+                if (injectable) {
                     LOGGER.debug(
-                            "Both base time checks 1 and 2 for [{}] URL [{}] are way too slow to be usable for the purposes of checking for time based SQL Injection checking.  We are aborting the check on this particular url.",
-                            msgTimeBaseline.getRequestHeader().getMethod(),
-                            msgTimeBaseline.getRequestHeader().getURI());
-                    return;
-                }
-                // the second time came in within the limits. use the later timing details as the
-                // base time for the checks.
-                originalTimeUsed = originalTimeUsed2;
-            }
-
-            LOGGER.debug(
-                    "Scanning URL [{}] [{}], field [{}] with value [{}] for MsSQL Injection",
-                    getBaseMsg().getRequestHeader().getMethod(),
-                    getBaseMsg().getRequestHeader().getURI(),
-                    paramName,
-                    paramValue);
-
-            // Check for time based SQL Injection, using MsSQL specific syntax
-            String sleepToken = getSleepToken(sleepInSeconds);
-            for (int timeBasedSQLindex = 0;
-                    timeBasedSQLindex < SQL_MSSQL_TIME_REPLACEMENTS.length
-                            && doTimeBased
-                            && countTimeBasedRequests < doTimeMaxRequests;
-                    timeBasedSQLindex++) {
-                HttpMessage msgAttack = getNewMsg();
-                String newTimeBasedInjectionValue =
-                        SQL_MSSQL_TIME_REPLACEMENTS[timeBasedSQLindex]
-                                .replace(ORIG_VALUE_TOKEN, paramValue)
-                                .replace(SLEEP_TOKEN, sleepToken);
-
-                setParameter(msgAttack, paramName, newTimeBasedInjectionValue);
-                long modifiedTimeUsed = getRoundTripTime(msgAttack);
-                LOGGER.debug(
-                        "Time Based SQL Injection test: [{}] on field: [{}] with value [{}] took {}ms, where the original took {}ms",
-                        newTimeBasedInjectionValue,
-                        paramName,
-                        newTimeBasedInjectionValue,
-                        modifiedTimeUsed,
-                        originalTimeUsed);
-                // add some small leeway on the time, since adding a 5 (by default) second delay in
-                // the SQL query will not cause the request
-                // to take a full 15 (by default) seconds longer to run than the original..
-                if (modifiedTimeUsed >= (originalTimeUsed + sleepInSeconds * 1000 - 200)) {
-                    // takes more than 5(by default) extra seconds => likely time based SQL
-                    // injection.
-
-                    // But first double check
-                    HttpMessage msgc = getNewMsg();
-                    try {
-                        sendAndReceive(msgc, false); // do not follow redirects
-                    } catch (Exception e) {
-                        // Ignore all exceptions
-                    }
-                    long checkTimeUsed = msgc.getTimeElapsedMillis();
-                    if (checkTimeUsed >= (originalTimeUsed + (this.sleepInSeconds * 1000) - 200)) {
-                        // Looks like the server is overloaded, very unlikely this is a real issue
-                        continue;
-                    }
+                            "[Time Based SQL Injection Found] on parameter [{}] with value [{}]",
+                            paramName,
+                            attack.get());
 
                     String extraInfo =
                             Constant.messages.getString(
                                     "ascanrules.sqlinjection.mssql.alert.timebased.extrainfo",
-                                    newTimeBasedInjectionValue,
-                                    modifiedTimeUsed,
+                                    attack.get(),
+                                    message.get().getTimeElapsedMillis(),
                                     paramValue,
-                                    originalTimeUsed);
+                                    getBaseMsg().getTimeElapsedMillis());
 
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
                             .setUri(getBaseMsg().getRequestHeader().getURI().toString())
                             .setParam(paramName)
-                            .setAttack(newTimeBasedInjectionValue)
+                            .setAttack(attack.get())
                             .setOtherInfo(extraInfo)
-                            .setMessage(msgAttack)
+                            .setMessage(message.get())
                             .raise();
-
-                    LOGGER.debug(
-                            "A likely Time Based SQL Injection Vulnerability has been found with [{}] URL [{}] on field: [{}]",
-                            msgAttack.getRequestHeader().getMethod(),
-                            msgAttack.getRequestHeader().getURI(),
-                            paramName);
-                    return;
-                } // query took longer than the amount of time we attempted to delay it by
-                // bale out if we were asked nicely
-                if (isStop()) {
-                    LOGGER.debug("Stopping the scan due to a user request");
-                    return;
+                    break;
                 }
+            } catch (SocketException ex) {
+                LOGGER.debug(
+                        "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
+                        ex.getClass().getName(),
+                        ex.getMessage(),
+                        message.get().getRequestHeader().getURI());
+            } catch (IOException ex) {
+                LOGGER.debug(
+                        "Check failed for parameter [{}] and payload [{}] due to an I/O error",
+                        paramName,
+                        attack.get(),
+                        ex);
             }
-            // end of check for time based SQL Injection
-        } catch (Exception e) {
-            LOGGER.error("An error occurred checking a url for MsSQL Injection vulnerabilities", e);
         }
-    }
-
-    private long getRoundTripTime(HttpMessage msg) throws IOException {
-        try {
-            sendAndReceive(msg, false); // do not follow redirects
-        } catch (java.net.SocketTimeoutException e) {
-            // to be expected occasionally, if the base query was one that contains some parameters
-            // exploiting time based SQL injection?
-            LOGGER.debug(
-                    "The Base Time Check timed out on [{}] URL [{}]",
-                    msg.getRequestHeader().getMethod(),
-                    msg.getRequestHeader().getURI());
-        }
-        countTimeBasedRequests++;
-        return msg.getTimeElapsedMillis();
     }
 
     private static String getSleepToken(int totalTimeInSeconds) {
@@ -306,8 +301,8 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
                 + Long.toString(secondsInTotalTime));
     }
 
-    public void setSleepInSeconds(int sleep) {
-        this.sleepInSeconds = sleep;
+    void setSleepInSeconds(int sleep) {
+        this.timeSleepSeconds = sleep;
     }
 
     @Override
