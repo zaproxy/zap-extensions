@@ -591,7 +591,16 @@ Funkcjonalność aplikacji webowej, która jest często celem ataków automatyza
     *Sondaże online- sondaże i inne typy systemów internetowego głosowania mogą być automatycznie skorumpowane na korzyść określonego wyboru.
     *Wysyłanie Wiadomości SMS oparte na sieci- atakujący mogą wykorzystać systemy wysyłające wiadomości SMS w celu spamowania telefonów użytkowników
 	</desc>
-	<solution/>
+	<solution>Implement strong anti-automation measures to defend against malicious attempts to automate processes. Consider the following strategies:
+1. **CAPTCHA:** Integrate CAPTCHA challenges in critical forms to distinguish between automated bots and human users.
+2. **Rate Limiting:** Enforce rate limiting on various actions to prevent rapid and repetitive requests which makes the automated attacks less effective.
+3. **Behavioral Analysis:** Implement behavioral analysis tools to detect patterns indicative of automation, such as unusual navigation sequences or form submissions.
+4. **Device Fingerprinting:** Use device fingerprinting techniques to identify and block requests from suspicious or known automated sources.
+5. **Multi-Factor Authentication (MFA):** Introduce multi-factor authentication to add an extra layer of security, making it harder for automated attacks to succeed.
+6. **Honeypots:** Deploy honeypots or hidden fields in forms to trick automated bots into revealing their presence, allowing for appropriate action.
+7. **Monitoring and Logging:** Regularly monitor and log user activities to identify and respond to unusual patterns indicative of automation.
+
+A combination of these measures is often more effective in preventing automated attacks.</solution>
 	<reference>http://projects.webappsec.org/Insufficient+Anti-automation</reference>
 	<reference>https://cwe.mitre.org/data/definitions/116.html</reference>
 </vuln_item_wasc_21>
@@ -1009,7 +1018,19 @@ Przed rozpoczęciem analizowania plików XML z powiązanymi definicjami DTD nale
 	<desc>Najpowszechniejszą metodologią dla atakujących jest najpierw zbadanie obecności celu w sieci i zebranie jak największej ilości informacji. Dzięki tym informacjom osoba atakująca może opracować dokładny scenariusz ataku, który skutecznie wykorzysta lukę w typie/wersji oprogramowania wykorzystywanej przez hosta docelowego.
 
 Wielopoziomowy "odcisk palca" jest podobny do jego poprzednika, zbierania "odcisków palców" TCP/IP (skanerem takim jak Nmap), z tym że koncentruje się on na warstwie aplikacji modelu OSI zamiast warstwy transportowej. Teoria stojąca za zbieraniem "odcisków palców" polega na stworzeniu dokładnego profilu platformy celu, technologii oprogramowania aplikacji internetowej, bazy danych backend, konfiguracji i ewentualnie również architektury/topologii sieci.</desc>
-	<solution/>
+	<solution>Implement measures to obfuscate or disguise information about the system's platform, web application software technology, backend database version, configurations, and network architecture/topology. This can include:
+
+1. **Platform and Software Diversity:** Use a mix of technologies and platforms to make it harder for attackers to build an accurate profile.
+
+2. **False Information:** Introduce fake or misleading information in system responses to confuse fingerprinting tools.
+
+3. **Response Randomization:** Randomize certain elements in responses to make it difficult for attackers to consistently identify the system.
+
+4. **Firewall Rules:** Implement firewall rules to block or limit the effectiveness of fingerprinting techniques.
+
+5. **Regular Updates:** Keep software, platforms, and configurations up-to-date to patch known vulnerabilities and prevent accurate identification based on outdated information.
+
+There is no one-size-fits-all solution, and a combination of these measures may be most effective.</solution>
 	<reference>http://projects.webappsec.org/Fingerprinting</reference>
 </vuln_item_wasc_45>
 
@@ -1043,7 +1064,15 @@ Aplikacja internetowa powinna unieważnić sesję po upływie zdefiniowanego cza
 <vuln_item_wasc_48>
 	<alert>Niezabezpieczone Indeksowanie</alert>
 	<desc>Niezabezpieczone Indeksowanie stanowi zagrożenie dla poufności danych na stronie internetowej. Indeksowanie zawartości strony internetowej za pośrednictwem procesu, który ma dostęp do plików, które nie powinny być publicznie dostępne, może potencjalnie ujawnić informacje o istnieniu takich plików i ich zawartości. W procesie indeksowania takie informacje są gromadzone i przechowywane w procesie indeksowania, który później może zostać odtworzony (choć nie trywialnie) przez określonego agresora, zazwyczaj za pomocą szeregu zapytań do wyszukiwarki. Atakujący nie omija modelu zabezpieczeń wyszukiwarki. W związku z tym atak ten jest subtelny i bardzo trudny do wykrycia i zablokowania - nie jest łatwo odróżnić zapytania atakującego od prawidłowych zapytań użytkownika.</desc>
-	<solution/>
+	<solution>Implement measures to secure indexing processes and prevent unauthorized access to sensitive information. The following strategies can be considered:
+1. **Access Controls:** Review and restrict access permissions for the indexing process to ensure it only accesses and indexes files that are intended to be publicly available.
+2. **Robot Exclusion Standard (robots.txt):** Use the robots.txt file to explicitly specify which areas of the website should not be indexed by search engines.
+3. **Authentication Requirements:** Implement authentication mechanisms for accessing sensitive files, ensuring that only authorized users or processes can retrieve them.
+4. **File Encryption:** Encrypt sensitive files to protect their content, even if an unauthorized user gains access to the files.
+5. **URL Redaction:** Avoid including sensitive information in URLs or filenames that might be exposed during indexing.
+6. **Security Headers:** Utilize security headers (e.g., Content Security Policy) to control how browsers and search engines interact with your website.
+
+A proactive and layered approach to security is crucial for safeguarding against Insecure Indexing.</solution>
 	<reference>http://projects.webappsec.org/Insecure-Indexing</reference>
 </vuln_item_wasc_48>
 

@@ -584,7 +584,16 @@ Les fonctionnalités ci-dessous sont souvent la cible d'attaques par automatisat
     * Sondages en ligne - les sondages et autres types de systèmes de vote en ligne peuvent être automatiquement détournés en faveur d'un certain choix.
     * Envoi de textos par internet - des agresseurs peuvent exploiter les systèmes de messagerie SMS pour spammer les utilisateurs de téléphone mobile
 	</desc>
-	<solution/>
+	<solution>Implement strong anti-automation measures to defend against malicious attempts to automate processes. Consider the following strategies:
+1. **CAPTCHA:** Integrate CAPTCHA challenges in critical forms to distinguish between automated bots and human users.
+2. **Rate Limiting:** Enforce rate limiting on various actions to prevent rapid and repetitive requests which makes the automated attacks less effective.
+3. **Behavioral Analysis:** Implement behavioral analysis tools to detect patterns indicative of automation, such as unusual navigation sequences or form submissions.
+4. **Device Fingerprinting:** Use device fingerprinting techniques to identify and block requests from suspicious or known automated sources.
+5. **Multi-Factor Authentication (MFA):** Introduce multi-factor authentication to add an extra layer of security, making it harder for automated attacks to succeed.
+6. **Honeypots:** Deploy honeypots or hidden fields in forms to trick automated bots into revealing their presence, allowing for appropriate action.
+7. **Monitoring and Logging:** Regularly monitor and log user activities to identify and respond to unusual patterns indicative of automation.
+
+A combination of these measures is often more effective in preventing automated attacks.</solution>
 	<reference>http://projects.webappsec.org/Insufficient+Anti-automation</reference>
 	<reference>https://cwe.mitre.org/data/definitions/116.html</reference>
 </vuln_item_wasc_21>
@@ -1000,7 +1009,19 @@ Avant d'analyser des fichiers XML avec des DTDs associées, recherchez les décl
 	<desc>La méthodologie la plus couramment utilisée par les pirates consiste d'abord à observer la présence internet de la cible et de rassembler le plus d'informations possible. Avec ces informations, l'agresseur peut développer un scénario d'attaque précis, qui exploitera efficacement une vulnérabilité du type ou de la version du logiciel utilisé par l'hôte cible.
 
 La recherche d'empreintes multi-tier est similaire à son prédécesseur, la recherche d'empreintes TCP/IP (avec un scanner comme Nmap), sauf qu'elle se concentre sur la couche Application du modèle OSI, au lieu de la couche de Transport. La théorie derrière cette recherche d'empreintes est de créer un profil exact de la plateforme de la cible, de la  technologie de l'application internet, de la version de la base de données, des configurations et peut-être même de l'architecture et de la topologie du réseau.</desc>
-	<solution/>
+	<solution>Implement measures to obfuscate or disguise information about the system's platform, web application software technology, backend database version, configurations, and network architecture/topology. This can include:
+
+1. **Platform and Software Diversity:** Use a mix of technologies and platforms to make it harder for attackers to build an accurate profile.
+
+2. **False Information:** Introduce fake or misleading information in system responses to confuse fingerprinting tools.
+
+3. **Response Randomization:** Randomize certain elements in responses to make it difficult for attackers to consistently identify the system.
+
+4. **Firewall Rules:** Implement firewall rules to block or limit the effectiveness of fingerprinting techniques.
+
+5. **Regular Updates:** Keep software, platforms, and configurations up-to-date to patch known vulnerabilities and prevent accurate identification based on outdated information.
+
+There is no one-size-fits-all solution, and a combination of these measures may be most effective.</solution>
 	<reference>http://projects.webappsec.org/Fingerprinting</reference>
 </vuln_item_wasc_45>
 
@@ -1034,7 +1055,15 @@ Une application internet devrait invalider une session après un temps d'inactiv
 <vuln_item_wasc_48>
 	<alert>Indexation non sécurisée</alert>
 	<desc>L'indexation non sécurisée (Insecure Indexing) constitue une menace pour la confidentialité des données du site internet. L'indexation de contenu de site internet par un processus ayant accès à des fichiers qui ne sont pas censés être accessibles au public constitue une fuite potentielle d'informations concernant l'existence de tels fichiers et sur leur contenu. Dans le processus d'indexation, ces informations sont recueillies et stockées par le processus d'indexation, et peuvent être récupérées plus tard (quoique pas trivialement) par un agresseur déterminé, généralement au moyen d'une série de requêtes sur le moteur de recherche. L'attaquant ne contrarie pas le modèle de sécurité du moteur de recherche. En soi, cette attaque est subtile et très difficile à détecter et à déjouer - il n'est pas facile de distinguer les requêtes de l'agresseur de celles des utilisateurs légitimes.</desc>
-	<solution/>
+	<solution>Implement measures to secure indexing processes and prevent unauthorized access to sensitive information. The following strategies can be considered:
+1. **Access Controls:** Review and restrict access permissions for the indexing process to ensure it only accesses and indexes files that are intended to be publicly available.
+2. **Robot Exclusion Standard (robots.txt):** Use the robots.txt file to explicitly specify which areas of the website should not be indexed by search engines.
+3. **Authentication Requirements:** Implement authentication mechanisms for accessing sensitive files, ensuring that only authorized users or processes can retrieve them.
+4. **File Encryption:** Encrypt sensitive files to protect their content, even if an unauthorized user gains access to the files.
+5. **URL Redaction:** Avoid including sensitive information in URLs or filenames that might be exposed during indexing.
+6. **Security Headers:** Utilize security headers (e.g., Content Security Policy) to control how browsers and search engines interact with your website.
+
+A proactive and layered approach to security is crucial for safeguarding against Insecure Indexing.</solution>
 	<reference>http://projects.webappsec.org/Insecure-Indexing</reference>
 </vuln_item_wasc_48>
 
