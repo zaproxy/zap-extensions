@@ -124,20 +124,18 @@ public class HiddenFilesScanRule extends AbstractHostPlugin {
             int statusCode = testMsg.getResponseHeader().getStatusCode();
             if (isPage200(testMsg)) {
                 String responseBody = testMsg.getResponseBody().toString();
-                // If all the content checks matched then confidence is high
                 boolean matches =
                         doesNotMatch(responseBody, file.getNotContent())
                                 && doesMatch(responseBody, file.getContent())
                                 && doesBinaryMatch(responseBody, file.getBinary());
                 if (matches && !file.isCustom()) {
                     raiseAlert(testMsg, Alert.CONFIDENCE_HIGH, getRisk(), file);
-                } else if (this.getAlertThreshold().equals(AlertThreshold.HIGH)
-                        || file.isCustom()) {
+                } else if (this.getAlertThreshold().equals(AlertThreshold.LOW) || file.isCustom()) {
                     raiseAlert(testMsg, Alert.CONFIDENCE_LOW, getRisk(), file);
                 }
             } else if ((statusCode == HttpStatusCode.UNAUTHORIZED
                             || statusCode == HttpStatusCode.FORBIDDEN)
-                    && this.getAlertThreshold().equals(AlertThreshold.HIGH)) {
+                    && this.getAlertThreshold().equals(AlertThreshold.LOW)) {
                 raiseAlert(testMsg, Alert.CONFIDENCE_LOW, Alert.RISK_INFO, file);
             }
         }
