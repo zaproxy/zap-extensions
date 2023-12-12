@@ -45,7 +45,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  *
  * @author 70pointer@gmail.com
  */
-public class Base64Disclosure extends PluginPassiveScanner {
+public class Base64Disclosure extends PluginPassiveScanner implements CommonPassiveScanRuleInfo {
 
     /**
      * a set of patterns used to identify Base64 encoded data. Set a minimum length to reduce false
@@ -399,9 +399,5 @@ public class Base64Disclosure extends PluginPassiveScanner {
 
     private static String getReference() {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
-    }
-
-    public String getHelpLink() {
-        return "https://www.zaproxy.org/docs/desktop/addons/passive-scan-rules-alpha/#base64-disclosure";
     }
 }

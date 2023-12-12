@@ -32,7 +32,8 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class FetchMetadataRequestHeadersScanRule extends PluginPassiveScanner {
+public class FetchMetadataRequestHeadersScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
     private static final String FETCH_METADATA_REQUEST_MESSAGE_PREFIX =
             "pscanalpha.metadata-request-headers.";
 
@@ -163,10 +164,6 @@ public class FetchMetadataRequestHeadersScanRule extends PluginPassiveScanner {
                     .setWascId(9)
                     .setEvidence(evidence);
         }
-    }
-
-    public String getHelpLink() {
-        return "https://www.zaproxy.org/docs/desktop/addons/passive-scan-rules-alpha/#fetch-metadata-request-headers-scan-rule";
     }
 
     static class SecFetchSite extends FetchMetaDataRequestHeaders {
