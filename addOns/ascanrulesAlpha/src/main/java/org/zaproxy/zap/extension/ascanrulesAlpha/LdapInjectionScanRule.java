@@ -47,7 +47,8 @@ import org.zaproxy.zap.model.TechSet;
  *
  * @author 70pointer
  */
-public class LdapInjectionScanRule extends AbstractAppParamPlugin {
+public class LdapInjectionScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
 
     /** for logging. */
     private static final Logger LOGGER = LogManager.getLogger(LdapInjectionScanRule.class);

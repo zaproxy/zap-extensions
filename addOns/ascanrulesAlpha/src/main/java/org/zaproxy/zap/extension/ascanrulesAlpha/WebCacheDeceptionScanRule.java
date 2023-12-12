@@ -40,7 +40,8 @@ import org.zaproxy.addon.commonlib.http.ComparableResponse;
  *
  * @author Nikhil (@bettercalln1ck)
  */
-public class WebCacheDeceptionScanRule extends AbstractAppPlugin {
+public class WebCacheDeceptionScanRule extends AbstractAppPlugin
+        implements CommonActiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "ascanalpha.webCacheDeception.";
     private static final Logger LOGGER = LogManager.getLogger(WebCacheDeceptionScanRule.class);
