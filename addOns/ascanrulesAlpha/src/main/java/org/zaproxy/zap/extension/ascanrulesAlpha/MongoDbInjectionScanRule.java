@@ -54,7 +54,8 @@ import org.zaproxy.zap.model.TechSet;
  *
  * @author l.casciaro
  */
-public class MongoDbInjectionScanRule extends AbstractAppParamPlugin {
+public class MongoDbInjectionScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
 
     // Prefix for internationalised messages used by this rule
     private static final String MESSAGE_PREFIX = "ascanalpha.mongodb.";
