@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.BeforeEach;
@@ -82,7 +83,28 @@ class BigRedirectsScanRuleUnitTest extends PassiveScannerTest<BigRedirectsScanRu
 
         // Then
         assertThat(alertsRaised.size(), is(1));
-        assertBigRedirectAlertAttributes(alertsRaised.get(0));
+        assertBigAlertAttributes(alertsRaised.get(0));
+    }
+
+    @Test
+    void givenRedirectHeadersWithSmallBodyButMultipleHrefsThenAlertRaised() {
+        // Given
+        msg.getResponseHeader().setStatusCode(HttpStatusCode.MOVED_PERMANENTLY);
+        msg.getResponseHeader().setHeader(HttpHeader.LOCATION, URI);
+        msg.setResponseBody(
+                "<html><a href=\""
+                        + URI.toString()
+                        + "\">Home</a>"
+                        + "<br>"
+                        + "<a href=\""
+                        + URI.toString()
+                        + "/admin\">Admin</a>"
+                        + "</html>");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(1));
+        assertMultiAlertAttributes(alertsRaised.get(0), "2");
     }
 
     @Test
@@ -152,22 +174,47 @@ class BigRedirectsScanRuleUnitTest extends PassiveScannerTest<BigRedirectsScanRu
                 is(equalTo(CommonAlertTag.WSTG_V42_INFO_05_CONTENT_LEAK.getValue())));
     }
 
-    private static void assertBigRedirectAlertAttributes(Alert alert) {
+    @Test
+    void shouldHaveExpectedExampleAlerts() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(2)));
+        assertBigAlertAttributes(alerts.get(0));
+        assertMultiAlertAttributes(alerts.get(1), "3");
+    }
+
+    private static void assertBigAlertAttributes(Alert alert) {
         assertThat(alert.getRisk(), is(Alert.RISK_LOW));
         assertThat(alert.getConfidence(), is(Alert.CONFIDENCE_MEDIUM));
         assertThat(alert.getName(), is(getLocalisedString("name")));
         assertThat(alert.getDescription(), is(getLocalisedString("desc")));
         assertThat(alert.getSolution(), is(getLocalisedString("soln")));
-        assertThat(alert.getReference(), is(getLocalisedString("refs")));
-        assertThat(alert.getOtherInfo(), is(getExpectedExtraInfo()));
+        assertThat(alert.getOtherInfo(), is(getExpectedBigExtraInfo()));
         assertThat(alert.getCweId(), is(201));
         assertThat(alert.getWascId(), is(13));
-        assertThat(alert.getUri(), is(URI));
+        assertThat(alert.getAlertRef(), is("10044-1"));
     }
 
-    private static String getExpectedExtraInfo() {
-        int bodySize = ALLOWABLE_BODY_SIZE;
-        return getLocalisedString("extrainfo", URI.length(), URI, bodySize, bodySize + 1);
+    private static String getExpectedBigExtraInfo() {
+        return getLocalisedString(
+                "extrainfo", URI.length(), URI, ALLOWABLE_BODY_SIZE, ALLOWABLE_BODY_SIZE + 1);
+    }
+
+    private static void assertMultiAlertAttributes(Alert alert, String count) {
+        assertThat(alert.getRisk(), is(Alert.RISK_LOW));
+        assertThat(alert.getConfidence(), is(Alert.CONFIDENCE_MEDIUM));
+        assertThat(alert.getName(), is(getLocalisedString("multi.name")));
+        assertThat(alert.getDescription(), is(getLocalisedString("multi.desc")));
+        assertThat(alert.getSolution(), is(getLocalisedString("soln")));
+        assertThat(alert.getOtherInfo(), is(getExpectedMultiExtraInfo(count)));
+        assertThat(alert.getCweId(), is(201));
+        assertThat(alert.getWascId(), is(13));
+        assertThat(alert.getAlertRef(), is("10044-2"));
+    }
+
+    private static String getExpectedMultiExtraInfo(String count) {
+        return getLocalisedString("multi.extrainfo", count);
     }
 
     private static String getLocalisedString(String key, Object... params) {

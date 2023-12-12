@@ -54,11 +54,14 @@ amount of time needed to passively scan.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/ApplicationErrorScanRule.java">ApplicationErrorScanRule.java</a>
 
-<H2>Big Redirect Detected (Potential Sensitive Information Leak)</H2>
+<H2 id="id-10044">Big Redirect Detected (Potential Sensitive Information Leak)</H2>
 This check predicts the size of various redirect type responses and generates an alert if the response is greater than the predicted size. 
 A large redirect response may indicate that although a redirect has taken place the page actually contained content (which may reveal sensitive information, PII, etc.).
+It will also raise an alert if the body of the redirect response contains multiple HREFs.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/BigRedirectsScanRule.java">BigRedirectsScanRule.java</a>
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10044/">10044</a>.
 
 <H2>Cache Control</H2>
 Checks "Cache-Control" response headers against general industry best practice settings for protection of sensitive content.<br>
