@@ -21,8 +21,6 @@ package org.zaproxy.addon.requester.internal;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
 
 import java.io.IOException;
 import org.apache.commons.httpclient.URI;
@@ -52,10 +50,7 @@ class HttpPanelSenderUnitTest {
         msg.getRequestHeader().addHeader("X-Foo", "bar");
         msg.getRequestHeader().addHeader("X-Client", "Foo-bar 1.1.0");
         msg.getRequestHeader().addHeader("X-Client", "Foo-not-bar 2.0");
-        // When
-        HttpPanelSender.setLowerCaseHeaderNames(msg);
-        // Then
-        assertThat(msg.getRequestHeader().getHeaders().size(), is(equalTo(3)));
+        HttpPanelSender.lowerCaseHeaderNames(msg);
         assertThat(
                 msg.getRequestHeader().getHeaders(),
                 containsInAnyOrder(

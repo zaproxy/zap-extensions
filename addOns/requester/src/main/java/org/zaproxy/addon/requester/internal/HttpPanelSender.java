@@ -50,6 +50,7 @@ import org.zaproxy.addon.requester.ExtensionRequester;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.extension.httppanel.HttpPanelResponse;
+import org.zaproxy.zap.extension.httppanel.InvalidMessageDataException;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.httppanel.view.impl.models.http.HttpPanelViewModelUtils;
 import org.zaproxy.zap.model.SessionStructure;
@@ -272,20 +273,33 @@ public class HttpPanelSender {
                     new JButton(ExtensionRequester.createIcon("lowercase-header-button.png"));
             lowerCaseHeaderNames.setToolTipText(
                     Constant.messages.getString(
-                            "requester.httpsender.button.lowerCaseHeadersName"));
-            lowerCaseHeaderNames.addActionListener(e -> lowerCaseHeaderNames());
+                            "requester.httpsender.button.lowerCaseHeaderNames"));
+            lowerCaseHeaderNames.addActionListener(
+                    e -> {
+                        try {
+                            customHttpPanelRequest.saveData();
+                        } catch (InvalidMessageDataException er) {
+                            StringBuilder warnMessage = new StringBuilder(150);
+                            warnMessage.append(
+                                    Constant.messages.getString(
+                                            "requester.httppanel.lowercaseHeaderNames.warn"));
+
+                            String exceptionMessage = er.getLocalizedMessage();
+                            if (exceptionMessage != null && !exceptionMessage.isEmpty()) {
+                                warnMessage.append('\n').append(exceptionMessage);
+                            }
+                            View.getSingleton().showWarningDialog(warnMessage.toString());
+                            return;
+                        }
+                        HttpMessage msg = (HttpMessage) customHttpPanelRequest.getMessage();
+                        lowerCaseHeaderNames(msg);
+                        customHttpPanelRequest.updateContent();
+                    });
         }
         return lowerCaseHeaderNames;
     }
 
-    private void lowerCaseHeaderNames() {
-        customHttpPanelRequest.saveData();
-        HttpMessage msg = ((HttpMessage) customHttpPanelRequest.getMessage());
-        setLowerCaseHeaderNames(msg);
-        customHttpPanelRequest.updateContent();
-    }
-
-    static void setLowerCaseHeaderNames(HttpMessage msg) {
+    static void lowerCaseHeaderNames(HttpMessage msg) {
         HttpRequestHeader httpRequestHeader = msg.getRequestHeader();
         List<HttpHeaderField> fields = httpRequestHeader.getHeaders();
         for (HttpHeaderField field : fields) {
