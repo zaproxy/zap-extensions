@@ -27,9 +27,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.model.Session;
+import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.model.StandardParameterParser;
 
 class ClientMapUnitTest {
@@ -45,6 +47,7 @@ class ClientMapUnitTest {
     private static final String BBB_DDD_URL = "https://bbb.com/ddd";
 
     private ClientNode root;
+    ClientMap map;
 
     @BeforeEach
     void setUp() {
@@ -52,14 +55,17 @@ class ClientMapUnitTest {
         StandardParameterParser ssp = new StandardParameterParser();
         given(session.getUrlParamParser(any(String.class))).willReturn(ssp);
         root = new ClientNode(new ClientSideDetails("Root", ""), session);
+        map = new ClientMap(root);
+    }
+
+    @AfterEach
+    void tearDown() {
+        ZAP.getEventBus().unregisterPublisher(map);
     }
 
     @Test
     void shouldFailIfGettingNullUrl() {
-        // Given
-        ClientMap map = new ClientMap(root);
-
-        // When
+        // Given / When
         IllegalArgumentException e =
                 assertThrows(IllegalArgumentException.class, () -> map.getNode(null, false, false));
 
@@ -69,10 +75,7 @@ class ClientMapUnitTest {
 
     @Test
     void shouldHandleBaseSiteSlashFragmentSlash() {
-        // Given
-        ClientMap map = new ClientMap(root);
-
-        // When
+        // Given / When
         map.getOrAddNode(AAA_URL + "/#/", false, false);
 
         // Then
@@ -98,10 +101,7 @@ class ClientMapUnitTest {
 
     @Test
     void shouldAddOrderedNodes() {
-        // Given
-        ClientMap map = new ClientMap(root);
-
-        // When
+        // Given / When
         map.getOrAddNode(CCC_URL + "/", false, false);
         map.getOrAddNode(BBB_DDD_URL + "/", false, false);
         map.getOrAddNode(DDD_URL + "/", false, false);
@@ -132,10 +132,7 @@ class ClientMapUnitTest {
 
     @Test
     void shouldAddStorageAtEnd() {
-        // Given
-        ClientMap map = new ClientMap(root);
-
-        // When
+        // Given / When
         map.getOrAddNode(BBB_DDD_URL + "/", false, false);
         map.getOrAddNode(BBB_CCC_URL + "/", false, true);
         map.getOrAddNode(BBB_BBB_URL + "/", false, false);
@@ -162,7 +159,6 @@ class ClientMapUnitTest {
     @Test
     void shouldGetExistingNode() {
         // Given
-        ClientMap map = new ClientMap(root);
         ClientNode node1 = map.getOrAddNode(BBB_DDD_URL + "/", false, false);
         map.getOrAddNode(BBB_CCC_URL + "/", false, true);
         map.getOrAddNode(BBB_BBB_URL + "/", false, false);
@@ -178,7 +174,6 @@ class ClientMapUnitTest {
     @Test
     void shouldNotGetMissingNode() {
         // Given
-        ClientMap map = new ClientMap(root);
         map.getOrAddNode(BBB_DDD_URL + "/", false, false);
         map.getOrAddNode(BBB_CCC_URL + "/", false, true);
         map.getOrAddNode(BBB_BBB_URL + "/", false, false);
@@ -193,10 +188,7 @@ class ClientMapUnitTest {
 
     @Test
     void shouldNormaliseParams() {
-        // Given
-        ClientMap map = new ClientMap(root);
-
-        // When
+        // Given / When
         map.getOrAddNode("https://www.example.com/aaa/bbb?p1=v1&p2=v2", false, false);
         map.getOrAddNode("https://www.example.com/aaa/bbb?p2=v3&p1=v4", false, false);
 
@@ -219,10 +211,7 @@ class ClientMapUnitTest {
 
     @Test
     void shouldNormaliseSiteNodesWithParams() {
-        // Given
-        ClientMap map = new ClientMap(root);
-
-        // When
+        // Given / When
         map.getOrAddNode("https://www.example.com?p1=v1&p2=v2", false, false);
         map.getOrAddNode("https://www.example.com?p2=v3&p1=v4", false, false);
 
@@ -239,10 +228,7 @@ class ClientMapUnitTest {
 
     @Test
     void shouldNormaliseNonSiteNodesWithParams() {
-        // Given
-        ClientMap map = new ClientMap(root);
-
-        // When
+        // Given / When
         map.getOrAddNode("https://www.example.com/aaa/?p1=v1&p2=v2", false, false);
         map.getOrAddNode("https://www.example.com/aaa?p2=v3&p1=v4", false, false);
 
@@ -271,10 +257,7 @@ class ClientMapUnitTest {
 
     @Test
     void shouldAddSiteLevelFragmentNodes() {
-        // Given
-        ClientMap map = new ClientMap(root);
-
-        // When
+        // Given / When
         map.getOrAddNode("https://www.example.com/?p2=v3&p1=v4#third", false, false);
         map.getOrAddNode("https://www.example.com#second", false, false);
         map.getOrAddNode("https://www.example.com/#first", false, false);
@@ -339,10 +322,7 @@ class ClientMapUnitTest {
 
     @Test
     void shouldClearTheMap() {
-        // Given
-        ClientMap map = new ClientMap(root);
-
-        // When
+        // Given / When
         map.getOrAddNode(CCC_URL + "/", false, false);
         map.getOrAddNode(BBB_DDD_URL + "/", false, false);
         map.getOrAddNode(DDD_URL + "/", false, false);

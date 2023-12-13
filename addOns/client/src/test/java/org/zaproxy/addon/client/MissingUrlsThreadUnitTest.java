@@ -26,6 +26,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.io.IOException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.model.Model;
@@ -33,6 +34,7 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.SiteMap;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.network.HttpSender;
+import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventPublisher;
 import org.zaproxy.zap.model.StandardParameterParser;
@@ -48,6 +50,7 @@ class MissingUrlsThreadUnitTest extends TestUtils {
     private Session session;
     private SiteMap siteMap;
     private ClientNode root;
+    private ClientMap clientMap;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -59,6 +62,12 @@ class MissingUrlsThreadUnitTest extends TestUtils {
         StandardParameterParser ssp = new StandardParameterParser();
         given(session.getUrlParamParser(any(String.class))).willReturn(ssp);
         root = new ClientNode(new ClientSideDetails("Root", ""), session);
+        clientMap = new ClientMap(root);
+    }
+
+    @AfterEach
+    void tearDown() {
+        ZAP.getEventBus().unregisterPublisher(clientMap);
     }
 
     @Test
@@ -67,20 +76,19 @@ class MissingUrlsThreadUnitTest extends TestUtils {
         given(model.getSession()).willReturn(session);
         given(session.getSiteTree()).willReturn(siteMap);
 
-        ClientMap map = new ClientMap(root);
-        map.getOrAddNode(AAA_URL, false, false);
+        clientMap.getOrAddNode(AAA_URL, false, false);
 
         EventPublisher evPub = mock(EventPublisher.class);
         Target target = new Target();
         target.setStartNode(new SiteNode(siteMap, 0, AAA_URL));
         Event event = new Event(evPub, "event", target);
-        MissingUrlsThread mut = new MissingUrlsThread(model, event, map.getRoot());
+        MissingUrlsThread mut = new MissingUrlsThread(model, event, clientMap.getRoot());
 
         HttpSender httpSender = mock(HttpSender.class);
         mut.setHttpSender(httpSender);
 
         // When
-        mut.traverseMap(map.getRoot());
+        mut.traverseMap(clientMap.getRoot());
 
         // Then
         verify(httpSender).sendAndReceive(any());
@@ -89,20 +97,19 @@ class MissingUrlsThreadUnitTest extends TestUtils {
     @Test
     void shouldNotAddUrlOutOfScope() throws IOException {
         // Given
-        ClientMap map = new ClientMap(root);
-        map.getOrAddNode(AAA_URL + "/", false, false);
+        clientMap.getOrAddNode(AAA_URL + "/", false, false);
 
         EventPublisher evPub = mock(EventPublisher.class);
         Target target = new Target();
         target.setStartNode(new SiteNode(siteMap, 0, CCC_URL));
         Event event = new Event(evPub, "event", target);
-        MissingUrlsThread mut = new MissingUrlsThread(model, event, map.getRoot());
+        MissingUrlsThread mut = new MissingUrlsThread(model, event, clientMap.getRoot());
 
         HttpSender httpSender = mock(HttpSender.class);
         mut.setHttpSender(httpSender);
 
         // When
-        mut.traverseMap(map.getRoot());
+        mut.traverseMap(clientMap.getRoot());
 
         // Then
         verify(httpSender, times(0)).sendAndReceive(any());
@@ -111,20 +118,19 @@ class MissingUrlsThreadUnitTest extends TestUtils {
     @Test
     void shouldNotAddStorageNode() throws IOException {
         // Given
-        ClientMap map = new ClientMap(root);
-        map.getOrAddNode(AAA_URL, false, true);
+        clientMap.getOrAddNode(AAA_URL, false, true);
 
         EventPublisher evPub = mock(EventPublisher.class);
         Target target = new Target();
         target.setStartNode(new SiteNode(siteMap, 0, AAA_URL));
         Event event = new Event(evPub, "event", target);
-        MissingUrlsThread mut = new MissingUrlsThread(model, event, map.getRoot());
+        MissingUrlsThread mut = new MissingUrlsThread(model, event, clientMap.getRoot());
 
         HttpSender httpSender = mock(HttpSender.class);
         mut.setHttpSender(httpSender);
 
         // When
-        mut.traverseMap(map.getRoot());
+        mut.traverseMap(clientMap.getRoot());
 
         // Then
         verify(httpSender, times(0)).sendAndReceive(any());
@@ -133,18 +139,17 @@ class MissingUrlsThreadUnitTest extends TestUtils {
     @Test
     void shouldNotAddUrlIfNoScope() throws IOException {
         // Given
-        ClientMap map = new ClientMap(root);
-        map.getOrAddNode(AAA_URL + "/", false, false);
+        clientMap.getOrAddNode(AAA_URL + "/", false, false);
 
         EventPublisher evPub = mock(EventPublisher.class);
         Event event = new Event(evPub, "event", new Target());
-        MissingUrlsThread mut = new MissingUrlsThread(model, event, map.getRoot());
+        MissingUrlsThread mut = new MissingUrlsThread(model, event, clientMap.getRoot());
 
         HttpSender httpSender = mock(HttpSender.class);
         mut.setHttpSender(httpSender);
 
         // When
-        mut.traverseMap(map.getRoot());
+        mut.traverseMap(clientMap.getRoot());
 
         // Then
         verify(httpSender, times(0)).sendAndReceive(any());

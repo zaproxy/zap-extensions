@@ -20,14 +20,22 @@
 package org.zaproxy.addon.client;
 
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.zaproxy.zap.ZAP;
+import org.zaproxy.zap.eventBus.Event;
+import org.zaproxy.zap.eventBus.EventPublisher;
+import org.zaproxy.zap.model.Target;
 
 @SuppressWarnings("serial")
-public class ClientMap extends SortedTreeModel {
+public class ClientMap extends SortedTreeModel implements EventPublisher {
+
+    public static final String MAP_NODE_ADDED_EVENT = "client.mapNode.added";
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = LogManager.getLogger(ClientMap.class);
@@ -36,6 +44,7 @@ public class ClientMap extends SortedTreeModel {
     public ClientMap(ClientNode root) {
         super(root);
         this.root = root;
+        ZAP.getEventBus().registerPublisher(this, MAP_NODE_ADDED_EVENT);
     }
 
     @Override
@@ -77,6 +86,14 @@ public class ClientMap extends SortedTreeModel {
                             new ClientNode(
                                     new ClientSideDetails(nodeName, url, visited, storage),
                                     storage);
+                    if (!storage) {
+                        Map<String, String> map = new HashMap<>();
+                        map.put("url", url);
+                        ZAP.getEventBus()
+                                .publishSyncEvent(
+                                        this,
+                                        new Event(this, MAP_NODE_ADDED_EVENT, new Target(), map));
+                    }
                 } else {
                     // Create intermediate node with a suitable URL
                     String nodeUrl;
@@ -127,6 +144,11 @@ public class ClientMap extends SortedTreeModel {
     public void clear() {
         root.removeAllChildren();
         this.nodeStructureChanged(root);
+    }
+
+    @Override
+    public String getPublisherName() {
+        return this.getClass().getCanonicalName();
     }
 }
 
