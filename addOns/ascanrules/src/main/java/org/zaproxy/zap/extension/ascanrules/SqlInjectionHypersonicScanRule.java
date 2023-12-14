@@ -19,9 +19,13 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import java.io.IOException;
 import java.net.SocketException;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,6 +35,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.timing.TimingUtils;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
@@ -62,15 +67,6 @@ import org.zaproxy.zap.model.TechSet;
  */
 public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
 
-    private boolean doUnionBased = false; // TODO: use in Union based, when we implement it
-    private boolean doTimeBased = false;
-
-    private int doUnionMaxRequests = 0; // TODO: use in Union based, when we implement it
-    private int doTimeMaxRequests = 0;
-
-    // note this is in milliseconds
-    private int sleepInMs = 15000;
-
     /** Hypersonic one-line comment */
     public static final String SQL_ONE_LINE_COMMENT = " -- ";
 
@@ -98,7 +94,7 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
     }
 
     /** the sleep function in Hypersonic SQL */
-    private static String SQL_HYPERSONIC_TIME_FUNCTION =
+    private static final String SQL_HYPERSONIC_TIME_FUNCTION =
             "\"java.lang.Thread.sleep\"(" + SLEEP_TOKEN + ")";
 
     /** Hypersonic specific time based injection strings. */
@@ -117,68 +113,79 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
     // Note: <<<<ORIGINALVALUE>>>> is replaced with the original parameter value at runtime in these
     // examples below (see * comment)
     // TODO: maybe add support for ')' after the original value, before the sleeps
-    private static String[] SQL_HYPERSONIC_TIME_REPLACEMENTS = {
-        "; select "
-                + SQL_HYPERSONIC_TIME_FUNCTION
-                + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME'"
-                + SQL_ONE_LINE_COMMENT,
-        "'; select "
-                + SQL_HYPERSONIC_TIME_FUNCTION
-                + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME'"
-                + SQL_ONE_LINE_COMMENT,
-        "\"; select "
-                + SQL_HYPERSONIC_TIME_FUNCTION
-                + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME'"
-                + SQL_ONE_LINE_COMMENT,
-        "); select "
-                + SQL_HYPERSONIC_TIME_FUNCTION
-                + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME'"
-                + SQL_ONE_LINE_COMMENT,
-        SQL_HYPERSONIC_TIME_FUNCTION,
-        ORIG_VALUE_TOKEN + " / " + SQL_HYPERSONIC_TIME_FUNCTION + " ",
-        ORIG_VALUE_TOKEN + "' / " + SQL_HYPERSONIC_TIME_FUNCTION + " / '",
-        ORIG_VALUE_TOKEN + "\" / " + SQL_HYPERSONIC_TIME_FUNCTION + " / \"",
-        ORIG_VALUE_TOKEN
-                + " and exists ( select "
-                + SQL_HYPERSONIC_TIME_FUNCTION
-                + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"
-                + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
-        ORIG_VALUE_TOKEN
-                + "' and exists ( select "
-                + SQL_HYPERSONIC_TIME_FUNCTION
-                + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"
-                + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
-        ORIG_VALUE_TOKEN
-                + "\" and exists ( select "
-                + SQL_HYPERSONIC_TIME_FUNCTION
-                + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"
-                + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
-        ORIG_VALUE_TOKEN
-                + ") and exists ( select "
-                + SQL_HYPERSONIC_TIME_FUNCTION
-                + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"
-                + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
-        ORIG_VALUE_TOKEN
-                + " or exists ( select "
-                + SQL_HYPERSONIC_TIME_FUNCTION
-                + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"
-                + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
-        ORIG_VALUE_TOKEN
-                + "' or exists ( select "
-                + SQL_HYPERSONIC_TIME_FUNCTION
-                + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"
-                + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
-        ORIG_VALUE_TOKEN
-                + "\" or exists ( select "
-                + SQL_HYPERSONIC_TIME_FUNCTION
-                + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"
-                + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
-        ORIG_VALUE_TOKEN
-                + ") or exists ( select "
-                + SQL_HYPERSONIC_TIME_FUNCTION
-                + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"
-                + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
-    };
+    private static final List<String> SQL_HYPERSONIC_TIME_REPLACEMENTS =
+            List.of(
+                    "; select "
+                            + SQL_HYPERSONIC_TIME_FUNCTION
+                            + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME'"
+                            + SQL_ONE_LINE_COMMENT,
+                    "'; select "
+                            + SQL_HYPERSONIC_TIME_FUNCTION
+                            + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME'"
+                            + SQL_ONE_LINE_COMMENT,
+                    "\"; select "
+                            + SQL_HYPERSONIC_TIME_FUNCTION
+                            + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME'"
+                            + SQL_ONE_LINE_COMMENT,
+                    "); select "
+                            + SQL_HYPERSONIC_TIME_FUNCTION
+                            + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME'"
+                            + SQL_ONE_LINE_COMMENT,
+                    SQL_HYPERSONIC_TIME_FUNCTION,
+                    ORIG_VALUE_TOKEN + " / " + SQL_HYPERSONIC_TIME_FUNCTION + " ",
+                    ORIG_VALUE_TOKEN + "' / " + SQL_HYPERSONIC_TIME_FUNCTION + " / '",
+                    ORIG_VALUE_TOKEN + "\" / " + SQL_HYPERSONIC_TIME_FUNCTION + " / \"",
+                    ORIG_VALUE_TOKEN
+                            + " and exists ( select "
+                            + SQL_HYPERSONIC_TIME_FUNCTION
+                            + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"
+                            + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
+                    ORIG_VALUE_TOKEN
+                            + "' and exists ( select "
+                            + SQL_HYPERSONIC_TIME_FUNCTION
+                            + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"
+                            + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
+                    ORIG_VALUE_TOKEN
+                            + "\" and exists ( select "
+                            + SQL_HYPERSONIC_TIME_FUNCTION
+                            + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"
+                            + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
+                    ORIG_VALUE_TOKEN
+                            + ") and exists ( select "
+                            + SQL_HYPERSONIC_TIME_FUNCTION
+                            + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"
+                            + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
+                    ORIG_VALUE_TOKEN
+                            + " or exists ( select "
+                            + SQL_HYPERSONIC_TIME_FUNCTION
+                            + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"
+                            + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
+                    ORIG_VALUE_TOKEN
+                            + "' or exists ( select "
+                            + SQL_HYPERSONIC_TIME_FUNCTION
+                            + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"
+                            + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
+                    ORIG_VALUE_TOKEN
+                            + "\" or exists ( select "
+                            + SQL_HYPERSONIC_TIME_FUNCTION
+                            + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"
+                            + SQL_ONE_LINE_COMMENT, // Param in WHERE clause somewhere
+                    ORIG_VALUE_TOKEN
+                            + ") or exists ( select "
+                            + SQL_HYPERSONIC_TIME_FUNCTION
+                            + " from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME')"
+                            + SQL_ONE_LINE_COMMENT // Param in WHERE clause somewhere
+                    );
+
+    /** The default number of seconds used in time-based attacks (i.e. sleep commands). */
+    private static final int DEFAULT_SLEEP_TIME = 5;
+
+    // limit the maximum number of requests sent for time-based attack detection
+    private static final int BLIND_REQUESTS_LIMIT = 4;
+
+    // error range allowable for statistical time-based blind attacks (0-1.0)
+    private static final double TIME_CORRELATION_ERROR_RANGE = 0.15;
+    private static final double TIME_SLOPE_ERROR_RANGE = 0.30;
 
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
@@ -188,6 +195,11 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
 
     /** for logging. */
     private static final Logger LOGGER = LogManager.getLogger(SqlInjectionHypersonicScanRule.class);
+
+    /** The number of seconds used in time-based attacks (i.e. sleep commands). */
+    private int timeSleepSeconds = DEFAULT_SLEEP_TIME;
+
+    private int blindTargetCount = SQL_HYPERSONIC_TIME_REPLACEMENTS.size();
 
     @Override
     public int getId() {
@@ -229,36 +241,25 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
         LOGGER.debug("Initialising");
         // set up what we are allowed to do, depending on the attack strength that was set.
         if (this.getAttackStrength() == AttackStrength.LOW) {
-            doTimeBased = true;
-            doTimeMaxRequests = 3;
-            doUnionBased = true;
-            doUnionMaxRequests = 3;
+            blindTargetCount = 6;
         } else if (this.getAttackStrength() == AttackStrength.MEDIUM) {
-            doTimeBased = true;
-            doTimeMaxRequests = 5;
-            doUnionBased = true;
-            doUnionMaxRequests = 5;
+            blindTargetCount = 10;
         } else if (this.getAttackStrength() == AttackStrength.HIGH) {
-            doTimeBased = true;
-            doTimeMaxRequests = 10;
-            doUnionBased = true;
-            doUnionMaxRequests = 10;
+            blindTargetCount = 12;
         } else if (this.getAttackStrength() == AttackStrength.INSANE) {
-            doTimeBased = true;
-            doTimeMaxRequests = 100;
-            doUnionBased = true;
-            doUnionMaxRequests = 100;
+            blindTargetCount = SQL_HYPERSONIC_TIME_REPLACEMENTS.size();
         }
-        // Read the sleep value from the configs - note this is in milliseconds
+
         try {
-            this.sleepInMs =
-                    this.getConfig().getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, 15) * 1000;
+            this.timeSleepSeconds =
+                    this.getConfig()
+                            .getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, DEFAULT_SLEEP_TIME);
         } catch (ConversionException e) {
             LOGGER.debug(
                     "Invalid value for 'rules.common.sleep': {}",
                     this.getConfig().getString(RuleConfigParam.RULE_COMMON_SLEEP_TIME));
         }
-        LOGGER.debug("Sleep set to {} milliseconds", sleepInMs);
+        LOGGER.debug("Sleep set to {} seconds", timeSleepSeconds);
     }
 
     /**
@@ -267,146 +268,90 @@ public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
      */
     @Override
     public void scan(HttpMessage originalMessage, String paramName, String paramValue) {
-        try {
-            // Timing Baseline check: we need to get the time that it took the original query, to
-            // know if the time based check is working correctly..
-            HttpMessage msgTimeBaseline = getNewMsg();
+
+        LOGGER.debug(
+                "Scanning URL [{}] [{}], field [{}] with value [{}] for SQL Injection",
+                getBaseMsg().getRequestHeader().getMethod(),
+                getBaseMsg().getRequestHeader().getURI(),
+                paramName,
+                paramValue);
+
+        AtomicReference<HttpMessage> message = new AtomicReference<>();
+        AtomicReference<String> attack = new AtomicReference<>();
+        Iterator<String> it = SQL_HYPERSONIC_TIME_REPLACEMENTS.iterator();
+        for (int i = 0; !isStop() && it.hasNext() && i < blindTargetCount; i++) {
+            String sleepPayload = it.next();
+            TimingUtils.RequestSender requestSender =
+                    x -> {
+                        HttpMessage msg = getNewMsg();
+                        message.compareAndSet(null, msg);
+
+                        String finalPayload =
+                                sleepPayload
+                                        .replace(ORIG_VALUE_TOKEN, paramValue)
+                                        // Time in milliseconds for the SQL function.
+                                        .replace(SLEEP_TOKEN, Integer.toString(((int) x) * 1000));
+
+                        setParameter(msg, paramName, finalPayload);
+                        LOGGER.debug("Testing [{}] = [{}]", paramName, finalPayload);
+                        attack.compareAndSet(null, finalPayload);
+
+                        sendAndReceive(msg, false);
+                        return msg.getTimeElapsedMillis() / 1000.0;
+                    };
+
             try {
-                sendAndReceive(msgTimeBaseline, false); // do not follow redirects
-            } catch (java.net.SocketTimeoutException e) {
-                // to be expected occasionally, if the base query was one that contains some
-                // parameters exploiting time based SQL injection?
-                LOGGER.debug(
-                        "The Base Time Check timed out on [{}] URL [{}]",
-                        msgTimeBaseline.getRequestHeader().getMethod(),
-                        msgTimeBaseline.getRequestHeader().getURI());
-            } catch (SocketException ex) {
-                LOGGER.debug(
-                        "Caught {} {} when accessing: {} for Base Time Check",
-                        ex.getClass().getName(),
-                        ex.getMessage(),
-                        msgTimeBaseline.getRequestHeader().getURI());
-                return; // No need to keep going
-            }
-            long originalTimeUsed = msgTimeBaseline.getTimeElapsedMillis();
-            // end of timing baseline check
+                boolean injectable =
+                        TimingUtils.checkTimingDependence(
+                                BLIND_REQUESTS_LIMIT,
+                                timeSleepSeconds,
+                                requestSender,
+                                TIME_CORRELATION_ERROR_RANGE,
+                                TIME_SLOPE_ERROR_RANGE);
 
-            int countUnionBasedRequests = 0;
-            int countTimeBasedRequests = 0;
-
-            LOGGER.debug(
-                    "Scanning URL [{}] [{}], field [{}] with value [{}] for SQL Injection",
-                    getBaseMsg().getRequestHeader().getMethod(),
-                    getBaseMsg().getRequestHeader().getURI(),
-                    paramName,
-                    paramValue);
-
-            // Hypersonic specific time based SQL injection checks
-            for (int timeBasedSQLindex = 0;
-                    timeBasedSQLindex < SQL_HYPERSONIC_TIME_REPLACEMENTS.length
-                            && doTimeBased
-                            && countTimeBasedRequests < doTimeMaxRequests;
-                    timeBasedSQLindex++) {
-                HttpMessage msgAttack = getNewMsg();
-                String newTimeBasedInjectionValue =
-                        SQL_HYPERSONIC_TIME_REPLACEMENTS[timeBasedSQLindex]
-                                .replace(ORIG_VALUE_TOKEN, paramValue)
-                                .replace(SLEEP_TOKEN, Integer.toString(sleepInMs));
-
-                setParameter(msgAttack, paramName, newTimeBasedInjectionValue);
-
-                // send it.
-                try {
-                    sendAndReceive(msgAttack, false); // do not follow redirects
-                    countTimeBasedRequests++;
-                } catch (java.net.SocketTimeoutException e) {
-                    // this is to be expected, if we start sending slow queries to the database.
-                    // ignore it in this case.. and just get the time.
+                if (injectable) {
                     LOGGER.debug(
-                            "The time check query timed out on [{}] URL [{}] on field: [{}]",
-                            msgTimeBaseline.getRequestHeader().getMethod(),
-                            msgTimeBaseline.getRequestHeader().getURI(),
-                            paramName);
-                } catch (SocketException ex) {
-                    LOGGER.debug(
-                            "Caught {} {} when accessing: {} for time check query",
-                            ex.getClass().getName(),
-                            ex.getMessage(),
-                            msgTimeBaseline.getRequestHeader().getURI());
-                    return; // No need to keep going
-                }
-                long modifiedTimeUsed = msgAttack.getTimeElapsedMillis();
-
-                LOGGER.debug(
-                        "Time Based SQL Injection test: [{}] on field: [{}] with value [{}] took {}ms, where the original took {}ms",
-                        newTimeBasedInjectionValue,
-                        paramName,
-                        newTimeBasedInjectionValue,
-                        modifiedTimeUsed,
-                        originalTimeUsed);
-
-                if (modifiedTimeUsed >= (originalTimeUsed + sleepInMs)) {
-                    // takes more than 15 (by default) extra seconds => likely time based SQL
-                    // injection.
-
-                    // But first double check
-
-                    HttpMessage msgc = getNewMsg();
-                    try {
-                        sendAndReceive(msgc, false); // do not follow redirects
-                    } catch (Exception e) {
-                        // Ignore all exceptions
-                    }
-                    long checkTimeUsed = msgc.getTimeElapsedMillis();
-                    if (checkTimeUsed >= (originalTimeUsed + this.sleepInMs - 200)) {
-                        // Looks like the server is overloaded, very unlikely this is a real issue
-                        continue;
-                    }
+                            "[Time Based SQL Injection Found] on parameter [{}] with value [{}]",
+                            paramName,
+                            attack.get());
 
                     String extraInfo =
                             Constant.messages.getString(
                                     "ascanrules.sqlinjection.alert.timebased.extrainfo",
-                                    newTimeBasedInjectionValue,
-                                    modifiedTimeUsed,
+                                    attack.get(),
+                                    message.get().getTimeElapsedMillis(),
                                     paramValue,
-                                    originalTimeUsed);
-                    String attack =
-                            Constant.messages.getString(
-                                    "ascanrules.sqlinjection.alert.booleanbased.attack",
-                                    paramName,
-                                    newTimeBasedInjectionValue);
+                                    getBaseMsg().getTimeElapsedMillis());
 
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
                             .setName(getName() + " - Time Based")
                             .setUri(getBaseMsg().getRequestHeader().getURI().toString())
                             .setParam(paramName)
-                            .setAttack(attack)
+                            .setAttack(attack.get())
                             .setOtherInfo(extraInfo)
-                            .setMessage(msgAttack)
+                            .setMessage(message.get())
                             .raise();
-
-                    LOGGER.debug(
-                            "A likely Time Based SQL Injection Vulnerability has been found with [{}] URL [{}] on field: [{}]",
-                            msgAttack.getRequestHeader().getMethod(),
-                            msgAttack.getRequestHeader().getURI(),
-                            paramName);
-                    return;
-                } // query took longer than the amount of time we attempted to retard it by
-            } // for each time based SQL index
-            // end of check for time based SQL Injection
-
-        } catch (Exception e) {
-            // Do not try to internationalise this.. we need an error message in any event..
-            // if it's in English, it's still better than not having it at all.
-            LOGGER.error(
-                    "An error occurred checking a url for Hypersonic SQL Injection vulnerabilities",
-                    e);
+                    break;
+                }
+            } catch (SocketException ex) {
+                LOGGER.debug(
+                        "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
+                        ex.getClass().getName(),
+                        ex.getMessage(),
+                        message.get().getRequestHeader().getURI());
+            } catch (IOException ex) {
+                LOGGER.debug(
+                        "Check failed for parameter [{}] and payload [{}] due to an I/O error",
+                        paramName,
+                        attack.get(),
+                        ex);
+            }
         }
     }
 
-    public void setSleepInMs(int sleepInMs) {
-        this.sleepInMs = sleepInMs;
+    void setTimeSleepSeconds(int timeSleepSeconds) {
+        this.timeSleepSeconds = timeSleepSeconds;
     }
 
     @Override

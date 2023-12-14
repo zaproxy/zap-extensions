@@ -6,7 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Fixed
 - Threshold handling in the Hidden File Finder scan rule.
-- Improved SQL Injection - MsSQL scan rule by using time-based linear regression tests.
+- Improved the following scan rules by using time-based linear regression tests:
+  - SQL Injection - Hypersonic SQL
+  - SQL Injection - MsSQL
 
 ## [59] - 2023-12-07
 ### Added

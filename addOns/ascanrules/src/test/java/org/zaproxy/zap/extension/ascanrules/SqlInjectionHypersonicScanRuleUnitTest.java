@@ -27,6 +27,8 @@ import static org.hamcrest.Matchers.is;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -67,22 +69,27 @@ class SqlInjectionHypersonicScanRuleUnitTest
     @Test
     void shouldAlertIfSleepTimesGetLonger() throws Exception {
         String test = "/shouldReportSqlTimingIssue/";
+        Pattern sleepPattern = Pattern.compile("Thread.sleep\"\\((\\d+)\\)");
 
         this.nano.addHandler(
                 new NanoServerHandler(test) {
-                    private int time = 100;
 
                     @Override
                     protected Response serve(IHTTPSession session) {
                         String name = getFirstParamValue(session, "name");
                         String response = "<html><body></body></html>";
-                        if (name != null && name.contains("Thread.sleep")) {
-                            try {
-                                Thread.sleep(time);
-                            } catch (InterruptedException e) {
-                                // Ignore
-                            }
-                            time += 300;
+                        if (name == null) {
+                            return newFixedLengthResponse(response);
+                        }
+                        Matcher match = sleepPattern.matcher(name);
+                        if (!match.find()) {
+                            return newFixedLengthResponse(name);
+                        }
+                        try {
+                            int sleepInput = Integer.parseInt(match.group(1));
+                            Thread.sleep(sleepInput);
+                        } catch (InterruptedException e) {
+                            // Ignore
                         }
                         return newFixedLengthResponse(response);
                     }
@@ -91,7 +98,7 @@ class SqlInjectionHypersonicScanRuleUnitTest
         HttpMessage msg = this.getHttpMessage(test + "?name=test");
 
         this.rule.init(msg, this.parent);
-        this.rule.setSleepInMs(300);
+        this.rule.setTimeSleepSeconds(2);
 
         this.rule.scan();
 
@@ -100,7 +107,7 @@ class SqlInjectionHypersonicScanRuleUnitTest
         assertThat(
                 alertsRaised.get(0).getAttack(),
                 equalTo(
-                        "field: [name], value ['; select \"java.lang.Thread.sleep\"(300) from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME' -- ]"));
+                        "; select \"java.lang.Thread.sleep\"(2000) from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME' -- "));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
@@ -121,7 +128,7 @@ class SqlInjectionHypersonicScanRuleUnitTest
                         } catch (InterruptedException e) {
                             // Ignore
                         }
-                        time += 300;
+                        time += 100;
                         return newFixedLengthResponse(response);
                     }
                 });
@@ -129,7 +136,7 @@ class SqlInjectionHypersonicScanRuleUnitTest
         HttpMessage msg = this.getHttpMessage(test + "?name=test");
 
         this.rule.init(msg, this.parent);
-        this.rule.setSleepInMs(300);
+        this.rule.setTimeSleepSeconds(2);
 
         this.rule.scan();
 
