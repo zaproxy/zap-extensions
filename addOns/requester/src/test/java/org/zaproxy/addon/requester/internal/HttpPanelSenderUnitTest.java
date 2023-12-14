@@ -50,7 +50,9 @@ class HttpPanelSenderUnitTest {
         msg.getRequestHeader().addHeader("X-Foo", "bar");
         msg.getRequestHeader().addHeader("X-Client", "Foo-bar 1.1.0");
         msg.getRequestHeader().addHeader("X-Client", "Foo-not-bar 2.0");
+        // When
         HttpPanelSender.lowerCaseHeaderNames(msg);
+        // Then
         assertThat(
                 msg.getRequestHeader().getHeaders(),
                 containsInAnyOrder(
