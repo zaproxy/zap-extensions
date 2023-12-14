@@ -45,7 +45,7 @@ class HttpPanelSenderUnitTest {
     }
 
     @Test
-    void shouldLowercaseheaderNames() {
+    void shouldLowercaseHeaderNames() {
         // Given
         msg.getRequestHeader().addHeader("X-Foo", "bar");
         msg.getRequestHeader().addHeader("X-Client", "Foo-bar 1.1.0");
