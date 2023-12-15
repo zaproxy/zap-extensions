@@ -20,7 +20,7 @@
 package org.zaproxy.addon.requester.internal;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.contains;
 
 import java.io.IOException;
 import org.apache.commons.httpclient.URI;
@@ -55,7 +55,7 @@ class HttpPanelSenderUnitTest {
         // Then
         assertThat(
                 msg.getRequestHeader().getHeaders(),
-                containsInAnyOrder(
+                contains(
                         new HttpHeaderField("x-foo", "bar"),
                         new HttpHeaderField("x-client", "Foo-bar 1.1.0"),
                         new HttpHeaderField("x-client", "Foo-not-bar 2.0")));
