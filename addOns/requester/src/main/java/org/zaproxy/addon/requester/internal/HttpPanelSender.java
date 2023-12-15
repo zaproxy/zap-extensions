@@ -24,8 +24,11 @@ import java.awt.event.ItemEvent;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import javax.net.ssl.SSLException;
+import javax.swing.JButton;
 import javax.swing.JToggleButton;
 import org.apache.commons.httpclient.URI;
 import org.apache.logging.log4j.LogManager;
@@ -37,14 +40,17 @@ import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.requester.ExtensionRequester;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.extension.httppanel.HttpPanel;
 import org.zaproxy.zap.extension.httppanel.HttpPanelResponse;
+import org.zaproxy.zap.extension.httppanel.InvalidMessageDataException;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.httppanel.view.impl.models.http.HttpPanelViewModelUtils;
 import org.zaproxy.zap.model.SessionStructure;
@@ -68,9 +74,13 @@ public class HttpPanelSender {
     private JToggleButton useCookies;
     private JToggleButton useCsrf;
     private JToggleButton hostHeader;
+    private JButton lowerCaseHeaderNames;
+
+    private CustomHttpPanelRequest customHttpPanelRequest;
 
     public HttpPanelSender(CustomHttpPanelRequest requestPanel, HttpPanelResponse responsePanel) {
         this.responsePanel = responsePanel;
+        this.customHttpPanelRequest = requestPanel;
 
         extAntiCSRF =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionAntiCSRF.class);
@@ -84,6 +94,8 @@ public class HttpPanelSender {
         requestPanel.addOptions(
                 getButtonFixContentLength(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
         requestPanel.addOptions(getButtonHostHeader(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
+        requestPanel.addOptions(
+                getButtonLowerCaseHeaderNames(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
         if (extAntiCSRF != null) {
             requestPanel.addOptions(getButtonUseCsrf(), HttpPanel.OptionsLocation.AFTER_COMPONENTS);
         }
@@ -253,6 +265,49 @@ public class HttpPanelSender {
                     Constant.messages.getString("requester.httpsender.checkbox.hostheader"));
         }
         return hostHeader;
+    }
+
+    private JButton getButtonLowerCaseHeaderNames() {
+        if (lowerCaseHeaderNames == null) {
+            lowerCaseHeaderNames =
+                    new JButton(ExtensionRequester.createIcon("lowercase-header-button.png"));
+            lowerCaseHeaderNames.setToolTipText(
+                    Constant.messages.getString(
+                            "requester.httpsender.button.lowerCaseHeaderNames"));
+            lowerCaseHeaderNames.addActionListener(
+                    e -> {
+                        try {
+                            customHttpPanelRequest.saveData();
+                        } catch (InvalidMessageDataException er) {
+                            StringBuilder warnMessage = new StringBuilder(150);
+                            warnMessage.append(
+                                    Constant.messages.getString(
+                                            "requester.httppanel.lowercaseHeaderNames.warn"));
+
+                            String exceptionMessage = er.getLocalizedMessage();
+                            if (exceptionMessage != null && !exceptionMessage.isEmpty()) {
+                                warnMessage.append('\n').append(exceptionMessage);
+                            }
+                            View.getSingleton().showWarningDialog(warnMessage.toString());
+                            return;
+                        }
+                        HttpMessage msg = (HttpMessage) customHttpPanelRequest.getMessage();
+                        lowerCaseHeaderNames(msg);
+                        customHttpPanelRequest.updateContent();
+                    });
+        }
+        return lowerCaseHeaderNames;
+    }
+
+    static void lowerCaseHeaderNames(HttpMessage msg) {
+        HttpRequestHeader httpRequestHeader = msg.getRequestHeader();
+        List<HttpHeaderField> fields = httpRequestHeader.getHeaders();
+        for (HttpHeaderField field : fields) {
+            httpRequestHeader.setHeader(field.getName(), null);
+        }
+        for (HttpHeaderField field : fields) {
+            httpRequestHeader.addHeader(field.getName().toLowerCase(Locale.ROOT), field.getValue());
+        }
     }
 
     /**
