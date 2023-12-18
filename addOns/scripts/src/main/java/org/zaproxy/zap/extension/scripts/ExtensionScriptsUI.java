@@ -78,7 +78,8 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
     /**
      * The templates that should be installed and enabled by default when the add-on is installed
      */
-    private static final String[] BUILT_IN_SCRIPTS = {"Copy as curl command menu.js"};
+    private static final List<BuiltInScript> BUILT_IN_SCRIPTS =
+            List.of(new BuiltInScript("Copy as curl command menu.js", true));
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionScriptsUI.class);
 
@@ -240,24 +241,28 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
     public void postInstall() {
         // Install and enable the 'built in' scripts
         for (ScriptWrapper template : this.getExtScript().getTemplates(extScriptType)) {
-            for (String name : BUILT_IN_SCRIPTS) {
-                if (template.getName().equals(name)) {
-                    installBuiltInExtenderScript(template);
+            for (BuiltInScript builtInScript : BUILT_IN_SCRIPTS) {
+                if (template.getName().equals(builtInScript.getName())) {
+                    installBuiltInExtenderScript(template, builtInScript);
                 }
             }
         }
     }
 
-    private void installBuiltInExtenderScript(ScriptWrapper template) {
+    private void installBuiltInExtenderScript(ScriptWrapper template, BuiltInScript builtInScript) {
         ScriptWrapper script = this.getExtScript().getScript(template.getName());
         if (script == null) {
             // Only install once
             template.setLoadOnStart(true);
-            template.setEnabled(true);
+            boolean enable = true;
+            if (builtInScript.isViewRequired()) {
+                enable = hasView();
+            }
+            template.setEnabled(enable);
             this.getExtScript().addScript(template, false);
             script = this.getExtScript().getScript(template.getName());
             if (script != null) {
-                this.getExtScript().setEnabled(script, true);
+                this.getExtScript().setEnabled(script, enable);
             } else {
                 LOGGER.error("Failed to install built in script {}", template.getName());
             }
@@ -966,6 +971,29 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
         @Override
         public void sessionScopeChanged(Session session) {
             // Nothing to do.
+        }
+    }
+
+    static class BuiltInScript {
+
+        private final String name;
+        private final boolean viewRequired;
+
+        BuiltInScript(String name) {
+            this(name, false);
+        }
+
+        BuiltInScript(String name, boolean viewRequired) {
+            this.name = name;
+            this.viewRequired = viewRequired;
+        }
+
+        String getName() {
+            return name;
+        }
+
+        boolean isViewRequired() {
+            return viewRequired;
         }
     }
 }
