@@ -309,7 +309,6 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
                         String finalPayload =
                                 sleepPayload
                                         .replace(ORIG_VALUE_TOKEN, originalParamValue)
-                                        // Time in milliseconds for the SQL function.
                                         .replace(SLEEP_TOKEN, String.valueOf(x));
 
                         setParameter(msg, paramName, finalPayload);
