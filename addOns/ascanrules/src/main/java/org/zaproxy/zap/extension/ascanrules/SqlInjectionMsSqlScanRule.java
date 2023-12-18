@@ -216,10 +216,10 @@ public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
                 paramName,
                 paramValue);
 
-        AtomicReference<HttpMessage> message = new AtomicReference<>();
-        AtomicReference<String> attack = new AtomicReference<>();
         Iterator<String> it = SQL_MSSQL_TIME_REPLACEMENTS.iterator();
         for (int i = 0; !isStop() && it.hasNext() && i < blindTargetCount; i++) {
+            AtomicReference<HttpMessage> message = new AtomicReference<>();
+            AtomicReference<String> attack = new AtomicReference<>();
             String sleepPayload = it.next();
             TimingUtils.RequestSender requestSender =
                     x -> {

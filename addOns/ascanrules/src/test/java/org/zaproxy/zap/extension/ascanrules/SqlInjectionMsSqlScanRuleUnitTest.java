@@ -68,7 +68,8 @@ class SqlInjectionMsSqlScanRuleUnitTest extends ActiveScannerTest<SqlInjectionMs
     @Test
     void shouldAlertIfSleepTimesGetLonger() throws Exception {
         String test = "/shouldReportSqlTimingIssue/";
-        Pattern sleepPattern = Pattern.compile("WAITFOR DELAY '0:0:(\\d+)'");
+        // Match one of the middle payloads, for proper evidence check.
+        Pattern sleepPattern = Pattern.compile("\\) ' WAITFOR DELAY '0:0:(\\d+)'");
 
         this.nano.addHandler(
                 new NanoServerHandler(test) {
@@ -103,7 +104,7 @@ class SqlInjectionMsSqlScanRuleUnitTest extends ActiveScannerTest<SqlInjectionMs
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
-        assertThat(alertsRaised.get(0).getAttack(), equalTo("test WAITFOR DELAY '0:0:2' -- "));
+        assertThat(alertsRaised.get(0).getAttack(), equalTo("test) ' WAITFOR DELAY '0:0:2' -- "));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
