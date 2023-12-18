@@ -296,10 +296,10 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
                 paramName,
                 originalParamValue);
 
-        AtomicReference<HttpMessage> message = new AtomicReference<>();
-        AtomicReference<String> attack = new AtomicReference<>();
         Iterator<String> it = SQL_MYSQL_TIME_REPLACEMENTS.iterator();
         for (int i = 0; !isStop() && it.hasNext() && i < blindTargetCount; i++) {
+            AtomicReference<HttpMessage> message = new AtomicReference<>();
+            AtomicReference<String> attack = new AtomicReference<>();
             String sleepPayload = it.next();
             TimingUtils.RequestSender requestSender =
                     x -> {
@@ -321,12 +321,6 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
                     };
             // end of timing baseline check
 
-            String attackPayload =
-                    sleepPayload
-                            .replace(ORIG_VALUE_TOKEN, originalParamValue)
-                            // Time in milliseconds for the SQL function.
-                            .replace(SLEEP_TOKEN, String.valueOf(timeSleepSeconds));
-
             try {
                 boolean injectable =
                         TimingUtils.checkTimingDependence(
@@ -340,12 +334,12 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
                     LOGGER.debug(
                             "[Time Based SQL Injection Found] on parameter [{}] with value [{}]",
                             paramName,
-                            attackPayload);
+                            attack.get());
 
                     String extraInfo =
                             Constant.messages.getString(
                                     "ascanrules.sqlinjection.alert.timebased.extrainfo",
-                                    attackPayload,
+                                    attack.get(),
                                     message.get().getTimeElapsedMillis(),
                                     originalParamValue,
                                     getBaseMsg().getTimeElapsedMillis());
@@ -355,7 +349,7 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
                             .setUri(getBaseMsg().getRequestHeader().getURI().toString())
                             .setParam(paramName)
-                            .setAttack(attackPayload)
+                            .setAttack(attack.get())
                             .setOtherInfo(extraInfo)
                             .setMessage(message.get())
                             .raise();

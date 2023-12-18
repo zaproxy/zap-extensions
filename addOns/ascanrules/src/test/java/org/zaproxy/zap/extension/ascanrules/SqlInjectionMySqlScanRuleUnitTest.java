@@ -103,7 +103,7 @@ class SqlInjectionMySqlScanRuleUnitTest extends ActiveScannerTest<SqlInjectionMy
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
-        assertThat(alertsRaised.get(0).getAttack(), equalTo("test' / sleep(2) / '"));
+        assertThat(alertsRaised.get(0).getAttack(), equalTo("test' / sleep(2.0) / '"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
