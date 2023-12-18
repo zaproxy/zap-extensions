@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Rename "Script Console" in the Options panel list to "Console".
 
+### Fixed
+- Prevent GUI initialization in daemon mode when installing the add-on.
+
 ## [43] - 2023-11-13
 ### Added
 - Allow setting the tab size and whether to use tabs or spaces for indentation in the console.
