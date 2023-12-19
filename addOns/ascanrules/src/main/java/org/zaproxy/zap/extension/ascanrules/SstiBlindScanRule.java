@@ -21,7 +21,8 @@ package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
 import java.net.SocketException;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
+import org.apache.commons.configuration.ConversionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
@@ -31,7 +32,9 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.timing.TimingUtils;
 import org.zaproxy.addon.oast.ExtensionOast;
+import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Tech;
 
 /**
@@ -45,8 +48,6 @@ public class SstiBlindScanRule extends AbstractAppParamPlugin {
     private static final String MESSAGE_PREFIX = "ascanrules.sstiblind.";
 
     private static final String SECONDS_PLACEHOLDER = "X_SECONDS_X";
-
-    private static final float ERROR_MARGIN = 0.9f;
 
     // Most of the exploits have been created by James Kettle @albinowax and the Tplmap creator
 
@@ -85,6 +86,18 @@ public class SstiBlindScanRule extends AbstractAppParamPlugin {
     private static final String[] WAYS_TO_MAKE_HTTP_REQUESTS_CMD_LINE = {
         "curl X_URL_X", "wget X_URL_X"
     };
+
+    /** The default number of seconds used in time-based attacks (i.e. sleep commands). */
+    private static final int DEFAULT_SLEEP_TIME = 5;
+
+    // limit the maximum number of requests sent for time-based attack detection
+    private static final int BLIND_REQUESTS_LIMIT = 4;
+
+    // error range allowable for statistical time-based blind attacks (0-1.0)
+    private static final double TIME_CORRELATION_ERROR_RANGE = 0.15;
+    private static final double TIME_SLOPE_ERROR_RANGE = 0.30;
+
+    private int timeSleepSeconds = DEFAULT_SLEEP_TIME;
 
     private static final Logger LOGGER = LogManager.getLogger(SstiBlindScanRule.class);
 
@@ -133,6 +146,25 @@ public class SstiBlindScanRule extends AbstractAppParamPlugin {
         return Alert.RISK_HIGH;
     }
 
+    public void setSleepInSeconds(int sleep) {
+        this.timeSleepSeconds = sleep;
+    }
+
+    @Override
+    public void init() {
+        LOGGER.debug("Initializing");
+        try {
+            this.timeSleepSeconds =
+                    this.getConfig()
+                            .getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, DEFAULT_SLEEP_TIME);
+        } catch (ConversionException e) {
+            LOGGER.debug(
+                    "Invalid value for 'rules.common.sleep': {}",
+                    this.getConfig().getString(RuleConfigParam.RULE_COMMON_SLEEP_TIME));
+        }
+        LOGGER.debug("Sleep set to {} seconds", timeSleepSeconds);
+    }
+
     @Override
     public void scan(HttpMessage msg, String paramName, String value) {
         if (inScope(Tech.JAVA)) {
@@ -169,7 +201,9 @@ public class SstiBlindScanRule extends AbstractAppParamPlugin {
         String payloadFormat;
         for (String sstiFormatPayload : commandExecPayloads) {
             payloadFormat = sstiFormatPayload.replace("X_COMMAND_X", "sleep X_SECONDS_X");
-            checkIfCausesTimeDelay(paramName, payloadFormat);
+            if (checkIfCausesTimeDelay(paramName, payloadFormat)) {
+                return;
+            }
         }
         // TODO make more requests using other ways of delaying a response
     }
@@ -181,61 +215,65 @@ public class SstiBlindScanRule extends AbstractAppParamPlugin {
      * @param payloadFormat format string that when formated with 1 argument makes a string that may
      *     cause a delay equal to the number of second inserted by the format
      */
-    private void checkIfCausesTimeDelay(String paramName, String payloadFormat) {
+    private boolean checkIfCausesTimeDelay(String paramName, String payloadFormat) {
+        AtomicReference<HttpMessage> message = new AtomicReference<>();
+        AtomicReference<String> attack = new AtomicReference<>();
+        TimingUtils.RequestSender requestSender =
+                x -> {
+                    HttpMessage msg = getNewMsg();
+                    message.compareAndSet(null, msg);
 
-        String test2seconds = payloadFormat.replace(SECONDS_PLACEHOLDER, "2");
-        HttpMessage msg = getNewMsg();
-        setParameter(msg, paramName, test2seconds);
+                    String finalPayload =
+                            payloadFormat.replace(SECONDS_PLACEHOLDER, String.valueOf(x));
+
+                    setParameter(msg, paramName, finalPayload);
+                    LOGGER.debug("Testing [{}] = [{}]", paramName, finalPayload);
+
+                    attack.compareAndSet(null, finalPayload);
+                    sendAndReceive(msg, false);
+                    return msg.getTimeElapsedMillis() / 1000.0;
+                };
+        // end of timing baseline check
+
         try {
-            sendAndReceive(msg, false);
-            int time2secondsTest = msg.getTimeElapsedMillis();
+            boolean injectable =
+                    TimingUtils.checkTimingDependence(
+                            BLIND_REQUESTS_LIMIT,
+                            timeSleepSeconds,
+                            requestSender,
+                            TIME_CORRELATION_ERROR_RANGE,
+                            TIME_SLOPE_ERROR_RANGE);
 
-            if (time2secondsTest >= TimeUnit.SECONDS.toMillis(2) * ERROR_MARGIN) {
-                // If we detect a response that takes more time that the delay we tried to
-                // cause it is possible that our injection was successful but it also may
-                // have been caused by the network or other variable. So further testing is needed.
+            if (injectable) {
+                LOGGER.debug(
+                        "[Time Based SSTI Found] on parameter [{}] with value [{}]",
+                        paramName,
+                        attack.get());
 
-                String sanityTest = payloadFormat.replace(SECONDS_PLACEHOLDER, "0");
-                msg = getNewMsg();
-                setParameter(msg, paramName, sanityTest);
-                sendAndReceive(msg, false);
-                int timeWithSanityTest = msg.getTimeElapsedMillis();
-
-                int sumTime =
-                        (int)
-                                (1
-                                        + TimeUnit.MILLISECONDS.toSeconds(
-                                                (long) time2secondsTest + timeWithSanityTest));
-                String testOfSumSeconds =
-                        payloadFormat.replace(SECONDS_PLACEHOLDER, Integer.toString(sumTime));
-                msg = getNewMsg();
-                setParameter(msg, paramName, testOfSumSeconds);
-                sendAndReceive(msg, false);
-                int timeSumSecondsTest = msg.getTimeElapsedMillis();
-
-                if (timeSumSecondsTest >= TimeUnit.SECONDS.toMillis(sumTime) * ERROR_MARGIN) {
-                    this.newAlert()
-                            .setConfidence(Alert.CONFIDENCE_HIGH)
-                            .setUri(msg.getRequestHeader().getURI().toString())
-                            .setParam(paramName)
-                            .setAttack(testOfSumSeconds)
-                            .setMessage(msg)
-                            .raise();
-                }
+                // raise the alert
+                newAlert()
+                        .setConfidence(Alert.CONFIDENCE_HIGH)
+                        .setUri(getBaseMsg().getRequestHeader().getURI().toString())
+                        .setParam(paramName)
+                        .setAttack(attack.get())
+                        .setMessage(message.get())
+                        .raise();
+                return true;
             }
         } catch (SocketException ex) {
             LOGGER.debug(
                     "Caught {} {} when accessing: {}",
                     ex.getClass().getName(),
                     ex.getMessage(),
-                    msg.getRequestHeader().getURI());
+                    message.get().getRequestHeader().getURI());
         } catch (IOException ex) {
             LOGGER.warn(
                     "SSTI vulnerability check failed for parameter [{}] and payload [{}] due to an I/O error",
                     paramName,
-                    payloadFormat,
+                    attack.get(),
                     ex);
         }
+        return false;
     }
 
     /**
