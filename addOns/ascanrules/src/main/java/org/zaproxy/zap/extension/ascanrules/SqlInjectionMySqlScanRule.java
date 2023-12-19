@@ -318,7 +318,6 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
                         sendAndReceive(msg, false);
                         return msg.getTimeElapsedMillis() / 1000.0;
                     };
-            // end of timing baseline check
 
             try {
                 boolean injectable =
@@ -364,7 +363,7 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
                 LOGGER.debug(
                         "Check failed for parameter [{}] and payload [{}] due to an I/O error",
                         paramName,
-                        "attack.get()",
+                        attack.get(),
                         ex);
             }
         }
