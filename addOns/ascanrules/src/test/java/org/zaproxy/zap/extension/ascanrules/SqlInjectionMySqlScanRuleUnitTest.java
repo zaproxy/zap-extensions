@@ -68,7 +68,7 @@ class SqlInjectionMySqlScanRuleUnitTest extends ActiveScannerTest<SqlInjectionMy
     @Test
     void shouldAlertIfSleepTimesGetLonger() throws Exception {
         String test = "/shouldReportSqlTimingIssue/";
-        Pattern sleepPattern = Pattern.compile("'\\s+/\\s+sleep\\((\\d+)\\.\\d+\\)\\s+/\\s+'");
+        Pattern sleepPattern = Pattern.compile("'\\s+/\\s+sleep\\((\\d+)\\)\\s+/\\s+'");
 
         this.nano.addHandler(
                 new NanoServerHandler(test) {
