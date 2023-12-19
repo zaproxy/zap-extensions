@@ -20,12 +20,17 @@
 package org.zaproxy.addon.automation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import org.junit.jupiter.api.Test;
@@ -305,25 +310,73 @@ class TechnologyUtilsUnitTest {
     }
 
     @Test
-    void shouldReturnAllTechIfNullExcludes() {
+    void shouldReturnAllTechIfNullExcludesAndIncludes() {
         // Given
-        TechSet set = TechnologyUtils.getTechSet(null);
-        Set<Tech> allTech = Tech.getAll();
+        TechnologyData source = new TechnologyData();
 
-        // When / Then
-        assertThat(set.getIncludeTech().size(), is(equalTo(allTech.size())));
+        // When
+        TechSet set = TechnologyUtils.getTechSet(source);
+
+        // Then
+        assertThat(set.getIncludeTech().size(), is(equalTo(Tech.getAll().size())));
         assertThat(set.getExcludeTech().size(), is(equalTo(0)));
+    }
+
+    @Test
+    void shouldReturnIncludedTechs() {
+        // Given
+        TechnologyData source = new TechnologyData(Map.of("include", List.of("Windows")), null);
+
+        // When
+        TechSet set = TechnologyUtils.getTechSet(source);
+
+        // Then
+        assertThat(set.getIncludeTech(), contains(Tech.Windows));
+        assertThat(set.getExcludeTech(), is(empty()));
+    }
+
+    @Test
+    void shouldReturnIncludedTechsWithExcludes() {
+        // Given
+        TechnologyData source =
+                new TechnologyData(
+                        Map.of("include", List.of("OS"), "exclude", List.of("Windows")), null);
+
+        // When
+        TechSet set = TechnologyUtils.getTechSet(source);
+
+        // Then
+        assertThat(set.getIncludeTech(), contains(Tech.OS, Tech.Linux, Tech.MacOS));
+        assertThat(set.getExcludeTech(), contains(Tech.Windows));
     }
 
     @Test
     void shouldRemoveTechIfExcludes() {
         // Given
-        TechSet set = TechnologyUtils.getTechSet(Arrays.asList(Tech.ASP.getName()));
-        Set<Tech> allTech = Tech.getAll();
+        TechnologyData source = new TechnologyData();
+        source.setExclude(List.of(Tech.ASP.getName()));
 
-        // When / Then
-        assertThat(set.getIncludeTech().size(), is(equalTo(allTech.size() - 1)));
+        // When
+        TechSet set = TechnologyUtils.getTechSet(source);
+
+        // Then
+        assertThat(set.getIncludeTech().size(), is(equalTo(Tech.getAll().size() - 1)));
         assertThat(set.getIncludeTech().contains(Tech.ASP), is(equalTo(false)));
         assertThat(set.getExcludeTech().size(), is(equalTo(1)));
+    }
+
+    @Test
+    void shouldResetIncludeWhenSettingExclude() {
+        // Given
+        TechnologyData source =
+                new TechnologyData(
+                        Map.of("include", List.of("OS"), "exclude", List.of("Windows")), null);
+
+        // When
+        source.setExclude(List.of("C"));
+
+        // Then
+        assertThat(source.getInclude(), is(nullValue()));
+        assertThat(source.getExclude(), contains("C"));
     }
 }

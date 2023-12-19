@@ -20,6 +20,7 @@
 package org.zaproxy.addon.automation;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
@@ -130,6 +131,8 @@ class TechnologyDataUnitTest {
                         + "      urls:\n"
                         + "      - http://www.example.com\n"
                         + "      technology:\n"
+                        + "        include:\n"
+                        + "        - MySQL\n"
                         + "        exclude:\n"
                         + "        - db\n"
                         + "        - JAVA";
@@ -146,9 +149,8 @@ class TechnologyDataUnitTest {
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(env.getContextWrappers().size(), is(equalTo(1)));
         TechnologyData techData = env.getContextWrappers().get(0).getData().getTechnology();
-        assertThat(techData.getExclude().size(), is(equalTo(2)));
-        assertThat(techData.getExclude().contains("db"), is(equalTo(true)));
-        assertThat(techData.getExclude().contains("JAVA"), is(equalTo(true)));
+        assertThat(techData.getInclude(), contains("MySQL"));
+        assertThat(techData.getExclude(), contains("db", "JAVA"));
     }
 
     @Test
@@ -185,7 +187,7 @@ class TechnologyDataUnitTest {
     }
 
     @Test
-    void shouldFailBadTechExclude() {
+    void shouldFailBadTechType() {
         // Given
         MockedStatic<CommandLine> mockedCmdLine = Mockito.mockStatic(CommandLine.class);
         Constant.messages = new I18N(Locale.ENGLISH);
@@ -196,7 +198,8 @@ class TechnologyDataUnitTest {
                         + "      urls:\n"
                         + "      - http://www.example.com\n"
                         + "      technology:\n"
-                        + "        exclude: 'db'";
+                        + "        exclude: 'db'\n"
+                        + "        include: 'db'";
         Yaml yaml = new Yaml();
         LinkedHashMap<?, ?> data = yaml.load(contextStr);
         LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
@@ -208,13 +211,15 @@ class TechnologyDataUnitTest {
 
         // Then
         assertThat(progress.hasErrors(), is(equalTo(true)));
-        assertThat(progress.getErrors().size(), is(equalTo(1)));
         assertThat(
-                progress.getErrors().get(0),
-                is(equalTo("!automation.error.context.badtechexclude!")));
+                progress.getErrors(),
+                contains(
+                        "!automation.error.context.badtechtype!",
+                        "!automation.error.context.badtechtype!"));
         assertThat(progress.hasWarnings(), is(equalTo(false)));
         assertThat(env.getContextWrappers().size(), is(equalTo(1)));
         TechnologyData techData = env.getContextWrappers().get(0).getData().getTechnology();
+        assertThat(techData.getInclude().size(), is(equalTo(0)));
         assertThat(techData.getExclude().size(), is(equalTo(0)));
     }
 
@@ -230,6 +235,9 @@ class TechnologyDataUnitTest {
                         + "      urls:\n"
                         + "      - http://www.example.com\n"
                         + "      technology:\n"
+                        + "        include:\n"
+                        + "        - OS\n"
+                        + "        - UnknownInclude\n"
                         + "        exclude:\n"
                         + "        - db\n"
                         + "        - JABA";
@@ -245,15 +253,15 @@ class TechnologyDataUnitTest {
         // Then
         assertThat(progress.hasErrors(), is(equalTo(false)));
         assertThat(progress.hasWarnings(), is(equalTo(true)));
-        assertThat(progress.getWarnings().size(), is(equalTo(1)));
         assertThat(
-                progress.getWarnings().get(0),
-                is(equalTo("!automation.error.context.unknowntech!")));
+                progress.getWarnings(),
+                contains(
+                        "!automation.error.context.unknowntech!",
+                        "!automation.error.context.unknowntech!"));
         assertThat(env.getContextWrappers().size(), is(equalTo(1)));
         TechnologyData techData = env.getContextWrappers().get(0).getData().getTechnology();
-        assertThat(techData.getExclude().size(), is(equalTo(2)));
-        assertThat(techData.getExclude().contains("db"), is(equalTo(true)));
-        assertThat(techData.getExclude().contains("JABA"), is(equalTo(true)));
+        assertThat(techData.getInclude(), contains("OS", "UnknownInclude"));
+        assertThat(techData.getExclude(), contains("db", "JABA"));
     }
 
     @Test
@@ -268,11 +276,12 @@ class TechnologyDataUnitTest {
                         + "      urls:\n"
                         + "      - http://www.example.com\n"
                         + "      technology:\n"
-                        + "        include:\n"
+                        + "        unknown:\n"
                         + "        - C\n"
+                        + "        include:\n"
+                        + "        - OS\n"
                         + "        exclude:\n"
-                        + "        - db\n"
-                        + "        - JAVA";
+                        + "        - Windows\n";
         Yaml yaml = new Yaml();
         LinkedHashMap<?, ?> data = yaml.load(contextStr);
         LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
@@ -290,8 +299,7 @@ class TechnologyDataUnitTest {
                 progress.getWarnings().get(0), is(equalTo("!automation.error.options.unknown!")));
         assertThat(env.getContextWrappers().size(), is(equalTo(1)));
         TechnologyData techData = env.getContextWrappers().get(0).getData().getTechnology();
-        assertThat(techData.getExclude().size(), is(equalTo(2)));
-        assertThat(techData.getExclude().contains("db"), is(equalTo(true)));
-        assertThat(techData.getExclude().contains("JAVA"), is(equalTo(true)));
+        assertThat(techData.getInclude(), contains("OS"));
+        assertThat(techData.getExclude(), contains("Windows"));
     }
 }

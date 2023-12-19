@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [44] - 2023-12-19
 ### Changed
 - Rename "Script Console" in the Options panel list to "Console".
 
@@ -283,6 +286,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[44]: https://github.com/zaproxy/zap-extensions/releases/scripts-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/scripts-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/scripts-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/scripts-v41

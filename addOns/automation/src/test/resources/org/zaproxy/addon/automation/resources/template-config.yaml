@@ -34,6 +34,7 @@ env:                                   # The environment, mandatory
           scriptEngine:                # String, the name of the script engine to use, only for 'script' session management
       technology:
         exclude:                       # List of tech to exclude, as per https://www.zaproxy.org/techtags/ (just use last names)
+        include:                       # List of tech to include, should only be used when targeting specific techs, the exclude takes precedence when configuring the context.
       users:                           # List of one or more users available to use for authentication
       - name:                          # String, the name to be used by the jobs
         credentials:                   # List of user credentials - may include any required for scripts, vars supported

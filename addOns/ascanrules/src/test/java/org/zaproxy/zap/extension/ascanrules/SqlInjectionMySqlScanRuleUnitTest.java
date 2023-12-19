@@ -27,6 +27,8 @@ import static org.hamcrest.Matchers.is;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
@@ -66,22 +68,27 @@ class SqlInjectionMySqlScanRuleUnitTest extends ActiveScannerTest<SqlInjectionMy
     @Test
     void shouldAlertIfSleepTimesGetLonger() throws Exception {
         String test = "/shouldReportSqlTimingIssue/";
+        Pattern sleepPattern = Pattern.compile("'\\s+/\\s+sleep\\((\\d+)\\)\\s+/\\s+'");
 
         this.nano.addHandler(
                 new NanoServerHandler(test) {
-                    private int time = 100;
 
                     @Override
                     protected Response serve(IHTTPSession session) {
                         String name = getFirstParamValue(session, "name");
                         String response = "<html><body></body></html>";
-                        if (name != null && name.contains(" sleep(")) {
-                            try {
-                                Thread.sleep(time);
-                            } catch (InterruptedException e) {
-                                // Ignore
-                            }
-                            time += 1000;
+                        if (name == null) {
+                            return newFixedLengthResponse(response);
+                        }
+                        Matcher match = sleepPattern.matcher(name);
+                        if (!match.find()) {
+                            return newFixedLengthResponse(name);
+                        }
+                        try {
+                            int sleepInput = Integer.parseInt(match.group(1));
+                            Thread.sleep(sleepInput * 1000);
+                        } catch (InterruptedException e) {
+                            // Ignore
                         }
                         return newFixedLengthResponse(response);
                     }
@@ -90,13 +97,13 @@ class SqlInjectionMySqlScanRuleUnitTest extends ActiveScannerTest<SqlInjectionMy
         HttpMessage msg = this.getHttpMessage(test + "?name=test");
 
         this.rule.init(msg, this.parent);
-        this.rule.setSleepInSeconds(1);
+        this.rule.setSleepInSeconds(2);
 
         this.rule.scan();
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
-        assertThat(alertsRaised.get(0).getAttack(), equalTo("test' / sleep(1) / '"));
+        assertThat(alertsRaised.get(0).getAttack(), equalTo("test' / sleep(2) / '"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }
@@ -125,7 +132,7 @@ class SqlInjectionMySqlScanRuleUnitTest extends ActiveScannerTest<SqlInjectionMy
         HttpMessage msg = this.getHttpMessage(test + "?name=test");
 
         this.rule.init(msg, this.parent);
-        this.rule.setSleepInSeconds(1);
+        this.rule.setSleepInSeconds(2);
 
         this.rule.scan();
 

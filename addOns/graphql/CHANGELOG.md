@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+
+## [0.22.0] - 2023-12-19
 ### Added
 - Fingerprinting check for the GraphQL.NET engine.
 
@@ -174,6 +177,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
   - Import a GraphQL Schema
   - Generate Queries from an imported Schema
 
+[0.22.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.22.0
 [0.21.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.21.0
 [0.20.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.20.0
 [0.19.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.19.0
