@@ -25,7 +25,6 @@ import static org.hamcrest.Matchers.equalTo;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
-// import static org.hamcrest.Matchers.is;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.junit.jupiter.api.Test;
@@ -57,8 +56,8 @@ class SstiBlindScanRuleUnitTest extends ActiveScannerTest<SstiBlindScanRule> {
 
     @Test
     void shouldAlertIfSleepTimesGetLonger() throws Exception {
-        String test = "/shouldReportSqlTimingIssue";
-        Pattern sleepPattern = Pattern.compile("#\\{%x\\(sleep\\s+(\\d+)\\.\\d+\\)\\}");
+        String test = "/shouldAlertIfSleepTimesGetLonger";
+        Pattern sleepPattern = Pattern.compile("#\\{%x\\(sleep\\s+(\\d+)\\)\\}");
 
         this.nano.addHandler(
                 new NanoServerHandler(test) {
@@ -93,7 +92,7 @@ class SstiBlindScanRuleUnitTest extends ActiveScannerTest<SstiBlindScanRule> {
 
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
-        assertThat(alertsRaised.get(0).getAttack(), equalTo("#{%x(sleep 2.0)}"));
+        assertThat(alertsRaised.get(0).getAttack(), equalTo("#{%x(sleep 2)}"));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_HIGH));
     }

@@ -224,7 +224,7 @@ public class SstiBlindScanRule extends AbstractAppParamPlugin {
                     message.compareAndSet(null, msg);
 
                     String finalPayload =
-                            payloadFormat.replace(SECONDS_PLACEHOLDER, String.valueOf(x));
+                            payloadFormat.replace(SECONDS_PLACEHOLDER, Integer.toString((int) x));
 
                     setParameter(msg, paramName, finalPayload);
                     LOGGER.debug("Testing [{}] = [{}]", paramName, finalPayload);
@@ -233,7 +233,6 @@ public class SstiBlindScanRule extends AbstractAppParamPlugin {
                     sendAndReceive(msg, false);
                     return msg.getTimeElapsedMillis() / 1000.0;
                 };
-        // end of timing baseline check
 
         try {
             boolean injectable =
