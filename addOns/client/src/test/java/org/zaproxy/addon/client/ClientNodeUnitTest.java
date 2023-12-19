@@ -27,11 +27,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.model.Session;
+import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.model.StandardParameterParser;
 
 class ClientNodeUnitTest {
@@ -39,6 +41,7 @@ class ClientNodeUnitTest {
     private static final String EXAMPLE_COM = "https://www.example.com";
 
     private ClientNode root;
+    private ClientMap map;
 
     @BeforeEach
     void setUp() {
@@ -46,13 +49,18 @@ class ClientNodeUnitTest {
         StandardParameterParser ssp = new StandardParameterParser();
         given(session.getUrlParamParser(any(String.class))).willReturn(ssp);
         root = new ClientNode(new ClientSideDetails("Root", ""), session);
+        map = new ClientMap(root);
+    }
+
+    @AfterEach
+    void tearDown() {
+        ZAP.getEventBus().unregisterPublisher(map);
     }
 
     @ParameterizedTest
     @ValueSource(strings = {EXAMPLE_COM, EXAMPLE_COM + "2", EXAMPLE_COM + "3"})
     void shouldGetRootChild(String childName) {
         // Given
-        ClientMap map = new ClientMap(root);
         map.getOrAddNode(EXAMPLE_COM + "3", false, false);
         map.getOrAddNode(EXAMPLE_COM, false, false);
         map.getOrAddNode(EXAMPLE_COM + "2", false, false);
@@ -69,7 +77,6 @@ class ClientNodeUnitTest {
     @ValueSource(strings = {"cccc", "bbb", "aa"})
     void shouldGetNonRootChild(String childName) {
         // Given
-        ClientMap map = new ClientMap(root);
         map.getOrAddNode(EXAMPLE_COM, false, false);
         map.getOrAddNode(EXAMPLE_COM + "/cccc", false, false);
         map.getOrAddNode(EXAMPLE_COM + "/bbb", false, false);
@@ -88,7 +95,6 @@ class ClientNodeUnitTest {
     @Test
     void shouldNotGetNonStorageChild() {
         // Given
-        ClientMap map = new ClientMap(root);
         map.getOrAddNode(EXAMPLE_COM, false, false);
         map.getOrAddNode(EXAMPLE_COM + "/cccc", false, false);
         map.getOrAddNode(EXAMPLE_COM + "/bbb", false, true);
@@ -106,7 +112,6 @@ class ClientNodeUnitTest {
     @Test
     void shouldGetNonStorageChild() {
         // Given
-        ClientMap map = new ClientMap(root);
         map.getOrAddNode(EXAMPLE_COM, false, false);
         map.getOrAddNode(EXAMPLE_COM + "/cccc", false, false);
         map.getOrAddNode(EXAMPLE_COM + "/bbb", false, true);
@@ -126,7 +131,6 @@ class ClientNodeUnitTest {
     @Test
     void shouldGetSite() {
         // Given
-        ClientMap map = new ClientMap(root);
         map.getOrAddNode(EXAMPLE_COM + "/aaa/bbb/ccc?aa=bb#f", false, false);
 
         // When
@@ -169,7 +173,6 @@ class ClientNodeUnitTest {
     @Test
     void shouldGetSession() {
         // Given
-        ClientMap map = new ClientMap(root);
         map.getOrAddNode(EXAMPLE_COM + "/aaa/bbb/ccc?aa=bb#f", false, false);
 
         // When
