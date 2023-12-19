@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.27.0] - 2023-12-19
 ### Changed
 - Dependency updates.
 
@@ -246,6 +246,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.27.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.27.0
 [0.26.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.26.0
 [0.25.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.25.0
 [0.24.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.24.0
