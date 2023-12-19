@@ -309,7 +309,7 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
                         String finalPayload =
                                 sleepPayload
                                         .replace(ORIG_VALUE_TOKEN, originalParamValue)
-                                        .replace(SLEEP_TOKEN, String.valueOf(x));
+                                        .replace(SLEEP_TOKEN, Integer.toString((int) x));
 
                         setParameter(msg, paramName, finalPayload);
                         LOGGER.debug("Testing [{}] = [{}]", paramName, finalPayload);
