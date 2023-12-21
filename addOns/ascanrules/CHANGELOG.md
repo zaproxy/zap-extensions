@@ -7,8 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - Threshold handling in the Hidden File Finder scan rule.
 - Improved the following scan rules by using time-based linear regression tests:
+  - Server Side Template Injection (Blind)
   - SQL Injection - Hypersonic SQL
   - SQL Injection - MsSQL
+  - SQL Injection - MySQL
 
 ## [59] - 2023-12-07
 ### Added

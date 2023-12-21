@@ -21,6 +21,7 @@ package org.zaproxy.addon.automation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -61,10 +62,22 @@ public class TechnologyUtils {
         return set.stream().filter(tech -> !parentInSet(set, tech)).collect(Collectors.toSet());
     }
 
-    public static TechSet getTechSet(List<String> exclude) {
-        TechSet ts = new TechSet(Tech.getAll());
-        if (exclude != null) {
-            exclude.stream()
+    public static TechSet getTechSet(TechnologyData data) {
+        TechSet ts = new TechSet();
+        if (data.getInclude() == null || data.getInclude().isEmpty()) {
+            Tech.getAll().forEach(ts::include);
+        } else {
+            data.getInclude().stream()
+                    .map(name -> getTech(name, null))
+                    .filter(Objects::nonNull)
+                    .forEach(
+                            tech -> {
+                                ts.include(tech);
+                                Tech.getAll().stream().filter(t -> t.is(tech)).forEach(ts::include);
+                            });
+        }
+        if (data.getExclude() != null) {
+            data.getExclude().stream()
                     .forEach(
                             name -> TechnologyUtils.removeTechAndChildren(ts, getTech(name, null)));
         }

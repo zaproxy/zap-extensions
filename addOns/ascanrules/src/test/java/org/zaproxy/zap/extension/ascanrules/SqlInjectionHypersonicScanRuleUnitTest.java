@@ -69,7 +69,9 @@ class SqlInjectionHypersonicScanRuleUnitTest
     @Test
     void shouldAlertIfSleepTimesGetLonger() throws Exception {
         String test = "/shouldReportSqlTimingIssue/";
-        Pattern sleepPattern = Pattern.compile("Thread.sleep\"\\((\\d+)\\)");
+        // Match one of the middle payloads, for proper evidence check.
+        Pattern sleepPattern =
+                Pattern.compile("\\); select \"java.lang.Thread.sleep\"\\((\\d+)\\)");
 
         this.nano.addHandler(
                 new NanoServerHandler(test) {
@@ -107,7 +109,7 @@ class SqlInjectionHypersonicScanRuleUnitTest
         assertThat(
                 alertsRaised.get(0).getAttack(),
                 equalTo(
-                        "; select \"java.lang.Thread.sleep\"(2000) from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME' -- "));
+                        "); select \"java.lang.Thread.sleep\"(2000) from INFORMATION_SCHEMA.SYSTEM_COLUMNS where TABLE_NAME = 'SYSTEM_COLUMNS' and COLUMN_NAME = 'TABLE_NAME' -- "));
         assertThat(alertsRaised.get(0).getRisk(), equalTo(Alert.RISK_HIGH));
         assertThat(alertsRaised.get(0).getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
     }

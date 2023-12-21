@@ -26,6 +26,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -45,6 +48,7 @@ import org.zaproxy.addon.client.impl.ClientZestRecorder;
 import org.zaproxy.addon.client.pscan.ClientPassiveScanController;
 import org.zaproxy.addon.client.pscan.ClientPassiveScanHelper;
 import org.zaproxy.addon.client.pscan.OptionsPassiveScan;
+import org.zaproxy.addon.client.spider.ClientSpider;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
@@ -94,6 +98,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     private EventConsumer eventConsumer;
 
     private Event lastAjaxSpiderStartEvent;
+    private List<ClientSpider> spiders = Collections.synchronizedList(new ArrayList<>());
 
     public ExtensionClientIntegration() {
         super(NAME);
@@ -354,12 +359,22 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                             .getExtension(ExtensionSelenium.class);
             extSelenium.deregisterBrowserHook(redirectScript);
         }
+        ZAP.getEventBus().unregisterPublisher(clientTree);
         ZAP.getEventBus().unregisterConsumer(eventConsumer);
     }
 
     @Override
     public boolean canUnload() {
         return true;
+    }
+
+    @Override
+    public void destroy() {
+        stopAllSpiders();
+    }
+
+    private void stopAllSpiders() {
+        spiders.forEach(ClientSpider::stop);
     }
 
     public ClientNode getOrAddClientNode(String url, boolean visited, boolean storage) {
@@ -458,11 +473,12 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             if (clientHistoryTableModel != null) {
                 clientHistoryTableModel.clear();
             }
+            spiders.clear();
         }
 
         @Override
         public void sessionAboutToChange(Session session) {
-            // Ignore
+            stopAllSpiders();
         }
 
         @Override
@@ -493,5 +509,47 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
 
     protected static boolean isApiUrl(String url) {
         return url.startsWith(API.API_URL) || url.startsWith(API.API_URL_S);
+    }
+
+    /**
+     * Run the client spider with the configured options
+     *
+     * @param url The inital URL to request
+     * @return an id which can be used to reference the specific scan.
+     */
+    public int runSpider(String url) {
+        return this.runSpider(url, this.getClientParam());
+    }
+
+    /**
+     * Run the client spider with the specified options
+     *
+     * @param url The inital URL to request
+     * @param options Custom options.
+     * @return an id which can be used to reference the specific scan.
+     */
+    public int runSpider(String url, ClientOptions options) {
+        synchronized (spiders) {
+            ClientSpider cs = new ClientSpider(url, options, spiders.size());
+            spiders.add(cs);
+            return spiders.indexOf(cs);
+        }
+    }
+
+    public ClientSpider getSpider(int id) {
+        return this.spiders.get(id);
+    }
+
+    @Override
+    public List<String> getActiveActions() {
+        List<String> activeActions = new ArrayList<>();
+        String actionPrefix = Constant.messages.getString("client.activeActionPrefix");
+        spiders.stream()
+                .filter(cs -> cs.isRunning())
+                .forEach(
+                        cs ->
+                                activeActions.add(
+                                        MessageFormat.format(actionPrefix, cs.getTargetUrl())));
+        return activeActions;
     }
 }

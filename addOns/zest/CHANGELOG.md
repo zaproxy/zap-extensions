@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [43] - 2023-12-19
 ### Changed
 - Move "Zest" under "Scripts > Engine" in the Options panel list.
 
@@ -311,6 +314,7 @@ Sender scripts. (Issue 5590)
 
 - Updated for 2.1.0
 
+[43]: https://github.com/zaproxy/zap-extensions/releases/zest-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/zest-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/zest-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/zest-v40

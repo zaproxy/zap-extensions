@@ -19,9 +19,13 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import java.io.IOException;
 import java.net.SocketException;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,6 +35,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.timing.TimingUtils;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
@@ -49,12 +54,6 @@ import org.zaproxy.zap.model.TechSet;
  * @author 70pointer
  */
 public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
-
-    private boolean doTimeBased = false;
-
-    private int doTimeMaxRequests = 0;
-
-    private int sleep = 15;
 
     /** MySQL one-line comment */
     public static final String SQL_ONE_LINE_COMMENT = " -- ";
@@ -82,111 +81,130 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
     // Note: <<<<ORIGINALVALUE>>>> is replaced with the original parameter value at runtime in these
     // examples below (see * comment)
     // TODO: maybe add support for ')' after the original value, before the sleeps
-    private static String[] SQL_MYSQL_TIME_REPLACEMENTS = {
-        // LOW
-        ORIG_VALUE_TOKEN
-                + " / sleep("
-                + SLEEP_TOKEN
-                + ") ", // MySQL >= 5.0.12. Might work if "SET sql_mode='STRICT_TRANS_TABLES'" is
-        // OFF. Try without a comment, to target use of the field in the SELECT
-        // clause, but also in the WHERE clauses.
-        ORIG_VALUE_TOKEN
-                + "' / sleep("
-                + SLEEP_TOKEN
-                + ") / '", // MySQL >= 5.0.12. Might work if "SET sql_mode='STRICT_TRANS_TABLES'" is
-        // OFF. Try without a comment, to target use of the field in the SELECT
-        // clause, but also in the WHERE clauses.
-        ORIG_VALUE_TOKEN
-                + "\" / sleep("
-                + SLEEP_TOKEN
-                + ") / \"", // MySQL >= 5.0.12. Might work if "SET sql_mode='STRICT_TRANS_TABLES'"
-        // is OFF. Try without a comment, to target use of the field in the
-        // SELECT clause, but also in the WHERE clauses.
-        // MEDIUM
-        ORIG_VALUE_TOKEN
-                + " and 0 in (select sleep("
-                + SLEEP_TOKEN
-                + ") )"
-                + SQL_ONE_LINE_COMMENT, // MySQL >= 5.0.12. Param in WHERE clause.
-        ORIG_VALUE_TOKEN
-                + "' and 0 in (select sleep("
-                + SLEEP_TOKEN
-                + ") )"
-                + SQL_ONE_LINE_COMMENT, // MySQL >= 5.0.12. Param in WHERE clause.
-        ORIG_VALUE_TOKEN
-                + "\" and 0 in (select sleep("
-                + SLEEP_TOKEN
-                + ") )"
-                + SQL_ONE_LINE_COMMENT, // MySQL >= 5.0.12. Param in WHERE clause.
-        // HIGH
-        ORIG_VALUE_TOKEN
-                + " where 0 in (select sleep("
-                + SLEEP_TOKEN
-                + ") )"
-                + SQL_ONE_LINE_COMMENT, // MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
-        ORIG_VALUE_TOKEN
-                + "' where 0 in (select sleep("
-                + SLEEP_TOKEN
-                + ") )"
-                + SQL_ONE_LINE_COMMENT, // MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
-        ORIG_VALUE_TOKEN
-                + "\" where 0 in (select sleep("
-                + SLEEP_TOKEN
-                + ") )"
-                + SQL_ONE_LINE_COMMENT, // MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
-        ORIG_VALUE_TOKEN
-                + " or 0 in (select sleep("
-                + SLEEP_TOKEN
-                + ") )"
-                + SQL_ONE_LINE_COMMENT, // MySQL >= 5.0.12. Param in WHERE clause.
-        ORIG_VALUE_TOKEN
-                + "' or 0 in (select sleep("
-                + SLEEP_TOKEN
-                + ") )"
-                + SQL_ONE_LINE_COMMENT, // MySQL >= 5.0.12. Param in WHERE clause.
-        ORIG_VALUE_TOKEN
-                + "\" or 0 in (select sleep("
-                + SLEEP_TOKEN
-                + ") )"
-                + SQL_ONE_LINE_COMMENT, // MySQL >= 5.0.12. Param in WHERE clause.
-        // INSANE
-        ORIG_VALUE_TOKEN
-                + " where 0 in (select sleep("
-                + SLEEP_TOKEN
-                + ") ) ", // MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
-        ORIG_VALUE_TOKEN
-                + "' where 0 in (select sleep("
-                + SLEEP_TOKEN
-                + ") ) and ''='", // MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
-        ORIG_VALUE_TOKEN
-                + "\" where 0 in (select sleep("
-                + SLEEP_TOKEN
-                + ") ) and \"\"=\"", // MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
-        ORIG_VALUE_TOKEN
-                + " and 0 in (select sleep("
-                + SLEEP_TOKEN
-                + ") ) ", // MySQL >= 5.0.12. Param in WHERE clause.
-        ORIG_VALUE_TOKEN
-                + "' and 0 in (select sleep("
-                + SLEEP_TOKEN
-                + ") ) and ''='", // MySQL >= 5.0.12. Param in WHERE clause.
-        ORIG_VALUE_TOKEN
-                + "\" and 0 in (select sleep("
-                + SLEEP_TOKEN
-                + ") ) and \"\"=\"", // MySQL >= 5.0.12. Param in WHERE clause.
-        ORIG_VALUE_TOKEN
-                + " or 0 in (select sleep("
-                + SLEEP_TOKEN
-                + ") ) ", // MySQL >= 5.0.12. Param in WHERE clause.
-        ORIG_VALUE_TOKEN
-                + "' or 0 in (select sleep("
-                + SLEEP_TOKEN
-                + ") ) and ''='", // MySQL >= 5.0.12. Param in WHERE clause.
-        ORIG_VALUE_TOKEN
-                + "\" or 0 in (select sleep("
-                + SLEEP_TOKEN
-                + ") ) and \"\"=\"", // MySQL >= 5.0.12. Param in WHERE clause.
-    };
+    private static final List<String> SQL_MYSQL_TIME_REPLACEMENTS =
+            List.of(
+                    // LOW
+                    ORIG_VALUE_TOKEN
+                            + " / sleep("
+                            + SLEEP_TOKEN
+                            + ") ", // MySQL >= 5.0.12. Might work if "SET
+                    // sql_mode='STRICT_TRANS_TABLES'" is
+                    // OFF. Try without a comment, to target use of the field in the SELECT
+                    // clause, but also in the WHERE clauses.
+                    ORIG_VALUE_TOKEN
+                            + "' / sleep("
+                            + SLEEP_TOKEN
+                            + ") / '", // MySQL >= 5.0.12. Might work if "SET
+                    // sql_mode='STRICT_TRANS_TABLES'" is
+                    // OFF. Try without a comment, to target use of the field in the SELECT
+                    // clause, but also in the WHERE clauses.
+                    ORIG_VALUE_TOKEN
+                            + "\" / sleep("
+                            + SLEEP_TOKEN
+                            + ") / \"", // MySQL >= 5.0.12. Might work if "SET
+                    // sql_mode='STRICT_TRANS_TABLES'"
+                    // is OFF. Try without a comment, to target use of the field in the
+                    // SELECT clause, but also in the WHERE clauses.
+                    // MEDIUM
+                    ORIG_VALUE_TOKEN
+                            + " and 0 in (select sleep("
+                            + SLEEP_TOKEN
+                            + ") )"
+                            + SQL_ONE_LINE_COMMENT, // MySQL >= 5.0.12. Param in WHERE clause.
+                    ORIG_VALUE_TOKEN
+                            + "' and 0 in (select sleep("
+                            + SLEEP_TOKEN
+                            + ") )"
+                            + SQL_ONE_LINE_COMMENT, // MySQL >= 5.0.12. Param in WHERE clause.
+                    ORIG_VALUE_TOKEN
+                            + "\" and 0 in (select sleep("
+                            + SLEEP_TOKEN
+                            + ") )"
+                            + SQL_ONE_LINE_COMMENT, // MySQL >= 5.0.12. Param in WHERE clause.
+                    // HIGH
+                    ORIG_VALUE_TOKEN
+                            + " where 0 in (select sleep("
+                            + SLEEP_TOKEN
+                            + ") )"
+                            + SQL_ONE_LINE_COMMENT, // MySQL >= 5.0.12. Param in
+                    // SELECT/UPDATE/DELETE clause.
+                    ORIG_VALUE_TOKEN
+                            + "' where 0 in (select sleep("
+                            + SLEEP_TOKEN
+                            + ") )"
+                            + SQL_ONE_LINE_COMMENT, // MySQL >= 5.0.12. Param in
+                    // SELECT/UPDATE/DELETE clause.
+                    ORIG_VALUE_TOKEN
+                            + "\" where 0 in (select sleep("
+                            + SLEEP_TOKEN
+                            + ") )"
+                            + SQL_ONE_LINE_COMMENT, // MySQL >= 5.0.12. Param in
+                    // SELECT/UPDATE/DELETE clause.
+                    ORIG_VALUE_TOKEN
+                            + " or 0 in (select sleep("
+                            + SLEEP_TOKEN
+                            + ") )"
+                            + SQL_ONE_LINE_COMMENT, // MySQL >= 5.0.12. Param in WHERE clause.
+                    ORIG_VALUE_TOKEN
+                            + "' or 0 in (select sleep("
+                            + SLEEP_TOKEN
+                            + ") )"
+                            + SQL_ONE_LINE_COMMENT, // MySQL >= 5.0.12. Param in WHERE clause.
+                    ORIG_VALUE_TOKEN
+                            + "\" or 0 in (select sleep("
+                            + SLEEP_TOKEN
+                            + ") )"
+                            + SQL_ONE_LINE_COMMENT, // MySQL >= 5.0.12. Param in WHERE clause.
+                    // INSANE
+                    ORIG_VALUE_TOKEN
+                            + " where 0 in (select sleep("
+                            + SLEEP_TOKEN
+                            + ") ) ", // MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE clause.
+                    ORIG_VALUE_TOKEN
+                            + "' where 0 in (select sleep("
+                            + SLEEP_TOKEN
+                            + ") ) and ''='", // MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE
+                    // clause.
+                    ORIG_VALUE_TOKEN
+                            + "\" where 0 in (select sleep("
+                            + SLEEP_TOKEN
+                            + ") ) and \"\"=\"", // MySQL >= 5.0.12. Param in SELECT/UPDATE/DELETE
+                    // clause.
+                    ORIG_VALUE_TOKEN
+                            + " and 0 in (select sleep("
+                            + SLEEP_TOKEN
+                            + ") ) ", // MySQL >= 5.0.12. Param in WHERE clause.
+                    ORIG_VALUE_TOKEN
+                            + "' and 0 in (select sleep("
+                            + SLEEP_TOKEN
+                            + ") ) and ''='", // MySQL >= 5.0.12. Param in WHERE clause.
+                    ORIG_VALUE_TOKEN
+                            + "\" and 0 in (select sleep("
+                            + SLEEP_TOKEN
+                            + ") ) and \"\"=\"", // MySQL >= 5.0.12. Param in WHERE clause.
+                    ORIG_VALUE_TOKEN
+                            + " or 0 in (select sleep("
+                            + SLEEP_TOKEN
+                            + ") ) ", // MySQL >= 5.0.12. Param in WHERE clause.
+                    ORIG_VALUE_TOKEN
+                            + "' or 0 in (select sleep("
+                            + SLEEP_TOKEN
+                            + ") ) and ''='", // MySQL >= 5.0.12. Param in WHERE clause.
+                    ORIG_VALUE_TOKEN
+                            + "\" or 0 in (select sleep("
+                            + SLEEP_TOKEN
+                            + ") ) and \"\"=\"" // MySQL >= 5.0.12. Param in WHERE clause.
+                    );
+
+    /** The default number of seconds used in time-based attacks (i.e. sleep commands). */
+    private static final int DEFAULT_SLEEP_TIME = 5;
+
+    // limit the maximum number of requests sent for time-based attack detection
+    private static final int BLIND_REQUESTS_LIMIT = 4;
+
+    // error range allowable for statistical time-based blind attacks (0-1.0)
+    private static final double TIME_CORRELATION_ERROR_RANGE = 0.15;
+    private static final double TIME_SLOPE_ERROR_RANGE = 0.30;
 
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
@@ -196,6 +214,10 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
 
     /** for logging. */
     private static final Logger LOGGER = LogManager.getLogger(SqlInjectionMySqlScanRule.class);
+
+    private int timeSleepSeconds = DEFAULT_SLEEP_TIME;
+
+    private int blindTargetCount = SQL_MYSQL_TIME_REPLACEMENTS.size();
 
     @Override
     public int getId() {
@@ -238,28 +260,26 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
 
         // set up what we are allowed to do, depending on the attack strength that was set.
         if (this.getAttackStrength() == AttackStrength.LOW) {
-            doTimeBased = true;
-            doTimeMaxRequests = 3;
+            blindTargetCount = 6;
         } else if (this.getAttackStrength() == AttackStrength.MEDIUM) {
-            doTimeBased = true;
-            doTimeMaxRequests = 6;
+            blindTargetCount = 10;
         } else if (this.getAttackStrength() == AttackStrength.HIGH) {
-            doTimeBased = true;
-            doTimeMaxRequests = 12;
+            blindTargetCount = 12;
         } else if (this.getAttackStrength() == AttackStrength.INSANE) {
-            doTimeBased = true;
-            doTimeMaxRequests = 100;
+            blindTargetCount = SQL_MYSQL_TIME_REPLACEMENTS.size();
         }
 
         // Read the sleep value from the configs
         try {
-            this.sleep = this.getConfig().getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, 15);
+            this.timeSleepSeconds =
+                    this.getConfig()
+                            .getInt(RuleConfigParam.RULE_COMMON_SLEEP_TIME, DEFAULT_SLEEP_TIME);
         } catch (ConversionException e) {
             LOGGER.debug(
                     "Invalid value for 'rules.common.sleep': {}",
                     this.getConfig().getString(RuleConfigParam.RULE_COMMON_SLEEP_TIME));
         }
-        LOGGER.debug("Sleep set to {} seconds", sleep);
+        LOGGER.debug("Sleep set to {} seconds", timeSleepSeconds);
     }
 
     /**
@@ -269,187 +289,88 @@ public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
     @Override
     public void scan(HttpMessage originalMessage, String paramName, String originalParamValue) {
 
-        try {
-            // Timing Baseline check: we need to get the time that it took the original query, to
-            // know if the time based check is working correctly..
-            HttpMessage msgTimeBaseline = getNewMsg();
+        LOGGER.debug(
+                "Scanning URL [{}] [{}], field [{}] with value [{}] for SQL Injection",
+                getBaseMsg().getRequestHeader().getMethod(),
+                getBaseMsg().getRequestHeader().getURI(),
+                paramName,
+                originalParamValue);
+
+        Iterator<String> it = SQL_MYSQL_TIME_REPLACEMENTS.iterator();
+        for (int i = 0; !isStop() && it.hasNext() && i < blindTargetCount; i++) {
+            AtomicReference<HttpMessage> message = new AtomicReference<>();
+            AtomicReference<String> attack = new AtomicReference<>();
+            String sleepPayload = it.next();
+            TimingUtils.RequestSender requestSender =
+                    x -> {
+                        HttpMessage msg = getNewMsg();
+                        message.compareAndSet(null, msg);
+
+                        String finalPayload =
+                                sleepPayload
+                                        .replace(ORIG_VALUE_TOKEN, originalParamValue)
+                                        .replace(SLEEP_TOKEN, Integer.toString((int) x));
+
+                        setParameter(msg, paramName, finalPayload);
+                        LOGGER.debug("Testing [{}] = [{}]", paramName, finalPayload);
+                        attack.compareAndSet(null, finalPayload);
+
+                        sendAndReceive(msg, false);
+                        return msg.getTimeElapsedMillis() / 1000.0;
+                    };
+
             try {
-                sendAndReceive(msgTimeBaseline, false); // do not follow redirects
-            } catch (java.net.SocketTimeoutException e) {
-                // to be expected occasionally, if the base query was one that contains some
-                // parameters exploiting time based SQL injection?
-                LOGGER.debug(
-                        "The Base Time Check timed out on [{}] URL [{}]",
-                        msgTimeBaseline.getRequestHeader().getMethod(),
-                        msgTimeBaseline.getRequestHeader().getURI());
-            } catch (SocketException ex) {
-                LOGGER.debug(
-                        "Caught {} {} when accessing: {}",
-                        ex.getClass().getName(),
-                        ex.getMessage(),
-                        msgTimeBaseline.getRequestHeader().getURI());
-                return; // No need to keep going
-            }
-            long originalTimeUsed = msgTimeBaseline.getTimeElapsedMillis();
-            // if the time was very slow (because JSP was being compiled on first call, for
-            // instance)
-            // then the rest of the time based logic will fail.  Lets double-check for that scenario
-            // by requesting the url again.
-            // If it comes back in a more reasonable time, we will use that time instead as our
-            // baseline.  If it come out in a slow fashion again,
-            // we will abort the check on this URL, since we will only spend lots of time trying
-            // request, when we will (very likely) not get positive results.
-            if (originalTimeUsed > sleep * 1000) {
-                try {
-                    sendAndReceive(msgTimeBaseline, false); // do not follow redirects
-                } catch (java.net.SocketTimeoutException e) {
-                    // to be expected occasionally, if the base query was one that contains some
-                    // parameters exploiting time based SQL injection?
+                boolean injectable =
+                        TimingUtils.checkTimingDependence(
+                                BLIND_REQUESTS_LIMIT,
+                                timeSleepSeconds,
+                                requestSender,
+                                TIME_CORRELATION_ERROR_RANGE,
+                                TIME_SLOPE_ERROR_RANGE);
+
+                if (injectable) {
                     LOGGER.debug(
-                            "Base Time Check 2 timed out on [{}] URL [{}]",
-                            msgTimeBaseline.getRequestHeader().getMethod(),
-                            msgTimeBaseline.getRequestHeader().getURI());
-                } catch (SocketException ex) {
-                    LOGGER.debug(
-                            "Caught {} {} when accessing: {}",
-                            ex.getClass().getName(),
-                            ex.getMessage(),
-                            msgTimeBaseline.getRequestHeader().getURI());
-                    return; // No need to keep going
-                }
-                long originalTimeUsed2 = msgTimeBaseline.getTimeElapsedMillis();
-                if (originalTimeUsed2 > sleep * 1000) {
-                    // no better the second time around.  we need to bale out.
-                    LOGGER.debug(
-                            "Both base time checks 1 and 2 for [{}] URL [{}] are way too slow to be usable for the purposes of checking for time based SQL Injection checking.  We are aborting the check on this particular url.",
-                            msgTimeBaseline.getRequestHeader().getMethod(),
-                            msgTimeBaseline.getRequestHeader().getURI());
-                    return;
-                } else {
-                    // phew.  the second time came in within the limits. use the later timing
-                    // details as the base time for the checks.
-                    originalTimeUsed = originalTimeUsed2;
-                }
-            }
-            // end of timing baseline check
+                            "[Time Based SQL Injection Found] on parameter [{}] with value [{}]",
+                            paramName,
+                            attack.get());
 
-            int countTimeBasedRequests = 0;
-
-            LOGGER.debug(
-                    "Scanning URL [{}] [{}], [{}] with value [{}] for SQL Injection",
-                    getBaseMsg().getRequestHeader().getMethod(),
-                    getBaseMsg().getRequestHeader().getURI(),
-                    paramName,
-                    originalParamValue);
-
-            // MySQL specific time-based SQL injection checks
-            for (int timeBasedSQLindex = 0;
-                    timeBasedSQLindex < SQL_MYSQL_TIME_REPLACEMENTS.length
-                            && doTimeBased
-                            && countTimeBasedRequests < doTimeMaxRequests;
-                    timeBasedSQLindex++) {
-                HttpMessage msg3 = getNewMsg();
-                String newTimeBasedInjectionValue =
-                        SQL_MYSQL_TIME_REPLACEMENTS[timeBasedSQLindex]
-                                .replace(ORIG_VALUE_TOKEN, originalParamValue)
-                                .replace(SLEEP_TOKEN, Integer.toString(sleep));
-                setParameter(msg3, paramName, newTimeBasedInjectionValue);
-
-                // send it.
-                try {
-                    sendAndReceive(msg3, false); // do not follow redirects
-                    countTimeBasedRequests++;
-                } catch (java.net.SocketTimeoutException e) {
-                    // to be expected occasionally, if the contains some parameters exploiting time
-                    // based SQL injection
-                    LOGGER.debug(
-                            "The time check query timed out on [{}] URL [{}] on field: [{}]",
-                            msg3.getRequestHeader().getMethod(),
-                            msg3.getRequestHeader().getURI(),
-                            paramName);
-                } catch (SocketException ex) {
-                    LOGGER.debug(
-                            "Caught {} {} when accessing: {}",
-                            ex.getClass().getName(),
-                            ex.getMessage(),
-                            msg3.getRequestHeader().getURI());
-                    return; // No need to keep going
-                }
-                long modifiedTimeUsed = msg3.getTimeElapsedMillis();
-
-                LOGGER.debug(
-                        "Time Based SQL Injection test: [{}] on field: [{}] with value [{}] took {}ms, where the original took {}ms",
-                        newTimeBasedInjectionValue,
-                        paramName,
-                        newTimeBasedInjectionValue,
-                        modifiedTimeUsed,
-                        originalTimeUsed);
-
-                // add some small leeway on the time, since adding a 5 (by default) second delay in
-                // the SQL query will not cause the request
-                // to take a full 5 (by default) seconds longer to run than the original..
-                if (modifiedTimeUsed >= (originalTimeUsed + (sleep * 1000) - 200)) {
-                    // takes more than 5 (by default) extra seconds => likely time based SQL
-                    // injection.
-
-                    // But first double check
-                    HttpMessage msgc = getNewMsg();
-                    try {
-                        sendAndReceive(msgc, false); // do not follow redirects
-                    } catch (Exception e) {
-                        // Ignore all exceptions
-                    }
-                    long checkTimeUsed = msgc.getTimeElapsedMillis();
-                    if (checkTimeUsed >= (originalTimeUsed + (sleep * 1000) - 200)) {
-                        // Looks like the server is overloaded, very unlikely this is a real issue
-                        continue;
-                    }
-
-                    // Likely a SQL Injection. Raise it
                     String extraInfo =
                             Constant.messages.getString(
                                     "ascanrules.sqlinjection.alert.timebased.extrainfo",
-                                    newTimeBasedInjectionValue,
-                                    modifiedTimeUsed,
+                                    attack.get(),
+                                    message.get().getTimeElapsedMillis(),
                                     originalParamValue,
-                                    originalTimeUsed);
+                                    getBaseMsg().getTimeElapsedMillis());
 
                     // raise the alert
                     newAlert()
                             .setConfidence(Alert.CONFIDENCE_MEDIUM)
                             .setUri(getBaseMsg().getRequestHeader().getURI().toString())
                             .setParam(paramName)
-                            .setAttack(newTimeBasedInjectionValue)
+                            .setAttack(attack.get())
                             .setOtherInfo(extraInfo)
-                            .setMessage(msg3)
+                            .setMessage(message.get())
                             .raise();
-
-                    LOGGER.debug(
-                            "A likely Time Based SQL Injection Vulnerability has been found with [{}] URL [{}] on field: [{}]",
-                            msg3.getRequestHeader().getMethod(),
-                            msg3.getRequestHeader().getURI(),
-                            paramName);
-
-                    return;
-                } // query took longer than the amount of time we attempted to retard it by
-                // bale out if we were asked nicely
-                if (isStop()) {
-                    LOGGER.debug("Stopping the scan due to a user request");
-                    return;
+                    break;
                 }
-            } // for each time based SQL index
-            // end of check for MySQL time based SQL Injection
-
-        } catch (Exception e) {
-            // Do not try to internationalise this.. we need an error message in any event..
-            // if it's in English, it's still better than not having it at all.
-            LOGGER.error(
-                    "An error occurred checking a url for MySQL SQL Injection vulnerabilities", e);
+            } catch (SocketException ex) {
+                LOGGER.debug(
+                        "Caught {} {} when accessing: {}.\n The target may have replied with a poorly formed redirect due to our input.",
+                        ex.getClass().getName(),
+                        ex.getMessage(),
+                        message.get().getRequestHeader().getURI());
+            } catch (IOException ex) {
+                LOGGER.debug(
+                        "Check failed for parameter [{}] and payload [{}] due to an I/O error",
+                        paramName,
+                        attack.get(),
+                        ex);
+            }
         }
     }
 
     public void setSleepInSeconds(int sleep) {
-        this.sleep = sleep;
+        this.timeSleepSeconds = sleep;
     }
 
     @Override

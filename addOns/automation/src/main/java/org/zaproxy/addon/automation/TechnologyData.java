@@ -20,8 +20,8 @@
 package org.zaproxy.addon.automation;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.model.Context;
@@ -29,10 +29,15 @@ import org.zaproxy.zap.model.TechSet;
 
 public class TechnologyData extends AutomationData {
 
+    private static final String INCLUDE_FIELD = "include";
+    private static final String EXCLUDE_FIELD = "exclude";
+
     private List<String> exclude;
+    private List<String> include;
 
     public TechnologyData() {
         exclude = new ArrayList<>();
+        include = new ArrayList<>();
     }
 
     public TechnologyData(TechSet techSet) {
@@ -48,36 +53,23 @@ public class TechnologyData extends AutomationData {
     }
 
     public void initContextTechnology(Context context, AutomationProgress progress) {
-        context.setTechSet(TechnologyUtils.getTechSet(exclude));
+        context.setTechSet(TechnologyUtils.getTechSet(this));
     }
 
     public TechnologyData(Object data, AutomationProgress progress) {
         this();
-        if (!(data instanceof LinkedHashMap)) {
-            progress.error(Constant.messages.getString("automation.error.context.badtech", data));
+        if (!(data instanceof Map)) {
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.error.context.badtech", data.getClass().getSimpleName()));
         } else {
-            LinkedHashMap<?, ?> dataMap = (LinkedHashMap<?, ?>) data;
+            Map<?, ?> dataMap = (Map<?, ?>) data;
 
             for (Entry<?, ?> cdata : dataMap.entrySet()) {
-                if ("exclude".equals(cdata.getKey().toString())) {
-                    Object value = cdata.getValue();
-                    if (value == null) {
-                        continue;
-                    }
-                    if (!(value instanceof ArrayList)) {
-                        progress.error(
-                                Constant.messages.getString(
-                                        "automation.error.context.badtechexclude", value));
-
-                    } else {
-                        ArrayList<?> urlList = (ArrayList<?>) value;
-                        for (Object urlObj : urlList) {
-                            String techName = urlObj.toString();
-                            exclude.add(techName);
-                            // Check it exists
-                            TechnologyUtils.getTech(techName, progress);
-                        }
-                    }
+                if (EXCLUDE_FIELD.equals(cdata.getKey().toString())) {
+                    readTechs(exclude, cdata, progress, EXCLUDE_FIELD);
+                } else if (INCLUDE_FIELD.equals(cdata.getKey().toString())) {
+                    readTechs(include, cdata, progress, INCLUDE_FIELD);
                 } else {
                     progress.warn(
                             Constant.messages.getString(
@@ -89,15 +81,46 @@ public class TechnologyData extends AutomationData {
         }
     }
 
+    private static void readTechs(
+            List<String> into, Entry<?, ?> data, AutomationProgress progress, String field) {
+        Object value = data.getValue();
+        if (value == null) {
+            return;
+        }
+
+        if (!(value instanceof List)) {
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.error.context.badtechtype",
+                            field,
+                            value.getClass().getSimpleName()));
+            return;
+        }
+
+        List<?> urlList = (List<?>) value;
+        for (Object urlObj : urlList) {
+            String techName = urlObj.toString();
+            into.add(techName);
+            // Check it exists
+            TechnologyUtils.getTech(techName, progress);
+        }
+    }
+
     public List<String> getExclude() {
         return exclude;
     }
 
     public void setExclude(List<String> exclude) {
         this.exclude = exclude;
+        // Exclude takes precedence.
+        this.include = null;
     }
 
-    public void setExclude(TechSet techSet) {
-        this.exclude = TechnologyUtils.techSetToExcludeList(techSet);
+    private void setExclude(TechSet techSet) {
+        setExclude(TechnologyUtils.techSetToExcludeList(techSet));
+    }
+
+    public List<String> getInclude() {
+        return include;
     }
 }

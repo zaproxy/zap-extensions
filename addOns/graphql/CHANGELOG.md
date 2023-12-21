@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ## Unreleased
 ### Added
+- Video link in help for Automation Framework job.
+
+## [0.22.0] - 2023-12-19
+### Added
 - Fingerprinting check for the GraphQL.NET engine.
 
 ## [0.21.0] - 2023-11-10
@@ -174,6 +178,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
   - Import a GraphQL Schema
   - Generate Queries from an imported Schema
 
+[0.22.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.22.0
 [0.21.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.21.0
 [0.20.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.20.0
 [0.19.0]: https://github.com/zaproxy/zap-extensions/releases/graphql-v0.19.0

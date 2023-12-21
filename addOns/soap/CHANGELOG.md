@@ -4,6 +4,10 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Video link in help for Automation Framework job.
+
+## [21] - 2023-12-19
 ### Fixed
 - Use empty values as defined by the Value Generator configuration (Issue 8202).
 - Correct generation of values for `date` and `dateTime`, it would fail with warnings in previous versions.
@@ -152,6 +156,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version
 
+[21]: https://github.com/zaproxy/zap-extensions/releases/soap-v21
 [20]: https://github.com/zaproxy/zap-extensions/releases/soap-v20
 [19]: https://github.com/zaproxy/zap-extensions/releases/soap-v19
 [18]: https://github.com/zaproxy/zap-extensions/releases/soap-v18
