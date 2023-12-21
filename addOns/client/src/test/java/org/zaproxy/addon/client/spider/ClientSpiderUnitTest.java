@@ -45,13 +45,16 @@ import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
 import org.zaproxy.addon.client.ClientMap;
 import org.zaproxy.addon.client.ClientNode;
+import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.addon.client.ClientSideDetails;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 class ClientSpiderUnitTest {
 
     private ExtensionSelenium extSel;
+    private ClientOptions options;
     private ClientMap map;
     private WebDriver wd;
 
@@ -65,6 +68,9 @@ class ClientSpiderUnitTest {
         when(extSel.getProxiedBrowser(any(String.class), any(String.class))).thenReturn(wd);
         Session session = mock(Session.class);
         map = new ClientMap(new ClientNode(new ClientSideDetails("Root", ""), session));
+        options = new ClientOptions();
+        options.load(new ZapXmlConfiguration());
+        options.setThreadCount(1);
     }
 
     @AfterEach
@@ -75,8 +81,7 @@ class ClientSpiderUnitTest {
     @Test
     void shouldRequestInScopeUrls() {
         // Given
-        ClientSpider spider =
-                new ClientSpider("https://www.example.com/", 0, "browser", 1, 0, 0, 1);
+        ClientSpider spider = new ClientSpider("https://www.example.com/", options, 1);
         Options options = mock(Options.class);
         Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         when(wd.manage()).thenReturn(options);
@@ -111,8 +116,7 @@ class ClientSpiderUnitTest {
     @Test
     void shouldIgnoreRequestAfterStopped() {
         // Given
-        ClientSpider spider =
-                new ClientSpider("https://www.example.com/", 0, "browser", 1, 0, 0, 1);
+        ClientSpider spider = new ClientSpider("https://www.example.com/", options, 1);
         Options options = mock(Options.class);
         Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         when(wd.manage()).thenReturn(options);
@@ -135,7 +139,7 @@ class ClientSpiderUnitTest {
     @Test
     void shouldStartPauseResumeStopSpider() {
         // Given
-        ClientSpider spider = new ClientSpider("https://www.example.com", 0, "browser", 1, 0, 0, 1);
+        ClientSpider spider = new ClientSpider("https://www.example.com", options, 1);
         SpiderStatus statusPostStart;
         SpiderStatus statusPostPause;
         SpiderStatus statusPostResume;

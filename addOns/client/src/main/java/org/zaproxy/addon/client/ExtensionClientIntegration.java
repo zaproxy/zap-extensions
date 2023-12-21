@@ -511,33 +511,26 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         return url.startsWith(API.API_URL) || url.startsWith(API.API_URL_S);
     }
 
-    /** Temporary method for testing parameters more easily. */
-    public int runSpider(
-            String url,
-            String browserType,
-            int threadCount,
-            int initialLoadTimeInSecs,
-            int pageLoadTimeInSecs,
-            int shutdownTimeInSecs) {
-        synchronized (spiders) {
-            ClientSpider cs =
-                    new ClientSpider(
-                            url,
-                            spiders.size(),
-                            browserType,
-                            threadCount,
-                            initialLoadTimeInSecs,
-                            pageLoadTimeInSecs,
-                            shutdownTimeInSecs);
-            spiders.add(cs);
-            cs.start();
-            return spiders.indexOf(cs);
-        }
+    /**
+     * Run the client spider with the configured options
+     *
+     * @param url The inital URL to request
+     * @return an id which can be used to reference the specific scan.
+     */
+    public int runSpider(String url) {
+        return this.runSpider(url, this.getClientParam());
     }
 
-    public int runSpider(String url) {
+    /**
+     * Run the client spider with the specified options
+     *
+     * @param url The inital URL to request
+     * @param options Custom options.
+     * @return an id which can be used to reference the specific scan.
+     */
+    public int runSpider(String url, ClientOptions options) {
         synchronized (spiders) {
-            ClientSpider cs = new ClientSpider(url, spiders.size());
+            ClientSpider cs = new ClientSpider(url, options, spiders.size());
             spiders.add(cs);
             return spiders.indexOf(cs);
         }

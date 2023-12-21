@@ -35,6 +35,7 @@ import org.openqa.selenium.WebDriver;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.client.ClientMap;
+import org.zaproxy.addon.client.ClientOptions;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventConsumer;
@@ -71,12 +72,8 @@ public class ClientSpider implements EventConsumer {
 
     private ExecutorService threadPool;
 
-    private String browserType;
     private int id;
-    private int initialLoadTimeInSecs;
-    private int pageLoadTimeInSecs;
-    private int shutdownTimeInSecs;
-    private int threadCount;
+    private ClientOptions options;
 
     private String targetUrl;
     private ExtensionSelenium extSelenium;
@@ -94,31 +91,14 @@ public class ClientSpider implements EventConsumer {
     private int tasksDoneCount;
     private int tasksTotalCount;
 
-    /** Temporary constructor for testing parameters more easily. */
-    public ClientSpider(
-            String targetUrl,
-            int id,
-            String browserType,
-            int threadCount,
-            int initialLoadTimeInSecs,
-            int pageLoadTimeInSecs,
-            int shutdownTimeInSecs) {
-        this.id = id;
-        this.browserType = browserType;
-        this.initialLoadTimeInSecs = initialLoadTimeInSecs;
-        this.pageLoadTimeInSecs = pageLoadTimeInSecs;
-        this.shutdownTimeInSecs = shutdownTimeInSecs;
-        this.threadCount = threadCount;
-
+    public ClientSpider(String targetUrl, ClientOptions options, int id) {
         this.targetUrl = targetUrl;
+        this.options = options;
+        this.id = id;
         ZAP.getEventBus().registerConsumer(this, ClientMap.class.getCanonicalName());
 
         extSelenium =
                 Control.getSingleton().getExtensionLoader().getExtension(ExtensionSelenium.class);
-    }
-
-    public ClientSpider(String targetUrl, int id) {
-        this(targetUrl, id, "firefox-headless", 4, 5, 1, 5);
     }
 
     public void start() {
@@ -126,11 +106,11 @@ public class ClientSpider implements EventConsumer {
 
         this.threadPool =
                 Executors.newFixedThreadPool(
-                        threadCount,
+                        options.getThreadCount(),
                         new ClientSpiderThreadFactory(
                                 "ZAP-ClientSpiderThreadPool-" + id + "-thread-"));
 
-        addTask(targetUrl, initialLoadTimeInSecs);
+        addTask(targetUrl, options.getInitialLoadTimeInSecs());
     }
 
     public synchronized WebDriver getWebDriver() {
@@ -139,7 +119,7 @@ public class ClientSpider implements EventConsumer {
             if (!this.webDriverPool.isEmpty()) {
                 wd = this.webDriverPool.remove(0);
             } else {
-                wd = extSelenium.getProxiedBrowser(browserType, targetUrl);
+                wd = extSelenium.getProxiedBrowser(options.getBrowserId(), targetUrl);
             }
             this.webDriverActive.add(wd);
         }
@@ -178,7 +158,7 @@ public class ClientSpider implements EventConsumer {
         this.spiderTasks.remove(task);
         if (this.spiderTasks.isEmpty()) {
             this.tempLogProgress("No running tasks, starting shutdown timer");
-            new ShutdownThread(shutdownTimeInSecs).start();
+            new ShutdownThread(options.getShutdownTimeInSecs()).start();
         }
     }
 
@@ -190,7 +170,7 @@ public class ClientSpider implements EventConsumer {
         this.lastEventReceivedtime = System.currentTimeMillis();
         String url = event.getParameters().get("url");
         if (url.startsWith(targetUrl)) {
-            addTask(url, this.pageLoadTimeInSecs);
+            addTask(url, options.getPageLoadTimeInSecs());
         }
     }
 
@@ -291,7 +271,7 @@ public class ClientSpider implements EventConsumer {
                     tempLogProgress("Spider not finished..");
                     if (spiderTasks.isEmpty()) {
                         tempLogProgress("No running tasks, restarting shutdown timer");
-                        new ShutdownThread(shutdownTimeInSecs).start();
+                        new ShutdownThread(options.getShutdownTimeInSecs()).start();
                     }
                     return;
                 }
