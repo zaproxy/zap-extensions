@@ -4,6 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Leave data empty instead of adding "N/A" for the scan rules:
+  - Cross Site Scripting (Persistent) - Prime
+  - Cross Site Scripting (Persistent) - Spider
+
 ### Fixed
 - Threshold handling in the Hidden File Finder scan rule.
 - Improved the following scan rules by using time-based linear regression tests:

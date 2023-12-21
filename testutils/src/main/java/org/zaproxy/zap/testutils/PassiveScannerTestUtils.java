@@ -56,7 +56,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  *
  * @param <T> the type of the passive scanner.
  */
-public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends TestUtils {
+public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends TestUtils
+        implements ScanRuleTests {
 
     protected T rule;
     protected PassiveScanTaskHelper helper;
@@ -88,6 +89,11 @@ public abstract class PassiveScannerTestUtils<T extends PassiveScanner> extends 
         if (rule instanceof PluginPassiveScanner) {
             ((PluginPassiveScanner) rule).setHelper(passiveScanData);
         }
+    }
+
+    @Override
+    public Object getScanRule() {
+        return rule;
     }
 
     protected void defaultAssertions(Alert alert) {
