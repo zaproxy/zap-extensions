@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /** Unit test for {@link ClientOptions}. */
@@ -61,6 +62,15 @@ class ClientParamUnitTest {
         assertThat(clientParam.getPscanRulesDisabled().size(), is(2));
         assertThat(clientParam.getPscanRulesDisabled().get(0), is(1));
         assertThat(clientParam.getPscanRulesDisabled().get(1), is(3));
+
+        assertThat(clientParam.getBrowserId(), is("firefox-headless"));
+        assertThat(clientParam.getInitialLoadTimeInSecs(), is(5));
+        assertThat(clientParam.getMaxChildren(), is(0));
+        assertThat(clientParam.getMaxDepth(), is(5));
+        assertThat(clientParam.getMaxDuration(), is(0));
+        assertThat(clientParam.getPageLoadTimeInSecs(), is(1));
+        assertThat(clientParam.getShutdownTimeInSecs(), is(5));
+        assertThat(clientParam.getThreadCount(), is(Constants.getDefaultThreadCount()));
     }
 
     @Test
@@ -76,13 +86,39 @@ class ClientParamUnitTest {
     }
 
     @Test
-    void shouldSetPscanningDisabled() {
+    void shouldSetOptions() {
         // Given
         clientParam.load(config);
         // When
         clientParam.setPscanEnabled(false);
+        clientParam.setBrowserId("test-browser");
+        clientParam.setInitialLoadTimeInSecs(4);
+        clientParam.setMaxChildren(100);
+        clientParam.setMaxDepth(10);
+        clientParam.setMaxDuration(100);
+        clientParam.setPageLoadTimeInSecs(3);
+        clientParam.setShutdownTimeInSecs(10);
+        clientParam.setThreadCount(32);
         // Then
         assertThat(config.getProperty("client.pscanEnabled"), is(false));
+        assertThat(config.getProperty("client.browserId"), is("test-browser"));
+        assertThat(config.getProperty("client.initialLoadTime"), is(4));
+        assertThat(config.getProperty("client.maxChildren"), is(100));
+        assertThat(config.getProperty("client.maxDepth"), is(10));
+        assertThat(config.getProperty("client.maxDuration"), is(100));
+        assertThat(config.getProperty("client.pageLoadTime"), is(3));
+        assertThat(config.getProperty("client.shutdownTime"), is(10));
+        assertThat(config.getProperty("client.threads"), is(32));
+
+        assertThat(clientParam.getPscanRulesDisabled().size(), is(0));
+        assertThat(clientParam.getBrowserId(), is("test-browser"));
+        assertThat(clientParam.getInitialLoadTimeInSecs(), is(4));
+        assertThat(clientParam.getMaxChildren(), is(100));
+        assertThat(clientParam.getMaxDepth(), is(10));
+        assertThat(clientParam.getMaxDuration(), is(100));
+        assertThat(clientParam.getPageLoadTimeInSecs(), is(3));
+        assertThat(clientParam.getShutdownTimeInSecs(), is(10));
+        assertThat(clientParam.getThreadCount(), is(32));
     }
 
     @Test
