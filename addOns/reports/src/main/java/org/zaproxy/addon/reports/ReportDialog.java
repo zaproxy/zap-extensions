@@ -281,6 +281,7 @@ public class ReportDialog extends StandardFieldsDialog {
     private JScrollPane getSectionsScrollPane() {
         if (sectionsPane == null) {
             sectionsPane = new JScrollPane();
+            sectionsPane.setMinimumSize((DisplayUtils.getScaledDimension(400, 300)));
         }
         return sectionsPane;
     }
