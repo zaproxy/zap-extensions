@@ -330,6 +330,7 @@ public class ReportDialog extends StandardFieldsDialog {
             }
         }
         getSectionsScrollPane().setViewportView(sectionPanel);
+        repaint();
     }
 
     private void setReportName() {

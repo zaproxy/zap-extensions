@@ -269,6 +269,7 @@ public class ReportJobDialog extends StandardFieldsDialog {
             }
         }
         getSectionsScrollPane().setViewportView(sectionPanel);
+        repaint();
     }
 
     @Override
