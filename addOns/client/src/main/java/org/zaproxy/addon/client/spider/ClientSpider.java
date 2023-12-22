@@ -27,6 +27,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.logging.log4j.LogManager;
@@ -50,12 +51,7 @@ public class ClientSpider implements EventConsumer {
      * TODO The following features will need to be implemented before the first release:
      * 		GUI (!)
      * 		Separate proxy (or maybe even one proxy per browser?)
-     * 		Configurable parameters
      * 		Support for modes
-     * 		Limits to prevent infinite spidering:
-     * 			Max time
-     * 			Max depth
-     * 			Max children
      * 		Help pages
      *
      * The following features should be implemented in future releases:
@@ -82,8 +78,9 @@ public class ClientSpider implements EventConsumer {
     private Set<WebDriver> webDriverActive = new HashSet<>();
     private List<ClientSpiderTask> spiderTasks = new ArrayList<>();
     private List<ClientSpiderTask> pausedTasks = new ArrayList<>();
-    private long startTime = System.currentTimeMillis();
+    private long startTime;
     private long lastEventReceivedtime;
+    private long maxTime;
     private boolean paused;
     private boolean finished;
     private boolean stopped;
@@ -102,7 +99,11 @@ public class ClientSpider implements EventConsumer {
     }
 
     public void start() {
-        lastEventReceivedtime = System.currentTimeMillis();
+        startTime = System.currentTimeMillis();
+        lastEventReceivedtime = startTime;
+        if (options.getMaxDuration() > 0) {
+            maxTime = startTime + TimeUnit.MINUTES.toMillis(options.getMaxDuration());
+        }
 
         this.threadPool =
                 Executors.newFixedThreadPool(
@@ -168,8 +169,36 @@ public class ClientSpider implements EventConsumer {
             return;
         }
         this.lastEventReceivedtime = System.currentTimeMillis();
-        String url = event.getParameters().get("url");
+        if (maxTime > 0 && this.lastEventReceivedtime > maxTime) {
+            this.tempLogProgress("Exceeded max time, stopping");
+            this.stop();
+            return;
+        }
+
+        String url = event.getParameters().get(ClientMap.URL_KEY);
         if (url.startsWith(targetUrl)) {
+            if (options.getMaxDepth() > 0) {
+                int depth = Integer.parseInt(event.getParameters().get(ClientMap.DEPTH_KEY));
+                if (depth > options.getMaxDepth()) {
+                    LOGGER.debug(
+                            "Ignoring URL - too deep {} > {} : {}",
+                            depth,
+                            options.getMaxDepth(),
+                            url);
+                    return;
+                }
+            }
+            if (options.getMaxChildren() > 0) {
+                int siblings = Integer.parseInt(event.getParameters().get(ClientMap.SIBLINGS_KEY));
+                if (siblings > options.getMaxChildren()) {
+                    LOGGER.debug(
+                            "Ignoring URL - too wide {} > {} : {}",
+                            siblings,
+                            options.getMaxChildren(),
+                            url);
+                    return;
+                }
+            }
             addTask(url, options.getPageLoadTimeInSecs());
         }
     }
