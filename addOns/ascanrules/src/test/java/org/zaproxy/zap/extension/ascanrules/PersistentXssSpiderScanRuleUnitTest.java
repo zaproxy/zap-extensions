@@ -19,11 +19,19 @@
  */
 package org.zaproxy.zap.extension.ascanrules;
 
+import org.junit.jupiter.api.Test;
+
 /** Unit test for {@link PersistentXssSpiderScanRule}. */
 class PersistentXssSpiderScanRuleUnitTest extends ActiveScannerTest<PersistentXssSpiderScanRule> {
 
     @Override
     protected PersistentXssSpiderScanRule createScanner() {
         return new PersistentXssSpiderScanRule();
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 }

@@ -66,7 +66,8 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
  *
  * @param <T> the type of the active scanner.
  */
-public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends TestUtils {
+public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends TestUtils
+        implements ScanRuleTests {
 
     /**
      * The recommended maximum number of messages that a scanner can send in {@link
@@ -180,6 +181,11 @@ public abstract class ActiveScannerTestUtils<T extends AbstractPlugin> extends T
         if (rule.getConfig() == null) {
             rule.setConfig(new ZapXmlConfiguration());
         }
+    }
+
+    @Override
+    public Object getScanRule() {
+        return rule;
     }
 
     @AfterEach

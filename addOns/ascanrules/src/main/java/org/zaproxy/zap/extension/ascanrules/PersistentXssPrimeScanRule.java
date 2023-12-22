@@ -47,7 +47,7 @@ public class PersistentXssPrimeScanRule extends AbstractAppParamPlugin {
 
     @Override
     public String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "misc");
+        return "";
     }
 
     @Override
@@ -57,12 +57,12 @@ public class PersistentXssPrimeScanRule extends AbstractAppParamPlugin {
 
     @Override
     public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "misc");
+        return "";
     }
 
     @Override
     public String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "misc");
+        return "";
     }
 
     @Override

@@ -52,7 +52,7 @@ public class PersistentXssSpiderScanRule extends AbstractAppPlugin {
 
     @Override
     public String getDescription() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "misc");
+        return "";
     }
 
     @Override
@@ -62,12 +62,12 @@ public class PersistentXssSpiderScanRule extends AbstractAppPlugin {
 
     @Override
     public String getSolution() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "misc");
+        return "";
     }
 
     @Override
     public String getReference() {
-        return Constant.messages.getString(MESSAGE_PREFIX + "misc");
+        return "";
     }
 
     @Override
