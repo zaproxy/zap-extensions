@@ -532,6 +532,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
         synchronized (spiders) {
             ClientSpider cs = new ClientSpider(url, options, spiders.size());
             spiders.add(cs);
+            cs.start();
             return spiders.indexOf(cs);
         }
     }

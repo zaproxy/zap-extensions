@@ -37,9 +37,11 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.addon.client.spider.ClientSpider;
 import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.internal.FirefoxProfileManager;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 class ExtensionClientIntegrationUnitTest {
 
@@ -117,5 +119,29 @@ class ExtensionClientIntegrationUnitTest {
 
         // Then
         assertEquals(expectedProfiles, updatedProfiles);
+    }
+
+    @Test
+    void shouldStartSpider() throws IOException {
+        // Given
+        ExtensionLoader extensionLoader = mock(ExtensionLoader.class);
+        Control.initSingletonForTesting(mock(Model.class), extensionLoader);
+        ExtensionSelenium extSel = mock(ExtensionSelenium.class);
+        when(extensionLoader.getExtension(ExtensionSelenium.class)).thenReturn(extSel);
+        FirefoxProfileManager fpm = mock(FirefoxProfileManager.class);
+        when(extSel.getProfileManager(Browser.FIREFOX)).thenReturn(fpm);
+        ExtensionClientIntegration extClient = new ExtensionClientIntegration();
+        ClientOptions options = new ClientOptions();
+        options.load(new ZapXmlConfiguration());
+        options.setThreadCount(1);
+
+        // When
+        int spiderId = extClient.runSpider("https://www.example.com", options);
+        ClientSpider spider = extClient.getSpider(spiderId);
+        boolean isRunning = spider.isRunning();
+        spider.stop();
+
+        // Then
+        assertEquals(isRunning, true);
     }
 }

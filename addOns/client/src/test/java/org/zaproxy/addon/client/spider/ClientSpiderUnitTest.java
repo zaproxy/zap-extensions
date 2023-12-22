@@ -22,6 +22,7 @@ package org.zaproxy.addon.client.spider;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.atLeastOnce;
@@ -54,7 +55,7 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 class ClientSpiderUnitTest {
 
     private ExtensionSelenium extSel;
-    private ClientOptions options;
+    private ClientOptions clientOptions;
     private ClientMap map;
     private WebDriver wd;
 
@@ -68,9 +69,9 @@ class ClientSpiderUnitTest {
         when(extSel.getProxiedBrowser(any(String.class), any(String.class))).thenReturn(wd);
         Session session = mock(Session.class);
         map = new ClientMap(new ClientNode(new ClientSideDetails("Root", ""), session));
-        options = new ClientOptions();
-        options.load(new ZapXmlConfiguration());
-        options.setThreadCount(1);
+        clientOptions = new ClientOptions();
+        clientOptions.load(new ZapXmlConfiguration());
+        clientOptions.setThreadCount(1);
     }
 
     @AfterEach
@@ -81,7 +82,7 @@ class ClientSpiderUnitTest {
     @Test
     void shouldRequestInScopeUrls() {
         // Given
-        ClientSpider spider = new ClientSpider("https://www.example.com/", options, 1);
+        ClientSpider spider = new ClientSpider("https://www.example.com/", clientOptions, 1);
         Options options = mock(Options.class);
         Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         when(wd.manage()).thenReturn(options);
@@ -116,7 +117,7 @@ class ClientSpiderUnitTest {
     @Test
     void shouldIgnoreRequestAfterStopped() {
         // Given
-        ClientSpider spider = new ClientSpider("https://www.example.com/", options, 1);
+        ClientSpider spider = new ClientSpider("https://www.example.com/", clientOptions, 1);
         Options options = mock(Options.class);
         Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
         when(wd.manage()).thenReturn(options);
@@ -139,7 +140,7 @@ class ClientSpiderUnitTest {
     @Test
     void shouldStartPauseResumeStopSpider() {
         // Given
-        ClientSpider spider = new ClientSpider("https://www.example.com", options, 1);
+        ClientSpider spider = new ClientSpider("https://www.example.com", clientOptions, 1);
         SpiderStatus statusPostStart;
         SpiderStatus statusPostPause;
         SpiderStatus statusPostResume;
@@ -171,6 +172,90 @@ class ClientSpiderUnitTest {
         assertThat(statusPostStop.isRunning(), is(false));
         assertThat(statusPostStop.isPaused(), is(false));
         assertThat(statusPostStop.isStopped(), is(true));
+    }
+
+    @Test
+    void shouldIgnoreUrlsTooDeep() {
+        // Given
+        clientOptions.setMaxDepth(5);
+        ClientSpider spider = new ClientSpider("https://www.example.com/", clientOptions, 1);
+        Options options = mock(Options.class);
+        Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
+        when(wd.manage()).thenReturn(options);
+        when(options.timeouts()).thenReturn(timeouts);
+        ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
+
+        // When
+        spider.start();
+        map.getOrAddNode("https://www.example.com/l1", false, false);
+        map.getOrAddNode("https://www.example.com/l1/l2", false, false);
+        map.getOrAddNode("https://www.example.com/l1/l2/l3", false, false);
+        map.getOrAddNode("https://www.example.com/l1/l2/l3/l4", false, false);
+        map.getOrAddNode("https://www.example.com/l1/l2/l3/l4/l5", false, false);
+        map.getOrAddNode("https://www.example.com/l1/l2/l3/l4/l5/l6", false, false);
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            // Ignore
+        }
+        spider.stop();
+        ClientNode l6Node = map.getNode("https://www.example.com/l1/l2/l3/l4/l5/l6", false, false);
+
+        // Then
+        verify(wd, atLeastOnce()).get(argument.capture());
+
+        List<String> values = argument.getAllValues();
+        assertThat(
+                values,
+                contains(
+                        "https://www.example.com/",
+                        "https://www.example.com/l1",
+                        "https://www.example.com/l1/l2",
+                        "https://www.example.com/l1/l2/l3",
+                        "https://www.example.com/l1/l2/l3/l4"));
+        assertThat(l6Node, is(notNullValue()));
+    }
+
+    @Test
+    void shouldIgnoreUrlsTooWide() {
+        // Given
+        clientOptions.setMaxChildren(4);
+        ClientSpider spider = new ClientSpider("https://www.example.com/", clientOptions, 1);
+        Options options = mock(Options.class);
+        Timeouts timeouts = mock(Timeouts.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
+        when(wd.manage()).thenReturn(options);
+        when(options.timeouts()).thenReturn(timeouts);
+        ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
+
+        // When
+        spider.start();
+        map.getOrAddNode("https://www.example.com/l1", false, false);
+        map.getOrAddNode("https://www.example.com/l2", false, false);
+        map.getOrAddNode("https://www.example.com/l3", false, false);
+        map.getOrAddNode("https://www.example.com/l4", false, false);
+        map.getOrAddNode("https://www.example.com/l5", false, false);
+        map.getOrAddNode("https://www.example.com/l6", false, false);
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            // Ignore
+        }
+        spider.stop();
+        ClientNode l6Node = map.getNode("https://www.example.com/l6", false, false);
+
+        // Then
+        verify(wd, atLeastOnce()).get(argument.capture());
+
+        List<String> values = argument.getAllValues();
+        assertThat(
+                values,
+                contains(
+                        "https://www.example.com/",
+                        "https://www.example.com/l1",
+                        "https://www.example.com/l2",
+                        "https://www.example.com/l3",
+                        "https://www.example.com/l4"));
+        assertThat(l6Node, is(notNullValue()));
     }
 
     class SpiderStatus {

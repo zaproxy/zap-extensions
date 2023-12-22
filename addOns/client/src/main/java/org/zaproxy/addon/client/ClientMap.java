@@ -36,6 +36,9 @@ import org.zaproxy.zap.model.Target;
 public class ClientMap extends SortedTreeModel implements EventPublisher {
 
     public static final String MAP_NODE_ADDED_EVENT = "client.mapNode.added";
+    public static final String DEPTH_KEY = "depth";
+    public static final String SIBLINGS_KEY = "siblings";
+    public static final String URL_KEY = "url";
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = LogManager.getLogger(ClientMap.class);
@@ -88,7 +91,10 @@ public class ClientMap extends SortedTreeModel implements EventPublisher {
                                     storage);
                     if (!storage) {
                         Map<String, String> map = new HashMap<>();
-                        map.put("url", url);
+                        map.put(URL_KEY, url);
+                        // Note we haven't added the child to the parent yet
+                        map.put(DEPTH_KEY, Integer.toString(parent.getLevel() + 1));
+                        map.put(SIBLINGS_KEY, Integer.toString(parent.getChildCount() + 1));
                         ZAP.getEventBus()
                                 .publishSyncEvent(
                                         this,
