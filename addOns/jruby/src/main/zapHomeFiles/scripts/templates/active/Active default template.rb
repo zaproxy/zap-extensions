@@ -5,13 +5,13 @@
       
 require 'java'
 java_package 'org.zaproxy.zap.extension.ascan'
-java_import 'org.zaproxy.zap.extension.ascan.ActiveScript'
-java_import 'org.zaproxy.zap.extension.ascan.ScriptsActiveScanner'
+java_import 'org.zaproxy.zap.extension.scripts.scanrules.ActiveScript'
+java_import 'org.zaproxy.zap.extension.scripts.scanrules.ScriptsActiveScanner'
 java_import 'org.parosproxy.paros.network.HttpMessage'
 java_import 'org.parosproxy.paros.view.View'
 
 class JRubyActiveScript 
-  include Java::org.zaproxy.zap.extension.ascan.ActiveScript
+  include Java::org.zaproxy.zap.extension.scripts.scanrules.ActiveScript
 
   java_signature 'scan(ScriptsActiveScanner, HttpMessage, String, String)'
   def scan(sas, msg, param, value)

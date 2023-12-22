@@ -38,6 +38,8 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
+import org.parosproxy.paros.core.scanner.AbstractPlugin;
+import org.parosproxy.paros.core.scanner.PluginFactory;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -51,6 +53,7 @@ import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.authentication.ExtensionAuthentication;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
+import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptEventListener;
@@ -58,10 +61,14 @@ import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.script.ScriptUI;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
+import org.zaproxy.zap.extension.scripts.scanrules.ScriptsPassiveScanner;
 import org.zaproxy.zap.extension.stdmenus.PopupContextMenuItemFactory;
 import org.zaproxy.zap.model.Context;
 
-/** The Extension that adds the UI for managing Scripts: scripts tree, scripts console. */
+/**
+ * The Extension that adds the UI for managing Scripts: scripts tree, scripts console and other
+ * scripting related functionality.
+ */
 public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventListener, ScriptUI {
 
     public static final String NAME = "ExtensionScripts";
@@ -235,6 +242,34 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
     @Override
     public boolean canUnload() {
         return true;
+    }
+
+    @Override
+    public void postInit() {
+        if (org.zaproxy.zap.extension.ascan.ScriptsActiveScanner.class.getAnnotation(
+                        Deprecated.class)
+                == null) {
+            PluginFactory.unloadedPlugin((AbstractPlugin) PluginFactory.getLoadedPlugin(50000));
+        }
+        if (org.zaproxy.zap.extension.pscan.scanner.ScriptsPassiveScanner.class.getAnnotation(
+                        Deprecated.class)
+                == null) {
+            var extensionPscan =
+                    Control.getSingleton()
+                            .getExtensionLoader()
+                            .getExtension(ExtensionPassiveScan.class);
+            if (extensionPscan != null) {
+                var installedPscanRule = extensionPscan.getPluginPassiveScanner(50001);
+                var corePscanRuleName =
+                        org.zaproxy.zap.extension.pscan.scanner.ScriptsPassiveScanner.class
+                                .getName();
+                if (installedPscanRule != null
+                        && installedPscanRule.getClass().getName().equals(corePscanRuleName)) {
+                    extensionPscan.removePluginPassiveScanner(installedPscanRule);
+                    extensionPscan.addPluginPassiveScanner(new ScriptsPassiveScanner());
+                }
+            }
+        }
     }
 
     @Override
