@@ -75,6 +75,7 @@ class ValidateTranslatedVulnerabilitiesFilesUnitTest extends TestUtils {
     }
 
     @Test
+    @Disabled("Until next crowdin sync")
     void shouldLoadAllVulnerabilitiesFilesAvailable() {
         processTranslations(
                 (fileName, source, translated) ->

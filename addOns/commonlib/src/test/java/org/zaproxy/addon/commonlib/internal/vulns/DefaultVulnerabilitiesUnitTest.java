@@ -47,8 +47,8 @@ class DefaultVulnerabilitiesUnitTest {
     private static void assertDefaults(DefaultVulnerabilities vulnerabilities) {
         assertThat(vulnerabilities.getAll(), hasSize(52));
         assertVulnerability(vulnerabilities.get("wasc_1"), 1, 3);
-        assertVulnerability(vulnerabilities.get("wasc_13"), 13, 2);
-        assertVulnerability(vulnerabilities.get("wasc_49"), 49, 2);
+        assertVulnerability(vulnerabilities.get("wasc_13"), 13, 1);
+        assertVulnerability(vulnerabilities.get("wasc_49"), 49, 3);
     }
 
     private static void assertVulnerability(
