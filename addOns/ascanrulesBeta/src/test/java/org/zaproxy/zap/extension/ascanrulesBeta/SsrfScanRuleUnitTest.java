@@ -40,7 +40,7 @@ import org.zaproxy.addon.oast.OastPayload;
 import org.zaproxy.addon.oast.OastService;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 
-public class SsrfScanRuleUnitTest extends ActiveScannerTest<SsrfScanRule> {
+class SsrfScanRuleUnitTest extends ActiveScannerTest<SsrfScanRule> {
 
     private ExtensionOast extensionOast;
     private String nanoHost;

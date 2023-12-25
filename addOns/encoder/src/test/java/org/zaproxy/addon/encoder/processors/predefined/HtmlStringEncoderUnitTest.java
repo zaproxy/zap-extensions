@@ -26,7 +26,7 @@ import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeResult;
 
-public class HtmlStringEncoderUnitTest extends ProcessorTests<HtmlStringEncoder> {
+class HtmlStringEncoderUnitTest extends ProcessorTests<HtmlStringEncoder> {
 
     @Override
     protected HtmlStringEncoder createProcessor() {

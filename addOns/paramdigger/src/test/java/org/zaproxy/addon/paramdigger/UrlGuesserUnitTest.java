@@ -57,7 +57,7 @@ import org.zaproxy.addon.paramdigger.gui.ParamDiggerHistoryTableModel;
 import org.zaproxy.zap.testutils.NanoServerHandler;
 import org.zaproxy.zap.testutils.TestUtils;
 
-public class UrlGuesserUnitTest extends TestUtils {
+class UrlGuesserUnitTest extends TestUtils {
     private UrlGuesser urlGuesser;
     private GuesserScan scan;
     private ExecutorService executor;

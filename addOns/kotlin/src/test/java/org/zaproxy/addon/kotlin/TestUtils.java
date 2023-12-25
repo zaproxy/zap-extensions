@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.FileUtils;
 
-public class TestUtils {
+class TestUtils {
     static String getScriptContents(String scriptName) throws IOException {
         return FileUtils.readFileToString(
                 new File(TestUtils.class.getResource(scriptName).getFile()),

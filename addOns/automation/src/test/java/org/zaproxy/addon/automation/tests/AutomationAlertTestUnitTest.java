@@ -52,7 +52,7 @@ import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.testutils.TestUtils;
 import org.zaproxy.zap.utils.I18N;
 
-public class AutomationAlertTestUnitTest extends TestUtils {
+class AutomationAlertTestUnitTest extends TestUtils {
 
     private final String name = "example name";
     private final Integer scanRuleId = 100;
