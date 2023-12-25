@@ -26,7 +26,7 @@ import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeResult;
 
-public class Base64DecoderUnitTest extends ProcessorTests<Base64Decoder> {
+class Base64DecoderUnitTest extends ProcessorTests<Base64Decoder> {
 
     @Override
     protected Base64Decoder createProcessor() {

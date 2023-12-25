@@ -27,7 +27,7 @@ import static org.mockito.BDDMockito.given;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeResult;
 
-public class Base64EncoderUnitTest extends ProcessorTests<Base64Encoder> {
+class Base64EncoderUnitTest extends ProcessorTests<Base64Encoder> {
 
     @Override
     protected Base64Encoder createProcessor() {

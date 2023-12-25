@@ -49,7 +49,7 @@ import org.zaproxy.addon.encoder.processors.script.ScriptBasedEncodeDecodeProces
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
-public class EncodeDecodeScriptUnitTest {
+class EncodeDecodeScriptUnitTest {
 
     private EncodeDecodeScript script;
     private ScriptBasedEncodeDecodeProcessor processor;

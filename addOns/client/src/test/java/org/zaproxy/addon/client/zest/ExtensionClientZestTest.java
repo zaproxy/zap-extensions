@@ -37,7 +37,7 @@ import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.client.ExtensionClientIntegration;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 
-public class ExtensionClientZestTest {
+class ExtensionClientZestTest {
     private ExtensionLoader extensionLoader;
     private ExtensionClientZest extension;
 

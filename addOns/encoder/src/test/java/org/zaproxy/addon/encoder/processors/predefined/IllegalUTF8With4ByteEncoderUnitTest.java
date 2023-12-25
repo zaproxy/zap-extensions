@@ -26,8 +26,7 @@ import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeResult;
 
-public class IllegalUTF8With4ByteEncoderUnitTest
-        extends ProcessorTests<IllegalUTF8With4ByteEncoder> {
+class IllegalUTF8With4ByteEncoderUnitTest extends ProcessorTests<IllegalUTF8With4ByteEncoder> {
 
     @Override
     protected IllegalUTF8With4ByteEncoder createProcessor() {

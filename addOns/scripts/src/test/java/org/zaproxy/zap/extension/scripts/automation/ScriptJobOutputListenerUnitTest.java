@@ -34,7 +34,7 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.AutomationProgress;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
-public class ScriptJobOutputListenerUnitTest {
+class ScriptJobOutputListenerUnitTest {
 
     String SCRIPT_NAME = "TEST";
     ScriptWrapper script;

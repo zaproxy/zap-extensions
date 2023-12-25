@@ -26,7 +26,7 @@ import static org.hamcrest.Matchers.is;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.encoder.processors.EncodeDecodeResult;
 
-public class HexStringEncoderUnitTest extends ProcessorTests<HexStringEncoder> {
+class HexStringEncoderUnitTest extends ProcessorTests<HexStringEncoder> {
 
     @Override
     protected HexStringEncoder createProcessor() {

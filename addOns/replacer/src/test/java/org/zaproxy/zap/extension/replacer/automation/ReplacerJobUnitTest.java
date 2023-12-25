@@ -53,7 +53,7 @@ import org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType;
 import org.zaproxy.zap.extension.replacer.automation.ReplacerJob.RuleData;
 import org.zaproxy.zap.testutils.TestUtils;
 
-public class ReplacerJobUnitTest extends TestUtils {
+class ReplacerJobUnitTest extends TestUtils {
 
     @BeforeEach
     void setUp() {

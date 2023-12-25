@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.testutils.TestUtils;
 
-public class HtmlContextAnalyserUnitTest extends TestUtils {
+class HtmlContextAnalyserUnitTest extends TestUtils {
     private HttpMessage msg;
 
     @Test
