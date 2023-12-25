@@ -19,5 +19,6 @@ zapAddOn {
 dependencies {
     zapAddOn("commonlib")
 
+    implementation("com.google.re2j:re2j:1.7")
     testImplementation(project(":testutils"))
 }
