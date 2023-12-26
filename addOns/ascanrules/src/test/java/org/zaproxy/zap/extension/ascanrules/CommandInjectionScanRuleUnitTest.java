@@ -47,6 +47,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -343,6 +344,32 @@ class CommandInjectionScanRuleUnitTest extends ActiveScannerTest<CommandInjectio
         // Then
         assertFalse(httpMessagesSent.get(0).getUrlParams().first().getValue().startsWith("a"));
         assertTrue(httpMessagesSent.get(1).getUrlParams().first().getValue().startsWith("a"));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / WHen
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+        Alert alert = alerts.get(0);
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alert.getParam(), is(equalTo("qry")));
+        assertThat(alert.getAttack(), is(equalTo("a;cat /etc/passwd ")));
+        assertThat(alert.getEvidence(), is(equalTo("root:x:0:0")));
+        assertThat(
+                alert.getOtherInfo(),
+                is(
+                        equalTo(
+                                "The scan rule was able to retrieve the content of a file or "
+                                        + "command by sending [a;cat /etc/passwd ] to the operating "
+                                        + "system running this application")));
     }
 
     private static class PayloadCollectorHandler extends NanoServerHandler {

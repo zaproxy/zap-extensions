@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import org.apache.logging.log4j.LogManager;
@@ -116,13 +117,15 @@ public class GetForPostScanRule extends AbstractAppPlugin implements CommonActiv
         }
 
         if (newRequest.getResponseBody().equals(baseMsg.getResponseBody())) {
-            newAlert()
-                    .setConfidence(Alert.CONFIDENCE_HIGH)
+            buildAlert(newRequest.getRequestHeader().getPrimeHeader())
                     .setUri(baseMsg.getRequestHeader().getURI().toString())
-                    .setEvidence(newRequest.getRequestHeader().getPrimeHeader())
                     .setMessage(newRequest)
                     .raise();
         }
+    }
+
+    private AlertBuilder buildAlert(String evidence) {
+        return newAlert().setConfidence(Alert.CONFIDENCE_HIGH).setEvidence(evidence);
     }
 
     @Override
@@ -143,5 +146,10 @@ public class GetForPostScanRule extends AbstractAppPlugin implements CommonActiv
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(buildAlert("HTTP/1.0 200").build());
     }
 }
