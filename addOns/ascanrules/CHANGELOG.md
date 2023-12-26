@@ -17,6 +17,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - SQL Injection - MsSQL
   - SQL Injection - MySQL
 
+### Added
+- Help entry for the Spring Actuators scan rule (missed during previous promotion).
+- Website alert links to the help page (Issue 8189).
+
 ## [59] - 2023-12-07
 ### Added
 - Support for mutations in reflected XSS rule.

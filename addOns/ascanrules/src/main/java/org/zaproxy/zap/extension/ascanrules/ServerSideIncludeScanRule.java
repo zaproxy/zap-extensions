@@ -43,7 +43,8 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
-public class ServerSideIncludeScanRule extends AbstractAppParamPlugin {
+public class ServerSideIncludeScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
 
     private static final Logger LOGGER = LogManager.getLogger(ServerSideIncludeScanRule.class);
 

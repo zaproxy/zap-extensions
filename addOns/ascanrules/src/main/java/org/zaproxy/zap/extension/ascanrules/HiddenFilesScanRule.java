@@ -59,7 +59,7 @@ import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
  * - Start position 0 (ex: checking magic numbers) [startsWith, not contains]<br>
  * - Response is ASCII compatible (which should include UTF-8 and ISO-8859-1)
  */
-public class HiddenFilesScanRule extends AbstractHostPlugin {
+public class HiddenFilesScanRule extends AbstractHostPlugin implements CommonActiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "ascanrules.hidden.files.";
     private static final int PLUGIN_ID = 40035;

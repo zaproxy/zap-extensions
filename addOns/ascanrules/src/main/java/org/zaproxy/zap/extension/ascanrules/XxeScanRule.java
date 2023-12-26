@@ -43,7 +43,7 @@ import org.zaproxy.addon.oast.ExtensionOast;
  *
  * @author yhawke (2104)
  */
-public class XxeScanRule extends AbstractAppPlugin {
+public class XxeScanRule extends AbstractAppPlugin implements CommonActiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "ascanrules.xxe.";
     private static final int PLUGIN_ID = 90023;

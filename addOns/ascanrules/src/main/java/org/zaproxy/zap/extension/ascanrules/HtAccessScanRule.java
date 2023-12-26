@@ -28,7 +28,7 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
-public class HtAccessScanRule extends AbstractAppFilePlugin {
+public class HtAccessScanRule extends AbstractAppFilePlugin implements CommonActiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "ascanrules.htaccess.";
     private static final int PLUGIN_ID = 40032;

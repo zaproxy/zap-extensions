@@ -28,7 +28,8 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.SourceSinkUtils;
 
-public class PersistentXssSpiderScanRule extends AbstractAppPlugin {
+public class PersistentXssSpiderScanRule extends AbstractAppPlugin
+        implements CommonActiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.persistentxssspider.";
@@ -97,5 +98,10 @@ public class PersistentXssSpiderScanRule extends AbstractAppPlugin {
     @Override
     public int getWascId() {
         return 8;
+    }
+
+    @Override
+    public String getHelpLink() {
+        return getHelpLink(40014);
     }
 }

@@ -42,7 +42,7 @@ import org.zaproxy.zap.model.Tech;
  *
  * @author DiogoMRSilva (2019)
  */
-public class SstiBlindScanRule extends AbstractAppParamPlugin {
+public class SstiBlindScanRule extends AbstractAppParamPlugin implements CommonActiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.sstiblind.";

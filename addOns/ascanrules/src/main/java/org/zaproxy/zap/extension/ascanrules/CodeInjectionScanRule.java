@@ -41,7 +41,8 @@ import org.zaproxy.zap.model.TechSet;
  *
  * @author yhawke (2013)
  */
-public class CodeInjectionScanRule extends AbstractAppParamPlugin {
+public class CodeInjectionScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.codeinjection.";

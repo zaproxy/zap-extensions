@@ -36,7 +36,7 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
  * Attempts to retrieve cloud metadata by forging the host header and requesting a specific URL. See
  * https://www.nginx.com/blog/trust-no-one-perils-of-trusting-user-input/ for more details
  */
-public class CloudMetadataScanRule extends AbstractHostPlugin {
+public class CloudMetadataScanRule extends AbstractHostPlugin implements CommonActiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.cloudmetadata.";

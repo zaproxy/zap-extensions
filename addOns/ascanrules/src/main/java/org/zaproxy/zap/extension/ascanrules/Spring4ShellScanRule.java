@@ -38,7 +38,7 @@ import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
-public class Spring4ShellScanRule extends AbstractAppPlugin {
+public class Spring4ShellScanRule extends AbstractAppPlugin implements CommonActiveScanRuleInfo {
 
     private static final int PLUGIN_ID = 40045;
 

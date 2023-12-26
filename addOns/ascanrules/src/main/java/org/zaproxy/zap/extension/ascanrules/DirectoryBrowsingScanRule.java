@@ -42,7 +42,8 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Tech;
 
-public class DirectoryBrowsingScanRule extends AbstractAppPlugin {
+public class DirectoryBrowsingScanRule extends AbstractAppPlugin
+        implements CommonActiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.directorybrowsing.";

@@ -57,7 +57,8 @@ import org.zaproxy.zap.model.TechSet;
  *
  * @author 70pointer
  */
-public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin {
+public class SqlInjectionOracleScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
 
     private int expectedDelayInMs = 5000;
 

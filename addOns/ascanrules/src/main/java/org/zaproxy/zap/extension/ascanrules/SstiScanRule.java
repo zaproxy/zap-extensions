@@ -47,7 +47,7 @@ import org.zaproxy.zap.extension.ascanrules.ssti.TemplateFormat;
  *
  * @author DiogoMRSilva (2018)
  */
-public class SstiScanRule extends AbstractAppParamPlugin {
+public class SstiScanRule extends AbstractAppParamPlugin implements CommonActiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.ssti.";

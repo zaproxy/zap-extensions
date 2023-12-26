@@ -42,7 +42,8 @@ import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.zap.extension.ascanrules.httputils.HtmlContext;
 import org.zaproxy.zap.extension.ascanrules.httputils.HtmlContextAnalyser;
 
-public class PersistentXssScanRule extends AbstractAppParamPlugin {
+public class PersistentXssScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.persistentxssattack.";

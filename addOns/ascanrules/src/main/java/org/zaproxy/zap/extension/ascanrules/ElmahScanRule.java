@@ -30,7 +30,7 @@ import org.zaproxy.zap.model.TechSet;
  * Active scan rule which checks whether or not elmah.axd is exposed.
  * https://github.com/zaproxy/zaproxy/issues/3279
  */
-public class ElmahScanRule extends AbstractHostFilePlugin {
+public class ElmahScanRule extends AbstractHostFilePlugin implements CommonActiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "ascanrules.elmah.";
     private static final int PLUGIN_ID = 40028;

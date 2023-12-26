@@ -38,7 +38,8 @@ import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
  *
  * @author yhawke (2013)
  */
-public class XpathInjectionScanRule extends AbstractAppParamPlugin {
+public class XpathInjectionScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "ascanrules.xpathinjection.";
     private static final int PLUGIN_ID = 90021;

@@ -40,7 +40,7 @@ import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 /**
  * @author kniepdennis@gmail.com
  */
-public class UserAgentScanRule extends AbstractAppPlugin {
+public class UserAgentScanRule extends AbstractAppPlugin implements CommonActiveScanRuleInfo {
 
     private static final Logger LOGGER = LogManager.getLogger(UserAgentScanRule.class);
 

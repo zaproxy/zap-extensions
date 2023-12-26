@@ -44,7 +44,8 @@ import org.zaproxy.zap.model.TechSet;
  *
  * @author 70pointer
  */
-public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin {
+public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin
+        implements CommonActiveScanRuleInfo {
 
     /**
      * details of the vulnerability which we are attempting to find WASC 20 = Improper Input

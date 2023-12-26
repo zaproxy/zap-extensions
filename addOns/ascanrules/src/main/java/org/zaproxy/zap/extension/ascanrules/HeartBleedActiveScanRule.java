@@ -44,7 +44,8 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
  *
  * @author 70pointer
  */
-public class HeartBleedActiveScanRule extends AbstractHostPlugin {
+public class HeartBleedActiveScanRule extends AbstractHostPlugin
+        implements CommonActiveScanRuleInfo {
 
     /** the timeout, which is controlled by the Attack Strength */
     private int timeoutMs = 0;

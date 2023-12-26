@@ -37,7 +37,7 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
  * Active scan rule which checks whether or not POST requests with parameters are accepted as GET
  * equivalent requests.
  */
-public class GetForPostScanRule extends AbstractAppPlugin {
+public class GetForPostScanRule extends AbstractAppPlugin implements CommonActiveScanRuleInfo {
 
     private static final Logger LOGGER = LogManager.getLogger(GetForPostScanRule.class);
     private static final String MESSAGE_PREFIX = "ascanrules.getforpost.";
