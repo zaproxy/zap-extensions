@@ -452,7 +452,12 @@ Pages that provide different responses based on the validity of the data can als
 Servers may include well-known default accounts and passwords. Failure to fully lock down or harden the server may leave improperly set file and directory permissions. Misconfigured SSL certificates and encryption settings, the use of default certificates, and improper authentication implementation with external systems may compromise the confidentiality of information.
 
 Verbose and informative error messages may result in data leakage, and the information revealed could be used to formulate the next level of attack. Incorrect configurations in the server software may permit directory indexing and path traversal attacks.</desc>
-	<solution></solution>
+	<solution>
+    * Don't use default credentials. Replace all default usernames and passwords with strong and unique credentials. Periodically update them.
+    * Implement an appropriate error message handling strategy that doesn't leak sensitive and debug information.
+    * Ensure that administrative functions are not accessible to unauthorized users. Implement strong authentication and authorization mechanisms.
+    * Follow the best practices and security guidelines for your specific server.
+   </solution>
 	<reference>http://projects.webappsec.org/Server-Misconfiguration</reference>
 </vuln_item_wasc_14>
 
@@ -462,7 +467,11 @@ Verbose and informative error messages may result in data leakage, and the infor
 	<desc>Application Misconfiguration attacks exploit configuration weaknesses found in web applications. Many applications come with unnecessary and unsafe features, such as debug and QA features, enabled by default. These features may provide a means for a hacker to bypass authentication methods and gain access to sensitive information, perhaps with elevated privileges.
 
 Likewise, default installations may include well-known usernames and passwords, hard-coded backdoor accounts, special access mechanisms, and incorrect permissions set for files accessible through web servers. Default samples may be accessible in production environments. Application-based configuration files that are not properly locked down may reveal clear text connection strings to the database, and default settings in configuration files may not have been set with security in mind. All of these misconfigurations may lead to unauthorized access to sensitive information.</desc>
-	<solution></solution>
+	<solution>
+    * Ensure that debug and QA features are deactivated.
+    * Ensure the error messages doesn't leak sensitive and debug information.
+    * Follow the best practices and security guidelines for your specific application tech stack.
+	</solution>
 	<reference>http://projects.webappsec.org/Application-Misconfiguration</reference>
 </vuln_item_wasc_15>
 

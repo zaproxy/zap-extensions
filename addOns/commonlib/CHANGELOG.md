@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- Add solution to 'Server Misconfiguration' and 'Application Misconfiguration' vulnerabilities (Issue 8056).
 
 ## [1.20.0] - 2023-12-07
 
