@@ -45,6 +45,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.reports.ExtensionReports;
+import org.zaproxy.addon.reports.ReflectionUtils;
 import org.zaproxy.addon.reports.ReportParam;
 import org.zaproxy.addon.reports.Template;
 import org.zaproxy.addon.reports.automation.ReportJob.Parameters;
@@ -148,9 +149,9 @@ public class ReportJobDialog extends StandardFieldsDialog {
 
         this.addComboField(TAB_TEMPLATE, FIELD_THEME, themes, theme);
 
-        this.addCustomComponent(TAB_TEMPLATE, FIELD_SECTIONS, getSectionsScrollPane());
+        ReflectionUtils.addCustomComponent(
+                this, TAB_TEMPLATE, FIELD_SECTIONS, getSectionsScrollPane(), 1.0D);
         resetTemplateFields();
-        this.addPadding(TAB_TEMPLATE);
 
         this.addTextFieldReadOnly(TAB_FILTER, FIELD_RISK_HEADER, "");
         List<String> stdRisks;
