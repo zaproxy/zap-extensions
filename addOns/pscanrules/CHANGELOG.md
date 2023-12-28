@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed 
+- Update Vulnerabilities' references to use https links (Issue 8262).
+
 ### Changed
 - The Big Redirect scan rule will now also alert on responses that have multiple HREFs (idea from xnl-h4ck3r).
     - It also now includes example alert and alert reference functionality for documentation generation purposes (Issues 6119, 7100, and 8189).
