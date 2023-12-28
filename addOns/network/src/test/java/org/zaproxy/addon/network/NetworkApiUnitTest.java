@@ -52,6 +52,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Pattern;
 import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
@@ -1481,6 +1482,81 @@ class NetworkApiUnitTest extends TestUtils {
         assertThat(response, is(equalTo(ApiResponseElement.OK)));
         verify(rateLimitOptions)
                 .addRule(new RateLimitRule("limit example.org", "example.org", false));
+    }
+
+    @Test
+    // Should not happen as it's mandatory but test expected behaviour anyway.
+    void shouldAcceptEmptyGroupByForRateLimitRule() throws Exception {
+        // Given
+        String name = "addRateLimitRule";
+        JSONObject params = new JSONObject();
+        params.put("description", "limit example.org");
+        params.put("matchString", "example.org");
+        params.put("enabled", "false");
+        params.put("groupBy", "");
+        // When
+        ApiResponse response = networkApi.handleApiAction(name, params);
+        // Then
+        assertThat(response, is(equalTo(ApiResponseElement.OK)));
+        verify(rateLimitOptions)
+                .addRule(
+                        new RateLimitRule(
+                                "limit example.org",
+                                "example.org",
+                                false,
+                                1,
+                                RateLimitRule.GroupBy.RULE,
+                                false));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "rule", "Rule", "RULE", "host", "Host", "HOST",
+            })
+    void shouldAcceptGroupByInAnyCaseForRateLimitRule(String groupBy) throws Exception {
+        // Given
+        String name = "addRateLimitRule";
+        JSONObject params = new JSONObject();
+        params.put("description", "limit example.org");
+        params.put("matchString", "example.org");
+        params.put("enabled", "false");
+        params.put("groupBy", groupBy);
+        // When
+        ApiResponse response = networkApi.handleApiAction(name, params);
+        // Then
+        assertThat(response, is(equalTo(ApiResponseElement.OK)));
+        verify(rateLimitOptions)
+                .addRule(
+                        new RateLimitRule(
+                                "limit example.org",
+                                "example.org",
+                                false,
+                                1,
+                                toGroupByEnum(groupBy),
+                                false));
+    }
+
+    private static RateLimitRule.GroupBy toGroupByEnum(String groupBy) {
+        return RateLimitRule.GroupBy.valueOf(groupBy.toUpperCase(Locale.ROOT));
+    }
+
+    @Test
+    void shouldRejectInvalidGroupByForRateLimitRule() throws Exception {
+        // Given
+        String name = "addRateLimitRule";
+        JSONObject params = new JSONObject();
+        params.put("description", "limit example.org");
+        params.put("matchString", "example.org");
+        params.put("enabled", "false");
+        params.put("groupBy", "Not_GroupBy_");
+        // When
+        ApiException exception =
+                assertThrows(ApiException.class, () -> networkApi.handleApiAction(name, params));
+        // Then
+        assertThat(exception.getType(), is(equalTo(ApiException.Type.ILLEGAL_PARAMETER)));
+        assertThat(exception.getMessage(), containsString("groupBy"));
+        verify(rateLimitOptions, times(0)).addRule(any());
     }
 
     @Test

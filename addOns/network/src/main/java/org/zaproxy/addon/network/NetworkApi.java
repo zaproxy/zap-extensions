@@ -30,6 +30,7 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -610,18 +611,12 @@ public class NetworkApi extends ApiImplementor {
                         throw new ApiException(
                                 ApiException.Type.ILLEGAL_PARAMETER, PARAM_REQUESTS_PER_SECOND);
                     }
-                    RateLimitRule.GroupBy groupBy;
-                    try {
-                        if (params.containsKey(PARAM_GROUP_BY)) {
-                            groupBy =
-                                    RateLimitRule.GroupBy.valueOf(params.getString(PARAM_GROUP_BY));
-                        } else {
-                            groupBy = RateLimitRule.GroupBy.RULE;
-                        }
-                    } catch (JSONException e) {
-                        throw new ApiException(
-                                ApiException.Type.ILLEGAL_PARAMETER, PARAM_GROUP_BY, e);
-                    }
+
+                    RateLimitRule.GroupBy groupBy =
+                            getGroupBy(
+                                    params.optString(
+                                            PARAM_GROUP_BY, RateLimitRule.GroupBy.RULE.name()));
+
                     boolean enabled = getParam(params, PARAM_ENABLED, true);
 
                     this.extensionNetwork
@@ -650,6 +645,18 @@ public class NetworkApi extends ApiImplementor {
 
             default:
                 throw new ApiException(ApiException.Type.BAD_ACTION);
+        }
+    }
+
+    private static RateLimitRule.GroupBy getGroupBy(String groupByName) throws ApiException {
+        if (groupByName.isEmpty()) {
+            return RateLimitRule.GroupBy.RULE;
+        }
+
+        try {
+            return RateLimitRule.GroupBy.valueOf(groupByName.toUpperCase(Locale.ROOT));
+        } catch (Exception e) {
+            throw new ApiException(ApiException.Type.ILLEGAL_PARAMETER, PARAM_GROUP_BY, e);
         }
     }
 

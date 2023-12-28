@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Notify proxy listeners concurrently, might break listeners that do not correctly handle concurrency.
 
+### Fixed
+- Accept rate limit rule's group by in lower case, when handling the API requests.
+
 ## [0.13.0] - 2023-11-17
 ### Added
 - On weekly releases and versions after 2.14, handle content encodings and add `br` content encoding on supported OSes (Issue 2198).
