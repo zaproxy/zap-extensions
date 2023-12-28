@@ -39,7 +39,8 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
-public class BufferOverflowScanRule extends AbstractAppParamPlugin {
+public class BufferOverflowScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.bufferoverflow.";

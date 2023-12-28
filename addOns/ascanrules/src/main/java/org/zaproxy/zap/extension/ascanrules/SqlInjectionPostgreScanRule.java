@@ -57,7 +57,8 @@ import org.zaproxy.zap.model.TechSet;
  *
  * @author 70pointer
  */
-public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin {
+public class SqlInjectionPostgreScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
 
     private boolean doTimeBased = false;
 

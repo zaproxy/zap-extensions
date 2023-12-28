@@ -51,7 +51,8 @@ import org.zaproxy.zap.model.TechSet;
  * http://www.websec.ca/kb/sql_injection#MSSQL_Stacked_Queries
  * http://pentestmonkey.net/cheat-sheet/sql-injection/mssql-sql-injection-cheat-sheet
  */
-public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin {
+public class SqlInjectionMsSqlScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
 
     /** MSSQL one-line comment */
     private static final String SQL_ONE_LINE_COMMENT = " -- ";

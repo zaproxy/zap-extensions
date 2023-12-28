@@ -45,7 +45,8 @@ import org.zaproxy.zap.model.TechSet;
  *
  * @author 70pointer
  */
-public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin {
+public class SourceCodeDisclosureCve20121823ScanRule extends AbstractAppPlugin
+        implements CommonActiveScanRuleInfo {
 
     /** match on PHP tags in the response */
     private static final Pattern PHP_PATTERN1 =

@@ -43,7 +43,8 @@ import org.zaproxy.zap.model.TechSet;
  *
  * @author 70pointer
  */
-public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin {
+public class SqlInjectionSqLiteScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
 
     // Some relevant notes about SQLite's support for various functions, which will affect what SQL
     // is valid,

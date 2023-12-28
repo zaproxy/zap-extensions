@@ -37,7 +37,8 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 /**
  * @author yhawke (2014)
  */
-public class PaddingOracleScanRule extends AbstractAppParamPlugin {
+public class PaddingOracleScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
 
     // List of all possible errors
     static final String[] ERROR_PATTERNS = {

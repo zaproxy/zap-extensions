@@ -40,7 +40,8 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
  * @author CaptainFreak
  * @author ZainabAlShowely
  */
-public class XsltInjectionScanRule extends AbstractAppParamPlugin {
+public class XsltInjectionScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
     private static final String MESSAGE_PREFIX = "ascanrules.xsltinjection.";
 
     private enum XSLTInjectionType {

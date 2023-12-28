@@ -38,7 +38,8 @@ import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 
 /** a scanner that looks for Remote File Include vulnerabilities */
-public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin {
+public class RemoteFileIncludeScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.remotefileinclude.";

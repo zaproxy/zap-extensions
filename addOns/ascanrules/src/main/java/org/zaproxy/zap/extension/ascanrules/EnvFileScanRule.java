@@ -25,7 +25,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.AbstractAppFilePlugin;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 
-public class EnvFileScanRule extends AbstractAppFilePlugin {
+public class EnvFileScanRule extends AbstractAppFilePlugin implements CommonActiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "ascanrules.envfiles.";
 

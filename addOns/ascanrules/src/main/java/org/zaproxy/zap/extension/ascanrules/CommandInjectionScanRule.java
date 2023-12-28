@@ -55,7 +55,8 @@ import org.zaproxy.zap.model.TechSet;
  *
  * @author yhawke (2013)
  */
-public class CommandInjectionScanRule extends AbstractAppParamPlugin {
+public class CommandInjectionScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
 
     /** The name of the rule to obtain the time, in seconds, for time-based attacks. */
     private static final String RULE_SLEEP_TIME = RuleConfigParam.RULE_COMMON_SLEEP_TIME;

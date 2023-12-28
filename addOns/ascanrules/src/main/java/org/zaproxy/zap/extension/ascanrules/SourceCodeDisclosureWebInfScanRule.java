@@ -52,7 +52,8 @@ import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
  *
  * @author 70pointer
  */
-public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin {
+public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin
+        implements CommonActiveScanRuleInfo {
 
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(

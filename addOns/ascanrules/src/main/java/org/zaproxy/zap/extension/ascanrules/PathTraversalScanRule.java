@@ -46,7 +46,8 @@ import org.zaproxy.addon.network.common.ZapSocketTimeoutException;
 import org.zaproxy.zap.model.Tech;
 
 /** A scan rule that looks for Path Traversal vulnerabilities. */
-public class PathTraversalScanRule extends AbstractAppParamPlugin {
+public class PathTraversalScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
 
     /*
      * Prefix for internationalised messages used by this rule

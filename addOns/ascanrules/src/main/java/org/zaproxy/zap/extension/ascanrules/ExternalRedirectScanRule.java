@@ -50,7 +50,8 @@ import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
  *
  * @author yhawke (2014)
  */
-public class ExternalRedirectScanRule extends AbstractAppParamPlugin {
+public class ExternalRedirectScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.externalredirect.";

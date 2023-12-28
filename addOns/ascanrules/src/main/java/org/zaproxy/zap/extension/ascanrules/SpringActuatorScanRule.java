@@ -44,7 +44,7 @@ import org.zaproxy.zap.model.TechSet;
  *
  * @author sgerlach
  */
-public class SpringActuatorScanRule extends AbstractHostPlugin {
+public class SpringActuatorScanRule extends AbstractHostPlugin implements CommonActiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "ascanrules.springactuator.";
     private static final int PLUGIN_ID = 40042;

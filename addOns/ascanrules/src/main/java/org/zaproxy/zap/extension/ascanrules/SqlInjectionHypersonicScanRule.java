@@ -65,7 +65,8 @@ import org.zaproxy.zap.model.TechSet;
  *
  * @author 70pointer
  */
-public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin {
+public class SqlInjectionHypersonicScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
 
     /** Hypersonic one-line comment */
     public static final String SQL_ONE_LINE_COMMENT = " -- ";

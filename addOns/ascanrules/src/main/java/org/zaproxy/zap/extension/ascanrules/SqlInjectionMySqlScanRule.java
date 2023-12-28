@@ -53,7 +53,8 @@ import org.zaproxy.zap.model.TechSet;
  *
  * @author 70pointer
  */
-public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin {
+public class SqlInjectionMySqlScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
 
     /** MySQL one-line comment */
     public static final String SQL_ONE_LINE_COMMENT = " -- ";

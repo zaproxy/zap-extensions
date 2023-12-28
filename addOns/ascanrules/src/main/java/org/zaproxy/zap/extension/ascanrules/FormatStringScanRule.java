@@ -56,7 +56,8 @@ import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 import org.zaproxy.zap.network.HttpResponseBody;
 
-public class FormatStringScanRule extends AbstractAppParamPlugin {
+public class FormatStringScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanrules.formatstring.";
