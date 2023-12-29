@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Add solution to 'Server Misconfiguration' and 'Application Misconfiguration' vulnerabilities (Issue 8056).
 
+### Changed
+- Update Vulnerabilities' references to use https links and retire some which were out-dated (Issue 8262).
+
 ## [1.20.0] - 2023-12-07
 
 ### Changed
