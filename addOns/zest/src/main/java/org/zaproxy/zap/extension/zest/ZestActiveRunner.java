@@ -26,8 +26,8 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.network.ExtensionNetwork;
-import org.zaproxy.zap.extension.ascan.ActiveScript;
-import org.zaproxy.zap.extension.ascan.ScriptsActiveScanner;
+import org.zaproxy.zap.extension.scripts.scanrules.ActiveScript;
+import org.zaproxy.zap.extension.scripts.scanrules.ScriptsActiveScanner;
 import org.zaproxy.zest.core.v1.ZestRequest;
 import org.zaproxy.zest.core.v1.ZestResponse;
 
