@@ -67,22 +67,22 @@ public class XContentTypeOptionsScanRule extends PluginPassiveScanner {
             List<String> xContentTypeOptions =
                     msg.getResponseHeader().getHeaderValues(HttpHeader.X_CONTENT_TYPE_OPTIONS);
             if (xContentTypeOptions.isEmpty()) {
-                this.raiseAlert(msg, id, "");
+                buildAlert("").raise();
             } else {
                 for (String xContentTypeOptionsDirective : xContentTypeOptions) {
                     // 'nosniff' is currently the only defined value for this header, so this logic
                     // is ok
                     if (xContentTypeOptionsDirective.toLowerCase(Locale.ROOT).indexOf("nosniff")
                             < 0) {
-                        this.raiseAlert(msg, id, xContentTypeOptionsDirective);
+                        buildAlert(xContentTypeOptionsDirective).raise();
                     }
                 }
             }
         }
     }
 
-    private void raiseAlert(HttpMessage msg, int id, String xContentTypeOption) {
-        newAlert()
+    private AlertBuilder buildAlert(String xContentTypeOption) {
+        return newAlert()
                 .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(getDescription())
@@ -92,8 +92,7 @@ public class XContentTypeOptionsScanRule extends PluginPassiveScanner {
                 .setReference(getReference())
                 .setEvidence(xContentTypeOption)
                 .setCweId(getCweId())
-                .setWascId(getWascId())
-                .raise();
+                .setWascId(getWascId());
     }
 
     @Override
@@ -137,5 +136,10 @@ public class XContentTypeOptionsScanRule extends PluginPassiveScanner {
 
     public int getWascId() {
         return 15; // WASC-15: Application Misconfiguration
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(buildAlert("").build());
     }
 }
