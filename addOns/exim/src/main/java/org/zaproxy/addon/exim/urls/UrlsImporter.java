@@ -47,7 +47,7 @@ public class UrlsImporter {
     private static final String STATS_URL_FILE_URL = "import.url.file.url";
     private static final String STATS_URL_FILE_URL_ERROR = "import.url.file.url.errors";
 
-    private final HttpSender sender = new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR);
+    private HttpSender sender;
     private ProgressPaneListener progressListener;
     private boolean success;
 
@@ -59,6 +59,13 @@ public class UrlsImporter {
         this.progressListener = listener;
         importUrlFile(file);
         completed();
+    }
+
+    private HttpSender getSender() {
+        if (sender == null) {
+            sender = new HttpSender(HttpSender.MANUAL_REQUEST_INITIATOR);
+        }
+        return sender;
     }
 
     private void importUrlFile(File file) {
@@ -111,7 +118,7 @@ public class UrlsImporter {
             URI url = new URI(line, false);
             if (hasSheme(url)) {
                 HttpMessage msg = new HttpMessage(url);
-                sender.sendAndReceive(msg, true);
+                getSender().sendAndReceive(msg, true);
                 persistMessage(msg);
 
                 Stats.incCounter(ExtensionExim.STATS_PREFIX + STATS_URL_FILE_URL);
