@@ -55,7 +55,9 @@ dependencies {
     zapAddOn("commonlib")
 
     implementation(files("lib/org.jwall.web.audit-0.2.15.jar"))
+    implementation("de.sstoehr:har-reader:2.3.0")
 
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
     testImplementation(project(":testutils"))
+    testImplementation(libs.log4j.core)
 }
