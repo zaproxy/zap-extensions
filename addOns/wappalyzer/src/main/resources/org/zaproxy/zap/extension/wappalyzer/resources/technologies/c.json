@@ -1584,6 +1584,27 @@
     "saas": true,
     "website": "https://churnzero.net"
   },
+  "Circle": {
+    "cats": [
+      2,
+      19
+    ],
+    "cookies": {
+      "_circle_session:": "\\;confidence:50"
+    },
+    "description": "Circie is an all-in-one community platform for businesses that brings together engaging courses, discussions, members, live streams, chat, events, and memberships.",
+    "dom": "a[href*='.circle.so/']",
+    "icon": "Circle.svg",
+    "js": {
+      "circleUser": "\\;confidence:50"
+    },
+    "pricing": [
+      "mid",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://circle.so"
+  },
   "CitrusPay": {
     "cats": [
       41
@@ -3569,6 +3590,22 @@
     "scriptSrc": "\\.cookie-script\\.com/",
     "website": "https://cookie-script.com"
   },
+  "Cookie Seal": {
+    "cats": [67],
+    "description": "Cookie Seal is a tool or system that helps you manage and configure the use of cookies on your website in accordance with data protection laws, ensuring compliance with relevant regulations.",
+    "icon": "Cookie Seal.svg",
+    "js": {
+      "CookieSeal": "",
+      "cookieSeal.consentEnabled": ""
+    },
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "cookie-seal\\.js",
+    "website": "https://cookieseal.com"
+  },
   "CookieFirst": {
     "cats": [
       67
@@ -4509,6 +4546,15 @@
     },
     "oss": true,
     "website": "https://git.zx2c4.com/cgit"
+  },
+  "chroma.js": {
+    "cats": [
+      59
+    ],
+    "description": "chroma.js is a small-ish zero-dependency JavaScript library for all kinds of color conversions and color scales.",
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?chroma(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2",
+    "website": "https://www.vis4.net/chromajs/"
   },
   "clickio": {
     "cats": [

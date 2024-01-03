@@ -5191,6 +5191,19 @@
     "scriptSrc": "cdn\\.shopify\\.com/.+/assets/speedimize\\.js",
     "website": "https://speedimize.io"
   },
+  "Spektrix": {
+    "cats": [
+      53
+    ],
+    "description": "Spektrix is a cloud-based ticketing, marketing, and fundraising CRM system putting audience insight at your fingertips.",
+    "icon": "Spektrix.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "scriptSrc": "spektrix(?:\\.com)?(?:_nb)?\\/(?:stable)?(?:libraries)?\\/(?:before-after)?(?:script)?(?:spektrix)?-?(?:web)?(?:component)?s?-?(?:basket-summary)?(?:donate)?(?:gift-vouchers)?(?:loader)?(?:login-status)?(?:memberships)?(?:merchandise)?(?:-es2015)?\\.js(?:\\?ver?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://www.spektrix.com"
+  },
   "Sphinx": {
     "cats": [
       4
@@ -7127,6 +7140,20 @@
     "oss": true,
     "scriptSrc": "swiper(?:\\.min)?\\.js",
     "website": "https://swiperjs.com"
+  },
+  "Swup": {
+    "cats": [
+      59
+    ],
+    "description": "Swup is a versatile and expandable library for implementing page transitions on websites that use server-side rendering.",
+    "dom": "html[class*='swup-enabled']",
+    "icon": "Swup.svg",
+    "js": {
+      "Swup": ""
+    },
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/(?:dist\\/)?)?swup(?:-preload)?(?:-plugin)?(?:\\.min)?\\.js\\;version:\\1",
+    "website": "https://swup.js.org"
   },
   "Swym Wishlist Plus": {
     "cats": [

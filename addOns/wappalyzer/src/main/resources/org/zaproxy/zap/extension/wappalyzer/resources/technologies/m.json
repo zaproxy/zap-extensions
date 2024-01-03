@@ -1517,6 +1517,25 @@
     },
     "website": "https://www.melistechnology.com/"
   },
+  "MemberSpace": {
+    "cats": [
+      19,
+      41
+    ],
+    "description": "MemberSpace is a cloud-based membership solution, which allows users to provide role-based access to content.",
+    "icon": "MemberSpace.png",
+    "js": {
+      "MemberSpace": "",
+      "MemberSpaceParams": ""
+    },
+    "pricing": [
+      "payg",
+      "recurring"
+    ],
+    "saas": true,
+    "scriptSrc": "memberspace\\.com(?:\\/widget)?(?:\\/\\w{0,25})?(?:\\/scripts)?(?:\\/widgets)?(?:\\/main)?\\.js",
+    "website": "https://www.memberspace.com"
+  },
   "MemberStack": {
     "cats": [
       1
