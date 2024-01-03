@@ -1158,6 +1158,20 @@
     "scriptSrc": "the-dotcom-public-cdn\\.s3\\.amazonaws\\.com/",
     "website": "https://www.the.com"
   },
+  "Theatre.js": {
+    "cats": [
+      25,
+      59
+    ],
+    "description": "Theatre.js is a javascript animation library with a professional motion design toolset.",
+    "icon": "Theatre.js.svg",
+    "js": {
+      "__TheatreJS_CoreBundle": "",
+      "__TheatreJS_CoreBundle.version": "((?:\\d+\\.)+\\d+)\\;version:\\1"
+    },
+    "oss": true,
+    "website": "https://www.theatrejs.com"
+  },
   "Thefork": {
     "cats": [
       93
@@ -2413,6 +2427,26 @@
     "icon": "Trac.png",
     "implies": "Python",
     "website": "https://trac.edgewall.org"
+  },
+  "Track123": {
+    "cats": [
+      99,
+      100
+    ],
+    "description": "Track123 is a product under Lingxing, founded in September 2021, with a focus on providing all-in-one tracking and management services for cross-border sellers.",
+    "icon": "Track123.svg",
+    "js": {
+      "api_base":"https://www.track123.com",
+      "track123": ""
+    },
+    "pricing": [
+      "freemium",
+      "payg"
+    ],
+    "requires": "Shopify",
+    "saas": true,
+    "scriptSrc": "track123\\.com\\/common\\/checkout-script-loader\\.js",
+    "website": "https://www.track123.com"
   },
   "TrackJs": {
     "cats": [

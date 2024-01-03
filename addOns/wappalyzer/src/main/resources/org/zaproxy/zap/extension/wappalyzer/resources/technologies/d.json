@@ -863,6 +863,19 @@
     "scriptSrc": "\\.digitalriver\\.com/",
     "website": "https://www.digitalriver.com"
   },
+  "Digizuite": {
+    "cats": [
+      95
+    ],
+    "description": "Digizuite is a Digital Asset Management software for enterprises.",
+    "dom": "img[src^='/globalassets/digizuite/'], source[srcset^='/globalassets/digizuite/'], video[src^='/globalassets/digizuite/']",
+    "icon": "Digizuite.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.digizuite.com"
+  },
   "dimple": {
     "cats": [
       25,
@@ -1445,6 +1458,25 @@
     ],
     "saas": true,
     "website": "https://www.doteasy.com/website-builder/"
+  },
+  "Dotser": {
+    "cats": [
+      6
+    ],
+    "description": "Dotser is a web software development company specialising in ecommerce and cloud-based business solutions.",
+    "icon": "Dotser.png",
+    "implies": [
+      "PHP",
+      "MySQL"
+    ],
+    "meta": {
+      "generator": "^Dotser\\sCommerce\\s((?:\\d+\\.)+\\d+)/\\;version:\\1"
+    },
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.dotser.ie"
   },
   "DoubleClick Ad Exchange (AdX)": {
     "cats": [

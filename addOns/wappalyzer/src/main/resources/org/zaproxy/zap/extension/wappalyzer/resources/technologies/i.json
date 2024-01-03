@@ -550,6 +550,22 @@
     "icon": "Incapsula.png",
     "website": "https://www.incapsula.com"
   },
+  "Incident.io": {
+    "cats": [
+      13
+    ],
+    "description": "Incident.io is a Slack-integrated incident management tool used to announce, manage, and resolve all incidents in a single channel.",
+    "headers": {
+      "x-webkit-csp": "incident-io-team\\.vercel\\.app"
+    },
+    "icon": "Incident.io.png",
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "saas": true,
+    "website": "https://incident.io"
+  },
   "Includable": {
     "cats": [
       18

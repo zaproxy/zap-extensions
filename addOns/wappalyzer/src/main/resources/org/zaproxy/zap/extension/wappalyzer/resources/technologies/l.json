@@ -1491,6 +1491,21 @@
     "saas": true,
     "website": "https://apps.shopify.com/locksmith"
   },
+  "Locomotive Scroll": {
+    "cats": [
+      25,
+      59
+    ],
+    "description": "Locomotive Scroll is an opinionated JavaScript library that provides smooth scrolling animations and advanced scroll interactions for web applications.",
+    "icon": "Locomotive Scroll.png",
+    "implies": "Lenis",
+    "js": {
+      "LocomotiveScroll": ""
+    },
+    "oss": true,
+    "scriptSrc": "locomotive-scroll(?:\\.min)?\\.js",
+    "website": "https://scroll.locomotive.ca/docs/#/"
+  },
   "LocomotiveCMS": {
     "cats": [
       1
