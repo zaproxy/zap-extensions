@@ -31,7 +31,7 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">= 1.19.0 & < 2.0.0")
+                    version.set(">= 1.21.0 & < 2.0.0")
                 }
             }
         }
@@ -55,6 +55,7 @@ dependencies {
     zapAddOn("commonlib")
 
     implementation(files("lib/org.jwall.web.audit-0.2.15.jar"))
+    implementation("de.sstoehr:har-reader:2.3.0")
 
     testImplementation(parent!!.childProjects.get("commonlib")!!.sourceSets.test.get().output)
     testImplementation(project(":testutils"))

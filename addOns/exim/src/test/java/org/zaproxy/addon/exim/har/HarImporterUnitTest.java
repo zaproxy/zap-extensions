@@ -27,10 +27,11 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import edu.umass.cs.benchlab.har.HarEntries;
-import edu.umass.cs.benchlab.har.HarLog;
+import de.sstoehr.harreader.model.HarEntry;
+import de.sstoehr.harreader.model.HarLog;
 import java.io.File;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -40,7 +41,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.ui.ProgressPaneListener;
-import org.zaproxy.zap.utils.HarUtils;
 import org.zaproxy.zap.utils.I18N;
 
 /** Unit test for {@link HarImporter}. */
@@ -128,8 +128,8 @@ class HarImporterUnitTest {
 
     private static HarLog createHarLog(HttpMessage message) {
         HarLog harLog = HarUtils.createZapHarLog();
-        HarEntries harEntries = new HarEntries();
-        harEntries.addEntry(HarUtils.createHarEntry(message));
+        List<HarEntry> harEntries = new ArrayList<>();
+        harEntries.add(HarUtils.createHarEntry(message));
         harLog.setEntries(harEntries);
         return harLog;
     }
