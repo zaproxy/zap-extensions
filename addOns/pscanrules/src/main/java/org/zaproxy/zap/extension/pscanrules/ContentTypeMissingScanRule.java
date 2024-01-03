@@ -49,33 +49,34 @@ public class ContentTypeMissingScanRule extends PluginPassiveScanner {
             if (!contentType.isEmpty()) {
                 for (String contentTypeDirective : contentType) {
                     if (contentTypeDirective.isEmpty()) {
-                        this.raiseAlert(msg, id, contentTypeDirective, false);
+                        buildAlert(false).raise();
                     }
                 }
             } else {
-                this.raiseAlert(msg, id, "", true);
+                buildAlert(true).raise();
             }
         }
     }
 
-    private void raiseAlert(
-            HttpMessage msg, int id, String contentType, boolean isContentTypeMissing) {
+    private AlertBuilder buildAlert(boolean isContentTypeMissing) {
         String issue = Constant.messages.getString(MESSAGE_PREFIX + "name.empty");
+        String alertRef = PLUGIN_ID + "-2";
         if (isContentTypeMissing) {
             issue = getName();
+            alertRef = PLUGIN_ID + "-1";
         }
 
-        newAlert()
+        return newAlert()
                 .setName(issue)
                 .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(getDescription())
-                .setParam(contentType)
+                .setParam(HttpHeader.CONTENT_TYPE)
                 .setSolution(getSolution())
                 .setReference(getReference())
                 .setCweId(getCweId())
                 .setWascId(getWascId())
-                .raise();
+                .setAlertRef(alertRef);
     }
 
     @Override
@@ -115,5 +116,10 @@ public class ContentTypeMissingScanRule extends PluginPassiveScanner {
     @Override
     public int getPluginId() {
         return PLUGIN_ID;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(buildAlert(true).build(), buildAlert(false).build());
     }
 }

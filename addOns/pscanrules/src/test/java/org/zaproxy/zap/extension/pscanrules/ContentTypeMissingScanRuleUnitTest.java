@@ -23,9 +23,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
@@ -80,6 +82,20 @@ class ContentTypeMissingScanRuleUnitTest extends PassiveScannerTest<ContentTypeM
     }
 
     @Test
+    void shouldHaveExpectedExampleAlerts() {
+        // Given / WHen
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(2)));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
+    }
+
+    @Test
     void shouldNotAlertIfResponseBodyIsEmpty() throws HttpMalformedHeaderException {
         // Given
         HttpMessage msg = createMessage();
@@ -115,6 +131,7 @@ class ContentTypeMissingScanRuleUnitTest extends PassiveScannerTest<ContentTypeM
         assertThat(
                 alertsRaised.get(0).getName(),
                 equalTo(Constant.messages.getString("pscanrules.contenttypemissing.name.empty")));
+        assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("10019-2")));
     }
 
     @Test
@@ -128,5 +145,6 @@ class ContentTypeMissingScanRuleUnitTest extends PassiveScannerTest<ContentTypeM
         assertThat(
                 alertsRaised.get(0).getName(),
                 equalTo(Constant.messages.getString("pscanrules.contenttypemissing.name")));
+        assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("10019-1")));
     }
 }
