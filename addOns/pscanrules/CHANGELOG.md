@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - They now also include example alerts for documentation generation and cross linking purposes (Issues 6119, 7100, and 8189).
 - Update reference for Loosely Scoped Cookie (Issue 8262).
 - The Absence of Anti-CSRF Tokens scan rule now takes into account the Partial Match settings from the Anti-CSRF Options (Issue 8280).
+- Maintenance changes.
 
 ## [53] - 2023-11-30
 ### Changed
