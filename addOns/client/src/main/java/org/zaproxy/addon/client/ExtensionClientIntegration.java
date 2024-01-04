@@ -19,6 +19,7 @@
  */
 package org.zaproxy.addon.client;
 
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +31,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.swing.ImageIcon;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -43,12 +45,15 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.SessionChangedListener;
 import org.parosproxy.paros.extension.history.ExtensionHistory;
 import org.parosproxy.paros.model.Session;
+import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.client.impl.ClientZestRecorder;
 import org.zaproxy.addon.client.pscan.ClientPassiveScanController;
 import org.zaproxy.addon.client.pscan.ClientPassiveScanHelper;
 import org.zaproxy.addon.client.pscan.OptionsPassiveScan;
 import org.zaproxy.addon.client.spider.ClientSpider;
+import org.zaproxy.addon.client.spider.ClientSpiderDialog;
+import org.zaproxy.addon.client.spider.PopupMenuSpider;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.eventBus.Event;
@@ -59,6 +64,8 @@ import org.zaproxy.zap.extension.selenium.Browser;
 import org.zaproxy.zap.extension.selenium.ExtensionSelenium;
 import org.zaproxy.zap.extension.selenium.ProfileManager;
 import org.zaproxy.zap.model.ScanEventPublisher;
+import org.zaproxy.zap.utils.DisplayUtils;
+import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionClientIntegration extends ExtensionAdaptor {
 
@@ -92,13 +99,14 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
     private ClientPassiveScanController scanController;
     private ClientPassiveScanHelper pscanHelper;
     private ClientOptions clientParam;
-
     private ClientIntegrationAPI api;
-
     private EventConsumer eventConsumer;
-
     private Event lastAjaxSpiderStartEvent;
     private List<ClientSpider> spiders = Collections.synchronizedList(new ArrayList<>());
+    private ImageIcon icon;
+
+    private ClientSpiderDialog spiderDialog;
+    private ZapMenuItem menuItemCustomScan;
 
     public ExtensionClientIntegration() {
         super(NAME);
@@ -128,6 +136,16 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
             extensionHook.getHookView().addWorkPanel(getClientDetailsPanel());
             extensionHook.getHookView().addStatusPanel(getClientHistoryPanel());
 
+            if (Constant.isDevBuild()) {
+                // Not for release .. yet ;)
+                extensionHook.getHookMenu().addToolsMenuItem(getMenuItemCustomScan());
+                extensionHook
+                        .getHookMenu()
+                        .addPopupMenuItem(
+                                new PopupMenuSpider(
+                                        Constant.messages.getString("client.attack.spider"), this));
+            }
+
             // Client Map menu items
             extensionHook
                     .getHookMenu()
@@ -140,7 +158,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                     .addPopupMenuItem(new PopupMenuClientDelete(this.getClientMapPanel()));
             extensionHook
                     .getHookMenu()
-                    .addPopupMenuItem(new PopupMenuClientOpenInBrowser(clientMapPanel));
+                    .addPopupMenuItem(new PopupMenuClientOpenInBrowser(this.getClientMapPanel()));
             extensionHook
                     .getHookMenu()
                     .addPopupMenuItem(new PopupMenuClientShowInSites(this.getClientMapPanel()));
@@ -300,7 +318,7 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                         eventConsumer, "org.zaproxy.zap.extension.spiderAjax.SpiderEventPublisher");
     }
 
-    ClientOptions getClientParam() {
+    public ClientOptions getClientParam() {
         if (clientParam == null) {
             clientParam = new ClientOptions();
         }
@@ -552,5 +570,54 @@ public class ExtensionClientIntegration extends ExtensionAdaptor {
                                 activeActions.add(
                                         MessageFormat.format(actionPrefix, cs.getTargetUrl())));
         return activeActions;
+    }
+
+    private void initScanDialog() {
+        if (spiderDialog == null) {
+            spiderDialog =
+                    new ClientSpiderDialog(
+                            this,
+                            View.getSingleton().getMainFrame(),
+                            DisplayUtils.getScaledDimension(700, 300));
+        }
+        spiderDialog.updateBrowsers();
+    }
+
+    public void showScanDialog(SiteNode node) {
+        initScanDialog();
+        spiderDialog.init(node);
+        spiderDialog.setVisible(true);
+    }
+
+    public void showScanDialog(String url) {
+        initScanDialog();
+        spiderDialog.init(url);
+        spiderDialog.setVisible(true);
+    }
+
+    private ZapMenuItem getMenuItemCustomScan() {
+        if (menuItemCustomScan == null) {
+            menuItemCustomScan =
+                    new ZapMenuItem(
+                            "client.spider.menu.tools.label",
+                            getView()
+                                    .getMenuShortcutKeyStroke(
+                                            KeyEvent.VK_C, KeyEvent.ALT_DOWN_MASK, false));
+            menuItemCustomScan.setEnabled(Control.getSingleton().getMode() != Mode.safe);
+            menuItemCustomScan.setIcon(getIcon());
+
+            menuItemCustomScan.addActionListener(e -> showScanDialog((String) null));
+        }
+        return menuItemCustomScan;
+    }
+
+    public ImageIcon getIcon() {
+        if (icon == null) {
+            icon =
+                    DisplayUtils.getScaledIcon(
+                            ExtensionClientIntegration.class.getResource(
+                                    ExtensionClientIntegration.RESOURCES + "/spiderClient.png"));
+        }
+        return icon;
     }
 }
