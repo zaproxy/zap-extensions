@@ -32,6 +32,7 @@
 *.classpath
 *.project
 *.settings
+.factorypath
 /bin
 /buildSrc/bin
 /addOns/**/bin
