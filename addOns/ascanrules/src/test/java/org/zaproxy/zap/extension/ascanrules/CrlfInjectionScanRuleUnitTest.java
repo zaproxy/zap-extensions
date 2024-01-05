@@ -27,8 +27,10 @@ import static org.hamcrest.Matchers.is;
 import fi.iki.elonen.NanoHTTPD;
 import fi.iki.elonen.NanoHTTPD.Response;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -53,9 +55,28 @@ class CrlfInjectionScanRuleUnitTest extends ActiveScannerTest<CrlfInjectionScanR
         }
     }
 
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+        Alert alert = alerts.get(0);
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alert.getParam(), is(equalTo("years")));
+        assertThat(alert.getAttack().startsWith("any\r\nSet-cookie: Tamper="), is(equalTo(true)));
+    }
+
     @Override
     protected CrlfInjectionScanRule createScanner() {
         return new CrlfInjectionScanRule();
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 
     @Test
@@ -131,5 +152,8 @@ class CrlfInjectionScanRuleUnitTest extends ActiveScannerTest<CrlfInjectionScanR
             }
         }
         assertThat(alertsRaised.get(0).getEvidence(), evidenceContainsOneOfTheTamperedHeaders);
+        assertThat(
+                alertsRaised.get(0).getAttack().startsWith("any\r\nSet-cookie: Tamper="),
+                is(equalTo(true)));
     }
 }

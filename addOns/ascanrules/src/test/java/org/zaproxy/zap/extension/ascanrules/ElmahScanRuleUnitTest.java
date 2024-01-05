@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.is;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -98,6 +99,30 @@ class ElmahScanRuleUnitTest extends AbstractHostFilePluginUnitTest<ElmahScanRule
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_CONF_05_ENUMERATE_INFRASTRUCTURE.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_CONF_05_ENUMERATE_INFRASTRUCTURE.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlerts() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(2)));
+        Alert alert = alerts.get(0);
+        Alert authAlert = alerts.get(1);
+        assertThat(alert.getName(), is(equalTo("ELMAH Information Leak")));
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
+        assertThat(alert.getAlertRef(), is(equalTo("40028-1")));
+        assertThat(authAlert.getName(), is(equalTo("ELMAH Information Leak")));
+        assertThat(authAlert.getRisk(), is(equalTo(Alert.RISK_INFO)));
+        assertThat(authAlert.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
+        assertThat(authAlert.getAlertRef(), is(equalTo("40028-2")));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 
     @ParameterizedTest

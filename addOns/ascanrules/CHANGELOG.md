@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Cross Site Scripting (Persistent) - Prime
   - Cross Site Scripting (Persistent) - Spider
 - Update reference for Server Side Code Injection (Issue 8262).
+- Now depends on minimum Common Library version 1.21.0.
 
 ### Fixed
 - Threshold handling in the Hidden File Finder scan rule.
@@ -21,6 +22,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Help entry for the Spring Actuators scan rule (missed during previous promotion).
 - Website alert links to the help page (Issue 8189).
+- The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119) and in some cases updated references (Issue 8262).
+  - CRLF Injection
+  - Remote OS Command Injection
+  - GET for POST
+  - ELMAH Information Leak
+  - .env Information Leak
+  - .htaccess Information Leak
+  - Trace.axd Information Leak
 
 ## [59] - 2023-12-07
 ### Added

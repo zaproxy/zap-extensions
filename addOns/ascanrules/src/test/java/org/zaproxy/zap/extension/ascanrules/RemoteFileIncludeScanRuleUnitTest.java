@@ -93,6 +93,12 @@ class RemoteFileIncludeScanRuleUnitTest extends ActiveScannerTest<RemoteFileIncl
     }
 
     @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
+    }
+
+    @Test
     void shouldRaiseAlertIfResponseHasRemoteFileContentAndPayloadIsNullByteBased()
             throws HttpMalformedHeaderException {
         // Given

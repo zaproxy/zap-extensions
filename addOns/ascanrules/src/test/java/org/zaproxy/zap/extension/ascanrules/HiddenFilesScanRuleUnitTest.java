@@ -751,6 +751,12 @@ class HiddenFilesScanRuleUnitTest extends ActiveScannerTest<HiddenFilesScanRule>
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
     }
 
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
+    }
+
     private static class ForbiddenResponseWithReqPath extends NanoServerHandler {
 
         private static final String PATH_TOKEN = "@@@PATH@@@";

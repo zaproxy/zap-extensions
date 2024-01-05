@@ -27,11 +27,13 @@ import static org.hamcrest.Matchers.is;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.AbstractAppFilePluginUnitTest;
@@ -144,6 +146,30 @@ class HtAccessScanRuleUnitTest extends AbstractAppFilePluginUnitTest<HtAccessSca
         rule.scan();
         // Then
         assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlerts() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(2)));
+        Alert alert = alerts.get(0);
+        Alert authAlert = alerts.get(1);
+        assertThat(alert.getName(), is(equalTo(".htaccess Information Leak")));
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
+        assertThat(alert.getAlertRef(), is(equalTo("40032-1")));
+        assertThat(authAlert.getName(), is(equalTo(".htaccess Information Leak")));
+        assertThat(authAlert.getRisk(), is(equalTo(Alert.RISK_INFO)));
+        assertThat(authAlert.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
+        assertThat(authAlert.getAlertRef(), is(equalTo("40032-2")));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 
     private static class MiscOkResponse extends NanoServerHandler {

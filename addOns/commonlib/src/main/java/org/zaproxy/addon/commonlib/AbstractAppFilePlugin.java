@@ -20,6 +20,7 @@
 package org.zaproxy.addon.commonlib;
 
 import java.io.IOException;
+import java.util.List;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
@@ -29,6 +30,7 @@ import org.parosproxy.paros.core.scanner.AbstractAppPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpHeader;
+import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
@@ -170,11 +172,12 @@ public abstract class AbstractAppFilePlugin extends AbstractAppPlugin {
             if (isFalsePositive(newRequest)) {
                 return;
             }
-            raiseAlert(newRequest, getRisk(), Alert.CONFIDENCE_MEDIUM, "");
+            buildAlert(newRequest, getRisk(), Alert.CONFIDENCE_MEDIUM).raise();
         } else if (this.getAlertThreshold().equals(AlertThreshold.LOW)
                 && (statusCode == HttpStatusCode.UNAUTHORIZED
                         || statusCode == HttpStatusCode.FORBIDDEN)) {
-            raiseAlert(newRequest, Alert.RISK_INFO, Alert.CONFIDENCE_LOW, getOtherInfo());
+            buildAuthAlert(newRequest, Alert.RISK_INFO, Alert.CONFIDENCE_LOW, getOtherInfo())
+                    .raise();
         }
     }
 
@@ -202,17 +205,48 @@ public abstract class AbstractAppFilePlugin extends AbstractAppPlugin {
         return newPath;
     }
 
-    private void raiseAlert(HttpMessage msg, int risk, int confidence, String otherInfo) {
-        newAlert()
+    private AlertBuilder buildBaseAlert(
+            HttpMessage msg, int risk, int confidence, String otherInfo, int alertRef) {
+        return newAlert()
                 .setRisk(risk)
                 .setConfidence(confidence)
                 .setOtherInfo(otherInfo)
                 .setEvidence(msg.getResponseHeader().getPrimeHeader())
                 .setMessage(msg)
-                .raise();
+                .setAlertRef(getId() + "-" + String.valueOf(alertRef));
+    }
+
+    private AlertBuilder buildAlert(HttpMessage msg, int risk, int confidence) {
+        return buildBaseAlert(msg, risk, confidence, "", 1);
+    }
+
+    private AlertBuilder buildAuthAlert(
+            HttpMessage msg, int risk, int confidence, String otherInfo) {
+        return buildBaseAlert(msg, risk, confidence, otherInfo, 2);
     }
 
     public String getFilename() {
         return filename;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        HttpMessage msg = null;
+        HttpMessage authMsg = null;
+        try {
+            msg = new HttpMessage(new URI("https://example.com/" + getFilename(), false));
+            authMsg = new HttpMessage(new URI("https://example.com/" + getFilename(), false));
+        } catch (URIException | HttpMalformedHeaderException | NullPointerException e) {
+            LOGGER.error(
+                    "The HttpMessage(s) for Example Alerts could not be created for some reason.",
+                    e);
+            return List.of();
+        }
+        msg.getResponseHeader().setStatusCode(HttpStatusCode.OK);
+        authMsg.getResponseHeader().setStatusCode(HttpStatusCode.UNAUTHORIZED);
+        return List.of(
+                buildAlert(msg, getRisk(), Alert.CONFIDENCE_LOW).build(),
+                buildAuthAlert(authMsg, Alert.RISK_INFO, Alert.CONFIDENCE_LOW, getOtherInfo())
+                        .build());
     }
 }
