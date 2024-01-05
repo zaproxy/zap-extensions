@@ -139,4 +139,10 @@ class DirectoryBrowsingScanRuleUnitTest extends PassiveScannerTest<DirectoryBrow
         assertThat(alerts.size(), is(equalTo(1)));
         assertAlertDetails(alerts.get(0), "<title>Index of /htdocs</title>", "Apache 2");
     }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
+    }
 }

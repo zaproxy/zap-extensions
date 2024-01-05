@@ -25,10 +25,12 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -262,5 +264,22 @@ class UserControlledHTMLAttributesScanRuleUnitTest
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A01_INJECTION.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+        Alert alert = alerts.get(0);
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_INFO)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 }

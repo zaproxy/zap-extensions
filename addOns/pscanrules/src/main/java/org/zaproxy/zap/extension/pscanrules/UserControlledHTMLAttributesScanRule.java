@@ -33,6 +33,7 @@ import net.htmlparser.jericho.Source;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HtmlParameter;
+import org.parosproxy.paros.network.HtmlParameter.Type;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -180,7 +181,13 @@ public class UserControlledHTMLAttributesScanRule extends PluginPassiveScanner {
 
                 for (String s : attrValue.split("[;=,]")) {
                     if (s.equals(paramValue)) {
-                        raiseAlert(msg, id, htmlElement, attribute, param, attrValue);
+                        buildAlert(
+                                        msg.getRequestHeader().getURI().toString(),
+                                        htmlElement.getName(),
+                                        attribute.getName(),
+                                        param,
+                                        attrValue)
+                                .raise();
                         return; // Only need one alert
                     }
                 }
@@ -196,7 +203,13 @@ public class UserControlledHTMLAttributesScanRule extends PluginPassiveScanner {
                         || paramValue.equalsIgnoreCase(domain)
                         || paramValue.equalsIgnoreCase(token)
                         || (attrValue.indexOf("://") > 0 && paramValue.indexOf(attrValue) == 0)) {
-                    raiseAlert(msg, id, htmlElement, attribute, param, attrValue);
+                    buildAlert(
+                                    msg.getRequestHeader().getURI().toString(),
+                                    htmlElement.getName(),
+                                    attribute.getName(),
+                                    param,
+                                    attrValue)
+                            .raise();
                 }
             }
 
@@ -229,30 +242,24 @@ public class UserControlledHTMLAttributesScanRule extends PluginPassiveScanner {
                 || contentType.indexOf("application/xhtml") != -1;
     }
 
-    private void raiseAlert(
-            HttpMessage msg,
-            int id,
-            Element htmlElement,
-            Attribute htmlAttribute,
+    private AlertBuilder buildAlert(
+            String url,
+            String htmlElement,
+            String htmlAttribute,
             HtmlParameter param,
             String userControlledValue) {
-        newAlert()
+        return newAlert()
                 .setRisk(Alert.RISK_INFO)
                 .setConfidence(Alert.CONFIDENCE_LOW)
                 .setDescription(getDescriptionMessage())
                 .setParam(param.getName())
                 .setOtherInfo(
                         getExtraInfoMessage(
-                                msg,
-                                htmlElement.getName(),
-                                htmlAttribute.getName(),
-                                param,
-                                userControlledValue))
+                                url, htmlElement, htmlAttribute, param, userControlledValue))
                 .setSolution(getSolutionMessage())
                 .setReference(getReferenceMessage())
                 .setCweId(20) // CWE-20: Improper Input Validation
-                .setWascId(20) // WASC-20: Improper Input Handling
-                .raise();
+                .setWascId(20); // WASC-20: Improper Input Handling
     }
 
     @Override
@@ -282,18 +289,26 @@ public class UserControlledHTMLAttributesScanRule extends PluginPassiveScanner {
     }
 
     private String getExtraInfoMessage(
-            HttpMessage msg,
-            String tag,
-            String attr,
-            HtmlParameter param,
-            String userControlledValue) {
+            String url, String tag, String attr, HtmlParameter param, String userControlledValue) {
         return Constant.messages.getString(
                 MESSAGE_PREFIX + "extrainfo",
-                msg.getRequestHeader().getURI().toString(),
+                url,
                 tag,
                 attr,
                 param.getName(),
                 param.getValue(),
                 userControlledValue);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                "http://example.com/i.php?name=fred",
+                                "img",
+                                "alt",
+                                new HtmlParameter(Type.url, "name", "fred"),
+                                MESSAGE_PREFIX)
+                        .build());
     }
 }

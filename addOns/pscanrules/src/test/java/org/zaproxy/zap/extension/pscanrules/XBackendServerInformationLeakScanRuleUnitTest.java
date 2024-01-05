@@ -120,4 +120,10 @@ class XBackendServerInformationLeakScanRuleUnitTest
                 alert.getDescription(),
                 equalTo(Constant.messages.getString(MESSAGE_PREFIX + "desc")));
     }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
+    }
 }

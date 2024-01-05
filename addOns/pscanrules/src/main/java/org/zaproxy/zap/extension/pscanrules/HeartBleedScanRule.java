@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.pscanrules;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -102,17 +103,17 @@ public class HeartBleedScanRule extends PluginPassiveScanner {
             // if the version matches any of the known vulnerable versions, raise an alert.
             for (String openSSLvulnerableVersion : openSSLvulnerableVersions) {
                 if (versionNumber.equalsIgnoreCase(openSSLvulnerableVersion)) {
-                    raiseAlert(msg, id, fullVersionString);
+                    buildAlert(fullVersionString).raise();
                     return;
                 }
             }
         }
     }
 
-    private void raiseAlert(HttpMessage msg, int id, String fullVersionString) {
+    private AlertBuilder buildAlert(String fullVersionString) {
         // Suspicious, but not a warning, because the reported version could have a
         // security back-port.
-        newAlert()
+        return newAlert()
                 .setRisk(Alert.RISK_HIGH)
                 .setConfidence(Alert.CONFIDENCE_LOW)
                 .setDescription(getDescription())
@@ -122,8 +123,7 @@ public class HeartBleedScanRule extends PluginPassiveScanner {
                 .setEvidence(fullVersionString)
                 .setCweId(119) // CWE 119: Failure to Constrain Operations within the Bounds of a
                 // Memory Buffer
-                .setWascId(20) // WASC-20: Improper Input Handling
-                .raise();
+                .setWascId(20); // WASC-20: Improper Input Handling
     }
 
     @Override
@@ -150,5 +150,10 @@ public class HeartBleedScanRule extends PluginPassiveScanner {
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(buildAlert("OpenSSL/1.0.1e").build());
     }
 }

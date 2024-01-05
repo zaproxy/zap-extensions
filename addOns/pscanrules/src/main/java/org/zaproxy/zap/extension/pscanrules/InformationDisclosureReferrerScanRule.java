@@ -75,33 +75,34 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner 
             String evidence;
             for (String referrerValue : referrer) {
                 if ((evidence = doesURLContainsSensitiveInformation(referrerValue)) != null) {
-                    this.raiseAlert(
-                            msg,
-                            evidence,
-                            Constant.messages.getString(
-                                    MESSAGE_PREFIX + "otherinfo.sensitiveinfo"));
+                    buildAlert(
+                                    evidence,
+                                    Constant.messages.getString(
+                                            MESSAGE_PREFIX + "otherinfo.sensitiveinfo"))
+                            .raise();
                 }
                 if ((evidence = doesContainCreditCard(referrerValue)) != null) {
-                    this.raiseCcAlert(
-                            msg,
-                            evidence,
-                            Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.cc"),
-                            BinList.getSingleton().get(evidence));
+                    buildCcAlert(
+                                    evidence,
+                                    Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.cc"),
+                                    BinList.getSingleton().get(evidence))
+                            .raise();
                 }
                 if ((evidence = doesContainEmailAddress(referrerValue)) != null) {
-                    this.raiseAlert(
-                            msg,
-                            evidence,
-                            Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.email"));
+                    buildAlert(
+                                    evidence,
+                                    Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.email"))
+                            .raise();
                 }
                 if ((evidence = doesContainUsSSN(referrerValue)) != null) {
-                    this.raiseAlert(
-                            msg,
-                            evidence,
-                            Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.ssn"));
+                    buildAlert(evidence, getSsnOtherInfo()).raise();
                 }
             }
         }
+    }
+
+    private String getSsnOtherInfo() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.ssn");
     }
 
     private boolean isRequestedURLSameDomainAsHTTPReferrer(String host, String referrerURL) {
@@ -122,8 +123,8 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner 
         return result;
     }
 
-    private void raiseAlert(HttpMessage msg, String evidence, String other) {
-        newAlert()
+    private AlertBuilder buildAlert(String evidence, String other) {
+        return newAlert()
                 .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(getDescription())
@@ -131,15 +132,14 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner 
                 .setSolution(getSolution())
                 .setEvidence(evidence)
                 .setCweId(getCweId())
-                .setWascId(getWascId())
-                .raise();
+                .setWascId(getWascId());
     }
 
-    private void raiseCcAlert(HttpMessage msg, String evidence, String other, BinRecord binRec) {
+    private AlertBuilder buildCcAlert(String evidence, String other, BinRecord binRec) {
         if (binRec != null) {
             other = other + '\n' + getBinRecString(binRec);
         }
-        newAlert()
+        return newAlert()
                 .setRisk(getRisk())
                 .setConfidence(binRec != null ? Alert.CONFIDENCE_HIGH : Alert.CONFIDENCE_MEDIUM)
                 .setDescription(getDescription())
@@ -147,8 +147,7 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner 
                 .setSolution(getSolution())
                 .setEvidence(evidence)
                 .setCweId(getCweId())
-                .setWascId(getWascId())
-                .raise();
+                .setWascId(getWascId());
     }
 
     private String getBinRecString(BinRecord binRec) {
@@ -276,5 +275,10 @@ public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner 
             return matcher.group();
         }
         return null;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(buildAlert("351-25-9735", getSsnOtherInfo()).build());
     }
 }

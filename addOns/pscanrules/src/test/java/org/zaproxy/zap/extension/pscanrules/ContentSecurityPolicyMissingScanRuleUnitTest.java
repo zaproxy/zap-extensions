@@ -308,6 +308,12 @@ class ContentSecurityPolicyMissingScanRuleUnitTest
         assertCSPAlertAttributes(alerts.get(2), "ro.", Alert.RISK_INFO, "10038-3");
     }
 
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
+    }
+
     private void assertContentSecurityPolicyAlertRaised() {
         assertThat(alertsRaised.size(), is(1));
         assertCSPAlertAttributes(alertsRaised.get(0), "", Alert.RISK_MEDIUM, "10038-1");
