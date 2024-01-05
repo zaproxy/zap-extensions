@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update reference for X-Content-Type-Options Header Missing and Content-Type Header Missing (Issue 8262).
     - They now also include example alerts for documentation generation and cross linking purposes (Issues 6119, 7100, and 8189).
 - Update reference for Loosely Scoped Cookie (Issue 8262).
+- Update reference for Charset Mismatch (Issue 8262).
+- Update reference for Strict-Transport-Security Header (Issue 8262).
 - The Absence of Anti-CSRF Tokens scan rule now takes into account the Partial Match settings from the Anti-CSRF Options (Issue 8280).
 
 ## [53] - 2023-11-30
