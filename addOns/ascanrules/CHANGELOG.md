@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Leave data empty instead of adding "N/A" for the scan rules:
   - Cross Site Scripting (Persistent) - Prime
   - Cross Site Scripting (Persistent) - Spider
+- Update reference for Server Side Code Injection (Issue 8262).
 
 ### Fixed
 - Threshold handling in the Hidden File Finder scan rule.

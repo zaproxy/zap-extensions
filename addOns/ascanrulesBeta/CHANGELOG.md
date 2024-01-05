@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Update minimum ZAP version to 2.14.0.
+- Update reference for Expression Language Injection (Issue 8262).
+- Update reference for HTTP Parameter Pollution (Issue 8262).
 
 ### Removed
 - Help entry for the Spring Actuators scan rule (missed during previous removal/promotion).
