@@ -109,7 +109,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
         // TODO: Update to use extensionAntiCSRF.isAntiCsrfToken(String) after 2.15
         BiPredicate<String, String> matcher = getMatcher();
 
-        if (formElements != null && formElements.size() > 0) {
+        if (formElements != null && !formElements.isEmpty()) {
             boolean hasSecurityAnnotation = false;
 
             // Loop through all of the FORM tags
@@ -119,11 +119,11 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
 
             List<String> ignoreList = new ArrayList<>();
             String ignoreConf = getCSRFIgnoreList();
-            if (ignoreConf != null && ignoreConf.length() > 0) {
+            if (ignoreConf != null && !ignoreConf.isEmpty()) {
                 LOGGER.debug("Using ignore list: {}", ignoreConf);
                 for (String str : ignoreConf.split(",")) {
                     String strTrim = str.trim();
-                    if (strTrim.length() > 0) {
+                    if (!strTrim.isEmpty()) {
                         ignoreList.add(strTrim);
                     }
                 }
@@ -163,7 +163,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
                 sbForm.append("[Form " + numberOfFormsPassed + ": \"");
                 boolean foundCsrfToken = false;
 
-                if (inputElements != null && inputElements.size() > 0) {
+                if (inputElements != null && !inputElements.isEmpty()) {
                     // Loop through all of the INPUT elements
                     LOGGER.debug("Found {} inputs", inputElements.size());
                     for (Element inputElement : inputElements) {

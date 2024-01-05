@@ -27,12 +27,14 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import fi.iki.elonen.NanoHTTPD;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.testutils.NanoServerHandler;
@@ -76,6 +78,23 @@ class PaddingOracleScanRuleUnitTest extends ActiveScannerTest<PaddingOracleScanR
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_CRYP_02_PADDING_ORACLE.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_CRYP_02_PADDING_ORACLE.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+        Alert alert = alerts.get(0);
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 
     @ParameterizedTest
