@@ -131,7 +131,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertEquals(alertsRaised.size(), 0);
+        assertEquals(0, alertsRaised.size());
     }
 
     @Test
@@ -141,7 +141,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertEquals(alertsRaised.size(), 0);
+        assertEquals(0, alertsRaised.size());
     }
 
     @Test
@@ -151,7 +151,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertEquals(alertsRaised.size(), 0);
+        assertEquals(0, alertsRaised.size());
     }
 
     @Test
@@ -162,7 +162,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertEquals(alertsRaised.size(), 0);
+        assertEquals(0, alertsRaised.size());
     }
 
     @Test
@@ -172,9 +172,9 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertEquals(alertsRaised.size(), 1);
-        assertEquals(alertsRaised.get(0).getWascId(), 9);
-        assertEquals(alertsRaised.get(0).getEvidence(), "<form id=\"no_csrf_token\">");
+        assertEquals(1, alertsRaised.size());
+        assertEquals(9, alertsRaised.get(0).getWascId());
+        assertEquals("<form id=\"no_csrf_token\">", alertsRaised.get(0).getEvidence());
     }
 
     @Test
@@ -193,7 +193,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertEquals(alertsRaised.size(), 1);
+        assertEquals(1, alertsRaised.size());
         assertTrue(
                 alertsRaised
                         .get(0)
@@ -220,7 +220,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertEquals(alertsRaised.size(), 1);
+        assertEquals(1, alertsRaised.size());
         assertTrue(
                 alertsRaised
                         .get(0)
@@ -236,7 +236,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertEquals(alertsRaised.size(), 0);
+        assertEquals(0, alertsRaised.size());
     }
 
     @ParameterizedTest
@@ -276,7 +276,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertEquals(alertsRaised.size(), 0);
+        assertEquals(0, alertsRaised.size());
     }
 
     @Test
@@ -287,7 +287,7 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         // When
         scanHttpResponseReceive(msg);
         // Then
-        assertEquals(alertsRaised.size(), 0);
+        assertEquals(0, alertsRaised.size());
     }
 
     @Test
@@ -334,9 +334,9 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         // Then
         assertEquals(2, alertsRaised.size());
         assertEquals(
-                alertsRaised.get(0).getEvidence(),
-                "<form id=\"zeroth_form\" action=\"someaction\">");
-        assertEquals(alertsRaised.get(1).getEvidence(), "<form id=\"second_form\">");
+                "<form id=\"zeroth_form\" action=\"someaction\">",
+                alertsRaised.get(0).getEvidence());
+        assertEquals("<form id=\"second_form\">", alertsRaised.get(1).getEvidence());
     }
 
     @Test
