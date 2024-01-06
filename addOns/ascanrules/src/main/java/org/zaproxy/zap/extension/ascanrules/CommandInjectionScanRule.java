@@ -291,6 +291,21 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
     /** The number of seconds used in time-based attacks (i.e. sleep commands). */
     private int timeSleepSeconds = DEFAULT_TIME_SLEEP_SEC;
 
+    private enum TestType {
+        FEEDBACK("feedback-based"),
+        TIME("time-based");
+
+        private final String nameKey;
+
+        private TestType(String nameKey) {
+            this.nameKey = nameKey;
+        }
+
+        String getNameKey() {
+            return nameKey;
+        }
+    }
+
     @Override
     public int getId() {
         return 90020;
@@ -351,8 +366,9 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         return Alert.RISK_HIGH;
     }
 
-    private String getOtherInfo(String testType, String testValue) {
-        return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo." + testType, testValue);
+    private String getOtherInfo(TestType testType, String testValue) {
+        return Constant.messages.getString(
+                MESSAGE_PREFIX + "otherinfo." + testType.getNameKey(), testValue);
     }
 
     @Override
@@ -550,16 +566,9 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
                             "[OS Command Injection Found] on parameter [{}] with value [{}]",
                             paramName,
                             paramValue);
-                    String otherInfo = getOtherInfo("feedback-based", paramValue);
+                    String otherInfo = getOtherInfo(TestType.FEEDBACK, paramValue);
 
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setParam(paramName)
-                            .setAttack(paramValue)
-                            .setEvidence(matcher.group())
-                            .setMessage(msg)
-                            .setOtherInfo(otherInfo)
-                            .raise();
+                    buildAlert(paramName, paramValue, matcher.group(), otherInfo, msg).raise();
 
                     // All done. No need to look for vulnerabilities on subsequent
                     // payloads on the same request (to reduce performance impact)
@@ -642,16 +651,10 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
                             "[Blind OS Command Injection Found] on parameter [{}] with value [{}]",
                             paramName,
                             paramValue);
-                    String otherInfo = getOtherInfo("time-based", paramValue);
+                    String otherInfo = getOtherInfo(TestType.TIME, paramValue);
 
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setParam(paramName)
-                            .setAttack(paramValue)
-                            // just attach this alert to the last sent message
-                            .setMessage(message.get())
-                            .setOtherInfo(otherInfo)
-                            .raise();
+                    // just attach this alert to the last sent message
+                    buildAlert(paramName, paramValue, "", otherInfo, message.get()).raise();
 
                     // All done. No need to look for vulnerabilities on subsequent
                     // payloads on the same request (to reduce performance impact)
@@ -697,5 +700,28 @@ public class CommandInjectionScanRule extends AbstractAppParamPlugin
         // insert variable before each space and '/' in the path
         return cmd.replaceAll("\\s", Matcher.quoteReplacement(var + " "))
                 .replaceAll("\\/", Matcher.quoteReplacement(var + "/"));
+    }
+
+    private AlertBuilder buildAlert(
+            String param, String attack, String evidence, String otherInfo, HttpMessage msg) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setParam(param)
+                .setAttack(attack)
+                .setEvidence(evidence)
+                .setMessage(msg)
+                .setOtherInfo(otherInfo);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                "qry",
+                                "a;cat /etc/passwd ",
+                                "root:x:0:0",
+                                getOtherInfo(TestType.FEEDBACK, "a;cat /etc/passwd "),
+                                null)
+                        .build());
     }
 }
