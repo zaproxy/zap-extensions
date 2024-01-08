@@ -53,9 +53,9 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpHeaderField;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
+import org.zaproxy.addon.spider.filters.FetchFilter.FetchStatus;
 import org.zaproxy.addon.spider.parser.SpiderResourceFound;
 import org.zaproxy.zap.testutils.TestUtils;
-import org.zaproxy.addon.spider.filters.FetchFilter.FetchStatus;
 
 /** Unit test for {@link SpiderController}. */
 class SpiderControllerUnitTest extends TestUtils {
@@ -114,7 +114,8 @@ class SpiderControllerUnitTest extends TestUtils {
         // When
         spiderController.addSeed(seed, HttpRequestHeader.GET, "HTTP/2");
         // Then
-        verify(spider, times(0)).notifyListenersFoundURI(testURI, HttpRequestHeader.GET, FetchStatus.SEED);
+        verify(spider, times(0))
+                .notifyListenersFoundURI(testURI, HttpRequestHeader.GET, FetchStatus.SEED);
     }
 
     @Test
