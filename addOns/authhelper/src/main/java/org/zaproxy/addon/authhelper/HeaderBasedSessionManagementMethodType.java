@@ -130,6 +130,10 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
         @Override
         public HttpHeaderBasedSession extractWebSession(HttpMessage msg) {
             Map<String, SessionToken> tokens = AuthUtils.getAllTokens(msg);
+            LOGGER.debug(
+                    "extractWebSession {} # tokens {}",
+                    msg.getRequestHeader().getURI(),
+                    tokens.size());
 
             // Add env vars
             envVars.forEach(
@@ -180,6 +184,10 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
                 throws UnsupportedWebSessionException {
             if (session instanceof HttpHeaderBasedSession) {
                 HttpHeaderBasedSession hbSession = (HttpHeaderBasedSession) session;
+                LOGGER.debug(
+                        "processMessageToMatchSession {} # headers {} ",
+                        message.getRequestHeader().getURI(),
+                        hbSession.getHeaders().size());
                 for (Pair<String, String> header : hbSession.getHeaders()) {
                     Stats.incCounter("stats.auth.session.set.header");
                     message.getRequestHeader().setHeader(header.first, header.second);
@@ -207,7 +215,17 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
                     } catch (Exception e) {
                         LOGGER.error(e.getMessage(), e);
                     }
+                } else if (context.getAuthenticationMethod() == null) {
+                    LOGGER.debug("processMessageToMatchSession no auth type set");
+                } else {
+                    LOGGER.debug(
+                            "processMessageToMatchSession unexpected auth type: {}",
+                            context.getAuthenticationMethod().getClass().getCanonicalName());
                 }
+            } else {
+                LOGGER.debug(
+                        "processMessageToMatchSession unexpected session type: {}",
+                        session.getClass().getCanonicalName());
             }
         }
 
