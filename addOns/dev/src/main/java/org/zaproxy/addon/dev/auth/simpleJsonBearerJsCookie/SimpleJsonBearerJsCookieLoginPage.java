@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2023 The ZAP Development Team
+ * Copyright 2024 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.dev.auth.simpleJsonCookie;
+package org.zaproxy.addon.dev.auth.simpleJsonBearerJsCookie;
 
-import java.net.HttpCookie;
-import java.util.List;
+import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,43 +28,46 @@ import org.zaproxy.addon.dev.TestPage;
 import org.zaproxy.addon.dev.TestProxyServer;
 import org.zaproxy.addon.network.server.HttpMessageHandlerContext;
 
-public class SimpleJsonCookieVerificationPage extends TestPage {
+public class SimpleJsonBearerJsCookieLoginPage extends TestPage {
 
     private static final Logger LOGGER =
-            LogManager.getLogger(SimpleJsonCookieVerificationPage.class);
+            LogManager.getLogger(SimpleJsonBearerJsCookieLoginPage.class);
 
-    public SimpleJsonCookieVerificationPage(TestProxyServer server) {
-        super(server, "user");
+    public SimpleJsonBearerJsCookieLoginPage(TestProxyServer server) {
+        super(server, "login");
     }
 
     @Override
     public void handleMessage(HttpMessageHandlerContext ctx, HttpMessage msg) {
-        String cookie = null;
-        List<HttpCookie> cookieList = msg.getRequestHeader().getHttpCookies();
-        for (HttpCookie hc : cookieList) {
-            if ("sid".equals(hc.getName())) {
-                cookie = hc.getValue();
+        String username = null;
+        String password = null;
+
+        if (msg.getRequestHeader().hasContentType("json")) {
+            String postData = msg.getRequestBody().toString();
+            JSONObject jsonObject;
+            try {
+                jsonObject = JSONObject.fromObject(postData);
+                username = jsonObject.getString("user");
+                password = jsonObject.getString("password");
+            } catch (JSONException e) {
+                LOGGER.debug("Unable to parse as JSON: {}", postData, e);
             }
         }
-        String user = getParent().getUser(cookie);
-        LOGGER.debug("Token: {} user: {}", cookie, user);
 
         JSONObject response = new JSONObject();
-        String status = TestProxyServer.STATUS_FORBIDDEN;
-        if (cookie == null) {
-            response.put("result", "FAIL (no cookie)");
-        } else if (user != null) {
+        String token = null;
+        if (getParent().isValid(username, password)) {
+            token = getParent().getToken(username);
             response.put("result", "OK");
-            response.put("user", user);
-            status = TestProxyServer.STATUS_OK;
+            response.put("accesstoken", token);
         } else {
             response.put("result", "FAIL");
         }
-        this.getServer().setJsonResponse(status, response, msg);
+        this.getServer().setJsonResponse(response, msg);
     }
 
     @Override
-    public SimpleJsonCookieDir getParent() {
-        return (SimpleJsonCookieDir) super.getParent();
+    public SimpleJsonBearerJsCookieDir getParent() {
+        return (SimpleJsonBearerJsCookieDir) super.getParent();
     }
 }

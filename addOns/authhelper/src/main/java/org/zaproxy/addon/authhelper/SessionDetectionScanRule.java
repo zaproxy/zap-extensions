@@ -85,7 +85,7 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
             // The request is using at least one session token, do we know where they come from?
             List<SessionToken> foundTokens = new ArrayList<>();
             for (SessionToken st : requestTokens) {
-                SessionToken sourceToken = AuthUtils.containsSessionToken(st.getToken());
+                SessionToken sourceToken = AuthUtils.containsSessionToken(st.getValue());
                 if (sourceToken != null) {
                     foundTokens.add(sourceToken);
                     LOGGER.debug("Found source of {}", st.getKey());
@@ -135,7 +135,7 @@ public class SessionDetectionScanRule extends PluginPassiveScanner {
                                 new HeaderBasedSessionManagementMethodType();
                         HeaderBasedSessionManagementMethod method =
                                 type.createSessionManagementMethod(context.getId());
-                        method.setHeaderConfigs(AuthUtils.getHeaderTokens(msg, foundTokens, false));
+                        method.setHeaderConfigs(AuthUtils.getHeaderTokens(msg, foundTokens, true));
 
                         context.setSessionManagementMethod(method);
                         Stats.incCounter("stats.auth.configure.session.header");

@@ -52,7 +52,7 @@ public class SimpleJsonBearerCookieVerificationPage extends TestPage {
         String cookie = null;
         List<HttpCookie> cookieList = msg.getRequestHeader().getHttpCookies();
         for (HttpCookie hc : cookieList) {
-            if (hc.getName().equals("token")) {
+            if ("token".equals(hc.getName())) {
                 cookie = hc.getValue();
             }
         }
