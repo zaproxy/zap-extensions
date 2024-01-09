@@ -15,7 +15,7 @@ const parseInput = arg => {
         codecs = codecStr
             .trim()
             .replace(`codecs="`, '')
-            .replace(`"`, '')
+            .replaceAll(`"`, '')
             .trim()
             .split(',')
             .filter(x => !!x)
