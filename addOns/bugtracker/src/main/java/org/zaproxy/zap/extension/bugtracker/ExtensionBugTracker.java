@@ -24,7 +24,6 @@ import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.view.View;
 
 /** A ZAP Extension to help user raise issues in bug trackers from within ZAP. */
 public class ExtensionBugTracker extends ExtensionAdaptor {
@@ -60,18 +59,15 @@ public class ExtensionBugTracker extends ExtensionAdaptor {
         if (hasView()) {
             addBugTracker(githubTracker);
             addBugTracker(bugzillaTracker);
-            View.getSingleton()
-                    .getOptionsDialog("")
-                    .addParamPanel(
-                            new String[] {Constant.messages.getString("bugtracker.name")},
-                            githubTracker.getOptionsPanel(),
-                            true);
-            View.getSingleton()
-                    .getOptionsDialog("")
-                    .addParamPanel(
-                            new String[] {Constant.messages.getString("bugtracker.name")},
-                            bugzillaTracker.getOptionsPanel(),
-                            true);
+            String[] parent = new String[] {Constant.messages.getString("bugtracker.name")};
+            extensionHook
+                    .getView()
+                    .getOptionsDialog()
+                    .addParamPanel(parent, githubTracker.getOptionsPanel(), true);
+            extensionHook
+                    .getView()
+                    .getOptionsDialog()
+                    .addParamPanel(parent, bugzillaTracker.getOptionsPanel(), true);
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMsgRaiseSemiAuto());
         }
     }
@@ -88,8 +84,8 @@ public class ExtensionBugTracker extends ExtensionAdaptor {
         if (hasView()) {
             bugTrackers.forEach(
                     bugTracker ->
-                            View.getSingleton()
-                                    .getOptionsDialog("")
+                            getView()
+                                    .getOptionsDialog()
                                     .removeParamPanel(bugTracker.getOptionsPanel()));
         }
     }
