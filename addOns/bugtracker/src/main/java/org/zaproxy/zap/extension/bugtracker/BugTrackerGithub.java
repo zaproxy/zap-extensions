@@ -61,10 +61,6 @@ public class BugTrackerGithub extends BugTracker {
 
     private static final Logger LOGGER = LogManager.getLogger(BugTrackerGithub.class);
 
-    public BugTrackerGithub() {
-        initializeConfigTable();
-    }
-
     @Override
     public void setDetails(Set<Alert> alerts) {
         setTitle(alerts);
@@ -77,12 +73,11 @@ public class BugTrackerGithub extends BugTracker {
         this.dialog = dialog;
     }
 
-    public void initializeConfigTable() {
-        githubPanel = new BugTrackerGithubMultipleOptionsPanel(getGithubModel());
-    }
-
     @Override
     public JPanel getConfigPanel() {
+        if (githubPanel == null) {
+            githubPanel = new BugTrackerGithubMultipleOptionsPanel(getGithubModel());
+        }
         return githubPanel;
     }
 

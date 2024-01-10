@@ -74,16 +74,11 @@ public class BugTrackerBugzilla extends BugTracker {
         this.dialog = dialog;
     }
 
-    public BugTrackerBugzilla() {
-        initializeConfigTable();
-    }
-
-    public void initializeConfigTable() {
-        bugzillaPanel = new BugTrackerBugzillaMultipleOptionsPanel(getBugzillaModel());
-    }
-
     @Override
     public JPanel getConfigPanel() {
+        if (bugzillaPanel == null) {
+            bugzillaPanel = new BugTrackerBugzillaMultipleOptionsPanel(getBugzillaModel());
+        }
         return bugzillaPanel;
     }
 
