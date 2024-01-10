@@ -9,6 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Dropped "to Clipboard" from ZAP copy menu items or buttons (Issue 8179).
 - Update cookies in header based session management, to cope with apps that set them via JavaScript.
 
+### Fixed
+- Read the user details from the session rather than the individual messages, which could cause an NPE.
+
 ## [0.10.0] - 2023-10-12
 ### Changed
 - Update minimum ZAP version to 2.14.0.

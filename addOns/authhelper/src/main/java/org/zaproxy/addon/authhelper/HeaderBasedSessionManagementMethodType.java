@@ -56,7 +56,6 @@ import org.zaproxy.zap.session.AbstractSessionManagementMethodOptionsPanel;
 import org.zaproxy.zap.session.SessionManagementMethod;
 import org.zaproxy.zap.session.SessionManagementMethodType;
 import org.zaproxy.zap.session.WebSession;
-import org.zaproxy.zap.users.User;
 import org.zaproxy.zap.utils.ApiUtils;
 import org.zaproxy.zap.utils.EncodingUtils;
 import org.zaproxy.zap.utils.Pair;
@@ -196,8 +195,6 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
                 AuthenticationMethod am = context.getAuthenticationMethod();
                 if (am instanceof BrowserBasedAuthenticationMethod) {
                     BrowserBasedAuthenticationMethod bbam = (BrowserBasedAuthenticationMethod) am;
-                    User user = message.getRequestingUser();
-                    WebSession ws = user.getAuthenticatedSession();
 
                     try {
                         Method method =
@@ -209,7 +206,7 @@ public class HeaderBasedSessionManagementMethodType extends SessionManagementMet
 
                         method.invoke(
                                 null,
-                                ws.getHttpState(),
+                                session.getHttpState(),
                                 ((BrowserBasedAuthenticationMethodType) bbam.getType())
                                         .getCookieStore());
                     } catch (Exception e) {
