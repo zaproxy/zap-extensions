@@ -26,6 +26,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zaproxy.addon.commonlib.Constants;
 import org.zaproxy.zap.common.VersionedAbstractParam;
+import org.zaproxy.zap.extension.api.ZapApiIgnore;
 import org.zaproxy.zap.extension.selenium.Browser;
 
 public class ClientOptions extends VersionedAbstractParam {
@@ -39,8 +40,8 @@ public class ClientOptions extends VersionedAbstractParam {
     private static final String CONFIG_VERSION_KEY = CLIENT_BASE_KEY + VERSION_ATTRIBUTE;
     private static final String PSCAN_ENABLED_KEY = CLIENT_BASE_KEY + ".pscanEnabled";
     private static final String PSCAN_DISABLED_RULES_KEY = CLIENT_BASE_KEY + ".pscanRulesDisabled";
-
     private static final String BROWSER_ID_KEY = CLIENT_BASE_KEY + ".browserId";
+    private static final String SHOW_ADV_OPTIONS_KEY = CLIENT_BASE_KEY + ".showAdvOptions";
     private static final String THREAD_COUNT_KEY = CLIENT_BASE_KEY + ".threads";
     private static final String INITIAL_LOAD_TIME_KEY = CLIENT_BASE_KEY + ".initialLoadTime";
     private static final String PAGE_LOAD_TIME_KEY = CLIENT_BASE_KEY + ".pageLoadTime";
@@ -58,9 +59,15 @@ public class ClientOptions extends VersionedAbstractParam {
     private int shutdownTimeInSecs;
     private boolean pscanEnabled;
     private List<Integer> pscanRulesDisabled;
+    private boolean showAdvancedDialog;
     private int maxChildren;
     private int maxDepth = 5;
     private int maxDuration;
+
+    @Override
+    public ClientOptions clone() {
+        return (ClientOptions) super.clone();
+    }
 
     @Override
     protected void parseImpl() {
@@ -84,6 +91,15 @@ public class ClientOptions extends VersionedAbstractParam {
             LOGGER.warn(e.getMessage(), e);
             pscanRulesDisabled = new ArrayList<>();
         }
+        browserId = getString(BROWSER_ID_KEY, DEFAULT_BROWSER_ID);
+        try {
+            Browser.getBrowserWithId(browserId);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn(
+                    "Unknown browser [{}] using default [{}].", browserId, DEFAULT_BROWSER_ID, e);
+            browserId = DEFAULT_BROWSER_ID;
+        }
+        this.showAdvancedDialog = getBoolean(SHOW_ADV_OPTIONS_KEY, false);
     }
 
     @Override
@@ -126,6 +142,17 @@ public class ClientOptions extends VersionedAbstractParam {
     public void setBrowserId(String browserId) {
         this.browserId = browserId;
         getConfig().setProperty(BROWSER_ID_KEY, browserId);
+    }
+
+    @ZapApiIgnore
+    public boolean isShowAdvancedDialog() {
+        return this.showAdvancedDialog;
+    }
+
+    @ZapApiIgnore
+    public void setShowAdvancedDialog(boolean show) {
+        this.showAdvancedDialog = show;
+        getConfig().setProperty(SHOW_ADV_OPTIONS_KEY, Boolean.valueOf(showAdvancedDialog));
     }
 
     public int getThreadCount() {

@@ -20,29 +20,60 @@
 package org.zaproxy.addon.client;
 
 import java.awt.Component;
-import java.awt.event.ActionEvent;
+import java.util.List;
+import javax.swing.JTree;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
+import org.zaproxy.zap.extension.ExtensionPopupMenu;
 
-public class PopupMenuClientAttack extends PopupMenuItemClient {
+public class PopupMenuClientAttack extends ExtensionPopupMenu {
 
     private static final long serialVersionUID = 1L;
+    private ClientMapPanel clientMapPanel;
 
     public PopupMenuClientAttack(ClientMapPanel clientMapPanel) {
-        super(Constant.messages.getString("client.tree.popup.attack"), clientMapPanel);
+        super(Constant.messages.getString("client.tree.popup.attack"));
+        this.clientMapPanel = clientMapPanel;
     }
 
     @Override
     public boolean isEnableForComponent(Component invoker) {
-        boolean enabled = super.isEnableForComponent(invoker);
-        if (enabled) {
-            // For now its a placeholder / tease ;)
-            this.setEnabled(false);
+        if (invoker instanceof JTree) {
+            JTree tree = (JTree) invoker;
+            if (ClientMapPanel.CLIENT_TREE_NAME.equals(tree.getName())) {
+                removeAll();
+                if (Constant.isDevBuild()) {
+                    // Not for release .. yet ;)
+                    add(new PopupClientSpider(clientMapPanel));
+                    List<ClientNode> nodes = clientMapPanel.getSelectedNodes();
+                    this.setEnabled(nodes.size() == 1 && !nodes.get(0).isRoot());
+                }
+                return true;
+            }
         }
-        return enabled;
+        return false;
     }
 
-    @Override
-    public void performAction(ActionEvent e) {
-        // Do nothing for now
+    private static class PopupClientSpider extends ExtensionPopupMenuItem {
+
+        private static final long serialVersionUID = 1L;
+
+        PopupClientSpider(ClientMapPanel clientMapPanel) {
+            super(Constant.messages.getString("client.tree.popup.spider"));
+            this.addActionListener(
+                    l ->
+                            clientMapPanel
+                                    .getExtension()
+                                    .showScanDialog(
+                                            clientMapPanel
+                                                    .getSelectedNode()
+                                                    .getUserObject()
+                                                    .getUrl()));
+        }
+
+        @Override
+        public boolean isSubMenu() {
+            return true;
+        }
     }
 }
