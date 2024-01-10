@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update reference for Strict-Transport-Security Header (Issue 8262).
 - The Absence of Anti-CSRF Tokens scan rule now takes into account the Partial Match settings from the Anti-CSRF Options (Issue 8280).
 - Maintenance changes.
+- Update reference for Server Leaks Information via "X-Powered-By" HTTP Response Header Field(s) (Issue 8262).
 
 ## [53] - 2023-11-30
 ### Changed
