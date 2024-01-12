@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: github/codeql-action/init@v2
+      - uses: github/codeql-action/init@v3
         with:
           languages: ${{ matrix.language }}
       - if: matrix.language != 'java'
@@ -43,6 +43,6 @@ jobs:
         env:
           WDM_CACHEPATH: "~/.gradle/wdm"
 
-      - uses: github/codeql-action/analyze@v2
+      - uses: github/codeql-action/analyze@v3
         with:
           category: "/language:${{matrix.language}}"
