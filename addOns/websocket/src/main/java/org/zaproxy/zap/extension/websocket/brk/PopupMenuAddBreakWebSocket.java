@@ -25,7 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
-import org.zaproxy.zap.extension.brk.ExtensionBreak;
+import org.zaproxy.addon.brk.ExtensionBreak;
 import org.zaproxy.zap.extension.websocket.WebSocketMessageDTO;
 import org.zaproxy.zap.extension.websocket.ui.WebSocketMessagesViewModel;
 

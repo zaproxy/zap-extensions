@@ -58,7 +58,7 @@ import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiResponse;
-import org.zaproxy.zap.extension.brk.ExtensionBreak;
+import org.zaproxy.addon.brk.ExtensionBreak;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.httppanel.component.HttpPanelComponentInterface;

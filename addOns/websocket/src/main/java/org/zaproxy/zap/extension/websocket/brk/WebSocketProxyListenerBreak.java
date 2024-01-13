@@ -21,7 +21,7 @@ package org.zaproxy.zap.extension.websocket.brk;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.zaproxy.zap.extension.brk.BreakpointMessageHandler2;
+import org.zaproxy.addon.brk.BreakpointMessageHandler2;
 import org.zaproxy.zap.extension.websocket.ExtensionWebSocket;
 import org.zaproxy.zap.extension.websocket.WebSocketException;
 import org.zaproxy.zap.extension.websocket.WebSocketFuzzMessageDTO;

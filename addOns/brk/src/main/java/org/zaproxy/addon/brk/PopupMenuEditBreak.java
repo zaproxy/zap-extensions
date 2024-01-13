@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2012 The ZAP Development Team
+ * Copyright 2010 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.websocket.brk;
+package org.zaproxy.addon.brk;
 
 import java.awt.Component;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
-import org.zaproxy.addon.brk.BreakpointsPanel;
-import org.zaproxy.addon.brk.ExtensionBreak;
 
 @SuppressWarnings("serial")
 public class PopupMenuEditBreak extends ExtensionPopupMenuItem {
@@ -34,15 +32,18 @@ public class PopupMenuEditBreak extends ExtensionPopupMenuItem {
 
     public PopupMenuEditBreak() {
         super(Constant.messages.getString("brk.edit.popup"));
-        initialize();
+        this.addActionListener(
+                new java.awt.event.ActionListener() {
+
+                    @Override
+                    public void actionPerformed(java.awt.event.ActionEvent e) {
+                        extension.editUiSelectedBreakpoint();
+                    }
+                });
     }
 
     public void setExtension(ExtensionBreak extension) {
         this.extension = extension;
-    }
-
-    private void initialize() {
-        this.addActionListener(e -> extension.editUiSelectedBreakpoint());
     }
 
     @Override

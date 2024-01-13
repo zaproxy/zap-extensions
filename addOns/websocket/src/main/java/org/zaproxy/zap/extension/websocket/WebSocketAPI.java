@@ -54,7 +54,7 @@ import org.zaproxy.zap.extension.api.ApiResponseElement;
 import org.zaproxy.zap.extension.api.ApiResponseList;
 import org.zaproxy.zap.extension.api.ApiResponseSet;
 import org.zaproxy.zap.extension.api.ApiView;
-import org.zaproxy.zap.extension.brk.ExtensionBreak;
+import org.zaproxy.addon.brk.ExtensionBreak;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy.Initiator;
 import org.zaproxy.zap.extension.websocket.WebSocketProxy.State;
