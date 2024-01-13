@@ -60,6 +60,7 @@ spotless {
 }
 
 dependencies {
+	zapAddOn("break")
     val nettyVersion = "4.1.100.Final"
     implementation("io.netty:netty-codec:$nettyVersion")
     implementation("io.netty:netty-handler:$nettyVersion")

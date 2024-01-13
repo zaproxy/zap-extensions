@@ -50,6 +50,7 @@ zapAddOn {
 dependencies {
     zapAddOn("fuzz")
     zapAddOn("requester")
-
+	zapAddOn("break")
+	
     testImplementation(project(":testutils"))
 }

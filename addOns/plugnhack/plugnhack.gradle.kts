@@ -43,4 +43,5 @@ zapAddOn {
 dependencies {
     zapAddOn("network")
     zapAddOn("requester")
+    zapAddOn("break")
 }
