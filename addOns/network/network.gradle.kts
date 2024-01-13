@@ -30,6 +30,14 @@ zapAddOn {
             libs.from(brotli)
             libs.from(hc)
         }
+
+        dependencies {
+            addOns {
+                register("brk") {
+                    version.set(">= 0.1.0")
+                }
+            }
+        }
     }
 
     apiClientGen {

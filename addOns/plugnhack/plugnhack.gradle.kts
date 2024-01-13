@@ -15,9 +15,12 @@ zapAddOn {
                 register("network") {
                     version.set(">= 0.2.0")
                 }
+                register("brk") {
+                    version.set(">= 0.1.0")
+                }
             }
         }
-
+        
         extensions {
             register("org.zaproxy.zap.extension.plugnhack.manualsend.ExtensionPlugNHackManualSend") {
                 classnames {

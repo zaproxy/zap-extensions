@@ -22,6 +22,9 @@ zapAddOn {
                         register("fuzz") {
                             version.set("2.* | 13.*")
                         }
+                        register("brk") {
+                            version.set(">= 0.1.0")
+                        }
                     }
                 }
             }
