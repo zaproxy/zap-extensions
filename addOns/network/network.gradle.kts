@@ -30,7 +30,6 @@ zapAddOn {
             libs.from(brotli)
             libs.from(hc)
         }
-        
     }
 
     apiClientGen {
