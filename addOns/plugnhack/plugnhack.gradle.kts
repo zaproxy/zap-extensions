@@ -20,7 +20,7 @@ zapAddOn {
                 }
             }
         }
-        
+
         extensions {
             register("org.zaproxy.zap.extension.plugnhack.manualsend.ExtensionPlugNHackManualSend") {
                 classnames {
