@@ -30,14 +30,7 @@ zapAddOn {
             libs.from(brotli)
             libs.from(hc)
         }
-
-        dependencies {
-            addOns {
-                register("brk") {
-                    version.set(">= 0.1.0")
-                }
-            }
-        }
+        
     }
 
     apiClientGen {
@@ -68,7 +61,6 @@ spotless {
 }
 
 dependencies {
-	zapAddOn("brk")
     val nettyVersion = "4.1.100.Final"
     implementation("io.netty:netty-codec:$nettyVersion")
     implementation("io.netty:netty-handler:$nettyVersion")

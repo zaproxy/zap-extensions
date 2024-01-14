@@ -133,7 +133,7 @@ import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiElement;
 import org.zaproxy.zap.extension.api.ApiImplementor;
-import org.zaproxy.addon.brk.ExtensionBreak;
+import org.zaproxy.zap.extension.brk.ExtensionBreak;
 import org.zaproxy.zap.utils.ZapPortNumberSpinner;
 
 public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineListener {

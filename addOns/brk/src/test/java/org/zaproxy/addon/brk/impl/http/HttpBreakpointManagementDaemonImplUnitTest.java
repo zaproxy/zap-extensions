@@ -28,9 +28,9 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
-import org.zaproxy.zap.WithConfigsTest;
+import org.zaproxy.zap.testutils.TestUtils;
 
-class HttpBreakpointManagementDaemonImplUnitTest extends WithConfigsTest {
+class HttpBreakpointManagementDaemonImplUnitTest extends TestUtils {
 
     private static String OK_RESPONSE =
             "HTTP/1.1 200 OK"
