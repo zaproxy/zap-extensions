@@ -22,8 +22,8 @@ package org.zaproxy.zap.extension.websocket.brk;
 import java.awt.Component;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
-import org.zaproxy.addon.brk.BreakpointsPanel;
-import org.zaproxy.addon.brk.ExtensionBreak;
+import org.zaproxy.zap.extension.brk.BreakpointsPanel;
+import org.zaproxy.zap.extension.brk.ExtensionBreak;
 
 @SuppressWarnings("serial")
 public class PopupMenuEditBreak extends ExtensionPopupMenuItem {
