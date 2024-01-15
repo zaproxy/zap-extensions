@@ -69,45 +69,41 @@ public class InformationDisclosureInUrlScanRule extends PluginPassiveScanner {
         for (HtmlParameter urlParam : urlParams) {
             String match = doesParamNameContainsSensitiveInformation(urlParam.getName());
             if (match != null) {
-                this.raiseAlert(
-                        msg,
-                        id,
-                        urlParam.getName(),
-                        urlParam.getName(),
-                        Constant.messages.getString(
-                                MESSAGE_PREFIX + "otherinfo.sensitiveinfo",
-                                match,
-                                urlParam.getName()));
+                buildAlert(
+                                urlParam.getName(),
+                                urlParam.getName(),
+                                Constant.messages.getString(
+                                        MESSAGE_PREFIX + "otherinfo.sensitiveinfo",
+                                        match,
+                                        urlParam.getName()))
+                        .raise();
             }
             if (isCreditCard(urlParam.getValue())) {
-                this.raiseAlert(
-                        msg,
-                        id,
-                        urlParam.getName(),
-                        urlParam.getValue(),
-                        Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.cc"));
+                buildAlert(
+                                urlParam.getName(),
+                                urlParam.getValue(),
+                                Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.cc"))
+                        .raise();
             }
             if (isEmailAddress(urlParam.getValue())) {
-                this.raiseAlert(
-                        msg,
-                        id,
-                        urlParam.getName(),
-                        urlParam.getValue(),
-                        Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.email"));
+                buildAlert(
+                                urlParam.getName(),
+                                urlParam.getValue(),
+                                Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.email"))
+                        .raise();
             }
             if (isUsSSN(urlParam.getValue())) {
-                this.raiseAlert(
-                        msg,
-                        id,
-                        urlParam.getName(),
-                        urlParam.getValue(),
-                        Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.ssn"));
+                buildAlert(urlParam.getName(), urlParam.getValue(), getSsnOtherInfo()).raise();
             }
         }
     }
 
-    private void raiseAlert(HttpMessage msg, int id, String param, String evidence, String other) {
-        newAlert()
+    private String getSsnOtherInfo() {
+        return Constant.messages.getString(MESSAGE_PREFIX + "otherinfo.ssn");
+    }
+
+    private AlertBuilder buildAlert(String param, String evidence, String other) {
+        return newAlert()
                 .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(getDescription())
@@ -116,8 +112,7 @@ public class InformationDisclosureInUrlScanRule extends PluginPassiveScanner {
                 .setSolution(getSolution())
                 .setEvidence(evidence)
                 .setCweId(getCweId())
-                .setWascId(getWascId())
-                .raise();
+                .setWascId(getWascId());
     }
 
     private static List<String> loadFile(String file) {
@@ -207,5 +202,10 @@ public class InformationDisclosureInUrlScanRule extends PluginPassiveScanner {
     private boolean isUsSSN(String usSSN) {
         Matcher matcher = usSSNPattern.matcher(usSSN);
         return matcher.find();
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(buildAlert("value", "351-25-9735", getSsnOtherInfo()).build());
     }
 }

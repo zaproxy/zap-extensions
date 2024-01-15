@@ -67,21 +67,20 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
             String parameter;
             if ((parameter = doesResponseContainsDebugErrorMessage(msg.getResponseBody()))
                     != null) {
-                this.raiseAlert(msg, id, parameter);
+                buildAlert(parameter).raise();
             }
         }
     }
 
-    private void raiseAlert(HttpMessage msg, int id, String infoDisclosureDBError) {
-        newAlert()
+    private AlertBuilder buildAlert(String evidence) {
+        return newAlert()
                 .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(getDescription())
                 .setSolution(getSolution())
-                .setEvidence(infoDisclosureDBError)
+                .setEvidence(evidence)
                 .setCweId(getCweId())
-                .setWascId(getWascId())
-                .raise();
+                .setWascId(getWascId());
     }
 
     private String doesResponseContainsDebugErrorMessage(HttpBody body) {
@@ -166,5 +165,10 @@ public class InformationDisclosureDebugErrorsScanRule extends PluginPassiveScann
     @Override
     public int getPluginId() {
         return PLUGIN_ID;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(buildAlert("incorrect syntax near").build());
     }
 }

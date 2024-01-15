@@ -79,6 +79,12 @@ class InfoPrivateAddressDisclosureScanRuleUnitTest
     }
 
     @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
+    }
+
+    @Test
     void alertsIfPrivateIp() throws HttpMalformedHeaderException {
         // ip as candidate / evidence
         String[][] data =
