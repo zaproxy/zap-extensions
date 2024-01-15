@@ -56,20 +56,20 @@ public class XDebugTokenScanRule extends PluginPassiveScanner {
 
         // Check "Link" variant first as it's of greater concern/convenience.
         if (responseHasHeader(msg, X_DEBUG_TOKEN_LINK_HEADER)) {
-            raiseAlert(msg, getHeaders(msg, X_DEBUG_TOKEN_LINK_HEADER).get(0));
+            buildAlert(getHeaders(msg, X_DEBUG_TOKEN_LINK_HEADER).get(0)).raise();
             return;
         }
         // Check non-Link variant
         if (responseHasHeader(msg, X_DEBUG_TOKEN_HEADER)) {
-            raiseAlert(msg, getHeaders(msg, X_DEBUG_TOKEN_HEADER).get(0));
+            buildAlert(getHeaders(msg, X_DEBUG_TOKEN_HEADER).get(0)).raise();
             return;
         }
 
         LOGGER.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
     }
 
-    private void raiseAlert(HttpMessage msg, String evidence) {
-        newAlert()
+    private AlertBuilder buildAlert(String evidence) {
+        return newAlert()
                 .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_HIGH)
                 .setDescription(getDescription())
@@ -78,8 +78,7 @@ public class XDebugTokenScanRule extends PluginPassiveScanner {
                 .setReference(getReference())
                 .setEvidence(evidence)
                 .setCweId(getCweId())
-                .setWascId(getWascId())
-                .raise();
+                .setWascId(getWascId());
     }
 
     /**
@@ -156,5 +155,10 @@ public class XDebugTokenScanRule extends PluginPassiveScanner {
 
     public int getWascId() {
         return 13; // WASC Id - Info leakage
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(buildAlert("X-Debug-Token-Link: /_profiler/97b958").build());
     }
 }
