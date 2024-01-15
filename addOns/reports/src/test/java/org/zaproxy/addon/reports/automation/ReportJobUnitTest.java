@@ -293,6 +293,92 @@ class ReportJobUnitTest extends TestUtils {
     }
 
     @Test
+    void shouldReplaceVarInSiteWhenRunning() throws IOException {
+        // Given
+        String templateName = "template";
+        String reportFile = "ZAP-Report-[[site]]";
+        ReportJob job =
+                createReportJob(
+                        "parameters:\n"
+                                + "  template: "
+                                + templateName
+                                + "\n"
+                                + "  reportFile: "
+                                + reportFile);
+        AutomationPlan plan = new AutomationPlan();
+        AutomationProgress progress = plan.getProgress();
+        AutomationEnvironment env = plan.getEnv();
+        env.getData().getVars().put("reportDir", "report-dir");
+        env.getData().getVars().put("ZAP_TARGET", "https://www.example.com/");
+        ContextWrapper contextWrapper = mock(ContextWrapper.class);
+        given(contextWrapper.getUrls()).willReturn(Collections.singletonList("${ZAP_TARGET}"));
+        env.setContexts(Arrays.asList(contextWrapper));
+        Template template = mock(Template.class);
+        given(template.getExtension()).willReturn("ext");
+        given(extensionReports.getTemplateByConfigName(templateName)).willReturn(template);
+        given(extensionReports.generateReport(any(), any(), anyString(), anyBoolean()))
+                .willReturn(mock(File.class));
+        job.verifyParameters(progress);
+        job.setPlan(plan);
+
+        // When
+        job.runJob(env, progress);
+
+        // Then
+        ArgumentCaptor<String> captorReportFileName = ArgumentCaptor.forClass(String.class);
+        verify(extensionReports)
+                .generateReport(any(), any(), captorReportFileName.capture(), anyBoolean());
+        assertThat(
+                new File(captorReportFileName.getValue()).getName(),
+                is(equalTo("ZAP-Report-www.example.com.ext")));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+    }
+
+    @Test
+    void shouldDefaultToCwdDirName() throws IOException {
+        // Given
+        String templateName = "template";
+        String reportFile = "report-file";
+        File planFile = Files.createTempFile("plan", ".yaml").toFile();
+        ReportJob job =
+                createReportJob(
+                        "parameters:\n"
+                                + "  template: "
+                                + templateName
+                                + "\n"
+                                + "  reportFile: "
+                                + reportFile);
+        AutomationPlan plan = new AutomationPlan();
+        AutomationProgress progress = plan.getProgress();
+        AutomationEnvironment env = plan.getEnv();
+        ContextWrapper contextWrapper = mock(ContextWrapper.class);
+        given(contextWrapper.getUrls()).willReturn(Collections.singletonList(""));
+        env.setContexts(Arrays.asList(contextWrapper));
+        Template template = mock(Template.class);
+        given(template.getExtension()).willReturn("ext");
+        given(extensionReports.getTemplateByConfigName(templateName)).willReturn(template);
+        given(extensionReports.generateReport(any(), any(), anyString(), anyBoolean()))
+                .willReturn(mock(File.class));
+        plan.setFile(planFile);
+        job.verifyParameters(progress);
+        job.setPlan(plan);
+
+        // When
+        job.runJob(env, progress);
+
+        // Then
+        ArgumentCaptor<String> captorReportFileName = ArgumentCaptor.forClass(String.class);
+        verify(extensionReports)
+                .generateReport(any(), any(), captorReportFileName.capture(), anyBoolean());
+        assertThat(
+                new File(captorReportFileName.getValue()).getParent(),
+                is(equalTo(planFile.getParent())));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+    }
+
+    @Test
     void shouldSupportRelativeDirName() throws IOException {
         // Given
         String templateName = "template";
