@@ -144,7 +144,12 @@ public class UserControlledJavascriptEventScanRule extends PluginPassiveScanner 
         String[] split = attribute.getValue().split("[;=,:]");
         for (String s : split) {
             if (s.equalsIgnoreCase(param.getValue())) {
-                raiseAlert(msg, id, htmlElement, attribute, param);
+                buildAlert(
+                                msg.getRequestHeader().getURI().toString(),
+                                attribute.getName(),
+                                attribute.getValue(),
+                                param)
+                        .raise();
             }
         }
     }
@@ -166,23 +171,18 @@ public class UserControlledJavascriptEventScanRule extends PluginPassiveScanner 
                 || contentType.indexOf("application/xhtml") != -1;
     }
 
-    private void raiseAlert(
-            HttpMessage msg,
-            int id,
-            Element htmlElement,
-            Attribute htmlAttribute,
-            HtmlParameter param) {
-        newAlert()
+    private AlertBuilder buildAlert(
+            String url, String attribute, String attributeValue, HtmlParameter param) {
+        return newAlert()
                 .setRisk(Alert.RISK_INFO)
                 .setConfidence(Alert.CONFIDENCE_LOW)
                 .setDescription(getDescriptionMessage())
                 .setParam(param.getName())
-                .setOtherInfo(getExtraInfoMessage(msg, htmlAttribute, param))
+                .setOtherInfo(getExtraInfoMessage(url, attribute, attributeValue, param))
                 .setSolution(getSolutionMessage())
                 .setReference(getReferenceMessage())
                 .setCweId(20) // CWE-20: Improper Input Validation
-                .setWascId(20) // WASC-20: Improper Input Handling
-                .raise();
+                .setWascId(20); // WASC-20: Improper Input Handling
     }
 
     @Override
@@ -212,12 +212,19 @@ public class UserControlledJavascriptEventScanRule extends PluginPassiveScanner 
     }
 
     private String getExtraInfoMessage(
-            HttpMessage msg, Attribute htmlAttribute, HtmlParameter param) {
+            String url, String attribute, String attributeValue, HtmlParameter param) {
         return Constant.messages.getString(
-                MESSAGE_PREFIX + "extrainfo",
-                msg.getRequestHeader().getURI().toString(),
-                htmlAttribute.getName(),
-                htmlAttribute.getValue(),
-                param.getValue());
+                MESSAGE_PREFIX + "extrainfo", url, attribute, attributeValue, param.getValue());
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                "http://example.com/i.php?place=moon&name=Foo",
+                                "onerror",
+                                "foo",
+                                new HtmlParameter(HtmlParameter.Type.url, "name", "foo"))
+                        .build());
     }
 }

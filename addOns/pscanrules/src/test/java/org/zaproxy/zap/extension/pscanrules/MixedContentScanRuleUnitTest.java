@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
@@ -69,6 +70,20 @@ class MixedContentScanRuleUnitTest extends PassiveScannerTest<MixedContentScanRu
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_CRYP_03_CRYPTO_FAIL.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_CRYP_03_CRYPTO_FAIL.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // THen
+        assertThat(alerts.size(), is(equalTo(1)));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 
     @Test

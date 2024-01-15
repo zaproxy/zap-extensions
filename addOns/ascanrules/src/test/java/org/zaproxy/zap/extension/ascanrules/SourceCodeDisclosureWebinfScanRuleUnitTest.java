@@ -28,6 +28,7 @@ import static org.hamcrest.Matchers.is;
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 import java.io.ByteArrayInputStream;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
@@ -77,6 +78,24 @@ class SourceCodeDisclosureWebinfScanRuleUnitTest
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_CONF_05_ENUMERATE_INFRASTRUCTURE.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_CONF_05_ENUMERATE_INFRASTRUCTURE.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(2)));
+        Alert webinfAlert = alerts.get(0);
+        assertThat(webinfAlert.getAlertRef(), is(equalTo("10045-1")));
+        Alert propsAlert = alerts.get(1);
+        assertThat(propsAlert.getAlertRef(), is(equalTo("10045-2")));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 
     @Test

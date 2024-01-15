@@ -61,7 +61,11 @@ public class InsecureFormPostScanRule extends PluginPassiveScanner {
         for (Element formElement : formElements) {
             String formAction = formElement.getAttributeValue("action");
             if (formAction != null && formAction.trim().toLowerCase().startsWith("http://")) {
-                raiseAlert(msg, id, formElement);
+                buildAlert(
+                                msg.getRequestHeader().getURI().toString(),
+                                formElement.toString(),
+                                formElement.getAttributeValue("action").trim())
+                        .raise();
             }
         }
     }
@@ -92,18 +96,17 @@ public class InsecureFormPostScanRule extends PluginPassiveScanner {
                 || contentType.indexOf("application/xhtml") != -1;
     }
 
-    private void raiseAlert(HttpMessage msg, int id, Element formElement) {
-        newAlert()
+    private AlertBuilder buildAlert(String url, String formElement, String evidence) {
+        return newAlert()
                 .setRisk(Alert.RISK_MEDIUM)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(getDescriptionMessage())
-                .setOtherInfo(getExtraInfoMessage(msg, formElement))
+                .setOtherInfo(getExtraInfoMessage(url, formElement))
                 .setSolution(getSolutionMessage())
                 .setReference(getReferenceMessage())
-                .setEvidence(formElement.getAttributeValue("action").trim())
+                .setEvidence(evidence)
                 .setCweId(319) // CWE-319: Cleartext Transmission of Sensitive Information
-                .setWascId(15) // WASC-15: Application Misconfiguration
-                .raise();
+                .setWascId(15); // WASC-15: Application Misconfiguration
     }
 
     @Override
@@ -127,11 +130,18 @@ public class InsecureFormPostScanRule extends PluginPassiveScanner {
         return Constant.messages.getString(MESSAGE_PREFIX + "refs");
     }
 
-    private String getExtraInfoMessage(HttpMessage msg, Element formElement) {
-        return Constant.messages.getString(
-                MESSAGE_PREFIX + "extrainfo",
-                msg.getRequestHeader().getURI().toString(),
-                formElement.toString());
+    private static String getExtraInfoMessage(String url, String formElement) {
+        return Constant.messages.getString(MESSAGE_PREFIX + "extrainfo", url, formElement);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                "https://example.com",
+                                "<form name=\"someform\" action=\"http://example.com/processform\">",
+                                "http://example.com/processform")
+                        .build());
     }
 
     @Override

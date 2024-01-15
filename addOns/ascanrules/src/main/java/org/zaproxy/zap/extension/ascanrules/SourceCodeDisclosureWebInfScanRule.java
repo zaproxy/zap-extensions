@@ -205,20 +205,7 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin
 
                         LOGGER.debug("Source Code Disclosure alert for: {}", classname);
 
-                        newAlert()
-                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                .setName(
-                                        Constant.messages.getString(
-                                                "ascanrules.sourcecodedisclosurewebinf.name"))
-                                .setDescription(
-                                        Constant.messages.getString(
-                                                "ascanrules.sourcecodedisclosurewebinf.desc"))
-                                .setOtherInfo(javaSourceCode)
-                                .setSolution(
-                                        Constant.messages.getString(
-                                                "ascanrules.sourcecodedisclosurewebinf.soln"))
-                                .setMessage(classfilemsg)
-                                .raise();
+                        buildWebinfAlert(javaSourceCode).setMessage(classfilemsg).raise();
 
                         // and add the referenced classes to the list of classes to look for!
                         // so that we catch as much source code as possible.
@@ -247,21 +234,7 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin
                             sendAndReceive(propsfilemsg, false); // do not follow redirects
                             if (isPage200(propsfilemsg)) {
                                 // Holy sheet.. we found a properties file
-                                newAlert()
-                                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                        .setName(
-                                                Constant.messages.getString(
-                                                        "ascanrules.sourcecodedisclosurewebinf.propertiesfile.name"))
-                                        .setDescription(
-                                                Constant.messages.getString(
-                                                        "ascanrules.sourcecodedisclosurewebinf.propertiesfile.desc"))
-                                        .setOtherInfo(
-                                                Constant.messages.getString(
-                                                        "ascanrules.sourcecodedisclosurewebinf.propertiesfile.extrainfo",
-                                                        classURI))
-                                        .setSolution(
-                                                Constant.messages.getString(
-                                                        "ascanrules.sourcecodedisclosurewebinf.propertiesfile.soln"))
+                                buildPropertiesAlert(classURI.toString())
                                         .setMessage(propsfilemsg)
                                         .raise();
                             }
@@ -325,6 +298,37 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin
                 false);
     }
 
+    private AlertBuilder buildWebinfAlert(String javaSourceCode) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setName(Constant.messages.getString("ascanrules.sourcecodedisclosurewebinf.name"))
+                .setDescription(
+                        Constant.messages.getString("ascanrules.sourcecodedisclosurewebinf.desc"))
+                .setOtherInfo(javaSourceCode)
+                .setSolution(
+                        Constant.messages.getString("ascanrules.sourcecodedisclosurewebinf.soln"))
+                .setAlertRef(getId() + "-1");
+    }
+
+    private AlertBuilder buildPropertiesAlert(String classUri) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setName(
+                        Constant.messages.getString(
+                                "ascanrules.sourcecodedisclosurewebinf.propertiesfile.name"))
+                .setDescription(
+                        Constant.messages.getString(
+                                "ascanrules.sourcecodedisclosurewebinf.propertiesfile.desc"))
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                "ascanrules.sourcecodedisclosurewebinf.propertiesfile.extrainfo",
+                                classUri))
+                .setSolution(
+                        Constant.messages.getString(
+                                "ascanrules.sourcecodedisclosurewebinf.propertiesfile.soln"))
+                .setAlertRef(getId() + "-2");
+    }
+
     @Override
     public int getRisk() {
         return Alert.RISK_HIGH;
@@ -343,5 +347,12 @@ public class SourceCodeDisclosureWebInfScanRule extends AbstractHostPlugin
     @Override
     public int getWascId() {
         return 34; // Predictable Resource Location
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildWebinfAlert("class A\n{\n}\n").build(),
+                buildPropertiesAlert("https://example.com/foo.class").build());
     }
 }
