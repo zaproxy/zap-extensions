@@ -52,7 +52,7 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.addon.brk.ExtensionBreak;
+import org.zaproxy.zap.extension.brk.ExtensionBreak;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.ServerInfo;
 import org.zaproxy.zap.ZAP;

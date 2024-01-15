@@ -31,18 +31,6 @@ zapAddOn {
                     }
                 }
             }
-            register("org.zaproxy.addon.brk.ExtensionBreak") {
-                classnames {
-                    allowed.set(listOf("org.zaproxy.addon.brk.ExtensionBreak"))
-                }
-                dependencies {
-                    addOns {
-                        register("brk") {
-                            version.set("0.1.0*")
-                        }
-                    }
-                }
-            }
         }
     }
 
@@ -55,5 +43,4 @@ zapAddOn {
 dependencies {
     zapAddOn("network")
     zapAddOn("requester")
-    zapAddOn("brk")
 }
