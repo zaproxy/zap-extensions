@@ -22,9 +22,6 @@ zapAddOn {
                         register("fuzz") {
                             version.set("2.* | 13.*")
                         }
-                        register("brk") {
-                            version.set(">= 0.1.0")
-                        }
                     }
                 }
             }
@@ -37,6 +34,19 @@ zapAddOn {
                     addOns {
                         register("requester") {
                             version.set("7.*")
+                        }
+                    }
+                }
+            }
+
+            register("org.zaproxy.addon.brk.ExtensionBreak") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.addon.brk.ExtensionBreak"))
+                }
+                dependencies {
+                    addOns {
+                        register("brk") {
+                            version.set("0.1.0*")
                         }
                     }
                 }
