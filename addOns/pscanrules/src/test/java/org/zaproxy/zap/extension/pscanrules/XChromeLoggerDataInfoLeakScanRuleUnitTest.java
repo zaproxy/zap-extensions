@@ -172,4 +172,10 @@ class XChromeLoggerDataInfoLeakScanRuleUnitTest
                 tags1.containsKey(CommonAlertTag.OWASP_2021_A04_INSECURE_DESIGN.getTag()),
                 is(equalTo(true)));
     }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
+    }
 }

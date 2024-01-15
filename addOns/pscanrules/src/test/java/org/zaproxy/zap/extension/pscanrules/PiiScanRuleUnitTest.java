@@ -403,6 +403,12 @@ class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
                                         + "Issuer: U.S. BANK N.A. ND")));
     }
 
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
+    }
+
     private HttpMessage createMsg(String cardNumber) throws HttpMalformedHeaderException {
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");

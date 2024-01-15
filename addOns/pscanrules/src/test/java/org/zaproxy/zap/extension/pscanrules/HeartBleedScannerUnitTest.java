@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
@@ -162,6 +163,23 @@ class HeartBleedScannerUnitTest extends PassiveScannerTest<HeartBleedScanRule> {
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_CRYP_01_TLS.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_CRYP_01_TLS.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+        Alert alert = alerts.get(0);
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 
     private static HttpMessage createMsg(String serverHeader) throws HttpMalformedHeaderException {

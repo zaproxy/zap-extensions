@@ -72,21 +72,31 @@ public class StrictTransportSecurityScanRule extends PluginPassiveScanner {
             Pattern.compile("\\p{Print}*", Pattern.CASE_INSENSITIVE);
 
     private enum VulnType {
-        HSTS_MISSING,
-        HSTS_MAX_AGE_DISABLED,
-        HSTS_MULTIPLE_HEADERS,
-        HSTS_ON_PLAIN_RESP,
-        HSTS_MAX_AGE_MISSING,
-        HSTS_META,
-        HSTS_MALFORMED_MAX_AGE,
-        HSTS_MALFORMED_CONTENT
+        HSTS_MISSING(1),
+        HSTS_MAX_AGE_DISABLED(2),
+        HSTS_MULTIPLE_HEADERS(3),
+        HSTS_ON_PLAIN_RESP(4),
+        HSTS_MAX_AGE_MISSING(5),
+        HSTS_META(6),
+        HSTS_MALFORMED_MAX_AGE(7),
+        HSTS_MALFORMED_CONTENT(8);
+
+        private final int ref;
+
+        private VulnType(int ref) {
+            this.ref = ref;
+        }
+
+        public int getRef() {
+            return this.ref;
+        }
     }
 
     private static final Logger LOGGER =
             LogManager.getLogger(StrictTransportSecurityScanRule.class);
 
-    private void raiseAlert(VulnType currentVT, String evidence, HttpMessage msg, int id) {
-        newAlert()
+    private AlertBuilder buildAlert(VulnType currentVT, String evidence) {
+        return newAlert()
                 .setName(getAlertElement(currentVT, "name"))
                 .setRisk(getRisk(currentVT))
                 .setConfidence(Alert.CONFIDENCE_HIGH)
@@ -96,7 +106,7 @@ public class StrictTransportSecurityScanRule extends PluginPassiveScanner {
                 .setEvidence(evidence)
                 .setCweId(319) // CWE-319: Cleartext Transmission of Sensitive Information
                 .setWascId(15) // WASC-15: Application Misconfiguration
-                .raise();
+                .setAlertRef(PLUGIN_ID + "-" + currentVT.getRef());
     }
 
     @Override
@@ -127,10 +137,10 @@ public class StrictTransportSecurityScanRule extends PluginPassiveScanner {
                     }
                 }
                 if (report) {
-                    raiseAlert(VulnType.HSTS_MISSING, null, msg, id);
+                    buildAlert(VulnType.HSTS_MISSING, "").raise();
                 }
             } else if (stsOption.size() > 1) { // More than one header found
-                raiseAlert(VulnType.HSTS_MULTIPLE_HEADERS, null, msg, id);
+                buildAlert(VulnType.HSTS_MULTIPLE_HEADERS, "").raise();
             } else { // Single HSTS header entry
                 String stsOptionString = stsOption.get(0);
                 Matcher badAgeMatcher = BAD_MAX_AGE_PATT.matcher(stsOptionString);
@@ -140,28 +150,28 @@ public class StrictTransportSecurityScanRule extends PluginPassiveScanner {
                 if (!wellformedMatcher.matches()) {
                     // Well formed pattern didn't match (perhaps curly quotes or some other unwanted
                     // character(s))
-                    raiseAlert(VulnType.HSTS_MALFORMED_CONTENT, STS_HEADER, msg, id);
+                    buildAlert(VulnType.HSTS_MALFORMED_CONTENT, STS_HEADER).raise();
                 } else if (badAgeMatcher.find()) {
                     // Matched BAD_MAX_AGE_PATT, max-age is zero
-                    raiseAlert(VulnType.HSTS_MAX_AGE_DISABLED, badAgeMatcher.group(), msg, id);
+                    buildAlert(VulnType.HSTS_MAX_AGE_DISABLED, badAgeMatcher.group()).raise();
                 } else if (!maxAgeMatcher.find()) {
                     // Didn't find a digit value associated with max-age
-                    raiseAlert(VulnType.HSTS_MAX_AGE_MISSING, stsOption.get(0), msg, id);
+                    buildAlert(VulnType.HSTS_MAX_AGE_MISSING, stsOption.get(0)).raise();
                 } else if (malformedMaxAgeMatcher.find()) {
                     // Found max-age but it was malformed
-                    raiseAlert(VulnType.HSTS_MALFORMED_MAX_AGE, stsOption.get(0), msg, id);
+                    buildAlert(VulnType.HSTS_MALFORMED_MAX_AGE, stsOption.get(0)).raise();
                 }
             }
         } else if (AlertThreshold.LOW.equals(this.getAlertThreshold()) && !stsOption.isEmpty()) {
             // isSecure is false at this point
             // HSTS Header found on non-HTTPS response (technically there could be more than one
             // but we only care that there is one or more)
-            raiseAlert(VulnType.HSTS_ON_PLAIN_RESP, stsOption.get(0), msg, id);
+            buildAlert(VulnType.HSTS_ON_PLAIN_RESP, stsOption.get(0)).raise();
         }
 
         if (metaHSTS != null) {
             // HSTS found defined by META tag
-            raiseAlert(VulnType.HSTS_META, metaHSTS, msg, id);
+            buildAlert(VulnType.HSTS_META, metaHSTS).raise();
         }
 
         LOGGER.debug("\tScan of record {} took {}ms", id, System.currentTimeMillis() - start);
@@ -262,5 +272,18 @@ public class StrictTransportSecurityScanRule extends PluginPassiveScanner {
             }
         }
         return null;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(VulnType.HSTS_MISSING, "").build(),
+                buildAlert(VulnType.HSTS_MAX_AGE_DISABLED, "max-age=0").build(),
+                buildAlert(VulnType.HSTS_MULTIPLE_HEADERS, "").build(),
+                buildAlert(VulnType.HSTS_ON_PLAIN_RESP, "max-age=86400").build(),
+                buildAlert(VulnType.HSTS_MAX_AGE_MISSING, "").build(),
+                buildAlert(VulnType.HSTS_META, STS_HEADER).build(),
+                buildAlert(VulnType.HSTS_MALFORMED_MAX_AGE, "\"max-age=84600\"").build(),
+                buildAlert(VulnType.HSTS_MALFORMED_CONTENT, STS_HEADER).build());
     }
 }

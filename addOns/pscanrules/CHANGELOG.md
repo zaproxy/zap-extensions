@@ -6,15 +6,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - The Big Redirect scan rule will now also alert on responses that have multiple HREFs (idea from xnl-h4ck3r).
-    - It also now includes example alert and alert reference functionality for documentation generation and cross linking purposes (Issues 6119, 7100, and 8189).
-- Update reference for X-Content-Type-Options Header Missing and Content-Type Header Missing (Issue 8262).
-    - They now also include example alerts for documentation generation and cross linking purposes (Issues 6119, 7100, and 8189).
-- Update reference for Loosely Scoped Cookie (Issue 8262).
-- Update reference for Charset Mismatch (Issue 8262).
-- Update reference for Strict-Transport-Security Header (Issue 8262).
+- The references for the following scan rules are now all HTTPS (Issue 8262) and in some cases updated:
+    - Loosely Scoped Cookie
+    - Charset Mismatch
+    - Strict-Transport-Security Header
+    - Content Security Policy (CSP) Header Not Set
+    - CSP
+    - Session ID in URL Rewrite
+    - HTTP Server Response Header
+    - Cookie Poisoning
+    - User Controllable HTML Element Attribute (Potential XSS)
+    - X-Content-Type-Options Header Missing
+    - Content-Type Header Missing
+    - Server Leaks Information via "X-Powered-By" HTTP Response Header Field(s)
 - The Absence of Anti-CSRF Tokens scan rule now takes into account the Partial Match settings from the Anti-CSRF Options (Issue 8280).
 - Maintenance changes.
-- Update reference for Server Leaks Information via "X-Powered-By" HTTP Response Header Field(s) (Issue 8262).
+- The following rules now include example alert functionality for documentation generation and cross linking purposes (Issues 6119, and 8189).
+    - Big Redirect
+    - Information Disclosure: Debug Errors
+    - Information Disclosure: In URL
+    - Information Disclosure: Referrer
+    - Cookie Poisoning
+    - User Controllable Charset
+    - Open Redirect
+    - User Controllable HTML Element Attribute (Potential XSS)
+    - Heartbleed OpenSSL Vulnerability (Indicative)
+    - Strict-Transport-Security Header
+    - Server Leaks Information via "X-Powered-By" HTTP Response Header Field(s)
+    - X-Content-Type-Options Header Missing
+    - Content-Type Header Missing
+- The CWE for the Cookie Poisoning scan rule was updated to a more specific one.
+- The Strict-Transport-Security Header and Big Redirect scan rules now use alert references for their different types of alerts (Issue 7100).
 
 ## [53] - 2023-11-30
 ### Changed

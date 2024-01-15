@@ -21,10 +21,12 @@ package org.zaproxy.zap.extension.pscanrules;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import net.htmlparser.jericho.Source;
+import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,6 +34,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HtmlParameter;
 import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -124,14 +127,14 @@ public class UserControlledOpenRedirectScanRule extends PluginPassiveScanner {
             if (paramValue.equalsIgnoreCase(domain)
                     || (responseLocation.indexOf("://") > 0
                             && paramValue.indexOf(responseLocation) >= 0)) {
-                raiseAlert(msg, id, param.getName(), paramValue, responseLocation);
+                buildAlert(msg, param.getName(), paramValue, responseLocation).raise();
             }
         }
     }
 
-    private void raiseAlert(
-            HttpMessage msg, int id, String paramName, String paramValue, String responseLocation) {
-        newAlert()
+    private AlertBuilder buildAlert(
+            HttpMessage msg, String paramName, String paramValue, String responseLocation) {
+        return newAlert()
                 .setRisk(Alert.RISK_HIGH)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
                 .setDescription(getDescriptionMessage())
@@ -140,8 +143,7 @@ public class UserControlledOpenRedirectScanRule extends PluginPassiveScanner {
                 .setSolution(getSolutionMessage())
                 .setReference(getReferenceMessage())
                 .setCweId(601) // CWE-601: URL Redirection to Untrusted Site ('Open Redirect')
-                .setWascId(38) // WASC-38: URL Redirector Abuse
-                .raise();
+                .setWascId(38); // WASC-38: URL Redirector Abuse
     }
 
     @Override
@@ -188,5 +190,18 @@ public class UserControlledOpenRedirectScanRule extends PluginPassiveScanner {
                         responseLocation));
 
         return extraInfoSB.toString();
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        HttpMessage msg = new HttpMessage();
+        msg.getRequestHeader().setMethod(HttpRequestHeader.GET);
+        try {
+            msg.getRequestHeader().setURI(new URI("https://example.com/transact", false));
+        } catch (URIException | NullPointerException e) {
+            // ignore
+        }
+
+        return List.of(buildAlert(msg, "place", "evil.com", "http://evil.com").build());
     }
 }
