@@ -38,7 +38,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The CWE for the Cookie Poisoning scan rule was updated to a more specific one.
 - The Strict-Transport-Security Header and Big Redirect scan rules now use alert references for their different types of alerts (Issue 7100).
 
-## [54] - 2024-01-16
+## [54] - 2024-01-15
 ### Changed
 - Update Vulnerabilities references to use https links and retire some which were out-dated (Issue 8262).
 
