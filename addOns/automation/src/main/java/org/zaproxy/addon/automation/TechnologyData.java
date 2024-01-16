@@ -19,10 +19,15 @@
  */
 package org.zaproxy.addon.automation;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.TechSet;
@@ -31,6 +36,8 @@ public class TechnologyData extends AutomationData {
 
     private static final String INCLUDE_FIELD = "include";
     private static final String EXCLUDE_FIELD = "exclude";
+
+    private static final Pattern LIST_VAR_PATTERN = Pattern.compile("\\$\\{\\[(.+?)\\]\\}");
 
     private List<String> exclude;
     private List<String> include;
@@ -56,7 +63,7 @@ public class TechnologyData extends AutomationData {
         context.setTechSet(TechnologyUtils.getTechSet(this));
     }
 
-    public TechnologyData(Object data, AutomationProgress progress) {
+    public TechnologyData(Object data, AutomationEnvironment env, AutomationProgress progress) {
         this();
         if (!(data instanceof Map)) {
             progress.error(
@@ -67,9 +74,9 @@ public class TechnologyData extends AutomationData {
 
             for (Entry<?, ?> cdata : dataMap.entrySet()) {
                 if (EXCLUDE_FIELD.equals(cdata.getKey().toString())) {
-                    readTechs(exclude, cdata, progress, EXCLUDE_FIELD);
+                    readTechs(exclude, cdata, env, progress, EXCLUDE_FIELD);
                 } else if (INCLUDE_FIELD.equals(cdata.getKey().toString())) {
-                    readTechs(include, cdata, progress, INCLUDE_FIELD);
+                    readTechs(include, cdata, env, progress, INCLUDE_FIELD);
                 } else {
                     progress.warn(
                             Constant.messages.getString(
@@ -82,10 +89,21 @@ public class TechnologyData extends AutomationData {
     }
 
     private static void readTechs(
-            List<String> into, Entry<?, ?> data, AutomationProgress progress, String field) {
+            List<String> into,
+            Entry<?, ?> data,
+            AutomationEnvironment env,
+            AutomationProgress progress,
+            String field) {
         Object value = data.getValue();
         if (value == null) {
             return;
+        }
+
+        if (value instanceof String) {
+            value = replaceVars(env, progress, field, (String) value);
+            if (value == null) {
+                return;
+            }
         }
 
         if (!(value instanceof List)) {
@@ -104,6 +122,35 @@ public class TechnologyData extends AutomationData {
             // Check it exists
             TechnologyUtils.getTech(techName, progress);
         }
+    }
+
+    private static Object replaceVars(
+            AutomationEnvironment env, AutomationProgress progress, String field, String value) {
+        Matcher matcher = LIST_VAR_PATTERN.matcher(value);
+        if (!matcher.matches()) {
+            return value;
+        }
+
+        String var = regularVarName(matcher.group(1));
+        String replaced = env.replaceVars(matcher.replaceFirst(Matcher.quoteReplacement(var)));
+        if (var.equals(replaced)) {
+            return value;
+        }
+
+        try {
+            return new ObjectMapper(new YAMLFactory()).readValue(replaced, List.class);
+        } catch (JsonProcessingException e) {
+            progress.error(
+                    Constant.messages.getString(
+                            "automation.error.context.badtechtype",
+                            field,
+                            replaced.getClass().getSimpleName()));
+            return null;
+        }
+    }
+
+    private static String regularVarName(String name) {
+        return "${" + name + "}";
     }
 
     public List<String> getExclude() {
