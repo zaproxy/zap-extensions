@@ -224,6 +224,122 @@ class TechnologyDataUnitTest {
     }
 
     @Test
+    void shouldHandleListVars() {
+        // Given
+        MockedStatic<CommandLine> mockedCmdLine = Mockito.mockStatic(CommandLine.class);
+        Constant.messages = new I18N(Locale.ENGLISH);
+        String contextStr =
+                "env:\n"
+                        + "  vars:\n"
+                        + "    INCLUDE:\n"
+                        + "     - MySQL\n"
+                        + "    EXCLUDE: [ db, JAVA ]\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      technology:\n"
+                        + "        exclude: '${[EXCLUDE]}'\n"
+                        + "        include: '${[INCLUDE]}'";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+        mockedCmdLine.close();
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(env.getContextWrappers().size(), is(equalTo(1)));
+        TechnologyData techData = env.getContextWrappers().get(0).getData().getTechnology();
+        assertThat(techData.getInclude(), contains("MySQL"));
+        assertThat(techData.getExclude(), contains("db", "JAVA"));
+    }
+
+    @Test
+    void shouldErrorOnNonListVars() {
+        // Given
+        MockedStatic<CommandLine> mockedCmdLine = Mockito.mockStatic(CommandLine.class);
+        Constant.messages = new I18N(Locale.ENGLISH);
+        String contextStr =
+                "env:\n"
+                        + "  vars:\n"
+                        + "    INCLUDE: '{ \"key\": \"value\" }'\n"
+                        + "    EXCLUDE: 'db'\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      technology:\n"
+                        + "        exclude: '${[EXCLUDE]}'\n"
+                        + "        include: '${[INCLUDE]}'";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+        mockedCmdLine.close();
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(
+                progress.getErrors(),
+                contains(
+                        "!automation.error.context.badtechtype!",
+                        "!automation.error.context.badtechtype!"));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(env.getContextWrappers().size(), is(equalTo(1)));
+        TechnologyData techData = env.getContextWrappers().get(0).getData().getTechnology();
+        assertThat(techData.getInclude().size(), is(equalTo(0)));
+        assertThat(techData.getExclude().size(), is(equalTo(0)));
+    }
+
+    @Test
+    void shouldWarnAndErrorOnMissingListVars() {
+        // Given
+        MockedStatic<CommandLine> mockedCmdLine = Mockito.mockStatic(CommandLine.class);
+        Constant.messages = new I18N(Locale.ENGLISH);
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: name1\n"
+                        + "      urls:\n"
+                        + "      - http://www.example.com\n"
+                        + "      technology:\n"
+                        + "        exclude: '${[EXCLUDE]}'\n"
+                        + "        include: '${[INCLUDE]}'";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data = yaml.load(contextStr);
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+
+        // When
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+        mockedCmdLine.close();
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(true)));
+        assertThat(
+                progress.getErrors(),
+                contains(
+                        "!automation.error.context.badtechtype!",
+                        "!automation.error.context.badtechtype!"));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(
+                progress.getWarnings(),
+                contains("!automation.error.env.novar!", "!automation.error.env.novar!"));
+        assertThat(env.getContextWrappers().size(), is(equalTo(1)));
+        TechnologyData techData = env.getContextWrappers().get(0).getData().getTechnology();
+        assertThat(techData.getInclude().size(), is(equalTo(0)));
+        assertThat(techData.getExclude().size(), is(equalTo(0)));
+    }
+
+    @Test
     void shouldWarnOnUnknownTech() {
         // Given
         Constant.messages = new I18N(Locale.ENGLISH);

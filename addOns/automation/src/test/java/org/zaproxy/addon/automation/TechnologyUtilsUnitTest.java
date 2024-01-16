@@ -325,7 +325,8 @@ class TechnologyUtilsUnitTest {
     @Test
     void shouldReturnIncludedTechs() {
         // Given
-        TechnologyData source = new TechnologyData(Map.of("include", List.of("Windows")), null);
+        TechnologyData source =
+                new TechnologyData(Map.of("include", List.of("Windows")), null, null);
 
         // When
         TechSet set = TechnologyUtils.getTechSet(source);
@@ -340,7 +341,9 @@ class TechnologyUtilsUnitTest {
         // Given
         TechnologyData source =
                 new TechnologyData(
-                        Map.of("include", List.of("OS"), "exclude", List.of("Windows")), null);
+                        Map.of("include", List.of("OS"), "exclude", List.of("Windows")),
+                        null,
+                        null);
 
         // When
         TechSet set = TechnologyUtils.getTechSet(source);
@@ -370,7 +373,9 @@ class TechnologyUtilsUnitTest {
         // Given
         TechnologyData source =
                 new TechnologyData(
-                        Map.of("include", List.of("OS"), "exclude", List.of("Windows")), null);
+                        Map.of("include", List.of("OS"), "exclude", List.of("Windows")),
+                        null,
+                        null);
 
         // When
         source.setExclude(List.of("C"));
