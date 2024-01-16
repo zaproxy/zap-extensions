@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - X-Content-Type-Options Header Missing
     - Content-Type Header Missing
     - Server Leaks Information via "X-Powered-By" HTTP Response Header Field(s)
+    - Retrieved from Cache
 - The Absence of Anti-CSRF Tokens scan rule now takes into account the Partial Match settings from the Anti-CSRF Options (Issue 8280).
 - Maintenance changes.
 - The following rules now include example alert functionality for documentation generation and cross linking purposes (Issues 6119, and 8189).
@@ -37,7 +38,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - Content-Type Header Missing
 - The CWE for the Cookie Poisoning scan rule was updated to a more specific one.
 - The Strict-Transport-Security Header and Big Redirect scan rules now use alert references for their different types of alerts (Issue 7100).
-- Retrieved from Cache the references for the following scan rules are now all HTTPS (Issue 8262) and in some cases updated.
 
 ## [53] - 2023-11-30
 ### Changed
