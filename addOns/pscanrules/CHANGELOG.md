@@ -19,6 +19,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - X-Content-Type-Options Header Missing
     - Content-Type Header Missing
     - Server Leaks Information via "X-Powered-By" HTTP Response Header Field(s)
+    - Retrieved from Cache
 - The Absence of Anti-CSRF Tokens scan rule now takes into account the Partial Match settings from the Anti-CSRF Options (Issue 8280).
 - On Non-LOW threshold, PII Scan rule only evaluates HTML, JSON and XML responses (Issue 8264).
 - Maintenance changes.
