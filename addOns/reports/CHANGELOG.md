@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.28.0] - 2024-01-16
 ### Changed
 - Default to same dir as plan if none specified.
 
@@ -254,6 +254,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.28.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.28.0
 [0.27.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.27.0
 [0.26.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.26.0
 [0.25.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.25.0
