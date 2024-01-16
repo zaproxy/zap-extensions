@@ -40,7 +40,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [54] - 2024-01-15
 ### Changed
-- Update Vulnerabilities references to use https links and retire some which were out-dated (Issue 8262).
+- Retrieved from Cache the references for the following scan rules are now all HTTPS (Issue 8262) and in some cases updated:
 
 ## [53] - 2023-11-30
 ### Changed
