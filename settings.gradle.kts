@@ -114,6 +114,7 @@ var addOns = listOf(
     "webdrivers:webdrivermacos",
     "webdrivers:webdriverwindows",
     "websocket",
+    "webuipoc",
     "zest",
 )
 
