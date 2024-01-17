@@ -143,9 +143,8 @@ class RemoteCodeExecutionCve20121823ScanRuleUnitTest
                         consumeBody(session);
 
                         StringBuilder strBuilder = new StringBuilder("Nothing echoed...\n");
-                        for (int i = 0; i < 50; i++) {
-                            strBuilder.append(" response content...\n");
-                        }
+                        strBuilder.append(" response content...\n".repeat(50));
+
                         return newFixedLengthResponse(strBuilder.toString());
                     }
                 });
