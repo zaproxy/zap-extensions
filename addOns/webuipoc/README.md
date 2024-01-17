@@ -4,6 +4,8 @@ This add-on supports web based UI PoCs for ZAP.
 
 It had been created for the proposed ZAP [GSoC 2024 Web Based UI](https://www.zaproxy.org/docs/gsoc/2024/#web-based-ui) project.
 
+There is also an associated [ZAP Chat: New GUI?](https://youtu.be/s8DKKTTHsGM) video.
+
 It is not available on the ZAP Marketplace - to use it you will need to:
 
 1. Set up a development environment as per the [ZAP Developer Guide](https://www.zaproxy.org/docs/developer/)
@@ -36,6 +38,11 @@ We would still like you to contribute a basic PoC but we are very happy for you 
 Create a new directory for your add-on under [webuipoc](src/main/zapHomeFiles/webuipoc).
 
 This is where you should put all of the files that need to be served up by ZAP.
+
+You may well find it easier to edit these files in the 'webuipoc' directory used by the ZAP runtime, this will be under
+the ZAP [default directory](https://www.zaproxy.org/faq/what-is-the-default-directory-that-zap-uses/).
+Once everything is working how you want you can copy them back to your new directory under 
+[webuipoc](src/main/zapHomeFiles/webuipoc) for your pull request.
 
 Source TypeScript files should be added to a new directory under the [src](src) directory.
 
