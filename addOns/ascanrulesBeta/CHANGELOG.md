@@ -5,8 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 - Update references for Expression Language Injection and HTTP Parameter Pollution (Issue 8262).
-  - Exponential Entity Expansions 
-
+  - Exponential Entity Expansion
 ### Changed
 - Update minimum ZAP version to 2.14.0.
 - Update references for Expression Language Injection and HTTP Parameter Pollution (Issue 8262).
@@ -476,6 +475,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[49]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v49
 [48]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v48
 [47]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v47
 [46]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v46

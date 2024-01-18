@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [45] - 2024-01-16
 ### Changed
 - Update minimum ZAP version to 2.14.0.
 - Depend on newer version of Common Library add-on.
@@ -361,6 +364,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version, including persistent XSS tests
 
+[45]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v45
 [44]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesAlpha-v42

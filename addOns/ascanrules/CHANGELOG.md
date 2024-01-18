@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [60] - 2024-01-16
 ### Changed
 - Leave data empty instead of adding "N/A" for the scan rules:
   - Cross Site Scripting (Persistent) - Prime
@@ -484,6 +487,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[60]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v60
 [59]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v59
 [58]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v58
 [57]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v57

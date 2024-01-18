@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [0.35.0] - 2024-01-16
 ### Added
 - Video links in help for Automation Framework jobs.
 
@@ -330,6 +333,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.35.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.35.0
 [0.34.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.34.0
 [0.33.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.33.0
 [0.32.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.32.0
