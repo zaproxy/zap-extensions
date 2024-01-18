@@ -4,13 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Update references for the Exponential Entity Expansion (Billion Laughs Attack) scan rule (Issue 8262).
 
 ## [49] - 2024-01-16
-### Changed
 - Update minimum ZAP version to 2.14.0.
-- Update references for and HTTP Parameter Pollution (Issue 8262).
-  - Exponential Entity Expansion
+- Update references for Expression Language Injection and HTTP Parameter Pollution (Issue 8262).
 - The Source Code Disclosure - SVN scan rule includes example alert functionality for documentation generation purposes (Issue 6119).
 
 ### Removed
