@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Update references for the Exponential Entity Expansion (Billion Laughs Attack) scan rule (Issue 8262).
 
 ## [49] - 2024-01-16
 ### Changed
