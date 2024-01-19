@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Video link in help for Automation Framework job.
 
+### Changed
+- The sitemap.xml parser will now accept and process a greater range of possible file content (Issue 8299).
+
 ## [0.8.0] - 2023-12-19
 ### Changed
 - Handle multiple "Link" HTTP Response headers.
