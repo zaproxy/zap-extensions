@@ -4,6 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed 
+- Update reference for Server Side Include
 
 
 ## [60] - 2024-01-16
@@ -12,7 +14,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Cross Site Scripting (Persistent) - Prime
   - Cross Site Scripting (Persistent) - Spider
 - Update reference for Server Side Code Injection (Issue 8262).
-  - Server Side Include
 - Now depends on minimum Common Library version 1.21.0.
 
 ### Fixed
