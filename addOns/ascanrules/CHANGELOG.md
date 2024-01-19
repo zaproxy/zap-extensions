@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed 
-- Update reference for Server Side Include
+- Update reference for Server Side Include (Issue 8262) 
 
 
 ## [60] - 2024-01-16
