@@ -19,14 +19,6 @@
  */
 package org.zaproxy.zap.extension.pscanrules;
 
-import com.shapesecurity.salvation2.Directives.SourceExpressionDirective;
-import com.shapesecurity.salvation2.FetchDirectiveKind;
-import com.shapesecurity.salvation2.Policy;
-import com.shapesecurity.salvation2.Policy.PolicyErrorConsumer;
-import com.shapesecurity.salvation2.Policy.Severity;
-import com.shapesecurity.salvation2.PolicyInOrigin;
-import com.shapesecurity.salvation2.URLs.URI;
-import com.shapesecurity.salvation2.URLs.URLWithScheme;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -43,6 +35,13 @@ import net.htmlparser.jericho.Source;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.htmlunit.csp.FetchDirectiveKind;
+import org.htmlunit.csp.Policy;
+import org.htmlunit.csp.Policy.PolicyErrorConsumer;
+import org.htmlunit.csp.PolicyInOrigin;
+import org.htmlunit.csp.directive.SourceExpressionDirective;
+import org.htmlunit.csp.url.URI;
+import org.htmlunit.csp.url.URLWithScheme;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
@@ -85,7 +84,6 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                     // TODO: Remove once https://github.com/shapesecurity/salvation/issues/232 is
                     // addressed
                     "require-trusted-types-for", "trusted-types");
-    private static final String PREFETCH_SRC_WARNING = "The prefetch-src directive is deprecated";
 
     private static final String RAND_FQDN = "7963124546083337415.owasp.org";
     private static final Optional<URLWithScheme> HTTP_URI =
@@ -133,9 +131,6 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                 Policy policy = parsePolicy(csp, consumer, msg, id);
                 if (policy == null) {
                     continue;
-                }
-                if (policy.getFetchDirective(FetchDirectiveKind.PrefetchSrc).isPresent()) {
-                    consumer.add(Severity.Warning, PREFETCH_SRC_WARNING, 0, -1);
                 }
 
                 if (!observedErrors.isEmpty()) {
@@ -220,11 +215,6 @@ public class ContentSecurityPolicyScanRule extends PluginPassiveScanner {
                 Policy parsedMetaPolicy = parsePolicy(metaPolicy, metaConsumer, msg, id);
                 if (parsedMetaPolicy == null) {
                     continue;
-                }
-                if (parsedMetaPolicy
-                        .getFetchDirective(FetchDirectiveKind.PrefetchSrc)
-                        .isPresent()) {
-                    metaConsumer.add(Severity.Warning, PREFETCH_SRC_WARNING, 0, -1);
                 }
                 checkObservedErrors(metaObservedErrors, msg, metaPolicy, true);
                 List<String> metaWildcardSources = getAllowedWildcardSources(metaPolicy);

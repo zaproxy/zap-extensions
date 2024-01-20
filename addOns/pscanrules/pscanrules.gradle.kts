@@ -37,7 +37,7 @@ zapAddOn {
 
 dependencies {
     implementation("com.google.re2j:re2j:1.7")
-    implementation("com.shapesecurity:salvation2:3.0.1")
+    implementation("org.htmlunit:htmlunit-csp:3.10.0")
 
     zapAddOn("commonlib")
     zapAddOn("custompayloads")
