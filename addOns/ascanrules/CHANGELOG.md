@@ -6,7 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed 
 - Update reference for Server Side Include (Issue 8262) 
-
+### Fixed
+- False positives on redirects for:
+  - Cloud Metadata (Issue 7710)
+  - Hidden Files
 
 ## [60] - 2024-01-16
 ### Changed
