@@ -4,13 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Made UI strings and help less Wappalyzer centric and more Technology Detection focused.
 
 ## [21.29.0] - 2024-01-03
 ### Changed
 - Updated with enthec upstream icon and pattern changes.
-
-
 
 ## [21.28.0] - 2023-12-04
 ### Changed
