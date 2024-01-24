@@ -158,7 +158,9 @@ class XxeScanRuleUnitTest extends ActiveScannerTest<XxeScanRule> {
         String sampleXmlMessage = getXmlResource("xxescanrule/SampleXml.txt");
         String requestBody = "\n" + "\n" + sampleXmlMessage;
         Matcher tagMatcher = XxeScanRule.tagPattern.matcher(requestBody);
-        for (int idx = 1; idx <= 4; idx++) tagMatcher.find();
+        for (int idx = 1; idx <= 4; idx++) {
+            tagMatcher.find();
+        }
         // When
         String payload = XxeScanRule.createTagSpecificLfrPayload(requestBody, tagMatcher);
         // Then

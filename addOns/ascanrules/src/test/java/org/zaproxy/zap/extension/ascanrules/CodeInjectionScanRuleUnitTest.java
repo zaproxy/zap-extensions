@@ -23,6 +23,7 @@ import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import fi.iki.elonen.NanoHTTPD;
 import java.util.ArrayList;
@@ -207,9 +208,10 @@ class CodeInjectionScanRuleUnitTest extends ActiveScannerTest<CodeInjectionScanR
         assertThat(alertsRaised.get(0).getParam(), equalTo("years"));
         boolean evidenceOnEvaluationResults = false;
         for (String result : evaluationResults) {
-            if (alertsRaised.get(0).getEvidence().contains(result))
+            if (alertsRaised.get(0).getEvidence().contains(result)) {
                 evidenceOnEvaluationResults = true;
+            }
         }
-        assert (evidenceOnEvaluationResults);
+        assertTrue(evidenceOnEvaluationResults);
     }
 }

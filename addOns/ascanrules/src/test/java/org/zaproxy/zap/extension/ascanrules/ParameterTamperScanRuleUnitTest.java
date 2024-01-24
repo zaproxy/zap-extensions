@@ -32,6 +32,8 @@ import fi.iki.elonen.NanoHTTPD.Response;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.testutils.NanoServerHandler;
@@ -213,48 +215,38 @@ class ParameterTamperScanRuleUnitTest extends ActiveScannerTest<ParameterTamperS
         assertThat(alertsRaised, hasSize(0));
     }
 
-    @Test
-    void shouldAlertWithLowConfidenceIfAttackResponseContainsOtherKnownServerErrors()
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "Microsoft VBScript error",
+                "Microsoft OLE DB Provider for ODBC Drivers error",
+                "ODBC Drivers error",
+                "Microsoft JET Database Engine error",
+                " on line <b>",
+                "Apache Tomcat/8.0.27 - Error report</title> ... <h1>HTTP Status 500 - Internal Server Error"
+            })
+    void shouldAlertWithLowConfidenceIfAttackResponseContainsOtherKnownServerErrors(String error)
             throws Exception {
         ServerErrorOnAttack serverErrorOnAttack = new ServerErrorOnAttack("/");
         nano.addHandler(serverErrorOnAttack);
 
-        String[] serverErrors = {
-            "Microsoft VBScript error",
-            "Microsoft OLE DB Provider for ODBC Drivers error",
-            "ODBC Drivers error",
-            "Microsoft JET Database Engine error",
-            " on line <b>",
-            "Apache Tomcat/8.0.27 - Error report</title> ... <h1>HTTP Status 500 - Internal Server Error"
-        };
-
-        for (String serverError : serverErrors) {
-            // Given
-            serverErrorOnAttack.setError(serverError);
-            rule.init(getHttpMessage("/?p=v"), parent);
-            // When
-            rule.scan();
-            // Then
-            assertThat(serverError, httpMessagesSent, hasSize(2));
-            assertThat(serverError, alertsRaised, hasSize(1));
-            assertThat(serverError, alertsRaised.get(0).getEvidence(), is(equalTo(serverError)));
-            assertThat(serverError, alertsRaised.get(0).getParam(), is(equalTo("p")));
-            assertThat(
-                    serverError,
-                    alertsRaised.get(0).getAttack(),
-                    is(equalTo(""))); // Parameter empty, no attack value.
-            assertThat(serverError, alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
-            assertThat(
-                    serverError,
-                    alertsRaised.get(0).getConfidence(),
-                    is(equalTo(Alert.CONFIDENCE_LOW)));
-            assertThat(serverError, alertsRaised.get(0).getOtherInfo(), is(equalTo("")));
-
-            // Clean up for next error
-            rule = createScanner();
-            httpMessagesSent.clear();
-            alertsRaised.clear();
-        }
+        // Given
+        serverErrorOnAttack.setError(error);
+        rule.init(getHttpMessage("/?p=v"), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(error, httpMessagesSent, hasSize(2));
+        assertThat(error, alertsRaised, hasSize(1));
+        assertThat(error, alertsRaised.get(0).getEvidence(), is(equalTo(error)));
+        assertThat(error, alertsRaised.get(0).getParam(), is(equalTo("p")));
+        assertThat(
+                error,
+                alertsRaised.get(0).getAttack(),
+                is(equalTo(""))); // Parameter empty, no attack value.
+        assertThat(error, alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_MEDIUM)));
+        assertThat(error, alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_LOW)));
+        assertThat(error, alertsRaised.get(0).getOtherInfo(), is(equalTo("")));
     }
 
     @Test
