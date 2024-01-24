@@ -60,10 +60,10 @@ class ConnectionOptionsPanel extends AbstractParamPanel {
     private final HttpProxyPanel httpProxyPanel;
     private final SocksProxyPanel socksProxyPanel;
 
-    public ConnectionOptionsPanel() {
+    public ConnectionOptionsPanel(AddressInUseChecker addressInUseChecker) {
         generalPanel = new GeneralPanel();
-        httpProxyPanel = new HttpProxyPanel();
-        socksProxyPanel = new SocksProxyPanel();
+        httpProxyPanel = new HttpProxyPanel(addressInUseChecker);
+        socksProxyPanel = new SocksProxyPanel(addressInUseChecker);
 
         setName(Constant.messages.getString("network.ui.options.connection.name"));
 
@@ -310,6 +310,8 @@ class ConnectionOptionsPanel extends AbstractParamPanel {
 
     private static class HttpProxyPanel {
 
+        private final AddressInUseChecker addressInUseChecker;
+
         private final JCheckBox proxyEnabledCheckBox;
         private final ZapTextField hostTextField;
         private final ZapPortNumberSpinner portNumberSpinner;
@@ -322,7 +324,9 @@ class ConnectionOptionsPanel extends AbstractParamPanel {
         private final HttpProxyExclusionTablePanel tablePanel;
         private final JPanel panel;
 
-        HttpProxyPanel() {
+        HttpProxyPanel(AddressInUseChecker addressInUseChecker) {
+            this.addressInUseChecker = addressInUseChecker;
+
             panel = new JPanel();
             GroupLayout layout = new GroupLayout(panel);
             panel.setLayout(layout);
@@ -522,6 +526,12 @@ class ConnectionOptionsPanel extends AbstractParamPanel {
                                 "network.ui.options.connection.httpproxy.host.empty"));
             }
 
+            if (addressInUseChecker.check(hostTextField.getText(), portNumberSpinner.getValue())) {
+                throw new Exception(
+                        Constant.messages.getString(
+                                "network.ui.options.connection.httpproxy.zapaddress"));
+            }
+
             if (!authEnabledCheckBox.isSelected()) {
                 return;
             }
@@ -562,6 +572,8 @@ class ConnectionOptionsPanel extends AbstractParamPanel {
 
     private static class SocksProxyPanel {
 
+        private final AddressInUseChecker addressInUseChecker;
+
         private final JCheckBox proxyEnabledCheckBox;
         private final ZapTextField hostTextField;
         private final ZapPortNumberSpinner portNumberSpinner;
@@ -572,7 +584,9 @@ class ConnectionOptionsPanel extends AbstractParamPanel {
         private final JPasswordField passwordField;
         private final JPanel panel;
 
-        public SocksProxyPanel() {
+        public SocksProxyPanel(AddressInUseChecker addressInUseChecker) {
+            this.addressInUseChecker = addressInUseChecker;
+
             panel = new JPanel();
             GroupLayout layout = new GroupLayout(panel);
             panel.setLayout(layout);
@@ -753,6 +767,13 @@ class ConnectionOptionsPanel extends AbstractParamPanel {
 
         void validate() throws Exception {
             if (!hostTextField.getText().isEmpty()) {
+                if (proxyEnabledCheckBox.isSelected()
+                        && addressInUseChecker.check(
+                                hostTextField.getText(), portNumberSpinner.getValue())) {
+                    throw new Exception(
+                            Constant.messages.getString(
+                                    "network.ui.options.connection.socksproxy.zapaddress"));
+                }
                 return;
             }
 
@@ -787,5 +808,10 @@ class ConnectionOptionsPanel extends AbstractParamPanel {
                                 new PasswordAuthentication(usernameTextField.getText(), password)));
             }
         }
+    }
+
+    interface AddressInUseChecker {
+
+        boolean check(String address, int port);
     }
 }
