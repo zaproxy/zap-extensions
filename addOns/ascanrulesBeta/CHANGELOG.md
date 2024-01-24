@@ -9,7 +9,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - Exponential Entity Expansion (Billion Laughs Attack)
     - Relative Path Confusion
     - HTTPS Content Available via HTTP
-- The HTTPS Content Available via HTTP rule now includes example alert functionality for documentation generation purposes (Issue 6119).
+    - Remote Code Execution - Shell Shock
+- The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119):
+    - HTTPS Content Available via HTTP
+    - Remote Code Execution - Shell Shock (it now also uses Alert Refs (Issue 7100))
 
 ## [49] - 2024-01-16
 ### Changed

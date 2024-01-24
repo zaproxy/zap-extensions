@@ -23,8 +23,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 class ShellShockScanRuleUnitTest extends ActiveScannerTest<ShellShockScanRule> {
@@ -62,5 +64,24 @@ class ShellShockScanRuleUnitTest extends ActiveScannerTest<ShellShockScanRule> {
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlerts() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(2)));
+        System.out.println(alerts.get(0).getName());
+        Alert alert = alerts.get(0);
+        assertThat(alert.getAlertRef(), is(equalTo("10048-1")));
+        Alert timingAlert = alerts.get(1);
+        assertThat(timingAlert.getAlertRef(), is(equalTo("10048-2")));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 }
