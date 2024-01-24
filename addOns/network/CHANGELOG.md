@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Notify proxy listeners concurrently, might break listeners that do not correctly handle concurrency.
 
+### Removed
+- Remove legacy options panels that helped the user find the new options panels:
+  - Client Certificate
+  - Connection
+  - Dynamic SSL Certificates
+  - Local Proxies
+
 ### Fixed
 - Accept rate limit rule's group by in lower case, when handling the API requests.
 
