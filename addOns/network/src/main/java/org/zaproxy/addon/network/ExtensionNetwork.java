@@ -611,7 +611,8 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                     new LocalServerInfoLabel(
                             getView().getMainFrame().getMainFooterPanel(), localServersOptions);
 
-            connectionOptionsPanel = new ConnectionOptionsPanel();
+            connectionOptionsPanel =
+                    new ConnectionOptionsPanel(localServersOptionsPanel::isConfiguredAddress);
             optionsDialog.addParamPanel(networkNode, connectionOptionsPanel, true);
 
             clientCertificatesOptionsPanel =

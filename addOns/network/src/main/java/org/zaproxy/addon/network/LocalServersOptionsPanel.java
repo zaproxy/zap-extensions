@@ -117,6 +117,10 @@ class LocalServersOptionsPanel extends AbstractParamPanel {
         return "addon.network.options.localservers";
     }
 
+    boolean isConfiguredAddress(String address, int port) {
+        return serversPanel.isConfiguredAddress(address, port);
+    }
+
     private static class ServersPanel {
 
         private final ExtensionNetwork extensionNetwork;
@@ -182,10 +186,14 @@ class LocalServersOptionsPanel extends AbstractParamPanel {
                             .addComponent(localServersTablePanel));
         }
 
-        private boolean validateAddress(Component parent, String address, int port) {
-            if (hasSameAddress(address, port, mainProxyPanel.getServerConfig())
+        boolean isConfiguredAddress(String address, int port) {
+            return hasSameAddress(address, port, mainProxyPanel.getServerConfig())
                     || localServersTableModel.getElements().stream()
-                            .anyMatch(e -> hasSameAddress(address, port, e))) {
+                            .anyMatch(e -> hasSameAddress(address, port, e));
+        }
+
+        private boolean validateAddress(Component parent, String address, int port) {
+            if (isConfiguredAddress(address, port)) {
                 JOptionPane.showMessageDialog(
                         parent,
                         Constant.messages.getString(
