@@ -25,10 +25,12 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
@@ -160,6 +162,7 @@ class UserControlledJavascriptEventScanRuleUnitTest
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
+        System.out.println(alertsRaised.get(0).getOtherInfo());
     }
 
     @Test
@@ -180,5 +183,19 @@ class UserControlledJavascriptEventScanRuleUnitTest
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A01_INJECTION.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // THen
+        assertThat(alerts.size(), is(equalTo(1)));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 }

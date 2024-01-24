@@ -6,8 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - References for the following scan rules were updated (Issue 8262):
-  - Exponential Entity Expansion (Billion Laughs Attack)
-  - Relative Path Confusion
+    - Exponential Entity Expansion (Billion Laughs Attack)
+    - Relative Path Confusion
+    - HTTPS Content Available via HTTP
+- The HTTPS Content Available via HTTP rule now includes example alert functionality for documentation generation purposes (Issue 6119).
 
 ## [49] - 2024-01-16
 ### Changed

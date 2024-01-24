@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - The Salvation2 library used by the CSP scan rule has been replaced by htmlunit-csp.
+- The following rules now include example alert functionality for documentation generation purposes (Issue 6119):
+    - HTTPS to HTTP Insecure Transition in Form Post
+    - HTTP to HTTPS Insecure Transition in Form Post
+    - Secure Pages Include Mixed Content
+    - User Controllable JavaScript Event (XSS)
+    - Cookie without SameSite Attribute
+    - X-Debug-Token Information Leak
+- The Cookie without SameSite Attribute scan rule now has alert references (Issue 7100).
+
+### Fixed
+- An issue where Other Info on alerts for the following rules may have been hard to read (missing spaces or new lines):
+    - HTTPS to HTTP Insecure Transition in Form Post
+    - HTTP to HTTPS Insecure Transition in Form Post
+    - User Controllable JavaScript Event (XSS)
 
 ## [54] - 2024-01-16
 ### Changed
