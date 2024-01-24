@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [70] - 2024-01-24
 ### Changed
 - Update ChromeDriver to 121.0.6167.85.
 
@@ -327,6 +327,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release: Firefox v0.13.0 Chrome v2.27
 
+[70]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v70
 [69]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v69
 [68]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v68
 [67]: https://github.com/zaproxy/zap-extensions/releases/webdriverlinux-v67
