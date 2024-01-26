@@ -41,7 +41,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * @author 70pointer@gmail.com
  */
 public class SourceCodeDisclosureScanRule extends PluginPassiveScanner
-        implements CommonPassiveScanRuleBeta {
+        implements CommonPassiveScanRuleInfo {
 
     private static final Logger LOGGER = LogManager.getLogger(SourceCodeDisclosureScanRule.class);
 

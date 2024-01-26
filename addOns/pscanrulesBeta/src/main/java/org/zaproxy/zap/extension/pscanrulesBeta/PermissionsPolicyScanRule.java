@@ -39,7 +39,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * https://github.com/zaproxy/zaproxy/issues/4885
  */
 public class PermissionsPolicyScanRule extends PluginPassiveScanner
-        implements CommonPassiveScanRuleBeta {
+        implements CommonPassiveScanRuleInfo {
 
     private static final String PERMISSIONS_POLICY_HEADER = "Permissions-Policy";
     private static final String DEPRECATED_HEADER = "Feature-Policy";

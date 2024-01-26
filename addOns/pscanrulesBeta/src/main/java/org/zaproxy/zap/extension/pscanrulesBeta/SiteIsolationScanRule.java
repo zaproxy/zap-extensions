@@ -65,7 +65,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * @see <a href="https://html.spec.whatwg.org/multipage/origin.html#coep">COEP Specs</a>
  */
 public class SiteIsolationScanRule extends PluginPassiveScanner
-        implements CommonPassiveScanRuleBeta {
+        implements CommonPassiveScanRuleInfo {
     /** Prefix for internationalized messages used by this rule */
     private static final String SITE_ISOLATION_MESSAGE_PREFIX = "pscanbeta.site-isolation.";
 

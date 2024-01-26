@@ -49,7 +49,7 @@ import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 
 /** Detect missing attribute integrity in supported elements */
 public class SubResourceIntegrityAttributeScanRule extends PluginPassiveScanner
-        implements CommonPassiveScanRuleBeta {
+        implements CommonPassiveScanRuleInfo {
 
     private static final Logger LOGGER =
             LogManager.getLogger(SubResourceIntegrityAttributeScanRule.class);
