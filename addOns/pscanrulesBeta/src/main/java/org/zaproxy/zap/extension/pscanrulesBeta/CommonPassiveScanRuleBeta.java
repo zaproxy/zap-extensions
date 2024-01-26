@@ -23,7 +23,7 @@ public interface CommonPassiveScanRuleBeta {
     public int getPluginId();
 
     public default String getHelpLink() {
-        return "https://www.zaproxy.org/docs/desktop/addons/passive-scan-rules-alpha/#id-"
+        return "https://www.zaproxy.org/docs/desktop/addons/passive-scan-rules-alpha-beta/#id-"
                 + getPluginId();
     }
 }
