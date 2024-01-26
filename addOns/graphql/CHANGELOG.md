@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ### Added
 - Video link in help for Automation Framework job.
 
+### Fixed
+- Fix graphql parameter injection in URL query.
+
 ## [0.22.0] - 2023-12-19
 ### Added
 - Fingerprinting check for the GraphQL.NET engine.
