@@ -75,7 +75,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  *
  * @author 70pointer@gmail.com
  */
-public class CacheableScanRule extends PluginPassiveScanner {
+public class CacheableScanRule extends PluginPassiveScanner implements CommonPassiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX_STORABILITY_CACHEABILITY =
             "pscanbeta.storabilitycacheability.";
