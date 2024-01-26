@@ -41,7 +41,8 @@ import org.zaproxy.zap.model.Tech;
  *
  * @author psiinon
  */
-public class ServletParameterPollutionScanRule extends PluginPassiveScanner {
+public class ServletParameterPollutionScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleBeta {
 
     private static final String MESSAGE_PREFIX = "pscanbeta.servletparameterpollution.";
     private static final int PLUGIN_ID = 10026;
