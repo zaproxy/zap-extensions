@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [50] - 2024-01-26
 ### Changed
 - References for the following scan rules were updated (Issue 8262):
     - Exponential Entity Expansion (Billion Laughs Attack)
@@ -484,6 +484,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[50]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v50
 [49]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v49
 [48]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v48
 [47]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v47
