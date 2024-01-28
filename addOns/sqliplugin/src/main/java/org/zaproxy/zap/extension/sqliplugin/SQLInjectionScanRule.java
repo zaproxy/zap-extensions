@@ -38,6 +38,7 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
+import org.zaproxy.addon.commonlib.http.ComparableResponse;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
@@ -54,6 +55,10 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
     // ------------------------------------------------------------------
     // Plugin Constants
     // ------------------------------------------------------------------
+
+    // Similarity ratio required to determine if two responses are similar (used in boolean based
+    // blind check)
+    private static final double REQUIRED_SIMILARITY = 0.90;
     // Coefficient used for a time-based query delay checking (must be >= 7)
     public static final int TIME_STDEV_COEFF = 7;
     // Standard deviation after which a warning message should be displayed about connection lags
@@ -114,7 +119,7 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
     private static final Pattern randstrPattern = Pattern.compile("\\[RANDSTR(?:\\d+)?\\]");
 
     // Internal dynamic properties
-    private final ResponseMatcher responseMatcher;
+    private ComparableResponse originalResponse;
     private final List<Long> responseTimes;
 
     private int lastRequestUID;
@@ -131,7 +136,6 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
      */
     public SQLInjectionScanRule() {
         responseTimes = new ArrayList<>();
-        responseMatcher = new ResponseMatcher();
         lastRequestUID = 0;
         lastErrorPageUID = -1;
     }
@@ -601,6 +605,7 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
                     // each plugin execution, then we have to work
                     // with message copies and use getNewMsg()
                     origMsg = getBaseMsg();
+                    originalResponse = new ComparableResponse(origMsg, null);
 
                     // Threat the parameter original value according to the
                     // test's <where> tag
@@ -639,7 +644,7 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
                                 // exit the plugin
                                 return;
                             }
-
+                            originalResponse = new ComparableResponse(origMsg, payloadValue);
                             break;
 
                         case SQLiPayloadManager.WHERE_REPLACE:
@@ -678,12 +683,10 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
 
                         // prepare string diff matcher
                         // cleaned by reflective values
-                        // and according to the replacement
-                        // logic set by the plugin
                         content = origMsg.getResponseBody().toString();
                         content = SQLiPayloadManager.removeReflectiveValues(content, payloadValue);
-                        responseMatcher.setOriginalResponse(content);
-                        responseMatcher.setLogic(where);
+                        origMsg.setResponseBody(content);
+                        originalResponse = new ComparableResponse(origMsg, payloadValue);
 
                         // -----------------------------------------------
                         // Check 1: Boolean-based blind SQL injection
@@ -710,7 +713,7 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
                             cmpPayload = payloadValue + cmpPayload;
 
                             // Send False payload
-                            // Useful to set first matchRatio on
+                            // Useful to tune original to
                             // the False response content
                             tempMsg = sendPayload(parameter, cmpPayload, true);
                             if (tempMsg == null) {
@@ -722,9 +725,11 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
                             content = tempMsg.getResponseBody().toString();
                             content =
                                     SQLiPayloadManager.removeReflectiveValues(content, cmpPayload);
-                            responseMatcher.setInjectedResponse(content);
-                            // set initial matchRatio
-                            responseMatcher.isComparable();
+                            tempMsg.setResponseBody(content);
+
+                            ComparableResponse tempResponse =
+                                    new ComparableResponse(tempMsg, cmpPayload);
+                            originalResponse.tuneHeuristicsWithResponse(tempResponse);
 
                             // Perform the test's True request
                             tempMsg = sendPayload(parameter, reqPayload, true);
@@ -737,13 +742,12 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
                             content = tempMsg.getResponseBody().toString();
                             content =
                                     SQLiPayloadManager.removeReflectiveValues(content, reqPayload);
-                            responseMatcher.setInjectedResponse(content);
-
+                            tempMsg.setResponseBody(content);
+                            tempResponse = new ComparableResponse(tempMsg, reqPayload);
                             // Check if the TRUE response is equal or
                             // at less strongly comparable respect to
                             // the Original response value
-                            if (responseMatcher.isComparable()) {
-
+                            if (this.isComparableToOriginal(tempResponse)) {
                                 // Perform again the test's False request
                                 tempMsg = sendPayload(parameter, cmpPayload, true);
                                 if (tempMsg == null) {
@@ -756,13 +760,14 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
                                 content =
                                         SQLiPayloadManager.removeReflectiveValues(
                                                 content, cmpPayload);
-                                responseMatcher.setInjectedResponse(content);
+                                tempMsg.setResponseBody(content);
+                                tempResponse = new ComparableResponse(tempMsg, cmpPayload);
 
                                 // Now check if the FALSE response is
                                 // completely different from the
                                 // Original response according to the
-                                // responseMatcher ratio criteria
-                                if (!responseMatcher.isComparable()) {
+                                // required ratio criteria
+                                if (!this.isComparableToOriginal(tempResponse)) {
                                     // We Found IT!
                                     // Now create the alert message
                                     String info =
@@ -1195,20 +1200,26 @@ public class SQLInjectionScanRule extends AbstractAppParamPlugin {
      * @param pageContent the content that need to be compared
      * @return true if similar, false otherwise
      */
-    protected boolean isComparableToOriginal(String pageContent) {
-        responseMatcher.setInjectedResponse(pageContent);
-        return responseMatcher.isComparable();
-    }
 
     /**
      * Get the page comparison ration against the original content
      *
-     * @param pageContent the content that need to be compared
+     * @param ComparableResponse that need to be compared
      * @return a ratio value for this comparison
      */
-    protected double compareToOriginal(String pageContent) {
-        responseMatcher.setInjectedResponse(pageContent);
-        return responseMatcher.getQuickRatio();
+    protected double compareToOriginal(ComparableResponse response) {
+        return originalResponse.compareWith(response);
+    }
+
+    /**
+     * Check if the response is similar to original Response
+     *
+     * @param ComparableResponse that need to be compared
+     * @return boolean indicating similar (true) or not similar(false)
+     */
+    protected boolean isComparableToOriginal(ComparableResponse otherResponse) {
+        float similarity = originalResponse.compareWith(otherResponse);
+        return similarity >= REQUIRED_SIMILARITY;
     }
 
     /**

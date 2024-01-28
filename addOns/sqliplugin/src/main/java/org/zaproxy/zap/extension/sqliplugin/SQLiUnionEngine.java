@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.http.ComparableResponse;
 
 /**
  * Union-based SQL injection query engine. This module allows the detection of OrderBy-based and
@@ -37,6 +38,12 @@ import org.parosproxy.paros.network.HttpMessage;
  * @author yhawke (2013)
  */
 public class SQLiUnionEngine {
+
+    // Minimum value for comparison ratio
+    public static final double MIN_RATIO = 0.0;
+
+    // Maximum value for comparison ratio
+    public static final double MAX_RATIO = 1.0;
 
     // Step used in ORDER BY technique used for finding the right number of columns in UNION payload
     // injections
@@ -818,9 +825,9 @@ public class SQLiUnionEngine {
         }
 
         String content = msg.getResponseBody().toString();
-
+        ComparableResponse messageResponse = new ComparableResponse(msg, payload);
         return (((content != null) && !orderPattern.matcher(content).lookingAt())
-                        && plugin.isComparableToOriginal(content)
+                        && plugin.isComparableToOriginal(messageResponse)
                 || ((content != null)
                         && content.contains("data types cannot be compared or sorted")));
     }
@@ -832,7 +839,6 @@ public class SQLiUnionEngine {
      */
     private int orderByTechnique() {
         int found = -1;
-
         if (orderByTest(1) && !orderByTest(Integer.parseInt(SQLiPayloadManager.randomInt()))) {
             LOGGER.debug(
                     "ORDER BY technique seems to be usable. This should reduce the time needed to find the right number of query columns. Automatically extending the range for current UNION query injection technique test");
@@ -914,8 +920,8 @@ public class SQLiUnionEngine {
 
         int lowerCount = uColsStart;
         int upperCount = uColsStop;
-        double min = ResponseMatcher.MAX_RATIO;
-        double max = ResponseMatcher.MIN_RATIO;
+        double min = MAX_RATIO;
+        double max = MIN_RATIO;
 
         // Search for our char sequence token
         Pattern tokenPattern = Pattern.compile("(" + uChars + "|\\>\\s*" + uChars + "\\s*\\<)");
@@ -952,14 +958,14 @@ public class SQLiUnionEngine {
 
             content = msg.getResponseBody().toString();
             content = SQLiPayloadManager.removeReflectiveValues(content, payload);
-
+            msg.setResponseBody(content);
             if (uChars != null) {
                 if (tokenPattern.matcher(content).find()) {
                     matchingCols.add(count);
                 }
             }
 
-            ratio = plugin.compareToOriginal(content);
+            ratio = plugin.compareToOriginal(new ComparableResponse(msg, null));
             min = Math.min(min, ratio);
             max = Math.max(max, ratio);
 
