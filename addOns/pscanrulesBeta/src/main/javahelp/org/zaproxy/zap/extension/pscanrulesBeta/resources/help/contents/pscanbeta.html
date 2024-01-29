@@ -33,7 +33,7 @@ Alerts generated:
  <li><b>Storable and Cacheable Content</b></li>
 </ul>
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/CacheableScanRule.java">CacheableScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/CacheableScanRule.java">CacheableScanRule.java</a><br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10049/">10049</a>
 
 <H2 id="id-10110">Dangerous JS Functions</H2>
@@ -43,7 +43,7 @@ They will also be searched for in responses as they're passively scanned. Keep i
 <br>
 <strong>Note:</strong> &dollar; is stripped from the start of the strings/payloads and is optionally included when the patterns are assembled.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/JsFunctionScanRule.java">JsFunctionScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/JsFunctionScanRule.java">JsFunctionScanRule.java</a><br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10110/">10110</a>
 
 <H2 id="id-10009">In Page Banner Information Leak</H2>
@@ -51,7 +51,7 @@ Analyzes response body content for the presence of web or application server ban
 If the Threshold is Low then status 200 - Ok responses are analyzed as well.<br>
 The presence of such banners may facilitate more targeted attacks against known vulnerabilities.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/InPageBannerInfoLeakScanRule.java">InPageBannerInfoLeakScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/InPageBannerInfoLeakScanRule.java">InPageBannerInfoLeakScanRule.java</a><br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10009/">10009</a>
 
 <H2 id="id-90002">Java Serialization Object</H2>
@@ -61,7 +61,7 @@ An attacker can also modify the data and exploit JSO to do a Remote Code Executi
 JSO should not be used by Java programs. Strong controls must be done on serialized data.<br>
 JSO are a type of vulnerabilities associated to A8:2017-Insecure Deserialization.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/JsoScanRule.java">JsoScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/JsoScanRule.java">JsoScanRule.java</a><br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90002/">90002</a>
 
 <H2 id="id-10063">Permissions Policy Header Not Set</H2>
@@ -69,7 +69,7 @@ This rule checks the HTTP response headers (on HTML and JavaScript responses) fo
 and alerts if one is not found. It also alerts if the deprecated header "Feature-Policy" is found.<br>
 Redirects are ignored except at the Low threshold.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/PermissionsPolicyScanRule.java">PermissionsPolicyScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/PermissionsPolicyScanRule.java">PermissionsPolicyScanRule.java</a><br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10063/">10063</a>
 
 <H2 id="id-90004">Site Isolation Scan Rule</H2>
@@ -111,7 +111,7 @@ mechanism managed independently by the browser.
  <li><b>Cross-Origin-Opener-Policy Header Missing or Invalid</b></li>
 </ul>
 <p>
- Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/SiteIsolationScanRule.java">SiteIsolationScanRule.java</a>
+ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/SiteIsolationScanRule.java">SiteIsolationScanRule.java</a><br>
  Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90004/">90004</a>
 
 <H2 id="id-10026">Servlet Parameter Pollution</H2>
@@ -120,14 +120,14 @@ Java Servlet spec calls for aggregation of query string and post data elements w
 unintended handling of user controlled data. This may impact other frameworks and technologies as well.
 <strong>Note:</strong> This scan rule will only analyze responses on LOW Threshold, and in Context URLs for which the Tech JSP/Servlet is applicable.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/ServletParameterPollutionScanRule.java">ServletParameterPollutionScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/ServletParameterPollutionScanRule.java">ServletParameterPollutionScanRule.java</a><br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10026/">10026</a>
 
 <H2 id="id-10099">Source Code Disclosure</H2>
 Application Source Code was disclosed by the web server.<br>
 NOTE: Ignores CSS, JavaScript, images, font files, and responses that contain ISO control characters (those which are likely binary files).
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/SourceCodeDisclosureScanRule.java">SourceCodeDisclosureScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/SourceCodeDisclosureScanRule.java">SourceCodeDisclosureScanRule.java</a><br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10099/">10099</a>
 
 <H2 id="id-90003">Sub Resource Integrity Attribute Missing</H2>
@@ -137,7 +137,7 @@ Note: A suggested integrity hash value will be present in the relevant Alert's O
 <p>
 This rule supports <b>Trusted Domains</b>, check "General Configuration" for more information.
 <p>
-Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/SubResourceIntegrityAttributeScanRule.java">SubResourceIntegrityAttributeScanRule.java</a>
+Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrulesBeta/src/main/java/org/zaproxy/zap/extension/pscanrulesBeta/SubResourceIntegrityAttributeScanRule.java">SubResourceIntegrityAttributeScanRule.java</a><br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/90003/">90003</a>
 
 </BODY>
