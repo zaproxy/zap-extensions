@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Updated with upstream retire.js pattern changes.
 - Now only targets relevant responses (HTML and JS).
 
 ## [0.29.0] - 2024-01-03
