@@ -208,11 +208,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
 
                 int risk = Alert.RISK_MEDIUM;
                 String desc = Constant.messages.getString("pscanrules.noanticsrftokens.desc");
-                String extraInfo =
-                        Constant.messages.getString(
-                                "pscanrules.noanticsrftokens.alert.extrainfo",
-                                tokenNamesFlattened,
-                                formDetails);
+                String extraInfo = getExtraInfo(tokenNamesFlattened, formDetails);
                 if (hasSecurityAnnotation) {
                     risk = Alert.RISK_INFO;
                     extraInfo =
@@ -220,20 +216,15 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
                                     "pscanrules.noanticsrftokens.extrainfo.annotation");
                 }
 
-                newAlert()
-                        .setRisk(risk)
-                        .setConfidence(Alert.CONFIDENCE_LOW)
-                        .setDescription(desc + "\n" + getDescription())
-                        .setOtherInfo(extraInfo)
-                        .setSolution(getSolution())
-                        .setReference(getReference())
-                        .setEvidence(evidence)
-                        .setCweId(getCweId())
-                        .setWascId(getWascId())
-                        .raise();
+                buildAlert(risk, desc, extraInfo, evidence).raise();
             }
         }
         LOGGER.debug("\tScan of record {} took {} ms", id, System.currentTimeMillis() - start);
+    }
+
+    private String getExtraInfo(String tokenNamesFlattened, String formDetails) {
+        return Constant.messages.getString(
+                "pscanrules.noanticsrftokens.alert.extrainfo", tokenNamesFlattened, formDetails);
     }
 
     private boolean formOnIgnoreList(Element formElement, List<String> ignoreList) {
@@ -291,6 +282,31 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
 
     public int getWascId() {
         return 9;
+    }
+
+    private AlertBuilder buildAlert(int risk, String desc, String extraInfo, String evidence) {
+        return newAlert()
+                .setRisk(risk)
+                .setConfidence(Alert.CONFIDENCE_LOW)
+                .setDescription(desc + "\n" + getDescription())
+                .setOtherInfo(extraInfo)
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(evidence)
+                .setCweId(getCweId())
+                .setWascId(getWascId());
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                Alert.RISK_MEDIUM,
+                                Constant.messages.getString("pscanrules.noanticsrftokens.desc"),
+                                getExtraInfo(
+                                        "[token, csrfToken, csrf-token]", "[Form 1: \"name\" ]"),
+                                "<form name=\"someName\" data-no-csrf>")
+                        .build());
     }
 
     protected ExtensionAntiCSRF getExtensionAntiCSRF() {

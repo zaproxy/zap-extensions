@@ -162,7 +162,6 @@ class UserControlledJavascriptEventScanRuleUnitTest
         // Then
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(alertsRaised.get(0).getParam(), equalTo("name"));
-        System.out.println(alertsRaised.get(0).getOtherInfo());
     }
 
     @Test

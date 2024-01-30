@@ -84,15 +84,18 @@ public class ModernAppDetectionScanRule extends PluginPassiveScanner {
 
         if (evidence != null && evidence.length() > 0) {
             // we found something
-            newAlert()
-                    .setRisk(Alert.RISK_INFO)
-                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                    .setDescription(getDescription())
-                    .setOtherInfo(otherInfo)
-                    .setSolution(getSolution())
-                    .setEvidence(evidence)
-                    .raise();
+            buildAlert(otherInfo, evidence).raise();
         }
+    }
+
+    private AlertBuilder buildAlert(String otherInfo, String evidence) {
+        return newAlert()
+                .setRisk(Alert.RISK_INFO)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription())
+                .setOtherInfo(otherInfo)
+                .setSolution(getSolution())
+                .setEvidence(evidence);
     }
 
     @Override
@@ -106,5 +109,14 @@ public class ModernAppDetectionScanRule extends PluginPassiveScanner {
 
     private String getSolution() {
         return Constant.messages.getString(MESSAGE_PREFIX + "soln");
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                Constant.messages.getString(MESSAGE_PREFIX + "other.self"),
+                                "<a href=\"link\" target=\"_self\">Link</a>")
+                        .build());
     }
 }
