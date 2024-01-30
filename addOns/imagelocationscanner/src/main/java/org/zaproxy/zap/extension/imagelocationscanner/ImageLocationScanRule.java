@@ -68,6 +68,11 @@ public class ImageLocationScanRule extends PluginPassiveScanner {
 		return PLUGIN_ID;
 	}
 
+    public String getHelpLink() {
+        return "https://www.zaproxy.org/docs/desktop/addons/image-location-and-privacy-scanner/"
+                + "#id-" + PLUGIN_ID;
+    }
+
 	@Override
 	public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
 		long start = 0;
