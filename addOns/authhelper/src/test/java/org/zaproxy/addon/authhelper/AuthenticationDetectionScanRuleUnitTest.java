@@ -54,10 +54,10 @@ class AuthenticationDetectionScanRuleUnitTest
     private ExtensionAuthhelper extAuth;
     private ExtensionLoader extensionLoader;
 
-    @Mock(lenient = true)
+    @Mock(strictness = org.mockito.Mock.Strictness.LENIENT)
     Model model;
 
-    @Mock(lenient = true)
+    @Mock(strictness = org.mockito.Mock.Strictness.LENIENT)
     Session session;
 
     @BeforeEach
