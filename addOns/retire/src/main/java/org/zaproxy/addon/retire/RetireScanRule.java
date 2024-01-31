@@ -58,6 +58,10 @@ public class RetireScanRule extends PluginPassiveScanner {
         return PLUGIN_ID;
     }
 
+    public String getHelpLink() {
+        return "https://www.zaproxy.org/docs/desktop/addons/retire.js/#id-" + PLUGIN_ID;
+    }
+
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
         Repo scanRepo = getRepo();
