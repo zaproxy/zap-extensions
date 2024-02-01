@@ -173,25 +173,29 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
                                 continue;
                             }
                         }
-                        newAlert()
-                                .setName(getName() + " - " + timestampType)
-                                .setRisk(getRisk())
-                                .setConfidence(Alert.CONFIDENCE_LOW)
-                                .setDescription(getDescription() + " - " + timestampType)
-                                .setParam(haystack.getName())
-                                .setOtherInfo(getExtraInfo(evidence, timestamp))
-                                .setSolution(getSolution())
-                                .setReference(getReference())
-                                .setEvidence(evidence)
-                                .setCweId(getCweId())
-                                .setWascId(getWascId())
-                                .raise();
+                        buildAlert(timestampType, evidence, haystack.getName(), timestamp).raise();
                         // do NOT break at this point.. we need to find *all* the potential
                         // timestamps in the response..
                     }
                 }
             }
         }
+    }
+
+    private AlertBuilder buildAlert(
+            String timestampType, String evidence, String param, Date timestamp) {
+        return newAlert()
+                .setName(getName() + " - " + timestampType)
+                .setRisk(getRisk())
+                .setConfidence(Alert.CONFIDENCE_LOW)
+                .setDescription(getDescription() + " - " + timestampType)
+                .setParam(param)
+                .setOtherInfo(getExtraInfo(evidence, timestamp))
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(evidence)
+                .setCweId(getCweId())
+                .setWascId(getWascId());
     }
 
     @Override
@@ -231,6 +235,12 @@ public class TimestampDisclosureScanRule extends PluginPassiveScanner {
 
     public int getWascId() {
         return 13; // WASC Id - Info leakage
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert("Unix", "1704114087", "registeredAt", new Date(1704114087)).build());
     }
 
     private static boolean containsIgnoreCase(List<String> list, String test) {
