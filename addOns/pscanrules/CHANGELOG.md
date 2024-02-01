@@ -4,6 +4,7 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
 ### Changed
 - The following rules now include example alert functionality for documentation generation purposes (Issue 6119):
     - Timestamp Disclosure - Unix
@@ -12,6 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The references for Alerts from the following rules were also updated (Issue 8262):
     - Timestamp Disclosure - Unix 
     - Hash Disclosure
+    - View State Scan Rule 
 
 ## [55] - 2024-01-26
 ### Changed
