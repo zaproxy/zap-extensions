@@ -33,7 +33,6 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.addon.commonlib.ResourceIdentificationUtils;
 import org.zaproxy.addon.retire.model.Repo;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
@@ -59,18 +58,21 @@ public class RetireScanRule extends PluginPassiveScanner {
         return PLUGIN_ID;
     }
 
+    public String getHelpLink() {
+        return "https://www.zaproxy.org/docs/desktop/addons/retire.js/#id-" + PLUGIN_ID;
+    }
+
     @Override
     public void scanHttpResponseReceive(HttpMessage msg, int id, Source source) {
-        if (!getHelper().isPage200(msg) || getRepo() == null) {
+        Repo scanRepo = getRepo();
+        if (!getHelper().isPage200(msg) || scanRepo == null) {
+            if (scanRepo == null) {
+                LOGGER.error("\tThe Retire.js repository was null.");
+            }
             return;
         }
         String uri = msg.getRequestHeader().getURI().toString();
-        if (!ResourceIdentificationUtils.isImage(msg) && !ResourceIdentificationUtils.isCss(msg)) {
-            Repo scanRepo = getRepo();
-            if (scanRepo == null) {
-                LOGGER.error("\tThe Retire.js repository was null.");
-                return;
-            }
+        if (msg.getResponseHeader().isHtml() || msg.getResponseHeader().isJavaScript()) {
             Result result = scanRepo.scanJS(msg, source);
             if (result == null) {
                 LOGGER.debug("\tNo vulnerabilities found in record {} with URL {}", id, uri);

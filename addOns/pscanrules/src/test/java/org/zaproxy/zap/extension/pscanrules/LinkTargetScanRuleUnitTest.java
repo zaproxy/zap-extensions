@@ -32,6 +32,7 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.Mock.Strictness;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
@@ -48,10 +49,10 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
     private static final String HTML_CONTENT_TYPE = "text/html;charset=ISO-8859-1";
     private static final String TEXT_CONTENT_TYPE = "text/plain; charset=us-ascii";
 
-    @Mock(lenient = true)
+    @Mock(strictness = Strictness.LENIENT)
     Model model;
 
-    @Mock(lenient = true)
+    @Mock(strictness = Strictness.LENIENT)
     Session session;
 
     @BeforeEach
