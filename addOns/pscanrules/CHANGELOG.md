@@ -4,6 +4,7 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+- View State Scan Rules (Issue 8262)
 
 
 ## [55] - 2024-01-26
@@ -20,7 +21,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - The following scan rules now have alert references (Issue 7100):
     - Cookie without SameSite Attribute 
     - Retrieved from Cache (raw text was also trimmed from one Alert reference (Issue 8262))
-    - View State Scan Rules (Issue 8262)
 
 ### Fixed
 - An issue where Other Info on alerts for the following rules may have been hard to read (missing spaces or new lines):
