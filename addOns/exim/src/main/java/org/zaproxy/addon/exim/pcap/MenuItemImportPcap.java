@@ -36,9 +36,9 @@ public class MenuItemImportPcap extends ZapMenuItem {
     private static final long serialVersionUID = 9111279126644588074L;
 
     public MenuItemImportPcap() {
-        super("exim.importPcap/Pcapng.topmenu.import");
+        super("exim.import.pcap.topmenu.import");
         this.setToolTipText(
-                Constant.messages.getString("exim.importPcap/Pcapng.topmenu.import.tooltip"));
+                Constant.messages.getString("exim.import.pcap.topmenu.import.tooltip"));
 
         this.addActionListener(
                 e -> {
@@ -49,12 +49,12 @@ public class MenuItemImportPcap extends ZapMenuItem {
                     FileFilter pcapFilter =
                             new FileNameExtensionFilter(
                                     Constant.messages.getString(
-                                            "exim.importPcap/Pcapng.choosefile.filter.pcap.description"),
+                                            "exim.import.pcap.choosefile.filter.pcap.description"),
                                     "pcap");
                     FileFilter pcapngFilter =
                             new FileNameExtensionFilter(
                                     Constant.messages.getString(
-                                            "exim.importPcap/Pcapng.choosefile.filter.pcapng.description"),
+                                            "exim.import.pcap.choosefile.filter.pcapng.description"),
                                     "pcapng");
                     fc.addChoosableFileFilter(pcapFilter);
                     fc.addChoosableFileFilter(pcapngFilter);
