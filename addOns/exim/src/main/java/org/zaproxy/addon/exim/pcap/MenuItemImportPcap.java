@@ -58,9 +58,7 @@ public class MenuItemImportPcap extends ZapMenuItem {
                                     "pcapng");
                     fc.addChoosableFileFilter(pcapFilter);
                     fc.addChoosableFileFilter(pcapngFilter);
-                    // done from here
 
-                    // check this
                     int openChoice = fc.showOpenDialog(main);
                     if (openChoice == JFileChooser.APPROVE_OPTION) {
                         File newFile = fc.getSelectedFile();
@@ -69,9 +67,6 @@ public class MenuItemImportPcap extends ZapMenuItem {
                         ExtensionExim.getProgressPanel().addProgressPane(currentImportPane);
                         new PcapImporter(newFile, new ProgressPaneListener(currentImportPane));
                     }
-
-                    // end of check
-
                 });
     }
 }
