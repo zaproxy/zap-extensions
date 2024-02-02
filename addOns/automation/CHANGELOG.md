@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Fixed
+- Correct parsing of attack strength and alert threshold in some locales.
 
 ## [0.35.0] - 2024-01-16
 ### Added
