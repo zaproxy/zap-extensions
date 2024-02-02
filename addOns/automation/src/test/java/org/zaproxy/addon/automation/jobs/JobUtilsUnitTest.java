@@ -39,11 +39,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.quality.Strictness;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
+import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.parosproxy.paros.extension.ExtensionLoader;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.automation.AutomationEnvironment;
@@ -407,6 +412,47 @@ class JobUtilsUnitTest extends TestUtils {
         File f = JobUtils.getFile(path, plan);
         // Then
         assertFilePath(f, "/full/path/dir/relative/path/to/file");
+    }
+
+    static Stream<Locale> locales() {
+        return Stream.of(
+                Locale.ROOT, Locale.ENGLISH, new Locale.Builder().setLanguage("TR").build());
+    }
+
+    @ParameterizedTest
+    @MethodSource("locales")
+    void shouldParseAttackStrengthInDifferentLocales(Locale locale) {
+        Locale defaultLocale = Locale.getDefault();
+        try {
+            // Given
+            Locale.setDefault(locale);
+            AutomationProgress progress = mock(AutomationProgress.class);
+            // When
+            AttackStrength attackStrength = JobUtils.parseAttackStrength("medium", "job", progress);
+            // Then
+            assertThat(attackStrength, is(equalTo(AttackStrength.MEDIUM)));
+            verifyNoInteractions(progress);
+        } finally {
+            Locale.setDefault(defaultLocale);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("locales")
+    void shouldParseAlertThresholdInDifferentLocales(Locale locale) {
+        Locale defaultLocale = Locale.getDefault();
+        try {
+            // Given
+            Locale.setDefault(locale);
+            AutomationProgress progress = mock(AutomationProgress.class);
+            // When
+            AlertThreshold alertThreshold = JobUtils.parseAlertThreshold("medium", "job", progress);
+            // Then
+            assertThat(alertThreshold, is(equalTo(AlertThreshold.MEDIUM)));
+            verifyNoInteractions(progress);
+        } finally {
+            Locale.setDefault(defaultLocale);
+        }
     }
 
     private static void assertFilePath(File file, String path) {
