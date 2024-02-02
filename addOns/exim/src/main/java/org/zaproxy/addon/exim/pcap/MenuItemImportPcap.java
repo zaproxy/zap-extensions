@@ -37,8 +37,7 @@ public class MenuItemImportPcap extends ZapMenuItem {
 
     public MenuItemImportPcap() {
         super("exim.import.pcap.topmenu.import");
-        this.setToolTipText(
-                Constant.messages.getString("exim.import.pcap.topmenu.import.tooltip"));
+        this.setToolTipText(Constant.messages.getString("exim.import.pcap.topmenu.import.tooltip"));
 
         this.addActionListener(
                 e -> {
