@@ -1775,6 +1775,15 @@
     "saas": true,
     "website": "https://fanavar.org"
   },
+  "Classnames": {
+    "cats": [
+      59
+    ],
+    "description": "Javascript utility for conditionally joining classNames together.",
+    "oss": true,
+    "scriptSrc": "classnames\\.?\\w{0,20}(?:\\.chunk)?\\.js",
+    "website": "https://jedwatson.github.io/classnames/"
+  },
   "Classy": {
     "cats": [
       111
@@ -1811,6 +1820,15 @@
       "reveal\\.clearbit\\.com/v[(0-9)]/"
     ],
     "website": "https://clearbit.com/reveal"
+  },
+  "Cleave.js": {
+    "cats": [
+      59
+    ],
+    "description": "JavaScript library for formatting input text content when you are typing.",
+    "oss": true,
+    "scriptSrc": "cleave(?:\\.min)?(?:\\.\\w{0,32})?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://nosir.github.io/cleave.js/"
   },
   "Clerk": {
     "cats": [
@@ -2548,6 +2566,17 @@
     ],
     "saas": true,
     "website": "https://codesandbox.io/"
+  },
+  "Coffee Script": {
+    "cats": [
+      12,
+      59
+    ],
+    "description": "CoffeeScript is a language that compiles into JavaScript.",
+    "icon": "Coffee Script.png",
+    "oss": true,
+    "scriptSrc": "coffee-?script(?:-lint)?(?:\\.min)?\\.js(?:\\?ver=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://coffeescript.org/"
   },
   "Coin Currency Converter": {
     "cats": [

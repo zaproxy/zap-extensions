@@ -1207,6 +1207,16 @@
     },
     "website": "https://developer.matomo.org/guides/tagmanager/introduction"
   },
+  "Matter.js": {
+    "cats": [
+      59
+    ],
+    "description": "Matter.js is a 2D physics engine for the web. It provides JavaScript-based tools for simulating rigid body physics in 2D environments.",
+    "icon": "Matter.js.png",
+    "oss": true,
+    "scriptSrc": "matter(?:-wrap)?(?:\\/demo\\/js\\/lib(?:\\/matter-tools\\/jquery)?(?:\\/decomp)?)?(?:\\/?-?((?:\\d+\\.)+\\d+))?(?:\\.min)?\\.js\\;version:\\1",
+    "website": "https://brm.io/matter-js/"
+  },
   "Mattermost": {
     "cats": [
       2

@@ -1940,6 +1940,16 @@
     "scriptSrc": "bootstrap-table(?:\\.min)?\\.js",
     "website": "https://bootstrap-table.wenzhixin.net.cn/"
   },
+  "BootstrapCDN": {
+    "cats": [
+      31
+    ],
+    "description": "BootstrapCDN is a powerful and reliable Content Delivery Network (CDN) that delivers static resources, including CSS, JavaScript, and font files, for the widely-used Bootstrap framework. By leveraging multiple server locations worldwide, BootstrapCDN accelerates website loading times, ensuring a smooth and visually appealing user experience. Additionally, it ensures website compatibility with various devices and browsers. The service reduces bandwidth usage and server load, improving web performance for developers and end-users alike.",
+    "icon": "BootstrapCDN.png",
+    "oss": true,
+    "scriptSrc": "bootstrapcdn\\.com\\/bootstrap\\/((?:\\d+\\.)+\\d+)?(?:\\/js\\/)?bootstrap(?:\\.min)?\\.js\\;version:\\1",
+    "website": "https://www.bootstrapcdn.com/"
+  },
   "Booxi": {
     "cats": [
       72
