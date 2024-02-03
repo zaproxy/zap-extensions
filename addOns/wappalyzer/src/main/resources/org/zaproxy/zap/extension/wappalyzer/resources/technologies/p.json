@@ -206,6 +206,19 @@
     "scriptSrc": "pay\\.pacenow\\.co",
     "website": "https://pacenow.co/"
   },
+  "Packery": {
+    "cats": [
+      59,
+      66
+    ],
+    "description": "Packery is a JavaScript library and jQuery plugin that makes gapless and draggable layouts.",
+    "icon": "Packery.svg",
+    "pricing": [
+      "onetime"
+    ],
+    "scriptSrc": "packery(?:\\.pkgd)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://packery.metafizzy.co/"
+  },
   "Packlink PRO": {
     "cats": [
       100,
@@ -542,6 +555,18 @@
       "PARSELY": ""
     },
     "website": "https://www.parse.ly"
+  },
+  "Parsley.js": {
+    "cats": [
+      59
+    ],
+    "description": "Javascript forms validation script.",
+    "js": {
+      "parsley": ""
+    },
+    "oss": true,
+    "scriptSrc": "parsley(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://parsleyjs.org"
   },
   "Partial.ly": {
     "cats": [
@@ -1608,6 +1633,15 @@
       "recurring"
     ],
     "website": "https://picturepark.com"
+  },
+  "Pikaday": {
+    "cats": [
+      59
+    ],
+    "description": "A refreshing JavaScript Datepicker.",
+    "oss": true,
+    "scriptSrc": "pikaday(?:-jquery)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://github.com/dbushell/Pikaday"
   },
   "Piman": {
     "cats": [
@@ -3698,6 +3732,19 @@
     "implies": "PHP",
     "website": "https://papaya-cms.com"
   },
+  "parallax.js": {
+    "cats": [
+      59
+    ],
+    "description": "Simple parallax scrolling effect.",
+    "js": {
+      "parallax": "",
+      "parallaxInstance": ""
+    },
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?parallax(?:\\/assets\\/js)?(?:\\/jquery)?(?:\\/scripts)?(?:\\/wow)?(?:[_\\.]move)?(?:\\.inview)?(?:\\.pkgd)?(?:\\.scrolling)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2",
+    "website": "https://github.com/pixelcog/parallax.js"
+  },
   "parcel": {
     "cats": [
       19
@@ -3723,6 +3770,15 @@
     "oss": true,
     "scriptSrc": "/particles(?:\\.min)?\\.js",
     "website": "https://github.com/VincentGarreau/particles.js"
+  },
+  "pdfmake": {
+    "cats": [
+      59
+    ],
+    "description": "Client/server side PDF printing in pure JavaScript.",
+    "oss": true,
+    "scriptSrc": "pdfmake(?:[\\/-]((?:\\d+\\.)+\\d+)\\/(?:build\\/)?)?(?:pdfmake)?(?:vfs_fonts)?(?:\\.min)?\\.js\\;version:\\1",
+    "website": "https://bpampuch.github.io/pdfmake"
   },
   "petite-vue": {
     "cats": [
@@ -3873,6 +3929,19 @@
       "generator": "^phpwind(?: v([0-9-]+))?\\;version:\\1"
     },
     "website": "https://www.phpwind.net"
+  },
+  "pickadate.js": {
+    "cats": [
+      59
+    ],
+    "description": "Mobile-friendly, responsive, and lightweight jQuery date & time input picker.",
+    "icon": "pickadate.js.png",
+    "js": {
+      "pickadate": ""
+    },
+    "oss": true,
+    "scriptSrc": "pickadate(?:\\/translations)?(?:\\/de_DE)?(?:\\/picker)?(?:\\.date)?(?:\\.time)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://amsul.ca/pickadate.js/"
   },
   "pinoox": {
     "cats": [

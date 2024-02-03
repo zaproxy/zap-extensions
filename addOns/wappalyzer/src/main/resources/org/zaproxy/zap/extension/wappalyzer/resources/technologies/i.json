@@ -665,6 +665,21 @@
     },
     "website": "https://infernojs.org"
   },
+  "Infinite Scroll": {
+    "cats": [
+      59
+    ],
+    "description": "jQuery plugin for infinite scrolling.",
+    "icon": "Infinite Scroll.svg",
+    "js": {
+      "infinitescroll": ""
+    },
+    "pricing": [
+      "onetime"
+    ],
+    "scriptSrc": "infinite-?scroll(?:\\.pkgd)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://infinite-scroll.com/"
+  },
   "Infogram": {
     "cats": [
       5
@@ -825,6 +840,15 @@
     "saas": true,
     "scriptSrc": "instafeed\\.nfcube\\.com/",
     "website": "https://apps.shopify.com/instafeed"
+  },
+  "Instafeed.js": {
+    "cats": [
+      59
+    ],
+    "description": "A way to add Instagram photos to your website.",
+    "oss": true,
+    "scriptSrc": "instafeed(?:\\.min)?\\.js",
+    "website": "https://instafeedjs.com/"
   },
   "Instamojo": {
     "cats": [
@@ -1481,6 +1505,15 @@
     ],
     "icon": "ikiwiki.png",
     "website": "https://ikiwiki.info"
+  },
+  "imagesLoaded": {
+    "cats": [
+      59
+    ],
+    "description": "jQuery plugin for seeing if the images are loaded.",
+    "oss": true,
+    "scriptSrc": "imagesloaded(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://imagesloaded.desandro.com/"
   },
   "imperia CMS": {
     "cats": [

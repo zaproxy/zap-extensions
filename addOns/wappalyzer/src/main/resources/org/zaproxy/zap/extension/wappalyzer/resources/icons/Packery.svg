@@ -1,0 +1,25 @@
+<svg class="mfzy-logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 144 144" width="36" height="36">
+    <title>Metafizzy logo</title>
+    <defs>
+        <path id="mfzy-logo__body" d="M 120 24 a 12 12 0 0 0-24 0 a 72 72 0 0 1 -1 11 a 40 40 0 0 0 -13 -8.5 A 12 12 0 1 0 61.1 25.1 c -8 2 -14 6 -19.6 11.6 A 12 12 0 1 0 35.3 55.5 L 45.8 72.1 l -16 9.6 A 12 12 0 0 0 42.2 102.3 L 58 92.8 a 20 20 0 0 1 -0.2 11.9 l -5.2 15.5 a 12 12 0 0 0 22.8 7.6 l 1.1 -3.3 l 23.7 -14.2 a 12 12 0 0 0 5.2 -6.5 l 4 -12 A 50 50 0 0 0 111.9 76 a 52 52 0 0 0 -1.6 -12.8 C 115 57 120 44 120 24Z"> </path>
+        <path id="mfzy-logo__eye" d="M 0 6.5 a 6.5 6.5 0 0 1 13 0 c 0 3.5 -3 0.5 -6.5 0.5 s -6.5 3 -6.5 -0.5 Z"> </path>
+        <clipPath id="mfzy-logo__body-clip">
+            <use xlink:href="#mfzy-logo__body"> </use>
+        </clipPath>
+    </defs>
+    <use class="mfzy-logo__body-outline" xlink:href="#mfzy-logo__body" fill="#333" stroke="#333" stroke-width="16"> </use>
+    <use class="mfzy-logo__body-fill" xlink:href="#mfzy-logo__body"> </use>
+    <g class="mfzy-logo__stripes" clip-path="url(#mfzy-logo__body-clip)">
+        <rect fill="#E62" x="16" width="120" height="138"> </rect>
+        <path fill="#C25" d="M96 24L16 72V0h80v24z"> </path>
+        <path fill="#EA0" d="M116 70L16 130v-26l95-57 5 23z"> </path>
+        <path fill="#19F" d="M136 138H16v-8l120-72v80z"> </path>
+    </g>
+    <path class="mfzy-logo__cut-ins" stroke="#333" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="8" d="M 72 20.4 c 23 0 44 29 44 56 M 54 103.4 a 16 16 0 0 0 0 -10 M 96 98 c -2 2 -8 6 -8.5,6 l -8.4 25.1"> </path>
+    <g transform="translate(53 57) rotate(-31)">
+        <ellipse class="mfzy-logo__snout" cx="25" cy="21" rx="14" ry="9" fill="#FFF"> </ellipse>
+        <use class="mfzy-logo__feature" xlink:href="#mfzy-logo__eye" fill="#333"> </use>
+        <use class="mfzy-logo__feature" xlink:href="#mfzy-logo__eye" fill="#333" transform="translate(29 0)"> </use>
+        <path class="mfzy-logo__feature" d="M 28.6 14 a 3 3 0 0 1 1.3 5.6 l -2.6 1.2 a 3 3 0 0 1 -2.6 0 l -2.6 -1.2 a 3 3 0 0 1 1.3 -5.6 Z" fill="#333"> </path>
+    </g>
+</svg>
