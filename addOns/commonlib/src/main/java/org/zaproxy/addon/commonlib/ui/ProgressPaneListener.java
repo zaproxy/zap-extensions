@@ -53,7 +53,7 @@ public class ProgressPaneListener {
      *
      * @return the number of tasks which have been processed.
      */
-    protected int getTasksDone() {
+    public int getTasksDone() {
         return tasksDone;
     }
 
