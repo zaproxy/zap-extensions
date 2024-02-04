@@ -52,7 +52,7 @@ import org.zaproxy.addon.network.common.ZapSocketTimeoutException;
  *
  * @author 70pointer
  */
-public class ProxyDisclosureScanRule extends AbstractAppPlugin {
+public class ProxyDisclosureScanRule extends AbstractAppPlugin implements CommonActiveScanRuleInfo {
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanbeta.proxydisclosure.";

@@ -51,7 +51,7 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
  *
  * @author 70pointer@gmail.com
  */
-public class CrossDomainScanRule extends AbstractHostPlugin {
+public class CrossDomainScanRule extends AbstractHostPlugin implements CommonActiveScanRuleInfo {
 
     /** the logger object */
     private static final Logger LOGGER = LogManager.getLogger(CrossDomainScanRule.class);

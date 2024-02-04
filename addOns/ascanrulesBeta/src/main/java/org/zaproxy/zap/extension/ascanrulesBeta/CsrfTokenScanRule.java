@@ -51,7 +51,7 @@ import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
  * CsrfTokenScanRule is an effort to improve the anti-CSRF token detection of ZAP It is based on
  * previous plugins such as csrfcountermeasuresscan and sessionfixation
  */
-public class CsrfTokenScanRule extends AbstractAppPlugin {
+public class CsrfTokenScanRule extends AbstractAppPlugin implements CommonActiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "ascanbeta.csrftoken.";
     private static final int PLUGIN_ID = 20012;

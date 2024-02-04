@@ -42,7 +42,8 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 /**
  * TODO note that this should extend AbstractAppParamPlugin rather than find parameters internally
  */
-public class HttpParameterPollutionScanRule extends AbstractAppPlugin {
+public class HttpParameterPollutionScanRule extends AbstractAppPlugin
+        implements CommonActiveScanRuleInfo {
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A03_INJECTION,

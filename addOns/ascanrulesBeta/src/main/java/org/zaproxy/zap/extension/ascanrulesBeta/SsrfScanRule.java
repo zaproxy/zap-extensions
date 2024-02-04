@@ -36,7 +36,7 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.addon.oast.OastPayload;
 
-public class SsrfScanRule extends AbstractAppParamPlugin {
+public class SsrfScanRule extends AbstractAppParamPlugin implements CommonActiveScanRuleInfo {
 
     private static final int PLUGIN_ID = 40046;
     private static final Logger LOGGER = LogManager.getLogger(SsrfScanRule.class);

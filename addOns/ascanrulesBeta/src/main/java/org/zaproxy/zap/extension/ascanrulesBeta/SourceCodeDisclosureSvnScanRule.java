@@ -50,7 +50,8 @@ import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
  *
  * @author 70pointer
  */
-public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
+public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin
+        implements CommonActiveScanRuleInfo {
 
     /**
      * if we got a 404 or a redirect specifically, then this is NOT a match note that since we are

@@ -34,7 +34,8 @@ import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 
-public class ExponentialEntityExpansionScanRule extends AbstractAppPlugin {
+public class ExponentialEntityExpansionScanRule extends AbstractAppPlugin
+        implements CommonActiveScanRuleInfo {
 
     private static final Logger LOGGER =
             LogManager.getLogger(ExponentialEntityExpansionScanRule.class);
