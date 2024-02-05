@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - The Backup File Disclosure scan rule now includes example alert functionality for documentation generation purposes (Issue 6119).
 - Updated reference for scan rule: Session Fixation (Issue 8262)
+- Add website alert links to the help page (Issue 8189).
 
 ## [50] - 2024-01-26
 ### Changed

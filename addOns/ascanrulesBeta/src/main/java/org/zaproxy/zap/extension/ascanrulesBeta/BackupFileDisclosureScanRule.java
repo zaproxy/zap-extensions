@@ -44,7 +44,8 @@ import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
  *
  * @author 70pointer
  */
-public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
+public class BackupFileDisclosureScanRule extends AbstractAppPlugin
+        implements CommonActiveScanRuleInfo {
 
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(

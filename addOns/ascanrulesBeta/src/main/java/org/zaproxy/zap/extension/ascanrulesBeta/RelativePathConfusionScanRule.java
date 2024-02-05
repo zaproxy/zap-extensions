@@ -52,7 +52,8 @@ import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
  *
  * @author 70pointer
  */
-public class RelativePathConfusionScanRule extends AbstractAppPlugin {
+public class RelativePathConfusionScanRule extends AbstractAppPlugin
+        implements CommonActiveScanRuleInfo {
 
     /** the logger object */
     private static final Logger LOGGER = LogManager.getLogger(RelativePathConfusionScanRule.class);

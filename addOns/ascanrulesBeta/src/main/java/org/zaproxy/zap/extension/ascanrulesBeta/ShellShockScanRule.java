@@ -40,7 +40,7 @@ import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
  *
  * @author psiinon
  */
-public class ShellShockScanRule extends AbstractAppParamPlugin {
+public class ShellShockScanRule extends AbstractAppParamPlugin implements CommonActiveScanRuleInfo {
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A06_VULN_COMP,

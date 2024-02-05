@@ -44,7 +44,8 @@ import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
  *
  * @author 70pointer
  */
-public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin {
+public class SourceCodeDisclosureGitScanRule extends AbstractAppPlugin
+        implements CommonActiveScanRuleInfo {
 
     /**
      * details of the vulnerability which we are attempting to find 34 = "Predictable Resource

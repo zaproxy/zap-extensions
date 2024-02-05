@@ -41,7 +41,8 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
  *
  * @author yhawke (2014)
  */
-public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin {
+public class ExpressionLanguageInjectionScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
 
     // Logger object
     private static final Logger LOGGER =

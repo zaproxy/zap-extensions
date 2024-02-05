@@ -37,7 +37,7 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
  * Active scan rule which checks whether or not HTTPS content is also available via HTTP
  * https://github.com/zaproxy/zaproxy/issues/174
  */
-public class HttpsAsHttpScanRule extends AbstractAppPlugin {
+public class HttpsAsHttpScanRule extends AbstractAppPlugin implements CommonActiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanbeta.httpsashttp.";

@@ -45,7 +45,7 @@ import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
  *
  * @author sanchitlucknow@gmail.com
  */
-public class HttpOnlySiteScanRule extends AbstractHostPlugin {
+public class HttpOnlySiteScanRule extends AbstractHostPlugin implements CommonActiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanbeta.httponlysite.";

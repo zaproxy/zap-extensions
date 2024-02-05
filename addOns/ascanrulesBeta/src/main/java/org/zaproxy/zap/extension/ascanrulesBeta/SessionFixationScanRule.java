@@ -65,7 +65,7 @@ import org.zaproxy.zap.model.Context;
  *
  * @author 70pointer
  */
-public class SessionFixationScanRule extends AbstractAppPlugin {
+public class SessionFixationScanRule extends AbstractAppPlugin implements CommonActiveScanRuleInfo {
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A01_BROKEN_AC,
