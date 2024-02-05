@@ -10,10 +10,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - Timestamp Disclosure - Unix
     - Hash Disclosure
     - Cross-Domain Misconfiguration
+    - Weak Authentication Method
+    - Reverse Tabnabbing
+    - CSRF Countermeasures
+- The following scan rules now have alert references (Issue 7100):
+    - Weak Authentication Method
 - The references for Alerts from the following rules were also updated (Issue 8262):
     - Timestamp Disclosure - Unix 
     - Hash Disclosure
     - View State Scan Rule 
+    - Weak Authentication Method
 
 ## [55] - 2024-01-26
 ### Changed

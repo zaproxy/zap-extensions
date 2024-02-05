@@ -25,6 +25,7 @@ import static org.hamcrest.Matchers.is;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
@@ -95,6 +96,24 @@ class InsecureAuthenticationScanRuleUnitTest
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_ATHN_01_CREDS_NO_CRYPTO.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_ATHN_01_CREDS_NO_CRYPTO.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlerts() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(2)));
+        Alert capturedAlert = alerts.get(0);
+        assertThat(capturedAlert.getAlertRef(), is(equalTo("10105-1")));
+        Alert weakAlert = alerts.get(1);
+        assertThat(weakAlert.getAlertRef(), is(equalTo("10105-2")));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 
     @Test
