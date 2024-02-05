@@ -4,6 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+### Changed
+- Handle traditional apps better in authentication detection dialog.
+- Make cookies set in auth request available to header based session management.
+
 ### Fixed
 - Correct HTTP field names shown in diagnostic data.
 
