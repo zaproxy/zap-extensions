@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Accept rate limit rule's group by in lower case, when handling the API requests.
 - Prevent configuration of the outgoing HTTP/SOCKS Proxy with the address of one of the Local Servers/Proxies, as it would lead to unintended request loops (Issue 5308).
+- Fix exception while proxying NTLM authentication (Issue 7685).
 
 ## [0.13.0] - 2023-11-17
 ### Added

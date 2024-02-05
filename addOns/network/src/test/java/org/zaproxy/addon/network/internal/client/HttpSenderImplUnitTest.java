@@ -570,6 +570,118 @@ class HttpSenderImplUnitTest {
                 assertRequest(receivedMessage, requestMethod, requestBody);
             }
         }
+
+        @Test
+        void shouldBeSentWithExistingNtlmAuthentication() throws Exception {
+            // Given
+            AtomicInteger requestCount = new AtomicInteger();
+            server.setHttpMessageHandler(
+                    (ctx, msg) -> {
+                        var response = "HTTP/1.1 200 OK";
+
+                        int current = requestCount.getAndIncrement();
+                        if (current == 0) {
+                            response =
+                                    "HTTP/1.1 401 Unauthorized\n"
+                                            + "WWW-Authenticate: Negotiate\n"
+                                            + "WWW-Authenticate: NTLM\n";
+                        } else if (current == 1) {
+                            response =
+                                    "HTTP/1.1 401 Unauthorized\n"
+                                            + "WWW-Authenticate: NTLM TlRMTVNTUAACAAAAHAAcADgAAAAFgooCSahi6Sp2OccAAAAAAAAAAJAAkABUAAAACgBdWAAAAA9XAEkATgBEAEUAVgAyADMAMQAxAEUAVgBBAEwAAgAcAFcASQBOAEQARQBWADIAMwAxADEARQBWAEEATAABABwAVwBJAE4ARABFAFYAMgAzADEAMQBFAFYAQQBMAAQAHABXAGkAbgBEAGUAdgAyADMAMQAxAEUAdgBhAGwAAwAcAFcAaQBuAEQAZQB2ADIAMwAxADEARQB2AGEAbAAHAAgAs59Pa0JY2gEAAAAA\n";
+                        }
+                        msg.getResponseHeader().setMessage(response);
+                        msg.getResponseHeader().setContentLength(msg.getResponseBody().length());
+                    });
+
+            HttpMessage initialRequest = createMessage(HttpRequestHeader.GET, "/");
+            String challenge = "NTLM TlRMTVNTUAABAAAAB4IIAAAAAAAAAAAAAAAAAAAAAAA=";
+            HttpMessage challengeRequest = createMessage(HttpRequestHeader.GET, "/");
+            challengeRequest.getRequestHeader().setHeader(HttpHeader.AUTHORIZATION, challenge);
+            String credentials =
+                    "NTLM TlRMTVNTUAADAAAAGAAYAF4AAAC8ALwAdgAAAAAAAABAAAAACAAIAEAAAAAWABYASAAAAAAAAAAAAAAABYIIAFUAcwBlAHIAVwBPAFIASwBTAFQAQQBUAEkATwBOAHizK+ek+7dlUzjnzJbXZRPGU9/At2s/Pl3sNL5zHWFfZkQYYCyprcMBAQAAAAAAAIBdvo1CWNoB4SlHsS/Dj0EAAAAAAgAcAFcASQBOAEQARQBWADIAMwAxADEARQBWAEEATAABABwAVwBJAE4ARABFAFYAMgAzADEAMQBFAFYAQQBMAAQAHABXAGkAbgBEAGUAdgAyADMAMQAxAEUAdgBhAGwAAwAcAFcAaQBuAEQAZQB2ADIAMwAxADEARQB2AGEAbAAHAAgAs59Pa0JY2gEAAAAA";
+            HttpMessage credentialsRequest = createMessage(HttpRequestHeader.GET, "/");
+            credentialsRequest.getRequestHeader().setHeader(HttpHeader.AUTHORIZATION, credentials);
+            // When
+            httpSender.sendAndReceive(initialRequest);
+            httpSender.sendAndReceive(challengeRequest);
+            httpSender.sendAndReceive(credentialsRequest);
+            // Then
+            assertThat(server.getReceivedMessages(), hasSize(3));
+            assertThat(
+                    server.getReceivedMessages()
+                            .get(0)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.AUTHORIZATION),
+                    is(nullValue()));
+            assertThat(
+                    server.getReceivedMessages()
+                            .get(1)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.AUTHORIZATION),
+                    is(equalTo(challenge)));
+            assertThat(
+                    server.getReceivedMessages()
+                            .get(2)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.AUTHORIZATION),
+                    is(equalTo(credentials)));
+            assertThat(message.getResponseBody().toString(), is(not(equalTo(SERVER_RESPONSE))));
+        }
+
+        @Test
+        void shouldBeSentWithExistingIncorrectNtlmAuthentication() throws Exception {
+            // Given
+            AtomicInteger requestCount = new AtomicInteger();
+            server.setHttpMessageHandler(
+                    (ctx, msg) -> {
+                        var response =
+                                "HTTP/1.1 401 Unauthorized\n"
+                                        + "WWW-Authenticate: Negotiate\n"
+                                        + "WWW-Authenticate: NTLM\n";
+                        if (requestCount.getAndIncrement() == 1) {
+                            response =
+                                    "HTTP/1.1 401 Unauthorized\n"
+                                            + "WWW-Authenticate: NTLM TlRMTVNTUAACAAAAHAAcADgAAAAFgooCpgp96tbFDRsAAAAAAAAAAJAAkABUAAAACgBdWAAAAA9XAEkATgBEAEUAVgAyADMAMQAxAEUAVgBBAEwAAgAcAFcASQBOAEQARQBWADIAMwAxADEARQBWAEEATAABABwAVwBJAE4ARABFAFYAMgAzADEAMQBFAFYAQQBMAAQAHABXAGkAbgBEAGUAdgAyADMAMQAxAEUAdgBhAGwAAwAcAFcAaQBuAEQAZQB2ADIAMwAxADEARQB2AGEAbAAHAAgA2oCaJUNY2gEAAAAA";
+                        }
+                        msg.getResponseHeader().setMessage(response);
+                        msg.getResponseHeader().setContentLength(msg.getResponseBody().length());
+                    });
+
+            HttpMessage initialRequest = createMessage(HttpRequestHeader.GET, "/");
+            String challenge = "NTLM TlRMTVNTUAABAAAAB4IIAAAAAAAAAAAAAAAAAAAAAAA=";
+            HttpMessage challengeRequest = createMessage(HttpRequestHeader.GET, "/");
+            challengeRequest.getRequestHeader().setHeader(HttpHeader.AUTHORIZATION, challenge);
+            String credentials =
+                    "NTLM TlRMTVNTUAADAAAAGAAYAFgAAAC8ALwAcAAAAAAAAABAAAAAAgACAEAAAAAWABYAQgAAAAAAAAAAAAAABYIIAFgAVwBPAFIASwBTAFQAQQBUAEkATwBOAP6yoXsqfSJ6sdpm5BsUKdLlurkW6n/9a5cWdamhy5bZRNgkApsZKiIBAQAAAAAAAIC+SixDWNoBSh9I+fDqnVEAAAAAAgAcAFcASQBOAEQARQBWADIAMwAxADEARQBWAEEATAABABwAVwBJAE4ARABFAFYAMgAzADEAMQBFAFYAQQBMAAQAHABXAGkAbgBEAGUAdgAyADMAMQAxAEUAdgBhAGwAAwAcAFcAaQBuAEQAZQB2ADIAMwAxADEARQB2AGEAbAAHAAgA2oCaJUNY2gEAAAAA";
+            HttpMessage credentialsRequest = createMessage(HttpRequestHeader.GET, "/");
+            credentialsRequest.getRequestHeader().setHeader(HttpHeader.AUTHORIZATION, credentials);
+            // When
+            httpSender.sendAndReceive(initialRequest);
+            httpSender.sendAndReceive(challengeRequest);
+            httpSender.sendAndReceive(credentialsRequest);
+            // Then
+            assertThat(server.getReceivedMessages(), hasSize(3));
+            assertThat(
+                    server.getReceivedMessages()
+                            .get(0)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.AUTHORIZATION),
+                    is(nullValue()));
+            assertThat(
+                    server.getReceivedMessages()
+                            .get(1)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.AUTHORIZATION),
+                    is(equalTo(challenge)));
+            assertThat(
+                    server.getReceivedMessages()
+                            .get(2)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.AUTHORIZATION),
+                    is(equalTo(credentials)));
+            assertThat(message.getResponseBody().toString(), is(not(equalTo(SERVER_RESPONSE))));
+        }
     }
 
     static Stream<Arguments> chunkSizesAndSendAndReceiveMethods() {
