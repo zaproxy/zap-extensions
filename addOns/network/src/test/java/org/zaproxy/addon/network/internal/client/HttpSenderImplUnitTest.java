@@ -2020,6 +2020,44 @@ class HttpSenderImplUnitTest {
         }
 
         @Test
+        void shouldBasicAuthWithoutRealm() throws Exception {
+            // Given
+            message.setRequestingUser(user);
+            server.setHttpMessageHandler(
+                    (ctx, msg) -> {
+                        String authorization =
+                                msg.getRequestHeader().getHeader(HttpHeader.AUTHORIZATION);
+                        if (authorization == null
+                                || !"Basic dXNlcm5hbWU6cGFzc3dvcmQ=".equals(authorization)) {
+                            msg.setResponseHeader("HTTP/1.1 401\r\nWWW-Authenticate: Basic\r\n");
+                            msg.getResponseHeader().setContentLength(0);
+                            return;
+                        }
+
+                        msg.setResponseHeader("HTTP/1.1 200\r\n");
+                        msg.setResponseBody(SERVER_RESPONSE);
+                        msg.getResponseHeader().setContentLength(msg.getResponseBody().length());
+                    });
+            // When
+            httpSender.sendAndReceive(message);
+            // Then
+            assertThat(server.getReceivedMessages(), hasSize(2));
+            assertThat(
+                    server.getReceivedMessages()
+                            .get(0)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.AUTHORIZATION),
+                    is(nullValue()));
+            assertThat(
+                    server.getReceivedMessages()
+                            .get(1)
+                            .getRequestHeader()
+                            .getHeader(HttpHeader.AUTHORIZATION),
+                    is(equalTo("Basic dXNlcm5hbWU6cGFzc3dvcmQ=")));
+            assertResponseBody(message, SERVER_RESPONSE);
+        }
+
+        @Test
         void shouldReauthenticateIfRemoveUserDefinedAuthHeadersSet() throws Exception {
             // Given
             message.setRequestingUser(user);
