@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.12.0] - 2024-02-06
 
 ### Changed
 - Handle traditional apps better in authentication detection dialog.
@@ -86,6 +86,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support of authentication request identification and configuration.
 
+[0.12.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.12.0
 [0.11.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.11.0
 [0.10.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.10.0
 [0.9.0]: https://github.com/zaproxy/zap-extensions/releases/authhelper-v0.9.0
