@@ -205,6 +205,10 @@ public class SvgHrefParser extends SpiderParser {
     }
 
     private static boolean isSvg(HttpMessage msg) {
+        if (msg.getResponseBody().length() == 0) {
+            return false;
+        }
+
         if (msg.getResponseHeader().hasContentType("svg")) {
             return true;
         }

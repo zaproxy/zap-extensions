@@ -56,6 +56,17 @@ class SvgHrefParserUnitTest extends SpiderParserTestUtils<SvgHrefParser> {
     }
 
     @Test
+    void shouldNotBeAbleToParseEmptySvg() {
+        // Given
+        messageWith("test.svg");
+        msg.setResponseBody("");
+        // When
+        boolean canParse = parser.canParseResource(ctx, false);
+        // Then
+        assertFalse(canParse);
+    }
+
+    @Test
     void shouldNotBeAbleToParseIrrelevantRequest() {
         // Given
         messageWith("test.test");
@@ -92,6 +103,17 @@ class SvgHrefParserUnitTest extends SpiderParserTestUtils<SvgHrefParser> {
         // Given
         messageWith("test");
         msg.setResponseBody("Foo Bar");
+        // When
+        boolean parse = parser.parseResource(ctx);
+        // Then
+        assertFalse(parse);
+    }
+
+    @Test
+    void shouldNotParseResourceWhenEmptySvg() {
+        // Given
+        messageWith("test.svg");
+        msg.setResponseBody("");
         // When
         boolean parse = parser.parseResource(ctx);
         // Then
@@ -293,6 +315,8 @@ class SvgHrefParserUnitTest extends SpiderParserTestUtils<SvgHrefParser> {
         } catch (HttpMalformedHeaderException e) {
             // ignore
         }
+
+        msg.setResponseBody("Non-SVG content by default.");
 
         try {
             msg.setResponseHeader(
