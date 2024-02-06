@@ -204,13 +204,19 @@ public class AuthUtils {
      * Authenticate as the given user, by filling in and submitting the login form
      *
      * @param wd the WebDriver controlling the browser
+     * @param context the context which is being used for authentication
      * @param loginPageUrl the URL of the login page
      * @param username the username
      * @param password the password
      * @return true if the login form was successfully submitted.
      */
     public static boolean authenticateAsUser(
-            WebDriver wd, String loginPageUrl, String username, String password, int waitInSecs) {
+            WebDriver wd,
+            Context context,
+            String loginPageUrl,
+            String username,
+            String password,
+            int waitInSecs) {
         wd.get(loginPageUrl);
         sleep(50);
         if (demoMode) {
@@ -278,6 +284,15 @@ public class AuthUtils {
             incStatsCounter(loginPageUrl, AUTH_BROWSER_PASSED_STATS);
             AuthUtils.sleep(TimeUnit.SECONDS.toMillis(waitInSecs));
 
+            if (context != null) {
+                if (context.getAuthenticationMethod().getPollUrl() == null) {
+                    // We failed to identify a suitable URL for polling.
+                    // This can happen for more traditional apps - refresh the current one in case
+                    // its a good option.
+                    wd.get(wd.getCurrentUrl());
+                    AuthUtils.sleep(TimeUnit.SECONDS.toMillis(1));
+                }
+            }
             return true;
         }
         if (userField == null) {
@@ -514,6 +529,16 @@ public class AuthUtils {
                                                 p.getName(),
                                                 p.getValue())));
         // Add Cookies
+        msg.getRequestHeader()
+                .getCookieParams()
+                .forEach(
+                        c ->
+                                addToMap(
+                                        tokens,
+                                        new SessionToken(
+                                                SessionToken.COOKIE_SOURCE,
+                                                c.getName(),
+                                                c.getValue())));
         msg.getResponseHeader()
                 .getHttpCookies(null)
                 .forEach(
@@ -731,12 +756,14 @@ public class AuthUtils {
 
         private BrowserBasedAuthenticationMethod bbaMethod;
         private UsernamePasswordAuthenticationCredentials userCreds;
+        private Context context;
 
         AuthenticationBrowserHook(Context context, String userName) {
             this(context, getUser(context, userName));
         }
 
         AuthenticationBrowserHook(Context context, User user) {
+            this.context = context;
             AuthenticationMethod method = context.getAuthenticationMethod();
             if (!(method instanceof BrowserBasedAuthenticationMethod)) {
                 throw new IllegalStateException("Unsupported method " + method.getType().getName());
@@ -757,6 +784,7 @@ public class AuthUtils {
                     "AuthenticationBrowserHook - authenticating as {}", userCreds.getUsername());
             AuthUtils.authenticateAsUser(
                     ssutils.getWebDriver(),
+                    context,
                     bbaMethod.getLoginPageUrl(),
                     userCreds.getUsername(),
                     userCreds.getPassword(),

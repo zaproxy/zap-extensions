@@ -339,6 +339,8 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
                             .getExtensionLoader()
                             .getExtension(ExtensionSelenium.class);
 
+            Context context = Model.getSingleton().getSession().getContext(user.getContextId());
+
             try {
                 proxyPort = getProxy(user.getContext()).start(proxyHost, 0);
 
@@ -353,6 +355,7 @@ public class BrowserBasedAuthenticationMethodType extends AuthenticationMethodTy
 
                     if (AuthUtils.authenticateAsUser(
                             wd,
+                            context,
                             loginPageUrl,
                             userCreds.getUsername(),
                             userCreds.getPassword(),
