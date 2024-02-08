@@ -29,18 +29,20 @@ import javax.swing.ImageIcon;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Engine;
-import org.zaproxy.zap.control.ExtensionFactory;
 import org.zaproxy.zap.extension.script.DefaultEngineWrapper;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
 public class GraalJsEngineWrapper extends DefaultEngineWrapper {
 
+    private final ClassLoader hostClassLoader;
     private final List<Path> defaultTemplates;
     private final ImageIcon icon;
 
-    public GraalJsEngineWrapper(List<Path> defaultTemplates, ImageIcon icon) {
+    public GraalJsEngineWrapper(
+            ClassLoader hostClassLoader, List<Path> defaultTemplates, ImageIcon icon) {
         super(new GraalJSEngineFactory());
 
+        this.hostClassLoader = hostClassLoader;
         this.defaultTemplates = Objects.requireNonNull(defaultTemplates);
         this.icon = icon;
     }
@@ -76,7 +78,7 @@ public class GraalJsEngineWrapper extends DefaultEngineWrapper {
                         .option("js.print", "true")
                         .option("js.nashorn-compat", "true")
                         .allowAllAccess(true)
-                        .hostClassLoader(ExtensionFactory.getAddOnLoader());
+                        .hostClassLoader(hostClassLoader);
 
         return GraalJSScriptEngine.create(engine, contextBuilder);
     }
