@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Skip parsing of empty SVGs.
 
 ### Fixed
+- Ensure issues in one parser don't break the whole parsing process.
 - Fix exception that happened with absolute dotted URLs in inlined content.
 
 ## [0.9.0] - 2024-01-26
