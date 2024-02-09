@@ -19,8 +19,6 @@
  */
 package org.zaproxy.addon.spider.automation;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -33,8 +31,7 @@ import org.zaproxy.addon.spider.ExtensionSpider2;
 public class ExtensionSpiderAutomation extends ExtensionAdaptor {
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
-            Collections.unmodifiableList(
-                    Arrays.asList(ExtensionSpider2.class, ExtensionAutomation.class));
+            List.of(ExtensionSpider2.class, ExtensionAutomation.class);
 
     private SpiderJob job;
 

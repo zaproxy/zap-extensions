@@ -20,8 +20,6 @@
 package org.zaproxy.zap.extension.domxss;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,15 +42,8 @@ public class ExtensionDomXSS extends ExtensionAdaptor {
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionDomXSS.class);
 
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
-        dependencies.add(ExtensionNetwork.class);
-        dependencies.add(ExtensionSelenium.class);
-
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionNetwork.class, ExtensionSelenium.class);
 
     private DomXssScanRule scanner;
 

@@ -82,13 +82,8 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
     private static final Logger LOGGER = LogManager.getLogger(ExtensionWappalyzer.class);
 
     /** The dependencies of the extension. */
-    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
-        dependencies.add(ExtensionPassiveScan.class);
-        EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
+    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
+            List.of(ExtensionPassiveScan.class);
 
     private WappalyzerPassiveScanner passiveScanner;
     private WappalyzerAPI api;

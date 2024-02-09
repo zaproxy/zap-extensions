@@ -29,7 +29,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -112,11 +111,7 @@ public class ExtensionZest extends ExtensionAdaptor implements ProxyListener, Sc
     private static final Logger LOGGER = LogManager.getLogger(ExtensionZest.class);
 
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
-            Collections.unmodifiableList(
-                    Arrays.asList(
-                            ExtensionScript.class,
-                            ExtensionNetwork.class,
-                            ExtensionSelenium.class));
+            List.of(ExtensionScript.class, ExtensionNetwork.class, ExtensionSelenium.class);
 
     private ZestParam param = null;
     private OptionsZestPanel optionsZestPanel = null;

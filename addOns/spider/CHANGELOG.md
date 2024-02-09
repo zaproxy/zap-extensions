@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Skip parsing of empty SVGs.
+- Maintenance changes.
 
 ### Fixed
 - Fix exception that happened with absolute dotted URLs in inlined content.

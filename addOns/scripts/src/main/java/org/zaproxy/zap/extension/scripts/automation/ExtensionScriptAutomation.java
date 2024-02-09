@@ -22,8 +22,6 @@ package org.zaproxy.zap.extension.scripts.automation;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.parosproxy.paros.CommandLine;
@@ -42,14 +40,8 @@ public class ExtensionScriptAutomation extends ExtensionAdaptor {
 
     private ScriptJob job;
 
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
-        dependencies.add(ExtensionScript.class);
-        dependencies.add(ExtensionAutomation.class);
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionScript.class, ExtensionAutomation.class);
 
     public ExtensionScriptAutomation() {
         super(NAME);

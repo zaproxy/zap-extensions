@@ -22,8 +22,6 @@ package org.zaproxy.addon.reports.automation;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -48,7 +46,8 @@ public class ExtensionReportAutomation extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionReportAutomation";
 
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionAutomation.class);
 
     private static final String RESOURCES_DIR = "/org/zaproxy/addon/reports/resources/";
 
@@ -56,12 +55,6 @@ public class ExtensionReportAutomation extends ExtensionAdaptor {
     private OutputSummaryJob outputSummaryJob;
 
     private ReportDataHandler reportDataHandler;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
-        dependencies.add(ExtensionAutomation.class);
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
 
     public ExtensionReportAutomation() {
         super(NAME);

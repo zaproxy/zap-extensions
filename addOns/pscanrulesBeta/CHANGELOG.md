@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Website alert links (Issue 8189).
 
+### Changed
+- Maintenance changes.
+
 ## [36] - 2024-01-16
 ### Changed
 - Update minimum ZAP version to 2.14.0.

@@ -45,13 +45,10 @@ public class ExtensionJruby extends ExtensionAdaptor implements ScriptEventListe
     public static final String NAME = "ExtensionJruby";
     public static final ImageIcon RUBY_ICON;
 
-    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
+    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
+            List.of(ExtensionScript.class);
 
     static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
-        dependencies.add(ExtensionScript.class);
-        EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
-
         RUBY_ICON =
                 View.isInitialised()
                         ? new ImageIcon(

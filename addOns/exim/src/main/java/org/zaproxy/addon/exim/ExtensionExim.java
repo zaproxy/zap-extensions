@@ -19,8 +19,6 @@
  */
 package org.zaproxy.addon.exim;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import javax.swing.JMenu;
 import org.parosproxy.paros.Constant;
@@ -46,7 +44,7 @@ public class ExtensionExim extends ExtensionAdaptor {
     public static final String EXIM_OUTPUT_ERROR = "exim.output.error";
     private static final String NAME = "ExtensionExim";
     private static final List<Class<? extends Extension>> DEPENDENCIES =
-            Collections.unmodifiableList(Arrays.asList(ExtensionCommonlib.class));
+            List.of(ExtensionCommonlib.class);
 
     private JMenu menuExport;
 

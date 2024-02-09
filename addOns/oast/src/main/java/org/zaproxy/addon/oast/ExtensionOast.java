@@ -21,7 +21,6 @@ package org.zaproxy.addon.oast;
 
 import static java.util.Collections.synchronizedMap;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -72,7 +71,7 @@ public class ExtensionOast extends ExtensionAdaptor {
     private static final String OAST_PERSISTENCE_UNIT_NAME = "oast";
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
-            Collections.unmodifiableList(Arrays.asList(ExtensionNetwork.class));
+            List.of(ExtensionNetwork.class);
 
     private final Map<String, OastService> services = new HashMap<>();
 

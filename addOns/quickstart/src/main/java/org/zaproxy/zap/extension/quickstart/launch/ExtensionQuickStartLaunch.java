@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.quickstart.launch;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -58,14 +56,8 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
 
     private JButton launchToolbarButton;
 
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
-        dependencies.add(ExtensionQuickStart.class);
-        dependencies.add(ExtensionSelenium.class);
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionQuickStart.class, ExtensionSelenium.class);
 
     private ImageIcon chromeIcon;
     private ImageIcon chromiumIcon;

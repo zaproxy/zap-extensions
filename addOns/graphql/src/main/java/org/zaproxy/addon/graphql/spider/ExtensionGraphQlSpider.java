@@ -19,8 +19,6 @@
  */
 package org.zaproxy.addon.graphql.spider;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -35,8 +33,7 @@ import org.zaproxy.addon.spider.parser.SpiderParser;
 public class ExtensionGraphQlSpider extends ExtensionAdaptor {
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
-            Collections.unmodifiableList(
-                    Arrays.asList(ExtensionSpider2.class, ExtensionGraphQl.class));
+            List.of(ExtensionSpider2.class, ExtensionGraphQl.class);
 
     private SpiderParser spiderParser;
     private ParseFilter parseFilter;

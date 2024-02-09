@@ -27,8 +27,6 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -78,15 +76,8 @@ public class ExtensionFrontEndScanner extends ExtensionAdaptor {
 
     private static final Logger LOGGER = LogManager.getLogger(ExtensionFrontEndScanner.class);
 
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
-        dependencies.add(ExtensionAlert.class);
-        dependencies.add(ExtensionScript.class);
-
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionAlert.class, ExtensionScript.class);
 
     public ExtensionFrontEndScanner() {
         super(NAME);

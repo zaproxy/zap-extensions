@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - The scan rule functionality of scripts was moved from the ZAP core to this add-on (Related to Issue 7105).
 
+### Changed
+- Maintenance changes.
+
 ### Fixed
 - The save button was not enabled for new scripts upon creation.
 
