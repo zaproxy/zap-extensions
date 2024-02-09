@@ -19,8 +19,6 @@
  */
 package org.zaproxy.addon.exim.automation;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -34,16 +32,10 @@ public class ExtensionEximAutomation extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionEximAutomation";
 
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionExim.class, ExtensionAutomation.class);
 
     private ImportJob importJob;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
-        dependencies.add(ExtensionExim.class);
-        dependencies.add(ExtensionAutomation.class);
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
 
     public ExtensionEximAutomation() {
         super(NAME);

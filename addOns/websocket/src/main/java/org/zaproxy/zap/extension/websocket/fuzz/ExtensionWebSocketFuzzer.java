@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.websocket.fuzz;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,14 +47,8 @@ import org.zaproxy.zap.extension.websocket.ui.WebSocketPanel;
 
 public class ExtensionWebSocketFuzzer extends ExtensionAdaptor {
 
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
-        dependencies.add(ExtensionFuzz.class);
-        dependencies.add(ExtensionWebSocket.class);
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionFuzz.class, ExtensionWebSocket.class);
 
     private WebSocketFuzzerHandler websocketFuzzerHandler;
 

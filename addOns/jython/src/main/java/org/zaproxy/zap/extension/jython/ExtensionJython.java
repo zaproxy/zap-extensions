@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.jython;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.swing.ImageIcon;
 import org.parosproxy.paros.Constant;
@@ -37,13 +35,10 @@ public class ExtensionJython extends ExtensionAdaptor {
     public static final String NAME = "ExtensionJython";
     public static final ImageIcon PYTHON_ICON;
 
-    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
+    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
+            List.of(ExtensionScript.class);
 
     static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
-        dependencies.add(ExtensionScript.class);
-        EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
-
         PYTHON_ICON =
                 View.isInitialised()
                         ? new ImageIcon(

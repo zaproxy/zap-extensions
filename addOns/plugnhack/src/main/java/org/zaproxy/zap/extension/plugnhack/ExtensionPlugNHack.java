@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +84,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
     private static final Logger LOGGER = LogManager.getLogger(ExtensionPlugNHack.class);
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
-            Collections.unmodifiableList(Arrays.asList(ExtensionNetwork.class));
+            List.of(ExtensionNetwork.class);
 
     private static final String REPLACE_ROOT_TOKEN = "__REPLACE_ROOT__";
     private static final String REPLACE_ID_TOKEN = "__REPLACE_ID__";

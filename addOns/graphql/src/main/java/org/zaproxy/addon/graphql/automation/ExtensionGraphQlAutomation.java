@@ -19,8 +19,6 @@
  */
 package org.zaproxy.addon.graphql.automation;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -34,16 +32,10 @@ public class ExtensionGraphQlAutomation extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionGraphQlAutomation";
 
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionGraphQl.class, ExtensionAutomation.class);
 
     private GraphQlJob job;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
-        dependencies.add(ExtensionGraphQl.class);
-        dependencies.add(ExtensionAutomation.class);
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
 
     public ExtensionGraphQlAutomation() {
         super(NAME);

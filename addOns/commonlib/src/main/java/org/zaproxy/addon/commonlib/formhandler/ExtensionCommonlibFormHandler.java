@@ -19,8 +19,6 @@
  */
 package org.zaproxy.addon.commonlib.formhandler;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -34,8 +32,7 @@ import org.zaproxy.zap.model.ValueGenerator;
 public class ExtensionCommonlibFormHandler extends ExtensionAdaptor {
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
-            Collections.unmodifiableList(
-                    Arrays.asList(ExtensionFormHandler.class, ExtensionCommonlib.class));
+            List.of(ExtensionFormHandler.class, ExtensionCommonlib.class);
 
     @Override
     public String getUIName() {

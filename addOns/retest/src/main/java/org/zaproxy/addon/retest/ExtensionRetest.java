@@ -19,8 +19,6 @@
  */
 package org.zaproxy.addon.retest;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control.Mode;
@@ -43,13 +41,8 @@ public class ExtensionRetest extends ExtensionAdaptor {
     private ZapMenuItem menuItemRetest;
     private RetestDialog retestDialog;
 
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
-        dependencies.add(ExtensionAutomation.class);
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionAutomation.class);
 
     public ExtensionRetest() {
         super(NAME);

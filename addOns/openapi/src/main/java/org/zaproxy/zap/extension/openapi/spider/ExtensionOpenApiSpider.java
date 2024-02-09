@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.openapi.spider;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,8 +36,7 @@ public class ExtensionOpenApiSpider extends ExtensionAdaptor {
     public static final String NAME = "ExtensionOpenApiSpider";
     private static final Logger LOGGER = LogManager.getLogger(ExtensionOpenApiSpider.class);
     private static final List<Class<? extends Extension>> DEPENDENCIES =
-            Collections.unmodifiableList(
-                    Arrays.asList(ExtensionSpider2.class, ExtensionOpenApi.class));
+            List.of(ExtensionSpider2.class, ExtensionOpenApi.class);
 
     private SpiderParser customSpider;
 

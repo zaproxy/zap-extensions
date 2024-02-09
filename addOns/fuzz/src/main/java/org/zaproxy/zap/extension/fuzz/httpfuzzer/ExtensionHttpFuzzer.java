@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.fuzz.httpfuzzer;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
@@ -57,13 +56,8 @@ import org.zaproxy.zap.extension.users.ExtensionUserManagement;
 
 public class ExtensionHttpFuzzer extends ExtensionAdaptor {
 
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
-        dependencies.add(ExtensionFuzz.class);
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionFuzz.class);
 
     private HttpFuzzerHandler httpFuzzerHandler;
 

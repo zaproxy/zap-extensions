@@ -83,7 +83,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
     private static final String THREAD_PREFIX = "ZAP-Import-OpenAPI-";
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
-            Collections.unmodifiableList(Arrays.asList(ExtensionCommonlib.class));
+            List.of(ExtensionCommonlib.class);
 
     private ZapMenuItem menuImportOpenApi;
     private ImportDialog importDialog;

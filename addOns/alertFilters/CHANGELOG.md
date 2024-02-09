@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 - Reword label in the automation job to prevent any confusion between the Alert Filters and the Alerts.
+- Maintenance changes.
 
 ## [19] - 2023-11-16
 ### Changed

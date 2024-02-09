@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Video link in help for Automation Framework job.
 
+### Changed
+- Maintenance changes.
+
 ## [23.18.0] - 2023-11-10
 ### Added
 - Add context menu item to Contexts tree to show the AJAX Spider dialogue with the selected Context.

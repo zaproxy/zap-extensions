@@ -24,8 +24,6 @@ import java.awt.event.MouseAdapter;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,7 +93,8 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
     private Map<String, ExtenderScript> installedExtenderScripts = new HashMap<>();
     private ScriptEngineWrapper nullEngineWrapper = null;
 
-    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
+    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
+            List.of(ExtensionScript.class);
 
     private ScriptsListPanel scriptsPanel = null;
     private ConsolePanel consolePanel = null;
@@ -121,14 +120,6 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
     private boolean lockOutputToDisplayedScript = false;
 
     // private ZapMenuItem menuEnableScripts = null;
-
-    // private static final Logger LOGGER = Logger.getLogger(ExtensionScriptsUI.class);
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
-        dependencies.add(ExtensionScript.class);
-        EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
 
     public ExtensionScriptsUI() {
         super(NAME);
