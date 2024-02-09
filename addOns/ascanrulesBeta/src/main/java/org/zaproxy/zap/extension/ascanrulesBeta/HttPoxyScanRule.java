@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -142,13 +143,10 @@ public class HttPoxyScanRule extends AbstractAppPlugin implements CommonActiveSc
 
                     if (listener.isMsgReceived()) {
                         // the server is vulnerable
-                        newAlert()
-                                .setConfidence(Alert.CONFIDENCE_HIGH)
-                                .setUri(getBaseMsg().getRequestHeader().getURI().toString())
-                                .setAttack(HttpFieldsNames.PROXY + ": " + hostPort)
-                                .setOtherInfo(
-                                        Constant.messages.getString(
-                                                MESSAGE_PREFIX + "otherinfo", listener.getMsgUrl()))
+                        buildAlert(
+                                        hostPort,
+                                        getBaseMsg().getRequestHeader().getURI().toString(),
+                                        listener.getMsgUrl())
                                 .setMessage(newRequest)
                                 .raise();
 
@@ -160,6 +158,21 @@ public class HttPoxyScanRule extends AbstractAppPlugin implements CommonActiveSc
         } catch (Exception e) {
             LOGGER.debug(e.getMessage(), e);
         }
+    }
+
+    private AlertBuilder buildAlert(String hostPort, String baseUrl, String url) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_HIGH)
+                .setUri(baseUrl)
+                .setAttack(HttpFieldsNames.PROXY + ": " + hostPort)
+                .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "otherinfo", url));
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert("192.168.0.11:1080", "http://example.com/", "http://192.168.0.11:1080/")
+                        .build());
     }
 
     private class HttpoxyListener implements HttpMessageHandler {

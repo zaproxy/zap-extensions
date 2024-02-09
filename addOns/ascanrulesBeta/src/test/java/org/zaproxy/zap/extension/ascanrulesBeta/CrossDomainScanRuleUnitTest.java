@@ -23,8 +23,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 class CrossDomainScanRuleUnitTest extends ActiveScannerTest<CrossDomainScanRule> {
@@ -62,5 +64,25 @@ class CrossDomainScanRuleUnitTest extends ActiveScannerTest<CrossDomainScanRule>
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_CONF_08_RIA_CROSS_DOMAIN.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_CONF_08_RIA_CROSS_DOMAIN.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(3)));
+        Alert adobeRead = alerts.get(0);
+        assertThat(adobeRead.getAlertRef(), is(equalTo("20016-1")));
+        Alert adobeSend = alerts.get(1);
+        assertThat(adobeSend.getAlertRef(), is(equalTo("20016-2")));
+        Alert silverlight = alerts.get(2);
+        assertThat(silverlight.getAlertRef(), is(equalTo("20016-3")));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 }

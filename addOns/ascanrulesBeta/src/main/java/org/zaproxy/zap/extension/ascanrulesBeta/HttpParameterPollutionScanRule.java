@@ -278,20 +278,16 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin
             vulnParams = vulnParams + ", " + s;
         }
         LOGGER.debug("Page vulnerable to HPP attacks");
-        String attack = Constant.messages.getString("ascanbeta.HTTPParamPoll.alert.attack");
-        newAlert()
-                .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setName(attack)
-                .setParam(vulnParams)
-                .setAttack(attack)
-                .setMessage(getBaseMsg())
-                .raise();
+        buildAlert(vulnParams).setMessage(getBaseMsg()).raise();
+    }
+
+    private AlertBuilder buildAlert(String vulnParams) {
+        return newAlert().setConfidence(Alert.CONFIDENCE_LOW).setParam(vulnParams);
     }
 
     @Override
     public int getRisk() {
-        // TODO Auto-generated method stub
-        return 0;
+        return Alert.RISK_INFO;
     }
 
     @Override
@@ -307,5 +303,10 @@ public class HttpParameterPollutionScanRule extends AbstractAppPlugin
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(buildAlert("Id").build());
     }
 }

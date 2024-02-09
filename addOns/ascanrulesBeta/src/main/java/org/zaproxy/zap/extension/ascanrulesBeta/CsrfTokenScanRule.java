@@ -220,13 +220,7 @@ public class CsrfTokenScanRule extends AbstractAppPlugin implements CommonActive
                                     Constant.messages.getString(
                                             MESSAGE_PREFIX + "extrainfo.annotation");
                         }
-                        newAlert()
-                                .setRisk(risk)
-                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                .setOtherInfo(otherInfo)
-                                .setEvidence(evidence)
-                                .setMessage(getBaseMsg())
-                                .raise();
+                        buildAlert(risk, otherInfo, evidence).setMessage(getBaseMsg()).raise();
                     }
                 }
 
@@ -235,6 +229,14 @@ public class CsrfTokenScanRule extends AbstractAppPlugin implements CommonActive
         } catch (IOException e) {
             LOGGER.error(e);
         }
+    }
+
+    private AlertBuilder buildAlert(int risk, String otherInfo, String evidence) {
+        return newAlert()
+                .setRisk(risk)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setOtherInfo(otherInfo)
+                .setEvidence(evidence);
     }
 
     private boolean formOnIgnoreList(Element formElement) {
@@ -300,5 +302,15 @@ public class CsrfTokenScanRule extends AbstractAppPlugin implements CommonActive
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                Alert.RISK_MEDIUM,
+                                "",
+                                "<input type=\"hidden\" name=\"firstName\" value=\"\">")
+                        .build());
     }
 }
