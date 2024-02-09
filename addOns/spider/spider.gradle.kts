@@ -1,3 +1,4 @@
+import me.champeau.gradle.japicmp.JapicmpTask
 import org.zaproxy.gradle.addon.AddOnStatus
 
 description = "Spider used for automatically finding URIs on a site."
@@ -61,6 +62,10 @@ dependencies {
     implementation("io.kaitai:kaitai-struct-runtime:0.10")
 
     testImplementation(project(":testutils"))
+}
+
+val japicmp by tasks.existing(JapicmpTask::class) {
+    packageExcludes = listOf("org.zaproxy.addon.spider.automation")
 }
 
 spotless {
