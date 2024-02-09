@@ -29,7 +29,10 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -50,6 +53,7 @@ import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 import org.zaproxy.addon.automation.tests.AutomationStatisticTest;
 import org.zaproxy.addon.network.common.ZapUnknownHostException;
 import org.zaproxy.addon.spider.ExtensionSpider2;
+import org.zaproxy.addon.spider.SpiderParam.HandleParametersOption;
 import org.zaproxy.addon.spider.SpiderScan;
 import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.users.User;
@@ -461,6 +465,10 @@ public class SpiderJob extends AutomationJob {
         private Boolean failIfFoundUrlsLessThan;
         private Boolean warnIfFoundUrlsLessThan;
 
+        private static final HandleParametersOption HANDLE_PARAMETERS_OPTION_DEFAULT =
+                HandleParametersOption.USE_ALL;
+        private static final Logger LOGGER = LogManager.getLogger(Parameters.class);
+
         public Parameters() {
             super();
         }
@@ -538,7 +546,21 @@ public class SpiderJob extends AutomationJob {
         }
 
         public void setHandleParameters(String handleParameters) {
-            this.handleParameters = handleParameters;
+            this.handleParameters = getHandleParamsOptionEnum(handleParameters).name();
+        }
+
+        private HandleParametersOption getHandleParamsOptionEnum(String handleParametersVisited) {
+            HandleParametersOption option =
+                    EnumUtils.getEnumIgnoreCase(
+                            HandleParametersOption.class, handleParametersVisited);
+            if (option == null) {
+                LOGGER.warn(
+                        "\"{}\" is not a valid HandleParametersOption value, defaulting to \"{}\"",
+                        handleParametersVisited,
+                        HANDLE_PARAMETERS_OPTION_DEFAULT);
+                option = HANDLE_PARAMETERS_OPTION_DEFAULT;
+            }
+            return option;
         }
 
         public Integer getMaxParseSizeBytes() {

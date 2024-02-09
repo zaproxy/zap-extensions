@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Skip parsing of empty SVGs.
 - Maintenance changes.
+- Setting "Query Parameters Handling" via automation framework should now be more forgiving as to the case of the values (enums).
 
 ### Fixed
 - Ensure issues in one parser don't break the whole parsing process.
