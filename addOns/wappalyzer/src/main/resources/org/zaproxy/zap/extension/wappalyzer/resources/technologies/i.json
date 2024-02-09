@@ -55,7 +55,7 @@
     "cats": [
       22
     ],
-    "cpe": "cpe:2.3:a:microsoft:internet_information_server:*:*:*:*:*:*:*:*",
+    "cpe": "cpe:2.3:a:microsoft:internet_information_services:*:*:*:*:*:*:*:*",
     "description": "Internet Information Services (IIS) is an extensible web server software created by Microsoft for use with the Windows NT family.",
     "headers": {
       "Server": "^(?:Microsoft-)?IIS(?:/([\\d.]+))?\\;version:\\1"
