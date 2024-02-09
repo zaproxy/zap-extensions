@@ -384,15 +384,28 @@ public class SpiderTask implements Runnable {
                         depth);
         boolean alreadyConsumed = false;
         for (SpiderParser parser : parsers) {
-            if (parser.canParseResource(ctx, alreadyConsumed)) {
-                LOGGER.debug("Parser {} can parse resource '{}'", parser, path);
-                if (parser.parseResource(ctx)) {
-                    alreadyConsumed = true;
-                }
-            } else {
-                LOGGER.debug("Parser {} cannot parse resource '{}'", parser, path);
+            try {
+                alreadyConsumed |= parse(ctx, alreadyConsumed, parser, path);
+            } catch (Exception e) {
+                LOGGER.error(
+                        "An error occurred while parsing the resource [{}] with [{}]: {}",
+                        path,
+                        parser.getClass(),
+                        e.getMessage(),
+                        e);
             }
         }
+    }
+
+    private static boolean parse(
+            ParseContext ctx, boolean alreadyConsumed, SpiderParser parser, String path) {
+        if (!parser.canParseResource(ctx, alreadyConsumed)) {
+            LOGGER.debug("Parser {} cannot parse resource '{}'", parser, path);
+            return false;
+        }
+
+        LOGGER.debug("Parser {} can parse resource '{}'", parser, path);
+        return parser.parseResource(ctx);
     }
 
     private ExtensionHistory getExtensionHistory() {
