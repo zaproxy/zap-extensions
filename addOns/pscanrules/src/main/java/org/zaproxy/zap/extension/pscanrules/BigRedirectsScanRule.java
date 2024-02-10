@@ -163,9 +163,4 @@ public class BigRedirectsScanRule extends PluginPassiveScanner
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
     }
-
-    public String getHelpLink() {
-        return "https://www.zaproxy.org/docs/desktop/addons/passive-scan-rules/#id-"
-                + getPluginId();
-    }
 }
