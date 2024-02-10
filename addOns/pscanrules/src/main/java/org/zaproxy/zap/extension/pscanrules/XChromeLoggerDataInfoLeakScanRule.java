@@ -34,7 +34,8 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /** X-ChromeLogger-Data header information leak passive scan rule */
-public class XChromeLoggerDataInfoLeakScanRule extends PluginPassiveScanner {
+public class XChromeLoggerDataInfoLeakScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "pscanrules.xchromeloggerdata.";
     private static final int PLUGIN_ID = 10052;

@@ -34,7 +34,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * X-Backend-Server header information leak passive scan rule
  * https://github.com/zaproxy/zaproxy/issues/1169
  */
-public class XBackendServerInformationLeakScanRule extends PluginPassiveScanner {
+public class XBackendServerInformationLeakScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "pscanrules.xbackendserver.";
     private static final int PLUGIN_ID = 10039;

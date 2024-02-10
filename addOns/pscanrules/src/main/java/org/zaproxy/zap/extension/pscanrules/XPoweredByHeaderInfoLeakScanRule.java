@@ -36,7 +36,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 /**
  * X-Powered-By Information Leak passive scan rule https://github.com/zaproxy/zaproxy/issues/1169
  */
-public class XPoweredByHeaderInfoLeakScanRule extends PluginPassiveScanner {
+public class XPoweredByHeaderInfoLeakScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "pscanrules.xpoweredbyheaderinfoleak.";
     private static final String HEADER_NAME = "X-Powered-By";

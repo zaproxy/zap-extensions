@@ -35,7 +35,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  *
  * @author 70pointer@gmail.com
  */
-public class RetrievedFromCacheScanRule extends PluginPassiveScanner {
+public class RetrievedFromCacheScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "pscanrules.retrievedfromcache.";
     private static final int PLUGIN_ID = 10050;

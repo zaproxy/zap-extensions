@@ -49,7 +49,8 @@ import org.zaproxy.zap.utils.ContentMatcher;
  *
  * @author yhawke 2013
  */
-public class ApplicationErrorScanRule extends PluginPassiveScanner {
+public class ApplicationErrorScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.applicationerrors.";

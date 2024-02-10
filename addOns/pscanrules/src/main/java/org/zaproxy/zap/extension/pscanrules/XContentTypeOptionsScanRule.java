@@ -31,7 +31,8 @@ import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class XContentTypeOptionsScanRule extends PluginPassiveScanner {
+public class XContentTypeOptionsScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.xcontenttypeoptions.";

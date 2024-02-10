@@ -41,7 +41,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Context;
 
-public class LinkTargetScanRule extends PluginPassiveScanner {
+public class LinkTargetScanRule extends PluginPassiveScanner implements CommonPassiveScanRuleInfo {
 
     public static final String TRUSTED_DOMAINS_PROPERTY = RuleConfigParam.RULE_DOMAINS_TRUSTED;
     private static final String MESSAGE_PREFIX = "pscanrules.linktarget.";

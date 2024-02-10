@@ -39,7 +39,8 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.users.User;
 
-public class UsernameIdorScanRule extends PluginPassiveScanner {
+public class UsernameIdorScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "pscanrules.usernameidor.";
     private static final int PLUGIN_ID = 10057;

@@ -29,7 +29,8 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /** A class to passively scan responses for indications that this is a modern web application. */
-public class ModernAppDetectionScanRule extends PluginPassiveScanner {
+public class ModernAppDetectionScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.modernapp.";

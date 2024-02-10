@@ -50,7 +50,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  *
  * @author 70pointer@gmail.com
  */
-public class TimestampDisclosureScanRule extends PluginPassiveScanner {
+public class TimestampDisclosureScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     // We are only interested in events within a 10 year span
     private static final long EPOCH_Y2038 = 2147483647L;

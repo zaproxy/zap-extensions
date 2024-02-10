@@ -39,7 +39,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 /*
  * passively scans requests for insecure authentication
  */
-public class InsecureAuthenticationScanRule extends PluginPassiveScanner {
+public class InsecureAuthenticationScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(

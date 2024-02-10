@@ -38,7 +38,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  *
  * @author 70pointer@gmail.com
  */
-public class DirectoryBrowsingScanRule extends PluginPassiveScanner {
+public class DirectoryBrowsingScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     /**
      * a consistently ordered map of: a regular expression pattern, mapping to the Web server to
