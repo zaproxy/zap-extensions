@@ -4,8 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-### Changed
-- Maintenance changes.
+### Fixed
+- Error message to give report name.
+- Issues with illegal XML characters in pdf reports (Issue 8330).
+- Corrected pdf report href from #olugin to #plugin.
+- Deprecated syntax in risk-confidence report.
 
 ## [0.28.0] - 2024-01-16
 ### Changed
