@@ -142,17 +142,15 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
         MySQL(
                 "MySQL",
                 Tech.MySQL,
-                Arrays.asList(
-                        new String[] {
-                            "\\Qcom.mysql.jdbc.exceptions\\E",
-                            "\\Qorg.gjt.mm.mysql\\E",
-                            "\\QODBC driver does not support\\E",
-                            "\\QThe used SELECT statements have a different number of columns\\E"
-                        }),
-                Arrays.asList(
-                        new String[] {
-                            "\\QThe used SELECT statements have a different number of columns\\E"
-                        })),
+                List.of(
+                        "\\QYou have an error in your SQL syntax\\E",
+                        "\\Qcom.mysql.jdbc.exceptions\\E",
+                        "\\Qorg.gjt.mm.mysql\\E",
+                        "\\QODBC driver does not support\\E",
+                        "\\QThe used SELECT statements have a different number of columns\\E"),
+                List.of(
+                        "\\QYou have an error in your SQL syntax\\E",
+                        "\\QThe used SELECT statements have a different number of columns\\E")),
 
         // TODO: Move this to the Microsoft SQL specific scan rule?
         // Injection vulnerabilities
