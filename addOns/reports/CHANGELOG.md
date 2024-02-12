@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.29.0] - 2024-02-12
 ### Fixed
 - Error message to give report name.
 - Issues with illegal XML characters in pdf reports (Issue 8330).
@@ -261,6 +261,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.29.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.29.0
 [0.28.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.28.0
 [0.27.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.27.0
 [0.26.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.26.0
