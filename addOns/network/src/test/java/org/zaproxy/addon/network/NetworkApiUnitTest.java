@@ -838,7 +838,7 @@ class NetworkApiUnitTest extends TestUtils {
 
     @ParameterizedTest
     @CsvSource({"true, true", "false, false", "invalid, false"})
-    void shouldSetHttpProxyAuthEnabled(boolean enabled, boolean expected) throws Exception {
+    void shouldSetHttpProxyAuthEnabled(String enabled, boolean expected) throws Exception {
         // Given
         String name = "setHttpProxyAuthEnabled";
         JSONObject params = new JSONObject();
@@ -852,7 +852,7 @@ class NetworkApiUnitTest extends TestUtils {
 
     @ParameterizedTest
     @CsvSource({"true, true", "false, false", "invalid, false"})
-    void shouldSetHttpProxyEnabled(boolean enabled, boolean expected) throws Exception {
+    void shouldSetHttpProxyEnabled(String enabled, boolean expected) throws Exception {
         // Given
         String name = "setHttpProxyEnabled";
         JSONObject params = new JSONObject();
