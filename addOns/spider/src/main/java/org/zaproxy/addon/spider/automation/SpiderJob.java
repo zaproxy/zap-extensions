@@ -29,10 +29,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import org.apache.commons.httpclient.URI;
-import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -447,7 +444,7 @@ public class SpiderJob extends AutomationJob {
         private Integer maxChildren;
         private Boolean acceptCookies;
         private Boolean handleODataParametersVisited;
-        private String handleParameters;
+        private HandleParametersOption handleParameters;
         private Integer maxParseSizeBytes;
         private Boolean parseComments;
         private Boolean parseGit;
@@ -464,10 +461,6 @@ public class SpiderJob extends AutomationJob {
         // These 2 fields are deprecated
         private Boolean failIfFoundUrlsLessThan;
         private Boolean warnIfFoundUrlsLessThan;
-
-        private static final HandleParametersOption HANDLE_PARAMETERS_OPTION_DEFAULT =
-                HandleParametersOption.USE_ALL;
-        private static final Logger LOGGER = LogManager.getLogger(Parameters.class);
 
         public Parameters() {
             super();
@@ -541,26 +534,12 @@ public class SpiderJob extends AutomationJob {
             this.maxDuration = maxDuration;
         }
 
-        public String getHandleParameters() {
+        public HandleParametersOption getHandleParameters() {
             return handleParameters;
         }
 
-        public void setHandleParameters(String handleParameters) {
-            this.handleParameters = getHandleParamsOptionEnum(handleParameters).name();
-        }
-
-        private HandleParametersOption getHandleParamsOptionEnum(String handleParametersVisited) {
-            HandleParametersOption option =
-                    EnumUtils.getEnumIgnoreCase(
-                            HandleParametersOption.class, handleParametersVisited);
-            if (option == null) {
-                LOGGER.warn(
-                        "\"{}\" is not a valid HandleParametersOption value, defaulting to \"{}\"",
-                        handleParametersVisited,
-                        HANDLE_PARAMETERS_OPTION_DEFAULT);
-                option = HANDLE_PARAMETERS_OPTION_DEFAULT;
-            }
-            return option;
+        public void setHandleParameters(HandleParametersOption handleParameters) {
+            this.handleParameters = handleParameters;
         }
 
         public Integer getMaxParseSizeBytes() {

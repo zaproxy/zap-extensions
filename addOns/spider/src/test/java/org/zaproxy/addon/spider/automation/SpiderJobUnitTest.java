@@ -23,7 +23,6 @@ import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -50,8 +49,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentMatcher;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -74,7 +71,6 @@ import org.zaproxy.addon.spider.ExtensionSpider2;
 import org.zaproxy.addon.spider.SpiderParam;
 import org.zaproxy.addon.spider.SpiderParam.HandleParametersOption;
 import org.zaproxy.addon.spider.SpiderScan;
-import org.zaproxy.addon.spider.automation.SpiderJob.Parameters;
 import org.zaproxy.addon.spider.automation.SpiderJob.UrlRequester;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
 import org.zaproxy.zap.extension.stats.InMemoryStats;
@@ -690,7 +686,9 @@ class SpiderJobUnitTest extends TestUtils {
         assertThat(job.getParameters().getMaxChildren(), is(equalTo(2)));
         assertThat(job.getParameters().getAcceptCookies(), is(equalTo(true)));
         assertThat(job.getParameters().getHandleODataParametersVisited(), is(equalTo(true)));
-        assertThat(job.getParameters().getHandleParameters(), is(equalTo("IGNORE_COMPLETELY")));
+        assertThat(
+                job.getParameters().getHandleParameters(),
+                is(equalTo(HandleParametersOption.IGNORE_COMPLETELY)));
         assertThat(job.getParameters().getMaxParseSizeBytes(), is(equalTo(2)));
         assertThat(job.getParameters().getParseComments(), is(equalTo(true)));
         assertThat(job.getParameters().getParseGit(), is(equalTo(true)));
@@ -770,25 +768,6 @@ class SpiderJobUnitTest extends TestUtils {
         assertThat(progress.getWarnings().size(), is(equalTo(1)));
         assertThat(
                 progress.getWarnings().get(0), is(equalTo("!automation.error.options.unknown!")));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"ignore_value", "USE_ALL", "IGnoRe_compLETELY"})
-    void shouldSetHandleParamOptionInAnyCase(String optValue) {
-        Parameters params = new Parameters();
-        assertDoesNotThrow(() -> params.setHandleParameters(optValue));
-    }
-
-    @Test
-    void shouldDefaultHandleParamOptionIfValueInvalid() {
-        // Given
-        String optValue = "invalid";
-        Parameters params = new Parameters();
-        // When
-        params.setHandleParameters(optValue);
-        String hpo = params.getHandleParameters();
-        // Then
-        assertThat(hpo, is(equalTo(HandleParametersOption.USE_ALL.name())));
     }
 
     private static class TestServerHandler extends NanoServerHandler {
