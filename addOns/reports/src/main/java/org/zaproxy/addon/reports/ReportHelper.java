@@ -241,4 +241,11 @@ public class ReportHelper {
                 .replace("&lt;p&gt;", "<p>")
                 .replace("&lt;/p&gt;", "</p>");
     }
+
+    public static String escapeXml(String text) {
+        if (text == null || text.isEmpty()) {
+            return "";
+        }
+        return XMLStringUtil.escapeControlChrs(text);
+    }
 }

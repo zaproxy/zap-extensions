@@ -88,6 +88,10 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 class ExtensionReportsUnitTest extends TestUtils {
 
+    private static final String ILLEGAL_XML_CHRS = "\u0000\u0013";
+    // FIXME change everything that uses this to use ILLEGAL_XML_CHRS - these places currently fail
+    private static final String NOT_ILLEGAL_XML_CHRS = "";
+
     private static final String HTML_REPORT_ALERT_SUMMARY_SECTION = "alertcount";
     private static final String HTML_REPORT_INSTANCE_SUMMARY_SECTION = "instancecount";
     private static final String HTML_REPORT_ALERT_DETAIL_SECTION = "alertdetails";
@@ -216,23 +220,41 @@ class ExtensionReportsUnitTest extends TestUtils {
         assertThat(counts.get(2), is(equalTo(4)));
     }
 
-    private AlertNode newAlertNode(
-            int pluginId, int level, String name, String uri, int childCount) {
-        Alert alert = new Alert(pluginId);
-        alert.setUri(uri);
-        alert.setDescription("Foo-Desc");
-        alert.setSolution("Foo-Sol");
-        alert.setOtherInfo("Foo-Other");
+    private HttpMessage newMsg(String uri) {
         try {
-            alert.setMessage(new HttpMessage(new URI(uri, true)));
+            HttpMessage msg = new HttpMessage(new URI(uri + ILLEGAL_XML_CHRS, true));
+            msg.getRequestHeader().setHeader("Test", "Foo-Header" + ILLEGAL_XML_CHRS);
+            msg.getRequestBody().setBody(ILLEGAL_XML_CHRS);
+            msg.getResponseHeader().setHeader("Test", "Foo-Header" + ILLEGAL_XML_CHRS);
+            msg.getResponseBody().setBody(ILLEGAL_XML_CHRS);
+            return msg;
         } catch (URIException | HttpMalformedHeaderException | NullPointerException e) {
             throw new RuntimeException(e);
         }
-        AlertNode alertNode = new AlertNode(level, name);
+    }
+
+    private AlertNode newAlertNode(
+            int pluginId, int level, String name, String uri, int childCount) {
+        Alert alert = new Alert(pluginId);
+        alert.setUri(uri + ILLEGAL_XML_CHRS);
+        alert.setName("Foo-name" + ILLEGAL_XML_CHRS);
+        alert.setDescription("Foo-Desc" + ILLEGAL_XML_CHRS);
+        alert.setSolution("Foo-Sol" + ILLEGAL_XML_CHRS);
+        alert.setOtherInfo("Foo-Other" + ILLEGAL_XML_CHRS);
+
+        alert.setEvidence("Foo-evid" + ILLEGAL_XML_CHRS);
+        alert.setReference("Foo-ref" + ILLEGAL_XML_CHRS);
+        alert.setAttack("Foo-attack" + ILLEGAL_XML_CHRS);
+
+        alert.setParam("Foo-param" + ILLEGAL_XML_CHRS);
+        alert.setMessage(newMsg(uri));
+        AlertNode alertNode = new AlertNode(level, name + ILLEGAL_XML_CHRS);
         alertNode.setUserObject(alert);
         for (int i = 0; i < childCount; i++) {
-            AlertNode childNode = new AlertNode(level, name);
-            childNode.setUserObject(new Alert(pluginId));
+            AlertNode childNode = new AlertNode(level, name + ILLEGAL_XML_CHRS);
+            Alert childAlert = new Alert(pluginId);
+            childAlert.setMessage(newMsg(uri));
+            childNode.setUserObject(childAlert);
             alertNode.add(childNode);
         }
         return alertNode;
@@ -1195,6 +1217,7 @@ class ExtensionReportsUnitTest extends TestUtils {
         File f = File.createTempFile("zap.reports.test", "x");
         Template template = getTemplateFromYamlFile(reportName);
         // When
+        reportData.setSections(template.getSections());
         File r = extRep.generateReport(reportData, template, f.getAbsolutePath(), false);
         String report = new String(Files.readAllBytes(r.toPath()));
         // Then
@@ -1217,12 +1240,11 @@ class ExtensionReportsUnitTest extends TestUtils {
                         8));
         reportData.setAlertTreeRootNode(root);
         String site1 = "https://www.example.com";
-        reportData.setSites(List.of(site1));
+        reportData.setSites(List.of(site1 + NOT_ILLEGAL_XML_CHRS));
         reportData.setIncludeAllConfidences(true);
         reportData.setIncludeAllRisks(true);
-        reportData.setDescription("");
-        reportData.addSection("alerts");
-        reportData.addSection("appendix");
+        reportData.setDescription("desc" + ILLEGAL_XML_CHRS);
+        reportData.setContexts(new ArrayList<>());
         return reportData;
     }
 
