@@ -69,6 +69,7 @@ import org.zaproxy.addon.automation.tests.AutomationStatisticTest;
 import org.zaproxy.addon.network.common.ZapUnknownHostException;
 import org.zaproxy.addon.spider.ExtensionSpider2;
 import org.zaproxy.addon.spider.SpiderParam;
+import org.zaproxy.addon.spider.SpiderParam.HandleParametersOption;
 import org.zaproxy.addon.spider.SpiderScan;
 import org.zaproxy.addon.spider.automation.SpiderJob.UrlRequester;
 import org.zaproxy.zap.extension.stats.ExtensionStats;
@@ -685,7 +686,9 @@ class SpiderJobUnitTest extends TestUtils {
         assertThat(job.getParameters().getMaxChildren(), is(equalTo(2)));
         assertThat(job.getParameters().getAcceptCookies(), is(equalTo(true)));
         assertThat(job.getParameters().getHandleODataParametersVisited(), is(equalTo(true)));
-        assertThat(job.getParameters().getHandleParameters(), is(equalTo("ignore_completely")));
+        assertThat(
+                job.getParameters().getHandleParameters(),
+                is(equalTo(HandleParametersOption.IGNORE_COMPLETELY)));
         assertThat(job.getParameters().getMaxParseSizeBytes(), is(equalTo(2)));
         assertThat(job.getParameters().getParseComments(), is(equalTo(true)));
         assertThat(job.getParameters().getParseGit(), is(equalTo(true)));

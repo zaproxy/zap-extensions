@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [63] - 2024-02-12
+### Changed
+- Maintenance changes.
+
+### Added
+- The SQL Injection scan rule now includes a MySQL/MariaDB generic error message.
+
 ## [62] - 2024-01-26
 ### Changed
 - The Source Code Disclosure - /WEB-INF Folder rule now includes example alert functionality for documentation generation purposes (Issue 6119).
@@ -499,6 +506,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[63]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v63
 [62]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v62
 [61]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v61
 [60]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v60

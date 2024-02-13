@@ -915,11 +915,11 @@
     "icon": "jQuery.svg",
     "implies": "jQuery",
     "js": {
-      "jQuery.migrateVersion": "([\\d.]+)\\;version:\\1",
+      "jQuery.migrateVersion": "((?:\\d+\\.){1,2}\\d+)\\;version:\\1",
       "jQuery.migrateWarnings": "",
       "jqueryMigrate": ""
     },
-    "scriptSrc": "jquery[.-]migrate(?:-([\\d.]+))?(?:\\.min)?\\.js(?:\\?ver=([\\d.]+))?\\;version:\\1?\\1:\\2",
+    "scriptSrc": "jquery-migrate(?:\\.min)?(?:-?((?:\\d+\\.)+\\d+))?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2",
     "website": "https://github.com/jquery/jquery-migrate"
   },
   "jQuery Mobile": {

@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Notify proxy listeners concurrently, might break listeners that do not correctly handle concurrency.
+- Update dependencies.
 
 ### Removed
 - Remove legacy options panels that helped the user find the new options panels:

@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Changed
 - Update minimum ZAP version to 2.14.0.
+- Maintenance changes.
 
 ### Added
 - Script template: encode-decode-template.kts, for the Encoder (encode/decode/hash) add-on (Issue 5996).

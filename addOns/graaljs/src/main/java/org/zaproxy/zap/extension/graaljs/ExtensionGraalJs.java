@@ -31,6 +31,7 @@ import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.zaproxy.zap.control.AddOn;
+import org.zaproxy.zap.control.ExtensionFactory;
 import org.zaproxy.zap.extension.script.ExtensionScript;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 
@@ -38,13 +39,8 @@ public class ExtensionGraalJs extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionGraalJs";
 
-    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
-        dependencies.add(ExtensionScript.class);
-        EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
+    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
+            List.of(ExtensionScript.class);
 
     private GraalJsEngineWrapper engineWrapper;
 
@@ -69,14 +65,11 @@ public class ExtensionGraalJs extends ExtensionAdaptor {
 
     @Override
     public void hook(ExtensionHook extensionHook) {
-        ClassLoader previousContextClassLoader = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-        try {
-            engineWrapper =
-                    new GraalJsEngineWrapper(getDefaultTemplates(), createScriptEngineIcon());
-        } finally {
-            Thread.currentThread().setContextClassLoader(previousContextClassLoader);
-        }
+        engineWrapper =
+                new GraalJsEngineWrapper(
+                        ExtensionFactory.getAddOnLoader(),
+                        getDefaultTemplates(),
+                        createScriptEngineIcon());
         getExtScript().registerScriptEngineWrapper(engineWrapper);
     }
 

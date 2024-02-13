@@ -22,8 +22,6 @@ package org.zaproxy.zap.extension.spiderAjax.automation;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.parosproxy.paros.CommandLine;
@@ -41,16 +39,10 @@ public class ExtensionAjaxAutomation extends ExtensionAdaptor {
 
     private static final String RESOURCES_DIR = "/org/zaproxy/zap/extension/spiderAjax/resources/";
 
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionAjax.class, ExtensionAutomation.class);
 
     private AjaxSpiderJob job;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
-        dependencies.add(ExtensionAjax.class);
-        dependencies.add(ExtensionAutomation.class);
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
 
     public ExtensionAjaxAutomation() {
         super(NAME);

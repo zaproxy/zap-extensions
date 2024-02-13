@@ -67,6 +67,9 @@ public class VerificationData extends AutomationData {
     public VerificationData(Context context) {
         AuthenticationMethod authMethod = context.getAuthenticationMethod();
         switch (authMethod.getAuthCheckingStrategy()) {
+            case AUTO_DETECT:
+                this.setMethod(METHOD_AUTO_DETECT);
+                break;
             case EACH_REQ:
                 this.setMethod(METHOD_REQUEST);
                 break;
@@ -80,10 +83,6 @@ public class VerificationData extends AutomationData {
             default:
                 this.setMethod(METHOD_POLL);
                 break;
-        }
-        if ("AUTO_DETECT".equals(authMethod.getAuthCheckingStrategy().name())) {
-            // Available in the latest weeklies and 2.13+
-            this.setMethod(METHOD_AUTO_DETECT);
         }
 
         if (authMethod.getLoggedInIndicatorPattern() != null) {
@@ -192,6 +191,9 @@ public class VerificationData extends AutomationData {
         AuthenticationMethod authMethod = context.getAuthenticationMethod();
         String planMethod = this.getMethod().toLowerCase(Locale.ROOT);
         switch (planMethod) {
+            case METHOD_AUTO_DETECT:
+                authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.AUTO_DETECT);
+                break;
             case METHOD_BOTH:
                 authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.EACH_REQ_RESP);
                 break;
@@ -205,14 +207,6 @@ public class VerificationData extends AutomationData {
             default:
                 authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.POLL_URL);
                 break;
-        }
-        if ("autodetect".equals(planMethod)) {
-            // Available in the latest weeklies and 2.13+
-            try {
-                authMethod.setAuthCheckingStrategy(AuthCheckingStrategy.valueOf("AUTO_DETECT"));
-            } catch (Exception e) {
-                // Ignore - not yet supported so will default to "poll"
-            }
         }
 
         if (POLL_UNIT_REQUESTS.equalsIgnoreCase(this.getPollUnits())) {

@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.alertFilters.automation;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -34,16 +32,10 @@ public class ExtensionAlertFiltersAutomation extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionAlertFiltersAutomation";
 
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionAlertFilters.class, ExtensionAutomation.class);
 
     private AlertFilterJob job;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
-        dependencies.add(ExtensionAlertFilters.class);
-        dependencies.add(ExtensionAutomation.class);
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
 
     public ExtensionAlertFiltersAutomation() {
         super(NAME);

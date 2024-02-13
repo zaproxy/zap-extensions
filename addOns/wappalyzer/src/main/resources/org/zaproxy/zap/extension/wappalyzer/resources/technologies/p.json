@@ -1007,6 +1007,18 @@
     },
     "website": "https://joinpeertube.org/"
   },
+  "Peity": {
+    "cats": [
+      59
+    ],
+    "description": "Peity is a simple jQuery plugin that converts an element's content into a simple mini svg pie, line or bar chart.",
+    "js": {
+      "peity": ""
+    },
+    "oss": true,
+    "scriptSrc": "peity(?:-demo)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://github.com/benpickles/peity"
+  },
   "Pelican": {
     "cats": [
       57
@@ -3001,7 +3013,9 @@
   },
   "Prism": {
     "cats": [
-      19
+      19,
+      66,
+      59
     ],
     "description": "Prism is an extensible syntax highlighter.",
     "icon": "Prism.svg",
@@ -3009,7 +3023,8 @@
       "Prism": "",
       "apex.libVersions.prismJs": "^([\\d\\.]+)$\\;version:\\1"
     },
-    "scriptSrc": "prism\\.js",
+    "oss": true,
+    "scriptSrc": "prism(?:\\.min)?(?:-\\w{0,64})?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
     "website": "https://prismjs.com"
   },
   "Prismic": {
@@ -3196,6 +3211,16 @@
     "requires": "Microsoft ASP.NET",
     "scriptSrc": "/ThinClient/(?:WTM|WebResource)(?:\\.axd|/public)\\;confidence:60",
     "website": "https://www.progress.com/ws_ftp"
+  },
+  "ProgressBar.js": {
+    "cats": [
+      59
+    ],
+    "description": "Responsive progress bars with animated SVG paths.",
+    "icon": "ProgressBar.js.png",
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?progressbar(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2",
+    "website": "https://kimmobrunfeldt.github.io/progressbar.js/"
   },
   "Project Wonderful": {
     "cats": [
@@ -4025,5 +4050,14 @@
       "PUNBB": ""
     },
     "website": "https://punbb.informer.com"
+  },
+  "punycode": {
+    "cats": [
+      59
+    ],
+    "description": "A robust Punycode converter that fully complies to RFC 3492 and RFC 5891, and works on nearly all JavaScript platforms.",
+    "oss": true,
+    "scriptSrc": "punycode(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.){1,2}\\d+))?\\;version:\\1",
+    "website": "https://github.com/mathiasbynens/punycode.js"
   }
 }

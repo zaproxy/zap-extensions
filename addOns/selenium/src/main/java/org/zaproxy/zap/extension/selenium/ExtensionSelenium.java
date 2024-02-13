@@ -25,7 +25,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -90,7 +89,7 @@ public class ExtensionSelenium extends ExtensionAdaptor {
     private static final Logger LOGGER = LogManager.getLogger(ExtensionSelenium.class);
 
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
-            Collections.unmodifiableList(Arrays.asList(ExtensionNetwork.class));
+            List.of(ExtensionNetwork.class);
 
     private static final int MIN_PORT = 1;
 

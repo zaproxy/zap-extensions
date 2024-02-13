@@ -50,6 +50,7 @@ import org.zaproxy.addon.automation.tests.AbstractAutomationTest;
 import org.zaproxy.addon.automation.tests.AutomationStatisticTest;
 import org.zaproxy.addon.network.common.ZapUnknownHostException;
 import org.zaproxy.addon.spider.ExtensionSpider2;
+import org.zaproxy.addon.spider.SpiderParam.HandleParametersOption;
 import org.zaproxy.addon.spider.SpiderScan;
 import org.zaproxy.zap.model.Target;
 import org.zaproxy.zap.users.User;
@@ -443,7 +444,7 @@ public class SpiderJob extends AutomationJob {
         private Integer maxChildren;
         private Boolean acceptCookies;
         private Boolean handleODataParametersVisited;
-        private String handleParameters;
+        private HandleParametersOption handleParameters;
         private Integer maxParseSizeBytes;
         private Boolean parseComments;
         private Boolean parseGit;
@@ -533,11 +534,11 @@ public class SpiderJob extends AutomationJob {
             this.maxDuration = maxDuration;
         }
 
-        public String getHandleParameters() {
+        public HandleParametersOption getHandleParameters() {
             return handleParameters;
         }
 
-        public void setHandleParameters(String handleParameters) {
+        public void setHandleParameters(HandleParametersOption handleParameters) {
             this.handleParameters = handleParameters;
         }
 
