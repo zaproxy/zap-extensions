@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.LogManager;
@@ -36,7 +37,7 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
  * Active scan rule which checks whether or not HTTPS content is also available via HTTP
  * https://github.com/zaproxy/zaproxy/issues/174
  */
-public class HttpsAsHttpScanRule extends AbstractAppPlugin {
+public class HttpsAsHttpScanRule extends AbstractAppPlugin implements CommonActiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "ascanbeta.httpsashttp.";
@@ -146,16 +147,24 @@ public class HttpsAsHttpScanRule extends AbstractAppPlugin {
         }
 
         if (newRequest.getResponseHeader().getStatusCode() == HttpStatusCode.OK) { // 200 Success
-
-            String newUri = newRequest.getRequestHeader().getURI().toString();
-
-            newAlert()
-                    .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                    .setUri(getBaseMsg().getRequestHeader().getURI().toString())
-                    .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "otherinfo", newUri))
-                    .setEvidence(newUri)
+            buildAlert(
+                            getBaseMsg().getRequestHeader().getURI().toString(),
+                            newRequest.getRequestHeader().getURI().toString())
                     .setMessage(newRequest)
                     .raise();
         }
+    }
+
+    private AlertBuilder buildAlert(String baseUrl, String newUrl) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setUri(baseUrl)
+                .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "otherinfo", newUrl))
+                .setEvidence(newUrl);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(buildAlert("https://example.org/", "http://example.org/").build());
     }
 }

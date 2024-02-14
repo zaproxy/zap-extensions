@@ -63,7 +63,8 @@ import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
  *
  * @author 70pointer
  */
-public class InsecureHttpMethodScanRule extends AbstractAppPlugin {
+public class InsecureHttpMethodScanRule extends AbstractAppPlugin
+        implements CommonActiveScanRuleInfo {
 
     /* These are the 'default' HTTP methods which are considered as insecure */
     private static final List<String> INSECURE_DEFAULT_METHODS =

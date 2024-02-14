@@ -380,7 +380,14 @@ public enum CommonAlertTag {
      *
      * @since 1.10.0
      */
-    CUSTOM_PAYLOADS("CUSTOM_PAYLOADS", "");
+    CUSTOM_PAYLOADS("CUSTOM_PAYLOADS", ""),
+
+    /**
+     * Indicates that the scan rule does time based tests.
+     *
+     * @since 1.22.0
+     */
+    TEST_TIMING("TEST_TIMING", "");
 
     private String tag;
     private String value;

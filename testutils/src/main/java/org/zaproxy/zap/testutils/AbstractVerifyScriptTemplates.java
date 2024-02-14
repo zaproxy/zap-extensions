@@ -35,10 +35,17 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /** Verifies that script templates are parsed without errors. */
-public abstract class AbstractVerifyScriptTemplates {
+public abstract class AbstractVerifyScriptTemplates extends TestUtils {
+
+    @Override
+    @BeforeEach
+    protected void setUpZap() throws Exception {
+        super.setUpZap();
+    }
 
     @Test
     public void shouldParseTemplates() throws Exception {

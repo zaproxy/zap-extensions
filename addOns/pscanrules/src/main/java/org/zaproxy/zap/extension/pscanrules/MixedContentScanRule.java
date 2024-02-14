@@ -98,7 +98,7 @@ public class MixedContentScanRule extends PluginPassiveScanner {
                 sb.append('\n');
             }
 
-            this.raiseAlert(msg, id, list.get(0).getValue(), sb.toString(), incScript);
+            buildAlert(list.get(0).getValue(), sb.toString(), incScript).raise();
         }
     }
 
@@ -112,14 +112,14 @@ public class MixedContentScanRule extends PluginPassiveScanner {
         return false;
     }
 
-    private void raiseAlert(HttpMessage msg, int id, String first, String all, boolean incScript) {
+    private AlertBuilder buildAlert(String first, String all, boolean incScript) {
         String name = getName();
         int risk = Alert.RISK_LOW;
         if (incScript) {
             name = Constant.messages.getString(MESSAGE_PREFIX + "name.inclscripts");
             risk = Alert.RISK_MEDIUM;
         }
-        newAlert()
+        return newAlert()
                 .setName(name)
                 .setRisk(risk)
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
@@ -129,8 +129,7 @@ public class MixedContentScanRule extends PluginPassiveScanner {
                 .setReference(getReference())
                 .setEvidence(first)
                 .setCweId(getCweId())
-                .setWascId(getWascId())
-                .raise();
+                .setWascId(getWascId());
     }
 
     @Override
@@ -166,6 +165,16 @@ public class MixedContentScanRule extends PluginPassiveScanner {
 
     public int getWascId() {
         return 4; // WASC Id 4 - Insufficient Transport Layer Protection
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                "http://example.com/file",
+                                "tag=img src=http://example.com/file\n",
+                                false)
+                        .build());
     }
 
     private class MixedContent {

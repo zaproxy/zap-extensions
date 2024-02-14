@@ -87,7 +87,7 @@ public class JobUtils {
         }
         if (o instanceof String) {
             try {
-                strength = AttackStrength.valueOf(((String) o).toUpperCase());
+                strength = AttackStrength.valueOf(((String) o).toUpperCase(Locale.ROOT));
             } catch (Exception e) {
                 progress.warn(
                         Constant.messages.getString("automation.error.ascan.strength", jobName, o));
@@ -107,7 +107,7 @@ public class JobUtils {
         }
         if (o instanceof String) {
             try {
-                threshold = AlertThreshold.valueOf(((String) o).toUpperCase());
+                threshold = AlertThreshold.valueOf(((String) o).toUpperCase(Locale.ROOT));
             } catch (Exception e) {
                 progress.warn(
                         Constant.messages.getString(

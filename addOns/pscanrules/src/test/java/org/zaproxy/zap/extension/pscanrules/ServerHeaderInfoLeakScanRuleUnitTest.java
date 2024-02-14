@@ -157,4 +157,10 @@ class ServerHeaderInfoLeakScanRuleUnitTest
         assertThat(countLows, is(equalTo(1L)));
         assertThat(countInfos, is(equalTo(1L)));
     }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
+    }
 }

@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import org.apache.commons.configuration.ConversionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,7 +40,7 @@ import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
  *
  * @author psiinon
  */
-public class ShellShockScanRule extends AbstractAppParamPlugin {
+public class ShellShockScanRule extends AbstractAppParamPlugin implements CommonActiveScanRuleInfo {
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
                     CommonAlertTag.OWASP_2021_A06_VULN_COMP,
@@ -49,11 +50,18 @@ public class ShellShockScanRule extends AbstractAppParamPlugin {
     /** the logger object */
     private static final Logger LOGGER = LogManager.getLogger(ShellShockScanRule.class);
 
-    private final String attackHeader = HttpFieldsNames.X_POWERED_BY;
+    /**
+     * Use a standard HTTP response header, to make sure the header is not dropped by load
+     * balancers, proxies, etc
+     */
+    private static final String ATTACK_HEADER = HttpFieldsNames.X_POWERED_BY;
 
-    // Use a standard HTTP response header, to make sure the header is not dropped by load
-    // balancers, proxies, etc
-    private final String evidence = "ShellShock-Vulnerable";
+    private static final String EVIDENCE = "ShellShock-Vulnerable";
+
+    private static final String ATTACK_1 =
+            "() { :;}; echo '" + ATTACK_HEADER + ": " + EVIDENCE + "'";
+    // Will have sleep value concatenated on the end
+    private static final String ATTACK_2 = "() { :;}; /bin/sleep ";
 
     private int sleep = 5;
 
@@ -106,25 +114,15 @@ public class ShellShockScanRule extends AbstractAppParamPlugin {
             // First try a simple reflected attack
             // With CGI, the evidence will come out in the header
             HttpMessage msg1 = getNewMsg();
-            String attack = "() { :;}; echo '" + attackHeader + ": " + evidence + "'";
 
-            setParameter(msg1, paramName, attack);
+            setParameter(msg1, paramName, ATTACK_1);
             sendAndReceive(msg1, false); // do not follow redirects
 
-            List<String> ssHeaders = msg1.getResponseHeader().getHeaderValues(attackHeader);
+            List<String> ssHeaders = msg1.getResponseHeader().getHeaderValues(ATTACK_HEADER);
             if (!ssHeaders.isEmpty()) {
                 for (String header : ssHeaders) {
-                    if (header.contains(evidence)) {
-                        newAlert()
-                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                .setParam(paramName)
-                                .setAttack(attack)
-                                .setOtherInfo(
-                                        Constant.messages.getString(
-                                                "ascanbeta.shellshock.extrainfo"))
-                                .setEvidence(evidence)
-                                .setMessage(msg1)
-                                .raise();
+                    if (header.contains(EVIDENCE)) {
+                        buildAlert(paramName, ATTACK_1).setMessage(msg1).raise();
                         return;
                     }
                 }
@@ -135,45 +133,58 @@ public class ShellShockScanRule extends AbstractAppParamPlugin {
             // based attack)
             boolean vulnerable = false;
             HttpMessage msg2 = getNewMsg();
-            attack = "() { :;}; /bin/sleep " + sleep;
+            String attack = ATTACK_2 + sleep;
 
             setParameter(msg2, paramName, attack);
             sendAndReceive(msg2, false); // do not follow redirects
             long attackElapsedTime = msg2.getTimeElapsedMillis();
 
-            if (attackElapsedTime > sleep * 1000) {
+            if (attackElapsedTime > TimeUnit.SECONDS.toMillis(sleep)) {
                 vulnerable = true;
                 if (!Plugin.AlertThreshold.LOW.equals(this.getAlertThreshold())
-                        && attackElapsedTime > 6000) {
+                        && attackElapsedTime > TimeUnit.SECONDS.toMillis(6L)) {
                     // Could be that the server is overloaded, try a safe request
                     HttpMessage safeMsg = getNewMsg();
                     sendAndReceive(safeMsg, false); // do not follow redirects
-                    if (safeMsg.getTimeElapsedMillis() > sleep * 1000
+                    if (safeMsg.getTimeElapsedMillis() > TimeUnit.SECONDS.toMillis(sleep)
                             && (safeMsg.getTimeElapsedMillis() - attackElapsedTime)
-                                    < sleep * 1000) {
+                                    < TimeUnit.SECONDS.toMillis(sleep)) {
                         // Looks like the server is just overloaded
                         vulnerable = false;
                     }
                 }
             }
             if (vulnerable) {
-                newAlert()
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setParam(paramName)
-                        .setAttack(attack)
-                        .setOtherInfo(Constant.messages.getString("ascanbeta.shellshock.extrainfo"))
-                        .setEvidence(
-                                Constant.messages.getString(
-                                        "ascanbeta.shellshock.timingbased.evidence",
-                                        attackElapsedTime))
-                        .setMessage(msg2)
-                        .raise();
-                return;
+                buildTimingAlert(paramName, attack, attackElapsedTime).setMessage(msg2).raise();
             }
 
         } catch (Exception e) {
             LOGGER.error("Error scanning a Host for ShellShock: {}", e.getMessage(), e);
         }
+    }
+
+    private AlertBuilder createAlert() {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setOtherInfo(Constant.messages.getString("ascanbeta.shellshock.extrainfo"));
+    }
+
+    private AlertBuilder buildAlert(String paramName, String attack) {
+        return createAlert()
+                .setParam(paramName)
+                .setAttack(attack)
+                .setEvidence(EVIDENCE)
+                .setAlertRef(getId() + "-1");
+    }
+
+    private AlertBuilder buildTimingAlert(String paramName, String attack, long attackElapsedTime) {
+        return createAlert()
+                .setParam(paramName)
+                .setAttack(attack)
+                .setEvidence(
+                        Constant.messages.getString(
+                                "ascanbeta.shellshock.timingbased.evidence", attackElapsedTime))
+                .setAlertRef(getId() + "-2");
     }
 
     @Override
@@ -195,5 +206,12 @@ public class ShellShockScanRule extends AbstractAppParamPlugin {
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert("profile", ATTACK_1).build(),
+                buildTimingAlert("profile", ATTACK_2 + "5", TimeUnit.SECONDS.toMillis(6L)).build());
     }
 }

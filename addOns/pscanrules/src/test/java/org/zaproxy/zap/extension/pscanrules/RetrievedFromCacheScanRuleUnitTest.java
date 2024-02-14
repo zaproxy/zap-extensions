@@ -23,10 +23,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
@@ -72,6 +74,24 @@ class RetrievedFromCacheScanRuleUnitTest extends PassiveScannerTest<RetrievedFro
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_ATHN_06_CACHE_WEAKNESS.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlerts() {
+        // Given // When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(2)));
+        Alert cacheHitMissAlert = alerts.get(0);
+        assertThat(cacheHitMissAlert.getAlertRef(), is(equalTo("10050-1")));
+        Alert xCacheAlert = alerts.get(1);
+        assertThat(xCacheAlert.getAlertRef(), is(equalTo("10050-2")));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 
     @Test

@@ -33,6 +33,7 @@ import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -75,7 +76,10 @@ class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
         // Given
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-        msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Server: Apache-Coyote/1.1\r\n");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Type: application/json \r\n");
         msg.setResponseBody("{\"cc\": \"" + cardNumber + "\"}");
 
         // When
@@ -364,6 +368,77 @@ class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
         assertThat(alertsRaised.get(0).getEvidence(), is(equalTo(ccNum)));
     }
 
+    @ParameterizedTest
+    @EnumSource(names = {"HIGH", "MEDIUM"})
+    void shouldNotRaiseAlertWhenPiiIsInJavascriptContentTypeOnNonLowThreshold(
+            AlertThreshold threshold) throws Exception {
+        // Given
+        String ccNum = "4111 1111 1111 1111";
+        HttpMessage msg = createMsg(ccNum);
+        msg.getRequestHeader().setURI(new URI("http://example.com/generate/", true));
+        msg.getResponseHeader()
+                .setHeader(HttpResponseHeader.CONTENT_TYPE, "application/javascript");
+        rule.setAlertThreshold(threshold);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(0));
+    }
+
+    @Test
+    void shouldRaiseAlertWhenPiiInJavascriptContentTypeOnLOWThreshold() throws Exception {
+        String ccNum = "4111 1111 1111 1111";
+        HttpMessage msg = createMsg(ccNum);
+        msg.getRequestHeader().setURI(new URI("http://example.com/generate/", true));
+        msg.getResponseHeader()
+                .setHeader(HttpResponseHeader.CONTENT_TYPE, "application/javascript");
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(1));
+    }
+
+    private static Stream<Arguments> provideContentTypeAndThreshold() {
+        return Stream.of(
+                Arguments.of("application/json", AlertThreshold.MEDIUM),
+                Arguments.of("application/json", AlertThreshold.HIGH),
+                Arguments.of("application/xml", AlertThreshold.MEDIUM),
+                Arguments.of("application/xml", AlertThreshold.HIGH),
+                Arguments.of("text/html", AlertThreshold.MEDIUM),
+                Arguments.of("text/html", AlertThreshold.HIGH));
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideContentTypeAndThreshold")
+    void shouldRaiseAlertsOnPiiWithHtmlOrJsonOrXmlOnNonLowThreshold(
+            String contentType, AlertThreshold threshold) throws Exception {
+        String ccNum = "4111 1111 1111 1111";
+        HttpMessage msg = createMsg(ccNum);
+        msg.getRequestHeader().setURI(new URI("http://example.com/generate/", true));
+        msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, contentType);
+        rule.setAlertThreshold(threshold);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(1));
+    }
+
+    @ParameterizedTest
+    @CsvSource({"application/json", "application/xml", "text/plain", "text/html"})
+    void shouldRaiseAlertsOnPiiWithTextOrHtmlOrJsonOrXmlOnLowThreshold(String contentType)
+            throws Exception {
+        String ccNum = "4111 1111 1111 1111";
+        HttpMessage msg = createMsg(ccNum);
+        msg.getRequestHeader().setURI(new URI("http://example.com/generate/", true));
+        msg.getResponseHeader().setHeader(HttpResponseHeader.CONTENT_TYPE, contentType);
+        rule.setAlertThreshold(AlertThreshold.LOW);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(1));
+    }
+
     @Test
     void shouldReturnExpectedMappings() {
         // Given / When
@@ -403,10 +478,19 @@ class PiiScanRuleUnitTest extends PassiveScannerTest<PiiScanRule> {
                                         + "Issuer: U.S. BANK N.A. ND")));
     }
 
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
+    }
+
     private HttpMessage createMsg(String cardNumber) throws HttpMalformedHeaderException {
         HttpMessage msg = new HttpMessage();
         msg.setRequestHeader("GET https://www.example.com/test/ HTTP/1.1");
-        msg.setResponseHeader("HTTP/1.1 200 OK\r\n" + "Server: Apache-Coyote/1.1\r\n");
+        msg.setResponseHeader(
+                "HTTP/1.1 200 OK\r\n"
+                        + "Server: Apache-Coyote/1.1\r\n"
+                        + "Content-Type: text/html \r\n");
         msg.setResponseBody("{\"cc\": \"" + cardNumber + "\"}");
         return msg;
     }

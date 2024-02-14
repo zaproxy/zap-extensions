@@ -51,7 +51,7 @@ import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
  * CsrfTokenScanRule is an effort to improve the anti-CSRF token detection of ZAP It is based on
  * previous plugins such as csrfcountermeasuresscan and sessionfixation
  */
-public class CsrfTokenScanRule extends AbstractAppPlugin {
+public class CsrfTokenScanRule extends AbstractAppPlugin implements CommonActiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "ascanbeta.csrftoken.";
     private static final int PLUGIN_ID = 20012;
@@ -220,13 +220,7 @@ public class CsrfTokenScanRule extends AbstractAppPlugin {
                                     Constant.messages.getString(
                                             MESSAGE_PREFIX + "extrainfo.annotation");
                         }
-                        newAlert()
-                                .setRisk(risk)
-                                .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                                .setOtherInfo(otherInfo)
-                                .setEvidence(evidence)
-                                .setMessage(getBaseMsg())
-                                .raise();
+                        buildAlert(risk, otherInfo, evidence).setMessage(getBaseMsg()).raise();
                     }
                 }
 
@@ -235,6 +229,14 @@ public class CsrfTokenScanRule extends AbstractAppPlugin {
         } catch (IOException e) {
             LOGGER.error(e);
         }
+    }
+
+    private AlertBuilder buildAlert(int risk, String otherInfo, String evidence) {
+        return newAlert()
+                .setRisk(risk)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setOtherInfo(otherInfo)
+                .setEvidence(evidence);
     }
 
     private boolean formOnIgnoreList(Element formElement) {
@@ -300,5 +302,15 @@ public class CsrfTokenScanRule extends AbstractAppPlugin {
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                Alert.RISK_MEDIUM,
+                                "",
+                                "<input type=\"hidden\" name=\"firstName\" value=\"\">")
+                        .build());
     }
 }

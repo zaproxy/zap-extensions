@@ -23,10 +23,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
@@ -299,5 +301,51 @@ class StrictTransportSecurityScanRuleUnitTest
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(8)));
+        Alert headerMissingAlert = alerts.get(0);
+        assertThat(headerMissingAlert.getRisk(), is(equalTo(Alert.RISK_LOW)));
+        assertThat(headerMissingAlert.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
+        assertThat(headerMissingAlert.getAlertRef(), is(equalTo("10035-1")));
+        Alert disabledAlert = alerts.get(1);
+        assertThat(disabledAlert.getRisk(), is(equalTo(Alert.RISK_LOW)));
+        assertThat(disabledAlert.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
+        assertThat(disabledAlert.getAlertRef(), is(equalTo("10035-2")));
+        Alert multiAlert = alerts.get(2);
+        assertThat(multiAlert.getRisk(), is(equalTo(Alert.RISK_LOW)));
+        assertThat(multiAlert.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
+        assertThat(multiAlert.getAlertRef(), is(equalTo("10035-3")));
+        Alert plainAlert = alerts.get(3);
+        assertThat(plainAlert.getRisk(), is(equalTo(Alert.RISK_INFO)));
+        assertThat(plainAlert.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
+        assertThat(plainAlert.getAlertRef(), is(equalTo("10035-4")));
+        Alert ageMissingAlert = alerts.get(4);
+        assertThat(ageMissingAlert.getRisk(), is(equalTo(Alert.RISK_LOW)));
+        assertThat(ageMissingAlert.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
+        assertThat(ageMissingAlert.getAlertRef(), is(equalTo("10035-5")));
+        Alert metaAlert = alerts.get(5);
+        assertThat(metaAlert.getRisk(), is(equalTo(Alert.RISK_LOW)));
+        assertThat(metaAlert.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
+        assertThat(metaAlert.getAlertRef(), is(equalTo("10035-6")));
+        Alert malformedAgeAlert = alerts.get(6);
+        assertThat(malformedAgeAlert.getRisk(), is(equalTo(Alert.RISK_LOW)));
+        assertThat(malformedAgeAlert.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
+        assertThat(malformedAgeAlert.getAlertRef(), is(equalTo("10035-7")));
+        Alert malformedContentAlert = alerts.get(7);
+        assertThat(malformedContentAlert.getRisk(), is(equalTo(Alert.RISK_LOW)));
+        assertThat(malformedContentAlert.getConfidence(), is(equalTo(Alert.CONFIDENCE_HIGH)));
+        assertThat(malformedContentAlert.getAlertRef(), is(equalTo("10035-8")));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 }

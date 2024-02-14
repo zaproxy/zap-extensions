@@ -130,18 +130,21 @@ public class LinkTargetScanRule extends PluginPassiveScanner {
         if (relAtt != null) {
             relAtt = relAtt.toLowerCase();
             if (relAtt.contains(OPENER) && !relAtt.contains(NOOPENER)) {
-                newAlert()
-                        .setRisk(Alert.RISK_MEDIUM)
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setDescription(getDescription())
-                        .setSolution(getSolution())
-                        .setReference(getReference())
-                        .setEvidence(link.toString())
-                        .raise();
+                buildAlert(link.toString()).raise();
                 return true;
             }
         }
         return false;
+    }
+
+    private AlertBuilder buildAlert(String evidence) {
+        return newAlert()
+                .setRisk(Alert.RISK_MEDIUM)
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(getDescription())
+                .setSolution(getSolution())
+                .setReference(getReference())
+                .setEvidence(evidence);
     }
 
     @Override
@@ -189,5 +192,13 @@ public class LinkTargetScanRule extends PluginPassiveScanner {
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                "<a href=\"https://www.example3.com/page1\" rel=\"opener\" target=\"_blank\">link</a>")
+                        .build());
     }
 }

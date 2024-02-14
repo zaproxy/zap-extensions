@@ -59,7 +59,6 @@ public class ReportJob extends AutomationJob {
     public ReportJob() {
         data = new Data(this, this.parameters);
         this.getParameters().setTemplate(ReportParam.DEFAULT_TEMPLATE);
-        this.getParameters().setReportDir(System.getProperty("user.home"));
         this.getParameters().setReportTitle(this.getExtReport().getReportParam().getTitle());
         this.getParameters()
                 .setReportDescription(this.getExtReport().getReportParam().getDescription());
@@ -105,9 +104,6 @@ public class ReportJob extends AutomationJob {
                             this.getName(),
                             getParameters().getTemplate(),
                             getExtReport().getTemplateConfigNames()));
-        }
-        if (StringUtils.isEmpty(this.getParameters().getReportDir())) {
-            this.getParameters().setReportDir(System.getProperty("user.home"));
         }
 
         list = getJobDataList(jobData, "sections", progress);
@@ -170,9 +166,13 @@ public class ReportJob extends AutomationJob {
         if (StringUtils.isEmpty(filePattern)) {
             filePattern = ReportParam.DEFAULT_NAME_PATTERN;
         }
+        // Replace envs in the URL first so that the site sanitization is used, then replace in the
+        // full pattern
         String fileName =
-                ExtensionReports.getNameFromPattern(
-                        filePattern, env.getDefaultContextWrapper().getUrls().get(0));
+                env.replaceVars(
+                        ExtensionReports.getNameFromPattern(
+                                filePattern,
+                                env.replaceVars(env.getDefaultContextWrapper().getUrls().get(0))));
 
         if (!fileName.endsWith("." + template.getExtension())) {
             fileName += "." + template.getExtension();

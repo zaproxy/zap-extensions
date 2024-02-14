@@ -43,7 +43,8 @@ import org.zaproxy.zap.model.Tech;
  *
  * @author 70pointer
  */
-public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamPlugin {
+public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
 
     // use a random file name which is very unlikely to exist
     private static final String NON_EXISTANT_FILENAME =

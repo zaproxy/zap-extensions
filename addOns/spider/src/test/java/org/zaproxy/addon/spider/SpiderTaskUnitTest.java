@@ -36,6 +36,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
 import java.util.Collections;
+import java.util.List;
 import org.apache.commons.httpclient.URI;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -133,6 +134,45 @@ class SpiderTaskUnitTest extends TestUtils {
         assertThat(ctxParse.getHttpMessage(), is(sameInstance(msg)));
         assertThat(ctxParse.getPath(), is(equalTo("/path")));
         assertThat(ctxParse.getDepth(), is(equalTo(depth)));
+    }
+
+    @Test
+    void shouldHandleParsersExceptions() {
+        // Given
+        SpiderParser parserA = mock(SpiderParser.class);
+        given(parserA.canParseResource(any(), anyBoolean())).willReturn(true);
+        given(parserA.parseResource(any())).willThrow(NullPointerException.class);
+        SpiderParser parserB = mock(SpiderParser.class);
+        given(parserB.canParseResource(any(), anyBoolean())).willReturn(true);
+        given(controller.getParsers()).willReturn(List.of(parserA, parserB));
+        int depth = 123;
+        // When
+        SpiderTask.processResource(parent, depth, msg);
+        // Then
+        verify(parserA).canParseResource(any(), eq(false));
+        verify(parserA).parseResource(any());
+        verify(parserB).canParseResource(any(), eq(false));
+        verify(parserB).parseResource(any());
+    }
+
+    @Test
+    void shouldPassAlreadyConsumedStateToFollowingParsers() {
+        // Given
+        SpiderParser parserA = mock(SpiderParser.class);
+        given(parserA.canParseResource(any(), anyBoolean())).willReturn(true);
+        given(parserA.parseResource(any())).willReturn(true);
+        SpiderParser parserB = mock(SpiderParser.class);
+        given(parserB.canParseResource(any(), anyBoolean())).willReturn(true);
+        given(parserB.parseResource(any())).willReturn(false);
+        SpiderParser parserC = mock(SpiderParser.class);
+        given(controller.getParsers()).willReturn(List.of(parserA, parserB, parserC));
+        int depth = 123;
+        // When
+        SpiderTask.processResource(parent, depth, msg);
+        // Then
+        verify(parserA).canParseResource(any(), eq(false));
+        verify(parserB).canParseResource(any(), eq(true));
+        verify(parserC).canParseResource(any(), eq(true));
     }
 
     @ParameterizedTest

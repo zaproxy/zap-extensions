@@ -106,6 +106,12 @@ class ContentSecurityPolicyScanRuleUnitTest
     }
 
     @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
+    }
+
+    @Test
     void shouldNotRaiseAlertOnNonHtmlAtMediumThreshold() {
         // Given
         HttpMessage msg = createHttpMessage("report-uri /__cspreport__");
@@ -327,7 +333,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         assertThat(alertsRaised.size(), equalTo(1));
         assertThat(
                 alertsRaised.get(0).getOtherInfo(),
-                is("Warnings:\n" + "The prefetch-src directive is deprecated\n"));
+                is("Warnings:\n" + "The prefetch-src directive has been deprecated\n"));
     }
 
     @Test
@@ -644,7 +650,7 @@ class ContentSecurityPolicyScanRuleUnitTest
         assertThat(alertsRaised.size(), is(equalTo(1)));
         assertThat(
                 alertsRaised.get(0).getOtherInfo(),
-                is(equalTo("Warnings:\nThe prefetch-src directive is deprecated\n")));
+                is(equalTo("Warnings:\nThe prefetch-src directive has been deprecated\n")));
     }
 
     private HttpMessage createHttpMessageWithReasonableCsp(String cspHeaderName) {

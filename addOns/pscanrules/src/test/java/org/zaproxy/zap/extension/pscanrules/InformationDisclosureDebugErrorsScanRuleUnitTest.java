@@ -29,11 +29,14 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -47,7 +50,7 @@ class InformationDisclosureDebugErrorsScanRuleUnitTest
     private static final String URI = "https://www.example.com/";
     private static final String DEFAULT_ERROR_MESSAGE = "Internal Server Error";
     private static final List<String> DEBUG_ERRORS =
-            Arrays.asList(
+            List.of(
                     DEFAULT_ERROR_MESSAGE,
                     "There seems to have been a problem with the",
                     "This error page might contain sensitive information because ASP.NET",
@@ -116,6 +119,23 @@ class InformationDisclosureDebugErrorsScanRuleUnitTest
     }
 
     @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+        Alert alert = alerts.get(0);
+        assertThat(alert.getRisk(), is(equalTo(Alert.RISK_LOW)));
+        assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
+    }
+
+    @Test
     void shouldFindDebugErrorsFile() {
         // Given
         String debugErrorFilePath = "/xml/debug-error-messages.txt";
@@ -125,27 +145,25 @@ class InformationDisclosureDebugErrorsScanRuleUnitTest
         assertThat(debugErrorFile, notNullValue());
     }
 
-    @Test
-    void alertsIfDebugErrorsDisclosed() throws HttpMalformedHeaderException {
-        for (int i = 0; i < DEBUG_ERRORS.size(); i++) {
-            String debugError = DEBUG_ERRORS.get(i);
-            String responseBody = "<html>" + debugError + "</html>";
+    private static Stream<String> provideDebugErrors() {
+        return DEBUG_ERRORS.stream();
+    }
 
-            HttpMessage msg = createHttpMessageWithRespBody(responseBody);
-
-            scanHttpResponseReceive(msg);
-
-            assertThat(alertsRaised.size(), equalTo(i + 1));
-
-            Alert alert = alertsRaised.get(i);
-            assertThat(alert.getMessage(), equalTo(msg));
-            assertThat(alert.getUri(), equalTo(URI));
-            assertThat(alert.getRisk(), equalTo(Alert.RISK_LOW));
-            assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
-            assertThat(alert.getCweId(), equalTo(200));
-            assertThat(alert.getWascId(), equalTo(13));
-            assertThat(alert.getEvidence(), equalTo(debugError));
-        }
+    @ParameterizedTest
+    @MethodSource("provideDebugErrors")
+    void alertsIfDebugErrorsDisclosed(String debugError) throws HttpMalformedHeaderException {
+        String responseBody = "<html>" + debugError + "</html>";
+        HttpMessage msg = createHttpMessageWithRespBody(responseBody);
+        scanHttpResponseReceive(msg);
+        assertThat(alertsRaised.size(), equalTo(1));
+        Alert alert = alertsRaised.get(0);
+        assertThat(alert.getMessage(), equalTo(msg));
+        assertThat(alert.getUri(), equalTo(URI));
+        assertThat(alert.getRisk(), equalTo(Alert.RISK_LOW));
+        assertThat(alert.getConfidence(), equalTo(Alert.CONFIDENCE_MEDIUM));
+        assertThat(alert.getCweId(), equalTo(200));
+        assertThat(alert.getWascId(), equalTo(13));
+        assertThat(alert.getEvidence(), equalTo(debugError));
     }
 
     @Test
@@ -194,25 +212,21 @@ class InformationDisclosureDebugErrorsScanRuleUnitTest
         assertThat(alert.getEvidence(), equalTo(DEFAULT_ERROR_MESSAGE.toUpperCase()));
     }
 
-    @Test
-    void passesIfNoDebugErrorsDisclosed() throws HttpMalformedHeaderException {
-        String[] data =
-                new String[] {
-                    "Error Management theory",
-                    "a subject can make two possible errors",
-                    "What to Do If You Get a 404",
-                    "500"
-                };
-
-        for (int i = 0; i < data.length; i++) {
-            String debugError = data[i];
-
-            HttpMessage msg = createHttpMessageWithRespBody("<html>" + debugError + "</html>");
-
-            scanHttpResponseReceive(msg);
-
-            assertThat(alertsRaised.size(), equalTo(0));
-        }
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "Error Management theory",
+                "a subject can make two possible errors",
+                "What to Do If You Get a 404",
+                "500"
+            })
+    void passesIfNoDebugErrorsDisclosed(String debugError) throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createHttpMessageWithRespBody("<html>" + debugError + "</html>");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(0));
     }
 
     @Test
@@ -285,19 +299,18 @@ class InformationDisclosureDebugErrorsScanRuleUnitTest
         assertThat(alertsRaised.get(0).getEvidence(), equalTo(DEFAULT_ERROR_MESSAGE));
     }
 
-    @Test
-    void changeDebugErrorsFile() throws HttpMalformedHeaderException {
+    @ParameterizedTest
+    @ValueSource(
+            strings = {"Alternative Error", "This should also be detected as debug error message"})
+    void changeDebugErrorsFile(String debugError) throws HttpMalformedHeaderException {
+        // Given
         int expectedAlerts = 0;
-        List<String> alternativeDebugErrors =
-                Arrays.asList(
-                        "Alternative Error", "This should also be detected as debug error message");
-
         // Should raise alert with default error messages loaded
         HttpMessage msg =
                 createHttpMessageWithRespBody("<html>" + DEFAULT_ERROR_MESSAGE + "</html>");
-
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         expectedAlerts++;
         assertThat(alertsRaised.size(), equalTo(expectedAlerts));
         Alert alert = alertsRaised.get(expectedAlerts - 1);
@@ -306,44 +319,40 @@ class InformationDisclosureDebugErrorsScanRuleUnitTest
         assertThat(alert.getEvidence(), equalTo(DEFAULT_ERROR_MESSAGE));
 
         // Should not raise alerts on alternative error definition yet
-        for (int i = 0; i < alternativeDebugErrors.size(); i++) {
-            String debugError = alternativeDebugErrors.get(i);
-            msg = createHttpMessageWithRespBody("<html>" + debugError + "</html>");
-
-            scanHttpResponseReceive(msg);
-
-            assertThat(alertsRaised.size(), equalTo(expectedAlerts));
-        }
+        // Given
+        msg = createHttpMessageWithRespBody("<html>" + debugError + "</html>");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(expectedAlerts));
 
         // Change debug error definitions for the scanner
+        // Given
         try {
             Path errorFile = testFolder.resolve("alternative-debug-error-messages.txt");
-            Files.write(errorFile, alternativeDebugErrors, Charset.forName("UTF-8"));
+            Files.write(errorFile, List.of(debugError), Charset.forName("UTF-8"));
             rule.setDebugErrorFile(errorFile);
         } catch (IOException e) {
             throw new RuntimeException("Could not write alternative debug error messages file.", e);
         }
-
         // Should NOT raise alert with default error messages loaded after changed definitions
         msg = createHttpMessageWithRespBody("<html>" + DEFAULT_ERROR_MESSAGE + "</html>");
-
+        // When
         scanHttpResponseReceive(msg);
-
+        // Then
         assertThat(alertsRaised.size(), equalTo(expectedAlerts));
 
         // Should raise alerts on alternative error definition now
-        for (int i = 0; i < alternativeDebugErrors.size(); i++) {
-            String debugError = alternativeDebugErrors.get(i);
-            msg = createHttpMessageWithRespBody("<html>" + debugError + "</html>");
-
-            scanHttpResponseReceive(msg);
-
-            expectedAlerts++;
-            assertThat(alertsRaised.size(), equalTo(expectedAlerts));
-            alert = alertsRaised.get(expectedAlerts - 1);
-            assertThat(alert.getCweId(), equalTo(200));
-            assertThat(alert.getWascId(), equalTo(13));
-            assertThat(alert.getEvidence(), equalTo(debugError));
-        }
+        // Given
+        msg = createHttpMessageWithRespBody("<html>" + debugError + "</html>");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        expectedAlerts++;
+        assertThat(alertsRaised.size(), equalTo(expectedAlerts));
+        alert = alertsRaised.get(expectedAlerts - 1);
+        assertThat(alert.getCweId(), equalTo(200));
+        assertThat(alert.getWascId(), equalTo(13));
+        assertThat(alert.getEvidence(), equalTo(debugError));
     }
 }

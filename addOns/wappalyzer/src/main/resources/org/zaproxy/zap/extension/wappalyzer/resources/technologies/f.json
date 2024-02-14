@@ -371,7 +371,7 @@
       "server": "Fastly",
       "x-fastly-origin": "",
       "x-fastly-request-id": "",
-      "x-via-fastly:": ""
+      "x-via-fastly": ""
     },
     "icon": "Fastly.svg",
     "pricing": [
@@ -1034,6 +1034,16 @@
     ],
     "saas": true,
     "website": "https://getflits.com"
+  },
+  "Floating UI": {
+    "cats": [
+      59
+    ],
+    "description": "A JavaScript library to position floating elements and create interactions for them.",
+    "icon": "Floating UI.svg",
+    "oss": true,
+    "scriptSrc": "floating-ui(?:\\/core)?(?:\\/dom)?(?:\\.js)?(?:@?(?:\\?v(?:er)?=)?((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://floating-ui.com/"
   },
   "Flocktory": {
     "cats": [

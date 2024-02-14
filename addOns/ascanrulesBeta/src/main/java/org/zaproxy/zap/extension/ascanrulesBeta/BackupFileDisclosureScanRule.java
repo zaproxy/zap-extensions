@@ -22,6 +22,7 @@ package org.zaproxy.zap.extension.ascanrulesBeta;
 import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.httpclient.URI;
@@ -43,7 +44,8 @@ import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
  *
  * @author 70pointer
  */
-public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
+public class BackupFileDisclosureScanRule extends AbstractAppPlugin
+        implements CommonActiveScanRuleInfo {
 
     private static final Map<String, String> ALERT_TAGS =
             CommonAlertTag.toMap(
@@ -385,6 +387,18 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
         }
     }
 
+    private AlertBuilder buildAlert(String candidateUrl, String originalUrl) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setAttack(candidateUrl)
+                .setSolution(Constant.messages.getString("ascanbeta.backupfiledisclosure.soln"))
+                .setOtherInfo(
+                        Constant.messages.getString(
+                                "ascanbeta.backupfiledisclosure.otherinfo",
+                                originalUrl,
+                                candidateUrl));
+    }
+
     @Override
     public int getRisk() {
         return Alert.RISK_MEDIUM; // Medium or maybe High.. depends on the file.
@@ -403,6 +417,13 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert("https://example.com/profile.asp.old", "https://example.com/profile.asp")
+                        .build());
     }
 
     private boolean isEmptyResponse(byte[] response) {
@@ -718,18 +739,9 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                                         && nonexistfilemsg.getResponseHeader().getStatusCode()
                                                 != requestStatusCode
                                         && (!Arrays.equals(disclosedData, nonexistfilemsgdata))))) {
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setAttack(candidateBackupFileURI.toString())
-                            .setOtherInfo(originalMessage.getRequestHeader().getURI().toString())
-                            .setSolution(
-                                    Constant.messages.getString(
-                                            "ascanbeta.backupfiledisclosure.soln"))
-                            .setEvidence(
-                                    Constant.messages.getString(
-                                            "ascanbeta.backupfiledisclosure.evidence",
-                                            originalURI,
-                                            candidateBackupFileURI))
+                    buildAlert(
+                                    candidateBackupFileURI.toString(),
+                                    originalMessage.getRequestHeader().getURI().toString())
                             .setMessage(requestmsg)
                             .raise();
                 }
@@ -765,21 +777,9 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin {
                                                 != requestStatusCode
                                         && (!Arrays.equals(
                                                 disclosedData, nonexistparentmsgdata))))) {
-                    newAlert()
-                            .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                            .setName(
-                                    Constant.messages.getString(
-                                            "ascanbeta.backupfiledisclosure.name"))
-                            .setAttack(candidateBackupFileURI.toString())
-                            .setOtherInfo(originalMessage.getRequestHeader().getURI().toString())
-                            .setSolution(
-                                    Constant.messages.getString(
-                                            "ascanbeta.backupfiledisclosure.soln"))
-                            .setEvidence(
-                                    Constant.messages.getString(
-                                            "ascanbeta.backupfiledisclosure.evidence",
-                                            originalURI,
-                                            candidateBackupFileURI))
+                    buildAlert(
+                                    candidateBackupFileURI.toString(),
+                                    originalMessage.getRequestHeader().getURI().toString())
                             .setMessage(requestmsg)
                             .raise();
                 }

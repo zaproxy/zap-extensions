@@ -76,43 +76,50 @@ public class CookieSameSiteScanRule extends PluginPassiveScanner {
             String sameSiteVal = CookieUtils.getAttributeValue(cookie, SAME_SITE_COOKIE_ATTRIBUTE);
             if (sameSiteVal == null) {
                 // Its missing
-                this.raiseAlert(msg, cookie, getName(), getDescription());
+                buildMissingAlert(msg.getResponseHeader().toString(), cookie).raise();
             } else if (sameSiteVal.equalsIgnoreCase(SAME_SITE_COOKIE_VALUE_NONE)
                     && !AlertThreshold.HIGH.equals(this.getAlertThreshold())) {
-                this.raiseAlert(
-                        msg,
-                        cookie,
-                        Constant.messages.getString(MESSAGE_PREFIX + "none.name"),
-                        Constant.messages.getString(MESSAGE_PREFIX + "none.desc"));
+                buildNoneAlert(msg.getResponseHeader().toString(), cookie).raise();
             } else if (!(sameSiteVal.equalsIgnoreCase(SAME_SITE_COOKIE_VALUE_STRICT)
                     || sameSiteVal.equalsIgnoreCase(SAME_SITE_COOKIE_VALUE_LAX)
                     || sameSiteVal.equalsIgnoreCase(SAME_SITE_COOKIE_VALUE_NONE))) {
                 // Its present but with an illegal value
-                this.raiseAlert(
-                        msg,
-                        cookie,
-                        Constant.messages.getString(MESSAGE_PREFIX + "badval.name"),
-                        Constant.messages.getString(MESSAGE_PREFIX + "badval.desc"));
+                buildBadValueAlert(msg.getResponseHeader().toString(), cookie).raise();
             }
         }
     }
 
-    private void raiseAlert(
-            HttpMessage msg, String cookieHeaderValue, String name, String description) {
-        newAlert()
-                .setName(name)
+    private AlertBuilder buildAlert(String responseHeader, String cookieHeaderValue) {
+        return newAlert()
                 .setRisk(getRisk())
                 .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                .setDescription(description)
                 .setParam(CookieUtils.getCookieName(cookieHeaderValue))
                 .setSolution(getSolution())
                 .setReference(getReference())
-                .setEvidence(
-                        CookieUtils.getSetCookiePlusName(
-                                msg.getResponseHeader().toString(), cookieHeaderValue))
+                .setEvidence(CookieUtils.getSetCookiePlusName(responseHeader, cookieHeaderValue))
                 .setCweId(getCweId())
-                .setWascId(getWascId())
-                .raise();
+                .setWascId(getWascId());
+    }
+
+    private AlertBuilder buildMissingAlert(String responseHeader, String cookieHeaderValue) {
+        return buildAlert(responseHeader, cookieHeaderValue)
+                .setName(getName())
+                .setDescription(getDescription())
+                .setAlertRef(PLUGIN_ID + "-1");
+    }
+
+    private AlertBuilder buildNoneAlert(String responseHeader, String cookieHeaderValue) {
+        return buildAlert(responseHeader, cookieHeaderValue)
+                .setName(Constant.messages.getString(MESSAGE_PREFIX + "none.name"))
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "none.desc"))
+                .setAlertRef(PLUGIN_ID + "-2");
+    }
+
+    private AlertBuilder buildBadValueAlert(String responseHeader, String cookieHeaderValue) {
+        return buildAlert(responseHeader, cookieHeaderValue)
+                .setName(Constant.messages.getString(MESSAGE_PREFIX + "badval.name"))
+                .setDescription(Constant.messages.getString(MESSAGE_PREFIX + "badval.desc"))
+                .setAlertRef(PLUGIN_ID + "-3");
     }
 
     @Override
@@ -152,6 +159,35 @@ public class CookieSameSiteScanRule extends PluginPassiveScanner {
 
     public int getWascId() {
         return 13; // WASC Id - Info leakage
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildMissingAlert(
+                                "HTTP/1.1 200 OK\n"
+                                        + "Server: Apache-Coyote/1.1\n"
+                                        + "Content-Type: text/html;charset=ISO-8859-1\n"
+                                        + "Content-Length: 13\n"
+                                        + "set-cookie: test=123; Path=/",
+                                "test=123; Path=/")
+                        .build(),
+                buildNoneAlert(
+                                "HTTP/1.1 200 OK\n"
+                                        + "Server: Apache-Coyote/1.1\n"
+                                        + "Content-Type: text/html;charset=ISO-8859-1\n"
+                                        + "Content-Length: 13\n"
+                                        + "set-cookie: test=123; Path=/; SameSite=none",
+                                "test=123; Path=/; SameSite=none")
+                        .build(),
+                buildBadValueAlert(
+                                "HTTP/1.1 200 OK\n"
+                                        + "Server: Apache-Coyote/1.1\n"
+                                        + "Content-Type: text/html;charset=ISO-8859-1\n"
+                                        + "Content-Length: 13\n"
+                                        + "set-cookie: test=123; Path=/; SameSite=badVal",
+                                "test=123; Path=/; SameSite=badVal")
+                        .build());
     }
 
     private Model getModel() {

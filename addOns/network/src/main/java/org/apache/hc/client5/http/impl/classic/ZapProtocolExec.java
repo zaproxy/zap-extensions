@@ -71,6 +71,7 @@ public final class ZapProtocolExec implements ExecChainHandler {
     private static final Logger LOG = LoggerFactory.getLogger(ZapProtocolExec.class);
 
     public static final String PROXY_AUTH_DISABLED_ATTR = "zap.proxy_auth_disabled";
+    public static final String AUTH_DISABLED_ATTR = "zap.auth_disabled";
 
     private final AuthenticationStrategy targetAuthStrategy;
     private final AuthenticationStrategy proxyAuthStrategy;
@@ -250,10 +251,11 @@ public final class ZapProtocolExec implements ExecChainHandler {
         final RequestConfig config = context.getRequestConfig();
         if (config.isAuthenticationEnabled()) {
             final boolean proxyAuthEnabled = !Boolean.TRUE.equals(context.getAttribute(PROXY_AUTH_DISABLED_ATTR));
+            final boolean authEnabled = !Boolean.TRUE.equals(context.getAttribute(AUTH_DISABLED_ATTR));
             final boolean targetAuthRequested = authenticator.isChallenged(
                     target, ChallengeType.TARGET, response, targetAuthExchange, context);
 
-            if (authCacheKeeper != null) {
+            if (authCacheKeeper != null && authEnabled) {
                 if (targetAuthRequested) {
                     authCacheKeeper.updateOnChallenge(target, pathPrefix, targetAuthExchange, context);
                 } else {
@@ -272,7 +274,7 @@ public final class ZapProtocolExec implements ExecChainHandler {
                 }
             }
 
-            if (targetAuthRequested) {
+            if (targetAuthRequested && authEnabled) {
                 final boolean updated = authenticator.updateAuthState(target, ChallengeType.TARGET, response,
                         targetAuthStrategy, targetAuthExchange, context);
 

@@ -4,8 +4,22 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [0.29.0] - 2024-02-12
+### Fixed
+- Error message to give report name.
+- Issues with illegal XML characters in pdf reports (Issue 8330).
+- Corrected pdf report href from #olugin to #plugin.
+- Deprecated syntax in risk-confidence report.
+
+## [0.28.0] - 2024-01-16
+### Changed
+- Default to same dir as plan if none specified.
+
 ### Fixed
 - Ensure the Sections' options are fully shown always in Generate Report Dialog (Issue 8259).
+- Replace env vars in URL when used for report file name.
 
 ## [0.27.0] - 2023-12-19
 ### Changed
@@ -250,6 +264,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.29.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.29.0
+[0.28.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.28.0
 [0.27.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.27.0
 [0.26.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.26.0
 [0.25.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.25.0

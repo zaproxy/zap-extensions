@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.openapi.automation;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
@@ -34,16 +32,10 @@ public class ExtensionOpenApiAutomation extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionOpenApiAutomation";
 
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionOpenApi.class, ExtensionAutomation.class);
 
     private OpenApiJob job;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
-        dependencies.add(ExtensionOpenApi.class);
-        dependencies.add(ExtensionAutomation.class);
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
 
     public ExtensionOpenApiAutomation() {
         super(NAME);

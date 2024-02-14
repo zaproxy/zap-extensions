@@ -4,6 +4,28 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [63] - 2024-02-12
+### Changed
+- Maintenance changes.
+
+### Added
+- The SQL Injection scan rule now includes a MySQL/MariaDB generic error message.
+
+## [62] - 2024-01-26
+### Changed
+- The Source Code Disclosure - /WEB-INF Folder rule now includes example alert functionality for documentation generation purposes (Issue 6119).
+
+## [61] - 2024-01-24
+### Changed 
+- Update reference for Server Side Include (Issue 8262) 
+### Fixed
+- False positives on redirects for:
+  - Cloud Metadata (Issue 7710)
+  - Hidden Files
+
+## [60] - 2024-01-16
 ### Changed
 - Leave data empty instead of adding "N/A" for the scan rules:
   - Cross Site Scripting (Persistent) - Prime
@@ -484,6 +506,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[63]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v63
+[62]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v62
+[61]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v61
+[60]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v60
 [59]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v59
 [58]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v58
 [57]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v57

@@ -6,23 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
-## [0.29.0] - 2024-01-03
+## [0.31.0] - 2024-02-12
 ### Changed
 - Updated with upstream retire.js pattern changes.
 
+### Added
+- Website alert links (Issue 8189).
 
+## [0.30.0] - 2024-01-29
+### Changed
+- Updated with upstream retire.js pattern changes.
+- Now only targets relevant responses (HTML and JS).
+
+## [0.29.0] - 2024-01-03
+### Changed
+- Updated with upstream retire.js pattern changes.
 
 ## [0.28.0] - 2023-12-04
 ### Changed
 - Updated with upstream retire.js pattern changes.
 
-
-
 ## [0.27.0] - 2023-11-03
 ### Changed
 - Updated with upstream retire.js pattern changes.
-
-
 
 ## [0.26.0] - 2023-10-12
 ### Changed
@@ -39,25 +45,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update minimum ZAP version to 2.13.0.
 - Updated with upstream retire.js pattern changes.
 
-
-
 ## [0.23.0] - 2023-06-02
 ### Changed
 - Updated with upstream retire.js pattern changes.
-
-
 
 ## [0.22.0] - 2023-05-03
 ### Changed
 - Updated with upstream retire.js pattern changes.
 
-
-
 ## [0.21.0] - 2023-04-04
 ### Changed
 - Updated with upstream retire.js pattern changes.
-
-
 
 ## [0.20.0] - 2023-03-03
 ### Changed
@@ -73,13 +71,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Updated with upstream retire.js pattern changes.
 
-
-
 ## [0.17.0] - 2022-11-14
 ### Changed
 - Updated with upstream retire.js pattern changes.
-
-
 
 ## [0.16.0] - 2022-10-27
 ### Changed
@@ -172,6 +166,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - First release.
 
+[0.31.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.31.0
+[0.30.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.30.0
 [0.29.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.29.0
 [0.28.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.28.0
 [0.27.0]: https://github.com/zaproxy/zap-extensions/releases/retire-v0.27.0

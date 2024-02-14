@@ -23,9 +23,16 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
@@ -79,63 +86,66 @@ class InfoPrivateAddressDisclosureScanRuleUnitTest
     }
 
     @Test
-    void alertsIfPrivateIp() throws HttpMalformedHeaderException {
-        // ip as candidate / evidence
-        String[][] data =
-                new String[][] {
-                    // IPs defined in RFC 1918
-                    {"foo-10.0.0.0-bar", "10.0.0.0"},
-                    {"hello?10.10.10.10@world", "10.10.10.10"},
-                    {"never{10.255.255.255}again", "10.255.255.255"},
-                    {"good(172.16.0.0)dog", "172.16.0.0"},
-                    {"happy<172.25.16.32>cat", "172.25.16.32"},
-                    {"bouncing{172.31.255.255}ball", "172.31.255.255"},
-                    {"crying[192.168.0.0]child", "192.168.0.0"},
-                    {"boyant@192.168.36.127$board", "192.168.36.127"},
-                    {"laughing#192.168.255.255!bird", "192.168.255.255"},
-
-                    // some other stuff
-                    {".10.0.0.0:.", "10.0.0.0"},
-                    {"apple.10.0.0.0:6553.jelly", "10.0.0.0:6553"},
-                    {" 10.0.0.0 ", "10.0.0.0"},
-                    {"/10.0.0.0.", "10.0.0.0"},
-                    {";10.0.0.0,", "10.0.0.0"},
-                    {"\n10.0.0.0\t", "10.0.0.0"},
-                    {"\n10.0.0.0\t", "10.0.0.0"},
-                    {"10.0.0.0:bla", "10.0.0.0"},
-                    {"10.0.0.0:128", "10.0.0.0:128"},
-                    {"ip-10.0.00.000:", "10.0.00.000"},
-                    {"IP-10.0.0.0", "10.0.0.0"},
-                };
-        for (int i = 0; i < data.length; i++) {
-            String candidate = data[i][0];
-            String evidence = data[i][1];
-            HttpMessage msg = createHttpMessage(candidate);
-            scanHttpResponseReceive(msg);
-
-            assertThat(candidate, alertsRaised.size(), equalTo(i + 1));
-            assertThat(alertsRaised.get(i).getEvidence(), equalTo(evidence));
-            validateAlert(alertsRaised.get(i));
-        }
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 
-    @Test
-    void shouldIgnoreRequestedPrivateIpByDefault() throws Exception {
+    @ParameterizedTest
+    @CsvSource({ // IPs defined in RFC 1918
+        "foo-10.0.0.0-bar, 10.0.0.0",
+        "hello?10.10.10.10@world, 10.10.10.10",
+        "never{10.255.255.255}again, 10.255.255.255",
+        "good(172.16.0.0)dog, 172.16.0.0",
+        "happy<172.25.16.32>cat, 172.25.16.32",
+        "bouncing{172.31.255.255}ball, 172.31.255.255",
+        "crying[192.168.0.0]child, 192.168.0.0",
+        "boyant@192.168.36.127$board, 192.168.36.127",
+        "laughing#192.168.255.255!bird, 192.168.255.255",
+        // some other stuff
+        ".10.0.0.0:., 10.0.0.0",
+        "apple.10.0.0.0:6553.jelly, 10.0.0.0:6553",
+        " 10.0.0.0 , 10.0.0.0",
+        "/10.0.0.0., 10.0.0.0",
+        // Single quote the string with comma (CsvSource)
+        "';10.0.0.0,', 10.0.0.0",
+        "\n10.0.0.0\t, 10.0.0.0",
+        "\n10.0.0.0\t, 10.0.0.0",
+        "10.0.0.0:bla, 10.0.0.0",
+        "10.0.0.0:128, 10.0.0.0:128",
+        "ip-10.0.00.000:, 10.0.00.000",
+        "IP-10.0.0.0, 10.0.0.0"
+    })
+    void alertsIfPrivateIp(String candidate, String evidence) throws HttpMalformedHeaderException {
         // Given
-        // ip and aws-hostname which get concatenated with the ports as candidates
-        String[] ipHost = new String[] {"10.0.2.2", "ip-10-0-2-2"};
-        String[] ports = new String[] {":45876", ":8081", ":98", ""};
-        for (int pi = 0; pi < ports.length; pi++) {
-            for (int ii = 0; ii < ipHost.length; ii++) {
-                alertsRaised.clear();
-                String candidate = ipHost[ii] + ports[pi];
-                HttpMessage msg = createHttpMessage(candidate, candidate);
-                // When
-                scanHttpResponseReceive(msg);
-                // Then
-                assertThat(candidate, alertsRaised.size(), equalTo(0));
-            }
-        }
+        HttpMessage msg = createHttpMessage(candidate);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(candidate, alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo(evidence));
+        validateAlert(alertsRaised.get(0));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        // ip or aws-hostname
+        "10.0.2.2:45876",
+        "10.0.2.2:8081",
+        "10.0.2.2:98",
+        "10.0.2.2",
+        "ip-10-0-2-2:45876",
+        "ip-10-0-2-2:8081",
+        "ip-10-0-2-2:98",
+        "ip-10-0-2-2"
+    })
+    void shouldIgnoreRequestedPrivateIpByDefault(String candidate) throws Exception {
+        // Given
+        HttpMessage msg = createHttpMessage(candidate, candidate);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(candidate, alertsRaised.size(), equalTo(0));
     }
 
     @Test
@@ -153,58 +163,59 @@ class InfoPrivateAddressDisclosureScanRuleUnitTest
         validateAlert(requestUri, alertsRaised.get(0));
     }
 
-    @Test
-    void passesIfNonPrivateOrInvalidIp() throws HttpMalformedHeaderException {
-        String[] candidates =
-                new String[] {
-                    // the "borders" of private IP ranges
-                    "9.255.255.255",
-                    "11.0.0.0",
-                    "172.15.255.255",
-                    "172.32.0.0",
-                    "192.167.255.255",
-                    "192.169.0.0",
-                    // outside & between the private ranges
-                    "8.8.8.8",
-                    "26.10.3.11",
-                    "84.168.27.12",
-                    "127.0.0.1",
-                    "186.27.16.2",
-                    "255.255.255.255",
-                    // some invalid ones
-                    "10",
-                    "10.0.0",
-                    "10.0.0:0",
-                    "10/0.0.0",
-                    "10.0\n0.0",
-                    "10.0.0 0",
-                    "10.0.0.a",
-                    "999.0.0.0",
-                    "10.999.0.0",
-                    "10.0.756.0",
-                    "ip-10-0-0-256",
-                    // no word boundaries
-                    "2050:10.0.0.0bla",
-                    "205010.0.0.0:bla",
-                    "abcd10.0.0.0bla",
-                    "abcd10.0.0.999",
-                    "ip-10-0-0-9999",
-                    "ship-192-168-0-5",
-                    "15.10.0.0.0.12.27",
-                    "100.10.0.0.0.10.12",
-                    "255.10.0.0.0:6555",
-                    "172.30.10.10.10.0.0.0",
-                    "172.30.10.10.10.0.0.0:6555",
-                };
-        for (String candidate : candidates) {
-            HttpMessage msg = createHttpMessage(candidate);
-            scanHttpResponseReceive(msg);
-        }
-        assertThat(alertsRaised.size(), equalTo(0));
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                // the "borders" of private IP ranges
+                "9.255.255.255",
+                "11.0.0.0",
+                "172.15.255.255",
+                "172.32.0.0",
+                "192.167.255.255",
+                "192.169.0.0",
+                // outside & between the private ranges
+                "8.8.8.8",
+                "26.10.3.11",
+                "84.168.27.12",
+                "127.0.0.1",
+                "186.27.16.2",
+                "255.255.255.255",
+                // some invalid ones
+                "10",
+                "10.0.0",
+                "10.0.0:0",
+                "10/0.0.0",
+                "10.0\n0.0",
+                "10.0.0 0",
+                "10.0.0.a",
+                "999.0.0.0",
+                "10.999.0.0",
+                "10.0.756.0",
+                "ip-10-0-0-256",
+                // no word boundaries
+                "2050:10.0.0.0bla",
+                "205010.0.0.0:bla",
+                "abcd10.0.0.0bla",
+                "abcd10.0.0.999",
+                "ip-10-0-0-9999",
+                "ship-192-168-0-5",
+                "15.10.0.0.0.12.27",
+                "100.10.0.0.0.10.12",
+                "255.10.0.0.0:6555",
+                "172.30.10.10.10.0.0.0",
+                "172.30.10.10.10.0.0.0:6555"
+            })
+    void passesIfNonPrivateOrInvalidIp(String candidate) throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createHttpMessage(candidate);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(candidate, alertsRaised.size(), equalTo(0));
     }
 
-    @Test
-    void alertsIfPrivIpAndAddsPortToEvidence() throws HttpMalformedHeaderException {
+    private static Stream<String> provideIpsandPorts() {
+        List<String> candidates = new ArrayList<>();
         // ip and aws-hostname which get concatenated with the ports as candidates
         String[] ipHost = new String[] {"10.0.0.0", "ip-10-0-0-0"};
         // several ports in the range 0-65535
@@ -220,20 +231,27 @@ class InfoPrivateAddressDisclosureScanRuleUnitTest
                 };
         for (int pi = 0; pi < ports.length; pi++) {
             for (int ii = 0; ii < ipHost.length; ii++) {
-                alertsRaised.clear();
-                String candidate = ipHost[ii] + ports[pi];
-                HttpMessage msg = createHttpMessage(candidate);
-                scanHttpResponseReceive(msg);
-
-                assertThat(candidate, alertsRaised.size(), equalTo(1));
-                assertThat(alertsRaised.get(0).getEvidence(), equalTo(candidate));
-                validateAlert(alertsRaised.get(0));
+                candidates.add(ipHost[ii] + ports[pi]);
             }
         }
+        return candidates.stream();
     }
 
-    @Test
-    void alertsIfPrivIpAndDropsPortNoInEvidence() throws HttpMalformedHeaderException {
+    @ParameterizedTest
+    @MethodSource("provideIpsandPorts")
+    void alertsIfPrivIpAndAddsPortToEvidence(String candidate) throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createHttpMessage(candidate);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(candidate, alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo(candidate));
+        validateAlert(alertsRaised.get(0));
+    }
+
+    private static Stream<Arguments> provideIpsAndInvalidPorts() {
+        List<Arguments> candidates = new ArrayList<>();
         // ip and aws-hostname which get concatenated with the ports as candidates
         String[] ipHost = new String[] {"10.0.0.0", "ip-10-0-0-0"};
         // several ports to be ignored
@@ -243,142 +261,133 @@ class InfoPrivateAddressDisclosureScanRuleUnitTest
                     ":78736",
                     ":99999",
                     ":4A3",
-                    //				// no word boundaries
+                    // no word boundaries
                     ":600000",
                     ":649999",
                     ":64999A"
                 };
         for (int pi = 0; pi < ports.length; pi++) {
             for (int ii = 0; ii < ipHost.length; ii++) {
-                alertsRaised.clear();
-                String candidate = ipHost[ii] + ports[pi];
-                HttpMessage msg = createHttpMessage(candidate);
-                scanHttpResponseReceive(msg);
-
-                assertThat(candidate, alertsRaised.size(), equalTo(1));
-                assertThat(alertsRaised.get(0).getEvidence(), equalTo(ipHost[ii]));
-                validateAlert(alertsRaised.get(0));
+                candidates.add(Arguments.of(ipHost[ii] + ports[pi], ipHost[ii]));
             }
         }
+        return candidates.stream();
     }
 
-    @Test
-    void alertsIfPrivateAwsHostname() throws HttpMalformedHeaderException {
-        // ip as candidate / evidence
-        String[][] data =
-                new String[][] {
-                    // body text               evidence
-                    // Pattern of IPs defined in RFC 1918
-                    {"ip-10-0-0-0", "ip-10-0-0-0"},
-                    {"ip-10-10-10-10", "ip-10-10-10-10"},
-                    {"ip-10-255-255-255", "ip-10-255-255-255"},
-                    {"ip-172-16-0-0", "ip-172-16-0-0"},
-                    {"ip-172-25-16-32", "ip-172-25-16-32"},
-                    {"ip-172-31-255-255", "ip-172-31-255-255"},
-                    {"ip-192-168-0-0", "ip-192-168-0-0"},
-                    {"ip-192-168-36-127", "ip-192-168-36-127"},
-                    {"ip-192-168-255-255", "ip-192-168-255-255"},
-                    // other stuff
-                    {"ip-10-0-0-0:", "ip-10-0-0-0"},
-                    {"ip-10-0-0-0:6553", "ip-10-0-0-0:6553"},
-                    {" ip-10-0-0-0 ", "ip-10-0-0-0"},
-                    {"/ip-10-0-0-0-", "ip-10-0-0-0"},
-                    {";ip-10-0-0-0,", "ip-10-0-0-0"},
-                    {"\nip-10-0-0-0\t", "ip-10-0-0-0"},
-                    {"ip-10-0-0-0:bla", "ip-10-0-0-0"},
-                    {"15-ip-10-0-0-0-12-27", "ip-10-0-0-0"},
-                    {"255:ip-10-0-0-0:6555", "ip-10-0-0-0:6555"},
-                    {"/ip-10-01-07-17.jpg", "ip-10-01-07-17"},
-                };
-        for (int i = 0; i < data.length; i++) {
-            String candidate = data[i][0];
-            String evidence = data[i][1];
-            HttpMessage msg = createHttpMessage(candidate);
-            scanHttpResponseReceive(msg);
-
-            assertThat(candidate, alertsRaised.size(), equalTo(i + 1));
-            assertThat(alertsRaised.get(i).getEvidence(), equalTo(evidence));
-            validateAlert(alertsRaised.get(i));
-        }
-    }
-
-    @Test
-    void passesIfInvalidAwsHostname() throws HttpMalformedHeaderException {
-        String[] candidates =
-                new String[] {
-                    // "outside borders" of private-IP-range-patterns
-                    "ip-9-255-255-255",
-                    "ip-11-0-0-0",
-                    "ip-172-15-255-255",
-                    "ip-172-32-0-0",
-                    "ip-192-167-255-255",
-                    "ip-192-169-0-0",
-                    // outside & betw. private-IP-range-patterns
-                    "ip-8-8-8-8",
-                    "ip-26-10-3-11",
-                    "ip-84-168-27-12",
-                    "ip-127-0-0-1",
-                    "ip-186-27-16-2",
-                    "ip-255-255-255-255",
-                    // some invalid IP ones
-                    "ip-10",
-                    "ip-10-0-0",
-                    "ip-10-0-0:0",
-                    "ip-10/0-0-0",
-                    "ip-10-0\n0-0",
-                    "ip-10-0-0 0",
-                    "ip-10-0-0-a",
-                    "ip-999-0-0-0",
-                    "ip-10-999-0-0",
-                    "ip-10-0-756-0",
-                    // others
-                    "ip- 10-0-0-0 ",
-                    "ip-\n10-0-0-0\t",
-                    "10-0-0-0",
-                    "2050ip-10-0-0-0bla",
-                    "gossip-10-0-0-0bla",
-                    "ip-10-0-0-999",
-                    "ip-10-0-0-9999999",
-                    "IP-10-0-0-0:",
-                    "/IP-10-01-07-17.jpg",
-                };
-        for (String candidate : candidates) {
-            HttpMessage msg = createHttpMessage(candidate);
-            scanHttpResponseReceive(msg);
-            assertThat(candidate, alertsRaised.size(), equalTo(0));
-        }
-    }
-
-    @Test
-    void alertsWithJustTheFirstEvidenceIfPrivIpAndPrivHostname()
+    @ParameterizedTest
+    @MethodSource("provideIpsAndInvalidPorts")
+    void alertsIfPrivIpAndDropsPortNoInEvidence(String candidate, String evidence)
             throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createHttpMessage(candidate);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo(evidence));
+        validateAlert(alertsRaised.get(0));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        // Pattern of IPs defined in RFC 1918
+        "ip-10-0-0-0, ip-10-0-0-0",
+        "ip-10-10-10-10, ip-10-10-10-10",
+        "ip-10-255-255-255, ip-10-255-255-255",
+        "ip-172-16-0-0, ip-172-16-0-0",
+        "ip-172-25-16-32, ip-172-25-16-32",
+        "ip-172-31-255-255, ip-172-31-255-255",
+        "ip-192-168-0-0, ip-192-168-0-0",
+        "ip-192-168-36-127, ip-192-168-36-127",
+        "ip-192-168-255-255, ip-192-168-255-255",
+        // other stuff
+        "ip-10-0-0-0:, ip-10-0-0-0",
+        "ip-10-0-0-0:6553, ip-10-0-0-0:6553",
+        " ip-10-0-0-0 , ip-10-0-0-0",
+        "/ip-10-0-0-0-, ip-10-0-0-0",
+        // Single quote the string with comma (CsvSource)
+        "';ip-10-0-0-0,', ip-10-0-0-0",
+        "\nip-10-0-0-0\t, ip-10-0-0-0",
+        "ip-10-0-0-0:bla, ip-10-0-0-0",
+        "15-ip-10-0-0-0-12-27, ip-10-0-0-0",
+        "255:ip-10-0-0-0:6555, ip-10-0-0-0:6555",
+        "/ip-10-01-07-17.jpg, ip-10-01-07-17"
+    })
+    void alertsIfPrivateAwsHostname(String candidate, String evidence)
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createHttpMessage(candidate);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo(evidence));
+        validateAlert(alertsRaised.get(0));
+    }
+
+    @ParameterizedTest
+    @CsvSource({ // "outside borders" of private-IP-range-patterns
+        "ip-9-255-255-255",
+        "ip-11-0-0-0",
+        "ip-172-15-255-255",
+        "ip-172-32-0-0",
+        "ip-192-167-255-255",
+        "ip-192-169-0-0",
+        // outside & betw. private-IP-range-patterns
+        "ip-8-8-8-8",
+        "ip-26-10-3-11",
+        "ip-84-168-27-12",
+        "ip-127-0-0-1",
+        "ip-186-27-16-2",
+        "ip-255-255-255-255",
+        // some invalid IP ones
+        "ip-10",
+        "ip-10-0-0",
+        "ip-10-0-0:0",
+        "ip-10/0-0-0",
+        "ip-10-0\n0-0",
+        "ip-10-0-0 0",
+        "ip-10-0-0-a",
+        "ip-999-0-0-0",
+        "ip-10-999-0-0",
+        "ip-10-0-756-0",
+        // others
+        "ip- 10-0-0-0 ",
+        "ip-\n10-0-0-0\t",
+        "10-0-0-0",
+        "2050ip-10-0-0-0bla",
+        "gossip-10-0-0-0bla",
+        "ip-10-0-0-999",
+        "ip-10-0-0-9999999",
+        "IP-10-0-0-0:",
+        "/IP-10-01-07-17.jpg"
+    })
+    void passesIfInvalidAwsHostname(String candidate) throws HttpMalformedHeaderException {
+        HttpMessage msg = createHttpMessage(candidate);
+        scanHttpResponseReceive(msg);
+        assertThat(candidate, alertsRaised.size(), equalTo(0));
+    }
+
+    @ParameterizedTest
+    @CsvSource({
         // candidate, evidence, otherInfo
-        String[][] data =
-                new String[][] {
-                    {"10.0.0.0:128 ip-192-168-0-0", "10.0.0.0:128", "10.0.0.0:128ip-192-168-0-0"},
-                    {
-                        "ip-10-0-0-0:128:192.168.0.0",
-                        "ip-10-0-0-0:128",
-                        "ip-10-0-0-0:128192.168.0.0"
-                    },
-                    {
-                        "172.16.0.0/ip-10-0-0-0:128:192.168.0.0",
-                        "172.16.0.0",
-                        "172.16.0.0ip-10-0-0-0:128192.168.0.0"
-                    }
-                };
-        for (int i = 0; i < data.length; i++) {
-            String candidate = data[i][0];
-            HttpMessage msg = createHttpMessage(candidate);
-            scanHttpResponseReceive(msg);
-
-            assertThat(candidate, alertsRaised.size(), equalTo(i + 1));
-            assertThat(alertsRaised.get(i).getEvidence(), equalTo(data[i][1]));
-            validateAlert(alertsRaised.get(i));
-
-            String otherInfo = alertsRaised.get(i).getOtherInfo().replaceAll("\\n", "");
-            assertThat(otherInfo, equalTo(data[i][2]));
-        }
+        "10.0.0.0:128 ip-192-168-0-0, 10.0.0.0:128, 10.0.0.0:128ip-192-168-0-0",
+        "ip-10-0-0-0:128:192.168.0.0, ip-10-0-0-0:128, ip-10-0-0-0:128192.168.0.0",
+        "172.16.0.0/ip-10-0-0-0:128:192.168.0.0, 172.16.0.0, 172.16.0.0ip-10-0-0-0:128192.168.0.0"
+    })
+    void alertsWithJustTheFirstEvidenceIfPrivIpAndPrivHostname(
+            String candidate, String evidence, String otherInfo)
+            throws HttpMalformedHeaderException {
+        // Given
+        HttpMessage msg = createHttpMessage(candidate);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(candidate, alertsRaised.size(), equalTo(1));
+        assertThat(alertsRaised.get(0).getEvidence(), equalTo(evidence));
+        validateAlert(alertsRaised.get(0));
+        String actualOtherInfo = alertsRaised.get(0).getOtherInfo().replaceAll("\\n", "");
+        assertThat(actualOtherInfo, equalTo(otherInfo));
     }
 
     @Test

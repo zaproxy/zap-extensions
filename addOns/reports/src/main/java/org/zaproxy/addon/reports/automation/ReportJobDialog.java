@@ -46,7 +46,6 @@ import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.jobs.JobUtils;
 import org.zaproxy.addon.reports.ExtensionReports;
 import org.zaproxy.addon.reports.ReflectionUtils;
-import org.zaproxy.addon.reports.ReportParam;
 import org.zaproxy.addon.reports.Template;
 import org.zaproxy.addon.reports.automation.ReportJob.Parameters;
 import org.zaproxy.zap.utils.DisplayUtils;
@@ -107,17 +106,18 @@ public class ReportJobDialog extends StandardFieldsDialog {
 
         this.addTextField(TAB_SCOPE, FIELD_NAME, this.job.getData().getName());
         this.addTextField(TAB_SCOPE, FIELD_TITLE, params.getReportTitle());
-
         this.addTextField(TAB_SCOPE, FIELD_REPORT_NAME, params.getReportFile());
 
-        String dir = params.getReportDir();
-        if (StringUtils.isEmpty(dir)) {
-            dir = ReportParam.DEFAULT_TEMPLATES_DIR;
+        String dirName = params.getReportDir();
+        File dir = null;
+
+        if (!StringUtils.isEmpty(dirName)) {
+            dir = new File(dirName);
         }
         this.addFileSelectField(
-                TAB_SCOPE, FIELD_REPORT_DIR, new File(dir), JFileChooser.DIRECTORIES_ONLY, null);
-        if (JobUtils.containsVars(dir)) {
-            setFieldValue(FIELD_REPORT_DIR, dir);
+                TAB_SCOPE, FIELD_REPORT_DIR, dir, JFileChooser.DIRECTORIES_ONLY, null);
+        if (!StringUtils.isEmpty(dirName) && JobUtils.containsVars(dirName)) {
+            setFieldValue(FIELD_REPORT_DIR, dirName);
         }
         this.addMultilineField(TAB_SCOPE, FIELD_DESCRIPTION, params.getReportDescription());
         this.addMultilineField(TAB_SCOPE, FIELD_SITES, listToString(job.getData().getSites()));

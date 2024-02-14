@@ -173,7 +173,7 @@ public class ContextWrapper {
                     data.setSessionManagement(new SessionManagementData(value, progress));
                     break;
                 case "technology":
-                    data.setTechnology(new TechnologyData(value, progress));
+                    data.setTechnology(new TechnologyData(value, env, progress));
                     break;
                 case "users":
                     if (!(value instanceof ArrayList)) {

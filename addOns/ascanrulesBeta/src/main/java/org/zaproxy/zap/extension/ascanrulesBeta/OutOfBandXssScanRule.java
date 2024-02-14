@@ -36,7 +36,8 @@ import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
 import org.zaproxy.addon.oast.ExtensionOast;
 
-public class OutOfBandXssScanRule extends AbstractAppParamPlugin {
+public class OutOfBandXssScanRule extends AbstractAppParamPlugin
+        implements CommonActiveScanRuleInfo {
 
     private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_8");
     private static final int PLUGIN_ID = 40031;

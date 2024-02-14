@@ -4,7 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Initial PCAP import support (Issue 4812).
 
+### Changed
+- Maintenance changes.
 
 ## [0.8.0] - 2023-11-10
 ### Changed

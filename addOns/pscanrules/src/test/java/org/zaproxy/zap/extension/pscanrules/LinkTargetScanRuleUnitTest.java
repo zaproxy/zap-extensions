@@ -28,10 +28,13 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.Mock.Strictness;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.Session;
@@ -48,10 +51,10 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
     private static final String HTML_CONTENT_TYPE = "text/html;charset=ISO-8859-1";
     private static final String TEXT_CONTENT_TYPE = "text/plain; charset=us-ascii";
 
-    @Mock(lenient = true)
+    @Mock(strictness = Strictness.LENIENT)
     Model model;
 
-    @Mock(lenient = true)
+    @Mock(strictness = Strictness.LENIENT)
     Session session;
 
     @BeforeEach
@@ -490,5 +493,19 @@ class LinkTargetScanRuleUnitTest extends PassiveScannerTest<LinkTargetScanRule> 
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlerts() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 }

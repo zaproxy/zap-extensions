@@ -58,7 +58,8 @@ import org.zaproxy.zap.utils.HirshbergMatcher;
  *
  * @author 70pointer
  */
-public class UsernameEnumerationScanRule extends AbstractAppPlugin {
+public class UsernameEnumerationScanRule extends AbstractAppPlugin
+        implements CommonActiveScanRuleInfo {
 
     private static final Logger LOGGER = LogManager.getLogger(UsernameEnumerationScanRule.class);
 

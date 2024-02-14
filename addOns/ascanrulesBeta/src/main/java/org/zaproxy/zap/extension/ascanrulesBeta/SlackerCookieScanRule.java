@@ -51,7 +51,7 @@ import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
  *
  * <p>With thanks to Kaiser Permanente CyberSecurity comrades for using and feedback.
  */
-public class SlackerCookieScanRule extends AbstractAppPlugin {
+public class SlackerCookieScanRule extends AbstractAppPlugin implements CommonActiveScanRuleInfo {
     // http://projects.webappsec.org/w/page/13246978/Threat%20Classification
     // going to classify this as #45, Fingerprinting.
     // #01, Authentication could be applicable.

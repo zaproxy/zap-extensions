@@ -20,7 +20,6 @@
 package org.zaproxy.zap.extension.sequence;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import javax.swing.ImageIcon;
@@ -44,18 +43,13 @@ import org.zaproxy.zap.extension.script.SequenceScript;
 
 public class ExtensionSequence extends ExtensionAdaptor implements ScannerHook {
 
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionScript.class);
 
     private ExtensionScript extScript;
     private ExtensionActiveScan extActiveScan;
     private static final Logger LOGGER = LogManager.getLogger(ExtensionSequence.class);
     public static final String TYPE_SEQUENCE = "sequence";
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
-        dependencies.add(ExtensionScript.class);
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
 
     private List<ScriptWrapper> directScripts = null;
     private SequenceAscanPanel sequencePanel;

@@ -124,7 +124,7 @@ td {
 	<p />
 	<th:block
 		th:each="desc, state: ${#strings.arraySplit(description, '\n')}">
-		<th:block th:text="${desc}"></th:block>
+		<th:block th:text="${helper.escapeXml(desc)}"></th:block>
 		<br th:if="${!state.last}" />
 	</th:block>
 
@@ -179,7 +179,8 @@ td {
 			</tr>
 			<tr th:each="alert: ${alertTree.children}">
 				<td><a th:href="'#' + ${alert.userObject.pluginId}"
-					th:text="${alert.nodeName}" href="#oluginId">Alert Name</a></td>
+					th:text="${helper.escapeXml(alert.nodeName)}" href="#pluginId">Alert
+						Name</a></td>
 				<td align="center" th:class="${'risk-' + alert.risk}"
 					th:text="${helper.getRiskString(alert.risk)}">Risk</td>
 				<td align="center" th:text="${alert.childCount}">Count</td>
@@ -196,14 +197,14 @@ td {
 					<th width="20%" th:class="${'risk-' + alert.risk}"><a
 						th:id="${alert.userObject.pluginId}"></a>
 						<div th:text="${helper.getRiskString(alert.risk)}">Risk</div></th>
-					<th th:text="${alert.nodeName}" th:class="${'risk-' + alert.risk}">Alert
-						Name</th>
+					<th th:text="${helper.escapeXml(alert.nodeName)}"
+						th:class="${'risk-' + alert.risk}">Alert Name</th>
 				</tr>
 				<tr>
 					<td th:text="#{report.alerts.detail.description}" width="20%">Description</td>
 					<td width="80%"><th:block
 							th:each="desc, state: ${#strings.arraySplit(alert.userObject.description, '\n')}">
-							<div th:text="${desc}">Description</div>
+							<div th:text="${helper.escapeXml(desc)}">Description</div>
 							<br th:if="${!state.last}" />
 						</th:block></td>
 				</tr>
@@ -247,7 +248,7 @@ td {
 					<td th:text="#{report.alerts.detail.solution}" width="20%">Solution</td>
 					<td width="80%"><th:block
 							th:each="soln, state: ${#strings.arraySplit(alert.userObject.solution, '\n')}">
-							<div th:text="${soln}">Solution</div>
+							<div th:text="${helper.escapeXml(soln)}">Solution</div>
 							<br th:if="${!state.last}" />
 						</th:block></td>
 				</tr>
@@ -255,7 +256,8 @@ td {
 					<td th:text="#{report.alerts.detail.reference}" width="20%">Reference</td>
 					<td width="80%"><th:block
 							th:each="ref, state: ${#strings.arraySplit(alert.userObject.reference, '\n')}">
-							<a th:href="${ref}" th:text="${ref}" href="ref.html">Ref</a>
+							<a th:href="${helper.escapeXml(ref)}"
+								th:text="${helper.escapeXml(ref)}" href="ref.html">Ref</a>
 							<br th:if="${!state.last}" />
 						</th:block></td>
 				</tr>

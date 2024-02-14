@@ -21,8 +21,6 @@ package org.zaproxy.addon.oast.scripts;
 
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,21 +37,14 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 
 public class ExtensionOastScripts extends ExtensionAdaptor {
 
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionOast.class, ExtensionScript.class, ExtensionGraalJs.class);
     private static final Logger LOGGER = LogManager.getLogger(ExtensionOastScripts.class);
     private static final String TEMPLATE_REGISTER_REQUEST_HANDLER = "OAST Request Handler.js";
     private static final String SCRIPT_GET_BOAST_SERVERS = "OAST Get BOAST Servers.js";
     private static final String SCRIPT_GET_INTERACTSH_PAYLOADS = "OAST Get Interactsh Payloads.js";
 
     private ExtensionScript extScript;
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(3);
-        dependencies.add(ExtensionOast.class);
-        dependencies.add(ExtensionScript.class);
-        dependencies.add(ExtensionGraalJs.class);
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
 
     @Override
     public String getName() {

@@ -611,19 +611,13 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
                     new LocalServerInfoLabel(
                             getView().getMainFrame().getMainFooterPanel(), localServersOptions);
 
-            hookView.addOptionPanel(
-                    new LegacyOptionsPanel("dynssl", serverCertificatesOptionsPanel));
-            hookView.addOptionPanel(new LegacyOptionsPanel("proxies", localServersOptionsPanel));
-
-            connectionOptionsPanel = new ConnectionOptionsPanel();
+            connectionOptionsPanel =
+                    new ConnectionOptionsPanel(localServersOptionsPanel::isConfiguredAddress);
             optionsDialog.addParamPanel(networkNode, connectionOptionsPanel, true);
-            hookView.addOptionPanel(new LegacyOptionsPanel("connection", connectionOptionsPanel));
 
             clientCertificatesOptionsPanel =
                     new ClientCertificatesOptionsPanel(View.getSingleton());
             optionsDialog.addParamPanel(networkNode, clientCertificatesOptionsPanel, true);
-            hookView.addOptionPanel(
-                    new LegacyOptionsPanel("clientcerts", clientCertificatesOptionsPanel));
 
             optionsDialog.addParamPanel(
                     networkNode, rateLimitExtensionHelper.getRateLimitOptionsPanel(), true);

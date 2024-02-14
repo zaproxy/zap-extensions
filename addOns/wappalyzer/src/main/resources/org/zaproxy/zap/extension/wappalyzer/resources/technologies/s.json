@@ -1114,6 +1114,15 @@
     "scriptSrc": "cdn.cxc.scorpion.direct",
     "website": "https://www.scorpion.co/"
   },
+  "Screenfull.js": {
+    "cats": [
+      59
+    ],
+    "description": "Simple wrapper for cross-browser usage of the JavaScript Fullscreen API.",
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?screenfull(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2",
+    "website": "https://sindresorhus.com/screenfull/"
+  },
   "Scrivito": {
     "cats": [
       1
@@ -2139,6 +2148,19 @@
     },
     "website": "https://shellinabox.com"
   },
+  "Shepherd": {
+    "cats": [
+      59
+    ],
+    "description": "Shepherd is a JavaScript library which makes an use-friendly user-guide to any website.",
+    "icon": "Shepherd.svg",
+    "oss": true,
+    "pricing": [
+      "poa"
+    ],
+    "scriptSrc": "shepherd(?:\\.min)?\\.js",
+    "website": "https://shepherdjs.dev/"
+  },
   "Shift4Shop": {
     "cats": [
       1,
@@ -2983,6 +3005,19 @@
     "requiresCategory": 6,
     "scriptSrc": "\\.shoutout\\.global/",
     "website": "https://www.shoutout.global"
+  },
+  "Showdown": {
+    "cats": [
+      59
+    ],
+    "description": "A Markdown to HTML converter written in Javascript.",
+    "icon": "Showdown.png",
+    "js": {
+      "showdown": ""
+    },
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/(?:dist\\/)?)?showdown(?:\\.min)?(?:-?((?:\\d+\\.)+\\d+))?\\.js\\;version:\\1\\2",
+    "website": "https://showdownjs.com/"
   },
   "Showit": {
     "cats": [
@@ -7375,9 +7410,13 @@
     "cats": [
       59
     ],
+    "description": "Reveal elements as they enter the viewport.",
     "html": "<[^>]+data-sr(?:-id)",
     "icon": "scrollreveal.svg",
-    "scriptSrc": "scrollreveal(?:\\.min)(?:\\.js)",
+    "pricing": [
+      "onetime"
+    ],
+    "scriptSrc": "scrollreveal(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
     "website": "https://scrollrevealjs.org"
   },
   "shadcn/ui": {

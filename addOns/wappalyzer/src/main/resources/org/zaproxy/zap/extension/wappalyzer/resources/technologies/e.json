@@ -804,6 +804,19 @@
     "scriptSrc": "\\.elfsight\\.com/",
     "website": "https://elfsight.com"
   },
+  "Elgg": {
+    "cats": [
+      1
+    ],
+    "description": "Elgg is a social networking engine, delivering the building blocks for creating social networks and applications.",
+    "icon": "Elgg.svg",
+    "js": {
+      "elgg": ""
+    },
+    "oss": true,
+    "scriptSrc": "elgg(?:_dataTables)?(?:\\/Ajax)?(?:\\/Plugin)?(?:\\/require_config)?(?:\\/spinner)?(?:\\/dev)?(?:\\.\\w{0,10})?\\.js",
+    "website": "https://elgg.org/"
+  },
   "Elixir": {
     "cats": [
       27
@@ -828,6 +841,15 @@
     "oss": true,
     "requires": "PHP",
     "website": "https://www.elkarte.net"
+  },
+  "Elliptic": {
+    "cats": [
+      59
+    ],
+    "description": "Fast Elliptic Curve Cryptography in plain javascript.",
+    "oss": true,
+    "scriptSrc": "elliptic(?:[\\w\\.-]{0,27})?(?:\\.bundle)?(?:\\.chunk)?(?:\\.min)?\\.js",
+    "website": "https://github.com/indutny/elliptic"
   },
   "Ellucian CRM Recruit": {
     "cats": [

@@ -720,6 +720,16 @@
     ],
     "website": "https://www.deutschepost.de"
   },
+  "Dexie.js": {
+    "cats": [
+      59
+    ],
+    "description": "A Minimalistic Wrapper for IndexedDB.",
+    "icon": "Dexie.js.png",
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?dexie(?:\\.bitrix)?(?:\\.bundle)?(?:\\.min)?\\.js\\;version:\\1",
+    "website": "https://dexie.org"
+  },
   "DiamondCDN": {
     "cats": [
       31
@@ -1199,7 +1209,7 @@
       "dojo": "",
       "dojo.version.major": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "([\\d.]+)/dojo/dojo(?:\\.xd)?\\.js\\;version:\\1",
+    "scriptSrc": "((?:\\d+\\.)+\\d+)/dojo/dojo(?:\\.xd)?\\.js\\;version:\\1",
     "website": "https://dojotoolkit.org"
   },
   "Dokan": {
@@ -2120,6 +2130,19 @@
     "scriptSrc": "cdn\\.db-ip\\.com",
     "website": "https://db-ip.com/",
     "xhr": "api\\.db-ip\\.com"
+  },
+  "dc.js": {
+    "cats": [
+      25,
+      59
+    ],
+    "description": "A multi-dimensional charting library built to work natively with crossfilter and rendered using d3.js",
+    "icon": "dc.js.png",
+    "js": {
+      "dcAPIKey": ""
+    },
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/(?:dc\\/)?)?dc(?:\\.leaflet)?\\.js\\;version:\\1",
+    "website": "https://dc-js.github.io/dc.js/"
   },
   "decimal.js": {
     "cats": [

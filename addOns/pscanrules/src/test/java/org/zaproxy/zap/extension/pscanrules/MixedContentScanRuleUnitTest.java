@@ -23,10 +23,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.network.HttpHeader;
@@ -69,6 +71,20 @@ class MixedContentScanRuleUnitTest extends PassiveScannerTest<MixedContentScanRu
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_CRYP_03_CRYPTO_FAIL.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_CRYP_03_CRYPTO_FAIL.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // THen
+        assertThat(alerts.size(), is(equalTo(1)));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 
     @Test
@@ -136,53 +152,50 @@ class MixedContentScanRuleUnitTest extends PassiveScannerTest<MixedContentScanRu
         assertThat(alertsRaised.size(), is(0));
     }
 
-    @Test
-    void shouldRaiseLowAlertIfHttpsResourceContainsMixedContentInKnownAttributes() {
-        for (String attribute :
-                Arrays.asList(
-                        "src",
-                        "background",
-                        "classid",
-                        "codebase",
-                        "data",
-                        "icon",
-                        "usemap",
-                        "action",
-                        "formaction")) {
-            alertsRaised.clear();
-            // Given
-            String uri = "https://example.com/";
-            HttpMessage msg =
-                    createHtmlResponse(
-                            uri, "<tag " + attribute + "=\"http://example.com/file\" />");
-            // When
-            scanHttpResponseReceive(msg);
-            // Then
-            assertThat(alertsRaised.size(), is(1));
-            assertThat(alertsRaised.get(0).getEvidence(), is("http://example.com/file"));
-            assertThat(
-                    alertsRaised.get(0).getOtherInfo(),
-                    is("tag=tag " + attribute + "=http://example.com/file\n"));
-            assertThat(alertsRaised.get(0).getRisk(), is(Alert.RISK_LOW));
-            assertThat(alertsRaised.get(0).getConfidence(), is(Alert.CONFIDENCE_MEDIUM));
-        }
+    @ParameterizedTest
+    @ValueSource(
+            strings = {
+                "src",
+                "background",
+                "classid",
+                "codebase",
+                "data",
+                "icon",
+                "usemap",
+                "action",
+                "formaction"
+            })
+    void shouldRaiseLowAlertIfHttpsResourceContainsMixedContentInKnownAttributes(String attribute) {
+        // Given
+        String uri = "https://example.com/";
+        HttpMessage msg =
+                createHtmlResponse(uri, "<tag " + attribute + "=\"http://example.com/file\" />");
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is("http://example.com/file"));
+        assertThat(
+                alertsRaised.get(0).getOtherInfo(),
+                is("tag=tag " + attribute + "=http://example.com/file\n"));
+        assertThat(alertsRaised.get(0).getRisk(), is(Alert.RISK_LOW));
+        assertThat(alertsRaised.get(0).getConfidence(), is(Alert.CONFIDENCE_MEDIUM));
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = {"action", "formaction"})
     void
-            shouldNotRaiseAlertIfHttpsResourceContainsMixedContentInActionAndFormActionAttributesWhenInHighAlertThreshold() {
-        for (String attribute : Arrays.asList("action", "formaction")) {
-            // Given
-            String uri = "https://example.com/";
-            HttpMessage msg =
-                    createHtmlResponse(
-                            uri, "<tag " + attribute + "=\"http://example.com/file\" />");
-            rule.setAlertThreshold(AlertThreshold.HIGH);
-            // When
-            scanHttpResponseReceive(msg);
-            // Then
-            assertThat(alertsRaised.size(), is(0));
-        }
+            shouldNotRaiseAlertIfHttpsResourceContainsMixedContentInActionAndFormActionAttributesWhenInHighAlertThreshold(
+                    String attribute) {
+        // Given
+        String uri = "https://example.com/";
+        HttpMessage msg =
+                createHtmlResponse(uri, "<tag " + attribute + "=\"http://example.com/file\" />");
+        rule.setAlertThreshold(AlertThreshold.HIGH);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertThat(alertsRaised.size(), is(0));
     }
 
     @Test

@@ -4,13 +4,21 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Maintenance changes.
 
+## [21.31.0] - 2024-02-09
+### Changed
+- Updated with enthec upstream icon and pattern changes.
+
+## [21.30.0] - 2024-02-05
+### Changed
+- Updated with enthec upstream icon and pattern changes.
+- Made UI strings and help less Wappalyzer centric and more Technology Detection focused.
 
 ## [21.29.0] - 2024-01-03
 ### Changed
 - Updated with enthec upstream icon and pattern changes.
-
-
 
 ## [21.28.0] - 2023-12-04
 ### Changed
@@ -323,6 +331,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - First version
 
 
+[21.31.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.31.0
+[21.30.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.30.0
 [21.29.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.29.0
 [21.28.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.28.0
 [21.27.0]: https://github.com/zaproxy/zap-extensions/releases/wappalyzer-v21.27.0

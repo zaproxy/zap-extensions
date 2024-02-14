@@ -124,6 +124,20 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
     }
 
     @Test
+    void shouldHaveExpectedExampleAlerts() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
+    }
+
+    @Test
     void shouldNotRaiseAlertIfContentTypeIsNotHTML() {
         // Given
         msg.getResponseHeader().setHeader(HttpHeader.CONTENT_TYPE, "application/json");

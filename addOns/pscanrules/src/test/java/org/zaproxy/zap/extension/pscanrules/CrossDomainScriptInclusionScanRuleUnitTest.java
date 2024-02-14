@@ -32,6 +32,7 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.mockito.Mock.Strictness;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
@@ -47,10 +48,10 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 class CrossDomainScriptInclusionScanRuleUnitTest
         extends PassiveScannerTest<CrossDomainScriptInclusionScanRule> {
 
-    @Mock(lenient = true)
+    @Mock(strictness = Strictness.LENIENT)
     Model model;
 
-    @Mock(lenient = true)
+    @Mock(strictness = Strictness.LENIENT)
     Session session;
 
     @BeforeEach
@@ -431,5 +432,11 @@ class CrossDomainScriptInclusionScanRuleUnitTest
         assertThat(tags.size(), is(equalTo(1)));
         assertThat(alert.getRisk(), is(equalTo(Alert.RISK_LOW)));
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 }

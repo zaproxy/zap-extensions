@@ -23,8 +23,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 class HttpsAsHttpScanRuleUnitTest extends ActiveScannerTest<HttpsAsHttpScanRule> {
@@ -62,5 +64,19 @@ class HttpsAsHttpScanRuleUnitTest extends ActiveScannerTest<HttpsAsHttpScanRule>
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_CRYP_03_CRYPTO_FAIL.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_CRYP_03_CRYPTO_FAIL.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // THen
+        assertThat(alerts.size(), is(equalTo(1)));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 }

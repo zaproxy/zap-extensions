@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Changed
+- Maintenance changes.
+
+## [15.18.0] - 2024-01-26
+### Changed
+- Update Selenium to version 4.17.0.
+
+## [15.17.0] - 2024-01-18
+### Changed
 - Update Selenium to version 4.16.1.
 
 ## [15.16.0] - 2023-11-10
@@ -201,6 +209,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated to Selenium 2.45 and moved to release
 
+[15.18.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.18.0
+[15.17.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.17.0
 [15.16.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.16.0
 [15.15.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.15.0
 [15.14.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.14.0

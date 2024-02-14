@@ -23,8 +23,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 
 class HttPoxyScanRuleUnitTest extends ActiveScannerTest<HttPoxyScanRule> {
@@ -56,5 +58,19 @@ class HttPoxyScanRuleUnitTest extends ActiveScannerTest<HttPoxyScanRule> {
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 }

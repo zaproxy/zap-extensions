@@ -78,7 +78,8 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
 
     // The name is public so that other extensions can access it
     public static final String NAME = "ExtensionRevisit";
-    private static final List<Class<? extends Extension>> DEPENDENCIES;
+    private static final List<Class<? extends Extension>> DEPENDENCIES =
+            List.of(ExtensionHistory.class, ExtensionAntiCSRF.class);
 
     // The i18n prefix, by default the package name - defined in one place to make it easier
     // to copy and change this example
@@ -86,13 +87,6 @@ public class ExtensionRevisit extends ExtensionAdaptor implements ProxyListener 
 
     public static final String ICON_RESOURCE = "/resource/icon/16/026.png";
     public static DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-
-    static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(2);
-        dependencies.add(ExtensionHistory.class);
-        dependencies.add(ExtensionAntiCSRF.class);
-        DEPENDENCIES = Collections.unmodifiableList(dependencies);
-    }
 
     private Logger LOGGER = LogManager.getLogger(this.getClass());
 

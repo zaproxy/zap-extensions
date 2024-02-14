@@ -22,7 +22,6 @@ package org.zaproxy.zap.extension.spiderAjax;
 import java.awt.event.KeyEvent;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -68,8 +67,7 @@ public class ExtensionAjax extends ExtensionAdaptor {
     public static final String NAME = "ExtensionSpiderAjax";
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
-            Collections.unmodifiableList(
-                    Arrays.asList(ExtensionSelenium.class, ExtensionNetwork.class));
+            List.of(ExtensionSelenium.class, ExtensionNetwork.class);
 
     private SpiderPanel spiderPanel = null;
     private PopupMenuAjaxSite popupMenuSpiderSite = null;

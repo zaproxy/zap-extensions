@@ -19,8 +19,6 @@
  */
 package org.zaproxy.zap.extension.groovy;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.swing.ImageIcon;
 import org.parosproxy.paros.Constant;
@@ -36,13 +34,10 @@ public class ExtensionGroovy extends ExtensionAdaptor {
     public static final String NAME = "ExtensionGroovy";
     public static final int EXTENSION_ORDER = 83;
     public static final ImageIcon GROOVY_ICON;
-    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES;
+    private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
+            List.of(ExtensionScript.class);
 
     static {
-        List<Class<? extends Extension>> dependencies = new ArrayList<>(1);
-        dependencies.add(ExtensionScript.class);
-        EXTENSION_DEPENDENCIES = Collections.unmodifiableList(dependencies);
-
         GROOVY_ICON =
                 View.isInitialised()
                         ? new ImageIcon(

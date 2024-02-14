@@ -50,7 +50,8 @@ import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
  *
  * @author 70pointer
  */
-public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
+public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin
+        implements CommonActiveScanRuleInfo {
 
     /**
      * if we got a 404 or a redirect specifically, then this is NOT a match note that since we are
@@ -353,12 +354,12 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                 if (evidence != null) {
                     // if we get to here, is is very likely that we have source file inclusion
                     // attack. alert it.
-                    newAlert()
-                            .setConfidence(getConfidence(svnsourcefileattackmsg))
-                            .setUri(getBaseMsg().getRequestHeader().getURI().toString())
-                            .setAttack(attackFilename)
-                            .setOtherInfo(getExtraInfo(urlfilename, attackFilename))
-                            .setEvidence(evidence)
+                    buildAlert(
+                                    getConfidence(svnsourcefileattackmsg),
+                                    getBaseMsg().getRequestHeader().getURI().toString(),
+                                    attackFilename,
+                                    urlfilename,
+                                    evidence)
                             .setMessage(svnsourcefileattackmsg)
                             .raise();
                     // if we found one, do not even try the "super" method, which tries each of the
@@ -604,21 +605,16 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                                             if (evidence != null) {
                                                 // if we get to here, is is very likely that we have
                                                 // source file inclusion attack. alert it.
-                                                newAlert()
-                                                        .setConfidence(
+                                                buildAlert(
                                                                 getConfidence(
-                                                                        svnSourceFileAttackMsg))
-                                                        .setUri(
+                                                                        svnSourceFileAttackMsg),
                                                                 getBaseMsg()
                                                                         .getRequestHeader()
                                                                         .getURI()
-                                                                        .toString())
-                                                        .setAttack(attackFilename)
-                                                        .setOtherInfo(
-                                                                getExtraInfo(
-                                                                        urlfilename,
-                                                                        attackFilename))
-                                                        .setEvidence(evidence)
+                                                                        .toString(),
+                                                                attackFilename,
+                                                                urlfilename,
+                                                                evidence)
                                                         .setMessage(svnSourceFileAttackMsg)
                                                         .raise();
                                                 // do not return.. need to tidy up first
@@ -697,5 +693,26 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin {
                     e);
         }
         return false;
+    }
+
+    private AlertBuilder buildAlert(
+            int confidence,
+            String url,
+            String attackFilename,
+            String urlfilename,
+            String evidence) {
+        return newAlert()
+                .setConfidence(confidence)
+                .setUri(url)
+                .setAttack(attackFilename)
+                .setOtherInfo(getExtraInfo(urlfilename, attackFilename))
+                .setEvidence(evidence);
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(Alert.CONFIDENCE_MEDIUM, "https://example.com/i.php", "", "", "")
+                        .build());
     }
 }

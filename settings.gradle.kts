@@ -42,7 +42,6 @@ var addOns = listOf(
     "callgraph",
     "callhome",
     "client",
-    "codedx",
     "commonlib",
     "coreLang",
     "custompayloads",
@@ -115,6 +114,7 @@ var addOns = listOf(
     "webdrivers:webdrivermacos",
     "webdrivers:webdriverwindows",
     "websocket",
+    "webuipoc",
     "zest",
 )
 

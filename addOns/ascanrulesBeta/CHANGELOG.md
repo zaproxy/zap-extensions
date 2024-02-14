@@ -5,9 +5,34 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119):
+    - Backup File Disclosure
+    - Httpoxy - Proxy Header Misuse
+    - Anti-CSRF Tokens Check
+    - HTTP Parameter Pollution
+    - Cross-Domain Misconfiguration 
+- Alerts from the HTTP Parameter Pollution scan rule are now raised with Low confidence.
+- Updated reference for scan rules (Issue 8262):
+    - Session Fixation
+    - Cross-Domain Misconfiguration 
+- Add website alert links to the help page (Issue 8189).
+
+## [50] - 2024-01-26
+### Changed
+- References for the following scan rules were updated (Issue 8262):
+    - Exponential Entity Expansion (Billion Laughs Attack)
+    - Relative Path Confusion
+    - HTTPS Content Available via HTTP
+    - Remote Code Execution - Shell Shock
+- The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119):
+    - HTTPS Content Available via HTTP
+    - Remote Code Execution - Shell Shock (it now also uses Alert Refs (Issue 7100))
+
+## [49] - 2024-01-16
+### Changed
 - Update minimum ZAP version to 2.14.0.
-- Update reference for Expression Language Injection (Issue 8262).
-- Update reference for HTTP Parameter Pollution (Issue 8262).
+- Update references for Expression Language Injection and HTTP Parameter Pollution (Issue 8262).
+- The Source Code Disclosure - SVN scan rule includes example alert functionality for documentation generation purposes (Issue 6119).
 
 ### Removed
 - Help entry for the Spring Actuators scan rule (missed during previous removal/promotion).
@@ -473,6 +498,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[50]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v50
+[49]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v49
 [48]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v48
 [47]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v47
 [46]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v46

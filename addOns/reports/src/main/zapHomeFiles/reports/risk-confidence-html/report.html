@@ -120,7 +120,7 @@
 				<h3 data-th-text="#{report.template.section.reportDescription}">Report
 					description</h3>
 				<div class="report-description--container">
-					<th-block data-th-replace="::nl2pbr(text=${description})">
+					<th-block data-th-replace="~{::nl2pbr(text=${description})}">
 					<p>Report description</p>
 					</th-block>
 				</div>

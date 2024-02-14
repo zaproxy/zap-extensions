@@ -5,6 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Changed
+- Maintenance changes.
+
+## [1.22.0] - 2024-01-26
+### Added
+- Add alert tag for scan rules that use time based tests.
+
+## [1.21.0] - 2024-01-16
 ### Added
 - Add solution to 'Server Misconfiguration' and 'Application Misconfiguration' vulnerabilities (Issue 8056).
 
@@ -145,6 +153,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 First version.
 
+[1.22.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.22.0
+[1.21.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.21.0
 [1.20.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.20.0
 [1.19.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.19.0
 [1.18.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.18.0

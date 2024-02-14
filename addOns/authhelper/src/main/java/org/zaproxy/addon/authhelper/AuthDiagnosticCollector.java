@@ -86,7 +86,7 @@ public class AuthDiagnosticCollector implements HttpSenderListener {
 
             appendExactHeaders(msg.getRequestHeader(), HttpHeader.CONTENT_TYPE, sb);
             appendSanitisedHeaders(msg.getRequestHeader(), HttpHeader.AUTHORIZATION, sb);
-            appendCookies(msg.getRequestHeader().getHttpCookies(), HttpHeader.SET_COOKIE, sb);
+            appendCookies(msg.getRequestHeader().getHttpCookies(), HttpHeader.COOKIE, sb);
             appendStructuredData(msg.getRequestHeader(), msg.getRequestBody(), sb);
 
             // The response
@@ -100,7 +100,7 @@ public class AuthDiagnosticCollector implements HttpSenderListener {
 
             appendExactHeaders(msg.getResponseHeader(), HttpHeader.CONTENT_TYPE, sb);
             appendSanitisedHeaders(msg.getResponseHeader(), HttpHeader.AUTHORIZATION, sb);
-            appendCookies(msg.getResponseHeader().getHttpCookies(null), HttpHeader.COOKIE, sb);
+            appendCookies(msg.getResponseHeader().getHttpCookies(null), HttpHeader.SET_COOKIE, sb);
             appendStructuredData(msg.getResponseHeader(), msg.getResponseBody(), sb);
             logString(sb.toString());
         } catch (URIException e) {

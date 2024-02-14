@@ -193,12 +193,8 @@ public class SpiderJobDialog extends StandardFieldsDialog {
                     }
                 };
 
-        SpiderParam.HandleParametersOption hpo = null;
         if (this.job.getParameters().getHandleParameters() != null) {
-            hpo =
-                    SpiderParam.HandleParametersOption.valueOf(
-                            this.job.getParameters().getHandleParameters());
-            handleParamsModel.setSelectedItem(hpo);
+            handleParamsModel.setSelectedItem(this.job.getParameters().getHandleParameters());
         }
         this.addComboField(2, HANDLE_PARAMS_PARAM, handleParamsModel);
         Component acField = this.getField(HANDLE_PARAMS_PARAM);
@@ -290,7 +286,7 @@ public class SpiderJobDialog extends StandardFieldsDialog {
             if (hpoObj instanceof SpiderParam.HandleParametersOption) {
                 SpiderParam.HandleParametersOption hpo =
                         (SpiderParam.HandleParametersOption) hpoObj;
-                this.job.getParameters().setHandleParameters(hpo.name());
+                this.job.getParameters().setHandleParameters(hpo);
             }
 
         } else {

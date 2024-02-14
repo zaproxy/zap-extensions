@@ -21,7 +21,6 @@ package org.zaproxy.zap.extension.portscan;
 
 import java.awt.EventQueue;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import javax.swing.tree.TreeNode;
@@ -51,7 +50,7 @@ public class ExtensionPortScan extends ExtensionAdaptor
     private static final Logger LOGGER = LogManager.getLogger(ExtensionPortScan.class);
 
     private static final List<Class<? extends Extension>> DEPENDENCIES =
-            Collections.singletonList(ExtensionNetwork.class);
+            List.of(ExtensionNetwork.class);
 
     // Could be after the last one that saves the HttpMessage, as this ProxyListener doesn't change
     // the HttpMessage.

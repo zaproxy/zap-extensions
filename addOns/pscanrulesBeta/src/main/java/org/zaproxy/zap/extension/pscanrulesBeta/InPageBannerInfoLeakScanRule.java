@@ -37,7 +37,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 /**
  * In Page Banner Information Leak passive scan rule https://github.com/zaproxy/zaproxy/issues/178
  */
-public class InPageBannerInfoLeakScanRule extends PluginPassiveScanner {
+public class InPageBannerInfoLeakScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     private static final Logger LOGGER = LogManager.getLogger(InPageBannerInfoLeakScanRule.class);
     private static final int PLUGIN_ID = 10009;

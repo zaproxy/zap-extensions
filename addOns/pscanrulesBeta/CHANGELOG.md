@@ -4,6 +4,17 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+
+## [37] - 2024-02-12
+
+### Added
+- Website alert links (Issue 8189).
+
+### Changed
+- Maintenance changes.
+
+## [36] - 2024-01-16
 ### Changed
 - Update minimum ZAP version to 2.14.0.
 - The Source Code Disclosure rule no longer considers responses that contain ISO control characters (those which are likely to be binary file types) (Issue 8191).
@@ -305,6 +316,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[37]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v37
+[36]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v36
 [35]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v35
 [34]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v34
 [33]: https://github.com/zaproxy/zap-extensions/releases/pscanrulesBeta-v33

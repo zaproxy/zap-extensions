@@ -37,7 +37,7 @@ import org.zaproxy.addon.oast.ExtensionOast;
 import org.zaproxy.zap.model.Tech;
 import org.zaproxy.zap.model.TechSet;
 
-public class Text4ShellScanRule extends AbstractAppParamPlugin {
+public class Text4ShellScanRule extends AbstractAppParamPlugin implements CommonActiveScanRuleInfo {
 
     private static final Logger LOGGER = LogManager.getLogger(Text4ShellScanRule.class);
     private static final String PREFIX = "ascanbeta.text4shell.";

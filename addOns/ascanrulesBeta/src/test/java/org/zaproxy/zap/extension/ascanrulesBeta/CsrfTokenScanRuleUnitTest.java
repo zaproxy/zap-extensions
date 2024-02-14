@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.TreeSet;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
 import org.parosproxy.paros.model.OptionsParam;
@@ -314,6 +315,20 @@ class CsrfTokenScanRuleUnitTest extends ActiveScannerTest<CsrfTokenScanRule> {
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_SESS_05_CSRF.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_SESS_05_CSRF.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 
     private HttpMessage createMessage(boolean isInScope)

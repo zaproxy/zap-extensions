@@ -4,17 +4,81 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+
+### Changed
+- Maintenance changes.
+- The following rules now include example alert functionality for documentation generation purposes (Issue 6119):
+    - Timestamp Disclosure - Unix
+    - Hash Disclosure
+    - Cross-Domain Misconfiguration
+    - Weak Authentication Method
+    - Reverse Tabnabbing
+    - CSRF Countermeasures
+- The following scan rules now have alert references (Issue 7100):
+    - Weak Authentication Method
+- The references for Alerts from the following rules were also updated (Issue 8262):
+    - Timestamp Disclosure - Unix 
+    - Hash Disclosure
+    - View State Scan Rule 
+    - Weak Authentication Method
+
+## [55] - 2024-01-26
+### Changed
+- The Salvation2 library used by the CSP scan rule has been replaced by htmlunit-csp.
+- The following rules now include example alert functionality for documentation generation purposes (Issue 6119):
+    - HTTPS to HTTP Insecure Transition in Form Post
+    - HTTP to HTTPS Insecure Transition in Form Post
+    - Secure Pages Include Mixed Content
+    - User Controllable JavaScript Event (XSS)
+    - Cookie without SameSite Attribute
+    - X-Debug-Token Information Leak
+    - Retrieved from Cache
+- The following scan rules now have alert references (Issue 7100):
+    - Cookie without SameSite Attribute 
+    - Retrieved from Cache (raw text was also trimmed from one Alert reference (Issue 8262))
+
+### Fixed
+- An issue where Other Info on alerts for the following rules may have been hard to read (missing spaces or new lines):
+    - HTTPS to HTTP Insecure Transition in Form Post
+    - HTTP to HTTPS Insecure Transition in Form Post
+    - User Controllable JavaScript Event (XSS)
+
+## [54] - 2024-01-16
 ### Changed
 - The Big Redirect scan rule will now also alert on responses that have multiple HREFs (idea from xnl-h4ck3r).
-    - It also now includes example alert and alert reference functionality for documentation generation and cross linking purposes (Issues 6119, 7100, and 8189).
-- Update reference for X-Content-Type-Options Header Missing and Content-Type Header Missing (Issue 8262).
-    - They now also include example alerts for documentation generation and cross linking purposes (Issues 6119, 7100, and 8189).
-- Update reference for Loosely Scoped Cookie (Issue 8262).
-- Update reference for Charset Mismatch (Issue 8262).
-- Update reference for Strict-Transport-Security Header (Issue 8262).
+- The references for the following scan rules are now all HTTPS (Issue 8262) and in some cases updated:
+    - Loosely Scoped Cookie
+    - Charset Mismatch
+    - Strict-Transport-Security Header
+    - Content Security Policy (CSP) Header Not Set
+    - CSP
+    - Session ID in URL Rewrite
+    - HTTP Server Response Header
+    - Cookie Poisoning
+    - User Controllable HTML Element Attribute (Potential XSS)
+    - X-Content-Type-Options Header Missing
+    - Content-Type Header Missing
+    - Server Leaks Information via "X-Powered-By" HTTP Response Header Field(s)
+    - Retrieved from Cache
 - The Absence of Anti-CSRF Tokens scan rule now takes into account the Partial Match settings from the Anti-CSRF Options (Issue 8280).
+- On Non-LOW threshold, PII Scan rule only evaluates HTML, JSON and XML responses (Issue 8264).
 - Maintenance changes.
-- Update reference for Server Leaks Information via "X-Powered-By" HTTP Response Header Field(s) (Issue 8262).
+- The following rules now include example alert functionality for documentation generation and cross linking purposes (Issues 6119, and 8189).
+    - Big Redirect
+    - Information Disclosure: Debug Errors
+    - Information Disclosure: In URL
+    - Information Disclosure: Referrer
+    - Cookie Poisoning
+    - User Controllable Charset
+    - Open Redirect
+    - User Controllable HTML Element Attribute (Potential XSS)
+    - Heartbleed OpenSSL Vulnerability (Indicative)
+    - Strict-Transport-Security Header
+    - Server Leaks Information via "X-Powered-By" HTTP Response Header Field(s)
+    - X-Content-Type-Options Header Missing
+    - Content-Type Header Missing
+- The CWE for the Cookie Poisoning scan rule was updated to a more specific one.
+- The Strict-Transport-Security Header and Big Redirect scan rules now use alert references for their different types of alerts (Issue 7100).
 
 ## [53] - 2023-11-30
 ### Changed
@@ -452,6 +516,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[55]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v55
+[54]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v54
 [53]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v53
 [52]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v52
 [51]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v51
