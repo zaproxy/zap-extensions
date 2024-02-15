@@ -66,7 +66,6 @@ public class ExtensionGraphQl extends ExtensionAdaptor
     private static final int ARG_IMPORT_FILE_IDX = 0;
     private static final int ARG_IMPORT_URL_IDX = 1;
     private static final int ARG_END_URL_IDX = 2;
-    public static final int PLUGIN_ID = 50007;
 
     public ExtensionGraphQl() {
         super(NAME);
@@ -164,14 +163,9 @@ public class ExtensionGraphQl extends ExtensionAdaptor
         parserThreads.clear();
     }
 
-    @Override
-    public int getPluginId() {
-        return PLUGIN_ID;
-    }
-
     public String getHelpLink() {
         return "https://www.zaproxy.org/docs/desktop/addons/graphql-support/alerts/#id-"
-                + getPluginId();
+                + TOOL_ALERT_ID;
     }
 
     @Override
