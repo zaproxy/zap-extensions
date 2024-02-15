@@ -159,7 +159,13 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
 
     ExtensionBreak extBreak;
 
-    /*
+    static boolean coreBrkDisabled;
+
+    static {
+        coreBrkDisabled = ExtensionBreak.class.getAnnotation(Deprecated.class) != null;
+    }
+
+        /*
      * TODO
      * Handle mode
      */
@@ -214,14 +220,26 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                     @Override
                     public void run() {
                         this.setName("ZAP-pnh-timeout");
+                        // Can't init extBreak here - Control wont have been initialized
+                        boolean ctrlInit = false;
                         while (!shutdown) {
                             try {
                                 sleep(poll);
+
+                                if (!ctrlInit && Control.getSingleton() != null && !coreBrkDisabled) {
+                                    extBreak =
+                                            (ExtensionBreak)
+                                                    Control.getSingleton()
+                                                            .getExtensionLoader()
+                                                            .getExtension(ExtensionBreak.NAME);
+                                    ctrlInit = true;
+                                }
+
                                 if (extBreak != null
                                         && (extBreak.getBreakpointManagementInterface()
-                                                        .isBreakRequest()
-                                                || extBreak.getBreakpointManagementInterface()
-                                                        .isBreakResponse())) {
+                                        .isBreakRequest()
+                                        || extBreak.getBreakpointManagementInterface()
+                                        .isBreakResponse())) {
                                     // Dont timeout pages while global breakpoints set
                                     // TODO find a solution for custom break points too
                                     continue;
@@ -280,6 +298,10 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
             ExtensionLoader extLoader = Control.getSingleton().getExtensionLoader();
 
             // setup Breakpoints
+            if(!coreBrkDisabled) {
+                extBreak = (ExtensionBreak) extLoader.getExtension(ExtensionBreak.NAME);
+            }
+
             if (extBreak != null) {
                 // setup custom breakpoint handler
                 brkMessageHandler =
@@ -327,6 +349,9 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
             ExtensionLoader extLoader = Control.getSingleton().getExtensionLoader();
 
             // clear up Breakpoints
+            if(!coreBrkDisabled) {
+                extBreak = (ExtensionBreak) extLoader.getExtension(ExtensionBreak.NAME);
+            }
             if (extBreak != null) {
                 extBreak.removeBreakpointsUiManager(getBrkManager());
             }
@@ -468,12 +493,12 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                                         + SCRIPT_START
                                         + this.getPnhScript()
                                         + SCRIPT_END
-                                                .replace(REPLACE_ROOT_TOKEN, this.getApiRoot())
-                                                .replace(REPLACE_ID_TOKEN, page.getId())
-                                                .replace(
-                                                        REPLACE_NONCE,
-                                                        API.getInstance()
-                                                                .getLongLivedNonce(SCRIPT_API))
+                                        .replace(REPLACE_ROOT_TOKEN, this.getApiRoot())
+                                        .replace(REPLACE_ID_TOKEN, page.getId())
+                                        .replace(
+                                                REPLACE_NONCE,
+                                                API.getInstance()
+                                                        .getLongLivedNonce(SCRIPT_API))
                                         + body.substring(endHeadTag);
                         msg.setResponseBody(body);
                         msg.getResponseHeader().setContentLength(body.length());
@@ -894,6 +919,13 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
 
     protected ClientBreakpointsUiManagerInterface getBrkManager() {
         if (brkManager == null) {
+            if(!coreBrkDisabled) {
+                extBreak =
+                        (ExtensionBreak)
+                                Control.getSingleton()
+                                        .getExtensionLoader()
+                                        .getExtension(ExtensionBreak.NAME);
+            }
             if (extBreak != null) {
                 brkManager = new ClientBreakpointsUiManagerInterface(this, extBreak);
             }
@@ -942,9 +974,5 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
         cmsg.set("name", key);
         cmsg.set("value", value);
         this.mpm.send(cmsg);
-    }
-
-    public void setExtensionBreak(ExtensionBreak brk) {
-        extBreak = brk;
     }
 }
