@@ -51,13 +51,13 @@ import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.brk.ExtensionBreak;
 import org.zaproxy.addon.network.ExtensionNetwork;
 import org.zaproxy.addon.network.server.ServerInfo;
 import org.zaproxy.zap.ZAP;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.api.ApiException;
 import org.zaproxy.zap.extension.api.ApiResponse;
-import org.zaproxy.zap.extension.brk.ExtensionBreak;
 import org.zaproxy.zap.extension.help.ExtensionHelp;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.httppanel.component.HttpPanelComponentInterface;
@@ -157,6 +157,8 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
 
     private ExtensionNetwork extensionNetwork;
 
+    ExtensionBreak extBreak;
+
     /*
      * TODO
      * Handle mode
@@ -212,21 +214,9 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                     @Override
                     public void run() {
                         this.setName("ZAP-pnh-timeout");
-                        // Can't init extBreak here - Control wont have been initialized
-                        boolean ctrlInit = false;
-                        ExtensionBreak extBreak = null;
                         while (!shutdown) {
                             try {
                                 sleep(poll);
-
-                                if (!ctrlInit && Control.getSingleton() != null) {
-                                    extBreak =
-                                            (ExtensionBreak)
-                                                    Control.getSingleton()
-                                                            .getExtensionLoader()
-                                                            .getExtension(ExtensionBreak.NAME);
-                                    ctrlInit = true;
-                                }
                                 if (extBreak != null
                                         && (extBreak.getBreakpointManagementInterface()
                                                         .isBreakRequest()
@@ -290,7 +280,6 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
             ExtensionLoader extLoader = Control.getSingleton().getExtensionLoader();
 
             // setup Breakpoints
-            ExtensionBreak extBreak = (ExtensionBreak) extLoader.getExtension(ExtensionBreak.NAME);
             if (extBreak != null) {
                 // setup custom breakpoint handler
                 brkMessageHandler =
@@ -338,7 +327,6 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
             ExtensionLoader extLoader = Control.getSingleton().getExtensionLoader();
 
             // clear up Breakpoints
-            ExtensionBreak extBreak = (ExtensionBreak) extLoader.getExtension(ExtensionBreak.NAME);
             if (extBreak != null) {
                 extBreak.removeBreakpointsUiManager(getBrkManager());
             }
@@ -906,11 +894,6 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
 
     protected ClientBreakpointsUiManagerInterface getBrkManager() {
         if (brkManager == null) {
-            ExtensionBreak extBreak =
-                    (ExtensionBreak)
-                            Control.getSingleton()
-                                    .getExtensionLoader()
-                                    .getExtension(ExtensionBreak.NAME);
             if (extBreak != null) {
                 brkManager = new ClientBreakpointsUiManagerInterface(this, extBreak);
             }
@@ -959,5 +942,9 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
         cmsg.set("name", key);
         cmsg.set("value", value);
         this.mpm.send(cmsg);
+    }
+
+    public void setExtensionBreak(ExtensionBreak brk) {
+        extBreak = brk;
     }
 }

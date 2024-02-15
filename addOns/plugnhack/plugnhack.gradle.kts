@@ -31,6 +31,19 @@ zapAddOn {
                     }
                 }
             }
+
+            register("org.zaproxy.zap.extension.plugnhack.brk.ExtensionPlugNHackBrk") {
+                classnames {
+                    allowed.set(listOf("org.zaproxy.zap.extension.plugnhack.brk"))
+                }
+                dependencies {
+                    addOns {
+                        register("brk") {
+                            version.set(">=0.1")
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -43,4 +56,5 @@ zapAddOn {
 dependencies {
     zapAddOn("network")
     zapAddOn("requester")
+    zapAddOn("brk")
 }

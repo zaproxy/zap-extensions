@@ -22,7 +22,7 @@ package org.zaproxy.zap.extension.plugnhack.brk;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.parosproxy.paros.Constant;
-import org.zaproxy.zap.extension.brk.AbstractBreakPointMessage;
+import org.zaproxy.addon.brk.AbstractBreakPointMessage;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.plugnhack.ClientMessage;
 
