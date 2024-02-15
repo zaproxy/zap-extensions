@@ -165,7 +165,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
         coreBrkDisabled = ExtensionBreak.class.getAnnotation(Deprecated.class) != null;
     }
 
-        /*
+    /*
      * TODO
      * Handle mode
      */
@@ -226,7 +226,9 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                             try {
                                 sleep(poll);
 
-                                if (!ctrlInit && Control.getSingleton() != null && !coreBrkDisabled) {
+                                if (!ctrlInit
+                                        && Control.getSingleton() != null
+                                        && !coreBrkDisabled) {
                                     extBreak =
                                             (ExtensionBreak)
                                                     Control.getSingleton()
@@ -237,9 +239,9 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
 
                                 if (extBreak != null
                                         && (extBreak.getBreakpointManagementInterface()
-                                        .isBreakRequest()
-                                        || extBreak.getBreakpointManagementInterface()
-                                        .isBreakResponse())) {
+                                                        .isBreakRequest()
+                                                || extBreak.getBreakpointManagementInterface()
+                                                        .isBreakResponse())) {
                                     // Dont timeout pages while global breakpoints set
                                     // TODO find a solution for custom break points too
                                     continue;
@@ -298,7 +300,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
             ExtensionLoader extLoader = Control.getSingleton().getExtensionLoader();
 
             // setup Breakpoints
-            if(!coreBrkDisabled) {
+            if (!coreBrkDisabled) {
                 extBreak = (ExtensionBreak) extLoader.getExtension(ExtensionBreak.NAME);
             }
 
@@ -349,7 +351,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
             ExtensionLoader extLoader = Control.getSingleton().getExtensionLoader();
 
             // clear up Breakpoints
-            if(!coreBrkDisabled) {
+            if (!coreBrkDisabled) {
                 extBreak = (ExtensionBreak) extLoader.getExtension(ExtensionBreak.NAME);
             }
             if (extBreak != null) {
@@ -493,12 +495,12 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
                                         + SCRIPT_START
                                         + this.getPnhScript()
                                         + SCRIPT_END
-                                        .replace(REPLACE_ROOT_TOKEN, this.getApiRoot())
-                                        .replace(REPLACE_ID_TOKEN, page.getId())
-                                        .replace(
-                                                REPLACE_NONCE,
-                                                API.getInstance()
-                                                        .getLongLivedNonce(SCRIPT_API))
+                                                .replace(REPLACE_ROOT_TOKEN, this.getApiRoot())
+                                                .replace(REPLACE_ID_TOKEN, page.getId())
+                                                .replace(
+                                                        REPLACE_NONCE,
+                                                        API.getInstance()
+                                                                .getLongLivedNonce(SCRIPT_API))
                                         + body.substring(endHeadTag);
                         msg.setResponseBody(body);
                         msg.getResponseHeader().setContentLength(body.length());
@@ -919,7 +921,7 @@ public class ExtensionPlugNHack extends ExtensionAdaptor
 
     protected ClientBreakpointsUiManagerInterface getBrkManager() {
         if (brkManager == null) {
-            if(!coreBrkDisabled) {
+            if (!coreBrkDisabled) {
                 extBreak =
                         (ExtensionBreak)
                                 Control.getSingleton()
