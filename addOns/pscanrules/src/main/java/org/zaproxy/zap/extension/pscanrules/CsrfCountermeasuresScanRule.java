@@ -52,7 +52,8 @@ import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
  *
  * @author 70pointer
  */
-public class CsrfCountermeasuresScanRule extends PluginPassiveScanner {
+public class CsrfCountermeasuresScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     /** contains the base vulnerability that this plugin refers to */
     private static final Vulnerability VULN = Vulnerabilities.getDefault().get("wasc_9");

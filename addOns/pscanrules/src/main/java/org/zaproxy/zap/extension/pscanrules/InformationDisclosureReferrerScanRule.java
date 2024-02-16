@@ -42,7 +42,8 @@ import org.zaproxy.addon.commonlib.binlist.BinList;
 import org.zaproxy.addon.commonlib.binlist.BinRecord;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner {
+public class InformationDisclosureReferrerScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     protected static final String MESSAGE_PREFIX = "pscanrules.informationdisclosurereferrer.";
     private static final int PLUGIN_ID = 10025;

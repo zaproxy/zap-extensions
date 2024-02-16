@@ -40,7 +40,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * Port for the Watcher passive scanner (http://websecuritytool.codeplex.com/) rule {@code
  * CasabaSecurity.Web.Watcher.Checks.CheckPasvUserControlledJavascriptEvent}
  */
-public class UserControlledJavascriptEventScanRule extends PluginPassiveScanner {
+public class UserControlledJavascriptEventScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     private static final String[] JAVASCRIPT_EVENTS =
             new String[] {

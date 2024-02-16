@@ -47,7 +47,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  *
  * @author Michael Kruglos (@michaelkruglos)
  */
-public class PiiScanRule extends PluginPassiveScanner {
+public class PiiScanRule extends PluginPassiveScanner implements CommonPassiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.pii.";

@@ -42,7 +42,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * Strict-Transport-Security Header Not Set passive scan rule
  * https://github.com/zaproxy/zaproxy/issues/1169
  */
-public class StrictTransportSecurityScanRule extends PluginPassiveScanner {
+public class StrictTransportSecurityScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "pscanrules.stricttransportsecurity.";
     private static final int PLUGIN_ID = 10035;

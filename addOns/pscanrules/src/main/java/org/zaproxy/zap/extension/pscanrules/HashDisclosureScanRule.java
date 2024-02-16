@@ -41,7 +41,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  *
  * @author 70pointer@gmail.com
  */
-public class HashDisclosureScanRule extends PluginPassiveScanner {
+public class HashDisclosureScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     private static final HashAlert MD4_MD5_HASH_ALERT =
             new HashAlert("MD4 / MD5", Alert.RISK_LOW, Alert.CONFIDENCE_LOW);

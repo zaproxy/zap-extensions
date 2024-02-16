@@ -60,7 +60,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * @author yhawke
  * @author kingthorin+owaspzap
  */
-public class InfoSessionIdUrlScanRule extends PluginPassiveScanner {
+public class InfoSessionIdUrlScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.infosessionidurl.";

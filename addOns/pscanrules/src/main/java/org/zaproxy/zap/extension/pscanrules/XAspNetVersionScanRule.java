@@ -33,7 +33,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * a scan rule to passively scan for the presence of the X-AspNet-Version/X-AspNetMvc-Version
  * response header
  */
-public class XAspNetVersionScanRule extends PluginPassiveScanner {
+public class XAspNetVersionScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.xaspnetversion.";

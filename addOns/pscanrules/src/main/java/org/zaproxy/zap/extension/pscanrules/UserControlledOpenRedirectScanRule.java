@@ -44,7 +44,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * Port for the Watcher passive scanner (http://websecuritytool.codeplex.com/) rule {@code
  * CasabaSecurity.Web.Watcher.Checks.CheckPasvUserControlledOpenRedirect}
  */
-public class UserControlledOpenRedirectScanRule extends PluginPassiveScanner {
+public class UserControlledOpenRedirectScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     private static final Logger LOGGER =
             LogManager.getLogger(UserControlledOpenRedirectScanRule.class);

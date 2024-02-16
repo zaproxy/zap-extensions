@@ -64,7 +64,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * with the gzip algorithm (which is the default).
  * </pre>
  */
-public class InsecureJsfViewStatePassiveScanRule extends PluginPassiveScanner {
+public class InsecureJsfViewStatePassiveScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "pscanrules.insecurejsfviewstate.";
 

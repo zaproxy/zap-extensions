@@ -39,7 +39,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
 import org.zaproxy.zap.model.Context;
 
-public class CrossDomainScriptInclusionScanRule extends PluginPassiveScanner {
+public class CrossDomainScriptInclusionScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.crossdomainscriptinclusion.";
