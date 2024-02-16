@@ -27,6 +27,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -345,7 +346,7 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
             List<String> errors =
                     importOpenApiDefinition(
-                            Json.pretty(openApi),
+                            new String(Files.readAllBytes(file.toPath())),
                             targetUrl,
                             null,
                             initViaUi,
