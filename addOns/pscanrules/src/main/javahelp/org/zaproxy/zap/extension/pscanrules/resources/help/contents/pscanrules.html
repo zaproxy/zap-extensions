@@ -333,7 +333,7 @@ It does not indicate any potential vulnerabilities but it could indicate that th
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/ModernAppDetectionScanRule.java">ModernAppDetectionScanRule.java</a>
 <br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/100109/">100109</a>.
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10109/">10109</a>.
 
 <H2 id="id-10028">Open Redirect</H2>
 This check looks at user-supplied input in query string parameters and POST data to identify where open redirects might be possible. Open redirects occur when an application allows user-supplied input (e.g. http://nottrusted.com) to control an offsite redirect. This is generally a pretty accurate way to find where 301 or 302 redirects could be exploited by spammers or phishing attacks.
@@ -366,7 +366,7 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10062/">10062</a>.
 
-<H2 id="id-00002">Private Address Disclosure</H2>
+<H2 id="id-2">Private Address Disclosure</H2>
 Checks the response content for inclusion of RFC 1918 IPv4 addresses as well as 
 Amazon EC2 private hostnames (for example, ip-10-0-56-78). This information can give an attacker 
 useful information about the IP address scheme of the internal network, and might be helpful for 
@@ -379,7 +379,7 @@ repeated scans the "Context Alert Filters" add-on could be leveraged.
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InfoPrivateAddressDisclosureScanRule.java">InfoPrivateAddressDisclosureScanRule.java</a>
 <br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/00002/">00002</a>.
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/2/">2</a>.
 
 <H2 id="id-10050">Retrieved from Cache</H2>
 This scan rule detects content that has been served from a shared cache.
@@ -405,7 +405,7 @@ Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns
 <br>
 Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10037/">10037</a>.
 
-<H2 id="id-00003">Session ID in URL Rewrite</H2>
+<H2 id="id-3">Session ID in URL Rewrite</H2>
 This scan rule checks for the existence of session token type parameters being rewritten to the URL. 
 To help reduce false positives the rule checks the length of the token value,  if the value of the parameter 
 is not greater than 8 characters in length then the parameter is ignored 
@@ -413,7 +413,7 @@ is not greater than 8 characters in length then the parameter is ignored
 <p>
 Latest code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/pscanrules/src/main/java/org/zaproxy/zap/extension/pscanrules/InfoSessionIdUrlScanRule.java">InfoSessionIdUrlScanRule.java</a>
 <br>
-Alert ID: <a href="https://www.zaproxy.org/docs/alerts/00003/">00003</a>.
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/3/">3</a>.
 
 <H2 id="id-10035">Strict Transport Security Header</H2>
 This rule checks HTTPS responses for the presence of a HTTP Strict Transport Security (HSTS) header and tests for various implementation concerns, 
