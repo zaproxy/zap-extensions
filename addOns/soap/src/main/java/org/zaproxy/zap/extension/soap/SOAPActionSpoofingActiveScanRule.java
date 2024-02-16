@@ -47,7 +47,8 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
  *
  * @author Albertov91
  */
-public class SOAPActionSpoofingActiveScanRule extends AbstractAppPlugin {
+public class SOAPActionSpoofingActiveScanRule extends AbstractAppPlugin
+        implements CommonScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "soap.soapactionspoofing.";
     private static final Logger LOGGER =

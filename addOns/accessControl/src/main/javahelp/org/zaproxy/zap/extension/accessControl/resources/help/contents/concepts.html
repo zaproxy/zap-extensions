@@ -20,7 +20,7 @@
     procedure</b>.
 </p>
 
-<h3>Access Rules</h3>
+<h2>Access Rules</h2>
 
 <p>
     In order to identify potential access control issues, ZAP needs to know which parts of the web application are
@@ -46,7 +46,7 @@
     about this can be found on the Access Control <a href="contextOptions.html">Context options</a> help page.</td>
 </p>
 
-<h3>Testing procedure</h3>
+<h2>Testing procedure</h2>
 
 <p> As a whole, in order to fully perform access control testing for a web application, the next steps should be
     followed:</p>
@@ -68,6 +68,32 @@
     </li>
 </ul>
 <strong>Note:</strong> Access control testing is not allowed in <code>Safe</code> mode nor <code>Protected</code> if the context is not in scope.
+
+<H2 id="alerts">Alerts</H2>
+
+The following Alerts may be raised by the add-on:
+
+<H3 id="id-10101">Access Control Issue - Improper Authentication</H3>
+
+    Insufficient Authentication occurs when a web site permits an attacker to access sensitive content or functionality without 
+    having to properly authenticate. Web-based administration tools are a good example of web sites providing access to sensitive functionality. 
+    Depending on the specific online resource, these web applications should not be directly accessible without requiring the user to properly verify 
+    their identity.
+    <p>
+    Latest Code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/accessControl/src/main/java/org/zaproxy/zap/extension/accessControl/AccessControlScannerThread.java">AccessControlScannerThread.java</a>
+    <br>
+    Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10101/">10101</a>.
+
+<H3 id="id-10102">Access Control Issue - Improper Authorization</H3>
+
+    Insufficient Authorization results when an application does not perform adequate authorization checks to ensure that the user is performing a 
+    function or accessing data in a manner consistent with the security policy. Authorization procedures should enforce what a user, service or 
+    application is permitted to do. When a user is authenticated to a web site, it does not necessarily mean that the user should have full access 
+    to all content and functionality.
+    <p>
+    Latest Code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/accessControl/src/main/java/org/zaproxy/zap/extension/accessControl/AccessControlScannerThread.java">AccessControlScannerThread.java</a>
+    <br>
+    Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10102/">10102</a>.
 
 <H2>API</H2>
 
