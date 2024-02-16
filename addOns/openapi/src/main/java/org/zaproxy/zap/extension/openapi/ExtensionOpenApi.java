@@ -335,7 +335,6 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                     throw new OpenApiExceptions.EmptyDefinitionException();
                 }
             }
-            
 
             SwaggerParseResult swaggerParseResult = SwaggerConverter.parse(file);
             OpenAPI openApi = swaggerParseResult.getOpenAPI();
