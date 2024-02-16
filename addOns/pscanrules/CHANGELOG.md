@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [56] - 2024-02-16
 
 ### Added
 - Website alert links for Passive Scan Rules (Issue 8189).
@@ -519,6 +519,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[56]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v56
 [55]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v55
 [54]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v54
 [53]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v53
