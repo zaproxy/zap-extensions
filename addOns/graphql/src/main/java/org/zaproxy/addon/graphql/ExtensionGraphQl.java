@@ -163,6 +163,11 @@ public class ExtensionGraphQl extends ExtensionAdaptor
         parserThreads.clear();
     }
 
+    public String getHelpLink() {
+        return "https://www.zaproxy.org/docs/desktop/addons/graphql-support/alerts/#id-"
+                + TOOL_ALERT_ID;
+    }
+
     @Override
     public void sessionAboutToChange(Session arg0) {
         stopParserThreads();
