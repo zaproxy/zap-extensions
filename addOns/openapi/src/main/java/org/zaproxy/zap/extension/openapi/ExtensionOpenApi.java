@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.openapi;
 
-import io.swagger.v3.core.util.Json;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.parser.core.models.SwaggerParseResult;
 import java.awt.EventQueue;
