@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Updated reference for scan rule: Possible Username Enumeration (Issue 8262)
 
 ## [51] - 2024-02-16
 ### Changed
@@ -19,10 +20,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - Session Fixation
     - Cross-Domain Misconfiguration 
 - Add website alert links to the help page (Issue 8189).
-- Remove broken http link for alerts (Issue 8262):
-    - Possible Username Enumeration
-    - Out of Band XSS
-    - Cookie Slack Detector
 
 ## [50] - 2024-01-26
 ### Changed
