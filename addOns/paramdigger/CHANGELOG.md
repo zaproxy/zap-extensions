@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 - Update minimum ZAP version to 2.15.0.
+- The output panel is now properly reset on ZAP session change (part of Issue 7694).
 
 ## [0.2.0] - 2023-06-06
 ### Fixed
