@@ -22,6 +22,7 @@ package org.zaproxy.addon.graphql;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.TreeSet;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.apache.commons.httpclient.URI;
@@ -139,12 +140,14 @@ public class VariantGraphQl implements Variant {
                 msg.getRequestHeader().setContentLength(msg.getRequestBody().length());
             }
         } else if (HttpRequestHeader.GET.equals(header.getMethod())) {
-            for (HtmlParameter param : msg.getUrlParams()) {
+            TreeSet<HtmlParameter> urlParams = msg.getUrlParams();
+            for (HtmlParameter param : urlParams) {
                 if (QUERY_KEY.equals(param.getName())) {
                     param.setValue(query);
                     break;
                 }
             }
+            msg.setGetParams(urlParams);
         }
     }
 
