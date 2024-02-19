@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Updated reference for scan rule: Possible Username Enumeration (Issue 8262)
 
 ## [51] - 2024-02-16
 ### Changed
