@@ -50,7 +50,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * Checks content for private IP V4 addresses as well as Amazon EC2 private hostnames (for example,
  * ip-10-34-56-78).
  */
-public class InfoPrivateAddressDisclosureScanRule extends PluginPassiveScanner {
+public class InfoPrivateAddressDisclosureScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.infoprivateaddressdisclosure.";

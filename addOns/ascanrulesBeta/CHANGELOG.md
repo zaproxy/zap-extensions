@@ -5,8 +5,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
-- The Backup File Disclosure scan rule now includes example alert functionality for documentation generation purposes (Issue 6119).
-- Updated reference for scan rule: Session Fixation (Issue 8262)
+- Updated reference for scan rule: Possible Username Enumeration (Issue 8262)
+
+## [51] - 2024-02-16
+### Changed
+- The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119):
+    - Backup File Disclosure
+    - Httpoxy - Proxy Header Misuse
+    - Anti-CSRF Tokens Check
+    - HTTP Parameter Pollution
+    - Cross-Domain Misconfiguration 
+- Alerts from the HTTP Parameter Pollution scan rule are now raised with Low confidence.
+- Updated reference for scan rules (Issue 8262):
+    - Session Fixation
+    - Cross-Domain Misconfiguration 
 - Add website alert links to the help page (Issue 8189).
 
 ## [50] - 2024-01-26
@@ -490,6 +502,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[51]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v51
 [50]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v50
 [49]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v49
 [48]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v48

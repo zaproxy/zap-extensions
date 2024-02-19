@@ -34,7 +34,8 @@ import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class AntiClickjackingScanRule extends PluginPassiveScanner {
+public class AntiClickjackingScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     /** Prefix for internationalised messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.anticlickjacking.";

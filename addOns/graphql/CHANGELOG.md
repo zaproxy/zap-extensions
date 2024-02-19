@@ -6,9 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 ## Unreleased
 ### Added
 - Video link in help for Automation Framework job.
+- Website alert links to the help page (Issue 8189).
 
 ### Changed
 - Maintenance changes.
+
+### Fixed
+- Fix graphql parameter injection in URL query.
 
 ## [0.22.0] - 2023-12-19
 ### Added

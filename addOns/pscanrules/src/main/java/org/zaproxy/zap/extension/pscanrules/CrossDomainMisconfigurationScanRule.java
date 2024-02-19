@@ -40,7 +40,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  *
  * @author 70pointer@gmail.com
  */
-public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner {
+public class CrossDomainMisconfigurationScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     /** the logger. it logs stuff. */
     private static final Logger LOGGER =

@@ -35,7 +35,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * Port for the Watcher passive scan (http://websecuritytool.codeplex.com/) rule {@code
  * CasabaSecurity.Web.Watcher.Checks.CheckPasvSSLInsecureFormLoad}
  */
-public class InsecureFormLoadScanRule extends PluginPassiveScanner {
+public class InsecureFormLoadScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.insecureformload.";

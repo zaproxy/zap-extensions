@@ -44,7 +44,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * Port for the Watcher passive scanner (http://websecuritytool.codeplex.com/) rule {@code
  * CasabaSecurity.Web.Watcher.Checks.CheckPasvUserControlledCookie}
  */
-public class UserControlledCookieScanRule extends PluginPassiveScanner {
+public class UserControlledCookieScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.usercontrolledcookie.";

@@ -34,7 +34,7 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /** X-Debug-Token passive scan rule https://github.com/zaproxy/zaproxy/issues/2452 */
-public class XDebugTokenScanRule extends PluginPassiveScanner {
+public class XDebugTokenScanRule extends PluginPassiveScanner implements CommonPassiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "pscanrules.xdebugtoken.";
     private static final int PLUGIN_ID = 10056;

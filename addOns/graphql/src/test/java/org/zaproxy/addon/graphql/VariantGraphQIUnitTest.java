@@ -28,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import org.apache.commons.httpclient.URIException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -42,6 +43,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.NameValuePair;
 import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMalformedHeaderException;
 import org.parosproxy.paros.network.HttpMessage;
@@ -125,6 +127,29 @@ class VariantGraphQlUnitTest {
         variant.setMessage(msg);
         // Then
         assertThat(logMessages.size(), is(1));
+    }
+
+    @Test
+    void shouldSetGraphqlQueryParametersCorrectlyOnTheUrl()
+            throws HttpMalformedHeaderException, URIException {
+        // Given
+        HttpRequestHeader httpReqHeader = new HttpRequestHeader();
+        httpReqHeader.setMessage(
+                "GET /graphql/?x=1&query=%7BsqlInjection(expression:%20%221%22)%7D&y=2 HTTP/1.1");
+        HttpMessage msg = new HttpMessage(httpReqHeader);
+
+        // When
+        variant.setMessage(msg);
+        NameValuePair param = variant.getParamList().get(0);
+        String sqliPayload = "\"or 1=1--";
+        variant.setParameter(msg, param, param.getName(), sqliPayload);
+        // Then
+        assertThat(
+                msg.getRequestHeader()
+                        .getURI()
+                        .getQuery()
+                        .contains("query={sqlInjection(expression:\"\\\"or 1=1--\")}"),
+                is(true));
     }
 
     private static void handleError(String message) {

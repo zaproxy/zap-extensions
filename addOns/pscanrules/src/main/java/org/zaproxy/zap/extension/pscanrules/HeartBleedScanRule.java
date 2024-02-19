@@ -37,7 +37,7 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  *
  * @author 70pointer@gmail.com
  */
-public class HeartBleedScanRule extends PluginPassiveScanner {
+public class HeartBleedScanRule extends PluginPassiveScanner implements CommonPassiveScanRuleInfo {
 
     /**
      * a pattern to identify the version reported in the header. This works for Apache2 (subject to

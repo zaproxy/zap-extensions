@@ -37,7 +37,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * Server Header Version Information Leak passive scan rule
  * https://github.com/zaproxy/zaproxy/issues/1169
  */
-public class ServerHeaderInfoLeakScanRule extends PluginPassiveScanner {
+public class ServerHeaderInfoLeakScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     private static final int PLUGIN_ID = 10036;
 

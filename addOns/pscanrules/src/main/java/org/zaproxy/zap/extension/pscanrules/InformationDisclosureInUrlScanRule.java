@@ -38,7 +38,8 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
-public class InformationDisclosureInUrlScanRule extends PluginPassiveScanner {
+public class InformationDisclosureInUrlScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     public static final String MESSAGE_PREFIX = "pscanrules.informationdisclosureinurl.";
     private static final int PLUGIN_ID = 10024;

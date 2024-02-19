@@ -39,7 +39,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  *
  * <p>http://websecuritytool.codeplex.com/SourceControl/changeset/view/17f2e3ded58f#Watcher%20Check%20Library%2fCheck.Pasv.Cookie.LooselyScoped.cs
  */
-public class CookieLooselyScopedScanRule extends PluginPassiveScanner {
+public class CookieLooselyScopedScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.cookielooselyscoped.";

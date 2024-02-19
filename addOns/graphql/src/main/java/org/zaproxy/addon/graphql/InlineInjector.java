@@ -19,6 +19,8 @@
  */
 package org.zaproxy.addon.graphql;
 
+import static org.apache.commons.text.StringEscapeUtils.escapeJson;
+
 import graphql.language.Argument;
 import graphql.language.AstPrinter;
 import graphql.language.Definition;
@@ -215,6 +217,7 @@ public final class InlineInjector {
                                         && argValueString.endsWith("\"")) {
                                     ivStartPos++;
                                     ivEndPos--;
+                                    value = escapeJson(value);
                                 }
 
                                 queryBuilder.replace(ivStartPos, ivEndPos, value);

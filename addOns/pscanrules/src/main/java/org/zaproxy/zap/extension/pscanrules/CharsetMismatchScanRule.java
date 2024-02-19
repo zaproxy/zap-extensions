@@ -37,7 +37,8 @@ import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
  * A port from a Watcher passive scanner (http://websecuritytool.codeplex.com/) rule {@code
  * CasabaSecurity.Web.Watcher.Checks.CheckPasvCharsetMismatch}
  */
-public class CharsetMismatchScanRule extends PluginPassiveScanner {
+public class CharsetMismatchScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     /** Prefix for internationalized messages used by this rule */
     private static final String MESSAGE_PREFIX = "pscanrules.charsetmismatch.";

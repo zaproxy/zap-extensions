@@ -35,7 +35,8 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 
 /** Big Redirects passive scan rule https://github.com/zaproxy/zaproxy/issues/1257 */
-public class BigRedirectsScanRule extends PluginPassiveScanner {
+public class BigRedirectsScanRule extends PluginPassiveScanner
+        implements CommonPassiveScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "pscanrules.bigredirects.";
     private static final int PLUGIN_ID = 10044;
@@ -161,10 +162,5 @@ public class BigRedirectsScanRule extends PluginPassiveScanner {
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
-    }
-
-    public String getHelpLink() {
-        return "https://www.zaproxy.org/docs/desktop/addons/passive-scan-rules/#id-"
-                + getPluginId();
     }
 }
