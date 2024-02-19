@@ -141,8 +141,8 @@ class VariantGraphQlUnitTest {
         // When
         variant.setMessage(msg);
         NameValuePair param = variant.getParamList().get(0);
-        String sqliPaylaod = "\"or 1=1--";
-        variant.setParameter(msg, param, param.getName(), sqliPaylaod);
+        String sqliPayload = "\"or 1=1--";
+        variant.setParameter(msg, param, param.getName(), sqliPayload);
         // Then
         assertThat(
                 msg.getRequestHeader()
