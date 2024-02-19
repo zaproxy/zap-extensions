@@ -348,9 +348,9 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
 
             List<String> errors =
                     importOpenApiDefinition(
-                            openApiString.contains("openapi:")
-                                    ? FileUtils.readFileToString(file, "UTF-8")
-                                    : Json.pretty(openApi),
+                            !openApiString.contains("openapi:") || openApiString.contains(".yaml#")
+                                    ? Json.pretty(openApi)
+                                    : openApiString,
                             targetUrl,
                             null,
                             initViaUi,
