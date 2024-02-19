@@ -146,9 +146,9 @@ class InlineInjectorUnitTest extends TestUtils {
     @Test
     void injectInputObjectArgumentCorrectlyEscaped() {
         String query = "{sqlInjection(expression: \"1\")}";
-        String sqliPaylaod = "\"or 1=1--";
+        String sqliPayload = "\"or 1=1--";
         String expectedQuery = "{sqlInjection(expression:\"\\\"or 1=1--\")}";
-        assertEquals(expectedQuery, injector.inject(query, "sqlInjection.expression", sqliPaylaod));
+        assertEquals(expectedQuery, injector.inject(query, "sqlInjection.expression", sqliPayload));
     }
 
     @Test
