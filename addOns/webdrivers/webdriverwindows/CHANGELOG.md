@@ -5,15 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
-- Update ChromeDriver to 121.0.6167.184.
-
-
+- Update ChromeDriver to 122.0.6261.57.
 
 ## [70] - 2024-01-24
 ### Changed
 - Update ChromeDriver to 121.0.6167.85.
-
-
 
 ## [69] - 2024-01-03
 ### Changed
@@ -23,25 +19,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update geckodriver to 0.34.0.
 
-
-
 ## [67] - 2023-12-19
 ### Changed
 - Update ChromeDriver to 120.0.6099.109.
-
-
 
 ## [66] - 2023-12-07
 ### Changed
 - Update ChromeDriver to 120.0.6099.71.
 
-
-
 ## [65] - 2023-11-01
 ### Changed
 - Update ChromeDriver to 119.0.6045.105.
-
-
 
 ## [64] - 2023-10-12
 ### Changed
@@ -52,13 +40,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update ChromeDriver to 117.0.5938.149.
 
-
-
 ## [62] - 2023-09-22
 ### Changed
 - Update ChromeDriver to 117.0.5938.92.
-
-
 
 ## [61] - 2023-09-19
 ### Added
@@ -68,25 +52,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Update ChromeDriver to 117.0.5938.88.
 
-
-
 ## [59] - 2023-09-13
 ### Changed
 - Update ChromeDriver to 117.0.5938.62.
-
-
 
 ## [58] - 2023-08-16
 ### Changed
 - Update ChromeDriver to 116.0.5845.96.
 
-
-
 ## [57] - 2023-08-09
 ### Changed
 - Update ChromeDriver to 115.0.5790.170.
-
-
 
 ## [56] - 2023-07-11
 ### Changed
