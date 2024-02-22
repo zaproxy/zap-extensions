@@ -20,7 +20,7 @@ spotless {
 
 dependencies {
     implementation("commons-codec:commons-codec:1.15")
-    implementation("io.github.bonigarcia:webdrivermanager:5.6.4") {
+    implementation("io.github.bonigarcia:webdrivermanager:5.7.0") {
         exclude("com.fasterxml.jackson.core")
     }
     implementation("com.diffplug.spotless:spotless-plugin-gradle:6.20.0")
