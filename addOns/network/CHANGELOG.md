@@ -4,7 +4,7 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [0.14.0] - 2024-02-22
 ### Changed
 - Notify proxy listeners concurrently, might break listeners that do not correctly handle concurrency.
 - Update dependencies.
@@ -172,6 +172,7 @@ would not be cleared when reusing the same message.
   - Options panel to manage the root CA certificate and issued certificates.
   - API endpoints to configure the validity of the root CA certificate and issued certificates ([Issue 4673](https://github.com/zaproxy/zaproxy/issues/4673)).
 
+[0.14.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.14.0
 [0.13.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.13.0
 [0.12.0]: https://github.com/zaproxy/zap-extensions/releases/network-v0.12.0
 [0.11.2]: https://github.com/zaproxy/zap-extensions/releases/network-v0.11.2
