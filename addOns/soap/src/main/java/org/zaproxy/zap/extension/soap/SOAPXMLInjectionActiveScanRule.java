@@ -41,7 +41,8 @@ import org.zaproxy.addon.commonlib.CommonAlertTag;
  *
  * @author Albertov91
  */
-public class SOAPXMLInjectionActiveScanRule extends AbstractAppParamPlugin {
+public class SOAPXMLInjectionActiveScanRule extends AbstractAppParamPlugin
+        implements CommonScanRuleInfo {
 
     private static final String MESSAGE_PREFIX = "soap.soapxmlinjection.";
     private static final Logger LOGGER = LogManager.getLogger(SOAPXMLInjectionActiveScanRule.class);

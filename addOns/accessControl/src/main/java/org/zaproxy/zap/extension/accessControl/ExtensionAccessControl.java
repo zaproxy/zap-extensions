@@ -684,4 +684,8 @@ public class ExtensionAccessControl extends ExtensionAdaptor
     public List<Alert> getExampleAlerts() {
         return AccessControlAlertsProcessor.getExampleAlerts();
     }
+
+    public String getHelpLink() {
+        return "https://www.zaproxy.org/docs/desktop/addons/access-control-testing/#alerts";
+    }
 }
