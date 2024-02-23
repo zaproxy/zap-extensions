@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update minimum ZAP version to 2.14.0.
 - Maintenance changes.
 - Link website alert pages and help (Issues 8189).
+- The results table now presents the same context menu as other similar tables (History, Search, etc) facilitating copying URLs, etc (Issue 8356).
+- Now has a table export button (Issue 8356).
+- Adjusted some labels/titles to use title caps (Issue 2000 & 8356).
+
+### Fixed
+- Now uses the General Font (Issue 8356), as set in the Display options.
 
 ## [9] - 2023-09-08
 ### Added
