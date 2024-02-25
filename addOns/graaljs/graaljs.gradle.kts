@@ -18,6 +18,17 @@ zapAddOn {
         bundledLibs {
             libs.from(configurations.runtimeClasspath)
         }
+
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">=1.24.0")
+                }
+                register("scripts") {
+                    version.set(">=45.2.0")
+                }
+            }
+        }
     }
 }
 
@@ -28,6 +39,9 @@ crowdin {
 }
 
 dependencies {
+    zapAddOn("commonlib")
+    zapAddOn("scripts")
+
     val graalJsVersion = "22.3.3"
     implementation("org.graalvm.js:js:$graalJsVersion")
     implementation("org.graalvm.js:js-scriptengine:$graalJsVersion")

@@ -27,23 +27,14 @@ import java.util.List;
 import javax.script.Compilable;
 import javax.script.CompiledScript;
 import javax.script.ScriptEngine;
-import org.junit.jupiter.api.BeforeAll;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.zap.testutils.AbstractVerifyScriptTemplates;
 
-/** Verifies that the Kotlin script templates are parsed without errors. */
-public class VerifyScriptTemplates extends AbstractVerifyScriptTemplates {
+/** Verifies that the GraalJS script templates are parsed without errors. */
+class VerifyScriptTemplates extends AbstractVerifyScriptTemplates {
 
     private static ScriptEngine se;
-
-    @BeforeAll
-    static void setUp() {
-        se =
-                new GraalJsEngineWrapper(
-                                VerifyScriptTemplates.class.getClassLoader(), List.of(), null)
-                        .getEngine();
-    }
 
     @Override
     protected String getScriptExtension() {
@@ -52,6 +43,10 @@ public class VerifyScriptTemplates extends AbstractVerifyScriptTemplates {
 
     @Override
     protected void parseTemplate(Path template) throws Exception {
+        se =
+                new GraalJsEngineWrapper(
+                                VerifyScriptTemplates.class.getClassLoader(), List.of(), null)
+                        .getEngine();
         se.put("control", Control.getSingleton());
         se.put("model", Model.getSingleton());
 

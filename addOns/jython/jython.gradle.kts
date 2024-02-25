@@ -11,8 +11,11 @@ zapAddOn {
         url.set("https://www.zaproxy.org/docs/desktop/addons/python-scripting/")
         dependencies {
             addOns {
+                register("commonlib") {
+                    version.set(">=1.24.0")
+                }
                 register("scripts") {
-                    version.set(">=44")
+                    version.set(">=45.2.0")
                 }
             }
         }
@@ -20,6 +23,8 @@ zapAddOn {
 }
 
 dependencies {
+    zapAddOn("commonlib")
+
     implementation("org.python:jython-standalone:2.7.2")
 
     testImplementation(project(":testutils"))

@@ -55,11 +55,9 @@ import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.extension.pscan.PassiveScanData;
 import org.zaproxy.zap.extension.pscan.PassiveScanTaskHelper;
 import org.zaproxy.zap.extension.script.ExtensionScript;
-import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.script.ScriptsCache;
 import org.zaproxy.zap.extension.script.ScriptsCache.CachedScript;
 import org.zaproxy.zap.extension.script.ScriptsCache.Configuration;
-import org.zaproxy.zap.extension.script.ScriptsCache.InterfaceErrorMessageProvider;
 import org.zaproxy.zap.extension.script.ScriptsCache.ScriptWrapperAction;
 import org.zaproxy.zap.extension.scripts.ExtensionScriptsUI;
 import org.zaproxy.zap.testutils.TestUtils;
@@ -176,12 +174,8 @@ class ScriptsPassiveScannerUnitTest extends TestUtils {
         Configuration<PassiveScript> configuration = argumentCaptor.getValue();
         assertThat(configuration.getScriptType(), is(equalTo(SCRIPT_TYPE)));
         assertThat(configuration.getTargetInterface(), is(equalTo(TARGET_INTERFACE)));
-        InterfaceErrorMessageProvider errorMessageProvider =
-                configuration.getInterfaceErrorMessageProvider();
-        assertThat(errorMessageProvider, is(not(nullValue())));
-        ScriptWrapper scriptWrapper = mock(ScriptWrapper.class);
-        given(scriptWrapper.getName()).willReturn("Name");
-        assertThat(errorMessageProvider.getErrorMessage(scriptWrapper), is(not(nullValue())));
+        assertThat(configuration.getInterfaceProvider(), is(not(nullValue())));
+        assertThat(configuration.getInterfaceErrorMessageProvider(), is(nullValue()));
     }
 
     @Test

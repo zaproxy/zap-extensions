@@ -3,7 +3,7 @@
  *
  * ZAP is an HTTP/HTTPS proxy for assessing web application security.
  *
- * Copyright 2023 The ZAP Development Team
+ * Copyright 2024 The ZAP Development Team
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.zap.extension.scripts.scanrules;
+package org.zaproxy.addon.commonlib.scanrules;
 
-import javax.script.ScriptException;
-import org.parosproxy.paros.network.HttpMessage;
+import org.parosproxy.paros.core.scanner.Alert;
 
-public interface ActiveScript2 {
+public enum Risk {
+    INFO(Alert.RISK_INFO),
+    LOW(Alert.RISK_LOW),
+    MEDIUM(Alert.RISK_MEDIUM),
+    HIGH(Alert.RISK_HIGH);
 
-    void scanNode(ActiveScriptHelper helper, HttpMessage msg) throws ScriptException;
+    private final int value;
+
+    Risk(int value) {
+        this.value = value;
+    }
+
+    public int getValue() {
+        return value;
+    }
 }

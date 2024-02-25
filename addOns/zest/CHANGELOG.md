@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Support for menu weights (Issue 8369)
 
 ### Changed
-- Update minimum Scripts add-on version to 45.
+- Update minimum `scripts` add-on version to 45.1.0.
 - Maintenance changes.
 
 ## [43] - 2023-12-19
