@@ -208,16 +208,28 @@ public class RunScriptAction extends ScriptAction {
                 extScript.invokeScript(script);
             }
             scriptJobOutputListener.flush();
+
+            if (script.getLastException() != null) {
+                reportScriptError(progress, jobName, parameters, script.getLastException());
+            }
         } catch (Exception e) {
             LOGGER.error(e);
-            progress.error(
-                    Constant.messages.getString(
-                            "scripts.automation.error.scriptError",
-                            jobName,
-                            parameters.getName(),
-                            e.getMessage()));
+            reportScriptError(progress, jobName, parameters, e);
         } finally {
             extScript.removeScriptOutputListener(scriptJobOutputListener);
         }
+    }
+
+    private static void reportScriptError(
+            AutomationProgress progress,
+            String jobName,
+            ScriptJobParameters parameters,
+            Exception e) {
+        progress.error(
+                Constant.messages.getString(
+                        "scripts.automation.error.scriptError",
+                        jobName,
+                        parameters.getName(),
+                        e.getMessage()));
     }
 }
