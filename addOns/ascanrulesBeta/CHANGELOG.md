@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Updated reference for scan rule: Possible Username Enumeration (Issue 8262)
 - Cookie Slack Detector scan rule now has a more specific CWE.
-- Possible Username Enumeration scan rule now include CWE-204 as a reference link.
+- Possible Username Enumeration scan rule now includes CWE-204 as a reference link.
 
 ## [51] - 2024-02-16
 ### Changed
