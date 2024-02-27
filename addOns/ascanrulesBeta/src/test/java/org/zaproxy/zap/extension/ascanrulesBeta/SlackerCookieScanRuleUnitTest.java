@@ -41,7 +41,7 @@ class SlackerCookieScanRuleUnitTest extends ActiveScannerTest<SlackerCookieScanR
         int wasc = rule.getWascId();
         Map<String, String> tags = rule.getAlertTags();
         // Then
-        assertThat(cwe, is(equalTo(200)));
+        assertThat(cwe, is(equalTo(205)));
         assertThat(wasc, is(equalTo(45)));
         assertThat(tags.size(), is(equalTo(3)));
         assertThat(
