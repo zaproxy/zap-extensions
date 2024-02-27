@@ -170,7 +170,7 @@ public class SpiderController implements SpiderParserListener {
      * @param method the http method used for fetching the resource
      * @param httpVersion the HTTP version for fetching the resource.
      */
-    protected void addSeed(URI uri, String method, String httpVersion) {
+    protected void addSeed(URI uri, String method, String httpVersion, Boolean fromFileSeed) {
         SpiderResourceFound resourceFound =
                 SpiderResourceFound.builder()
                         .setUri(uri.toString())
@@ -195,6 +195,12 @@ public class SpiderController implements SpiderParserListener {
         // Create and submit the new task
         SpiderTask task = new SpiderTask(spider, resourceFound, uri);
         spider.submitTask(task);
+
+        // Add the uri to the found list
+
+        if (!fromFileSeed) {
+            spider.notifyListenersFoundURI(uri.toString(), method, FetchStatus.SEED);
+        }
     }
 
     /**

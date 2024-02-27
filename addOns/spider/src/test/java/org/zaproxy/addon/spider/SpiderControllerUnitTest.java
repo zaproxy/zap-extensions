@@ -100,19 +100,23 @@ class SpiderControllerUnitTest extends TestUtils {
         // Given
         URI uri = new URI("http://127.0.0.1", true);
         // When
-        spiderController.addSeed(uri, HttpRequestHeader.GET, httpVersion);
+        spiderController.addSeed(uri, HttpRequestHeader.GET, httpVersion, false);
         // Then
         HttpMessage msg = messageWrittenToSession();
         assertThat(msg.getRequestHeader().getVersion(), is(equalTo(httpVersion)));
+
+        verify(spider, times(1))
+                .notifyListenersFoundURI(
+                        "http://127.0.0.1", HttpRequestHeader.GET, FetchStatus.SEED);
     }
 
     @Test
-    void shouldNotNotifySeedAsFoundUri() throws Exception {
-        String testURI = "http://127.0.0.1";
+    void shouldNotNotifyFileSeedAsFoundUri() throws Exception {
+        String testURI = "http://127.0.0.1/test.xml";
         // Given
         URI seed = new URI(testURI, true);
         // When
-        spiderController.addSeed(seed, HttpRequestHeader.GET, "HTTP/2");
+        spiderController.addSeed(seed, HttpRequestHeader.GET, "HTTP/2", true);
         // Then
         verify(spider, times(0))
                 .notifyListenersFoundURI(testURI, HttpRequestHeader.GET, FetchStatus.SEED);

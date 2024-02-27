@@ -232,7 +232,7 @@ public class Spider {
         }
         // Add the seed to the list -- it will be added to the task list only when the spider is
         // started
-        this.seedList.add(new Seed(uri, httpVersion));
+        this.seedList.add(new Seed(uri, httpVersion, false));
         // Add the appropriate 'robots.txt' as a seed
         if (getSpiderParam().isParseRobotsTxt()) {
             addRootFileSeed(uri, "robots.txt", httpVersion);
@@ -275,7 +275,7 @@ public class Spider {
                         baseUri.getPort(),
                         "/" + fileName);
         try {
-            this.seedList.add(new Seed(new URI(seed, true), httpVersion));
+            this.seedList.add(new Seed(new URI(seed, true), httpVersion, true));
         } catch (Exception e) {
             LOGGER.warn("Error while creating [{}] seed: {}", fileName, seed, e);
         }
@@ -343,7 +343,7 @@ public class Spider {
                         baseUri.getPort(),
                         pathminusfilename + fileName);
         try {
-            this.seedList.add(new Seed(new URI(uri, true), httpVersion));
+            this.seedList.add(new Seed(new URI(uri, true), httpVersion, true));
         } catch (Exception e) {
             LOGGER.warn(
                     "Error while creating a seed URI for file [{}] from [{}] using [{}]:",
@@ -528,7 +528,11 @@ public class Spider {
         // Add the seeds
         for (Seed seed : seedList) {
             LOGGER.debug("Adding seed for spider: {}", seed);
-            controller.addSeed(seed.getUri(), HttpRequestHeader.GET, seed.getHttpVersion());
+            controller.addSeed(
+                    seed.getUri(),
+                    HttpRequestHeader.GET,
+                    seed.getHttpVersion(),
+                    seed.getFromFileSeed());
         }
         // Mark the process as completely initialized
         initialized = true;
@@ -858,10 +862,16 @@ public class Spider {
     private static class Seed {
         private final URI uri;
         private final String httpVersion;
+        private final Boolean fromFileSeed;
 
-        Seed(URI uri, String httpVersion) {
+        public Boolean getFromFileSeed() {
+            return fromFileSeed;
+        }
+
+        Seed(URI uri, String httpVersion, Boolean fromFileSeed) {
             this.uri = uri;
             this.httpVersion = httpVersion;
+            this.fromFileSeed = fromFileSeed;
         }
 
         URI getUri() {
