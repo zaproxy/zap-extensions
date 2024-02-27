@@ -19,9 +19,9 @@
  */
 package org.zaproxy.zap.extension.plugnhack.brk;
 
-import org.zaproxy.addon.brk.BreakpointMessageInterface;
-import org.zaproxy.addon.brk.BreakpointsUiManagerInterface;
-import org.zaproxy.addon.brk.ExtensionBreak;
+import org.zaproxy.zap.extension.brk.BreakpointMessageInterface;
+import org.zaproxy.zap.extension.brk.BreakpointsUiManagerInterface;
+import org.zaproxy.zap.extension.brk.ExtensionBreak;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.plugnhack.ClientMessage;
 import org.zaproxy.zap.extension.plugnhack.ExtensionPlugNHack;
