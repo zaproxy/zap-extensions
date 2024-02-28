@@ -121,7 +121,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
                     .map(ExtensionWappalyzer::techToResourcePath)
                     .forEach(technologyFiles::add);
         } catch (IOException e) {
-            LOGGER.error("Failed to enumerate Wappalyzer technologies:", e);
+            LOGGER.error("Failed to enumerate Tech Detection technologies:", e);
         }
 
         WappalyzerData result =
