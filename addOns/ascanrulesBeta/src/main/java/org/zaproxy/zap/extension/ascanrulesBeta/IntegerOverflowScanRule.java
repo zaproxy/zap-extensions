@@ -23,6 +23,7 @@
 package org.zaproxy.zap.extension.ascanrulesBeta;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -205,13 +206,12 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin
             sendAndReceive(msg);
             if (isPage500(msg)) {
                 LOGGER.debug("Found Header");
-                newAlert()
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setUri(this.getBaseMsg().getRequestHeader().getURI().toString())
-                        .setParam(param)
-                        .setAttack(returnAttack)
-                        .setOtherInfo(this.getError(type))
-                        .setEvidence(msg.getResponseHeader().getPrimeHeader())
+                buildAlert(
+                                getBaseMsg().getRequestHeader().getURI().toString(),
+                                param,
+                                returnAttack,
+                                type,
+                                msg.getResponseHeader().getPrimeHeader())
                         .setMessage(msg)
                         .raise();
                 return true;
@@ -220,5 +220,28 @@ public class IntegerOverflowScanRule extends AbstractAppParamPlugin
             LOGGER.debug(e.getMessage(), e);
         }
         return false;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                "https://example.com/?years=1",
+                                "years",
+                                "95697568703220167658153205694899573480013738",
+                                '1',
+                                "HTTP/1.1 500 Internal Server Error")
+                        .build());
+    }
+
+    private AlertBuilder buildAlert(
+            String url, String param, String attack, char type, String evidence) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setUri(url)
+                .setParam(param)
+                .setAttack(attack)
+                .setOtherInfo(this.getError(type))
+                .setEvidence(evidence);
     }
 }

@@ -27,8 +27,10 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
 import fi.iki.elonen.NanoHTTPD;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Tech;
@@ -156,5 +158,19 @@ class IntegerOverflowScanRuleUnitTest extends ActiveScannerTest<IntegerOverflowS
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A01_INJECTION.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 }
