@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.selenium;
 
 import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.view.messagecontainer.MessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuHttpMessageContainer;
 
@@ -60,5 +61,9 @@ public class PopupMenuOpenInBrowser extends PopupMenuHttpMessageContainer {
         }
 
         return super.isEnableForMessageContainer(invoker);
+    }
+
+    public int getWeight() {
+        return MenuWeights.MENU_OPEN_BROWSER_WEIGHT;
     }
 }

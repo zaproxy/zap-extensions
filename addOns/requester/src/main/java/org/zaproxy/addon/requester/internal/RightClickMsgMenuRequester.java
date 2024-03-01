@@ -22,6 +22,7 @@ package org.zaproxy.addon.requester.internal;
 import java.awt.event.KeyEvent;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.addon.requester.ExtensionRequester;
 import org.zaproxy.zap.view.messagecontainer.http.HttpMessageContainer;
 import org.zaproxy.zap.view.popup.PopupMenuItemHttpMessageContainer;
@@ -58,5 +59,9 @@ public class RightClickMsgMenuRequester extends PopupMenuItemHttpMessageContaine
         // This is enabled for all tabs which list messages
         // You can examine the invoker is you wish to restrict this to specific tabs
         return true;
+    }
+
+    public int getWeight() {
+        return MenuWeights.MENU_OPEN_REQUESTER_WEIGHT;
     }
 }

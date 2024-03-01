@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.fuzz.httpfuzzer.ui;
 
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.extension.fuzz.ExtensionFuzz;
 import org.zaproxy.zap.extension.fuzz.FuzzerUIUtils;
 import org.zaproxy.zap.extension.fuzz.httpfuzzer.HttpFuzzer;
@@ -58,6 +59,14 @@ public class HttpFuzzAttackPopupMenuItem extends PopupMenuItemHttpMessageContain
     @Override
     public int getParentMenuIndex() {
         return ATTACK_MENU_INDEX;
+    }
+
+    public int getParentWeight() {
+        return MenuWeights.MENU_ATTACK_WEIGHT;
+    }
+
+    public int getWeight() {
+        return MenuWeights.MENU_ATTACK_FUZZ_WEIGHT;
     }
 
     @Override

@@ -19,8 +19,14 @@ zapAddOn {
                         register("automation") {
                             version.set(">=0.31.0")
                         }
-                        register("commonlib")
                     }
+                }
+            }
+        }
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">= 1.23.0")
                 }
             }
         }

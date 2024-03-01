@@ -26,6 +26,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.util.List;
 import org.parosproxy.paros.model.HistoryReference;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.view.popup.PopupMenuItemHistoryReferenceContainer;
 
@@ -70,5 +71,9 @@ public class PopupMenuCopyUrls extends PopupMenuItemHistoryReferenceContainer
     @Override
     public void lostOwnership(Clipboard clipboard, Transferable contents) {
         // Ignore
+    }
+
+    public int getWeight() {
+        return MenuWeights.MENU_COPY_URLS_WEIGHT;
     }
 }

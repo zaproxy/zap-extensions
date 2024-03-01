@@ -18,6 +18,9 @@ zapAddOn {
                 register("network") {
                     version.set(">=0.2.0")
                 }
+                register("commonlib") {
+                    version.set(">=1.23.0")
+                }
             }
         }
 
@@ -41,6 +44,7 @@ dependencies {
         exclude(group = "org.apache.logging.log4j")
     }
 
+    zapAddOn("commonlib")
     zapAddOn("network")
 
     testImplementation(project(":testutils"))

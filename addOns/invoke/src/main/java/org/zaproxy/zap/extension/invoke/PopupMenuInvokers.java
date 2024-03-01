@@ -21,6 +21,7 @@ package org.zaproxy.zap.extension.invoke;
 
 import java.util.List;
 import org.parosproxy.paros.Constant;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.view.popup.PopupMenuHttpMessageContainer;
 
 public class PopupMenuInvokers extends PopupMenuHttpMessageContainer {
@@ -61,5 +62,9 @@ public class PopupMenuInvokers extends PopupMenuHttpMessageContainer {
             addSeparator();
         }
         add(confPopup);
+    }
+
+    public int getWeight() {
+        return MenuWeights.MENU_RUN_APP_WEIGHT;
     }
 }

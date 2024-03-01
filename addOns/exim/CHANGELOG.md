@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - Initial PCAP import support (Issue 4812).
+- Support for menu weights (Issue 8369)
 
 ### Changed
 - Maintenance changes.

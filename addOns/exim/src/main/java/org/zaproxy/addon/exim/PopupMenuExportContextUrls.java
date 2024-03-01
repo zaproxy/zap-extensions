@@ -30,6 +30,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.model.SiteNode;
 import org.parosproxy.paros.view.SiteMapPanel;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.utils.Stats;
 
@@ -88,5 +89,10 @@ public class PopupMenuExportContextUrls extends PopupMenuExportUrls {
         for (SiteNode node : ctx.getNodesInContextFromSiteTree()) {
             outputSet.add(node.getHistoryReference().getURI().toString());
         }
+    }
+
+    @Override
+    public int getWeight() {
+        return MenuWeights.MENU_CONTEXT_EXPORT_URLS_WEIGHT;
     }
 }

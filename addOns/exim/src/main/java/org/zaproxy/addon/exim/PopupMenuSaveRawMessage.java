@@ -29,6 +29,7 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.utils.Stats;
 
 public class PopupMenuSaveRawMessage extends AbstractPopupMenuSaveMessage {
@@ -106,5 +107,9 @@ public class PopupMenuSaveRawMessage extends AbstractPopupMenuSaveMessage {
             LOGGER.error(e.getMessage(), e);
             Stats.incCounter(STATS_RAW_FILE_MSG_ERROR + "." + messageComponent.name());
         }
+    }
+
+    public int getWeight() {
+        return MenuWeights.MENU_SAVE_RAW_WEIGHT;
     }
 }

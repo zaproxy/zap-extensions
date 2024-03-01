@@ -34,6 +34,7 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.utils.XmlUtils;
 
@@ -136,5 +137,9 @@ public class PopupMenuSaveXmlMessage extends AbstractPopupMenuSaveMessage {
             LOGGER.error(e.getMessage(), e);
             Stats.incCounter(STATS_XML_FILE_MSG_ERROR + "." + messageComponent.name());
         }
+    }
+
+    public int getWeight() {
+        return MenuWeights.MENU_SAVE_XML_WEIGHT;
     }
 }

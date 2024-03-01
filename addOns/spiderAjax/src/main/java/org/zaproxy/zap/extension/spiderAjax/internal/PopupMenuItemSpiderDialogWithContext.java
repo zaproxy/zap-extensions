@@ -19,6 +19,7 @@
  */
 package org.zaproxy.zap.extension.spiderAjax.internal;
 
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.extension.spiderAjax.ExtensionAjax;
 import org.zaproxy.zap.extension.stdmenus.PopupContextTreeMenu;
 import org.zaproxy.zap.model.Context;
@@ -43,5 +44,9 @@ public class PopupMenuItemSpiderDialogWithContext extends PopupContextTreeMenu {
                     Context context = extension.getModel().getSession().getContext(getContextId());
                     extension.showScanDialog(new Target(context));
                 });
+    }
+
+    public int getWeight() {
+        return MenuWeights.MENU_CONTEXT_AJAX_WEIGHT;
     }
 }
