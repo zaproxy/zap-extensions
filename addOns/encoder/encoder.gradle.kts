@@ -9,6 +9,13 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/encode-decode-hash/")
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">=1.23.0")
+                }
+            }
+        }
     }
 }
 
@@ -21,5 +28,7 @@ crowdin {
 }
 
 dependencies {
+    zapAddOn("commonlib")
+
     testImplementation(project(":testutils"))
 }

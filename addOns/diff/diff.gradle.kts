@@ -9,10 +9,18 @@ zapAddOn {
     manifest {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/diff/")
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">=1.23.0")
+                }
+            }
+        }
     }
 }
 
 dependencies {
+    zapAddOn("commonlib")
     implementation("com.googlecode.java-diff-utils:diffutils:1.3.0")
 }
 

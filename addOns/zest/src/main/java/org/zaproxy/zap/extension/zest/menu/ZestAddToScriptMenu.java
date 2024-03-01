@@ -23,6 +23,7 @@ import java.util.List;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
 import org.zaproxy.zap.view.popup.ExtensionPopupMenuComponent;
@@ -54,6 +55,10 @@ public class ZestAddToScriptMenu extends PopupMenuItemHttpMessageContainer {
     @Override
     public String getParentMenuName() {
         return Constant.messages.getString("zest.addto.popup");
+    }
+
+    public int getParentWeight() {
+        return MenuWeights.MENU_SCRIPT_ZEST_ADD_WEIGHT;
     }
 
     @Override

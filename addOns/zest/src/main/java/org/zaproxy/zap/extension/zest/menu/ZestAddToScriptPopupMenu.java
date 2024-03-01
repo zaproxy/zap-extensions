@@ -25,6 +25,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.extension.script.ScriptNode;
 import org.zaproxy.zap.extension.script.ScriptType;
 import org.zaproxy.zap.extension.zest.ExtensionZest;
@@ -50,6 +51,10 @@ public class ZestAddToScriptPopupMenu extends PopupMenuItemHistoryReferenceConta
     @Override
     public String getParentMenuName() {
         return Constant.messages.getString("zest.addto.popup", true);
+    }
+
+    public int getParentWeight() {
+        return MenuWeights.MENU_SCRIPT_ZEST_ADD_WEIGHT;
     }
 
     @Override

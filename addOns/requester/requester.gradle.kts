@@ -10,6 +10,13 @@ zapAddOn {
     manifest {
         author.set("Surikato and the ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/requester/")
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">=1.23.0")
+                }
+            }
+        }
 
         helpSet {
             baseName.set("help%LC%.helpset")
@@ -37,5 +44,7 @@ spotless {
 }
 
 dependencies {
+    zapAddOn("commonlib")
+
     testImplementation(project(":testutils"))
 }

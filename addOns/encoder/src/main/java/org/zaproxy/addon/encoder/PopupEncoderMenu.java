@@ -23,6 +23,7 @@ import java.awt.Component;
 import javax.swing.text.JTextComponent;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
+import org.zaproxy.addon.commonlib.MenuWeights;
 
 public class PopupEncoderMenu extends ExtensionPopupMenuItem {
 
@@ -70,5 +71,9 @@ public class PopupEncoderMenu extends ExtensionPopupMenuItem {
 
         return invoker.getName().equals(EncodeDecodeDialog.ENCODE_DECODE_FIELD)
                 || invoker.getName().equals(EncodeDecodeDialog.ENCODE_DECODE_RESULTFIELD);
+    }
+
+    public int getWeight() {
+        return MenuWeights.MENU_ENCODE_WEIGHT;
     }
 }
