@@ -36,6 +36,7 @@ import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
 import org.parosproxy.paros.model.SiteNode;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.utils.Stats;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
@@ -185,5 +186,9 @@ public class PopupMenuExportUrls extends ExtensionPopupMenuItem {
             return chooser.getSelectedFile();
         }
         return null;
+    }
+
+    public int getWeight() {
+        return MenuWeights.MENU_SAVE_ALL_URLS_WEIGHT;
     }
 }

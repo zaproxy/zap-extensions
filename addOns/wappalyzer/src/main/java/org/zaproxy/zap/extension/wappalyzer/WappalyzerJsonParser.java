@@ -65,12 +65,13 @@ public class WappalyzerJsonParser {
     }
 
     WappalyzerData parse(String categories, List<String> technologies, boolean createIcons) {
-        LOGGER.info("Starting to parse Wappalyzer technologies.");
+        LOGGER.info("Starting to parse Tech Detecction technologies.");
         WappalyzerData wappalyzerData = new WappalyzerData();
         parseCategories(wappalyzerData, getStringResource(categories));
         technologies.forEach(
                 path -> parseJson(wappalyzerData, getStringResource(path), createIcons));
-        LOGGER.info("Loaded {} Wappalyzer technologies.", wappalyzerData.getApplications().size());
+        LOGGER.info(
+                "Loaded {} Tech Detection technologies.", wappalyzerData.getApplications().size());
         return wappalyzerData;
     }
 

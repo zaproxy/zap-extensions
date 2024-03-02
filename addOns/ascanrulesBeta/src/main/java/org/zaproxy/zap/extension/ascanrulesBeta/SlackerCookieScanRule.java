@@ -320,8 +320,8 @@ public class SlackerCookieScanRule extends AbstractAppPlugin implements CommonAc
 
     @Override
     public int getCweId() {
-        // The CWE id - 200 is closest thing to fingerprinting
-        return 200;
+        // CWE-205: Observable Behavioral Discrepancy
+        return 205;
     }
 
     @Override

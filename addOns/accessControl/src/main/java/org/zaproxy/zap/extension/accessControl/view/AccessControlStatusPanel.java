@@ -36,7 +36,6 @@ import javax.swing.filechooser.FileFilter;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jdesktop.swingx.JXTable;
 import org.jdesktop.swingx.decorator.AbstractHighlighter;
 import org.jdesktop.swingx.decorator.ComponentAdapter;
 import org.jdesktop.swingx.renderer.DefaultTableRenderer;
@@ -62,8 +61,10 @@ import org.zaproxy.zap.extension.httpsessions.HttpSessionsPanel;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.scan.BaseScannerThreadManager;
 import org.zaproxy.zap.utils.DesktopUtils;
+import org.zaproxy.zap.utils.TableExportButton;
 import org.zaproxy.zap.view.LayoutHelper;
 import org.zaproxy.zap.view.panels.AbstractScanToolbarStatusPanel;
+import org.zaproxy.zap.view.table.HistoryReferencesTable;
 import org.zaproxy.zap.view.widgets.WritableFileChooser;
 
 /**
@@ -81,9 +82,10 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
     private static final AccessControlResultsTableModel EMPTY_RESULTS_MODEL =
             new AccessControlResultsTableModel();
 
-    private JXTable resultsTable;
+    private HistoryReferencesTable resultsTable;
     private JScrollPane workPane;
     private JButton reportButton;
+    private TableExportButton<HistoryReferencesTable> exportButton = null;
 
     private Map<Integer, AccessControlResultsTableModel> resultsModels;
     private AccessControlResultsTableModel currentResultsModel;
@@ -121,7 +123,6 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
             workPane = new JScrollPane();
             workPane.setName("AccessControlResultsPane");
             workPane.setViewportView(getScanResultsTable());
-            workPane.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
         }
         return workPane;
     }
@@ -131,10 +132,10 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
      *
      * @return the scan results table
      */
-    private JXTable getScanResultsTable() {
+    private HistoryReferencesTable getScanResultsTable() {
         if (resultsTable == null) {
             // Create the table with a default, empty TableModel and the proper settings
-            resultsTable = new JXTable(EMPTY_RESULTS_MODEL);
+            resultsTable = new HistoryReferencesTable(EMPTY_RESULTS_MODEL);
             resultsTable.setColumnSelectionAllowed(false);
             resultsTable.setCellSelectionEnabled(false);
             resultsTable.setRowSelectionAllowed(true);
@@ -145,7 +146,6 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
             this.setScanResultsTableColumnSizes();
 
             resultsTable.setName(PANEL_NAME);
-            resultsTable.setFont(new java.awt.Font("Dialog", java.awt.Font.PLAIN, 11));
             resultsTable.setDoubleBuffered(true);
             resultsTable.setSelectionMode(
                     javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -269,6 +269,9 @@ public class AccessControlStatusPanel extends AbstractScanToolbarStatusPanel
                         DesktopUtils.openUrlInBrowser(generatedFile.toURI());
                     });
             toolbar.add(reportButton, LayoutHelper.getGBC(gridX++, 0, 1, 0));
+            toolbar.add(
+                    new TableExportButton<>(getScanResultsTable()),
+                    LayoutHelper.getGBC(gridX++, 0, 1, 0));
         }
         return gridX;
     }

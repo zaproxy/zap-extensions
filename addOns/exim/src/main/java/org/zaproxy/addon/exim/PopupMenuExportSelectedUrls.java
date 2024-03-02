@@ -30,6 +30,7 @@ import javax.swing.tree.TreePath;
 import org.apache.commons.lang3.ArrayUtils;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.model.SiteNode;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.utils.Stats;
 
 public class PopupMenuExportSelectedUrls extends PopupMenuExportUrls {
@@ -78,5 +79,10 @@ public class PopupMenuExportSelectedUrls extends PopupMenuExportUrls {
             }
         }
         return outputSet;
+    }
+
+    @Override
+    public int getWeight() {
+        return MenuWeights.MENU_SAVE_URLS_WEIGHT;
     }
 }

@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ## Added 
 - Button to lowercase request header names (Issue 8176).
+- Support for menu weights (Issue 8369)
 
 ## [7.4.0] - 2023-10-12
 ### Added

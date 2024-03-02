@@ -20,6 +20,7 @@
 package org.zaproxy.addon.spider;
 
 import org.parosproxy.paros.model.Model;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.zap.extension.stdmenus.PopupContextTreeMenu;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.Target;
@@ -45,5 +46,9 @@ public class PopupMenuItemSpiderDialogWithContext extends PopupContextTreeMenu {
                     Context context = Model.getSingleton().getSession().getContext(getContextId());
                     extension.showSpiderDialog(new Target(context));
                 });
+    }
+
+    public int getWeight() {
+        return MenuWeights.MENU_CONTEXT_SPIDER_WEIGHT;
     }
 }

@@ -28,7 +28,9 @@ zapAddOn {
                 register("network") {
                     version.set(">=0.8.0")
                 }
-                register("commonlib")
+                register("commonlib") {
+                    version.set(">=1.23.0")
+                }
             }
         }
     }

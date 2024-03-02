@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Updated
 - Add-on help content.
+### Added
+- Support for menu weights (Issue 8369)
+
 
 ## [14] - 2023-10-12
 ### Changed

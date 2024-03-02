@@ -39,6 +39,13 @@ zapAddOn {
                 }
             }
         }
+        dependencies {
+            addOns {
+                register("commonlib") {
+                    version.set(">=1.23.0")
+                }
+            }
+        }
     }
 
     apiClientGen {
@@ -48,6 +55,7 @@ zapAddOn {
 }
 
 dependencies {
+    zapAddOn("commonlib")
     zapAddOn("fuzz")
     zapAddOn("requester")
 

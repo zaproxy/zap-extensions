@@ -34,6 +34,7 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
+import org.zaproxy.addon.commonlib.MenuWeights;
 import org.zaproxy.addon.exim.EximFileChooser;
 import org.zaproxy.addon.exim.ExtensionExim;
 import org.zaproxy.zap.utils.HarUtils;
@@ -120,5 +121,9 @@ public class PopupMenuItemSaveHarMessage extends PopupMenuItemHttpMessageContain
             return fileChooser.getSelectedFile();
         }
         return null;
+    }
+
+    public int getWeight() {
+        return MenuWeights.MENU_SAVE_HAR_WEIGHT;
     }
 }
