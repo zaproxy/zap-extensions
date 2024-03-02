@@ -2383,6 +2383,7 @@
           "CWE-79"
         ],
         "identifiers": {
+          "summary": "Versions of dojo prior to 1.4.2 are vulnerable to DOM-based Cross-Site Scripting (XSS). The package does not sanitize URL parameters in the _testCommon.js and runner.html test files, allowing attackers to execute arbitrary JavaScript in the victim's browser.",
           "PR": "307",
           "CVE": [
             "CVE-2010-2273"
@@ -2408,6 +2409,7 @@
           "CWE-79"
         ],
         "identifiers": {
+          "summary": "Versions of dojo prior to 1.4.2 are vulnerable to DOM-based Cross-Site Scripting (XSS). The package does not sanitize URL parameters in the _testCommon.js and runner.html test files, allowing attackers to execute arbitrary JavaScript in the victim's browser.",
           "PR": "307",
           "CVE": [
             "CVE-2010-2273"
@@ -2432,6 +2434,7 @@
           "CWE-79"
         ],
         "identifiers": {
+          "summary": "Affected versions of dojo are susceptible to a cross-site scripting vulnerability in the dijit.Editor and textarea components, which execute their contents as Javascript, even when sanitized.",
           "CVE": [
             "CVE-2008-6681"
           ],
@@ -2449,6 +2452,7 @@
           "CWE-79"
         ],
         "identifiers": {
+          "summary": "Versions of dojo prior to 1.4.2 are vulnerable to DOM-based Cross-Site Scripting (XSS). The package does not sanitize URL parameters in the _testCommon.js and runner.html test files, allowing attackers to execute arbitrary JavaScript in the victim's browser.",
           "PR": "307",
           "CVE": [
             "CVE-2010-2273"
@@ -2474,6 +2478,7 @@
           "CWE-79"
         ],
         "identifiers": {
+          "summary": "Versions of dojo prior to 1.4.2 are vulnerable to DOM-based Cross-Site Scripting (XSS). The package does not sanitize URL parameters in the _testCommon.js and runner.html test files, allowing attackers to execute arbitrary JavaScript in the victim's browser.",
           "PR": "307",
           "CVE": [
             "CVE-2010-2273"
@@ -2499,6 +2504,7 @@
           "CWE-79"
         ],
         "identifiers": {
+          "summary": "Versions of dojo prior to 1.4.2 are vulnerable to DOM-based Cross-Site Scripting (XSS). The package does not sanitize URL parameters in the _testCommon.js and runner.html test files, allowing attackers to execute arbitrary JavaScript in the victim's browser.",
           "PR": "307",
           "CVE": [
             "CVE-2010-2273"
@@ -2523,6 +2529,7 @@
           "CWE-79"
         ],
         "identifiers": {
+          "summary": "Cross-site scripting (XSS) vulnerability in dijit/tests/_testCommon.js in Dojo Toolkit SDK before 1.4.2 allows remote attackers to inject arbitrary web script or HTML via the theme parameter, as demonstrated by an attack against dijit/tests/form/test_Button.html",
           "CVE": [
             "CVE-2010-2275"
           ]
@@ -2539,6 +2546,7 @@
           "CWE-79"
         ],
         "identifiers": {
+          "summary": "Versions of dojo prior to 1.4.2 are vulnerable to DOM-based Cross-Site Scripting (XSS). The package does not sanitize URL parameters in the _testCommon.js and runner.html test files, allowing attackers to execute arbitrary JavaScript in the victim's browser.",
           "PR": "307",
           "CVE": [
             "CVE-2010-2273"
@@ -2563,6 +2571,7 @@
           "CWE-79"
         ],
         "identifiers": {
+          "summary": "Versions of dojo prior to 1.2.0 are vulnerable to Cross-Site Scripting (XSS). The package fails to sanitize HTML code in user-controlled input, allowing attackers to execute arbitrary JavaScript in the victim's browser.",
           "CVE": [
             "CVE-2015-5654"
           ],
@@ -2580,6 +2589,7 @@
           "CWE-79"
         ],
         "identifiers": {
+          "summary": "Versions of dojo prior to 1.4.2 are vulnerable to DOM-based Cross-Site Scripting (XSS). The package does not sanitize URL parameters in the _testCommon.js and runner.html test files, allowing attackers to execute arbitrary JavaScript in the victim's browser.",
           "PR": "307",
           "CVE": [
             "CVE-2010-2273"
@@ -2605,6 +2615,7 @@
           "CWE-79"
         ],
         "identifiers": {
+          "summary": "Versions of dojo prior to 1.4.2 are vulnerable to DOM-based Cross-Site Scripting (XSS). The package does not sanitize URL parameters in the _testCommon.js and runner.html test files, allowing attackers to execute arbitrary JavaScript in the victim's browser.",
           "PR": "307",
           "CVE": [
             "CVE-2010-2273"
@@ -2631,6 +2642,7 @@
           "CWE-94"
         ],
         "identifiers": {
+          "summary": "Prototype pollution in dojo",
           "CVE": [
             "CVE-2020-5258"
           ],
@@ -2649,6 +2661,7 @@
           "CWE-79"
         ],
         "identifiers": {
+          "summary": "Versions of dojo prior to 1.4.2 are vulnerable to DOM-based Cross-Site Scripting (XSS). The package does not sanitize URL parameters in the _testCommon.js and runner.html test files, allowing attackers to execute arbitrary JavaScript in the victim's browser.",
           "PR": "307",
           "CVE": [
             "CVE-2010-2273"
@@ -2676,6 +2689,7 @@
           "CWE-94"
         ],
         "identifiers": {
+          "summary": "Prototype pollution in dojo",
           "CVE": [
             "CVE-2020-5258"
           ],
@@ -2694,6 +2708,7 @@
           "CWE-79"
         ],
         "identifiers": {
+          "summary": "Versions of dojo prior to 1.4.2 are vulnerable to DOM-based Cross-Site Scripting (XSS). The package does not sanitize URL parameters in the _testCommon.js and runner.html test files, allowing attackers to execute arbitrary JavaScript in the victim's browser.",
           "PR": "307",
           "CVE": [
             "CVE-2010-2273"
@@ -2721,6 +2736,7 @@
           "CWE-94"
         ],
         "identifiers": {
+          "summary": "Prototype pollution in dojo",
           "CVE": [
             "CVE-2020-5258"
           ],
@@ -2738,9 +2754,11 @@
           "CWE-79"
         ],
         "identifiers": {
+          "summary": "In Dojo Toolkit before 1.14.0, there is unescaped string injection in dojox/Grid/DataGrid.",
           "CVE": [
             "CVE-2018-15494"
-          ]
+          ],
+          "githubID": "GHSA-84cm-x2q5-8225"
         },
         "info": [
           "https://dojotoolkit.org/blog/dojo-1-14-released"
@@ -2756,6 +2774,7 @@
           "CWE-94"
         ],
         "identifiers": {
+          "summary": "Prototype pollution in dojo",
           "CVE": [
             "CVE-2020-5258"
           ],
@@ -2776,6 +2795,7 @@
           "CWE-94"
         ],
         "identifiers": {
+          "summary": "Prototype pollution in dojo",
           "CVE": [
             "CVE-2020-5258"
           ],
@@ -2796,6 +2816,7 @@
           "CWE-94"
         ],
         "identifiers": {
+          "summary": "Prototype pollution in dojo",
           "CVE": [
             "CVE-2020-5258"
           ],
@@ -2829,13 +2850,14 @@
         "dojo.version.toString()"
       ],
       "uri": [
-        "/(?:dojo-)?(§§version§§)/dojo(\\.min)?\\.js"
+        "/(?:dojo-)?(§§version§§)(?:/dojo)?/dojo(\\.min)?\\.js"
       ],
       "filename": [
         "dojo-(§§version§§)(\\.min)?\\.js"
       ],
       "filecontentreplace": [
-        "/dojo.version=\\{major:([0-9]+),minor:([0-9]+),patch:([0-9]+)/$1.$2.$3/"
+        "/dojo.version=\\{major:([0-9]+),minor:([0-9]+),patch:([0-9]+)/$1.$2.$3/",
+        "/\"dojox\"[\\s\\S]{1,350}\\.version=\\{major:([0-9]+),minor:([0-9]+),patch:([0-9]+)/$1.$2.$3/"
       ],
       "hashes": {
         "73cdd262799aab850abbe694cd3bfb709ea23627": "1.4.1",
@@ -3039,7 +3061,7 @@
           "CWE-1104"
         ],
         "identifiers": {
-          "summary": "End-of-Life: Long term support for AngularJS has been discontinued",
+          "summary": "End-of-Life: Long term support for AngularJS has been discontinued as of December 31, 2021",
           "retid": "54"
         },
         "info": [
@@ -3387,7 +3409,7 @@
         "below": "3.0.8",
         "severity": "high",
         "cwe": [
-          "CWE-79"
+          "CWE-94"
         ],
         "identifiers": {
           "summary": "Versions of `handlebars` prior to 3.0.8 or 4.5.2 are vulnerable to Arbitrary Code Execution. The package's lookup helper fails to properly validate templates, allowing attackers to submit templates that execute arbitrary JavaScript in the system. It can be used to run arbitrary code in a server processing Handlebars templates or on a victim's browser (effectively serving as Cross-Site Scripting).\n\nThe following template can be used to demonstrate the vulnerability:  \n```{{#with \"constructor\"}}\n\t{{#with split as |a|}}\n\t\t{{pop (push \"alert('Vulnerable Handlebars JS');\")}}\n\t\t{{#with (concat (lookup join (slice 0 1)))}}\n\t\t\t{{#each (slice 2 3)}}\n\t\t\t\t{{#with (apply 0 a)}}\n\t\t\t\t\t{{.}}\n\t\t\t\t{{/with}}\n\t\t\t{{/each}}\n\t\t{{/with}}\n\t{{/with}}\n{{/with}}```\n\n\n## Recommendation\n\nUpgrade to version 3.0.8, 4.5.2 or later.",
@@ -3597,7 +3619,7 @@
         "below": "4.5.2",
         "severity": "high",
         "cwe": [
-          "CWE-79"
+          "CWE-94"
         ],
         "identifiers": {
           "summary": "Versions of `handlebars` prior to 3.0.8 or 4.5.2 are vulnerable to Arbitrary Code Execution. The package's lookup helper fails to properly validate templates, allowing attackers to submit templates that execute arbitrary JavaScript in the system. It can be used to run arbitrary code in a server processing Handlebars templates or on a victim's browser (effectively serving as Cross-Site Scripting).\n\nThe following template can be used to demonstrate the vulnerability:  \n```{{#with \"constructor\"}}\n\t{{#with split as |a|}}\n\t\t{{pop (push \"alert('Vulnerable Handlebars JS');\")}}\n\t\t{{#with (concat (lookup join (slice 0 1)))}}\n\t\t\t{{#each (slice 2 3)}}\n\t\t\t\t{{#with (apply 0 a)}}\n\t\t\t\t\t{{.}}\n\t\t\t\t{{/with}}\n\t\t\t{{/each}}\n\t\t{{/with}}\n\t{{/with}}\n{{/with}}```\n\n\n## Recommendation\n\nUpgrade to version 3.0.8, 4.5.2 or later.",
@@ -3726,7 +3748,8 @@
         "this.Handlebars=\\{\\};[\n\r \t]+\\(function\\([a-z]\\)\\{[a-z].VERSION=(?:'|\")(§§version§§)(?:'|\")",
         "exports.HandlebarsEnvironment=[\\s\\S]{70,120}exports.VERSION=(?:'|\")(§§version§§)(?:'|\")",
         "/\\*+![\\s]+(?:@license)?[\\s]+handlebars v+(§§version§§)",
-        "window\\.Handlebars=.,.\\.VERSION=\"(§§version§§)\""
+        "window\\.Handlebars=.,.\\.VERSION=\"(§§version§§)\"",
+        ".\\.HandlebarsEnvironment=.;var .=.\\(.\\),.=.\\(.\\),.=\"(§§version§§)\";.\\.VERSION="
       ],
       "hashes": {}
     }
@@ -4361,7 +4384,7 @@
       "filecontent": [
         "/\\*\\*\n +\\* React \\(with addons\\) ?v(§§version§§)",
         "/\\*\\*\n +\\* React v(§§version§§)",
-        "/\\*\\* @license React v(§§version§§)[\\s]*\\* react\\.",
+        "/\\*\\* @license React v(§§version§§)[\\s]*\\* react(-jsx-runtime)?\\.",
         "\"\\./ReactReconciler\":[0-9]+,\"\\./Transaction\":[0-9]+,\"fbjs/lib/invariant\":[0-9]+\\}\\],[0-9]+:\\[function\\(require,module,exports\\)\\{\"use strict\";module\\.exports=\"(§§version§§)\"\\}",
         "ReactVersion\\.js[\\*! \\\\/\n\r]{0,100}function\\(e,t\\)\\{\"use strict\";e\\.exports=\"(§§version§§)\"",
         "expected a ReactNode.[\\s\\S]{0,1800}?function\\(e,t\\)\\{\"use strict\";e\\.exports=\"(§§version§§)\""
@@ -4478,6 +4501,22 @@
       "filecontent": [
         "version:\"(§§version§§)[a-z0-9\\-]*\"[\\s,]*rendererPackageName:\"react-dom\"",
         "/\\*\\* @license React v(§§version§§)[\\s]*\\* react-dom\\."
+      ]
+    }
+  },
+  "react-is": {
+    "vulnerabilities": [],
+    "extractors": {
+      "filecontent": [
+        "/\\*\\* @license React v(§§version§§)[\\s]*\\* react-is\\."
+      ]
+    }
+  },
+  "scheduler": {
+    "vulnerabilities": [],
+    "extractors": {
+      "filecontent": [
+        "/\\*\\* @license React v(§§version§§)[\\s]*\\* scheduler\\."
       ]
     }
   },
@@ -4770,30 +4809,12 @@
         ],
         "severity": "medium",
         "identifiers": {
-          "summary": "XSS in data-target property of scrollspy",
-          "issue": "20184",
-          "CVE": [
-            "CVE-2018-14041"
-          ],
-          "githubID": "GHSA-pj7m-g53m-7638"
-        },
-        "info": [
-          "https://github.com/advisories/GHSA-pj7m-g53m-7638",
-          "https://github.com/twbs/bootstrap/issues/20184"
-        ]
-      },
-      {
-        "below": "3.4.0",
-        "cwe": [
-          "CWE-79"
-        ],
-        "severity": "medium",
-        "identifiers": {
           "summary": "XSS in data-container property of tooltip",
           "issue": "20184",
           "CVE": [
             "CVE-2018-14042"
-          ]
+          ],
+          "githubID": "GHSA-7mvr-5x2g-wfc8"
         },
         "info": [
           "https://github.com/twbs/bootstrap/issues/20184"
@@ -4814,6 +4835,25 @@
         },
         "info": [
           "https://github.com/advisories/GHSA-ph58-4vrj-w6hr"
+        ]
+      },
+      {
+        "below": "3.4.0",
+        "cwe": [
+          "CWE-79"
+        ],
+        "severity": "medium",
+        "identifiers": {
+          "summary": "XSS in data-target property of scrollspy",
+          "issue": "20184",
+          "CVE": [
+            "CVE-2018-14041"
+          ],
+          "githubID": "GHSA-pj7m-g53m-7638"
+        },
+        "info": [
+          "https://github.com/advisories/GHSA-pj7m-g53m-7638",
+          "https://github.com/twbs/bootstrap/issues/20184"
         ]
       },
       {
@@ -4913,15 +4953,14 @@
         ],
         "severity": "medium",
         "identifiers": {
-          "summary": "XSS in data-target property of scrollspy",
+          "summary": "XSS in data-container property of tooltip",
           "issue": "20184",
           "CVE": [
-            "CVE-2018-14041"
+            "CVE-2018-14042"
           ],
-          "githubID": "GHSA-pj7m-g53m-7638"
+          "githubID": "GHSA-7mvr-5x2g-wfc8"
         },
         "info": [
-          "https://github.com/advisories/GHSA-pj7m-g53m-7638",
           "https://github.com/twbs/bootstrap/issues/20184"
         ]
       },
@@ -4933,13 +4972,15 @@
         ],
         "severity": "medium",
         "identifiers": {
-          "summary": "XSS in data-container property of tooltip",
+          "summary": "XSS in data-target property of scrollspy",
           "issue": "20184",
           "CVE": [
-            "CVE-2018-14042"
-          ]
+            "CVE-2018-14041"
+          ],
+          "githubID": "GHSA-pj7m-g53m-7638"
         },
         "info": [
+          "https://github.com/advisories/GHSA-pj7m-g53m-7638",
           "https://github.com/twbs/bootstrap/issues/20184"
         ]
       },
@@ -6841,6 +6882,233 @@
       ],
       "uri": [
         "/(§§version§§)/lodash(\\.min)?\\.js"
+      ]
+    }
+  },
+  "ua-parser-js": {
+    "vulnerabilities": [
+      {
+        "atOrAbove": "0",
+        "below": "0.7.22",
+        "cwe": [
+          "CWE-400"
+        ],
+        "severity": "high",
+        "identifiers": {
+          "summary": "Regular Expression Denial of Service in ua-parser-js",
+          "CVE": [
+            "CVE-2020-7733"
+          ],
+          "githubID": "GHSA-662x-fhqg-9p8v"
+        },
+        "info": [
+          "https://github.com/advisories/GHSA-662x-fhqg-9p8v",
+          "https://nvd.nist.gov/vuln/detail/CVE-2020-7733",
+          "https://github.com/faisalman/ua-parser-js/commit/233d3bae22a795153a7e6638887ce159c63e557d",
+          "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSBOWERGITHUBFAISALMAN-674666",
+          "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSNPM-674665",
+          "https://snyk.io/vuln/SNYK-JS-UAPARSERJS-610226",
+          "https://www.oracle.com//security-alerts/cpujul2021.html"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "0.7.22",
+        "cwe": [
+          "CWE-400"
+        ],
+        "severity": "high",
+        "identifiers": {
+          "summary": "Regular Expression Denial of Service in ua-parser-js",
+          "CVE": [
+            "CVE-2020-7733"
+          ],
+          "githubID": "GHSA-662x-fhqg-9p8v"
+        },
+        "info": [
+          "https://github.com/advisories/GHSA-662x-fhqg-9p8v",
+          "https://nvd.nist.gov/vuln/detail/CVE-2020-7733",
+          "https://github.com/faisalman/ua-parser-js/commit/233d3bae22a795153a7e6638887ce159c63e557d",
+          "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSBOWERGITHUBFAISALMAN-674666",
+          "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSNPM-674665",
+          "https://snyk.io/vuln/SNYK-JS-UAPARSERJS-610226",
+          "https://www.oracle.com//security-alerts/cpujul2021.html"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "0.7.23",
+        "cwe": [
+          "CWE-400"
+        ],
+        "severity": "high",
+        "identifiers": {
+          "summary": "ua-parser-js Regular Expression Denial of Service vulnerability",
+          "CVE": [
+            "CVE-2020-7793"
+          ],
+          "githubID": "GHSA-394c-5j6w-4xmx"
+        },
+        "info": [
+          "https://github.com/advisories/GHSA-394c-5j6w-4xmx",
+          "https://nvd.nist.gov/vuln/detail/CVE-2020-7793",
+          "https://github.com/faisalman/ua-parser-js/commit/6d1f26df051ba681463ef109d36c9cf0f7e32b18",
+          "https://cert-portal.siemens.com/productcert/pdf/ssa-637483.pdf",
+          "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSBOWERGITHUBFAISALMAN-1050388",
+          "https://snyk.io/vuln/SNYK-JAVA-ORGWEBJARSNPM-1050387",
+          "https://snyk.io/vuln/SNYK-JS-UAPARSERJS-1023599"
+        ]
+      },
+      {
+        "atOrAbove": "0.7.14",
+        "below": "0.7.24",
+        "cwe": [
+          "CWE-400"
+        ],
+        "severity": "high",
+        "identifiers": {
+          "summary": "Regular Expression Denial of Service (ReDoS) in ua-parser-js",
+          "CVE": [
+            "CVE-2021-27292"
+          ],
+          "githubID": "GHSA-78cj-fxph-m83p"
+        },
+        "info": [
+          "https://github.com/advisories/GHSA-78cj-fxph-m83p",
+          "https://nvd.nist.gov/vuln/detail/CVE-2021-27292",
+          "https://github.com/faisalman/ua-parser-js/commit/809439e20e273ce0d25c1d04e111dcf6011eb566",
+          "https://github.com/pygments/pygments/commit/2e7e8c4a7b318f4032493773732754e418279a14",
+          "https://gist.github.com/b-c-ds/6941d80d6b4e694df4bc269493b7be76"
+        ]
+      },
+      {
+        "atOrAbove": "0.7.29",
+        "below": "0.7.30",
+        "cwe": [
+          "CWE-829",
+          "CWE-912"
+        ],
+        "severity": "high",
+        "identifiers": {
+          "summary": "Embedded malware in ua-parser-js",
+          "CVE": [],
+          "githubID": "GHSA-pjwm-rvh2-c87w"
+        },
+        "info": [
+          "https://github.com/advisories/GHSA-pjwm-rvh2-c87w",
+          "https://github.com/faisalman/ua-parser-js/issues/536",
+          "https://github.com/faisalman/ua-parser-js/issues/536#issuecomment-949772496",
+          "https://github.com/faisalman/ua-parser-js",
+          "https://www.npmjs.com/package/ua-parser-js"
+        ]
+      },
+      {
+        "atOrAbove": "0",
+        "below": "0.7.33",
+        "cwe": [
+          "CWE-1333",
+          "CWE-400"
+        ],
+        "severity": "high",
+        "identifiers": {
+          "summary": "ReDoS Vulnerability in ua-parser-js version",
+          "CVE": [
+            "CVE-2022-25927"
+          ],
+          "githubID": "GHSA-fhg7-m89q-25r3"
+        },
+        "info": [
+          "https://github.com/advisories/GHSA-fhg7-m89q-25r3",
+          "https://github.com/faisalman/ua-parser-js/security/advisories/GHSA-fhg7-m89q-25r3",
+          "https://nvd.nist.gov/vuln/detail/CVE-2022-25927",
+          "https://github.com/faisalman/ua-parser-js/commit/a6140a17dd0300a35cfc9cff999545f267889411",
+          "https://github.com/faisalman/ua-parser-js",
+          "https://security.snyk.io/vuln/SNYK-JS-UAPARSERJS-3244450"
+        ]
+      },
+      {
+        "atOrAbove": "0.8.0",
+        "below": "0.8.1",
+        "cwe": [
+          "CWE-829",
+          "CWE-912"
+        ],
+        "severity": "high",
+        "identifiers": {
+          "summary": "Embedded malware in ua-parser-js",
+          "CVE": [],
+          "githubID": "GHSA-pjwm-rvh2-c87w"
+        },
+        "info": [
+          "https://github.com/advisories/GHSA-pjwm-rvh2-c87w",
+          "https://github.com/faisalman/ua-parser-js/issues/536",
+          "https://github.com/faisalman/ua-parser-js/issues/536#issuecomment-949772496",
+          "https://github.com/faisalman/ua-parser-js",
+          "https://www.npmjs.com/package/ua-parser-js"
+        ]
+      },
+      {
+        "atOrAbove": "1.0.0",
+        "below": "1.0.1",
+        "cwe": [
+          "CWE-829",
+          "CWE-912"
+        ],
+        "severity": "high",
+        "identifiers": {
+          "summary": "Embedded malware in ua-parser-js",
+          "CVE": [],
+          "githubID": "GHSA-pjwm-rvh2-c87w"
+        },
+        "info": [
+          "https://github.com/advisories/GHSA-pjwm-rvh2-c87w",
+          "https://github.com/faisalman/ua-parser-js/issues/536",
+          "https://github.com/faisalman/ua-parser-js/issues/536#issuecomment-949772496",
+          "https://github.com/faisalman/ua-parser-js",
+          "https://www.npmjs.com/package/ua-parser-js"
+        ]
+      },
+      {
+        "atOrAbove": "0.8.0",
+        "below": "1.0.33",
+        "cwe": [
+          "CWE-1333",
+          "CWE-400"
+        ],
+        "severity": "high",
+        "identifiers": {
+          "summary": "ReDoS Vulnerability in ua-parser-js version",
+          "CVE": [
+            "CVE-2022-25927"
+          ],
+          "githubID": "GHSA-fhg7-m89q-25r3"
+        },
+        "info": [
+          "https://github.com/advisories/GHSA-fhg7-m89q-25r3",
+          "https://github.com/faisalman/ua-parser-js/security/advisories/GHSA-fhg7-m89q-25r3",
+          "https://nvd.nist.gov/vuln/detail/CVE-2022-25927",
+          "https://github.com/faisalman/ua-parser-js/commit/a6140a17dd0300a35cfc9cff999545f267889411",
+          "https://github.com/faisalman/ua-parser-js",
+          "https://security.snyk.io/vuln/SNYK-JS-UAPARSERJS-3244450"
+        ]
+      }
+    ],
+    "extractors": {
+      "uri": [
+        "/(§§version§§)/ua-parser(.min)?.js"
+      ],
+      "filecontent": [
+        "/\\* UAParser.js v(§§version§§)",
+        "/\\*[*!](?:@license)?[\\s]+\\* UAParser.js v(§§version§§)",
+        "// UAParser.js v(§§version§§)",
+        ".\\.VERSION=\"(§§version§§)\",.\\.BROWSER=\\{NAME:.,MAJOR:\"major\",VERSION:.\\},.\\.CPU=\\{ARCHITECTURE:",
+        ".\\.VERSION=\"(§§version§§)\",.\\.BROWSER=.\\(\\[[^\\]]{1,20}\\]\\),.\\.CPU=",
+        "LIBVERSION=\"(§§version§§)\",EMPTY=\"\",UNKNOWN=\"\\?\",FUNC_TYPE=\"function\",UNDEF_TYPE=\"undefined\"",
+        ".=\"(§§version§§)\",.=\"\",.=\"\\?\",.=\"function\",.=\"undefined\",.=\"object\",(.=\"string\",)?.=\"major\",.=\"model\",.=\"name\",.=\"type\",.=\"vendor\""
+      ],
+      "func": [
+        "UAParser.VERSION",
+        "$.ua.version"
       ]
     }
   },
