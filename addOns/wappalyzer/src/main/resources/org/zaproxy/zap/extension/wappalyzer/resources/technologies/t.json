@@ -319,6 +319,14 @@
     "requires": "WordPress",
     "website": "https://tablepress.org"
   },
+  "Tablesorter": {
+    "cats": [
+      59
+    ],
+    "description": "Flexible client-side table sorting.",
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)[-\\/](?:dist\\/js\\/)?)?(?:jquery\\.)?tablesorter(?:[\\.\\/]pager)?(?:-custom-controls)?(?:\\.widgets)?(?:\\.min)?\\.js\\;version:\\1",
+    "website": "https://mottie.github.io/tablesorter/"
+  },
   "Taboola": {
     "cats": [
       36
@@ -2221,6 +2229,16 @@
     ],
     "website": "https://www.tinybird.co/"
   },
+  "Tinycon": {
+    "cats": [
+      59,
+      66
+    ],
+    "description": "A library for manipulating a websites favicon.",
+    "oss": true,
+    "scriptSrc": "tinycon(?:\\.min)?\\.js",
+    "website": "https://github.com/tommoor/tinycon"
+  },
   "Tippy.js": {
     "cats": [
       59
@@ -3641,6 +3659,18 @@
     },
     "icon": "thttpd.png",
     "website": "https://acme.com/software/thttpd"
+  },
+  "timeago": {
+    "cats": [
+      59
+    ],
+    "description": "Timeago is a jQuery plugin that makes it easy to support automatically updating fuzzy timestamps.",
+    "js": {
+      "timeago": ""
+    },
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/)?(?:jquery\\.)?[Tt]imeago(?:_mkdocs_material)?(?:\\.full)?(?:\\.locales)?(?:\\.native)?(?:\\.min)?\\.js\\;version:\\1",
+    "website": "https://timeago.yarp.com/"
   },
   "toastr": {
     "cats": [

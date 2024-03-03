@@ -401,12 +401,12 @@
       },
       "link[id*='generate-style']": {
         "attributes": {
-          "href": "generatepress\\S*\\.css(?:\\?ver=([0-9.]+))?\\;version:\\1"
+          "href": "generatepress(?:(?:%20)?_?child)?(?:\\/assets)?(?:\\/css)?(?:\\/js)?(?:\\/accordion){0,2}(?:\\/all)?(?:\\/components)?(?:\\/font-icons)?(?:\\/mobile)?(?:\\/slick){0,2}(?:\\/style)?(?:\\/unsemantic-grid)?(?:\\/csd)?(?:-theme)?(?:\\.min)?\\.css(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
         }
       },
       "link[id*='generatepress']": {
         "attributes": {
-          "href": "generatepress\\S*\\.css(?:\\?ver=([0-9.]+))?\\;version:\\1"
+          "href": "generatepress(?:(?:%20)?_?child)?(?:\\/assets)?(?:\\/css)?(?:\\/js)?(?:\\/accordion){0,2}(?:\\/all)?(?:\\/components)?(?:\\/font-icons)?(?:\\/mobile)?(?:\\/slick){0,2}(?:\\/style)?(?:\\/unsemantic-grid)?(?:\\/csd)?(?:-theme)?(?:\\.min)?\\.css(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1"
         }
       }
     },
@@ -421,9 +421,7 @@
       "onetime"
     ],
     "requires": "WordPress",
-    "scriptSrc": [
-      "themes/generatepress\\S*\\.js(?:\\?ver=([0-9.]+))?\\;version:\\1"
-    ],
+    "scriptSrc": "themes\\/generatepress(?:(?:%20)?_?child)?(?:\\/assets)?(?:\\/inc)?(?:\\/js)?(?:\\/accordion){0,2}(?:\\/lity)?(?:\\/menu)?(?:\\/owl)?(?:\\/slick){0,2}(?:\\/vs(?:loadmore)?(?:postviews)?)?(?:\\/back-to-top)?(?:\\/keen-slider)?(?:\\/tab-img)?(?:-init)?(?:\\.carousel)?(?:\\/jquery)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
     "website": "https://generatepress.com"
   },
   "GeneratePress GP Premium": {
@@ -439,7 +437,7 @@
     ],
     "requires": "WordPress",
     "saas": true,
-    "scriptSrc": "/wp-content/plugins/gp-premium/.+\\.js(?:\\?ver=(\\d+(?:\\.\\d+)+))?\\;version:\\1",
+    "scriptSrc": "wp-content\\/plugins\\/gp-premium(?:\\/menu-plus)?(?:\\/sections)?\\/functions\\/js(?:\\/offside)?(?:\\/parallax)?(?:\\/sticky)?(?:\\.min)?(?:-((?:\\d+\\.)+\\d+))?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2",
     "website": "https://docs.generatepress.com/article/installing-gp-premium/"
   },
   "Genesis theme": {
