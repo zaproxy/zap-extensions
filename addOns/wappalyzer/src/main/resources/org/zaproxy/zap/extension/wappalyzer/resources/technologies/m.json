@@ -388,7 +388,7 @@
     },
     "oss": true,
     "probe": {
-      "/magento_version": "magento"
+      "/magento_version": ""
     },
     "scriptSrc": [
       "js/mage",
