@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Updated reference for scan rule: Possible Username Enumeration (Issue 8262)
 - Cookie Slack Detector scan rule now has a more specific CWE.
 - Possible Username Enumeration scan rule now includes CWE-204 as a reference link.
+- The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119):
+    - Relative Path Confusion
+    - Integer Overflow Error
+
+### Removed 
+- Removed HTTP only reference for scan rule: Integer Overflow Error (Issue 8262)
 
 ## [51] - 2024-02-16
 ### Changed
