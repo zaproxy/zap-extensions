@@ -4,7 +4,13 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119):
+    - Source Code Disclosure - CVE-2012-1823
+    - Remote Code Execution - CVE-2012-1823
+    - Server Side Include
+    - Cross Site Scripting (Reflected)
+- The Alerts from the Remote Code Execution - CVE-2012-1823 scan rule no longer have evidence duplicated in the Other Info field.
 
 ## [63] - 2024-02-12
 ### Changed
