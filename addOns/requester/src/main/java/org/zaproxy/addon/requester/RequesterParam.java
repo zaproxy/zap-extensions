@@ -20,6 +20,7 @@
 package org.zaproxy.addon.requester;
 
 import org.zaproxy.zap.common.VersionedAbstractParam;
+import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
 /**
  * Manages the requester configurations saved in the configuration file.
@@ -44,7 +45,7 @@ public class RequesterParam extends VersionedAbstractParam {
      * @see #CONFIG_VERSION_KEY
      * @see #updateConfigsImpl(int)
      */
-    private static final int CURRENT_CONFIG_VERSION = 1;
+    private static final int CURRENT_CONFIG_VERSION = 2;
 
     /**
      * The key for the version of the configurations.
@@ -80,7 +81,12 @@ public class RequesterParam extends VersionedAbstractParam {
     protected void updateConfigsImpl(int fileVersion) {
         switch (fileVersion) {
             case NO_CONFIG_VERSION:
-                // No updates/changes needed.
+            case 1:
+                // Remove the old Resend dialog configs, if present
+                if (this.getConfig() instanceof ZapXmlConfiguration) {
+                    ZapXmlConfiguration zapConfig = (ZapXmlConfiguration) this.getConfig();
+                    zapConfig.clearTree("view.resend");
+                }
                 break;
             default:
         }

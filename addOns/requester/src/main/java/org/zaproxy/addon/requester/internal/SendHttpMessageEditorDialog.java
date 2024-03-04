@@ -20,6 +20,7 @@
 package org.zaproxy.addon.requester.internal;
 
 import java.awt.event.KeyEvent;
+import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.view.View;
@@ -27,12 +28,17 @@ import org.zaproxy.addon.requester.ExtensionRequester;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.view.ZapMenuItem;
 
+@SuppressWarnings("serial")
 public class SendHttpMessageEditorDialog extends AbstractHttpMessageEditorDialog {
 
     private static final long serialVersionUID = 1L;
 
-    public SendHttpMessageEditorDialog(ManualHttpRequestEditorPanel panel) {
+    private ExtensionRequester extensionRequester;
+
+    public SendHttpMessageEditorDialog(
+            ExtensionRequester extensionRequester, ManualHttpRequestEditorPanel panel) {
         super("requester.send.dialog.title", panel);
+        this.extensionRequester = extensionRequester;
     }
 
     @Override
@@ -46,14 +52,25 @@ public class SendHttpMessageEditorDialog extends AbstractHttpMessageEditorDialog
         menuItem.setIcon(ExtensionRequester.getManualIcon());
         menuItem.addActionListener(
                 e -> {
-                    Message message = getPanel().getMessage();
-                    if (message == null
-                            || (message instanceof HttpMessage
-                                    && ((HttpMessage) message).getRequestHeader().isEmpty())) {
+                    Message message = extensionRequester.getSelectedMsg();
+                    if (message instanceof HttpMessage
+                            && !((HttpMessage) message).getRequestHeader().isEmpty()) {
+                        getPanel().setMessage(message);
+                    } else {
                         getPanel().setDefaultMessage();
                     }
                     setVisible(true);
                 });
         extensionHook.getHookMenu().addToolsMenuItem(menuItem);
+
+        PopupMenuResendMessage popupMenuResendMessage =
+                new PopupMenuResendMessage(
+                        Constant.messages.getString("requester.resend.popup"),
+                        ExtensionRequester.getManualIcon(),
+                        msg -> {
+                            getPanel().setMessage(msg);
+                            setVisible(true);
+                        });
+        extensionHook.getHookMenu().addPopupMenuItem(popupMenuResendMessage);
     }
 }

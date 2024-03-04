@@ -5,9 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-## Added 
+### Added 
 - Button to lowercase request header names (Issue 8176).
 - Support for menu weights (Issue 8369)
+
+### Changed
+- Manual request dialog to be opened with selected message on CTRL-M (Issue 8365)
+- Manual request dialog to be used instead of a separate Resend dialog.
 
 ## [7.4.0] - 2023-10-12
 ### Added
