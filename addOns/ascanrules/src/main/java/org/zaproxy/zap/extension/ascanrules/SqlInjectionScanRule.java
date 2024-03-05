@@ -813,97 +813,99 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
             // query was last run (could be hours ago)
             // so to work around this, simply re-run the query again now at this point.
             // Note that we are not counting this request in our max number of requests to be issued
-            refreshedmessage = getNewMsg();
-            try {
-                sendAndReceive(refreshedmessage, false); // do not follow redirects
-            } catch (SocketException ex) {
-                LOGGER.debug(
-                        "Caught {} {} when accessing: {}",
-                        ex.getClass().getName(),
-                        ex.getMessage(),
-                        refreshedmessage.getRequestHeader().getURI());
-                return; // Something went wrong, no point continuing
-            }
-
-            // String mResBodyNormal = getBaseMsg().getResponseBody().toString();
-            mResBodyNormalUnstripped = refreshedmessage.getResponseBody().toString();
-            mResBodyNormalStripped = this.stripOff(mResBodyNormalUnstripped, origParamValue);
-
-            if (!sqlInjectionFoundForUrl
-                    && doExpressionBased
-                    && countExpressionBasedRequests < doExpressionMaxRequests) {
-
-                // first figure out the type of the parameter..
+            if (getAlertThreshold().equals(AlertThreshold.LOW)) {
+                refreshedmessage = getNewMsg();
                 try {
-                    // is it an integer type?
-                    // ZAP: removed URLDecoding because on Variants
-                    // int paramAsInt =
-                    // Integer.parseInt(SqlInjectionScanRule.getURLDecode(origParamValue));
-                    int paramAsInt = Integer.parseInt(origParamValue);
+                    sendAndReceive(refreshedmessage, false); // do not follow redirects
+                } catch (SocketException ex) {
+                    LOGGER.debug(
+                            "Caught {} {} when accessing: {}",
+                            ex.getClass().getName(),
+                            ex.getMessage(),
+                            refreshedmessage.getRequestHeader().getURI());
+                    return; // Something went wrong, no point continuing
+                }
 
-                    LOGGER.debug("The parameter value [{}] is of type Integer", origParamValue);
-                    // This check is implemented using two variant PLUS(+) and MULT(*)
+                // String mResBodyNormal = getBaseMsg().getResponseBody().toString();
+                mResBodyNormalUnstripped = refreshedmessage.getResponseBody().toString();
+                mResBodyNormalStripped = this.stripOff(mResBodyNormalUnstripped, origParamValue);
+
+                if (!sqlInjectionFoundForUrl
+                        && doExpressionBased
+                        && countExpressionBasedRequests < doExpressionMaxRequests) {
+
+                    // first figure out the type of the parameter..
                     try {
-                        // PLUS variant check the param value "3-2" gives same result as original
-                        // request and param value "4-2" gives different result if original param
-                        // value is 1
-                        // set the parameter value to a string value like "3-2", if the original
-                        // parameter value was "1"
-                        int paramPlusTwo = Math.addExact(paramAsInt, 2);
-                        String modifiedParamValueForAdd = String.valueOf(paramPlusTwo) + "-2";
-                        // set the parameter value to a string value like "4-2", if the original
-                        // parameter value was "1"
-                        int paramPlusThree = Math.addExact(paramAsInt, 3);
-                        String modifiedParamValueConfirmForAdd =
-                                String.valueOf(paramPlusThree) + "-2";
-                        // Do the attack for ADD variant
-                        expressionBasedAttack(
-                                param,
-                                origParamValue,
-                                modifiedParamValueForAdd,
-                                modifiedParamValueConfirmForAdd);
-                        // bale out if we were asked nicely
-                        if (isStop()) {
-                            LOGGER.debug("Stopping the scan due to a user request");
-                            return;
-                        }
-                        // MULT variant check the param value "2/2" gives same result as original
-                        // request and param value "4/2" gives different result if original param
-                        // value is 1
-                        if (!sqlInjectionFoundForUrl
-                                && countExpressionBasedRequests < doExpressionMaxRequests) {
-                            // set the parameter value to a string value like "2/2", if the original
+                        // is it an integer type?
+                        // ZAP: removed URLDecoding because on Variants
+                        // int paramAsInt =
+                        // Integer.parseInt(SqlInjectionScanRule.getURLDecode(origParamValue));
+                        int paramAsInt = Integer.parseInt(origParamValue);
+
+                        LOGGER.debug("The parameter value [{}] is of type Integer", origParamValue);
+                        // This check is implemented using two variant PLUS(+) and MULT(*)
+                        try {
+                            // PLUS variant check the param value "3-2" gives same result as original
+                            // request and param value "4-2" gives different result if original param
+                            // value is 1
+                            // set the parameter value to a string value like "3-2", if the original
                             // parameter value was "1"
-                            int paramMultTwo = Math.multiplyExact(paramAsInt, 2);
-                            String modifiedParamValueForMult = String.valueOf(paramMultTwo) + "/2";
-                            // set the parameter value to a string value like "4/2", if the original
+                            int paramPlusTwo = Math.addExact(paramAsInt, 2);
+                            String modifiedParamValueForAdd = String.valueOf(paramPlusTwo) + "-2";
+                            // set the parameter value to a string value like "4-2", if the original
                             // parameter value was "1"
-                            int paramMultFour = Math.multiplyExact(paramAsInt, 4);
-                            String modifiedParamValueConfirmForMult =
-                                    String.valueOf(paramMultFour) + "/2";
-                            // Do the attack for MULT variant
+                            int paramPlusThree = Math.addExact(paramAsInt, 3);
+                            String modifiedParamValueConfirmForAdd =
+                                    String.valueOf(paramPlusThree) + "-2";
+                            // Do the attack for ADD variant
                             expressionBasedAttack(
                                     param,
                                     origParamValue,
-                                    modifiedParamValueForMult,
-                                    modifiedParamValueConfirmForMult);
+                                    modifiedParamValueForAdd,
+                                    modifiedParamValueConfirmForAdd);
                             // bale out if we were asked nicely
                             if (isStop()) {
                                 LOGGER.debug("Stopping the scan due to a user request");
                                 return;
                             }
+                            // MULT variant check the param value "2/2" gives same result as original
+                            // request and param value "4/2" gives different result if original param
+                            // value is 1
+                            if (!sqlInjectionFoundForUrl
+                                    && countExpressionBasedRequests < doExpressionMaxRequests) {
+                                // set the parameter value to a string value like "2/2", if the original
+                                // parameter value was "1"
+                                int paramMultTwo = Math.multiplyExact(paramAsInt, 2);
+                                String modifiedParamValueForMult = String.valueOf(paramMultTwo) + "/2";
+                                // set the parameter value to a string value like "4/2", if the original
+                                // parameter value was "1"
+                                int paramMultFour = Math.multiplyExact(paramAsInt, 4);
+                                String modifiedParamValueConfirmForMult =
+                                        String.valueOf(paramMultFour) + "/2";
+                                // Do the attack for MULT variant
+                                expressionBasedAttack(
+                                        param,
+                                        origParamValue,
+                                        modifiedParamValueForMult,
+                                        modifiedParamValueConfirmForMult);
+                                // bale out if we were asked nicely
+                                if (isStop()) {
+                                    LOGGER.debug("Stopping the scan due to a user request");
+                                    return;
+                                }
+                            }
+                        } catch (ArithmeticException ex) {
+                            LOGGER.debug(
+                                    "Caught {} {}. When performing integer math with the parameter value [{}]",
+                                    ex.getClass().getName(),
+                                    ex.getMessage(),
+                                    origParamValue);
                         }
-                    } catch (ArithmeticException ex) {
-                        LOGGER.debug(
-                                "Caught {} {}. When performing integer math with the parameter value [{}]",
-                                ex.getClass().getName(),
-                                ex.getMessage(),
-                                origParamValue);
+                    } catch (Exception e) {
+                        LOGGER.debug("The parameter value [{}] is NOT of type Integer", origParamValue);
+                        // TODO: implement a similar check for string types?  This probably needs to be
+                        // RDBMS specific (ie, it should not live in this scanner)
                     }
-                } catch (Exception e) {
-                    LOGGER.debug("The parameter value [{}] is NOT of type Integer", origParamValue);
-                    // TODO: implement a similar check for string types?  This probably needs to be
-                    // RDBMS specific (ie, it should not live in this scanner)
                 }
             }
 
