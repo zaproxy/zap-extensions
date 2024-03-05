@@ -365,7 +365,8 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
 
                     // Check if a there was a finding or the scan has been stopped
                     // if yes dispose resources and exit
-                    if (sendAndCheckPayload(param, LOCAL_DIR_TARGETS[h], DIR_PATTERN, 3) || isStop()) {
+                    if (sendAndCheckPayload(param, LOCAL_DIR_TARGETS[h], DIR_PATTERN, 3)
+                            || isStop()) {
                         // Dispose all resources
                         // Exit the scan rule
                         return;

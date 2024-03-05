@@ -845,8 +845,10 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                         LOGGER.debug("The parameter value [{}] is of type Integer", origParamValue);
                         // This check is implemented using two variant PLUS(+) and MULT(*)
                         try {
-                            // PLUS variant check the param value "3-2" gives same result as original
-                            // request and param value "4-2" gives different result if original param
+                            // PLUS variant check the param value "3-2" gives same result as
+                            // original
+                            // request and param value "4-2" gives different result if original
+                            // param
                             // value is 1
                             // set the parameter value to a string value like "3-2", if the original
                             // parameter value was "1"
@@ -868,16 +870,21 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                                 LOGGER.debug("Stopping the scan due to a user request");
                                 return;
                             }
-                            // MULT variant check the param value "2/2" gives same result as original
-                            // request and param value "4/2" gives different result if original param
+                            // MULT variant check the param value "2/2" gives same result as
+                            // original
+                            // request and param value "4/2" gives different result if original
+                            // param
                             // value is 1
                             if (!sqlInjectionFoundForUrl
                                     && countExpressionBasedRequests < doExpressionMaxRequests) {
-                                // set the parameter value to a string value like "2/2", if the original
+                                // set the parameter value to a string value like "2/2", if the
+                                // original
                                 // parameter value was "1"
                                 int paramMultTwo = Math.multiplyExact(paramAsInt, 2);
-                                String modifiedParamValueForMult = String.valueOf(paramMultTwo) + "/2";
-                                // set the parameter value to a string value like "4/2", if the original
+                                String modifiedParamValueForMult =
+                                        String.valueOf(paramMultTwo) + "/2";
+                                // set the parameter value to a string value like "4/2", if the
+                                // original
                                 // parameter value was "1"
                                 int paramMultFour = Math.multiplyExact(paramAsInt, 4);
                                 String modifiedParamValueConfirmForMult =
@@ -902,8 +909,10 @@ public class SqlInjectionScanRule extends AbstractAppParamPlugin
                                     origParamValue);
                         }
                     } catch (Exception e) {
-                        LOGGER.debug("The parameter value [{}] is NOT of type Integer", origParamValue);
-                        // TODO: implement a similar check for string types?  This probably needs to be
+                        LOGGER.debug(
+                                "The parameter value [{}] is NOT of type Integer", origParamValue);
+                        // TODO: implement a similar check for string types?  This probably needs to
+                        // be
                         // RDBMS specific (ie, it should not live in this scanner)
                     }
                 }
