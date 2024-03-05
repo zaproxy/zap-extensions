@@ -360,14 +360,16 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
             }
 
             // Check 3: Detect if this page is a directory browsing component
-            for (int h = 0; h < dirCount; h++) {
+            if (getAlertThreshold().equals(AlertThreshold.LOW)) {
+                for (int h = 0; h < dirCount; h++) {
 
-                // Check if a there was a finding or the scan has been stopped
-                // if yes dispose resources and exit
-                if (sendAndCheckPayload(param, LOCAL_DIR_TARGETS[h], DIR_PATTERN, 3) || isStop()) {
-                    // Dispose all resources
-                    // Exit the scan rule
-                    return;
+                    // Check if a there was a finding or the scan has been stopped
+                    // if yes dispose resources and exit
+                    if (sendAndCheckPayload(param, LOCAL_DIR_TARGETS[h], DIR_PATTERN, 3) || isStop()) {
+                        // Dispose all resources
+                        // Exit the scan rule
+                        return;
+                    }
                 }
             }
 
