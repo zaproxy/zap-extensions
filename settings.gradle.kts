@@ -100,6 +100,7 @@ var addOns = listOf(
     "spider",
     "spiderAjax",
     "sqliplugin",
+    "sqlmap",
     "sse",
     "svndigger",
     "tips",
