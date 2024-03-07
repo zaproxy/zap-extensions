@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Support for menu weights (Issue 8369)
 
+### Fixed
+- A typo on the intro page in the add-on's help.
+
 ## [15.19.0] - 2024-02-22
 ### Changed
 - Update Selenium to version 4.18.1.
