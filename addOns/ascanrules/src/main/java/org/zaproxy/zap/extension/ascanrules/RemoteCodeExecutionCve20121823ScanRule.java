@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
@@ -168,20 +169,7 @@ public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin
                     && responseBody.startsWith(RANDOM_STRING)) {
                 LOGGER.debug("Remote Code Execution alert for: {}", originalURI);
 
-                // bingo.
-                newAlert()
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setDescription(
-                                Constant.messages.getString(
-                                        "ascanrules.remotecodeexecution.cve-2012-1823.desc"))
-                        .setAttack(payload)
-                        .setOtherInfo(responseBody)
-                        .setSolution(
-                                Constant.messages.getString(
-                                        "ascanrules.remotecodeexecution.cve-2012-1823.soln"))
-                        .setEvidence(responseBody)
-                        .setMessage(attackmsg)
-                        .raise();
+                buildAlert(payload, responseBody).setMessage(attackmsg).raise();
                 return true;
             }
         } catch (Exception e) {
@@ -191,6 +179,19 @@ public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin
                     e);
         }
         return false;
+    }
+
+    private AlertBuilder buildAlert(String payload, String evidence) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setDescription(
+                        Constant.messages.getString(
+                                "ascanrules.remotecodeexecution.cve-2012-1823.desc"))
+                .setAttack(payload)
+                .setSolution(
+                        Constant.messages.getString(
+                                "ascanrules.remotecodeexecution.cve-2012-1823.soln"))
+                .setEvidence(evidence);
     }
 
     private static URI createAttackUri(URI originalURI, String attackParam) {
@@ -229,5 +230,14 @@ public class RemoteCodeExecutionCve20121823ScanRule extends AbstractAppPlugin
     @Override
     public Map<String, String> getAlertTags() {
         return ALERT_TAGS;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(
+                buildAlert(
+                                "<?php exec('cmd.exe /C echo mt9slj64g5yyp4yzkyqr',$colm);echo join(\"\n\",$colm);die();?>",
+                                "mt9slj64g5yyp4yzkyqr<html><body>X Y Z</body></html>")
+                        .build());
     }
 }

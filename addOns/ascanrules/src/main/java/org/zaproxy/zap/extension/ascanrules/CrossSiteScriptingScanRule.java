@@ -1018,6 +1018,18 @@ public class CrossSiteScriptingScanRule extends AbstractAppParamPlugin
         return 8;
     }
 
+    @Override
+    public List<Alert> getExampleAlerts() {
+        String attack = "</p><scrIpt>alert`1`;</scRipt><p>";
+        return List.of(
+                newAlert()
+                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                        .setParam("name")
+                        .setAttack(attack)
+                        .setEvidence(attack)
+                        .build());
+    }
+
     private static class Mutation {
         private char original;
         private char mutation;

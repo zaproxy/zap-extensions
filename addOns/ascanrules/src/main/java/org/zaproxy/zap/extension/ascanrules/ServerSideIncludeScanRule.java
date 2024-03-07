@@ -30,6 +30,7 @@
 package org.zaproxy.zap.extension.ascanrules;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import org.apache.logging.log4j.LogManager;
@@ -161,13 +162,7 @@ public class ServerSideIncludeScanRule extends AbstractAppParamPlugin
 
             StringBuilder evidence = new StringBuilder();
             if (matchBodyPattern(message, testEvidence, evidence)) {
-                newAlert()
-                        .setConfidence(Alert.CONFIDENCE_MEDIUM)
-                        .setParam(parameter)
-                        .setAttack(value)
-                        .setEvidence(evidence.toString())
-                        .setMessage(message)
-                        .raise();
+                buildAlert(parameter, value, evidence.toString()).setMessage(message).raise();
                 return true;
             }
         } catch (IOException e) {
@@ -182,6 +177,14 @@ public class ServerSideIncludeScanRule extends AbstractAppParamPlugin
                     e);
         }
         return false;
+    }
+
+    private AlertBuilder buildAlert(String param, String attack, String evidence) {
+        return newAlert()
+                .setConfidence(Alert.CONFIDENCE_MEDIUM)
+                .setParam(param)
+                .setAttack(attack)
+                .setEvidence(evidence);
     }
 
     @Override
@@ -202,5 +205,10 @@ public class ServerSideIncludeScanRule extends AbstractAppParamPlugin
     @Override
     public int getWascId() {
         return 31;
+    }
+
+    @Override
+    public List<Alert> getExampleAlerts() {
+        return List.of(buildAlert("profile", SSI_UNIX, "/root /sbin /temp /usr").build());
     }
 }

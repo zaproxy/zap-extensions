@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.is;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.core.scanner.Alert;
@@ -181,7 +182,6 @@ class RemoteCodeExecutionCve20121823ScanRuleUnitTest
                                         + "',$colm);echo join(\"\n\",$colm);die();?>")));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
-        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo(body)));
     }
 
     @Test
@@ -227,7 +227,6 @@ class RemoteCodeExecutionCve20121823ScanRuleUnitTest
                                         + "',$colm);echo join(\"\n\",$colm);die();?>")));
         assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
-        assertThat(alertsRaised.get(0).getOtherInfo(), is(equalTo(body)));
     }
 
     @Test
@@ -278,6 +277,20 @@ class RemoteCodeExecutionCve20121823ScanRuleUnitTest
         assertThat(
                 tags.get(CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ.getTag()),
                 is(equalTo(CommonAlertTag.WSTG_V42_INPV_12_COMMAND_INJ.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 
     private abstract static class RceResponse extends NanoServerHandler {

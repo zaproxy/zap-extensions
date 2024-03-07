@@ -27,6 +27,7 @@ import static org.hamcrest.Matchers.is;
 
 import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.text.StringEscapeUtils;
 import org.junit.jupiter.api.Test;
@@ -388,6 +389,20 @@ class SourceCodeDisclosureCve20121823ScanRuleUnitTest
         assertThat(
                 tags.get(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getTag()),
                 is(equalTo(CommonAlertTag.OWASP_2017_A09_VULN_COMP.getValue())));
+    }
+
+    @Test
+    void shouldHaveExpectedExampleAlert() {
+        // Given / When
+        List<Alert> alerts = rule.getExampleAlerts();
+        // Then
+        assertThat(alerts.size(), is(equalTo(1)));
+    }
+
+    @Test
+    @Override
+    public void shouldHaveValidReferences() {
+        super.shouldHaveValidReferences();
     }
 
     private HttpMessage httpMessage404NotFound() throws Exception {
