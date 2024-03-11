@@ -21,8 +21,6 @@ package org.zaproxy.zap.extension.quickstart;
 
 import java.awt.GridBagConstraints;
 import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -55,20 +53,12 @@ public abstract class QuickStartSubPanel extends QuickStartBackgroundPanel {
         this.setScrollableHeightHint(ScrollableSizeHint.PREFERRED_STRETCH);
         this.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.RAISED));
 
-        JPanel topPanel = new QuickStartBackgroundPanel();
-        topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
-        topPanel.add(getBackButton());
-        JLabel topTitle = new JLabel(Constant.messages.getString(this.getTitleKey()));
-        topTitle.setBackground(topPanel.getBackground());
-        topTitle.setFont(FontUtils.getFont(Size.much_larger));
-        topPanel.add(Box.createHorizontalGlue());
-        topPanel.add(topTitle);
-        topPanel.add(Box.createHorizontalGlue());
-
         int panelY = 0;
-        topPanel.add(new JLabel(this.getIcon()));
         this.add(
-                topPanel,
+                new TitlePanel(
+                        Constant.messages.getString("quickstart.top.panel.title"),
+                        getBackButton(),
+                        getIcon()),
                 LayoutHelper.getGBC(0, panelY, 2, 1.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
 
         this.add(

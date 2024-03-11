@@ -45,7 +45,6 @@ public class LearnMorePanel extends QuickStartSubPanel {
     private static final String WEBSITE_LINK = "https://www.zaproxy.org/";
     private static final String FAQ_LINK = "https://www.zaproxy.org/faq/";
     private static final String GETTING_STARTED_LINK = "https://www.zaproxy.org/getting-started/";
-    private static final String USER_GROUP_LINK = "https://groups.google.com/group/zaproxy-users";
     private static final String USER_GUIDE_LINK = "https://www.zaproxy.org/docs/desktop/";
     private static final String ZAP_VIDEOS_LINK = "https://www.zaproxy.org/videos/";
     private static final String ZAP_AUTOMATE_LINK = "https://www.zaproxy.org/docs/automate/";
@@ -239,10 +238,6 @@ public class LearnMorePanel extends QuickStartSubPanel {
                                 DisplayUtils.getScaledInsets(5, 5, 5, 5)));
                 // TODO move link if/when we detect the add-on is installed
             }
-            contentPanel.add(
-                    getOnlineLink("quickstart.link.usergroup", USER_GROUP_LINK),
-                    LayoutHelper.getGBC(
-                            1, ++formPanelY, 1, 0.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
             contentPanel.add(
                     getOnlineLink("quickstart.link.faq", FAQ_LINK),
                     LayoutHelper.getGBC(

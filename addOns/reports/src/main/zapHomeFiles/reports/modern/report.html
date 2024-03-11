@@ -66,6 +66,12 @@
 					<th:block th:text="#{report.zapVersion(${zapVersion})}">ZAP Version</th:block>
 				</h3>
 
+				<h4>
+					ZAP is supported by the <a
+						href="https://crashoverride.com/open-source">Crash Override
+						Open Source Fellowship</a>
+				</h4>
+
 				<th:block th:if="${reportData.isIncludeSection('chart')}">
 					<!--  Hidden divs just to allow us to get hold of the right CSS colors -->
 					<div class="risk-3-chart" style="display: none;"></div>

@@ -49,6 +49,11 @@
 	<h3>
 		<th:block th:text="#{report.zapVersion(${zapVersion})}">ZAP Version</th:block>
 	</h3>
+	<h4>
+		ZAP is supported by the <a
+			href="https://crashoverride.com/open-source">Crash Override Open
+			Source Fellowship</a>
+	</h4>
 	<th:block th:if="${reportData.isIncludeSection('chart')}">
 		<canvas id="summaryChart" width="550" height="300"
 			style="border: 1px solid"></canvas>
