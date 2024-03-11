@@ -6,7 +6,7 @@
 <toc version="2.0">
     <tocitem text="ZAP User Guide" tocid="toplevelitem">
         <tocitem text="Add Ons" tocid="addons">
-            <tocitem text="Grpc Support" image="addon.grpc.icon" target="addon.grpc"/>
+            <tocitem text="gRPC Support" image="addon.grpc.icon" target="addon.grpc"/>
         </tocitem>
     </tocitem>
 </toc>

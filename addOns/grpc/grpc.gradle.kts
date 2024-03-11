@@ -1,7 +1,7 @@
-description = "Inspect, attack Grpc endpoints and Decode protobuf message."
+description = "Inspect, attack gRPC endpoints, and decode protobuf messages."
 
 zapAddOn {
-    addOnName.set("Grpc Support")
+    addOnName.set("gRPC Support")
     zapVersion.set("2.14.0")
 
     manifest {
