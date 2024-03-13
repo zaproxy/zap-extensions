@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [44] - 2024-03-13
 ### Added
 - Support panel.
 
@@ -234,6 +234,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[44]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v42
 [41]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v41
