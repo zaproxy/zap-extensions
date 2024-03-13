@@ -4,9 +4,13 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Support panel.
+
 ### Changed
 - Maintenance changes.
 - Dropped "to Clipboard" from ZAP copy menu items and buttons (Issue 8179).
+- Panels to include OSF image and link.
 
 ## [43] - 2023-10-12
 ### Changed
