@@ -8,6 +8,10 @@ zapAddOn {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/grpc-support/")
     }
+
+    apiClientGen {
+        messages.set(file("src/main/resources/org/zaproxy/addon/grpc/resources/Messages.properties"))
+    }
 }
 
 crowdin {

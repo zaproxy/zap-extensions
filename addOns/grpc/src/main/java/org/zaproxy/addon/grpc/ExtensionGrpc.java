@@ -22,10 +22,16 @@ package org.zaproxy.addon.grpc;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionGrpc extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionGrpc";
+
+    private ZapMenuItem protoBufToolsMenuItem;
+
+    private ProtoBufEditorDialog protoBufEditorDialog;
 
     public ExtensionGrpc() {
         super(NAME);
@@ -34,6 +40,27 @@ public class ExtensionGrpc extends ExtensionAdaptor {
     @Override
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
+        if (hasView()) {
+            extensionHook.getHookMenu().addToolsMenuItem(getProtoBufToolsMenuItem());
+        }
+    }
+
+    private ZapMenuItem getProtoBufToolsMenuItem() {
+        if (protoBufToolsMenuItem == null) {
+            protoBufToolsMenuItem = new ZapMenuItem("grpc.tools.menu.encdec");
+            protoBufToolsMenuItem.setToolTipText(
+                    Constant.messages.getString("grpc.tools.menu.encdec.tooltip"));
+            protoBufToolsMenuItem.addActionListener(e -> getProtoBufEditorDialog());
+        }
+        return protoBufToolsMenuItem;
+    }
+
+    private void getProtoBufEditorDialog() {
+        if (protoBufEditorDialog == null) {
+            protoBufEditorDialog =
+                    new ProtoBufEditorDialog(View.getSingleton().getMainFrame(), true);
+        }
+        protoBufEditorDialog.setVisible(true);
     }
 
     @Override
