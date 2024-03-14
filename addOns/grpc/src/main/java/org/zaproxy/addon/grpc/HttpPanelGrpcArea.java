@@ -27,8 +27,6 @@ import org.zaproxy.zap.extension.search.SearchMatch;
 
 public class HttpPanelGrpcArea extends HttpPanelSyntaxHighlightTextArea {
 
-    private static final long serialVersionUID = 1L;
-
     public HttpPanelGrpcArea() {
         setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_NONE);
         addSyntaxStyle("grpc", SyntaxConstants.SYNTAX_STYLE_NONE);

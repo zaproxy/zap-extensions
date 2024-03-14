@@ -58,8 +58,8 @@ public class ExtensionGrpc extends ExtensionAdaptor {
     }
 
     @Override
-    public void unload(){
-        if(hasView()){
+    public void unload() {
+        if (hasView()) {
             HttpPanelManager panelManager = HttpPanelManager.getInstance();
             // remove views and their factories
             panelManager.removeRequestViewFactory(

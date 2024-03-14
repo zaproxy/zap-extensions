@@ -20,22 +20,16 @@
 package org.zaproxy.addon.grpc;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import org.apache.commons.configuration.FileConfiguration;
 import org.fife.ui.rtextarea.RTextScrollPane;
-import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.httppanel.view.AbstractStringHttpPanelViewModel;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelView;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelViewModel;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelViewModelEvent;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelViewModelListener;
-import org.zaproxy.zap.extension.httppanel.view.impl.models.http.request.RequestBodyStringHttpPanelViewModel;
-import org.zaproxy.zap.extension.httppanel.view.impl.models.http.response.ResponseBodyStringHttpPanelViewModel;
 
 public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListener {
 
@@ -92,7 +86,7 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
 
     @Override
     public boolean isEnabled(Message message) {
-        //todo: check for grpc string body type
+        // todo: check for grpc string body type
         return true;
     }
 
@@ -123,8 +117,8 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
 
     @Override
     public void save() {
-        // this.model.setData(httpPanelGrpcArea.getText());
         // todo: encode before saving
+        // this.model.setData(httpPanelGrpcArea.getText());
     }
 
     @Override
