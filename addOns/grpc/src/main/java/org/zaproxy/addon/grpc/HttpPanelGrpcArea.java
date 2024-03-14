@@ -25,6 +25,7 @@ import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.zaproxy.zap.extension.httppanel.view.syntaxhighlight.HttpPanelSyntaxHighlightTextArea;
 import org.zaproxy.zap.extension.search.SearchMatch;
 
+@SuppressWarnings("serial")
 public class HttpPanelGrpcArea extends HttpPanelSyntaxHighlightTextArea {
 
     public HttpPanelGrpcArea() {

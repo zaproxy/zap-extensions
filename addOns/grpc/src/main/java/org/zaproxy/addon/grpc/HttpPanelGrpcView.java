@@ -31,7 +31,6 @@ import org.zaproxy.zap.extension.httppanel.view.HttpPanelViewModel;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelViewModelEvent;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelViewModelListener;
 
-@SuppressWarnings("serial")
 public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListener {
 
     /**
