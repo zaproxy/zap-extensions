@@ -22,7 +22,12 @@ package org.zaproxy.addon.grpc;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
-import org.parosproxy.paros.view.View;
+import org.zaproxy.zap.extension.httppanel.component.split.request.RequestSplitComponent;
+import org.zaproxy.zap.extension.httppanel.component.split.response.ResponseSplitComponent;
+import org.zaproxy.zap.extension.httppanel.view.HttpPanelView;
+import org.zaproxy.zap.extension.httppanel.view.impl.models.http.request.RequestBodyStringHttpPanelViewModel;
+import org.zaproxy.zap.extension.httppanel.view.impl.models.http.response.ResponseBodyStringHttpPanelViewModel;
+import org.zaproxy.zap.view.HttpPanelManager;
 import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionGrpc extends ExtensionAdaptor {
@@ -30,8 +35,6 @@ public class ExtensionGrpc extends ExtensionAdaptor {
     public static final String NAME = "ExtensionGrpc";
 
     private ZapMenuItem protoBufToolsMenuItem;
-
-    private ProtoBufEditorDialog protoBufEditorDialog;
 
     public ExtensionGrpc() {
         super(NAME);
@@ -41,31 +44,38 @@ public class ExtensionGrpc extends ExtensionAdaptor {
     public void hook(ExtensionHook extensionHook) {
         super.hook(extensionHook);
         if (hasView()) {
-            extensionHook.getHookMenu().addToolsMenuItem(getProtoBufToolsMenuItem());
+            HttpPanelManager panelManager = HttpPanelManager.getInstance();
+            panelManager.addRequestViewFactory(
+                    RequestSplitComponent.NAME, new RequestGrpcViewFactory());
+            panelManager.addResponseViewFactory(
+                    ResponseSplitComponent.NAME, new ResponseGrpcViewFactory());
         }
-    }
-
-    private ZapMenuItem getProtoBufToolsMenuItem() {
-        if (protoBufToolsMenuItem == null) {
-            protoBufToolsMenuItem = new ZapMenuItem("grpc.tools.menu.encdec");
-            protoBufToolsMenuItem.setToolTipText(
-                    Constant.messages.getString("grpc.tools.menu.encdec.tooltip"));
-            protoBufToolsMenuItem.addActionListener(e -> getProtoBufEditorDialog());
-        }
-        return protoBufToolsMenuItem;
-    }
-
-    private void getProtoBufEditorDialog() {
-        if (protoBufEditorDialog == null) {
-            protoBufEditorDialog =
-                    new ProtoBufEditorDialog(View.getSingleton().getMainFrame(), true);
-        }
-        protoBufEditorDialog.setVisible(true);
     }
 
     @Override
     public boolean canUnload() {
         return true;
+    }
+
+    @Override
+    public void unload(){
+        if(hasView()){
+            HttpPanelManager panelManager = HttpPanelManager.getInstance();
+            // remove views and their factories
+            panelManager.removeRequestViewFactory(
+                    RequestSplitComponent.NAME, RequestGrpcViewFactory.NAME);
+            panelManager.removeRequestViews(
+                    RequestSplitComponent.NAME,
+                    HttpPanelGrpcView.NAME,
+                    RequestSplitComponent.ViewComponent.BODY);
+            panelManager.removeResponseViewFactory(
+                    ResponseSplitComponent.NAME, ResponseGrpcViewFactory.NAME);
+            panelManager.removeResponseViews(
+                    ResponseSplitComponent.NAME,
+                    HttpPanelGrpcView.NAME,
+                    ResponseSplitComponent.ViewComponent.BODY);
+        }
+        super.unload();
     }
 
     @Override
@@ -76,5 +86,45 @@ public class ExtensionGrpc extends ExtensionAdaptor {
     @Override
     public String getDescription() {
         return Constant.messages.getString("grpc.desc");
+    }
+
+    private static final class ResponseGrpcViewFactory
+            implements HttpPanelManager.HttpPanelViewFactory {
+        public static final String NAME = "ResponseGrpcViewFactory";
+
+        @Override
+        public String getName() {
+            return NAME;
+        }
+
+        @Override
+        public HttpPanelView getNewView() {
+            return new HttpPanelGrpcView(new ResponseBodyStringHttpPanelViewModel());
+        }
+
+        @Override
+        public Object getOptions() {
+            return ResponseSplitComponent.ViewComponent.BODY;
+        }
+    }
+
+    private static final class RequestGrpcViewFactory
+            implements HttpPanelManager.HttpPanelViewFactory {
+        public static final String NAME = "RequestGrpcViewFactory";
+
+        @Override
+        public String getName() {
+            return NAME;
+        }
+
+        @Override
+        public HttpPanelView getNewView() {
+            return new HttpPanelGrpcView(new RequestBodyStringHttpPanelViewModel());
+        }
+
+        @Override
+        public Object getOptions() {
+            return RequestSplitComponent.ViewComponent.BODY;
+        }
     }
 }

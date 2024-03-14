@@ -8,6 +8,10 @@ zapAddOn {
         author.set("ZAP Dev Team")
         url.set("https://www.zaproxy.org/docs/desktop/addons/grpc-support/")
     }
+
+    dependencies {
+        testImplementation(project(":testutils"))
+    }
 }
 
 crowdin {
