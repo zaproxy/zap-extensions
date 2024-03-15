@@ -17,15 +17,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.grpc;
+package org.zaproxy.addon.grpc.internal;
 
 import java.awt.BorderLayout;
+import java.util.Arrays;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import org.apache.commons.configuration.FileConfiguration;
 import org.fife.ui.rtextarea.RTextScrollPane;
+import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.extension.httppanel.Message;
-import org.zaproxy.zap.extension.httppanel.view.AbstractStringHttpPanelViewModel;
+import org.zaproxy.zap.extension.httppanel.view.AbstractByteHttpPanelViewModel;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelView;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelViewModel;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelViewModelEvent;
@@ -33,21 +35,16 @@ import org.zaproxy.zap.extension.httppanel.view.HttpPanelViewModelListener;
 
 public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListener {
 
-    /**
-     * Default name used for {@code MessageContainer}.
-     *
-     * @see org.zaproxy.zap.view.messagecontainer.MessageContainer
-     */
     public static final String NAME = "HttpPanelGrpcView";
 
-    private static final String CAPTION_NAME = "GRPC";
+    private static final String CAPTION_NAME = Constant.messages.getString("grpc.panel.view.name");
 
     private HttpPanelGrpcArea httpPanelGrpcArea;
     private JPanel mainPanel;
 
-    private AbstractStringHttpPanelViewModel model;
+    private AbstractByteHttpPanelViewModel model;
 
-    public HttpPanelGrpcView(AbstractStringHttpPanelViewModel model) {
+    public HttpPanelGrpcView(AbstractByteHttpPanelViewModel model) {
         httpPanelGrpcArea = new HttpPanelGrpcArea();
         RTextScrollPane scrollPane = new RTextScrollPane(httpPanelGrpcArea);
         scrollPane.setLineNumbersEnabled(false);
@@ -132,7 +129,7 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
 
     @Override
     public void dataChanged(HttpPanelViewModelEvent e) {
-        String body = ((AbstractStringHttpPanelViewModel) e.getSource()).getData();
+        String body = Arrays.toString(((AbstractByteHttpPanelViewModel) e.getSource()).getData());
         // todo: decode before showing
         httpPanelGrpcArea.setText(body);
 

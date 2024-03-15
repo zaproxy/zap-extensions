@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.grpc;
+package org.zaproxy.addon.grpc.internal;
 
 import java.util.List;
 import java.util.regex.Pattern;

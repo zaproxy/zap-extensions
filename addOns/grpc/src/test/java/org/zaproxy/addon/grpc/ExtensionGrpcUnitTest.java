@@ -26,17 +26,17 @@ import org.junit.jupiter.api.Test;
 import org.parosproxy.paros.Constant;
 import org.zaproxy.zap.testutils.TestUtils;
 
-public class ExtensionGrpcUnitTest extends TestUtils {
-    ExtensionGrpc extensionGrpc;
+class ExtensionGrpcUnitTest extends TestUtils {
+    private ExtensionGrpc extensionGrpc;
 
     @BeforeEach
-    public void setup() throws Exception {
+    void setup() throws Exception {
         extensionGrpc = new ExtensionGrpc();
         mockMessages(extensionGrpc);
     }
 
     @Test
-    void checkNameDescExtension() {
+    void shouldHaveNameAndDescription() {
         assertEquals(Constant.messages.getString("grpc.name"), extensionGrpc.getUIName());
         assertEquals(Constant.messages.getString("grpc.desc"), extensionGrpc.getDescription());
     }

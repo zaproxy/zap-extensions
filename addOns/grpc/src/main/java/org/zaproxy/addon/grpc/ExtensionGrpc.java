@@ -22,19 +22,17 @@ package org.zaproxy.addon.grpc;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
+import org.zaproxy.addon.grpc.internal.HttpPanelGrpcView;
 import org.zaproxy.zap.extension.httppanel.component.split.request.RequestSplitComponent;
 import org.zaproxy.zap.extension.httppanel.component.split.response.ResponseSplitComponent;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelView;
-import org.zaproxy.zap.extension.httppanel.view.impl.models.http.request.RequestBodyStringHttpPanelViewModel;
-import org.zaproxy.zap.extension.httppanel.view.impl.models.http.response.ResponseBodyStringHttpPanelViewModel;
+import org.zaproxy.zap.extension.httppanel.view.impl.models.http.request.RequestBodyByteHttpPanelViewModel;
+import org.zaproxy.zap.extension.httppanel.view.impl.models.http.response.ResponseBodyByteHttpPanelViewModel;
 import org.zaproxy.zap.view.HttpPanelManager;
-import org.zaproxy.zap.view.ZapMenuItem;
 
 public class ExtensionGrpc extends ExtensionAdaptor {
 
     public static final String NAME = "ExtensionGrpc";
-
-    private ZapMenuItem protoBufToolsMenuItem;
 
     public ExtensionGrpc() {
         super(NAME);
@@ -75,7 +73,6 @@ public class ExtensionGrpc extends ExtensionAdaptor {
                     HttpPanelGrpcView.NAME,
                     ResponseSplitComponent.ViewComponent.BODY);
         }
-        super.unload();
     }
 
     @Override
@@ -99,7 +96,7 @@ public class ExtensionGrpc extends ExtensionAdaptor {
 
         @Override
         public HttpPanelView getNewView() {
-            return new HttpPanelGrpcView(new ResponseBodyStringHttpPanelViewModel());
+            return new HttpPanelGrpcView(new ResponseBodyByteHttpPanelViewModel());
         }
 
         @Override
@@ -119,7 +116,7 @@ public class ExtensionGrpc extends ExtensionAdaptor {
 
         @Override
         public HttpPanelView getNewView() {
-            return new HttpPanelGrpcView(new RequestBodyStringHttpPanelViewModel());
+            return new HttpPanelGrpcView(new RequestBodyByteHttpPanelViewModel());
         }
 
         @Override
