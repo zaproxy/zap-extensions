@@ -28,6 +28,7 @@ import java.net.PasswordAuthentication;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.zaproxy.addon.network.common.HttpProxy;
 
 /** Unit test for {@link HttpProxy}. */
 class HttpProxyUnitTest {

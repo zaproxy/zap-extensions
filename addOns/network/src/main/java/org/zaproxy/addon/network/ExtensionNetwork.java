@@ -92,6 +92,7 @@ import org.parosproxy.paros.network.HttpSender;
 import org.parosproxy.paros.view.OptionsDialog;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.network.LocalServersOptions.ServersChangedListener;
+import org.zaproxy.addon.network.common.HttpProxy;
 import org.zaproxy.addon.network.internal.ContentEncodingsHandler;
 import org.zaproxy.addon.network.internal.TlsUtils;
 import org.zaproxy.addon.network.internal.cert.CertData;
@@ -100,7 +101,6 @@ import org.zaproxy.addon.network.internal.cert.GenerationException;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateGenerator;
 import org.zaproxy.addon.network.internal.cert.ServerCertificateService;
 import org.zaproxy.addon.network.internal.client.CloseableHttpSenderImpl;
-import org.zaproxy.addon.network.internal.client.HttpProxy;
 import org.zaproxy.addon.network.internal.client.LegacyUtils;
 import org.zaproxy.addon.network.internal.client.ZapAuthenticator;
 import org.zaproxy.addon.network.internal.client.ZapProxySelector;
@@ -296,6 +296,31 @@ public class ExtensionNetwork extends ExtensionAdaptor implements CommandLineLis
 
     ConnectionOptions getConnectionOptions() {
         return connectionOptions;
+    }
+
+    /**
+     * Gets the HTTP proxy.
+     *
+     * @return the HTTP proxy, never {@code null}.
+     * @since 0.15.0
+     */
+    public HttpProxy getHttpProxy() {
+        return getConnectionOptions().getHttpProxy();
+    }
+
+    /**
+     * Sets the specified HTTP proxy.
+     *
+     * @param httpProxy the HTTP proxy.
+     * @throws NullPointerException if the given {@code httpProxy} is {@code null}.
+     * @since 0.15.0
+     */
+    public void setHttpProxy(HttpProxy proxy) {
+        getConnectionOptions().setHttpProxy(proxy);
+    }
+
+    public void setHttpProxyEnabled(boolean enabled) {
+        getConnectionOptions().setHttpProxyEnabled(enabled);
     }
 
     ClientCertificatesOptions getClientCertificatesOptions() {

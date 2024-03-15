@@ -15,6 +15,9 @@ zapAddOn {
                 register("commonlib") {
                     version.set(">= 1.17.0 & < 2.0.0")
                 }
+                register("network") {
+                    version.set(">= 0.15.0 & < 1.0.0")
+                }
             }
         }
     }
@@ -35,6 +38,7 @@ crowdin {
 
 dependencies {
     zapAddOn("commonlib")
+    zapAddOn("network")
 
     testImplementation(project(":testutils"))
 }

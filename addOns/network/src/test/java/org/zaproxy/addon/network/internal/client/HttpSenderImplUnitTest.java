@@ -103,6 +103,7 @@ import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpSender;
 import org.zaproxy.addon.network.ClientCertificatesOptions;
 import org.zaproxy.addon.network.ConnectionOptions;
+import org.zaproxy.addon.network.common.HttpProxy;
 import org.zaproxy.addon.network.common.ZapSocketTimeoutException;
 import org.zaproxy.addon.network.common.ZapUnknownHostException;
 import org.zaproxy.addon.network.internal.client.apachev5.HttpSenderApache;

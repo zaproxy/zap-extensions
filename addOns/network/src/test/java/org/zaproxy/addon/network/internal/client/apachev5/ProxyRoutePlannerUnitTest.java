@@ -34,7 +34,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.parosproxy.paros.network.HttpHeader;
 import org.zaproxy.addon.network.ConnectionOptions;
-import org.zaproxy.addon.network.internal.client.HttpProxy;
+import org.zaproxy.addon.network.common.HttpProxy;
 
 /** Unit test for  {@link ProxyRoutePlanner}. */
 class ProxyRoutePlannerUnitTest {
