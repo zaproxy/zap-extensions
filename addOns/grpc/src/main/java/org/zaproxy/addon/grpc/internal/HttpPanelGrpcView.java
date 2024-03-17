@@ -20,7 +20,9 @@
 package org.zaproxy.addon.grpc.internal;
 
 import java.awt.BorderLayout;
-import java.util.Arrays;
+import java.awt.Color;
+import java.util.Base64;
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import org.apache.commons.configuration.FileConfiguration;
@@ -42,6 +44,7 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
     private HttpPanelGrpcArea httpPanelGrpcArea;
     private JPanel mainPanel;
 
+    private ProtoBufMessageDecoder protoBufMessageDecoder;
     private AbstractByteHttpPanelViewModel model;
 
     public HttpPanelGrpcView(AbstractByteHttpPanelViewModel model) {
@@ -51,7 +54,8 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
         mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(scrollPane, BorderLayout.CENTER);
         this.model = model;
-        model.addHttpPanelViewModelListener(this);
+        this.model.addHttpPanelViewModelListener(this);
+        protoBufMessageDecoder = new ProtoBufMessageDecoder();
     }
 
     @Override
@@ -129,10 +133,20 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
 
     @Override
     public void dataChanged(HttpPanelViewModelEvent e) {
-        String body = Arrays.toString(((AbstractByteHttpPanelViewModel) e.getSource()).getData());
-        // todo: decode before showing
-        httpPanelGrpcArea.setText(body);
-
+        byte[] body = ((AbstractByteHttpPanelViewModel) e.getSource()).getData();
+        try {
+            body = Base64.getDecoder().decode(body);
+            byte[] payload = DecoderUtils.extractPayload(body);
+            if (payload.length == 0) {
+                httpPanelGrpcArea.setText("");
+            } else {
+                protoBufMessageDecoder.startDecoding(payload);
+                httpPanelGrpcArea.setText(protoBufMessageDecoder.getDecodedOuput());
+            }
+        } catch (Exception er) {
+            httpPanelGrpcArea.setText(er.getMessage());
+            httpPanelGrpcArea.setBorder(BorderFactory.createLineBorder(Color.RED));
+        }
         if (!isEditable()) {
             httpPanelGrpcArea.discardAllEdits();
         }
