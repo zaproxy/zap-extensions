@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Fixed
+- Handle alerts without HTTP message gracefully (Issue 6880).
 
 ## [0.30.0] - 2024-03-13
 ### Changed
