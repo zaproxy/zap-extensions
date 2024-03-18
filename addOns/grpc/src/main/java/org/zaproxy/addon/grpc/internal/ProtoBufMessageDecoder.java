@@ -43,32 +43,32 @@ public class ProtoBufMessageDecoder {
     public void startDecoding(byte[] inputEncodedData) {
         decodedToList.clear();
         decodedToString.setLength(0);
-        if (inputEncodedData.length == 0) {
+        if (inputEncodedData == null || inputEncodedData.length == 0) {
             return;
         }
         this.inputData = inputEncodedData;
         this.inputStream = CodedInputStream.newInstance(inputData);
         boolean check = true;
         while (check) {
-            decodeField();
             try {
+                decodeField();
                 if (inputStream.isAtEnd()) {
                     check = false;
                 }
             } catch (IOException e) {
+                decodedToString.setLength(0);
+                decodedToList.clear();
+                decodedToString.append(
+                        "Failed to decode protobuf message: The message format is invalid or corrupted.");
                 LOGGER.debug("Error while decoding the message", e.getMessage());
+                return;
             }
         }
     }
 
-    private void decodeField() {
+    private void decodeField() throws IOException {
         int tag;
-        try {
-            tag = inputStream.readTag();
-        } catch (IOException e) {
-            LOGGER.debug("Error while reading the Tag", e.getMessage());
-            return;
-        }
+        tag = inputStream.readTag();
 
         String decodedValue = DecoderUtils.decodeField(tag, inputStream);
 

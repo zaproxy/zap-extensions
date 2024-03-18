@@ -49,15 +49,13 @@ public class ProtoBufNestedMessageDecoder {
         int tag;
         try {
             tag = inputStream.readTag();
+            // field number 0 is reserved for error
+            if (tag >> 3 == 0) {
+                return "";
+            }
+            return DecoderUtils.decodeField(tag, inputStream);
         } catch (IOException e) {
             return "";
         }
-
-        // field number 0 is reserved for error
-        if (tag >> 3 == 0) {
-            return "";
-        }
-
-        return DecoderUtils.decodeField(tag, inputStream);
     }
 }

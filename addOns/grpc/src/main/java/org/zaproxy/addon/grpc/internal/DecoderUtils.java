@@ -73,72 +73,68 @@ public class DecoderUtils {
         return Arrays.copyOfRange(input, 5, input.length);
     }
 
-    public static String decodeField(int tag, CodedInputStream inputStream) {
+    public static String decodeField(int tag, CodedInputStream inputStream) throws IOException {
         String decodedValue = (tag >> 3) + ":";
         int wireType = (tag & 0x7);
-        try {
-            switch (wireType) {
-                case 0: // Varint
-                    long varintValue = inputStream.readRawVarint64();
-                    decodedValue += wireType + "::" + varintValue;
-                    break;
+        switch (wireType) {
+            case 0: // Varint
+                long varintValue = inputStream.readRawVarint64();
+                decodedValue += wireType + "::" + varintValue;
+                break;
 
-                case 1: // 64-bit
-                    long longValue = inputStream.readRawLittleEndian64();
-                    decodedValue += Integer.toString(wireType);
-                    if (DecoderUtils.isDouble(longValue)) {
-                        decodedValue += "D::" + Double.longBitsToDouble(longValue);
-                    } else {
-                        decodedValue += "::" + longValue;
-                    }
-                    break;
+            case 1: // 64-bit
+                long longValue = inputStream.readRawLittleEndian64();
+                decodedValue += Integer.toString(wireType);
+                if (DecoderUtils.isDouble(longValue)) {
+                    decodedValue += "D::" + Double.longBitsToDouble(longValue);
+                } else {
+                    decodedValue += "::" + longValue;
+                }
+                break;
 
-                case 5: // 32-bit
-                    decodedValue += Integer.toString(wireType);
-                    int intValue = inputStream.readRawLittleEndian32();
-                    if (DecoderUtils.isFloat(intValue)) {
-                        decodedValue += "F::" + Float.intBitsToFloat(intValue);
-                    } else {
-                        decodedValue += "::" + intValue;
-                    }
-                    break;
+            case 5: // 32-bit
+                decodedValue += Integer.toString(wireType);
+                int intValue = inputStream.readRawLittleEndian32();
+                if (DecoderUtils.isFloat(intValue)) {
+                    decodedValue += "F::" + Float.intBitsToFloat(intValue);
+                } else {
+                    decodedValue += "::" + intValue;
+                }
+                break;
 
-                case 2: // Length-Prefixed string
-                    decodedValue += Integer.toString(wireType);
-                    String decoded = inputStream.readStringRequireUtf8();
-                    byte[] stringBytes = decoded.getBytes();
-                    // assume wire type 2 as Nested Message
-                    // child nested message , recursively check each nestedMessage field
-                    // if not able to successfully decode as NestedMessage field, then consider it
-                    // as string
-                    // still need to check for packed repeated fields
-                    String validMessage = checkNestedMessage(stringBytes);
-                    if (validMessage.isEmpty()) {
-                        // not a nested message check for printable characters
-                        int unprintable = 0;
-                        int runes = stringBytes.length;
-                        for (byte stringByte : stringBytes) {
-                            if (!DecoderUtils.isGraphic(stringByte)) {
-                                unprintable++;
-                            }
+            case 2: // Length-Prefixed string
+                decodedValue += Integer.toString(wireType);
+                String decoded = inputStream.readStringRequireUtf8();
+                byte[] stringBytes = decoded.getBytes();
+                // assume wire type 2 as Nested Message
+                // child nested message , recursively check each nestedMessage field
+                // if not able to successfully decode as NestedMessage field, then consider it
+                // as string
+                // still need to check for packed repeated fields
+                String validMessage = checkNestedMessage(stringBytes);
+                if (validMessage.isEmpty()) {
+                    // not a nested message check for printable characters
+                    int unprintable = 0;
+                    int runes = stringBytes.length;
+                    for (byte stringByte : stringBytes) {
+                        if (!DecoderUtils.isGraphic(stringByte)) {
+                            unprintable++;
                         }
+                    }
 
-                        // assume not a human readable string
-                        // decode it as hex values
-                        if ((double) unprintable / runes > 0.3) {
-                            decodedValue += "B::" + DecoderUtils.toHexString(stringBytes);
-                        } else {
-                            decodedValue += "::" + decoded;
-                        }
-                    } else decodedValue += "N::" + validMessage;
+                    // assume not a human readable string
+                    // decode it as hex values
+                    if ((double) unprintable / runes > 0.3) {
+                        decodedValue += "B::" + DecoderUtils.toHexString(stringBytes);
+                    } else {
+                        decodedValue += "::" + decoded;
+                    }
+                } else decodedValue += "N::" + validMessage;
 
-                    break;
+                break;
 
-                default:
-                    return "";
-            }
-        } catch (IOException e) {
-            return "";
+            default:
+                return "";
         }
         return decodedValue;
     }
