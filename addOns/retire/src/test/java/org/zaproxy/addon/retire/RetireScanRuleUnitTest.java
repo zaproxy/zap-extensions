@@ -110,6 +110,19 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
                 alertsRaised.get(0).getReference());
     }
 
+    @Test
+    void shouldNotRaiseAlertOnUrlWithNonVersionIdentifier() {
+        // Given
+        HttpMessage msg =
+                createMessage("http://example.com/ajax/libs/000-000-0000-00/lodash.min.js", null);
+        msg.getResponseHeader().setHeader(HttpFieldsNames.CONTENT_TYPE, "text/javascript");
+        given(passiveScanData.isPage200(any())).willReturn(true);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(0, alertsRaised.size());
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"jquery-3.1.1.min.js", "jquery-3_1_1.min.js", "jquery-3-1-1.min.js"})
     void shouldRaiseAlertOnVulnerableFilename(String fileName) {
@@ -125,6 +138,19 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         assertEquals(
                 "https://blog.jquery.com/2020/04/10/jquery-3-5-0-released/\n",
                 alertsRaised.get(0).getReference());
+    }
+
+    @Test
+    void shouldNotRaiseAlertOnFilenameWithNonVersionIdentifier() {
+        // Given
+        String fileName = "npm.moment.7a06f256.js";
+        HttpMessage msg = createMessage("http://example.com/CommonElements/js/" + fileName, null);
+        msg.getResponseHeader().setHeader(HttpFieldsNames.CONTENT_TYPE, "text/javascript");
+        given(passiveScanData.isPage200(any())).willReturn(true);
+        // When
+        scanHttpResponseReceive(msg);
+        // Then
+        assertEquals(0, alertsRaised.size());
     }
 
     @Test
