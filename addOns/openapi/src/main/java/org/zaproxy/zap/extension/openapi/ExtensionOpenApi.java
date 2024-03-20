@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import org.apache.commons.httpclient.URI;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.CommandLine;
@@ -343,9 +344,13 @@ public class ExtensionOpenApi extends ExtensionAdaptor implements CommandLineLis
                 throw new InvalidDefinitionException();
             }
 
+            String openApiString = FileUtils.readFileToString(file, "UTF-8");
+
             List<String> errors =
                     importOpenApiDefinition(
-                            Json.pretty(openApi),
+                            !openApiString.contains("openapi:") || openApiString.contains(".yaml#")
+                                    ? Json.pretty(openApi)
+                                    : openApiString,
                             targetUrl,
                             null,
                             initViaUi,
