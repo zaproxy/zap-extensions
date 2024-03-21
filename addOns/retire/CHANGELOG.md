@@ -4,13 +4,12 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Fixed
+- Version matching was improved to address some false positives (Issue 8384 & 8398).
 
 ## [0.32.0] - 2024-03-04
 ### Changed
 - Updated with upstream retire.js pattern changes.
-
-
 
 ## [0.31.0] - 2024-02-12
 ### Changed
