@@ -25,11 +25,11 @@
                             "param": "[(${helper.legacyEscapeTextAlertParam(instance, true)})]",
                             "attack": "[(${helper.legacyEscapeText(instance.attack, true)})]",
                             "evidence": "[(${helper.legacyEscapeText(instance.evidence, true)})]",
-                            "otherinfo": "[(${helper.legacyEscapeText(instance.otherinfo, true)})]",
+                            "otherinfo": "[(${helper.legacyEscapeText(instance.otherinfo, true)})]"[#th:block th:if="${instance.message}"],
                             "request-header": "[(${helper.legacyEscapeText(instance.message.requestHeader, true)})]",
                             "request-body": "[(${helper.legacyEscapeText(instance.message.requestBody, true)})]",
                             "response-header": "[(${helper.legacyEscapeText(instance.message.responseHeader, true)})]",
-                            "response-body": "[(${helper.legacyEscapeText(instance.message.responseBody, true)})]"
+                            "response-body": "[(${helper.legacyEscapeText(instance.message.responseBody, true)})]"[/th:block]
                         }[/th:block]
                     ],
                     "count": "[(${instances.size})]",
