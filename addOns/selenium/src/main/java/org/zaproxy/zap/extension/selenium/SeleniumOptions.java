@@ -56,6 +56,7 @@ import org.zaproxy.zap.extension.selenium.internal.BrowserArgument;
  *   <li>The path to Firefox binary;
  *   <li>The path to Firefox driver (geckodriver);
  *   <li>The path to PhantomJS binary.
+ *   <li>stealth
  * </ul>
  */
 public class SeleniumOptions extends VersionedAbstractParam {
@@ -110,6 +111,8 @@ public class SeleniumOptions extends VersionedAbstractParam {
     private static final String CONFIRM_REMOVE_BROWSER_ARG =
             SELENIUM_BASE_KEY + ".confirmRemoveBrowserArg";
 
+    private static final String STEALTH = SELENIUM_BASE_KEY + ".stealth";
+
     /** The configuration key to read/write the path to ChromeDriver. */
     private static final String CHROME_DRIVER_KEY = SELENIUM_BASE_KEY + ".chromeDriver";
 
@@ -149,6 +152,8 @@ public class SeleniumOptions extends VersionedAbstractParam {
 
     private Map<String, List<BrowserArgument>> browserArguments = new HashMap<>();
     private boolean confirmRemoveBrowserArgument = true;
+
+    private boolean stealth = false;
 
     public SeleniumOptions() {
         extensionsDir = new File(Constant.getZapHome() + "/selenium/extensions/");
@@ -200,6 +205,8 @@ public class SeleniumOptions extends VersionedAbstractParam {
         browserArguments.put(Browser.FIREFOX.getId(), readBrowserArguments(FIREFOX_ARGS_KEY));
 
         confirmRemoveBrowserArgument = getBoolean(CONFIRM_REMOVE_BROWSER_ARG, true);
+
+        stealth = getBoolean(STEALTH, false);
     }
 
     /**
@@ -542,6 +549,15 @@ public class SeleniumOptions extends VersionedAbstractParam {
 
     boolean isConfirmRemoveBrowserArgument() {
         return confirmRemoveBrowserArgument;
+    }
+
+    void setStealth(boolean stealth) {
+        this.stealth = stealth;
+        getConfig().setProperty(STEALTH, this.stealth);
+    }
+
+    boolean isStealth() {
+        return stealth;
     }
 
     List<BrowserArgument> getBrowserArguments(String browser) {
