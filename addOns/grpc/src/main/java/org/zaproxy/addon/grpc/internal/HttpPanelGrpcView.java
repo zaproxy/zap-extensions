@@ -54,7 +54,7 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
         mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(scrollPane, BorderLayout.CENTER);
         this.model = model;
-        this.model.addHttpPanelViewModelListener(this);
+        model.addHttpPanelViewModelListener(this);
         protoBufMessageDecoder = new ProtoBufMessageDecoder();
     }
 
@@ -140,12 +140,13 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
             if (payload.length == 0) {
                 httpPanelGrpcArea.setText("");
             } else {
-                protoBufMessageDecoder.startDecoding(payload);
+                protoBufMessageDecoder.decode(payload);
                 httpPanelGrpcArea.setText(protoBufMessageDecoder.getDecodedOuput());
             }
         } catch (Exception er) {
             httpPanelGrpcArea.setText(er.getMessage());
             httpPanelGrpcArea.setBorder(BorderFactory.createLineBorder(Color.RED));
+            httpPanelGrpcArea.setBorder(null);
         }
         if (!isEditable()) {
             httpPanelGrpcArea.discardAllEdits();

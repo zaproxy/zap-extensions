@@ -25,6 +25,15 @@ import java.util.Arrays;
 
 public class DecoderUtils {
 
+    public static final int PAYLOAD_HEADER_SIZE = 5;
+
+    public static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
+
+    public static final int VARINT_WIRE_TYPE = 0;
+    public static final int BIT64_WIRE_TYPE = 1;
+    public static final int LENGTH_DELIMITED_WIRE_TYPE = 2;
+    public static final int BIT32_WIRE_TYPE = 5;
+
     static boolean isGraphic(byte ch) {
         // Check if the character is printable
         // Printable characters have unicode values greater than 32 (excluding control
@@ -33,7 +42,7 @@ public class DecoderUtils {
     }
 
     public static String toHexString(byte[] bytes) {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(2 * bytes.length);
         for (byte b : bytes) {
             sb.append(String.format("%02x", b & 0xFF));
         }
@@ -41,69 +50,66 @@ public class DecoderUtils {
     }
 
     public static boolean isFloat(int value) {
-        int bitLen = 32;
-        int expLen = 8;
-        int mantLen = bitLen - expLen - 1;
-        int exp = (value >> mantLen) & ((1 << expLen) - 1);
-        exp -= (1 << (expLen - 1)) - 1;
+        int mantLen = 23;
+        int exp = (value >> mantLen) & ((1 << 8) - 1);
+        exp -= (1 << (8 - 1)) - 1;
         if (exp < 0) {
             exp = -exp;
         }
-        int bigExp = (1 << (expLen - 1)) - 1;
+        int bigExp = (1 << (8 - 1)) - 1;
         return exp < bigExp;
     }
 
     public static boolean isDouble(long value) {
-        int bitLen = 64;
-        int expLen = 11;
-        int mantLen = bitLen - expLen - 1;
-        long exp = (value >> mantLen) & ((1 << expLen) - 1);
-        exp -= (1 << (expLen - 1)) - 1;
+        int mantLen = 52;
+        long exp = (value >> mantLen) & ((1 << 11) - 1);
+        exp -= (1 << (11 - 1)) - 1;
         if (exp < 0) {
             exp = -exp;
         }
-        int bigExp = (1 << (expLen - 1)) - 1;
+        int bigExp = (1 << (11 - 1)) - 1;
         return exp < bigExp;
     }
 
     public static byte[] extractPayload(byte[] input) {
-        if (input.length <= 5) {
-            return new byte[0];
+        if (input.length <= PAYLOAD_HEADER_SIZE) {
+            return EMPTY_BYTE_ARRAY;
         }
-        return Arrays.copyOfRange(input, 5, input.length);
+        return Arrays.copyOfRange(input, PAYLOAD_HEADER_SIZE, input.length);
     }
 
     public static String decodeField(int tag, CodedInputStream inputStream) throws IOException {
-        String decodedValue = (tag >> 3) + ":";
+        StringBuilder decodedValueBuilder = new StringBuilder();
+        decodedValueBuilder.append(tag >> 3).append(":");
         int wireType = (tag & 0x7);
         switch (wireType) {
-            case 0: // Varint
+            case VARINT_WIRE_TYPE:
                 long varintValue = inputStream.readRawVarint64();
-                decodedValue += wireType + "::" + varintValue;
+                decodedValueBuilder.append(wireType).append("::").append(varintValue);
                 break;
 
-            case 1: // 64-bit
+            case BIT64_WIRE_TYPE:
                 long longValue = inputStream.readRawLittleEndian64();
-                decodedValue += Integer.toString(wireType);
+                decodedValueBuilder.append(wireType);
                 if (DecoderUtils.isDouble(longValue)) {
-                    decodedValue += "D::" + Double.longBitsToDouble(longValue);
+                    decodedValueBuilder.append("D::").append(Double.longBitsToDouble(longValue));
                 } else {
-                    decodedValue += "::" + longValue;
+                    decodedValueBuilder.append("::").append(longValue);
                 }
                 break;
 
-            case 5: // 32-bit
-                decodedValue += Integer.toString(wireType);
+            case BIT32_WIRE_TYPE:
+                decodedValueBuilder.append(wireType);
                 int intValue = inputStream.readRawLittleEndian32();
                 if (DecoderUtils.isFloat(intValue)) {
-                    decodedValue += "F::" + Float.intBitsToFloat(intValue);
+                    decodedValueBuilder.append("F::").append(Float.intBitsToFloat(intValue));
                 } else {
-                    decodedValue += "::" + intValue;
+                    decodedValueBuilder.append("::").append(intValue);
                 }
                 break;
 
-            case 2: // Length-Prefixed string
-                decodedValue += Integer.toString(wireType);
+            case LENGTH_DELIMITED_WIRE_TYPE:
+                decodedValueBuilder.append(wireType);
                 String decoded = inputStream.readStringRequireUtf8();
                 byte[] stringBytes = decoded.getBytes();
                 // assume wire type 2 as Nested Message
@@ -125,23 +131,27 @@ public class DecoderUtils {
                     // assume not a human readable string
                     // decode it as hex values
                     if ((double) unprintable / runes > 0.3) {
-                        decodedValue += "B::" + DecoderUtils.toHexString(stringBytes);
+                        decodedValueBuilder
+                                .append("B::")
+                                .append(DecoderUtils.toHexString(stringBytes));
                     } else {
-                        decodedValue += "::" + decoded;
+                        decodedValueBuilder.append("::").append(decoded);
                     }
-                } else decodedValue += "N::" + validMessage;
+                } else {
+                    decodedValueBuilder.append("N::").append(validMessage);
+                }
 
                 break;
 
             default:
                 return "";
         }
-        return decodedValue;
+        return decodedValueBuilder.toString();
     }
 
     public static String checkNestedMessage(byte[] stringBytes) {
         ProtoBufNestedMessageDecoder protobufNestedMessageDecoder =
                 new ProtoBufNestedMessageDecoder();
-        return protobufNestedMessageDecoder.startDecoding(stringBytes);
+        return protobufNestedMessageDecoder.decode(stringBytes);
     }
 }

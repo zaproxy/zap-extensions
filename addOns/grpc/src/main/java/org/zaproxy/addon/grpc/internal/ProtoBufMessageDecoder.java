@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.parosproxy.paros.Constant;
 
 public class ProtoBufMessageDecoder {
 
@@ -40,7 +41,7 @@ public class ProtoBufMessageDecoder {
         this.decodedToString = new StringBuilder();
     }
 
-    public void startDecoding(byte[] inputEncodedData) {
+    public void decode(byte[] inputEncodedData) {
         decodedToList.clear();
         decodedToString.setLength(0);
         if (inputEncodedData == null || inputEncodedData.length == 0) {
@@ -48,18 +49,16 @@ public class ProtoBufMessageDecoder {
         }
         this.inputData = inputEncodedData;
         this.inputStream = CodedInputStream.newInstance(inputData);
-        boolean check = true;
-        while (check) {
+        while (true) {
             try {
                 decodeField();
                 if (inputStream.isAtEnd()) {
-                    check = false;
+                    break;
                 }
             } catch (IOException e) {
                 decodedToString.setLength(0);
                 decodedToList.clear();
-                decodedToString.append(
-                        "Failed to decode protobuf message: The message format is invalid or corrupted.");
+                decodedToString.append(Constant.messages.getString("grpc.decoder.error"));
                 LOGGER.debug("Error while decoding the message", e.getMessage());
                 return;
             }
@@ -67,13 +66,13 @@ public class ProtoBufMessageDecoder {
     }
 
     private void decodeField() throws IOException {
-        int tag;
-        tag = inputStream.readTag();
+
+        int tag = inputStream.readTag();
 
         String decodedValue = DecoderUtils.decodeField(tag, inputStream);
 
         decodedToList.add(decodedValue);
-        decodedToString.append(decodedValue).append("\n");
+        decodedToString.append(decodedValue).append('\n');
     }
 
     public String getDecodedOuput() {

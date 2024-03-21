@@ -24,33 +24,35 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Base64;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.zaproxy.addon.grpc.ExtensionGrpc;
+import org.zaproxy.zap.testutils.TestUtils;
 
-class ProtoBufMessageDecoderTest {
+class ProtoBufMessageDecoderUnitTest extends TestUtils {
 
     private ProtoBufMessageDecoder decoder;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         decoder = new ProtoBufMessageDecoder();
     }
 
     @Test
-    void testStartDecodingWithEmptyInput() {
+    void shouldDecodeWithEmptyInput() {
         byte[] emptyInput = new byte[0];
-        decoder.startDecoding(emptyInput);
+        decoder.decode(emptyInput);
         assertEquals("", decoder.getDecodedOuput());
         assertEquals(0, decoder.getDecodedToList().size());
     }
 
     @Test
-    void testStartDecodingWithNullInput() {
-        decoder.startDecoding(null);
+    void shouldDecodeWithNullInput() {
+        decoder.decode(null);
         assertEquals("", decoder.getDecodedOuput());
         assertEquals(0, decoder.getDecodedToList().size());
     }
 
     @Test
-    void testStartDecodingWithSimpleValidInput() {
+    void shouldDecodeWithSimpleValidInput() {
         String inputString =
                 "AAAAADEKC2pvaG4gTWlsbGVyEB4aIDEyMzQgTWFpbiBTdC4gQW55dG93biwgVVNBIDEyMzQ1";
         String expectedOutput =
@@ -58,13 +60,13 @@ class ProtoBufMessageDecoderTest {
         // Example valid input byte array
         byte[] validInput = Base64.getDecoder().decode(inputString);
         validInput = DecoderUtils.extractPayload(validInput);
-        decoder.startDecoding(validInput);
+        decoder.decode(validInput);
         assertEquals(expectedOutput, decoder.getDecodedOuput());
         assertEquals(3, decoder.getDecodedToList().size());
     }
 
     @Test
-    void testStartDecodingWithNestedMessageValidInput() {
+    void shouldDecodeWithNestedMessageValidInput() {
         String inputString =
                 "AAAAAEkKI3sibmFtZSI6IkpvaG4iLCJsYXN0bmFtZSI6Ik1pbGxlciJ9EB4aIDEyMzQgTWFpbiBTdC4gQW55dG93biwgVVNBIDEyMzQ1";
         String expectedOutput =
@@ -72,55 +74,56 @@ class ProtoBufMessageDecoderTest {
         // Example valid input byte array
         byte[] validInput = Base64.getDecoder().decode(inputString);
         validInput = DecoderUtils.extractPayload(validInput);
-        decoder.startDecoding(validInput);
+        decoder.decode(validInput);
         assertEquals(expectedOutput, decoder.getDecodedOuput());
         assertEquals(3, decoder.getDecodedToList().size());
     }
 
     @Test
-    void testStartDecodingWithEnumAndRepeatedFieldsInput() {
+    void shouldDecodeWithEnumAndRepeatedFieldsInput() {
         // Example corrupted input byte array
         String inputString = "AAAAAA4IARIBYRIBYhIBYxIBZA";
         String expectedOutput = "1:0::1\n2:2::a\n2:2::b\n2:2::c\n2:2::d\n";
         byte[] validInput = Base64.getDecoder().decode(inputString);
         validInput = DecoderUtils.extractPayload(validInput);
-        decoder.startDecoding(validInput);
+        decoder.decode(validInput);
         assertEquals(expectedOutput, decoder.getDecodedOuput());
         assertEquals(5, decoder.getDecodedToList().size());
     }
 
     @Test
-    void testStartDecodingWithDoubleAndFloatInput() {
+    void shouldDecodeWithDoubleAndFloatInput() {
         String inputString = "AAAAAA4JzczMzMzcXkAVrseHQg";
         String expectedOutput = "1:1D::123.45\n2:5F::67.89\n";
         byte[] validInput = Base64.getDecoder().decode(inputString);
         validInput = DecoderUtils.extractPayload(validInput);
-        decoder.startDecoding(validInput);
+        decoder.decode(validInput);
         assertEquals(expectedOutput, decoder.getDecodedOuput());
         assertEquals(2, decoder.getDecodedToList().size());
     }
 
     @Test
-    void testStartDecodingWithWireType1And6Input() {
+    void shouldDecodeWithWireType1And6Input() {
         String inputString = "AAAAAA4NQEIPABHMm5cAyicBAA";
         String expectedOutput = "1:5::1000000\n2:1::325223523523532\n";
         byte[] validInput = Base64.getDecoder().decode(inputString);
         validInput = DecoderUtils.extractPayload(validInput);
-        decoder.startDecoding(validInput);
+        decoder.decode(validInput);
         assertEquals(expectedOutput, decoder.getDecodedOuput());
         assertEquals(2, decoder.getDecodedToList().size());
     }
 
     @Test
-    void testStartDecodingWithCorruptedInput() {
+    void shouldDecodeWithCorruptedInput() {
+        mockMessages(new ExtensionGrpc());
         // Example corrupted input byte array
         String invalidString =
                 "AAAAADEPC2pvaG4gTWlsbGVyEB4aIDEyMzQgTWFpbiBTdC4gQW55dG93biwgVVNBIDEyMzQ1";
         String expectedOutput =
-                "Failed to decode protobuf message: The message format is invalid or corrupted.";
+                "Failed to decode protobuf message: The message format is invalid or corrupted";
         byte[] invalidInput = Base64.getDecoder().decode(invalidString);
         invalidInput = DecoderUtils.extractPayload(invalidInput);
-        decoder.startDecoding(invalidInput);
+        decoder.decode(invalidInput);
         assertEquals(expectedOutput, decoder.getDecodedOuput());
         assertEquals(0, decoder.getDecodedToList().size());
     }

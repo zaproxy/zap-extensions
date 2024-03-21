@@ -25,24 +25,26 @@ import java.io.IOException;
 public class ProtoBufNestedMessageDecoder {
     private CodedInputStream inputStream;
 
-    public String startDecoding(byte[] inputData) {
+    public String decode(byte[] inputData) {
         this.inputStream = CodedInputStream.newInstance(inputData);
-        boolean check = true;
-        String output = "{";
-        while (check) {
+        StringBuilder outputBuilder = new StringBuilder("{");
+        while (true) {
             String validField = decodeField();
-            if (validField.isEmpty()) return validField;
-            else output += "\"" + validField + "\"";
+            if (validField.isEmpty()) {
+                return validField;
+            } else {
+                outputBuilder.append('"').append(validField).append('"');
+            }
             try {
                 if (inputStream.isAtEnd()) {
-                    check = false;
+                    break;
                 }
             } catch (IOException e) {
                 return "";
             }
         }
-        output += "}";
-        return output;
+        outputBuilder.append("}");
+        return outputBuilder.toString();
     }
 
     private String decodeField() {
