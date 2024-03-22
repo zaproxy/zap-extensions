@@ -20,9 +20,7 @@
 package org.zaproxy.addon.grpc.internal;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.util.Base64;
-import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import org.apache.commons.configuration.FileConfiguration;
