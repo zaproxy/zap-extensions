@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - Support for menu weights (Issue 8369)
+- Add solution to HTTP Response Smuggling alert (Issue 8056)
 
 ### Changed
 - Maintenance changes.

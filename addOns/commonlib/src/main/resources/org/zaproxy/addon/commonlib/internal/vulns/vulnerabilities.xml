@@ -709,8 +709,24 @@ One use for this technique is to enhance the basic HTTP response splitting techn
 
 HTTP response smuggling makes use of HTTP request smuggling -like techniques to exploit the discrepancies between what an anti- HTTP Response Splitting mechanism (or a proxy server) would consider to be the HTTP response stream, and the response stream as parsed by a proxy server (or a browser). So, while an anti- HTTP response splitting mechanism may consider a particular response stream harmless (single HTTP response), a proxy/browser may still parse it as two HTTP responses, and hence be susceptible to all the outcomes of the original HTTP response splitting technique (in the first use case) or be susceptible to page spoofing (in the second case). For example, some anti- HTTP response splitting mechanisms in use by some application engines forbid the application from inserting a header containing CR+LF to the response. Yet an attacker can force the application to insert a header containing CRs, thereby circumventing the defense mechanism. Some proxy servers may still treat CR (only) as a header (and response) separator, and as such the combination of web server and proxy server will still be vulnerable to an attack that may poison the proxy's cache.
 	</desc>
-	<solution></solution>
+	<solution>Use HTTP/2 for backend connections. While HTTP/2 doesn't entirely prevent request smuggling, it does introduce certain changes that makes it difficult for attacker to exploit this.
+
+		Utilize a Web Application Firewall (WAF) that has built-in mitigation to detect abnormal requests/responses.
+
+		Whenever a HTTP message contains both Transfer-Encoding and Content-Length either prioritize the Transfer-Encoding header or just completely reject the HTTP message. Make this behavior consistent in the back-end server and any intermediary HTTP agents.
+
+		Disallow Malformed/Invalid Transfer-Encoding Headers used in obfuscation, such as:
+			* Headers with no space before the value “chunked”
+			* Headers with extra spaces
+			* Headers beginning with trailing characters
+			* Headers providing a value “chunk” instead of “chunked” (the server normalizes this as chunked encoding)
+			* Headers with multiple spaces before the value “chunked”
+			* Headers with quoted values (whether single or double quotations)
+			* Headers with CRLF characters before the value “chunked”
+			* Values with invalid characters
+	</solution>
 	<reference>https://owasp.org/www-community/attacks/HTTP_Response_Splitting</reference>
+	<reference>https://capec.mitre.org/data/definitions/273.html</reference>
 </vuln_item_wasc_27>
 
 <vuln_items>wasc_28</vuln_items>
