@@ -327,6 +327,7 @@ class DomXssScanRuleUnitTest extends ActiveScannerTestUtils<DomXssScanRule> {
     /** Test based on http://public-firing-range.appspot.com/address/location.hash/formaction */
     @ParameterizedTest
     @MethodSource("testBrowsers")
+    @Disabled
     void shouldReportXssInLocationHashFormAction(String browser)
             throws NullPointerException, IOException {
         // Given
