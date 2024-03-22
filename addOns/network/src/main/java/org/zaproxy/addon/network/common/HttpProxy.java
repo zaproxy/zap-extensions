@@ -27,6 +27,7 @@ import java.util.Objects;
  * An HTTP proxy.
  *
  * <p>Contains the host, port, realm, and password authentication.
+ *
  * @since 0.15.0
  */
 public class HttpProxy {
