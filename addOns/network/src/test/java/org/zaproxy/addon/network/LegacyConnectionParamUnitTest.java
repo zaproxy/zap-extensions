@@ -46,7 +46,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.zaproxy.addon.network.internal.client.HttpProxy;
+import org.zaproxy.addon.network.common.HttpProxy;
 import org.zaproxy.addon.network.internal.client.HttpProxyExclusion;
 import org.zaproxy.zap.network.DomainMatcher;
 

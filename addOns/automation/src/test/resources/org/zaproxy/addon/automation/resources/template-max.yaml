@@ -45,6 +45,12 @@ env:                                   # The environment, mandatory
     failOnError: true                  # If set exit on an error         
     failOnWarning: false               # If set exit on a warning
     progressToStdout: true             # If set will write job progress to stdout
+  proxy:                               # Optional upstream proxy settings
+    hostname:                          # String, the proxy host
+    port:                              # Int, the proxy port
+    realm:                             # String, the proxy realm
+    username:                          # String, the proxy username
+    password:                          # String, the proxy password
 
 jobs:
 

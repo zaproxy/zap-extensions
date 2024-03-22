@@ -17,7 +17,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.zaproxy.addon.network.internal.client;
+package org.zaproxy.addon.network.common;
 
 import java.net.PasswordAuthentication;
 import java.util.Arrays;
@@ -27,6 +27,8 @@ import java.util.Objects;
  * An HTTP proxy.
  *
  * <p>Contains the host, port, realm, and password authentication.
+ *
+ * @since 0.15.0
  */
 public class HttpProxy {
 

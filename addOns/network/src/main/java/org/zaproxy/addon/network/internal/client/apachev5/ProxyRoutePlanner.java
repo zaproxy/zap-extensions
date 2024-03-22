@@ -24,7 +24,7 @@ import org.apache.hc.core5.http.HttpHost;
 import org.apache.hc.core5.http.protocol.HttpContext;
 import org.parosproxy.paros.network.HttpHeader;
 import org.zaproxy.addon.network.ConnectionOptions;
-import org.zaproxy.addon.network.internal.client.HttpProxy;
+import org.zaproxy.addon.network.common.HttpProxy;
 
 /** A {@link DefaultRoutePlanner} that proxies through the configured HTTP proxy. */
 public class ProxyRoutePlanner extends DefaultRoutePlanner {

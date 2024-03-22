@@ -278,7 +278,11 @@ public class ExtensionAutomation extends ExtensionAdaptor implements CommandLine
                 Constant.messages.getString(
                         "automation.cmdline.out.template", f.getAbsolutePath()));
         try (FileWriter fw = new FileWriter(f)) {
-            fw.write(AutomationEnvironment.getTemplateFileData());
+            if (incAll) {
+                fw.write(AutomationEnvironment.getTemplateFileDataMax());
+            } else {
+                fw.write(AutomationEnvironment.getTemplateFileDataMin());
+            }
 
             jobs.values().stream()
                     .sorted()

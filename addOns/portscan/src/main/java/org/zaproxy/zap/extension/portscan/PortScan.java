@@ -35,7 +35,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.model.Model;
 import org.zaproxy.addon.network.ConnectionOptions;
-import org.zaproxy.addon.network.internal.client.HttpProxy;
+import org.zaproxy.addon.network.common.HttpProxy;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.ScanListenner;
 import org.zaproxy.zap.model.ScanThread;

@@ -26,9 +26,11 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import org.apache.commons.lang3.StringUtils;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.addon.automation.AutomationEnvironment;
+import org.zaproxy.addon.automation.AutomationEnvironment.Proxy;
 import org.zaproxy.addon.automation.ContextWrapper;
 import org.zaproxy.addon.automation.ContextWrapper.Data;
 import org.zaproxy.zap.utils.DisplayUtils;
@@ -42,13 +44,20 @@ public class EnvironmentDialog extends StandardFieldsDialog {
     private static final String[] TAB_LABELS = {
         "automation.dialog.env.tab.contexts",
         "automation.dialog.tab.params",
-        "automation.dialog.env.tab.vars"
+        "automation.dialog.env.tab.proxy",
+        "automation.dialog.env.tab.vars",
     };
 
     private static final String TITLE = "automation.dialog.env.title";
     private static final String FAIL_ON_ERROR_PARAM = "automation.dialog.env.failonerror";
     private static final String FAIL_ON_WARNING_PARAM = "automation.dialog.env.failonwarning";
     private static final String PROGRESS_TO_STDOUT_PARAM = "automation.dialog.env.progresstostdout";
+
+    private static final String PROXY_HOSTNAME = "automation.dialog.env.proxyhost";
+    private static final String PROXY_PORT = "automation.dialog.env.proxyport";
+    private static final String PROXY_REALM = "automation.dialog.env.proxyrealm";
+    private static final String PROXY_USERNAME = "automation.dialog.env.proxyuser";
+    private static final String PROXY_PASSWORD = "automation.dialog.env.proxypwd";
 
     private AutomationEnvironment env;
 
@@ -89,12 +98,19 @@ public class EnvironmentDialog extends StandardFieldsDialog {
                 1, PROGRESS_TO_STDOUT_PARAM, env.getData().getParameters().getProgressToStdout());
         this.addPadding(1);
 
+        Proxy proxy = this.env.getData().getProxy(true);
+        this.addTextField(2, PROXY_HOSTNAME, proxy.getHostname());
+        this.addNumberField(2, PROXY_PORT, 1, 65535, proxy.getPort());
+        this.addTextField(2, PROXY_REALM, proxy.getRealm());
+        this.addTextField(2, PROXY_USERNAME, proxy.getUsername());
+        this.addPasswordField(2, PROXY_PASSWORD, proxy.getPassword());
+
         List<JButton> envVarButtons = new ArrayList<>();
         envVarButtons.add(getAddEnvVarButton());
         envVarButtons.add(getModifyEnvVarButton());
         envVarButtons.add(getRemoveEnvVarButton());
 
-        this.addTableField(2, getEnvVarsTable(), envVarButtons);
+        this.addTableField(3, getEnvVarsTable(), envVarButtons);
     }
 
     @Override
@@ -111,6 +127,19 @@ public class EnvironmentDialog extends StandardFieldsDialog {
 
         this.env.setContexts(this.getContextsModel().getContexts());
         this.env.getData().setVars(this.getEnvVarsModel().getEnvVarMap());
+
+        String host = this.getStringValue(PROXY_HOSTNAME);
+        if (!StringUtils.isBlank(host)) {
+            Proxy proxy = this.env.getData().getProxy(true);
+            proxy.setHostname(host);
+            proxy.setPort(this.getIntValue(PROXY_PORT));
+            proxy.setRealm(this.getStringValue(PROXY_REALM));
+            proxy.setUsername(this.getStringValue(PROXY_REALM));
+            proxy.setPassword(this.getStringValue(PROXY_PASSWORD));
+        } else {
+            this.env.getData().setProxy(null);
+        }
+
         this.env.getPlan().setChanged();
     }
 
