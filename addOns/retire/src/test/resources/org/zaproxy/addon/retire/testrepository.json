@@ -55,7 +55,7 @@
 			{
 				"below" : "3.5.0",
 				"identifiers": {
-					"summary": "Regex in its jQuery.htmlPrefilter  sometimes may introduce XSS"
+					"summary": "Regex in its jQuery.htmlPrefilter sometimes may introduce XSS"
 				},
 				"severity" : "medium",
 				"info" : [ "https://blog.jquery.com/2020/04/10/jquery-3-5-0-released/" ]
@@ -130,7 +130,72 @@
 			"hashes"		: {}
 		}
 	},
+	"moment.js": {
+		"bowername": [
+			"moment",
+			"momentjs"
+		],
+		"npmname": "moment",
+		"basePurl": "pkg:npm/moment",
+		"vulnerabilities": [
+			{
+				"below": "2.29.2",
+				"severity": "high",
+				"cwe": [
+					"CWE-22",
+					"CWE-27"
+				],
+				"identifiers": {
+					"summary": "This vulnerability impacts npm (server) users of moment.js, especially if user provided locale string, eg fr is directly used to switch moment locale.",
+					"CVE": [
+						"CVE-2022-24785"
+					],
+					"githubID": "GHSA-8hfj-j24r-96c4"
+				},
+				"info": [
+					"https://github.com/moment/moment/security/advisories/GHSA-8hfj-j24r-96c4"
+				]
+			}
+		],
+		"extractors": {
+			"filename": [
+				"moment(?:-|\\.)(§§version§§)(?:-min)?\\.js"
+			]
+		}
+	},
 
+	"lodash": {
+		"vulnerabilities": [
+			{
+				"below": "4.17.5",
+				"cwe": [
+					"CWE-471"
+				],
+				"severity": "low",
+				"identifiers": {
+					"summary": "Prototype Pollution in lodash",
+					"CVE": [
+						"CVE-2018-3721"
+					],
+					"githubID": "GHSA-fvqr-27wr-82fm"
+				},
+				"info": [
+					"https://github.com/advisories/GHSA-fvqr-27wr-82fm",
+					"https://nvd.nist.gov/vuln/detail/CVE-2018-3721",
+					"https://github.com/lodash/lodash/commit/d8e069cc3410082e44eb18fcf8e7f3d08ebe1d4a",
+					"https://hackerone.com/reports/310443",
+					"https://github.com/advisories/GHSA-fvqr-27wr-82fm",
+					"https://security.netapp.com/advisory/ntap-20190919-0004/",
+					"https://www.npmjs.com/advisories/577"
+				]
+			}
+		],
+		"extractors": {
+			"uri": [
+				"/(§§version§§)/lodash(\\.min)?\\.js"
+			]
+		}
+	},
 
 
 

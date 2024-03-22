@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - Server Side Include
     - Cross Site Scripting (Reflected)
 - The Alerts from the Remote Code Execution - CVE-2012-1823 scan rule no longer have evidence duplicated in the Other Info field.
+- The GET for POST scan rule now uses a different comparison mechanism which should be more tolerant of unrelated response differences.
 
 ## [63] - 2024-02-12
 ### Changed
