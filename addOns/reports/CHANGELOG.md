@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Fixed
 - Handle alerts without HTTP message gracefully (Issue 6880).
+- More issues with illegal XML characters in pdf reports (Issue 8330).
 
 ## [0.30.0] - 2024-03-13
 ### Changed

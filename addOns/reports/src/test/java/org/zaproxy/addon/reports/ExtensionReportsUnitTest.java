@@ -242,9 +242,7 @@ class ExtensionReportsUnitTest extends TestUtils {
         for (int i = 0; i < childCount; i++) {
             AlertNode childNode = new AlertNode(level, name + ILLEGAL_XML_CHRS);
             Alert childAlert = new Alert(pluginId);
-            // TODO uncomment for illegal chars in PDF (and remove the following line)
-            // setAlertData(uri, childAlert);
-            childAlert.setMessage(newMsg(uri));
+            setAlertData(uri, childAlert);
             childNode.setUserObject(childAlert);
             alertNode.add(childNode);
         }
