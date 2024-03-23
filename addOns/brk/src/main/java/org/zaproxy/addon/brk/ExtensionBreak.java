@@ -22,6 +22,9 @@ package org.zaproxy.addon.brk;
 import java.awt.Component;
 import java.awt.EventQueue;
 import java.awt.event.KeyEvent;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -43,6 +46,7 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionHookView;
 import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.extension.option.ExtensionOption;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.model.Session;
@@ -115,6 +119,32 @@ public class ExtensionBreak extends ExtensionAdaptor
     @Override
     public void init() {
         serialisationRequiredListeners = Collections.synchronizedList(new ArrayList<>(1));
+        try {
+            ExtensionOption extOption =
+                    Control.getSingleton().getExtensionLoader().getExtension(ExtensionOption.class);
+            Class<?> breakOptionsHandlerClass =
+                    getClass()
+                            .getClassLoader()
+                            .loadClass("org.parosproxy.paros.extension.option.BreakOptionsHandler");
+            Method method =
+                    extOption
+                            .getClass()
+                            .getDeclaredMethod("setBreakOptionsHandler", breakOptionsHandlerClass);
+            method.invoke(
+                    extOption,
+                    Proxy.newProxyInstance(
+                            breakOptionsHandlerClass.getClassLoader(),
+                            new Class<?>[] {breakOptionsHandlerClass},
+                            (proxy, m, args) -> {
+                                getOptionsParam().setShowIgnoreFilesButtons((Boolean) args[0]);
+                                return null;
+                            }));
+        } catch (NoSuchMethodException
+                | IllegalAccessException
+                | InvocationTargetException
+                | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public BreakpointManagementInterface getBreakpointManagementInterface() {
