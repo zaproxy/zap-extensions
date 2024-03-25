@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [64] - 2024-03-25
 ### Changed
 - The following scan rules now include example alert functionality for documentation generation purposes (Issue 6119):
     - Source Code Disclosure - CVE-2012-1823
@@ -513,6 +513,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[64]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v64
 [63]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v63
 [62]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v62
 [61]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v61

@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.36.0] - 2024-03-25
 ### Added
 - Support for upstream proxy in environment (Issue 8360).
 
@@ -341,6 +341,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.36.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.36.0
 [0.35.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.35.0
 [0.34.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.34.0
 [0.33.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.33.0

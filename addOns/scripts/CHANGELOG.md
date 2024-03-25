@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [45.1.0] - 2024-03-25
 ### Added
 - Support for menu weights (Issue 8369)
 ### Fixed
@@ -299,6 +299,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[45.1.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.1.0
 [45.0.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.0.0
 [44]: https://github.com/zaproxy/zap-extensions/releases/scripts-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/scripts-v43

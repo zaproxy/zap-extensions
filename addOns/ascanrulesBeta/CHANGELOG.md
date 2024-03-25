@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [52] - 2024-03-25
 ### Changed
 - Updated reference for scan rule: Possible Username Enumeration (Issue 8262)
 - Cookie Slack Detector scan rule now has a more specific CWE.
@@ -510,6 +510,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[52]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v52
 [51]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v51
 [50]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v50
 [49]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v49
