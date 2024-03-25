@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [45] - 2024-03-25
 ### Changed
 - Tweaked OSF sponsorship links.
 
@@ -238,6 +238,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[45]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v45
 [44]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v44
 [43]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v43
 [42]: https://github.com/zaproxy/zap-extensions/releases/quickstart-v42
