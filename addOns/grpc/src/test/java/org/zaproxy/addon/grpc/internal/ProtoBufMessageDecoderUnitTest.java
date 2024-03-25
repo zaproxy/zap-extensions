@@ -20,6 +20,7 @@
 package org.zaproxy.addon.grpc.internal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Base64;
 import org.junit.jupiter.api.BeforeEach;
@@ -119,11 +120,14 @@ class ProtoBufMessageDecoderUnitTest extends TestUtils {
         // Example corrupted input byte array
         String invalidString =
                 "AAAAADEPC2pvaG4gTWlsbGVyEB4aIDEyMzQgTWFpbiBTdC4gQW55dG93biwgVVNBIDEyMzQ1";
-        String expectedOutput =
-                "Failed to decode protobuf message: The message format is invalid or corrupted";
+        String expectedOutput = "";
         byte[] invalidInput = Base64.getDecoder().decode(invalidString);
-        invalidInput = DecoderUtils.extractPayload(invalidInput);
-        decoder.decode(invalidInput);
+        byte[] finalInvalidInput = DecoderUtils.extractPayload(invalidInput);
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> {
+                    decoder.decode(finalInvalidInput);
+                });
         assertEquals(expectedOutput, decoder.getDecodedOuput());
         assertEquals(0, decoder.getDecodedToList().size());
     }
