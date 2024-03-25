@@ -4,6 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Changed
+- Tweaked OSF sponsorship links.
+
 ### Fixed
 - Handle alerts without HTTP message gracefully (Issue 6880).
 - More issues with illegal XML characters in pdf reports (Issue 8330).
