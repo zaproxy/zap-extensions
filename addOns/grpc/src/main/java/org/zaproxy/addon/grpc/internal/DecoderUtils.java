@@ -27,6 +27,14 @@ public class DecoderUtils {
 
     public static final int PAYLOAD_HEADER_SIZE = 5;
 
+    public static final int DOUBLE_EXPONENT_LEN = 11;
+
+    public static final int FLOAT_EXPONENT_LEN = 8;
+
+    public static final int DOUBLE_MANTISSA_LEN = 52;
+
+    public static final int FLOAT_MANTISSA_LEN = 23;
+
     public static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
 
     public static final int VARINT_WIRE_TYPE = 0;
@@ -50,24 +58,22 @@ public class DecoderUtils {
     }
 
     public static boolean isFloat(int value) {
-        int mantLen = 23;
-        int exp = (value >> mantLen) & ((1 << 8) - 1);
-        exp -= (1 << (8 - 1)) - 1;
+        int exp = (value >> FLOAT_MANTISSA_LEN) & ((1 << FLOAT_EXPONENT_LEN) - 1);
+        exp -= (1 << (FLOAT_EXPONENT_LEN - 1)) - 1;
         if (exp < 0) {
             exp = -exp;
         }
-        int bigExp = (1 << (8 - 1)) - 1;
+        int bigExp = (1 << (FLOAT_EXPONENT_LEN - 1)) - 1;
         return exp < bigExp;
     }
 
     public static boolean isDouble(long value) {
-        int mantLen = 52;
-        long exp = (value >> mantLen) & ((1 << 11) - 1);
-        exp -= (1 << (11 - 1)) - 1;
+        long exp = (value >> DOUBLE_MANTISSA_LEN) & ((1 << DOUBLE_EXPONENT_LEN) - 1);
+        exp -= (1 << (DOUBLE_EXPONENT_LEN - 1)) - 1;
         if (exp < 0) {
             exp = -exp;
         }
-        int bigExp = (1 << (11 - 1)) - 1;
+        int bigExp = (1 << (DOUBLE_EXPONENT_LEN - 1)) - 1;
         return exp < bigExp;
     }
 

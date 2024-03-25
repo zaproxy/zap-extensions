@@ -20,7 +20,9 @@
 package org.zaproxy.addon.grpc.internal;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.util.Base64;
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import org.apache.commons.configuration.FileConfiguration;
@@ -132,6 +134,7 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
     @Override
     public void dataChanged(HttpPanelViewModelEvent e) {
         byte[] body = ((AbstractByteHttpPanelViewModel) e.getSource()).getData();
+        httpPanelGrpcArea.setBorder(null);
         try {
             body = Base64.getDecoder().decode(body);
             byte[] payload = DecoderUtils.extractPayload(body);
@@ -143,6 +146,7 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
             }
         } catch (Exception er) {
             httpPanelGrpcArea.setText(er.getMessage());
+            httpPanelGrpcArea.setBorder(BorderFactory.createLineBorder(Color.RED));
         }
         if (!isEditable()) {
             httpPanelGrpcArea.discardAllEdits();
