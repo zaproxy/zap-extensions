@@ -164,7 +164,7 @@ public class QuickStartPanel extends AbstractPanel {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         Stats.incCounter("stats.ui.link.osf");
-                        DesktopUtils.openUrlInBrowser("https://crashoverride.com/open-source");
+                        DesktopUtils.openUrlInBrowser("https://crashoverride.com/?zap=ui");
                     }
                 });
         return label;

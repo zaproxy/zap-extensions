@@ -1,6 +1,6 @@
 # [(${reportTitle})]
 
-ZAP is supported by the [Crash Override Open Source Fellowship](https://crashoverride.com/open-source).
+ZAP is supported by the [Crash Override Open Source Fellowship](https://crashoverride.com/?zap=rep).
 
 [#th:block th:if="${reportData.isIncludeSection('alertcount')}"]
 ## [(#{report.alerts.summary})]
