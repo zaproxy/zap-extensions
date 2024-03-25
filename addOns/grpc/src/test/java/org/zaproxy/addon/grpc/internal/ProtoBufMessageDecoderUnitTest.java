@@ -123,11 +123,13 @@ class ProtoBufMessageDecoderUnitTest extends TestUtils {
         String expectedOutput = "";
         byte[] invalidInput = Base64.getDecoder().decode(invalidString);
         byte[] finalInvalidInput = DecoderUtils.extractPayload(invalidInput);
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> {
-                    decoder.decode(finalInvalidInput);
-                });
+        IllegalArgumentException exception =
+                assertThrows(
+                        IllegalArgumentException.class, () -> decoder.decode(finalInvalidInput));
+
+        String expectedExceptionMessage =
+                "Failed to decode protobuf message: The message format is invalid or corrupted";
+        assertEquals(expectedExceptionMessage, exception.getMessage());
         assertEquals(expectedOutput, decoder.getDecodedOuput());
         assertEquals(0, decoder.getDecodedToList().size());
     }
