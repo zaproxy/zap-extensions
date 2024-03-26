@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- Change link to use HTTPS in other info of SQL Injection - SQLite (Issue 8262).
 
 ## [64] - 2024-03-25
 ### Changed
