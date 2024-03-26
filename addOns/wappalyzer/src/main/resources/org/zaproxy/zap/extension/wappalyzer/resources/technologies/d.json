@@ -9,7 +9,7 @@
     "js": {
       "d3.version": "^(.+)$\\;version:\\1"
     },
-    "scriptSrc": "/d3(?:\\. v\\d+)?(?:\\.min)?\\.js",
+    "scriptSrc": "/d3(?:\\.v\\d+)?(?:\\.min)?\\.js",
     "website": "https://d3js.org"
   },
   "DDoS-Guard": {
@@ -397,6 +397,19 @@
     ],
     "saas": true,
     "website": "https://www.datamilk.ai"
+  },
+  "Datascape": {
+    "cats": [
+      1
+    ],
+    "description": "Datascape is a cloud-based solution designed to create new ways for councils to work and better engage with their communities.",
+    "dom": "link[href*='cdn-sites.datascape.cloud']",
+    "icon": "Datascape.svg",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://datacom.com/nz/en/products/datascape"
   },
   "DataTables": {
     "cats": [
@@ -2027,6 +2040,16 @@
     "saas": true,
     "scriptSrc": "cdn(?:-eu)?\\.dynamicyield\\.\\w+/",
     "website": "https://www.dynamicyield.com"
+  },
+  "Dynamics.js": {
+    "cats": [
+      59
+    ],
+    "description": "Javascript library to create physics-related animations",
+    "icon": "Dynamics.js.png",
+    "oss": true,
+    "scriptSrc": "dynamics(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://dynamicsjs.com"
   },
   "Dynamicweb": {
     "cats": [

@@ -252,6 +252,15 @@
     "website": "https://www.easy-orders.net",
     "xhr": "api\\.easy-orders\\.net/"
   },
+  "Easy Pie Chart": {
+    "cats": [
+      59
+    ],
+    "description": "Lightweight jQuery plugin to render and animate nice pie charts with the HTML5 canvas element.",
+    "oss": true,
+    "scriptSrc": "[Ee]asy-?[Pp]ie-?[Cc]hart(?:\\.min)?\\.js",
+    "website": "https://rendro.github.io/easy-pie-chart/"
+  },
   "Easy Redirects": {
     "cats": [
       100
@@ -1126,6 +1135,15 @@
     "requires": "WordPress",
     "website": "https://github.com/bluehost/endurance-page-cache"
   },
+  "EngagementHQ": {
+    "cats": [
+      1
+    ],
+    "description": "Essential software for changemakers. Facilitate, centralize, and analyze two-way conversations between you and your community.",
+    "icon": "EngagementHQ.svg",
+    "dom": "link[href*='ehq-production-']",
+    "website": "https://granicus.com/solution/govdelivery/engagementhq/"
+  },
   "Engagio": {
     "cats": [
       10
@@ -1437,6 +1455,24 @@
     ],
     "saas": true,
     "website": "https://errorception.com"
+  },
+  "EspoCRM": {
+    "cats": [
+      10,
+      53
+    ],
+    "description": "Open Source CRM Software.",
+    "dom": "meta[content*='EspoCRM'], link[href*='/espo/']",
+    "icon": "EspoCRM.svg",
+    "oss": true,
+    "pricing": [
+      "low",
+      "mid",
+      "freemium",
+      "recurring"
+    ],
+    "scriptSrc": "espo(?:\\.min)?\\.js",
+    "website": "https://www.espocrm.com/"
   },
   "Essent SiteBuilder Pro": {
     "cats": [

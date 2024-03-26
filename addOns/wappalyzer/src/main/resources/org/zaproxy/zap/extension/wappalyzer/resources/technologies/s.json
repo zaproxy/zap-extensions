@@ -465,6 +465,7 @@
   },
   "Sakai": {
     "cats": [
+      1,
       21
     ],
     "cookies": {
@@ -4712,6 +4713,19 @@
     "scriptSrc": "socialladder\\.rkiapps\\.com/",
     "website": "https://socialladderapp.com"
   },
+  "Social Pinpoint": {
+    "cats": [
+      1
+    ],
+    "description": "Social Pinpoint is a comprehensive online platform that facilitates meaningful and accessible engagement opportunities that bring your community together.",
+    "dom": "a[href*='www.socialpinpoint.com']",
+    "icon": "socialpinpoint.png",
+    "pricing": [
+      "poa"
+    ],
+    "saas": true,
+    "website": "https://www.socialpinpoint.com/"
+  },
   "Societe des Avis Garantis": {
     "cats": [
       87,
@@ -5115,6 +5129,20 @@
     "saas": true,
     "scriptSrc": "(?:^[^/]*//[^/]*viglink\\.com/api/|vglnk\\.js)",
     "website": "https://www.sovrn.com/publishers/commerce/"
+  },
+  "Spark CMS": {
+    "cats": [
+      1
+    ],
+    "cookies": {
+      "BNI_SparkCMSLB": ""
+    },
+    "description": "The CMS has been custom built by our web developers based on feedback from our clients, ensuring an easy to use platform that's been designed in consultation with the end user in mind.",
+    "dom": "link[href*='sparkcms.com.au']",
+    "icon": "Spark.png",
+    "oss": false,
+    "scriptSrc": "/spark-scripts/",
+    "website": "https://www.councilconnect.com.au/our-websites/about-spark-cms.aspx"
   },
   "SparkPost": {
     "cats": [

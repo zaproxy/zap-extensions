@@ -903,6 +903,17 @@
     },
     "website": "https://www.openwebanalytics.com"
   },
+  "Open edX": {
+    "cats": [
+      1,
+      21
+    ],
+    "description": "The Open edX platform is a free and open source course management system.",
+    "dom": "meta[name='openedx-release-line'], #footer-openedx, .openedx, .open-edx-logo, .open-edx-link, .footer-about-openedx, a[href*='https://open.edx.org'], a[href*='https://openedx.org'], img[src*='https://files.edx.org/openedx-logos/'][alt='Powered by Open edX']",
+    "icon": "Open edX.png",
+    "oss": true,
+    "website": "https://openedx.org/"
+  },
   "Open eShop": {
     "cats": [
       6
