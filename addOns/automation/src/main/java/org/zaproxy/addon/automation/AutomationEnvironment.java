@@ -22,6 +22,7 @@ package org.zaproxy.addon.automation;
 import java.net.PasswordAuthentication;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -197,23 +198,45 @@ public class AutomationEnvironment {
             this.combinedVars = new HashMap<>(this.getData().getVars());
             this.combinedVars.putAll(envSupplier.get());
         }
-        String text = value.toString();
+
+        return replaceRecursively(value.toString(), new HashSet<>(), new HashSet<>());
+    }
+
+    private String replaceRecursively(
+            String text, Set<String> warnedVars, Set<String> replacedVars) {
         Matcher matcher = varPattern.matcher(text);
         StringBuilder sb = new StringBuilder();
 
+        var replaced = new HashSet<String>();
+        boolean changed = false;
         while (matcher.find()) {
-            String val = this.combinedVars.get(matcher.group(1));
+            String varName = matcher.group(1);
+            String val = this.combinedVars.get(varName);
             if (val != null) {
+                if (replacedVars.contains(varName)) {
+                    if (!warnedVars.contains(varName)) {
+                        warnedVars.add(varName);
+                        progress.warn(
+                                Constant.messages.getString(
+                                        "automation.error.env.loopvar", matcher.group(1)));
+                    }
+                    continue;
+                }
+                replaced.add(varName);
                 matcher.appendReplacement(sb, "");
                 sb.append(val);
-            } else {
+                changed = true;
+            } else if (!warnedVars.contains(varName)) {
+                warnedVars.add(varName);
                 progress.warn(
                         Constant.messages.getString(
                                 "automation.error.env.novar", matcher.group(1)));
             }
         }
-        matcher.appendTail(sb);
-        return sb.toString();
+        replacedVars.addAll(replaced);
+
+        String result = matcher.appendTail(sb).toString();
+        return changed ? replaceRecursively(result, warnedVars, replacedVars) : result;
     }
 
     public Map<String, String> replaceMapVars(Map<String, String> map) {
