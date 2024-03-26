@@ -4,12 +4,16 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Added
+- Active and Passive Scripts with a `getMetadata()` function are now treated as first-class scan rules (Issue 7105).
+
 ### Fixed
 - Error when trying to run an unsupported script type through the Automation Framework.
 
 ## [45.1.0] - 2024-03-25
 ### Added
 - Support for menu weights (Issue 8369)
+
 ### Fixed
 - Propagate script errors to the Automation Framework when running them.
 

@@ -23,13 +23,13 @@ zapAddOn {
         dependencies {
             addOns {
                 register("commonlib") {
-                    version.set(">=1.23.0")
+                    version.set(">=1.24.0")
                 }
                 register("network") {
                     version.set(">=0.2.0")
                 }
                 register("scripts") {
-                    version.set(">=45.0.0")
+                    version.set(">=45.2.0")
                 }
                 register("selenium") {
                     version.set(">= 15.13.0")

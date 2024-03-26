@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Update Active and Passive Script Templates to include a `getMetadata` function. This will allow them to be used as regular scan rules.
+- Depend on the `commonlib` and `scripts` add-ons for scan rule scripts.
 - Maintenance changes.
 
 ## [0.5.0] - 2023-10-12
