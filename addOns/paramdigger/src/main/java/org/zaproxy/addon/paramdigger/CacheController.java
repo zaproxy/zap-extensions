@@ -861,20 +861,16 @@ public class CacheController {
             String indicValue = msg.getResponseHeader().getHeader(cache.getIndicator());
             if (indicValue == null || indicValue.isEmpty()) {
                 return true;
-            } else {
-                if (!this.checkCacheHit(indicValue, cache) && cache.getIndicator() != null) {
-                    sleeper(2000);
-                    httpSender.sendAndReceive(msg);
-                    addCacheMessage(msg);
-                    indicValue = msg.getResponseHeader().getHeader(cache.getIndicator());
-                    if (this.checkCacheHit(indicValue, cache)) {
-                        return false;
-                    } else {
-                        return true;
-                    }
-                }
-                return false;
             }
+            if (!this.checkCacheHit(indicValue, cache) && cache.getIndicator() != null) {
+                sleeper(2000);
+                httpSender.sendAndReceive(msg);
+                addCacheMessage(msg);
+                indicValue = msg.getResponseHeader().getHeader(cache.getIndicator());
+                // Not cache hit, is always miss
+                return !this.checkCacheHit(indicValue, cache);
+            }
+            return false;
 
         } catch (Exception e) {
             return false;
