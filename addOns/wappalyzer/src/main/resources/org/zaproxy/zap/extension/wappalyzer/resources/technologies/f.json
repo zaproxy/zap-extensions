@@ -446,6 +446,18 @@
     "scriptSrc": "cdn\\.usefathom\\.com/",
     "website": "https://usefathom.com"
   },
+  "Faveo": {
+    "cats": [
+      1,
+      104
+    ],
+    "description": "Open source help desk system and ticket management tool.",
+    "dom": "link[href*='/lb-faveo/']",
+    "icon": "Faveo.png",
+    "oss": true,
+    "scriptSrc": "faveo(?:\\/js)?(?:\\/jquery)?(?:\\/know)?(?:\\/mobilemenu)?(?:\\/plugins)?(?:\\/bootstrap)?(?:\\/superfish)?(?:\\/iCheck\\/icheck)?(?:-wysihtml5\\/bootstrap3-wysihtml5)?(?:\\.all)?(?:\\.rating)?(?:\\.pack)?((?:\\d+\\.)+\\d+)?(?:\\.min)?\\.js\\;version:\\1",
+    "website": "https://faveohelpdesk.com"
+  },
   "Fbits": {
     "cats": [
       6
@@ -1063,6 +1075,16 @@
     "saas": true,
     "scriptSrc": "\\.flocktory\\.com/",
     "website": "https://www.flocktory.com"
+  },
+  "Flot": {
+    "cats": [
+      59
+    ],
+    "description": "Attractive Javascript plotting for jQuery.",
+    "icon": "Flot.png",
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/(?:jquery\\.)?)?flot(?:\\/curvedLines)?(?:\\/excanvas)?(?:\\/jquery)?(?:\\.categories)?(?:\\.pack)?(?:\\.pie)?(?:\\.resize)?(?:\\.selection)?(?:\\.spline)?(?:\\.symbol)?(?:\\.time)?(?:\\.tooltip)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1\\2",
+    "website": "https://flotcharts.org/"
   },
   "Flow": {
     "cats": [
@@ -2431,6 +2453,18 @@
     ],
     "saas": true,
     "website": "https://platform.fynd.com"
+  },
+  "framework7": {
+    "cats": [
+      59,
+      66
+    ],
+    "description": "Full Featured Mobile HTML Framework For Building iOS & Android Apps.",
+    "dom": "link[href*='framework7'], .framework7-root, .framework7-modals",
+    "icon": "framework7.png",
+    "oss": true,
+    "scriptSrc": "(?:((?:\\d+\\.)+\\d+)\\/(?:js\\/)?)?framework7(?:-((?:\\d+\\.)+\\d+))?(?:\\.custom)?(?:\\.min)?(?:-vue)?_?[\\w\\.]{0,29}\\.js\\;version:\\1\\2",
+    "website": "https://framework7.io/"
   },
   "fullPage.js": {
     "cats": [

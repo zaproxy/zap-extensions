@@ -1605,6 +1605,20 @@
     "saas": true,
     "website": "https://circle.so"
   },
+  "Citizen Space": {
+    "cats": [
+      1
+    ],
+    "description": "Next-generation engagement tools for 21st century democracy.",
+    "dom": "a[href='https://www.delib.net/citizen_space']",
+    "icon": "CitizenSpace.png",
+    "pricing": [
+      "payg"
+    ],
+    "saas": true,
+    "scriptSrc": "/static/vendor/dlb-admin-ui/",
+    "website": "https://www.delib.net/citizen_space"
+  },
   "CitrusPay": {
     "cats": [
       41
@@ -4031,6 +4045,23 @@
     "saas": true,
     "website": "https://www.cratejoy.com"
   },
+  "Crayon Syntax Highlighter": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "Syntax Highlighter supporting multiple languages, themes, fonts, highlighting from a URL, local file or post text.",
+    "dom": "link#crayon-css, link#crayon",
+    "js": {
+      "CrayonSyntaxSettings": "",
+      "CrayonSyntaxStrings": "",
+      "CrayonTagEditorSettings": ""
+    },
+    "oss": true,
+    "requires": "WordPress",
+    "scriptSrc": "crayon-syntax-highlighter(?:\\/js)?(?:\\/min)?(?:\\/crayon)?(?:\\.te)?(?:\\.min)?\\.js(?:\\?v(?:er)?=_((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/crayon-syntax-highlighter/"
+  },
   "Crazy Egg": {
     "cats": [
       10
@@ -4390,6 +4421,17 @@
     "requires": "WordPress",
     "scriptSrc": "/wp-content/plugins/custom-fonts/",
     "website": "https://github.com/brainstormforce/custom-fonts"
+  },
+  "Custom Twitter Feeds": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "Custom Twitter Feeds for Wordpress.",
+    "dom": "link[href*='/wp-content/plugins/custom-twitter-feeds/']",
+    "requires": "WordPress",
+    "scriptSrc": "custom-twitter-feeds(?:\\/js)?(?:\\/ctf-scripts)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/custom-twitter-feeds"
   },
   "Customer.io": {
     "cats": [
