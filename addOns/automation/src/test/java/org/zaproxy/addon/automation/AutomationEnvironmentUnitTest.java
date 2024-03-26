@@ -811,6 +811,155 @@ class AutomationEnvironmentUnitTest {
     }
 
     @Test
+    void shouldReplaceVarsInVars() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
+                        + "  vars:\n"
+                        + "    a: a\n"
+                        + "    b: ${a}b\n"
+                        + "    c: ${b}${b}\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // When
+        String result = env.replaceVars("${c}");
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(false)));
+        assertThat(result, is(equalTo("abab")));
+    }
+
+    @Test
+    void shouldWarnOnMissingVarsOnce() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
+                        + "  vars:\n"
+                        + "    a: a\n"
+                        + "    b: ${a}b\n"
+                        + "    c: ${b}${z}${b}\n"
+                        + "    d: ${c}${z}\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // When
+        String result = env.replaceVars("${d}");
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.getWarnings(), contains("!automation.error.env.novar!"));
+        assertThat(result, is(equalTo("ab${z}ab${z}")));
+    }
+
+    @Test
+    void shouldWarnOnVarWithSelfReference() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
+                        + "  vars:\n"
+                        + "    a: ${a}\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // When
+        String result = env.replaceVars("${a}");
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.getWarnings(), contains("!automation.error.env.loopvar!"));
+        assertThat(result, is(equalTo("${a}")));
+    }
+
+    @Test
+    void shouldWarnOnVarsWithLoop() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
+                        + "  vars:\n"
+                        + "    a: ${b}\n"
+                        + "    b: ${a}\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // When
+        String result = env.replaceVars("${a}");
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(progress.getWarnings(), contains("!automation.error.env.loopvar!"));
+        assertThat(result, is(equalTo("${a}")));
+    }
+
+    @Test
+    void shouldWarnOncePerLoopVar() {
+        // Given
+        String contextStr =
+                "env:\n"
+                        + "  contexts:\n"
+                        + "    - name: context 1\n"
+                        + "      urls:\n"
+                        + "      - https://www.example.com\n"
+                        + "  vars:\n"
+                        + "    a: ${b}\n"
+                        + "    b: ${a}${c}\n"
+                        + "    c: ${b}\n";
+        Yaml yaml = new Yaml();
+        LinkedHashMap<?, ?> data =
+                yaml.load(new ByteArrayInputStream(contextStr.getBytes(StandardCharsets.UTF_8)));
+        LinkedHashMap<?, ?> contextData = (LinkedHashMap<?, ?>) data.get("env");
+        AutomationProgress progress = new AutomationProgress();
+        AutomationEnvironment env = new AutomationEnvironment(contextData, progress);
+
+        // When
+        String result = env.replaceVars("${c}");
+
+        // Then
+        assertThat(progress.hasErrors(), is(equalTo(false)));
+        assertThat(progress.hasWarnings(), is(equalTo(true)));
+        assertThat(
+                progress.getWarnings(),
+                contains("!automation.error.env.loopvar!", "!automation.error.env.loopvar!"));
+        assertThat(result, is(equalTo("${b}${c}")));
+    }
+
+    @Test
     void shouldUseSystemEnvVarsOverConfigVars() {
         // Given
         String contextStr =
