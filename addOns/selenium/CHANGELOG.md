@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Update Selenium to version 4.19.0.
+- Update HtmlUnit to major version 3.
 
 ### Fixed
 - A typo on the intro page in the add-on's help.
