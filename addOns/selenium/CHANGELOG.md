@@ -6,7 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
-- Support for menu weights (Issue 8369)
+- Support for menu weights (Issue 8369).
+
+### Changed
+- Update Selenium to version 4.19.0.
 
 ### Fixed
 - A typo on the intro page in the add-on's help.
