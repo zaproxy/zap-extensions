@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [57] - 2024-03-28
 ### Changed
 - Use of HTTP for example URLs in the descriptions or other info details for the following rules have been updated to HTTPS (Issue 8262):
     - Cookie Poisoning
@@ -526,6 +526,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[57]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v57
 [56]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v56
 [55]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v55
 [54]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v54

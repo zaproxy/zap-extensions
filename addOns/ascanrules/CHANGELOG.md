@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [65] - 2024-03-28
 ### Changed
 - Change link to use HTTPS in other info of SQL Injection - SQLite (Issue 8262).
 
@@ -517,6 +517,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[65]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v65
 [64]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v64
 [63]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v63
 [62]: https://github.com/zaproxy/zap-extensions/releases/ascanrules-v62

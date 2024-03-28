@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [53] - 2024-03-28
 ### Changed
 - Change links to use HTTPS in other info of Insecure HTTP Method (Issue 8262).
 
@@ -514,6 +514,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - Updated to support new addon format
 
+[53]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v53
 [52]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v52
 [51]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v51
 [50]: https://github.com/zaproxy/zap-extensions/releases/ascanrulesBeta-v50

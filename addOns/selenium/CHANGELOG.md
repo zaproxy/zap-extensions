@@ -4,7 +4,7 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [15.20.0] - 2024-03-28
 ### Added
 - Support for menu weights (Issue 8369).
 
@@ -221,6 +221,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated to Selenium 2.45 and moved to release
 
+[15.20.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.20.0
 [15.19.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.19.0
 [15.18.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.18.0
 [15.17.0]: https://github.com/zaproxy/zap-extensions/releases/selenium-v15.17.0
