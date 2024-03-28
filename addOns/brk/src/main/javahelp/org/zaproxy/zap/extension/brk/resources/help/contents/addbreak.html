@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<TITLE>
+Add/Edit Breakpoint dialog
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Add/Edit Breakpoint dialog</H1>
+
+A breakpoint is defined by the following fields:
+
+<ul>
+	<li><strong>Location</strong> - where the <code>String</code> is checked in the
+		HTTP message: <code>URL</code>, <code>Request Header</code>, <code>Request Body</code>,
+		<code>Response Header</code>, or <code>Response Body</code>.</li>
+	<li><strong>Match</strong> - how the <code>String</code> is interpreted, <code>Regex</code>
+		or <code>Contains</code>, for regular expression or exact match, respectively, in the <code>Location</code>.
+		The regular expression does not need to match the whole content of the <code>Location</code>.</li>
+	<li><strong>String</strong> - the string that triggers the breakpoint.</li>
+	<li><strong>Inverse</strong> - if the result of the <code>Match</code> should be
+		the inverse.</li>
+	<li><strong>Ignore case</strong> - if the case of the <code>String</code> should be
+		ignored.</li>
+</ul>
+
+If you proxy a HTTP message that matches a breakpoint then ZAP will intercept it and allow you to change either the request
+or the response.
+
+<p>
+<strong>Note:</strong> ZAP will warn and prevent adding breakpoints with a fragment identifier component (<code>#</code>), if
+the breakpoint has match <code>Contains</code> and location <code>URL</code>. Such breakpoint would not work because the 
+fragment identifier is not sent to the server.
+
+</BODY>
+</HTML>
