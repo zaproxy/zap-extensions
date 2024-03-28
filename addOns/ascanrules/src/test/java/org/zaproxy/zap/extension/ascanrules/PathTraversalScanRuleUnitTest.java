@@ -148,11 +148,16 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         assertThat(alertsRaised, hasSize(0));
     }
 
-    @Test
-    void shouldAlertIfAttackResponseListsWindowsDirectories() throws Exception {
+    @ParameterizedTest
+    @EnumSource(
+            value = Plugin.AlertThreshold.class,
+            names = {"LOW"})
+    void shouldAlertIfAttackResponseListsWindowsDirectories(AlertThreshold alertThreshold)
+            throws Exception {
         // Given
         nano.addHandler(new ListWinDirsOnAttack("/", "p", "c:/"));
         rule.init(getHttpMessage("/?p=v"), parent);
+        rule.setAlertThreshold(alertThreshold);
         // When
         rule.scan();
         // Then
@@ -166,11 +171,39 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-3")));
     }
 
-    @Test
-    void shouldAlertIfAttackResponseListsLinuxDirectories() throws Exception {
+    @ParameterizedTest
+    @EnumSource(
+            value = Plugin.AlertThreshold.class,
+            names = {"LOW"})
+    void shouldAlertIfAttackResponseListsLinuxDirectories(AlertThreshold alertThreshold)
+            throws Exception {
         // Given
         nano.addHandler(new ListLinuxDirsOnAttack("/", "p", "/"));
         rule.init(getHttpMessage("/?p=v"), parent);
+        rule.setAlertThreshold(alertThreshold);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(greaterThan(1)));
+        assertThat(alertsRaised, hasSize(1));
+        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("etc")));
+        assertThat(alertsRaised.get(0).getParam(), is(equalTo("p")));
+        assertThat(alertsRaised.get(0).getAttack(), is(equalTo("/")));
+        assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
+        assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-3")));
+    }
+
+    @ParameterizedTest
+    @EnumSource(
+            value = Plugin.AlertThreshold.class,
+            names = {"LOW"})
+    void shouldNotAlertIfAttackResponseListsHasFalsePositivePattern(AlertThreshold alertThreshold)
+            throws Exception {
+        // Given
+        nano.addHandler(new ListFalsePositiveDirsOnAttack("/", "p", "/"));
+        rule.init(getHttpMessage("/?p=v"), parent);
+        rule.setAlertThreshold(alertThreshold);
         // When
         rule.scan();
         // Then
@@ -375,6 +408,25 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
                         + "<td><a href=\"/boot/\">boot</a></td>";
 
         public ListLinuxDirsOnAttack(String path, String param, String attack) {
+            super(path, param, attack);
+        }
+
+        @Override
+        protected String getDirs() {
+            return DIRS_LISTING;
+        }
+    }
+
+    private static class ListFalsePositiveDirsOnAttack extends ListDirsOnAttack {
+
+        private static final String DIRS_LISTING =
+                "<script src=\"/static/appbuilder/js/bootstrap.min.js\"></script>"
+                        + "<div class=\"modal fade\" id=\"modal-confirm\" tabindex=\"-1\" role=\"dialog\">"
+                        // etc
+                        + "<div id=\"app\" data-bootstrap=\"{&#34;common&#34;: {&#34;conf&#34;:"
+                        + "{&#34;SUPERSET_WEBSERVER_TIMEOUT&#34;, etc. are evaluated on the server using the server&#39;\";</div>";
+
+        public ListFalsePositiveDirsOnAttack(String path, String param, String attack) {
             super(path, param, attack);
         }
 

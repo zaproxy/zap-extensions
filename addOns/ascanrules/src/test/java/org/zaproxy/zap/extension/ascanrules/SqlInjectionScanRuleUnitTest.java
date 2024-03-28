@@ -32,7 +32,11 @@ import fi.iki.elonen.NanoHTTPD.IHTTPSession;
 import fi.iki.elonen.NanoHTTPD.Response;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.parosproxy.paros.core.scanner.Alert;
+import org.parosproxy.paros.core.scanner.Plugin;
+import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.core.scanner.Plugin.AttackStrength;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.zap.model.Tech;
@@ -164,8 +168,11 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
         assertThat(targets, is(equalTo(false)));
     }
 
-    @Test
-    void shouldAlertIfSumExpressionsAreSuccessful() throws Exception {
+    @ParameterizedTest
+    @EnumSource(
+            value = Plugin.AlertThreshold.class,
+            names = {"LOW"})
+    void shouldAlertIfSumExpressionsAreSuccessful(AlertThreshold alertThreshold) throws Exception {
         // Given
         String param = "id";
         nano.addHandler(
@@ -173,6 +180,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
         rule.init(
                 getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.SUM.value),
                 parent);
+        rule.setAlertThreshold(alertThreshold);
         // When
         rule.scan();
         // Then
@@ -187,8 +195,12 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 
-    @Test
-    void shouldAlertIfSumExpressionsAreSuccessfulAndReflectedInResponse() throws Exception {
+    @ParameterizedTest
+    @EnumSource(
+            value = Plugin.AlertThreshold.class,
+            names = {"LOW"})
+    void shouldAlertIfSumExpressionsAreSuccessfulAndReflectedInResponse(
+            AlertThreshold alertThreshold) throws Exception {
         // Given
         String param = "id";
         nano.addHandler(
@@ -202,6 +214,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
         rule.init(
                 getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.SUM.value),
                 parent);
+        rule.setAlertThreshold(alertThreshold);
         // When
         rule.scan();
         // Then
@@ -216,8 +229,12 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 
-    @Test
-    void shouldNotAlertIfSumConfirmationExpressionIsNotSuccessful() throws Exception {
+    @ParameterizedTest
+    @EnumSource(
+            value = Plugin.AlertThreshold.class,
+            names = {"LOW"})
+    void shouldNotAlertIfSumConfirmationExpressionIsNotSuccessful(AlertThreshold alertThreshold)
+            throws Exception {
         // Given
         String param = "id";
         nano.addHandler(
@@ -226,6 +243,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
         rule.init(
                 getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.SUM.value),
                 parent);
+        rule.setAlertThreshold(alertThreshold);
         // When
         rule.scan();
         // Then
@@ -233,9 +251,12 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
         assertThat(alertsRaised, hasSize(0));
     }
 
-    @Test
-    void shouldNotAlertIfSumConfirmationExpressionIsNotSuccessfulAndIsReflectedInResponse()
-            throws Exception {
+    @ParameterizedTest
+    @EnumSource(
+            value = Plugin.AlertThreshold.class,
+            names = {"LOW"})
+    void shouldNotAlertIfSumConfirmationExpressionIsNotSuccessfulAndIsReflectedInResponse(
+            AlertThreshold alertThreshold) throws Exception {
         // Given
         String param = "id";
         nano.addHandler(
@@ -248,6 +269,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
         rule.init(
                 getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.SUM.value),
                 parent);
+        rule.setAlertThreshold(alertThreshold);
         // When
         rule.scan();
         // Then
@@ -255,8 +277,11 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
         assertThat(alertsRaised, hasSize(0));
     }
 
-    @Test
-    void shouldAlertIfMultExpressionsAreSuccessful() throws Exception {
+    @ParameterizedTest
+    @EnumSource(
+            value = Plugin.AlertThreshold.class,
+            names = {"LOW"})
+    void shouldAlertIfMultExpressionsAreSuccessful(AlertThreshold alertThreshold) throws Exception {
         // Given
         String param = "id";
         nano.addHandler(
@@ -264,6 +289,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
         rule.init(
                 getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.MULT.value),
                 parent);
+        rule.setAlertThreshold(alertThreshold);
         // When
         rule.scan();
         // Then
@@ -278,8 +304,12 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 
-    @Test
-    void shouldAlertIfMultExpressionsAreSuccessfulAndReflectedInResponse() throws Exception {
+    @ParameterizedTest
+    @EnumSource(
+            value = Plugin.AlertThreshold.class,
+            names = {"LOW"})
+    void shouldAlertIfMultExpressionsAreSuccessfulAndReflectedInResponse(
+            AlertThreshold alertThreshold) throws Exception {
         // Given
         String param = "id";
         nano.addHandler(
@@ -293,6 +323,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
         rule.init(
                 getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.MULT.value),
                 parent);
+        rule.setAlertThreshold(alertThreshold);
         // When
         rule.scan();
         // Then
@@ -307,8 +338,12 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
         assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
     }
 
-    @Test
-    void shouldNotAlertIfMultConfirmationExpressionIsNotSuccessful() throws Exception {
+    @ParameterizedTest
+    @EnumSource(
+            value = Plugin.AlertThreshold.class,
+            names = {"LOW"})
+    void shouldNotAlertIfMultConfirmationExpressionIsNotSuccessful(AlertThreshold alertThreshold)
+            throws Exception {
         // Given
         String param = "id";
         nano.addHandler(
@@ -317,6 +352,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
         rule.init(
                 getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.MULT.value),
                 parent);
+        rule.setAlertThreshold(alertThreshold);
         // When
         rule.scan();
         // Then
@@ -324,9 +360,12 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
         assertThat(alertsRaised, hasSize(0));
     }
 
-    @Test
-    void shouldNotAlertIfMultConfirmationExpressionIsNotSuccessfulAndReflectedInResponse()
-            throws Exception {
+    @ParameterizedTest
+    @EnumSource(
+            value = Plugin.AlertThreshold.class,
+            names = {"LOW"})
+    void shouldNotAlertIfMultConfirmationExpressionIsNotSuccessfulAndReflectedInResponse(
+            AlertThreshold alertThreshold) throws Exception {
         // Given
         String param = "id";
         nano.addHandler(
@@ -339,6 +378,7 @@ class SqlInjectionScanRuleUnitTest extends ActiveScannerTest<SqlInjectionScanRul
         rule.init(
                 getHttpMessage("/?" + param + "=" + ExpressionBasedHandler.Expression.MULT.value),
                 parent);
+        rule.setAlertThreshold(alertThreshold);
         // When
         rule.scan();
         // Then
