@@ -21,9 +21,9 @@ package org.zaproxy.addon.grpc.internal;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.util.Base64;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.apache.commons.configuration.FileConfiguration;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -45,6 +45,8 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
     private JPanel mainPanel;
 
     private ProtoBufMessageDecoder protoBufMessageDecoder;
+
+    private ProtoBufMessageEncoder protoBufMessageEncoder;
     private AbstractByteHttpPanelViewModel model;
 
     public HttpPanelGrpcView(AbstractByteHttpPanelViewModel model) {
@@ -56,6 +58,7 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
         this.model = model;
         model.addHttpPanelViewModelListener(this);
         protoBufMessageDecoder = new ProtoBufMessageDecoder();
+        protoBufMessageEncoder = new ProtoBufMessageEncoder();
     }
 
     @Override
@@ -119,7 +122,14 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
     @Override
     public void save() {
         // todo: encode before saving
-        // this.model.setData(httpPanelGrpcArea.getText());
+        String text = httpPanelGrpcArea.getText();
+        try {
+            protoBufMessageEncoder.encode(EncoderUtils.parseIntoList(text));
+            byte[] encodedMessage = protoBufMessageEncoder.getOutputEncodedMessage();
+            this.model.setData(org.apache.commons.codec.binary.Base64.encodeBase64(encodedMessage));
+        } catch (Exception e) {
+            showInvalidMessageFormatError(e.getMessage());
+        }
     }
 
     @Override
@@ -136,7 +146,7 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
         byte[] body = ((AbstractByteHttpPanelViewModel) e.getSource()).getData();
         httpPanelGrpcArea.setBorder(null);
         try {
-            body = Base64.getDecoder().decode(body);
+            body = org.apache.commons.codec.binary.Base64.decodeBase64(body);
             byte[] payload = DecoderUtils.extractPayload(body);
             if (payload.length == 0) {
                 httpPanelGrpcArea.setText("");
@@ -151,5 +161,10 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
         if (!isEditable()) {
             httpPanelGrpcArea.discardAllEdits();
         }
+    }
+
+    public void showInvalidMessageFormatError(String message) {
+        JOptionPane.showMessageDialog(
+                null, message, "Invalid Message Format", JOptionPane.ERROR_MESSAGE);
     }
 }

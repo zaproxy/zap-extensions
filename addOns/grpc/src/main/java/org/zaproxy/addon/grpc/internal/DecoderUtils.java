@@ -141,7 +141,7 @@ public class DecoderUtils {
                                 .append("B::")
                                 .append(DecoderUtils.toHexString(stringBytes));
                     } else {
-                        decodedValueBuilder.append("::").append(decoded);
+                        decodedValueBuilder.append("::").append('"').append(decoded).append('"');
                     }
                 } else {
                     decodedValueBuilder.append("N::").append(validMessage);

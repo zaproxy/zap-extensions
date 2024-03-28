@@ -22,7 +22,6 @@ package org.zaproxy.addon.grpc.internal;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.Base64;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.grpc.ExtensionGrpc;
@@ -57,9 +56,9 @@ class ProtoBufMessageDecoderUnitTest extends TestUtils {
         String inputString =
                 "AAAAADEKC2pvaG4gTWlsbGVyEB4aIDEyMzQgTWFpbiBTdC4gQW55dG93biwgVVNBIDEyMzQ1";
         String expectedOutput =
-                "1:2::john Miller\n2:0::30\n3:2::1234 Main St. Anytown, USA 12345\n";
+                "1:2::\"john Miller\"\n2:0::30\n3:2::\"1234 Main St. Anytown, USA 12345\"\n";
         // Example valid input byte array
-        byte[] validInput = Base64.getDecoder().decode(inputString);
+        byte[] validInput = org.apache.commons.codec.binary.Base64.decodeBase64(inputString);
         validInput = DecoderUtils.extractPayload(validInput);
         decoder.decode(validInput);
         assertEquals(expectedOutput, decoder.getDecodedOuput());
@@ -69,11 +68,11 @@ class ProtoBufMessageDecoderUnitTest extends TestUtils {
     @Test
     void shouldDecodeWithNestedMessageValidInput() {
         String inputString =
-                "AAAAAEkKI3sibmFtZSI6IkpvaG4iLCJsYXN0bmFtZSI6Ik1pbGxlciJ9EB4aIDEyMzQgTWFpbiBTdC4gQW55dG93biwgVVNBIDEyMzQ1";
+                "AAAAAEEKEEhlbGxvLCBQcm90b2J1ZiESJwoESm9obhIGTWlsbGVyGhcKBEpvaG4QAhoNCgtIZWxsbyBXb3JsZBjqrcDlJA";
         String expectedOutput =
-                "1:2::{\"name\":\"John\",\"lastname\":\"Miller\"}\n2:0::30\n3:2::1234 Main St. Anytown, USA 12345\n";
+                "1:2::\"Hello, Protobuf!\"\n2:2N::{\n1:2::\"John\"\n2:2::\"Miller\"\n3:2N::{\n1:2::\"John\"\n2:0::2\n3:2N::{\n1:2::\"Hello World\"\n}\n}\n}\n3:0::9876543210\n";
         // Example valid input byte array
-        byte[] validInput = Base64.getDecoder().decode(inputString);
+        byte[] validInput = org.apache.commons.codec.binary.Base64.decodeBase64(inputString);
         validInput = DecoderUtils.extractPayload(validInput);
         decoder.decode(validInput);
         assertEquals(expectedOutput, decoder.getDecodedOuput());
@@ -84,8 +83,8 @@ class ProtoBufMessageDecoderUnitTest extends TestUtils {
     void shouldDecodeWithEnumAndRepeatedFieldsInput() {
         // Example corrupted input byte array
         String inputString = "AAAAAA4IARIBYRIBYhIBYxIBZA";
-        String expectedOutput = "1:0::1\n2:2::a\n2:2::b\n2:2::c\n2:2::d\n";
-        byte[] validInput = Base64.getDecoder().decode(inputString);
+        String expectedOutput = "1:0::1\n2:2::\"a\"\n2:2::\"b\"\n2:2::\"c\"\n2:2::\"d\"\n";
+        byte[] validInput = org.apache.commons.codec.binary.Base64.decodeBase64(inputString);
         validInput = DecoderUtils.extractPayload(validInput);
         decoder.decode(validInput);
         assertEquals(expectedOutput, decoder.getDecodedOuput());
@@ -96,7 +95,7 @@ class ProtoBufMessageDecoderUnitTest extends TestUtils {
     void shouldDecodeWithDoubleAndFloatInput() {
         String inputString = "AAAAAA4JzczMzMzcXkAVrseHQg";
         String expectedOutput = "1:1D::123.45\n2:5F::67.89\n";
-        byte[] validInput = Base64.getDecoder().decode(inputString);
+        byte[] validInput = org.apache.commons.codec.binary.Base64.decodeBase64(inputString);
         validInput = DecoderUtils.extractPayload(validInput);
         decoder.decode(validInput);
         assertEquals(expectedOutput, decoder.getDecodedOuput());
@@ -107,7 +106,7 @@ class ProtoBufMessageDecoderUnitTest extends TestUtils {
     void shouldDecodeWithWireType1And6Input() {
         String inputString = "AAAAAA4NQEIPABHMm5cAyicBAA";
         String expectedOutput = "1:5::1000000\n2:1::325223523523532\n";
-        byte[] validInput = Base64.getDecoder().decode(inputString);
+        byte[] validInput = org.apache.commons.codec.binary.Base64.decodeBase64(inputString);
         validInput = DecoderUtils.extractPayload(validInput);
         decoder.decode(validInput);
         assertEquals(expectedOutput, decoder.getDecodedOuput());
@@ -121,7 +120,7 @@ class ProtoBufMessageDecoderUnitTest extends TestUtils {
         String invalidString =
                 "AAAAADEPC2pvaG4gTWlsbGVyEB4aIDEyMzQgTWFpbiBTdC4gQW55dG93biwgVVNBIDEyMzQ1";
         String expectedOutput = "";
-        byte[] invalidInput = Base64.getDecoder().decode(invalidString);
+        byte[] invalidInput = org.apache.commons.codec.binary.Base64.decodeBase64(invalidString);
         byte[] finalInvalidInput = DecoderUtils.extractPayload(invalidInput);
         IllegalArgumentException exception =
                 assertThrows(
