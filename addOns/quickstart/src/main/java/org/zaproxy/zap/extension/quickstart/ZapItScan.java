@@ -19,7 +19,6 @@
  */
 package org.zaproxy.zap.extension.quickstart;
 
-import com.gargoylesoftware.htmlunit.HttpHeader;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -42,6 +41,7 @@ import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.model.HistoryReference;
 import org.parosproxy.paros.model.SiteNode;
+import org.parosproxy.paros.network.HttpHeader;
 import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.zap.extension.alert.ExtensionAlert;
