@@ -155,7 +155,7 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
                 httpPanelGrpcArea.setText(protoBufMessageDecoder.getDecodedOuput());
             }
         } catch (Exception er) {
-            httpPanelGrpcArea.setText(er.getMessage());
+            httpPanelGrpcArea.setText(protoBufMessageDecoder.getDecodedOuput() + er.getMessage());
             httpPanelGrpcArea.setBorder(BorderFactory.createLineBorder(Color.RED));
         }
         if (!isEditable()) {
