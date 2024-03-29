@@ -148,16 +148,11 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         assertThat(alertsRaised, hasSize(0));
     }
 
-    @ParameterizedTest
-    @EnumSource(
-            value = Plugin.AlertThreshold.class,
-            names = {"LOW"})
-    void shouldAlertIfAttackResponseListsWindowsDirectories(AlertThreshold alertThreshold)
-            throws Exception {
+    @Test
+    void shouldAlertIfAttackResponseListsWindowsDirectories() throws Exception {
         // Given
         nano.addHandler(new ListWinDirsOnAttack("/", "p", "c:/"));
         rule.init(getHttpMessage("/?p=v"), parent);
-        rule.setAlertThreshold(alertThreshold);
         // When
         rule.scan();
         // Then
@@ -171,16 +166,11 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-3")));
     }
 
-    @ParameterizedTest
-    @EnumSource(
-            value = Plugin.AlertThreshold.class,
-            names = {"LOW"})
-    void shouldAlertIfAttackResponseListsLinuxDirectories(AlertThreshold alertThreshold)
-            throws Exception {
+    @Test
+    void shouldAlertIfAttackResponseListsLinuxDirectories() throws Exception {
         // Given
         nano.addHandler(new ListLinuxDirsOnAttack("/", "p", "/"));
         rule.init(getHttpMessage("/?p=v"), parent);
-        rule.setAlertThreshold(alertThreshold);
         // When
         rule.scan();
         // Then
@@ -194,27 +184,16 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-3")));
     }
 
-    @ParameterizedTest
-    @EnumSource(
-            value = Plugin.AlertThreshold.class,
-            names = {"LOW"})
-    void shouldNotAlertIfAttackResponseListsHasFalsePositivePattern(AlertThreshold alertThreshold)
-            throws Exception {
+    @Test
+    void shouldNotAlertIfAttackResponseListsHasFalsePositivePattern() throws Exception {
         // Given
         nano.addHandler(new ListFalsePositiveDirsOnAttack("/", "p", "/"));
         rule.init(getHttpMessage("/?p=v"), parent);
-        rule.setAlertThreshold(alertThreshold);
         // When
         rule.scan();
         // Then
         assertThat(httpMessagesSent, hasSize(greaterThan(1)));
-        assertThat(alertsRaised, hasSize(1));
-        assertThat(alertsRaised.get(0).getEvidence(), is(equalTo("etc")));
-        assertThat(alertsRaised.get(0).getParam(), is(equalTo("p")));
-        assertThat(alertsRaised.get(0).getAttack(), is(equalTo("/")));
-        assertThat(alertsRaised.get(0).getRisk(), is(equalTo(Alert.RISK_HIGH)));
-        assertThat(alertsRaised.get(0).getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
-        assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-3")));
+        assertThat(alertsRaised, hasSize(0));
     }
 
     @Test
