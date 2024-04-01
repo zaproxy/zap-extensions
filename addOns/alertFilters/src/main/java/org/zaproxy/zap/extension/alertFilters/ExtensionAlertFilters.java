@@ -46,8 +46,6 @@ import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.model.Session.OnContextsChangedListener;
 import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.ZAP;
-import org.zaproxy.zap.control.CoreFunctionality;
-import org.zaproxy.zap.control.ExtensionFactory;
 import org.zaproxy.zap.eventBus.Event;
 import org.zaproxy.zap.eventBus.EventConsumer;
 import org.zaproxy.zap.extension.alert.AlertEventPublisher;
@@ -55,6 +53,7 @@ import org.zaproxy.zap.extension.alert.ExtensionAlert;
 import org.zaproxy.zap.extension.alert.PopupMenuItemAlert;
 import org.zaproxy.zap.extension.alertFilters.internal.ScanRulesInfo;
 import org.zaproxy.zap.extension.ascan.ExtensionActiveScan;
+import org.zaproxy.zap.extension.pscan.ExtensionPassiveScan;
 import org.zaproxy.zap.model.Context;
 import org.zaproxy.zap.model.ContextDataFactory;
 import org.zaproxy.zap.model.SessionStructure;
@@ -141,8 +140,9 @@ public class ExtensionAlertFilters extends ExtensionAdaptor
             scanRulesInfo =
                     new ScanRulesInfo(
                             getExtAscan(),
-                            CoreFunctionality.getBuiltInPassiveScanRules(),
-                            ExtensionFactory.getAddOnLoader().getPassiveScanRules());
+                            Control.getSingleton()
+                                    .getExtensionLoader()
+                                    .getExtension(ExtensionPassiveScan.class));
         }
         return scanRulesInfo;
     }
