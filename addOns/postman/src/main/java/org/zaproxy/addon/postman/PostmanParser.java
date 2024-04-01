@@ -119,6 +119,9 @@ public class PostmanParser {
 
         extractHttpMessages(
                 postmanCollection.getItem(), httpMessages, errors, postmanCollection.getVariable());
+        if (httpMessages.isEmpty()) {
+            errors.add(Constant.messages.getString("postman.import.error.noItem"));
+        }
         return httpMessages;
     }
 
@@ -239,9 +242,6 @@ public class PostmanParser {
                             getCombinedVarList(itemGroup.getVariable(), parentVariables));
                 }
             }
-        }
-        if (httpMessages.isEmpty()) {
-            errors.add(Constant.messages.getString("postman.import.error.noItem"));
         }
     }
 

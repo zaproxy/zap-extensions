@@ -21,6 +21,7 @@ package org.zaproxy.addon.postman;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -64,6 +65,9 @@ class ListDeserializerUnitTest extends TestUtils {
         String collectionJson = "{\"item\":[true,{\"randomKey\":\"randomValue\"}]}";
 
         PostmanCollection collection = assertDoesNotThrow(() -> parser.parse(collectionJson));
-        assertEquals(0, collection.getItem().size());
+        assertEquals(1, collection.getItem().size());
+        var item = collection.getItem().get(0);
+        assertTrue(Item.class.isInstance(item));
+        assertNull(((Item) item).getRequest());
     }
 }
