@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - Error when trying to run an unsupported script type through the Automation Framework.
+- The "Scripts Passive Scanner" scan rule was being loaded twice.
 
 ## [45.1.0] - 2024-03-25
 ### Added

@@ -62,7 +62,6 @@ import org.zaproxy.zap.extension.script.ScriptUI;
 import org.zaproxy.zap.extension.script.ScriptWrapper;
 import org.zaproxy.zap.extension.scripts.scanrules.ActiveScriptSynchronizer;
 import org.zaproxy.zap.extension.scripts.scanrules.PassiveScriptSynchronizer;
-import org.zaproxy.zap.extension.scripts.scanrules.ScriptsPassiveScanner;
 import org.zaproxy.zap.extension.stdmenus.PopupContextMenuItemFactory;
 import org.zaproxy.zap.model.Context;
 
@@ -265,7 +264,6 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
                 if (installedPscanRule != null
                         && installedPscanRule.getClass().getName().equals(corePscanRuleName)) {
                     extensionPscan.removePluginPassiveScanner(installedPscanRule);
-                    extensionPscan.addPluginPassiveScanner(new ScriptsPassiveScanner());
                 }
             }
         }

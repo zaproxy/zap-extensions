@@ -21,6 +21,8 @@ package org.zaproxy.zap.extension.scripts.scanrules;
 
 import java.util.HashMap;
 import java.util.Map;
+import net.bytebuddy.ByteBuddy;
+import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.control.Control;
@@ -64,7 +66,19 @@ public class PassiveScriptSynchronizer {
                 return;
             }
 
-            scanRule = new PassiveScriptScanRule(script, metadata);
+            // FIXME: Remove the usage of ByteBuddy when ExtensionPassiveScan does not rely on the
+            // class name to remove scan rules
+            var dynamicPassiveScanRuleType =
+                    new ByteBuddy()
+                            .subclass(PassiveScriptScanRule.class)
+                            .make()
+                            .load(getClass().getClassLoader(), ClassLoadingStrategy.Default.WRAPPER)
+                            .getLoaded();
+            scanRule =
+                    dynamicPassiveScanRuleType
+                            .getConstructor(ScriptWrapper.class, metadata.getClass())
+                            .newInstance(script, metadata);
+
             if (!getExtPscan().addPluginPassiveScanner(scanRule)) {
                 LOGGER.error("Failed to install script scan rule: {}", script.getName());
                 return;

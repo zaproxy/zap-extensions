@@ -59,5 +59,7 @@ dependencies {
     zapAddOn("automation")
     zapAddOn("commonlib")
 
+    implementation("net.bytebuddy:byte-buddy:1.14.13")
+
     testImplementation(project(":testutils"))
 }
