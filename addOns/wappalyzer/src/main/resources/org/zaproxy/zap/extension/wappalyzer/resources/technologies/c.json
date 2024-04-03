@@ -3712,6 +3712,17 @@
     "scriptSrc": "consent\\.cookiebot\\.com",
     "website": "https://www.cookiebot.com"
   },
+  "Cool Timeline": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "Creates vertical and horizontal history timeline blocks.",
+    "dom": "link[href*='/plugins/cool-timeline/'], script[src*='/cool-timeline/'], .cooltimeline-body",
+    "oss": true,
+    "requires": "WordPress",
+    "website": "https://wordpress.org/plugins/cool-timeline"
+  },
   "Cooladata": {
     "cats": [
       97
@@ -3866,6 +3877,17 @@
     },
     "icon": "CouchDB.png",
     "website": "https://couchdb.apache.org"
+  },
+  "Countdown Timer Ultimate": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "Add and display responsive Countdown timer on your website.",
+    "dom": "link[href*='/wp-content/plugins/countdown-timer-ultimate/']",
+    "oss": true,
+    "requires": "WordPress",
+    "website": "https://wordpress.org/plugins/countdown-timer-ultimate"
   },
   "Countly": {
     "cats": [
