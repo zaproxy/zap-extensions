@@ -145,19 +145,15 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
      * Windows/Unix/Linux/etc. local directory targets and detection pattern
      */
     private static final ContentsMatcher DIR_PATTERN = new DirNamesContentsMatcher();
-    private static final String[] LOCAL_DIR_TARGETS = {
+    private static final String[] WIN_LOCAL_DIR_TARGETS = {
         "c:/",
-        "/",
         "c:\\",
-        "../../../../../../../../../../../../../../../../",
         "..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\",
-        "/../../../../../../../../../../../../../../../../",
         "\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\..\\",
         "file:///c:/",
         "file:///c:\\",
         "file:\\\\\\c:\\",
         "file:\\\\\\c:/",
-        "file:///",
         "file:\\\\\\",
         "d:\\",
         "d:/",
@@ -165,6 +161,12 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
         "file:///d:\\",
         "file:\\\\\\d:\\",
         "file:\\\\\\d:/"
+    };
+    private static final String[] NIX_LOCAL_DIR_TARGETS = {
+        "/",
+        "../../../../../../../../../../../../../../../../",
+        "/../../../../../../../../../../../../../../../../",
+        "file:///",
     };
 
     private static final ContentsMatcher WAR_PATTERN =
@@ -223,7 +225,8 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
             // figure out how aggressively we should test
             int nixCount = 0;
             int winCount = 0;
-            int dirCount = 0;
+            int nixDirCount = 0;
+            int winDirCount = 0;
             int localTraversalLength = 0;
             String extension = null;
             boolean includeNullByteInjectionPayload = false;
@@ -233,33 +236,37 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
 
             switch (this.getAttackStrength()) {
                 case LOW:
-                    // This works out as a total of 2+2+2+0*4+1 = 7 reqs / param
+                    // This works out as a total of 2+2+1+1+0*4+1 = 7 reqs / param
                     nixCount = 2;
                     winCount = 2;
-                    dirCount = 2;
+                    nixDirCount = 1;
+                    winDirCount = 1;
                     break;
 
                 case MEDIUM:
-                    // This works out as a total of 2+4+4+1*4+1 = 15 reqs / param
+                    // This works out as a total of 2+4+2+2+1*4+1 = 15 reqs / param
                     nixCount = 2;
                     winCount = 4;
-                    dirCount = 4;
+                    nixDirCount = 2;
+                    winDirCount = 2;
                     localTraversalLength = 1;
                     break;
 
                 case HIGH:
-                    // This works out as a total of 4+8+7+2*4+1 = 28 reqs / param
+                    // This works out as a total of 4+8+3+4+2*4+1 = 28 reqs / param
                     nixCount = 4;
                     winCount = 8;
-                    dirCount = 7;
+                    nixDirCount = 3;
+                    winDirCount = 4;
                     localTraversalLength = 2;
                     break;
 
                 case INSANE:
-                    // This works out as a total of 6+18+19+4*4+1 = 60 reqs / param
+                    // This works out as a total of 6+18+15+4+4*4+1 = 60 reqs / param
                     nixCount = NIX_LOCAL_FILE_TARGETS.length;
                     winCount = WIN_LOCAL_FILE_TARGETS.length;
-                    dirCount = LOCAL_DIR_TARGETS.length;
+                    nixDirCount = NIX_LOCAL_DIR_TARGETS.length;
+                    winDirCount = WIN_LOCAL_DIR_TARGETS.length;
                     localTraversalLength = 4;
                     includeNullByteInjectionPayload = true;
                     if (value != null) {
@@ -360,17 +367,25 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
             }
 
             // Check 3: Detect if this page is a directory browsing component
-            for (int h = 0; h < dirCount; h++) {
+            for (int h = 0; h < nixDirCount; h++) {
 
                 // Check if a there was a finding or the scan has been stopped
                 // if yes dispose resources and exit
-                if (sendAndCheckPayload(param, LOCAL_DIR_TARGETS[h], DIR_PATTERN, 3) || isStop()) {
+                if (sendAndCheckPayload(param, NIX_LOCAL_DIR_TARGETS[h], DIR_PATTERN, 3)
+                        || isStop()) {
                     // Dispose all resources
                     // Exit the scan rule
                     return;
                 }
             }
-
+            for (int h = 0; h < winDirCount; h++) {
+                if (sendAndCheckPayload(param, WIN_LOCAL_DIR_TARGETS[h], DIR_PATTERN, 3)
+                        || isStop()) {
+                    // Dispose all resources
+                    // Exit the scan rule
+                    return;
+                }
+            }
             // Check 4: Start detection for internal well known files
             // try variants based on increasing ../ ..\ prefixes and the presence of the / and \
             // trailer
@@ -674,15 +689,29 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
 
         @Override
         public String match(String contents) {
-            if (contents.contains("etc") && contents.contains("bin") && contents.contains("boot")) {
-                Pattern nixDoubleCheckPattern = Pattern.compile("\\betc\\b");
-                Matcher nixDoubleCheckMatcher = nixDoubleCheckPattern.matcher(contents);
+            String result = matchNixDirectories(contents);
+            if (result != null) {
+                return result;
+            }
+            return matchWinDirectories(contents);
+        }
 
-                if (nixDoubleCheckMatcher.find()) {
-                    return "etc";
-                }
+        private String matchNixDirectories(String contents) {
+            Pattern binPattern = Pattern.compile("<a href=\".*?/?bin/?\">bin/?</a>");
+            Pattern etcPattern = Pattern.compile("<a href=\".*?/?etc/?\">etc/?</a>");
+            Pattern bootPattern = Pattern.compile("<a href=\".*?/?boot/?\">boot/?</a>");
+
+            Matcher binMatcher = binPattern.matcher(contents);
+            Matcher etcMatcher = etcPattern.matcher(contents);
+            Matcher bootMatcher = bootPattern.matcher(contents);
+            if (binMatcher.find() && etcMatcher.find() && bootMatcher.find()) {
+                return "etc";
             }
 
+            return null;
+        }
+
+        private String matchWinDirectories(String contents) {
             if (contents.contains("Windows")
                     && Pattern.compile("Program\\sFiles").matcher(contents).find()) {
                 return "Windows";

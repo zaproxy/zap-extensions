@@ -185,6 +185,18 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
     }
 
     @Test
+    void shouldNotAlertIfAttackResponseListsHasFalsePositivePattern() throws Exception {
+        // Given
+        nano.addHandler(new ListFalsePositiveDirsOnAttack("/", "p", "/"));
+        rule.init(getHttpMessage("/?p=v"), parent);
+        // When
+        rule.scan();
+        // Then
+        assertThat(httpMessagesSent, hasSize(greaterThan(1)));
+        assertThat(alertsRaised, hasSize(0));
+    }
+
+    @Test
     void shouldNotAlertIfAttackResponseListsBogusLinuxDirectories() throws Exception {
         // Given
         nano.addHandler(new ListBogusLinuxDirsOnAttack("/", "p", "/"));
@@ -375,6 +387,25 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
                         + "<td><a href=\"/boot/\">boot</a></td>";
 
         public ListLinuxDirsOnAttack(String path, String param, String attack) {
+            super(path, param, attack);
+        }
+
+        @Override
+        protected String getDirs() {
+            return DIRS_LISTING;
+        }
+    }
+
+    private static class ListFalsePositiveDirsOnAttack extends ListDirsOnAttack {
+
+        private static final String DIRS_LISTING =
+                "<script src=\"/static/appbuilder/js/bootstrap.min.js\"></script>"
+                        + "<div class=\"modal fade\" id=\"modal-confirm\" tabindex=\"-1\" role=\"dialog\">"
+                        // etc
+                        + "<div id=\"app\" data-bootstrap=\"{&#34;common&#34;: {&#34;conf&#34;:"
+                        + "{&#34;SUPERSET_WEBSERVER_TIMEOUT&#34;, etc. are evaluated on the server using the server&#39;\";</div>";
+
+        public ListFalsePositiveDirsOnAttack(String path, String param, String attack) {
             super(path, param, attack);
         }
 

@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
+### Fixed
+- False positives in Path Traversal ascan rule (6-3 Directory browsing)
 
 ## [66] - 2024-05-07
 ### Changed
