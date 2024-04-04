@@ -309,7 +309,4 @@ public class EncoderUtils {
         }
         return size + nesMessageSize + CodedOutputStream.computeUInt32SizeNoTag(nesMessageSize);
     }
-
-
-
 }
