@@ -160,4 +160,14 @@ public class DecoderUtils {
                 new ProtoBufNestedMessageDecoder();
         return protobufNestedMessageDecoder.decode(stringBytes);
     }
+
+    static byte[] splitMessageBodyAndStatusCode(byte[] encodedText) {
+        String encodedString = new String(encodedText);
+
+        String[] parts = encodedString.split("=");
+
+        String base64EncodedMessageBodyText = parts[0];
+
+        return base64EncodedMessageBodyText.getBytes();
+    }
 }

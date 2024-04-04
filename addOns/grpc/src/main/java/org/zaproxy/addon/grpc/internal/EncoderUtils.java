@@ -79,7 +79,9 @@ public class EncoderUtils {
                 } else {
                     field.append(s).append('\n');
                 }
-            } else field.append(s).append('\n');
+            } else {
+                field.append(s).append('\n');
+            }
         }
 
         if (countOpenCurlyBraces != 0) {
@@ -90,7 +92,7 @@ public class EncoderUtils {
         return output;
     }
 
-    public static byte[] hexStringtoByteArray(String hexString) {
+    public static byte[] hexStringToByteArray(String hexString) {
         // Ensure even length
         if (hexString.length() % 2 != 0) {
             throw new IllegalArgumentException("Invalid Hex string: Odd length");
@@ -182,12 +184,13 @@ public class EncoderUtils {
                     String val = inputArray[1];
 
                     if (typeSpecifier == 'B') {
-                        byte[] byteArray = hexStringtoByteArray(inputArray[1]);
+                        byte[] byteArray = hexStringToByteArray(inputArray[1]);
                         codedOutputStream.writeByteArray(fieldNumber, byteArray);
                     } else if (typeSpecifier == 'N') {
                         // nested message
                         byte[] byteArray = getNestedMessageEncodedValue(val);
                         // if failed to parsed as nested message
+                        // treat it as a string
                         if (byteArray.length == 0) {
                             codedOutputStream.writeString(fieldNumber, val);
                         } else {
@@ -217,11 +220,14 @@ public class EncoderUtils {
         }
     }
 
-    static byte[] getNestedMessageEncodedValue(String nestedMessage)
-            throws IOException, InvalidProtobufFormatException {
+    static byte[] getNestedMessageEncodedValue(String nestedMessage) {
         ProtoBufNestedMessageEncoder protoBufNestedMessageEncoder =
                 new ProtoBufNestedMessageEncoder();
-        return protoBufNestedMessageEncoder.encode(nestedMessage).toByteArray();
+        try {
+            return protoBufNestedMessageEncoder.encode(nestedMessage).toByteArray();
+        } catch (Exception e) {
+            return new byte[0];
+        }
     }
 
     static int getSerializedSize(List<String> inputString) throws InvalidProtobufFormatException {
@@ -256,7 +262,7 @@ public class EncoderUtils {
                     break;
                 case LENGTH_DELIMITED_WIRE_TYPE:
                     if (typeSpecifier == 'B') {
-                        byte[] byteArray = hexStringtoByteArray(inputArray[1]);
+                        byte[] byteArray = hexStringToByteArray(inputArray[1]);
                         size += CodedOutputStream.computeByteArraySize(fieldNumber, byteArray);
                     } else if (typeSpecifier == 'N') {
                         // nested message
@@ -292,11 +298,18 @@ public class EncoderUtils {
         return size;
     }
 
-    static int computeNestedMessageSize(int fieldNumber, String nestedMessage)
-            throws InvalidProtobufFormatException {
+    static int computeNestedMessageSize(int fieldNumber, String nestedMessage) {
         int size = CodedOutputStream.computeTagSize(fieldNumber);
         NestedMessageSize nestedMessageSize = new NestedMessageSize();
-        int nesMessageSize = nestedMessageSize.computeSize(nestedMessage);
+        int nesMessageSize = 0;
+        try {
+            nesMessageSize = nestedMessageSize.computeSize(nestedMessage);
+        } catch (InvalidProtobufFormatException e) {
+            return 0;
+        }
         return size + nesMessageSize + CodedOutputStream.computeUInt32SizeNoTag(nesMessageSize);
     }
+
+
+
 }

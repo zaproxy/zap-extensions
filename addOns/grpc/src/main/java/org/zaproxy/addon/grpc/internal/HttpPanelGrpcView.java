@@ -21,6 +21,7 @@ package org.zaproxy.addon.grpc.internal;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.util.Base64;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
@@ -121,12 +122,11 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
 
     @Override
     public void save() {
-        // todo: encode before saving
         String text = httpPanelGrpcArea.getText();
         try {
             protoBufMessageEncoder.encode(EncoderUtils.parseIntoList(text));
             byte[] encodedMessage = protoBufMessageEncoder.getOutputEncodedMessage();
-            this.model.setData(org.apache.commons.codec.binary.Base64.encodeBase64(encodedMessage));
+            this.model.setData(Base64.getEncoder().encode(encodedMessage));
         } catch (Exception e) {
             showInvalidMessageFormatError(e.getMessage());
         }
@@ -146,7 +146,8 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
         byte[] body = ((AbstractByteHttpPanelViewModel) e.getSource()).getData();
         httpPanelGrpcArea.setBorder(null);
         try {
-            body = org.apache.commons.codec.binary.Base64.decodeBase64(body);
+            body = DecoderUtils.splitMessageBodyAndStatusCode(body);
+            body = Base64.getDecoder().decode(body);
             byte[] payload = DecoderUtils.extractPayload(body);
             if (payload.length == 0) {
                 httpPanelGrpcArea.setText("");
