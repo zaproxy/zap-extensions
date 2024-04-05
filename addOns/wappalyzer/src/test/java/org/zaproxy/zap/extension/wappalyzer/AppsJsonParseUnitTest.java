@@ -32,8 +32,8 @@ class AppsJsonParseUnitTest {
     @Test
     void test() throws IOException {
         // Given
-        List<String> errs = new ArrayList<>();
-        List<Exception> parsingExceptions = new ArrayList<>();
+        List<String> errs = Collections.synchronizedList(new ArrayList<>());
+        List<Exception> parsingExceptions = Collections.synchronizedList(new ArrayList<>());
         // When
         WappalyzerJsonParser parser =
                 new WappalyzerJsonParser(
