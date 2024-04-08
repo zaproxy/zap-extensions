@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Update minimum ZAP version to 2.14.0.
 - Maintenance changes.
 
+### Fixed
+- More gracefully handle missing value for "id" field (Issue 8320)
+
 ## [12] - 2022-10-28
 ### Changed
 - Update minimum ZAP version to 2.12.0.
