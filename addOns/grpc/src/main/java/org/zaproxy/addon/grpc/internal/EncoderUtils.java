@@ -20,9 +20,11 @@
 package org.zaproxy.addon.grpc.internal;
 
 import com.google.protobuf.CodedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.parosproxy.paros.Constant;
 
 public class EncoderUtils {
 
@@ -43,11 +45,11 @@ public class EncoderUtils {
             int last = text.lastIndexOf('\n');
             if (first == -1 || last == -1)
                 throw new InvalidProtobufFormatException(
-                        "Invalid Format:Nested message must contain a newline immediately after every curly brace");
+                        Constant.messages.getString("grpc.encoder.nested.message.newline.error"));
             return text.substring(first + 1, last);
         } else {
             throw new InvalidProtobufFormatException(
-                    "Invalid Format: Nested message should start and end with curly braces");
+                    Constant.messages.getString("grpc.encoder.nested.message.braces.error"));
         }
     }
 
@@ -87,7 +89,8 @@ public class EncoderUtils {
         if (countOpenCurlyBraces != 0) {
             output.clear();
             throw new InvalidProtobufFormatException(
-                    "Invalid Format: Extra or missing curly braces in nested message.");
+                    Constant.messages.getString(
+                            "grpc.encoder.nested.message.missing.braces.error"));
         }
         return output;
     }
@@ -118,7 +121,7 @@ public class EncoderUtils {
             str = str.substring(1, str.length() - 1);
         } else {
             throw new InvalidProtobufFormatException(
-                    "Invalid Format: String must be enclosed by double quotes.");
+                    Constant.messages.getString("grpc.encoder.message.missing.quotes.error"));
         }
         return str;
     }
@@ -127,12 +130,12 @@ public class EncoderUtils {
         String[] inputArray = input.split("::", 2);
         if (inputArray.length == 0) {
             throw new InvalidProtobufFormatException(
-                    "Invalid Format: Missing field number and Wire type");
+                    Constant.messages.getString("grpc.encoder.message.missing.field.wire.error"));
         }
         String[] fieldNumWireType = inputArray[0].split(":", 2);
         if (fieldNumWireType.length != 2) {
             throw new InvalidProtobufFormatException(
-                    "Invalid Format: Missing field number or Wire type");
+                    Constant.messages.getString("grpc.encoder.message.missing.field.wire.error"));
         }
         return fieldNumWireType;
     }
@@ -215,19 +218,36 @@ public class EncoderUtils {
 
                     break;
                 default:
-                    throw new InvalidProtobufFormatException("Invalid Wire type");
+                    throw new InvalidProtobufFormatException(
+                            Constant.messages.getString(
+                                    "grpc.encoder.message.invalid.wiretype.error"));
             }
         }
     }
 
     static byte[] getNestedMessageEncodedValue(String nestedMessage) {
-        ProtoBufNestedMessageEncoder protoBufNestedMessageEncoder =
-                new ProtoBufNestedMessageEncoder();
         try {
-            return protoBufNestedMessageEncoder.encode(nestedMessage).toByteArray();
+            return encodeNestedMessage(nestedMessage).toByteArray();
         } catch (Exception e) {
             return new byte[0];
         }
+    }
+
+    public static ByteArrayOutputStream encodeNestedMessage(String nestedMessage)
+            throws IOException, InvalidProtobufFormatException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        CodedOutputStream codedOutputStream = CodedOutputStream.newInstance(outputStream);
+        nestedMessage = EncoderUtils.removeFirstAndLastCurlyBraces(nestedMessage);
+        if (nestedMessage.isEmpty()) {
+            return outputStream;
+        }
+
+        List<String> nestedMessageFields = EncoderUtils.parseIntoList(nestedMessage);
+
+        EncoderUtils.writeFields(nestedMessageFields, codedOutputStream);
+        codedOutputStream.flush();
+
+        return outputStream;
     }
 
     static int getSerializedSize(List<String> inputString) throws InvalidProtobufFormatException {
@@ -292,7 +312,9 @@ public class EncoderUtils {
                     }
                     break;
                 default:
-                    throw new InvalidProtobufFormatException("Invalid Wire type");
+                    throw new InvalidProtobufFormatException(
+                            Constant.messages.getString(
+                                    "grpc.encoder.message.invalid.wiretype.error"));
             }
         }
         return size;
@@ -300,13 +322,18 @@ public class EncoderUtils {
 
     static int computeNestedMessageSize(int fieldNumber, String nestedMessage) {
         int size = CodedOutputStream.computeTagSize(fieldNumber);
-        NestedMessageSize nestedMessageSize = new NestedMessageSize();
         int nesMessageSize = 0;
         try {
-            nesMessageSize = nestedMessageSize.computeSize(nestedMessage);
+            nesMessageSize = computeSize(nestedMessage);
         } catch (InvalidProtobufFormatException e) {
             return 0;
         }
         return size + nesMessageSize + CodedOutputStream.computeUInt32SizeNoTag(nesMessageSize);
+    }
+
+    static int computeSize(String nestedMessage) throws InvalidProtobufFormatException {
+        nestedMessage = EncoderUtils.removeFirstAndLastCurlyBraces(nestedMessage);
+        List<String> nestedMessageFields = EncoderUtils.parseIntoList(nestedMessage);
+        return EncoderUtils.getSerializedSize(nestedMessageFields);
     }
 }

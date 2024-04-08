@@ -19,6 +19,8 @@
  */
 package org.zaproxy.addon.grpc.internal;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.nullValue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
@@ -32,7 +34,7 @@ class ProtoBufMessageEncoderUnitTest {
     private ProtoBufMessageEncoder encoder;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         encoder = new ProtoBufMessageEncoder();
     }
 
@@ -52,7 +54,7 @@ class ProtoBufMessageEncoderUnitTest {
 
         encoder.encode(null);
 
-        assert (Arrays.equals(null, encoder.getOutputEncodedMessage()));
+        assertThat(encoder.getOutputEncodedMessage(), nullValue());
     }
 
     @Test
