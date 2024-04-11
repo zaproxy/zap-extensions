@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [45.2.0] - 2024-04-11
 ### Added
 - Active and Passive Scripts with a `getMetadata()` function are now treated as first-class scan rules (Issue 7105).
 
@@ -308,6 +308,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[45.2.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.2.0
 [45.1.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.1.0
 [45.0.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.0.0
 [44]: https://github.com/zaproxy/zap-extensions/releases/scripts-v44

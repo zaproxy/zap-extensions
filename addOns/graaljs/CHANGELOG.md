@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.6.0] - 2024-04-11
 ### Changed
 - Update Active and Passive Script Templates to include a `getMetadata` function. This will allow them to be used as regular scan rules.
 - Depend on the `commonlib` and `scripts` add-ons for scan rule scripts.
@@ -45,6 +45,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 First version.
 
+[0.6.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.6.0
 [0.5.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.5.0
 [0.4.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.4.0
 [0.3.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.3.0
