@@ -3,6 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+
 ## [0.38.0] - 2024-04-11
 ### Fixed
 - Correctly expose all information in the `planProgress` API view (Issue 8433). This might break existing clients as the format has changed.
