@@ -669,7 +669,7 @@ public class BackupFileDisclosureScanRule extends AbstractAppPlugin
             // whatever the plural of prefix/suffix is)
             counted = 0;
             if (pathbreak.length > 2) {
-                // if there is a a parent folder to play with
+                // if there is a parent folder to play with
                 for (String fileSuffixToTry : fileSuffixes) {
                     // inject the directory suffix at positionDirectorySuffixInjection
                     String candidateBackupFilePath =

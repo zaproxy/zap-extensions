@@ -316,7 +316,7 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
                                     randomversussourcefilenamematchpercentage,
                                     this.thresholdPercentage);
 
-                            // if we get to here, is is very likely that we have source file
+                            // if we get to here, it is very likely that we have source file
                             // inclusion attack. alert it.
                             createAlert(
                                             paramname,
@@ -397,7 +397,7 @@ public class SourceCodeDisclosureFileInclusionScanRule extends AbstractAppParamP
 
                             // Note: no verification of the file contents in this case.
 
-                            // if we get to here, is is very likely that we have source file
+                            // if we get to here, it is very likely that we have source file
                             // inclusion attack. alert it.
                             createAlert(
                                             paramname,

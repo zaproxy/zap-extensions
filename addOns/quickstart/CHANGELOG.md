@@ -7,6 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Help content typos.
+
 ## [45] - 2024-03-25
 ### Changed
 - Tweaked OSF sponsorship links.

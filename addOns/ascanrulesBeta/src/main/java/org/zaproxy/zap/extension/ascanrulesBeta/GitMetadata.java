@@ -706,7 +706,7 @@ public class GitMetadata {
             throws Exception {
 
         try {
-            // wrap the entry we are interested in in a ByteBuffer (using the offsets to calculate
+            // wrap the entry we are interested in a ByteBuffer (using the offsets to calculate
             // the length)
             // Note: the offset is from the start of the "pack" file, not from after the header.
             if (packfiledataoffset > (packfiledata.length - 1)) {
