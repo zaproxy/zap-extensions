@@ -27,13 +27,21 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 import javax.swing.ImageIcon;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -41,6 +49,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jsoup.select.QueryParser;
 import org.jsoup.select.Selector.SelectorParseException;
+import org.zaproxy.addon.commonlib.Constants;
 
 public class WappalyzerJsonParser {
 
@@ -66,12 +75,34 @@ public class WappalyzerJsonParser {
 
     WappalyzerData parse(String categories, List<String> technologies, boolean createIcons) {
         LOGGER.info("Starting to parse Tech Detecction technologies.");
+        Instant start = Instant.now();
         WappalyzerData wappalyzerData = new WappalyzerData();
         parseCategories(wappalyzerData, getStringResource(categories));
-        technologies.forEach(
-                path -> parseJson(wappalyzerData, getStringResource(path), createIcons));
+        // Process the files/paths in parallel
+        ExecutorService executor =
+                Executors.newFixedThreadPool(
+                        Constants.getDefaultThreadCount(),
+                        new JsonParserThreadFactory("ZAP-WappalyzerJsonParserThreadPool-thread-"));
+        List<CompletableFuture<Void>> futures =
+                technologies.stream()
+                        .map(
+                                path ->
+                                        CompletableFuture.runAsync(
+                                                () ->
+                                                        parseJson(
+                                                                wappalyzerData,
+                                                                getStringResource(path),
+                                                                createIcons),
+                                                executor))
+                        .collect(Collectors.toList());
+        // Note: Based on testing having the forEach separate performs faster than chaining it
+        futures.forEach(CompletableFuture::join);
+        executor.shutdown();
+        Instant finish = Instant.now();
         LOGGER.info(
-                "Loaded {} Tech Detection technologies.", wappalyzerData.getApplications().size());
+                "Loaded {} Tech Detection technologies, in {}ms",
+                wappalyzerData.getApplications().size(),
+                Duration.between(start, finish).toMillis());
         return wappalyzerData;
     }
 
@@ -455,5 +486,30 @@ public class WappalyzerJsonParser {
 
     interface ParsingExceptionHandler {
         void handleException(Exception e);
+    }
+
+    private static class JsonParserThreadFactory implements ThreadFactory {
+
+        private final AtomicInteger threadNumber;
+        private final String namePrefix;
+        private final ThreadGroup group;
+
+        public JsonParserThreadFactory(String namePrefix) {
+            threadNumber = new AtomicInteger(1);
+            this.namePrefix = namePrefix;
+            group = Thread.currentThread().getThreadGroup();
+        }
+
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(group, r, namePrefix + threadNumber.getAndIncrement(), 0);
+            if (t.isDaemon()) {
+                t.setDaemon(false);
+            }
+            if (t.getPriority() != Thread.NORM_PRIORITY) {
+                t.setPriority(Thread.NORM_PRIORITY);
+            }
+            return t;
+        }
     }
 }

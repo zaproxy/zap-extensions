@@ -10,14 +10,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [21.34.0] - 2024-04-11
 ### Changed
 - Updated with enthec upstream icon and pattern changes.
-
-
+- Parallelize loading of the technology files, to improve install/start-up performance.
 
 ## [21.33.0] - 2024-03-28
 ### Changed
 - Updated with enthec upstream icon and pattern changes.
-
-
 
 ## [21.32.0] - 2024-03-04
 ### Changed
