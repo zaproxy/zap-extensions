@@ -697,14 +697,19 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
         }
 
         private String matchNixDirectories(String contents) {
-            Pattern binPattern = Pattern.compile("<a href=\".*?/?bin/?\">bin/?</a>");
-            Pattern etcPattern = Pattern.compile("<a href=\".*?/?etc/?\">etc/?</a>");
-            Pattern bootPattern = Pattern.compile("<a href=\".*?/?boot/?\">boot/?</a>");
+            Pattern procPattern = Pattern.compile("(^|\\W)proc(\\W|$)", Pattern.CASE_INSENSITIVE);
+            Pattern etcPattern = Pattern.compile("(^|\\W)etc(\\W|$)", Pattern.CASE_INSENSITIVE);
+            Pattern bootPattern = Pattern.compile("(^|\\W)boot(\\W|$)", Pattern.CASE_INSENSITIVE);
+            Pattern tmpPattern = Pattern.compile("(^|\\W)tmp(\\W|$)", Pattern.CASE_INSENSITIVE);
+            Pattern homePattern = Pattern.compile("(^|\\W)home(\\W|$)", Pattern.CASE_INSENSITIVE);
 
-            Matcher binMatcher = binPattern.matcher(contents);
+            Matcher procMatcher = procPattern.matcher(contents);
             Matcher etcMatcher = etcPattern.matcher(contents);
             Matcher bootMatcher = bootPattern.matcher(contents);
-            if (binMatcher.find() && etcMatcher.find() && bootMatcher.find()) {
+            Matcher tmpMatcher = tmpPattern.matcher(contents);
+            Matcher homeMatcher = homePattern.matcher(contents);
+
+            if (procMatcher.find() && etcMatcher.find() && bootMatcher.find() && tmpMatcher.find() && homeMatcher.find()) {
                 return "etc";
             }
 
