@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Changed
 - Maintenance changes.
 
+### Fixed
+- Help content typos.
+
 ## [15] - 2023-10-12
 ### Changed
 - Update minimum ZAP version to 2.14.0.

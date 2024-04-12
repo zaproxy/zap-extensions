@@ -352,7 +352,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin
                         findEvidenceForExtension(
                                 svnsourcefileattackmsg.getResponseBody().getBytes(), fileExtension);
                 if (evidence != null) {
-                    // if we get to here, is is very likely that we have source file inclusion
+                    // if we get to here, it is very likely that we have source file inclusion
                     // attack. alert it.
                     buildAlert(
                                     getConfidence(svnsourcefileattackmsg),
@@ -603,7 +603,7 @@ public class SourceCodeDisclosureSvnScanRule extends AbstractAppPlugin
                                                                     .getBytes(),
                                                             fileExtension);
                                             if (evidence != null) {
-                                                // if we get to here, is is very likely that we have
+                                                // if we get to here, it is very likely that we have
                                                 // source file inclusion attack. alert it.
                                                 buildAlert(
                                                                 getConfidence(

@@ -12,6 +12,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Maintenance changes.
 - Default number of threads to 2 * processor count.
 
+### Fixed
+- Help content typos.
+
 ## [10] - 2022-10-27
 ### Changed
 - Use the Network add-on to obtain the outgoing proxy.

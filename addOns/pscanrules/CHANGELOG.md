@@ -4,7 +4,8 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Fixed
+- A typo in the Other Info of one of the Retrieved from Cache Alerts.
 
 ## [57] - 2024-03-28
 ### Changed
