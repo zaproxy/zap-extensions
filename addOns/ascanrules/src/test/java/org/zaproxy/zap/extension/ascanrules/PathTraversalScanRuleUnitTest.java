@@ -404,8 +404,8 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
                 "<td><a href=\"/bin/\">bin</a></td>"
                         + "<td><a href=\"/etc/\">etc</a></td>"
                         + "<td><a href=\"/boot/\">boot</a></td>"
-                        + "<td><a href=\"/proc/\">etc</a></td>"
-                        + "<td><a href=\"/tmp/\">etc</a></td>"
+                        + "<td><a href=\"/proc/\">proc</a></td>"
+                        + "<td><a href=\"/tmp/\">tmp</a></td>"
                         + "<td><a href=\"/home/\">home</a></td>";
 
         public ListLinuxDirsOnAttack(String path, String param, String attack) {
@@ -421,7 +421,7 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
     private static class ListLinuxDirsOnAttackPlainText extends ListDirsOnAttack {
 
         private static final String DIRS_LISTING =
-                "etc root tmp bin boot dev home mnt opt proc home";
+                "etc root tmp bin boot dev home mnt opt proc";
 
         public ListLinuxDirsOnAttackPlainText(String path, String param, String attack) {
             super(path, param, attack);

@@ -697,11 +697,11 @@ public class PathTraversalScanRule extends AbstractAppParamPlugin
         }
 
         private String matchNixDirectories(String contents) {
-            Pattern procPattern = Pattern.compile("(^|\\W)proc(\\W|$)", Pattern.CASE_INSENSITIVE);
-            Pattern etcPattern = Pattern.compile("(^|\\W)etc(\\W|$)", Pattern.CASE_INSENSITIVE);
-            Pattern bootPattern = Pattern.compile("(^|\\W)boot(\\W|$)", Pattern.CASE_INSENSITIVE);
-            Pattern tmpPattern = Pattern.compile("(^|\\W)tmp(\\W|$)", Pattern.CASE_INSENSITIVE);
-            Pattern homePattern = Pattern.compile("(^|\\W)home(\\W|$)", Pattern.CASE_INSENSITIVE);
+            Pattern procPattern = Pattern.compile("(?:^|\\W)proc(?:\\W|$)", Pattern.CASE_INSENSITIVE);
+            Pattern etcPattern = Pattern.compile("(?:^|\\W)etc(?:\\W|$)", Pattern.CASE_INSENSITIVE);
+            Pattern bootPattern = Pattern.compile("(?:^|\\W)boot(?:\\W|$)", Pattern.CASE_INSENSITIVE);
+            Pattern tmpPattern = Pattern.compile("(?:^|\\W)tmp(?:\\W|$)", Pattern.CASE_INSENSITIVE);
+            Pattern homePattern = Pattern.compile("(?:^|\\W)home(?:\\W|$)", Pattern.CASE_INSENSITIVE);
 
             Matcher procMatcher = procPattern.matcher(contents);
             Matcher etcMatcher = etcPattern.matcher(contents);
