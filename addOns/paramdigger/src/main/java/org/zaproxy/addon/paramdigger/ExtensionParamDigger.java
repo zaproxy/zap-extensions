@@ -21,9 +21,12 @@ package org.zaproxy.addon.paramdigger;
 
 import javax.swing.ImageIcon;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.control.Control.Mode;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.ExtensionPopupMenuItem;
+import org.parosproxy.paros.extension.SessionChangedListener;
+import org.parosproxy.paros.model.Session;
 import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.paramdigger.gui.ParamDiggerDialog;
 import org.zaproxy.addon.paramdigger.gui.ParamDiggerPanel;
@@ -83,6 +86,8 @@ public class ExtensionParamDigger extends ExtensionAdaptor {
             extensionHook.getHookMenu().addToolsMenuItem(getMenu());
             extensionHook.getHookView().addStatusPanel(getParamDiggerPanel());
             extensionHook.getHookMenu().addPopupMenuItem(getPopupMsg());
+
+            extensionHook.addSessionListener(new SessionChangedListenerImpl());
         }
     }
 
@@ -152,5 +157,28 @@ public class ExtensionParamDigger extends ExtensionAdaptor {
     @Override
     public String getDescription() {
         return Constant.messages.getString(PREFIX + ".desc");
+    }
+
+    private class SessionChangedListenerImpl implements SessionChangedListener {
+
+        @Override
+        public void sessionChanged(Session session) {
+            getParamDiggerPanel().reset();
+        }
+
+        @Override
+        public void sessionAboutToChange(Session session) {
+            // Nothing to do
+        }
+
+        @Override
+        public void sessionScopeChanged(Session session) {
+            // Nothing to do
+        }
+
+        @Override
+        public void sessionModeChanged(Mode mode) {
+            // Nothing to do
+        }
     }
 }
