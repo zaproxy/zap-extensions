@@ -202,7 +202,6 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
         assertThat(alertsRaised.get(0).getAlertRef(), is(equalTo("6-3")));
     }
 
-
     @Test
     void shouldNotAlertIfAttackResponseListsHasFalsePositivePattern() throws Exception {
         // Given
@@ -420,8 +419,7 @@ class PathTraversalScanRuleUnitTest extends ActiveScannerTest<PathTraversalScanR
 
     private static class ListLinuxDirsOnAttackPlainText extends ListDirsOnAttack {
 
-        private static final String DIRS_LISTING =
-                "etc root tmp bin boot dev home mnt opt proc";
+        private static final String DIRS_LISTING = "etc root tmp bin boot dev home mnt opt proc";
 
         public ListLinuxDirsOnAttackPlainText(String path, String param, String attack) {
             super(path, param, attack);
