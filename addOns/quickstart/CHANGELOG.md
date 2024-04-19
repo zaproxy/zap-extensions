@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Changed
 - Maintenance changes.
+- AJAX spider selection to include "if modern" option.
 
 ### Fixed
 - Help content typos.

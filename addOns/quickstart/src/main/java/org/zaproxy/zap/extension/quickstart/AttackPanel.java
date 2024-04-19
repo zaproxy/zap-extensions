@@ -375,6 +375,16 @@ public class AttackPanel extends QuickStartSubPanel {
             this.getUrlField().requestFocusInWindow();
             return false;
         }
+        if (plugableSpider != null
+                && plugableSpider.requireStdSpider()
+                && (traditionalSpider == null || !traditionalSpider.isSelected())) {
+            getExtensionQuickStart()
+                    .getView()
+                    .showWarningDialog(
+                            Constant.messages.getString("quickstart.url.warning.needspider"));
+            return false;
+        }
+
         String urlStr = item.toString();
         URL url;
         try {
