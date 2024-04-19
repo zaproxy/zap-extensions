@@ -45,8 +45,8 @@ dependencies {
     compileOnly(libs.log4j.core)
 
     implementation("com.google.re2j:re2j:1.7")
-    implementation("com.github.weisj:jsvg:1.2.0")
-    implementation("org.jsoup:jsoup:1.16.2")
+    implementation("com.github.weisj:jsvg:1.4.0")
+    implementation("org.jsoup:jsoup:1.17.2")
 
     testImplementation(project(":testutils"))
 }
