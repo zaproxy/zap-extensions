@@ -4,7 +4,9 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
-
+### Changed
+- The following reports now include the number of Sites tree nodes actively scanned:
+  - Traditional HTML with Requests and Responses
 
 ## [0.31.0] - 2024-03-25
 ### Changed
