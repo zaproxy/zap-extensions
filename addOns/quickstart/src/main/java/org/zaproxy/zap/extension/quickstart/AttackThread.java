@@ -96,6 +96,9 @@ public class AttackThread extends Thread {
             }
             Target target = new Target(startNode);
             target.setRecurse(true);
+            if (plugableSpider != null) {
+                plugableSpider.init();
+            }
             if (this.useStdSpider) {
 
                 if (traditionalSpider == null) {
