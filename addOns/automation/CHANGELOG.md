@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.39.0] - 2024-04-23
 ### Added
 - Allow reports to know the number of Sites tree nodes actively scanned (Issue 7022).
 
@@ -381,6 +381,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.39.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.39.0
 [0.38.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.38.0
 [0.37.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.37.0
 [0.36.0]: https://github.com/zaproxy/zap-extensions/releases/automation-v0.36.0
