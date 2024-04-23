@@ -23,8 +23,8 @@ import com.google.protobuf.CodedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
 import org.parosproxy.paros.Constant;
 
 public final class EncoderUtils {
@@ -34,8 +34,7 @@ public final class EncoderUtils {
     public static final int LENGTH_DELIMITED_WIRE_TYPE = 2;
     public static final int BIT32_WIRE_TYPE = 5;
 
-    private EncoderUtils() {
-    }
+    private EncoderUtils() {}
 
     public static String removeFirstAndLastCurlyBraces(String text)
             throws InvalidProtobufFormatException {
@@ -59,7 +58,7 @@ public final class EncoderUtils {
     public static List<String> parseIntoList(String inputString)
             throws InvalidProtobufFormatException {
         if (inputString == null || inputString.isEmpty()) {
-            return new ArrayList<>();
+            Collections.emptyList();
         }
         List<String> output = new ArrayList<>();
         String[] temp = inputString.split("\n");
@@ -94,13 +93,14 @@ public final class EncoderUtils {
                     Constant.messages.getString(
                             "grpc.encoder.nested.message.missing.braces.error"));
         }
-        return Collections.unmodifiableList(output);
+        return output;
     }
 
     public static byte[] hexStringToByteArray(String hexString) {
         // Ensure even length
         if (hexString.length() % 2 != 0) {
-            throw new IllegalArgumentException(Constant.messages.getString("grpc.encoder.message.invalid.hex.string.error"));
+            throw new IllegalArgumentException(
+                    Constant.messages.getString("grpc.encoder.message.invalid.hex.string.error"));
         }
 
         // Create byte array with correct size
@@ -125,7 +125,6 @@ public final class EncoderUtils {
         }
         throw new InvalidProtobufFormatException(
                 Constant.messages.getString("grpc.encoder.message.missing.quotes.error"));
-
     }
 
     static String[] validateAndSplitInput(String input) throws InvalidProtobufFormatException {
@@ -148,11 +147,10 @@ public final class EncoderUtils {
                 return Integer.parseInt(String.valueOf(tag.charAt(0)));
             }
             return Integer.parseInt(tag);
+        } catch (NumberFormatException e) {
+            throw new InvalidProtobufFormatException(
+                    Constant.messages.getString("grpc.encoder.message.missing.field.wire.error"));
         }
-        catch(NumberFormatException e) {
-            throw new InvalidProtobufFormatException(Constant.messages.getString("grpc.encoder.message.missing.field.wire.error"));
-        }
-
     }
 
     static char getTypeSpecifier(String tag) {
@@ -166,9 +164,9 @@ public final class EncoderUtils {
     static int getFieldNumber(String fieldNumber) throws InvalidProtobufFormatException {
         try {
             return Integer.parseInt(fieldNumber);
-        }
-        catch(NumberFormatException e) {
-            throw new InvalidProtobufFormatException(Constant.messages.getString("grpc.encoder.message.missing.field.wire.error"));
+        } catch (NumberFormatException e) {
+            throw new InvalidProtobufFormatException(
+                    Constant.messages.getString("grpc.encoder.message.missing.field.wire.error"));
         }
     }
 

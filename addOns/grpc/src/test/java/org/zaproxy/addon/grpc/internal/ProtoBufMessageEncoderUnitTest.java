@@ -19,7 +19,9 @@
  */
 package org.zaproxy.addon.grpc.internal;
 
-
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Base64;
 import java.util.List;
@@ -27,10 +29,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.zaproxy.addon.grpc.ExtensionGrpc;
 import org.zaproxy.zap.testutils.TestUtils;
-
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static  org.junit.jupiter.api.Assertions.assertEquals;
-import  static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ProtoBufMessageEncoderUnitTest extends TestUtils {
 
@@ -134,10 +132,13 @@ class ProtoBufMessageEncoderUnitTest extends TestUtils {
         String expectedOutput = "";
         byte[] decodedBytes = Base64.getDecoder().decode(expectedOutput);
         String inputString = "1:8::1000000\n2:2::\"Hello\"\n";
-        InvalidProtobufFormatException exception = assertThrows(InvalidProtobufFormatException.class, () -> {
-            List<String> messageFields = EncoderUtils.parseIntoList(inputString);
-            encoder.encode(messageFields);
-        });
+        InvalidProtobufFormatException exception =
+                assertThrows(
+                        InvalidProtobufFormatException.class,
+                        () -> {
+                            List<String> messageFields = EncoderUtils.parseIntoList(inputString);
+                            encoder.encode(messageFields);
+                        });
         assertEquals("Invalid Wire type", exception.getMessage());
 
         assertArrayEquals(decodedBytes, encoder.getOutputEncodedMessage());
@@ -150,10 +151,13 @@ class ProtoBufMessageEncoderUnitTest extends TestUtils {
         byte[] decodedBytes = Base64.getDecoder().decode(expectedOutput);
         String inputString =
                 "Failed to decode protobuf message: The message format is invalid or corrupted.";
-        InvalidProtobufFormatException exception = assertThrows(InvalidProtobufFormatException.class, () -> {
-            List<String> messageFields = EncoderUtils.parseIntoList(inputString);
-            encoder.encode(messageFields);
-        });
+        InvalidProtobufFormatException exception =
+                assertThrows(
+                        InvalidProtobufFormatException.class,
+                        () -> {
+                            List<String> messageFields = EncoderUtils.parseIntoList(inputString);
+                            encoder.encode(messageFields);
+                        });
         assertEquals("Invalid Format: Missing field number and Wire type", exception.getMessage());
         assertArrayEquals(decodedBytes, encoder.getOutputEncodedMessage());
     }

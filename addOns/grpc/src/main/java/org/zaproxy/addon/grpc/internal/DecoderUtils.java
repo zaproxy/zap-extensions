@@ -163,7 +163,8 @@ public class DecoderUtils {
         return protobufNestedMessageDecoder.decode(stringBytes);
     }
 
-    static byte[] splitMessageBodyAndStatusCode(byte[] encodedText) throws UnsupportedEncodingException {
+    static byte[] splitMessageBodyAndStatusCode(byte[] encodedText)
+            throws UnsupportedEncodingException {
         String encodedString = new String(encodedText, StandardCharsets.UTF_8);
 
         String[] parts = encodedString.split("=");
