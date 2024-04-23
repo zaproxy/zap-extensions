@@ -58,7 +58,7 @@ public final class EncoderUtils {
     public static List<String> parseIntoList(String inputString)
             throws InvalidProtobufFormatException {
         if (inputString == null || inputString.isEmpty()) {
-            Collections.emptyList();
+            return Collections.emptyList();
         }
         List<String> output = new ArrayList<>();
         String[] temp = inputString.split("\n");
