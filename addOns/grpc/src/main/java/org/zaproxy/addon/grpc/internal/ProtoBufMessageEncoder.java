@@ -28,7 +28,7 @@ import java.util.List;
 public class ProtoBufMessageEncoder {
     private static final int HEADER_LENGTH = 5;
 
-    public static byte[] EMPTY_BYTE_ARRAY = new byte[0];
+    private static byte[] EMPTY_BYTE_ARRAY = new byte[0];
     private ByteArrayOutputStream outputStream;
     private byte[] outputEncodedMessage;
     private ByteBuffer headerScratch;

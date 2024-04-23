@@ -19,46 +19,52 @@
  */
 package org.zaproxy.addon.grpc.internal;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.nullValue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Arrays;
+
 import java.util.Base64;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.zaproxy.addon.grpc.ExtensionGrpc;
+import org.zaproxy.zap.testutils.TestUtils;
 
-class ProtoBufMessageEncoderUnitTest {
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static  org.junit.jupiter.api.Assertions.assertEquals;
+import  static org.junit.jupiter.api.Assertions.assertThrows;
+
+class ProtoBufMessageEncoderUnitTest extends TestUtils {
 
     private ProtoBufMessageEncoder encoder;
+    private ExtensionGrpc extensionGrpc;
 
     @BeforeEach
     void setUp() {
         encoder = new ProtoBufMessageEncoder();
+        extensionGrpc = new ExtensionGrpc();
+        mockMessages(extensionGrpc);
     }
 
     @Test
-    void testStartEncodingWithEmptyInput() throws Exception {
+    void ShouldStartEncodingWithEmptyInput() throws Exception {
         String inputString = "";
         byte[] decodedBytes = Base64.getDecoder().decode(inputString);
 
         List<String> messageFields = EncoderUtils.parseIntoList(inputString);
         encoder.encode(messageFields);
 
-        assertEquals(null, encoder.getOutputEncodedMessage());
+        assertArrayEquals(null, encoder.getOutputEncodedMessage());
     }
 
     @Test
-    void testStartEncodingWithNullInput() throws Exception {
+    void ShouldStartEncodingWithNullInput() throws Exception {
 
         encoder.encode(null);
 
-        assertThat(encoder.getOutputEncodedMessage(), nullValue());
+        assertArrayEquals(null, encoder.getOutputEncodedMessage());
     }
 
     @Test
-    void testStartEncodingWithSimpleValidInput() throws Exception {
+    void ShouldStartEncodingWithSimpleValidInput() throws Exception {
         String expectedOutput =
                 "AAAAADEKC2pvaG4gTWlsbGVyEB4aIDEyMzQgTWFpbiBTdC4gQW55dG93biwgVVNBIDEyMzQ1";
         byte[] decodedBytes = Base64.getDecoder().decode(expectedOutput);
@@ -68,11 +74,11 @@ class ProtoBufMessageEncoderUnitTest {
         List<String> messageFields = EncoderUtils.parseIntoList(inputString);
         encoder.encode(messageFields);
 
-        assert (Arrays.equals(decodedBytes, encoder.getOutputEncodedMessage()));
+        assertArrayEquals(decodedBytes, encoder.getOutputEncodedMessage());
     }
 
     @Test
-    void testStartEncodingWithNestedMessageValidInput() throws Exception {
+    void ShouldStartEncodingWithNestedMessageValidInput() throws Exception {
         String expectedOutput =
                 "AAAAAEEKEEhlbGxvLCBQcm90b2J1ZiESJwoESm9obhIGTWlsbGVyGhcKBEpvaG4QAhoNCgtIZWxsbyBXb3JsZBjqrcDlJA";
         byte[] decodedBytes = Base64.getDecoder().decode(expectedOutput);
@@ -82,11 +88,11 @@ class ProtoBufMessageEncoderUnitTest {
         List<String> messageFields = EncoderUtils.parseIntoList(inputString);
         encoder.encode(messageFields);
 
-        assert (Arrays.equals(decodedBytes, encoder.getOutputEncodedMessage()));
+        assertArrayEquals(decodedBytes, encoder.getOutputEncodedMessage());
     }
 
     @Test
-    void testStartEncodingWithEnumAndRepeatedFieldsInput() throws Exception {
+    void ShouldStartEncodingWithEnumAndRepeatedFieldsInput() throws Exception {
         // Example corrupted input byte array
         String expectedOutput = "AAAAAA4IARIBYRIBYhIBYxIBZA";
         byte[] decodedBytes = Base64.getDecoder().decode(expectedOutput);
@@ -95,11 +101,11 @@ class ProtoBufMessageEncoderUnitTest {
         List<String> messageFields = EncoderUtils.parseIntoList(inputString);
         encoder.encode(messageFields);
 
-        assert (Arrays.equals(decodedBytes, encoder.getOutputEncodedMessage()));
+        assertArrayEquals(decodedBytes, encoder.getOutputEncodedMessage());
     }
 
     @Test
-    void testStartEncodingWithDoubleAndFloatInput() throws Exception {
+    void ShouldStartEncodingWithDoubleAndFloatInput() throws Exception {
         String expectedOutput = "AAAAAA4JzczMzMzcXkAVrseHQg";
         byte[] decodedBytes = Base64.getDecoder().decode(expectedOutput);
         String inputString = "1:1D::123.45\n2:5F::67.89\n";
@@ -107,11 +113,11 @@ class ProtoBufMessageEncoderUnitTest {
         List<String> messageFields = EncoderUtils.parseIntoList(inputString);
         encoder.encode(messageFields);
 
-        assert (Arrays.equals(decodedBytes, encoder.getOutputEncodedMessage()));
+        assertArrayEquals(decodedBytes, encoder.getOutputEncodedMessage());
     }
 
     @Test
-    void testStartEncodingWithWireType1And6Input() throws Exception {
+    void ShouldStartEncodingWithWireType1And6Input() throws Exception {
         String expectedOutput = "AAAAAA4NQEIPABHMm5cAyicBAA";
         byte[] decodedBytes = Base64.getDecoder().decode(expectedOutput);
         String inputString = "1:5::1000000\n2:1::325223523523532\n";
@@ -119,38 +125,36 @@ class ProtoBufMessageEncoderUnitTest {
         List<String> messageFields = EncoderUtils.parseIntoList(inputString);
         encoder.encode(messageFields);
 
-        assert (Arrays.equals(decodedBytes, encoder.getOutputEncodedMessage()));
+        assertArrayEquals(decodedBytes, encoder.getOutputEncodedMessage());
     }
 
     @Test
-    void testStartEncodingWithCorruptedWireTypeInput() {
+    void ShouldStartEncodingWithCorruptedWireTypeInput() {
         // Example corrupted input byte array
         String expectedOutput = "";
         byte[] decodedBytes = Base64.getDecoder().decode(expectedOutput);
         String inputString = "1:8::1000000\n2:2::\"Hello\"\n";
-
-        try {
+        InvalidProtobufFormatException exception = assertThrows(InvalidProtobufFormatException.class, () -> {
             List<String> messageFields = EncoderUtils.parseIntoList(inputString);
             encoder.encode(messageFields);
-        } catch (Exception e) {
-            assertEquals("Invalid Wire type", e.getMessage());
-        }
-        assert (Arrays.equals(decodedBytes, encoder.getOutputEncodedMessage()));
+        });
+        assertEquals("Invalid Wire type", exception.getMessage());
+
+        assertArrayEquals(decodedBytes, encoder.getOutputEncodedMessage());
     }
 
     @Test
-    void testStartEncodingWithOnlyRandomStringInput() {
+    void ShouldStartEncodingWithOnlyRandomStringInput() {
         // Example corrupted input byte array
         String expectedOutput = "";
         byte[] decodedBytes = Base64.getDecoder().decode(expectedOutput);
         String inputString =
                 "Failed to decode protobuf message: The message format is invalid or corrupted.";
-        try {
+        InvalidProtobufFormatException exception = assertThrows(InvalidProtobufFormatException.class, () -> {
             List<String> messageFields = EncoderUtils.parseIntoList(inputString);
             encoder.encode(messageFields);
-        } catch (Exception e) {
-            assertEquals("For input string: \"Failed to decode protobuf message\"", e.getMessage());
-        }
-        assert (Arrays.equals(decodedBytes, encoder.getOutputEncodedMessage()));
+        });
+        assertEquals("Invalid Format: Missing field number and Wire type", exception.getMessage());
+        assertArrayEquals(decodedBytes, encoder.getOutputEncodedMessage());
     }
 }

@@ -29,6 +29,7 @@ import javax.swing.JPanel;
 import org.apache.commons.configuration.FileConfiguration;
 import org.fife.ui.rtextarea.RTextScrollPane;
 import org.parosproxy.paros.Constant;
+import org.parosproxy.paros.view.View;
 import org.zaproxy.zap.extension.httppanel.Message;
 import org.zaproxy.zap.extension.httppanel.view.AbstractByteHttpPanelViewModel;
 import org.zaproxy.zap.extension.httppanel.view.HttpPanelView;
@@ -43,7 +44,7 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
     private static final String CAPTION_NAME = Constant.messages.getString("grpc.panel.view.name");
 
     private HttpPanelGrpcArea httpPanelGrpcArea;
-    private JPanel mainPanel;
+    private static JPanel mainPanel;
 
     private ProtoBufMessageDecoder protoBufMessageDecoder;
 
@@ -164,8 +165,8 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
         }
     }
 
-    public void showInvalidMessageFormatError(String message) {
+    private static void showInvalidMessageFormatError(String message) {
         JOptionPane.showMessageDialog(
-                null, message, "Invalid Message Format", JOptionPane.ERROR_MESSAGE);
+               mainPanel, message, Constant.messages.getString("grpc.encoder.message.invalid.format.error "), JOptionPane.ERROR_MESSAGE);
     }
 }

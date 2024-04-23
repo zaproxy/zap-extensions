@@ -56,7 +56,7 @@ public class ProtoBufMessageDecoder {
                     break;
                 }
             } catch (IOException e) {
-                LOGGER.debug("Error decoding the message", e.getMessage());
+                LOGGER.debug("Error decoding the message: {}", e.getMessage());
                 throw new IllegalArgumentException(
                         Constant.messages.getString("grpc.decoder.error"));
             }

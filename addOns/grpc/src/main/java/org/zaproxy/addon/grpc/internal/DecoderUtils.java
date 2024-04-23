@@ -21,6 +21,8 @@ package org.zaproxy.addon.grpc.internal;
 
 import com.google.protobuf.CodedInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public class DecoderUtils {
@@ -161,13 +163,13 @@ public class DecoderUtils {
         return protobufNestedMessageDecoder.decode(stringBytes);
     }
 
-    static byte[] splitMessageBodyAndStatusCode(byte[] encodedText) {
-        String encodedString = new String(encodedText);
+    static byte[] splitMessageBodyAndStatusCode(byte[] encodedText) throws UnsupportedEncodingException {
+        String encodedString = new String(encodedText, StandardCharsets.UTF_8);
 
         String[] parts = encodedString.split("=");
 
         String base64EncodedMessageBodyText = parts[0];
 
-        return base64EncodedMessageBodyText.getBytes();
+        return base64EncodedMessageBodyText.getBytes(StandardCharsets.UTF_8);
     }
 }

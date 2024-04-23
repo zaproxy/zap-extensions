@@ -20,16 +20,9 @@
 package org.zaproxy.addon.grpc.internal;
 
 public class InvalidProtobufFormatException extends Exception {
-    private final String message;
     private static final long serialVersionUID = 1L;
 
     public InvalidProtobufFormatException(String message) {
-        super();
-        this.message = message;
-    }
-
-    @Override
-    public String getMessage() {
-        return message;
+        super(message);
     }
 }
