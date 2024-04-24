@@ -26,91 +26,106 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.parosproxy.paros.common.AbstractParam;
+import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
 import org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType;
 
-public class ReplacerParam extends AbstractParam {
+public class ReplacerParam extends VersionedAbstractParam {
 
     private static final Logger LOGGER = LogManager.getLogger(ReplacerParam.class);
 
     private static final String REPLACER_BASE_KEY = "replacer";
 
-    private static final String ALL_RULES_KEY = REPLACER_BASE_KEY + ".full_list";
+    protected static final String ALL_RULES_KEY = REPLACER_BASE_KEY + ".full_list";
 
-    private static final String RULE_DESCRIPTION_KEY = "description";
-    private static final String RULE_URL_KEY = "url";
-    private static final String RULE_ENABLED_KEY = "enabled";
-    private static final String RULE_MATCH_STRING_KEY = "matchstr";
-    private static final String RULE_MATCH_TYPE_KEY = "matchtype";
-    private static final String RULE_REGEX_KEY = "regex";
-    private static final String RULE_REPLACEMENT_KEY = "replacement";
-    private static final String RULE_INITIATORS_KEY = "initiators";
-    private static final String RULE_EXTRA_PROCESSING_KEY = "extraprocessing";
+    protected static final String RULE_DESCRIPTION_KEY = "description";
+    protected static final String RULE_URL_KEY = "url";
+    protected static final String RULE_ENABLED_KEY = "enabled";
+    protected static final String RULE_MATCH_STRING_KEY = "matchstr";
+    protected static final String RULE_MATCH_TYPE_KEY = "matchtype";
+    protected static final String RULE_REGEX_KEY = "regex";
+    protected static final String RULE_REPLACEMENT_KEY = "replacement";
+    protected static final String RULE_INITIATORS_KEY = "initiators";
+    protected static final String RULE_EXTRA_PROCESSING_KEY = "extraprocessing";
 
-    private static final String CONFIRM_REMOVE_RULE_KEY = REPLACER_BASE_KEY + ".confirmRemoveToken";
-    private static final String FALSE_STRING = "false";
+    protected static final String CONFIRM_REMOVE_RULE_KEY =
+            REPLACER_BASE_KEY + ".confirmRemoveToken";
+    protected static final String FALSE_STRING = "false";
+    protected static final String TRUE_STRING = "true";
 
-    private static ArrayList<ReplacerParamRule> defaultList = new ArrayList<>();
+    protected static final String REPORT_TO_DESC = "Disable Report-To or Report-Uri (CSP, etc)";
+    protected static final String REPORT_TO_REGEX = "(?i)report-(?:to|uri)";
+    protected static final String REPORT_TO_REPLACEMENT = "report-disabled";
+
+    /**
+     * The current version of the configurations. Used to keep track of configuration changes
+     * between releases, in case changes/updates are needed.
+     *
+     * <p>It only needs to be incremented for configuration changes (not releases of the add-on).
+     *
+     * @see #CONFIG_VERSION_KEY
+     * @see #updateConfigsImpl(int)
+     */
+    private static final int CURRENT_CONFIG_VERSION = 1;
+
+    /**
+     * The key for the version of the configurations.
+     *
+     * @see #CURRENT_CONFIG_VERSION
+     */
+    private static final String CONFIG_VERSION_KEY = REPLACER_BASE_KEY + VERSION_ATTRIBUTE;
+
+    private static List<ReplacerParamRule> defaultList =
+            List.of(
+                    new ReplacerParamRule(
+                            "Remove CSP",
+                            ReplacerParamRule.MatchType.RESP_HEADER,
+                            "Content-Security-Policy",
+                            false,
+                            "",
+                            List.of(),
+                            false),
+                    new ReplacerParamRule(
+                            "Remove HSTS",
+                            ReplacerParamRule.MatchType.RESP_HEADER,
+                            "Strict-Transport-Security",
+                            false,
+                            "",
+                            List.of(),
+                            false),
+                    new ReplacerParamRule(
+                            "Replace User-Agent with shellshock attack",
+                            ReplacerParamRule.MatchType.REQ_HEADER,
+                            "User-Agent",
+                            false,
+                            "() {:;}; /bin/cat /etc/passwd",
+                            List.of(),
+                            false),
+                    new ReplacerParamRule(
+                            REPORT_TO_DESC,
+                            ReplacerParamRule.MatchType.RESP_HEADER_STR,
+                            REPORT_TO_REGEX,
+                            true,
+                            REPORT_TO_REPLACEMENT,
+                            List.of(),
+                            false));
 
     private List<ReplacerParamRule> rules = new ArrayList<>();
 
     private boolean confirmRemoveToken = true;
 
-    /** Fills in the list of rules which will be added if there are none configured. */
-    private void setDefaultList() {
-        final String[][] defaultListArray = {
-            {
-                "Remove CSP",
-                ReplacerParamRule.MatchType.RESP_HEADER.name(),
-                "Content-Security-Policy",
-                "",
-                FALSE_STRING,
-                "",
-                FALSE_STRING
-            },
-            {
-                "Remove HSTS",
-                ReplacerParamRule.MatchType.RESP_HEADER.name(),
-                "Strict-Transport-Security",
-                "",
-                FALSE_STRING,
-                "",
-                FALSE_STRING
-            },
-            {
-                "Replace User-Agent with shellshock attack",
-                ReplacerParamRule.MatchType.REQ_HEADER.name(),
-                "User-Agent",
-                "() {:;}; /bin/cat /etc/passwd",
-                FALSE_STRING,
-                "",
-                FALSE_STRING
-            }
-        };
-
-        for (String[] row : defaultListArray) {
-            boolean regex = row[4].equalsIgnoreCase("true");
-            boolean enabled = row[6].equalsIgnoreCase("true");
-            defaultList.add(
-                    new ReplacerParamRule(
-                            row[0],
-                            MatchType.valueOf(row[1]),
-                            row[2],
-                            regex,
-                            row[3],
-                            null,
-                            enabled));
-        }
-    }
-
     public ReplacerParam() {
         super();
-        setDefaultList();
     }
 
     @Override
-    protected void parse() {
+    protected void parseImpl() {
+        parseReplacerRules();
+
+        this.confirmRemoveToken = getBoolean(CONFIRM_REMOVE_RULE_KEY, true);
+    }
+
+    private void parseReplacerRules() {
         try {
             List<HierarchicalConfiguration> fields =
                     ((HierarchicalConfiguration) getConfig()).configurationsAt(ALL_RULES_KEY);
@@ -171,8 +186,6 @@ public class ReplacerParam extends AbstractParam {
                 this.rules.add(new ReplacerParamRule(geu));
             }
         }
-
-        this.confirmRemoveToken = getBoolean(CONFIRM_REMOVE_RULE_KEY, true);
     }
 
     public List<ReplacerParamRule> getRules() {
@@ -274,5 +287,38 @@ public class ReplacerParam extends AbstractParam {
     public void setConfirmRemoveToken(boolean confirmRemove) {
         this.confirmRemoveToken = confirmRemove;
         getConfig().setProperty(CONFIRM_REMOVE_RULE_KEY, Boolean.valueOf(confirmRemoveToken));
+    }
+
+    @Override
+    protected String getConfigVersionKey() {
+        return CONFIG_VERSION_KEY;
+    }
+
+    @Override
+    protected int getCurrentVersion() {
+        return CURRENT_CONFIG_VERSION;
+    }
+
+    @Override
+    @SuppressWarnings("fallthrough")
+    protected void updateConfigsImpl(int fileVersion) {
+        switch (fileVersion) {
+            case NO_CONFIG_VERSION:
+                // Handle unversioned to versioned update
+                parseReplacerRules();
+                if (getRule(REPORT_TO_DESC) == null) {
+                    addRule(
+                            new ReplacerParamRule(
+                                    ReplacerParam.REPORT_TO_DESC,
+                                    ReplacerParamRule.MatchType.RESP_HEADER_STR,
+                                    ReplacerParam.REPORT_TO_REGEX,
+                                    true,
+                                    ReplacerParam.REPORT_TO_REPLACEMENT,
+                                    null,
+                                    false));
+                }
+                // Fallthrough
+            default:
+        }
     }
 }
