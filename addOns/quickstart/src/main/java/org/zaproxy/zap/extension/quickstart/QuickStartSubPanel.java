@@ -56,9 +56,7 @@ public abstract class QuickStartSubPanel extends QuickStartBackgroundPanel {
         int panelY = 0;
         this.add(
                 new TitlePanel(
-                        Constant.messages.getString("quickstart.top.panel.title"),
-                        getBackButton(),
-                        getIcon()),
+                        Constant.messages.getString(getTitleKey()), getBackButton(), getIcon()),
                 LayoutHelper.getGBC(0, panelY, 2, 1.0D, DisplayUtils.getScaledInsets(5, 5, 5, 5)));
 
         this.add(
