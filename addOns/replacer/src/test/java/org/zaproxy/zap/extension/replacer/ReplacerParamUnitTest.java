@@ -31,7 +31,7 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
@@ -39,7 +39,7 @@ import org.zaproxy.zap.utils.ZapXmlConfiguration;
 /** Unit test for {@link ReplacerParam}. */
 class ReplacerParamUnitTest {
 
-    private static final int EXPECTED_V1_RULE_COUNT = 4;
+    private static final int EXPECTED_V1_RULE_COUNT = 6;
 
     private ReplacerParam param;
     private ZapXmlConfiguration configuration;
@@ -106,9 +106,10 @@ class ReplacerParamUnitTest {
     }
 
     @ParameterizedTest
-    @NullSource
-    @ValueSource(ints = {2, 999})
-    void shouldNotOverwriteExistingRulesOnUpdate(Object version) {
+    @CsvSource(
+            value = {"2, 2, 1", "999, 2, 1", "null, 4, 3"},
+            nullValues = {"null"})
+    void shouldNotOverwriteExistingRulesOnUpdate(Object version, int count, int index) {
         // Given / When
         param.load(configuration);
         configuration = new ZapXmlConfiguration();
@@ -118,14 +119,14 @@ class ReplacerParamUnitTest {
         ReplacerParamRule enabledReportTo = getReportToRule(true);
         param.addRule(enabledReportTo);
         // Then
-        assertThat(param.getRules().size(), is(equalTo(2)));
+        assertThat(param.getRules().size(), is(equalTo(count)));
         // getRule returns first match (0th)
         ReplacerParamRule originalRule = param.getRule(ReplacerParam.REPORT_TO_DESC);
         assertNotNull(originalRule);
         assertThat(originalRule.getDescription(), is(equalTo(ReplacerParam.REPORT_TO_DESC)));
         assertThat(originalRule.isEnabled(), is(equalTo(false)));
-        // Added rule (1st) should be enabled
-        assertThat(param.getRules().get(1).isEnabled(), is(equalTo(true)));
+        // The nth rule should be the added enabled one
+        assertThat(param.getRules().get(index).isEnabled(), is(equalTo(true)));
     }
 
     private void createConfigWithReportToRule(ZapXmlConfiguration config) {

@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Video link in help for Automation Framework job.
 - A rule to disable CSP reporting (Issue 740).
+- Rules to disable Caching (Issue 8437).
 
 ## [16] - 2023-11-30
 ### Changed
