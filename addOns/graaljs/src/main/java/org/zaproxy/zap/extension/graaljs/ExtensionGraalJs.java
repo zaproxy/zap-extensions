@@ -37,6 +37,10 @@ import org.zaproxy.zap.extension.script.ScriptWrapper;
 
 public class ExtensionGraalJs extends ExtensionAdaptor {
 
+    static {
+        System.setProperty("polyglot.engine.WarnInterpreterOnly", "false");
+    }
+
     public static final String NAME = "ExtensionGraalJs";
 
     private static final List<Class<? extends Extension>> EXTENSION_DEPENDENCIES =
