@@ -54,6 +54,8 @@ public class ScanRuleMetadata {
     private Map<String, String> alertTags;
     private String otherInfo;
     private AddOn.Status status = AddOn.Status.unknown;
+    private String codeLink;
+    private String helpLink;
 
     // Required for Jackson YAML deserialization
     private ScanRuleMetadata() {}
@@ -166,6 +168,22 @@ public class ScanRuleMetadata {
 
     public void setStatus(AddOn.Status status) {
         this.status = status;
+    }
+
+    public String getCodeLink() {
+        return codeLink;
+    }
+
+    public void setCodeLink(String codeLink) {
+        this.codeLink = codeLink;
+    }
+
+    public String getHelpLink() {
+        return helpLink;
+    }
+
+    public void setHelpLink(String helpLink) {
+        this.helpLink = helpLink;
     }
 
     public static ScanRuleMetadata fromYaml(String yaml) {

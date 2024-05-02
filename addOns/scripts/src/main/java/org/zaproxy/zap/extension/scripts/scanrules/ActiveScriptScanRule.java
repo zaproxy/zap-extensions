@@ -237,6 +237,14 @@ public class ActiveScriptScanRule extends ActiveScriptHelper {
         return script.isEnabled();
     }
 
+    public String getCodeLink() {
+        return metadata.getCodeLink();
+    }
+
+    public String getHelpLink() {
+        return metadata.getHelpLink();
+    }
+
     private ExtensionScript getExtScript() {
         if (extScript == null) {
             extScript =

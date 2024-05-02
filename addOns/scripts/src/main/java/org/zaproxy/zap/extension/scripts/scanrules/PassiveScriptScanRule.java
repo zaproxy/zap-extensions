@@ -120,6 +120,14 @@ public class PassiveScriptScanRule extends PassiveScriptHelper {
         return script.isEnabled();
     }
 
+    public String getCodeLink() {
+        return metadata.getCodeLink();
+    }
+
+    public String getHelpLink() {
+        return metadata.getHelpLink();
+    }
+
     @Override
     public List<Alert> getExampleAlerts() {
         return List.of(newAlert().build());
