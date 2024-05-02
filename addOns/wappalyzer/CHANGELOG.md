@@ -4,7 +4,11 @@ All notable changes to this add-on will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
+### Fixed
+- Implemented a change to address a resource contention issue when loading Tech Detection details (Issue 8464).
 
+### Changed
+- Suppress further un-helpful messages from the jsvg library logger.
 
 ## [21.35.0] - 2024-04-23
 ### Changed
