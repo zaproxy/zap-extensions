@@ -110,6 +110,7 @@ public class ExtensionWappalyzer extends ExtensionAdaptor
                         "com.github.weisj.jsvg.util.ResourceUtil",
                         "com.github.weisj.jsvg.parser.css.impl.SimpleCssParser",
                         "com.github.weisj.jsvg.parser.css.impl.Lexer",
+                        "com.github.weisj.jsvg.parser.SVGLoader",
                         "com.github.weisj.jsvg.nodes.Image",
                         "com.github.weisj.jsvg.nodes.container.BaseContainerNode"),
                 Level.OFF);

@@ -20,6 +20,7 @@
 package org.zaproxy.zap.extension.wappalyzer;
 
 import com.github.weisj.jsvg.SVGDocument;
+import com.github.weisj.jsvg.attributes.paint.SVGPaint;
 import com.github.weisj.jsvg.parser.SVGLoader;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -75,6 +76,11 @@ public class WappalyzerJsonParser {
 
     WappalyzerData parse(String categories, List<String> technologies, boolean createIcons) {
         LOGGER.info("Starting to parse Tech Detecction technologies.");
+        if (createIcons) {
+            // Access the SVGPaint class to hopefully address class contention when parallel loading
+            // below. Issue 8464
+            SVGPaint.DEFAULT_PAINT.paint();
+        }
         Instant start = Instant.now();
         WappalyzerData wappalyzerData = new WappalyzerData();
         parseCategories(wappalyzerData, getStringResource(categories));
