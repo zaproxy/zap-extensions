@@ -62,11 +62,7 @@ dependencies {
     zapAddOn("commonlib")
     zapAddOn("spider")
 
-    implementation("com.graphql-java:graphql-java:21.3")
-    implementation(libs.log4j.slf4j2) {
-        // Provided by ZAP.
-        exclude(group = "org.apache.logging.log4j")
-    }
+    implementation("com.graphql-java:graphql-java:22.0")
 
     testImplementation(project(":testutils"))
     testImplementation(libs.log4j.core)
