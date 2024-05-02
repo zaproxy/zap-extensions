@@ -60,7 +60,9 @@ class ScanRuleMetadataUnitTest {
                         + "  name1: value1\n"
                         + "  name2: value2\n"
                         + "otherInfo: Any other Info\n"
-                        + "status: alpha";
+                        + "status: alpha\n"
+                        + "codeLink: https://www.example.com/codelink\n"
+                        + "helpLink: https://www.example.com/helplink";
         // When
         var metadata = ScanRuleMetadata.fromYaml(yaml);
         // Then
@@ -78,6 +80,8 @@ class ScanRuleMetadataUnitTest {
                 metadata.getAlertTags(), is(equalTo(Map.of("name1", "value1", "name2", "value2"))));
         assertThat(metadata.getOtherInfo(), is(equalTo("Any other Info")));
         assertThat(metadata.getStatus(), is(equalTo(AddOn.Status.alpha)));
+        assertThat(metadata.getCodeLink(), is(equalTo("https://www.example.com/codelink")));
+        assertThat(metadata.getHelpLink(), is(equalTo("https://www.example.com/helplink")));
     }
 
     @Test
