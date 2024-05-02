@@ -34,6 +34,10 @@ public abstract class ActiveScriptHelper extends AbstractAppParamPlugin {
         return super.setParameter(msg, param, value);
     }
 
+    public String setEscapedParam(HttpMessage msg, String param, String value) {
+        return super.setEscapedParameter(msg, param, value);
+    }
+
     @Override
     public void sendAndReceive(HttpMessage msg) throws IOException {
         super.sendAndReceive(msg);
