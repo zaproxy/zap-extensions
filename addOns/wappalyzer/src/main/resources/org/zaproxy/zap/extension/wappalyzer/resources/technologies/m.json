@@ -801,6 +801,22 @@
     "scriptSrc": "maplibre-gl@([\\d\\.]+)/dist/maplibre-gl\\.js\\;version:\\1",
     "website": "https://github.com/maplibre/maplibre-gl-js"
   },
+  "MapPress": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "MapPress is a WordPress plugin that provides easy integration of interactive maps into WordPress websites.",
+    "dom": "link[href*='wp-content/plugins/mappress-google-maps-for-wordpress/'], #mappress-leaflet-css, #mappress-css",
+    "icon": "MapPress.png",
+    "oss": true,
+    "pricing": [
+      "low",
+      "recurring"
+    ],
+    "requires": "WordPress",
+    "website": "https://mappresspro.com"
+  },
   "Mapbox GL JS": {
     "cats": [
       35
