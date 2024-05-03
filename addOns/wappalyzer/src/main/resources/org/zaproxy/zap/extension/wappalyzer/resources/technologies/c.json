@@ -3070,6 +3070,20 @@
     "scriptSrc": "/concrete/js/",
     "website": "https://www.concretecms.com/"
   },
+  "Conditional Fields for Contact Form 7": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "Adds conditional logic to Contact Form 7.",
+    "dom": "link[href*='/wp-content/plugins/cf7-conditional-fields/']",
+    "icon": "Conditional Fields for Contact Form 7.png",
+    "implies": "Contact Form 7",
+    "oss": true,
+    "requires": "WordPress",
+    "scriptSrc": "cf7-conditional-fields(?:\\/js)?(?:\\/scripts)?(?:\\.min)?\\.js(?:\\?v(?:er)?=((?:\\d+\\.)+\\d+))?\\;version:\\1",
+    "website": "https://wordpress.org/plugins/cf7-conditional-fields"
+  },
   "Conekta": {
     "cats": [
       41
@@ -3371,6 +3385,18 @@
     ],
     "saas": true,
     "website": "https://www.contentstack.com"
+  },
+  "Contextual Related Posts": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "Add related posts to your WordPress site with inbuilt caching.",
+    "dom": "link[href*='/wp-content/plugins/contextual-related-posts/']",
+    "icon": "Contextual Related Posts.png",
+    "oss": true,
+    "requires": "WordPress",
+    "website": "https://wordpress.org/plugins/contextual-related-posts/"
   },
   "Contlo": {
     "cats": [
@@ -3807,6 +3833,18 @@
       "poa"
     ],
     "website": "https://corebine.com"
+  },
+  "Cornerstone": {
+    "cats": [
+      5,
+      87
+    ],
+    "description": "Enhanced content management for WordPress.",
+    "dom": "#cornerstone-generated-css",
+    "oss": true,
+    "requires": "WordPress",
+    "scriptSrc": "cornerstone(?:\\/assets)?(?:\\/js)?(?:\\/site)?(?:\\/cs-classic)?\\.?((?:\\d+\\.)+\\d+)?\\.js\\;version:\\1",
+    "website": "https://wordpress.org/plugins/cornerstone"
   },
   "Correos": {
     "cats": [
