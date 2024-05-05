@@ -117,9 +117,7 @@ public final class EncoderUtils {
     }
 
     public static String removeDoubleQuotes(String str) throws InvalidProtobufFormatException {
-
         if (str.startsWith("\"") && str.endsWith("\"")) {
-
             str = str.substring(1, str.length() - 1);
             return str;
         }
@@ -248,6 +246,7 @@ public final class EncoderUtils {
 
     public static ByteArrayOutputStream encodeNestedMessage(String nestedMessage)
             throws IOException, InvalidProtobufFormatException {
+
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         CodedOutputStream codedOutputStream = CodedOutputStream.newInstance(outputStream);
         nestedMessage = EncoderUtils.removeFirstAndLastCurlyBraces(nestedMessage);
