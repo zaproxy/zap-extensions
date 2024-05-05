@@ -168,7 +168,7 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
         JOptionPane.showMessageDialog(
                 mainPanel,
                 message,
-                Constant.messages.getString("grpc.encoder.message.invalid.format.error "),
+                Constant.messages.getString("grpc.encoder.message.invalid.format.error"),
                 JOptionPane.ERROR_MESSAGE);
     }
 }

@@ -293,13 +293,13 @@ public final class EncoderUtils {
                     }
                     break;
                 case LENGTH_DELIMITED_WIRE_TYPE:
+                    String val = inputArray[1];
                     if (typeSpecifier == 'B') {
                         byte[] byteArray = hexStringToByteArray(inputArray[1]);
                         size += CodedOutputStream.computeByteArraySize(fieldNumber, byteArray);
                     } else if (typeSpecifier == 'N') {
                         // nested message
-                        int nestedMessageSize =
-                                computeNestedMessageSize(fieldNumber, inputArray[1]);
+                        int nestedMessageSize = computeNestedMessageSize(fieldNumber, val);
                         // if failed to get size treat it as simple string
                         if (nestedMessageSize == 0) {
                             size += CodedOutputStream.computeStringSize(fieldNumber, inputArray[1]);
@@ -308,8 +308,8 @@ public final class EncoderUtils {
                         }
                     } else {
                         // human readable string
-                        inputArray[1] = EncoderUtils.removeDoubleQuotes(inputArray[1]);
-                        size += CodedOutputStream.computeStringSize(fieldNumber, inputArray[1]);
+                        val = EncoderUtils.removeDoubleQuotes(inputArray[1]);
+                        size += CodedOutputStream.computeStringSize(fieldNumber, val);
                     }
                     break;
                 case BIT32_WIRE_TYPE:
