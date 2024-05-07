@@ -53,6 +53,7 @@ public class ZestAddToScriptPopupMenu extends PopupMenuItemHistoryReferenceConta
         return Constant.messages.getString("zest.addto.popup", true);
     }
 
+    @Override
     public int getParentWeight() {
         return MenuWeights.MENU_SCRIPT_ZEST_ADD_WEIGHT;
     }
@@ -84,7 +85,6 @@ public class ZestAddToScriptPopupMenu extends PopupMenuItemHistoryReferenceConta
         if (ze != null) {
             if (ze instanceof ZestConditional) {
                 ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(selNode);
-                piicm.setMenuIndex(this.getMenuIndex());
                 mainPopupMenuItems.add(piicm);
             }
         }
@@ -93,7 +93,6 @@ public class ZestAddToScriptPopupMenu extends PopupMenuItemHistoryReferenceConta
             if (st.hasCapability(ScriptType.CAPABILITY_APPEND)) {
                 for (ScriptNode node : extension.getZestScriptNodes(st.getName())) {
                     ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(node);
-                    piicm.setMenuIndex(this.getMenuIndex());
                     mainPopupMenuItems.add(piicm);
                 }
             }

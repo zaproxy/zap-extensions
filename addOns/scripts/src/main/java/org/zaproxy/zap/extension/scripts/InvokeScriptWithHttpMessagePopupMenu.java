@@ -84,7 +84,6 @@ public class InvokeScriptWithHttpMessagePopupMenu extends PopupMenuItemHttpMessa
         for (ScriptWrapper script :
                 extension.getExtScript().getScripts(ExtensionScript.TYPE_TARGETED)) {
             ExtensionPopupMenuItem piicm = createPopupAddToScriptMenu(script);
-            piicm.setMenuIndex(this.getMenuIndex());
             mainPopupMenuItems.add(piicm);
         }
     }
@@ -98,6 +97,7 @@ public class InvokeScriptWithHttpMessagePopupMenu extends PopupMenuItemHttpMessa
         return true;
     }
 
+    @Override
     public int getParentWeight() {
         return MenuWeights.MENU_SCRIPT_INVOKE_WEIGHT;
     }

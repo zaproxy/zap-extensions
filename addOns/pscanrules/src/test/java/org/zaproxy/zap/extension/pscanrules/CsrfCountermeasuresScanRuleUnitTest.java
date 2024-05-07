@@ -24,7 +24,10 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +36,7 @@ import org.apache.commons.httpclient.URI;
 import org.apache.commons.httpclient.URIException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-import org.mockito.Mockito;
+import org.mockito.quality.Strictness;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Plugin.AlertThreshold;
 import org.parosproxy.paros.model.Model;
@@ -45,7 +46,6 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.parosproxy.paros.network.HttpRequestHeader;
 import org.parosproxy.paros.network.HttpResponseHeader;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.zap.extension.anticsrf.AntiCsrfParam;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.utils.ZapXmlConfiguration;
 
@@ -53,7 +53,6 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
 
     private ExtensionAntiCSRF extensionAntiCSRFMock;
     private List<String> antiCsrfTokenNames;
-    private AntiCsrfParam antiCsrfParam;
     private HttpMessage msg;
 
     @BeforeEach
@@ -63,15 +62,17 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         antiCsrfTokenNames.add("csrfToken");
         antiCsrfTokenNames.add("csrf-token");
 
-        extensionAntiCSRFMock = mock(ExtensionAntiCSRF.class);
-        Mockito.lenient()
-                .when(extensionAntiCSRFMock.getAntiCsrfTokenNames())
-                .thenReturn(antiCsrfTokenNames);
+        extensionAntiCSRFMock =
+                mock(ExtensionAntiCSRF.class, withSettings().strictness(Strictness.LENIENT));
+        given(extensionAntiCSRFMock.getAntiCsrfTokenNames()).willReturn(antiCsrfTokenNames);
+        given(extensionAntiCSRFMock.isAntiCsrfToken(any()))
+                .willAnswer(
+                        invocation -> {
+                            return antiCsrfTokenNames.contains(
+                                    invocation.getArgument(0, String.class));
+                        });
         OptionsParam options = Model.getSingleton().getOptionsParam();
         options.load(new ZapXmlConfiguration());
-        antiCsrfParam = new AntiCsrfParam();
-        options.addParamSet(antiCsrfParam);
-        antiCsrfParam.setPartialMatchingEnabled(false);
         rule.setExtensionAntiCSRF(extensionAntiCSRFMock);
         rule.setCsrfIgnoreList("");
         rule.setCSRFIgnoreAttName("");
@@ -251,35 +252,6 @@ class CsrfCountermeasuresScanRuleUnitTest extends PassiveScannerTest<CsrfCounter
         scanHttpResponseReceive(msg);
         // Then
         assertEquals(0, alertsRaised.size());
-    }
-
-    @ParameterizedTest
-    @CsvSource({"0, true", "1, false"})
-    void shouldRaiseAlertOrNotBasedOnPartialMatchWhenThereIsOnlyOneFormWithKnownCsrfTokenUsingName(
-            int expectedAlerts, boolean partialMatchingEnabled) {
-        // Given
-        antiCsrfParam.setPartialMatchingEnabled(partialMatchingEnabled);
-        msg.setResponseBody(
-                "<html><head></head><body><form id=\"form_name\"><input type=\"text\" name=\"csrf-token-597zyx\"/><input type=\"submit\"/></form></body></html>");
-        // When
-        scanHttpResponseReceive(msg);
-        // Then
-        assertEquals(expectedAlerts, alertsRaised.size());
-    }
-
-    @ParameterizedTest
-    @CsvSource({"0, true", "1, false"})
-    void
-            shouldRaiseAlertOrNotBasedOnPartialMatchWhenThereIsOnlyOneFormWithKnownCsrfTokenUsingAttribute(
-                    int expectedAlerts, boolean partialMatchingEnabled) {
-        // Given
-        antiCsrfParam.setPartialMatchingEnabled(partialMatchingEnabled);
-        msg.setResponseBody(
-                "<html><head></head><body><form id=\"form_name\"><input type=\"text\" id=\"csrf-token-597zyx\"/><input type=\"submit\"/></form></body></html>");
-        // When
-        scanHttpResponseReceive(msg);
-        // Then
-        assertEquals(expectedAlerts, alertsRaised.size());
     }
 
     @Test

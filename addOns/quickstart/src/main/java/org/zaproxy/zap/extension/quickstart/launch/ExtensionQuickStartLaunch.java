@@ -33,8 +33,8 @@ import org.parosproxy.paros.extension.ExtensionHook;
 import org.parosproxy.paros.extension.OptionsChangedListener;
 import org.parosproxy.paros.model.OptionsParam;
 import org.parosproxy.paros.view.View;
-import org.zaproxy.zap.control.AddOn;
 import org.zaproxy.zap.extension.AddOnInstallationStatusListener;
+import org.zaproxy.zap.extension.AddOnInstallationStatusListener.StatusUpdate;
 import org.zaproxy.zap.extension.api.API;
 import org.zaproxy.zap.extension.quickstart.ExtensionQuickStart;
 import org.zaproxy.zap.extension.quickstart.QuickStartParam;
@@ -266,16 +266,10 @@ public class ExtensionQuickStartLaunch extends ExtensionAdaptor
     }
 
     @Override
-    public void addOnInstalled(AddOn addOn) {
-        // Not currently supported
-    }
-
-    @Override
-    public void addOnSoftUninstalled(AddOn addOn, boolean successfully) {}
-
-    @Override
-    public void addOnUninstalled(AddOn addOn, boolean successfully) {
-        if (hasView() && addOn.getId().equals("hud")) {
+    public void update(StatusUpdate statusUpdate) {
+        if (statusUpdate.getStatus() == StatusUpdate.Status.UNINSTALLED
+                && hasView()
+                && statusUpdate.getAddOn().getId().equals("hud")) {
             this.launchPanel.hudAddOnUninstalled();
         }
     }

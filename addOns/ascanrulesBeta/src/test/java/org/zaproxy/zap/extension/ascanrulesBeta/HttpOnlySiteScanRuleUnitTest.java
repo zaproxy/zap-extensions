@@ -160,7 +160,8 @@ class HttpOnlySiteScanRuleUnitTest extends ActiveScannerTest<HttpOnlySiteScanRul
         Alert alert = alerts.get(0);
 
         Map<String, String> tags = alert.getTags();
-        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(tags, hasKey("CWE-311"));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.WSTG_V42_SESS_02_COOKIE_ATTRS.getTag()));

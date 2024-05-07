@@ -129,7 +129,6 @@ public class ZestAddAssertionPopupMenu extends ExtensionPopupMenuItem {
                         ZestZapUtils.toUiString(za2, false));
         menu.addActionListener(
                 e -> extension.getDialogManager().showZestAssertionDialog(req, null, za2, true));
-        menu.setMenuIndex(this.getMenuIndex());
         View.getSingleton().getPopupList().add(menu);
     }
 

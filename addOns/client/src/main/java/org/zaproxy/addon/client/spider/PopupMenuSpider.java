@@ -49,14 +49,11 @@ public class PopupMenuSpider extends PopupMenuItemSiteNodeContainer {
     }
 
     @Override
-    public int getParentMenuIndex() {
-        return ATTACK_MENU_INDEX;
-    }
-
     public int getParentWeight() {
         return MenuWeights.MENU_ATTACK_WEIGHT;
     }
 
+    @Override
     public int getWeight() {
         return MenuWeights.MENU_ATTACK_CLIENT_WEIGHT;
     }

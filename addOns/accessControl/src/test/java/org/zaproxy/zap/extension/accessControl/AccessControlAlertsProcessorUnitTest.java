@@ -69,10 +69,12 @@ class AccessControlAlertsProcessorUnitTest {
         assertThat(alert.getCweId(), is(equalTo(cweId)));
         assertThat(alert.getWascId(), is(equalTo(wascId)));
         Map<String, String> tags = alert.getTags();
-        assertThat(tags.size(), is(equalTo(2)));
         assertThat(
                 tags,
                 allOf(
+                        hasEntry(
+                                "CWE-" + cweId,
+                                "https://cwe.mitre.org/data/definitions/" + cweId + ".html"),
                         hasEntry(
                                 CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag(),
                                 CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getValue()),

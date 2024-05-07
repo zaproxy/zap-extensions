@@ -48,6 +48,7 @@ public class ZestRecordFromNodePopupMenu extends PopupMenuItemSiteNodeContainer 
         extension.getDialogManager().showZestRecordScriptDialog(node);
     }
 
+    @Override
     public int getWeight() {
         return MenuWeights.MENU_SCRIPT_ZEST_RECORD_WEIGHT;
     }

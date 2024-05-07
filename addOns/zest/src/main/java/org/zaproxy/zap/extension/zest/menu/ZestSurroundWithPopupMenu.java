@@ -220,7 +220,6 @@ public class ZestSurroundWithPopupMenu extends ExtensionPopupMenuItem {
                         extension.pasteToNode(orNode);
                     });
         }
-        menu.setMenuIndex(this.getMenuIndex());
         View.getSingleton().getPopupList().add(menu);
     }
 

@@ -118,11 +118,6 @@ public class RegExTesterPopupMenuItem extends PopupMenuHttpMessageContainer {
     }
 
     @Override
-    public boolean precedeWithSeparator() {
-        return true;
-    }
-
-    @Override
     public boolean isSafe() {
         return true;
     }

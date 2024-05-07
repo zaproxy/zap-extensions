@@ -66,6 +66,7 @@ dependencies {
 
 val japicmp by tasks.existing(JapicmpTask::class) {
     packageExcludes = listOf("org.zaproxy.addon.spider.automation")
+    methodExcludes = listOf("org.zaproxy.addon.spider.PopupMenuItemSpiderDialog#getParentMenuIndex()")
 }
 
 spotless {

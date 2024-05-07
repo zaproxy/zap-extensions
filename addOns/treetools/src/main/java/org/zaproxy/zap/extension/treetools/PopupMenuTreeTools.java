@@ -81,11 +81,6 @@ public class PopupMenuTreeTools extends ExtensionPopupMenuItem {
     }
 
     @Override
-    public boolean precedeWithSeparator() {
-        return true;
-    }
-
-    @Override
     public boolean isSafe() {
         return true;
     }

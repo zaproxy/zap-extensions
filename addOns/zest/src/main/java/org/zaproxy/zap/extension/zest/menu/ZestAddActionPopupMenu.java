@@ -177,7 +177,6 @@ public class ZestAddActionPopupMenu extends ExtensionPopupMenuItem {
                                 .showZestActionDialog(parent, child, stmt, za, true);
                     }
                 });
-        menu.setMenuIndex(this.getMenuIndex());
         View.getSingleton().getPopupList().add(menu);
     }
 

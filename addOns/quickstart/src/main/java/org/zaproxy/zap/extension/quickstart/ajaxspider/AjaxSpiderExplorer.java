@@ -74,14 +74,12 @@ public class AjaxSpiderExplorer implements PlugableSpider {
     }
 
     private static final String MODERN_APP_PLUGIN_ID = "10109";
-    private static final String MODERN_APP_I18N_KEY = "pscanrules.modernapp.name";
 
     private ExtensionQuickStartAjaxSpider extension;
     private JComboBox<ProvidedBrowserUI> browserComboBox;
     private JComboBox<Select> selectComboBox;
     private EventConsumerImpl eventConsumer;
     private boolean isModern;
-    private String modernAppAlertName = "Modern Web Application";
 
     private JPanel panel;
 
@@ -98,11 +96,6 @@ public class AjaxSpiderExplorer implements PlugableSpider {
                         eventConsumer,
                         AlertEventPublisher.getPublisher().getPublisherName(),
                         AlertEventPublisher.ALERT_ADDED_EVENT);
-
-        if (Constant.messages.containsKey(MODERN_APP_I18N_KEY)) {
-            // Handle the case where this has been i18n'ed, or changed in the alert..
-            modernAppAlertName = Constant.messages.getString(MODERN_APP_I18N_KEY);
-        }
     }
 
     public ExtensionAjax getExtAjax() {
@@ -155,10 +148,7 @@ public class AjaxSpiderExplorer implements PlugableSpider {
         extAjax.startScan(builder.build());
     }
 
-    /**
-     * Monitors the alert added events for the Modern App Detection rule: 10109 In 2.14.0 the
-     * pluginId is not present, so we have to rely on the i18n'ed name.
-     */
+    /** Monitors the alert added events for the Modern App Detection rule: 10109. */
     private class EventConsumerImpl implements EventConsumer {
         @Override
         public void eventReceived(Event event) {
@@ -167,9 +157,7 @@ public class AjaxSpiderExplorer implements PlugableSpider {
                 return;
             } else if (event.getEventType().equals(AlertEventPublisher.ALERT_ADDED_EVENT)) {
                 Map<String, String> params = event.getParameters();
-                // FIXME Use the PLUGIN_ID constant and remove the name check post 2.15
-                if (MODERN_APP_PLUGIN_ID.equals(params.get("pluginId"))
-                        || params.get(AlertEventPublisher.NAME).equals(modernAppAlertName)) {
+                if (MODERN_APP_PLUGIN_ID.equals(params.get(AlertEventPublisher.PLUGIN_ID))) {
                     isModern = true;
                 }
             }

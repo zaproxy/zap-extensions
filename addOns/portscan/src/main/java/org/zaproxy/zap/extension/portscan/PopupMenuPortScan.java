@@ -52,10 +52,6 @@ public class PopupMenuPortScan extends PopupMenuItemSiteNodeContainer {
     }
 
     @Override
-    public int getParentMenuIndex() {
-        return ATTACK_MENU_INDEX;
-    }
-
     public int getParentWeight() {
         return MenuWeights.MENU_ATTACK_WEIGHT;
     }

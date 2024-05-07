@@ -149,7 +149,6 @@ public class ZestAddAssignPopupMenu extends ExtensionPopupMenuItem {
                         extension
                                 .getDialogManager()
                                 .showZestAssignDialog(parent, child, stmt, za, true));
-        menu.setMenuIndex(this.getMenuIndex());
         View.getSingleton().getPopupList().add(menu);
     }
 

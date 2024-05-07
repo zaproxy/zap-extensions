@@ -308,9 +308,7 @@ public class ScriptsListPanel extends AbstractPanel {
     protected void saveScript(ScriptWrapper script) {
         if (script.getFile() != null) {
             try {
-                synchronized (extension.getConsolePanel().getScriptLock()) {
-                    extension.getExtScript().saveScript(script);
-                }
+                extension.getExtScript().saveScript(script);
                 ((ScriptTreeModel) this.getTree().getModel())
                         .nodeChanged(this.getSelectedScriptNode());
             } catch (IOException e1) {
@@ -352,9 +350,7 @@ public class ScriptsListPanel extends AbstractPanel {
                 script.setFile(file);
 
                 try {
-                    synchronized (extension.getConsolePanel().getScriptLock()) {
-                        extension.getExtScript().saveScript(script);
-                    }
+                    extension.getExtScript().saveScript(script);
                     ((ScriptTreeModel) this.getTree().getModel())
                             .nodeChanged(this.getSelectedScriptNode());
                 } catch (IOException e1) {

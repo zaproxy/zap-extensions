@@ -23,6 +23,7 @@ import static fi.iki.elonen.SimpleWebServer.newFixedLengthResponse;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.hasKey;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 
@@ -259,8 +260,9 @@ class ParameterTamperScanRuleUnitTest extends ActiveScannerTest<ParameterTamperS
 
         Alert alert = alerts.get(0);
         Map<String, String> tags1 = alert.getTags();
-        assertThat(tags1.size(), is(equalTo(2)));
+        assertThat(tags1.size(), is(equalTo(3)));
         assertThat(alert.getConfidence(), is(equalTo(Alert.CONFIDENCE_MEDIUM)));
+        assertThat(tags1, hasKey("CWE-472"));
         assertThat(
                 tags1.containsKey(CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()),
                 is(equalTo(true)));

@@ -173,8 +173,8 @@ class RetireScanRuleUnitTest extends PassiveScannerTest<RetireScanRule> {
         assertEquals(
                 "https://github.com/twbs/bootstrap/issues/20184\n",
                 alertsRaised.get(0).getReference());
-        // Two Constant OWASP tags plus one CVE
-        assertEquals(3, alertsRaised.get(0).getTags().size());
+        // Two Constant OWASP tags plus one CVE and CWE
+        assertEquals(4, alertsRaised.get(0).getTags().size());
     }
 
     @Test

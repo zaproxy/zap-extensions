@@ -139,6 +139,7 @@ public class PopupMenuSaveXmlMessage extends AbstractPopupMenuSaveMessage {
         }
     }
 
+    @Override
     public int getWeight() {
         return MenuWeights.MENU_SAVE_XML_WEIGHT;
     }
