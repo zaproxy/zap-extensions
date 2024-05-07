@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [58] - 2024-05-07
 ### Changed
 - Update minimum ZAP version to 2.15.0.
 - The library (htmlunit-csp) used by the Content Security Policy scan rule was updated to v4.0.0, which includes support for the wasm-unsafe-eval source expression.
@@ -534,6 +534,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[58]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v58
 [57]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v57
 [56]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v56
 [55]: https://github.com/zaproxy/zap-extensions/releases/pscanrules-v55

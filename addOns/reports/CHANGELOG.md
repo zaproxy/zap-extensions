@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.32.0] - 2024-05-07
 ### Changed
 - Update minimum ZAP version to 2.15.0.
 - The following reports now include the number of Sites tree nodes actively scanned:
@@ -279,6 +279,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First version.
 
+[0.32.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.32.0
 [0.31.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.31.0
 [0.30.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.30.0
 [0.29.0]: https://github.com/zaproxy/zap-extensions/releases/reports-v0.29.0
