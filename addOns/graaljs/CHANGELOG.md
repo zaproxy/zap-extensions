@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [0.7.0] - 2024-05-07
 ### Changed
 - Update minimum ZAP version to 2.15.0.
 - Disable warns about the engine being executed in interpreter mode, that's the expected mode of execution.
@@ -50,6 +50,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 First version.
 
+[0.7.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.7.0
 [0.6.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.6.0
 [0.5.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.5.0
 [0.4.0]: https://github.com/zaproxy/zap-extensions/releases/graaljs-v0.4.0
