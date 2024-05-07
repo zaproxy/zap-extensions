@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [15] - 2024-05-07
 ### Changed
 - Update minimum ZAP version to 2.15.0.
 
@@ -77,6 +77,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First release as an add-on, previously bundled with ZAP core.
 
+[15]: https://github.com/zaproxy/zap-extensions/releases/invoke-v15
 [14]: https://github.com/zaproxy/zap-extensions/releases/invoke-v14
 [13]: https://github.com/zaproxy/zap-extensions/releases/invoke-v13
 [12]: https://github.com/zaproxy/zap-extensions/releases/invoke-v12
