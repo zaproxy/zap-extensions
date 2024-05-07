@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<vulnerabilities xmlns="http://tempuri.org/XMLSchemaOptions.xsd">
+<vulnerabilities>
 
 <vuln_items>wasc_1</vuln_items>
 <vuln_item_wasc_1>
@@ -9,7 +9,7 @@
 Kimlik Doğrulama kurulumunun çevresinden dolaşmak için, bazı kaynaklar özel bir konumda "saklanmakta" ve bu konumların, ana web sayfasında veya diğer herkese açık yerlerde bağlantısı verilmemektedir. Fakat, bu yaklaşım "gizleyerek güvenlik"'ten başka bir şey değildir. Şunu anlamak önemli ki, bir kaynak saldırgan tarafından bilinmese de, bu kaynak hala ona özgü URL ile erişilebilir durumdadır. Bu spesifik URL, yaygın dosya ve dizin konumlarına (mesela /admin), hata mesajlarına, yönlendirme kayıtlarına veya yardım dosyaları gibi dökümanlara kaba kuvvet yoklamasıyla keşfedilebilir. Bu kaynaklar, ister içerik ister islevsellik temelli olsun, yeterli şekilde korunmalıdır.</desc>
 	<solution>Faz: Mimari ve Tasarım
 OWASP ESAPI Kimlik Kontrolü özelliği gibi, bir Kimlik Doğrulama çerçevesi veya kütüphanesi kullanınız.</solution>
-	<reference>http://projects.webappsec.org/Insufficient-Authentication</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/287.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/284.html</reference>
 </vuln_item_wasc_1>
@@ -25,18 +25,18 @@ Bunun en bilinen örneği, 2005 yılı Harvard İşletme Okulu başvuru işlemin
  
 Yetersiz Veri Yetkilendirmesi
 
-Pek çok uygulama, URL'in altındaki veri bilgilerini sergilemektedir. Mesela, sistemdeki bir tıbbi kayda erişirken, URL şu şekilde olabilir:
+Pek çok uygulama, URL'in altındaki veri bilgilerini sergilemektedir. For example, when accessing a medical record on a system one might have a URL such as:
 
- http://example.com/RecordView?id=12345
+https://example.com/RecordView?id=12345
 
-Eğer uygulama, kimliği doğrulanmış kullanıcının okuma hakkı olup olmadığını kontrol etmezse, kullanıcının görmemesi gerekn veriyi gösterebilir.
+If the application does not check that the authenticated user ID has read rights, then it could display data to the user that the user should not see.
 
 Yetersiz Veri yetkilendirmesi, Yetersiz İşlev Yetkilendirmesinden daha yaygındır, çünkü programcılar genellikle uygulama işlevleri açısından tam bilgiye sahiptir, fakat uygulamanın erişebileceği veri hakkında tam bir eşleştirmeye sahip değildir. Programcılar sıklıkla işlev yetkilendirme mekanizmaları hakkında sıkı bir kontrole sahiptir, fakat veri yetkilendirmesi için veritabanları gibi başka sistemlere güvenirler.</desc>
 	<solution>Fazlar: Mimari ve Tasarım: Operasyon
 Ayarları, yönetimi ve ayrıcalıkların ele alınmasını çok dikkatli bir şekilde yönetin. Yazılımdaki güven sınırlarını kesin bir şekilde yönetin.
 
 Yürütülen Program: Mimarlık ve Tasarım Sistem dizaynına uygun bölümlendirmenin yapıldığından ve bölümlendirmenin ayrıcalık ayırma işlevselliğini arttırmaya ve daha da güçlendirmeye yaradığından emin olun. Mimarlar ve tasarımcılar, sistem ayrıcalıklarının kullanılması ve bırakılmasının uygun olduğuna karar verdiği durumlarda en düşük ayrıcalık prensiplerine güvenmeliler.</solution>
-	<reference>http://projects.webappsec.org/Insufficient-Authentication</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/284.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/285.html</reference>
 </vuln_item_wasc_2>
@@ -69,7 +69,6 @@ Ayrıca, 32-bit, 64-bit ve sayısal gösterimi etkileyebilecek diğer potansiyel
 
 Faz: Gerçekleme
 Derleyici uyarılarını yakından inceleyin ve signed / unsigned uyumsuzlukları gibi, potansiyel kritik güvenlik sorunlarını bertaraf edin. Zafiyet çok ender olarak sömürülebilir olsa da, küçük bir başarısızlık, bütün sistemi riske atabilir.</solution>
-	<reference>http://projects.webappsec.org/Integer-Overflows</reference>
 	<reference>https://cwe.mitre.org/data/definitions/190.html</reference>
 </vuln_item_wasc_3>
 
@@ -117,7 +116,7 @@ endüstri tarafından onaylanmış teknikler kullanırken, onları dikkatli kull
 Faz: Gerçekleme
 İsimlendirme kurallarını ve güçlü tipleri, hassas bilgi kullanılırken daha kolay farkedebilmek için kullanın. Nesne, yapı ve diğer kompleks yapıları kullanırken, hassas ve hassas olmayan veriyi mümkün oldukça ayırın.
 Bu, şifrelenmemiş veriyi kodda daha kolay farkedebilmenizi sağlar.</solution>
-	<reference>http://projects.webappsec.org/Insufficient-Authentication</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Transport_Layer_Protection_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/311.html</reference>
 </vuln_item_wasc_4>
 
@@ -155,7 +154,7 @@ Bu, saldırganın ana programda var olan fakat dosyalar içinde yer almayan koru
 Fazlar: Mimari ve Tasarım; Uygulama
 Güvenilmeyen girdilerin yazılımınıza girebileceği tüm olası alanları anlayın: Parametre ve argümanlar, çerezler, ağdan okunan her şey, ortam değişkenleri, ters DNS aramaları, arama sonuçları, istek başlıkları URL bileşenleri, e-postalar, dosyalar, veri tabanları ve uygulamaya veri sağlayan tüm harici sistemler. Unutmayın ki bunun gibi girdiler API çağrıları sayesinde dolaylı olarak elde edebilirler.
 Birçok dosya dahil etme sorunu, programcının belirli girdilerin, özellikle de çerezlerin ve URL bileşenlerinin değiştirilemez olmasını düşünmesinden doğar.</solution>
-	<reference>http://projects.webappsec.org/Remote-File-Inclusion</reference>
+	<reference>https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/07-Input_Validation_Testing/11.2-Testing_for_Remote_File_Inclusion</reference>
 	<reference>https://cwe.mitre.org/data/definitions/98.html</reference>
 </vuln_item_wasc_5>
 
@@ -177,7 +176,7 @@ Aşama: Uygulama
 Tüm format dize işlevlerinin kullanıcı tarafından denetlenemeyen statik bir dize geçirildiğinden ve doğru sayıda argüman daima bu işleve gönderildiğinden emin olun. Mümkünse, biçim dizgelerinde %n operatörünü desteklemeyen işlevleri kullanın.
 Yapı: Derleyicilerin ve bağlayıcıların uyarılarına dikkat edin çünkü uygun olmayan kullanım konusunda uyarabilirler.
 </solution>
-	<reference>http://projects.webappsec.org/Format-String</reference>
+	<reference>https://owasp.org/www-community/attacks/Format_string_attack</reference>
 	<reference>https://cwe.mitre.org/data/definitions/134.html</reference>
 </vuln_item_wasc_6>
 
@@ -226,7 +225,7 @@ Aşama: Uygulama
 
 Sınırsız kopyalama işlevlerini, strnpy ile strcpy gibi uzunluk bağımsız değişkenlerini destekleyen benzer işlevlerle değiştirin. Mevcut değilse oluşturun.
 </solution>
-	<reference>http://projects.webappsec.org/Buffer-Overflow</reference>
+	<reference>https://owasp.org/www-community/vulnerabilities/Buffer_Overflow</reference>
 	<reference>https://cwe.mitre.org/data/definitions/119.html</reference>
 </vuln_item_wasc_7>
 
@@ -264,7 +263,7 @@ Giriş doğrulamasını gerçekleştirirken, uzunluğu, girdi türünü, kabul e
 
 Ensure that you perform input validation at well-defined interfaces within the application. Bu, bir bileşen başka yerlerde yeniden kullanılması veya taşınması durumunda bile uygulamayı korumaya yardımcı olacaktır.
 	</solution>
-	<reference>http://projects.webappsec.org/Cross-Site-Scripting</reference>
+	<reference>https://owasp.org/www-community/attacks/xss/</reference>
 	<reference>https://cwe.mitre.org/data/definitions/79.html</reference>
 </vuln_item_wasc_8>
 
@@ -300,7 +299,7 @@ Durum değişikliğini tetikleyen herhangi bir istek için GET yöntemini kullan
 
 Aşama: Uygulama
 İsteğin beklenen bir sayfadan kaynaklanıp kaynaklanmadığını görmek için HTTP Referer başlığını kontrol edin. Bu, meşru işlevselliği bozabilir, çünkü kullanıcılar veya vekiller, Referer'ı gizlilik nedenleriyle göndermeyi devre dışı bırakmış olabilirler.</solution>
-	<reference>http://projects.webappsec.org/Cross-Site-Request-Forgery</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/352.html</reference>
 </vuln_item_wasc_9>
 
@@ -327,7 +326,7 @@ Protokollere belirli bir limit ölçeği yerleştirildiğinden emin olun.
 
 Aşama: Uygulama
 Kaynak paylaştırmadaki tüm başarısızlıkların sistemi güvenli durum konumuna getirdiğinden emin olun.</solution>
-	<reference>http://projects.webappsec.org/Denial-of-Service</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Denial_of_Service_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/400.html</reference>
 </vuln_item_wasc_10>
 
@@ -348,7 +347,7 @@ Web uygulamalarındaki en yaygın kaba kuvvet saldırısı tipi, giriş bilgiler
 It is important that the techniques used to limit user access to the system be implemented properly in order to prevent abuses and negative side effects such as denial of service.
 
 Additionally consider migrating to password-less authentication mechanisms like passkeys.</solution>
-	<reference>http://projects.webappsec.org/Brute-Force</reference>
+	<reference>https://owasp.org/www-community/attacks/Brute_force_attack</reference>
 </vuln_item_wasc_11a>
 
 <vuln_items>wasc_11b</vuln_items>
@@ -359,7 +358,7 @@ Additionally consider migrating to password-less authentication mechanisms like 
 HTTP durum bilgisi olmayan bir protokol olduğundan, devlet web korumak için uygulamaları bir oturum kimliği ve her isteğin bir tarayıcı tarafından gönderildiğinden emin olunması gerekir. Oturum tanımlayıcısı en sık HTTP çerezinde veya URL'de depolanmaktadır. Kaba kuvvet saldırısı kullanarak, bir saldırgan başka bir kullanıcının oturum tanımlayıcısını tahmin edebilir. Bu, saldırganların kullanıcıların kimliğine bürünmesine, kişisel bilgilerin çalınmasına ve kullanıcı adına eylemler gerçekleştirmesine neden olabilir.
 	</desc>
 	<solution>Use mechanisms that generate random, transient, and unpredictable session identifiers.</solution>
-	<reference>http://projects.webappsec.org/Brute-Force</reference>
+	<reference>https://owasp.org/www-community/attacks/Brute_force_attack</reference>
 </vuln_item_wasc_11b>
 
 <vuln_items>wasc_11c</vuln_items>
@@ -372,7 +371,7 @@ Dosyalar herhangi bir yerle bağlantılı değilse ve web sunucusu tarafından s
 Bir kaba kuvvet saldırısı, bağlantısız dosyayı çok sayıda dosyaya erişmeye çalışarak bulmayı dener. Girilen dosya adlarının listesi bilinen potansiyel dosyaların bir listesinden oluşabilir veya web sitesinde görülebilen dosyaların türevlerine dayalı olabilir. Kaba kuvvet dizinleri ve daha fazla bilgili dosyaların güvenlik açığı, öngörülebilir kaynak konumu içinde bulunabilir.
 	</desc>
 	<solution>Never rely on "security by obscurity" mechanisms to restrict access to sensitive files and directories on a web server. Implement appropriate access control measures if hosting sensitive information is required.</solution>
-	<reference>http://projects.webappsec.org/Brute-Force</reference>
+	<reference>https://owasp.org/www-community/attacks/Forced_browsing</reference>
 </vuln_item_wasc_11c>
 
 <vuln_items>wasc_11d</vuln_items>
@@ -403,7 +402,7 @@ Phase: Operation
 Regularly monitor and review your security measures and adapt to evolving threats and attack patterns.
 
 </solution>
-	<reference>http://projects.webappsec.org/Brute-Force</reference>
+	<reference>https://owasp.org/www-community/attacks/Brute_force_attack</reference>
 </vuln_item_wasc_11d>
 
 <vuln_items>wasc_12</vuln_items>
@@ -415,14 +414,14 @@ Sadece tekst Sızdırma teksti
 Sayfaları hareketli olarak meydana getirmek için ortak bir yaklaşım, cesedi veya bölümleri bir sorgu dizesi değeri aracılığıyla sayfaya geçirmeyi içerir. Bu yaklaşım hata sayfalarında veya hikaye ya da haber gönderileri sağlayan sitelerde sıktır. Bu parametrede belirtilen içerik daha sonra sayfanın içeriğini oluşturmak için sayfaya da yansıtılır.
  
 İşaretlenen Yansıyan İçeriklerin Sızdırılması
-Bazı web sayfaları, dinamik olarak oluşturulmuş HTML içerik kaynaklarını kullanılarak oluşmaktadır. For example, the source location of a frame <frame src="http://foo.example/file.html"/>) could be specified by a URL parameter value. (http://foo.example/page?frame_src=http://foo.example/file.html). Bir saldırgan, "frame_src" parametre değerlerini "frame_src = http: //attacker.example/spoof.html" ile değiştirebilir. Yönlendiricilerin aksine, sonuç sayfası sunulduğunda, tarayıcı konum çubuğu kullanıcı tarafından beklenen alan adının (foo.example) altında görünür kalır, ancak yabancı veriler (attacker.example) geçerli içerik tarafından örtülür.
+Bazı web sayfaları, dinamik olarak oluşturulmuş HTML içerik kaynaklarını kullanılarak oluşmaktadır. For example, the source location of a frame <frame src="https://foo.example/file.html"/>) could be specified by a URL parameter value. (https://foo.example/page?frame_src=https://foo.example/file.html). An attacker may be able to replace the "frame_src" parameter value with "frame_src=https://attacker.example/spoof.html". Yönlendiricilerin aksine, sonuç sayfası sunulduğunda, tarayıcı konum çubuğu kullanıcı tarafından beklenen alan adının (foo.example) altında görünür kalır, ancak yabancı veriler (attacker.example) geçerli içerik tarafından örtülür.
 
-Özel hazırlanmış bağlantılar bir kullanıcının e-postasına anında ileti gönderir, bülten tahtasına gönderilir veya kullanıcılara Cross-site Scripting ile zorla gönderilebilir. Bir saldırgan, bir kullanıcının kötü amaçlı URL'sinin belirlediği bir web sayfasını ziyaret etmesini sağlar, kullanıcı, gerçek içeriği olmadığı halde bir konumdan denetlendiğine güvenir. Tarayıcı konum çubuğunda aslında http: //attacker.example'yi referans alan HTML çerçevesi http: //foo.example göründüğünde, kullanıcılar sahte içeriğe dolaylı olarak güvenebilir.
+Özel hazırlanmış bağlantılar bir kullanıcının e-postasına anında ileti gönderir, bülten tahtasına gönderilir veya kullanıcılara Cross-site Scripting ile zorla gönderilebilir. Bir saldırgan, bir kullanıcının kötü amaçlı URL'sinin belirlediği bir web sayfasını ziyaret etmesini sağlar, kullanıcı, gerçek içeriği olmadığı halde bir konumdan denetlendiğine güvenir. Users will implicitly trust the spoofed content since the browser location bar displays https://foo.example, when in fact the underlying HTML frame is referencing https://attacker.example.
 
 Bu saldırılar, kullanıcılar ve web siteleri arasında oluşan güveni kullanır. Bu teknik, giriş formları, sızdırma, yanlış basın bültenleri vb. Dahil olmak üzere sahte web sayfaları kurmak için kullanılmıştır.
 	</desc>
 	<solution>Implement appropriate Content Security Policy (CSP) and never trust user input.</solution>
-	<reference>http://projects.webappsec.org/Content-Spoofing</reference>
+	<reference>https://owasp.org/www-community/attacks/Content_Spoofing</reference>
 </vuln_item_wasc_12>
 
 <vuln_items>wasc_13</vuln_items>
@@ -436,7 +435,6 @@ Yazılım sürüm numaraları ve ayrıntılı hata mesajları (ASP.NET sürüm n
 
 Verilerin geçerliliğine dayalı olarak farklı yanıtlar sunan sayfalar da bilgi sızıntılarına neden olabilir; özellikle de web uygulaması tasarımının bir sonucu olarak gizli olduğunu düşünülen bilgiler ortaya çıktığında. Hassas veri örnekleri, (ancak bunlarla sınırlı değildir.) hesap numaraları, kullanıcı tanımlayıcıları (Sürücü lisans numarası, Pasaport numarası, Sosyal Güvenlik Numaraları, vb.) ve kullanıcıya özgü bilgiler (şifreler, oturumlar, adresler) i içerir. Bilgi Sızıntısı, bu bağlamda, kullanıcıya bile açıkça gösterilmemesi gereken, gizli veya gizli sayılan temel kullanıcı bilgilerini ortaya koymaktadır. Kredi kartı numaraları ve diğer katı şekilde düzenlenen bilgiler, uygun şifreleme ve erişim kontrolleri yapılmış olsa dahi, kullanıcı verilerinin asıl örneklerinin maruz kalmaması veya sızıntıdan daha fazla korunması gerekir.</desc>
 	<solution>Sisteminde, güven sınırlarının belirgin şekilde görünebilceği "güvenli" alanlar oluşturun. Hassas bilginin güven sınırları dışına gitmesine izin vermeyin ve güvenli alan dışındaki bir bölümle karşılaştığınızda her zaman dikkatli olun.</solution>
-	<reference>http://projects.webappsec.org/Information-Leakage</reference>
 	<reference>https://cwe.mitre.org/data/definitions/200.html</reference>
 </vuln_item_wasc_13>
 
@@ -448,8 +446,13 @@ Verilerin geçerliliğine dayalı olarak farklı yanıtlar sunan sayfalar da bil
 Sunucular, herkesçe bilinen hesapları ve parolaları içerebilir. Sunucuyu tam güvenli hale getirmez veya güçlendirmezseniz, dosya ve dizin izinlerine erişilerek yanlış ayarlanabilir. Yanlış yapılandırılmış SSL sertifikaları ve şifreleme ayarları, varsayılan sertifikaların kullanılması ve harici sistemlerle yetersiz doğrulama uygulaması, bilginin gizliliği tehlikeye girebilir.
 
 Ayrıntılı ve bilgilendirici hata mesajları veri sızıntılarına neden olabilir ve ortaya çıkan bu bilgiler bir sonraki saldırının formüle edilmesi için kullanılabilir. Sunucu yazılımındaki yanlış yapılandırmalar dizin ekleme ve yol geçişi saldırılarına izin verebilir.</desc>
-	<solution/>
-	<reference>http://projects.webappsec.org/Server-Misconfiguration</reference>
+	<solution>
+    * Don't use default credentials. Replace all default usernames and passwords with strong and unique credentials. Periodically update them.
+    * Implement an appropriate error message handling strategy that doesn't leak sensitive and debug information.
+    * Ensure that administrative functions are not accessible to unauthorized users. Implement strong authentication and authorization mechanisms.
+    * Follow the best practices and security guidelines for your specific server.
+   </solution>
+	<reference>https://owasp.org/www-project-mobile-top-10/2023-risks/m8-security-misconfiguration</reference>
 </vuln_item_wasc_14>
 
 <vuln_items>wasc_15</vuln_items>
@@ -458,16 +461,20 @@ Ayrıntılı ve bilgilendirici hata mesajları veri sızıntılarına neden olab
 	<desc>Uygulama Yanlış yapılandırma saldırıları, web uygulamalarında bulunan yapılandırma zayıflıklarını hedef almaktadır. Çoğu uygulama, varsayılan olarak etkinleştirilmiş olan hata ayıklama ve QA özellikleri gibi gereksiz ve güvensiz özellikler barındırır. Bu özellikler, bir bilgisayar korsanının kimlik doğrulama yöntemlerini geçip belki de yüksek ayrıcalıklarla hassas bilgilere erişebilmesi için kullanabilceği bir yol sağlayabilir.
 
 Aynı şekilde, varsayılan yüklemeler iyi bilinen kullanıcı adlarını ve şifreleri içerebilir, sabit kodlu arka kapı hesaplarını, özel erişim mekanizmalarını ve Web sunucuları üzerinden erişilebilen dosyalar için yanlış izinler ayarlanır. Varsayılan örnekler, üretim ortamlarında erişilebilir olmalıdır. Düzgün kilitlenmemiş uygulama tabanlı yapılandırma dosyaları, açık metin bağlantı dizelerini veritabanına gösterebilir ve yapılandırma dosyalarındaki varsayılan ayarlar güvenlik göz önüne alınarak yapılmamış olabilir. Bu yanlış yapılandırmaların tümü, hassas bilgilere yetkisiz erişime neden olabilir.</desc>
-	<solution/>
-	<reference>http://projects.webappsec.org/Application-Misconfiguration</reference>
+	<solution>
+    * Ensure that debug and QA features are deactivated.
+    * Ensure the error messages doesn't leak sensitive and debug information.
+    * Follow the best practices and security guidelines for your specific application tech stack.
+	</solution>
+	<reference>https://cwe.mitre.org/data/definitions/16.html</reference>
 </vuln_item_wasc_15>
 
 <vuln_items>wasc_16</vuln_items>
 <vuln_item_wasc_16>
 	<alert>Dizin dizini oluşturma</alert>
-	<desc>Eğer Normal taban dosyası ise (index.html/home.html/default.htm/default.asp/default.aspx/index.php) otomatik dizin listesi/dizin oluşturma, tüm dosyaları istenen bir dizinde listeleyen bir web sunucusu işlevidir. Bir kullanıcı bir web sitesinin ana sayfasına istediğinde, alan adını kullanarak ve belirli bir dosyayı hariç tutarak normalde http://www.example.com/directory1/ gibi bir URL'yi yazarlar. Web sunucusu bu isteği işler ve varsayılan dosya adı için belge kaynak dizini arar ve bu sayfayı alıcıya gönderir. Bu sayfa mevcut değilse, web sunucusu dinamik olarak bir dizin listesi çıkarır ve çıktıyı istemciye gönderir. Temel olarak bu, bu dizinde bir "Is" (Unix) veya "dir" (Windows) komutu yazmaya ve sonuçları HTML biçiminde göstermeye denktir. Saldırı ve güvenlik açısından bakıldığında, istenmeyen dizin listelerinin belirli bir web isteğiyle birlikte kullanılan yazılım güvenlik açıkları (aşağıda örnek bölümünde tartışıldı) nedeniyle olabileceğini fark etmek önemlidir.</desc>
+	<desc>Eğer Normal taban dosyası ise (index.html/home.html/default.htm/default.asp/default.aspx/index.php) otomatik dizin listesi/dizin oluşturma, tüm dosyaları istenen bir dizinde listeleyen bir web sunucusu işlevidir. When a user requests the main page of a web site, they normally type in a URL such as: https://www.example.com/directory1/ - using the domain name and excluding a specific file. Web sunucusu bu isteği işler ve varsayılan dosya adı için belge kaynak dizini arar ve bu sayfayı alıcıya gönderir. Bu sayfa mevcut değilse, web sunucusu dinamik olarak bir dizin listesi çıkarır ve çıktıyı istemciye gönderir. Temel olarak bu, bu dizinde bir "Is" (Unix) veya "dir" (Windows) komutu yazmaya ve sonuçları HTML biçiminde göstermeye denktir. Saldırı ve güvenlik açısından bakıldığında, istenmeyen dizin listelerinin belirli bir web isteğiyle birlikte kullanılan yazılım güvenlik açıkları (aşağıda örnek bölümünde tartışıldı) nedeniyle olabileceğini fark etmek önemlidir.</desc>
 	<solution>Öneriler arasında, belge ve sunucu kökü için gerek duyulması gerektiğini kabul ederek önemli dizinlere veya dosyalara erişimi sınırlandırmak ve Otomatik Dizin Listeleri gibi özel dosyalara neden olabilecek saldırıyı formüle edip gerçekleştirirken bir saldırganın kullanabileceği bilgileri sağlayan özellikleri kapatmak gerekir.</solution>
-	<reference>http://projects.webappsec.org/Directory-Indexing</reference>
+	<reference>https://owasp.org/www-community/attacks/Path_Traversal</reference>
 	<reference>https://cwe.mitre.org/data/definitions/548.html</reference>
 </vuln_item_wasc_16>
 
@@ -476,7 +483,7 @@ Aynı şekilde, varsayılan yüklemeler iyi bilinen kullanıcı adlarını ve ş
 	<alert>Yanlış dosya sistem izinleri</alert>
 	<desc>Yanlış dosya sistemi izinleri, bir web uygulamasının gizliliği, bütünlüğü ve kullanılabilirliği için bir tehdittir. Yanlış dosya sistemi izinleri dosyalar, klasörler ve simgesel bağlantılar üzerinde ayarlandığında sorun çıkar. Yanlış izinler ayarlandığında, bir saldırgan kısıtlanmış dosyalara veya dizinlere erişebilir ve içeriğini değiştirebilir veya silebilir. Örneğin, anonim bir kullanıcı hesabı bir dosyaya yazma iznine sahipse, bir saldırgan web uygulamasını etkileyen dosyanın içeriğini istenmeyen yollarla değiştirebilir. Bir saldırgan ayrıcalıklarını tırmandırmak ve/veya yetkisiz dosyalara erişmek için uygun olmayan sembolik bağları da kullanabilir; örneğin, web kökü dışında bir dizine işaret eden bir sembolik bağ.</desc>
 	<solution>Very carefully manage the setting, management and handling of permissions. Yazılımdaki güven sınırlarını kesin bir şekilde yönetin.</solution>
-	<reference>http://projects.webappsec.org/Improper-Filesystem-Permissions</reference>
+	<reference>https://owasp.org/www-community/Broken_Access_Control</reference>
 	<reference>https://cwe.mitre.org/data/definitions/280.html</reference>
 </vuln_item_wasc_17>
 
@@ -487,7 +494,8 @@ Aynı şekilde, varsayılan yüklemeler iyi bilinen kullanıcı adlarını ve ş
 
 Birçok web sitesi, iletişim ilk kurulduğunda bir kullanıcıyı kimliklendirmek ve takip etmek üzere tasarlanmıştır. Bunu yapmak için, kullanıcı genelde kullanıcı adı / şifre (kimlik bilgileri) kombinasyonu sağlayarak kimlik bilgilerini web sitesinde ispatlamalıdır. Bu özel bilgileri her işlemle ileri geri taşımaktansa, web siteleri kullanıcı oturumunu kimliklendirilmiş olarak tanımlamak için eşsiz bir "oturum kimliği" oluşturacaktır. Kimliklendirilmiş oturumun bir "kanıtı olarak", kullanıcı ile web sitesi arasındaki sonraki iletişim, oturum kimliği ile etiketlenir. Bir saldırgan, başka bir kullanıcının oturum kimliğini tahmin edebiliyorsa sahte etkinlik mümkündür.</desc>
 	<solution>Use mechanisms that generate random, transient, and unpredictable session identifiers.</solution>
-	<reference>http://projects.webappsec.org/Credential-and-Session-Prediction</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html</reference>
+	<reference>https://owasp.org/www-community/attacks/Session_Prediction</reference>
 </vuln_item_wasc_18>
 
 <vuln_items>wasc_19</vuln_items>
@@ -522,7 +530,8 @@ When constructing SQL query strings, use stringent allow lists that limit the ch
 Unutmayın ki, girdi doğrulaması bazı derinlemesine savunmalar getirebilmesine rağmen, SQL enjeksiyonunu önlemek için en etkili çözüm uygun çıktı kodlaması, kaçışı ve alıntılamadır. Bunun nedeni, çıktıda görünecek olan şeyleri etkin biçimde sınırlandırmasıdır. Giriş doğrulaması her zaman SQL enjeksiyonunu engellemez, özellikle keyfi karakterler içerebilen serbest çalışma metin alanlarını desteklemeniz gerekiyorsa. Örneğin, "O'Reilly" ismi İngilizce'de sık bulunan bir soyadı olduğu için büyük ihtimalle doğrulama aşamasını geçecektir. Ancak, kaçınılması veya başka türlü ele alınması gereken "'" kesme işareti karakterini içerdiğinden, doğrudan veri tabanına eklenemez. Bu durumda, kesme işaretini kaldırmak SQL enjeksiyonun riskini azaltabilir, ancak yanlış isim kaydedileceğinden dolayı yanlış davranışa neden olur.
 
 Uygulanabilir olduğunda, meta-karakterlerden kaçınmak yerine onları tamamen reddetmek en güvenlisi olabilir. Bu derinlemesine bir savunma sağlayacaktır. Veriler veritabanına girildikten sonra, daha sonraki süreçler kullanmadan önce meta karakterlerden kaçmayı görmezden gelebilir ve bu süreçler üzerinde kontrol sahibi olamazsınız.</solution>
-	<reference>http://projects.webappsec.org/SQL-Injection</reference>
+	<reference>https://owasp.org/www-community/attacks/SQL_Injection</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html</reference>
 </vuln_item_wasc_19>
 
 <vuln_items>wasc_20</vuln_items>
@@ -564,7 +573,8 @@ Girişler doğrulanmadan önce uygulamanın mevcut iç temsiline göre kodlanmal
 Girdiniz artık değişmeyene kadar, tekrarlanan kanonlaştırma uygulamayı düşünün. Bu çift-kod çözmeyi ve benzer senaryoları önleyecektir ama doğru kodlanmış tehlikeli içeriği tutmasına izin verilen girdileri yanlışlıkla değiştirebilir.
 
 Bileşenler arasında veri alışverişi yaparken, iki bileşenin de aynı karakter kodlamasını kullandığından emin olun. Her bir arayüzde doğru şifreleme uygulandığından emin olun. Protokolün buna izin verdiğinde her zaman kullandığınız kodlamayı açıkça belirtin.</solution>
-	<reference>http://projects.webappsec.org/Improper-Input-Handling</reference>
+	<reference>https://owasp.org/www-community/vulnerabilities/Improper_Data_Validation</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Input_Validation_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/89.html</reference>
 </vuln_item_wasc_20>
 
@@ -595,8 +605,9 @@ Aşağıdaki özellikler otomatik saldırıların hedefidir:
 7. **Monitoring and Logging:** Regularly monitor and log user activities to identify and respond to unusual patterns indicative of automation.
 
 A combination of these measures is often more effective in preventing automated attacks.</solution>
-	<reference>http://projects.webappsec.org/Insufficient+Anti-automation</reference>
+	<reference>https://owasp.org/www-project-automated-threats-to-web-applications/</reference>
 	<reference>https://cwe.mitre.org/data/definitions/116.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/799.html</reference>
 </vuln_item_wasc_21>
 
 <vuln_items>wasc_22</vuln_items>
@@ -630,7 +641,7 @@ Bazı durumlarda, çıktı doğrulaması tam bir çözüm olmadığından giriş
 Girdi doğrulamasını derinlemesine saldırı ölçütü olarak kullanarak çıktı kodlama hatalarının olasılığını düşürün (CWE-20'e bakınız).
 
 Bileşenler arasında veri alışverişi yaparken, iki bileşenin de aynı karakter kodlamasını kullandığından emin olun. Her bir arayüzde doğru şifreleme uygulandığından emin olun. Protokolün buna izin verdiğinde her zaman kullandığınız kodlamayı açıkça belirtin.</solution>
-	<reference>http://projects.webappsec.org/Improper-Output-Handling</reference>
+	<reference>https://owasp.org/www-project-proactive-controls/v3/en/c4-encode-escape-data</reference>
 </vuln_item_wasc_22>
 
 <vuln_items>wasc_23</vuln_items>
@@ -638,7 +649,9 @@ Bileşenler arasında veri alışverişi yaparken, iki bileşenin de aynı karak
 	<alert>XML Enjeksiyonu</alert>
 	<desc>XML enjeksiyonu XML uygulamasının ya da hizmetinin mantığını değiştirmek ya da bozmak için kullanılan bir saldırı tekniğidir. İstenmeyen XML içeriği ve/veya yapılarını bir XML iletisine enjekte edilmesi, uygulamanın mantığını değiştirebilir. Dahası, XML enjeksiyonu ortaya çıkan mesaja/belgeye zararlı içeriğin eklenmesine neden olabilir.</desc>
 	<solution>Never trust user input. Validate and sanitize the user input before incorporating it into the XML document. Consider blocking or escaping XML meta characters e.g. "&lt;" and "&gt;" could be represented with the corresponding entities: "&amp;lt;" and "&amp;gt;".</solution>
-	<reference>http://projects.webappsec.org/XML-Injection</reference>
+	<reference>https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/XML_Security_Cheat_Sheet.html</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html</reference>
 </vuln_item_wasc_23>
 
 <vuln_items>wasc_24</vuln_items>
@@ -648,8 +661,9 @@ Bileşenler arasında veri alışverişi yaparken, iki bileşenin de aynı karak
 	<solution>Avoid using CRLF as a special sequence.
 
 Appropriately filter or quote CRLF sequences in user-controlled input.</solution>
-	<reference>http://projects.webappsec.org/HTTP-Request-Splitting</reference>
+	<reference>https://owasp.org/www-community/vulnerabilities/CRLF_Injection</reference>
 	<reference>https://cwe.mitre.org/data/definitions/93.html</reference>
+	<reference>https://portswigger.net/web-security/request-smuggling</reference>
 </vuln_item_wasc_24>
 
 <vuln_items>wasc_25</vuln_items>
@@ -664,7 +678,7 @@ HTTP Cevap Bölmenin özü, saldırganın web sunucusunu bir çıktı akımı ol
 
 HTTP Cevap Bölme saldırıları sunucu komutunun HTTP cevap başlıklarına kullanıcı verilerini gömdüğü yerde gerçekleşir. Bu, genellikle komut dosyası kullanıcı verilerini yönlendirme yanıtının yeniden yönlendirme URL'sine gömerken olur(HTTP status code 3xx), veya komut dosyası kullanıcı verilerini çerez değerine yerleştirdiğinde veya yanıt bir çerez ayarlarken isimlendirir.</desc>
 	<solution>HTTP üstbilgilerini, doğrulanmamış girdi verilerini kullanmaktan kaçınarak dikkatlice oluşturun.</solution>
-	<reference>http://projects.webappsec.org/HTTP-Response-Splitting</reference>
+	<reference>https://owasp.org/www-community/attacks/HTTP_Response_Splitting</reference>
 	<reference>https://cwe.mitre.org/data/definitions/113.html</reference>
 </vuln_item_wasc_25>
 
@@ -679,7 +693,6 @@ Yalnızca SSL iletişimi kullanın.
 Her isteğin ardından istemci oturumunu sonlandırın.
 
 Tüm sayfaları önbelleknemez hale getirin.</solution>
-	<reference>http://projects.webappsec.org/HTTP-Request-Smuggling</reference>
 	<reference>https://cwe.mitre.org/data/definitions/444.html</reference>
 </vuln_item_wasc_26>
 
@@ -692,8 +705,24 @@ Bu tekniğin bir kullanımı, anti-HTTP cevap bölme önlemlerinden kaçmak içi
 
 HTTP cevap kaçakçılığı, bir anti-HTTP Cevap Bölme mekanizmasının (veya proxy sunucusunun) HTTP cevap akışı olarak gördüğü ile proxy sunucusu (veya bir tarayıcı) tarafından ayrıştırılan cevap akışı arasındaki uyumsuzluklardan yararlanmak için HTTP istek kaçakçılığı gibi teknikler kullanır. Yani, bir anti-HTTP cevap bölme mekanizması belli bir cevap akşının zararsız olarak görürken (tek HTTP cevabı), bir proxy/tarayıcı onu iki HTTP cevabı olarak ayrıştırabilir, ve bu nedenle orijinal HTTP cevap bölme tekniğinin tüm sonuçlarına (ilk kullanım durumunda) ya da sayfa sızdırmaya duyarlı olabilir (ikinci durumda). Örneğin, bazı uygulama motorları tarafından kullanılan bazı anti-HTTP yanıtı bölme mekanizmaları, uygulamanın yanıtta CR+LF içeren bir üstbilgi eklemesini yasaklamaktadır. Yine de bir saldırgan, uygulamanın CR'ler içeren bir başlık eklemeye zorlayabilir, böylece savunma mekanizmasını atlatabilir. Bazı proxy sunucuları CR'ye (sadece) bir başlık (ve cevap) ayırıcı olarak davranabilir ve web sunucusu ve proxy sunucusu birleşimi, proxy önbelleğini zehirleyebilecek bir saldırıya karşı halen savunmasızdır.
 	</desc>
-	<solution/>
-	<reference>http://projects.webappsec.org/HTTP-Response-Smuggling</reference>
+	<solution>Use HTTP/2 for backend connections. While HTTP/2 doesn't entirely prevent request smuggling, it does introduce certain changes that makes it difficult for attacker to exploit this.
+
+		Utilize a Web Application Firewall (WAF) that has built-in mitigation to detect abnormal requests/responses.
+
+		Whenever a HTTP message contains both Transfer-Encoding and Content-Length either prioritize the Transfer-Encoding header or just completely reject the HTTP message. Make this behavior consistent in the back-end server and any intermediary HTTP agents.
+
+		Disallow Malformed/Invalid Transfer-Encoding Headers used in obfuscation, such as:
+			* Headers with no space before the value “chunked”
+			* Headers with extra spaces
+			* Headers beginning with trailing characters
+			* Headers providing a value “chunk” instead of “chunked” (the server normalizes this as chunked encoding)
+			* Headers with multiple spaces before the value “chunked”
+			* Headers with quoted values (whether single or double quotations)
+			* Headers with CRLF characters before the value “chunked”
+			* Values with invalid characters
+	</solution>
+	<reference>https://owasp.org/www-community/attacks/HTTP_Response_Splitting</reference>
+	<reference>https://capec.mitre.org/data/definitions/273.html</reference>
 </vuln_item_wasc_27>
 
 <vuln_items>wasc_28</vuln_items>
@@ -713,7 +742,7 @@ Güçlü çıktı kodlaması belirleyin ve kullanın (örneğin ISO 8859-1 veya 
 Do not rely exclusively on deny list validation to detect malicious input or to encode output. Bir karakteri kodlamak için çok fazla değişken var. Bazı değişkenleri gözden kaçırmanız olasıdır.
 
 Girişler doğrulanmadan önce uygulamanın mevcut iç temsiline göre kodlanmalı ve standart hale getirilmelidir. Uygulamanızın aynı girdiyi iki kez deşifre etmediğinden emin olun. Such errors could be used to bypass allow list schemes by introducing dangerous inputs after they have been checked.</solution>
-	<reference>http://projects.webappsec.org/Null-Byte-Injection</reference>
+	<reference>https://owasp.org/www-community/attacks/Embedding_Null_Code</reference>
 	<reference>https://cwe.mitre.org/data/definitions/158.html</reference>
 </vuln_item_wasc_28>
 
@@ -726,7 +755,8 @@ Basit Dizin Erişim Protokolü (LDAP), X.500 dizin hizmetlerini sorgulayan ve de
 
 Bir web uygulaması kullanıcı-kaynaklı girdileri düzgün temizleyemediğinde, bir saldırganın LDAP komutunun yapısını değiştirmesi mümkündür. Bir saldırgan LDAP ifadesinin yapısını değiştirebildiğinde, işlem komutu çalıştıran komutla aynı izinlere sahip olarak devam edecektir. (Örneğin: Veritabanı sunucusu, Web uygulama sunucusu, Web sunucusu vb.). LDAP ağacının içinden herhangi bir şeyi sorgulamak, silmek veya değiştirmek gibi yetkileri vermek ciddi güvenlik sorunlarına sebep olabilir. SQL Enjeksiyon içinde bulunan faydalanma teknikleri, LDAP Enjeksiyonu içinde benzer bir şekilde uygulanabilir.</desc>
 	<solution>Tüm girdilerin zararlı olduğunu varsay. Use an appropriate combination of black lists and white lists to neutralize LDAP syntax from user-controlled input.</solution>
-	<reference>http://projects.webappsec.org/LDAP-Injection</reference>
+	<reference>https://owasp.org/www-community/attacks/LDAP_Injection</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/LDAP_Injection_Prevention_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/90.html</reference>
 </vuln_item_wasc_29>
 
@@ -749,7 +779,6 @@ Girdiniz artık değişmeyene kadar, tekrarlanan kanonlaştırma uygulamayı dü
 Bileşenler arasında veri alışverişi yaparken, iki bileşenin de aynı karakter kodlamasını kullandığından emin olun. Her bir arayüzde doğru şifreleme uygulandığından emin olun. Protokolün buna izin verdiğinde her zaman kullandığınız kodlamayı açıkça belirtin.
 
 Uygulamanız birden çok kaynaktan gelen verileri birleştirdiğinde, doğrulamayı kaynaklar birleştirildikten sonra yapın. Tekil veri öğeleri doğrulama adımını geçebilir ama birleştirildikten sonra amaçlanan kısıtlamaları ihlal edebilir.</solution>
-	<reference>http://projects.webappsec.org/Mail-Command-Injection</reference>
 	<reference>https://cwe.mitre.org/data/definitions/88.html</reference>
 </vuln_item_wasc_30>
 
@@ -789,7 +818,8 @@ When constructing OS command strings, use stringent allow lists that limit the c
 Uygun çıktı şifreleme, kaçınma ve alıntılama işletim sistemi komut enjeksiyonundan kaçınmak için en etkili çözüm olduğunu unutmayın, gerçi girdi doğrulaması derinine koruma sağlayabilir. Bunun nedeni, çıktıda görünecek olan şeyleri etkin biçimde sınırlandırmasıdır. Girdi doğrulama her zaman İşletim Sistemi komut enjeksiyonunu önlemez, özellikle de eğer rastgele karakterler içerebilen düzensiz metin alanlarını desteklemeniz gerekiyorsa. Örneğin, bir posta programını başlattığınızda kaçılması veya yönetilmesi gereken ";" ve ">" gibi aksi-tehlikeli girdiler içerimesi için konu alanlarına izin vermeye ihtiyaç duyabilirsiniz. Bu durumda, karakteri soyma İS komut enjeksiyonu riskini azaltabilir, fakat konu alanı kullanıcının istediği gibi kaydedilmeyeceği için yanlış davranışla sonuçlanabilir. Bu ufak bir zahmet gibi görünebilir, fakat program diğer bileşenlere mesajları aktarmak için iyi yapılandırılmış konu satırlarına dayandığı zaman daha önemli olabilir.
 
 Doğrulamanızda bir hata yaparsanız bile (100 giriş alanında birinin unutulması gibi), uygun kodlamanın enjeksiyon tabanlı saldırılardan korunmak içindir. Tek başına yapılmadığı sürece, saldırı yüzeyinizi önemli ölçüde azaltabileceğinden, bazı saldırıları tespit etmenize izin verdiğinden ve uygun kodlamanın çözemediği diğer güvenlik avantajlarını sağladığından giriş doğrulaması hala yararlı bir tekniktir.</solution>
-	<reference>http://projects.webappsec.org/OS-Commanding</reference>
+	<reference>https://owasp.org/www-community/attacks/Command_Injection</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/OS_Command_Injection_Defense_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/78.html</reference>
 </vuln_item_wasc_31>
 
@@ -800,13 +830,13 @@ Doğrulamanızda bir hata yaparsanız bile (100 giriş alanında birinin unutulm
 
 Routing Detour'lar, "Ortada Kalmış Adam" misali, aracılara sızarak ya da "ele geçirerek", yüksek önem derecesine sahip mesajları dış ortama yönlendiren saldırılardır. Yönlendirme bilgisi (HTTP başlığındaki veya WS-Yönlendirme başlığındaki), güzergah boyunca değiştirilebilir ve yönlendirme izleri üst bilgiden ve iletiden kaldırılabilir, mesajı alacak olan uygulama bu yönlendirme değişiminin yapıldığından haberdar olacak donanıma sahip değildir. Başlık ve başlık nesnelerinin eklenmesi genellikle mesajdan daha az korunur; bunun sebebi başlığın kimlik doğrulama, yönlendirme, biçimlendirme, şema, standartlaştırma, ad alanları vb. hakkında bütün metaveriyi yakalamak için kullanılmasıdır. Ayrıca, birçok işlem, bir XML belgesinin başlığını ekleme/işleme koymada rol oynayabilir. Bir çok uygulamada yönlendirme bilgisi, işlem için spesifik yönlendirme sağlayan bir dış web servisinden gelebilir (örneğin: WS-Referral kullanımı).
 
-WS-Adresleme, W3C tarafından yayınlanan ve SOAP mesajlarına yönlendirme fonksiyonu sağlayan daha yeni bir standarttır. WS-Yönlendirmesi ve WS-Adresleme arasındaki bir diğer anahtar değişkenliği ise, WS-Adreslemenin sadece güzergahtaki sonraki konumu sağlamasıdır. WS-Adreslemenin, Yönlendirme Detour Saldırına karşı olan duyarlılığıyla ilgili çok az araştırma yapılmasına rağmen, çalışmalardan bir tanesi (aşağıdaki 6 numaralı referansı inceleyebilirsiniz) WS-Adreslemenin, Yönlendirme Detour'a karşı savunmasız olduğunu önerir.</desc>
+WS-Adresleme, W3C tarafından yayınlanan ve SOAP mesajlarına yönlendirme fonksiyonu sağlayan daha yeni bir standarttır. WS-Yönlendirmesi ve WS-Adresleme arasındaki bir diğer anahtar değişkenliği ise, WS-Adreslemenin sadece güzergahtaki sonraki konumu sağlamasıdır. While little research has been done into the susceptibility of WS-Addressing to Routing Detour Attack, some research suggests that WS-Addressing is vulnerable to Routing Detour as well.</desc>
 	<solution>Herhangi bir iletişim kanalının her iki ucunu daima tam olarak doğrulayın.
 
 Arabuluculuk ilkesine uyun.
 
 Bir sertifika, iletişim kuran tarafın kimliğini doğrulama için kimlik şifreleme anahtarına bağlanır. Genellikle, sertifika, öznenin kimliğinin, ortak anahtarının ve yayıncının özel anahtarı kullanılarak yayınlanma veya sona erme süresi gibi bilgilerin şifrelenmiş biçimini alır. Sertifika, bahsi geçen kişinin genel anahtarına bağlı sertifikasının çözümlenmesiyle doğrulanabilir. Ayrıca X.509 sertifika imza zincirlerine ve PGP sertifikasyon yapısına bakınız.</solution>
-	<reference>http://projects.webappsec.org/Routing-Detour</reference>
+	<reference>https://learn.microsoft.com/en-us/previous-versions/ms951244(v=msdn.10)</reference>
 	<reference>https://cwe.mitre.org/data/definitions/300.html</reference>
 </vuln_item_wasc_32>
 
@@ -842,7 +872,7 @@ Kodunuzu "jail" ya da işlem ve işletim sistemi arasına sıkı sınırlar koya
 
 Bu pratik bir çözüm olmayabilir ve sadece işletim sistemi üzerindeki etkileri kısıtlar; uygulamaların kalanları savunmasız kalabilir.
 </solution>
-	<reference>http://projects.webappsec.org/Path-Traversal</reference>
+	<reference>https://owasp.org/www-community/attacks/Path_Traversal</reference>
 	<reference>https://cwe.mitre.org/data/definitions/22.html</reference>
 </vuln_item_wasc_33>
 
@@ -855,7 +885,7 @@ Bu, site güvenlik açıklarına yol açabilecek site bölümlerinin belirlenmes
 	<solution>Apply appropriate access control authorizations for each access to all restricted URLs, scripts or files.
 
 Consider using MVC based frameworks such as Struts.</solution>
-	<reference>http://projects.webappsec.org/Predictable-Resource-Location</reference>
+	<reference>https://owasp.org/www-community/attacks/Forced_browsing</reference>
 	<reference>https://cwe.mitre.org/data/definitions/425.html</reference>
 </vuln_item_wasc_34>
 
@@ -866,7 +896,7 @@ Consider using MVC based frameworks such as Struts.</solution>
 	<solution> Ayrılan bellek miktarını etkileyen herhangi bir değere karşı uygun bir girdi doğrulaması gerçekleştirin. Limiti aşan sorguları yönetmek için uygun bir strateji tanımlayın ve destekleyici bir yapılandırma seçeneğini göz önünde bulundurun böylelikle eğer gerekirse yönetici kullanılan bellek miktarını genişletebilir.
 
 Belleğe sistem tarafından sağlanan kaynakları kullanarak programı çalıştırın. Bu hala programın çökmesine ya da çıkmasına sebep olabilir ama sistem üzerindeki etkisi minimize edilecektir.</solution>
-	<reference>http://projects.webappsec.org/SOAP-Array-Abuse</reference>
+	<reference>https://capec.mitre.org/data/definitions/256.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/789.html</reference>
 </vuln_item_wasc_35>
 
@@ -882,7 +912,7 @@ If an attacker submits a Server-side Include statement, he may have the ability 
 - Only enable the SSI directives that are needed for this page and disable all others.
 - HTML varlığı tarafından şifrelenen kullanıcıdan kaynaklı veriler, SSI çalıştırma izinleriyle gönderilmeden önce.
 - Use SUExec to have the page execute as the owner of the file instead of the web server user.</solution>
-	<reference>http://projects.webappsec.org/SSI-Injection</reference>
+	<reference>https://owasp.org/www-community/attacks/Server-Side_Includes_(SSI)_Injection</reference>
 </vuln_item_wasc_36>
 
 <vuln_items>wasc_37</vuln_items>
@@ -898,7 +928,9 @@ Bir kullanıcının oturum kimlik numarasını, siteye giriş yapmasının ardı
 	<solution>Invalidate any existing session identifiers prior to authorizing a new user session
 
 For platforms such as ASP that do not generate new values for sessionid cookies, utilize a secondary cookie. Bu yaklaşımda, kullanıcının tarayıcısında ikincil çerezi rastgele bir değere ayarlayın ve oturum değişkenini de aynı değere ayarlayın. Oturum değişkeni ve çerez değeri hiç eşleşmiyorsa, oturumu geçersiz kılın ve kullanıcıyı yeniden oturum açmaya zorlayın.</solution>
-	<reference>http://projects.webappsec.org/Session-Fixation</reference>
+	<reference>https://owasp.org/www-community/attacks/Session_fixation</reference>
+	<reference>https://owasp.org/www-community/controls/Session_Fixation_Protection</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/384.html</reference>
 </vuln_item_wasc_37>
 
@@ -916,12 +948,12 @@ Kullanıcıya sitenizden ayrıldıklarına dair net bir uyarı sağlayan ara bir
 
 Dosya isimleri veya URL'ler gibi kabul edilen nesnelerin dizisi sınırlandığında ya da bilindiğinde, asıl dosya isimleri veya URL'ler için sabit girdi değerleri (sayısal kimlikler gibi) dizisinden oluşturulan bir eşleşme yaratın ve diğer bütün girdileri reddedin.
 
-Örneğin ID 1 "/login.asp" ile, ID 2 ise "http://www.example.com/" ile eşleşebilir. ESAPI AccessReferenceMap/ErişimReferansHaritası gibi özellikler bunu sağlar.
+For example, ID 1 could map to "/login.asp" and ID 2 could map to "https://www.example.com/". ESAPI AccessReferenceMap/ErişimReferansHaritası gibi özellikler bunu sağlar.
 
 Güvenilir olmayan girdilerin yazılımınıza girebilecek bütün potansiyel alanlarını öğrenin: parametreler veya argümanlar, çerezler, ağdan okunan herşey, ortam değişkenleri, ters DNS aramaları, sorgu sonuçları, istek başlıkları, URL bileşenleri, e-postalar, dosyalar, veri tabanları ve uygulamaya veri getiren tüm harici sistemler. Unutmayın ki bunun gibi girdiler API çağrıları sayesinde dolaylı olarak elde edebilirler.
 
 Bir çok yönlendirme sorunu, yazılımcının çerezler ve saklı form alanları gibi bazı girdilerin değiştirilmeyeceğini varsaydığı için ortaya çıkar.</solution>
-	<reference>http://projects.webappsec.org/URL-Redirector-Abuse</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Unvalidated_Redirects_and_Forwards_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/601.html</reference>
 </vuln_item_wasc_38>
 
@@ -934,7 +966,8 @@ Eğer bir uygulama işleyiş süresi XPath sorgusu yapısı kullanıyorsa, sorgu
 	<solution>Parametreleştirilmiş XPath sorgularını kullanın (örn. XQuery kullanımı). Bu veri düzlemi ve kontrol düzlemi ayrımına yardımcı olacaktır.
 
 Kullanıcı girdisini doğru bir şekilde doğrulayın. Uygun olan yerde veriyi reddet, uygun olan yerde filtrele ve uygun olan yerde kaç. XPath sorgularında kullanılar girdilerin, o ortamda güvenli olduğundan emin olun.</solution>
-	<reference>http://projects.webappsec.org/XPath-Injection</reference>
+	<reference>https://owasp.org/www-community/attacks/XPATH_Injection</reference>
+	<reference>https://owasp.org/www-community/attacks/Blind_XPath_Injection</reference>
 	<reference>https://cwe.mitre.org/data/definitions/643.html</reference>
 </vuln_item_wasc_39>
 
@@ -949,7 +982,8 @@ Doğrulama gerektiren iki tür ana süreç vardır: akış kontrolü ve işletme
 
 "İşletme mantığı", işletme gereksinimleri tarafından yönetilen süreç uygulamaları kapsamını ifade eder. İşletme mantığı zayıflığının kötüye kullanılması işletme bilgisi gerektirir. Eğer kötüye kullanım için bilgi gerekmiyorsa, o zaman büyük ihtimalle işletme mantık akışı değildir. Bundan dolayı, tarama ve kod değerlendirmeleri gibi güvenlik önlemleri bu zayıflık sınıfını bulamaz. Bir test yaklaşımı, Test Kılavuzunda OWASP tarafından sunulmuştur.</desc>
 	<solution/>
-	<reference>http://projects.webappsec.org/Insufficient-Process-Validation</reference>
+	<reference>https://owasp.org/www-community/vulnerabilities/Business_logic_vulnerability</reference>
+	<reference>https://cwe.mitre.org/data/definitions/840.html</reference>
 </vuln_item_wasc_40>
 
 <vuln_items>wasc_41</vuln_items>
@@ -969,7 +1003,7 @@ Bu çözümlerden birincisi, saldırganların, sistemdeki belirli bir geçerli k
 Protokollere belirli bir limit ölçeği yerleştirildiğinden emin olun.
 
 Tüm kaynak dağıtımlarında meydana gelen hataların sistemi güvenli bir konumda tuttuğundan emin olun.</solution>
-	<reference>http://projects.webappsec.org/XML-Attribute-Blowup</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/XML_Security_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/400.html</reference>
 </vuln_item_wasc_41>
 
@@ -978,7 +1012,7 @@ Tüm kaynak dağıtımlarında meydana gelen hataların sistemi güvenli bir kon
 	<alert>İşlevselliğin kötüye kullanımı</alert>
 	<desc>İşlevselliği Kötüye Kullanmak, bir web sitesinin kendine veya başkalarına saldırmak için kendi özelliklerini ve işlevselliğini kullanan bir saldırı tekniğidir. İşlevselliğin Kötüye Kullanımı, istenmeyen bir sonucu gerçekleştirmek için amaçlanan uygulama işlevinin kötüye kullanımı olarak tanımlanır. Bu saldırıların kaynakları tüketmek, kontrollere erişmek veya bilgi sızdırmak gibi farklı sonuçları vardır. Kötüye kullanım olasılığı ve seviyesi internet siteleri ve uygulamalara göre değişir. İşlevsellik saldırılarının kötüye kullanımı genellikle diğer saldırı türlerinin birleşimi ve/veya diğer saldırı vektörlerinin kullanılması şeklinde gerçekleşir.</desc>
 	<solution>API'leri her zaman belirtilen şekilde kullanmalısınız.</solution>
-	<reference>http://projects.webappsec.org/Abuse-of-Functionality</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Abuse_Case_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/227.html</reference>
 </vuln_item_wasc_42>
 
@@ -988,7 +1022,9 @@ Tüm kaynak dağıtımlarında meydana gelen hataların sistemi güvenli bir kon
 	<desc>Belgeleri işleme sırasında dinamik olarak oluşturmak için teknik XML özelliğinden yararlanın. XML mesajı ya veriyi doğrudan sağlar ya da verinin olduğu URI'yı işaret eder. Saldırı yönetiminde harici varlıklar, varlık değerini zararlı veriyle değiştirebilir, başvuruları değiştirebilirveya sunucu/XML uygulamasının erişimi olan verilerin güvenliğini tehlikeye atabilir.
 	Saldırganlar aynı zamanda zararlı kodu veya içeriği indirmek için web hizmeti sunucusu olan Harici Varlıkları da kullanabilirler.</desc>
 	<solution>XML External Entities vulnerabilities arise because the application's XML parsing library supports potentially dangerous XML features. To prevent XML External Entities vulnerabilities disable the resolution of external entities and the support for XInclude.</solution>
-	<reference>http://projects.webappsec.org/XML-External-Entities</reference>
+	<reference>https://owasp.org/www-community/vulnerabilities/XML_External_Entity_(XXE)_Processing</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html</reference>
+	<reference>https://cwe.mitre.org/data/definitions/611.html</reference>
 </vuln_item_wasc_43>
 
 <vuln_items>wasc_44</vuln_items>
@@ -1000,7 +1036,6 @@ Mevcut sunucu kaynaklarını tamamen kullanan tekrarlı varlık genişlemesini (
 	<solution>Mümkünse, tekrar eden DTD varlıklarının genişlemesini kısıtlayan DTD'lerin veya XML ayrıştırıcısının kullanılmasını önleyin.
 
 XML dosyalarını ilişkili DTD'lerle arıştırmadan önce, tekrar eden varlık ifadelerini arayın ve patlama potansiyeli olan içerikleri ayrıştırmaya devam etmeyin.</solution>
-	<reference>http://projects.webappsec.org/XML-Entity-Expansion</reference>
 	<reference>https://cwe.mitre.org/data/definitions/776.html</reference>
 </vuln_item_wasc_44>
 
@@ -1023,7 +1058,7 @@ XML dosyalarını ilişkili DTD'lerle arıştırmadan önce, tekrar eden varlık
 5. **Regular Updates:** Keep software, platforms, and configurations up-to-date to patch known vulnerabilities and prevent accurate identification based on outdated information.
 
 There is no one-size-fits-all solution, and a combination of these measures may be most effective.</solution>
-	<reference>http://projects.webappsec.org/Fingerprinting</reference>
+	<reference>https://cwe.mitre.org/data/definitions/205.html</reference>
 </vuln_item_wasc_45>
 
 <vuln_items>wasc_46</vuln_items>
@@ -1033,7 +1068,8 @@ There is no one-size-fits-all solution, and a combination of these measures may 
 	<solution>Parametrize edilmiş aramalar kullanın. Bu veri düzlemi ve kontrol düzlemi ayrımına yardımcı olacaktır.
 
 Kullanıcı girdisini doğru bir şekilde doğrulayın. Uygun olan yerde veriyi reddet, uygun olan yerde filtrele ve uygun olan yerde kaç. XQL aramalarında kullanılacak girdilerin bu bağlamda güvenli olduğundan emin olun.</solution>
-	<reference>http://projects.webappsec.org/XQuery-Injection</reference>
+	<reference>https://owasp.org/www-community/Injection_Theory</reference>
+	<reference>https://owasp.org/www-community/Injection_Flaws</reference>
 	<reference>https://cwe.mitre.org/data/definitions/652.html</reference>
 </vuln_item_wasc_46>
 
@@ -1048,7 +1084,8 @@ Seans süre olumu iki zaman aşımı türünden meydana gelir: inaktif ve mutlak
 
 Bir Web uygulaması, daha önceden tanımlanan boş bekleme süresi geçtikten sonra bir seansı geçersiz kılmalı ve çıkış yaparak kullanıcıya kendi seansının geçersiz olduğunu sağlamalıdır. Bu şekilde seans ID ömrünün mümkün olduğunca kısa tutulmasına yardımcı olunur ve birden fazla kişinin bilgisayara sınırsız fiziksel erişimi olan, paylaşılan ortamlarda bu uygulama gereklidir. Çıkış yap fonksiyonu kullanıcıya daima görünür olmalı, bir kullanıcının oturumunu açıkça geçersiz kılmalı ve oturum simgesinin tekrar kullanımına imkan tanımamalıdır.</desc>
 	<solution>Seansların/kimliklerin son kullanım tarihlerinin belirlenmesi.</solution>
-	<reference>http://projects.webappsec.org/Insufficient-Session-Expiration</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html</reference>
+	<reference>https://owasp.org/www-community/Session_Timeout</reference>
 	<reference>https://cwe.mitre.org/data/definitions/613.html</reference>
 </vuln_item_wasc_47>
 
@@ -1065,13 +1102,13 @@ Bir Web uygulaması, daha önceden tanımlanan boş bekleme süresi geçtikten s
 6. **Security Headers:** Utilize security headers (e.g., Content Security Policy) to control how browsers and search engines interact with your website.
 
 A proactive and layered approach to security is crucial for safeguarding against Insecure Indexing.</solution>
-	<reference>http://projects.webappsec.org/Insecure-Indexing</reference>
+	<reference>https://cwe.mitre.org/data/definitions/612.html</reference>
 </vuln_item_wasc_48>
 
 <vuln_items>wasc_49</vuln_items>
 <vuln_item_wasc_49>
 	<alert>Yetersiz Parola Kurtarma</alert>
-	<desc>Yetersiz Parola Kurtarma, bir web sitesi, saldırgana başka bir kullanıcının parolasını yasa dışı bir şekilde elde etmesine, değiştirmesine veya kurtarmasına izin verdiğinde gerçekleşir. Geleneksel web site kimlik doğrulama metodları, kullanıcının bir parola veya geçiş anahtarı belirlemesi ve onu hatırlamasına dayanır. Kullanıcı parolayı bilen tek kişi olmalıdır ve onu tam olarak hatırlamalıdır. Zaman geçtikçe kullanıcının parolasını hatırlama yeteneği kaybolur. Kullanıcı parola belirlemesini isteyen ortalama 20 siteyi ziyaret ettiğinde durum daha da karmaşıklaşıyor.  (RSA Anketi: http://news.bbc.co.uk/1/hi/technology/3639679.stm) Bunun için parola kurtarma, çevrimiçi kullanıcılara hizmetin önemli bir parçasıdır.
+	<desc>Yetersiz Parola Kurtarma, bir web sitesi, saldırgana başka bir kullanıcının parolasını yasa dışı bir şekilde elde etmesine, değiştirmesine veya kurtarmasına izin verdiğinde gerçekleşir. Geleneksel web site kimlik doğrulama metodları, kullanıcının bir parola veya geçiş anahtarı belirlemesi ve onu hatırlamasına dayanır. Kullanıcı parolayı bilen tek kişi olmalıdır ve onu tam olarak hatırlamalıdır. Zaman geçtikçe kullanıcının parolasını hatırlama yeteneği kaybolur. Kullanıcı parola belirlemesini isteyen ortalama 20 siteyi ziyaret ettiğinde durum daha da karmaşıklaşıyor. Thus, password recovery is an important part in servicing online users.
 
 Otomatik parola kurtarma işlemlerine örnek olarak kullanıcıların üyelik aşamasının bir parçası olarak tanımlanan "gizli soru"ya cevap vermeleri gerekmektedir. Bu soru, önceden belirlenmiş sorular listesinden seçilebilir veya kullanıcıdan belirlemesi istenebilir. Kullanılmakta olan bir başka mekanizma ise kullanıcıya kayıt sırasında, parolasını hatırlamasında yardımcı olacak "ipucu" sunmaktır. Other mechanisms require the user to provide several pieces of personal data such as their social security number, home address, zip code etc. to validate their identity. Kullanıcı kimliğini kanıtladıktan sonra kurtarma sistemi, yeni bir parola görüntüleyecek veya e-posta gönderecektir.
 
@@ -1087,7 +1124,8 @@ Make sure that there is throttling on the number of incorrect answers to a secur
 Kullanıcının şifre kurtarma mekanizmasına yeni şifrenin gönderileceği e-posta adresini asla kontrol etmesine izin vermeyin.
 
 Orijinal parolayı göstermek yerine yeni bir geçici parola atayın.</solution>
-	<reference>http://projects.webappsec.org/Insufficient-Password-Recovery</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Forgot_Password_Cheat_Sheet.html</reference>
+	<reference>https://cheatsheetseries.owasp.org/cheatsheets/Authentication_Cheat_Sheet.html</reference>
 	<reference>https://cwe.mitre.org/data/definitions/640.html</reference>
 </vuln_item_wasc_49>
 

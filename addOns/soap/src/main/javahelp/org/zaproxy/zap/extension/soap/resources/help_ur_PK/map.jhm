@@ -7,4 +7,5 @@
     <mapID target="soap-icon" url="contents/images/soap.png" />
     <mapID target="soap" url="contents/soap.html" />
     <mapID target="soap.automation" url="contents/automation.html" />
+    <mapID target="soap.alerts" url="contents/alerts.html" />
 </map>

@@ -5,6 +5,7 @@
 		<tocitem text="Дополнения" tocid="addons">
 			<tocitem text="Поддержка SOAP " image="soap-icon" target="soap">
 				<tocitem text="Автоматизация " image="soap-icon" target="soap.automation"/>
+				<tocitem text="Alerts" image="soap-icon" target="soap.alerts"/>
 			</tocitem>
 		</tocitem>
 	</tocitem>

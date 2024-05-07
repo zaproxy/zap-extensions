@@ -18,7 +18,7 @@
     prosedür</b>.
 </p>
 
-<h3>Erişim Kuralları</h3>
+<h2>Access Rules</h2>
 
 <p>
     Erişim denetimiyle ilgili olası sorunları belirlemek için, ZAP web uygulamasının hangi bölümlerine hangi kullanıcı tarafından erişilmesi gerektiğini bilmelidir. ZAP'te bu kuralların adı: <i>Erişim kuralları</i> ve genellike şu anlamı vardır: "<i>SayfaA KullanıcıX tarafından erişilmeli/erişilmemelidir.</i>".
@@ -38,7 +38,7 @@
     daha fazla detay Erişim Kontrolu <a href="contextOptions.html">Bağlam seçenekleri</a> yardım sayfasında bulunabilir.</td>
 </p>
 
-<h3>Test etme prosedürü</h3>
+<h2>Testing procedure</h2>
 
 <p> Bir bütün olarak, bir web uygulaması için erişim denetimi sınamasını tam olarak gerçekleştirmek için bir sonraki adımlar    takip edin:</p>
 <ul>
@@ -56,6 +56,32 @@
     </li>
 </ul>
 <strong>Note:</strong> Access control testing is not allowed in <code>Safe</code> mode nor <code>Protected</code> if the context is not in scope.
+
+<h2 id="alerts">Alerts</h2>
+
+The following Alerts may be raised by the add-on:
+
+<h3 id="id-10101">Access Control Issue - Improper Authentication</h3>
+
+    Insufficient Authentication occurs when a web site permits an attacker to access sensitive content or functionality without 
+    having to properly authenticate. Web-based administration tools are a good example of web sites providing access to sensitive functionality. 
+    Depending on the specific online resource, these web applications should not be directly accessible without requiring the user to properly verify 
+    their identity.
+    <p>
+    Latest Code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/accessControl/src/main/java/org/zaproxy/zap/extension/accessControl/AccessControlScannerThread.java">AccessControlScannerThread.java</a>
+    <br>
+    Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10101/">10101</a>.
+
+<h3 id="id-10102">Access Control Issue - Improper Authorization</h3>
+
+    Insufficient Authorization results when an application does not perform adequate authorization checks to ensure that the user is performing a 
+    function or accessing data in a manner consistent with the security policy. Authorization procedures should enforce what a user, service or 
+    application is permitted to do. When a user is authenticated to a web site, it does not necessarily mean that the user should have full access 
+    to all content and functionality.
+    <p>
+    Latest Code: <a href="https://github.com/zaproxy/zap-extensions/blob/main/addOns/accessControl/src/main/java/org/zaproxy/zap/extension/accessControl/AccessControlScannerThread.java">AccessControlScannerThread.java</a>
+    <br>
+    Alert ID: <a href="https://www.zaproxy.org/docs/alerts/10102/">10102</a>.
 
 <h2>API</h2>
 
