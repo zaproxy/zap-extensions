@@ -91,7 +91,8 @@ class FormatStringScanRuleUnitTest extends ActiveScannerTest<FormatStringScanRul
         assertThat(alerts.size(), is(equalTo(1)));
         Alert alert = alerts.get(0);
         Map<String, String> tags = alert.getTags();
-        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags, hasKey("CWE-134"));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2017_A01_INJECTION.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A03_INJECTION.getTag()));
         assertThat(alert.getRisk(), is(equalTo(Alert.RISK_MEDIUM)));

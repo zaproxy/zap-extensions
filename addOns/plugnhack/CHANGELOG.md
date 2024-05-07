@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Prevent exception if no display (Issue 3978).
 
 ### Changed
-- Update minimum ZAP version to 2.14.0.
+- Update minimum ZAP version to 2.15.0.
 - Maintenance changes.
 
 ## [13] - 2022-10-27

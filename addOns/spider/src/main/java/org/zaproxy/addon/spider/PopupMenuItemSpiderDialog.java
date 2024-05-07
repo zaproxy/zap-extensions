@@ -56,11 +56,6 @@ public class PopupMenuItemSpiderDialog extends PopupMenuItemSiteNodeContainer {
     }
 
     @Override
-    public int getParentMenuIndex() {
-        return ATTACK_MENU_INDEX;
-    }
-
-    @Override
     public void performAction(SiteNode node) {
         extension.showSpiderDialog(node);
     }
@@ -82,10 +77,12 @@ public class PopupMenuItemSpiderDialog extends PopupMenuItemSiteNodeContainer {
         }
     }
 
+    @Override
     public int getParentWeight() {
         return MenuWeights.MENU_ATTACK_WEIGHT;
     }
 
+    @Override
     public int getWeight() {
         return MenuWeights.MENU_ATTACK_SPIDER_WEIGHT;
     }

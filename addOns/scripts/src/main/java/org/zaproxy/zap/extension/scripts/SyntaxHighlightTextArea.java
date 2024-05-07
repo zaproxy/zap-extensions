@@ -148,38 +148,23 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
             syntaxMenu = new SyntaxMenu();
             viewMenu = new ViewMenu();
 
-            undoAction =
-                    new TextAreaMenuItem(
-                            RTextArea.UNDO_ACTION, true, false, MenuWeights.MENU_UNDO_WEIGHT);
-            redoAction =
-                    new TextAreaMenuItem(
-                            RTextArea.REDO_ACTION, false, true, MenuWeights.MENU_REDO_WEIGHT);
+            undoAction = new TextAreaMenuItem(RTextArea.UNDO_ACTION, MenuWeights.MENU_UNDO_WEIGHT);
+            redoAction = new TextAreaMenuItem(RTextArea.REDO_ACTION, MenuWeights.MENU_REDO_WEIGHT);
 
             cutAction =
-                    new TextAreaMenuItem(
-                            RTextArea.CUT_ACTION, false, false, MenuWeights.MENU_EDIT_CUT_WEIGHT);
+                    new TextAreaMenuItem(RTextArea.CUT_ACTION, MenuWeights.MENU_EDIT_CUT_WEIGHT);
             copyAction =
-                    new TextAreaMenuItem(
-                            RTextArea.COPY_ACTION, false, false, MenuWeights.MENU_EDIT_COPY_WEIGHT);
+                    new TextAreaMenuItem(RTextArea.COPY_ACTION, MenuWeights.MENU_EDIT_COPY_WEIGHT);
             pasteAction =
                     new TextAreaMenuItem(
-                            RTextArea.PASTE_ACTION,
-                            false,
-                            false,
-                            MenuWeights.MENU_EDIT_PASTE_WEIGHT);
+                            RTextArea.PASTE_ACTION, MenuWeights.MENU_EDIT_PASTE_WEIGHT);
             deleteAction =
                     new TextAreaMenuItem(
-                            RTextArea.DELETE_ACTION,
-                            false,
-                            true,
-                            MenuWeights.MENU_EDIT_DELETE_WEIGHT);
+                            RTextArea.DELETE_ACTION, MenuWeights.MENU_EDIT_DELETE_WEIGHT);
 
             selectAllAction =
                     new TextAreaMenuItem(
-                            RTextArea.SELECT_ALL_ACTION,
-                            false,
-                            false,
-                            MenuWeights.MENU_SECECT_ALL_WEIGHT);
+                            RTextArea.SELECT_ALL_ACTION, MenuWeights.MENU_SECECT_ALL_WEIGHT);
             final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
 
             mainPopupMenuItems.add(syntaxMenu);
@@ -271,19 +256,10 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
         private static final long serialVersionUID = -8369459846515841057L;
 
         private int actionId;
-        private boolean precedeWithSeparator;
-        private boolean succeedWithSeparator;
         private int weight;
 
-        public TextAreaMenuItem(
-                int actionId,
-                boolean precedeWithSeparator,
-                boolean succeedWithSeparator,
-                int weight)
-                throws IllegalArgumentException {
+        public TextAreaMenuItem(int actionId, int weight) throws IllegalArgumentException {
             this.actionId = actionId;
-            this.precedeWithSeparator = precedeWithSeparator;
-            this.succeedWithSeparator = succeedWithSeparator;
             this.weight = weight;
             Action action = RTextArea.getAction(actionId);
             if (action == null) {
@@ -318,20 +294,11 @@ public class SyntaxHighlightTextArea extends RSyntaxTextArea {
         }
 
         @Override
-        public boolean precedeWithSeparator() {
-            return precedeWithSeparator;
-        }
-
-        @Override
-        public boolean succeedWithSeparator() {
-            return succeedWithSeparator;
-        }
-
-        @Override
         public boolean isSafe() {
             return true;
         }
 
+        @Override
         public int getWeight() {
             return weight;
         }

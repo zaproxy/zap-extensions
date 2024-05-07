@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
-- Update minimum ZAP version to 2.14.0.
+- Update minimum ZAP version to 2.15.0.
 - Maintenance changes.
 - This add-on now depends on the Scripts add-on for providing scanning related functionality.
 - The active and passive scan rule templates were updated to import classes from the scripts add-on.

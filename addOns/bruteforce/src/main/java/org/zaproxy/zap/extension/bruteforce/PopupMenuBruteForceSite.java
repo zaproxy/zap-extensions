@@ -54,10 +54,6 @@ public class PopupMenuBruteForceSite extends PopupMenuItemSiteNodeContainer {
     }
 
     @Override
-    public int getParentMenuIndex() {
-        return ATTACK_MENU_INDEX;
-    }
-
     public int getParentWeight() {
         return MenuWeights.MENU_ATTACK_WEIGHT;
     }

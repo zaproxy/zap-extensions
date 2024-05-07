@@ -136,7 +136,6 @@ public class ZestAddExpressionPopupMenu extends ExtensionPopupMenuItem {
                     e ->
                             // add a new empty structures expression node (no dialog needed)
                             extension.addToParent(extension.getSelectedZestNode(), exp));
-            menu.setMenuIndex(this.getMenuIndex());
             View.getSingleton().getPopupList().add(menu);
         }
     }
@@ -166,7 +165,6 @@ public class ZestAddExpressionPopupMenu extends ExtensionPopupMenuItem {
                                 .getDialogManager()
                                 .showZestExpressionDialog(
                                         parent, nodes, stmt, ze, true, false, false));
-        menu.setMenuIndex(this.getMenuIndex());
         View.getSingleton().getPopupList().add(menu);
     }
 

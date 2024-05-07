@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.function.BiPredicate;
 import net.htmlparser.jericho.Attribute;
 import net.htmlparser.jericho.Element;
 import net.htmlparser.jericho.HTMLElementName;
@@ -41,7 +40,6 @@ import org.parosproxy.paros.network.HttpMessage;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerabilities;
 import org.zaproxy.addon.commonlib.vulnerabilities.Vulnerability;
-import org.zaproxy.zap.extension.anticsrf.AntiCsrfParam;
 import org.zaproxy.zap.extension.anticsrf.ExtensionAntiCSRF;
 import org.zaproxy.zap.extension.pscan.PluginPassiveScanner;
 import org.zaproxy.zap.extension.ruleconfig.RuleConfigParam;
@@ -106,9 +104,6 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner
         }
 
         List<Element> formElements = source.getAllElements(HTMLElementName.FORM);
-        List<String> tokenNames = extAntiCSRF.getAntiCsrfTokenNames();
-        // TODO: Update to use extensionAntiCSRF.isAntiCsrfToken(String) after 2.15
-        BiPredicate<String, String> matcher = getMatcher();
 
         if (formElements != null && !formElements.isEmpty()) {
             boolean hasSecurityAnnotation = false;
@@ -171,12 +166,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner
                         String attId = inputElement.getAttributeValue("ID");
                         if (attId != null) {
                             elementNames.add(attId);
-                            for (String tokenName : tokenNames) {
-                                if (matcher.test(attId, tokenName)) {
-                                    foundCsrfToken = true;
-                                    break;
-                                }
-                            }
+                            foundCsrfToken |= extAntiCSRF.isAntiCsrfToken(attId);
                         }
                         String name = inputElement.getAttributeValue("NAME");
                         if (name != null) {
@@ -184,12 +174,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner
                                 // Dont bother recording both
                                 elementNames.add(name);
                             }
-                            for (String tokenName : tokenNames) {
-                                if (matcher.test(name, tokenName)) {
-                                    foundCsrfToken = true;
-                                    break;
-                                }
-                            }
+                            foundCsrfToken |= extAntiCSRF.isAntiCsrfToken(name);
                         }
                     }
                 }
@@ -205,7 +190,7 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner
                 sbForm.append("\" ]");
 
                 String formDetails = sbForm.toString();
-                String tokenNamesFlattened = tokenNames.toString();
+                String tokenNamesFlattened = extAntiCSRF.getAntiCsrfTokenNames().toString();
 
                 int risk = Alert.RISK_MEDIUM;
                 String desc = Constant.messages.getString("pscanrules.noanticsrftokens.desc");
@@ -241,16 +226,6 @@ public class CsrfCountermeasuresScanRule extends PluginPassiveScanner
             }
         }
         return false;
-    }
-
-    private static BiPredicate<String, String> getMatcher() {
-        if (Model.getSingleton()
-                .getOptionsParam()
-                .getParamSet(AntiCsrfParam.class)
-                .isPartialMatchingEnabled()) {
-            return StringUtils::containsIgnoreCase;
-        }
-        return String::equalsIgnoreCase;
     }
 
     @Override

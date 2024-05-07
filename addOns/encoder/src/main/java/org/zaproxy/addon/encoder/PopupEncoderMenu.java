@@ -73,6 +73,7 @@ public class PopupEncoderMenu extends ExtensionPopupMenuItem {
                 || invoker.getName().equals(EncodeDecodeDialog.ENCODE_DECODE_RESULTFIELD);
     }
 
+    @Override
     public int getWeight() {
         return MenuWeights.MENU_ENCODE_WEIGHT;
     }

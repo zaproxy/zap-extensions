@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Support for menu weights (Issue 8369)
 ### Changed
+- Update minimum ZAP version to 2.15.0.
 - Maintenance changes.
 
 ## [1.4.0] - 2023-10-12

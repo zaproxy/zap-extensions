@@ -36,8 +36,6 @@ import org.apache.logging.log4j.Logger;
 import org.parosproxy.paros.Constant;
 import org.parosproxy.paros.control.Control;
 import org.parosproxy.paros.control.Control.Mode;
-import org.parosproxy.paros.core.scanner.AbstractPlugin;
-import org.parosproxy.paros.core.scanner.PluginFactory;
 import org.parosproxy.paros.extension.Extension;
 import org.parosproxy.paros.extension.ExtensionAdaptor;
 import org.parosproxy.paros.extension.ExtensionHook;
@@ -243,33 +241,6 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
     }
 
     @Override
-    public void postInit() {
-        if (org.zaproxy.zap.extension.ascan.ScriptsActiveScanner.class.getAnnotation(
-                        Deprecated.class)
-                == null) {
-            PluginFactory.unloadedPlugin((AbstractPlugin) PluginFactory.getLoadedPlugin(50000));
-        }
-        if (org.zaproxy.zap.extension.pscan.scanner.ScriptsPassiveScanner.class.getAnnotation(
-                        Deprecated.class)
-                == null) {
-            var extensionPscan =
-                    Control.getSingleton()
-                            .getExtensionLoader()
-                            .getExtension(ExtensionPassiveScan.class);
-            if (extensionPscan != null) {
-                var installedPscanRule = extensionPscan.getPluginPassiveScanner(50001);
-                var corePscanRuleName =
-                        org.zaproxy.zap.extension.pscan.scanner.ScriptsPassiveScanner.class
-                                .getName();
-                if (installedPscanRule != null
-                        && installedPscanRule.getClass().getName().equals(corePscanRuleName)) {
-                    extensionPscan.removePluginPassiveScanner(installedPscanRule);
-                }
-            }
-        }
-    }
-
-    @Override
     public void postInstall() {
         // Install and enable the 'built in' scripts
         for (ScriptWrapper template : this.getExtScript().getTemplates(extScriptType)) {
@@ -436,11 +407,6 @@ public class ExtensionScriptsUI extends ExtensionAdaptor implements ScriptEventL
                                 Context context, String parentMenu) {
                             return new PopupUseScriptAsAuthenticationScript(
                                     ExtensionScriptsUI.this, context);
-                        }
-
-                        @Override
-                        public int getMenuIndex() {
-                            return 1000;
                         }
                     };
         }

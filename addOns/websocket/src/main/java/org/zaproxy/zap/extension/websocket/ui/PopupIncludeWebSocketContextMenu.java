@@ -38,6 +38,7 @@ public class PopupIncludeWebSocketContextMenu extends PopupMenuItemContextInclud
         return MENU_NAME;
     }
 
+    @Override
     public int getParentWeight() {
         return MenuWeights.MENU_INC_CHANNEL_CONTEXT_WEIGHT;
     }

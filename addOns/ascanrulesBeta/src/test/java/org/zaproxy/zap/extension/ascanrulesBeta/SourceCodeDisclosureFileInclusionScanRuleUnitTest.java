@@ -75,7 +75,8 @@ class SourceCodeDisclosureFileInclusionScanRuleUnitTest
         Alert alert = alerts.get(0);
 
         Map<String, String> tags = alert.getTags();
-        assertThat(tags.size(), is(equalTo(2)));
+        assertThat(tags.size(), is(equalTo(3)));
+        assertThat(tags, hasKey("CWE-541"));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2017_A06_SEC_MISCONFIG.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A05_SEC_MISCONFIG.getTag()));
 

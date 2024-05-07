@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 ### Changed
+- Update minimum ZAP version to 2.15.0.
 - Disable warns about the engine being executed in interpreter mode, that's the expected mode of execution.
 
 ## [0.6.0] - 2024-04-11

@@ -39,7 +39,6 @@ public class PopupMenuResendMessage extends PopupMenuItemHttpMessageContainer {
 
         this.showResendDialogue = Objects.requireNonNull(showResendDialogue);
         setIcon(icon);
-        setMenuIndex(5);
     }
 
     @Override
@@ -47,6 +46,7 @@ public class PopupMenuResendMessage extends PopupMenuItemHttpMessageContainer {
         showResendDialogue.accept(message.cloneRequest());
     }
 
+    @Override
     public int getWeight() {
         return MenuWeights.MENU_OPEN_REQUEST_WEIGHT;
     }

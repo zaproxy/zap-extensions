@@ -280,7 +280,6 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
                     }
                 });
         final List<JMenuItem> mainPopupMenuItems = View.getSingleton().getPopupList();
-        menu.setMenuIndex(this.getMenuIndex());
         mainPopupMenuItems.add(menu);
         if (menu2 != null) {
             menu2.addActionListener(
@@ -303,7 +302,6 @@ public class ZestAddConditionPopupMenu extends ExtensionPopupMenuItem {
                                     new ZestConditional(new ZestExpressionOr()));
                         }
                     });
-            menu2.setMenuIndex(this.getMenuIndex());
             mainPopupMenuItems.add(menu2);
         }
     }

@@ -57,14 +57,11 @@ public class HttpFuzzAttackPopupMenuItem extends PopupMenuItemHttpMessageContain
     }
 
     @Override
-    public int getParentMenuIndex() {
-        return ATTACK_MENU_INDEX;
-    }
-
     public int getParentWeight() {
         return MenuWeights.MENU_ATTACK_WEIGHT;
     }
 
+    @Override
     public int getWeight() {
         return MenuWeights.MENU_ATTACK_FUZZ_WEIGHT;
     }

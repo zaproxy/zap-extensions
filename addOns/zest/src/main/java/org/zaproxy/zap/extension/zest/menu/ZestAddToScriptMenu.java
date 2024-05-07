@@ -43,7 +43,6 @@ public class ZestAddToScriptMenu extends PopupMenuItemHttpMessageContainer {
         super(Constant.messages.getString("zest.addto.new.title"), true);
         this.extension = extension;
         this.parent = null;
-        this.setPrecedeWithSeparator(true);
     }
 
     public ZestAddToScriptMenu(ExtensionZest extension, ScriptNode parent) {
@@ -57,6 +56,7 @@ public class ZestAddToScriptMenu extends PopupMenuItemHttpMessageContainer {
         return Constant.messages.getString("zest.addto.popup");
     }
 
+    @Override
     public int getParentWeight() {
         return MenuWeights.MENU_SCRIPT_ZEST_ADD_WEIGHT;
     }

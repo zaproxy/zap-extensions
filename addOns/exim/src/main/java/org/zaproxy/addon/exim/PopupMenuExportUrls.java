@@ -188,6 +188,7 @@ public class PopupMenuExportUrls extends ExtensionPopupMenuItem {
         return null;
     }
 
+    @Override
     public int getWeight() {
         return MenuWeights.MENU_SAVE_ALL_URLS_WEIGHT;
     }

@@ -62,11 +62,6 @@ public class PopupMenuItemSaveHarMessage extends PopupMenuItemHttpMessageContain
     }
 
     @Override
-    public boolean precedeWithSeparator() {
-        return true;
-    }
-
-    @Override
     public boolean isSafe() {
         return true;
     }
@@ -123,6 +118,7 @@ public class PopupMenuItemSaveHarMessage extends PopupMenuItemHttpMessageContain
         return null;
     }
 
+    @Override
     public int getWeight() {
         return MenuWeights.MENU_SAVE_HAR_WEIGHT;
     }

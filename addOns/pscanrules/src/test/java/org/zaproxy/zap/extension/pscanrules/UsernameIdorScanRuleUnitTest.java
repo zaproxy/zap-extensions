@@ -106,7 +106,8 @@ class UsernameIdorScanRuleUnitTest extends PassiveScannerTest<UsernameIdorScanRu
         Alert alert = alerts.get(0);
         Map<String, String> tags = alert.getTags();
         // Then
-        assertThat(tags.size(), is(equalTo(4)));
+        assertThat(tags.size(), is(equalTo(5)));
+        assertThat(tags, hasKey("CWE-284"));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2021_A01_BROKEN_AC.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.OWASP_2017_A05_BROKEN_AC.getTag()));
         assertThat(tags, hasKey(CommonAlertTag.WSTG_V42_ATHZ_04_IDOR.getTag()));

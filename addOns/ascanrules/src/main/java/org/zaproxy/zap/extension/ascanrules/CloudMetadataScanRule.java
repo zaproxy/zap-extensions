@@ -30,10 +30,7 @@ import org.parosproxy.paros.core.scanner.AbstractHostPlugin;
 import org.parosproxy.paros.core.scanner.Alert;
 import org.parosproxy.paros.core.scanner.Category;
 import org.parosproxy.paros.network.HttpMessage;
-import org.parosproxy.paros.network.HttpStatusCode;
 import org.zaproxy.addon.commonlib.CommonAlertTag;
-import org.zaproxy.zap.extension.custompages.CustomPage;
-import org.zaproxy.zap.model.Context;
 
 /**
  * Attempts to retrieve cloud metadata by forging the host header and requesting a specific URL. See
@@ -102,22 +99,6 @@ public class CloudMetadataScanRule extends AbstractHostPlugin implements CommonA
                 .setAttack(host)
                 .setOtherInfo(Constant.messages.getString(MESSAGE_PREFIX + "otherinfo"))
                 .setMessage(newRequest);
-    }
-
-    /** FIXME Remove this call after 2.15.0 to call the fixed version in the parent. */
-    @Override
-    public boolean isSuccess(HttpMessage msg) {
-        Context context = getParent().getContext();
-        if (context != null) {
-            if (context.isCustomPage(msg, CustomPage.Type.NOTFOUND_404)
-                    || context.isCustomPage(msg, CustomPage.Type.ERROR_500)) {
-                return false;
-            }
-            if (context.isCustomPage(msg, CustomPage.Type.OK_200)) {
-                return true;
-            }
-        }
-        return HttpStatusCode.isSuccess(msg.getResponseHeader().getStatusCode());
     }
 
     @Override

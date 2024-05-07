@@ -68,11 +68,6 @@ public class WebSocketFuzzAttackPopupMenuItem extends ExtensionPopupMenuItemMess
     }
 
     @Override
-    public int getParentMenuIndex() {
-        return ATTACK_MENU_INDEX;
-    }
-
-    @Override
     public boolean isEnableForMessageContainer(MessageContainer<?> messageContainer) {
         resetState();
         setEnabled(false);

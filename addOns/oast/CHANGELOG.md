@@ -7,6 +7,7 @@ to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
 ### Changed
+- Update minimum ZAP version to 2.15.0.
 - Maintenance changes.
 
 ## [0.17.0] - 2023-10-12
