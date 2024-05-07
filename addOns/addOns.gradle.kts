@@ -21,7 +21,7 @@ plugins {
     id("org.cyclonedx.bom") version "1.8.1" apply false
     id("org.rm3l.datanucleus-gradle-plugin") version "2.0.0" apply false
     id("org.zaproxy.add-on") version "0.10.0" apply false
-    id("org.zaproxy.crowdin") version "0.3.1" apply false
+    id("org.zaproxy.crowdin") version "0.4.0" apply false
     id("me.champeau.gradle.japicmp") version "0.4.2" apply false
 }
 
