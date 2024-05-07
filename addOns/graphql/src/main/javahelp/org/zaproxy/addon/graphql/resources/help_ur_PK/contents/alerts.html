@@ -5,23 +5,30 @@
     <title>GraphQL Alerts</title>
 </head>
 <body>
-<h1>GraphQL Alerts</h1>
+<h1 id="id-50007">GraphQL Alerts</h1>
 <p> The following alerts are raised by the GraphQL add-on. </p>
 <table>
     <tr>
         <th>Alert Reference
         <th>Name
         <th>Description
+        <th>Latest Code
     <tr>
         <td><a href="https://www.zaproxy.org/docs/alerts/50007-1/">50007-1</a>
         <td>GraphQL Endpoint Supports Introspection
         <td>This alert is raised when the spider discovers a GraphQL endpoint that supports introspection.
+        <td><a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/graphql/src/main/java/org/zaproxy/addon/graphql/GraphQlParser.java">GraphQlParser.java</a>
     <tr>
         <td><a href="https://www.zaproxy.org/docs/alerts/50007-2/">50007-2</a>
         <td>GraphQL Server Implementation Identified
         <td>This alert is raised when the GraphQL implementation used by the server is identified. It utilises
             fingerprinting techniques adapted from the tool <a href="https://github.com/dolevf/graphw00f">graphw00f</a>.
+        <td><a href="https://github.com/zaproxy/zap-extensions/tree/main/addOns/graphql/src/main/java/org/zaproxy/addon/graphql/GraphQlFingerprinter.java">GraphQlFingerprinter.java</a>
 </table>
+
+<br>
+Alert ID: <a href="https://www.zaproxy.org/docs/alerts/50007/">50007</a>.
+
 <h2>See also</h2>
 <table>
     <tr>
