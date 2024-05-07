@@ -1,9 +1,9 @@
 import org.zaproxy.gradle.addon.AddOnStatus
 
-description = "Technology detection using Wappalyzer: wappalyzer.com"
+description = "Technology detection using various fingerprints and identifiers."
 
 zapAddOn {
-    addOnName.set("Wappalyzer - Technology Detection")
+    addOnName.set("Technology Detection")
     addOnStatus.set(AddOnStatus.RELEASE)
 
     manifest {
