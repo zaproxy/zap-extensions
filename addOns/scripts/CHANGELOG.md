@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [45.3.0] - 2024-05-07
 ### Added
 - Support for code and help links for script scan rules.
 
@@ -316,6 +316,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[45.3.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.3.0
 [45.2.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.2.0
 [45.1.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.1.0
 [45.0.0]: https://github.com/zaproxy/zap-extensions/releases/scripts-v45.0.0

@@ -3,7 +3,7 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
+## [31] - 2024-05-07
 ### Added
 - Support for menu weights (Issue 8369)
 ### Changed
@@ -225,6 +225,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 
 
+[31]: https://github.com/zaproxy/zap-extensions/releases/websocket-v31
 [30]: https://github.com/zaproxy/zap-extensions/releases/websocket-v30
 [29]: https://github.com/zaproxy/zap-extensions/releases/websocket-v29
 [28]: https://github.com/zaproxy/zap-extensions/releases/websocket-v28
