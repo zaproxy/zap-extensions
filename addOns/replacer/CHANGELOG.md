@@ -3,8 +3,9 @@ All notable changes to this add-on will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## Unreleased
-
+## [18] - 2024-05-08
+### Added
+- Rules to disable Caching (Issue 8437).
 
 ## [17] - 2024-05-07
 ### Changed
@@ -13,7 +14,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Video link in help for Automation Framework job.
 - A rule to disable CSP reporting (Issue 740).
-- Rules to disable Caching (Issue 8437).
 
 ## [16] - 2023-11-30
 ### Changed
@@ -111,6 +111,7 @@ the dialogue when other match types are selected.
 
 - First version
 
+[18]: https://github.com/zaproxy/zap-extensions/releases/replacer-v18
 [17]: https://github.com/zaproxy/zap-extensions/releases/replacer-v17
 [16]: https://github.com/zaproxy/zap-extensions/releases/replacer-v16
 [15]: https://github.com/zaproxy/zap-extensions/releases/replacer-v15
