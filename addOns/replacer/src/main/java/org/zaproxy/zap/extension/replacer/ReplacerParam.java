@@ -26,6 +26,7 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.zaproxy.addon.commonlib.http.HttpFieldsNames;
 import org.zaproxy.zap.common.VersionedAbstractParam;
 import org.zaproxy.zap.extension.api.ZapApiIgnore;
 import org.zaproxy.zap.extension.replacer.ReplacerParamRule.MatchType;
@@ -57,6 +58,9 @@ public class ReplacerParam extends VersionedAbstractParam {
     protected static final String REPORT_TO_REGEX = "(?i)report-(?:to|uri)";
     protected static final String REPORT_TO_REPLACEMENT = "report-disabled";
 
+    private static final String NONE_MATCH_DESC = "Require non-cached response (Match)";
+    private static final String MODIFIED_SINCE_DESC = "Require non-cached response (Modified)";
+
     /**
      * The current version of the configurations. Used to keep track of configuration changes
      * between releases, in case changes/updates are needed.
@@ -75,6 +79,7 @@ public class ReplacerParam extends VersionedAbstractParam {
      */
     private static final String CONFIG_VERSION_KEY = REPLACER_BASE_KEY + VERSION_ATTRIBUTE;
 
+    // Order is important here and these are referenced by index during config update
     private static List<ReplacerParamRule> defaultList =
             List.of(
                     new ReplacerParamRule(
@@ -107,6 +112,22 @@ public class ReplacerParam extends VersionedAbstractParam {
                             REPORT_TO_REGEX,
                             true,
                             REPORT_TO_REPLACEMENT,
+                            List.of(),
+                            false),
+                    new ReplacerParamRule(
+                            MODIFIED_SINCE_DESC,
+                            ReplacerParamRule.MatchType.REQ_HEADER,
+                            HttpFieldsNames.IF_MODIFIED_SINCE,
+                            false,
+                            "",
+                            List.of(),
+                            false),
+                    new ReplacerParamRule(
+                            NONE_MATCH_DESC,
+                            ReplacerParamRule.MatchType.REQ_HEADER,
+                            HttpFieldsNames.IF_NONE_MATCH,
+                            false,
+                            "",
                             List.of(),
                             false));
 
@@ -306,19 +327,19 @@ public class ReplacerParam extends VersionedAbstractParam {
             case NO_CONFIG_VERSION:
                 // Handle unversioned to versioned update
                 parseReplacerRules();
-                if (getRule(REPORT_TO_DESC) == null) {
-                    addRule(
-                            new ReplacerParamRule(
-                                    ReplacerParam.REPORT_TO_DESC,
-                                    ReplacerParamRule.MatchType.RESP_HEADER_STR,
-                                    ReplacerParam.REPORT_TO_REGEX,
-                                    true,
-                                    ReplacerParam.REPORT_TO_REPLACEMENT,
-                                    null,
-                                    false));
-                }
+                addIfAbsent(3);
+                addIfAbsent(4);
+                addIfAbsent(5);
                 // Fallthrough
             default:
+        }
+    }
+
+    private void addIfAbsent(int index) {
+        ReplacerParamRule rule = defaultList.get(index);
+
+        if (getRule(rule.getDescription()) == null) {
+            addRule(rule);
         }
     }
 }
