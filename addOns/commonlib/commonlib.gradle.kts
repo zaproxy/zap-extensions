@@ -47,6 +47,7 @@ dependencies {
     api("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
     api("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml")
     api("com.fasterxml.jackson.datatype:jackson-datatype-jdk8")
+    api("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
     implementation("commons-io:commons-io:2.16.1")
     implementation("org.apache.commons:commons-csv:1.10.0")
