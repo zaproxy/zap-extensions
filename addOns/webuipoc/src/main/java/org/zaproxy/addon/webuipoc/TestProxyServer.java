@@ -214,8 +214,8 @@ public class TestProxyServer {
             try {
                 String path = msg.getRequestHeader().getURI().getEscapedPath();
 
-                if (path.startsWith("/web-ui/")){
-                    path = "/web-ui/build/index.html";
+                if (path.startsWith("/web-ui")){
+                    path = "/web-ui/build/";
                 }
 
                 if (isApiRequest(msg)) {
