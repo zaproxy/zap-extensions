@@ -43,7 +43,7 @@ class ProtoBufMessageEncoderUnitTest extends TestUtils {
     }
 
     @Test
-    void ShouldEncodingWithEmptyInput() throws Exception {
+    void shouldEncodingWithEmptyInput() throws Exception {
         String inputString = "";
         byte[] decodedBytes = Base64.getDecoder().decode(inputString);
 
@@ -54,7 +54,7 @@ class ProtoBufMessageEncoderUnitTest extends TestUtils {
     }
 
     @Test
-    void ShouldEncodingWithNullInput() throws Exception {
+    void shouldEncodingWithNullInput() throws Exception {
 
         encoder.encode(null);
 
@@ -62,7 +62,7 @@ class ProtoBufMessageEncoderUnitTest extends TestUtils {
     }
 
     @Test
-    void ShouldEncodingWithSimpleValidInput() throws Exception {
+    void shouldEncodingWithSimpleValidInput() throws Exception {
         String expectedOutput =
                 "AAAAADEKC2pvaG4gTWlsbGVyEB4aIDEyMzQgTWFpbiBTdC4gQW55dG93biwgVVNBIDEyMzQ1";
         byte[] decodedBytes = Base64.getDecoder().decode(expectedOutput);
@@ -76,7 +76,7 @@ class ProtoBufMessageEncoderUnitTest extends TestUtils {
     }
 
     @Test
-    void ShouldEncodingWithNestedMessageValidInput() throws Exception {
+    void shouldEncodingWithNestedMessageValidInput() throws Exception {
         String expectedOutput =
                 "AAAAAEEKEEhlbGxvLCBQcm90b2J1ZiESJwoESm9obhIGTWlsbGVyGhcKBEpvaG4QAhoNCgtIZWxsbyBXb3JsZBjqrcDlJA";
         byte[] decodedBytes = Base64.getDecoder().decode(expectedOutput);
@@ -90,7 +90,7 @@ class ProtoBufMessageEncoderUnitTest extends TestUtils {
     }
 
     @Test
-    void ShouldEncodingWithEnumAndRepeatedFieldsInput() throws Exception {
+    void shouldEncodingWithEnumAndRepeatedFieldsInput() throws Exception {
         // Example corrupted input byte array
         String expectedOutput = "AAAAAA4IARIBYRIBYhIBYxIBZA";
         byte[] decodedBytes = Base64.getDecoder().decode(expectedOutput);
@@ -103,7 +103,7 @@ class ProtoBufMessageEncoderUnitTest extends TestUtils {
     }
 
     @Test
-    void ShouldEncodingWithDoubleAndFloatInput() throws Exception {
+    void shouldEncodingWithDoubleAndFloatInput() throws Exception {
         String expectedOutput = "AAAAAA4JzczMzMzcXkAVrseHQg";
         byte[] decodedBytes = Base64.getDecoder().decode(expectedOutput);
         String inputString = "1:1D::123.45\n2:5F::67.89\n";
@@ -115,7 +115,7 @@ class ProtoBufMessageEncoderUnitTest extends TestUtils {
     }
 
     @Test
-    void ShouldEncodingWithWireType1And6Input() throws Exception {
+    void shouldEncodingWithWireType1And6Input() throws Exception {
         String expectedOutput = "AAAAAA4NQEIPABHMm5cAyicBAA";
         byte[] decodedBytes = Base64.getDecoder().decode(expectedOutput);
         String inputString = "1:5::1000000\n2:1::325223523523532\n";
@@ -127,7 +127,7 @@ class ProtoBufMessageEncoderUnitTest extends TestUtils {
     }
 
     @Test
-    void ShouldEncodingWithCorruptedWireTypeInput() {
+    void shouldEncodingWithCorruptedWireTypeInput() {
         // Example corrupted input byte array
         String expectedOutput = "";
         byte[] decodedBytes = Base64.getDecoder().decode(expectedOutput);
@@ -145,7 +145,7 @@ class ProtoBufMessageEncoderUnitTest extends TestUtils {
     }
 
     @Test
-    void ShouldEncodingWithOnlyRandomStringInput() {
+    void shouldEncodingWithOnlyRandomStringInput() {
         // Example corrupted input byte array
         String expectedOutput = "";
         byte[] decodedBytes = Base64.getDecoder().decode(expectedOutput);

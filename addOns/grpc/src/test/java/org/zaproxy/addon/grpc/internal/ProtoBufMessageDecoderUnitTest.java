@@ -41,14 +41,14 @@ class ProtoBufMessageDecoderUnitTest extends TestUtils {
     void shouldDecodeWithEmptyInput() {
         byte[] emptyInput = new byte[0];
         decoder.decode(emptyInput);
-        assertEquals("", decoder.getDecodedOuput());
+        assertEquals("", decoder.getDecodedOutput());
         assertEquals(0, decoder.getDecodedToList().size());
     }
 
     @Test
     void shouldDecodeWithNullInput() {
         decoder.decode(null);
-        assertEquals("", decoder.getDecodedOuput());
+        assertEquals("", decoder.getDecodedOutput());
         assertEquals(0, decoder.getDecodedToList().size());
     }
 
@@ -62,7 +62,7 @@ class ProtoBufMessageDecoderUnitTest extends TestUtils {
         byte[] validInput = Base64.getDecoder().decode(inputString);
         validInput = DecoderUtils.extractPayload(validInput);
         decoder.decode(validInput);
-        assertEquals(expectedOutput, decoder.getDecodedOuput());
+        assertEquals(expectedOutput, decoder.getDecodedOutput());
         assertEquals(3, decoder.getDecodedToList().size());
     }
 
@@ -76,7 +76,7 @@ class ProtoBufMessageDecoderUnitTest extends TestUtils {
         byte[] validInput = Base64.getDecoder().decode(inputString);
         validInput = DecoderUtils.extractPayload(validInput);
         decoder.decode(validInput);
-        assertEquals(expectedOutput, decoder.getDecodedOuput());
+        assertEquals(expectedOutput, decoder.getDecodedOutput());
         assertEquals(3, decoder.getDecodedToList().size());
     }
 
@@ -88,7 +88,7 @@ class ProtoBufMessageDecoderUnitTest extends TestUtils {
         byte[] validInput = Base64.getDecoder().decode(inputString);
         validInput = DecoderUtils.extractPayload(validInput);
         decoder.decode(validInput);
-        assertEquals(expectedOutput, decoder.getDecodedOuput());
+        assertEquals(expectedOutput, decoder.getDecodedOutput());
         assertEquals(5, decoder.getDecodedToList().size());
     }
 
@@ -99,7 +99,7 @@ class ProtoBufMessageDecoderUnitTest extends TestUtils {
         byte[] validInput = Base64.getDecoder().decode(inputString);
         validInput = DecoderUtils.extractPayload(validInput);
         decoder.decode(validInput);
-        assertEquals(expectedOutput, decoder.getDecodedOuput());
+        assertEquals(expectedOutput, decoder.getDecodedOutput());
         assertEquals(2, decoder.getDecodedToList().size());
     }
 
@@ -110,7 +110,7 @@ class ProtoBufMessageDecoderUnitTest extends TestUtils {
         byte[] validInput = Base64.getDecoder().decode(inputString);
         validInput = DecoderUtils.extractPayload(validInput);
         decoder.decode(validInput);
-        assertEquals(expectedOutput, decoder.getDecodedOuput());
+        assertEquals(expectedOutput, decoder.getDecodedOutput());
         assertEquals(2, decoder.getDecodedToList().size());
     }
 

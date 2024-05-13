@@ -153,10 +153,10 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
                 httpPanelGrpcArea.setText("");
             } else {
                 protoBufMessageDecoder.decode(payload);
-                httpPanelGrpcArea.setText(protoBufMessageDecoder.getDecodedOuput());
+                httpPanelGrpcArea.setText(protoBufMessageDecoder.getDecodedOutput());
             }
         } catch (Exception er) {
-            httpPanelGrpcArea.setText(protoBufMessageDecoder.getDecodedOuput() + er.getMessage());
+            httpPanelGrpcArea.setText(protoBufMessageDecoder.getDecodedOutput() + er.getMessage());
             httpPanelGrpcArea.setBorder(BorderFactory.createLineBorder(Color.RED));
         }
         if (!isEditable()) {

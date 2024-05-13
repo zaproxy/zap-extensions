@@ -73,7 +73,7 @@ public class ProtoBufMessageDecoder {
         decodedToString.append(decodedValue).append('\n');
     }
 
-    public String getDecodedOuput() {
+    public String getDecodedOutput() {
         return decodedToString.toString();
     }
 
