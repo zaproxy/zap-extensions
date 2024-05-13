@@ -118,8 +118,7 @@ public final class EncoderUtils {
 
     public static String removeDoubleQuotes(String str) throws InvalidProtobufFormatException {
         if (str.startsWith("\"") && str.endsWith("\"")) {
-            str = str.substring(1, str.length() - 1);
-            return str;
+            return str.substring(1, str.length() - 1);
         }
         throw new InvalidProtobufFormatException(
                 Constant.messages.getString("grpc.encoder.message.missing.quotes.error"));

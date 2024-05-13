@@ -43,7 +43,7 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
     private static final String CAPTION_NAME = Constant.messages.getString("grpc.panel.view.name");
 
     private HttpPanelGrpcArea httpPanelGrpcArea;
-    private static JPanel mainPanel;
+    private JPanel mainPanel;
 
     private ProtoBufMessageDecoder protoBufMessageDecoder;
 
@@ -164,7 +164,7 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
         }
     }
 
-    private static void showInvalidMessageFormatError(String message) {
+    private void showInvalidMessageFormatError(String message) {
         JOptionPane.showMessageDialog(
                 mainPanel,
                 message,
