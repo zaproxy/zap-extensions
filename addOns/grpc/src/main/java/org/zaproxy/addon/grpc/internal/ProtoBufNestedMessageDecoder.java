@@ -27,13 +27,13 @@ public class ProtoBufNestedMessageDecoder {
 
     public String decode(byte[] inputData) {
         this.inputStream = CodedInputStream.newInstance(inputData);
-        StringBuilder outputBuilder = new StringBuilder("{");
+        StringBuilder outputBuilder = new StringBuilder("{\n");
         while (true) {
             String validField = decodeField();
             if (validField.isEmpty()) {
                 return validField;
             } else {
-                outputBuilder.append('"').append(validField).append('"');
+                outputBuilder.append(validField).append('\n');
             }
             try {
                 if (inputStream.isAtEnd()) {

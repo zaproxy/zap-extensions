@@ -56,9 +56,7 @@ public class ProtoBufMessageDecoder {
                     break;
                 }
             } catch (IOException e) {
-                decodedToString.setLength(0);
-                decodedToList.clear();
-                LOGGER.debug("Error while decoding the message", e.getMessage());
+                LOGGER.debug("Error decoding the message: {}", e.getMessage());
                 throw new IllegalArgumentException(
                         Constant.messages.getString("grpc.decoder.error"));
             }
@@ -75,7 +73,7 @@ public class ProtoBufMessageDecoder {
         decodedToString.append(decodedValue).append('\n');
     }
 
-    public String getDecodedOuput() {
+    public String getDecodedOutput() {
         return decodedToString.toString();
     }
 
