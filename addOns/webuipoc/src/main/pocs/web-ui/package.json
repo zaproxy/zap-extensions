@@ -14,8 +14,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
-    "buildAddon": "PUBLIC_URL=./web-ui/build/ react-scripts build",
+    "build": "PUBLIC_URL=/web-ui/ BUILD_PATH=./dist react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
