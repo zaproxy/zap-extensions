@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 
 
+## [41] - 2024-05-10
+### Changed
+- Rely on Common Library add-on for use of Jackson library.
+
 ## [40] - 2024-05-07
 ### Changed
 - Update minimum ZAP version to 2.15.0.
@@ -310,6 +314,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 - First Version
 
+[41]: https://github.com/zaproxy/zap-extensions/releases/openapi-v41
 [40]: https://github.com/zaproxy/zap-extensions/releases/openapi-v40
 [39]: https://github.com/zaproxy/zap-extensions/releases/openapi-v39
 [38]: https://github.com/zaproxy/zap-extensions/releases/openapi-v38

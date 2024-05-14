@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 
+## [1.26.0] - 2024-05-10
+### Added
+- Include the Jackson Datatype: JSR310 library for other add-ons to use.
+
 ## [1.25.0] - 2024-05-07
 ### Added
 - Support for code and help links for script scan rules.
@@ -171,6 +175,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 First version.
 
+[1.26.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.26.0
 [1.25.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.25.0
 [1.24.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.24.0
 [1.23.0]: https://github.com/zaproxy/zap-extensions/releases/commonlib-v1.23.0

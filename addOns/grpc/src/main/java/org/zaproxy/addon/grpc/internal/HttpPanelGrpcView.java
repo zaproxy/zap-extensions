@@ -24,6 +24,7 @@ import java.awt.Color;
 import java.util.Base64;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.apache.commons.configuration.FileConfiguration;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -45,6 +46,8 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
     private JPanel mainPanel;
 
     private ProtoBufMessageDecoder protoBufMessageDecoder;
+
+    private ProtoBufMessageEncoder protoBufMessageEncoder;
     private AbstractByteHttpPanelViewModel model;
 
     public HttpPanelGrpcView(AbstractByteHttpPanelViewModel model) {
@@ -56,6 +59,7 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
         this.model = model;
         model.addHttpPanelViewModelListener(this);
         protoBufMessageDecoder = new ProtoBufMessageDecoder();
+        protoBufMessageEncoder = new ProtoBufMessageEncoder();
     }
 
     @Override
@@ -118,8 +122,14 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
 
     @Override
     public void save() {
-        // todo: encode before saving
-        // this.model.setData(httpPanelGrpcArea.getText());
+        String text = httpPanelGrpcArea.getText();
+        try {
+            protoBufMessageEncoder.encode(EncoderUtils.parseIntoList(text));
+            byte[] encodedMessage = protoBufMessageEncoder.getOutputEncodedMessage();
+            this.model.setData(Base64.getEncoder().encode(encodedMessage));
+        } catch (Exception e) {
+            showInvalidMessageFormatError(e.getMessage());
+        }
     }
 
     @Override
@@ -136,20 +146,29 @@ public class HttpPanelGrpcView implements HttpPanelView, HttpPanelViewModelListe
         byte[] body = ((AbstractByteHttpPanelViewModel) e.getSource()).getData();
         httpPanelGrpcArea.setBorder(null);
         try {
+            body = DecoderUtils.splitMessageBodyAndStatusCode(body);
             body = Base64.getDecoder().decode(body);
             byte[] payload = DecoderUtils.extractPayload(body);
             if (payload.length == 0) {
                 httpPanelGrpcArea.setText("");
             } else {
                 protoBufMessageDecoder.decode(payload);
-                httpPanelGrpcArea.setText(protoBufMessageDecoder.getDecodedOuput());
+                httpPanelGrpcArea.setText(protoBufMessageDecoder.getDecodedOutput());
             }
         } catch (Exception er) {
-            httpPanelGrpcArea.setText(er.getMessage());
+            httpPanelGrpcArea.setText(protoBufMessageDecoder.getDecodedOutput() + er.getMessage());
             httpPanelGrpcArea.setBorder(BorderFactory.createLineBorder(Color.RED));
         }
         if (!isEditable()) {
             httpPanelGrpcArea.discardAllEdits();
         }
+    }
+
+    private void showInvalidMessageFormatError(String message) {
+        JOptionPane.showMessageDialog(
+                mainPanel,
+                message,
+                Constant.messages.getString("grpc.encoder.message.invalid.format.error"),
+                JOptionPane.ERROR_MESSAGE);
     }
 }
