@@ -75,7 +75,7 @@ public class WappalyzerJsonParser {
     }
 
     WappalyzerData parse(String categories, List<String> technologies, boolean createIcons) {
-        LOGGER.info("Starting to parse Tech Detecction technologies.");
+        LOGGER.info("Starting to parse Tech Detection technologies.");
         if (createIcons) {
             // Access the SVGPaint class to hopefully address class contention when parallel loading
             // below. Issue 8464
