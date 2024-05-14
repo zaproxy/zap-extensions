@@ -110,9 +110,11 @@ public class TestProxyServer {
         sb.append("Access-Control-Allow-Methods: GET,POST,OPTIONS\r\n");
         sb.append("Access-Control-Allow-Headers: ZAP-Header\r\n");
         // If this CSP is causing you problems then talk to the ZAP team
-       // sb.append(
-         //       "Content-Security-Policy: default-src 'none'; script-src 'self'; connect-src 'self'; "
-           //             + "child-src 'self'; img-src 'self' data:; font-src 'self' data:; style-src 'self'\r\n");
+        // sb.append(
+        //       "Content-Security-Policy: default-src 'none'; script-src 'self'; connect-src
+        // 'self'; "
+        //             + "child-src 'self'; img-src 'self' data:; font-src 'self' data:; style-src
+        // 'self'\r\n");
         sb.append("X-Frame-Options: SAMEORIGIN\r\n");
         sb.append("X-XSS-Protection: 1; mode=block\r\n");
         sb.append("X-Content-Type-Options: nosniff\r\n");
@@ -214,7 +216,7 @@ public class TestProxyServer {
             try {
                 String path = msg.getRequestHeader().getURI().getEscapedPath();
 
-                if (path.startsWith("/web-ui") && !path.startsWith("/web-ui/build")){
+                if (path.startsWith("/web-ui") && !path.startsWith("/web-ui/build")) {
                     path = path.replace("/web-ui", "/web-ui/build");
                 }
 
